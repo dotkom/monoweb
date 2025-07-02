@@ -1,15 +1,7 @@
-import type {
-  AttendancePool,
-  AttendanceSelection,
-  AttendanceSelectionResponse,
-  AttendanceStatus,
-  Attendee,
-} from "@dotkomonline/types"
+import type { AttendancePool, Attendee } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
-import { useSetSelectionsOptionsMutation } from "../mutations"
-import { SelectionsForm } from "./SelectionsForm"
 
 const getAttendanceStatusText = (
   isAttendingAndReserved: boolean,
@@ -41,7 +33,8 @@ interface CardProps {
 const Card: FC<CardProps> = ({ classNames, children, title }) => {
   const baseOuterClassName = "flex flex-col w-full bg-slate-3 rounded-lg"
   const baseHeaderClassName = "p-2 bg-slate-5 rounded-t-lg text-center text-sm font-bold"
-  const baseInnerClassName = "flex flex-col min-h-[10rem] gap-4 p-3 items-center text-center justify-center w-full"
+  const baseInnerClassName =
+    "flex flex-col min-h-[10rem] gap-4 p-2 rounded-md items-center text-center justify-center w-full"
 
   if (!title) {
     return <section className={cn(baseOuterClassName, baseInnerClassName, classNames?.inner)}>{children}</section>
@@ -65,19 +58,9 @@ interface MainPoolCardProps {
   isLoggedIn: boolean
   queuePosition: number | null
   hasMembership: boolean
-  attendanceSelections: AttendanceSelection[]
-  status: AttendanceStatus
 }
 
-export const MainPoolCard: FC<MainPoolCardProps> = ({
-  pool,
-  attendee,
-  queuePosition,
-  isLoggedIn,
-  hasMembership,
-  attendanceSelections,
-  status,
-}) => {
+export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosition, isLoggedIn, hasMembership }) => {
   if (!isLoggedIn) {
     return (
       <Card>
@@ -115,18 +98,6 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const isAttendingAndNotReserved = isAttending && queuePosition !== null
   const poolHasQueue = pool.numUnreservedAttendees > 0
 
-  const selectionsMutation = useSetSelectionsOptionsMutation()
-  const handleSelectionChange = (selections: AttendanceSelectionResponse[]) => {
-    if (!attendee) {
-      return
-    }
-
-    selectionsMutation.mutate({
-      attendeeId: attendee.id,
-      options: selections,
-    })
-  }
-
   return (
     <Card
       classNames={{
@@ -146,18 +117,6 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
         )}
         <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
       </div>
-
-      {isAttendingAndReserved && attendanceSelections.length > 0 && (
-        <div className="w-[70%] mt-2">
-          <SelectionsForm
-            selections={attendanceSelections}
-            // biome-ignore lint/style/noNonNullAssertion: isAttending is true if attendee exists
-            defaultValues={{ options: attendee!.selections }}
-            onSubmit={handleSelectionChange}
-            disabled={status === "Closed"}
-          />
-        </div>
-      )}
     </Card>
   )
 }

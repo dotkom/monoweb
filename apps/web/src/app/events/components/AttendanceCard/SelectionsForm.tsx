@@ -4,24 +4,24 @@ import { useEffect } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 
 interface FormValues {
-  options: { optionId: string; selectionId: string }[]
+  attendeeOptions: AttendanceSelectionResponse[]
 }
 
 interface FormProps {
   selections: AttendanceSelection[]
+  attendeeSelections: AttendanceSelectionResponse[]
   onSubmit: (selections: AttendanceSelectionResponse[]) => void
-  defaultValues?: FormValues
-  isLoading?: boolean
   disabled?: boolean
 }
 
-export function SelectionsForm({ selections, onSubmit, defaultValues: submittedDefaults, disabled }: FormProps) {
-  const defaultValues: FormValues = {
-    options: selections.map((sel) => {
-      const saved = submittedDefaults?.options?.find((o) => o.selectionId === sel.id)
-      return { selectionId: sel.id, optionId: saved?.optionId ?? "" }
-    }),
-  }
+export function SelectionsForm({ selections, onSubmit, attendeeSelections, disabled }: FormProps) {
+  const prefilledSelections = selections.map(({ id: selectionId, name: selectionName }) => {
+    const savedResponse = attendeeSelections.find((selection) => selection.selectionId === selectionId)
+    const optionId = savedResponse?.optionId ?? ""
+    const optionName = savedResponse?.optionName ?? ""
+
+    return { selectionId, selectionName, optionId, optionName }
+  })
 
   const {
     control,
@@ -29,98 +29,76 @@ export function SelectionsForm({ selections, onSubmit, defaultValues: submittedD
     getValues,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues,
+    defaultValues: { attendeeOptions: prefilledSelections },
     mode: "onChange",
     reValidateMode: "onChange",
   })
 
+  // This validates the default values without the user having to interact with the form
   useEffect(() => {
     trigger()
   }, [trigger])
 
-  const { fields } = useFieldArray({
-    name: "options",
+  const { fields: attendeeOptionsFields } = useFieldArray({
+    name: "attendeeOptions",
     control,
   })
 
-  const submitHandler = () => {
-    const options = getValues("options")
-
-    const result = options
-      .map(({ optionId }, i) => {
-        const selection = selections[i]
-        const option = selection.options.find((o) => o.id === optionId)
-        return (
-          option && {
-            optionId: option.id,
-            optionName: option.name,
-            selectionName: selection.name,
-            selectionId: selection.id,
-          }
-        )
-      })
-      .filter(Boolean) as AttendanceSelectionResponse[]
-
-    onSubmit(result)
-  }
-
-  const hasError = (index: number) => !disabled && Boolean(errors.options?.[index]?.optionId)
+  const hasError = (index: number) => !disabled && Boolean(errors.attendeeOptions?.[index]?.optionId)
 
   return (
-    <div className="flex flex-col gap-4">
-      {fields.map((field, index) => (
-        <div key={field.id} className={cn("w-full flex flex-col gap-2", hasError(index) && "bg-red-2 rounded-md p-2")}>
-          <Controller
-            control={control}
-            name={`options.${index}.optionId`}
-            disabled={disabled}
-            rules={{ required: "Du må velge et alternativ" }}
-            render={({ field: { onChange, value } }) => (
-              <div className="w-full flex flex-col gap-1">
-                <Select
-                  value={value}
-                  disabled={disabled}
-                  onValueChange={async (val) => {
-                    onChange(val)
-                    await trigger(`options.${index}.optionId`)
-                    submitHandler()
-                  }}
+    <section className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {attendeeOptionsFields.map((field, index) => (
+        <Controller
+          key={field.id}
+          control={control}
+          name={`attendeeOptions.${index}.optionId`}
+          disabled={disabled}
+          rules={{ required: "Du må velge et alternativ" }}
+          render={({ field: { onChange, value } }) => (
+            <div className="w-full flex flex-col gap-1">
+              <Select
+                value={value}
+                disabled={disabled}
+                onValueChange={(newValue) => {
+                  onChange(newValue)
+                  onSubmit(getValues("attendeeOptions"))
+                }}
+              >
+                <SelectTrigger
+                  className={cn(
+                    "w-full transition-all",
+                    hasError(index) && "border-red-9 focus:ring-red-9 focus:border-red-9"
+                  )}
                 >
-                  <SelectTrigger
-                    className={cn(
-                      "w-full transition-all border-green-5",
-                      hasError(index) && "border-red-9 focus:ring-red-9 focus:border-red-9"
-                    )}
-                  >
-                    <SelectValue
-                      placeholder={selections[index].name}
-                      className={cn(
-                        "placeholder:text-slate-8 transition-all",
-                        hasError(index) && "text-red-11 placeholder:text-red-9"
-                      )}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem key={"label"} value={"label"} disabled>
-                      <Text className="text-slate-11 text-xs font-medium text-left">{selections[index].name}</Text>
+                  <SelectValue
+                    placeholder={selections[index].name}
+                    className={cn("placeholder:text-slate-8 transition-all", hasError(index) && "text-red-11")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {/* Label for the current selection */}
+                  <SelectItem key={"label"} value={"label"} disabled>
+                    <Text className="text-slate-11 text-xs font-medium text-left">{selections[index].name}</Text>
+                  </SelectItem>
+
+                  {selections[index].options.map(({ id, name }) => (
+                    <SelectItem key={id} value={id}>
+                      {name}
                     </SelectItem>
-                    {selections[index].options.map(({ id, name }) => (
-                      <SelectItem key={id} value={id}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {hasError(index) && (
-                  <Text className="text-red-11 text-xs text-left transition-all fade-in fade-out">
-                    {errors.options?.[index]?.optionId?.message}
-                  </Text>
-                )}
-              </div>
-            )}
-          />
-        </div>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {hasError(index) && (
+                <Text className="text-red-11 text-xs text-left transition-all fade-in fade-out">
+                  {errors.attendeeOptions?.[index]?.optionId?.message ?? "En feil oppstod"}
+                </Text>
+              )}
+            </div>
+          )}
+        />
       ))}
-    </div>
+    </section>
   )
 }

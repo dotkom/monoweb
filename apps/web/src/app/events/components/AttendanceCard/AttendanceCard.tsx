@@ -1,17 +1,25 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
-import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type AttendancePool,
+  type AttendanceSelectionResponse,
+  type Attendee,
+  type User,
+  canUserAttendPool,
+} from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
-import { useDeregisterMutation, useRegisterMutation } from "./../mutations"
+import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { RegistrationButton } from "./RegistrationButton"
+import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
@@ -64,10 +72,23 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
 
   const registerMutation = useRegisterMutation({})
   const deregisterMutation = useDeregisterMutation()
+  const selectionsMutation = useSetSelectionsOptionsMutation()
+
+  const handleSelectionChange = (selections: AttendanceSelectionResponse[]) => {
+    if (!attendee) {
+      return
+    }
+
+    selectionsMutation.mutate({
+      attendeeId: attendee.id,
+      options: selections,
+    })
+  }
 
   const attendablePool = attendee
     ? attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
     : user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
+
   const nonAttendablePools = attendance.pools
     .filter((pool) => pool.id !== attendablePool?.id)
     .sort((a, b) => {
@@ -109,9 +130,22 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
         queuePosition={queuePosition}
         isLoggedIn={isLoggedIn}
         hasMembership={hasMembership}
-        attendanceSelections={attendance.selections}
-        status={attendanceStatus}
       />
+
+      {isAttendingAndReserved && attendance.selections.length > 0 && attendee && (
+        <div className="flex flex-col gap-2">
+          <Title element="p" size="sm" className="text-base">
+            Valg
+          </Title>
+
+          <SelectionsForm
+            selections={attendance.selections}
+            attendeeSelections={attendee.selections}
+            onSubmit={handleSelectionChange}
+            disabled={attendanceStatus === "Closed"}
+          />
+        </div>
+      )}
 
       {nonAttendablePools.length > 0 && (
         <NonAttendablePoolsBox pools={nonAttendablePools} hasAttendablePool={Boolean(attendablePool)} />
