@@ -29,6 +29,8 @@ import {
   NTNUStudyplanRepositoryImpl,
 } from "./external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
+import { type FeedbackFormRepository, FeedbackFormRepositoryImpl } from "./feedback-form/feedback-form-repository"
+import { type FeedbackFormService, FeedbackFormServiceImpl } from "./feedback-form/feedback-form-service"
 import { type GroupRepository, GroupRepositoryImpl } from "./group/group-repository"
 import { type GroupService, GroupServiceImpl } from "./group/group-service"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
@@ -128,6 +130,8 @@ export const createServiceLayer = async ({
   const feideGroupsRepository: NTNUGroupsRepository = new NTNUGroupsRepositoryImpl()
   const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
 
+  const feedbackFormRepository: FeedbackFormRepository = new FeedbackFormRepositoryImpl(db)
+  
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
@@ -196,6 +200,8 @@ export const createServiceLayer = async ({
 
   const jobExecutor = new JobExecutor(jobService, attendeeService, attendanceService)
 
+  const feedbackFormService: FeedbackFormService = new FeedbackFormServiceImpl(feedbackFormRepository)
+
   return {
     userService,
     eventService,
@@ -220,5 +226,6 @@ export const createServiceLayer = async ({
     interestGroupService,
     jobService,
     jobExecutor,
+    feedbackFormService,
   }
 }

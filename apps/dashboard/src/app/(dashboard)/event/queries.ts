@@ -53,3 +53,8 @@ export const useEventAttendeesGetQuery = (attendanceId: AttendanceId) => {
   })
   return { attendees, ...query }
 }
+
+export const useEventFeedbackFormGetQuery = (eventId: EventId) => {
+  const trpc = useTRPC()
+  return useQuery(trpc.event.feedbackForm.getByEventId.queryOptions(eventId))
+}

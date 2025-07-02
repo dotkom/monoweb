@@ -374,3 +374,43 @@ export const useUpdateSelectionResponsesMutation = () => {
     })
   )
 }
+
+export const useCreateFeedbackFormMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "create",
+  })
+
+  return useMutation(
+    trpc.event.feedbackForm.create.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (data) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.event.feedbackForm.getByEventId.queryOptions(data.eventId))
+      },
+    })
+  )
+}
+
+export const useUpdateFeedbackFormMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.event.feedbackForm.update.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (data) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.event.feedbackForm.getByEventId.queryOptions(data.eventId))
+      },
+    })
+  )
+}

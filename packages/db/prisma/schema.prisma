@@ -202,6 +202,8 @@ model Attendee {
   attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId String
 
+  feedbackFormAnswer   FeedbackFormAnswer?
+
   /// Which options the user has selected from the Attendance selections
   selections Json @default("[]")
 
@@ -238,6 +240,7 @@ model Event {
   companies       EventCompany[]
   hostingGroups   EventHostingGroup[]
   interestGroups  EventInterestGroup[]
+  feedbackForm    FeedbackForm?
 
   @@map("event")
 }
@@ -522,4 +525,26 @@ model Job {
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("job")
+}
+
+model FeedbackForm {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  questions Json
+  eventId   String   @unique
+  event     Event    @relation(fields: [eventId], references: [id])
+
+  @@map("feedback_form")
+}
+
+model FeedbackFormAnswer {
+  id              String        @id @default(uuid())
+  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(3)
+  answers         Json
+  attendeeId      String        @unique
+  attendee        Attendee      @relation(fields: [attendeeId], references: [id])
+
+  @@map("feedback_form_answer")
 }
