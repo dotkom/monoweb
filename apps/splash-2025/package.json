@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@dotkomonline/ui": "workspace:*",
-    "@fontsource/fraunces": "^5.2.6",
-    "@fontsource/poppins": "^5.2.6",
+    "@fontsource/figtree": "^5.2.8",
+    "@fontsource/inter": "^5.2.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
     "react": "^19.1.0",
