@@ -1,7 +1,9 @@
 "use client"
 
 import { Button } from "@mantine/core"
-import { useEffect } from "react"
+import {getBrowserLogger} from "@dotkomonline/logger";
+
+const logger = getBrowserLogger('monoweb-dashboard')
 
 export default function ErrorBoundary({
   error,
@@ -10,10 +12,7 @@ export default function ErrorBoundary({
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  useEffect(() => {
-    console.error(error)
-  }, [error])
-
+  logger.error(error)
   return (
     <div>
       <h2>Noe gikk galt!</h2>

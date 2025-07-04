@@ -22,9 +22,6 @@ export const useDeregisterMutation = () => {
           ),
         ])
       },
-      onError: (error) => {
-        console.error(error)
-      },
     })
   )
 }
@@ -47,9 +44,6 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
 
         onSuccess?.()
       },
-      onError: (error) => {
-        console.error(error)
-      },
     })
   )
 }
@@ -62,10 +56,6 @@ export const useSetSelectionsOptionsMutation = () => {
     trpc.attendance.updateSelectionResponses.mutationOptions({
       onSuccess: async ({ userId, attendanceId }) => {
         await queryClient.invalidateQueries(trpc.attendance.getAttendee.queryOptions({ userId, attendanceId }))
-      },
-      onError: (error) => {
-        alert("Noe gikk galt")
-        console.error(error)
       },
     })
   )

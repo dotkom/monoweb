@@ -1,7 +1,9 @@
 import repl from "node:repl"
+import { getLogger } from "@dotkomonline/logger"
 import { core, prisma } from "./services"
 
-console.warn("The monoweb shell does not support s3, auth0, or stripe operations at this time.")
+const logger = getLogger("shell")
+logger.warn("The monoweb shell does not support s3, auth0, or stripe operations at this time.")
 
 // Start the REPL
 const replServer = repl.start({

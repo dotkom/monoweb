@@ -3,15 +3,17 @@
 import { env } from "@/lib/env"
 import { TRPCProvider } from "@/lib/trpc"
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
+import { getBrowserLogger } from "@dotkomonline/logger"
 import { useSession } from "@dotkomonline/oauth2/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { type CreateTRPCClientOptions, createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { type PropsWithChildren, useState } from "react"
 import superjson from "superjson"
 
+const logger = getBrowserLogger("trpc")
+
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
-
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -19,6 +21,9 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
           queries: {
             retry: process.env.NODE_ENV === "production" ? 3 : 0,
           },
+          mutations: {
+            onError: logger.error
+          }
         },
       })
   )
@@ -27,6 +32,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       loggerLink({
         enabled: (opts) =>
           env.NEXT_PUBLIC_ORIGIN.includes("localhost") || (opts.direction === "down" && opts.result instanceof Error),
+        console: logger,
       }),
       httpBatchLink({
         transformer: superjson,
@@ -34,18 +40,16 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         async fetch(url, options) {
           try {
             const headers = new Headers(options?.headers)
-
             if (session !== null) {
               headers.append("Authorization", `Bearer ${session.accessToken}`)
             }
-
             return fetch(url, {
               ...options,
               credentials: "include",
               headers,
             })
           } catch (e) {
-            console.error(
+            logger.error(
               "The fetch call to the TRPC api failed, the TRPC server may be down! Check if the TRPC server is up and running"
             )
             throw e
