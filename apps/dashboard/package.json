@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3002 --turbo",
-    "build": "next build --turbo",
+    "build": "next build",
     "docker:build": "docker build -t dashboard:latest -f Dockerfile --progress plain ../..",
     "start": "next start",
     "lint": "biome check . --write",
