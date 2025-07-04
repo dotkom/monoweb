@@ -1,7 +1,7 @@
 "use client"
 
-import { RichText } from "@/components/molecules/RichText/RichText"
 import type { JobListing } from "@dotkomonline/types"
+import { RichText } from "@dotkomonline/ui"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import Image from "next/image"
