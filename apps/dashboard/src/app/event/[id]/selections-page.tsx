@@ -7,7 +7,11 @@ import type { FC } from "react"
 import { useAttendanceForm } from "../components/attendance-form"
 import { useCreateAttendanceSelectionsModal } from "../components/create-event-selections-modal"
 import { useEditSelectionsModal } from "../components/edit-event-selections-modal"
-import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
+import {
+  useAddAttendanceMutation,
+  useRemoveSelectionResponsesMutation,
+  useUpdateAttendanceMutation,
+} from "../mutations"
 import { useEventDetailsContext } from "./provider"
 
 export const SelectionsPage: FC = () => {
@@ -57,7 +61,9 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
     attendance,
   })
 
-  const edit = useUpdateAttendanceMutation()
+  const updateAttendance = useUpdateAttendanceMutation()
+  const removeSelectionResponses = useRemoveSelectionResponsesMutation()
+
   const { data: results, isLoading: resultsIsLoading } = useQuery({
     ...trpc.attendance.getSelectionsResults.queryOptions({
       attendanceId: attendance.id,
@@ -65,9 +71,12 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
     initialData: [],
   })
 
-  const deleteAlternative = (id: string) => {
-    const newOptions = attendance.selections?.filter((alt) => alt.id !== id)
-    edit.mutate({
+  const onDelete = (selectionId: string) => {
+    const newOptions = attendance.selections?.filter((selection) => selection.id !== selectionId)
+
+    removeSelectionResponses.mutate({ selectionId })
+
+    updateAttendance.mutate({
       id: attendance.id,
       attendance: {
         selections: newOptions ?? [],
@@ -94,7 +103,7 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
               <ActionIcon variant="outline" onClick={() => openEdit(selection)} mr="md">
                 <Icon icon="tabler:edit" />
               </ActionIcon>
-              <ActionIcon variant="outline" onClick={() => deleteAlternative(selection.id)} color="red">
+              <ActionIcon variant="outline" onClick={() => onDelete(selection.id)} color="red">
                 <Icon icon="tabler:trash" />
               </ActionIcon>
               <h3>{selection.name}</h3>

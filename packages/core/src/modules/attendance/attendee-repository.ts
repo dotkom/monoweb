@@ -2,7 +2,6 @@ import type { DBClient, DBContext } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePoolId,
-  type Attendee,
   type AttendeeId,
   AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
   AttendeeSelectionResponsesSchema,
@@ -35,6 +34,7 @@ export interface AttendeeRepository {
     userId: UserId,
     attendanceIds: AttendanceId[]
   ): Promise<Map<AttendanceId, "RESERVED" | "UNRESERVED">>
+  removeSelectionResponses(selectionId: string): Promise<AttendanceId | null>
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
@@ -180,16 +180,14 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   public async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {
     const attendees = (await this.db.attendee.findMany({
       where: { attendanceId },
-      select: {
-        id: true,
-        selections: true,
-      },
-    })) as Pick<Attendee, "id" | "selections">[]
+      select: { id: true, selections: true },
+    })) as Pick<UnparsedAttendeeWithoutUser, "id" | "selections">[]
 
     const updatedRows = attendees
-      .filter(({ selections }) => selections.length > 0)
+      .filter(({ selections }) => Array.isArray(selections) && selections.length > 0)
       .map(({ id, selections: oldSelections }) => {
-        const selections = oldSelections.filter((oldSelection) => oldSelection.selectionId !== selectionId)
+        const parsedSelections = AttendeeSelectionResponsesSchema.parse(oldSelections)
+        const selections = parsedSelections.filter((oldSelection) => oldSelection.selectionId !== selectionId)
 
         return this.db.attendee.update({
           where: { id },
@@ -215,5 +213,24 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
         return statusMap
       })
+  }
+
+  public async removeSelectionResponses(selectionId: string) {
+    const updated = await this.db.$queryRawUnsafe<{ attendanceId: AttendanceId }[]>(
+      `
+        UPDATE "attendee"
+        SET selections = (
+          SELECT COALESCE(jsonb_agg(elem), '[]'::jsonb)
+          FROM jsonb_array_elements(selections) AS elem
+          WHERE elem->>'selectionId' <> $1
+        )
+        WHERE selections @> $2::jsonb
+        RETURNING "attendanceId";
+      `,
+      selectionId,
+      JSON.stringify([{ selectionId }])
+    )
+
+    return updated[0]?.attendanceId || null
   }
 }

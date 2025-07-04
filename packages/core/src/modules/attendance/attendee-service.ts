@@ -48,6 +48,7 @@ export interface AttendeeService {
     userId: UserId,
     attendanceIds: AttendanceId[]
   ): Promise<Map<AttendanceId, "RESERVED" | "UNRESERVED">>
+  removeSelectionResponses(selectionId: string): Promise<AttendanceId | null>
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
@@ -305,6 +306,10 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   public async getAttendeeStatuses(userId: UserId, attendanceIds: AttendanceId[]) {
-    return this.attendeeRepository.getAttendeeStatuses(userId, attendanceIds)
+    return await this.attendeeRepository.getAttendeeStatuses(userId, attendanceIds)
+  }
+
+  public async removeSelectionResponses(selectionId: string) {
+    return await this.attendeeRepository.removeSelectionResponses(selectionId)
   }
 }
