@@ -1,6 +1,6 @@
 "use client"
 
-import { getBrowserLogger } from "@dotkomonline/logger"
+import { getBrowserLogger } from "@dotkomonline/logger/browser"
 import { Button } from "@mantine/core"
 
 const logger = getBrowserLogger("monoweb-dashboard")

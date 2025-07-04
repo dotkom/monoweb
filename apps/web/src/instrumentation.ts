@@ -1,9 +1,11 @@
-import { getLogger, getResource, startOpenTelemetry } from "@dotkomonline/logger"
 import * as Sentry from "@sentry/nextjs"
 
-const logger = getLogger("monoweb-web/instrumentation")
-
-export function register() {
+export async function register() {
+  if (process.env.NEXT_RUNTIME !== "node") {
+    return
+  }
+  const { getLogger, getResource, startOpenTelemetry } = await import("@dotkomonline/logger")
+  const logger = getLogger("monoweb-web/instrumentation")
   const resource = getResource("monoweb-web")
   startOpenTelemetry(resource)
 

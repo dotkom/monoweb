@@ -1,4 +1,4 @@
-import { getBrowserLogger } from "@dotkomonline/logger"
+import { getBrowserLogger } from "@dotkomonline/logger/browser"
 import * as Sentry from "@sentry/nextjs"
 
 const logger = getBrowserLogger("monoweb-web/instrumentation")

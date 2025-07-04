@@ -10,7 +10,7 @@ import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics"
 import { NodeSDK } from "@opentelemetry/sdk-node"
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from "@opentelemetry/semantic-conventions"
 import { OpenTelemetryTransportV3 } from "@opentelemetry/winston-transport"
-import winston, { format } from "winston"
+import { type LoggerIdentifier, getLoggerWithTransports } from "./browser"
 export type { Logger } from "winston"
 
 export function getResource(serviceName: string, version = "0.1.0"): Resource {
@@ -62,60 +62,6 @@ export function startOpenTelemetry(resource: Resource) {
   logger.info("opentelemetry instrumentation installed (service-name=%s)", resource.attributes[ATTR_SERVICE_NAME])
 }
 
-interface Message {
-  level: string
-  message: string
-  timestamp: string
-  identifier: string
-}
-
-function padWithColor(str: string, desiredLength: number) {
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
-  const ansiEscapeCodes = /\x1b\[[0-9;]*m/g // Regex to match ANSI escape codes
-  const visibleLength = str.replace(ansiEscapeCodes, "").length // Length of string without ANSI codes
-  const paddingLength = desiredLength - visibleLength // Calculate how much padding is needed
-  return str + " ".repeat(paddingLength) // Pad the string with spaces
-}
-
-const formatMessage = ({ level, message, timestamp, identifier }: Message) => {
-  const levelPadded = padWithColor(level, 7)
-  const dim = "\x1b[2m"
-  const reset = "\x1b[0m"
-  return `${levelPadded}[${timestamp}] ${message} ${dim}(${identifier})${reset}`
-}
-
-// biome-ignore lint/suspicious/noExplicitAny: this should be any for inference reasons
-export type LoggerIdentifier = string | (new (...args: any[]) => any)
-
-export function getBrowserLogger(identifier: LoggerIdentifier) {
-  return getLogger(identifier)
-}
-
 export function getLogger(identifier: LoggerIdentifier) {
   return getLoggerWithTransports(identifier, [new OpenTelemetryTransportV3()])
-}
-
-function getLoggerWithTransports(name: LoggerIdentifier, transports: winston.transport[] = []): winston.Logger {
-  const identifier = name instanceof Function ? name.name : name
-  return winston.createLogger({
-    level: "info",
-    transports: [
-      new winston.transports.Console({
-        format: format.combine(
-          format.splat(),
-          format.colorize(),
-          format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-          format.printf((msg) =>
-            formatMessage({
-              level: msg.level,
-              message: msg.message as string,
-              timestamp: msg.timestamp as string,
-              identifier,
-            })
-          )
-        ),
-      }),
-      ...transports,
-    ],
-  })
 }
