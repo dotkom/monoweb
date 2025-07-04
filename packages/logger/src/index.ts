@@ -62,4 +62,6 @@ export function startOpenTelemetry(resource: Resource) {
   logger.info("opentelemetry instrumentation installed (service-name=%s)", resource.attributes[ATTR_SERVICE_NAME])
 }
 
+export type Logger = ReturnType<typeof createLogger>
+
 export const getLogger = createLogger

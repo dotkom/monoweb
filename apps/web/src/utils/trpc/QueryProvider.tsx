@@ -20,7 +20,10 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       loggerLink({
         enabled: (opts) =>
           env.NEXT_PUBLIC_ORIGIN === "development" || (opts.direction === "down" && opts.result instanceof Error),
-        console: logger,
+        console: {
+          log: logger.info,
+          error: logger.error,
+        },
       }),
       httpBatchLink({
         transformer: superjson,
@@ -45,7 +48,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       new QueryClient({
         defaultOptions: {
           mutations: {
-            onError: logger.error,
+            onError: (err, variables) => logger.error("trpc error:", err, variables),
           },
         },
       })
