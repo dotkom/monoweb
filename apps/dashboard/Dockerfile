@@ -13,6 +13,12 @@ ARG NEXT_PUBLIC_ORIGIN
 ARG NEXT_PUBLIC_RPC_HOST
 ARG RPC_HOST
 
+ARG SENTRY_DSN
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_RELEASE
+
+ARG DOPPLER_ENVIRONMENT
+
 FROM base AS builder
 WORKDIR /app
 
@@ -25,8 +31,6 @@ RUN turbo prune @dotkomonline/dashboard --docker
 
 FROM base AS installer
 WORKDIR /app
-
-ENV DOCKER_BUILD=1
 
 RUN npm install -g pnpm@9.15.5 --ignore-scripts
 COPY --from=builder /app/out/full .
@@ -46,6 +50,17 @@ ENV NEXT_PUBLIC_ORIGIN ${NEXT_PUBLIC_ORIGIN}
 ENV NEXT_PUBLIC_RPC_HOST ${NEXT_PUBLIC_RPC_HOST}
 ENV RPC_HOST ${RPC_HOST}
 
+# Allow Sentry to upload source maps and build artifacts during build.
+ENV SENTRY_AUTH_TOKEN ${SENTRY_AUTH_TOKEN}
+
+# The following are public build-time variables that instrument and configure Sentry
+ENV SENTRY_DSN ${SENTRY_DSN}
+ENV NEXT_PUBLIC_SENTRY_DSN ${SENTRY_DSN}
+ENV SENTRY_RELEASE ${SENTRY_RELEASE}
+ENV NEXT_PUBLIC_SENTRY_RELEASE ${SENTRY_RELEASE}
+ENV DOPPLER_ENVIRONMENT ${DOPPLER_ENVIRONMENT}
+ENV NEXT_PUBLIC_DOPPLER_ENVIRONMENT ${DOPPLER_ENVIRONMENT}
+
 COPY --from=builder /app/out/full .
 RUN pnpm run --filter @dotkomonline/dashboard build
 
@@ -59,6 +74,9 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
+
+# Embed the Sentry release ID into the container.
+ENV SENTRY_RELEASE=${SENTRY_RELEASE}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs

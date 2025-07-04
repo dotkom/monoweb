@@ -1,5 +1,5 @@
+import { getLogger } from "@dotkomonline/logger"
 import { z } from "zod"
-import {getLogger} from "@dotkomonline/logger";
 
 const BaseStudyWaypointSchema = z.object({
   code: z.string(),

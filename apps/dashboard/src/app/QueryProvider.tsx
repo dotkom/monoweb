@@ -3,7 +3,7 @@
 import { env } from "@/lib/env"
 import { TRPCProvider } from "@/lib/trpc"
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
-import { getBrowserLogger } from "@dotkomonline/logger"
+import { getBrowserLogger } from "@dotkomonline/logger/browser"
 import { useSession } from "@dotkomonline/oauth2/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { type CreateTRPCClientOptions, createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
@@ -22,8 +22,8 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
             retry: process.env.NODE_ENV === "production" ? 3 : 0,
           },
           mutations: {
-            onError: logger.error
-          }
+            onError: (err, variables) => logger.error("trpc error:", err, variables),
+          },
         },
       })
   )
@@ -32,7 +32,10 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       loggerLink({
         enabled: (opts) =>
           env.NEXT_PUBLIC_ORIGIN.includes("localhost") || (opts.direction === "down" && opts.result instanceof Error),
-        console: logger,
+        console: {
+          log: logger.info,
+          error: logger.error,
+        },
       }),
       httpBatchLink({
         transformer: superjson,

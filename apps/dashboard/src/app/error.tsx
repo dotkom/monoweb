@@ -1,9 +1,9 @@
 "use client"
 
+import { getBrowserLogger } from "@dotkomonline/logger/browser"
 import { Button } from "@mantine/core"
-import {getBrowserLogger} from "@dotkomonline/logger";
 
-const logger = getBrowserLogger('monoweb-dashboard')
+const logger = getBrowserLogger("monoweb-dashboard")
 
 export default function ErrorBoundary({
   error,
