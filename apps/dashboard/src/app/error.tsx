@@ -1,9 +1,7 @@
 "use client"
 
-import { getBrowserLogger } from "@dotkomonline/logger/browser"
 import { Button } from "@mantine/core"
-
-const logger = getBrowserLogger("monoweb-dashboard")
+import * as Sentry from "@sentry/nextjs"
 
 export default function ErrorBoundary({
   error,
@@ -12,7 +10,8 @@ export default function ErrorBoundary({
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  logger.error(error)
+  Sentry.captureException(error)
+  console.error(error)
   return (
     <div>
       <h2>Noe gikk galt!</h2>
