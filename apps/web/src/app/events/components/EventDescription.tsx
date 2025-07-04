@@ -1,4 +1,4 @@
-import { RichText } from "@/components/molecules/RichText/RichText"
+import { RichText } from "@dotkomonline/ui"
 
 export function EventDescription({ description }: { description: string }) {
   return <RichText content={description} />
