@@ -1,17 +1,29 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "configMigration": true,
-  "extends": [
-    "config:recommended"
-  ],
+  "extends": ["config:best-practices"],
+  "semanticCommits": "disabled",
+  "major": {
+    "automerge": false
+  },
+  "minor": {
+    "automerge": true
+  },
+  "patch": {
+    "automerge": true
+  },
   "schedule": [
-    "* 0-3 * * 1"
+    "0 6 * * 1"
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchCurrentVersion": "!/^0/", 
-      "automerge": true
+      "groupName": "next",
+      "matchPackageNames": [
+        "next",
+        "^/@next//",
+        "^/@types/next/",
+        "^/@types/next__/"
+      ]
     },
     {
       "enabled": false,
