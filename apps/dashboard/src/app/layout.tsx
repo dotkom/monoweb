@@ -12,6 +12,8 @@ import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
 
+export const dynamic = "force-dynamic"
+
 function BaseLayout({ session, children }: PropsWithChildren<{ session: Session | null }>) {
   return (
     <html lang="no" {...mantineHtmlProps}>
