@@ -1,10 +1,7 @@
-import { getBrowserLogger } from "@dotkomonline/logger/browser"
 import * as Sentry from "@sentry/nextjs"
 
-const logger = getBrowserLogger("monoweb-dashboard/instrumentation")
-
 if (process.env.NEXT_PUBLIC_SENTRY_DSN !== undefined) {
-  logger.info("Initializing Sentry for client-side Next.js...")
+  console.info("Initializing Sentry for client-side Next.js...")
   Sentry.init({
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     // SENTRY_RELEASE and DOPPLER_ENVIRONMENT are embedded into the Dockerfile
