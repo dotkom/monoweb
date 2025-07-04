@@ -1,3 +1,4 @@
+import { useTagsAllQuery } from "@/app/article/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
@@ -5,7 +6,6 @@ import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { ArticleSchema, type ArticleWrite, ArticleWriteSchema } from "@dotkomonline/types"
-import { useTagsAllQuery } from "src/modules/article/queries/use-tags-all-query"
 import type { z } from "zod"
 
 const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWrite> = {}
