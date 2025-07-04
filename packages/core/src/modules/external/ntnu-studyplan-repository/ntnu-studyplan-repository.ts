@@ -1,3 +1,4 @@
+import { getLogger } from "@dotkomonline/logger"
 import { z } from "zod"
 
 const BaseStudyWaypointSchema = z.object({
@@ -84,6 +85,7 @@ export interface NTNUStudyplanRepository {
  */
 export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
   private readonly endpoint = "https://www.ntnu.no/web/studier/studieplan"
+  private readonly logger = getLogger(NTNUStudyplanRepositoryImpl)
 
   private getStudyDirectionCourses(direction: StudyDirection, periodNumber: string) {
     const courses: StudyplanCourse[] = []
@@ -130,30 +132,23 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     let response: Response
     try {
       response = await fetch(`${this.endpoint}?${params.toString()}`)
-
       if (!response.ok) {
         throw new Error(`Failed to fetch studyplan for ${code} ${year}: ${await response.text()}`)
       }
     } catch (error) {
-      console.error("Failed to fetch studyplan:", error)
-
+      this.logger.error("Failed to fetch studyplan:", error)
       if (code in STATIC_FALLBACK_DATA) {
-        console.error("Using static data fallback because NTNU API failed")
-
+        this.logger.error("Using static data fallback because NTNU API failed")
         return STATIC_FALLBACK_DATA[code]
       }
-
       throw error
     }
-
     const data = await response.json()
-
     return StudyplanEndpointSchema.parse(data).studyplan
   }
 
   public async getStudyplanCourses(code: string, year: number) {
     const studyplan = await this.getStudyplan(code, year)
-
     return studyplan.studyPeriods.flatMap((period) =>
       this.getStudyDirectionCourses(period.direction, period.periodNumber)
     )

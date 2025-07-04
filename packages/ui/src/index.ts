@@ -28,5 +28,6 @@ export * from "./molecules/Accordion/Accordion"
 export * from "./molecules/Dialog/Dialog"
 export * from "./molecules/Card/Card"
 export * from "./molecules/ReadMore/ReadMore"
+export * from "./molecules/RichText/RichText"
 
 export * from "./utils"

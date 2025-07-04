@@ -68,9 +68,6 @@ const InterestGroupViewInner: FC<InnerInterestGroupViewProps> = (props: InnerInt
       onSuccess: () => {
         refetchMembers()
       },
-      onError: (error) => {
-        console.error("Failed to join:", error.message)
-      },
     })
   )
 
@@ -78,9 +75,6 @@ const InterestGroupViewInner: FC<InnerInterestGroupViewProps> = (props: InnerInt
     trpc.interestGroup.removeMember.mutationOptions({
       onSuccess: () => {
         refetchMembers()
-      },
-      onError: (error) => {
-        console.error("Failed to leave:", error.message)
       },
     })
   )

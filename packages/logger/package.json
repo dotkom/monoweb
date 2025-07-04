@@ -1,8 +1,16 @@
 {
   "name": "@dotkomonline/logger",
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./browser": {
+      "import": "./src/browser.ts",
+      "types": "./src/browser.ts"
+    }
+  },
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules",
@@ -11,7 +19,22 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "winston": "^3.17.0"
+    "@opentelemetry/api-logs": "^0.202.0",
+    "@opentelemetry/api-metrics": "^0.33.0",
+    "@opentelemetry/exporter-logs-otlp-proto": "^0.202.0",
+    "@opentelemetry/exporter-metrics-otlp-proto": "^0.202.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.202.0",
+    "@opentelemetry/instrumentation-pino": "^0.49.0",
+    "@opentelemetry/resource-detector-aws": "^2.2.0",
+    "@opentelemetry/resource-detector-container": "^0.7.2",
+    "@opentelemetry/resources": "^2.0.1",
+    "@opentelemetry/sdk-logs": "^0.202.0",
+    "@opentelemetry/sdk-metrics": "^2.0.1",
+    "@opentelemetry/sdk-node": "^0.202.0",
+    "@opentelemetry/sdk-trace-node": "^2.0.1",
+    "@opentelemetry/semantic-conventions": "^1.34.0",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
