@@ -1,12 +1,12 @@
 "use client"
 
+import { RichText } from "@/components/molecules/RichText/RichText"
 import type { JobListing } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
-import { RenderedContent } from "../molecules/RenderedContent/RenderedContent"
 
 interface JobListingViewProps {
   jobListing: JobListing
@@ -96,7 +96,7 @@ export const JobListingView: FC<JobListingViewProps> = ({ jobListing }: JobListi
                         [&_[dir='ltr']]:pl-4
                         mb-12 ml-8 flex flex-col"
         >
-          <RenderedContent content={description} />
+          <RichText content={description} />
         </div>
       </div>
     </div>

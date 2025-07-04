@@ -67,7 +67,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
           ) : (
             <Text className="text-slate-10">Ingen arrangører</Text>
           )}
-          <EventDescription description={eventDetail.event.description} />
+          {eventDetail.event.description && <EventDescription description={eventDetail.event.description} />}
         </div>
 
         <div className="flex flex-1 flex-col gap-8 sm:gap-4">
