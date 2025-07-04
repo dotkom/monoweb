@@ -6,6 +6,9 @@ import ical from "ical-generator"
 import { jwtVerify } from "jose"
 import { JWTClaimValidationFailed, JWTInvalid } from "jose/errors"
 import { type NextRequest, NextResponse } from "next/server"
+import {getLogger} from "@dotkomonline/logger";
+
+const logger = getLogger('web/calendar')
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const key = req.nextUrl.searchParams.get("key")
@@ -35,7 +38,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     if (err instanceof JWTClaimValidationFailed || err instanceof JWTInvalid) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-    console.error(err)
+    logger.error(err)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

@@ -1304,6 +1304,9 @@ importers:
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.2

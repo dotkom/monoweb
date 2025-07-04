@@ -8,6 +8,9 @@ import { type CreateTRPCClientOptions, createTRPCClient, httpBatchLink, loggerLi
 import { type PropsWithChildren, useState } from "react"
 import superjson from "superjson"
 import { TRPCProvider } from "./client"
+import {getBrowserLogger} from "@dotkomonline/logger";
+
+const logger = getBrowserLogger('trpc')
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
@@ -17,6 +20,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       loggerLink({
         enabled: (opts) =>
           env.NEXT_PUBLIC_ORIGIN === "development" || (opts.direction === "down" && opts.result instanceof Error),
+        console: logger,
       }),
       httpBatchLink({
         transformer: superjson,
@@ -27,7 +31,6 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
           if (session !== null) {
             headers.append("Authorization", `Bearer ${session.accessToken}`)
           }
-
           return fetch(url, {
             ...options,
             credentials: "include",
@@ -37,7 +40,13 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       }),
     ],
   }
-  const [queryClient] = useState(() => new QueryClient())
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      mutations: {
+        onError: logger.error
+      }
+    }
+  }))
   const [trpcClient] = useState(() => createTRPCClient(trpcConfig))
 
   return (
