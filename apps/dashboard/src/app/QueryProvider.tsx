@@ -22,8 +22,8 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
             retry: process.env.NODE_ENV === "production" ? 3 : 0,
           },
           mutations: {
-            onError: logger.error
-          }
+            onError: logger.error,
+          },
         },
       })
   )

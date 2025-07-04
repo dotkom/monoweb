@@ -2,15 +2,15 @@
 
 import { env } from "@/env"
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
+import { getBrowserLogger } from "@dotkomonline/logger"
 import { useSession } from "@dotkomonline/oauth2/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { type CreateTRPCClientOptions, createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { type PropsWithChildren, useState } from "react"
 import superjson from "superjson"
 import { TRPCProvider } from "./client"
-import {getBrowserLogger} from "@dotkomonline/logger";
 
-const logger = getBrowserLogger('trpc')
+const logger = getBrowserLogger("trpc")
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
@@ -40,13 +40,16 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       }),
     ],
   }
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      mutations: {
-        onError: logger.error
-      }
-    }
-  }))
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          mutations: {
+            onError: logger.error,
+          },
+        },
+      })
+  )
   const [trpcClient] = useState(() => createTRPCClient(trpcConfig))
 
   return (

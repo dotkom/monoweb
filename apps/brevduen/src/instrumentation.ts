@@ -1,13 +1,20 @@
-import { getResource, startOpenTelemetry } from "@dotkomonline/logger"
+import { getLogger, getResource, startOpenTelemetry } from "@dotkomonline/logger"
 import * as Sentry from "@sentry/node"
-import { env } from "./env"
 
+const logger = getLogger("monoweb-brevduen/instrumentation")
 const resource = getResource("monoweb-brevduen")
 startOpenTelemetry(resource)
 
-if (env.SENTRY_DSN !== undefined) {
+if (process.env.SENTRY_DSN !== undefined) {
+  logger.info("Initializing Sentry...")
   Sentry.init({
-    dsn: env.SENTRY_DSN,
+    dsn: process.env.SENTRY_DSN,
+    // SENTRY_RELEASE and DOPPLER_ENVIRONMENT are embedded into the Dockerfile
+    release: process.env.SENTRY_RELEASE,
+    environment: process.env.DOPPLER_ENVIRONMENT,
+    tracesSampleRate: 1,
+    sendDefaultPii: false,
+    debug: false,
     skipOpenTelemetrySetup: true,
   })
 }

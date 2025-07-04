@@ -13,8 +13,6 @@ RUN turbo prune @dotkomonline/invoicification --docker
 FROM base AS installer
 WORKDIR /app
 
-ENV DOCKER_BUILD=1
-
 RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/full .
 RUN pnpm install --ignore-scripts
