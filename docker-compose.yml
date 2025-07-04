@@ -9,3 +9,10 @@ services:
       POSTGRES_DB: ow
     ports:
       - "4010:5432"
+  jaeger:
+    container_name: ow_jaeger
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - '4317:4317'
+      - '4318:4318'
+      - '16686:16686'

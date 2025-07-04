@@ -1,5 +1,4 @@
-// Always import Sentry instrumentation at the top of the entrypoint
-import "./sentry"
+import "./instrumentation"
 
 import { S3Client } from "@aws-sdk/client-s3"
 import { createServiceLayer } from "@dotkomonline/core"
@@ -13,7 +12,7 @@ import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import { ManagementClient } from "auth0"
 import fastify from "fastify"
 import Stripe from "stripe"
-import { verifyIdentityCredenetials } from "./aws"
+import { identifyCallerIAMIdentity } from "./aws"
 import { env } from "./env"
 
 const logger = getLogger("rpc")
@@ -115,6 +114,6 @@ server.get("/health", (_, res) => {
   res.send({ status: "ok" })
 })
 
-await verifyIdentityCredenetials()
+await identifyCallerIAMIdentity()
 await server.listen({ port: 4444, host: "0.0.0.0" })
 logger.info("Started RPC server on http://0.0.0.0:4444")
