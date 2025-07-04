@@ -1,3 +1,4 @@
+import { useS3UploadFile } from "@/app/offline/use-s3-upload-file"
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
@@ -55,7 +56,6 @@ import {
   useForm,
 } from "react-hook-form"
 import type { z } from "zod"
-import { useS3UploadFile } from "../modules/offline/use-s3-upload-file"
 
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>

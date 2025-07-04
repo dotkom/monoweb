@@ -18,6 +18,9 @@
         "name": "next"
       }
     ],
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "strictNullChecks": true,
     "allowJs": true,
     "resolveJsonModule": true
