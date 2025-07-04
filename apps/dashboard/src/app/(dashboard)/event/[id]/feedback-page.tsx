@@ -17,14 +17,16 @@ export const FeedbackPage: FC = () => {
       updateMutation.mutate({
         id: feedbackFormQuery.data.id,
         data: {
-          questions: formValues.questions,
           eventId: event.id,
         },
+        questions: formValues.questions,
       })
     } else {
       createMutation.mutate({
         questions: formValues.questions,
-        eventId: event.id,
+        form: {
+          eventId: event.id,
+        },
       })
     }
   }
@@ -38,7 +40,7 @@ export const FeedbackPage: FC = () => {
         </Text>
       ) : (
         !feedbackFormQuery.isLoading && (
-          <FeedbackForm onSubmit={onSubmit} defaultValues={feedbackFormQuery?.data ?? { questions: [] }} />
+          <FeedbackForm onSubmit={onSubmit} defaultValues={{ questions: feedbackFormQuery?.data?.questions ?? [] }} />
         )
       )}
     </Box>

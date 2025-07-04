@@ -1,4 +1,4 @@
-import { type FeedbackFormQuestion, FeedbackFormQuestionSchema } from "@dotkomonline/types"
+import { FeedbackQuestionSchema, type FeedbackQuestionUpdate, FeedbackQuestionUpdateSchema } from "@dotkomonline/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react/dist/iconify.js"
 import { Button, Card, Checkbox, Group, Select, Stack, TagsInput, TextInput } from "@mantine/core"
@@ -15,12 +15,12 @@ import {
 import z from "zod"
 
 const FormValuesSchema = z.object({
-  questions: z.array(FeedbackFormQuestionSchema),
+  questions: z.array(FeedbackQuestionUpdateSchema),
 })
 
 export type FormValues = z.infer<typeof FormValuesSchema>
 
-const typeOptions = Object.values(FeedbackFormQuestionSchema.shape.type.Values).map((type) => ({
+const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map((type) => ({
   value: type,
   label: type,
 }))
@@ -44,19 +44,25 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
   })
 
   const addQuestion = () => {
-    const question: FeedbackFormQuestion = {
-      id: crypto.randomUUID(),
+    const question: FeedbackQuestionUpdate = {
       label: "Spørsmål",
-      type: "text",
+      type: "TEXT",
       required: false,
+      options: [],
+      order: 0,
     }
 
     append(question)
   }
 
+  const handleSubmit = async (values: FormValues) => {
+    onSubmit(values)
+    form.reset(values)
+  }
+
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
         <Group>
           <Button onClick={addQuestion}>Legg til spørsmål</Button>
           <Button type="submit" color="green" disabled={!form.formState.isDirty || fields.length === 0}>
@@ -109,25 +115,25 @@ function QuestionCard({ index, onRemove, control }: QuestionCardProps) {
                 {...field}
                 onChange={(value) => {
                   field.onChange(value)
-                  if (value !== "select") {
+                  if (value !== "SELECT") {
                     setValue(`questions.${index}.options`, [])
                   }
                 }}
               />
             )}
           />
-          {type === "select" && (
+          {type === "SELECT" && (
             <Controller
               name={`questions.${index}.options`}
               control={control}
               render={({ field }) => (
                 <TagsInput
                   label="Alternativer"
-                  value={field.value.map((opt) => opt.name)}
+                  value={field.value.map((opt) => opt.label)}
                   onChange={(values) => {
                     field.onChange(
                       values.map(
-                        (name) => field.value.find((opt) => opt.name === name) ?? { id: crypto.randomUUID(), name }
+                        (label) => field.value.find((opt) => opt.label === label) ?? { id: crypto.randomUUID(), label }
                       )
                     )
                   }}

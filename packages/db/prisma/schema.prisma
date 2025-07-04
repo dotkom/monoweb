@@ -527,23 +527,76 @@ model Job {
   @@map("job")
 }
 
+enum FeedbackQuestionType {
+  TEXT
+  LONGTEXT
+  SLIDER
+  CHECKBOX
+  SELECT
+
+  @@map("feedback_question_type")
+}
+
 model FeedbackForm {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
-  questions Json
   eventId   String   @unique
   event     Event    @relation(fields: [eventId], references: [id])
+  questions FeedbackQuestion[]
+  answers   FeedbackFormAnswer[]
 
   @@map("feedback_form")
 }
 
+model FeedbackQuestion {
+  id              String                    @id @default(uuid())
+  createdAt       DateTime                  @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime                  @updatedAt @db.Timestamptz(3)
+  feedbackFormId  String
+  feedbackForm    FeedbackForm              @relation(fields: [feedbackFormId], references: [id])
+  label           String
+  required        Boolean                   @default(false)
+  type            FeedbackQuestionType
+  order           Int
+  options         FeedbackQuestionOption[]  
+  answers         FeedbackQuestionAnswer[]  @relation("QuestionAnswers")
+
+  @@map("feedback_question")
+}
+
+model FeedbackQuestionOption {
+  id          String   @id @default(uuid())
+  label       String
+  questionId  String
+  question    FeedbackQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedInAnswers FeedbackQuestionAnswer[] @relation("SelectedOption")
+
+  @@unique([questionId, label])
+  @@map("feedback_question_option")
+}
+
+model FeedbackQuestionAnswer {
+  id            String   @id @default(uuid())
+  questionId    String
+  question      FeedbackQuestion  @relation("QuestionAnswers", fields: [questionId], references: [id])
+  formAnswerId  String
+  formAnswer    FeedbackFormAnswer  @relation("FormAnswers", fields: [formAnswerId], references: [id])
+  value         Json?
+  selectedOptionId String?
+  selectedOption   FeedbackQuestionOption? @relation("SelectedOption", fields: [selectedOptionId], references: [id])
+
+  @@map("feedback_question_answer")
+}
+
 model FeedbackFormAnswer {
-  id              String        @id @default(uuid())
-  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime      @updatedAt @db.Timestamptz(3)
-  answers         Json
-  attendeeId      String        @unique
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  feedbackFormId  String
+  feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id])
+  answers   FeedbackQuestionAnswer[]  @relation("FormAnswers")
+  attendeeId      String    @unique
   attendee        Attendee      @relation(fields: [attendeeId], references: [id])
 
   @@map("feedback_form_answer")
