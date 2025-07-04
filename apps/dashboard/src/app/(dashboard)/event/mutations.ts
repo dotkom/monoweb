@@ -374,3 +374,27 @@ export const useUpdateSelectionResponsesMutation = () => {
     })
   )
 }
+
+export const useRemoveSelectionResponsesMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "delete",
+  })
+
+  return useMutation(
+    trpc.attendance.removeSelectionResponses.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (attendanceId) => {
+        complete()
+
+        if (attendanceId) {
+          await queryClient.invalidateQueries(
+            trpc.attendance.getSelectionResponseResults.queryOptions({ attendanceId })
+          )
+        }
+      },
+    })
+  )
+}
