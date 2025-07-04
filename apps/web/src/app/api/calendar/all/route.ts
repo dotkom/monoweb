@@ -3,8 +3,6 @@ import { server } from "@/utils/trpc/server"
 import ical from "ical-generator"
 import { type NextRequest, NextResponse } from "next/server"
 
-export const dynamic = "force-dynamic"
-
 export async function GET(req: NextRequest): Promise<NextResponse> {
   // TODO: Support paginating through the results
   void req

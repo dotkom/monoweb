@@ -5,8 +5,6 @@ import { env } from "@/env"
 import { SignJWT } from "jose"
 import { type NextRequest, NextResponse } from "next/server"
 
-export const dynamic = "force-dynamic"
-
 export async function GET(_: NextRequest): Promise<NextResponse> {
   const session = await auth.getServerSession()
   if (session === null) {

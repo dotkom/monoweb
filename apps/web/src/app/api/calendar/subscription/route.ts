@@ -8,8 +8,6 @@ import { jwtVerify } from "jose"
 import { JWTClaimValidationFailed, JWTInvalid } from "jose/errors"
 import { type NextRequest, NextResponse } from "next/server"
 
-export const dynamic = "force-dynamic"
-
 const logger = getLogger("web/calendar")
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
