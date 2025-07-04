@@ -89,25 +89,21 @@ const formatMessage = ({ level, message, timestamp, identifier }: Message) => {
 // biome-ignore lint/suspicious/noExplicitAny: safe for any constructor name here
 export function getLogger(name: string | (new (...args: any[]) => any)): winston.Logger {
   const identifier = name instanceof Function ? name.name : name
+  const format = winston.format.combine(
+    winston.format.splat(),
+    winston.format.colorize(),
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.printf((msg) =>
+      formatMessage({
+        level: msg.level,
+        message: msg.message as string,
+        timestamp: msg.timestamp as string,
+        identifier,
+      })
+    )
+  )
   return winston.createLogger({
     level: "info",
-    transports: [
-      new winston.transports.Console({
-        format: winston.format.combine(
-          winston.format.splat(),
-          winston.format.colorize(),
-          winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-          winston.format.printf((msg) =>
-            formatMessage({
-              level: msg.level,
-              message: msg.message as string,
-              timestamp: msg.timestamp as string,
-              identifier,
-            })
-          )
-        ),
-      }),
-      new OpenTelemetryTransportV3(),
-    ],
+    transports: [new winston.transports.Console({ format }), new OpenTelemetryTransportV3({ format })],
   })
 }
