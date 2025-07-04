@@ -13,7 +13,7 @@
     "automerge": true
   },
   "schedule": [
-    "0 6 * * 1"
+    "before 6am on every monday"
   ],
   "packageRules": [
     {
