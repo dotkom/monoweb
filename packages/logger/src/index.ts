@@ -84,19 +84,15 @@ const formatMessage = ({ level, message, timestamp, identifier }: Message) => {
   return `${levelPadded}[${timestamp}] ${message} ${dim}(${identifier})${reset}`
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: this should be any for inference reasons
-export type LoggerIdentifier = string | (new (...args: any[]) => any)
-
-export function getBrowserLogger(identifier: LoggerIdentifier) {
+export function getBrowserLogger(identifier: string) {
   return getLogger(identifier)
 }
 
-export function getLogger(identifier: LoggerIdentifier) {
+export function getLogger(identifier: string) {
   return getLoggerWithTransports(identifier, [new OpenTelemetryTransportV3()])
 }
 
-function getLoggerWithTransports(name: LoggerIdentifier, transports: winston.transport[] = []): winston.Logger {
-  const identifier = name instanceof Function ? name.name : name
+function getLoggerWithTransports(identifier: string, transports: winston.transport[] = []): winston.Logger {
   return winston.createLogger({
     level: "info",
     transports: [
