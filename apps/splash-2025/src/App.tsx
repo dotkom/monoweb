@@ -14,7 +14,7 @@ export function App() {
       <main>
         <Hero {...HeroData} />
         <DebugInfo />
-        <div className="bg-brand h-screen">
+        <div className="bg-brand">
           <LinjeforeningInfo />
         </div>
       </main>
