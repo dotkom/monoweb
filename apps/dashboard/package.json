@@ -44,7 +44,7 @@
     "@trpc/tanstack-react-query": "11.0.0-rc.828",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
-    "next": "^15.3.3",
+    "next": "^15.3.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.57.0",
