@@ -187,7 +187,7 @@ export const EventCalendarItem = ({ event, className }: EventCalendarItemProps) 
     <HoverCard openDelay={50} closeDelay={50}>
       <HoverCardTrigger asChild>
         <Link
-          href={`/events/${slugify(event.title)}/${event.id}`}
+          href={`/arrangementer/${slugify(event.title)}/${event.id}`}
           className={cn(
             "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden relative",
             theme.item.base,
@@ -213,7 +213,7 @@ export const EventCalendarItem = ({ event, className }: EventCalendarItemProps) 
         )}
         sideOffset={3}
       >
-        <Link href={`/events/${slugify(event.title)}/${event.id}`}>
+        <Link href={`/arrangementer/${slugify(event.title)}/${event.id}`}>
           <div className={cn("p-4", theme.card.text)}>
             <p className="text-l font-semibold mb-2">{event.title}</p>
             <div className="flex items-center gap-3">

@@ -35,14 +35,14 @@ export const EventsViewToggle: FC<EventsViewToggleProps> = ({ active }) => {
       {active === "list" ? (
         listButton
       ) : (
-        <Link href="/events" className="w-full text-slate-9 hover:text-slate-12">
+        <Link href="/arrangementer" className="w-full text-slate-9 hover:text-slate-12">
           {listButton}
         </Link>
       )}
       {active === "cal" ? (
         calendarButton
       ) : (
-        <Link href="/events/calendar" className="w-full text-slate-9 hover:text-slate-12">
+        <Link href="/arrangementer/kalender" className="w-full text-slate-9 hover:text-slate-12">
           {calendarButton}
         </Link>
       )}

@@ -15,10 +15,10 @@ export default async function App() {
     <section className="w-full">
       <CompanySplash />
       <div className="flex scroll-m-20 justify-between pb-1 tracking-tight transition-colors">
-        <Link href="/events" className="text-3xl font-semibold hover:underline">
+        <Link href="/arrangementer" className="text-3xl font-semibold hover:underline">
           Arrangementer
         </Link>
-        <Link href="/events" className="hidden sm:block">
+        <Link href="/arrangementer" className="hidden sm:block">
           <Button>Flere arrangementer</Button>
         </Link>
       </div>

@@ -1,4 +1,4 @@
-import { getAttendanceStatus } from "@/app/events/components/attendanceStatus"
+import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
 import type { AttendanceEvent } from "@dotkomonline/types"
 import { Title, cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
@@ -20,7 +20,7 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
   const { id, title, type, imageUrl: customImageUrl } = attendanceEvent
 
   const imageUrl = customImageUrl || PLACEHOLDER_IMAGE_URL
-  const url = `/events/${slugify(title)}/${id}`
+  const url = `/arrangementer/${slugify(title)}/${id}`
 
   const attendanceStatus = attendanceEvent.attendance && getAttendanceStatus(attendanceEvent.attendance)
 
