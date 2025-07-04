@@ -22,7 +22,7 @@ export type MenuLink =
 const links: MenuLink[] = [
   {
     title: "Arrangementer",
-    href: "/events",
+    href: "/arrangementer",
   },
   {
     title: "Jobbannonser",

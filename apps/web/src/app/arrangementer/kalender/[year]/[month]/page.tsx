@@ -7,7 +7,7 @@ const EventPage = async ({ params }: { params: Promise<{ year: number; month: nu
   const { year, month } = await params
 
   if (Number.isNaN(year) || Number.isNaN(month) || month < 1 || month > 12) {
-    redirect("/events/calendar") // Redirects to current month if invalid
+    redirect("/arrangementer/kalender") // Redirects to current month if invalid
   }
 
   return (
