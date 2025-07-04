@@ -55,8 +55,6 @@ export const useJobListingWriteForm = ({
       }),
       description: createRichTextInput({
         label: "Beskrivelse",
-        placeholder: "Detaljert beskrivelse av stillingen...",
-        markdown: "",
         required: true,
       }),
       start: createDateTimeInput({
