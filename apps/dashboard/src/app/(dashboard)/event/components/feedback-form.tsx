@@ -4,10 +4,11 @@ import {
   type FeedbackQuestionUpdate,
   FeedbackQuestionUpdateSchema,
 } from "@dotkomonline/types"
+import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react/dist/iconify.js"
 import { Button, Card, Checkbox, Group, Select, Stack, TagsInput, TextInput } from "@mantine/core"
-import type { FC } from "react"
+import React, { type FC } from "react"
 import {
   type Control,
   Controller,
@@ -36,12 +37,13 @@ interface Props {
   defaultValues?: FormValues
 }
 
-//TODO: Add drag n drop re-ordering
 export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
+  defaultValues?.questions.sort((a, b) => a.order - b.order)
+
   const form = useForm<FormValues>({
     mode: "onSubmit",
     resolver: zodResolver(FormValuesSchema),
-    defaultValues: defaultValues,
+    defaultValues,
   })
 
   const { fields, append, remove, move } = useFieldArray({
@@ -55,15 +57,27 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
       type: "TEXT",
       required: false,
       options: [],
-      order: 0,
+      order: fields.length,
     }
 
     append(question)
   }
 
+  const handleSubmit = (values: FormValues) => {
+    // Update question order
+    values.questions = values.questions.map((question, idx) => ({ ...question, order: idx }))
+
+    onSubmit(values)
+  }
+
+  const handleDragEnd = ({ destination, source }: DropResult<string>) => {
+    if (!destination || destination.index === source.index) return
+    move(source.index, destination.index)
+  }
+
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
         <Group>
           <Controller
             name={"form.isActive"}
@@ -84,11 +98,18 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
           </Button>
         </Group>
         <Card mt={16} withBorder>
-          <Stack>
-            {fields.map((field, index) => (
-              <QuestionCard key={field.id} control={form.control} index={index} onRemove={remove} />
-            ))}
-          </Stack>
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="questions" direction="vertical">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {fields.map((field, index) => (
+                    <QuestionCard key={field.id} fieldId={field.id} control={form.control} index={index} onRemove={remove} />
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </Card>
       </form>
     </FormProvider>
@@ -98,10 +119,11 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
 interface QuestionCardProps {
   index: number
   control: Control<FormValues>
+  fieldId: string
   onRemove(index: number): void
 }
 
-function QuestionCard({ index, onRemove, control }: QuestionCardProps) {
+const QuestionCard = React.memo(function QuestionCard({ index, onRemove, control, fieldId }: QuestionCardProps) {
   const { setValue } = useFormContext()
 
   const type = useWatch<FormValues>({
@@ -110,74 +132,84 @@ function QuestionCard({ index, onRemove, control }: QuestionCardProps) {
   })
 
   return (
-    <Card withBorder>
-      <Group wrap="nowrap">
-        <Stack>
-          <Group>
-            <Controller
-              name={`questions.${index}.label`}
-              control={control}
-              render={({ field }) => <TextInput label="Spørsmål" {...field} />}
-            />
-            <Controller
-              name={`questions.${index}.type`}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  label="Type"
-                  data={typeOptions}
-                  required={true}
-                  {...field}
-                  onChange={(value) => {
-                    field.onChange(value)
-                    if (value !== "SELECT") {
-                      setValue(`questions.${index}.options`, [])
-                    }
-                  }}
-                />
-              )}
-            />
-            <Controller
-              name={`questions.${index}.required`}
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  label="Obligatorisk"
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.currentTarget.checked)}
-                />
-              )}
-            />
-          </Group>
-          {(type === "SELECT" || type === "MULTISELECT") && (
+    <Draggable index={index} draggableId={fieldId}>
+      {(provided) => (
+        <Card withBorder ref={provided.innerRef} {...provided.draggableProps} mb={24}>
+          <Group wrap="nowrap">
             <Group>
-              <Controller
-                name={`questions.${index}.options`}
-                control={control}
-                render={({ field }) => (
-                  <TagsInput
-                    label="Alternativer"
-                    value={field.value.map((opt) => opt.name)}
-                    onChange={(values) => {
-                      field.onChange(
-                        values.map(
-                          (name) => field.value.find((opt) => opt.name === name) ?? { id: crypto.randomUUID(), name }
-                        )
-                      )
-                    }}
-                  />
-                )}
-              />
+              <div {...provided.dragHandleProps}>
+                <Icon icon="tabler:grip-vertical" cursor={"grab"} />
+              </div>
             </Group>
-          )}
-        </Stack>
+            <Stack>
+              <Group>
+                <Controller
+                  name={`questions.${index}.label`}
+                  control={control}
+                  render={({ field }) => <TextInput label="Spørsmål" {...field} />}
+                />
+                <Controller
+                  name={`questions.${index}.type`}
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      label="Type"
+                      data={typeOptions}
+                      required={true}
+                      {...field}
+                      onChange={(value) => {
+                        field.onChange(value)
+                        if (value !== "SELECT") {
+                          setValue(`questions.${index}.options`, [])
+                        }
+                      }}
+                    />
+                  )}
+                />
+                <Controller
+                  name={`questions.${index}.required`}
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      label="Obligatorisk"
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.currentTarget.checked)}
+                    />
+                  )}
+                />
+              </Group>
+              {(type === "SELECT" || type === "MULTISELECT") && (
+                <Group>
+                  <Controller
+                    name={`questions.${index}.options`}
+                    control={control}
+                    render={({ field }) => (
+                      <TagsInput
+                        label="Alternativer"
+                        value={field.value.map((opt) => opt.name)}
+                        onChange={(values) => {
+                          field.onChange(
+                            values.map(
+                              (name) =>
+                                field.value.find((opt) => opt.name === name) ?? { id: crypto.randomUUID(), name } //TODO: Shouldn't set id
+                            )
+                          )
+                        }}
+                      />
+                    )}
+                  />
+                </Group>
+              )}
+            </Stack>
 
-        <Group gap={4} mb={"auto"} ml={"auto"}>
-          <Button color="red" variant="light" onClick={() => onRemove(index)}>
-            <Icon icon="tabler:trash" />
-          </Button>
-        </Group>
-      </Group>
-    </Card>
+            <Group gap={4} mb={"auto"} ml={"auto"}>
+              <Button color="red" variant="light" onClick={() => onRemove(index)}>
+                <Icon icon="tabler:trash" />
+              </Button>
+            </Group>
+          </Group>
+        </Card>
+      )}
+    </Draggable>
   )
-}
+})
