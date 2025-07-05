@@ -13,7 +13,7 @@ export const Events = () => {
     <div className="w-full bg-white h-[500px] p-4 overflow-y-auto">
       {data.map((event) => (
         // show nice formatted json
-        <pre key={event.id}>{JSON.stringify(event, null, 2)}</pre>
+        <pre key={event.event.id}>{JSON.stringify(event, null, 2)}</pre>
       ))}
     </div>
   )

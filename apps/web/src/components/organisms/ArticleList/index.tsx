@@ -1,6 +1,6 @@
 "use client"
 
-import { ArticleFiltersContainer } from "@/components/molecules/ArticleFiltersContainer.tsx"
+import { ArticleFiltersContainer } from "@/components/molecules/ArticleFiltersContainer.js"
 import { ArticleListItem } from "@/components/molecules/ArticleListItem"
 import type { Article, ArticleTag } from "@dotkomonline/types"
 import { compareDesc } from "date-fns"
