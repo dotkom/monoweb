@@ -1,6 +1,6 @@
 {
   "extends": "../../packages/config/tsconfig.json",
-  "include": [],
+  "include": ["./**/*.ts", "./**/*.tsx"],
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "preserve",
@@ -10,9 +10,5 @@
     "strictNullChecks": true,
     "allowJs": true,
     "resolveJsonModule": true
-  },
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  }
 }
