@@ -197,10 +197,10 @@ importers:
         specifier: 22.15.29
         version: 22.15.29
       '@types/react':
-        specifier: ^19.1.6
+        specifier: 19.1.6
         version: 19.1.6
       '@types/react-dom':
-        specifier: ^19.1.5
+        specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.6)
       autoprefixer:
         specifier: 10.4.21
@@ -276,10 +276,10 @@ importers:
         specifier: 22.15.29
         version: 22.15.29
       '@types/react':
-        specifier: ^19.1.6
+        specifier: 19.1.6
         version: 19.1.6
       '@types/react-dom':
-        specifier: ^19.1.5
+        specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.6)
       autoprefixer:
         specifier: 10.4.21
@@ -373,10 +373,10 @@ importers:
         specifier: 22.15.29
         version: 22.15.29
       '@types/react':
-        specifier: ^19.1.6
+        specifier: 19.1.6
         version: 19.1.6
       '@types/react-dom':
-        specifier: ^19.1.5
+        specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.6)
       '@vitejs/plugin-react':
         specifier: 4.4.1
@@ -461,10 +461,10 @@ importers:
         specifier: 22.15.29
         version: 22.15.29
       '@types/react':
-        specifier: ^19.1.6
+        specifier: 19.1.6
         version: 19.1.6
       '@types/react-dom':
-        specifier: ^19.1.5
+        specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.6)
       autoprefixer:
         specifier: 10.4.21
@@ -598,10 +598,10 @@ importers:
         specifier: 22.15.29
         version: 22.15.29
       '@types/react':
-        specifier: ^19.1.6
+        specifier: 19.1.6
         version: 19.1.6
       '@types/react-dom':
-        specifier: ^19.1.5
+        specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.6)
       '@vitejs/plugin-react':
         specifier: 4.4.1
@@ -773,10 +773,10 @@ importers:
         specifier: 22.15.29
         version: 22.15.29
       '@types/react':
-        specifier: ^19.1.6
+        specifier: 19.1.6
         version: 19.1.6
       '@types/react-dom':
-        specifier: ^19.1.5
+        specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.6)
       autoprefixer:
         specifier: 10.4.21
@@ -968,10 +968,10 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@types/react':
-        specifier: ^19.1.6
+        specifier: 19.1.6
         version: 19.1.6
       '@types/react-dom':
-        specifier: ^19.1.5
+        specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.6)
       react-email:
         specifier: 3.0.7
@@ -1259,7 +1259,7 @@ importers:
         specifier: 5.0.3
         version: 5.0.3(@swc/helpers@0.5.15)(@types/node@22.16.0)(@types/react@19.1.6)(acorn@8.15.0)(jiti@2.4.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sugarss@5.0.0(postcss@8.5.4))(terser@5.43.1)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.8.0)
       '@types/react':
-        specifier: ^19.1.6
+        specifier: 19.1.6
         version: 19.1.6
       autoprefixer:
         specifier: 10.4.21
