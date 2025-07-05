@@ -43,7 +43,7 @@ importers:
         version: 5.3.3
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -185,7 +185,7 @@ importers:
         version: 2.2.2
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -264,7 +264,7 @@ importers:
         version: 7.57.0(react@19.1.0)
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -364,7 +364,7 @@ importers:
         version: 1.0.7(tailwindcss@3.4.17)
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -449,7 +449,7 @@ importers:
         version: 7.57.0(react@19.1.0)
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -534,7 +534,7 @@ importers:
         version: 13.11.0
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -586,7 +586,7 @@ importers:
         version: 1.0.7(tailwindcss@3.4.17)
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -755,7 +755,7 @@ importers:
         version: 11.0.5
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -864,7 +864,7 @@ importers:
         version: 13.11.0
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -913,7 +913,7 @@ importers:
         version: 8.16.3
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
       zod-prisma-types:
         specifier: ^3.2.4
         version: 3.2.4(@prisma/client@6.8.2(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3))(prisma@6.8.2(typescript@5.8.3))
@@ -959,7 +959,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -984,7 +984,7 @@ importers:
     dependencies:
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -1012,7 +1012,7 @@ importers:
         version: 2.2.2
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -1122,7 +1122,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -1150,7 +1150,7 @@ importers:
         version: link:../utils
       zod:
         specifier: ^3.25.47
-        version: 3.25.47
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -8816,8 +8816,8 @@ packages:
       '@prisma/client': ^4.x.x || ^5.x.x || ^6.x.x
       prisma: ^4.x.x || ^5.x.x || ^6.x.x
 
-  zod@3.25.47:
-    resolution: {integrity: sha512-+f8+agSYoT9niC0VUL60IuXnr81FJeJ27Lf5YPrmcxTWmygcpGBeEuAAovDDEjkyQ36KyqNswwbhISZ1Z7yY+A==}
+  zod@3.25.74:
+    resolution: {integrity: sha512-J8poo92VuhKjNknViHRAIuuN6li/EwFbAC8OedzI8uxpEPGiXHGQu9wemIAioIpqgfB4SySaJhdk0mH5Y4ICBg==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -17667,8 +17667,8 @@ snapshots:
       code-block-writer: 12.0.0
       lodash: 4.17.21
       prisma: 6.8.2(typescript@5.8.3)
-      zod: 3.25.47
+      zod: 3.25.74
 
-  zod@3.25.47: {}
+  zod@3.25.74: {}
 
   zwitch@2.0.4: {}
