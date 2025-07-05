@@ -15,7 +15,6 @@ const config = {
       },
     ],
   },
-  output: "standalone",
 }
 
 export default withSentryConfig(config, {
