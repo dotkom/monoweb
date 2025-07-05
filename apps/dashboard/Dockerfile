@@ -19,24 +19,16 @@ ARG SENTRY_RELEASE
 
 ARG DOPPLER_ENVIRONMENT
 
+# Step 1: Build the Next.js application along with the necessary build variables.
 FROM base AS builder
 WORKDIR /app
 
+COPY . .
+
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
-COPY apps ./apps
-COPY packages ./packages
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-RUN turbo prune @dotkomonline/dashboard --docker
-
-FROM base AS installer
-WORKDIR /app
-
 RUN npm install -g pnpm@9.15.5 --ignore-scripts
-COPY --from=builder /app/out/full .
-RUN pnpm install --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# Generate prisma types
 WORKDIR /app/packages/db
 RUN pnpm run generate
 WORKDIR /app
@@ -61,9 +53,19 @@ ENV NEXT_PUBLIC_SENTRY_RELEASE ${SENTRY_RELEASE}
 ENV DOPPLER_ENVIRONMENT ${DOPPLER_ENVIRONMENT}
 ENV NEXT_PUBLIC_DOPPLER_ENVIRONMENT ${DOPPLER_ENVIRONMENT}
 
-COPY --from=builder /app/out/full .
 RUN pnpm run --filter @dotkomonline/dashboard build
 
+# Step 2: Prepare the production image with the built application.
+FROM base AS installer
+WORKDIR /app
+
+COPY . .
+
+RUN apk update && apk add --no-cache libc6-compat
+RUN npm install -g pnpm@9.15.5 --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts --production
+
+# Step 3: Run the actual application and finalize the image.
 FROM base AS runner
 WORKDIR /app
 
@@ -82,8 +84,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/.next/static ./apps/dashboard/.next/static
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/public ./apps/dashboard/public
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/node_modules ./node_modules
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/node_modules ./apps/dashboard/node_modules
 
-CMD node apps/dashboard/server.js
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/.next ./apps/dashboard/.next
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/public ./apps/dashboard/public
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/package.json ./apps/dashboard/package.json
+
+WORKDIR /app/apps/dashboard
+
+CMD ["npm", "run", "start"]

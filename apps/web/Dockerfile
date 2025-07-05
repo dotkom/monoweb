@@ -63,7 +63,6 @@ RUN pnpm run --filter @dotkomonline/web build
 
 # Step 2: Only install the necessary dependencies for the production build of this application.
 FROM base AS installer
-
 WORKDIR /app
 
 COPY . .
