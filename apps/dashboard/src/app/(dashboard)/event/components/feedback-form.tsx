@@ -111,64 +111,68 @@ function QuestionCard({ index, onRemove, control }: QuestionCardProps) {
 
   return (
     <Card withBorder>
-      <Group>
-        <Group>
-          <Controller
-            name={`questions.${index}.label`}
-            control={control}
-            render={({ field }) => <TextInput label="Spørsmål" {...field} />}
-          />
-          <Controller
-            name={`questions.${index}.type`}
-            control={control}
-            render={({ field }) => (
-              <Select
-                label="Type"
-                data={typeOptions}
-                required={true}
-                {...field}
-                onChange={(value) => {
-                  field.onChange(value)
-                  if (value !== "SELECT") {
-                    setValue(`questions.${index}.options`, [])
-                  }
-                }}
-              />
-            )}
-          />
-          {(type === "SELECT" || type === "MULTISELECT") && (
+      <Group wrap="nowrap">
+        <Stack>
+          <Group>
             <Controller
-              name={`questions.${index}.options`}
+              name={`questions.${index}.label`}
+              control={control}
+              render={({ field }) => <TextInput label="Spørsmål" {...field} />}
+            />
+            <Controller
+              name={`questions.${index}.type`}
               control={control}
               render={({ field }) => (
-                <TagsInput
-                  label="Alternativer"
-                  value={field.value.map((opt) => opt.name)}
-                  onChange={(values) => {
-                    field.onChange(
-                      values.map(
-                        (name) => field.value.find((opt) => opt.name === name) ?? { id: crypto.randomUUID(), name }
-                      )
-                    )
+                <Select
+                  label="Type"
+                  data={typeOptions}
+                  required={true}
+                  {...field}
+                  onChange={(value) => {
+                    field.onChange(value)
+                    if (value !== "SELECT") {
+                      setValue(`questions.${index}.options`, [])
+                    }
                   }}
                 />
               )}
             />
-          )}
-          <Controller
-            name={`questions.${index}.required`}
-            control={control}
-            render={({ field }) => (
-              <Checkbox
-                label="Obligatorisk"
-                checked={field.value}
-                onChange={(e) => field.onChange(e.currentTarget.checked)}
+            <Controller
+              name={`questions.${index}.required`}
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Obligatorisk"
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.currentTarget.checked)}
+                />
+              )}
+            />
+          </Group>
+          {(type === "SELECT" || type === "MULTISELECT") && (
+            <Group>
+              <Controller
+                name={`questions.${index}.options`}
+                control={control}
+                render={({ field }) => (
+                  <TagsInput
+                    label="Alternativer"
+                    value={field.value.map((opt) => opt.name)}
+                    onChange={(values) => {
+                      field.onChange(
+                        values.map(
+                          (name) => field.value.find((opt) => opt.name === name) ?? { id: crypto.randomUUID(), name }
+                        )
+                      )
+                    }}
+                  />
+                )}
               />
-            )}
-          />
-        </Group>
+            </Group>
+          )}
+        </Stack>
 
-        <Group gap={4} mt={"auto"} ml={"auto"}>
+        <Group gap={4} mb={"auto"} ml={"auto"}>
           <Button color="red" variant="light" onClick={() => onRemove(index)}>
             <Icon icon="tabler:trash" />
           </Button>
