@@ -7,7 +7,7 @@ import {
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react/dist/iconify.js"
-import { Button, Card, Checkbox, Group, Select, Stack, TagsInput, TextInput } from "@mantine/core"
+import { Button, Card, Checkbox, Divider, Group, Select, Stack, TagsInput, TextInput, Title } from "@mantine/core"
 import React, { type FC } from "react"
 import {
   type Control,
@@ -78,7 +78,8 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <Group>
+        <Stack>
+          <Title order={3}>Tilbakemeldingsskjema</Title>
           <Controller
             name={"form.isActive"}
             control={form.control}
@@ -90,27 +91,34 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
               />
             )}
           />
-        </Group>
-        <Group mt={16}>
-          <Button onClick={addQuestion}>Legg til spørsmål</Button>
-          <Button type="submit" color="green" disabled={!form.formState.isDirty || fields.length === 0}>
-            Lagre
-          </Button>
-        </Group>
-        <Card mt={16} withBorder>
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="questions" direction="vertical">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {fields.map((field, index) => (
-                    <QuestionCard key={field.id} fieldId={field.id} control={form.control} index={index} onRemove={remove} />
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </Card>
+          <Group>
+            <Button onClick={addQuestion}>Legg til spørsmål</Button>
+            <Button type="submit" color="green" disabled={fields.length === 0}>
+              Lagre
+            </Button>
+          </Group>
+          <Divider />
+          <Card withBorder>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="questions" direction="vertical">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {fields.map((field, index) => (
+                      <QuestionCard
+                        key={field.id}
+                        fieldId={field.id}
+                        control={form.control}
+                        index={index}
+                        onRemove={remove}
+                      />
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </Card>
+        </Stack>
       </form>
     </FormProvider>
   )
@@ -159,7 +167,7 @@ const QuestionCard = React.memo(function QuestionCard({ index, onRemove, control
                       {...field}
                       onChange={(value) => {
                         field.onChange(value)
-                        if (value !== "SELECT") {
+                        if (value !== "SELECT" && value !== "MULTISELECT") {
                           setValue(`questions.${index}.options`, [])
                         }
                       }}
@@ -188,12 +196,7 @@ const QuestionCard = React.memo(function QuestionCard({ index, onRemove, control
                         label="Alternativer"
                         value={field.value.map((opt) => opt.name)}
                         onChange={(values) => {
-                          field.onChange(
-                            values.map(
-                              (name) =>
-                                field.value.find((opt) => opt.name === name) ?? { id: crypto.randomUUID(), name } //TODO: Shouldn't set id
-                            )
-                          )
+                          field.onChange(values.map((name) => field.value.find((opt) => opt.name === name) ?? { name }))
                         }}
                       />
                     )}
