@@ -28,8 +28,8 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
-    "@types/react": "^19.1.6",
-    "@types/react-dom": "^19.1.5",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5",
     "react-email": "3.0.7",
     "typescript": "5.8.3"
   }
