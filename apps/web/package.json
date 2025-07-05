@@ -68,7 +68,7 @@
     "autoprefixer": "10.4.21",
     "cva": "npm:class-variance-authority@0.7.1",
     "postcss": "8.5.6",
-    "postcss-import": "16.1.0",
+    "postcss-import": "16.1.1",
     "tailwindcss": "3.4.17",
     "tslib": "2.8.1",
     "typescript": "5.8.3"
