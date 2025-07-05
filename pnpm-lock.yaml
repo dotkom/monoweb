@@ -525,7 +525,7 @@ importers:
         version: 11.0.0-rc.828(typescript@5.8.3)
       auth0:
         specifier: ^4.23.1
-        version: 4.23.1
+        version: 4.27.0
       fastify:
         specifier: ^5.3.3
         version: 5.3.3
@@ -867,7 +867,7 @@ importers:
         version: 6.8.2(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
       auth0:
         specifier: ^4.23.1
-        version: 4.23.1
+        version: 4.27.0
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -5381,8 +5381,8 @@ packages:
     resolution: {integrity: sha512-0bDNnY/u6pPwHDMoF0FieU354oBi0a8rD9FcsLwzcGWbc8KS8KPIi7y+s13OlVY+gMWc/9xEMUgNE6Qm8ZllYQ==}
     engines: {node: '>=4'}
 
-  auth0@4.23.1:
-    resolution: {integrity: sha512-Kx7T4eDZXzUZwS2MqX5N+vO72AbWIepT7cXyIbcFuiFn5VjQMhs70N+Yihc9YUv24JODyBOdzZkM8yW2x5stLw==}
+  auth0@4.27.0:
+    resolution: {integrity: sha512-4FGgjzKCH/f7rQLQVR5dM30asjOObeW3PyHa8bQrS4rKkuv22JoNxox26fb1FZ3hI4zEgbVbPm9x7pHrljZzrw==}
     engines: {node: '>=18'}
 
   autoprefixer@10.4.21:
@@ -13583,7 +13583,7 @@ snapshots:
 
   attr-accept@2.2.5: {}
 
-  auth0@4.23.1:
+  auth0@4.27.0:
     dependencies:
       jose: 4.15.9
       undici-types: 6.21.0
