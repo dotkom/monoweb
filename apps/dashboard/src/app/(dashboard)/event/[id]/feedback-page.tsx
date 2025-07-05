@@ -12,12 +12,14 @@ export const FeedbackPage: FC = () => {
   const createMutation = useCreateFeedbackFormMutation()
   const updateMutation = useUpdateFeedbackFormMutation()
 
+  //TODO: Use formwrite instead of formvalues?
   const onSubmit = (formValues: FormValues) => {
     if (feedbackFormQuery?.data?.id) {
       updateMutation.mutate({
         id: feedbackFormQuery.data.id,
         data: {
           eventId: event.id,
+          isActive: formValues.form.isActive,
         },
         questions: formValues.questions,
       })
@@ -26,6 +28,7 @@ export const FeedbackPage: FC = () => {
         questions: formValues.questions,
         form: {
           eventId: event.id,
+          isActive: formValues.form.isActive
         },
       })
     }
@@ -40,7 +43,13 @@ export const FeedbackPage: FC = () => {
         </Text>
       ) : (
         !feedbackFormQuery.isLoading && (
-          <FeedbackForm onSubmit={onSubmit} defaultValues={{ questions: feedbackFormQuery?.data?.questions ?? [] }} />
+          <FeedbackForm
+            onSubmit={onSubmit}
+            defaultValues={{
+              questions: feedbackFormQuery?.data?.questions ?? [],
+              form: { isActive: feedbackFormQuery?.data?.isActive ?? false },
+            }}
+          />
         )
       )}
     </Box>

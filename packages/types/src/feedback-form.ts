@@ -64,6 +64,7 @@ export const FeedbackQuestionAnswerSchema = schemas.FeedbackQuestionAnswerSchema
   value: true,
 }).extend({
   value: z.union([z.string(), z.number(), z.boolean()]).nullable(),
+  selectedOptions: FeedbackQuestionOptionSchema.array(),
 })
 
 export type FeedbackQuestionAnswer = z.infer<typeof FeedbackQuestionAnswerSchema>

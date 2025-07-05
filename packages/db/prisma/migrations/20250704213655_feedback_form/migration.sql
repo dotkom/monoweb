@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "feedback_question_type" AS ENUM ('TEXT', 'LONGTEXT', 'SLIDER', 'CHECKBOX', 'SELECT');
+CREATE TYPE "feedback_question_type" AS ENUM ('TEXT', 'LONGTEXT', 'RATING', 'CHECKBOX', 'SELECT', 'MULTISELECT');
 
 -- CreateTable
 CREATE TABLE "feedback_form" (
@@ -7,6 +7,7 @@ CREATE TABLE "feedback_form" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL,
     "eventId" TEXT NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "feedback_form_pkey" PRIMARY KEY ("id")
 );
@@ -28,7 +29,7 @@ CREATE TABLE "feedback_question" (
 -- CreateTable
 CREATE TABLE "feedback_question_option" (
     "id" TEXT NOT NULL,
-    "label" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "questionId" TEXT NOT NULL,
 
     CONSTRAINT "feedback_question_option_pkey" PRIMARY KEY ("id")
@@ -40,9 +41,16 @@ CREATE TABLE "feedback_question_answer" (
     "questionId" TEXT NOT NULL,
     "formAnswerId" TEXT NOT NULL,
     "value" JSONB,
-    "selectedOptionId" TEXT,
 
     CONSTRAINT "feedback_question_answer_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "feedback_answer_option_link" (
+    "feedbackQuestionOptionId" TEXT NOT NULL,
+    "feedbackQuestionAnswerId" TEXT NOT NULL,
+
+    CONSTRAINT "feedback_answer_option_link_pkey" PRIMARY KEY ("feedbackQuestionOptionId","feedbackQuestionAnswerId")
 );
 
 -- CreateTable
@@ -60,7 +68,7 @@ CREATE TABLE "feedback_form_answer" (
 CREATE UNIQUE INDEX "feedback_form_eventId_key" ON "feedback_form"("eventId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "feedback_question_option_questionId_label_key" ON "feedback_question_option"("questionId", "label");
+CREATE UNIQUE INDEX "feedback_question_option_questionId_name_key" ON "feedback_question_option"("questionId", "name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "feedback_form_answer_attendeeId_key" ON "feedback_form_answer"("attendeeId");
@@ -81,7 +89,10 @@ ALTER TABLE "feedback_question_answer" ADD CONSTRAINT "feedback_question_answer_
 ALTER TABLE "feedback_question_answer" ADD CONSTRAINT "feedback_question_answer_formAnswerId_fkey" FOREIGN KEY ("formAnswerId") REFERENCES "feedback_form_answer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "feedback_question_answer" ADD CONSTRAINT "feedback_question_answer_selectedOptionId_fkey" FOREIGN KEY ("selectedOptionId") REFERENCES "feedback_question_option"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "feedback_answer_option_link" ADD CONSTRAINT "feedback_answer_option_link_feedbackQuestionOptionId_fkey" FOREIGN KEY ("feedbackQuestionOptionId") REFERENCES "feedback_question_option"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "feedback_answer_option_link" ADD CONSTRAINT "feedback_answer_option_link_feedbackQuestionAnswerId_fkey" FOREIGN KEY ("feedbackQuestionAnswerId") REFERENCES "feedback_question_answer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "feedback_form_answer" ADD CONSTRAINT "feedback_form_answer_feedbackFormId_fkey" FOREIGN KEY ("feedbackFormId") REFERENCES "feedback_form"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

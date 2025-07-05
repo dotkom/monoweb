@@ -530,9 +530,10 @@ model Job {
 enum FeedbackQuestionType {
   TEXT
   LONGTEXT
-  SLIDER
+  RATING
   CHECKBOX
   SELECT
+  MULTISELECT
 
   @@map("feedback_question_type")
 }
@@ -545,6 +546,7 @@ model FeedbackForm {
   event     Event    @relation(fields: [eventId], references: [id])
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
+  isActive  Boolean   @default(false)
 
   @@map("feedback_form")
 }
@@ -567,12 +569,12 @@ model FeedbackQuestion {
 
 model FeedbackQuestionOption {
   id          String   @id @default(uuid())
-  label       String
+  name       String
   questionId  String
   question    FeedbackQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  selectedInAnswers FeedbackQuestionAnswer[] @relation("SelectedOption")
+  selectedInAnswers   FeedbackQuestionAnswerOptionLink[]
 
-  @@unique([questionId, label])
+  @@unique([questionId, name])
   @@map("feedback_question_option")
 }
 
@@ -583,10 +585,19 @@ model FeedbackQuestionAnswer {
   formAnswerId  String
   formAnswer    FeedbackFormAnswer  @relation("FormAnswers", fields: [formAnswerId], references: [id])
   value         Json?
-  selectedOptionId String?
-  selectedOption   FeedbackQuestionOption? @relation("SelectedOption", fields: [selectedOptionId], references: [id])
+  selectedOptions   FeedbackQuestionAnswerOptionLink[]
 
   @@map("feedback_question_answer")
+}
+
+model FeedbackQuestionAnswerOptionLink {
+  feedbackQuestionOption   FeedbackQuestionOption    @relation(fields: [feedbackQuestionOptionId], references: [id])
+  feedbackQuestionOptionId String
+  feedbackQuestionAnswer       FeedbackQuestionAnswer @relation(fields: [feedbackQuestionAnswerId], references: [id])
+  feedbackQuestionAnswerId   String
+
+  @@id([feedbackQuestionOptionId, feedbackQuestionAnswerId])
+  @@map("feedback_answer_option_link")
 }
 
 model FeedbackFormAnswer {
