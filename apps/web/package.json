@@ -61,7 +61,7 @@
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
-    "@types/cors": "2.8.18",
+    "@types/cors": "2.8.19",
     "@types/node": "22.15.29",
     "@types/react": "19.1.6",
     "@types/react-dom": "19.1.5",
