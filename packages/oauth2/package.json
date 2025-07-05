@@ -54,10 +54,10 @@
     }
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.3",
+    "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.4",
-    "vitest-mock-extended": "^3.1.0"
+    "typescript": "5.8.3",
+    "vitest": "3.1.4",
+    "vitest-mock-extended": "3.1.0"
   }
 }

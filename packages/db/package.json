@@ -38,12 +38,12 @@
     "zod-prisma-types": "^3.2.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.3",
+    "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
-    "@types/node": "^22.15.29",
-    "@types/pg": "^8.15.4",
-    "prisma": "^6.8.2",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "@types/node": "22.15.29",
+    "@types/pg": "8.15.4",
+    "prisma": "6.8.2",
+    "tsx": "4.19.4",
+    "typescript": "5.8.3"
   }
 }

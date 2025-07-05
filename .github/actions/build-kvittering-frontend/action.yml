@@ -11,7 +11,7 @@ runs:
   using: composite
   steps:
     - name: Install local GitHub Actions
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         fetch-depth: 1
         sparse-checkout: '.github'
@@ -22,14 +22,14 @@ runs:
         project: monoweb-kvittering-frontend
         config: prd
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         fetch-depth: 1
         ref: ${{ inputs.git-hash }}
     - uses: pnpm/action-setup@v2
       with:
         version: 9.15.7
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: 22.15.0
         cache: 'pnpm'
@@ -39,7 +39,7 @@ runs:
       run: pnpm install && pnpm build
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
       with:
         aws-region: eu-north-1
         role-to-assume: arn:aws:iam::891459268445:role/monoweb-prd-kvittering-frontend-ci-role
