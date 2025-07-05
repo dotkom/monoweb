@@ -1,7 +1,7 @@
 import { getLogger, getResource, startOpenTelemetry } from "@dotkomonline/logger"
 import * as Sentry from "@sentry/node"
 
-const logger = getLogger("monoweb-brevduen/instrumentation")
+const logger = getLogger("monoweb-rpc/instrumentation")
 const resource = getResource("monoweb-rpc")
 startOpenTelemetry(resource)
 

@@ -6,8 +6,8 @@ export async function register() {
     return
   }
   const { getLogger, getResource, startOpenTelemetry } = await import("@dotkomonline/logger")
-  const logger = getLogger("monoweb-web/instrumentation")
-  const resource = getResource("monoweb-web")
+  const logger = getLogger("monoweb-dashboard/instrumentation")
+  const resource = getResource("monoweb-dashboard")
   startOpenTelemetry(resource)
 
   if (process.env.SENTRY_DSN !== undefined) {
