@@ -30,20 +30,20 @@ runs:
   using: composite
   steps:
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: ${{ inputs.aws-iam-role }}
     - name: Render new task definition revision
       id: render-task-definition
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      uses: aws-actions/amazon-ecs-render-task-definition@acd72bc11233ac43bac45ddb7b8e54ada737e6cd # v1
       with:
         container-name: ${{ inputs.container-name }}
         task-definition-arn: ${{ inputs.aws-task-definition-arn }}
         image: ${{ inputs.image }}
     - name: Deploy new task definition
       id: deploy-task-definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      uses: aws-actions/amazon-ecs-deploy-task-definition@69e7aed9b8acdd75a6c585ac669c33831ab1b9a3 # v1
       with:
         service: ${{ inputs.service-name }}
         cluster: ${{ inputs.cluster-name }}
