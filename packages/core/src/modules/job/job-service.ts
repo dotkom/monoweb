@@ -1,4 +1,4 @@
-import type { Job, JobId, JobName, JobScheduledAt, JobWrite } from "@dotkomonline/types"
+import type { Job, JobId, JobName, JobScheduledAt, JobStatus, JobWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import type { z } from "zod"
 import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError } from "./job-error"
@@ -52,11 +52,17 @@ export class JobServiceImpl implements JobService {
     return await this.jobRepository.create({ ...data, payload })
   }
 
-  public async update(jobId: JobId, data: Partial<JobWrite>) {
+  public async update(jobId: JobId, data: Partial<JobWrite>, oldState?: JobStatus) {
     let jobData: Partial<JobWrite> = data
 
+    const existingJob = await this.jobRepository.getById(jobId)
+
+    if (!existingJob) {
+      throw new JobNotFound(`Job with id ${jobId} not found`)
+    }
+
     if (data.payload) {
-      const name = data.name || (await this.jobRepository.getById(jobId))?.name
+      const name = data.name || existingJob?.name
 
       if (!name) {
         throw new JobNotFound(`Job with id ${jobId} not found`)
@@ -67,11 +73,16 @@ export class JobServiceImpl implements JobService {
       jobData = { ...data, payload }
     }
 
-    return await this.jobRepository.update(jobId, jobData)
+    const job = await this.jobRepository.update(jobId, jobData, oldState)
+    if (job === null) {
+      throw new JobNotFound(`Job with id ${jobId} has wrong state: ${existingJob.status}`)
+    }
+
+    return job
   }
 
   public async process(jobId: JobId, data: Partial<JobWrite>) {
-    return await this.update(jobId, { ...data, processedAt: new Date() })
+    return await this.update(jobId, { ...data, processedAt: new Date() }, "PENDING")
   }
 
   public async getById(jobId: JobId) {

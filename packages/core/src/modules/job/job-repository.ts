@@ -1,10 +1,11 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBClient, JobStatus } from "@dotkomonline/db"
 import type { Job, JobId, JobWrite } from "@dotkomonline/types"
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 
 export interface JobRepository {
   create(data: JobWrite): Promise<Job>
   createMany(data: JobWrite[]): Promise<Job[]>
-  update(jobId: string, data: Partial<JobWrite>): Promise<Job>
+  update(jobId: string, data: Partial<JobWrite>, oldState?: JobStatus): Promise<Job | null>
   delete(jobId: JobId): Promise<void>
   getById(jobId: JobId): Promise<Job | null>
   getAll(): Promise<Job[]>
@@ -34,11 +35,21 @@ export class JobsRepositoryImpl implements JobRepository {
     })
   }
 
-  public async update(jobId: JobId, data: Partial<JobWrite>) {
-    return await this.db.job.update({
-      where: { id: jobId },
-      data: { ...data, payload: data.payload ?? undefined },
-    })
+  public async update(jobId: JobId, data: Partial<JobWrite>, oldStatus?: JobStatus) {
+    try {
+      return await this.db.job.update({
+        where: { id: jobId, status: oldStatus ? { equals: oldStatus } : undefined },
+        data: { ...data, payload: data.payload ?? undefined },
+      })
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code === "P2025") {
+          return null
+        }
+      }
+
+      throw e
+    }
   }
 
   public async delete(jobId: JobId) {
