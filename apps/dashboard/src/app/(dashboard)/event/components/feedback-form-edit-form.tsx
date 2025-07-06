@@ -2,7 +2,7 @@ import {
   type FeedbackFormId,
   FeedbackFormWriteSchema,
   FeedbackQuestionSchema,
-  type FeedbackQuestionUpdate,
+  type FeedbackQuestionWrite,
 } from "@dotkomonline/types"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -55,7 +55,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
   })
 
   const addQuestion = () => {
-    const question: FeedbackQuestionUpdate = {
+    const question: FeedbackQuestionWrite = {
       label: "Spørsmål",
       type: "TEXT",
       required: false,

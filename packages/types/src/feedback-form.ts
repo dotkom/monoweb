@@ -1,25 +1,16 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 
-//TODO: Clean up types
 export const FeedbackQuestionOptionSchema = schemas.FeedbackQuestionOptionSchema
 export type FeedbackQuestionOption = z.infer<typeof FeedbackQuestionOptionSchema>
 
-export const FeedbackQuestionOptionIdSchema = FeedbackQuestionOptionSchema.shape.id
-export type FeedbackQuestionOptionId = z.infer<typeof FeedbackQuestionOptionIdSchema>
-
 export const FeedbackQuestionOptionWriteSchema = schemas.FeedbackQuestionOptionSchema.omit({
-  id: true,
-  questionId: true,
-})
-export const FeedbackQuestionOptionUpdateSchema = schemas.FeedbackQuestionOptionSchema.omit({
   id: true,
   questionId: true,
 }).extend({
   id: z.string().optional(),
 })
 export type FeedbackQuestionOptionWrite = z.infer<typeof FeedbackQuestionOptionWriteSchema>
-export type FeedbackQuestionOptionUpdate = z.infer<typeof FeedbackQuestionOptionUpdateSchema>
 
 export const FeedbackQuestionSchema = schemas.FeedbackQuestionSchema.extend({
   options: FeedbackQuestionOptionSchema.array(),
@@ -33,26 +24,10 @@ export const FeedbackQuestionWriteSchema = FeedbackQuestionSchema.omit({
   feedbackFormId: true,
   options: true,
 }).extend({
-  options: FeedbackQuestionOptionUpdateSchema.array(),
+  options: FeedbackQuestionOptionWriteSchema.array(),
+  id: z.string().optional(),
 })
 export type FeedbackQuestionWrite = z.infer<typeof FeedbackQuestionWriteSchema>
-
-export const FeedbackQuestionUpdateSchema = FeedbackQuestionSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-  feedbackFormId: true,
-  options: true,
-}).extend({
-  options: FeedbackQuestionOptionUpdateSchema.array(),
-  id: z.string().optional(),
-})
-export type FeedbackQuestionUpdate = z.infer<typeof FeedbackQuestionUpdateSchema>
-
-export const FeedbackQuestionUpsertSchema = FeedbackQuestionWriteSchema.extend({
-  id: z.string().optional(),
-})
-export type FeedbackQuestionUpsert = z.infer<typeof FeedbackQuestionUpsertSchema>
 
 export const FeedbackFormSchema = schemas.FeedbackFormSchema.extend({
   questions: FeedbackQuestionSchema.array(),
@@ -71,7 +46,6 @@ export const FeedbackQuestionAnswerWriteSchema = FeedbackQuestionAnswerSchema.om
   formAnswerId: true,
   id: true,
 })
-export type FeedbackQuestionAnswerWrite = z.infer<typeof FeedbackQuestionAnswerWriteSchema>
 
 export const FeedbackFormAnswerSchema = schemas.FeedbackFormAnswerSchema.extend({
   questionAnswers: FeedbackQuestionAnswerSchema.array(),
@@ -90,10 +64,6 @@ export type FeedbackFormAnswerWrite = z.infer<typeof FeedbackFormAnswerWriteSche
 
 export type FeedbackQuestionType = FeedbackQuestion["type"]
 
-export const FeedbackQuestionIdSchema = FeedbackQuestionSchema.shape.id
-
-export type FeedbackQuestionId = z.infer<typeof FeedbackQuestionIdSchema>
-
 export const FeedbackFormIdSchema = FeedbackFormSchema.shape.id
 
 export type FeedbackFormId = z.infer<typeof FeedbackFormIdSchema>
@@ -104,7 +74,7 @@ export const FeedbackFormWriteSchema = FeedbackFormSchema.omit({
   updatedAt: true,
   questions: true,
 }).extend({
-  questions: FeedbackQuestionUpdateSchema.array(),
+  questions: FeedbackQuestionWriteSchema.array(),
 })
 
 export type FeedbackFormWrite = z.infer<typeof FeedbackFormWriteSchema>
