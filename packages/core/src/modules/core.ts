@@ -42,8 +42,8 @@ import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
 import { type MarkService, MarkServiceImpl } from "./mark/mark-service"
 import { type PersonalMarkRepository, PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository"
 import { type PersonalMarkService, PersonalMarkServiceImpl } from "./mark/personal-mark-service"
-import { type OfflineRepository, OfflineRepositoryImpl } from "./offline/offline-repository"
-import { type OfflineService, OfflineServiceImpl } from "./offline/offline-service"
+import { getOfflineRepository } from "./offline/offline-repository"
+import { getOfflineService } from "./offline/offline-service"
 import { type PaymentRepository, PaymentRepositoryImpl } from "./payment/payment-repository"
 import { type PaymentService, PaymentServiceImpl } from "./payment/payment-service"
 import {
@@ -120,7 +120,7 @@ export const createServiceLayer = async ({
   const privacyPermissionsRepository: PrivacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository: NotificationPermissionsRepository =
     new NotificationPermissionsRepositoryImpl(db)
-  const offlineRepository: OfflineRepository = new OfflineRepositoryImpl(db)
+  const offlineRepository = getOfflineRepository()
   const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
@@ -190,7 +190,7 @@ export const createServiceLayer = async ({
   )
   const markService: MarkService = new MarkServiceImpl(markRepository)
   const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
-  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository)
+  const offlineService = getOfflineService(offlineRepository, s3Repository)
   const articleService: ArticleService = new ArticleServiceImpl(
     articleRepository,
     articleTagRepository,
