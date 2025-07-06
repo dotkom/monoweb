@@ -14,17 +14,20 @@ export type JobListingLocationWrite = z.infer<typeof JobListingLocationWriteSche
 export const JobListingSchema = schemas.JobListingSchema.omit({
   companyId: true,
 }).extend({
-  id: z.string(), // FIXME: hotfix for now as migrated ids from ow4 are not uuids
+  id: z.string(),
   company: CompanySchema,
-  locations: z.array(z.string()),
+  locations: z.array(
+    z.object({
+      name: z.string(),
+    })
+  ),
 })
 
 export const JobListingWriteSchema = JobListingSchema.omit({
   id: true,
   createdAt: true,
   company: true,
-}).extend({
-  companyId: z.string(),
+  locations: true,
 })
 
 export type JobListing = z.infer<typeof JobListingSchema>
