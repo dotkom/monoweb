@@ -1,5 +1,5 @@
 import type { FeedbackFormId } from "@dotkomonline/types"
-import { Box, Button } from "@mantine/core"
+import { Box, Button, Title } from "@mantine/core"
 import type { FC } from "react"
 import { FeedbackFormEditForm, type FormValues } from "../components/feedback-form-edit-form"
 import { useCreateFeedbackFormMutation, useUpdateFeedbackFormMutation } from "../mutations"
@@ -37,6 +37,10 @@ export const FeedbackPage: FC = () => {
 
   return (
     <Box>
+      <Title order={3} mb={16}>
+        Tilbakemeldingsskjema
+      </Title>
+
       {!feedbackFormQuery.isLoading &&
         (feedbackFormQuery.data?.id ? (
           <FeedbackFormEditForm

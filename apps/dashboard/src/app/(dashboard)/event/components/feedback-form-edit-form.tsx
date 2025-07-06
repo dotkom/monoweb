@@ -7,19 +7,7 @@ import {
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react/dist/iconify.js"
-import {
-  Button,
-  Card,
-  Checkbox,
-  Divider,
-  Group,
-  Select,
-  Stack,
-  TagsInput,
-  TextInput,
-  Title,
-  Tooltip,
-} from "@mantine/core"
+import { Button, Card, Checkbox, Divider, Group, Select, Stack, TagsInput, TextInput, Tooltip } from "@mantine/core"
 import React, { type FC } from "react"
 
 import {
@@ -63,6 +51,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
   const { fields, append, remove, move } = useFieldArray({
     name: "questions",
     control: form.control,
+    keyName: "fieldId",
   })
 
   const addQuestion = () => {
@@ -89,8 +78,10 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
     move(source.index, destination.index)
   }
 
-  const answers = useFeedbackAnswersGetQuery(feedbackFormId)
-  const hasBeenAnswered = (answers.data?.length ?? 0) > 0
+  const formAnswers = useFeedbackAnswersGetQuery(feedbackFormId)
+  const hasFormAnswers = (formAnswers.data?.length ?? 0) > 0
+
+  const answeredQuestionIds = new Set(formAnswers.data?.flatMap((a) => a.questionAnswers.map((qa) => qa.questionId)))
 
   const deleteFormMutation = useDeleteFeedbackFormMutation()
 
@@ -106,7 +97,6 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <Stack>
-          <Title order={3}>Tilbakemeldingsskjema</Title>
           <Controller
             name={"isActive"}
             control={form.control}
@@ -129,11 +119,12 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
                   <div {...provided.droppableProps} ref={provided.innerRef}>
                     {fields.map((field, index) => (
                       <QuestionCard
-                        key={field.id}
-                        fieldId={field.id}
+                        key={field.fieldId}
+                        fieldId={field.fieldId}
                         control={form.control}
                         index={index}
                         onRemove={remove}
+                        hasAnswers={!!field.id && answeredQuestionIds.has(field.id)}
                       />
                     ))}
                     {provided.placeholder}
@@ -149,7 +140,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
               </Button>
             </Tooltip>
             <Tooltip
-              disabled={!hasBeenAnswered}
+              disabled={!hasFormAnswers}
               label="Skjemaet har mottatt svar og kan ikke slettes. Deaktiver det for å stoppe nye svar"
             >
               <Button
@@ -157,7 +148,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
                 onClick={openDeleteFormModal}
                 variant="outline"
                 color="red"
-                disabled={hasBeenAnswered}
+                disabled={hasFormAnswers}
               >
                 <Icon icon="tabler:trash" />
               </Button>
@@ -174,9 +165,16 @@ interface QuestionCardProps {
   control: Control<FormValues>
   fieldId: string
   onRemove(index: number): void
+  hasAnswers: boolean
 }
 
-const QuestionCard = React.memo(function QuestionCard({ index, onRemove, control, fieldId }: QuestionCardProps) {
+const QuestionCard = React.memo(function QuestionCard({
+  index,
+  onRemove,
+  control,
+  fieldId,
+  hasAnswers,
+}: QuestionCardProps) {
   const { setValue } = useFormContext()
 
   const type = useWatch<FormValues>({
@@ -205,18 +203,21 @@ const QuestionCard = React.memo(function QuestionCard({ index, onRemove, control
                   name={`questions.${index}.type`}
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      label="Type"
-                      data={typeOptions}
-                      required={true}
-                      {...field}
-                      onChange={(value) => {
-                        field.onChange(value)
-                        if (value !== "SELECT" && value !== "MULTISELECT") {
-                          setValue(`questions.${index}.options`, [])
-                        }
-                      }}
-                    />
+                    <Tooltip disabled={!hasAnswers} label="Typen kan ikke endres fordi spørsmålet har blitt besvart">
+                      <Select
+                        label="Type"
+                        data={typeOptions}
+                        required={true}
+                        disabled={hasAnswers}
+                        {...field}
+                        onChange={(value) => {
+                          field.onChange(value)
+                          if (value !== "SELECT" && value !== "MULTISELECT") {
+                            setValue(`questions.${index}.options`, [])
+                          }
+                        }}
+                      />
+                    </Tooltip>
                   )}
                 />
                 <Controller
@@ -251,9 +252,11 @@ const QuestionCard = React.memo(function QuestionCard({ index, onRemove, control
             </Stack>
 
             <Group gap={4} mb={"auto"} ml={"auto"}>
-              <Button color="red" variant="light" onClick={() => onRemove(index)}>
-                <Icon icon="tabler:trash" />
-              </Button>
+              <Tooltip disabled={!hasAnswers} label="Dette spørsmålet har blitt besvart og kan ikke slettes">
+                <Button color="red" variant="light" onClick={() => onRemove(index)} disabled={hasAnswers}>
+                  <Icon icon="tabler:trash" />
+                </Button>
+              </Tooltip>
             </Group>
           </Group>
         </Card>
