@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "docker:build": "docker build -t web:latest -f Dockerfile --progress plain ../..",
     "start": "next start",
@@ -43,6 +43,7 @@
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "ical-generator": "^8.1.1",
+    "import-in-the-middle": "^1.14.2",
     "isomorphic-dompurify": "^2.24.0",
     "jose": "^6.0.11",
     "next": "^15.3.5",
@@ -53,6 +54,7 @@
     "react-hook-form": "^7.57.0",
     "remark-html": "^16.0.1",
     "remark-parse": "^11.0.0",
+    "require-in-the-middle": "^7.5.2",
     "superjson": "^2.0.0",
     "unified": "^11.0.5",
     "zod": "^3.25.47"

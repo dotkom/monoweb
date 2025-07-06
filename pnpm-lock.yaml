@@ -41,6 +41,12 @@ importers:
       fastify:
         specifier: ^5.3.3
         version: 5.4.0
+      import-in-the-middle:
+        specifier: ^1.14.2
+        version: 1.14.2
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
       zod:
         specifier: ^3.25.47
         version: 3.25.74
@@ -165,6 +171,9 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      import-in-the-middle:
+        specifier: ^1.14.2
+        version: 1.14.2
       next:
         specifier: ^15.3.5
         version: 15.3.5(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -180,6 +189,9 @@ importers:
       react-zxing:
         specifier: ^2.1.0
         version: 2.1.0(react@19.1.0)
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
       superjson:
         specifier: ^2.0.0
         version: 2.2.2
@@ -529,6 +541,12 @@ importers:
       fastify:
         specifier: ^5.3.3
         version: 5.4.0
+      import-in-the-middle:
+        specifier: ^1.14.2
+        version: 1.14.2
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
       stripe:
         specifier: ^13.11.0
         version: 13.11.0
@@ -732,6 +750,9 @@ importers:
       ical-generator:
         specifier: ^8.1.1
         version: 8.1.1(@types/node@22.15.29)(dayjs@1.11.13)
+      import-in-the-middle:
+        specifier: ^1.14.2
+        version: 1.14.2
       isomorphic-dompurify:
         specifier: ^2.24.0
         version: 2.24.0
@@ -762,6 +783,9 @@ importers:
       remark-parse:
         specifier: ^11.0.0
         version: 11.0.0
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
       superjson:
         specifier: ^2.0.0
         version: 2.2.2
@@ -899,6 +923,9 @@ importers:
       '@vitest/ui':
         specifier: 3.1.4
         version: 3.1.4(vitest@3.1.4)
+      jsdom:
+        specifier: 26.1.0
+        version: 26.1.0
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -5259,11 +5286,6 @@ packages:
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  acorn@8.14.1:
-    resolution: {integrity: sha512-OvQ/2pUDKmgfCg++xsTX1wGxfTaszcHVcTctW4UJB4hibJx2HXxxO5UmVgyjMa+ZDsiaf5wWLXYpRWMmBI0QHg==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
-
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
@@ -6515,9 +6537,6 @@ packages:
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
-
-  import-in-the-middle@1.13.1:
-    resolution: {integrity: sha512-k2V9wNm9B+ysuelDTHjI9d5KPc4l8zAZTGqj+pcynvWkypZd857ryzN8jNC7Pg2YZXNMJcHRPpaDyCBbNyVRpA==}
 
   import-in-the-middle@1.14.2:
     resolution: {integrity: sha512-5tCuY9BV8ujfOpwtAGgsTx9CGUapcFMEEyByLv1B+v2+6DhAcw+Zr0nhQT7uwaZ7DiourxFEscghOR8e1aPLQw==}
@@ -11075,7 +11094,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/api-logs': 0.202.0
-      import-in-the-middle: 1.13.1
+      import-in-the-middle: 1.14.2
       require-in-the-middle: 7.5.2
     transitivePeerDependencies:
       - supports-color
@@ -11085,7 +11104,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/api-logs': 0.57.2
       '@types/shimmer': 1.2.0
-      import-in-the-middle: 1.13.1
+      import-in-the-middle: 1.14.2
       require-in-the-middle: 7.5.2
       semver: 7.7.1
       shimmer: 1.2.1
@@ -12352,7 +12371,7 @@ snapshots:
       '@prisma/instrumentation': 6.8.2(@opentelemetry/api@1.9.0)
       '@sentry/core': 9.24.0
       '@sentry/opentelemetry': 9.24.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.34.0)
-      import-in-the-middle: 1.13.1
+      import-in-the-middle: 1.14.2
       minimatch: 9.0.5
     transitivePeerDependencies:
       - supports-color
@@ -13475,15 +13494,13 @@ snapshots:
       mime-types: 2.1.35
       negotiator: 0.6.3
 
-  acorn-import-attributes@1.9.5(acorn@8.14.1):
+  acorn-import-attributes@1.9.5(acorn@8.15.0):
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
 
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
       acorn: 8.15.0
-
-  acorn@8.14.1: {}
 
   acorn@8.15.0: {}
 
@@ -14889,17 +14906,10 @@ snapshots:
 
   ignore@5.3.2: {}
 
-  import-in-the-middle@1.13.1:
-    dependencies:
-      acorn: 8.14.1
-      acorn-import-attributes: 1.9.5(acorn@8.14.1)
-      cjs-module-lexer: 1.4.3
-      module-details-from-path: 1.0.3
-
   import-in-the-middle@1.14.2:
     dependencies:
-      acorn: 8.14.1
-      acorn-import-attributes: 1.9.5(acorn@8.14.1)
+      acorn: 8.15.0
+      acorn-import-attributes: 1.9.5(acorn@8.15.0)
       cjs-module-lexer: 1.4.3
       module-details-from-path: 1.0.3
 
@@ -15868,7 +15878,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.0)
+      styled-jsx: 5.1.6(react@19.1.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.3.5
       '@next/swc-darwin-x64': 15.3.5
@@ -17070,6 +17080,11 @@ snapshots:
       client-only: 0.0.1
       react: 19.0.0
 
+  styled-jsx@5.1.6(react@19.1.0):
+    dependencies:
+      client-only: 0.0.1
+      react: 19.1.0
+
   sucrase@3.35.0:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.12
@@ -17424,7 +17439,7 @@ snapshots:
 
   unplugin@1.0.1:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
       chokidar: 3.6.0
       webpack-sources: 3.3.3
       webpack-virtual-modules: 0.5.0
