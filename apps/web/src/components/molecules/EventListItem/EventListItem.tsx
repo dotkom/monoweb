@@ -1,6 +1,6 @@
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
 import type { AttendanceEvent } from "@dotkomonline/types"
-import { Title, cn } from "@dotkomonline/ui"
+import { Tilt, Title, cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import Link from "next/link"
@@ -42,7 +42,9 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
           "group"
         )}
       >
-        <Thumbnail imageUrl={imageUrl} alt={title} startInPast={startInPast} eventType={type} />
+        <Tilt>
+          <Thumbnail imageUrl={imageUrl} alt={title} startInPast={startInPast} eventType={type} />
+        </Tilt>
 
         <div className="flex flex-col gap-2">
           <Title element="h3" size="sm" className="font-normal">
@@ -53,10 +55,8 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
 
           <AttendanceStatus
             attendance={attendanceEvent.attendance}
-            attendanceStatus={attendanceStatus}
+            attendeeStatus={attendeeStatus}
             startInPast={startInPast}
-            isReserved={isReserved}
-            isUnreserved={isUnreserved}
           />
         </div>
       </Link>

@@ -69,7 +69,7 @@ export const eventRouter = t.router({
     }),
 
   all: publicProcedure
-    .input(z.object({ page: PaginateInputSchema, filter: EventFilterSchema }).optional())
+    .input(z.object({ page: PaginateInputSchema, filter: EventFilterSchema.optional() }).optional())
     .output(z.array(EventDetailSchema))
     .query(async ({ input, ctx }) => {
       const events = await ctx.eventService.getEvents(input?.page, input?.filter)
