@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:22-alpine@sha256:a7c10fad0b8fa59578bf3cd1717b168df134db8362b89e1ea6f54676fee49d3b AS base
 
 FROM base AS builder
 WORKDIR /app
@@ -12,8 +12,6 @@ RUN turbo prune @dotkomonline/rif --docker
 
 FROM base AS installer
 WORKDIR /app
-
-ENV DOCKER_BUILD=1
 
 RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/full .

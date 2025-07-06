@@ -51,7 +51,7 @@ export function Button<E extends ElementType = "button">({
 
 export const button = cva(
   [
-    "font-poppins cursor-pointer appearance-none rounded-md transition-colors",
+    "font-body cursor-pointer appearance-none rounded-md transition-colors",
     "disabled:opacity-50 disabled:cursor-not-allowed",
     "dark:text-white",
   ],

@@ -1,4 +1,7 @@
-FROM node:22-alpine AS base
+FROM node:22-alpine@sha256:a7c10fad0b8fa59578bf3cd1717b168df134db8362b89e1ea6f54676fee49d3b AS base
+
+ARG SENTRY_RELEASE
+ARG DOPPLER_ENVIRONMENT
 
 FROM base AS builder
 WORKDIR /app
@@ -12,8 +15,6 @@ RUN turbo prune @dotkomonline/brevduen --docker
 
 FROM base AS installer
 WORKDIR /app
-
-ENV DOCKER_BUILD=1
 
 RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/full .
@@ -32,6 +33,9 @@ RUN apk add --no-cache curl
 EXPOSE 3000
 
 ENV NODE_ENV=production
+
+# Embed the Sentry release ID into the container.
+ENV SENTRY_RELEASE=${SENTRY_RELEASE}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 brevduen

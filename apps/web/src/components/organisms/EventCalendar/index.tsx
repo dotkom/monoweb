@@ -1,4 +1,3 @@
-import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
 import { server } from "@/utils/trpc/server"
 import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
@@ -51,7 +50,6 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   return (
     <div className="mb-10">
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <EventsViewToggle active="cal" />
         <div className="w-full flex items-center gap-4 justify-between sm:justify-end">
           <h2>
             {months[month]} {year}
@@ -59,13 +57,13 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           <div className="flex pb-2 gap-2 sm:gap-0">
             <Link
               className="rounded-full hover:bg-slate-4 flex p-3 sm:p-2 duration-200"
-              href={`/events/calendar/${month === 0 ? year - 1 : year}/${month === 0 ? 12 : month}`}
+              href={`/arrangementer/kalender/${month === 0 ? year - 1 : year}/${month === 0 ? 12 : month}`}
             >
               <Icon icon="tabler:chevron-left" width={24} height={24} />
             </Link>
             <Link
               className="rounded-full hover:bg-slate-4 flex p-3 sm:p-2 duration-200"
-              href={`/events/calendar/${month === 11 ? year + 1 : year}/${month === 11 ? 1 : month + 2}`}
+              href={`/arrangementer/kalender/${month === 11 ? year + 1 : year}/${month === 11 ? 1 : month + 2}`}
             >
               <Icon icon="tabler:chevron-right" width={24} height={24} />
             </Link>

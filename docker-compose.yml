@@ -1,7 +1,7 @@
 services:
   db:
     container_name: ow_db
-    image: postgres:16-alpine
+    image: postgres:16-alpine@sha256:ef2235fd13b6cb29728a98ee17862ff5c9b7d20515a9b34804da4a45062695f6
     restart: always
     environment:
       POSTGRES_PASSWORD: owpassword123
@@ -9,3 +9,10 @@ services:
       POSTGRES_DB: ow
     ports:
       - "4010:5432"
+  jaeger:
+    container_name: ow_jaeger
+    image: jaegertracing/all-in-one:latest@sha256:beb31282a9c5d0d10cb78dd168945dab9887acebb42fcc0bd738b08c36b68bc0
+    ports:
+      - '4317:4317'
+      - '4318:4318'
+      - '16686:16686'

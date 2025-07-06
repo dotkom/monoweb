@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:22-alpine@sha256:a7c10fad0b8fa59578bf3cd1717b168df134db8362b89e1ea6f54676fee49d3b AS base
 
 # Next.js evaluates a lot of code at build-time for things like SSG and SSR. For this reason, we need some of the
 # runtime variables to be available at build-time.
@@ -13,26 +13,22 @@ ARG NEXT_PUBLIC_ORIGIN
 ARG NEXT_PUBLIC_RPC_HOST
 ARG RPC_HOST
 
+ARG SENTRY_DSN
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_RELEASE
+
+ARG DOPPLER_ENVIRONMENT
+
+# Step 1: Build the Next.js application along with the necessary build variables.
 FROM base AS builder
 WORKDIR /app
 
+COPY . .
+
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
-COPY apps ./apps
-COPY packages ./packages
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-RUN turbo prune @dotkomonline/dashboard --docker
-
-FROM base AS installer
-WORKDIR /app
-
-ENV DOCKER_BUILD=1
-
 RUN npm install -g pnpm@9.15.5 --ignore-scripts
-COPY --from=builder /app/out/full .
-RUN pnpm install --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# Generate prisma types
 WORKDIR /app/packages/db
 RUN pnpm run generate
 WORKDIR /app
@@ -46,9 +42,30 @@ ENV NEXT_PUBLIC_ORIGIN ${NEXT_PUBLIC_ORIGIN}
 ENV NEXT_PUBLIC_RPC_HOST ${NEXT_PUBLIC_RPC_HOST}
 ENV RPC_HOST ${RPC_HOST}
 
-COPY --from=builder /app/out/full .
+# Allow Sentry to upload source maps and build artifacts during build.
+ENV SENTRY_AUTH_TOKEN ${SENTRY_AUTH_TOKEN}
+
+# The following are public build-time variables that instrument and configure Sentry
+ENV SENTRY_DSN ${SENTRY_DSN}
+ENV NEXT_PUBLIC_SENTRY_DSN ${SENTRY_DSN}
+ENV SENTRY_RELEASE ${SENTRY_RELEASE}
+ENV NEXT_PUBLIC_SENTRY_RELEASE ${SENTRY_RELEASE}
+ENV DOPPLER_ENVIRONMENT ${DOPPLER_ENVIRONMENT}
+ENV NEXT_PUBLIC_DOPPLER_ENVIRONMENT ${DOPPLER_ENVIRONMENT}
+
 RUN pnpm run --filter @dotkomonline/dashboard build
 
+# Step 2: Prepare the production image with the built application.
+FROM base AS installer
+WORKDIR /app
+
+COPY . .
+
+RUN apk update && apk add --no-cache libc6-compat
+RUN npm install -g pnpm@9.15.5 --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts --production
+
+# Step 3: Run the actual application and finalize the image.
 FROM base AS runner
 WORKDIR /app
 
@@ -60,12 +77,20 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
+# Embed the Sentry release ID into the container.
+ENV SENTRY_RELEASE=${SENTRY_RELEASE}
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/.next/static ./apps/dashboard/.next/static
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/public ./apps/dashboard/public
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/node_modules ./node_modules
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/node_modules ./apps/dashboard/node_modules
 
-CMD node apps/dashboard/server.js
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/.next ./apps/dashboard/.next
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/public ./apps/dashboard/public
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/package.json ./apps/dashboard/package.json
+
+WORKDIR /app/apps/dashboard
+
+CMD ["npm", "run", "start"]

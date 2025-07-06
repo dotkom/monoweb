@@ -1,5 +1,5 @@
 // Always import Sentry instrumentation at the top of the entrypoint
-import "./sentry"
+import "./instrumentation"
 
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 import {

@@ -18,7 +18,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-email/components": "^0.0.36",
+    "@react-email/components": "^0.1.0",
     "@react-email/render": "^1.1.2",
     "@react-email/tailwind": "^1.0.5",
     "react": "^19.1.0",
@@ -26,11 +26,11 @@
     "zod": "^3.25.47"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.3",
+    "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
-    "@types/react": "^19.1.6",
-    "@types/react-dom": "^19.1.5",
-    "react-email": "^3.0.0",
-    "typescript": "^5.8.3"
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "react-email": "3.0.7",
+    "typescript": "5.8.3"
   }
 }

@@ -129,7 +129,7 @@ interface TagListProps {
 const TagList = ({ tags }: TagListProps) => {
   return (
     <section className="md:pl-4 pb-2 gap-2 md:border-l-2 border-slate-10 flex flex-col">
-      <Title element="h3" size="md" className="font-semibold text-slate-12 dark:text-slate-2 font-poppins">
+      <Title element="h3" size="md" className="text-slate-12 dark:text-slate-2">
         Tags
       </Title>
 
@@ -150,7 +150,7 @@ const RelatedArticles = ({ articles }: RelatedArticlesProps) => {
   return (
     <section className="mt-6 md:mt-12">
       <div className="flex justify-between tracking-tight transition-colors">
-        <Title element="h2" className="text-3xl font-poppins font-semibold">
+        <Title element="h2" size="xl">
           Relaterte artikler
         </Title>
         <Link href="/artikler" className="hidden sm:block">

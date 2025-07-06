@@ -31,7 +31,7 @@ export function Text<E extends ElementType = "p">({
   )
 }
 
-const text = cva("text-inherit font-poppins", {
+const text = cva("text-inherit font-body", {
   variants: {
     size: {
       sm: "text-sm",

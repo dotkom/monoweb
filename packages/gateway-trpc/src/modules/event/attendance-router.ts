@@ -157,4 +157,21 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionsResponseSummary(input.attendanceId)),
+
+  getAttendeeStatuses: adminProcedure
+    .input(
+      z.object({
+        userId: UserSchema.shape.id,
+        attendanceIds: z.array(AttendanceSchema.shape.id),
+      })
+    )
+    .query(async ({ input, ctx }) => ctx.attendeeService.getAttendeeStatuses(input.userId, input.attendanceIds)),
+
+  removeSelectionResponses: adminProcedure
+    .input(
+      z.object({
+        selectionId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => ctx.attendeeService.removeSelectionResponses(input.selectionId)),
 })

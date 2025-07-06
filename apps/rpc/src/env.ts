@@ -17,8 +17,6 @@ export const env = createEnvironment(
     FAGKOM_STRIPE_PUBLIC_KEY: variable,
     FAGKOM_STRIPE_SECRET_KEY: variable,
     FAGKOM_STRIPE_WEBHOOK_SECRET: variable,
-    // Sentry DSN should only be set in production
-    SENTRY_DSN: variable.optional(),
 
     // comma separated auth0 subs, e.g.
     // "auth0|111111111111111111111111,auth0|222222222222222222222222"
@@ -27,6 +25,5 @@ export const env = createEnvironment(
   },
   {
     env: process.env,
-    skipValidation: process.env.DOCKER_BUILD === "1",
   }
 )

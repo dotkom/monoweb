@@ -97,22 +97,24 @@ export const eventRouter = t.router({
       )
     }),
 
-  allByCompany: publicProcedure
-    .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) => ctx.companyEventService.getEventsByCompanyId(input.id, input.paginate)),
   allByUserId: publicProcedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByUserAttending(input.id)),
-  allByGroup: publicProcedure
+  allByCompanyWithAttendance: publicProcedure
+    .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) => ctx.companyEventService.getAttendanceEventsByCompanyId(input.id, input.paginate)),
+  allByGroupWithAttendance: publicProcedure
     .input(z.object({ id: GroupSchema.shape.id, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) => ctx.eventService.getEventsByGroupId(input.id, input.paginate)),
-  allByInterestGroup: publicProcedure
+    .query(async ({ input, ctx }) => ctx.eventService.getAttendanceEventsByGroupId(input.id, input.paginate)),
+  allByInterestGroupWithAttendance: publicProcedure
     .input(z.object({ id: InterestGroupSchema.shape.id, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) => ctx.eventService.getEventsByInterestGroupId(input.id, input.paginate)),
+    .query(async ({ input, ctx }) => ctx.eventService.getAttendanceEventsByInterestGroupId(input.id, input.paginate)),
+
   getEventDetail: publicProcedure
     .input(EventSchema.shape.id)
     .output(EventDetailSchema)
     .query(async ({ input, ctx }) => ctx.eventService.getEventDetail(input)),
+
   addAttendance: adminProcedure
     .input(
       z.object({
@@ -121,6 +123,7 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.values)),
+
   attendance: attendanceRouter,
   company: eventCompanyRouter,
   feedback: feedbackRouter,

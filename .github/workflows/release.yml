@@ -25,12 +25,12 @@ jobs:
   # build all the packages in the monorepo.
   check:
     name: Verify build requirements
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
-      - uses: actions/cache@v4
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ github.sha }}
@@ -39,7 +39,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 9.15.5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22.15.0
           cache: 'pnpm'
@@ -52,12 +52,12 @@ jobs:
 
   build-brevduen:
     name: brevduen
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -70,12 +70,12 @@ jobs:
 
   build-dashboard:
     name: dashboard
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -88,12 +88,12 @@ jobs:
 
   build-invoicification:
     name: invoicification
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -111,7 +111,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -124,12 +124,12 @@ jobs:
 
   build-kvittering-frontend:
     name: kvittering-frontend
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -142,12 +142,12 @@ jobs:
 
   build-rif:
     name: rif
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -160,12 +160,12 @@ jobs:
 
   build-rpc:
     name: rpc
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -178,12 +178,12 @@ jobs:
 
   build-splash:
     name: splash-2025
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -195,12 +195,12 @@ jobs:
 
   build-web:
     name: web
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'

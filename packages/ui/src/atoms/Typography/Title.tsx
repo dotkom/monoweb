@@ -23,15 +23,16 @@ export function Title<E extends ElementType = "h2">({ children, element, classNa
   )
 }
 
-const title = cva("text-inherit font-extrabold font-fraunces", {
+const title = cva("text-inherit font-title font-bold", {
   variants: {
     size: {
-      md: "text-xl",
-      lg: "text-2xl",
-      xl: "text-4xl",
+      sm: "text-lg font-semibold",
+      md: "text-xl font-semibold",
+      lg: "text-2xl font-semibold",
+      xl: "text-3xl",
     },
   },
   defaultVariants: {
-    size: "md",
+    size: "lg",
   },
 })

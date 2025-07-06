@@ -1,4 +1,4 @@
-import { Icon } from "@dotkomonline/ui"
+import { Button, Icon, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -7,34 +7,43 @@ interface EventsViewToggleProps {
 }
 
 export const EventsViewToggle: FC<EventsViewToggleProps> = ({ active }) => {
+  const listIcon = <Icon icon="tabler:layout-list" className="text-sm" />
+  const calendarIcon = <Icon icon="tabler:calendar-month" className="text-sm" />
+
+  const listButton = (
+    <Button
+      color="light"
+      icon={listIcon}
+      className={cn(active !== "list" ? "bg-transparent hover:bg-transparent" : "")}
+    >
+      <Text className="text-sm">Liste</Text>
+    </Button>
+  )
+
+  const calendarButton = (
+    <Button
+      color="light"
+      icon={calendarIcon}
+      className={cn(active !== "cal" ? "bg-transparent hover:bg-transparent" : "")}
+    >
+      <Text className="text-sm">Kalender</Text>
+    </Button>
+  )
+
   return (
-    <div className="w-full sm:w-fit text-foreground bg-slate-3 inline-flex items-center justify-center rounded-md p-1">
+    <div className="w-full sm:w-fit border border-slate-3 flex flex-row items-center rounded-lg p-1">
       {active === "list" ? (
-        <div className="w-full text-slate-12 bg-slate-2 shadow-sm flex gap-1 items-center justify-center rounded-[0.185rem] px-4 py-1.5">
-          <Icon icon="tabler:layout-list" width={20} height={20} />
-          <span>Liste</span>
-        </div>
+        listButton
       ) : (
-        <Link
-          href="/events"
-          className="w-full text-slate-9 flex gap-1 items-center justify-center rounded-[0.185rem] px-4 py-1.5 transition-all cursor-pointer hover:text-slate-12"
-        >
-          <Icon icon="tabler:layout-list" width={20} height={20} />
-          <span>Liste</span>
+        <Link href="/arrangementer" className="w-full text-slate-9 hover:text-slate-12">
+          {listButton}
         </Link>
       )}
       {active === "cal" ? (
-        <div className="w-full text-slate-12 bg-slate-2 shadow-sm flex gap-1 items-center justify-center rounded-[0.185rem] px-4 py-1.5">
-          <Icon icon="tabler:calendar-month" width={20} height={20} />
-          <span>Kalender</span>
-        </div>
+        calendarButton
       ) : (
-        <Link
-          href="/events/calendar"
-          className="w-full text-slate-9 flex gap-1 items-center justify-center rounded-[0.185rem] px-4 py-1.5 transition-all cursor-pointer hover:text-slate-12"
-        >
-          <Icon icon="tabler:calendar-month" width={20} height={20} />
-          <span>Kalender</span>
+        <Link href="/arrangementer/kalender" className="w-full text-slate-9 hover:text-slate-12">
+          {calendarButton}
         </Link>
       )}
     </div>

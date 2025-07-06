@@ -10,11 +10,12 @@
   "dependencies": {
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
-    "@dotkomonline/environment": "workspace:*"
+    "@dotkomonline/environment": "workspace:*",
+    "@dotkomonline/logger": "workspace:*"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.2",
-    "tsx": "^3.14.0",
-    "typescript": "^5.8.3"
+    "@biomejs/biome": "1.9.4",
+    "tsx": "3.14.0",
+    "typescript": "5.8.3"
   }
 }

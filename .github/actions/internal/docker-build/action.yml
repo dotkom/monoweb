@@ -10,6 +10,10 @@ inputs:
   dockerfile:
     description: 'Dockerfile to use for build'
     required: true
+  platform:
+    description: 'Docker platform to build for'
+    required: false
+    default: 'linux/arm64'
   push:
     description: 'Push the image to ECR'
     required: false
@@ -32,21 +36,21 @@ runs:
   using: composite
   steps:
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: ${{ inputs.aws-iam-role }}
     - name: Login to AWS ECR
-      uses: aws-actions/amazon-ecr-login@v2
+      uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2
     - name: Check out provided ref
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         fetch-depth: 1
         ref: ${{ inputs.git-hash }}
     - name: Build docker image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6
       with:
-        platforms: linux/amd64
+        platforms: ${{ inputs.platform }}
         context: .
         file: ${{ inputs.dockerfile }}
         tags: ${{ inputs.aws-ecr-repository }}:latest, ${{ inputs.aws-ecr-repository }}:git-${{ inputs.git-hash }}

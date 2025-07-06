@@ -1,4 +1,4 @@
-import { FooterWave } from "@/components/icons/FooterWave.tsx"
+import { FooterWave } from "@/components/icons/FooterWave.js"
 import { Text, Title } from "@dotkomonline/ui"
 import type { ReactNode } from "react"
 import { SoMeLinks } from "./someLinks"

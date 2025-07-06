@@ -14,7 +14,7 @@ runs:
   using: composite
   steps:
     - name: Install local GitHub Actions
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         fetch-depth: 1
         sparse-checkout: '.github'
@@ -32,7 +32,9 @@ runs:
         aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/${{ inputs.environment }}/web
         git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/web/Dockerfile
-        build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
+        build-arguments: |
+          ${{ steps.acquire-secrets.outputs.secrets }}
+          SENTRY_RELEASE=git-${{ inputs.git-hash }}-${{ inputs.environment }}
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
       if: ${{ inputs.deploy == 'true' }}

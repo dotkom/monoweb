@@ -19,7 +19,7 @@ export const EventCard: React.FC<ComingEventProps> = ({
   const capacity = attendance?.pools?.reduce((prev, pool) => prev + pool.capacity, 0)
 
   return (
-    <Link href={`/events/${slugify(title)}/${id}`}>
+    <Link href={`/arrangementer/${slugify(title)}/${id}`}>
       <div className="mt-2 flex flex-col">
         <div className="relative">
           <Image

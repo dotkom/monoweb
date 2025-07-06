@@ -1,23 +1,25 @@
 "use client"
 
+import { env } from "@/lib/env"
+import { TRPCProvider } from "@/lib/trpc"
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import { useSession } from "@dotkomonline/oauth2/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { type CreateTRPCClientOptions, createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { type PropsWithChildren, useState } from "react"
-import { env } from "src/env"
 import superjson from "superjson"
-import { TRPCProvider } from "../trpc"
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
-
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
             retry: process.env.NODE_ENV === "production" ? 3 : 0,
+          },
+          mutations: {
+            onError: console.error,
           },
         },
       })
@@ -34,11 +36,9 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         async fetch(url, options) {
           try {
             const headers = new Headers(options?.headers)
-
             if (session !== null) {
               headers.append("Authorization", `Bearer ${session.accessToken}`)
             }
-
             return fetch(url, {
               ...options,
               credentials: "include",

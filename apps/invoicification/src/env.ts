@@ -7,6 +7,5 @@ export const env = createEnvironment(
   },
   {
     env: process.env,
-    skipValidation: process.env.DOCKER_BUILD === "1",
   }
 )

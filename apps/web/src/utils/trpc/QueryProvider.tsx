@@ -27,7 +27,6 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
           if (session !== null) {
             headers.append("Authorization", `Bearer ${session.accessToken}`)
           }
-
           return fetch(url, {
             ...options,
             credentials: "include",
@@ -37,7 +36,16 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       }),
     ],
   }
-  const [queryClient] = useState(() => new QueryClient())
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          mutations: {
+            onError: console.error,
+          },
+        },
+      })
+  )
   const [trpcClient] = useState(() => createTRPCClient(trpcConfig))
 
   return (

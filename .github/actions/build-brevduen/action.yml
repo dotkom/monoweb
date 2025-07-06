@@ -14,7 +14,7 @@ runs:
   using: composite
   steps:
     - name: Install local GitHub Actions
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         fetch-depth: 1
         sparse-checkout: '.github'
@@ -28,6 +28,8 @@ runs:
         git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/brevduen/Dockerfile
         push: ${{ inputs.deploy }}
+        build-arguments: |
+          SENTRY_RELEASE=git-${{ inputs.git-hash }}-${{ inputs.environment }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
       if: ${{ inputs.deploy == 'true' }}
       id: deploy
