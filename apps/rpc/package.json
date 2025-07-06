@@ -25,6 +25,8 @@
     "@trpc/server": "11.0.0-rc.828",
     "auth0": "^4.23.1",
     "fastify": "^5.3.3",
+    "import-in-the-middle": "^1.14.2",
+    "require-in-the-middle": "^7.5.2",
     "stripe": "^13.11.0",
     "zod": "^3.25.47"
   },
