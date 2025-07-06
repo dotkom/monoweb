@@ -1,4 +1,4 @@
-import type { AttendanceId, EventId } from "@dotkomonline/types"
+import type { AttendanceId, EventId, FeedbackFormId } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 import { useTRPC } from "../../../trpc"
 
@@ -57,4 +57,9 @@ export const useEventAttendeesGetQuery = (attendanceId: AttendanceId) => {
 export const useEventFeedbackFormGetQuery = (eventId: EventId) => {
   const trpc = useTRPC()
   return useQuery(trpc.event.feedback.findFormByEventId.queryOptions(eventId))
+}
+
+export const useFeedbackAnswersGetQuery = (formId: FeedbackFormId) => {
+  const trpc = useTRPC()
+  return useQuery(trpc.event.feedback.getAllAnswers.queryOptions(formId))
 }

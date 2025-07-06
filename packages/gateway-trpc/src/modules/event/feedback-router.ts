@@ -20,6 +20,12 @@ export const feedbackRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.feedbackFormService.update(input.id, input.data)),
+  deleteForm: protectedProcedure
+    .input(FeedbackFormIdSchema)
+    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.delete(input)),
+  getFormById: protectedProcedure
+    .input(FeedbackFormIdSchema)
+    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.getById(input)),
   findFormByEventId: publicProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.feedbackFormService.findByEventId(input)),

@@ -1,7 +1,7 @@
-import { Box, Text } from "@mantine/core"
-import Link from "next/link"
+import type { FeedbackFormId } from "@dotkomonline/types"
+import { Box, Button } from "@mantine/core"
 import type { FC } from "react"
-import { FeedbackForm, type FormValues } from "../components/feedback-form"
+import { FeedbackFormEditForm, type FormValues } from "../components/feedback-form-edit-form"
 import { useCreateFeedbackFormMutation, useUpdateFeedbackFormMutation } from "../mutations"
 import { useEventFeedbackFormGetQuery } from "../queries"
 import { useEventDetailsContext } from "./provider"
@@ -12,21 +12,22 @@ export const FeedbackPage: FC = () => {
   const createMutation = useCreateFeedbackFormMutation()
   const updateMutation = useUpdateFeedbackFormMutation()
 
-  const onSubmit = (formValues: FormValues) => {
-    if (feedbackFormQuery?.data?.id) {
-      updateMutation.mutate({
-        id: feedbackFormQuery.data.id,
-        data: {
-          eventId: event.id,
-          ...formValues,
-        },
-      })
-    } else {
-      createMutation.mutate({
+  const onSubmit = (id: FeedbackFormId, formValues: FormValues) => {
+    updateMutation.mutate({
+      id,
+      data: {
         eventId: event.id,
         ...formValues,
-      })
-    }
+      },
+    })
+  }
+
+  const createEmptyFeedbackForm = () => {
+    createMutation.mutate({
+      eventId: event.id,
+      isActive: false,
+      questions: [],
+    })
   }
 
   const defaultValues = {
@@ -36,15 +37,16 @@ export const FeedbackPage: FC = () => {
 
   return (
     <Box>
-      {event.end.getTime() <= Date.now() ? (
-        <Text>
-          Du kan ikke endre tilbakemeldingsskjemaet etter arrangemenetet har fullført. Se svar{" "}
-          {/* TODO: Link to answers page */}
-          <Link href={"/"}>her</Link>
-        </Text>
-      ) : (
-        !feedbackFormQuery.isLoading && <FeedbackForm onSubmit={onSubmit} defaultValues={defaultValues} />
-      )}
+      {!feedbackFormQuery.isLoading &&
+        (feedbackFormQuery.data?.id ? (
+          <FeedbackFormEditForm
+            onSubmit={onSubmit}
+            defaultValues={defaultValues}
+            feedbackFormId={feedbackFormQuery.data?.id}
+          />
+        ) : (
+          <Button onClick={createEmptyFeedbackForm}>Opprett</Button>
+        ))}
     </Box>
   )
 }

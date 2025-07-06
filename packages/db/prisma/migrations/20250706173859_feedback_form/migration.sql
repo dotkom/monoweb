@@ -77,7 +77,7 @@ CREATE UNIQUE INDEX "feedback_form_answer_attendeeId_key" ON "feedback_form_answ
 ALTER TABLE "feedback_form" ADD CONSTRAINT "feedback_form_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "feedback_question" ADD CONSTRAINT "feedback_question_feedbackFormId_fkey" FOREIGN KEY ("feedbackFormId") REFERENCES "feedback_form"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "feedback_question" ADD CONSTRAINT "feedback_question_feedbackFormId_fkey" FOREIGN KEY ("feedbackFormId") REFERENCES "feedback_form"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "feedback_question_option" ADD CONSTRAINT "feedback_question_option_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "feedback_question"("id") ON DELETE CASCADE ON UPDATE CASCADE;

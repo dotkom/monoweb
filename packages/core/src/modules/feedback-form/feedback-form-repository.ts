@@ -1,17 +1,12 @@
 import type { DBClient, Prisma } from "@dotkomonline/db"
-import {
-  type EventId,
-  type FeedbackForm,
-  type FeedbackFormId,
-  type FeedbackFormWrite,
-  FeedbackQuestionSchema,
-} from "@dotkomonline/types"
-import { z } from "zod"
+import type { EventId, FeedbackForm, FeedbackFormId, FeedbackFormWrite } from "@dotkomonline/types"
 
 export interface FeedbackFormRepository {
   create(data: FeedbackFormWrite): Promise<FeedbackForm>
   update(id: FeedbackFormId, data: FeedbackFormWrite): Promise<FeedbackForm>
-  findByEventId(eventId: EventId): Promise<FeedbackForm | null>
+  delete(id: FeedbackFormId): Promise<void>
+  getByEventId(eventId: EventId): Promise<FeedbackForm | null>
+  getById(id: FeedbackFormId): Promise<FeedbackForm | null>
 }
 
 export class FeedbackFormRepositoryImpl implements FeedbackFormRepository {
@@ -50,7 +45,7 @@ export class FeedbackFormRepositoryImpl implements FeedbackFormRepository {
       include: this.includeQuestions,
     })
 
-    return this.mapFeedbackForm(feedbackForm)
+    return feedbackForm
   }
 
   public async update(id: FeedbackFormId, data: FeedbackFormWrite) {
@@ -103,12 +98,27 @@ export class FeedbackFormRepositoryImpl implements FeedbackFormRepository {
       include: this.includeQuestions,
     })
 
-    return this.mapFeedbackForm(feedbackForm)
+    return feedbackForm
   }
 
-  //TODO: Add getbyId and delete
+  public async delete(id: FeedbackFormId) {
+    await this.db.feedbackForm.delete({
+      where: {
+        id: id,
+      },
+    })
+  }
 
-  public async findByEventId(eventId: EventId) {
+  public async getById(id: FeedbackFormId) {
+    return await this.db.feedbackForm.findFirst({
+      where: {
+        id: id,
+      },
+      include: this.includeQuestions,
+    })
+  }
+
+  public async getByEventId(eventId: EventId) {
     const feedbackForm = await this.db.feedbackForm.findFirst({
       where: {
         eventId: eventId,
@@ -117,12 +127,5 @@ export class FeedbackFormRepositoryImpl implements FeedbackFormRepository {
     })
 
     return feedbackForm
-  }
-
-  private mapFeedbackForm({ questions, ...feedbackForm }: FeedbackForm): FeedbackForm {
-    return {
-      ...feedbackForm,
-      questions: z.array(FeedbackQuestionSchema).parse(questions),
-    }
   }
 }

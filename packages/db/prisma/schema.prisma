@@ -556,7 +556,7 @@ model FeedbackQuestion {
   createdAt       DateTime                  @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime                  @updatedAt @db.Timestamptz(3)
   feedbackFormId  String
-  feedbackForm    FeedbackForm              @relation(fields: [feedbackFormId], references: [id])
+  feedbackForm    FeedbackForm              @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
   label           String
   required        Boolean                   @default(false)
   type            FeedbackQuestionType

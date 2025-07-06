@@ -1,9 +1,27 @@
-import { FeedbackFormWriteSchema, FeedbackQuestionSchema, type FeedbackQuestionUpdate } from "@dotkomonline/types"
+import {
+  type FeedbackFormId,
+  FeedbackFormWriteSchema,
+  FeedbackQuestionSchema,
+  type FeedbackQuestionUpdate,
+} from "@dotkomonline/types"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react/dist/iconify.js"
-import { Button, Card, Checkbox, Divider, Group, Select, Stack, TagsInput, TextInput, Title } from "@mantine/core"
+import {
+  Button,
+  Card,
+  Checkbox,
+  Divider,
+  Group,
+  Select,
+  Stack,
+  TagsInput,
+  TextInput,
+  Title,
+  Tooltip,
+} from "@mantine/core"
 import React, { type FC } from "react"
+
 import {
   type Control,
   Controller,
@@ -13,7 +31,10 @@ import {
   useFormContext,
   useWatch,
 } from "react-hook-form"
+import { useConfirmDeleteModal } from "src/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import type z from "zod"
+import { useDeleteFeedbackFormMutation } from "../mutations"
+import { useFeedbackAnswersGetQuery } from "../queries"
 
 const FormValuesSchema = FeedbackFormWriteSchema.omit({ eventId: true })
 
@@ -25,11 +46,12 @@ const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map(
 }))
 
 interface Props {
-  onSubmit(data: FormValues): void
+  onSubmit(id: FeedbackFormId, data: FormValues): void
   defaultValues?: FormValues
+  feedbackFormId: FeedbackFormId
 }
 
-export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
+export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedbackFormId }) => {
   defaultValues?.questions.sort((a, b) => a.order - b.order)
 
   const form = useForm<FormValues>({
@@ -59,13 +81,26 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
     // Update question order
     values.questions = values.questions.map((question, idx) => ({ ...question, order: idx }))
 
-    onSubmit(values)
+    onSubmit(feedbackFormId, values)
   }
 
   const handleDragEnd = ({ destination, source }: DropResult<string>) => {
     if (!destination || destination.index === source.index) return
     move(source.index, destination.index)
   }
+
+  const answers = useFeedbackAnswersGetQuery(feedbackFormId)
+  const hasBeenAnswered = (answers.data?.length ?? 0) > 0
+
+  const deleteFormMutation = useDeleteFeedbackFormMutation()
+
+  const openDeleteFormModal = useConfirmDeleteModal({
+    title: "Slett tilbakemeldingsskjema",
+    text: "Er du sikker på at du vil slette tilbakemeldingsskjemaet?",
+    onConfirm: () => {
+      deleteFormMutation.mutate(feedbackFormId)
+    },
+  })
 
   return (
     <FormProvider {...form}>
@@ -83,11 +118,8 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
               />
             )}
           />
-          <Group>
+          <Group mt={16}>
             <Button onClick={addQuestion}>Legg til spørsmål</Button>
-            <Button type="submit" color="green" disabled={fields.length === 0}>
-              Lagre
-            </Button>
           </Group>
           <Divider />
           <Card withBorder>
@@ -110,6 +142,27 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
               </Droppable>
             </DragDropContext>
           </Card>
+          <Group>
+            <Tooltip label="Legg til minst ett spørsmål først" disabled={fields.length > 0}>
+              <Button type="submit" disabled={fields.length === 0}>
+                Lagre skjema
+              </Button>
+            </Tooltip>
+            <Tooltip
+              disabled={!hasBeenAnswered}
+              label="Skjemaet har mottatt svar og kan ikke slettes. Deaktiver det for å stoppe nye svar"
+            >
+              <Button
+                type="button"
+                onClick={openDeleteFormModal}
+                variant="outline"
+                color="red"
+                disabled={hasBeenAnswered}
+              >
+                <Icon icon="tabler:trash" />
+              </Button>
+            </Tooltip>
+          </Group>
         </Stack>
       </form>
     </FormProvider>

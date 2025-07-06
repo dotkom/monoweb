@@ -414,3 +414,25 @@ export const useUpdateFeedbackFormMutation = () => {
     })
   )
 }
+
+export const useDeleteFeedbackFormMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "delete",
+  })
+
+  return useMutation(
+    trpc.event.feedback.deleteForm.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries({
+          queryKey: trpc.event.feedback.findFormByEventId.queryKey(),
+        })
+      },
+    })
+  )
+}
