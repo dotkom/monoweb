@@ -38,7 +38,7 @@
     "@trpc/client": "11.0.0-rc.828",
     "@trpc/next": "11.0.0-rc.828",
     "@trpc/tanstack-react-query": "11.0.0-rc.828",
-    "axios": "1.8.4",
+    "axios": "1.10.0",
     "clsx": "^2.0.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
