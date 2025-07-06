@@ -1,4 +1,4 @@
-FROM node:22-alpine@sha256:5340cbfc2df14331ab021555fdd9f83f072ce811488e705b0e736b11adeec4bb AS base
+FROM node:22-alpine@sha256:a7c10fad0b8fa59578bf3cd1717b168df134db8362b89e1ea6f54676fee49d3b AS base
 
 FROM base AS builder
 WORKDIR /app

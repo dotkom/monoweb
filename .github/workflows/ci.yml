@@ -29,7 +29,7 @@ jobs:
   # build all the packages in the monorepo.
   check:
     name: Verify build requirements
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
@@ -56,7 +56,7 @@ jobs:
 
   build-brevduen:
     name: brevduen
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
@@ -74,7 +74,7 @@ jobs:
 
   build-dashboard:
     name: dashboard
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
@@ -92,7 +92,7 @@ jobs:
 
   build-invoicification:
     name: invoicification
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
@@ -127,7 +127,7 @@ jobs:
 
   build-kvittering-frontend:
     name: kvittering-frontend
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
@@ -144,7 +144,7 @@ jobs:
 
   build-rif:
     name: rif
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
@@ -162,7 +162,7 @@ jobs:
 
   build-rpc:
     name: rpc
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
@@ -180,7 +180,7 @@ jobs:
 
   build-splash:
     name: splash-2025
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
@@ -197,7 +197,7 @@ jobs:
 
   build-web:
     name: web
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs:
       - check
     steps:
