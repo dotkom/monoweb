@@ -38,7 +38,7 @@ export class FeedbackFormServiceImpl implements FeedbackFormService {
     return feedbackForm
   }
 
-  public async findByEventId(eventId: EventId): Promise<FeedbackForm | null> {
+  public async findByEventId(eventId: EventId) {
     return await this.formRepository.getByEventId(eventId)
   }
 }

@@ -1,5 +1,6 @@
 import {
   type FeedbackFormId,
+  type FeedbackFormWrite,
   FeedbackFormWriteSchema,
   FeedbackQuestionSchema,
   type FeedbackQuestionWrite,
@@ -20,13 +21,8 @@ import {
   useWatch,
 } from "react-hook-form"
 import { useConfirmDeleteModal } from "src/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
-import type z from "zod"
 import { useDeleteFeedbackFormMutation } from "../mutations"
 import { useFeedbackAnswersGetQuery } from "../queries"
-
-const FormValuesSchema = FeedbackFormWriteSchema.omit({ eventId: true })
-
-export type FormValues = z.infer<typeof FormValuesSchema>
 
 const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map((type) => ({
   value: type,
@@ -34,17 +30,17 @@ const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map(
 }))
 
 interface Props {
-  onSubmit(id: FeedbackFormId, data: FormValues): void
-  defaultValues?: FormValues
+  onSubmit(id: FeedbackFormId, data: FeedbackFormWrite): void
+  defaultValues?: FeedbackFormWrite
   feedbackFormId: FeedbackFormId
 }
 
 export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedbackFormId }) => {
   defaultValues?.questions.sort((a, b) => a.order - b.order)
 
-  const form = useForm<FormValues>({
+  const form = useForm<FeedbackFormWrite>({
     mode: "onSubmit",
-    resolver: zodResolver(FormValuesSchema),
+    resolver: zodResolver(FeedbackFormWriteSchema),
     defaultValues,
   })
 
@@ -66,8 +62,8 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
     append(question)
   }
 
-  const handleSubmit = (values: FormValues) => {
-    // Update question order
+  const handleSubmit = (values: FeedbackFormWrite) => {
+    // Update order on questions
     values.questions = values.questions.map((question, idx) => ({ ...question, order: idx }))
 
     onSubmit(feedbackFormId, values)
@@ -162,7 +158,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
 
 interface QuestionCardProps {
   index: number
-  control: Control<FormValues>
+  control: Control<FeedbackFormWrite>
   fieldId: string
   onRemove(index: number): void
   hasAnswers: boolean
@@ -177,7 +173,7 @@ const QuestionCard = React.memo(function QuestionCard({
 }: QuestionCardProps) {
   const { setValue } = useFormContext()
 
-  const type = useWatch<FormValues>({
+  const type = useWatch<FeedbackFormWrite>({
     control,
     name: `questions.${index}.type`,
   })
