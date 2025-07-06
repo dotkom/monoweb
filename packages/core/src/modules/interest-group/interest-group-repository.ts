@@ -1,4 +1,4 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db"
 import type {
   EventId,
   InterestGroup,
@@ -9,68 +9,59 @@ import type {
 } from "@dotkomonline/types"
 
 export interface InterestGroupRepository {
-  getById(interestGroupId: InterestGroupId): Promise<InterestGroup | null>
-  getAll(): Promise<InterestGroup[]>
-  create(values: InterestGroupWrite): Promise<InterestGroup>
-  update(interestGroupId: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup>
-  delete(interestGroupId: InterestGroupId): Promise<void>
-  getAllMembers(interestGroupId: InterestGroupId): Promise<InterestGroupMember[]>
-  getAllByMember(userId: UserId): Promise<InterestGroup[]>
-  addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember>
-  removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void>
-  getAllByEventId(eventId: EventId): Promise<InterestGroup[]>
+  getById(handle: DBHandle, interestGroupId: InterestGroupId): Promise<InterestGroup | null>
+  getAll(handle: DBHandle): Promise<InterestGroup[]>
+  create(handle: DBHandle, values: InterestGroupWrite): Promise<InterestGroup>
+  update(
+    handle: DBHandle,
+    interestGroupId: InterestGroupId,
+    values: Partial<InterestGroupWrite>
+  ): Promise<InterestGroup>
+  delete(handle: DBHandle, interestGroupId: InterestGroupId): Promise<void>
+  getAllMembers(handle: DBHandle, interestGroupId: InterestGroupId): Promise<InterestGroupMember[]>
+  getAllByMember(handle: DBHandle, userId: UserId): Promise<InterestGroup[]>
+  addMember(handle: DBHandle, interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember>
+  removeMember(handle: DBHandle, interestGroupId: InterestGroupId, userId: UserId): Promise<void>
+  getAllByEventId(handle: DBHandle, eventId: EventId): Promise<InterestGroup[]>
 }
 
-export class InterestGroupRepositoryImpl implements InterestGroupRepository {
-  private readonly db: DBClient
-
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  public async getById(interestGroupId: InterestGroupId) {
-    return await this.db.interestGroup.findUnique({ where: { id: interestGroupId } })
-  }
-
-  public async getAll() {
-    return await this.db.interestGroup.findMany()
-  }
-
-  public async create(data: InterestGroupWrite) {
-    return await this.db.interestGroup.create({ data })
-  }
-
-  public async update(interestGroupId: InterestGroupId, data: Partial<InterestGroupWrite>) {
-    return await this.db.interestGroup.update({ where: { id: interestGroupId }, data })
-  }
-
-  public async delete(interestGroupId: InterestGroupId) {
-    await this.db.interestGroup.delete({ where: { id: interestGroupId } })
-  }
-
-  public async getAllMembers(interestGroupId: InterestGroupId) {
-    return await this.db.interestGroupMember.findMany({ where: { interestGroupId } })
-  }
-
-  public async getAllByMember(userId: UserId) {
-    return await this.db.interestGroup.findMany({ where: { members: { some: { userId } } } })
-  }
-
-  public async addMember(interestGroupId: InterestGroupId, userId: UserId) {
-    return await this.db.interestGroupMember.create({ data: { interestGroupId, userId } })
-  }
-
-  public async removeMember(interestGroupId: InterestGroupId, userId: UserId) {
-    await this.db.interestGroupMember.delete({ where: { interestGroupId, userId } })
-  }
-
-  public async getAllByEventId(eventId: EventId) {
-    return await this.db.interestGroup.findMany({
-      where: {
-        events: {
-          some: { eventId },
+export function getInterestGroupRepository(): InterestGroupRepository {
+  return {
+    async getById(handle, interestGroupId) {
+      return await handle.interestGroup.findUnique({ where: { id: interestGroupId } })
+    },
+    async getAll(handle) {
+      return await handle.interestGroup.findMany()
+    },
+    async create(handle, values) {
+      return await handle.interestGroup.create({ data: values })
+    },
+    async update(handle, interestGroupId, values) {
+      return await handle.interestGroup.update({ where: { id: interestGroupId }, data: values })
+    },
+    async delete(handle, interestGroupId) {
+      await handle.interestGroup.delete({ where: { id: interestGroupId } })
+    },
+    async getAllMembers(handle, interestGroupId) {
+      return await handle.interestGroupMember.findMany({ where: { interestGroupId } })
+    },
+    async getAllByMember(handle, userId) {
+      return await handle.interestGroup.findMany({ where: { members: { some: { userId } } } })
+    },
+    async addMember(handle, interestGroupId, userId) {
+      return await handle.interestGroupMember.create({ data: { interestGroupId, userId } })
+    },
+    async removeMember(handle, interestGroupId, userId) {
+      await handle.interestGroupMember.delete({ where: { interestGroupId, userId } })
+    },
+    async getAllByEventId(handle, eventId) {
+      return await handle.interestGroup.findMany({
+        where: {
+          events: {
+            some: { eventId },
+          },
         },
-      },
-    })
+      })
+    },
   }
 }

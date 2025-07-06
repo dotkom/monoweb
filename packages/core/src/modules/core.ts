@@ -31,8 +31,8 @@ import {
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type GroupRepository, GroupRepositoryImpl } from "./group/group-repository"
 import { type GroupService, GroupServiceImpl } from "./group/group-service"
-import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
-import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
+import { getInterestGroupRepository } from "./interest-group/interest-group-repository"
+import { getInterestGroupService } from "./interest-group/interest-group-service"
 import { type JobListingRepository, JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { type JobListingService, JobListingServiceImpl } from "./job-listing/job-listing-service"
 import { JobExecutor } from "./job/job-executor"
@@ -155,8 +155,8 @@ export const createServiceLayer = async ({
     attendeeService,
     jobService
   )
-  const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
-  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
+  const interestGroupRepository = getInterestGroupRepository()
+  const interestGroupService = getInterestGroupService(interestGroupRepository)
 
   const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
   const eventService: EventService = new EventServiceImpl(
@@ -223,5 +223,6 @@ export const createServiceLayer = async ({
     interestGroupService,
     jobService,
     jobExecutor,
+    executeTransaction: db.$transaction.bind(db),
   }
 }
