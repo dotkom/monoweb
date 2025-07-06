@@ -24,6 +24,7 @@ runs:
         aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prd/kvittering-backend
         git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/kvittering-backend/Dockerfile
+        platform: 'linux/amd64'
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
       if: ${{ inputs.deploy == 'true' }}
