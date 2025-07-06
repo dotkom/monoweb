@@ -86,16 +86,16 @@ ALTER TABLE "feedback_question_option" ADD CONSTRAINT "feedback_question_option_
 ALTER TABLE "feedback_question_answer" ADD CONSTRAINT "feedback_question_answer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "feedback_question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "feedback_question_answer" ADD CONSTRAINT "feedback_question_answer_formAnswerId_fkey" FOREIGN KEY ("formAnswerId") REFERENCES "feedback_form_answer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "feedback_question_answer" ADD CONSTRAINT "feedback_question_answer_formAnswerId_fkey" FOREIGN KEY ("formAnswerId") REFERENCES "feedback_form_answer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "feedback_answer_option_link" ADD CONSTRAINT "feedback_answer_option_link_feedbackQuestionOptionId_fkey" FOREIGN KEY ("feedbackQuestionOptionId") REFERENCES "feedback_question_option"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "feedback_answer_option_link" ADD CONSTRAINT "feedback_answer_option_link_feedbackQuestionAnswerId_fkey" FOREIGN KEY ("feedbackQuestionAnswerId") REFERENCES "feedback_question_answer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "feedback_answer_option_link" ADD CONSTRAINT "feedback_answer_option_link_feedbackQuestionAnswerId_fkey" FOREIGN KEY ("feedbackQuestionAnswerId") REFERENCES "feedback_question_answer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "feedback_form_answer" ADD CONSTRAINT "feedback_form_answer_feedbackFormId_fkey" FOREIGN KEY ("feedbackFormId") REFERENCES "feedback_form"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "feedback_form_answer" ADD CONSTRAINT "feedback_form_answer_attendeeId_fkey" FOREIGN KEY ("attendeeId") REFERENCES "attendee"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "feedback_form_answer" ADD CONSTRAINT "feedback_form_answer_attendeeId_fkey" FOREIGN KEY ("attendeeId") REFERENCES "attendee"("id") ON DELETE CASCADE ON UPDATE CASCADE;

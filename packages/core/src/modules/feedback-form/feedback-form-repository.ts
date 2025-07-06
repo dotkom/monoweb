@@ -11,7 +11,7 @@ import { z } from "zod"
 export interface FeedbackFormRepository {
   create(data: FeedbackFormWrite): Promise<FeedbackForm>
   update(id: FeedbackFormId, data: FeedbackFormWrite): Promise<FeedbackForm>
-  getByEventId(eventId: EventId): Promise<FeedbackForm | null>
+  findByEventId(eventId: EventId): Promise<FeedbackForm | null>
 }
 
 export class FeedbackFormRepositoryImpl implements FeedbackFormRepository {
@@ -41,7 +41,7 @@ export class FeedbackFormRepositoryImpl implements FeedbackFormRepository {
 
   //TODO: Add getbyId and delete
 
-  public async getByEventId(eventId: EventId) {
+  public async findByEventId(eventId: EventId) {
     const feedbackForm = await this.db.feedbackForm.findFirst({
       where: {
         eventId: eventId,

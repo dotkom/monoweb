@@ -13,7 +13,7 @@ import type { FeedbackQuestionService } from "./feedback-question-service"
 export interface FeedbackFormService {
   create(data: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>
   update(id: FeedbackFormId, data: FeedbackFormWrite, questions: FeedbackQuestionUpdate[]): Promise<FeedbackForm>
-  getByEventId(eventId: EventId): Promise<FeedbackForm | null>
+  findByEventId(eventId: EventId): Promise<FeedbackForm | null>
 }
 
 export class FeedbackFormServiceImpl implements FeedbackFormService {
@@ -44,8 +44,8 @@ export class FeedbackFormServiceImpl implements FeedbackFormService {
     return updatedForm
   }
 
-  public async getByEventId(eventId: EventId): Promise<FeedbackForm | null> {
-    return await this.formRepository.getByEventId(eventId)
+  public async findByEventId(eventId: EventId): Promise<FeedbackForm | null> {
+    return await this.formRepository.findByEventId(eventId)
   }
 
   public async setQuestions(id: FeedbackFormId, questions: FeedbackQuestionUpdate[]): Promise<FeedbackQuestion[]> {

@@ -17,7 +17,7 @@ import { z } from "zod"
 import { adminProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
-import { feedbackFormRouter } from "./feedback-form-router"
+import { feedbackRouter } from "./feedback-router"
 
 export const eventRouter = t.router({
   get: publicProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) => {
@@ -123,5 +123,5 @@ export const eventRouter = t.router({
     .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.values)),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
-  feedbackForm: feedbackFormRouter
+  feedback: feedbackRouter,
 })

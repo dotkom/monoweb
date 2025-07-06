@@ -70,3 +70,32 @@ export const useSetSelectionsOptionsMutation = () => {
     })
   )
 }
+
+interface useCreateFeedbackAnswerMutationInput {
+  onSuccess?: () => void
+}
+
+export const useCreateFeedbackAnswerMutation = ({ onSuccess }: useCreateFeedbackAnswerMutationInput) => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    trpc.event.feedback.createAnswer.mutationOptions({
+      onSuccess: async (data) => {
+        await queryClient.invalidateQueries(
+          trpc.event.feedback.findAnswerByAttendee.queryOptions({
+            formId: data.feedbackFormId,
+            attendeeId: data.attendeeId,
+          })
+        )
+        await queryClient.invalidateQueries(trpc.event.feedback.getAllAnswers.queryOptions(data.feedbackFormId))
+
+        onSuccess?.()
+      },
+      onError: (error) => {
+        alert("Noe gikk galt")
+        console.error(error)
+      },
+    })
+  )
+}

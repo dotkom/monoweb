@@ -383,13 +383,13 @@ export const useCreateFeedbackFormMutation = () => {
   })
 
   return useMutation(
-    trpc.event.feedbackForm.create.mutationOptions({
+    trpc.event.feedback.createForm.mutationOptions({
       onError: fail,
       onMutate: loading,
       onSuccess: async (data) => {
         complete()
 
-        await queryClient.invalidateQueries(trpc.event.feedbackForm.getByEventId.queryOptions(data.eventId))
+        await queryClient.invalidateQueries(trpc.event.feedback.findFormByEventId.queryOptions(data.eventId))
       },
     })
   )
@@ -403,13 +403,13 @@ export const useUpdateFeedbackFormMutation = () => {
   })
 
   return useMutation(
-    trpc.event.feedbackForm.update.mutationOptions({
+    trpc.event.feedback.updateForm.mutationOptions({
       onError: fail,
       onMutate: loading,
       onSuccess: async (data) => {
         complete()
 
-        await queryClient.invalidateQueries(trpc.event.feedbackForm.getByEventId.queryOptions(data.eventId))
+        await queryClient.invalidateQueries(trpc.event.feedback.findFormByEventId.queryOptions(data.eventId))
       },
     })
   )

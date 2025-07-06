@@ -56,7 +56,6 @@ export type FeedbackQuestionUpsert = z.infer<typeof FeedbackQuestionUpsertSchema
 
 export const FeedbackFormSchema = schemas.FeedbackFormSchema.extend({
   questions: FeedbackQuestionSchema.array(),
-  //TODO: Add answers
 })
 export type FeedbackForm = z.infer<typeof FeedbackFormSchema>
 
@@ -66,11 +65,28 @@ export const FeedbackQuestionAnswerSchema = schemas.FeedbackQuestionAnswerSchema
   value: z.union([z.string(), z.number(), z.boolean()]).nullable(),
   selectedOptions: FeedbackQuestionOptionSchema.array(),
 })
-
 export type FeedbackQuestionAnswer = z.infer<typeof FeedbackQuestionAnswerSchema>
 
-export const FeedbackFormAnswerSchema = schemas.FeedbackFormAnswerSchema
+export const FeedbackQuestionAnswerWriteSchema = FeedbackQuestionAnswerSchema.omit({
+  formAnswerId: true,
+  id: true,
+})
+export type FeedbackQuestionAnswerWrite = z.infer<typeof FeedbackQuestionAnswerWriteSchema>
+
+export const FeedbackFormAnswerSchema = schemas.FeedbackFormAnswerSchema.extend({
+  questionAnswers: FeedbackQuestionAnswerSchema.array(),
+})
 export type FeedbackFormAnswer = z.infer<typeof FeedbackFormAnswerSchema>
+
+export const FeedbackFormAnswerWriteSchema = FeedbackFormAnswerSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  questionAnswers: true,
+}).extend({
+  questionAnswers: FeedbackQuestionAnswerWriteSchema.array(),
+})
+export type FeedbackFormAnswerWrite = z.infer<typeof FeedbackFormAnswerWriteSchema>
 
 export type FeedbackQuestionType = FeedbackQuestion["type"]
 
