@@ -1,9 +1,4 @@
-import {
-  FeedbackFormWriteSchema,
-  FeedbackQuestionSchema,
-  type FeedbackQuestionUpdate,
-  FeedbackQuestionUpdateSchema,
-} from "@dotkomonline/types"
+import { FeedbackFormWriteSchema, FeedbackQuestionSchema, type FeedbackQuestionUpdate } from "@dotkomonline/types"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react/dist/iconify.js"
@@ -18,12 +13,9 @@ import {
   useFormContext,
   useWatch,
 } from "react-hook-form"
-import z from "zod"
+import type z from "zod"
 
-const FormValuesSchema = z.object({
-  questions: z.array(FeedbackQuestionUpdateSchema),
-  form: FeedbackFormWriteSchema.omit({ eventId: true }),
-})
+const FormValuesSchema = FeedbackFormWriteSchema.omit({ eventId: true })
 
 export type FormValues = z.infer<typeof FormValuesSchema>
 
@@ -81,7 +73,7 @@ export const FeedbackForm: FC<Props> = ({ onSubmit, defaultValues }) => {
         <Stack>
           <Title order={3}>Tilbakemeldingsskjema</Title>
           <Controller
-            name={"form.isActive"}
+            name={"isActive"}
             control={form.control}
             render={({ field }) => (
               <Checkbox

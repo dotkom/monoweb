@@ -39,15 +39,6 @@ import {
 } from "./feedback-form/feedback-form-answer-service"
 import { type FeedbackFormRepository, FeedbackFormRepositoryImpl } from "./feedback-form/feedback-form-repository"
 import { type FeedbackFormService, FeedbackFormServiceImpl } from "./feedback-form/feedback-form-service"
-import {
-  type FeedbackQuestionOptionRepository,
-  FeedbackQuestionOptionRepositoryImpl,
-} from "./feedback-form/feedback-question-option-repository"
-import {
-  type FeedbackQuestionRepository,
-  FeedbackQuestionRepositoryImpl,
-} from "./feedback-form/feedback-question-repository"
-import { type FeedbackQuestionService, FeedbackQuestionServiceImpl } from "./feedback-form/feedback-question-service"
 import { type GroupRepository, GroupRepositoryImpl } from "./group/group-repository"
 import { type GroupService, GroupServiceImpl } from "./group/group-service"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
@@ -148,13 +139,9 @@ export const createServiceLayer = async ({
   const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
 
   const feedbackFormRepository: FeedbackFormRepository = new FeedbackFormRepositoryImpl(db)
-  const feedbackQuestionRepository: FeedbackQuestionRepository = new FeedbackQuestionRepositoryImpl(db)
-  const feedbackQuestionOptionRepository: FeedbackQuestionOptionRepository = new FeedbackQuestionOptionRepositoryImpl(
-    db
-  )
 
   const feedbackFormAnswerRepository: FeedbackFormAnswerRepository = new FeedbackFormAnswerRepositoryImpl(db)
-  
+
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
@@ -223,15 +210,7 @@ export const createServiceLayer = async ({
 
   const jobExecutor = new JobExecutor(jobService, attendeeService, attendanceService)
 
-  const feedbackQuestionService: FeedbackQuestionService = new FeedbackQuestionServiceImpl(
-    feedbackQuestionRepository,
-    feedbackQuestionOptionRepository
-  )
-
-  const feedbackFormService: FeedbackFormService = new FeedbackFormServiceImpl(
-    feedbackFormRepository,
-    feedbackQuestionService
-  )
+  const feedbackFormService: FeedbackFormService = new FeedbackFormServiceImpl(feedbackFormRepository)
 
   const feedbackFormAnswerService: FeedbackFormAnswerService = new FeedbackFormAnswerServiceImpl(
     feedbackFormAnswerRepository

@@ -4,25 +4,22 @@ import {
   FeedbackFormAnswerWriteSchema,
   FeedbackFormIdSchema,
   FeedbackFormWriteSchema,
-  FeedbackQuestionUpdateSchema,
-  FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const feedbackRouter = t.router({
   createForm: protectedProcedure
-    .input(z.object({ form: FeedbackFormWriteSchema, questions: FeedbackQuestionWriteSchema.array() }))
-    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.create(input.form, input.questions)),
+    .input(FeedbackFormWriteSchema)
+    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.create(input)),
   updateForm: protectedProcedure
     .input(
       z.object({
         id: FeedbackFormIdSchema,
         data: FeedbackFormWriteSchema,
-        questions: FeedbackQuestionUpdateSchema.array(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.update(input.id, input.data, input.questions)),
+    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.update(input.id, input.data)),
   findFormByEventId: publicProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.feedbackFormService.findByEventId(input)),

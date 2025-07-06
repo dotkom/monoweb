@@ -103,6 +103,8 @@ export const FeedbackFormWriteSchema = FeedbackFormSchema.omit({
   createdAt: true,
   updatedAt: true,
   questions: true,
+}).extend({
+  questions: FeedbackQuestionUpdateSchema.array(),
 })
 
 export type FeedbackFormWrite = z.infer<typeof FeedbackFormWriteSchema>
