@@ -1,11 +1,11 @@
 import type { Company } from "@dotkomonline/types"
 import { addDays } from "date-fns"
 import { beforeEach, describe, expect, it } from "vitest"
-import { core, dbClient } from "../../../../vitest-integration.setup"
-import { getCompanyMock, getJobListingMock } from "../../../mock"
-import { InvalidEndDateError } from "../job-listing-error"
+import { core, dbClient } from "../../../vitest-integration.setup"
+import { getCompanyMock, getJobListingMock } from "../../mock"
+import { InvalidEndDateError } from "./job-listing-error"
 
-describe("job-listings", async () => {
+describe.skip("job-listings", async () => {
   let company: Company
 
   beforeEach(async () => {

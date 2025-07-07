@@ -6,7 +6,7 @@ import { createPrisma } from "."
 const SCHEMA_FILE_PATH = `${import.meta.dirname}/../prisma/schema.prisma`
 const PRISMA_BIN_PATH = `${import.meta.dirname}/../node_modules/.bin/prisma`
 
-const POSTGRES_IMAGE = "postgres:15-alpine"
+const POSTGRES_IMAGE = "postgres:16-alpine"
 const DB_USERNAME = "owuser"
 const DB_PASSWORD = "owpassword"
 const DB_NAME = "test"
@@ -32,9 +32,12 @@ function migrateTestDatabase(dbUrl: string) {
           DATABASE_URL: dbUrl,
           NODE_ENV: "development",
         },
-        stdio: "inherit",
       }
     )
+    // Only inherit stderr as stdout will be bloated by Prisma migration output
+    proc.stderr.on("data", (data) => {
+      console.error(data.toString())
+    })
 
     proc.on("exit", (code) => {
       if (code === 0) {
