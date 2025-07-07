@@ -8,6 +8,7 @@ export type PrivacyPermissions = z.infer<typeof PrivacyPermissionsSchema>
 export const PrivacyPermissionsWriteSchema = PrivacyPermissionsSchema.omit({
   createdAt: true,
   updatedAt: true,
+  userId: true,
 })
 
 export type PrivacyPermissionsWrite = z.infer<typeof PrivacyPermissionsWriteSchema>

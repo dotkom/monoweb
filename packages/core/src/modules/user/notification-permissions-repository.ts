@@ -1,28 +1,26 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db"
 import type { NotificationPermissions, NotificationPermissionsWrite, UserId } from "@dotkomonline/types"
 
 export interface NotificationPermissionsRepository {
-  getByUserId(id: UserId): Promise<NotificationPermissions | null>
-  create(data: Partial<NotificationPermissionsWrite>): Promise<NotificationPermissions>
-  update(userId: UserId, data: Partial<Omit<NotificationPermissionsWrite, "userId">>): Promise<NotificationPermissions>
+  getByUserId(handle: DBHandle, id: UserId): Promise<NotificationPermissions | null>
+  create(handle: DBHandle, userId: UserId, data: NotificationPermissionsWrite): Promise<NotificationPermissions>
+  update(
+    handle: DBHandle,
+    userId: UserId,
+    data: Partial<NotificationPermissionsWrite>
+  ): Promise<NotificationPermissions>
 }
 
-export class NotificationPermissionsRepositoryImpl implements NotificationPermissionsRepository {
-  private readonly db: DBClient
-
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  public async getByUserId(userId: UserId) {
-    return await this.db.notificationPermissions.findUnique({ where: { userId } })
-  }
-
-  public async create(data: NotificationPermissionsWrite) {
-    return await this.db.notificationPermissions.create({ data })
-  }
-
-  public async update(userId: UserId, data: Partial<Omit<NotificationPermissionsWrite, "userId">>) {
-    return await this.db.notificationPermissions.update({ where: { userId }, data })
+export function getNotificationPermissionsRepository(): NotificationPermissionsRepository {
+  return {
+    async getByUserId(handle, userId) {
+      return await handle.notificationPermissions.findUnique({ where: { userId } })
+    },
+    async create(handle, userId, data) {
+      return await handle.notificationPermissions.create({ data: { ...data, userId } })
+    },
+    async update(handle, userId, data) {
+      return await handle.notificationPermissions.update({ where: { userId }, data })
+    },
   }
 }
