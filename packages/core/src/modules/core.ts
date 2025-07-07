@@ -23,10 +23,6 @@ import {
 import { type EventHostingGroupService, EventHostingGroupServiceImpl } from "./event/event-hosting-group-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
-import {
-  type NTNUStudyplanRepository,
-  NTNUStudyplanRepositoryImpl,
-} from "./external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
@@ -42,6 +38,7 @@ import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
 import { type MarkService, MarkServiceImpl } from "./mark/mark-service"
 import { type PersonalMarkRepository, PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository"
 import { type PersonalMarkService, PersonalMarkServiceImpl } from "./mark/personal-mark-service"
+import { getNTNUStudyplanRepository } from "./ntnu-study-plan/ntnu-study-plan-repository"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
 import { type PaymentRepository, PaymentRepositoryImpl } from "./payment/payment-repository"
@@ -117,7 +114,7 @@ export const createServiceLayer = async ({
   const articleTagRepository = getArticleTagRepository()
   const articleTagLinkRepository = getArticleTagLinkRepository()
   const feideGroupsRepository = getFeideGroupsRepository()
-  const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
+  const ntnuStudyplanRepository = getNTNUStudyplanRepository()
 
   const userService = getUserService(
     userRepository,
