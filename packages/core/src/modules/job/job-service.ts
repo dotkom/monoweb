@@ -1,3 +1,4 @@
+import type { DBHandle } from "@dotkomonline/db"
 import type { Job, JobId, JobName, JobScheduledAt, JobStatus, JobWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import type { z } from "zod"
@@ -8,17 +9,22 @@ import { payloadHandler } from "./payload/index"
 type PayloadOf<Job extends JobName> = z.infer<(typeof payloadHandler)[Job]["schema"]>
 
 export type JobService = {
-  getById: (jobId: JobId) => Promise<Job | null>
-  getAllProcessableJobs: () => Promise<Job[]>
+  getById(handle: DBHandle, jobId: JobId): Promise<Job | null>
+  getAllProcessableJobs(handle: DBHandle): Promise<Job[]>
   /**
    * Updates a job
    *
    * @throws {JobNotFound} If `data.name` is not provided and the job with the given ID does not exist
    */
-  update: (jobId: JobId, data: Partial<JobWrite>) => Promise<Job>
-  process: (jobId: JobId, data: Partial<JobWrite>) => Promise<Job>
-  cancel: (jobId: JobId) => Promise<Job>
-
+  update(handle: DBHandle, jobId: JobId, data: Partial<JobWrite>, oldState: JobStatus): Promise<Job>
+  process(handle: DBHandle, jobId: JobId, data: Partial<JobWrite>): Promise<Job>
+  cancel(handle: DBHandle, jobId: JobId): Promise<Job>
+  scheduleAttemptReserveAttendeeJob(
+    handle: DBHandle,
+    scheduleAt: JobScheduledAt,
+    payload: PayloadOf<"ATTEMPT_RESERVE_ATTENDEE">
+  ): Promise<Job>
+  scheduleMergePoolsJob(handle: DBHandle, scheduleAt: JobScheduledAt, payload: PayloadOf<"MERGE_POOLS">): Promise<Job>
   /**
    * Parses the payload for a job
    *
@@ -26,107 +32,73 @@ export type JobService = {
    * @throws {PayloadHandlerNotFoundError} If the payload handler for the job is not found
    * @throws {JobPayloadValidationError} If the payload is invalid
    */
-  parsePayload: <Job extends JobName>(jobName: Job, payload: JsonValue) => PayloadOf<Job>
-
-  scheduleAttemptReserveAttendeeJob: (
-    scheduleAt: JobScheduledAt,
-    payload: PayloadOf<"ATTEMPT_RESERVE_ATTENDEE">
-  ) => Promise<Job>
-  scheduleMergePoolsJob: (scheduleAt: JobScheduledAt, payload: PayloadOf<"MERGE_POOLS">) => Promise<Job>
+  parsePayload<Name extends JobName>(jobName: Name, payload: JsonValue): PayloadOf<Name>
 }
 
-export class JobServiceImpl implements JobService {
-  private readonly jobRepository: JobRepository
-
-  constructor(jobsRepository: JobRepository) {
-    this.jobRepository = jobsRepository
-  }
-
-  private async create(data: JobWrite) {
-    let payload = data.payload
-
-    if (data.payload) {
-      payload = this.parsePayload(data.name, data.payload)
-    }
-
-    return await this.jobRepository.create({ ...data, payload })
-  }
-
-  public async update(jobId: JobId, data: Partial<JobWrite>, oldState?: JobStatus) {
-    let jobData: Partial<JobWrite> = data
-
-    const existingJob = await this.jobRepository.getById(jobId)
-
-    if (!existingJob) {
-      throw new JobNotFound(`Job with id ${jobId} not found`)
-    }
-
-    if (data.payload) {
-      const name = data.name || existingJob?.name
-
-      if (!name) {
+export function getJobService(jobRepository: JobRepository): JobService {
+  return {
+    async getById(handle, jobId) {
+      return await jobRepository.getById(handle, jobId)
+    },
+    async getAllProcessableJobs(handle) {
+      return await jobRepository.getAllProcessableJobs(handle)
+    },
+    async update(handle, jobId, data, oldState) {
+      let jobData: Partial<JobWrite> = data
+      const existingJob = await jobRepository.getById(handle, jobId)
+      if (!existingJob) {
         throw new JobNotFound(`Job with id ${jobId} not found`)
       }
 
-      const payload = this.parsePayload(name, data.payload)
+      if (data.payload) {
+        const name = data.name || existingJob?.name
+        if (!name) {
+          throw new JobNotFound(`Job with id ${jobId} not found`)
+        }
 
-      jobData = { ...data, payload }
-    }
+        const payload = this.parsePayload(name, data.payload)
+        jobData = { ...data, payload }
+      }
 
-    const job = await this.jobRepository.update(jobId, jobData, oldState)
-    if (job === null) {
-      throw new JobNotFound(`Job with id ${jobId} has wrong state: ${existingJob.status}`)
-    }
+      const job = await jobRepository.update(handle, jobId, jobData, oldState)
+      if (job === null) {
+        throw new JobNotFound(`Job with id ${jobId} has wrong state: ${existingJob.status}`)
+      }
 
-    return job
-  }
+      return job
+    },
+    async process(handle, jobId, data) {
+      return await this.update(handle, jobId, { ...data, processedAt: new Date() }, "PENDING")
+    },
+    async cancel(handle, jobId) {
+      return await this.process(handle, jobId, { status: "CANCELED" })
+    },
+    async scheduleAttemptReserveAttendeeJob(handle, scheduledAt, payload) {
+      return await jobRepository.create(handle, {
+        ...this.parsePayload("ATTEMPT_RESERVE_ATTENDEE", payload),
+        name: "ATTEMPT_RESERVE_ATTENDEE",
+        scheduledAt,
+      })
+    },
+    async scheduleMergePoolsJob(handle, scheduledAt, payload) {
+      return await jobRepository.create(handle, {
+        ...this.parsePayload("MERGE_POOLS", payload),
+        name: "MERGE_POOLS",
+        scheduledAt,
+      })
+    },
+    parsePayload<Name extends JobName>(jobName: Name, payload: JsonValue) {
+      if (!payload) {
+        throw new PayloadNotFoundError(jobName)
+      }
 
-  public async process(jobId: JobId, data: Partial<JobWrite>) {
-    return await this.update(jobId, { ...data, processedAt: new Date() }, "PENDING")
-  }
+      const handler = payloadHandler[jobName]
 
-  public async getById(jobId: JobId) {
-    return await this.jobRepository.getById(jobId)
-  }
+      if (!handler) {
+        throw new PayloadHandlerNotFoundError(jobName)
+      }
 
-  public async getAllProcessableJobs() {
-    return await this.jobRepository.getAllProcessableJobs()
-  }
-
-  public async cancel(jobId: JobId) {
-    return await this.process(jobId, { status: "CANCELED" })
-  }
-
-  public parsePayload<Name extends JobName>(jobName: Name, payload: JsonValue) {
-    if (!payload) {
-      throw new PayloadNotFoundError(jobName)
-    }
-
-    const handler = payloadHandler[jobName]
-
-    if (!handler) {
-      throw new PayloadHandlerNotFoundError(jobName)
-    }
-
-    return handler.parser(payload)
-  }
-
-  public async scheduleAttemptReserveAttendeeJob(
-    scheduledAt: JobScheduledAt,
-    payload: PayloadOf<"ATTEMPT_RESERVE_ATTENDEE">
-  ) {
-    return await this.create({
-      name: "ATTEMPT_RESERVE_ATTENDEE",
-      scheduledAt,
-      payload,
-    })
-  }
-
-  public async scheduleMergePoolsJob(scheduledAt: JobScheduledAt, payload: PayloadOf<"MERGE_POOLS">) {
-    return await this.create({
-      name: "MERGE_POOLS",
-      scheduledAt,
-      payload,
-    })
+      return handler.parser(payload)
+    },
   }
 }

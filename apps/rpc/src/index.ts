@@ -59,7 +59,7 @@ const serviceLayer = await createServiceLayer({
   managementClient: auth0Client,
 })
 
-serviceLayer.jobExecutor.initialize()
+serviceLayer.jobExecutor.initialize(prisma)
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
