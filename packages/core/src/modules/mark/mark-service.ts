@@ -1,3 +1,4 @@
+import type { DBHandle } from "@dotkomonline/db"
 import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
 import { MarkNotFoundError } from "./mark-error"
@@ -9,55 +10,43 @@ export interface MarkService {
    *
    * @throws {MarkNotFoundError} if the mark does not exist
    */
-  getMark(markId: MarkId): Promise<Mark>
-  getMarks(page: Pageable): Promise<Mark[]>
-  createMark(data: MarkWrite): Promise<Mark>
+  getMark(handle: DBHandle, markId: MarkId): Promise<Mark>
+  getMarks(handle: DBHandle, page: Pageable): Promise<Mark[]>
+  createMark(handle: DBHandle, data: MarkWrite): Promise<Mark>
   /**
    * Update a mark by its id
    *
    * @throws {MarkNotFoundError} if the mark does not exist
    */
-  updateMark(markId: MarkId, data: MarkWrite): Promise<Mark>
+  updateMark(handle: DBHandle, markId: MarkId, data: MarkWrite): Promise<Mark>
   /**
    * Delete a mark by its id
    *
    * @throws {MarkNotFoundError} if the mark does not exist
    */
-  deleteMark(markId: MarkId): Promise<Mark>
+  deleteMark(handle: DBHandle, markId: MarkId): Promise<Mark>
 }
 
-export class MarkServiceImpl implements MarkService {
-  private readonly markRepository: MarkRepository
-
-  constructor(markRepository: MarkRepository) {
-    this.markRepository = markRepository
-  }
-
-  public async getMark(markId: MarkId) {
-    const mark = await this.markRepository.getById(markId)
-    if (!mark) {
-      throw new MarkNotFoundError(markId)
-    }
-    return mark
-  }
-
-  public async getMarks(page: Pageable) {
-    const marks = await this.markRepository.getAll(page)
-    return marks
-  }
-
-  public async createMark(data: MarkWrite) {
-    const mark = await this.markRepository.create(data)
-    return mark
-  }
-
-  public async updateMark(markId: MarkId, data: MarkWrite) {
-    const mark = await this.markRepository.update(markId, data)
-    return mark
-  }
-
-  public async deleteMark(markId: MarkId) {
-    const mark = await this.markRepository.delete(markId)
-    return mark
+export function getMarkService(markRepository: MarkRepository): MarkService {
+  return {
+    async getMark(handle, markId) {
+      const mark = await markRepository.getById(handle, markId)
+      if (!mark) {
+        throw new MarkNotFoundError(markId)
+      }
+      return mark
+    },
+    async getMarks(handle, page) {
+      return await markRepository.getAll(handle, page)
+    },
+    async createMark(handle, data) {
+      return await markRepository.create(handle, data)
+    },
+    async updateMark(handle, markId, data) {
+      return await markRepository.update(handle, markId, data)
+    },
+    async deleteMark(handle, markId) {
+      return await markRepository.delete(handle, markId)
+    },
   }
 }
