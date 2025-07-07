@@ -34,10 +34,10 @@ import { getJobListingService } from "./job-listing/job-listing-service"
 import { JobExecutor } from "./job/job-executor"
 import { getJobRepository } from "./job/job-repository"
 import { getJobService } from "./job/job-service"
-import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
-import { type MarkService, MarkServiceImpl } from "./mark/mark-service"
-import { type PersonalMarkRepository, PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository"
-import { type PersonalMarkService, PersonalMarkServiceImpl } from "./mark/personal-mark-service"
+import { getMarkRepository } from "./mark/mark-repository"
+import { getMarkService } from "./mark/mark-service"
+import { getPersonalMarkRepository } from "./mark/personal-mark-repository"
+import { getPersonalMarkService } from "./mark/personal-mark-service"
 import { getNTNUStudyplanRepository } from "./ntnu-study-plan/ntnu-study-plan-repository"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
@@ -97,8 +97,8 @@ export const createServiceLayer = async ({
   const paymentRepository = getPaymentRepository()
   const productPaymentProviderRepository = getProductPaymentProviderRepository()
   const refundRequestRepository = getRefundRequestRepository()
-  const markRepository: MarkRepository = new MarkRepositoryImpl(db)
-  const personalMarkRepository: PersonalMarkRepository = new PersonalMarkRepositoryImpl(db)
+  const markRepository = getMarkRepository()
+  const personalMarkRepository = getPersonalMarkRepository()
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
   const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const offlineRepository = getOfflineRepository()
@@ -163,8 +163,8 @@ export const createServiceLayer = async ({
     productRepository,
     paymentService
   )
-  const markService: MarkService = new MarkServiceImpl(markRepository)
-  const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
+  const markService = getMarkService(markRepository)
+  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService)
   const offlineService = getOfflineService(offlineRepository, s3Repository)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
 
