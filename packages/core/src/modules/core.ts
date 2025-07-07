@@ -41,20 +41,14 @@ import { type PersonalMarkService, PersonalMarkServiceImpl } from "./mark/person
 import { getNTNUStudyplanRepository } from "./ntnu-study-plan/ntnu-study-plan-repository"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
-import { type PaymentRepository, PaymentRepositoryImpl } from "./payment/payment-repository"
-import { type PaymentService, PaymentServiceImpl } from "./payment/payment-service"
-import {
-  type ProductPaymentProviderRepository,
-  ProductPaymentProviderRepositoryImpl,
-} from "./payment/product-payment-provider-repository"
-import {
-  type ProductPaymentProviderService,
-  ProductPaymentProviderServiceImpl,
-} from "./payment/product-payment-provider-service"
-import { type ProductRepository, ProductRepositoryImpl } from "./payment/product-repository"
-import { type ProductService, ProductServiceImpl } from "./payment/product-service"
-import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
-import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
+import { getPaymentRepository } from "./payment/payment-repository"
+import { getPaymentService } from "./payment/payment-service"
+import { getProductPaymentProviderRepository } from "./payment/product-payment-provider-repository"
+import { getProductPaymentProviderService } from "./payment/product-payment-provider-service"
+import { getProductRepository } from "./payment/product-repository"
+import { getProductService } from "./payment/product-service"
+import { getRefundRequestRepository } from "./payment/refund-request-repository"
+import { getRefundRequestService } from "./payment/refund-request-service"
 import { getNotificationPermissionsRepository } from "./user/notification-permissions-repository"
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
@@ -99,12 +93,10 @@ export const createServiceLayer = async ({
   const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
   const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db)
 
-  const productRepository: ProductRepository = new ProductRepositoryImpl(db)
-  const paymentRepository: PaymentRepository = new PaymentRepositoryImpl(db)
-  const productPaymentProviderRepository: ProductPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(
-    db
-  )
-  const refundRequestRepository: RefundRequestRepository = new RefundRequestRepositoryImpl(db)
+  const productRepository = getProductRepository()
+  const paymentRepository = getPaymentRepository()
+  const productPaymentProviderRepository = getProductPaymentProviderRepository()
+  const refundRequestRepository = getRefundRequestRepository()
   const markRepository: MarkRepository = new MarkRepositoryImpl(db)
   const personalMarkRepository: PersonalMarkRepository = new PersonalMarkRepositoryImpl(db)
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
@@ -156,18 +148,16 @@ export const createServiceLayer = async ({
   )
   const companyService = getCompanyService(companyRepository)
   const companyEventService = getCompanyEventService(companyEventRepository, attendanceService)
-  const productService: ProductService = new ProductServiceImpl(productRepository)
-  const paymentService: PaymentService = new PaymentServiceImpl(
+  const productService = getProductService(productRepository)
+  const paymentService = getPaymentService(
     paymentRepository,
     productRepository,
     eventRepository,
     refundRequestRepository,
     stripeAccounts
   )
-  const productPaymentProviderService: ProductPaymentProviderService = new ProductPaymentProviderServiceImpl(
-    productPaymentProviderRepository
-  )
-  const refundRequestService: RefundRequestService = new RefundRequestServiceImpl(
+  const productPaymentProviderService = getProductPaymentProviderService(productPaymentProviderRepository)
+  const refundRequestService = getRefundRequestService(
     refundRequestRepository,
     paymentRepository,
     productRepository,

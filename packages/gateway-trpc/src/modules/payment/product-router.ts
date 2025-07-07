@@ -4,12 +4,34 @@ import { z } from "zod"
 import { adminProcedure, t } from "../../trpc"
 
 export const productRouter = t.router({
-  create: adminProcedure.input(ProductWriteSchema).mutation(async ({ input, ctx }) => ctx.productService.create(input)),
-  get: adminProcedure.input(ProductSchema.shape.id).query(async ({ input, ctx }) => ctx.productService.getById(input)),
-  all: adminProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.productService.getProducts(input)),
+  create: adminProcedure
+    .input(ProductWriteSchema)
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.productService.create(handle, input)
+      )
+    ),
+  get: adminProcedure
+    .input(ProductSchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.productService.getById(handle, input)
+      )
+    ),
+  all: adminProcedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.productService.getProducts(handle, input)
+      )
+    ),
   addPaymentProvider: adminProcedure
     .input(ProductPaymentProviderWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.productPaymentProviderService.addPaymentProvider(input)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.productPaymentProviderService.addPaymentProvider(handle, input)
+      )
+    ),
   deletePaymentProvider: adminProcedure
     .input(
       z.object({
@@ -18,11 +40,17 @@ export const productRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.productPaymentProviderService.deletePaymentProvider(input.productId, input.paymentProviderId)
+      ctx.executeTransaction(async (handle) =>
+        ctx.productPaymentProviderService.deletePaymentProvider(handle, input.productId, input.paymentProviderId)
+      )
     ),
   getPaymentProvidersByProductId: adminProcedure
     .input(ProductSchema.shape.id)
-    .query(async ({ input, ctx }) => ctx.productPaymentProviderService.getAllByProductId(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.productPaymentProviderService.getAllByProductId(handle, input)
+      )
+    ),
   hasPaymentProviderId: adminProcedure
     .input(
       z.object({
@@ -31,6 +59,8 @@ export const productRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) =>
-      ctx.productPaymentProviderService.productHasPaymentProviderId(input.productId, input.paymentProviderId)
+      ctx.executeTransaction(async (handle) =>
+        ctx.productPaymentProviderService.productHasPaymentProviderId(handle, input.productId, input.paymentProviderId)
+      )
     ),
 })
