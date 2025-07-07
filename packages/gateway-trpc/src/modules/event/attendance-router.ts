@@ -18,10 +18,19 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendeeService.getByUserId(input.userId, input.attendanceId)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.getByUserId(handle, input.userId, input.attendanceId)
+      )
+    ),
+
   createPool: adminProcedure
     .input(AttendancePoolWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.createPool(input)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.createPool(handle, input)
+      )
+    ),
 
   updatePool: adminProcedure
     .input(
@@ -30,7 +39,11 @@ export const attendanceRouter = t.router({
         input: AttendancePoolWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input: { id, input }, ctx }) => ctx.attendanceService.updatePool(id, input)),
+    .mutation(async ({ input: { id, input }, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.updatePool(handle, id, input)
+      )
+    ),
 
   deletePool: adminProcedure
     .input(
@@ -38,7 +51,11 @@ export const attendanceRouter = t.router({
         id: AttendancePoolSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.deletePool(input.id)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.deletePool(handle, input.id)
+      )
+    ),
 
   adminRegisterForEvent: adminProcedure
     .input(
@@ -49,7 +66,9 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.attendeeService.adminRegisterForEvent(input.userId, input.attendanceId, input.attendancePoolId)
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.adminRegisterForEvent(handle, input.userId, input.attendanceId, input.attendancePoolId)
+      )
     ),
 
   registerForEvent: protectedProcedure
@@ -59,9 +78,11 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      return ctx.attendeeService.registerForEvent(ctx.principal, input.attendanceId, input.attendancePoolId)
-    }),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.registerForEvent(handle, ctx.principal, input.attendanceId, input.attendancePoolId)
+      )
+    ),
 
   deregisterForEvent: protectedProcedure
     .input(
@@ -69,7 +90,11 @@ export const attendanceRouter = t.router({
         attendanceId: AttendancePoolSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.deregisterForEvent(ctx.principal, input.attendanceId)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.deregisterForEvent(handle, ctx.principal, input.attendanceId)
+      )
+    ),
 
   adminDeregisterForEvent: adminProcedure
     .input(
@@ -80,10 +105,12 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.attendeeService.adminDeregisterForEvent(input.attendeeId, {
-        reserveNextAttendee: input.reserveNextAttendee,
-        bypassCriteriaOnReserveNextAttendee: input.bypassCriteriaOnReserveNextAttendee,
-      })
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.adminDeregisterForEvent(handle, input.attendeeId, {
+          reserveNextAttendee: input.reserveNextAttendee,
+          bypassCriteriaOnReserveNextAttendee: input.bypassCriteriaOnReserveNextAttendee,
+        })
+      )
     ),
 
   getSelectionsResults: protectedProcedure
@@ -92,7 +119,11 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionsResponseSummary(input.attendanceId)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.getSelectionsResponseSummary(handle, input.attendanceId)
+      )
+    ),
 
   registerAttendance: protectedProcedure
     .input(
@@ -101,7 +132,11 @@ export const attendanceRouter = t.router({
         attended: z.boolean(),
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.id, input.attended)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.updateAttended(handle, input.id, input.attended)
+      )
+    ),
 
   updateSelectionResponses: protectedProcedure
     .input(
@@ -110,8 +145,10 @@ export const attendanceRouter = t.router({
         options: AttendeeSelectionResponsesSchema,
       })
     )
-    .mutation(
-      async ({ input, ctx }) => await ctx.attendeeService.updateSelectionResponses(input.attendeeId, input.options)
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.updateSelectionResponses(handle, input.attendeeId, input.options)
+      )
     ),
 
   getAttendees: publicProcedure
@@ -120,7 +157,11 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendeeService.getByAttendanceId(input.attendanceId)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.getByAttendanceId(handle, input.attendanceId)
+      )
+    ),
 
   getAttendance: publicProcedure
     .input(
@@ -128,7 +169,11 @@ export const attendanceRouter = t.router({
         id: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.getById(input.id)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.getById(handle, input.id)
+      )
+    ),
 
   updateAttendance: adminProcedure
     .input(
@@ -137,7 +182,11 @@ export const attendanceRouter = t.router({
         attendance: AttendanceWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.update(input.id, input.attendance)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.update(handle, input.id, input.attendance)
+      )
+    ),
 
   mergeAttendancePools: adminProcedure
     .input(
@@ -147,7 +196,9 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.attendanceService.mergeAttendancePools(input.attendanceId, input.attendancePool)
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.mergeAttendancePools(handle, input.attendanceId, input.attendancePool)
+      )
     ),
 
   getSelectionResponseResults: adminProcedure
@@ -156,7 +207,11 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionsResponseSummary(input.attendanceId)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.getSelectionsResponseSummary(handle, input.attendanceId)
+      )
+    ),
 
   getAttendeeStatuses: adminProcedure
     .input(
@@ -165,7 +220,11 @@ export const attendanceRouter = t.router({
         attendanceIds: z.array(AttendanceSchema.shape.id),
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendeeService.getAttendeeStatuses(input.userId, input.attendanceIds)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.getAttendeeStatuses(handle, input.userId, input.attendanceIds)
+      )
+    ),
 
   removeSelectionResponses: adminProcedure
     .input(
@@ -173,5 +232,9 @@ export const attendanceRouter = t.router({
         selectionId: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.removeSelectionResponses(input.selectionId)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.removeSelectionResponses(handle, input.selectionId)
+      )
+    ),
 })
