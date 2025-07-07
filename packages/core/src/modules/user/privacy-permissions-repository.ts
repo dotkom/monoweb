@@ -1,28 +1,22 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db"
 import type { PrivacyPermissions, PrivacyPermissionsWrite, UserId } from "@dotkomonline/types"
 
 export interface PrivacyPermissionsRepository {
-  getByUserId(userId: UserId): Promise<PrivacyPermissions | null>
-  create(data: Partial<PrivacyPermissionsWrite>): Promise<PrivacyPermissions>
-  update(userId: UserId, data: Partial<Omit<PrivacyPermissionsWrite, "userId">>): Promise<PrivacyPermissions | null>
+  getByUserId(handle: DBHandle, userId: UserId): Promise<PrivacyPermissions | null>
+  create(handle: DBHandle, userId: UserId, data: Partial<PrivacyPermissionsWrite>): Promise<PrivacyPermissions>
+  update(handle: DBHandle, userId: UserId, data: Partial<PrivacyPermissionsWrite>): Promise<PrivacyPermissions | null>
 }
 
-export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepository {
-  private readonly db: DBClient
-
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  public async getByUserId(userId: UserId) {
-    return await this.db.privacyPermissions.findUnique({ where: { userId } })
-  }
-
-  public async create(data: PrivacyPermissionsWrite) {
-    return await this.db.privacyPermissions.create({ data })
-  }
-
-  public async update(userId: UserId, data: Partial<Omit<PrivacyPermissionsWrite, "userId">>) {
-    return await this.db.privacyPermissions.update({ data, where: { id: userId } })
+export function getPrivacyPermissionsRepository(): PrivacyPermissionsRepository {
+  return {
+    async getByUserId(handle, userId) {
+      return await handle.privacyPermissions.findUnique({ where: { userId } })
+    },
+    async create(handle, userId, data) {
+      return await handle.privacyPermissions.create({ data: { ...data, userId } })
+    },
+    async update(handle, userId, data) {
+      return await handle.privacyPermissions.update({ where: { userId }, data })
+    },
   }
 }

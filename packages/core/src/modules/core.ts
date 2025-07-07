@@ -58,16 +58,10 @@ import { type ProductRepository, ProductRepositoryImpl } from "./payment/product
 import { type ProductService, ProductServiceImpl } from "./payment/product-service"
 import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
-import {
-  type NotificationPermissionsRepository,
-  NotificationPermissionsRepositoryImpl,
-} from "./user/notification-permissions-repository"
-import {
-  type PrivacyPermissionsRepository,
-  PrivacyPermissionsRepositoryImpl,
-} from "./user/privacy-permissions-repository"
-import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
-import { type UserService, UserServiceImpl } from "./user/user-service"
+import { getNotificationPermissionsRepository } from "./user/notification-permissions-repository"
+import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
+import { getUserRepository } from "./user/user-repository"
+import { getUserService } from "./user/user-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -103,8 +97,7 @@ export const createServiceLayer = async ({
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const eventHostingGroupRepository: EventHostingGroupRepository = new EventHostingGroupRepositoryImpl(db)
-
-  const userRepository: UserRepository = new UserRepositoryImpl(managementClient, db)
+  const userRepository = getUserRepository(managementClient)
 
   const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
   const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db)
@@ -117,9 +110,8 @@ export const createServiceLayer = async ({
   const refundRequestRepository: RefundRequestRepository = new RefundRequestRepositoryImpl(db)
   const markRepository: MarkRepository = new MarkRepositoryImpl(db)
   const personalMarkRepository: PersonalMarkRepository = new PersonalMarkRepositoryImpl(db)
-  const privacyPermissionsRepository: PrivacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
-  const notificationPermissionsRepository: NotificationPermissionsRepository =
-    new NotificationPermissionsRepositoryImpl(db)
+  const privacyPermissionsRepository = getPrivacyPermissionsRepository()
+  const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const offlineRepository = getOfflineRepository()
   const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
@@ -128,7 +120,7 @@ export const createServiceLayer = async ({
   const feideGroupsRepository: NTNUGroupsRepository = new NTNUGroupsRepositoryImpl()
   const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
 
-  const userService: UserService = new UserServiceImpl(
+  const userService = getUserService(
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository,
