@@ -9,11 +9,11 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import { getAcademicYear } from "@dotkomonline/utils"
-import type { NTNUGroupsRepository } from "../external/feide-groups-repository"
 import type {
   NTNUStudyplanRepository,
   StudyplanCourse,
 } from "../external/ntnu-studyplan-repository/ntnu-studyplan-repository"
+import type { FeideGroupsRepository } from "../feide/feide-groups-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { UserNotFoundError } from "./user-error"
@@ -43,7 +43,7 @@ export function getUserService(
   userRepository: UserRepository,
   privacyPermissionsRepository: PrivacyPermissionsRepository,
   notificationPermissionsRepository: NotificationPermissionsRepository,
-  feideGroupsRepository: NTNUGroupsRepository,
+  feideGroupsRepository: FeideGroupsRepository,
   ntnuStudyplanRepository: NTNUStudyplanRepository
 ): UserService {
   function shouldReplaceMembership(currentMembership: Membership | null, newMembership: Membership | null) {
