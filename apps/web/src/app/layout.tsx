@@ -55,13 +55,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          fontTitle.variable,
-          fontBody.variable,
-          "bg-white dark:bg-[#282828] transition-colors duration-1000"
-        )}
-      >
+      <body className={cn(fontTitle.variable, fontBody.variable, "bg-white dark:bg-[#282828] transition-colors")}>
         <SessionProvider session={session}>
           <QueryProvider>
             <ThemeProvider defaultTheme="light" enableSystem={false} attribute="data-theme">
