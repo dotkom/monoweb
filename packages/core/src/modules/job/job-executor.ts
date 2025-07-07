@@ -1,5 +1,6 @@
 import { clearInterval, setInterval } from "node:timers"
 import { inspect } from "node:util"
+import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { minutesToMilliseconds } from "date-fns"
@@ -17,6 +18,8 @@ import type { JobService } from "./job-service"
  * It fetches all processable jobs from the JobService and executes them.
  * - If a job is successfully executed, it marks the job as completed.
  * - If an error occurs during execution, it marks the job as failed.
+ *
+ * TODO: Turn this into an interface to abstract over in-memory vs SQS
  */
 export class JobExecutor {
   private readonly logger = getLogger("job-executor")
@@ -34,25 +37,25 @@ export class JobExecutor {
     this.attendanceService = attendanceService
   }
 
-  private async markCompleted(jobId: string, jobName: string) {
+  private async markCompleted(handle: DBHandle, jobId: string, jobName: string) {
     this.logger.info(`Job ${jobId} (${jobName}) completed successfully.`)
 
-    await this.jobService.process(jobId, { status: "COMPLETED" })
+    await this.jobService.process(handle, jobId, { status: "COMPLETED" })
   }
 
-  private async markFailed(jobId: string, jobName: string, error: Error) {
+  private async markFailed(handle: DBHandle, jobId: string, jobName: string, error: Error) {
     this.logger.error(`Error processing job ${jobId} (${jobName}):\n${inspect(error)}`)
-    await this.jobService.process(jobId, { status: "FAILED" })
+    await this.jobService.process(handle, jobId, { status: "FAILED" })
   }
 
-  private async executeAllProcessableJobs() {
+  private async executeAllProcessableJobs(handle: DBHandle) {
     if (this.running) {
       return
     }
 
     this.running = true
 
-    const jobs = await this.jobService.getAllProcessableJobs()
+    const jobs = await this.jobService.getAllProcessableJobs(handle)
 
     for (const job of jobs) {
       try {
@@ -72,11 +75,11 @@ export class JobExecutor {
           }
         }
       } catch (error) {
-        this.markFailed(job.id, job.name, error as Error)
+        this.markFailed(handle, job.id, job.name, error as Error)
         continue
       }
 
-      this.markCompleted(job.id, job.name)
+      this.markCompleted(handle, job.id, job.name)
     }
 
     this.running = false
@@ -90,15 +93,14 @@ export class JobExecutor {
    * @see {@link JobExecutor.stop}
    * @throws {JobExecutorAlreadyInitializedError} if the executor is already initialized.
    */
-  public initialize() {
+  public initialize(handle: DBHandle) {
     if (this.intervalId) {
       throw new JobExecutorAlreadyInitializedError()
     }
-
-    this.executeAllProcessableJobs() // setInterval does not run immediately
-
+    // setInterval does not run immediately
+    this.executeAllProcessableJobs(handle)
     this.intervalId = setInterval(async () => {
-      await this.executeAllProcessableJobs()
+      await this.executeAllProcessableJobs(handle)
     }, minutesToMilliseconds(1))
   }
 

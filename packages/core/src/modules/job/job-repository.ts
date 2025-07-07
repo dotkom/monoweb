@@ -1,79 +1,69 @@
-import type { DBClient, JobStatus } from "@dotkomonline/db"
+import type { DBHandle, JobStatus } from "@dotkomonline/db"
 import type { Job, JobId, JobWrite } from "@dotkomonline/types"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 
 export interface JobRepository {
-  create(data: JobWrite): Promise<Job>
-  createMany(data: JobWrite[]): Promise<Job[]>
-  update(jobId: string, data: Partial<JobWrite>, oldState?: JobStatus): Promise<Job | null>
-  delete(jobId: JobId): Promise<void>
-  getById(jobId: JobId): Promise<Job | null>
-  getAll(): Promise<Job[]>
+  create(handle: DBHandle, data: JobWrite): Promise<Job>
+  createMany(handle: DBHandle, data: JobWrite[]): Promise<Job[]>
+  update(handle: DBHandle, jobId: string, data: Partial<JobWrite>, oldState?: JobStatus): Promise<Job | null>
+  delete(handle: DBHandle, jobId: JobId): Promise<void>
+  getById(handle: DBHandle, jobId: JobId): Promise<Job | null>
+  getAll(handle: DBHandle): Promise<Job[]>
 
   /**
    * Get all jobs that are processable. A job is processable if:
    * - It is scheduled to run at or before the current time
    * - Its status is "PENDING"
    */
-  getAllProcessableJobs(): Promise<Job[]>
+  getAllProcessableJobs(handle: DBHandle): Promise<Job[]>
 }
 
-export class JobsRepositoryImpl implements JobRepository {
-  private readonly db: DBClient
-
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  public async create(data: JobWrite) {
-    return await this.db.job.create({ data: { ...data, payload: data.payload ?? undefined } })
-  }
-
-  public async createMany(data: JobWrite[]) {
-    return await this.db.job.createManyAndReturn({
-      data: data.map((job) => ({ ...job, payload: job.payload ?? undefined })),
-    })
-  }
-
-  public async update(jobId: JobId, data: Partial<JobWrite>, oldStatus?: JobStatus) {
-    try {
-      return await this.db.job.update({
-        where: { id: jobId, status: oldStatus ? { equals: oldStatus } : undefined },
-        data: { ...data, payload: data.payload ?? undefined },
+export function getJobRepository(): JobRepository {
+  return {
+    async create(handle, data) {
+      return await handle.job.create({ data: { ...data, payload: data.payload ?? undefined } })
+    },
+    async createMany(handle, data) {
+      return await handle.job.createManyAndReturn({
+        data: data.map((job) => ({ ...job, payload: job.payload ?? undefined })),
       })
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
-        if (e.code === "P2025") {
-          return null
+    },
+    async update(handle, jobId, data, oldStatus) {
+      try {
+        return await handle.job.update({
+          where: { id: jobId, status: oldStatus ? { equals: oldStatus } : undefined },
+          data: { ...data, payload: data.payload ?? undefined },
+        })
+      } catch (e) {
+        if (e instanceof PrismaClientKnownRequestError) {
+          // "An operation failed because it depends on one or more records that were required but not found. {cause}"
+          if (e.code === "P2025") {
+            return null
+          }
         }
+        throw e
       }
-
-      throw e
-    }
-  }
-
-  public async delete(jobId: JobId) {
-    await this.db.job.delete({
-      where: { id: jobId },
-    })
-  }
-
-  public async getById(jobId: JobId) {
-    return await this.db.job.findUnique({
-      where: { id: jobId },
-    })
-  }
-
-  public async getAll() {
-    return await this.db.job.findMany()
-  }
-
-  public async getAllProcessableJobs() {
-    return await this.db.job.findMany({
-      where: {
-        scheduledAt: { lte: new Date() },
-        status: "PENDING",
-      },
-    })
+    },
+    async delete(handle, jobId) {
+      await handle.job.delete({
+        where: { id: jobId },
+      })
+    },
+    async getById(handle, jobId) {
+      return await handle.job.findUnique({
+        where: { id: jobId },
+      })
+    },
+    async getAll(handle) {
+      return await handle.job.findMany()
+    },
+    async getAllProcessableJobs(handle) {
+      return await handle.job.findMany({
+        where: {
+          scheduledAt: { lte: new Date() },
+          status: "PENDING",
+        },
+      })
+    },
   }
 }
