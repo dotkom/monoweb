@@ -9,11 +9,8 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import { getAcademicYear } from "@dotkomonline/utils"
-import type {
-  NTNUStudyplanRepository,
-  StudyplanCourse,
-} from "../external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import type { FeideGroupsRepository } from "../feide/feide-groups-repository"
+import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { UserNotFoundError } from "./user-error"
@@ -44,7 +41,7 @@ export function getUserService(
   privacyPermissionsRepository: PrivacyPermissionsRepository,
   notificationPermissionsRepository: NotificationPermissionsRepository,
   feideGroupsRepository: FeideGroupsRepository,
-  ntnuStudyplanRepository: NTNUStudyplanRepository
+  ntnuStudyPlanRepository: NTNUStudyPlanRepository
 ): UserService {
   function shouldReplaceMembership(currentMembership: Membership | null, newMembership: Membership | null) {
     if (!newMembership) {
@@ -86,7 +83,7 @@ export function getUserService(
     const studyLength = masterProgramme ? 2 : 3
     // Get the newest study plan we can be sure is complete
     const studyplanYear = getAcademicYear(new Date()) - studyLength
-    const studyplanCourses = await ntnuStudyplanRepository.getStudyplanCourses(relevantProgramme.code, studyplanYear)
+    const studyplanCourses = await ntnuStudyPlanRepository.getStudyPlanCourses(relevantProgramme.code, studyplanYear)
 
     const estimatedStudyGrade = await estimateStudyGrade(studyplanCourses, courses)
     const estimatedStudyYear = getAcademicYear(new Date()) - estimatedStudyGrade + 1
