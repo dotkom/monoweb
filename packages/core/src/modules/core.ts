@@ -29,8 +29,8 @@ import {
   NTNUStudyplanRepositoryImpl,
 } from "./external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
-import { type GroupRepository, GroupRepositoryImpl } from "./group/group-repository"
-import { type GroupService, GroupServiceImpl } from "./group/group-service"
+import { getGroupRepository } from "./group/group-repository"
+import { getGroupService } from "./group/group-service"
 import { getInterestGroupRepository } from "./interest-group/interest-group-repository"
 import { getInterestGroupService } from "./interest-group/interest-group-service"
 import { type JobListingRepository, JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
@@ -97,7 +97,7 @@ export const createServiceLayer = async ({
 
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
-  const groupRepository: GroupRepository = new GroupRepositoryImpl(db)
+  const groupRepository = getGroupRepository()
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
   const companyRepository: CompanyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
@@ -139,7 +139,7 @@ export const createServiceLayer = async ({
   const eventHostingGroupService: EventHostingGroupService = new EventHostingGroupServiceImpl(
     eventHostingGroupRepository
   )
-  const groupService: GroupService = new GroupServiceImpl(groupRepository)
+  const groupService = getGroupService(groupRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
 
   const attendeeService: AttendeeService = new AttendeeServiceImpl(
