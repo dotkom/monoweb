@@ -3,13 +3,14 @@ import type { Event, Payment, Product } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
 import Stripe from "stripe"
 import { describe, vi } from "vitest"
-import { EventRepositoryImpl } from "../../event/event-repository"
+import { dbClient } from "../../../../vitest-integration.setup"
+import { getEventRepository } from "../../event/event-repository"
 import { InvalidPaymentStatusError, UnrefundablePaymentError } from "../payment-error"
-import { PaymentRepositoryImpl } from "../payment-repository"
-import { PaymentServiceImpl } from "../payment-service"
-import { ProductRepositoryImpl } from "../product-repository"
+import { getPaymentRepository } from "../payment-repository"
+import { getPaymentService } from "../payment-service"
+import { getProductRepository } from "../product-repository"
 import { RefundRequestNotFoundError } from "../refund-request-error"
-import { RefundRequestRepositoryImpl } from "../refund-request-repository"
+import { getRefundRequestRepository } from "../refund-request-repository"
 import { paymentProvidersPayload } from "./product-payment-provider.spec"
 import { productPayload } from "./product-service.spec"
 
@@ -198,10 +199,10 @@ const stripeResponseRefundPayload: Stripe.Response<Stripe.Refund> = {
 
 describe("PaymentService", () => {
   const db = vi.mocked(PrismaClient.prototype)
-  const paymentRepository = new PaymentRepositoryImpl(db)
-  const productRepository = new ProductRepositoryImpl(db)
-  const eventRepository = new EventRepositoryImpl(db)
-  const refundRequestRepository = new RefundRequestRepositoryImpl(db)
+  const paymentRepository = getPaymentRepository()
+  const productRepository = getProductRepository()
+  const eventRepository = getEventRepository()
+  const refundRequestRepository = getRefundRequestRepository()
   const stripe = new Stripe("doesntmatter", { apiVersion: "2023-08-16" })
   const stripeAccounts = {
     doesntmatter: {
@@ -210,7 +211,7 @@ describe("PaymentService", () => {
       webhookSecret: "doesntmatterWebhookSecret",
     },
   }
-  const paymentService = new PaymentServiceImpl(
+  const paymentService = getPaymentService(
     paymentRepository,
     productRepository,
     eventRepository,
@@ -245,6 +246,7 @@ describe("PaymentService", () => {
     // test that a valid payment provider is required
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(productPayloadExtended)
     const call = paymentService.createStripeCheckoutSessionForProductId(
+      dbClient,
       productPayloadExtended.id,
       "obviouslyInvalidPaymentProviderId",
       "https://example.com/successRedirectUrl",
@@ -260,6 +262,7 @@ describe("PaymentService", () => {
     vi.spyOn(paymentRepository, "create").mockResolvedValueOnce(paymentPayloadExtended)
     expect(
       await paymentService.createStripeCheckoutSessionForProductId(
+        dbClient,
         productPayloadExtended.id,
         productPayloadExtended.paymentProviders.at(0)?.paymentProviderId ?? "",
         "https://example.com/successRedirectUrl",
@@ -279,7 +282,7 @@ describe("PaymentService", () => {
       status: "PAID",
     })
     await expect(
-      paymentService.fulfillStripeCheckoutSession(sessionId, paymentProviderOrderId as string)
+      paymentService.fulfillStripeCheckoutSession(dbClient, sessionId, paymentProviderOrderId as string)
     ).resolves.toEqual(undefined)
     expect(paymentRepository.updateByPaymentProviderSessionId).toHaveBeenCalledWith(sessionId, {
       status: "PAID",
@@ -291,7 +294,7 @@ describe("PaymentService", () => {
     vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "PAID" })
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: false })
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
+    const call = paymentService.refundPaymentById(dbClient, paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).rejects.toThrow(UnrefundablePaymentError)
   })
 
@@ -299,7 +302,7 @@ describe("PaymentService", () => {
     vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "UNPAID" })
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: true })
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
+    const call = paymentService.refundPaymentById(dbClient, paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).rejects.toThrow(InvalidPaymentStatusError)
   })
 
@@ -307,7 +310,7 @@ describe("PaymentService", () => {
     vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "REFUNDED" })
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: true })
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
+    const call = paymentService.refundPaymentById(dbClient, paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).rejects.toThrow(InvalidPaymentStatusError)
   })
 
@@ -320,7 +323,7 @@ describe("PaymentService", () => {
     })
     vi.spyOn(refundRequestRepository, "getByPaymentId").mockResolvedValueOnce(null)
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
+    const call = paymentService.refundPaymentById(dbClient, paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).rejects.toThrow(RefundRequestNotFoundError)
   })
 
@@ -340,7 +343,7 @@ describe("PaymentService", () => {
     vi.spyOn(stripe.refunds, "create").mockResolvedValueOnce(stripeResponseRefundPayload)
     vi.spyOn(paymentRepository, "update").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "REFUNDED" })
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
+    const call = paymentService.refundPaymentById(dbClient, paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).resolves.toEqual(undefined)
     expect(paymentRepository.update).toHaveBeenCalledWith(paymentPayloadExtended.id, { status: "REFUNDED" })
   })

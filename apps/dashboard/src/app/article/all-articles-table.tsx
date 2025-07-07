@@ -60,7 +60,7 @@ export const AllArticlesTable = ({ articles }: AllArticlesTableProps) => {
         cell: (info) => (
           <Group>
             {info.row.original.tags.map((tag) => (
-              <span key={tag}>{tag}</span>
+              <span key={tag.name}>{tag.name}</span>
             ))}
           </Group>
         ),

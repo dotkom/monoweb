@@ -33,8 +33,8 @@ export const ArticleListItem: FC<ArticleListItemProps> = ({ article, orientation
         {orientation === "horizontal" && (
           <div className="flex flex-wrap gap-2 mt-2 max-sm:hidden">
             {article.tags.map((tag) => (
-              <Text key={tag} className="text-xs text-slate-12 bg-slate-3 dark:bg-slate-6 px-2 py-1 rounded-xl">
-                {tag}
+              <Text key={tag.name} className="text-xs text-slate-12 bg-slate-3 dark:bg-slate-6 px-2 py-1 rounded-xl">
+                {tag.name}
               </Text>
             ))}
           </div>

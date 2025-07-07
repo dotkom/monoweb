@@ -9,10 +9,12 @@ export const JobListingEditCard: FC = () => {
 
   const FormComponent = useJobListingWriteForm({
     label: "Endre stillingsannonse",
-    onSubmit: (data) => {
+    onSubmit: ({ locationIds, companyId, ...data }) => {
       edit.mutate({
         id: jobListing.id,
         input: data,
+        locationIds,
+        companyId,
       })
     },
     defaultValues: {
@@ -28,7 +30,7 @@ export const JobListingEditCard: FC = () => {
       deadlineAsap: jobListing.deadlineAsap,
       employment: jobListing.employment,
       featured: jobListing.featured,
-      locations: jobListing.locations,
+      locationIds: jobListing.locations.map((location) => location.name),
     },
   })
   return <FormComponent />

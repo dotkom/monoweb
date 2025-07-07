@@ -2,13 +2,13 @@ import { randomUUID } from "node:crypto"
 import type { Company } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
 import { describe, vi } from "vitest"
-import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "../event-company-repository"
-import { type EventCompanyService, EventCompanyServiceImpl } from "../event-company-service"
+import { getEventCompanyRepository } from "../event-company-repository"
+import { getEventCompanyService } from "../event-company-service"
 
 describe("EventCompanyService", () => {
   const db = vi.mocked(PrismaClient.prototype)
-  const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
-  const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
+  const eventCompanyRepository = getEventCompanyRepository()
+  const eventCompanyService = getEventCompanyService(eventCompanyRepository)
 
   const bekk: Company = {
     createdAt: new Date(),
@@ -27,31 +27,31 @@ describe("EventCompanyService", () => {
   it("creates links a company to an event", async () => {
     const id = randomUUID()
     vi.spyOn(eventCompanyRepository, "createCompany").mockResolvedValueOnce(undefined)
-    const event = await eventCompanyService.createCompany(id, bekk.id)
+    const event = await eventCompanyService.createCompany(db, id, bekk.id)
     expect(event).toEqual(undefined)
-    expect(eventCompanyRepository.createCompany).toHaveBeenCalledWith(id, bekk.id)
+    expect(eventCompanyRepository.createCompany).toHaveBeenCalledWith(db, id, bekk.id)
   })
 
   it("gets all companies related to an event", async () => {
     const id = randomUUID()
     vi.spyOn(eventCompanyRepository, "getCompaniesByEventId").mockResolvedValueOnce([bekk])
-    const companies = await eventCompanyService.getCompaniesByEventId(id)
+    const companies = await eventCompanyService.getCompaniesByEventId(db, id)
     expect(companies).toEqual([bekk])
-    expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(id)
+    expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(db, id)
   })
 
   it("deletes companies from an event", async () => {
     const id = randomUUID()
     vi.spyOn(eventCompanyRepository, "deleteCompany").mockResolvedValueOnce(undefined)
-    const companies = await eventCompanyService.deleteCompany(id, bekk.id)
+    const companies = await eventCompanyService.deleteCompany(db, id, bekk.id)
     expect(companies).toEqual(undefined)
-    expect(eventCompanyRepository.deleteCompany).toHaveBeenCalledWith(id, bekk.id)
+    expect(eventCompanyRepository.deleteCompany).toHaveBeenCalledWith(db, id, bekk.id)
   })
 
   it("silently deletes missing links", async () => {
     const id = randomUUID()
     vi.spyOn(eventCompanyRepository, "deleteCompany").mockResolvedValueOnce(undefined)
-    await eventCompanyService.deleteCompany(id, bekk.id)
-    expect(eventCompanyRepository.deleteCompany).toHaveBeenCalledWith(id, bekk.id)
+    await eventCompanyService.deleteCompany(db, id, bekk.id)
+    expect(eventCompanyRepository.deleteCompany).toHaveBeenCalledWith(db, id, bekk.id)
   })
 })

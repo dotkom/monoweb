@@ -7,8 +7,12 @@ export const CreateJobListingModal: FC<ContextModalProps> = ({ context, id }) =>
   const close = () => context.closeModal(id)
   const create = useCreateJobListingMutation()
   const FormComponent = useJobListingWriteForm({
-    onSubmit: (data) => {
-      create.mutate(data)
+    onSubmit: ({ locationIds, companyId, ...data }) => {
+      create.mutate({
+        input: data,
+        locationIds,
+        companyId,
+      })
       close()
     },
   })

@@ -52,7 +52,7 @@ export const JobListingView: FC<JobListingViewProps> = ({ jobListing }: JobListi
         <div className="bg-slate-9 mb-7 mt-3 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <Icon icon="mdi:globe" className="text-blue-9" width={20} height={20} />
-          <p className="m-0 pl-2">{locations}</p>
+          <p className="m-0 pl-2">{locations.map((location) => location.name)}</p>
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">

@@ -22,7 +22,7 @@ const getLocations = (jobListings: JobListing[]) => {
   const locations = new Set<string>()
   for (const jobListing of jobListings) {
     for (const location of jobListing.locations) {
-      locations.add(location)
+      locations.add(location.name)
     }
   }
 

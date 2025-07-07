@@ -76,7 +76,7 @@ export function getEventService(
     async getAttendanceEventsByGroupId(handle, groupId, page) {
       const events = await eventRepository.getAllByHostingGroupId(handle, groupId, page)
       const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
-      const attendances = await attendanceService.getByIds(attendanceIds)
+      const attendances = await attendanceService.getByIds(handle, attendanceIds)
       const attendanceEvents: AttendanceEvent[] = events.map((event) => {
         const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
         return { ...event, attendance }
@@ -87,7 +87,7 @@ export function getEventService(
     async getAttendanceEventsByInterestGroupId(handle, interestGroupId, page) {
       const events = await eventRepository.getAllByInterestGroupId(handle, interestGroupId, page)
       const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
-      const attendances = await attendanceService.getByIds(attendanceIds)
+      const attendances = await attendanceService.getByIds(handle, attendanceIds)
       const attendanceEvents: AttendanceEvent[] = events.map((event) => {
         const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
         return { ...event, attendance }
@@ -96,13 +96,13 @@ export function getEventService(
       return attendanceEvents
     },
     async addAttendance(handle, eventId, data) {
-      const attendance = await attendanceService.create(data)
+      const attendance = await attendanceService.create(handle, data)
       return await eventRepository.addAttendance(handle, eventId, attendance.id)
     },
     async getEventDetail(handle, eventId) {
       const event = await this.getEventById(handle, eventId)
       const hostingCompanies = await eventCompanyService.getCompaniesByEventId(handle, event.id)
-      const attendance = event.attendanceId ? await attendanceService.getById(event.attendanceId) : null
+      const attendance = event.attendanceId ? await attendanceService.getById(handle, event.attendanceId) : null
 
       const hostingGroups = await eventHostingGroupService.getHostingGroupsForEvent(handle, event.id)
       const hostingInterestGroups = await interestGroupService.getAllByEventId(handle, event.id)

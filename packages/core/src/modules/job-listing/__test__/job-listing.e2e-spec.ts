@@ -9,7 +9,7 @@ describe("job-listings", async () => {
   let company: Company
 
   beforeEach(async () => {
-    company = await core.companyService.createCompany(getCompanyMock())
+    company = await core.companyService.createCompany(dbClient, getCompanyMock())
   })
 
   it("can create new job listings", async () => {

@@ -61,12 +61,12 @@ export class JobExecutor {
       try {
         switch (job.name) {
           case "ATTEMPT_RESERVE_ATTENDEE": {
-            await this.runAttemptReserveAttendeeJob(job.payload)
+            await this.runAttemptReserveAttendeeJob(handle, job.payload)
             break
           }
 
           case "MERGE_POOLS": {
-            await this.runMergePoolsJob(job.payload)
+            await this.runMergePoolsJob(handle, job.payload)
             break
           }
 
@@ -121,16 +121,16 @@ export class JobExecutor {
     this.running = false
   }
 
-  private async runAttemptReserveAttendeeJob(payload: JsonValue) {
+  private async runAttemptReserveAttendeeJob(handle: DBHandle, payload: JsonValue) {
     const { userId, attendanceId } = this.jobService.parsePayload("ATTEMPT_RESERVE_ATTENDEE", payload)
 
-    const attendance = await this.attendanceService.getById(attendanceId)
+    const attendance = await this.attendanceService.getById(handle, attendanceId)
 
     if (!attendance) {
       throw new AttendanceNotFound(attendanceId)
     }
 
-    const attendee = await this.attendeeService.getByUserId(userId, attendanceId)
+    const attendee = await this.attendeeService.getByUserId(handle, userId, attendanceId)
 
     if (!attendee) {
       throw new AttendeeNotFoundError(userId, attendanceId)
@@ -142,12 +142,12 @@ export class JobExecutor {
       throw new AttendancePoolNotFoundError(attendee.attendancePoolId)
     }
 
-    await this.attendeeService.attemptReserve(attendee, pool, { bypassCriteria: false })
+    await this.attendeeService.attemptReserve(handle, attendee, pool, { bypassCriteria: false })
   }
 
-  public runMergePoolsJob(payload: JsonValue) {
+  public runMergePoolsJob(handle: DBHandle, payload: JsonValue) {
     const { attendanceId, newMergePoolData } = this.jobService.parsePayload("MERGE_POOLS", payload)
 
-    return this.attendanceService.mergeAttendancePools(attendanceId, newMergePoolData)
+    return this.attendanceService.mergeAttendancePools(handle, attendanceId, newMergePoolData)
   }
 }

@@ -1,7 +1,7 @@
 import { ArticleListItem } from "@/components/molecules/ArticleListItem"
 import { ArticleTag } from "@/components/molecules/ArticleTag"
 import { server } from "@/utils/trpc/server"
-import type { Article, ArticleTagName } from "@dotkomonline/types"
+import type { Article, ArticleTag as ArticleTagType } from "@dotkomonline/types"
 import { Button, Text, Title, Video } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
@@ -123,7 +123,7 @@ const AuthorInfo = ({ author }: AuthorInfoProps) => {
 }
 
 interface TagListProps {
-  tags: ArticleTagName[]
+  tags: ArticleTagType[]
 }
 
 const TagList = ({ tags }: TagListProps) => {
@@ -135,7 +135,7 @@ const TagList = ({ tags }: TagListProps) => {
 
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <ArticleTag tag={tag} key={tag} />
+          <ArticleTag tag={tag.name} key={tag.name} />
         ))}
       </div>
     </section>

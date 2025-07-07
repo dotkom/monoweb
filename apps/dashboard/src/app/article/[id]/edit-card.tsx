@@ -11,7 +11,7 @@ export const ArticleEditCard: FC = () => {
     label: "Oppdater artikkel",
     onSubmit: (data) => {
       const { tags, ...articleData } = data
-      edit.mutate({ id: article.id, article: articleData, tags })
+      edit.mutate({ id: article.id, article: articleData, tags: tags.map((tag) => tag.name) })
     },
     defaultValues: { ...article },
   })

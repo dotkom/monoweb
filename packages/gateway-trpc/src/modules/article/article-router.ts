@@ -29,9 +29,7 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.articleService.update(handle, input.id, input.input)
-      )
+      ctx.executeTransaction(async (handle) => ctx.articleService.update(handle, input.id, input.input))
     ),
   editWithTags: adminProcedure
     .input(
@@ -87,9 +85,7 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.articleService.addTag(handle, input.id, input.tag)
-      )
+      ctx.executeTransaction(async (handle) => ctx.articleService.addTag(handle, input.id, input.tag))
     ),
   removeTag: adminProcedure
     .input(
@@ -99,8 +95,6 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.articleService.removeTag(handle, input.id, input.tag)
-      )
+      ctx.executeTransaction(async (handle) => ctx.articleService.removeTag(handle, input.id, input.tag))
     ),
 })

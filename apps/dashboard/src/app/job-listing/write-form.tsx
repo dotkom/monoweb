@@ -6,7 +6,7 @@ import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { createTextareaInput } from "@/components/forms/TextareaInput"
-import { JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
+import { CompanySchema, JobListingLocationSchema, JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 import { useCompanyAllQuery } from "../company/queries"
 import { useJobListingAllLocationsQuery } from "./queries/use-job-listing-locations-all-query"
@@ -19,7 +19,10 @@ interface UseJobListingWriteFormProps {
   label?: string
 }
 
-export const FormValidationSchema = JobListingWriteSchema
+export const FormValidationSchema = JobListingWriteSchema.extend({
+  companyId: CompanySchema.shape.id,
+  locationIds: JobListingLocationSchema.shape.name.array(),
+})
 type FormValidationSchema = z.infer<typeof FormValidationSchema>
 
 export const useJobListingWriteForm = ({
@@ -94,9 +97,9 @@ export const useJobListingWriteForm = ({
       deadlineAsap: createCheckboxInput({
         label: "Frist så snart som mulig",
       }),
-      locations: createTagInput({
+      locationIds: createTagInput({
         label: "Sted",
-        data: locations,
+        data: locations.map((location) => location.name),
         name: "locations",
         withAsterisk: true,
       }),
