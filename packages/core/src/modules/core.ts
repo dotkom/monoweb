@@ -2,10 +2,10 @@ import type { S3Client } from "@aws-sdk/client-s3"
 import type { DBClient } from "@dotkomonline/db"
 import type { ManagementClient } from "auth0"
 import type Stripe from "stripe"
-import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article-repository"
-import { type ArticleService, ArticleServiceImpl } from "./article/article-service"
-import { type ArticleTagLinkRepository, ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
-import { type ArticleTagRepository, ArticleTagRepositoryImpl } from "./article/article-tag-repository"
+import { getArticleRepository } from "./article/article-repository"
+import { getArticleService } from "./article/article-service"
+import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
+import { getArticleTagRepository } from "./article/article-tag-repository"
 import { type AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/attendance-repository"
 import { type AttendanceService, AttendanceServiceImpl } from "./attendance/attendance-service"
 import { type AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
@@ -113,9 +113,9 @@ export const createServiceLayer = async ({
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
   const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const offlineRepository = getOfflineRepository()
-  const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
-  const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
-  const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
+  const articleRepository = getArticleRepository()
+  const articleTagRepository = getArticleTagRepository()
+  const articleTagLinkRepository = getArticleTagLinkRepository()
 
   const feideGroupsRepository: NTNUGroupsRepository = new NTNUGroupsRepositoryImpl()
   const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
@@ -183,11 +183,7 @@ export const createServiceLayer = async ({
   const markService: MarkService = new MarkServiceImpl(markRepository)
   const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
   const offlineService = getOfflineService(offlineRepository, s3Repository)
-  const articleService: ArticleService = new ArticleServiceImpl(
-    articleRepository,
-    articleTagRepository,
-    articleTagLinkRepository
-  )
+  const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
 
   const jobExecutor = new JobExecutor(jobService, attendeeService, attendanceService)
 

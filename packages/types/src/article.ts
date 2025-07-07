@@ -10,7 +10,7 @@ export const ArticleTagWrite = ArticleTagSchema
 export type ArticleTagWrite = z.infer<typeof ArticleTagWrite>
 
 export const ArticleSchema = schemas.ArticleSchema.extend({
-  tags: z.array(ArticleTagSchema.shape.name),
+  tags: z.array(ArticleTagSchema),
 })
 
 export type ArticleSlug = Article["slug"]
