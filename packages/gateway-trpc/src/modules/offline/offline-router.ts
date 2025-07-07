@@ -4,7 +4,11 @@ import { z } from "zod"
 import { adminProcedure, publicProcedure, t } from "../../trpc"
 
 export const offlineRouter = t.router({
-  create: adminProcedure.input(OfflineWriteSchema).mutation(async ({ input, ctx }) => ctx.offlineService.create(input)),
+  create: adminProcedure
+    .input(OfflineWriteSchema)
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.offlineService.create(handle, input))
+    ),
   edit: adminProcedure
     .input(
       z.object({
@@ -12,9 +16,19 @@ export const offlineRouter = t.router({
         input: OfflineWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input: changes, ctx }) => ctx.offlineService.update(changes.id, changes.input)),
-  all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.offlineService.getAll(input)),
-  get: publicProcedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => ctx.offlineService.getById(input)),
+    .mutation(async ({ input: changes, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.offlineService.update(handle, changes.id, changes.input))
+    ),
+  all: publicProcedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.offlineService.getAll(handle, input))
+    ),
+  get: publicProcedure
+    .input(OfflineSchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.offlineService.getById(handle, input))
+    ),
   createPresignedPost: adminProcedure
     .input(
       z.object({
