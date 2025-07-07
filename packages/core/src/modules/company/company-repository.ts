@@ -1,39 +1,31 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db"
 import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface CompanyRepository {
-  getById(id: CompanyId): Promise<Company | null>
-  getBySlug(slug: string): Promise<Company | null>
-  getAll(page: Pageable): Promise<Company[]>
-  create(values: CompanyWrite): Promise<Company>
-  update(id: CompanyId, data: CompanyWrite): Promise<Company>
+  getById(handle: DBHandle, id: CompanyId): Promise<Company | null>
+  getBySlug(handle: DBHandle, slug: string): Promise<Company | null>
+  getAll(handle: DBHandle, page: Pageable): Promise<Company[]>
+  create(handle: DBHandle, values: CompanyWrite): Promise<Company>
+  update(handle: DBHandle, id: CompanyId, data: Partial<CompanyWrite>): Promise<Company>
 }
 
-export class CompanyRepositoryImpl implements CompanyRepository {
-  private readonly db: DBClient
-
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  public async getById(id: string): Promise<Company | null> {
-    return await this.db.company.findUnique({ where: { id } })
-  }
-
-  public async getBySlug(slug: string): Promise<Company | null> {
-    return await this.db.company.findUnique({ where: { slug } })
-  }
-
-  public async getAll(page: Pageable): Promise<Company[]> {
-    return await this.db.company.findMany({ ...pageQuery(page) })
-  }
-
-  public async create(data: CompanyWrite): Promise<Company> {
-    return await this.db.company.create({ data })
-  }
-
-  public async update(id: CompanyId, data: Omit<CompanyWrite, "id">): Promise<Company> {
-    return await this.db.company.update({ where: { id }, data })
+export function getCompanyRepository(): CompanyRepository {
+  return {
+    async getById(handle, id) {
+      return await handle.company.findUnique({ where: { id } })
+    },
+    async getBySlug(handle, slug) {
+      return await handle.company.findUnique({ where: { slug } })
+    },
+    async getAll(handle, page) {
+      return await handle.company.findMany({ ...pageQuery(page) })
+    },
+    async create(handle, values) {
+      return await handle.company.create({ data: values })
+    },
+    async update(handle, id, data) {
+      return await handle.company.update({ where: { id }, data })
+    },
   }
 }

@@ -12,6 +12,8 @@ export const companyEventRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) =>
-      ctx.companyEventService.getAttendanceEventsByCompanyId(input.id, input.pagination)
+      ctx.executeTransaction(async (handle) => {
+        return ctx.companyEventService.getAttendanceEventsByCompanyId(handle, input.id, input.pagination)
+      })
     ),
 })
