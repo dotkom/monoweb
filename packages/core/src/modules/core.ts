@@ -14,15 +14,12 @@ import { getCompanyEventRepository } from "./company/company-event-repository"
 import { getCompanyEventService } from "./company/company-event-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
-import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event/event-company-repository"
-import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event-company-service"
-import {
-  type EventHostingGroupRepository,
-  EventHostingGroupRepositoryImpl,
-} from "./event/event-hosting-group-repository"
-import { type EventHostingGroupService, EventHostingGroupServiceImpl } from "./event/event-hosting-group-service"
-import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
-import { type EventService, EventServiceImpl } from "./event/event-service"
+import { getEventCompanyRepository } from "./event/event-company-repository"
+import { getEventCompanyService } from "./event/event-company-service"
+import { getEventHostingGroupRepository } from "./event/event-hosting-group-repository"
+import { getEventHostingGroupService } from "./event/event-hosting-group-service"
+import { getEventRepository } from "./event/event-repository"
+import { getEventService } from "./event/event-service"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
@@ -81,13 +78,13 @@ export const createServiceLayer = async ({
   const jobService = getJobService(jobRepository)
 
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
-  const eventRepository: EventRepository = new EventRepositoryImpl(db)
+  const eventRepository = getEventRepository()
   const groupRepository = getGroupRepository()
   const jobListingRepository = getJobListingRepository()
   const companyRepository = getCompanyRepository()
   const companyEventRepository = getCompanyEventRepository()
-  const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
-  const eventHostingGroupRepository: EventHostingGroupRepository = new EventHostingGroupRepositoryImpl(db)
+  const eventCompanyRepository = getEventCompanyRepository()
+  const eventHostingGroupRepository = getEventHostingGroupRepository()
   const userRepository = getUserRepository(managementClient)
 
   const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
@@ -116,9 +113,7 @@ export const createServiceLayer = async ({
     ntnuStudyplanRepository
   )
 
-  const eventHostingGroupService: EventHostingGroupService = new EventHostingGroupServiceImpl(
-    eventHostingGroupRepository
-  )
+  const eventHostingGroupService = getEventHostingGroupService(eventHostingGroupRepository)
   const groupService = getGroupService(groupRepository)
   const jobListingService = getJobListingService(jobListingRepository)
 
@@ -138,8 +133,8 @@ export const createServiceLayer = async ({
   const interestGroupRepository = getInterestGroupRepository()
   const interestGroupService = getInterestGroupService(interestGroupRepository)
 
-  const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
-  const eventService: EventService = new EventServiceImpl(
+  const eventCompanyService = getEventCompanyService(eventCompanyRepository)
+  const eventService = getEventService(
     eventRepository,
     attendanceService,
     eventCompanyService,

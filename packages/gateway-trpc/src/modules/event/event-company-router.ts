@@ -10,7 +10,7 @@ export const eventCompanyRouter = t.router({
         company: CompanySchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.eventCompanyService.createCompany(input.id, input.company)),
+    .mutation(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.eventCompanyService.createCompany(handle, input.id, input.company))),
   delete: protectedProcedure
     .input(
       z.object({
@@ -18,12 +18,12 @@ export const eventCompanyRouter = t.router({
         company: CompanySchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.eventCompanyService.deleteCompany(input.id, input.company)),
+    .mutation(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.eventCompanyService.deleteCompany(handle, input.id, input.company))),
   get: publicProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.eventCompanyService.getCompaniesByEventId(input.id)),
+    .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.eventCompanyService.getCompaniesByEventId(handle, input.id))),
 })
