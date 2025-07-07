@@ -1,4 +1,4 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db"
 import type {
   PaymentProvider,
   ProductId,
@@ -7,39 +7,32 @@ import type {
 } from "@dotkomonline/types"
 
 export interface ProductPaymentProviderRepository {
-  create(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | null>
-  delete(productId: ProductId, paymentProviderId: string): Promise<void>
-  getAllByProductId(productId: ProductId): Promise<PaymentProvider[]>
-  productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean>
+  create(handle: DBHandle, data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | null>
+  delete(handle: DBHandle, productId: ProductId, paymentProviderId: string): Promise<void>
+  getAllByProductId(handle: DBHandle, productId: ProductId): Promise<PaymentProvider[]>
+  productHasPaymentProviderId(handle: DBHandle, productId: ProductId, paymentProviderId: string): Promise<boolean>
 }
 
-export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProviderRepository {
-  private readonly db: DBClient
-
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  async create(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | null> {
-    return await this.db.productPaymentProvider.create({ data })
-  }
-
-  async delete(productId: ProductId, paymentProviderId: string): Promise<void> {
-    await this.db.productPaymentProvider.delete({
-      where: { productId_paymentProviderId: { productId, paymentProviderId } },
-    })
-  }
-
-  async getAllByProductId(productId: ProductId): Promise<PaymentProvider[]> {
-    return await this.db.productPaymentProvider.findMany({ where: { productId } })
-  }
-
-  async productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean> {
-    return Boolean(
-      await this.db.productPaymentProvider.findUnique({
+export function getProductPaymentProviderRepository(): ProductPaymentProviderRepository {
+  return {
+    async create(handle, data) {
+      return await handle.productPaymentProvider.create({ data })
+    },
+    async delete(handle, productId, paymentProviderId) {
+      await handle.productPaymentProvider.delete({
         where: { productId_paymentProviderId: { productId, paymentProviderId } },
-        select: {},
       })
-    )
+    },
+    async getAllByProductId(handle, productId) {
+      return await handle.productPaymentProvider.findMany({ where: { productId } })
+    },
+    async productHasPaymentProviderId(handle, productId, paymentProviderId) {
+      return Boolean(
+        await handle.productPaymentProvider.findUnique({
+          where: { productId_paymentProviderId: { productId, paymentProviderId } },
+          select: {},
+        })
+      )
+    },
   }
 }

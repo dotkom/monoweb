@@ -9,7 +9,9 @@ export const paymentRouter = t.router({
   product: productRouter,
   refundRequest: refundRequestRouter,
   getPaymentProviders: adminProcedure.query(({ ctx }) => ctx.paymentService.getPaymentProviders()),
-  all: adminProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.paymentService.getPayments(input)),
+  all: adminProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => {
+    return ctx.paymentService.getPayments(handle, input)
+    })),
   createStripeCheckoutSession: adminProcedure
     .input(
       z.object({
@@ -20,13 +22,14 @@ export const paymentRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.paymentService.createStripeCheckoutSessionForProductId(
+      ctx.executeTransaction(async (handle) => ctx.paymentService.createStripeCheckoutSessionForProductId(
+        handle,
         input.productId,
         input.stripePublicKey,
         input.successRedirectUrl,
         input.cancelRedirectUrl,
         ctx.principal
-      )
+      ))
     ),
   refundPayment: adminProcedure
     .input(
@@ -35,6 +38,6 @@ export const paymentRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.paymentService.refundPaymentById(input.paymentId, { checkRefundApproval: true })
+      ctx.executeTransaction(async (handle) => ctx.paymentService.refundPaymentById(handle, input.paymentId, { checkRefundApproval: true }))
     ),
 })

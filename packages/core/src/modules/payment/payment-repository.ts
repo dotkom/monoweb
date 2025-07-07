@@ -1,4 +1,4 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db"
 import type {
   Payment,
   PaymentId,
@@ -11,79 +11,63 @@ import type {
 import { type Pageable, pageQuery } from "../../query"
 
 export interface PaymentRepository {
-  create(data: PaymentWrite): Promise<Payment>
-  update(paymentId: PaymentId, data: Partial<PaymentWrite>): Promise<Payment>
+  create(handle: DBHandle, data: PaymentWrite): Promise<Payment>
+  update(handle: DBHandle, paymentId: PaymentId, data: Partial<PaymentWrite>): Promise<Payment>
   updateByPaymentProviderSessionId(
+    handle: DBHandle,
     paymentProviderSessionId: PaymentProviderSessionId,
     data: Partial<PaymentWrite>
   ): Promise<Payment>
-  getById(paymentId: PaymentId): Promise<Payment | null>
-  getByPaymentProviderOrderId(paymentProviderOrderId: PaymentProviderOrderId): Promise<Payment | null>
-  getAll(page: Pageable): Promise<Payment[]>
-  getAllByUserId(userId: UserId, page: Pageable): Promise<Payment[]>
-  getAllByProductId(productId: ProductId, page: Pageable): Promise<Payment[]>
-  delete(paymentId: PaymentId): Promise<void>
-  deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void>
+  getById(handle: DBHandle, paymentId: PaymentId): Promise<Payment | null>
+  getByPaymentProviderOrderId(handle: DBHandle, paymentProviderOrderId: PaymentProviderOrderId): Promise<Payment | null>
+  getAll(handle: DBHandle, page: Pageable): Promise<Payment[]>
+  getAllByUserId(handle: DBHandle, userId: UserId, page: Pageable): Promise<Payment[]>
+  getAllByProductId(handle: DBHandle, productId: ProductId, page: Pageable): Promise<Payment[]>
+  delete(handle: DBHandle, paymentId: PaymentId): Promise<void>
+  deleteByPaymentProviderSessionId(handle: DBHandle, paymentProviderSessionId: string): Promise<void>
 }
 
-export class PaymentRepositoryImpl implements PaymentRepository {
-  private readonly db: DBClient
-
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  public async create(data: PaymentWrite) {
-    return await this.db.payment.create({ data })
-  }
-
-  public async update(paymentId: PaymentId, data: Partial<PaymentWrite>) {
-    return await this.db.payment.update({ where: { id: paymentId }, data })
-  }
-
-  public async updateByPaymentProviderSessionId(
-    paymentProviderSessionId: PaymentProviderSessionId,
-    data: Partial<PaymentWrite>
-  ) {
-    const payments = await this.db.payment.updateManyAndReturn({
-      data,
-      where: {
-        paymentProviderSessionId,
-      },
-    })
-
-    if (payments.length !== 1) {
-      throw new Error("Expected one payment from specific payment provider session id")
-    }
-
-    return payments[0]
-  }
-
-  public async getById(paymentId: PaymentId) {
-    return await this.db.payment.findUnique({ where: { id: paymentId } })
-  }
-
-  public async getByPaymentProviderOrderId(paymentProviderOrderId: PaymentProviderOrderId) {
-    return await this.db.payment.findFirst({ where: { paymentProviderOrderId } })
-  }
-
-  public async getAll(page: Pageable) {
-    return await this.db.payment.findMany({ ...pageQuery(page) })
-  }
-
-  public async getAllByUserId(userId: UserId, page: Pageable) {
-    return this.db.payment.findMany({ where: { userId }, ...pageQuery(page) })
-  }
-
-  public async getAllByProductId(productId: ProductId, page: Pageable) {
-    return this.db.payment.findMany({ where: { productId }, ...pageQuery(page) })
-  }
-
-  public async delete(paymentId: PaymentId) {
-    await this.db.payment.delete({ where: { id: paymentId } })
-  }
-
-  public async deleteByPaymentProviderSessionId(paymentProviderSessionId: PaymentProviderSessionId) {
-    await this.db.payment.deleteMany({ where: { paymentProviderSessionId } })
+export function getPaymentRepository(): PaymentRepository {
+  return {
+    async create(handle, data) {
+      return await handle.payment.create({ data })
+    },
+    async update(handle, paymentId, data) {
+      return await handle.payment.update({ where: { id: paymentId }, data })
+    },
+    async updateByPaymentProviderSessionId(handle, paymentProviderSessionId, data) {
+      const payments = await handle.payment.updateManyAndReturn({
+        data,
+        where: {
+          paymentProviderSessionId,
+        },
+      })
+      const payment = payments.at(0)
+      if (payment === undefined) {
+        throw new Error("Expected one payment from specific payment provider session id")
+      }
+      return payment
+    },
+    async getById(handle, paymentId) {
+      return await handle.payment.findUnique({ where: { id: paymentId } })
+    },
+    async getByPaymentProviderOrderId(handle, paymentProviderOrderId) {
+      return await handle.payment.findFirst({ where: { paymentProviderOrderId } })
+    },
+    async getAll(handle, page) {
+      return await handle.payment.findMany({ ...pageQuery(page) })
+    },
+    async getAllByUserId(handle, userId, page) {
+      return handle.payment.findMany({ where: { userId }, ...pageQuery(page) })
+    },
+    async getAllByProductId(handle, productId, page) {
+      return handle.payment.findMany({ where: { productId }, ...pageQuery(page) })
+    },
+    async delete(handle, paymentId) {
+      await handle.payment.delete({ where: { id: paymentId } })
+    },
+    async deleteByPaymentProviderSessionId(handle, paymentProviderSessionId) {
+      await handle.payment.deleteMany({ where: { paymentProviderSessionId } })
+    },
   }
 }
