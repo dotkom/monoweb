@@ -10,10 +10,10 @@ import { type AttendanceRepository, AttendanceRepositoryImpl } from "./attendanc
 import { type AttendanceService, AttendanceServiceImpl } from "./attendance/attendance-service"
 import { type AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
 import { type AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
-import { type CompanyEventRepository, CompanyEventRepositoryImpl } from "./company/company-event-repository"
-import { type CompanyEventService, CompanyEventServiceImpl } from "./company/company-event-service"
-import { type CompanyRepository, CompanyRepositoryImpl } from "./company/company-repository"
-import { type CompanyService, CompanyServiceImpl } from "./company/company-service"
+import { getCompanyEventRepository } from "./company/company-event-repository"
+import { getCompanyEventService } from "./company/company-event-service"
+import { getCompanyRepository } from "./company/company-repository"
+import { getCompanyService } from "./company/company-service"
 import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event/event-company-repository"
 import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event-company-service"
 import {
@@ -93,8 +93,8 @@ export const createServiceLayer = async ({
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const groupRepository = getGroupRepository()
   const jobListingRepository = getJobListingRepository()
-  const companyRepository: CompanyRepository = new CompanyRepositoryImpl(db)
-  const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
+  const companyRepository = getCompanyRepository()
+  const companyEventRepository = getCompanyEventRepository()
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const eventHostingGroupRepository: EventHostingGroupRepository = new EventHostingGroupRepositoryImpl(db)
   const userRepository = getUserRepository(managementClient)
@@ -158,11 +158,8 @@ export const createServiceLayer = async ({
     eventHostingGroupService,
     interestGroupService
   )
-  const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
-  const companyEventService: CompanyEventService = new CompanyEventServiceImpl(
-    companyEventRepository,
-    attendanceService
-  )
+  const companyService = getCompanyService(companyRepository)
+  const companyEventService = getCompanyEventService(companyEventRepository, attendanceService)
   const productService: ProductService = new ProductServiceImpl(productRepository)
   const paymentService: PaymentService = new PaymentServiceImpl(
     paymentRepository,
