@@ -23,12 +23,12 @@ import {
 import { type EventHostingGroupService, EventHostingGroupServiceImpl } from "./event/event-hosting-group-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
-import { type NTNUGroupsRepository, NTNUGroupsRepositoryImpl } from "./external/feide-groups-repository"
 import {
   type NTNUStudyplanRepository,
   NTNUStudyplanRepositoryImpl,
 } from "./external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
+import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
 import { getGroupService } from "./group/group-service"
 import { getInterestGroupRepository } from "./interest-group/interest-group-repository"
@@ -116,8 +116,7 @@ export const createServiceLayer = async ({
   const articleRepository = getArticleRepository()
   const articleTagRepository = getArticleTagRepository()
   const articleTagLinkRepository = getArticleTagLinkRepository()
-
-  const feideGroupsRepository: NTNUGroupsRepository = new NTNUGroupsRepositoryImpl()
+  const feideGroupsRepository = getFeideGroupsRepository()
   const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
 
   const userService = getUserService(
