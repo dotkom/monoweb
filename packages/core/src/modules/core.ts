@@ -6,10 +6,10 @@ import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
 import { getArticleTagRepository } from "./article/article-tag-repository"
-import { type AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/attendance-repository"
-import { type AttendanceService, AttendanceServiceImpl } from "./attendance/attendance-service"
-import { type AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
-import { type AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
+import { getAttendanceRepository } from "./attendance/attendance-repository"
+import { getAttendanceService } from "./attendance/attendance-service"
+import { getAttendeeRepository } from "./attendance/attendee-repository"
+import { getAttendeeService } from "./attendance/attendee-service"
 import { getCompanyEventRepository } from "./company/company-event-repository"
 import { getCompanyEventService } from "./company/company-event-service"
 import { getCompanyRepository } from "./company/company-repository"
@@ -86,10 +86,8 @@ export const createServiceLayer = async ({
   const eventCompanyRepository = getEventCompanyRepository()
   const eventHostingGroupRepository = getEventHostingGroupRepository()
   const userRepository = getUserRepository(managementClient)
-
-  const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
-  const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db)
-
+  const attendanceRepository = getAttendanceRepository()
+  const attendeeRepository = getAttendeeRepository()
   const productRepository = getProductRepository()
   const paymentRepository = getPaymentRepository()
   const productPaymentProviderRepository = getProductPaymentProviderRepository()
@@ -112,27 +110,13 @@ export const createServiceLayer = async ({
     feideGroupsRepository,
     ntnuStudyplanRepository
   )
-
   const eventHostingGroupService = getEventHostingGroupService(eventHostingGroupRepository)
   const groupService = getGroupService(groupRepository)
   const jobListingService = getJobListingService(jobListingRepository)
-
-  const attendeeService: AttendeeService = new AttendeeServiceImpl(
-    attendeeRepository,
-    attendanceRepository,
-    userService,
-    jobService
-  )
-
-  const attendanceService: AttendanceService = new AttendanceServiceImpl(
-    attendanceRepository,
-    attendeeRepository,
-    attendeeService,
-    jobService
-  )
+  const attendeeService = getAttendeeService(attendeeRepository, attendanceRepository, userService, jobService)
+  const attendanceService = getAttendanceService(attendanceRepository, attendeeRepository, attendeeService, jobService)
   const interestGroupRepository = getInterestGroupRepository()
   const interestGroupService = getInterestGroupService(interestGroupRepository)
-
   const eventCompanyService = getEventCompanyService(eventCompanyRepository)
   const eventService = getEventService(
     eventRepository,

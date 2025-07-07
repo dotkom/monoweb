@@ -1,4 +1,4 @@
-import type { DBClient, DBContext } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePoolId,
@@ -17,207 +17,149 @@ type UnparsedAttendeeWithoutUser = Omit<AttendeeWithoutUser, "selections"> & {
 }
 
 export interface AttendeeRepository {
-  create(data: AttendeeWrite): Promise<AttendeeWithoutUser>
-  delete(attendeeId: AttendeeId): Promise<void>
-  getById(attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
-  update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<AttendeeWithoutUser>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeWithoutUser[]>
-  getByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser[]>
-  getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser | null>
-  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<AttendeeWithoutUser | null>
-  poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
-  attendanceHasAttendees(attendanceId: AttendanceId): Promise<boolean>
-  reserveAttendee(attendeeId: AttendeeId): Promise<boolean>
-  moveFromMultiplePoolsToPool(fromPoolIds: AttendancePoolId[], toPoolId: AttendancePoolId): Promise<void>
-  removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string): Promise<void>
+  create(handle: DBHandle, data: AttendeeWrite): Promise<AttendeeWithoutUser>
+  delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
+  getById(handle: DBHandle, attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
+  update(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<AttendeeWithoutUser>
+  getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<AttendeeWithoutUser[]>
+  getByAttendancePoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser[]>
+  getFirstUnreservedByAttendancePoolId(
+    handle: DBHandle,
+    attendancePoolId: AttendancePoolId
+  ): Promise<AttendeeWithoutUser | null>
+  getByUserId(handle: DBHandle, userId: UserId, attendanceId: AttendanceId): Promise<AttendeeWithoutUser | null>
+  poolHasAttendees(handle: DBHandle, poolId: AttendancePoolId): Promise<boolean>
+  attendanceHasAttendees(handle: DBHandle, attendanceId: AttendanceId): Promise<boolean>
+  reserveAttendee(handle: DBHandle, attendeeId: AttendeeId): Promise<boolean>
+  moveFromMultiplePoolsToPool(
+    handle: DBHandle,
+    fromPoolIds: AttendancePoolId[],
+    toPoolId: AttendancePoolId
+  ): Promise<void>
+  removeAllSelectionResponsesForSelection(
+    handle: DBHandle,
+    attendanceId: AttendanceId,
+    selectionId: string
+  ): Promise<void>
   getAttendeeStatuses(
+    handle: DBHandle,
     userId: UserId,
     attendanceIds: AttendanceId[]
   ): Promise<Map<AttendanceId, "RESERVED" | "UNRESERVED">>
-  removeSelectionResponses(selectionId: string): Promise<AttendanceId | null>
+  removeSelectionResponses(handle: DBHandle, selectionId: string): Promise<AttendanceId | null>
 }
 
-export class AttendeeRepositoryImpl implements AttendeeRepository {
-  private readonly db: DBClient
-
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  private validateWrite(data: Partial<AttendeeWrite>) {
-    if (!data.selections) {
-      return
-    }
-
-    const selectionResponseParseResult = AttendeeSelectionOptionSchema.safeParse(data.selections)
-
-    if (!selectionResponseParseResult.success) {
-      throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field selectionResponses")
-    }
-  }
-
-  private parse(unparsedAttendee: UnparsedAttendeeWithoutUser): AttendeeWithoutUser {
-    const parsedSelections = unparsedAttendee.selections
-      ? AttendeeSelectionResponsesSchema.parse(unparsedAttendee.selections)
-      : []
-
-    return {
-      ...unparsedAttendee,
-      selections: parsedSelections,
-    }
-  }
-
-  public async getByUserId(userId: UserId, attendanceId: AttendanceId) {
-    const attendee = await this.db.attendee.findFirst({ where: { userId, attendanceId } })
-
-    if (!attendee) {
-      return null
-    }
-
-    return this.parse(attendee)
-  }
-
-  public async poolHasAttendees(attendancePoolId: AttendancePoolId) {
-    const numberOfAttendees = await this.db.attendee.count({ where: { attendancePoolId } })
-
-    return numberOfAttendees > 0
-  }
-
-  public async attendanceHasAttendees(attendanceId: AttendanceId) {
-    const numberOfAttendees = await this.db.attendee.count({ where: { attendanceId } })
-
-    return numberOfAttendees > 0
-  }
-
-  public async moveFromMultiplePoolsToPool(fromPoolIds: AttendancePoolId[], toPoolId: AttendancePoolId) {
-    await this.db.attendee.updateMany({
-      where: { attendancePoolId: { in: fromPoolIds } },
-      data: { attendancePoolId: toPoolId },
-    })
-  }
-
-  public async create(data: AttendeeWrite) {
-    this.validateWrite(data)
-
-    const attendee = await this.db.attendee.create({ data })
-
-    return this.parse(attendee)
-  }
-
-  public async delete(attendeeId: AttendeeId) {
-    await this.db.attendee.delete({ where: { id: attendeeId } })
-  }
-
-  public async getById(attendeeId: AttendeeId) {
-    const attendee = await this.db.attendee.findUnique({ where: { id: attendeeId } })
-
-    if (!attendee) {
-      return null
-    }
-
-    return this.parse(attendee)
-  }
-
-  public async getByAttendanceId(attendanceId: AttendanceId) {
-    const attendees = await this.db.attendee.findMany({
-      where: { attendanceId },
-      orderBy: { reserveTime: "asc" },
-    })
-
-    return attendees.map((attendee) => this.parse(attendee))
-  }
-
-  public async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
-    const attendees = await this.db.attendee.findMany({
-      where: { attendancePoolId },
-      orderBy: { reserveTime: "asc" },
-    })
-
-    return attendees.map((attendee) => this.parse(attendee))
-  }
-
-  public async getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId) {
-    const attendee = await this.db.attendee.findFirst({
-      where: { attendancePoolId, reserved: false },
-      orderBy: { reserveTime: "asc" },
-    })
-
-    if (!attendee) {
-      return null
-    }
-
-    return this.parse(attendee)
-  }
-
-  public async update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>) {
-    this.validateWrite(data)
-
-    const updatedAttendee = await this.db.attendee.update({ where: { id: attendeeId }, data })
-
-    return this.parse(updatedAttendee)
-  }
-
-  public async countReservedCapacityForUpdate(attendancePoolId: AttendancePoolId, tx: DBContext) {
-    const result: number =
-      await tx.$queryRaw`SELECT count(*) FROM attendee WHERE "attendancePoolId" = ${attendancePoolId} FOR UPDATE`
-
-    return result
-  }
-
-  public async reserveAttendee(attendeeId: AttendeeId) {
-    const attendee = await this.db.attendee.update({
-      where: {
-        id: attendeeId,
-      },
-      data: {
-        reserved: true,
-      },
-    })
-
-    return attendee.reserved
-  }
-
-  public async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {
-    const attendees = (await this.db.attendee.findMany({
-      where: { attendanceId },
-      select: { id: true, selections: true },
-    })) as Pick<UnparsedAttendeeWithoutUser, "id" | "selections">[]
-
-    const updatedRows = attendees
-      .filter(({ selections }) => Array.isArray(selections) && selections.length > 0)
-      .map(({ id, selections: oldSelections }) => {
-        const parsedSelections = AttendeeSelectionResponsesSchema.parse(oldSelections)
-        const selections = parsedSelections.filter((oldSelection) => oldSelection.selectionId !== selectionId)
-
-        return this.db.attendee.update({
-          where: { id },
-          data: { selections },
-        })
+export function getAttendeeRepository(): AttendeeRepository {
+  return {
+    async create(handle, data) {
+      validateWrite(data)
+      const attendee = await handle.attendee.create({ data })
+      return parse(attendee)
+    },
+    async delete(handle, attendeeId) {
+      await handle.attendee.delete({ where: { id: attendeeId } })
+    },
+    async getById(handle, attendeeId) {
+      const attendee = await handle.attendee.findUnique({ where: { id: attendeeId } })
+      if (!attendee) {
+        return null
+      }
+      return parse(attendee)
+    },
+    async update(handle, attendeeId, data) {
+      validateWrite(data)
+      const updatedAttendee = await handle.attendee.update({ where: { id: attendeeId }, data })
+      return parse(updatedAttendee)
+    },
+    async getByAttendanceId(handle, attendanceId) {
+      const attendees = await handle.attendee.findMany({
+        where: { attendanceId },
+        orderBy: { reserveTime: "asc" },
       })
+      return attendees.map(parse)
+    },
+    async getByAttendancePoolId(handle, attendancePoolId) {
+      const attendees = await handle.attendee.findMany({
+        where: { attendancePoolId },
+        orderBy: { reserveTime: "asc" },
+      })
+      return attendees.map(parse)
+    },
+    async getFirstUnreservedByAttendancePoolId(handle, attendancePoolId) {
+      const attendee = await handle.attendee.findFirst({
+        where: { attendancePoolId, reserved: false },
+        orderBy: { reserveTime: "asc" },
+      })
+      if (!attendee) {
+        return null
+      }
+      return parse(attendee)
+    },
+    async getByUserId(handle, userId, attendanceId) {
+      const attendee = await handle.attendee.findFirst({ where: { userId, attendanceId } })
+      if (!attendee) {
+        return null
+      }
+      return parse(attendee)
+    },
+    async poolHasAttendees(handle, poolId) {
+      const numberOfAttendees = await handle.attendee.count({ where: { attendancePoolId: poolId } })
+      return numberOfAttendees > 0
+    },
+    async attendanceHasAttendees(handle, attendanceId) {
+      const numberOfAttendees = await handle.attendee.count({ where: { attendanceId } })
+      return numberOfAttendees > 0
+    },
+    async reserveAttendee(handle, attendeeId) {
+      const attendee = await handle.attendee.update({
+        where: {
+          id: attendeeId,
+        },
+        data: {
+          reserved: true,
+        },
+      })
+      return attendee.reserved
+    },
+    async moveFromMultiplePoolsToPool(handle, fromPoolIds, toPoolId) {
+      await handle.attendee.updateMany({
+        where: { attendancePoolId: { in: fromPoolIds } },
+        data: { attendancePoolId: toPoolId },
+      })
+    },
+    async removeAllSelectionResponsesForSelection(handle, attendanceId, selectionId) {
+      const attendees = (await handle.attendee.findMany({
+        where: { attendanceId },
+        select: { id: true, selections: true },
+      })) as Pick<UnparsedAttendeeWithoutUser, "id" | "selections">[]
 
-    await this.db.$transaction(updatedRows)
-  }
+      const updatedRows = attendees
+        .filter(({ selections }) => Array.isArray(selections) && selections.length > 0)
+        .map(({ id, selections: oldSelections }) => {
+          const parsedSelections = AttendeeSelectionResponsesSchema.parse(oldSelections)
+          const selections = parsedSelections.filter((oldSelection) => oldSelection.selectionId !== selectionId)
 
-  public async getAttendeeStatuses(userId: UserId, attendanceIds: AttendanceId[]) {
-    return this.db.attendee
-      .findMany({
+          return handle.attendee.update({
+            where: { id },
+            data: { selections },
+          })
+        })
+      await Promise.all(updatedRows)
+    },
+    async getAttendeeStatuses(handle, userId, attendanceIds) {
+      const attendees = await handle.attendee.findMany({
         where: { userId, attendanceId: { in: attendanceIds } },
         select: { attendanceId: true, reserved: true },
       })
-      .then((attendees) => {
-        const statusMap: Map<AttendanceId, "RESERVED" | "UNRESERVED"> = new Map()
-
-        for (const { attendanceId, reserved } of attendees) {
-          statusMap.set(attendanceId, reserved ? "RESERVED" : "UNRESERVED")
-        }
-
-        return statusMap
-      })
-  }
-
-  public async removeSelectionResponses(selectionId: string) {
-    const updated = await this.db.$queryRawUnsafe<{ attendanceId: AttendanceId }[]>(
-      `
+      const statusMap: Map<AttendanceId, "RESERVED" | "UNRESERVED"> = new Map()
+      for (const { attendanceId, reserved } of attendees) {
+        statusMap.set(attendanceId, reserved ? "RESERVED" : "UNRESERVED")
+      }
+      return statusMap
+    },
+    async removeSelectionResponses(handle, selectionId) {
+      const updated = await handle.$queryRawUnsafe<{ attendanceId: AttendanceId }[]>(
+        `
         UPDATE "attendee"
         SET selections = (
           SELECT COALESCE(jsonb_agg(elem), '[]'::jsonb)
@@ -227,10 +169,32 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         WHERE selections @> $2::jsonb
         RETURNING "attendanceId";
       `,
-      selectionId,
-      JSON.stringify([{ selectionId }])
-    )
+        selectionId,
+        JSON.stringify([{ selectionId }])
+      )
 
-    return updated[0]?.attendanceId || null
+      return updated.at(0)?.attendanceId || null
+    },
+  }
+}
+
+function validateWrite(data: Partial<AttendeeWrite>) {
+  if (!data.selections) {
+    return
+  }
+  const selectionResponseParseResult = AttendeeSelectionOptionSchema.safeParse(data.selections)
+  if (!selectionResponseParseResult.success) {
+    throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field selectionResponses")
+  }
+}
+
+function parse(unparsedAttendee: UnparsedAttendeeWithoutUser): AttendeeWithoutUser {
+  const parsedSelections = unparsedAttendee.selections
+    ? AttendeeSelectionResponsesSchema.parse(unparsedAttendee.selections)
+    : []
+
+  return {
+    ...unparsedAttendee,
+    selections: parsedSelections,
   }
 }
