@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto"
 import type { PaymentProvider, Product, ProductPaymentProvider } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
-import { ProductPaymentProviderRepositoryImpl } from "../product-payment-provider-repository"
-import { ProductPaymentProviderServiceImpl } from "../product-payment-provider-service"
+import { getProductPaymentProviderRepository } from "../product-payment-provider-repository"
+import { getProductPaymentProviderService } from "../product-payment-provider-service"
 import { productPayload } from "./product-service.spec"
 
 // biome-ignore lint/suspicious/noExportsInTest: this is shared across multiple tests
@@ -22,8 +22,8 @@ export const paymentProvidersPayload: PaymentProvider[] = productPaymentProvider
 
 describe("ProductPaymentProviderService", () => {
   const db = vi.mocked(PrismaClient.prototype)
-  const productPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(db)
-  const productPaymentProviderService = new ProductPaymentProviderServiceImpl(productPaymentProviderRepository)
+  const productPaymentProviderRepository = getProductPaymentProviderRepository()
+  const productPaymentProviderService = getProductPaymentProviderService(productPaymentProviderRepository)
 
   const productPayloadExtended: Product = {
     ...productPayload,
@@ -33,20 +33,22 @@ describe("ProductPaymentProviderService", () => {
   it("should add payment provider to product", async () => {
     const productPaymentProvider = productPaymentProvidersPayload[0]
     vi.spyOn(productPaymentProviderRepository, "create").mockResolvedValueOnce(productPaymentProvider)
-    const result = await productPaymentProviderService.addPaymentProvider(productPaymentProvider)
+    const result = await productPaymentProviderService.addPaymentProvider(db, productPaymentProvider)
     expect(result).toEqual(productPaymentProvider)
-    expect(productPaymentProviderRepository.create).toHaveBeenCalledWith(productPaymentProvider)
+    expect(productPaymentProviderRepository.create).toHaveBeenCalledWith(db, productPaymentProvider)
   })
 
   it("should delete payment provider from product", async () => {
     const productPaymentProvider = productPaymentProvidersPayload[0]
     vi.spyOn(productPaymentProviderRepository, "delete").mockResolvedValueOnce(undefined)
     const result = await productPaymentProviderService.deletePaymentProvider(
+      db,
       productPayloadExtended.id,
       productPaymentProvider.paymentProvider
     )
     expect(result).toEqual(undefined)
     expect(productPaymentProviderRepository.delete).toHaveBeenCalledWith(
+      db,
       productPayloadExtended.id,
       productPaymentProvider.paymentProvider
     )
@@ -56,11 +58,13 @@ describe("ProductPaymentProviderService", () => {
     const productPaymentProvider = productPaymentProvidersPayload[0]
     vi.spyOn(productPaymentProviderRepository, "productHasPaymentProviderId").mockResolvedValueOnce(true)
     const result = await productPaymentProviderService.productHasPaymentProviderId(
+      db,
       productPayloadExtended.id,
       productPaymentProvider.paymentProviderId
     )
     expect(result).toEqual(true)
     expect(productPaymentProviderRepository.productHasPaymentProviderId).toHaveBeenCalledWith(
+      db,
       productPayloadExtended.id,
       productPaymentProvider.paymentProviderId
     )

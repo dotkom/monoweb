@@ -208,7 +208,7 @@ export function getPaymentService(
       if (product.objectId !== null) {
         switch (product.type) {
           case "EVENT": {
-            const event = await eventRepository.getById(product.objectId)
+            const event = await eventRepository.getById(handle, product.objectId)
             if (event) {
               productName = `Betaling for ${event.title}`
             }

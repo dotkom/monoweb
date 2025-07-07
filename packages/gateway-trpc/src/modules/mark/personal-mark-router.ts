@@ -7,16 +7,12 @@ export const personalMarkRouter = t.router({
   getByUser: adminProcedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.personalMarkService.getPersonalMarksForUserId(handle, input.id)
-      )
+      ctx.executeTransaction(async (handle) => ctx.personalMarkService.getPersonalMarksForUserId(handle, input.id))
     ),
   getByMark: adminProcedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.personalMarkService.getPersonalMarksByMarkId(handle, input.id)
-      )
+      ctx.executeTransaction(async (handle) => ctx.personalMarkService.getPersonalMarksByMarkId(handle, input.id))
     ),
   addToUser: adminProcedure
     .input(PersonalMarkSchema)
@@ -28,9 +24,7 @@ export const personalMarkRouter = t.router({
   countUsersWithMark: adminProcedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId }))
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.personalMarkService.countUsersByMarkId(handle, input.id)
-      )
+      ctx.executeTransaction(async (handle) => ctx.personalMarkService.countUsersByMarkId(handle, input.id))
     ),
   removeFromUser: adminProcedure
     .input(PersonalMarkSchema)
@@ -42,8 +36,6 @@ export const personalMarkRouter = t.router({
   getExpiryDateForUser: adminProcedure
     .input(UserSchema.shape.id)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.personalMarkService.getExpiryDateForUserId(handle, input)
-      )
+      ctx.executeTransaction(async (handle) => ctx.personalMarkService.getExpiryDateForUserId(handle, input))
     ),
 })

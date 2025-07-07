@@ -1,13 +1,13 @@
 import { randomUUID } from "node:crypto"
 import { PrismaClient } from "@prisma/client"
 import { MarkNotFoundError } from "../mark-error"
-import { MarkRepositoryImpl } from "../mark-repository"
-import { MarkServiceImpl } from "../mark-service"
+import { getMarkRepository } from "../mark-repository"
+import { getMarkService } from "../mark-service"
 
 describe("MarkService", () => {
   const db = vi.mocked(PrismaClient.prototype, true)
-  const markRepository = new MarkRepositoryImpl(db)
-  const markService = new MarkServiceImpl(markRepository)
+  const markRepository = getMarkRepository()
+  const markService = getMarkService(markRepository)
 
   it("creates a new mark", async () => {
     const mark = {
@@ -20,14 +20,14 @@ describe("MarkService", () => {
     }
     const id = randomUUID()
     vi.spyOn(markRepository, "create").mockResolvedValueOnce({ id, ...mark })
-    await expect(markService.createMark(mark)).resolves.toEqual({ id, ...mark })
-    expect(markRepository.create).toHaveBeenCalledWith(mark)
+    await expect(markService.createMark(db, mark)).resolves.toEqual({ id, ...mark })
+    expect(markRepository.create).toHaveBeenCalledWith(db, mark)
   })
 
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
     vi.spyOn(markRepository, "getById").mockResolvedValueOnce(null)
-    await expect(markService.getMark(unknownID)).rejects.toThrow(MarkNotFoundError)
-    expect(markRepository.getById).toHaveBeenCalledWith(unknownID)
+    await expect(markService.getMark(db, unknownID)).rejects.toThrow(MarkNotFoundError)
+    expect(markRepository.getById).toHaveBeenCalledWith(db, unknownID)
   })
 })

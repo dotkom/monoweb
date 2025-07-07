@@ -110,7 +110,7 @@ export function getRefundRequestService(
         handledById: handledByUserId,
       })
       // Automatically refund the payment. We already know the request was approved, so no need to check.
-      await paymentService.refundPaymentById(updatedRefundRequest.paymentId, { checkRefundApproval: false })
+      await paymentService.refundPaymentById(handle, updatedRefundRequest.paymentId, { checkRefundApproval: false })
     },
     async rejectRefundRequest(handle, refundRequestId, handledByUserId) {
       const refundRequest = await refundRequestRepository.getById(handle, refundRequestId)

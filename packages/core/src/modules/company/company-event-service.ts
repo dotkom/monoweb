@@ -17,7 +17,7 @@ export function getCompanyEventService(
     async getAttendanceEventsByCompanyId(handle, companyId, page) {
       const events = await companyEventRepository.getEventsByCompanyId(handle, companyId, page)
       const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as EventId[]
-      const attendances = await attendanceService.getByIds(attendanceIds)
+      const attendances = await attendanceService.getByIds(handle, attendanceIds)
       const attendanceEvents: AttendanceEvent[] = events.map((event) => {
         const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
         return { ...event, attendance }

@@ -71,7 +71,7 @@ export function getAttendanceService(
 
     await Promise.all(
       updatedSelections.map(async (selection) =>
-        attendeeRepository.removeAllSelectionResponsesForSelection(attendanceId, selection.id)
+        attendeeRepository.removeAllSelectionResponsesForSelection(handle, attendanceId, selection.id)
       )
     )
   }
@@ -86,12 +86,12 @@ export function getAttendanceService(
       return
     }
 
-    const attendees = await attendeeService.getByAttendancePoolId(newPool.id) // These are in order of reserveTime
+    const attendees = await attendeeService.getByAttendancePoolId(handle, newPool.id) // These are in order of reserveTime
     const unreservedAttendees = attendees.filter((attendee) => !attendee.reserved)
     const toAttemptReserve = unreservedAttendees.slice(0, capacityDifference)
 
     for (const attendee of toAttemptReserve) {
-      const result = await attendeeService.attemptReserve(attendee, newPool, { bypassCriteria: false })
+      const result = await attendeeService.attemptReserve(handle, attendee, newPool, { bypassCriteria: false })
       // reserveTime and pool capacity are the only metrics we use to reserve. If one fail the next will also fail
       if (!result) {
         break
@@ -113,7 +113,7 @@ export function getAttendanceService(
       return await attendanceRepository.create(handle, data)
     },
     async delete(handle, attendanceId: AttendanceId) {
-      const poolHasAttendees = await attendeeRepository.attendanceHasAttendees(attendanceId)
+      const poolHasAttendees = await attendeeRepository.attendanceHasAttendees(handle, attendanceId)
       if (poolHasAttendees) {
         throw new AttendanceDeletionError("Cannot delete attendance with attendees")
       }
@@ -180,7 +180,7 @@ export function getAttendanceService(
         })
 
         const poolsToMergeIds = poolsToMerge.map((pool) => pool.id)
-        await attendeeRepository.moveFromMultiplePoolsToPool(poolsToMergeIds, newMergePool.id)
+        await attendeeRepository.moveFromMultiplePoolsToPool(handle, poolsToMergeIds, newMergePool.id)
 
         for (const pool of poolsToMerge) {
           await attendanceRepository.deletePool(handle, pool.id)
@@ -194,7 +194,7 @@ export function getAttendanceService(
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
-      const attendees = await attendeeRepository.getByAttendanceId(attendanceId)
+      const attendees = await attendeeRepository.getByAttendanceId(handle, attendanceId)
       const allSelectionResponses = attendees.flatMap((attendee) => attendee.selections)
 
       return attendance.selections.map((selection) => {
@@ -216,7 +216,7 @@ export function getAttendanceService(
       return await attendanceRepository.createPool(handle, data)
     },
     async deletePool(handle, attendancePoolId) {
-      if (await attendeeRepository.poolHasAttendees(attendancePoolId)) {
+      if (await attendeeRepository.poolHasAttendees(handle, attendancePoolId)) {
         throw new AttendanceDeletionError("Cannot delete attendance pool with attendees")
       }
       return await attendanceRepository.deletePool(handle, attendancePoolId)

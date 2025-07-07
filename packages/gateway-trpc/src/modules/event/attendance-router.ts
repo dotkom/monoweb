@@ -27,9 +27,7 @@ export const attendanceRouter = t.router({
   createPool: adminProcedure
     .input(AttendancePoolWriteSchema)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.createPool(handle, input)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendanceService.createPool(handle, input))
     ),
 
   updatePool: adminProcedure
@@ -40,9 +38,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input: { id, input }, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.updatePool(handle, id, input)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendanceService.updatePool(handle, id, input))
     ),
 
   deletePool: adminProcedure
@@ -52,9 +48,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.deletePool(handle, input.id)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendanceService.deletePool(handle, input.id))
     ),
 
   adminRegisterForEvent: adminProcedure
@@ -133,9 +127,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.attendeeService.updateAttended(handle, input.id, input.attended)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendeeService.updateAttended(handle, input.id, input.attended))
     ),
 
   updateSelectionResponses: protectedProcedure
@@ -158,9 +150,7 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.attendeeService.getByAttendanceId(handle, input.attendanceId)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendeeService.getByAttendanceId(handle, input.attendanceId))
     ),
 
   getAttendance: publicProcedure
@@ -170,9 +160,7 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.getById(handle, input.id)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendanceService.getById(handle, input.id))
     ),
 
   updateAttendance: adminProcedure
@@ -183,9 +171,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.update(handle, input.id, input.attendance)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendanceService.update(handle, input.id, input.attendance))
     ),
 
   mergeAttendancePools: adminProcedure
@@ -233,8 +219,6 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.attendeeService.removeSelectionResponses(handle, input.selectionId)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendeeService.removeSelectionResponses(handle, input.selectionId))
     ),
 })

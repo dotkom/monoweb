@@ -19,11 +19,11 @@ import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
 
 export const eventRouter = t.router({
-  get: publicProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) =>
-    ctx.executeTransaction(async (handle) =>
-      ctx.eventService.getEventById(handle, input)
-    )
-  ),
+  get: publicProcedure
+    .input(EventSchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.eventService.getEventById(handle, input))
+    ),
   create: adminProcedure
     .input(
       z.object({
@@ -52,9 +52,7 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.eventService.updateEvent(handle, input.id, input.event)
-      )
+      ctx.executeTransaction(async (handle) => ctx.eventService.updateEvent(handle, input.id, input.event))
     ),
   editWithGroups: adminProcedure
     .input(
@@ -79,12 +77,18 @@ export const eventRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
         const events = await ctx.eventService.getEvents(handle, input?.page, input?.filter)
-        const groups = await Promise.all(events.map((e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(handle, e.id)))
-        const interestGroups = await Promise.all(events.map((e) => ctx.interestGroupService.getAllByEventId(handle, e.id)))
-        const companies = await Promise.all(events.map((e) => ctx.companyEventService.getCompaniesByEventId(handle, e.id)))
-        const attendances = await Promise.all(events.map((e) =>
-          e.attendanceId ? ctx.attendanceService.getById(e.attendanceId) : null
-        ))
+        const groups = await Promise.all(
+          events.map((e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(handle, e.id))
+        )
+        const interestGroups = await Promise.all(
+          events.map((e) => ctx.interestGroupService.getAllByEventId(handle, e.id))
+        )
+        const companies = await Promise.all(
+          events.map((e) => ctx.companyEventService.getCompaniesByEventId(handle, e.id))
+        )
+        const attendances = await Promise.all(
+          events.map((e) => (e.attendanceId ? ctx.attendanceService.getById(handle, e.attendanceId) : null))
+        )
 
         return events.map(
           (event, i): EventDetail => ({
@@ -100,9 +104,7 @@ export const eventRouter = t.router({
   allByUserId: publicProcedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.eventService.getEventsByUserAttending(handle, input.id)
-      )
+      ctx.executeTransaction(async (handle) => ctx.eventService.getEventsByUserAttending(handle, input.id))
     ),
   allByCompanyWithAttendance: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
@@ -129,9 +131,7 @@ export const eventRouter = t.router({
     .input(EventSchema.shape.id)
     .output(EventDetailSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.eventService.getEventDetail(handle, input)
-      )
+      ctx.executeTransaction(async (handle) => ctx.eventService.getEventDetail(handle, input))
     ),
   addAttendance: adminProcedure
     .input(
@@ -141,9 +141,7 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.eventService.addAttendance(handle, input.eventId, input.values)
-      )
+      ctx.executeTransaction(async (handle) => ctx.eventService.addAttendance(handle, input.eventId, input.values))
     ),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
