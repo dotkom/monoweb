@@ -36,6 +36,7 @@ export class JobExecutor {
 
   private async markCompleted(jobId: string, jobName: string) {
     this.logger.info(`Job ${jobId} (${jobName}) completed successfully.`)
+
     await this.jobService.process(jobId, { status: "COMPLETED" })
   }
 
