@@ -1,7 +1,7 @@
 import { clearInterval, setInterval } from "node:timers"
-import { inspect } from "node:util"
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBClient, DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
+import type { Job } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { minutesToMilliseconds } from "date-fns"
 import { AttendanceNotFound } from "../attendance/attendance-error"
@@ -9,7 +9,7 @@ import { AttendancePoolNotFoundError } from "../attendance/attendance-pool-error
 import type { AttendanceService } from "../attendance/attendance-service"
 import { AttendeeNotFoundError } from "../attendance/attendee-error"
 import type { AttendeeService } from "../attendance/attendee-service"
-import { JobExecutorAlreadyInitializedError, JobExecutorNotInitializedError, JobNotFound } from "./job-error"
+import { InvalidJobType, JobExecutorAlreadyInitializedError, JobExecutorNotInitializedError } from "./job-error"
 import type { JobService } from "./job-service"
 
 /**
@@ -29,7 +29,6 @@ export class JobExecutor {
   private readonly attendanceService: AttendanceService
 
   private intervalId: ReturnType<typeof setInterval> | null = null
-  private running = false
 
   constructor(jobService: JobService, attendeeService: AttendeeService, attendanceService: AttendanceService) {
     this.jobService = jobService
@@ -37,52 +36,58 @@ export class JobExecutor {
     this.attendanceService = attendanceService
   }
 
-  private async markCompleted(handle: DBHandle, jobId: string, jobName: string) {
-    this.logger.info(`Job ${jobId} (${jobName}) completed successfully.`)
-
-    await this.jobService.process(handle, jobId, { status: "COMPLETED" })
-  }
-
-  private async markFailed(handle: DBHandle, jobId: string, jobName: string, error: Error) {
-    this.logger.error(`Error processing job ${jobId} (${jobName}):\n${inspect(error)}`)
-    await this.jobService.process(handle, jobId, { status: "FAILED" })
-  }
-
-  private async executeAllProcessableJobs(handle: DBHandle) {
-    if (this.running) {
-      return
-    }
-
-    this.running = true
-
-    const jobs = await this.jobService.getAllProcessableJobs(handle)
-
+  private async executeAllProcessableJobs(client: DBClient) {
+    this.logger.info("JobExecutor executing all processable jobs at %s", new Date().toISOString())
+    const jobs = await this.jobService.getAllProcessableJobs(client)
+    this.logger.info("JobExecutor discovery found %d tasks to execute", jobs.length)
     for (const job of jobs) {
-      try {
-        switch (job.name) {
-          case "ATTEMPT_RESERVE_ATTENDEE": {
-            await this.runAttemptReserveAttendeeJob(handle, job.payload)
-            break
-          }
-
-          case "MERGE_POOLS": {
-            await this.runMergePoolsJob(handle, job.payload)
-            break
-          }
-
-          default: {
-            throw new JobNotFound(`Job with name ${job.name} not found in executor`)
-          }
-        }
-      } catch (error) {
-        this.markFailed(handle, job.id, job.name, error as Error)
-        continue
-      }
-
-      this.markCompleted(handle, job.id, job.name)
+      // CORRECTNESS: Do not await here, as we would block the entire event loop on each job execution which is very
+      // slow for large job queues.
+      void this.runTask(client, job)
     }
+  }
 
-    this.running = false
+  /**
+   * Execute a single task in its own isolated database transaction.
+   *
+   * The caller should not await this method, as the task itself maintains full control over its state.
+   */
+  private async runTask(client: DBClient, task: Job) {
+    let isError = false
+    // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
+    // as running regardless of whether the child transaction commits or rollbacks.
+    await this.jobService.setTaskExecutionStatus(client, task.id, "RUNNING")
+    try {
+      // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
+      // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
+      // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
+      await client.$transaction(async (handle) => {
+        switch (task.name) {
+          case "ATTEMPT_RESERVE_ATTENDEE":
+            return await this.runAttemptReserveAttendeeJob(handle, task.payload)
+          case "MERGE_POOLS":
+            return await this.runMergePoolsJob(handle, task.payload)
+          default:
+            // NOTE: Do not need to log this, as the below catch block will catch the error after it has bubbled up
+            // through the Prisma transaction.
+            throw new InvalidJobType(`Job with name ${task.name} not found in executor for Job ID=${task.id}`)
+        }
+      })
+    } catch (error: unknown) {
+      isError = true
+      // TODO: Sentry.captureExecutionError(error)
+      // Mark the job as failed using the client, so that regardless of whether the child transaction commits or not,
+      // status is updated accordingly.
+      await this.jobService.setTaskExecutionStatus(client, task.id, "FAILED")
+      this.logger.error("Job with ID=%s failed with error: %o", task.id, error)
+    } finally {
+      // If nothing failed, we mark the job as completed. The reason this is in a finally block is to ensure that
+      // regardless of whether the job execution was successful or not, we always update the job status.
+      if (!isError) {
+        await this.jobService.setTaskExecutionStatus(client, task.id, "COMPLETED")
+        this.logger.debug("Job with ID=%s completed successfully", task.id)
+      }
+    }
   }
 
   /**
@@ -93,14 +98,14 @@ export class JobExecutor {
    * @see {@link JobExecutor.stop}
    * @throws {JobExecutorAlreadyInitializedError} if the executor is already initialized.
    */
-  public initialize(handle: DBHandle) {
+  public async initialize(client: DBClient) {
     if (this.intervalId) {
       throw new JobExecutorAlreadyInitializedError()
     }
     // setInterval does not run immediately
-    this.executeAllProcessableJobs(handle)
+    await this.executeAllProcessableJobs(client)
     this.intervalId = setInterval(async () => {
-      await this.executeAllProcessableJobs(handle)
+      await this.executeAllProcessableJobs(client)
     }, minutesToMilliseconds(1))
   }
 
@@ -118,7 +123,6 @@ export class JobExecutor {
 
     clearInterval(this.intervalId)
     this.intervalId = null
-    this.running = false
   }
 
   private async runAttemptReserveAttendeeJob(handle: DBHandle, payload: JsonValue) {

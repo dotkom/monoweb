@@ -1,5 +1,11 @@
-import { ApplicationError } from "../../error"
+import { ApplicationError, IllegalStateError } from "../../error"
 import { PROBLEM_DETAILS } from "../../http-problem-details"
+
+export class InvalidJobType extends IllegalStateError {
+  constructor(type: string) {
+    super(`Invalid job type: ${type}. This is a severe bug in the application.`)
+  }
+}
 
 export class JobNotFound extends ApplicationError {
   constructor(id: string) {

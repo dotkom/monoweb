@@ -17,14 +17,7 @@ export type JobService = {
    * @throws {JobNotFound} If `data.name` is not provided and the job with the given ID does not exist
    */
   update(handle: DBHandle, jobId: JobId, data: Partial<JobWrite>, oldState: JobStatus): Promise<Job>
-  process(handle: DBHandle, jobId: JobId, data: Partial<JobWrite>): Promise<Job>
-  cancel(handle: DBHandle, jobId: JobId): Promise<Job>
-  scheduleAttemptReserveAttendeeJob(
-    handle: DBHandle,
-    scheduleAt: JobScheduledAt,
-    payload: PayloadOf<"ATTEMPT_RESERVE_ATTENDEE">
-  ): Promise<Job>
-  scheduleMergePoolsJob(handle: DBHandle, scheduleAt: JobScheduledAt, payload: PayloadOf<"MERGE_POOLS">): Promise<Job>
+  setTaskExecutionStatus(handle: DBHandle, jobId: JobId, status: JobStatus): Promise<Job>
   /**
    * Parses the payload for a job
    *
@@ -33,6 +26,13 @@ export type JobService = {
    * @throws {JobPayloadValidationError} If the payload is invalid
    */
   parsePayload<Name extends JobName>(jobName: Name, payload: JsonValue): PayloadOf<Name>
+
+  scheduleAttemptReserveAttendeeJob(
+    handle: DBHandle,
+    scheduleAt: JobScheduledAt,
+    payload: PayloadOf<"ATTEMPT_RESERVE_ATTENDEE">
+  ): Promise<Job>
+  scheduleMergePoolsJob(handle: DBHandle, scheduleAt: JobScheduledAt, payload: PayloadOf<"MERGE_POOLS">): Promise<Job>
 }
 
 export function getJobService(jobRepository: JobRepository): JobService {
@@ -67,11 +67,8 @@ export function getJobService(jobRepository: JobRepository): JobService {
 
       return job
     },
-    async process(handle, jobId, data) {
-      return await this.update(handle, jobId, { ...data, processedAt: new Date() }, "PENDING")
-    },
-    async cancel(handle, jobId) {
-      return await this.process(handle, jobId, { status: "CANCELED" })
+    async setTaskExecutionStatus(handle, jobId, status) {
+      return await this.update(handle, jobId, { processedAt: new Date(), status }, "PENDING")
     },
     async scheduleAttemptReserveAttendeeJob(handle, scheduledAt, payload) {
       return await jobRepository.create(handle, {

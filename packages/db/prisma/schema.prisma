@@ -504,6 +504,7 @@ enum JobName {
 
 enum JobStatus {
   PENDING
+  RUNNING
   COMPLETED
   FAILED
   CANCELED
