@@ -1,8 +1,7 @@
+import type { DBHandle } from "@dotkomonline/db"
 import type {
   Membership,
   NTNUGroup,
-  NotificationPermissions,
-  NotificationPermissionsWrite,
   PrivacyPermissions,
   PrivacyPermissionsWrite,
   User,
@@ -10,11 +9,8 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import { getAcademicYear } from "@dotkomonline/utils"
-import type { NTNUGroupsRepository } from "../external/feide-groups-repository"
-import type {
-  NTNUStudyplanRepository,
-  StudyplanCourse,
-} from "../external/ntnu-studyplan-repository/ntnu-studyplan-repository"
+import type { FeideGroupsRepository } from "../feide/feide-groups-repository"
+import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { UserNotFoundError } from "./user-error"
@@ -23,64 +19,53 @@ import type { UserRepository } from "./user-repository"
 export interface UserService {
   getById(id: UserId): Promise<User>
   getAll(limit: number, offset: number): Promise<User[]>
+  /**
+   * @see https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
+   */
   searchForUser(query: string, limit: number, offset: number): Promise<User[]>
-  getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
+  getPrivacyPermissionsByUserId(handle: DBHandle, id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
+    handle: DBHandle,
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   update(userId: UserId, data: Partial<UserWrite>): Promise<User>
-  register(auth0Id: string): Promise<void>
+  register(handle: DBHandle, auth0Id: string): Promise<void>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT", "MIT"]
 const ONLINE_BACHELOR_PROGRAMMES = ["BIT"]
 
-export class UserServiceImpl implements UserService {
-  private readonly userRepository: UserRepository
-  private readonly privacyPermissionsRepository: PrivacyPermissionsRepository
-  private readonly notificationPermissionsRepository: NotificationPermissionsRepository
-  private readonly feideGroupsRepository: NTNUGroupsRepository
-  private readonly ntnuStudyplanRepository: NTNUStudyplanRepository
-
-  constructor(
-    userRepository: UserRepository,
-    privacyPermissionsRepository: PrivacyPermissionsRepository,
-    notificationPermissionsRepository: NotificationPermissionsRepository,
-    feideGroupsRepository: NTNUGroupsRepository,
-    ntnuStudyplanRepository: NTNUStudyplanRepository
-  ) {
-    this.userRepository = userRepository
-    this.privacyPermissionsRepository = privacyPermissionsRepository
-    this.notificationPermissionsRepository = notificationPermissionsRepository
-    this.feideGroupsRepository = feideGroupsRepository
-    this.ntnuStudyplanRepository = ntnuStudyplanRepository
-  }
-
-  async register(auth0Id: string) {
-    const { user, feideAccessToken } = await this.userRepository.getByIdWithFeideAccessToken(auth0Id)
-
-    await this.userRepository.register(auth0Id)
-
-    if (feideAccessToken) {
-      await this.refreshMembership(feideAccessToken, user, auth0Id)
+export function getUserService(
+  userRepository: UserRepository,
+  privacyPermissionsRepository: PrivacyPermissionsRepository,
+  notificationPermissionsRepository: NotificationPermissionsRepository,
+  feideGroupsRepository: FeideGroupsRepository,
+  ntnuStudyPlanRepository: NTNUStudyPlanRepository
+): UserService {
+  function shouldReplaceMembership(currentMembership: Membership | null, newMembership: Membership | null) {
+    if (!newMembership) {
+      return false
     }
+    if (!currentMembership) {
+      return true
+    }
+    if (currentMembership.type === "BACHELOR" && newMembership.type === "MASTER") {
+      return true
+    }
+    return currentMembership.type === "SOCIAL"
   }
-
-  private async refreshMembership(feideAccessToken: string, user: User | null, auth0Id: string) {
+  async function refreshMembership(feideAccessToken: string, user: User | null, auth0Id: string) {
     const { studyProgrammes, studySpecializations, courses } =
-      await this.feideGroupsRepository.getStudentInformation(feideAccessToken)
-
-    const defaultMembership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
-
-    if (this.shouldReplaceMembership(user?.membership ?? null, defaultMembership)) {
-      await this.userRepository.update(auth0Id, {
+      await feideGroupsRepository.getStudentInformation(feideAccessToken)
+    const defaultMembership = await calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
+    if (shouldReplaceMembership(user?.membership ?? null, defaultMembership)) {
+      await userRepository.update(auth0Id, {
         membership: defaultMembership,
       })
     }
   }
-
-  private async calculateDefaultMembership(
+  async function calculateDefaultMembership(
     studyProgrammes: NTNUGroup[],
     studySpecializations: NTNUGroup[],
     courses: NTNUGroup[]
@@ -98,12 +83,9 @@ export class UserServiceImpl implements UserService {
     const studyLength = masterProgramme ? 2 : 3
     // Get the newest study plan we can be sure is complete
     const studyplanYear = getAcademicYear(new Date()) - studyLength
-    const studyplanCourses = await this.ntnuStudyplanRepository.getStudyplanCourses(
-      relevantProgramme.code,
-      studyplanYear
-    )
+    const studyplanCourses = await ntnuStudyPlanRepository.getStudyPlanCourses(relevantProgramme.code, studyplanYear)
 
-    const estimatedStudyGrade = await this.estimateStudyGrade(studyplanCourses, courses)
+    const estimatedStudyGrade = await estimateStudyGrade(studyplanCourses, courses)
     const estimatedStudyYear = getAcademicYear(new Date()) - estimatedStudyGrade + 1
 
     if (masterProgramme) {
@@ -121,7 +103,7 @@ export class UserServiceImpl implements UserService {
   }
 
   // This function takes a list of courses from the study plan and a list of courses taken by the user, and estimates the grade level of the user (klassetrinn)
-  async estimateStudyGrade(studyplanCourses: StudyplanCourse[], coursesTaken: NTNUGroup[]): Promise<number> {
+  async function estimateStudyGrade(studyplanCourses: StudyplanCourse[], coursesTaken: NTNUGroup[]): Promise<number> {
     // Sum up how much each course from the study plan indicates each grade level in the study plan
     // Example: { TDT4100: { "1": 7.5 } }, Object oriented programming indicates a first year (grade 1) with 7.5 credits indication strength
     const courseGradeIndications: Record<string, { grade: number; credits: number }> = {}
@@ -164,92 +146,43 @@ export class UserServiceImpl implements UserService {
     return indicatedGrade
   }
 
-  shouldReplaceMembership(currentMembership: Membership | null, newMembership: Membership | null) {
-    if (!newMembership) {
-      return false
-    }
-
-    if (!currentMembership) {
-      return true
-    }
-
-    if (currentMembership.type === "BACHELOR" && newMembership.type === "MASTER") {
-      return true
-    }
-
-    if (currentMembership.type === "SOCIAL") {
-      return true
-    }
-
-    return false
-  }
-
-  async getById(userId: UserId) {
-    const user = await this.userRepository.getById(userId)
-
-    if (!user) {
-      throw new UserNotFoundError(userId)
-    }
-
-    return user
-  }
-
-  async update(userId: UserId, data: Partial<UserWrite>): Promise<User> {
-    return this.userRepository.update(userId, data)
-  }
-
-  async getAll(limit: number, offset: number): Promise<User[]> {
-    return await this.userRepository.getAll(limit, offset)
-  }
-
-  // https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
-  async searchForUser(query: string, limit: number, offset: number): Promise<User[]> {
-    return await this.userRepository.searchForUser(query, limit, offset)
-  }
-
-  async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {
-    let privacyPermissions = await this.privacyPermissionsRepository.getByUserId(id)
-
-    if (!privacyPermissions) {
-      privacyPermissions = await this.privacyPermissionsRepository.create({ userId: id })
-    }
-
-    return privacyPermissions
-  }
-
-  async updatePrivacyPermissionsForUserId(
-    id: string,
-    data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
-  ): Promise<PrivacyPermissions> {
-    let privacyPermissions = await this.privacyPermissionsRepository.update(id, data)
-
-    if (!privacyPermissions) {
-      privacyPermissions = await this.privacyPermissionsRepository.create({ userId: id, ...data })
-    }
-
-    return privacyPermissions
-  }
-
-  async getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions> {
-    let notificationPermissions = await this.notificationPermissionsRepository.getByUserId(id)
-
-    if (!notificationPermissions) {
-      notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id })
-    }
-
-    return notificationPermissions
-  }
-
-  async updateNotificationPermissionsForUserId(
-    id: string,
-    data: Partial<Omit<NotificationPermissionsWrite, "userId">>
-  ): Promise<NotificationPermissions> {
-    let notificationPermissions = await this.notificationPermissionsRepository.update(id, data)
-
-    if (!notificationPermissions) {
-      notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id, ...data })
-    }
-
-    return notificationPermissions
+  return {
+    async register(handle, auth0Id) {
+      const { user, feideAccessToken } = await userRepository.getByIdWithFeideAccessToken(auth0Id)
+      await userRepository.register(handle, auth0Id)
+      if (feideAccessToken) {
+        await refreshMembership(feideAccessToken, user, auth0Id)
+      }
+    },
+    async getById(userId) {
+      const user = await userRepository.getById(userId)
+      if (!user) {
+        throw new UserNotFoundError(userId)
+      }
+      return user
+    },
+    async update(userId, data) {
+      return await userRepository.update(userId, data)
+    },
+    async getAll(limit, offset) {
+      return await userRepository.getAll(limit, offset)
+    },
+    async searchForUser(query, limit, offset) {
+      return await userRepository.searchForUser(query, limit, offset)
+    },
+    async getPrivacyPermissionsByUserId(handle, id) {
+      let privacyPermissions = await privacyPermissionsRepository.getByUserId(handle, id)
+      if (privacyPermissions === null) {
+        privacyPermissions = await privacyPermissionsRepository.create(handle, id, {})
+      }
+      return privacyPermissions
+    },
+    async updatePrivacyPermissionsForUserId(handle, id, data) {
+      let privacyPermissions = await privacyPermissionsRepository.update(handle, id, data)
+      if (!privacyPermissions) {
+        privacyPermissions = await privacyPermissionsRepository.create(handle, id, data)
+      }
+      return privacyPermissions
+    },
   }
 }

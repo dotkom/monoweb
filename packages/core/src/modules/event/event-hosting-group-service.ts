@@ -1,58 +1,55 @@
+import type { DBHandle } from "@dotkomonline/db"
 import type { EventHostingGroup, EventId, Group, GroupId } from "@dotkomonline/types"
 import type { EventHostingGroupRepository } from "./event-hosting-group-repository"
 
 export interface EventHostingGroupService {
-  getGroupsForEvent(eventId: EventId): Promise<Group[]>
-  getHostingGroupsForEvent(eventId: EventId): Promise<Group[]>
-  setEventHostingGroups(eventId: EventId, groups: GroupId[]): Promise<EventHostingGroup[]>
+  getGroupsForEvent(handle: DBHandle, eventId: EventId): Promise<Group[]>
+  getHostingGroupsForEvent(handle: DBHandle, eventId: EventId): Promise<Group[]>
+  setEventHostingGroups(handle: DBHandle, eventId: EventId, groups: GroupId[]): Promise<EventHostingGroup[]>
 }
 
-export class EventHostingGroupServiceImpl implements EventHostingGroupService {
-  private readonly eventHostingGroupRepository: EventHostingGroupRepository
+export function getEventHostingGroupService(
+  eventHostingGroupRepository: EventHostingGroupRepository
+): EventHostingGroupService {
+  return {
+    async getGroupsForEvent(handle, eventId) {
+      return await eventHostingGroupRepository.getAllGroups(handle, eventId)
+    },
 
-  constructor(eventHostingGroupRepository: EventHostingGroupRepository) {
-    this.eventHostingGroupRepository = eventHostingGroupRepository
-  }
+    async getHostingGroupsForEvent(handle, eventId) {
+      return await eventHostingGroupRepository.getAllEventHostingGroups(handle, eventId)
+    },
 
-  public async getGroupsForEvent(eventId: EventId): Promise<Group[]> {
-    const groups = await this.eventHostingGroupRepository.getAllGroups(eventId)
-    return groups
-  }
+    async setEventHostingGroups(handle, eventId, groups) {
+      // Fetch all groups associated with the event
+      const eventHostingGroups = await this.getHostingGroupsForEvent(handle, eventId)
+      const currentHostingGroupIds = eventHostingGroups.map((hostingGroup) => hostingGroup.id)
 
-  public async getHostingGroupsForEvent(eventId: EventId): Promise<Group[]> {
-    const hostingGroups = await this.eventHostingGroupRepository.getAllEventHostingGroups(eventId)
-    return hostingGroups
-  }
+      // Identify hosting groups to add and remove
+      const hostingGroupsToRemove = currentHostingGroupIds.filter((groupId) => !groups.includes(groupId))
+      const hostingGroupsToAdd = groups.filter((groupId) => !currentHostingGroupIds.includes(groupId))
 
-  public async setEventHostingGroups(eventId: EventId, groups: GroupId[]): Promise<EventHostingGroup[]> {
-    // Fetch all groups associated with the event
-    const eventHostingGroups = await this.getHostingGroupsForEvent(eventId)
-    const currentHostingGroupIds = eventHostingGroups.map((hostingGroup) => hostingGroup.id)
+      // Create promises for removal and addition operations
+      const removePromises = hostingGroupsToRemove.map(async (groupId) =>
+        eventHostingGroupRepository.removeHostingGroupFromEvent(handle, eventId, groupId)
+      )
 
-    // Identify hosting groups to add and remove
-    const hostingGroupsToRemove = currentHostingGroupIds.filter((groupId) => !groups.includes(groupId))
-    const hostingGroupsToAdd = groups.filter((groupId) => !currentHostingGroupIds.includes(groupId))
+      const addPromises = hostingGroupsToAdd.map(async (groupId) =>
+        eventHostingGroupRepository.addHostingGroupToEvent(handle, eventId, groupId)
+      )
 
-    // Create promises for removal and addition operations
-    const removePromises = hostingGroupsToRemove.map(async (groupId) =>
-      this.eventHostingGroupRepository.removeHostingGroupFromEvent(eventId, groupId)
-    )
+      // Execute all promises in parallel
+      await Promise.all([...removePromises, ...addPromises])
 
-    const addPromises = hostingGroupsToAdd.map(async (groupId) =>
-      this.eventHostingGroupRepository.addHostingGroupToEvent(eventId, groupId)
-    )
+      // After removal and addition, we can identify the remaining groups
+      const remainingHostingGroups = currentHostingGroupIds
+        .filter((groupId) => !hostingGroupsToRemove.includes(groupId)) // Remove the groups to remove
+        .concat(hostingGroupsToAdd) // Add the groups to add
 
-    // Execute all promises in parallel
-    await Promise.all([...removePromises, ...addPromises])
-
-    // After removal and addition, we can identify the remaining groups
-    const remainingHostingGroups = currentHostingGroupIds
-      .filter((groupId) => !hostingGroupsToRemove.includes(groupId)) // Remove the groups to remove
-      .concat(hostingGroupsToAdd) // Add the groups to add
-
-    return remainingHostingGroups.map((groupId) => ({
-      eventId,
-      groupId,
-    }))
+      return remainingHostingGroups.map((groupId) => ({
+        eventId,
+        groupId,
+      }))
+    },
   }
 }

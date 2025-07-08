@@ -5,19 +5,33 @@ import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../tr
 export const groupRouter = t.router({
   create: adminProcedure
     .input(GroupWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.groupService.createGroup(input)),
-  all: publicProcedure.query(async ({ ctx }) => ctx.groupService.getGroups()),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.create(handle, input))
+    ),
+  all: publicProcedure.query(async ({ ctx }) =>
+    ctx.executeTransaction(async (handle) => ctx.groupService.getAll(handle))
+  ),
   allByType: publicProcedure
     .input(GroupSchema.shape.type)
-    .query(async ({ input, ctx }) => ctx.groupService.getGroupsByType(input)),
-  allIds: publicProcedure.query(async ({ ctx }) => ctx.groupService.getAllGroupIds()),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.getAllByType(handle, input))
+    ),
+  allIds: publicProcedure.query(async ({ ctx }) =>
+    ctx.executeTransaction(async (handle) => ctx.groupService.getAllIds(handle))
+  ),
   allIdsByType: publicProcedure
     .input(GroupSchema.shape.type)
-    .query(async ({ input, ctx }) => ctx.groupService.getAllGroupIdsByType(input)),
-  get: publicProcedure.input(GroupSchema.shape.id).query(async ({ input, ctx }) => ctx.groupService.getGroup(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.getAllIdsByType(handle, input))
+    ),
+  get: publicProcedure
+    .input(GroupSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.getById(handle, input))),
   getByType: publicProcedure
     .input(z.object({ groupId: GroupSchema.shape.id, type: GroupSchema.shape.type }))
-    .query(async ({ input, ctx }) => ctx.groupService.getGroupByType(input.groupId, input.type)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.getByIdAndType(handle, input.groupId, input.type))
+    ),
   update: protectedProcedure
     .input(
       z.object({
@@ -25,20 +39,32 @@ export const groupRouter = t.router({
         values: GroupWriteSchema,
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.groupService.updateGroup(input.id, input.values)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.update(handle, input.id, input.values))
+    ),
   delete: protectedProcedure
     .input(GroupSchema.shape.id)
-    .mutation(async ({ input, ctx }) => await ctx.groupService.deleteGroup(input)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.delete(handle, input))
+    ),
   getMembers: publicProcedure
     .input(GroupMemberSchema.shape.userId)
-    .query(async ({ input, ctx }) => ctx.groupService.getMembers(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.getMembers(handle, input))
+    ),
   allByMember: publicProcedure
     .input(GroupMemberSchema.shape.userId)
-    .query(async ({ input, ctx }) => ctx.groupService.getGroupsByMember(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.getAllByMember(handle, input))
+    ),
   addMember: adminProcedure
     .input(GroupMemberWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.groupService.addMember(input)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.addMember(handle, input))
+    ),
   removeMember: adminProcedure
     .input(z.object({ groupId: GroupMemberSchema.shape.groupId, userId: GroupMemberSchema.shape.userId }))
-    .mutation(async ({ input, ctx }) => await ctx.groupService.removeMember(input.userId, input.groupId)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.removeMember(handle, input.userId, input.groupId))
+    ),
 })

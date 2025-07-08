@@ -9,6 +9,7 @@ export type NotificationPermissions = z.infer<typeof NotificationPermissionsSche
 export const NotificationPermissionsWriteSchema = NotificationPermissionsSchema.omit({
   createdAt: true,
   updatedAt: true,
+  userId: true,
 })
 
 export type NotificationPermissionsWrite = z.infer<typeof NotificationPermissionsWriteSchema>

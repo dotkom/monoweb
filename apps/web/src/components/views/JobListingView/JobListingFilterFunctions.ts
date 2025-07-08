@@ -19,7 +19,7 @@ export function filterLocation(jobListing: JobListing, chosenLocation: string) {
   if (chosenLocation === "Alle") {
     return true
   }
-  return jobListing.locations.includes(chosenLocation)
+  return jobListing.locations.some((location) => location.name === chosenLocation)
 }
 
 export function filterName(jobListing: JobListing, searchName: string) {

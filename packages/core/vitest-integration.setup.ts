@@ -20,7 +20,7 @@ export async function createServiceLayerForTesting() {
   })
 }
 
-let dbClient: DBClient
+export let dbClient: DBClient
 export let core: Awaited<ReturnType<typeof createServiceLayerForTesting>>
 
 afterAll(async () => {

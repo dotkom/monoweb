@@ -1,6 +1,6 @@
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
 import type { AttendanceEvent } from "@dotkomonline/types"
-import { Title, cn } from "@dotkomonline/ui"
+import { Tilt, Title, cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import Link from "next/link"
@@ -11,12 +11,13 @@ import { Thumbnail } from "./Thumbnail"
 
 const PLACEHOLDER_IMAGE_URL = "https://placehold.co/320x240/png?text=Arrangement"
 
-export interface EventListItemProps {
+export interface EventCardProps {
   attendanceEvent: AttendanceEvent
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
+  direction: "row" | "column"
 }
 
-export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attendeeStatus }: EventListItemProps) => {
+export const EventCard: FC<EventCardProps> = ({ attendanceEvent, attendeeStatus, direction }: EventCardProps) => {
   const { id, title, type, imageUrl: customImageUrl } = attendanceEvent
 
   const imageUrl = customImageUrl || PLACEHOLDER_IMAGE_URL
@@ -34,30 +35,32 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
       <Link
         href={url}
         className={cn(
-          "flex flex-row gap-3 w-full rounded-lg p-2",
+          "group flex w-full rounded-lg p-2",
           "hover:bg-slate-2 transition-colors",
           isReserved && !inPast && "bg-green-1 hover:bg-green-2",
           isUnreserved && !inPast && "bg-yellow-1 hover:bg-yellow-2",
           startInPast && "text-slate-11 hover:text-slate-12",
-          "group"
+          direction === "row" ? "flex-row gap-3" : "flex-col gap-1"
         )}
       >
-        <Thumbnail imageUrl={imageUrl} alt={title} startInPast={startInPast} eventType={type} />
+        <Tilt>
+          <Thumbnail imageUrl={imageUrl} alt={title} startInPast={startInPast} eventType={type} />
+        </Tilt>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           <Title element="h3" size="sm" className="font-normal">
             {title}
           </Title>
 
-          <DateAndTime start={attendanceEvent.start} end={attendanceEvent.end} />
+          <div className={cn("flex", direction === "row" ? "flex-col gap-2" : "flex-row gap-4")}>
+            <DateAndTime start={attendanceEvent.start} end={attendanceEvent.end} />
 
-          <AttendanceStatus
-            attendance={attendanceEvent.attendance}
-            attendanceStatus={attendanceStatus}
-            startInPast={startInPast}
-            isReserved={isReserved}
-            isUnreserved={isUnreserved}
-          />
+            <AttendanceStatus
+              attendance={attendanceEvent.attendance}
+              attendeeStatus={attendeeStatus}
+              startInPast={startInPast}
+            />
+          </div>
         </div>
       </Link>
     </section>

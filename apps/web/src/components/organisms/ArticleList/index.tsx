@@ -21,7 +21,7 @@ export const ArticleList: FC<ArticleListProps> = ({ tags, articles }: ArticleLis
   const filteredArticles = articles
     .filter((article) => {
       const matchesSearch = !search || article.title.toLowerCase().includes(search.toLowerCase())
-      const matchesTag = !selectedTag || article.tags.includes(selectedTag)
+      const matchesTag = !selectedTag || article.tags.some((tag) => tag.name === selectedTag)
       return matchesSearch && matchesTag
     })
     .sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))

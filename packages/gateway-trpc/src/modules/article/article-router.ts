@@ -8,17 +8,19 @@ export const articleRouter = t.router({
     .input(
       z.object({
         article: ArticleWriteSchema,
-        tags: ArticleSchema.shape.tags,
+        tags: z.array(ArticleTagSchema.shape.name),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const article = await ctx.articleService.create(input.article)
-      const tags = await ctx.articleService.setTags(article.id, input.tags)
-      return {
-        ...article,
-        tags,
-      }
-    }),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        const article = await ctx.articleService.create(handle, input.article)
+        const tags = await ctx.articleService.setTags(handle, article.id, input.tags)
+        return {
+          ...article,
+          tags,
+        }
+      })
+    ),
   edit: adminProcedure
     .input(
       z.object({
@@ -26,38 +28,55 @@ export const articleRouter = t.router({
         input: ArticleWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.articleService.update(input.id, input.input)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.update(handle, input.id, input.input))
+    ),
   editWithTags: adminProcedure
     .input(
       z.object({
         id: ArticleSchema.shape.id,
         article: ArticleWriteSchema.partial(),
-        tags: ArticleSchema.shape.tags,
+        tags: z.array(ArticleTagSchema.shape.name),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const article = await ctx.articleService.update(input.id, input.article)
-      const tags = await ctx.articleService.setTags(input.id, input.tags)
-
-      return { ...article, tags }
-    }),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        const article = await ctx.articleService.update(handle, input.id, input.article)
+        const tags = await ctx.articleService.setTags(handle, input.id, input.tags)
+        return { ...article, tags }
+      })
+    ),
   all: publicProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => await ctx.articleService.getAll(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.getAll(handle, input))
+    ),
   get: publicProcedure
     .input(ArticleSchema.shape.id)
-    .query(async ({ input, ctx }) => await ctx.articleService.getById(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.getById(handle, input))
+    ),
   getBySlug: publicProcedure
     .input(ArticleSchema.shape.slug)
-    .query(async ({ input, ctx }) => await ctx.articleService.getBySlug(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.getBySlug(handle, input))
+    ),
   allByTags: publicProcedure
     .input(z.array(ArticleTagSchema.shape.name))
-    .query(async ({ input, ctx }) => await ctx.articleService.getAllByTags(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.getAllByTags(handle, input))
+    ),
   related: publicProcedure
     .input(ArticleSchema)
-    .query(async ({ input, ctx }) => await ctx.articleService.getRelated(input)),
-  featured: publicProcedure.query(async ({ ctx }) => await ctx.articleService.getFeatured()),
-  getTags: publicProcedure.query(async ({ ctx }) => await ctx.articleService.getTags()),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.getRelated(handle, input))
+    ),
+  featured: publicProcedure.query(async ({ ctx }) =>
+    ctx.executeTransaction(async (handle) => ctx.articleService.getFeatured(handle))
+  ),
+  getTags: publicProcedure.query(async ({ ctx }) =>
+    ctx.executeTransaction(async (handle) => ctx.articleService.getTags(handle))
+  ),
   addTag: adminProcedure
     .input(
       z.object({
@@ -65,7 +84,9 @@ export const articleRouter = t.router({
         tag: ArticleTagSchema.shape.name,
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.articleService.addTag(input.id, input.tag)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.addTag(handle, input.id, input.tag))
+    ),
   removeTag: adminProcedure
     .input(
       z.object({
@@ -73,5 +94,7 @@ export const articleRouter = t.router({
         tag: ArticleTagSchema.shape.name,
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.articleService.removeTag(input.id, input.tag)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.removeTag(handle, input.id, input.tag))
+    ),
 })

@@ -3,14 +3,14 @@ import type { RefundRequestWrite } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
 import { describe, vi } from "vitest"
 import { IllegalStateError } from "../../../error"
-import { EventRepositoryImpl } from "../../event/event-repository"
+import { getEventRepository } from "../../event/event-repository"
 import { UnrefundablePaymentError } from "../payment-error"
-import { PaymentRepositoryImpl } from "../payment-repository"
-import { PaymentServiceImpl } from "../payment-service"
-import { ProductRepositoryImpl } from "../product-repository"
+import { getPaymentRepository } from "../payment-repository"
+import { getPaymentService } from "../payment-service"
+import { getProductRepository } from "../product-repository"
 import { InvalidRefundRequestStatusError } from "../refund-request-error"
-import { RefundRequestRepositoryImpl } from "../refund-request-repository"
-import { RefundRequestServiceImpl } from "../refund-request-service"
+import { getRefundRequestRepository } from "../refund-request-repository"
+import { getRefundRequestService } from "../refund-request-service"
 import { paymentPayload } from "./payment-service.spec"
 import { productPayload } from "./product-service.spec"
 
@@ -25,18 +25,18 @@ export const refundRequestPayload: RefundRequestWrite = {
 
 describe("RefundRequestService", () => {
   const db = vi.mocked(PrismaClient.prototype)
-  const refundRequestRepository = new RefundRequestRepositoryImpl(db)
-  const paymentRepository = new PaymentRepositoryImpl(db)
-  const productRepository = new ProductRepositoryImpl(db)
-  const eventRepository = new EventRepositoryImpl(db)
-  const paymentService = new PaymentServiceImpl(
+  const refundRequestRepository = getRefundRequestRepository()
+  const paymentRepository = getPaymentRepository()
+  const productRepository = getProductRepository()
+  const eventRepository = getEventRepository()
+  const paymentService = getPaymentService(
     paymentRepository,
     productRepository,
     eventRepository,
     refundRequestRepository,
     {}
   )
-  const refundRequestService = new RefundRequestServiceImpl(
+  const refundRequestService = getRefundRequestService(
     refundRequestRepository,
     paymentRepository,
     productRepository,
@@ -64,7 +64,7 @@ describe("RefundRequestService", () => {
     vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce(paymentPayloadExtended)
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: false })
 
-    const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason")
+    const call = refundRequestService.createRefundRequest(db, paymentPayloadExtended.id, userId, "Test reason")
     await expect(call).rejects.toThrowError(UnrefundablePaymentError)
   })
 
@@ -76,7 +76,7 @@ describe("RefundRequestService", () => {
       refundRequiresApproval: false,
     })
 
-    const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason")
+    const call = refundRequestService.createRefundRequest(db, paymentPayloadExtended.id, userId, "Test reason")
     await expect(call).rejects.toThrowError(IllegalStateError)
   })
 
@@ -94,7 +94,7 @@ describe("RefundRequestService", () => {
       updatedAt: new Date(),
     })
 
-    const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason")
+    const call = refundRequestService.createRefundRequest(db, paymentPayloadExtended.id, userId, "Test reason")
     await expect(call).resolves.toEqual(refundRequestPayloadExtended)
     expect(refundRequestRepository.create).toHaveBeenCalledWith({
       paymentId: paymentPayloadExtended.id,
@@ -113,7 +113,7 @@ describe("RefundRequestService", () => {
       updatedAt: new Date(),
     })
 
-    const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId)
+    const call = refundRequestService.approveRefundRequest(db, refundRequestPayloadExtended.id, userId)
     await expect(call).rejects.toThrowError(InvalidRefundRequestStatusError)
   })
 
@@ -133,7 +133,7 @@ describe("RefundRequestService", () => {
     })
     vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined)
 
-    const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId)
+    const call = refundRequestService.approveRefundRequest(db, refundRequestPayloadExtended.id, userId)
     await expect(call).resolves.toEqual(undefined)
     expect(refundRequestRepository.update).toHaveBeenCalledWith(refundRequestPayloadExtended.id, {
       status: "APPROVED",
@@ -157,7 +157,7 @@ describe("RefundRequestService", () => {
     })
     vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined)
 
-    const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId)
+    const call = refundRequestService.approveRefundRequest(db, refundRequestPayloadExtended.id, userId)
     await expect(call).resolves.toEqual(undefined)
     expect(refundRequestRepository.update).toHaveBeenCalledWith(refundRequestPayloadExtended.id, {
       status: "APPROVED",
@@ -173,7 +173,7 @@ describe("RefundRequestService", () => {
       updatedAt: new Date(),
     })
 
-    const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId)
+    const call = refundRequestService.rejectRefundRequest(db, refundRequestPayloadExtended.id, userId)
     await expect(call).rejects.toThrowError(InvalidRefundRequestStatusError)
   })
 
@@ -185,7 +185,7 @@ describe("RefundRequestService", () => {
       updatedAt: new Date(),
     })
 
-    const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId)
+    const call = refundRequestService.rejectRefundRequest(db, refundRequestPayloadExtended.id, userId)
     await expect(call).rejects.toThrowError(InvalidRefundRequestStatusError)
   })
 })

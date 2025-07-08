@@ -1,3 +1,4 @@
+import type { DBHandle } from "@dotkomonline/db"
 import type { PaymentId, RefundRequest, RefundRequestId, RefundRequestWrite, UserId } from "@dotkomonline/types"
 import { IllegalStateError } from "../../error"
 import type { Pageable } from "../../query"
@@ -18,124 +19,114 @@ export interface RefundRequestService {
    * @throws {UnrefundablePaymentError} if product is not refundable
    * @throws {IllegalStateError} if refund request is not required for this product
    */
-  createRefundRequest(paymentId: PaymentId, refunderUserId: UserId, reason: string): Promise<RefundRequest>
-  updateRefundRequest(refundRequestId: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest>
-  deleteRefundRequest(refundRequestId: RefundRequestId): Promise<void>
-  getRefundRequestById(refundRequestId: RefundRequestId): Promise<RefundRequest | null>
-  getRefundRequests(page: Pageable): Promise<RefundRequest[]>
+  createRefundRequest(
+    handle: DBHandle,
+    paymentId: PaymentId,
+    refunderUserId: UserId,
+    reason: string
+  ): Promise<RefundRequest>
+  updateRefundRequest(
+    handle: DBHandle,
+    refundRequestId: RefundRequestId,
+    data: Partial<RefundRequestWrite>
+  ): Promise<RefundRequest>
+  deleteRefundRequest(handle: DBHandle, refundRequestId: RefundRequestId): Promise<void>
+  getRefundRequestById(handle: DBHandle, refundRequestId: RefundRequestId): Promise<RefundRequest | null>
+  getRefundRequests(handle: DBHandle, page: Pageable): Promise<RefundRequest[]>
   /**
    * Approve a refund request
    *
    * @throws {RefundRequestNotFoundError} if refund request is not found
    * @throws {InvalidRefundRequestStatusError} if refund request is not pending
    */
-  approveRefundRequest(refundRequestId: RefundRequestId, handledByUserId: UserId): Promise<void>
+  approveRefundRequest(handle: DBHandle, refundRequestId: RefundRequestId, handledByUserId: UserId): Promise<void>
   /**
    * Reject a refund request
    *
    * @throws {RefundRequestNotFoundError} if refund request is not found
    * @throws {InvalidRefundRequestStatusError} if refund request is not pending
    */
-  rejectRefundRequest(refundRequestId: RefundRequestId, handledByUserId: UserId): Promise<void>
+  rejectRefundRequest(handle: DBHandle, refundRequestId: RefundRequestId, handledByUserId: UserId): Promise<void>
 }
 
-export class RefundRequestServiceImpl implements RefundRequestService {
-  private readonly refundRequestRepository: RefundRequestRepository
-  private readonly paymentRepository: PaymentRepository
-  private readonly productRepository: ProductRepository
-  private readonly paymentService: PaymentService
+export function getRefundRequestService(
+  refundRequestRepository: RefundRequestRepository,
+  paymentRepository: PaymentRepository,
+  productRepository: ProductRepository,
+  paymentService: PaymentService
+): RefundRequestService {
+  return {
+    async createRefundRequest(handle, paymentId, refunderUserId, reason) {
+      const payment = await paymentRepository.getById(handle, paymentId)
+      if (!payment) {
+        throw new PaymentNotFoundError(paymentId)
+      }
 
-  constructor(
-    refundRequestRepository: RefundRequestRepository,
-    paymentRepository: PaymentRepository,
-    productRepository: ProductRepository,
-    paymentService: PaymentService
-  ) {
-    this.refundRequestRepository = refundRequestRepository
-    this.paymentRepository = paymentRepository
-    this.productRepository = productRepository
-    this.paymentService = paymentService
-  }
+      const product = await productRepository.getById(handle, payment.productId)
+      if (!product) {
+        throw new ProductNotFoundError(payment.productId)
+      }
 
-  public async createRefundRequest(paymentId: PaymentId, refunderUserId: UserId, reason: string) {
-    const payment = await this.paymentRepository.getById(paymentId)
+      if (!product.isRefundable) {
+        throw new UnrefundablePaymentError()
+      }
 
-    if (!payment) {
-      throw new PaymentNotFoundError(paymentId)
-    }
+      if (!product.refundRequiresApproval) {
+        throw new IllegalStateError("Refund request not required for this product")
+      }
 
-    const product = await this.productRepository.getById(payment.productId)
-    if (!product) {
-      throw new ProductNotFoundError(payment.productId)
-    }
+      return refundRequestRepository.create(handle, {
+        paymentId,
+        userId: refunderUserId,
+        reason,
+        status: "PENDING",
+        handledById: null,
+      })
+    },
+    async updateRefundRequest(handle, refundRequestId, data) {
+      return refundRequestRepository.update(handle, refundRequestId, data)
+    },
+    async deleteRefundRequest(handle, refundRequestId) {
+      return refundRequestRepository.delete(handle, refundRequestId)
+    },
+    async getRefundRequestById(handle, refundRequestId) {
+      return refundRequestRepository.getById(handle, refundRequestId)
+    },
+    async getRefundRequests(handle, page) {
+      return refundRequestRepository.getAll(handle, page)
+    },
+    async approveRefundRequest(handle, refundRequestId, handledByUserId) {
+      const refundRequest = await refundRequestRepository.getById(handle, refundRequestId)
+      if (!refundRequest) {
+        throw new RefundRequestNotFoundError(refundRequestId)
+      }
 
-    if (!product.isRefundable) {
-      throw new UnrefundablePaymentError()
-    }
+      if (refundRequest.status !== "PENDING") {
+        throw new InvalidRefundRequestStatusError("PENDING", refundRequest.status)
+      }
 
-    if (!product.refundRequiresApproval) {
-      throw new IllegalStateError("Refund request not required for this product")
-    }
+      const updatedRefundRequest = await refundRequestRepository.update(handle, refundRequestId, {
+        status: "APPROVED",
+        handledById: handledByUserId,
+      })
+      // Automatically refund the payment. We already know the request was approved, so no need to check.
+      await paymentService.refundPaymentById(handle, updatedRefundRequest.paymentId, { checkRefundApproval: false })
+    },
+    async rejectRefundRequest(handle, refundRequestId, handledByUserId) {
+      const refundRequest = await refundRequestRepository.getById(handle, refundRequestId)
 
-    return this.refundRequestRepository.create({
-      paymentId,
-      userId: refunderUserId,
-      reason,
-      status: "PENDING",
-      handledById: null,
-    })
-  }
+      if (!refundRequest) {
+        throw new RefundRequestNotFoundError(refundRequestId)
+      }
 
-  public async updateRefundRequest(refundRequestId: RefundRequestId, data: Partial<RefundRequestWrite>) {
-    return this.refundRequestRepository.update(refundRequestId, data)
-  }
+      if (refundRequest.status !== "PENDING") {
+        throw new InvalidRefundRequestStatusError("PENDING", refundRequest.status)
+      }
 
-  public async deleteRefundRequest(refundRequestId: RefundRequestId) {
-    return this.refundRequestRepository.delete(refundRequestId)
-  }
-
-  public async getRefundRequestById(refundRequestId: RefundRequestId) {
-    return this.refundRequestRepository.getById(refundRequestId)
-  }
-
-  public async getRefundRequests(page: Pageable) {
-    return this.refundRequestRepository.getAll(page)
-  }
-
-  public async approveRefundRequest(refundRequestId: RefundRequestId, handledByUserId: UserId) {
-    const refundRequest = await this.refundRequestRepository.getById(refundRequestId)
-
-    if (!refundRequest) {
-      throw new RefundRequestNotFoundError(refundRequestId)
-    }
-
-    if (refundRequest.status !== "PENDING") {
-      throw new InvalidRefundRequestStatusError("PENDING", refundRequest.status)
-    }
-
-    const updatedRefundRequest = await this.refundRequestRepository.update(refundRequestId, {
-      status: "APPROVED",
-      handledById: handledByUserId,
-    })
-
-    // Automatically refund the payment. We already know the request was approved, so no need to check.
-    await this.paymentService.refundPaymentById(updatedRefundRequest.paymentId, { checkRefundApproval: false })
-  }
-
-  public async rejectRefundRequest(refundRequestId: RefundRequestId, handledByUserId: UserId) {
-    const refundRequest = await this.refundRequestRepository.getById(refundRequestId)
-
-    if (!refundRequest) {
-      throw new RefundRequestNotFoundError(refundRequestId)
-    }
-
-    if (refundRequest.status !== "PENDING") {
-      throw new InvalidRefundRequestStatusError("PENDING", refundRequest.status)
-    }
-
-    await this.refundRequestRepository.update(refundRequestId, {
-      status: "REJECTED",
-      handledById: handledByUserId,
-    })
+      await refundRequestRepository.update(handle, refundRequestId, {
+        status: "REJECTED",
+        handledById: handledByUserId,
+      })
+    },
   }
 }

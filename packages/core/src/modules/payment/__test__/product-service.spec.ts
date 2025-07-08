@@ -3,8 +3,8 @@ import type { Product } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
 import { describe, vi } from "vitest"
 import { ProductNotFoundError } from "../product-error"
-import { ProductRepositoryImpl } from "./../product-repository"
-import { ProductServiceImpl } from "./../product-service"
+import { getProductRepository } from "../product-repository"
+import { getProductService } from "../product-service"
 
 // biome-ignore lint/suspicious/noExportsInTest: this is shared across multiple tests
 export const productPayload: Omit<Product, "id"> = {
@@ -21,24 +21,24 @@ export const productPayload: Omit<Product, "id"> = {
 
 describe("ProductService", () => {
   const db = vi.mocked(PrismaClient.prototype)
-  const productRepository = new ProductRepositoryImpl(db)
-  const productService = new ProductServiceImpl(productRepository)
+  const productRepository = getProductRepository()
+  const productService = getProductService(productRepository)
 
   it("creates a new product", async () => {
     const id = randomUUID()
     vi.spyOn(productRepository, "create").mockResolvedValueOnce({ id, ...productPayload })
-    const product = await productService.create(productPayload)
+    const product = await productService.create(db, productPayload)
     expect(product).toEqual({ id, ...productPayload })
-    expect(productRepository.create).toHaveBeenCalledWith(productPayload)
+    expect(productRepository.create).toHaveBeenCalledWith(db, productPayload)
   })
 
   it("finds products by id", async () => {
     const id = randomUUID()
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(null)
-    const missing = productService.getById(id)
+    const missing = productService.getById(db, id)
     await expect(missing).rejects.toThrow(ProductNotFoundError)
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ id, ...productPayload })
-    const real = await productService.getById(id)
+    const real = await productService.getById(db, id)
     expect(real).toEqual({ id, ...productPayload })
   })
 })

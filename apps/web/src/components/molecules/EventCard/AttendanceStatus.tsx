@@ -1,14 +1,11 @@
-import type { Attendance, AttendanceStatus as AttendanceStatus_ } from "@dotkomonline/types"
+import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
+import type { Attendance } from "@dotkomonline/types"
 import { Icon, Text, cn } from "@dotkomonline/ui"
 import { formatDistanceToNow } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 
-const getAttendeeCountAndCapacity = (attendance: Attendance | null): [number, number] | [null, null] => {
-  if (!attendance?.pools?.length) {
-    return [null, null]
-  }
-
+const getAttendeeCountAndCapacity = (attendance: Attendance): [number, number] => {
   return attendance.pools.reduce(
     ([attendeeCount, capacity], pool) => [attendeeCount + pool.numAttendees, capacity + pool.capacity],
     [0, 0]
@@ -17,24 +14,24 @@ const getAttendeeCountAndCapacity = (attendance: Attendance | null): [number, nu
 
 interface EventListItemAttendanceStatusProps {
   attendance: Attendance | null
-  attendanceStatus: AttendanceStatus_ | null
+  attendeeStatus: "RESERVED" | "UNRESERVED" | null
   startInPast: boolean
-  isReserved: boolean
-  isUnreserved: boolean
 }
 
 export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   attendance,
-  attendanceStatus,
+  attendeeStatus,
   startInPast,
-  isReserved,
-  isUnreserved,
 }) => {
-  const [numberOfAttendees, capacity] = getAttendeeCountAndCapacity(attendance)
-
-  if (attendance === null || attendanceStatus === null || numberOfAttendees === null || capacity === null) {
+  if (attendance === null) {
     return null
   }
+
+  const attendanceStatus = getAttendanceStatus(attendance)
+  const isReserved = attendeeStatus === "RESERVED"
+  const isUnreserved = attendeeStatus === "UNRESERVED"
+
+  const [numberOfAttendees, capacity] = getAttendeeCountAndCapacity(attendance)
 
   const justAttendanceClosed = attendanceStatus === "Closed" && !isReserved && !isUnreserved && !startInPast
   const inPast = attendanceStatus === "Closed" || startInPast

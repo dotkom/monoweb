@@ -49,7 +49,7 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
             <div>
               <div className="flex flex-row gap-1">
                 <Icon width={16} icon={"tabler:map-pin"} />
-                {showLocations(jobListing.locations)}
+                {showLocations(jobListing.locations.map((location) => location.name))}
               </div>
               <div className="flex flex-row gap-1">
                 <Icon width={16} icon={"tabler:clock-hour-3"} />
