@@ -64,16 +64,18 @@ export const CompanySplash: FC = () => {
         <div className="flex flex-row gap-2 items-center">
           <Icon icon="tabler:briefcase-filled" className="text-lg" />
 
-          <Text>Er du fra en bedrift og ønsker å vise interesse?</Text>
+          <div className="flex flex-row gap- items-center">
+            <Text>Er du fra en bedrift og ønsker å vise interesse?</Text>
 
-          <Button
-            variant="text"
-            element="a"
-            href="https://interesse.online.ntnu.no"
-            iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
-          >
-            Ta kontakt her
-          </Button>
+            <Button
+              variant="text"
+              element="a"
+              href="https://interesse.online.ntnu.no"
+              iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
+            >
+              Ta kontakt her
+            </Button>
+          </div>
         </div>
       </div>
 

@@ -13,18 +13,17 @@ export const EventHeader: FC<Props> = ({ event }) => {
 
   return (
     <section className="flex flex-col gap-8">
-      <Tilt scale={1} tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} glareMaxOpacity={0.10}>
-
-      <Image
-        src={imageUrlLight}
-        alt="Banner"
-        width="0"
-        height="0"
-        sizes="100%"
-        style={{ objectFit: "cover" }}
-        className="w-full rounded-xl bg-slate-5 aspect-[16/9] md:aspect-[24/9] dark:hidden"
+      <Tilt scale={1} tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} glareMaxOpacity={0.1}>
+        <Image
+          src={imageUrlLight}
+          alt="Banner"
+          width="0"
+          height="0"
+          sizes="100%"
+          style={{ objectFit: "cover" }}
+          className="w-full rounded-xl bg-slate-5 aspect-[16/9] md:aspect-[24/9] dark:hidden"
         />
-        </Tilt>
+      </Tilt>
       <Image
         src={imageUrlDark}
         alt="Banner"

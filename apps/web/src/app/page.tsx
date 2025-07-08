@@ -1,12 +1,18 @@
+import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
 import { auth } from "@/auth"
 import { ArticleListItem } from "@/components/molecules/ArticleListItem"
-import { EventCard } from "@/components/molecules/ComingEvent/ComingEvent"
 import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
+import { AttendanceStatus } from "@/components/molecules/EventCard/AttendanceStatus"
+import { DateAndTime } from "@/components/molecules/EventCard/DateAndTime"
 import { OfflineCard } from "@/components/molecules/OfflineCard"
 import { server } from "@/utils/trpc/server"
-import type { AttendanceId } from "@dotkomonline/types"
+import type { AttendanceId, EventDetail } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
+import { slugify } from "@dotkomonline/utils"
+import { isPast } from "date-fns"
+import Image from "next/image"
 import Link from "next/link"
+import type { FC } from "react"
 
 export default async function App() {
   const events = await server.event.all.query({ page: { take: 3 } })
@@ -32,18 +38,20 @@ export default async function App() {
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
-        <div className="flex flex-row gap-8">
+        <div className="grid grid-cols-5 gap-4">
           {events.map((eventDetail) => {
             const attendeeStatus = attendanceStatuses?.get(eventDetail.attendance?.id ?? "") ?? null
+
             return <EventCard key={eventDetail.event.id} eventDetail={eventDetail} attendeeStatus={attendeeStatus} />
           })}
+
           <Tilt className="flex-grow" tiltMaxAngleX={2} tiltMaxAngleY={2} scale={1.05}>
             <Button
               element="a"
               href="/arrangementer"
               className="w-full h-full bg-blue-3 hover:bg-blue-4 text-brand-9 hover:text-brand-12"
               iconRight={<Icon icon="tabler:arrow-up-right" />}
-              >
+            >
               <Text>Se alle arrangementer</Text>
             </Button>
           </Tilt>
@@ -60,7 +68,7 @@ export default async function App() {
       </div>
       <div className="grid gap-4 mt-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {featuredArticles.slice(0, 6).map((article) => (
-          <ArticleListItem article={article} key={article.id} orientation="vertical" />
+          <ArticleListItem article={article} orientation="vertical" key={article.id} />
         ))}
       </div>
 
@@ -78,5 +86,44 @@ export default async function App() {
         ))}
       </div>
     </section>
+  )
+}
+
+interface ComingEventProps {
+  eventDetail: EventDetail
+  attendeeStatus: "RESERVED" | "UNRESERVED" | null
+}
+
+export const EventCard: FC<ComingEventProps> = ({
+  eventDetail: {
+    event: { id, imageUrl, title, start, end },
+    attendance,
+  },
+  attendeeStatus,
+}) => {
+  return (
+    <Link href={`/arrangementer/${slugify(title)}/${id}`} className="flex flex-col gap-2">
+      <Tilt>
+        <Image
+          width={200}
+          height={150}
+          src={imageUrl ? imageUrl : EventImagePlaceholder}
+          alt={title}
+          className="rounded-lg border border-slate-3 object-cover aspect-[4/3]"
+        />
+      </Tilt>
+      <div className="flex flex-col gap-1">
+        <Title element="p" size="sm" className="font-normal">
+          {title}
+        </Title>
+
+        <div className="flex flex-row gap-4 items-center">
+          <DateAndTime start={start} end={end} />
+          {attendance && (
+            <AttendanceStatus attendance={attendance} attendeeStatus={attendeeStatus} startInPast={isPast(start)} />
+          )}
+        </div>
+      </div>
+    </Link>
   )
 }

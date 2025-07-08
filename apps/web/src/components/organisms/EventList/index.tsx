@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
+import { EventCard } from "@/components/molecules/EventCard/EventCard"
 import { server } from "@/utils/trpc/server"
 import type { AttendanceEvent, AttendanceId } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
@@ -12,7 +12,14 @@ const mapEventDetailToItem = (
 ) => {
   const attendeeStatus = attendanceStatuses?.get(attendanceEvent.attendance?.id ?? "") ?? null
 
-  return <EventListItem attendanceEvent={attendanceEvent} attendeeStatus={attendeeStatus} key={attendanceEvent.id} />
+  return (
+    <EventCard
+      attendanceEvent={attendanceEvent}
+      attendeeStatus={attendeeStatus}
+      direction="row"
+      key={attendanceEvent.id}
+    />
+  )
 }
 
 interface EventListProps {
