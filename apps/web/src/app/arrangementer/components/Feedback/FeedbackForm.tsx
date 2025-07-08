@@ -70,8 +70,10 @@ export function EventFeedbackForm({ feedbackForm, attendee }: FormProps) {
     })
 
     feedbackAnswerCreateMutation.mutate({
-      attendeeId: attendee.id,
-      feedbackFormId: feedbackForm.id,
+      formAnswer: {
+        attendeeId: attendee.id,
+        feedbackFormId: feedbackForm.id,
+      },
       questionAnswers: answers,
     })
   }

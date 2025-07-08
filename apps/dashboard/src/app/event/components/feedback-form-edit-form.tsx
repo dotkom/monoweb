@@ -4,6 +4,7 @@ import {
   FeedbackFormWriteSchema,
   FeedbackQuestionSchema,
   type FeedbackQuestionWrite,
+  FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,6 +22,7 @@ import {
   useWatch,
 } from "react-hook-form"
 import { useConfirmDeleteModal } from "src/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
+import z from "zod"
 import { useDeleteFeedbackFormMutation } from "../mutations"
 import { useFeedbackAnswersGetQuery } from "../queries"
 
@@ -29,18 +31,25 @@ const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map(
   label: type,
 }))
 
+const FormValuesSchema = z.object({
+  feedbackForm: FeedbackFormWriteSchema,
+  questions: FeedbackQuestionWriteSchema.array(),
+})
+
+export type FormValues = z.infer<typeof FormValuesSchema>
+
 interface Props {
-  onSubmit(id: FeedbackFormId, data: FeedbackFormWrite): void
-  defaultValues?: FeedbackFormWrite
+  onSubmit(id: FeedbackFormId, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): void
+  defaultValues?: FormValues
   feedbackFormId: FeedbackFormId
 }
 
 export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedbackFormId }) => {
   defaultValues?.questions.sort((a, b) => a.order - b.order)
 
-  const form = useForm<FeedbackFormWrite>({
+  const form = useForm<FormValues>({
     mode: "onSubmit",
-    resolver: zodResolver(FeedbackFormWriteSchema),
+    resolver: zodResolver(FormValuesSchema),
     defaultValues,
   })
 
@@ -62,11 +71,11 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
     append(question)
   }
 
-  const handleSubmit = (values: FeedbackFormWrite) => {
+  const handleSubmit = (values: FormValues) => {
     // Update order on questions
     values.questions = values.questions.map((question, idx) => ({ ...question, order: idx }))
 
-    onSubmit(feedbackFormId, values)
+    onSubmit(feedbackFormId, values.feedbackForm, values.questions)
   }
 
   const handleDragEnd = ({ destination, source }: DropResult<string>) => {
@@ -94,7 +103,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <Stack>
           <Controller
-            name={"isActive"}
+            name={"feedbackForm.isActive"}
             control={form.control}
             render={({ field }) => (
               <Checkbox
@@ -158,7 +167,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
 
 interface QuestionCardProps {
   index: number
-  control: Control<FeedbackFormWrite>
+  control: Control<FormValues>
   fieldId: string
   onRemove(index: number): void
   hasAnswers: boolean
@@ -173,7 +182,7 @@ const QuestionCard = React.memo(function QuestionCard({
 }: QuestionCardProps) {
   const { setValue } = useFormContext()
 
-  const type = useWatch<FeedbackFormWrite>({
+  const type = useWatch<FormValues>({
     control,
     name: `questions.${index}.type`,
   })

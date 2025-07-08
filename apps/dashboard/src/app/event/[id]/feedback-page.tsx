@@ -1,4 +1,4 @@
-import type { FeedbackFormId, FeedbackFormWrite } from "@dotkomonline/types"
+import type { FeedbackFormId, FeedbackFormWrite, FeedbackQuestionWrite } from "@dotkomonline/types"
 import { Box, Button, Title } from "@mantine/core"
 import type { FC } from "react"
 import { FeedbackFormEditForm } from "../components/feedback-form-edit-form"
@@ -12,25 +12,30 @@ export const FeedbackPage: FC = () => {
   const createMutation = useCreateFeedbackFormMutation()
   const updateMutation = useUpdateFeedbackFormMutation()
 
-  const onSubmit = (id: FeedbackFormId, data: FeedbackFormWrite) => {
+  const onSubmit = (id: FeedbackFormId, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]) => {
     updateMutation.mutate({
       id,
-      data,
+      feedbackForm,
+      questions,
     })
   }
 
   const createEmptyFeedbackForm = () => {
     createMutation.mutate({
-      eventId: event.id,
-      isActive: false,
+      feedbackForm: {
+        eventId: event.id,
+        isActive: false,
+      },
       questions: [],
     })
   }
 
   const defaultValues = {
-    isActive: feedbackFormQuery?.data?.isActive ?? false,
+    feedbackForm: {
+      eventId: event.id,
+      isActive: feedbackFormQuery?.data?.isActive ?? false,
+    },
     questions: feedbackFormQuery?.data?.questions ?? [],
-    eventId: event.id,
   }
 
   return (

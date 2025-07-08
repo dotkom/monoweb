@@ -4,25 +4,37 @@ import {
   FeedbackFormAnswerWriteSchema,
   FeedbackFormIdSchema,
   FeedbackFormWriteSchema,
+  FeedbackQuestionAnswerWriteSchema,
+  FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { adminProcedure, protectedProcedure, t } from "../../trpc"
 
 export const feedbackRouter = t.router({
   createForm: adminProcedure
-    .input(FeedbackFormWriteSchema)
+    .input(
+      z.object({
+        feedbackForm: FeedbackFormWriteSchema,
+        questions: FeedbackQuestionWriteSchema.array(),
+      })
+    )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.create(handle, input))
+      ctx.executeTransaction(async (handle) =>
+        ctx.feedbackFormService.create(handle, input.feedbackForm, input.questions)
+      )
     ),
   updateForm: adminProcedure
     .input(
       z.object({
         id: FeedbackFormIdSchema,
-        data: FeedbackFormWriteSchema,
+        feedbackForm: FeedbackFormWriteSchema,
+        questions: FeedbackQuestionWriteSchema.array(),
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.update(handle, input.id, input.data))
+      ctx.executeTransaction(async (handle) =>
+        ctx.feedbackFormService.update(handle, input.id, input.feedbackForm, input.questions)
+      )
     ),
   deleteForm: adminProcedure
     .input(FeedbackFormIdSchema)
@@ -40,9 +52,16 @@ export const feedbackRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.findByEventId(handle, input))
     ),
   createAnswer: protectedProcedure
-    .input(FeedbackFormAnswerWriteSchema)
+    .input(
+      z.object({
+        formAnswer: FeedbackFormAnswerWriteSchema,
+        questionAnswers: FeedbackQuestionAnswerWriteSchema.array(),
+      })
+    )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.create(handle, input))
+      ctx.executeTransaction(async (handle) =>
+        ctx.feedbackFormAnswerService.create(handle, input.formAnswer, input.questionAnswers)
+      )
     ),
   findAnswerByAttendee: adminProcedure
     .input(

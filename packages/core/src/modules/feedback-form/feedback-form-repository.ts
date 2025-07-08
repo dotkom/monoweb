@@ -1,9 +1,20 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
-import type { EventId, FeedbackForm, FeedbackFormId, FeedbackFormWrite } from "@dotkomonline/types"
+import type {
+  EventId,
+  FeedbackForm,
+  FeedbackFormId,
+  FeedbackFormWrite,
+  FeedbackQuestionWrite,
+} from "@dotkomonline/types"
 
 export interface FeedbackFormRepository {
-  create(handle: DBHandle, data: FeedbackFormWrite): Promise<FeedbackForm>
-  update(handle: DBHandle, id: FeedbackFormId, data: FeedbackFormWrite): Promise<FeedbackForm>
+  create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>
+  update(
+    handle: DBHandle,
+    id: FeedbackFormId,
+    feedbackForm: FeedbackFormWrite,
+    questions: FeedbackQuestionWrite[]
+  ): Promise<FeedbackForm>
   delete(handle: DBHandle, id: FeedbackFormId): Promise<void>
   getById(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackForm | null>
   getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
@@ -11,12 +22,10 @@ export interface FeedbackFormRepository {
 
 export function getFeedbackFormRepository(): FeedbackFormRepository {
   return {
-    async create(handle, data) {
-      const { questions, ...form } = data
-
-      const feedbackForm = await handle.feedbackForm.create({
+    async create(handle, feedbackForm, questions) {
+      const createdFeedbackForm = await handle.feedbackForm.create({
         data: {
-          ...form,
+          ...feedbackForm,
           questions: {
             create: questions.map((question) => ({
               label: question.label,
@@ -36,15 +45,13 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
         include: QUERY_WITH_QUESTIONS,
       })
 
-      return feedbackForm
+      return createdFeedbackForm
     },
-    async update(handle, id, data) {
-      const { questions, ...form } = data
-
-      const feedbackForm = await handle.feedbackForm.update({
+    async update(handle, id, feedbackForm, questions) {
+      const createdFeedbackForm = await handle.feedbackForm.update({
         where: { id },
         data: {
-          ...form,
+          ...feedbackForm,
           questions: {
             deleteMany: {
               feedbackFormId: id,
@@ -88,7 +95,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
         include: QUERY_WITH_QUESTIONS,
       })
 
-      return feedbackForm
+      return createdFeedbackForm
     },
     async delete(handle, id) {
       await handle.feedbackForm.delete({

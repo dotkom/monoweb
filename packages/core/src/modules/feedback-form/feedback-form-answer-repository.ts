@@ -5,11 +5,16 @@ import {
   type FeedbackFormAnswerWrite,
   type FeedbackFormId,
   FeedbackQuestionAnswerSchema,
+  type FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
 import { Prisma } from "@prisma/client"
 
 export interface FeedbackFormAnswerRepository {
-  create(handle: DBHandle, data: FeedbackFormAnswerWrite): Promise<FeedbackFormAnswer>
+  create(
+    handle: DBHandle,
+    formAnswer: FeedbackFormAnswerWrite,
+    questionAnswers: FeedbackQuestionAnswerWrite[]
+  ): Promise<FeedbackFormAnswer>
   getAllAnswers(handle: DBHandle, formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
   findAnswerByAttendee(
     handle: DBHandle,
@@ -20,14 +25,12 @@ export interface FeedbackFormAnswerRepository {
 
 export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository {
   return {
-    async create(handle, data) {
-      const { questionAnswers, ...formAnswer } = data
-
+    async create(handle, formAnswer, questionAnswers) {
       const answer = await handle.feedbackFormAnswer.create({
         data: {
           ...formAnswer,
           answers: {
-            create: data.questionAnswers.map((questionAnswer) => ({
+            create: questionAnswers.map((questionAnswer) => ({
               value: questionAnswer.value ?? Prisma.JsonNull,
               question: {
                 connect: { id: questionAnswer.questionId },

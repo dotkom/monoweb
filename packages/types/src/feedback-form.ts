@@ -46,6 +46,7 @@ export const FeedbackQuestionAnswerWriteSchema = FeedbackQuestionAnswerSchema.om
   formAnswerId: true,
   id: true,
 })
+export type FeedbackQuestionAnswerWrite = z.infer<typeof FeedbackQuestionAnswerWriteSchema>
 
 export const FeedbackFormAnswerSchema = schemas.FeedbackFormAnswerSchema.extend({
   questionAnswers: FeedbackQuestionAnswerSchema.array(),
@@ -57,8 +58,6 @@ export const FeedbackFormAnswerWriteSchema = FeedbackFormAnswerSchema.omit({
   createdAt: true,
   updatedAt: true,
   questionAnswers: true,
-}).extend({
-  questionAnswers: FeedbackQuestionAnswerWriteSchema.array(),
 })
 export type FeedbackFormAnswerWrite = z.infer<typeof FeedbackFormAnswerWriteSchema>
 
@@ -73,8 +72,6 @@ export const FeedbackFormWriteSchema = FeedbackFormSchema.omit({
   createdAt: true,
   updatedAt: true,
   questions: true,
-}).extend({
-  questions: FeedbackQuestionWriteSchema.array(),
 })
 
 export type FeedbackFormWrite = z.infer<typeof FeedbackFormWriteSchema>

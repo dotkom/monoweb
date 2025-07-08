@@ -1,11 +1,22 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { EventId, FeedbackForm, FeedbackFormId, FeedbackFormWrite } from "@dotkomonline/types"
+import type {
+  EventId,
+  FeedbackForm,
+  FeedbackFormId,
+  FeedbackFormWrite,
+  FeedbackQuestionWrite,
+} from "@dotkomonline/types"
 import { FeedbackFormNotFoundError } from "./feedback-form-errors"
 import type { FeedbackFormRepository } from "./feedback-form-repository"
 
 export interface FeedbackFormService {
-  create(handle: DBHandle, data: FeedbackFormWrite): Promise<FeedbackForm>
-  update(handle: DBHandle, id: FeedbackFormId, data: FeedbackFormWrite): Promise<FeedbackForm>
+  create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>
+  update(
+    handle: DBHandle,
+    id: FeedbackFormId,
+    feedbackForm: FeedbackFormWrite,
+    questions: FeedbackQuestionWrite[]
+  ): Promise<FeedbackForm>
   delete(handle: DBHandle, id: FeedbackFormId): Promise<void>
   getById(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackForm>
   findByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
@@ -13,11 +24,11 @@ export interface FeedbackFormService {
 
 export function getFeedbackFormService(formRepository: FeedbackFormRepository): FeedbackFormService {
   return {
-    async create(handle, data) {
-      return await formRepository.create(handle, data)
+    async create(handle, feedbackForm, questions) {
+      return await formRepository.create(handle, feedbackForm, questions)
     },
-    async update(handle, id, data) {
-      return await formRepository.update(handle, id, data)
+    async update(handle, id, feedbackForm, questions) {
+      return await formRepository.update(handle, id, feedbackForm, questions)
     },
     async delete(handle, id) {
       await formRepository.delete(handle, id)
