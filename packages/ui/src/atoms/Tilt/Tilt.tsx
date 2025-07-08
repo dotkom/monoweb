@@ -1,16 +1,16 @@
 "use client"
 
 import type { FC, PropsWithChildren } from "react"
-import Tilt_ from "react-parallax-tilt"
+import ReactParallaxTilt from "react-parallax-tilt"
 
 type TiltProps = {
   className?: string
-} & Exclude<typeof Tilt_.defaultProps, "children"> &
+} & Exclude<typeof ReactParallaxTilt.defaultProps, "children"> &
   PropsWithChildren
 
 export const Tilt: FC<TiltProps> = ({ className, children, ...props }) => {
   return (
-    <Tilt_
+    <ReactParallaxTilt
       glareEnable
       glareMaxOpacity={0.35}
       glareReverse={true}
@@ -18,11 +18,10 @@ export const Tilt: FC<TiltProps> = ({ className, children, ...props }) => {
       tiltMaxAngleY={3.5}
       scale={1.01}
       transitionSpeed={1000}
-      //
       className={className}
       {...props}
     >
       {children}
-    </Tilt_>
+    </ReactParallaxTilt>
   )
 }

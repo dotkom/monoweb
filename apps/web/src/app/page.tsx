@@ -94,7 +94,7 @@ interface ComingEventProps {
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
 }
 
-export const EventCard: FC<ComingEventProps> = ({
+const EventCard: FC<ComingEventProps> = ({
   eventDetail: {
     event: { id, imageUrl, title, start, end },
     attendance,
