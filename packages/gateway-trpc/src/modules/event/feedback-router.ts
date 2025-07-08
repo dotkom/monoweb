@@ -6,33 +6,45 @@ import {
   FeedbackFormWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
+import { adminProcedure, protectedProcedure, t } from "../../trpc"
 
 export const feedbackRouter = t.router({
-  createForm: protectedProcedure
+  createForm: adminProcedure
     .input(FeedbackFormWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.create(input)),
-  updateForm: protectedProcedure
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.create(handle, input))
+    ),
+  updateForm: adminProcedure
     .input(
       z.object({
         id: FeedbackFormIdSchema,
         data: FeedbackFormWriteSchema,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.update(input.id, input.data)),
-  deleteForm: protectedProcedure
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.update(handle, input.id, input.data))
+    ),
+  deleteForm: adminProcedure
     .input(FeedbackFormIdSchema)
-    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.delete(input)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.delete(handle, input))
+    ),
   getFormById: protectedProcedure
     .input(FeedbackFormIdSchema)
-    .mutation(async ({ input, ctx }) => ctx.feedbackFormService.getById(input)),
-  findFormByEventId: publicProcedure
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getById(handle, input))
+    ),
+  findFormByEventId: protectedProcedure
     .input(EventSchema.shape.id)
-    .query(async ({ input, ctx }) => ctx.feedbackFormService.findByEventId(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.findByEventId(handle, input))
+    ),
   createAnswer: protectedProcedure
     .input(FeedbackFormAnswerWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.feedbackFormAnswerService.create(input)),
-  findAnswerByAttendee: protectedProcedure
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.create(handle, input))
+    ),
+  findAnswerByAttendee: adminProcedure
     .input(
       z.object({
         formId: FeedbackFormIdSchema,
@@ -40,9 +52,13 @@ export const feedbackRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) =>
-      ctx.feedbackFormAnswerService.findAnswerByAttendee(input.formId, input.attendeeId)
+      ctx.executeTransaction(async (handle) =>
+        ctx.feedbackFormAnswerService.findAnswerByAttendee(handle, input.formId, input.attendeeId)
+      )
     ),
-  getAllAnswers: protectedProcedure
+  getAllAnswers: adminProcedure
     .input(FeedbackFormIdSchema)
-    .query(async ({ input, ctx }) => ctx.feedbackFormAnswerService.getAllAnswers(input)),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getAllAnswers(handle, input))
+    ),
 })

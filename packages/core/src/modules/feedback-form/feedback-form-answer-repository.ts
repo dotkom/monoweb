@@ -1,10 +1,4 @@
-import type {
-  DBClient,
-  FeedbackFormAnswer as DBFeedbackFormAnswer,
-  FeedbackQuestionAnswer,
-  FeedbackQuestionAnswerOptionLink,
-  FeedbackQuestionOption,
-} from "@dotkomonline/db"
+import type { DBHandle, FeedbackQuestionAnswer, FeedbackQuestionOption } from "@dotkomonline/db"
 import {
   type AttendeeId,
   type FeedbackFormAnswer,
@@ -14,112 +8,109 @@ import {
 } from "@dotkomonline/types"
 import { Prisma } from "@prisma/client"
 
-type FeedbackFormAnswerWithAnswers = DBFeedbackFormAnswer & {
-  answers: (FeedbackQuestionAnswer & {
-    selectedOptions: (FeedbackQuestionAnswerOptionLink & {
-      feedbackQuestionOption: FeedbackQuestionOption
-    })[]
-  })[]
-}
-
 export interface FeedbackFormAnswerRepository {
-  create(data: FeedbackFormAnswerWrite): Promise<FeedbackFormAnswer>
-  getAllAnswers(formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
-  findAnswerByAttendee(formId: FeedbackFormId, attendeeId: AttendeeId): Promise<FeedbackFormAnswer | null>
+  create(handle: DBHandle, data: FeedbackFormAnswerWrite): Promise<FeedbackFormAnswer>
+  getAllAnswers(handle: DBHandle, formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
+  findAnswerByAttendee(
+    handle: DBHandle,
+    formId: FeedbackFormId,
+    attendeeId: AttendeeId
+  ): Promise<FeedbackFormAnswer | null>
 }
 
-export class FeedbackFormAnswerRepositoryImpl implements FeedbackFormAnswerRepository {
-  private readonly db: DBClient
+export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository {
+  return {
+    async create(handle, data) {
+      const { questionAnswers, ...formAnswer } = data
 
-  constructor(db: DBClient) {
-    this.db = db
-  }
-
-  private includeAnswers = {
-    answers: {
-      include: {
-        selectedOptions: {
-          include: {
-            feedbackQuestionOption: true,
+      const answer = await handle.feedbackFormAnswer.create({
+        data: {
+          ...formAnswer,
+          answers: {
+            create: data.questionAnswers.map((questionAnswer) => ({
+              value: questionAnswer.value ?? Prisma.JsonNull,
+              question: {
+                connect: { id: questionAnswer.questionId },
+              },
+              selectedOptions: {
+                create: questionAnswer.selectedOptions.map(
+                  (
+                    selectedOption
+                  ): Prisma.FeedbackQuestionAnswerOptionLinkCreateWithoutFeedbackQuestionAnswerInput => ({
+                    feedbackQuestionOption: {
+                      connect: { id: selectedOption.id },
+                    },
+                  })
+                ),
+              },
+            })),
           },
+        },
+        include: QUERY_WITH_ANSWERS,
+      })
+
+      return mapFormAnswer(answer, answer.answers)
+    },
+    async getAllAnswers(handle, formId) {
+      const formAnswers = await handle.feedbackFormAnswer.findMany({
+        where: {
+          feedbackFormId: formId,
+        },
+        include: QUERY_WITH_ANSWERS,
+      })
+
+      return formAnswers.map((answer) => mapFormAnswer(answer, answer.answers))
+    },
+    async findAnswerByAttendee(handle, formId, attendeeId) {
+      const answer = await handle.feedbackFormAnswer.findFirst({
+        where: {
+          feedbackFormId: formId,
+          attendeeId: attendeeId,
+        },
+        include: QUERY_WITH_ANSWERS,
+      })
+
+      if (!answer) return null
+
+      return mapFormAnswer(answer, answer.answers)
+    },
+  }
+}
+
+function mapFormAnswer(
+  formAnswer: Omit<FeedbackFormAnswer, "questionAnswers">,
+  questionAnswers: (FeedbackQuestionAnswer & {
+    selectedOptions: {
+      feedbackQuestionOption: FeedbackQuestionOption
+    }[]
+  })[]
+): FeedbackFormAnswer {
+  const parsedAnswers = questionAnswers.map((ans) => ({
+    id: ans.id,
+    questionId: ans.questionId,
+    formAnswerId: ans.formAnswerId,
+    value: FeedbackQuestionAnswerSchema.shape.value.parse(ans.value),
+    selectedOptions: ans.selectedOptions.map((link) => ({
+      id: link.feedbackQuestionOption.id,
+      questionId: link.feedbackQuestionOption.questionId,
+      name: link.feedbackQuestionOption.name,
+    })),
+  }))
+
+  return {
+    ...formAnswer,
+    questionAnswers: parsedAnswers,
+  }
+}
+
+const QUERY_WITH_ANSWERS = {
+  answers: {
+    include: {
+      selectedOptions: {
+        include: {
+          feedbackQuestionOption: true,
         },
       },
     },
-  }
-
-  public async create(data: FeedbackFormAnswerWrite) {
-    const { questionAnswers, ...formAnswer } = data
-
-    const answer = await this.db.feedbackFormAnswer.create({
-      data: {
-        ...formAnswer,
-        answers: {
-          create: data.questionAnswers.map((questionAnswer) => ({
-            value: questionAnswer.value ?? Prisma.JsonNull,
-            question: {
-              connect: { id: questionAnswer.questionId },
-            },
-            selectedOptions: {
-              create: questionAnswer.selectedOptions.map(
-                (selectedOption): Prisma.FeedbackQuestionAnswerOptionLinkCreateWithoutFeedbackQuestionAnswerInput => ({
-                  feedbackQuestionOption: {
-                    connect: { id: selectedOption.id },
-                  },
-                })
-              ),
-            },
-          })),
-        },
-      },
-      include: this.includeAnswers,
-    })
-
-    return this.mapFormAnswer(answer)
-  }
-
-  public async getAllAnswers(formId: FeedbackFormId) {
-    const answers = await this.db.feedbackFormAnswer.findMany({
-      where: {
-        feedbackFormId: formId,
-      },
-      include: this.includeAnswers,
-    })
-
-    return answers.map(this.mapFormAnswer)
-  }
-
-  public async findAnswerByAttendee(formId: FeedbackFormId, attendeeId: AttendeeId) {
-    const answer = await this.db.feedbackFormAnswer.findFirst({
-      where: {
-        feedbackFormId: formId,
-        attendeeId: attendeeId,
-      },
-      include: this.includeAnswers,
-    })
-
-    if (!answer) return null
-
-    return this.mapFormAnswer(answer)
-  }
-
-  private mapFormAnswer(answer: FeedbackFormAnswerWithAnswers): FeedbackFormAnswer {
-    const { answers, ...rest } = answer
-
-    const parsedAnswers = answers.map((ans) => ({
-      id: ans.id,
-      questionId: ans.questionId,
-      formAnswerId: ans.formAnswerId,
-      value: FeedbackQuestionAnswerSchema.shape.value.parse(ans.value),
-      selectedOptions: ans.selectedOptions.map((link) => ({
-        id: link.feedbackQuestionOption.id,
-        questionId: link.feedbackQuestionOption.questionId,
-        name: link.feedbackQuestionOption.name,
-      })),
-    }))
-
-    return {
-      ...rest,
-      questionAnswers: parsedAnswers,
-    }
-  }
-}
+  },
+} as const

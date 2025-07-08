@@ -1,37 +1,38 @@
+import type { DBHandle } from "@dotkomonline/db"
 import type { AttendeeId, FeedbackFormAnswer, FeedbackFormAnswerWrite, FeedbackFormId } from "@dotkomonline/types"
 import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
 
 export interface FeedbackFormAnswerService {
-  create(data: FeedbackFormAnswerWrite): Promise<FeedbackFormAnswer>
-  getAllAnswers(formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
-  findAnswerByAttendee(formId: FeedbackFormId, attendeeId: AttendeeId): Promise<FeedbackFormAnswer | null>
+  create(handle: DBHandle, data: FeedbackFormAnswerWrite): Promise<FeedbackFormAnswer>
+  getAllAnswers(handle: DBHandle, formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
+  findAnswerByAttendee(
+    handle: DBHandle,
+    formId: FeedbackFormId,
+    attendeeId: AttendeeId
+  ): Promise<FeedbackFormAnswer | null>
 }
 
-export class FeedbackFormAnswerServiceImpl implements FeedbackFormAnswerService {
-  private readonly formAnswerRepository: FeedbackFormAnswerRepository
+export function getFeedbackFormAnswerService(
+  formAnswerRepository: FeedbackFormAnswerRepository
+): FeedbackFormAnswerService {
+  return {
+    async create(handle, data) {
+      const { questionAnswers, ...rest } = data
 
-  constructor(formAnswerRepository: FeedbackFormAnswerRepository) {
-    this.formAnswerRepository = formAnswerRepository
-  }
+      const validatedQuestionAnswers = questionAnswers.filter(
+        (questionAnswer) => questionAnswer.value !== null || questionAnswer.selectedOptions.length > 0
+      )
 
-  public async create(data: FeedbackFormAnswerWrite) {
-    const { questionAnswers, ...rest } = data
-
-    const validatedQuestionAnswers = questionAnswers.filter(
-      (questionAnswer) => questionAnswer.value !== null || questionAnswer.selectedOptions.length > 0
-    )
-
-    return await this.formAnswerRepository.create({
-      ...rest,
-      questionAnswers: validatedQuestionAnswers,
-    })
-  }
-
-  public async getAllAnswers(formId: FeedbackFormId) {
-    return this.formAnswerRepository.getAllAnswers(formId)
-  }
-
-  public async findAnswerByAttendee(formId: FeedbackFormId, attendeeId: AttendeeId) {
-    return await this.formAnswerRepository.findAnswerByAttendee(formId, attendeeId)
+      return await formAnswerRepository.create(handle,{
+        ...rest,
+        questionAnswers: validatedQuestionAnswers,
+      })
+    },
+    async getAllAnswers(handle, formId) {
+      return formAnswerRepository.getAllAnswers(handle, formId)
+    },
+    async findAnswerByAttendee(handle, formId, attendeeId) {
+      return await formAnswerRepository.findAnswerByAttendee(handle, formId, attendeeId)
+    },
   }
 }
