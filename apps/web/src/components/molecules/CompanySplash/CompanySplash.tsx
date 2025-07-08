@@ -1,10 +1,9 @@
 "use client"
 
-import { Button } from "@dotkomonline/ui"
+import { Button, Icon, Text, cn } from "@dotkomonline/ui"
 import { Title } from "@dotkomonline/ui"
 import Spline from "@splinetool/react-spline"
 import { useTheme } from "next-themes"
-import Link from "next/link"
 import type { FC } from "react"
 import { useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
@@ -15,25 +14,15 @@ interface SplineInstance {
 
 export const CompanySplash: FC = () => {
   const { theme, setTheme } = useTheme()
+
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false)
-  const splineRef = useRef<SplineInstance | null>(null)
+
   const themeState = useRef<string | undefined>(theme)
+  const splineRef = useRef<SplineInstance | null>(null)
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsPageLoaded(true)
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [])
-
-  // Keep track of the latest theme in a ref
   useEffect(() => {
     themeState.current = theme
-  }, [theme])
 
-  // Update Spline dark mode when theme changes
-  useEffect(() => {
     if (splineRef.current?.setVariable) {
       updateSplineDarkMode(theme === "dark")
     }
@@ -58,63 +47,53 @@ export const CompanySplash: FC = () => {
   }
 
   return (
-    <div
-      className={`mb-6 lg:my-4 lg:mb-10 transition-opacity duration-700 ${isPageLoaded ? "opacity-100" : "opacity-0"}`}
-    >
-      <div className="flex flex-col lg:items-center lg:flex-row lg:justify-between text-center lg:text-left">
-        <div className="w-full lg:w-[50%] px-6 lg:pr-0 lg:pl-16 lg:pb-8 transition-opacity duration-700 delay-100">
-          <Title className="relative font-bold pb-2 transition-opacity duration-700 delay-200">
-            {/* Transparent text over the logo to make "Online" selectable and screen-reader accessible. Makes the logo behave like part of the text during selection. */}
-            <span className="font-body absolute text-transparent text-[94px] leading-[80px] tracking-[-2px] height-[80px] inset-0 lg:inset-auto">
-              Online
-            </span>
-            <span
-              aria-hidden="true"
-              className="block max-w-[300px] w-full pb-4 mx-auto lg:mx-0 transition-opacity duration-700 delay-300"
+    <div className="flex flex-col lg:justify-stretch gap-4 items-center lg:flex-row">
+      <div className="flex flex-col gap-8 w-full">
+        <span aria-hidden="true" className="w-full max-w-[300px]">
+          <Logo />
+        </span>
+
+        <Title size="xl" className="font-medium lg:text-3xl">
+          Linjeforeningen for informatikk ved NTNU
+        </Title>
+
+        <Text className="md:text-lg max-w-xl">
+          Her burde det stå en kort tekst om linjeforeningen og hva vi gjør. Helst ikke mer enn to setninger
+        </Text>
+
+        <div className="flex flex-row gap-2 items-center">
+          <Icon icon="tabler:briefcase-filled" className="text-lg" />
+
+          <div className="flex flex-row gap- items-center">
+            <Text>Er du fra en bedrift og ønsker å vise interesse?</Text>
+
+            <Button
+              variant="text"
+              element="a"
+              href="https://interesse.online.ntnu.no"
+              iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
             >
-              <Logo />
-            </span>
-            <span className="font-title text-2xl lg:text-3xl block transition-opacity duration-700 delay-400">
-              Linjeforeningen for Informatikk ved NTNU
-            </span>
-          </Title>
-          <p className="font-body text-md md:text-lg max-w-xl mb-4 lg:mb-8 mx-auto lg:mx-0 transition-opacity duration-700 delay-500">
-            {/* Informatikkstudiet hører til Institutt for datateknologi og 
-            informatikk (IDI). Dette innebærer blant annet å lære om utvikling, 
-            forbedring, evaluering og bruk av datasystemer. For mer informasjon 
-            om studiet, se NTNU sine offisielle nettsider for bachelor og master. */}
-            Her burde det stå en kort tekst om linjeforeningen og hva vi gjør. Helst ikke mer enn to setninger
-          </p>
-          <Link href="https://interesse.online.ntnu.no">
-            <Button>Bedriftskontakt</Button>
-          </Link>
-        </div>
-        <div
-          className={`w-full lg:w-[50%] relative transition-opacity duration-700 delay-700 ${
-            isPageLoaded ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center text-blue-7">
-              <svg
-                className="animate-spin h-12 w-12"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <title>Loading...</title>
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-            </div>
-          )}
-          <div className="w-full aspect-[10/9] max-w-[600px] mx-auto">
-            <Spline
-              scene="https://prod.spline.design/yapmhg7y5iZdf9u4/scene.splinecode"
-              onLoad={onSplineLoad}
-              onSplineMouseDown={lightSwitch}
-            />
+              Ta kontakt her
+            </Button>
           </div>
+        </div>
+      </div>
+
+      <div className="relative w-full aspect-[10/9]">
+        {isLoading && (
+          <div className="absolute bg-slate-2 dark:bg-slate-11 rounded-xl animate-pulse z-20 w-[65%] h-[65%] inset-0 m-auto" />
+        )}
+        <div
+          className={cn(
+            "absolute inset-0 max-w-[600px] duration-700 transition-opacity z-10",
+            isLoading ? "opacity-0" : "opacity-100"
+          )}
+        >
+          <Spline
+            scene="https://prod.spline.design/yapmhg7y5iZdf9u4/scene.splinecode"
+            onLoad={onSplineLoad}
+            onSplineMouseDown={lightSwitch}
+          />
         </div>
       </div>
     </div>
