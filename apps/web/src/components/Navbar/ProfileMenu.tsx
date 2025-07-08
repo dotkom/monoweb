@@ -257,7 +257,11 @@ const ThemeMenuSub = () => {
         <DropdownMenuSubContent>
           <DropdownMenuRadioGroup value={theme} onValueChange={(val) => setTheme(val)}>
             {THEME_OPTIONS.map((item) => (
-              <DropdownMenuRadioItem className="w-full flex flex-row gap-2 items-center" value={item.theme} key={item.theme}>
+              <DropdownMenuRadioItem
+                className="w-full flex flex-row gap-2 items-center"
+                value={item.theme}
+                key={item.theme}
+              >
                 <Icon icon={item.icon} className="text-sm" />
                 <Text element="span">{item.label}</Text>
               </DropdownMenuRadioItem>
