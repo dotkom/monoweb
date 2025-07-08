@@ -98,7 +98,7 @@ type SelectLabelProps = React.ComponentPropsWithRef<typeof SelectPrimitive.Label
 export const SelectLabel = ({ className, ref, ...props }: SelectLabelProps) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn("font-body py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
+    className={cn("font-body py-1.5 px-2 text-xs font-semibold", className)}
     {...props}
   />
 )
@@ -110,7 +110,7 @@ export const SelectItem = ({ className, children, ref, ...props }: SelectItemPro
     ref={ref}
     className={cn(
       "font-body relative flex w-full cursor-default select-none items-center",
-      "rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none bg-slate-1 focus:bg-slate-3",
+      "rounded-sm py-1.5 px-2 text-sm outline-none bg-slate-1 focus:bg-slate-3",
       "focus:text-slate-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}

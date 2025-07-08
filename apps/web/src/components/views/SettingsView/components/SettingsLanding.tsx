@@ -2,25 +2,36 @@
 
 import { useTRPC } from "@/utils/trpc/client"
 import type { User } from "@dotkomonline/types"
-import { Button, Icon, TextInput, Textarea } from "@dotkomonline/ui"
+import {
+  Button,
+  Icon,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+  TextInput,
+  Textarea,
+} from "@dotkomonline/ui"
 import { useMutation } from "@tanstack/react-query"
 import type { NextPage } from "next"
-import type { JSX } from "react"
+import type { FC, PropsWithChildren } from "react"
 import { useForm } from "react-hook-form"
 
-interface FormInputProps {
+type FormInputProps = {
   title: string
-  children?: JSX.Element
-}
-
-const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
-  <div className="w-full border-t-[1px] first-of-type:border-0 first-of-type:pt-0 border-slate-7 flex pt-16 justify-between px-4">
-    <div className="w-1/4">{title}:</div>
-    <div className="flex-1 flex justify-center">{children}</div>
-  </div>
-)
+} & PropsWithChildren
 
 type EditableFields = Pick<User, "firstName" | "lastName" | "biography" | "allergies" | "gender" | "phone">
+
+const FormInput: FC<FormInputProps> = ({ title, children }) => (
+  <div className="flex flex-col gap-1 w-full">
+    <div className="uppercase text-xs font-bold tracking-wide">{title}</div>
+    {children}
+  </div>
+)
 
 export const Landing: NextPage<{ user: User }> = ({ user }) => {
   const trpc = useTRPC()
@@ -47,59 +58,70 @@ export const Landing: NextPage<{ user: User }> = ({ user }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitForm)} className="flex flex-col space-y-4 pb-4">
+    <form onSubmit={handleSubmit(handleSubmitForm)} className="flex flex-col gap-4">
       {/*
       <div className="flex flex-col items-center justify-evenly space-y-4 mb-4">
         <AvatarImgChange {...user} />
       </div>
       */}
-      <FormInput title="Epost">
-        <TextInput width="flex-1" placeholder="Epost" defaultValue={user.email} disabled />
+
+      <FormInput title="E-post">
+        <TextInput width="flex-1" placeholder="E-post" defaultValue={user.email} disabled />
       </FormInput>
+
       <FormInput title="Navn">
-        <div className="w-full flex flex-wrap justify-center ">
+        <div className="flex flex-row w-full gap-2">
           <TextInput
-            width="flex-1 mb-2 mx-1"
+            width="flex-grow"
             placeholder="Fornavn"
             defaultValue={user.firstName ?? undefined}
             {...register("firstName")}
           />
           <TextInput
-            width="flex-1 mx-1"
+            width="flex-grow"
             placeholder="Etternavn"
             defaultValue={user.lastName ?? undefined}
             {...register("lastName")}
           />
         </div>
       </FormInput>
+
       <FormInput title="Telefon">
-        <div className="w-full flex space-x-2">
-          <TextInput
-            width="w-full"
-            maxLength={12}
-            placeholder="Telefon"
-            defaultValue={user.phone ?? undefined}
-            {...register("phone")}
-          />
-        </div>
+        <TextInput
+          width="w-full"
+          maxLength={12}
+          placeholder="Telefon"
+          defaultValue={user.phone ?? undefined}
+          {...register("phone")}
+        />
       </FormInput>
-      {/*
+
       <FormInput title="Bio">
         <Textarea placeholder="Din råkule bio" {...register("biography")} />
       </FormInput>
-      */}
+
       <FormInput title="Allergier">
         <Textarea placeholder="Dine allergier" {...register("allergies")} />
       </FormInput>
+
       <FormInput title="Kjønn">
         <div className="w-full">
-          <select {...register("gender")} defaultValue={user.gender ?? undefined} className="px-4 py-2">
-            <option value="male">Mann</option>
-            <option value="female">Kvinne</option>
-            <option value="other">Annet</option>
-          </select>
+          <Select {...register("gender")}>
+            <SelectTrigger className="max-w-48">
+              <SelectValue placeholder="Kjønn" className="placeholder:text-slate-8 transition-all" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Velg kjønn</SelectLabel>
+                <SelectItem value="male">Mann</SelectItem>
+                <SelectItem value="female">Kvinne</SelectItem>
+                <SelectItem value="other">Annet</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </FormInput>
+
       <Button type="submit" className="px-8">
         {updateUserMutation.isPending ? <Icon icon="tabler:loader-2" className="animate-spin" /> : "Lagre"}
       </Button>

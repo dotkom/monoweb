@@ -5,6 +5,7 @@ import type { ComponentPropsWithRef, FC } from "react"
 import { AlertIcon } from "../../molecules/Alert/AlertIcon"
 import { cn } from "../../utils"
 import { Label } from "../Label/Label"
+import { Text } from "../Typography/Text"
 
 export type TextareaProps = ComponentPropsWithRef<"textarea"> & {
   label?: string
@@ -19,21 +20,23 @@ export const Textarea: FC<TextareaProps> = ({ className, error, status, message,
       {label && <Label htmlFor={props.id}>{label}</Label>}
       <textarea
         className={cn(
-          "border-slate-6 focus:riled:cursor-not-allowed placeholder:text-slate-9 focus:ring-brand flex h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-2 disabled:opacity-50",
+          "border border-slate-6 focus:riled:cursor-not-allowed placeholder:text-slate-9",
+          "focus:ring-brand flex min-h-20 w-full rounded-md font-body",
+          "p-2 text-sm focus:outline-none focus:ring-2 disabled:opacity-50",
           statusVariants({ status: status ?? (error ? "danger" : undefined) }),
           className
         )}
         ref={ref}
         {...props}
       />
-      {message && <p className={displayMessage({ status })}>{message}</p>}
+      {message && <Text className={displayMessage({ status })}>{message}</Text>}
       {error && (
         <div className={displayMessage({ status: "danger" })}>
           <AlertIcon size={20} status="danger" className="mr-1" />
-          <p>
+          <Text>
             <span className="font-bold">Error:&nbsp;</span>
             {error}
-          </p>
+          </Text>
         </div>
       )}
     </div>

@@ -8,14 +8,14 @@ import { useQuery } from "@tanstack/react-query"
 
 export default function SettingsPage() {
   const trpc = useTRPC()
-  const { data: user } = useQuery(trpc.user.getMe.queryOptions())
+  const { data: user, isLoading } = useQuery(trpc.user.getMe.queryOptions())
 
-  if (user === null) {
-    redirect("/")
+  if (isLoading) {
+    return <div>Loading...</div>
   }
 
-  if (user === undefined) {
-    return <div>Loading...</div>
+  if (!user) {
+    redirect("/")
   }
 
   return <Landing user={user} />

@@ -1,5 +1,15 @@
 import type { AttendanceSelection, AttendanceSelectionResponse } from "@dotkomonline/types"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Text, cn } from "@dotkomonline/ui"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+  Text,
+  cn,
+} from "@dotkomonline/ui"
 import { useEffect } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 
@@ -77,16 +87,14 @@ export function SelectionsForm({ selections, onSubmit, attendeeSelections, disab
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* Label for the current selection */}
-                  <SelectItem key={"label"} value={"label"} disabled>
-                    <Text className="text-slate-11 text-xs font-medium text-left">{selections[index].name}</Text>
-                  </SelectItem>
-
-                  {selections[index].options.map(({ id, name }) => (
-                    <SelectItem key={id} value={id}>
-                      {name}
-                    </SelectItem>
-                  ))}
+                  <SelectGroup>
+                    <SelectLabel>{selections[index].name}</SelectLabel>
+                    {selections[index].options.map(({ id, name }) => (
+                      <SelectItem key={id} value={id}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
 
