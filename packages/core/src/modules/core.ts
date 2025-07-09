@@ -21,6 +21,10 @@ import { getEventHostingGroupService } from "./event/event-hosting-group-service
 import { getEventRepository } from "./event/event-repository"
 import { getEventService } from "./event/event-service"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
+import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-answer-repository"
+import { getFeedbackFormAnswerService } from "./feedback-form/feedback-form-answer-service"
+import { getFeedbackFormRepository } from "./feedback-form/feedback-form-repository"
+import { getFeedbackFormService } from "./feedback-form/feedback-form-service"
 import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
 import { getGroupService } from "./group/group-service"
@@ -102,6 +106,8 @@ export const createServiceLayer = async ({
   const articleTagLinkRepository = getArticleTagLinkRepository()
   const feideGroupsRepository = getFeideGroupsRepository()
   const ntnuStudyplanRepository = getNTNUStudyplanRepository()
+  const feedbackFormRepository = getFeedbackFormRepository()
+  const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
 
   const userService = getUserService(
     userRepository,
@@ -146,6 +152,8 @@ export const createServiceLayer = async ({
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService)
   const offlineService = getOfflineService(offlineRepository, s3Repository)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
+  const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
+  const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository)
 
   const jobExecutor = new JobExecutor(jobService, attendeeService, attendanceService)
 
@@ -173,6 +181,8 @@ export const createServiceLayer = async ({
     interestGroupService,
     jobService,
     jobExecutor,
+    feedbackFormService,
+    feedbackFormAnswerService,
     executeTransaction: db.$transaction.bind(db),
   }
 }

@@ -3,15 +3,13 @@
 import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import type { FC } from "react"
 import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
+import { FeedbackPage } from "./feedback-page"
 import { useEventDetailsContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
-
-const EventDetailsFeedbackForms: FC = () => <h1>Tilbakemelding</h1>
 
 const SIDEBAR_LINKS = [
   {
@@ -30,7 +28,7 @@ const SIDEBAR_LINKS = [
     icon: "tabler:forms",
     label: "Tilbakemeldingsskjema",
     slug: "feedback-form",
-    component: EventDetailsFeedbackForms,
+    component: FeedbackPage,
   },
   {
     icon: "tabler:calendar-event",

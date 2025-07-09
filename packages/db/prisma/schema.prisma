@@ -202,6 +202,8 @@ model Attendee {
   attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId String
 
+  feedbackFormAnswer   FeedbackFormAnswer?
+
   /// Which options the user has selected from the Attendance selections
   selections Json @default("[]")
 
@@ -238,6 +240,7 @@ model Event {
   companies       EventCompany[]
   hostingGroups   EventHostingGroup[]
   interestGroups  EventInterestGroup[]
+  feedbackForm    FeedbackForm?
 
   @@map("event")
 }
@@ -504,6 +507,7 @@ enum JobName {
 
 enum JobStatus {
   PENDING
+  RUNNING
   COMPLETED
   FAILED
   CANCELED
@@ -522,4 +526,90 @@ model Job {
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("job")
+}
+
+enum FeedbackQuestionType {
+  TEXT
+  LONGTEXT
+  RATING
+  CHECKBOX
+  SELECT
+  MULTISELECT
+
+  @@map("feedback_question_type")
+}
+
+model FeedbackForm {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  eventId   String   @unique
+  event     Event    @relation(fields: [eventId], references: [id])
+  questions FeedbackQuestion[]
+  answers   FeedbackFormAnswer[]
+  isActive  Boolean   @default(false)
+
+  @@map("feedback_form")
+}
+
+model FeedbackQuestion {
+  id              String                    @id @default(uuid())
+  createdAt       DateTime                  @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime                  @updatedAt @db.Timestamptz(3)
+  feedbackFormId  String
+  feedbackForm    FeedbackForm              @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
+  label           String
+  required        Boolean                   @default(false)
+  type            FeedbackQuestionType
+  order           Int
+  options         FeedbackQuestionOption[]  
+  answers         FeedbackQuestionAnswer[]  @relation("QuestionAnswers")
+
+  @@map("feedback_question")
+}
+
+model FeedbackQuestionOption {
+  id          String   @id @default(uuid())
+  name       String
+  questionId  String
+  question    FeedbackQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedInAnswers   FeedbackQuestionAnswerOptionLink[]
+
+  @@unique([questionId, name])
+  @@map("feedback_question_option")
+}
+
+model FeedbackQuestionAnswer {
+  id            String   @id @default(uuid())
+  questionId    String
+  question      FeedbackQuestion  @relation("QuestionAnswers", fields: [questionId], references: [id])
+  formAnswerId  String
+  formAnswer    FeedbackFormAnswer  @relation("FormAnswers", fields: [formAnswerId], references: [id], onDelete: Cascade)
+  value         Json?
+  selectedOptions   FeedbackQuestionAnswerOptionLink[]
+
+  @@map("feedback_question_answer")
+}
+
+model FeedbackQuestionAnswerOptionLink {
+  feedbackQuestionOption   FeedbackQuestionOption    @relation(fields: [feedbackQuestionOptionId], references: [id])
+  feedbackQuestionOptionId String
+  feedbackQuestionAnswer       FeedbackQuestionAnswer @relation(fields: [feedbackQuestionAnswerId], references: [id], onDelete: Cascade)
+  feedbackQuestionAnswerId   String
+
+  @@id([feedbackQuestionOptionId, feedbackQuestionAnswerId])
+  @@map("feedback_answer_option_link")
+}
+
+model FeedbackFormAnswer {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  feedbackFormId  String
+  feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id])
+  answers   FeedbackQuestionAnswer[]  @relation("FormAnswers")
+  attendeeId      String    @unique
+  attendee        Attendee      @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
+
+  @@map("feedback_form_answer")
 }

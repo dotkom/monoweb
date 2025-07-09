@@ -11,7 +11,8 @@
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/environment": "workspace:*",
-    "@dotkomonline/logger": "workspace:*"
+    "@dotkomonline/logger": "workspace:*",
+    "commander": "^13.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

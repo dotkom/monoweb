@@ -131,7 +131,8 @@ export const useDeletePoolMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )
@@ -151,7 +152,8 @@ export const useCreatePoolMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )
@@ -171,7 +173,8 @@ export const useUpdatePoolMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )
@@ -196,7 +199,9 @@ export const useAdminForEventMutation = () => {
           message: "Bruker ble påmeldt arrangementet.",
         })
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendees.queryKey() })
       },
       onError: (err) => {
         notification.fail({
@@ -227,7 +232,9 @@ export const useRegisterForEventMutation = () => {
           message: "Bruker ble påmeldt arrangementet.",
         })
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendees.queryKey() })
       },
       onError: (err) => {
         notification.fail({
@@ -258,7 +265,9 @@ export const useDeregisterForEventMutation = () => {
           message: "Bruker ble meldt av arrangementet.",
         })
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendees.queryKey() })
       },
       onError: (err) => {
         notification.fail({
@@ -288,7 +297,8 @@ export const useUpdateEventAttendanceMutation = () => {
           message: `Oppmøte er ${data.attended ? "registrert" : "fjernet"}. `,
         })
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendees.queryKey() })
       },
       onError: (err) => {
         notification.fail({
@@ -334,7 +344,7 @@ export const useUpdateAttendanceMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
       },
     })
   )
@@ -354,7 +364,8 @@ export const useMergeAttendanceMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getEventDetail.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )
@@ -371,6 +382,67 @@ export const useUpdateSelectionResponsesMutation = () => {
       onError: fail,
       onMutate: loading,
       onSuccess: complete,
+    })
+  )
+}
+
+export const useCreateFeedbackFormMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "create",
+  })
+
+  return useMutation(
+    trpc.event.feedback.createForm.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (data) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.event.feedback.findFormByEventId.queryOptions(data.eventId))
+      },
+    })
+  )
+}
+
+export const useUpdateFeedbackFormMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.event.feedback.updateForm.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (data) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.event.feedback.findFormByEventId.queryOptions(data.eventId))
+      },
+    })
+  )
+}
+export const useDeleteFeedbackFormMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "delete",
+  })
+
+  return useMutation(
+    trpc.event.feedback.deleteForm.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries({
+          queryKey: trpc.event.feedback.findFormByEventId.queryKey(),
+        })
+      },
     })
   )
 }
