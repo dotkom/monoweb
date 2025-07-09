@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
+import { isAfter } from "date-fns"
 
 const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
   const { eventId } = await params
@@ -28,7 +29,7 @@ const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string
 
   if (previousAnswer) return <Text>Du har allerede svart på dette skjemaet.</Text>
 
-  if (event.end.getTime() > Date.now())
+  if (isAfter(event.end, Date.now()))
     return (
       <Text>
         Du kan ikke sende inn tilbakemelding før arrangementet er over {formatDate(event.end, { includeTime: true })}.

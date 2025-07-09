@@ -8,7 +8,7 @@ import {
 } from "@dotkomonline/types"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Icon } from "@iconify/react/dist/iconify.js"
+import { Icon } from "@iconify/react"
 import { Button, Card, Checkbox, Divider, Group, Select, Stack, TagsInput, TextInput, Tooltip } from "@mantine/core"
 import React, { type FC } from "react"
 
