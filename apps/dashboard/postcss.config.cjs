@@ -1,6 +1,6 @@
 module.exports = {
   plugins: {
-    autoprefixer: {},
+    "@tailwindcss/postcss": {},
     "postcss-preset-mantine": {},
     "postcss-simple-vars": {
       variables: {
