@@ -68,14 +68,14 @@ async function dumpData() {
   fs.writeFileSync(path.resolve(pathOfThisScript, "./hobbys.json"), JSON.stringify(hobbies, null, 2))
 }
 
-// @ts-ignore does not exist before running dumpData
-import groups from "./groups.json" assert { type: "json" }
-
 import { env } from "../env"
-// @ts-ignore does not exist before running dumpData
-import hobbies from "./hobbys.json" assert { type: "json" }
 
 async function insertDump() {
+  // biome-ignore lint/suspicious/noExplicitAny: files don't exist and cannot provide types until they are created
+  const groups = (await import("./groups.json", { assert: { type: "json" } })) as any[]
+  // biome-ignore lint/suspicious/noExplicitAny: files don't exist and cannot provide types until they are created
+  const hobbies = (await import("./hobbys.json", { assert: { type: "json" } })) as any[]
+
   const committees = groups.filter((item) => item.group_type === "committee")
   const nodeCommittees = groups.filter((item) => item.group_type === "node_committee")
   const interestGroups = hobbies
