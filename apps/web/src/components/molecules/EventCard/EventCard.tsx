@@ -73,16 +73,25 @@ export const EventListItemSkeleton: FC = () => {
       <div className="aspect-[4/3] h-[6rem] bg-slate-4 rounded-lg animate-pulse" />
 
       <div className="flex flex-col gap-4">
-        <div className="w-32 h-6 bg-slate-4 rounded-sm animate-pulse" style={{ width: `${Math.random() * 10 + 5}rem` }} />
+        <div
+          className="w-32 h-6 bg-slate-4 rounded-sm animate-pulse"
+          style={{ width: `${Math.random() * 10 + 5}rem` }}
+        />
 
         <div className="flex gap-2">
           <div className="w-4 h-4 bg-slate-4 rounded-sm animate-pulse" />
-          <div className="w-24 h-4 bg-slate-4 rounded-sm animate-pulse" style={{ width: `${Math.random() * 2 + 4}rem` }} />
+          <div
+            className="w-24 h-4 bg-slate-4 rounded-sm animate-pulse"
+            style={{ width: `${Math.random() * 2 + 4}rem` }}
+          />
         </div>
 
         <div className="flex gap-2">
           <div className="w-4 h-4 bg-slate-4 rounded-sm animate-pulse" />
-          <div className="w-16 h-4 bg-slate-4 rounded-sm animate-pulse" style={{ width: `${Math.random() * 1 + 2}rem` }} />
+          <div
+            className="w-16 h-4 bg-slate-4 rounded-sm animate-pulse"
+            style={{ width: `${Math.random() * 1 + 2}rem` }}
+          />
         </div>
       </div>
     </div>
