@@ -8,8 +8,8 @@ const createColorScale = (name) => {
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // Relative to the project when the preset is loaded from a tailwind.config.js
   darkMode: ["class", '[data-theme="dark"]'],
+  // Relative to the project when the preset is loaded from a tailwind.config.js
   content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ui/src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     colors: {
@@ -65,15 +65,6 @@ module.exports = {
       ringColor: {
         DEFAULT: "var(--blue-7)",
       },
-      borderRadius: {
-        md: "4px",
-      },
-      typography: ({ theme }) => ({
-        DEFAULT: {
-          "--tw-prose-invert-bullets": theme("colors.amber.12"),
-          "--tw-prose-bullets": theme("colors.amber.12"),
-        },
-      }),
     },
   },
   plugins: [

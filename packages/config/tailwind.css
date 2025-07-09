@@ -8,6 +8,8 @@
 
 @import "tailwindcss";
 
+@config "./tailwind-preset.js";
+
 @layer base {
   :root,
   .light,
@@ -42,6 +44,11 @@
     --brand-surface: #ecf9ffcc;
     --brand-indicator: #0d5474;
     --brand-track: #0d5474;
+
+    button:not(:disabled),
+    [role="button"]:not(:disabled) {
+      cursor: pointer;
+    }
   }
 
   @supports (color: color(display-p3 1 1 1)) {
@@ -312,10 +319,8 @@
   }
 }
 
-@layer utilities {
-  .animate-shine {
-    animation: shine 1s linear;
-  }
+@utility animate-shine {
+  animation: shine 1s linear;
 }
 
 @keyframes shine {
