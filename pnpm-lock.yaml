@@ -630,6 +630,9 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@tailwindcss/postcss':
+        specifier: ^4.1.11
+        version: 4.1.11
       '@types/node':
         specifier: 22.15.29
         version: 22.15.29
