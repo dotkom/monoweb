@@ -45,7 +45,7 @@ export default async function App() {
             return <EventCard key={eventDetail.event.id} eventDetail={eventDetail} attendeeStatus={attendeeStatus} />
           })}
 
-          <Tilt className="flex-grow" tiltMaxAngleX={2} tiltMaxAngleY={2} scale={1.05}>
+          <Tilt className="grow" tiltMaxAngleX={2} tiltMaxAngleY={2} scale={1.05}>
             <Button
               element="a"
               href="/arrangementer"

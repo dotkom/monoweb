@@ -12,7 +12,7 @@ export const Card: FC<CardProps> = (props) => (
   <div className={cn(props.className, card({ shadow: props.shadow, outlined: props.outlined }))}>{props.children}</div>
 )
 
-const card = cva("box-border m-0 min-w-0 border p-1 rounded", {
+const card = cva("box-border m-0 min-w-0 border p-1 rounded-sm", {
   variants: {
     shadow: {
       true: "shadow-md",

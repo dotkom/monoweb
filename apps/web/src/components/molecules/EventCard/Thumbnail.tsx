@@ -40,7 +40,7 @@ const EventTypePill: FC<EventTypePillProps> = ({ eventType, startInPast }) => {
         startInPast && "grayscale group-hover:grayscale-[50%] transition-all"
       )}
     >
-      <Text className={cn("px-1 py-0.5 rounded-sm text-xs", backgroundColor, textColor)}>{label}</Text>
+      <Text className={cn("px-1 py-0.5 rounded-xs text-xs", backgroundColor, textColor)}>{label}</Text>
     </div>
   )
 }

@@ -106,7 +106,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
       }}
       title={pool.title}
     >
-      <div className="flex flex-grow flex-col gap-2 items-center text-center justify-center">
+      <div className="flex grow flex-col gap-2 items-center text-center justify-center">
         <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
           {pool.numAttendees}/{pool.capacity}
         </Text>

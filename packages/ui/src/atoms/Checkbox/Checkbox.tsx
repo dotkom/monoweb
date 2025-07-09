@@ -14,7 +14,7 @@ export const Checkbox: FC<CheckboxProps> = ({ label, className, ref, ...props })
       <CheckboxPrimitive.Root
         ref={ref}
         className={cn(
-          "border-slate-7 focus:ring-blue-7 peer h-6 w-6 shrink-0 rounded-sm border focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "border-slate-7 focus:ring-blue-7 peer h-6 w-6 shrink-0 rounded-xs border focus:outline-hidden focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
           "bg-white-3 hover:bg-white-4 active:bg-white-5",
           "hover:border-slate-8 transition-colors",
           "rdx-state-checked:bg-blue- rdx-state-checked:hover:bg-blue-6",

@@ -26,7 +26,7 @@ export const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      "data-[state=open]:bg-slate-7 text-md flex cursor-default select-none items-center rounded-sm px-2 py-1.5 font-medium outline-none",
+      "data-[state=open]:bg-slate-7 text-md flex cursor-default select-none items-center rounded-xs px-2 py-1.5 font-medium outline-hidden",
       inset && "pl-8",
       "data-[state=open]:bg-slate-3 data-[state=open]:dark:bg-slate-7",
       "focus:bg-slate-3 focus:dark:bg-slate-7",
@@ -85,7 +85,7 @@ export const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "text-md relative flex cursor-default select-none items-center rounded px-2 py-1.5 font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "text-md relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 font-medium outline-hidden data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       inset && "pl-8",
       "focus:bg-slate-3 focus:dark:bg-slate-7",
       className
@@ -102,7 +102,7 @@ export const DropdownMenuCheckboxItem = React.forwardRef<
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
     className={cn(
-      "text-md relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "text-md relative flex cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 font-medium outline-hidden data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "focus:bg-slate-3 focus:dark:bg-slate-7",
       className
     )}
@@ -126,7 +126,7 @@ export const DropdownMenuRadioItem = React.forwardRef<
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
     className={cn(
-      "text-md relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "text-md relative flex cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 font-medium outline-hidden data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "focus:bg-slate-3 focus:dark:bg-slate-7",
       className
     )}

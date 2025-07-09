@@ -27,7 +27,7 @@ export const AlertDialogOverlay: FC<ComponentPropsWithRef<typeof AlertDialogPrim
   return (
     <AlertDialogPrimitive.Overlay
       className={cn(
-        "animate-in fade-in bg-slate-1/50 fixed inset-0 z-50 backdrop-blur-sm transition-opacity",
+        "animate-in fade-in bg-slate-1/50 fixed inset-0 z-50 backdrop-blur-xs transition-opacity",
         className
       )}
       {...props}

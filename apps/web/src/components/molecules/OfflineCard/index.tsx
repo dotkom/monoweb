@@ -17,7 +17,7 @@ export const OfflineCard = ({ offline }: OfflineCardProps) => {
             width={200}
             height={250}
             alt={offline.title}
-            className="rounded cursor-pointer w-auto transition-transform duration-200 hover:scale-105 shadow-sm hover:shadow-md"
+            className="rounded-sm cursor-pointer w-auto transition-transform duration-200 hover:scale-105 shadow-xs hover:shadow-md"
           />
         </Link>
       )}

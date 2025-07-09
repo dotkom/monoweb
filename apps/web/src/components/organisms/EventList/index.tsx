@@ -60,11 +60,11 @@ export const EventList: FC<EventListProps> = async (props: EventListProps) => {
       {pastEventItems.length > 0 && (
         <>
           <div className="w-full px-2 flex flex-row items-center gap-2 sm:-my-1">
-            <div className="flex-grow h-[2px] bg-slate-3 rounded-full" />
+            <div className="grow h-[2px] bg-slate-3 rounded-full" />
             <Text className="text-slate-5 text-xs uppercase tracking-widest font-medium select-none">
               Tidligere arrangementer
             </Text>
-            <div className="flex-grow h-[2px] bg-slate-3 rounded-full" />
+            <div className="grow h-[2px] bg-slate-3 rounded-full" />
           </div>
           {pastEventItems}
         </>

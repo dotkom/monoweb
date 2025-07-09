@@ -77,7 +77,7 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
         <React.Fragment key={key}>
           {element}
           {index < sortedElements.length - 1 && (
-            <span className="flex-grow h-0.5 rounded-full bg-slate-7 invisible sm:visible" />
+            <span className="grow h-0.5 rounded-full bg-slate-7 invisible sm:visible" />
           )}
         </React.Fragment>
       ))}

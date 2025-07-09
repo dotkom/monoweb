@@ -31,7 +31,7 @@ export const MobileMenuContainer = () => {
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content className="animate-in fade-in-10">
-            <div className="bg-indigo-1 shadow-slate-8 flex w-screen flex-col rounded-lg p-3 shadow-sm md:hidden">
+            <div className="bg-indigo-1 shadow-slate-8 flex w-screen flex-col rounded-lg p-3 shadow-xs md:hidden">
               {settingsItems.map((item) => (
                 <Popover.Close key={item.title}>
                   <SettingsMenuItem {...item} />
