@@ -40,4 +40,7 @@ export const userRouter = t.router({
   searchByFullName: adminProcedure
     .input(z.object({ searchQuery: z.string() }))
     .query(async ({ input, ctx }) => ctx.userService.searchForUser(input.searchQuery, 30, 0)),
+  isAdmin: protectedProcedure.query(
+    async ({ ctx }) => ctx.adminPrincipals.includes("*") || ctx.adminPrincipals.includes(ctx.principal)
+  ),
 })
