@@ -12,12 +12,12 @@ export default async function AboutOnlinePage() {
 
   return (
     <div>
-      <div className="flex flex-col items-center sm:text-center rounded-xl bg-blue-3 dark:bg-transparent p-8">
+      <div className="flex flex-col items-center sm:text-center rounded-xl bg-blue-200 dark:bg-transparent p-8">
         <Title size="xl" element="h1" className="mb-10">
           Bli kjent med{" "}
           <span className="relative inline-block">
             Online linjeforening
-            <span className="absolute left-0 -bottom-6 h-4 w-full bg-blue-7 dark:bg-blue-8 rounded-2xl" />
+            <span className="absolute left-0 -bottom-6 h-4 w-full bg-blue-600 dark:bg-blue-700 rounded-2xl" />
           </span>
         </Title>
         <Text>
@@ -29,7 +29,7 @@ export default async function AboutOnlinePage() {
         </Text>
       </div>
       <div className="flex flex-col items-center text-center mt-7">
-        <Title size={"lg"} element="h2" className="border-b border-slate-6 pb-1 w-full mb-4">
+        <Title size={"lg"} element="h2" className="border-b border-slate-500 pb-1 w-full mb-4">
           Generalforsamlingen
         </Title>
 
@@ -45,7 +45,7 @@ export default async function AboutOnlinePage() {
           </div>
           <div className="text-left max-w-md mt-4 md:mt-0">
             <Text>
-              <Link href="https://wiki.online.ntnu.no/generalforsamlinger/" className="hover:underline text-blue-8">
+              <Link href="https://wiki.online.ntnu.no/generalforsamlinger/" className="hover:underline text-blue-700">
                 Generalforsamlingen
               </Link>{" "}
               er den høyeste besluttende myndighet i Online.
@@ -57,7 +57,7 @@ export default async function AboutOnlinePage() {
         </div>
       </div>
       <div className="flex flex-col items-center text-center mt-7">
-        <Title size={"lg"} element="h2" className="border-b border-slate-6 pb-1 w-full mb-4">
+        <Title size={"lg"} element="h2" className="border-b border-slate-500 pb-1 w-full mb-4">
           Komiteer
         </Title>
         <Text className="md:w-2/3 lg:w-1/2 sm:mx-12 text-left md:text-center">
@@ -67,7 +67,7 @@ export default async function AboutOnlinePage() {
         <GroupList groups={committees} />
       </div>
       <div className="flex flex-col items-center text-center mt-7">
-        <Title size={"lg"} element="h2" className="border-b border-slate-6 pb-1 w-full mb-4">
+        <Title size={"lg"} element="h2" className="border-b border-slate-500 pb-1 w-full mb-4">
           Nodekomiteer
         </Title>
         <Text className="md:w-2/3 lg:w-1/2 sm:mx-12 text-left md:text-center">

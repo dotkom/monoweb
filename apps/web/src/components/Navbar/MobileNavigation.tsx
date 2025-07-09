@@ -18,7 +18,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
         </div>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content className="w-screen border-t bg-slate-1 animate-in fade-in-20 p-6 mt-8">
+        <Popover.Content className="w-screen border-t bg-slate-50 animate-in fade-in-20 p-6 mt-8">
           <nav className="flex flex-col gap-4">
             {links.map((link) => (
               <Fragment key={link.title}>
@@ -26,7 +26,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                   <Link
                     href={"href" in link ? link.href : "#"}
                     className={cn(
-                      "inline-flex py-2 text-lg font-semibold text-slate-12 hover:bg-slate-2 rounded-md px-2 transition-colors",
+                      "inline-flex py-2 text-lg font-semibold text-black hover:bg-slate-100 rounded-md px-2 transition-colors",
                       "href" in link && "font-normal"
                     )}
                   >
@@ -39,7 +39,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       <Link
                         href={"href" in link ? link.href : "#"}
                         className={cn(
-                          "ml-4 inline-flex py-2 text-base font-medium text-slate-12 hover:bg-slate-2 rounded-md px-2 transition-colors",
+                          "ml-4 inline-flex py-2 text-base font-medium text-black hover:bg-slate-100 rounded-md px-2 transition-colors",
                           "href" in link && "font-normal"
                         )}
                       >

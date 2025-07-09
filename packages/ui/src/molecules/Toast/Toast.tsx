@@ -29,25 +29,25 @@ export const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
   )
 }
 
-const base = cva("flex align-center p-2 rounded-sm max-w-[360px] text-slate-1 shadow-md", {
+const base = cva("flex align-center p-2 rounded-sm max-w-[360px] text-slate-50 shadow-md", {
   variants: {
     color: {
-      danger: "bg-red-9 text-slate-12",
-      warning: "bg-amber-9",
-      info: "bg-blue-9 text-slate-12",
-      success: "bg-green-9 text-slate-12",
+      danger: "bg-red-800 text-black",
+      warning: "bg-amber-800",
+      info: "bg-blue-800 text-black",
+      success: "bg-green-800 text-black",
       monochrome: "bg-white",
     },
   },
 })
 
-const close = cva("w-6 h-6 text-slate-1", {
+const close = cva("w-6 h-6 text-slate-50", {
   variants: {
     color: {
-      danger: "bg-red-9 text-slate-12",
-      warning: "bg-amber-9",
-      info: "bg-blue-9 text-slate-12",
-      success: "bg-green-9 text-slate-12",
+      danger: "bg-red-800 text-black",
+      warning: "bg-amber-800",
+      info: "bg-blue-800 text-black",
+      success: "bg-green-800 text-black",
       monochrome: "",
     },
   },

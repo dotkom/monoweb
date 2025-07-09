@@ -1,5 +1,5 @@
-const bgColor = "bg-brand-12"
-const borderColor = "border-x-brand-12"
+const bgColor = "bg-black"
+const borderColor = "border-x-black"
 
 export const Header = () => {
   return (

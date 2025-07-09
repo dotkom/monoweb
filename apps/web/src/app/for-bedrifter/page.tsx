@@ -20,11 +20,11 @@ export default async function Page() {
 
 const HeroSection: FC = () => {
   return (
-    <section className="bg-amber-2 w-full rounded-lg">
+    <section className="bg-amber-100 w-full rounded-lg">
       <div className="mx-auto flex max-w-[768px] flex-col text-center items-center p-4 pb-9">
         <Title element="h1" className="mb-8 mt-5 !text-4xl/relaxed lg:!text-5xl/tight">
           Er din bedrift på jakt etter skarpe <br />
-          <span className="relative after:content-[''] after:bg-amber-7 after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
+          <span className="relative after:content-[''] after:bg-amber-600 after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
             IT&ndash;studenter?
           </span>
         </Title>
@@ -99,7 +99,7 @@ const ProductSection: FC = () => {
 const ProcessSection: FC = () => {
   const steps = ["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]
   return (
-    <section className="bg-blue-3 w-full py-10 rounded-lg ">
+    <section className="bg-blue-200 w-full py-10 rounded-lg ">
       <div className="mx-auto flex flex-col items-center md:flex-wrap md:flex-row md:items-stretch justify-evenly max-w-[1024px] px-16 py-4 lg:flex-nowrap ">
         {steps.map((step, index) => (
           <Fragment key={step}>

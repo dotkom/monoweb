@@ -49,7 +49,7 @@ export default async function App() {
             <Button
               element="a"
               href="/arrangementer"
-              className="w-full h-full bg-blue-3 hover:bg-blue-4 text-brand-9 hover:text-brand-12"
+              className="w-full h-full bg-blue-200 hover:bg-blue-300 text-brand-800 hover:text-black"
               iconRight={<Icon icon="tabler:arrow-up-right" />}
             >
               <Text>Se alle arrangementer</Text>
@@ -109,7 +109,7 @@ const EventCard: FC<ComingEventProps> = ({
           height={150}
           src={imageUrl ? imageUrl : EventImagePlaceholder}
           alt={title}
-          className="rounded-lg border border-slate-3 object-cover aspect-[4/3]"
+          className="rounded-lg border border-slate-200 object-cover aspect-[4/3]"
         />
       </Tilt>
       <div className="flex flex-col gap-1">

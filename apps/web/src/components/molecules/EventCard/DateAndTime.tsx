@@ -41,13 +41,13 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
     return (
       <div className="flex flex-row gap-2 items-center">
         <div className="flex flex-row gap-2 items-center">
-          <Icon icon="tabler:calendar-event" className="text-base text-slate-9" />
+          <Icon icon="tabler:calendar-event" className="text-base text-slate-800" />
           <Text className="text-sm">{startDate}</Text>
         </div>
 
         {showTime && (
           <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:clock" className="text-base text-slate-9 ml-2" />
+            <Icon icon="tabler:clock" className="text-base text-slate-800 ml-2" />
             <Text className="text-sm">
               {startTime} - {endTime}
             </Text>
@@ -59,14 +59,14 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
 
   return (
     <div className="flex flex-row gap-2 items-center">
-      <Icon icon="tabler:calendar-event" className="text-base text-slate-9" />
+      <Icon icon="tabler:calendar-event" className="text-base text-slate-800" />
 
       <div className="flex flex-row gap-1">
         <Text className="text-sm">{startDate}</Text>
         {showTime && <Text className="text-sm"> kl. {startTime}</Text>}
       </div>
 
-      <Text className="text-sm text-slate-9">til</Text>
+      <Text className="text-sm text-slate-800">til</Text>
 
       <div className="flex flex-row gap-1">
         <Text className="text-sm">{endDate}</Text>

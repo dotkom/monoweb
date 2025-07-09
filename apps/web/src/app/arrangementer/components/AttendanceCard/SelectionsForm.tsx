@@ -68,18 +68,18 @@ export function SelectionsForm({ selections, onSubmit, attendeeSelections, disab
                 <SelectTrigger
                   className={cn(
                     "w-full transition-all",
-                    hasError(index) && "border-red-9 focus:ring-red-9 focus:border-red-9"
+                    hasError(index) && "border-red-800 focus:ring-red-800 focus:border-red-800"
                   )}
                 >
                   <SelectValue
                     placeholder={selections[index].name}
-                    className={cn("placeholder:text-slate-8 transition-all", hasError(index) && "text-red-11")}
+                    className={cn("placeholder:text-slate-700 transition-all", hasError(index) && "text-red-950")}
                   />
                 </SelectTrigger>
                 <SelectContent>
                   {/* Label for the current selection */}
                   <SelectItem key={"label"} value={"label"} disabled>
-                    <Text className="text-slate-11 text-xs font-medium text-left">{selections[index].name}</Text>
+                    <Text className="text-slate-950 text-xs font-medium text-left">{selections[index].name}</Text>
                   </SelectItem>
 
                   {selections[index].options.map(({ id, name }) => (
@@ -91,7 +91,7 @@ export function SelectionsForm({ selections, onSubmit, attendeeSelections, disab
               </Select>
 
               {hasError(index) && (
-                <Text className="text-red-11 text-xs text-left transition-all fade-in fade-out">
+                <Text className="text-red-950 text-xs text-left transition-all fade-in fade-out">
                   {errors.attendeeOptions?.[index]?.optionId?.message ?? "En feil oppstod"}
                 </Text>
               )}

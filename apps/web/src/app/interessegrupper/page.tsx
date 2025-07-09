@@ -8,7 +8,7 @@ export default async function InterestPage() {
 
   return (
     <div>
-      <div className="border-slate-7 border-b">
+      <div className="border-slate-600 border-b">
         <div className="flex flex-col pb-5">
           <Title element="h1" className="text-3xl">
             Interessegrupper
@@ -19,10 +19,10 @@ export default async function InterestPage() {
             for alle mulige slags interesser. Har du og en kompis eller to en sær/stilig/fantastisk interesse? Opprett
             en interessegruppe!
           </Text>
-          <Text className="text-slate-11 pt-2">
+          <Text className="text-slate-950 pt-2">
             Mer informasjon om hvordan dette gjøres finnes{" "}
             <Link
-              className="hover:underline text-blue-8"
+              className="hover:underline text-blue-700"
               href={"https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper/"}
             >
               her.

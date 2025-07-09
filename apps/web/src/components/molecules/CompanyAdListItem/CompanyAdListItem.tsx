@@ -28,7 +28,7 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
   return (
     <Link
       href={`/karriere/${jobListing.id}`}
-      className="border-slate-3 flex h-56 items-center justify-between rounded-lg border px-6 py-2"
+      className="border-slate-200 flex h-56 items-center justify-between rounded-lg border px-6 py-2"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -44,7 +44,7 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
         )}
         <div className="flex flex-col w-full">
           <h3 className="text-lg md:text-xl xl:text-2xl">{jobListing.title}</h3>
-          <p className="text-slate-8 my-2">{jobListing.company.name}</p>
+          <p className="text-slate-700 my-2">{jobListing.company.name}</p>
           <div className="flex flex-row justify-between w-full">
             <div>
               <div className="flex flex-row gap-1">
