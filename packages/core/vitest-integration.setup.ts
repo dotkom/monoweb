@@ -1,10 +1,13 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { DBClient } from "@dotkomonline/db"
 import { getPrismaClientForTest } from "@dotkomonline/db/test-harness"
+import { faker } from "@faker-js/faker"
 import type { ManagementClient } from "auth0"
 import { afterAll, beforeEach } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import { type StripeAccount, createServiceLayer } from "./src"
+
+faker.seed(69)
 
 export async function createServiceLayerForTesting() {
   const s3Client = mockDeep<S3Client>()

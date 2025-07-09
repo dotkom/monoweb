@@ -13,6 +13,10 @@ export default defineConfig({
     exclude: defaultExclude.concat("**/*.spec.ts"),
     include: ["**/*.e2e-spec.ts"],
     mockReset: true,
+    coverage: {
+      provider: "v8",
+      reporter: ["text"],
+    },
     setupFiles: ["./vitest-integration.setup.ts"],
   },
 })
