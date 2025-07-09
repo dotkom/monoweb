@@ -1,28 +1,31 @@
-import { createEnvironment, variable } from "@dotkomonline/environment"
+import { config, defineConfiguration } from "@dotkomonline/environment"
 
-export const env = createEnvironment(
-  {
-    AUTH0_CLIENT_ID: variable,
-    AUTH0_CLIENT_SECRET: variable,
-    AUTH0_ISSUER: variable,
-    AUTH0_AUDIENCES: variable,
-    AUTH_SECRET: variable,
-    RPC_HOST: variable,
-    SIGNING_KEY: variable,
-    NEXT_PUBLIC_ORIGIN: variable,
-    NEXT_PUBLIC_RPC_HOST: variable,
-    NEXT_PUBLIC_DASHBOARD_URL: variable,
-    NEXT_PUBLIC_HOME_URL: variable.default("/"),
-  },
-  {
-    env: {
-      ...process.env,
-      NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
-      NEXT_PUBLIC_DASHBOARD_URL: process.env.NEXT_PUBLIC_DASHBOARD_URL,
-      NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
-      NEXT_PUBLIC_HOME_URL: process.env.NEXT_PUBLIC_HOME_URL,
-    },
-    // Web should also validate env at build time
-    skipValidation: false,
-  }
-)
+export const env = defineConfiguration({
+  AUTH0_CLIENT_ID: config(process.env.AUTH0_CLIENT_ID),
+  AUTH0_CLIENT_SECRET: config(process.env.AUTH0_CLIENT_SECRET),
+  AUTH0_ISSUER: config(process.env.AUTH0_ISSUER),
+  AUTH0_AUDIENCES: config(process.env.AUTH0_AUDIENCES),
+  AUTH_SECRET: config(process.env.AUTH_SECRET),
+  RPC_HOST: config(process.env.RPC_HOST, {
+    prd: "https://rpc.online.ntnu.no",
+    stg: "https://staging.rpc.online.ntnu.no",
+    dev: "http://localhost:4444",
+  }),
+  SIGNING_KEY: config(process.env.SIGNING_KEY),
+  NEXT_PUBLIC_ORIGIN: config(process.env.NEXT_PUBLIC_ORIGIN, {
+    prd: "https://web.online.ntnu.no",
+    stg: "https://staging.online.ntnu.no",
+    dev: "http://localhost:3000",
+  }),
+  NEXT_PUBLIC_RPC_HOST: config(process.env.NEXT_PUBLIC_RPC_HOST, {
+    prd: "https://rpc.online.ntnu.no",
+    stg: "https://staging.rpc.online.ntnu.no",
+    dev: "http://localhost:4444",
+  }),
+  NEXT_PUBLIC_DASHBOARD_URL: config(process.env.NEXT_PUBLIC_DASHBOARD_URL, {
+    prd: "https://dashboard.online.ntnu.no",
+    stg: "https://staging.dashboard.online.ntnu.no",
+    dev: "http://localhost:3000",
+  }),
+  NEXT_PUBLIC_HOME_URL: config(process.env.NEXT_PUBLIC_HOME_URL, "/"),
+})

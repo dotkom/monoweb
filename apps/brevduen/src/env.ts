@@ -1,10 +1,5 @@
-import { createEnvironment, variable } from "@dotkomonline/environment"
+import { config, defineConfiguration } from "@dotkomonline/environment"
 
-export const env = createEnvironment(
-  {
-    EMAIL_TOKEN: variable,
-  },
-  {
-    env: process.env,
-  }
-)
+export const env = defineConfiguration({
+  EMAIL_TOKEN: config(process.env.EMAIL_TOKEN),
+})

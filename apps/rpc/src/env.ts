@@ -1,29 +1,28 @@
-import { createEnvironment, variable } from "@dotkomonline/environment"
+import { config, defineConfiguration } from "@dotkomonline/environment"
 
-export const env = createEnvironment(
-  {
-    AUTH0_ISSUER: variable,
-    AUTH0_AUDIENCES: variable,
-    AUTH0_CLIENT_ID: variable,
-    AUTH0_CLIENT_SECRET: variable,
-    AUTH0_MGMT_TENANT: variable,
-    ALLOWED_ORIGINS: variable,
-    AWS_REGION: variable,
-    AWS_S3_BUCKET: variable,
-    DATABASE_URL: variable,
-    TRIKOM_STRIPE_PUBLIC_KEY: variable,
-    TRIKOM_STRIPE_SECRET_KEY: variable,
-    TRIKOM_STRIPE_WEBHOOK_SECRET: variable,
-    FAGKOM_STRIPE_PUBLIC_KEY: variable,
-    FAGKOM_STRIPE_SECRET_KEY: variable,
-    FAGKOM_STRIPE_WEBHOOK_SECRET: variable,
+export const env = defineConfiguration({
+  AUTH0_ISSUER: config(process.env.AUTH0_ISSUER),
+  AUTH0_AUDIENCES: config(process.env.AUTH0_AUDIENCES),
+  AUTH0_CLIENT_ID: config(process.env.AUTH0_CLIENT_ID),
+  AUTH0_CLIENT_SECRET: config(process.env.AUTH0_CLIENT_SECRET),
+  AUTH0_MGMT_TENANT: config(process.env.AUTH0_MGMT_TENANT),
 
-    // comma separated auth0 subs, e.g.
-    // "auth0|111111111111111111111111,auth0|222222222222222222222222"
-    // value "*" means all users are admins
-    ADMIN_USERS: variable,
-  },
-  {
-    env: process.env,
-  }
-)
+  ALLOWED_ORIGINS: config(process.env.ALLOWED_ORIGINS, {
+    prd: "https://online.ntnu.no",
+    stg: "https://staging.online.ntnu.no",
+    dev: "http://localhost:3000",
+  }),
+  ADMIN_USERS: config(process.env.ADMIN_USERS),
+
+  AWS_REGION: config(process.env.AWS_REGION, "eu-north-1"),
+  AWS_S3_BUCKET: config(process.env.AWS_S3_BUCKET),
+  DATABASE_URL: config(process.env.DATABASE_URL),
+
+  TRIKOM_STRIPE_PUBLIC_KEY: config(process.env.TRIKOM_STRIPE_PUBLIC_KEY),
+  TRIKOM_STRIPE_SECRET_KEY: config(process.env.TRIKOM_STRIPE_SECRET_KEY),
+  TRIKOM_STRIPE_WEBHOOK_SECRET: config(process.env.TRIKOM_STRIPE_WEBHOOK_SECRET),
+
+  FAGKOM_STRIPE_PUBLIC_KEY: config(process.env.FAGKOM_STRIPE_PUBLIC_KEY),
+  FAGKOM_STRIPE_SECRET_KEY: config(process.env.FAGKOM_STRIPE_SECRET_KEY),
+  FAGKOM_STRIPE_WEBHOOK_SECRET: config(process.env.FAGKOM_STRIPE_WEBHOOK_SECRET),
+})
