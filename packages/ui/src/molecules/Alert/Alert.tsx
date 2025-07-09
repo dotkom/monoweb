@@ -15,7 +15,7 @@ export const Alert: FC<PropsWithChildren<AlertProps>> = ({ status, title, childr
     <div className="mr-3">{showIcon && <AlertIcon status={status} />}</div>
     <div className="flex flex-col">
       <span className={alertTitle({ status })}>{title}</span>
-      <div className="text-slate-12">{children}</div>
+      <div className="text-black">{children}</div>
     </div>
   </div>
 )
@@ -23,10 +23,10 @@ export const Alert: FC<PropsWithChildren<AlertProps>> = ({ status, title, childr
 const alert = cva("flex justify-center flex-row px-5 py-4 rounded-md text-base", {
   variants: {
     status: {
-      info: "bg-blue-4",
-      success: "bg-green-4",
-      warning: "bg-amber-4",
-      danger: "bg-red-4",
+      info: "bg-blue-300",
+      success: "bg-green-300",
+      warning: "bg-amber-300",
+      danger: "bg-red-300",
     },
   },
 })
@@ -34,10 +34,10 @@ const alert = cva("flex justify-center flex-row px-5 py-4 rounded-md text-base",
 const alertTitle = cva("font-semibold mb-3", {
   variants: {
     status: {
-      info: "text-blue-11",
-      success: "text-green-11",
-      warning: "text-amber-11",
-      danger: "text-red-11",
+      info: "text-blue-950",
+      success: "text-green-950",
+      warning: "text-amber-950",
+      danger: "text-red-950",
     },
   },
 })

@@ -29,7 +29,7 @@ export const TicketButton = ({ attendeeId }: TicketButtonProps) => {
   }
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-slate-1 z-50 overflow-hidden">
+    <div className="fixed top-0 left-0 w-screen h-screen bg-slate-50 z-50 overflow-hidden">
       <div className="flex justify-start p-10">
         <Button onClick={() => setOpen(false)}>
           <Cross2Icon width={20} height={20} />

@@ -40,23 +40,23 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
   return (
     <div className="flex flex-row items-center gap-2">
-      <Icon icon="tabler:users" className="text-base text-slate-9" />
+      <Icon icon="tabler:users" className="text-base text-slate-800" />
 
       <div
         className={cn(
           "flex flex-row gap-1 items-center",
           (justAttendanceClosed || isReserved || isUnreserved) && "px-1 py-0.5 rounded-md",
-          justAttendanceClosed && "bg-slate-2",
-          isReserved && (inPast ? "bg-green-2" : "bg-green-4"),
-          isUnreserved && (inPast ? "bg-yellow-2" : "bg-yellow-3")
+          justAttendanceClosed && "bg-slate-100",
+          isReserved && (inPast ? "bg-green-100" : "bg-green-300"),
+          isUnreserved && (inPast ? "bg-yellow-100" : "bg-yellow-200")
         )}
       >
         <Text
           className={cn(
             "text-sm",
-            attendanceStatus === "NotOpened" && "text-slate-9",
-            isReserved ? "text-green-9" : isUnreserved ? "text-yellow-8" : null,
-            inPast ? (isReserved ? "text-green-6" : isUnreserved ? "text-yellow-6" : "text-slate-9") : null
+            attendanceStatus === "NotOpened" && "text-slate-800",
+            isReserved ? "text-green-800" : isUnreserved ? "text-yellow-700" : null,
+            inPast ? (isReserved ? "text-green-500" : isUnreserved ? "text-yellow-500" : "text-slate-800") : null
           )}
         >
           {numberOfAttendees}
@@ -64,17 +64,17 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
         </Text>
 
         {justAttendanceClosed ? (
-          <Icon icon="tabler:lock" className="text-slate-8 text-sm" />
+          <Icon icon="tabler:lock" className="text-slate-700 text-sm" />
         ) : isReserved ? (
-          <Icon icon="tabler:check" className={cn("text-green-9 text-sm", inPast && "text-green-5")} />
+          <Icon icon="tabler:check" className={cn("text-green-800 text-sm", inPast && "text-green-400")} />
         ) : isUnreserved ? (
-          <Icon icon="tabler:clock" className={cn("text-yellow-9 text-sm", inPast && "text-yellow-5")} />
+          <Icon icon="tabler:clock" className={cn("text-yellow-800 text-sm", inPast && "text-yellow-400")} />
         ) : null}
       </div>
 
       {attendanceStatus === "NotOpened" && (
         <>
-          <div className="w-1 h-1 bg-slate-9 rounded-full" />
+          <div className="w-1 h-1 bg-slate-800 rounded-full" />
           <Text className="text-sm">
             Åpner {attendance ? formatDistanceToNow(attendance.registerStart, { locale: nb, addSuffix: true }) : ""}
           </Text>

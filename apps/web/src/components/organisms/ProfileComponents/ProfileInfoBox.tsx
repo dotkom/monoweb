@@ -10,11 +10,11 @@ type ProfileInfoBoxProps = {
 }
 
 export const ProfileInfoBox: FC<ProfileInfoBoxProps> = ({ user }) => {
-  const lineStyle = "border-r border-slate-7 last:border-r-0"
+  const lineStyle = "border-r border-slate-600 last:border-r-0"
   const bio = true
 
   return (
-    <div className="border-slate-7 mt-9 min-w-[970px] rounded-xl left-0 z-0 w-full border flex flex-row justify-evenly py-16">
+    <div className="border-slate-600 mt-9 min-w-[970px] rounded-xl left-0 z-0 w-full border flex flex-row justify-evenly py-16">
       <div className={cn("min-w-[340px]", lineStyle)}>
         <PersonalInfo user={user} />
       </div>
