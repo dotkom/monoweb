@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import fsp from "node:fs/promises"
 import path from "node:path"
 import { exit } from "node:process"
 import { Command } from "commander"
@@ -72,9 +73,9 @@ import { env } from "../env"
 
 async function insertDump() {
   // biome-ignore lint/suspicious/noExplicitAny: files don't exist and cannot provide types until they are created
-  const groups = (await import("./groups.json", { assert: { type: "json" } })) as any[]
+  const groups = JSON.parse(await fsp.readFile("./groups.json", "utf-8")) as any[]
   // biome-ignore lint/suspicious/noExplicitAny: files don't exist and cannot provide types until they are created
-  const hobbies = (await import("./hobbys.json", { assert: { type: "json" } })) as any[]
+  const hobbies = JSON.parse(await fsp.readFile("./hobbys.json", "utf-8")) as any[]
 
   const committees = groups.filter((item) => item.group_type === "committee")
   const nodeCommittees = groups.filter((item) => item.group_type === "node_committee")
