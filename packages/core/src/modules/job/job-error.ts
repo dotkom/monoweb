@@ -2,8 +2,8 @@ import { ApplicationError, IllegalStateError } from "../../error"
 import { PROBLEM_DETAILS } from "../../http-problem-details"
 
 export class InvalidJobType extends IllegalStateError {
-  constructor(type: string) {
-    super(`Invalid job type: ${type}. This is a severe bug in the application.`)
+  constructor(taskType: string, taskId: string) {
+    super(`Invalid job type: ${taskType} seen in JobID=${taskId}. This is a severe bug in the application.`)
   }
 }
 

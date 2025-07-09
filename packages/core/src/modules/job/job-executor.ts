@@ -70,7 +70,7 @@ export class JobExecutor {
           default:
             // NOTE: Do not need to log this, as the below catch block will catch the error after it has bubbled up
             // through the Prisma transaction.
-            throw new InvalidJobType(`Job with name ${task.name} not found in executor for Job ID=${task.id}`)
+            throw new InvalidJobType(task.name, task.id)
         }
       })
     } catch (error: unknown) {
