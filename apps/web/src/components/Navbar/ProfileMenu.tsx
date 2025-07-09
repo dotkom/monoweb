@@ -1,6 +1,7 @@
 "use client"
 
 import { env } from "@/env"
+import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   Avatar,
@@ -11,12 +12,10 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -31,11 +30,11 @@ import {
   Text,
   cn,
 } from "@dotkomonline/ui"
+import { useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import type { FC, PropsWithChildren } from "react"
-import { Fragment } from "react"
+import { type FC, Fragment, type PropsWithChildren, useState } from "react"
 
 const THEME_OPTIONS = [
   {
@@ -55,8 +54,12 @@ const THEME_OPTIONS = [
   },
 ] as const
 
-export const ProfileMenu = () => {
+export const ProfileMenu: FC = () => {
   const session = useSession()
+  const trpc = useTRPC()
+
+  const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
+
   if (session === null) {
     const { setTheme, theme } = useTheme()
 
@@ -105,8 +108,10 @@ export const ProfileMenu = () => {
     <button type="button">
       <AvatarDropdown>
         <Avatar>
-          <AvatarImage src={session.picture} alt="@rick" />
-          <AvatarFallback>OW</AvatarFallback>
+          <AvatarImage src={user?.image ?? undefined} alt={user?.displayName ?? "Profilbilde"} />
+          <AvatarFallback className="bg-blue-6">
+            <Icon className="text-lg" icon="tabler:user" />
+          </AvatarFallback>
         </Avatar>
       </AvatarDropdown>
     </button>
@@ -118,6 +123,7 @@ interface LinkDetail {
   icon: string
   href?: string
   openInNewTab?: boolean
+  adminOnly?: boolean
 }
 const linkGroups: LinkDetail[][] = [
   [
@@ -137,6 +143,7 @@ const linkGroups: LinkDetail[][] = [
       icon: "tabler:adjustments",
       label: "Dashboard",
       href: env.NEXT_PUBLIC_DASHBOARD_URL,
+      adminOnly: true,
     },
   ],
   [
@@ -161,41 +168,74 @@ const linkGroups: LinkDetail[][] = [
   ],
 ]
 
-const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
+export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
+  const [open, setOpen] = useState(false)
+
+  const session = useSession()
   const router = useRouter()
+  const trpc = useTRPC()
+
+  const { data: isAdmin } = useQuery(trpc.user.isAdmin.queryOptions(undefined, { enabled: Boolean(session) }))
+
+  const filteredLinkGroups = linkGroups
+    .map((group) => group.filter((link) => !link.adminOnly || isAdmin))
+    .filter((group) => group.length > 0)
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-60">
-        <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
-        {linkGroups.map((group, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: This is a static list
-          <Fragment key={i}>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {group.map((link) => (
-                <DropdownMenuItem key={link.label}>
-                  <Link
-                    className="w-full"
-                    href={link.href ?? "#"}
-                    target={link.openInNewTab ? "_blank" : undefined}
-                    rel="noreferrer"
-                  >
-                    <Icon icon={link.icon} className="mr-2 h-4 w-4" />
-                    <span>{link.label}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-          </Fragment>
-        ))}
+        {filteredLinkGroups.map((group, i, { length }) => {
+          const notLast = i !== length - 1
+
+          return (
+            // biome-ignore lint/suspicious/noArrayIndexKey: This is a static list
+            <Fragment key={i}>
+              <DropdownMenuGroup>
+                {group.map((link) => (
+                  <DropdownMenuItem asChild onClick={() => setOpen(false)} key={link.label}>
+                    <Link
+                      className="w-full flex flex-row gap-2 items-center"
+                      href={link.href ?? "#"}
+                      target={link.openInNewTab ? "_blank" : undefined}
+                      rel="noreferrer"
+                    >
+                      <Icon icon={link.icon} className="text-sm" />
+                      {link.adminOnly ? (
+                        <div className="flex flex-row items-center justify-between w-full">
+                          <Text element="span">{link.label}</Text>
+                          <div className="flex flex-row items-center gap-1 text-[0.65rem] text-slate-9 dark:text-slate-8">
+                            <Icon icon="tabler:lock" />
+                            <Text element="span">Admin</Text>
+                          </div>
+                        </div>
+                      ) : (
+                        <Text element="span">{link.label}</Text>
+                      )}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              {notLast && <DropdownMenuSeparator />}
+            </Fragment>
+          )
+        })}
+
         <DropdownMenuSeparator />
+
         <ThemeMenuSub />
+
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/api/auth/logout")}>
-          <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
-          <span>Logg ut</span>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+
+        <DropdownMenuItem
+          className="w-full flex flex-row gap-2 items-center cursor-pointer"
+          onClick={() => {
+            setOpen(false)
+            router.push("/api/auth/logout")
+          }}
+        >
+          <Icon icon="tabler:logout" className="text-sm" />
+          <Text element="span">Logg ut</Text>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -208,16 +248,22 @@ const ThemeMenuSub = () => {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
-        <Icon icon="tabler:sun" className="mr-2 h-4 w-4" />
-        <span>Fargetema</span>
+        <div className="w-full flex flex-row gap-2 items-center">
+          <Icon icon="tabler:sun" />
+          <Text element="span">Fargetema</Text>
+        </div>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
           <DropdownMenuRadioGroup value={theme} onValueChange={(val) => setTheme(val)}>
             {THEME_OPTIONS.map((item) => (
-              <DropdownMenuRadioItem className="cursor-pointer" value={item.theme} key={item.theme}>
-                <Icon icon={item.icon} className="mr-2 h-4 w-4" />
-                <span>{item.label}</span>
+              <DropdownMenuRadioItem
+                className="w-full flex flex-row gap-2 items-center"
+                value={item.theme}
+                key={item.theme}
+              >
+                <Icon icon={item.icon} className="text-sm" />
+                <Text element="span">{item.label}</Text>
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>
