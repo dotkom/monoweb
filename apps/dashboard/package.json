@@ -22,6 +22,7 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
+    "@hello-pangea/dnd": "^18.0.1",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^4.0.0",
     "@iconify/react": "^5.2.1",

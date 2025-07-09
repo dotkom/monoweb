@@ -17,6 +17,7 @@ import { z } from "zod"
 import { adminProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
+import { feedbackRouter } from "./feedback-router"
 
 export const eventRouter = t.router({
   get: publicProcedure
@@ -145,4 +146,5 @@ export const eventRouter = t.router({
     ),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
+  feedback: feedbackRouter,
 })
