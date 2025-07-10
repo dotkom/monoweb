@@ -47,6 +47,7 @@ import { getProductRepository } from "./payment/product-repository"
 import { getProductService } from "./payment/product-service"
 import { getRefundRequestRepository } from "./payment/refund-request-repository"
 import { getRefundRequestService } from "./payment/refund-request-service"
+import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
 import { getLocalTaskExecutor } from "./task/task-executor"
 import { getTaskRepository } from "./task/task-repository"
 import { getTaskService } from "./task/task-service"
@@ -153,7 +154,8 @@ export const createServiceLayer = async ({
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository)
-  const taskExecutor = getLocalTaskExecutor(taskService, attendanceService)
+  const taskDiscoveryService = getLocalTaskDiscoveryService(db, taskService)
+  const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
 
   return {
     userService,

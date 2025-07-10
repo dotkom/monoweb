@@ -1,0 +1,55 @@
+import type { SQSClient } from "@aws-sdk/client-sqs"
+import type { DBClient } from "@dotkomonline/db"
+import { getLogger } from "@dotkomonline/logger"
+import type { Task, TaskKind } from "@dotkomonline/types"
+import { NotImplementedError } from "../../error"
+import { tasks } from "./task-definition"
+import type { TaskService } from "./task-service"
+
+export interface TaskDiscoveryService {
+  discover(kind: TaskKind): Promise<Task[]>
+  discoverAll(): Promise<Task[]>
+}
+
+/**
+ * Create a TaskDiscoveryService that discovers tasks from the local database.
+ *
+ * NOTE: This constructor takes the DBClient as an argument (as opposed to a DBHandle) as the task discovery service
+ * runs independently of any request or other transaction context.
+ */
+export function getLocalTaskDiscoveryService(client: DBClient, taskService: TaskService): TaskDiscoveryService {
+  const logger = getLogger("task-discovery-service/local-backend")
+  return {
+    async discoverAll() {
+      const discoveredTasks = await Promise.all([
+        this.discover(tasks.ATTEMPT_RESERVE_ATTENDEE.kind),
+        this.discover(tasks.MERGE_POOLS.kind),
+      ])
+      return discoveredTasks.flat()
+    },
+    async discover(kind) {
+      logger.info("Running task discovery for Kind=%s", kind)
+      const jobs = await taskService.getPendingTasks(client, kind)
+      logger.info("Task discovery for Kind=%s yielded %d tasks", kind, jobs.length)
+      return jobs
+    },
+  }
+}
+
+/**
+ * An SQS-backed TaskDiscoveryService that polls multiple SQS queues for tasks to execute. The tasks used in the queues
+ * on SQS are scheduled by AWS EventBridge.
+ */
+export function getSQSTaskDiscoveryService(client: SQSClient): TaskDiscoveryService {
+  const logger = getLogger("task-discovery-service/sqs-backend")
+  return {
+    async discoverAll() {
+      logger.warn("discoverAll is not implemented for SQS TaskDiscoveryService")
+      throw new NotImplementedError("SQSTaskDiscovery#discoverAll")
+    },
+    async discover(kind) {
+      logger.warn("discover is not implemented for SQS TaskDiscoveryService")
+      throw new NotImplementedError("SQSTaskDiscovery#discover")
+    },
+  }
+}
