@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import type {
   Attendance,
@@ -10,12 +11,13 @@ import type {
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
 import { addHours, differenceInMinutes, isAfter, isBefore, isFuture } from "date-fns"
-import type {
-  AttemptReserveAttendeeTaskDefinition,
-  InferTaskData,
-  MergePoolsTaskDefinition,
+import {
+  type AttemptReserveAttendeeTaskDefinition,
+  type InferTaskData,
+  type MergePoolsTaskDefinition,
+  tasks,
 } from "../task/task-definition"
-import type { TaskService } from "../task/task-service"
+import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
@@ -65,7 +67,7 @@ export function getAttendanceService(
   attendanceRepository: AttendanceRepository,
   attendeeRepository: AttendeeRepository,
   attendeeService: AttendeeService,
-  taskService: TaskService
+  taskSchedulingService: TaskSchedulingService
 ): AttendanceService {
   async function validateSelections(
     handle: DBHandle,
@@ -197,7 +199,15 @@ export function getAttendanceService(
         }
       }
 
-      await taskService.scheduleMergePoolsTask(handle, mergeTime, { attendanceId, newMergePoolData })
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.MERGE_POOLS.kind,
+        {
+          attendanceId,
+          newMergePoolData,
+        },
+        new TZDate(mergeTime)
+      )
     },
     async getSelectionsResponseSummary(handle, attendanceId) {
       const attendance = await attendanceRepository.getById(handle, attendanceId)

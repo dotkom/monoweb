@@ -4,12 +4,12 @@ import { z } from "zod"
 import { TaskDefinitionNotFoundError } from "./task-error"
 
 export interface TaskDefinition<TData, TKind extends TaskKind> {
-  getSchema(): z.ZodType<TData>
+  getSchema(): z.ZodSchema<TData>
   kind: TKind
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: these are used in inference position
-export type InferTaskData<TDef extends TaskDefinition<any, any>> = z.infer<ReturnType<TDef["getSchema"]>>
+export type InferTaskData<TDef> = TDef extends TaskDefinition<infer TData, infer TKind> ? TData : never
+export type InferTaskKind<TDef> = TDef extends TaskDefinition<infer TData, infer TKind extends TaskKind> ? TKind : never
 
 export function createTaskDefinition<const TData, const TKind extends TaskKind>(
   definition: TaskDefinition<TData, TKind>
