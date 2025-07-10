@@ -1,4 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
+import type { SchedulerClient } from "@aws-sdk/client-scheduler"
+import type { SQSClient } from "@aws-sdk/client-sqs"
 import type { DBClient } from "@dotkomonline/db"
 import type { ManagementClient } from "auth0"
 import type Stripe from "stripe"
@@ -47,10 +49,10 @@ import { getProductRepository } from "./payment/product-repository"
 import { getProductService } from "./payment/product-service"
 import { getRefundRequestRepository } from "./payment/refund-request-repository"
 import { getRefundRequestService } from "./payment/refund-request-service"
-import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
+import { getLocalTaskDiscoveryService, getSQSTaskDiscoveryService } from "./task/task-discovery-service"
 import { getLocalTaskExecutor } from "./task/task-executor"
 import { getTaskRepository } from "./task/task-repository"
-import { getLocalTaskSchedulingService } from "./task/task-scheduling-service"
+import { getEventBridgeTaskSchedulingService, getLocalTaskSchedulingService } from "./task/task-scheduling-service"
 import { getTaskService } from "./task/task-service"
 import { getNotificationPermissionsRepository } from "./user/notification-permissions-repository"
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
@@ -68,21 +70,36 @@ export type StripeAccount = {
 export interface ServiceLayerOptions {
   db: DBClient
   s3Client: S3Client
+  sqsClient: SQSClient
+  schedulerClient: SchedulerClient
   s3BucketName: string
   stripeAccounts: Record<string, StripeAccount>
   managementClient: ManagementClient
+  options: {
+    tasksBackend: "postgres" | "sqs"
+  }
 }
 
 export const createServiceLayer = async ({
   db,
   s3Client,
+  sqsClient,
+  schedulerClient,
   managementClient,
   stripeAccounts,
   s3BucketName,
+  options,
 }: ServiceLayerOptions) => {
   const taskRepository = getTaskRepository()
   const taskService = getTaskService(taskRepository)
-  const taskSchedulingService = getLocalTaskSchedulingService(taskRepository, taskService)
+  const taskSchedulingService =
+    options.tasksBackend === "postgres"
+      ? getLocalTaskSchedulingService(taskRepository, taskService)
+      : getEventBridgeTaskSchedulingService(schedulerClient)
+  const taskDiscoveryService =
+    options.tasksBackend === "postgres"
+      ? getLocalTaskDiscoveryService(db, taskService)
+      : getSQSTaskDiscoveryService(sqsClient)
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository = getEventRepository()
   const groupRepository = getGroupRepository()
@@ -166,7 +183,6 @@ export const createServiceLayer = async ({
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository)
-  const taskDiscoveryService = getLocalTaskDiscoveryService(db, taskService)
   const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
 
   return {
