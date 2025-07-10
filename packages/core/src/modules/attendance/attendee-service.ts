@@ -15,7 +15,7 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours, isFuture } from "date-fns"
-import type { JobService } from "../job/job-service"
+import type { TaskService } from "../task/task-service"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenError } from "./attendance-error"
 import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attendance-pool-error"
@@ -74,7 +74,7 @@ export function getAttendeeService(
   attendeeRepository: AttendeeRepository,
   attendanceRepository: AttendanceRepository,
   userService: UserService,
-  jobService: JobService
+  taskService: TaskService
 ): AttendeeService {
   async function addUserToAttendee(attendeeWithoutUser: AttendeeWithoutUser, user?: User): Promise<Attendee> {
     const resolvedUser = user ?? (await userService.getById(attendeeWithoutUser.userId))
@@ -134,7 +134,7 @@ export function getAttendeeService(
       if (!isFuture(reserveTime)) {
         attendee.reserved = await this.attemptReserve(handle, attendee, attendancePool, { bypassCriteria: false })
       } else {
-        await jobService.scheduleAttemptReserveAttendeeJob(handle, reserveTime, { attendanceId, userId })
+        await taskService.scheduleAttemptReserveAttendeeTask(handle, reserveTime, { attendanceId, userId })
       }
       return await addUserToAttendee(attendeeWithoutUser, user)
     },
