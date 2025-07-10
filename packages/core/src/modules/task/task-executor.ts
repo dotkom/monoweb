@@ -1,7 +1,7 @@
 import { clearInterval, setInterval } from "node:timers"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task, TaskKind } from "@dotkomonline/types"
+import type { Task } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import type { AttendanceService } from "../attendance/attendance-service"
 import {
@@ -11,20 +11,13 @@ import {
   getTaskDefinition,
   tasks,
 } from "./task-definition"
+import type { TaskDiscoveryService } from "./task-discovery-service"
 import { InvalidTaskKind } from "./task-error"
 import type { TaskService } from "./task-service"
 
 export interface TaskExecutor {
   start(client: DBClient): Promise<void>
   stop(): void
-  /**
-   * Discover all tasks of a specific kind that are pending execution.
-   *
-   * NOTE: The reason for splitting queries by task is to support different task offloading strategies. When we use the
-   * AWS SQS backend, we have one SQS queue per task kind.
-   */
-  discover(client: DBClient, kind: TaskKind): Promise<Task[]>
-  discoverAll(client: DBClient): Promise<Task[]>
   /**
    * Execute a single task in its own isolated database transaction.
    *
@@ -33,8 +26,12 @@ export interface TaskExecutor {
   run(client: DBClient, task: Task): Promise<void>
 }
 
-export function getLocalTaskExecutor(taskService: TaskService, attendanceService: AttendanceService): TaskExecutor {
-  const logger = getLogger("task-executor/local")
+export function getLocalTaskExecutor(
+  taskService: TaskService,
+  taskDiscoveryService: TaskDiscoveryService,
+  attendanceService: AttendanceService
+): TaskExecutor {
+  const logger = getLogger("task-executor")
   let intervalId: ReturnType<typeof setInterval> | null = null
   return {
     async start(client) {
@@ -48,7 +45,7 @@ export function getLocalTaskExecutor(taskService: TaskService, attendanceService
       // system resources more stable.
       intervalId = setInterval(async () => {
         logger.info("TaskExecutor performing discovery and execution of all pending tasks")
-        const tasks = await this.discoverAll(client)
+        const tasks = await taskDiscoveryService.discoverAll()
         for (const task of tasks) {
           // CORRECTNESS: Do not await here, as we would block the entire event loop on each task execution which is
           // very slow for large task queues.
@@ -64,19 +61,6 @@ export function getLocalTaskExecutor(taskService: TaskService, attendanceService
       logger.info("Stopping TaskExecutor")
       clearInterval(intervalId)
       intervalId = null
-    },
-    async discoverAll(client) {
-      const tasks = await Promise.all([
-        this.discover(client, "ATTEMPT_RESERVE_ATTENDEE"),
-        this.discover(client, "MERGE_POOLS"),
-      ])
-      return tasks.flat()
-    },
-    async discover(client, kind) {
-      logger.info("Running task discovery for Kind=%s", kind)
-      const jobs = await taskService.getPendingTasks(client, kind)
-      logger.info("Task discovery for Kind=%s yielded %d tasks", kind, jobs.length)
-      return jobs
     },
     async run(client, task) {
       let isError = false
