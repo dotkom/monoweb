@@ -105,7 +105,7 @@ type CardProps = {
 const Card: FC<CardProps> = ({ imageUrl, title, description }: CardProps) => {
   return (
     <li className="flex items-center text-left">
-      <div className="w-[150px] mr-4 flex-shrink-0">
+      <div className="w-[150px] mr-4 shrink-0">
         {imageUrl ? (
           <Image
             src={imageUrl}

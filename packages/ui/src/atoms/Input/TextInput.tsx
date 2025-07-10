@@ -25,7 +25,7 @@ export const TextInput: FC<TextInputProps> = ({ label, error, width, ref, ...pro
 }
 
 const input = cva(
-  "border-solid border outline-none focus:border-blue-7 bg-white-3 hover:bg-white-4 active:bg-white-5 rounded-md p-2 focus:ring-2 focus:ring-brand",
+  "border-solid border outline-hidden focus:border-blue-7 bg-white-3 hover:bg-white-4 active:bg-white-5 rounded-md p-2 focus:ring-2 focus:ring-brand",
   {
     variants: {
       error: {

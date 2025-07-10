@@ -23,7 +23,7 @@ export const AllVariants: Story = () => (
                     variant={variant}
                     size={size}
                     color={color}
-                    className="flex-shrink-0 whitespace-pre"
+                    className="shrink-0 whitespace-pre"
                   >
                     {`${size} ${color}`}
                   </Button>
@@ -55,7 +55,7 @@ export const DisabledVariants: Story = () => (
                     variant={variant}
                     size={size}
                     color={color}
-                    className="flex-shrink-0 whitespace-pre"
+                    className="shrink-0 whitespace-pre"
                     disabled
                   >
                     {`${size} ${color}`}
@@ -90,7 +90,7 @@ export const AllVariantsWithIcon: Story = () => (
                     color={color}
                     icon={icon(size)}
                     iconRight={icon(size)}
-                    className="flex-shrink-0 whitespace-pre"
+                    className="shrink-0 whitespace-pre"
                   >
                     {`${size} ${color}`}
                   </Button>
@@ -124,7 +124,7 @@ export const DisabledVariantsWithIcon: Story = () => (
                     color={color}
                     icon={icon(size)}
                     iconRight={icon(size)}
-                    className="flex-shrink-0 whitespace-pre"
+                    className="shrink-0 whitespace-pre"
                     disabled
                   >
                     {`${size} ${color}`}

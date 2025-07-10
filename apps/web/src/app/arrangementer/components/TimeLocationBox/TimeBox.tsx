@@ -32,7 +32,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
     <div className="flex flex-row gap-4 items-center">
       <Icon icon="tabler:clock" className="text-xl" />
 
-      <div className="flex flex-row flex-grow gap-4 items-center">
+      <div className="flex flex-row grow gap-4 items-center">
         <div className="flex flex-col">
           <Text>{date.start}</Text>
           <Text>

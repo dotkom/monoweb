@@ -39,7 +39,7 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
             width={140}
             height={80}
             alt={`${jobListing.company.name}’s job posting`}
-            className="hidden md:block rounded"
+            className="hidden md:block rounded-sm"
           />
         )}
         <div className="flex flex-col w-full">

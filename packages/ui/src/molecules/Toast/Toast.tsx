@@ -29,7 +29,7 @@ export const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
   )
 }
 
-const base = cva("flex align-center p-2 rounded max-w-[360px] text-slate-1 shadow-md", {
+const base = cva("flex align-center p-2 rounded-sm max-w-[360px] text-slate-1 shadow-md", {
   variants: {
     color: {
       danger: "bg-red-9 text-slate-12",

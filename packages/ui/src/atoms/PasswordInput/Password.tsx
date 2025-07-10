@@ -51,7 +51,7 @@ export const PasswordInput: FC<PasswordInputProps> = ({
   )
 }
 
-const input = cva("border-solid border outline-none focus:border-blue-7 bg-slate-3 rounded-md p-2 w-full ", {
+const input = cva("border-solid border outline-hidden focus:border-blue-7 bg-slate-3 rounded-md p-2 w-full ", {
   variants: {
     error: {
       true: "text-slate-12 border-red-7",

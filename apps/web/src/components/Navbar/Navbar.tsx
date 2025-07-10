@@ -114,7 +114,7 @@ export const Navbar: FC = () => {
           <OnlineIcon className="h-[2.5rem]" />
         </Link>
         <MainNavigation links={links} />
-        <div className="flex flex-grow items-center justify-end md:flex-grow-0">
+        <div className="flex grow items-center justify-end md:grow-0">
           <ProfileMenu />
         </div>
       </div>

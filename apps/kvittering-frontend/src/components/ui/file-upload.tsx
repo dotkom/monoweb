@@ -298,7 +298,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps & React
         <div
           ref={ref}
           onKeyDownCapture={handleKeyDown}
-          className={cn("grid w-full focus:outline-none overflow-hidden ", className, {
+          className={cn("grid w-full focus:outline-hidden overflow-hidden ", className, {
             "gap-2": value && value.length > 0,
           })}
           dir={dir}

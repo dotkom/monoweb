@@ -61,7 +61,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <ThemeProvider defaultTheme="light" enableSystem={false} attribute="data-theme">
               <div className="min-h-screen flex flex-col gap-8 mx-auto w-full max-w-screen-xl">
                 <Navbar />
-                <main className="flex-grow px-4 lg:px-12">
+                <main className="grow px-4 lg:px-12">
                   <div className="">{children}</div>
                 </main>
                 <Footer />

@@ -34,7 +34,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 export const NavigationMenuItem = NavigationMenuPrimitive.Item
 
 export const navigationMenuTriggerStyle = cn(
-  "inline-flex items-center justify-center relative rounded-md text-sm font-semibold transition-colors focus:outline-none",
+  "inline-flex items-center justify-center relative rounded-md text-sm font-semibold transition-colors focus:outline-hidden",
   "disabled:opacity-50 disabled:pointer-events-none",
   "h-10 py-2 px-4 group hover:text-brand-9 data-[state=open]:text-brand-9"
 )

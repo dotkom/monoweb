@@ -57,7 +57,7 @@ export const GenericSearch = <T,>({
       data={dataWithDuplicates}
       onChange={handleChange}
       placeholder={placeholderText}
-      className="flex-grow"
+      className="grow"
       value={value}
     />
   )

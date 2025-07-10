@@ -26,8 +26,7 @@ export const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      "flex cursor-default select-none items-center outline-none",
-      inset && "pl-8",
+      "flex cursor-default select-none items-center outline-hidden",
       "data-[state=open]:bg-slate-3 data-[state=open]:dark:bg-slate-10",
       "focus:bg-slate-3 focus:dark:bg-slate-10",
       "px-3 py-2 rounded-md",
@@ -94,7 +93,7 @@ export const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "outline-hidden data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "flex cursor-default select-none items-center",
       "px-3 py-2 rounded-md",
       "text-sm",
@@ -114,7 +113,7 @@ export const DropdownMenuCheckboxItem = React.forwardRef<
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
     className={cn(
-      "outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "outline-hidden data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "flex cursor-default select-none items-center",
       "px-3 py-2 rounded-md",
       "text-sm",
@@ -141,7 +140,7 @@ export const DropdownMenuRadioItem = React.forwardRef<
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
     className={cn(
-      "outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "outline-hidden data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "flex cursor-default select-none items-center",
       "pr-3 pl-4 py-2 rounded-md",
       "text-sm",

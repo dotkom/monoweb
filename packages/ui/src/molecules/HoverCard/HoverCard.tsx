@@ -20,7 +20,7 @@ export const HoverCardContent: FC<ComponentPropsWithRef<typeof HoverCardPrimitiv
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 w-64 rounded-lg border border-gray-200 text-gray-800 shadow-lg outline-none transition-transform ease-in-out",
+        "z-50 w-64 rounded-lg border border-gray-200 text-gray-800 shadow-lg outline-hidden transition-transform ease-in-out",
         "data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out",
         "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         className
