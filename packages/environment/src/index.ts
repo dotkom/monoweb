@@ -74,9 +74,14 @@ export function config<TSpec extends SpecValue>(
     }
     return defaultValue ?? (null as unknown as z.infer<TSpec>)
   }
+  // If we are running on the client in a Next.js application, we ignore all validation because the server environment
+  // variables will be set to undefined.
+  if (typeof window !== "undefined" && value === undefined && defaultValue === undefined) {
+    return undefined as unknown as z.infer<TSpec>
+  }
   // DOPPLER_ENVIRONMENT is available at build-time in all containers, and NEXT_PUBLIC_DOPPLER_ENVIRONMENT is available
-  // for client-side Next.js applications. NOTE: For NEXT_PUBLIC_DOPPLER_ENVIRONMENT to work, the Dockerfile must set
-  // this value from `DOPPLER_ENVIRONMENT` which comes from Doppler.
+  // during build for client-side Next.js applications. NOTE: For NEXT_PUBLIC_DOPPLER_ENVIRONMENT to work, the
+  // Dockerfile must set this value from `DOPPLER_ENVIRONMENT` which comes from Doppler.
   const environment = process.env.NEXT_PUBLIC_DOPPLER_ENVIRONMENT ?? process.env.DOPPLER_ENVIRONMENT ?? "dev"
   const val = value ?? getDefaultValue(environment)
   // If the `getDefaultValue` function returned undefined, then there was no default value to use, and the value must
