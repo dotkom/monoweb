@@ -16,7 +16,6 @@
     "@aws-sdk/s3-presigned-post": "^3.821.0",
     "@date-fns/tz": "^1.2.0",
     "@dotkomonline/environment": "workspace:*",
-    "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/oauth2": "workspace:*",
     "@dotkomonline/types": "workspace:*",
@@ -58,6 +57,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:^",
+    "@dotkomonline/rpc": "workspace:*",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "22.15.29",
     "@types/react": "19.1.8",

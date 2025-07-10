@@ -15,9 +15,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.821.0",
     "@aws-sdk/s3-presigned-post": "^3.821.0",
-    "@dotkomonline/db": "workspace:*",
     "@dotkomonline/environment": "workspace:*",
-    "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/oauth2": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
@@ -64,6 +62,7 @@
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/rpc": "workspace:*",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/cors": "2.8.19",
     "@types/node": "22.15.29",

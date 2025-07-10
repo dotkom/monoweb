@@ -1,4 +1,4 @@
-import type { AppRouter } from "@dotkomonline/gateway-trpc"
+import type { AppRouter } from "@dotkomonline/rpc"
 import { QueryClient } from "@tanstack/react-query"
 import { createTRPCClient, httpBatchLink } from "@trpc/client"
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query"

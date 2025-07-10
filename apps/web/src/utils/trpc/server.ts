@@ -1,6 +1,6 @@
 import { auth } from "@/auth"
 import { env } from "@/env"
-import type { AppRouter } from "@dotkomonline/gateway-trpc"
+import type { AppRouter } from "@dotkomonline/rpc"
 import * as trpc from "@trpc/client"
 import superjson from "superjson"
 

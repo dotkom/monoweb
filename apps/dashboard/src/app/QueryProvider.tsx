@@ -2,8 +2,8 @@
 
 import { env } from "@/lib/env"
 import { TRPCProvider } from "@/lib/trpc"
-import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import { useSession } from "@dotkomonline/oauth2/react"
+import type { AppRouter } from "@dotkomonline/rpc"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { type CreateTRPCClientOptions, createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { type PropsWithChildren, useState } from "react"
