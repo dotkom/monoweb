@@ -5,7 +5,7 @@ import { cn } from "../../utils"
 // Add variants, colors, or sizes in the arrays below
 // to add them to the component
 export const BUTTON_VARIANTS = ["solid", "outline", "pill", "text", "unstyled"] as const
-export const BUTTON_COLORS = ["light", "slate", "dark", "brand", "blue", "green", "red", "yellow"] as const
+export const BUTTON_COLORS = ["light", "dark", "brand", "blue", "green", "red", "yellow"] as const
 export const BUTTON_SIZES = ["sm", "md", "lg"] as const
 
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number]
@@ -53,14 +53,14 @@ export const button = cva(
   [
     "font-body cursor-pointer appearance-none rounded-md transition-colors",
     "disabled:opacity-50 disabled:cursor-not-allowed",
-    "dark:text-white",
+    "text-black dark:text-white",
   ],
   {
     variants: {
       size: {
-        sm: "text-sm px-3 py-1",
-        md: "text-base px-3.5 py-1.5",
-        lg: "text-lg px-4 py-1.5",
+        sm: "text-sm px-2 py-1",
+        md: "text-base px-2.5 py-1",
+        lg: "text-lg px-3 py-1",
       },
       variant: {
         solid: "",
@@ -68,13 +68,12 @@ export const button = cva(
         pill: "rounded-full",
         text: "px-1 py-0.5",
         unstyled: [
-          "p-0 text-[length:inherit] dark:text-inherit bg-transparent border-0",
+          "p-0 text-[length:inherit] dark:text-[length:inherit] bg-transparent border-0",
           "rounded-none transition-none disabled:opacity-100",
         ].join(" "),
       },
       color: {
         light: "",
-        slate: "",
         dark: "",
         brand: "",
         blue: "",
@@ -86,72 +85,40 @@ export const button = cva(
     defaultVariants: {
       size: "md",
       variant: "solid",
-      color: "slate",
+      color: "light",
     },
     compoundVariants: [
       {
         color: "light",
         variant: "solid",
         className: [
-          "bg-slate-200 hover:bg-slate-300 disabled:hover:bg-slate-200",
-          "dark:bg-slate-950 dark:hover:bg-black dark:disabled:hover:bg-slate-950",
+          // Not using `enabled:` to make it easier to override
+          "bg-gray-200 hover:bg-gray-100 disabled:hover:bg-gray-200",
+          "dark:bg-stone-800 dark:hover:bg-stone-700 dark:disabled:hover:bg-stone-800",
         ].join(" "),
       },
       {
         color: "light",
         variant: "pill",
         className: [
-          "bg-slate-200 hover:bg-slate-300 disabled:hover:bg-slate-200",
-          "dark:bg-slate-950 dark:hover:bg-black dark:disabled:hover:bg-slate-950",
+          "bg-gray-200 hover:bg-gray-100 disabled:hover:bg-gray-200",
+          "dark:bg-stone-900 dark:hover:bg-stone-700 dark:disabled:hover:bg-stone-900",
         ].join(" "),
       },
       {
         color: "light",
         variant: "outline",
         className: [
-          "border-slate-400 hover:bg-slate-200 disabled:hover:bg-inherit",
-          "dark:border-slate-950 dark:hover:bg-slate-950 dark:disabled:hover:bg-inherit",
+          "border-gray-400 hover:bg-gray-200 disabled:hover:bg-inherit",
+          "dark:border-stone-800 dark:hover:bg-stone-900 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
       {
         color: "light",
         variant: "text",
         className: [
-          "hover:bg-slate-200 disabled:hover:bg-inherit",
-          "dark:hover:bg-slate-950 dark:disabled:hover:bg-inherit",
-        ].join(" "),
-      },
-
-      {
-        color: "slate",
-        variant: "solid",
-        className: [
-          "bg-slate-400 hover:bg-slate-500 disabled:hover:bg-slate-400",
-          "dark:bg-slate-800 dark:hover:bg-slate-900 dark:disabled:hover:bg-slate-800",
-        ].join(" "),
-      },
-      {
-        color: "slate",
-        variant: "pill",
-        className: [
-          "bg-slate-400 hover:bg-slate-500 disabled:hover:bg-slate-400",
-          "dark:bg-slate-800 dark:hover:bg-slate-900 dark:disabled:hover:bg-slate-800",
-        ].join(" "),
-      },
-      {
-        color: "slate",
-        variant: "outline",
-        className: [
-          "border-slate-600 hover:bg-slate-200 disabled:hover:bg-inherit",
-          "dark:border-slate-800 dark:hover:border-slate-950 dark:hover:bg-slate-950 dark:disabled:hover:bg-inherit",
-        ].join(" "),
-      },
-      {
-        color: "slate",
-        variant: "text",
-        className: [
-          "hover:bg-slate-200 disabled:hover:bg-inherit",
-          "dark:hover:bg-slate-800 dark:disabled:hover:bg-inherit",
+          "hover:bg-gray-200 disabled:hover:bg-inherit",
+          "dark:hover:bg-stone-900 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
 
@@ -159,8 +126,8 @@ export const button = cva(
         color: "dark",
         variant: "solid",
         className: [
-          "bg-slate-950 hover:bg-black disabled:hover:bg-slate-950",
-          "dark:bg-slate-200 dark:hover:bg-slate-300 dark:disabled:hover:bg-slate-200",
+          "bg-gray-800 hover:bg-gray-700 disabled:hover:bg-gray-800",
+          "dark:bg-stone-200 dark:hover:bg-stone-100 dark:disabled:hover:bg-stone-200",
           "text-white dark:text-black",
         ].join(" "),
       },
@@ -168,8 +135,8 @@ export const button = cva(
         color: "dark",
         variant: "pill",
         className: [
-          "bg-slate-950 hover:bg-black disabled:hover:bg-slate-950",
-          "dark:bg-slate-200 dark:hover:bg-slate-300 dark:disabled:hover:bg-slate-200",
+          "bg-gray-800 hover:bg-gray-700 disabled:hover:bg-gray-800",
+          "dark:bg-stone-200 dark:hover:bg-stone-100 dark:disabled:hover:bg-stone-200",
           "text-white dark:text-black",
         ].join(" "),
       },
@@ -177,8 +144,8 @@ export const button = cva(
         color: "dark",
         variant: "outline",
         className: [
-          "border-slate-950 hover:bg-slate-950 disabled:hover:bg-inherit",
-          "dark:border-slate-400 dark:hover:bg-slate-600 dark:disabled:hover:bg-inherit",
+          "border-gray-900 hover:bg-gray-900 disabled:hover:bg-inherit",
+          "dark:border-gray-400 dark:hover:bg-gray-600 dark:disabled:hover:bg-inherit",
           "hover:text-white disabled:hover:text-inherit",
           "dark:hover:text-black dark:disabled:hover:text-inherit",
         ].join(" "),
@@ -187,8 +154,8 @@ export const button = cva(
         color: "dark",
         variant: "text",
         className: [
-          "hover:bg-slate-950 disabled:hover:bg-inherit",
-          "dark:hover:bg-slate-300 dark:disabled:hover:bg-inherit",
+          "hover:bg-gray-950 disabled:hover:bg-inherit",
+          "dark:hover:bg-gray-300 dark:disabled:hover:bg-inherit",
           "hover:text-white disabled:hover:text-inherit",
           "dark:hover:text-black dark:disabled:hover:text-inherit",
         ].join(" "),
