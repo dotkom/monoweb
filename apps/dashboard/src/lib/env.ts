@@ -1,27 +1,26 @@
-import { createEnvironment, variable } from "@dotkomonline/environment"
+import { config, defineConfiguration } from "@dotkomonline/environment"
 
-export const env = createEnvironment(
-  {
-    AUTH0_CLIENT_ID: variable,
-    AUTH0_CLIENT_SECRET: variable,
-    AUTH0_ISSUER: variable,
-    AUTH0_AUDIENCES: variable,
-    AUTH_SECRET: variable,
-    NEXT_PUBLIC_ORIGIN: variable,
-    NEXT_PUBLIC_RPC_HOST: variable,
-    RPC_HOST: variable,
-    // Feature toggle for uploading files to S3. If disabled, uploads are faked and replaced with static URL
-    S3_UPLOAD_ENABLED: variable.default("true"),
-  },
-  {
-    env: {
-      ...process.env,
-      NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
-      NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
-      S3_UPLOAD_ENABLED: process.env.S3_UPLOAD_ENABLED,
-    },
-
-    // Dashboard should also validate env at build time
-    skipValidation: false,
-  }
-)
+export const env = defineConfiguration({
+  AUTH0_CLIENT_ID: config(process.env.AUTH0_CLIENT_ID),
+  AUTH0_CLIENT_SECRET: config(process.env.AUTH0_CLIENT_SECRET),
+  AUTH0_ISSUER: config(process.env.AUTH0_ISSUER),
+  AUTH0_AUDIENCES: config(process.env.AUTH0_AUDIENCES),
+  AUTH_SECRET: config(process.env.AUTH_SECRET),
+  NEXT_PUBLIC_ORIGIN: config(process.env.NEXT_PUBLIC_ORIGIN, {
+    prd: "https://web.online.ntnu.no",
+    stg: "https://staging.web.online.ntnu.no",
+    dev: "http://localhost:3000",
+  }),
+  NEXT_PUBLIC_RPC_HOST: config(process.env.NEXT_PUBLIC_RPC_HOST, {
+    prd: "https://rpc.online.ntnu.no",
+    stg: "https://staging.rpc.online.ntnu.no",
+    dev: "http://localhost:4444",
+  }),
+  RPC_HOST: config(process.env.RPC_HOST, {
+    prd: "https://rpc.online.ntnu.no",
+    stg: "https://staging.rpc.online.ntnu.no",
+    dev: "http://localhost:4444",
+  }),
+  // Feature toggle for uploading files to S3. If disabled, uploads are faked and replaced with static URL
+  S3_UPLOAD_ENABLED: config(process.env.S3_UPLOAD_ENABLED, "true"),
+})

@@ -1046,6 +1046,9 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../config
+      '@types/node':
+        specifier: 22.15.29
+        version: 22.15.29
 
   packages/gateway-trpc:
     dependencies:
