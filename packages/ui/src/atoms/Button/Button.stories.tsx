@@ -3,7 +3,7 @@ import { Icon } from "../Icon/Icon"
 import { Title } from "../Typography/Title"
 import { BUTTON_COLORS, BUTTON_SIZES, BUTTON_VARIANTS, Button, type ButtonSize } from "./Button"
 
-const icon = (size: ButtonSize) => <Icon icon="tabler:bolt" width={size === "sm" ? 14 : size === "md" ? 17 : 20} />
+const icon = (size: ButtonSize) => <Icon icon="tabler:bolt" width={size === "sm" ? 10 : size === "md" ? 13 : 16} />
 
 export const AllVariants: Story = () => (
   <div className="flex flex-col gap-12">
