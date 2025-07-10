@@ -99,6 +99,6 @@ export function config<TSpec extends SpecValue>(
 }
 
 /** Identity function to infer the type of the provided spec. */
-export function defineConfiguration<TSpec>(spec: TSpec): TSpec {
+export function defineConfiguration<const TSpec>(spec: TSpec): TSpec {
   return spec
 }

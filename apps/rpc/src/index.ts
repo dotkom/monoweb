@@ -62,7 +62,7 @@ const serviceLayer = await createServiceLayer({
 // This spins of all potentially remaining jobs in the queue that this system was not aware of. For this reason, it does
 // not need to be awaited. While the task execution itself is not blocked on, await here adds unnecessary latency to the
 // server startup.
-void serviceLayer.jobExecutor.initialize(prisma)
+void serviceLayer.taskExecutor.start(prisma)
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization

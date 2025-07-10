@@ -883,6 +883,9 @@ importers:
       '@aws-sdk/s3-presigned-post':
         specifier: ^3.821.0
         version: 3.821.0
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../db
@@ -1345,12 +1348,15 @@ importers:
 
   packages/utils:
     dependencies:
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.2.0
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
-      vitest:
-        specifier: ^3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(msw@2.7.0(@types/node@22.15.29)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.39.0)(tsx@4.19.4)(yaml@2.8.0)
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -1361,6 +1367,9 @@ importers:
       typescript:
         specifier: 5.8.3
         version: 5.8.3
+      vitest:
+        specifier: ^3.1.4
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(msw@2.7.0(@types/node@22.15.29)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.39.0)(tsx@4.19.4)(yaml@2.8.0)
 
   tools/shell:
     dependencies:
