@@ -17,6 +17,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.821.0",
     "@aws-sdk/s3-presigned-post": "^3.821.0",
+    "@date-fns/tz": "^1.2.0",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/utils": "workspace:*",

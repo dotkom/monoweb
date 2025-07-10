@@ -10,7 +10,12 @@ import type {
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
 import { addHours, differenceInMinutes, isAfter, isBefore, isFuture } from "date-fns"
-import type { JobService } from "../job/job-service"
+import type {
+  AttemptReserveAttendeeTaskDefinition,
+  InferTaskData,
+  MergePoolsTaskDefinition,
+} from "../task/task-definition"
+import type { TaskService } from "../task/task-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
@@ -49,13 +54,18 @@ export interface AttendanceService {
     attendancePoolId: AttendancePoolId,
     data: Partial<AttendancePoolWrite>
   ): Promise<AttendancePool>
+  handleMergePoolsTask(handle: DBHandle, payload: InferTaskData<MergePoolsTaskDefinition>): Promise<void>
+  handleAttemptReserveAttendeeTask(
+    handle: DBHandle,
+    payload: InferTaskData<AttemptReserveAttendeeTaskDefinition>
+  ): Promise<void>
 }
 
 export function getAttendanceService(
   attendanceRepository: AttendanceRepository,
   attendeeRepository: AttendeeRepository,
   attendeeService: AttendeeService,
-  jobService: JobService
+  taskService: TaskService
 ): AttendanceService {
   async function validateSelections(
     handle: DBHandle,
@@ -187,7 +197,7 @@ export function getAttendanceService(
         }
       }
 
-      await jobService.scheduleMergePoolsJob(handle, mergeTime, { attendanceId, newMergePoolData })
+      await taskService.scheduleMergePoolsTask(handle, mergeTime, { attendanceId, newMergePoolData })
     },
     async getSelectionsResponseSummary(handle, attendanceId) {
       const attendance = await attendanceRepository.getById(handle, attendanceId)
@@ -233,6 +243,18 @@ export function getAttendanceService(
       }
 
       return newPool
+    },
+    async handleMergePoolsTask(handle, { attendanceId, newMergePoolData }) {
+      return this.mergeAttendancePools(handle, attendanceId, newMergePoolData)
+    },
+    async handleAttemptReserveAttendeeTask(handle, { userId, attendanceId }) {
+      const attendance = await this.getById(handle, attendanceId)
+      const attendee = await attendeeService.getByUserId(handle, userId, attendanceId)
+      const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+      if (!pool) {
+        throw new AttendancePoolNotFoundError(attendee.attendancePoolId)
+      }
+      await attendeeService.attemptReserve(handle, attendee, pool, { bypassCriteria: false })
     },
   }
 }

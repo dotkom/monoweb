@@ -1,11 +1,5 @@
-import { createEnvironment, variable } from "@dotkomonline/environment"
+import { config, defineConfiguration } from "@dotkomonline/environment"
 
-export const env = createEnvironment(
-  {
-    DATABASE_URL: variable,
-  },
-  {
-    env: process.env,
-    skipValidation: false,
-  }
-)
+export const env = defineConfiguration({
+  DATABASE_URL: config(process.env.DATABASE_URL),
+})

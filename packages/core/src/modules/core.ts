@@ -32,9 +32,6 @@ import { getInterestGroupRepository } from "./interest-group/interest-group-repo
 import { getInterestGroupService } from "./interest-group/interest-group-service"
 import { getJobListingRepository } from "./job-listing/job-listing-repository"
 import { getJobListingService } from "./job-listing/job-listing-service"
-import { JobExecutor } from "./job/job-executor"
-import { getJobRepository } from "./job/job-repository"
-import { getJobService } from "./job/job-service"
 import { getMarkRepository } from "./mark/mark-repository"
 import { getMarkService } from "./mark/mark-service"
 import { getPersonalMarkRepository } from "./mark/personal-mark-repository"
@@ -50,6 +47,9 @@ import { getProductRepository } from "./payment/product-repository"
 import { getProductService } from "./payment/product-service"
 import { getRefundRequestRepository } from "./payment/refund-request-repository"
 import { getRefundRequestService } from "./payment/refund-request-service"
+import { getLocalTaskExecutor } from "./task/task-executor"
+import { getTaskRepository } from "./task/task-repository"
+import { getTaskService } from "./task/task-service"
 import { getNotificationPermissionsRepository } from "./user/notification-permissions-repository"
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
@@ -78,9 +78,8 @@ export const createServiceLayer = async ({
   stripeAccounts,
   s3BucketName,
 }: ServiceLayerOptions) => {
-  const jobRepository = getJobRepository()
-  const jobService = getJobService(jobRepository)
-
+  const taskRepository = getTaskRepository()
+  const taskService = getTaskService(taskRepository)
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository = getEventRepository()
   const groupRepository = getGroupRepository()
@@ -119,8 +118,8 @@ export const createServiceLayer = async ({
   const eventHostingGroupService = getEventHostingGroupService(eventHostingGroupRepository)
   const groupService = getGroupService(groupRepository)
   const jobListingService = getJobListingService(jobListingRepository)
-  const attendeeService = getAttendeeService(attendeeRepository, attendanceRepository, userService, jobService)
-  const attendanceService = getAttendanceService(attendanceRepository, attendeeRepository, attendeeService, jobService)
+  const attendeeService = getAttendeeService(attendeeRepository, attendanceRepository, userService, taskService)
+  const attendanceService = getAttendanceService(attendanceRepository, attendeeRepository, attendeeService, taskService)
   const interestGroupRepository = getInterestGroupRepository()
   const interestGroupService = getInterestGroupService(interestGroupRepository)
   const eventCompanyService = getEventCompanyService(eventCompanyRepository)
@@ -154,8 +153,7 @@ export const createServiceLayer = async ({
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository)
-
-  const jobExecutor = new JobExecutor(jobService, attendeeService, attendanceService)
+  const taskExecutor = getLocalTaskExecutor(taskService, attendanceService)
 
   return {
     userService,
@@ -179,8 +177,8 @@ export const createServiceLayer = async ({
     attendeeService,
     interestGroupRepository,
     interestGroupService,
-    jobService,
-    jobExecutor,
+    taskService,
+    taskExecutor,
     feedbackFormService,
     feedbackFormAnswerService,
     executeTransaction: db.$transaction.bind(db),
