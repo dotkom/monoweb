@@ -65,7 +65,7 @@ Hexagonal architecture is a code organization pattern that is often associated w
 helps to enforce the separation of concerns between the domain and the rest of the system. A simple diagram of
 hexagonal architecture is shown below:
 
-[Hexagonal Architecture](./attachments/hexagonal-architecture.png)
+[Hexagonal Architecture](../attachments/hexagonal-architecture.png)
 
 As seen in the model, the domain is at the center of the hexagon, and the domain model is the most important part of
 the system. The domain model is surrounded by the application services, which are the use cases of the system. The
@@ -94,11 +94,11 @@ use-cases are declared in `packages/core` inside service classes. Methods on the
 specific use-case within the domain.
 
 Adapters are also defined inside `/packages/core`, and are used to interact with the outside world. For example,
-various repositories such as [user-repository.ts](../packages/core/src/modules/user/user-repository.ts) are used to
+various repositories such as [user-repository.ts](../../packages/core/src/modules/user/user-repository.ts) are used to
 interact with the database.
 
 External systems such as SDKs are also considered adapters, and are in code, also repositories. For example,
-[s3-repository.ts](../packages/core/src/modules/external/s3-repository.ts) is used to interact with the Amazon S3
+[s3-repository.ts](../../packages/core/src/modules/external/s3-repository.ts) is used to interact with the Amazon S3
 service.
 
 Note that so far, we have not even talked about which HTTP framework we are using, or which database we are using.
