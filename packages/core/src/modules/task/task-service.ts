@@ -1,16 +1,9 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task, TaskId, TaskKind, TaskScheduledAt, TaskStatus, TaskWrite } from "@dotkomonline/types"
+import type { Task, TaskId, TaskKind, TaskStatus, TaskWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { IllegalStateError } from "../../error"
-import {
-  type AttemptReserveAttendeeTaskDefinition,
-  type InferTaskData,
-  type MergePoolsTaskDefinition,
-  type TaskDefinition,
-  getTaskDefinition,
-  tasks,
-} from "./task-definition"
+import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
 import { TaskDataValidationError, TaskNotFound } from "./task-error"
 import type { TaskRepository } from "./task-repository"
 
@@ -35,17 +28,6 @@ export type TaskService = {
     taskDefinition: TTaskDef,
     payload: JsonValue
   ): InferTaskData<TTaskDef>
-
-  scheduleAttemptReserveAttendeeTask(
-    handle: DBHandle,
-    scheduleAt: TaskScheduledAt,
-    payload: InferTaskData<AttemptReserveAttendeeTaskDefinition>
-  ): Promise<Task>
-  scheduleMergePoolsTask(
-    handle: DBHandle,
-    scheduleAt: TaskScheduledAt,
-    payload: InferTaskData<MergePoolsTaskDefinition>
-  ): Promise<Task>
 }
 
 export function getTaskService(taskRepository: TaskRepository): TaskService {
@@ -88,22 +70,6 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
     },
     async setTaskExecutionStatus(handle, taskId, status) {
       return await this.update(handle, taskId, { processedAt: new Date(), status }, "PENDING")
-    },
-    async scheduleAttemptReserveAttendeeTask(handle, scheduledAt, payload) {
-      return await taskRepository.create(handle, tasks.ATTEMPT_RESERVE_ATTENDEE.kind, {
-        payload: this.parse(tasks.ATTEMPT_RESERVE_ATTENDEE, payload),
-        processedAt: null,
-        scheduledAt,
-        status: "PENDING",
-      })
-    },
-    async scheduleMergePoolsTask(handle, scheduledAt, payload) {
-      return await taskRepository.create(handle, tasks.MERGE_POOLS.kind, {
-        payload: this.parse(tasks.MERGE_POOLS, payload),
-        processedAt: null,
-        scheduledAt,
-        status: "PENDING",
-      })
     },
     parse(taskDefinition, payload) {
       const schema = taskDefinition.getSchema()

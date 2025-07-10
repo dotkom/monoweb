@@ -50,6 +50,7 @@ import { getRefundRequestService } from "./payment/refund-request-service"
 import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
 import { getLocalTaskExecutor } from "./task/task-executor"
 import { getTaskRepository } from "./task/task-repository"
+import { getLocalTaskSchedulingService } from "./task/task-scheduling-service"
 import { getTaskService } from "./task/task-service"
 import { getNotificationPermissionsRepository } from "./user/notification-permissions-repository"
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
@@ -81,6 +82,7 @@ export const createServiceLayer = async ({
 }: ServiceLayerOptions) => {
   const taskRepository = getTaskRepository()
   const taskService = getTaskService(taskRepository)
+  const taskSchedulingService = getLocalTaskSchedulingService(taskRepository, taskService)
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository = getEventRepository()
   const groupRepository = getGroupRepository()
@@ -119,8 +121,18 @@ export const createServiceLayer = async ({
   const eventHostingGroupService = getEventHostingGroupService(eventHostingGroupRepository)
   const groupService = getGroupService(groupRepository)
   const jobListingService = getJobListingService(jobListingRepository)
-  const attendeeService = getAttendeeService(attendeeRepository, attendanceRepository, userService, taskService)
-  const attendanceService = getAttendanceService(attendanceRepository, attendeeRepository, attendeeService, taskService)
+  const attendeeService = getAttendeeService(
+    attendeeRepository,
+    attendanceRepository,
+    userService,
+    taskSchedulingService
+  )
+  const attendanceService = getAttendanceService(
+    attendanceRepository,
+    attendeeRepository,
+    attendeeService,
+    taskSchedulingService
+  )
   const interestGroupRepository = getInterestGroupRepository()
   const interestGroupService = getInterestGroupService(interestGroupRepository)
   const eventCompanyService = getEventCompanyService(eventCompanyRepository)

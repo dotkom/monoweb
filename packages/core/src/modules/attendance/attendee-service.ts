@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type AttendanceId,
@@ -15,7 +16,8 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours, isFuture } from "date-fns"
-import type { TaskService } from "../task/task-service"
+import { tasks } from "../task/task-definition"
+import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenError } from "./attendance-error"
 import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attendance-pool-error"
@@ -74,7 +76,7 @@ export function getAttendeeService(
   attendeeRepository: AttendeeRepository,
   attendanceRepository: AttendanceRepository,
   userService: UserService,
-  taskService: TaskService
+  taskSchedulingService: TaskSchedulingService
 ): AttendeeService {
   async function addUserToAttendee(attendeeWithoutUser: AttendeeWithoutUser, user?: User): Promise<Attendee> {
     const resolvedUser = user ?? (await userService.getById(attendeeWithoutUser.userId))
@@ -134,7 +136,12 @@ export function getAttendeeService(
       if (!isFuture(reserveTime)) {
         attendee.reserved = await this.attemptReserve(handle, attendee, attendancePool, { bypassCriteria: false })
       } else {
-        await taskService.scheduleAttemptReserveAttendeeTask(handle, reserveTime, { attendanceId, userId })
+        await taskSchedulingService.scheduleAt(
+          handle,
+          tasks.ATTEMPT_RESERVE_ATTENDEE.kind,
+          { userId, attendanceId },
+          new TZDate(reserveTime)
+        )
       }
       return await addUserToAttendee(attendeeWithoutUser, user)
     },
