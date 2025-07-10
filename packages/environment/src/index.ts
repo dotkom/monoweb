@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export type SpecValue = z.ZodString | z.ZodEffects<z.ZodString>
+export type SpecValue = z.ZodString | z.ZodEffects<z.ZodString> | z.ZodEnum<[string, ...string[]]>
 export type DefaultVariable<TSpec extends SpecValue> =
   | z.infer<SpecValue>
   | {
@@ -49,20 +49,9 @@ export type DefaultVariable<TSpec extends SpecValue> =
  * )
  * ```
  */
-export function config<TSpec extends SpecValue>(value: z.infer<TSpec> | undefined): z.infer<TSpec>
 export function config<TSpec extends SpecValue>(
-  value: z.infer<TSpec> | undefined,
-  defaultValue: null
-): z.infer<TSpec> | null
-export function config<TSpec extends SpecValue>(
-  value: z.infer<TSpec> | undefined,
+  value: unknown,
   defaultValue?: DefaultVariable<TSpec>,
-  validator?: TSpec
-): z.infer<TSpec>
-
-export function config<TSpec extends SpecValue>(
-  value: z.infer<TSpec> | undefined,
-  defaultValue?: DefaultVariable<TSpec> | null,
   validator: TSpec = z.string() as TSpec
 ): z.infer<TSpec> {
   function getDefaultValue(env: string): z.infer<TSpec> | undefined {

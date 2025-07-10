@@ -1,6 +1,8 @@
 import "./instrumentation"
 
 import { S3Client } from "@aws-sdk/client-s3"
+import { SchedulerClient } from "@aws-sdk/client-scheduler"
+import { SQSClient } from "@aws-sdk/client-sqs"
 import { createServiceLayer } from "@dotkomonline/core"
 import { createPrisma } from "@dotkomonline/db"
 import { type AppRouter, appRouter, createContext } from "@dotkomonline/gateway-trpc"
@@ -13,50 +15,55 @@ import { ManagementClient } from "auth0"
 import fastify from "fastify"
 import Stripe from "stripe"
 import { identifyCallerIAMIdentity } from "./aws"
-import { env } from "./env"
+import { configuration } from "./configuration"
 
 const logger = getLogger("rpc")
-const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
-const oauthAudiences = env.AUTH0_AUDIENCES.split(",")
+const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
+const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
 
-const jwtService = new JwtService(env.AUTH0_ISSUER, oauthAudiences)
+const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
 
-const s3Client = new S3Client({
-  region: env.AWS_REGION,
-})
+const s3Client = new S3Client({ region: configuration.AWS_REGION })
+const sqsClient = new SQSClient({ region: configuration.AWS_REGION })
+const schedulerClient = new SchedulerClient({ region: configuration.AWS_REGION })
 
 const auth0Client = new ManagementClient({
-  domain: env.AUTH0_MGMT_TENANT,
-  clientId: env.AUTH0_CLIENT_ID,
-  clientSecret: env.AUTH0_CLIENT_SECRET,
+  domain: configuration.AUTH0_MGMT_TENANT,
+  clientId: configuration.AUTH0_CLIENT_ID,
+  clientSecret: configuration.AUTH0_CLIENT_SECRET,
 })
 
 const stripeAccounts = {
   trikom: {
-    stripe: new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, {
+    stripe: new Stripe(configuration.TRIKOM_STRIPE_SECRET_KEY, {
       apiVersion: "2023-08-16",
     }),
-    publicKey: env.TRIKOM_STRIPE_PUBLIC_KEY,
-    webhookSecret: env.TRIKOM_STRIPE_WEBHOOK_SECRET,
+    publicKey: configuration.TRIKOM_STRIPE_PUBLIC_KEY,
+    webhookSecret: configuration.TRIKOM_STRIPE_WEBHOOK_SECRET,
   },
   fagkom: {
-    stripe: new Stripe(env.FAGKOM_STRIPE_SECRET_KEY, {
+    stripe: new Stripe(configuration.FAGKOM_STRIPE_SECRET_KEY, {
       apiVersion: "2023-08-16",
     }),
-    publicKey: env.FAGKOM_STRIPE_PUBLIC_KEY,
-    webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
+    publicKey: configuration.FAGKOM_STRIPE_PUBLIC_KEY,
+    webhookSecret: configuration.FAGKOM_STRIPE_WEBHOOK_SECRET,
   },
 }
 
-const adminPrincipals = env.ADMIN_USERS.split(",").map((sub) => sub.trim())
-const prisma = createPrisma(env.DATABASE_URL)
+const adminPrincipals = configuration.ADMIN_USERS.split(",").map((sub) => sub.trim())
+const prisma = createPrisma(configuration.DATABASE_URL)
 
 const serviceLayer = await createServiceLayer({
   s3Client,
-  s3BucketName: env.AWS_S3_BUCKET,
+  sqsClient,
+  schedulerClient,
+  s3BucketName: configuration.AWS_S3_BUCKET,
   stripeAccounts,
   db: prisma,
   managementClient: auth0Client,
+  options: {
+    tasksBackend: configuration.tasks.backend,
+  },
 })
 
 // This spins of all potentially remaining jobs in the queue that this system was not aware of. For this reason, it does

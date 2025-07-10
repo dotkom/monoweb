@@ -499,6 +499,12 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.821.0
+      '@aws-sdk/client-scheduler':
+        specifier: ^3.844.0
+        version: 3.844.0
+      '@aws-sdk/client-sqs':
+        specifier: ^3.844.0
+        version: 3.844.0
       '@aws-sdk/client-sts':
         specifier: ^3.821.0
         version: 3.821.0
