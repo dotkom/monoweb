@@ -11,7 +11,7 @@ const formatTime = (date: Date) => formatDate(date, "HH:mm", { locale: nb })
 const dateComponent = (label: string, dateStr: string, time: string) => (
   <div>
     <Text className="text-base">{label}</Text>
-    <div className="flex flex-row gap-2 text-black text-base sm:flex-col sm:gap-0 sm:text-sm">
+    <div className="flex flex-row gap-2 dark:text-stone-300 text-base sm:flex-col sm:gap-0 sm:text-sm">
       <Text>{dateStr}</Text>
       <Text>kl. {time}</Text>
     </div>
