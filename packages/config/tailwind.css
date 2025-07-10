@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --brand: #0b5374;
-    --accent: #fab759;
+    --color-brand: #0b5374;
+    --color-accent: #fab759;
   }
   
   button:not(:disabled),
