@@ -6,6 +6,7 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "incremental": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["vitest/globals"]
   }
 }

@@ -40,4 +40,4 @@ USER rpc
 COPY --from=installer --chown=rpc:nodejs --chmod=755 /app .
 COPY --from=builder --chown=rpc:nodejs --chmod=755 /app/out/full .
 
-CMD node --loader ./apps/rpc/runtime.mjs --experimental-strip-types ./apps/rpc/src/index.ts
+CMD node --loader ./apps/rpc/runtime.mjs --experimental-strip-types ./apps/rpc/src/bin/server.ts

@@ -87,9 +87,6 @@ importers:
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
-      '@dotkomonline/gateway-trpc':
-        specifier: workspace:*
-        version: link:../../packages/gateway-trpc
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
@@ -208,6 +205,9 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:^
         version: link:../../packages/config
+      '@dotkomonline/rpc':
+        specifier: workspace:*
+        version: link:../rpc
       '@tailwindcss/postcss':
         specifier: ^4.1.11
         version: 4.1.11
@@ -499,33 +499,45 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.821.0
+      '@aws-sdk/client-scheduler':
+        specifier: ^3.844.0
+        version: 3.844.0
+      '@aws-sdk/client-sqs':
+        specifier: ^3.844.0
+        version: 3.844.0
       '@aws-sdk/client-sts':
         specifier: ^3.821.0
         version: 3.821.0
-      '@dotkomonline/core':
-        specifier: workspace:*
-        version: link:../../packages/core
+      '@aws-sdk/s3-presigned-post':
+        specifier: ^3.821.0
+        version: 3.821.0
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../../packages/db
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
-      '@dotkomonline/gateway-trpc':
-        specifier: workspace:*
-        version: link:../../packages/gateway-trpc
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
       '@dotkomonline/oauth2':
         specifier: workspace:*
         version: link:../../packages/oauth2
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@fastify/cors':
         specifier: ^11.0.0
         version: 11.0.1
       '@opentelemetry/api':
         specifier: ^1.9.0
         version: 1.9.0
+      '@prisma/client':
+        specifier: ^6.8.2
+        version: 6.8.2(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
       '@sentry/node':
         specifier: ^9.24.0
         version: 9.34.0
@@ -535,18 +547,30 @@ importers:
       auth0:
         specifier: ^4.23.1
         version: 4.23.1
+      commander:
+        specifier: ^14.0.0
+        version: 14.0.0
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       fastify:
         specifier: ^5.3.3
         version: 5.3.3
       import-in-the-middle:
         specifier: ^1.14.2
         version: 1.14.2
+      lru-cache:
+        specifier: ^11.1.0
+        version: 11.1.0
       require-in-the-middle:
         specifier: ^7.5.2
         version: 7.5.2
       stripe:
         specifier: ^13.11.0
         version: 13.11.0
+      superjson:
+        specifier: ^2.0.0
+        version: 2.2.2
       zod:
         specifier: ^3.25.47
         version: 3.25.47
@@ -557,9 +581,24 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@faker-js/faker':
+        specifier: ^9.9.0
+        version: 9.9.0
+      '@testcontainers/postgresql':
+        specifier: 10.28.0
+        version: 10.28.0
       '@types/node':
         specifier: 22.15.29
         version: 22.15.29
+      '@vitest/coverage-v8':
+        specifier: 3.1.4
+        version: 3.1.4(vitest@3.1.4)
+      '@vitest/ui':
+        specifier: 3.1.4
+        version: 3.1.4(vitest@3.1.4)
       dotenv-cli:
         specifier: 8.0.0
         version: 8.0.0
@@ -572,12 +611,15 @@ importers:
       typescript:
         specifier: 5.8.3
         version: 5.8.3
+      vitest:
+        specifier: 3.1.4
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(lightningcss@1.30.1)(msw@2.7.0(@types/node@22.15.29)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.39.0)(tsx@4.19.4)(yaml@2.8.0)
+      vitest-mock-extended:
+        specifier: 3.1.0
+        version: 3.1.0(typescript@5.8.3)(vitest@3.1.4)
 
   apps/splash-2025:
     dependencies:
-      '@dotkomonline/gateway-trpc':
-        specifier: workspace:*
-        version: link:../../packages/gateway-trpc
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -624,6 +666,9 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@dotkomonline/rpc':
+        specifier: workspace:*
+        version: link:../rpc
       '@tailwindcss/postcss':
         specifier: ^4.1.11
         version: 4.1.11
@@ -663,15 +708,9 @@ importers:
       '@aws-sdk/s3-presigned-post':
         specifier: ^3.821.0
         version: 3.821.0
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../../packages/db
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
-      '@dotkomonline/gateway-trpc':
-        specifier: workspace:*
-        version: link:../../packages/gateway-trpc
       '@dotkomonline/oauth2':
         specifier: workspace:*
         version: link:../../packages/oauth2
@@ -805,6 +844,9 @@ importers:
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@dotkomonline/rpc':
+        specifier: workspace:*
+        version: link:../rpc
       '@tailwindcss/postcss':
         specifier: ^4.1.11
         version: 4.1.11
@@ -865,88 +907,6 @@ importers:
       typescript:
         specifier: 5.8.3
         version: 5.8.3
-
-  packages/core:
-    dependencies:
-      '@aws-sdk/client-s3':
-        specifier: ^3.821.0
-        version: 3.821.0
-      '@aws-sdk/client-scheduler':
-        specifier: ^3.844.0
-        version: 3.844.0
-      '@aws-sdk/client-sqs':
-        specifier: ^3.844.0
-        version: 3.844.0
-      '@aws-sdk/s3-presigned-post':
-        specifier: ^3.821.0
-        version: 3.821.0
-      '@date-fns/tz':
-        specifier: ^1.2.0
-        version: 1.2.0
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../db
-      '@dotkomonline/logger':
-        specifier: workspace:*
-        version: link:../logger
-      '@dotkomonline/utils':
-        specifier: workspace:*
-        version: link:../utils
-      '@faker-js/faker':
-        specifier: ^9.9.0
-        version: 9.9.0
-      '@prisma/client':
-        specifier: ^6.8.2
-        version: 6.8.2(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
-      auth0:
-        specifier: ^4.23.1
-        version: 4.23.1
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      lru-cache:
-        specifier: ^11.1.0
-        version: 11.1.0
-      stripe:
-        specifier: ^13.11.0
-        version: 13.11.0
-      zod:
-        specifier: ^3.25.47
-        version: 3.25.47
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 1.9.4
-        version: 1.9.4
-      '@dotkomonline/config':
-        specifier: workspace:*
-        version: link:../config
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../types
-      '@testcontainers/postgresql':
-        specifier: 10.28.0
-        version: 10.28.0
-      '@types/node':
-        specifier: 22.15.29
-        version: 22.15.29
-      '@vitest/coverage-v8':
-        specifier: 3.1.4
-        version: 3.1.4(vitest@3.1.4)
-      '@vitest/ui':
-        specifier: 3.1.4
-        version: 3.1.4(vitest@3.1.4)
-      jsdom:
-        specifier: 26.1.0
-        version: 26.1.0
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
-      vitest:
-        specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(lightningcss@1.30.1)(msw@2.7.0(@types/node@22.15.29)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.39.0)(tsx@4.19.4)(yaml@2.8.0)
-      vitest-mock-extended:
-        specifier: 3.1.0
-        version: 3.1.0(typescript@5.8.3)(vitest@3.1.4)
 
   packages/db:
     dependencies:
@@ -1049,46 +1009,6 @@ importers:
       '@types/node':
         specifier: 22.15.29
         version: 22.15.29
-
-  packages/gateway-trpc:
-    dependencies:
-      '@dotkomonline/core':
-        specifier: workspace:*
-        version: link:../core
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../db
-      '@dotkomonline/oauth2':
-        specifier: workspace:*
-        version: link:../oauth2
-      '@trpc/server':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(typescript@5.8.3)
-      superjson:
-        specifier: ^2.0.0
-        version: 2.2.2
-      zod:
-        specifier: ^3.25.47
-        version: 3.25.47
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 1.9.4
-        version: 1.9.4
-      '@dotkomonline/config':
-        specifier: workspace:*
-        version: link:../config
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../types
-      '@vitest/ui':
-        specifier: 3.1.4
-        version: 3.1.4(vitest@3.1.4)
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
-      vitest:
-        specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(lightningcss@1.30.1)(msw@2.7.0(@types/node@22.15.29)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.39.0)(tsx@4.19.4)(yaml@2.8.0)
 
   packages/logger:
     dependencies:
@@ -1370,9 +1290,6 @@ importers:
 
   tools/shell:
     dependencies:
-      '@dotkomonline/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -5888,6 +5805,10 @@ packages:
     resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
     engines: {node: '>=18'}
 
+  commander@14.0.0:
+    resolution: {integrity: sha512-2uM9rYjPvyq39NwLRqaiLtWHyDC1FvryJDa2ATTVims5YAS4PupsEQsDvP14FqhFr0P49CYDugi59xaxJlTXRA==}
+    engines: {node: '>=20'}
+
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
@@ -5986,15 +5907,6 @@ packages:
 
   debug@4.3.7:
     resolution: {integrity: sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-
-  debug@4.4.0:
-    resolution: {integrity: sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==}
     engines: {node: '>=6.0'}
     peerDependencies:
       supports-color: '*'
@@ -14548,6 +14460,8 @@ snapshots:
 
   commander@13.1.0: {}
 
+  commander@14.0.0: {}
+
   commander@2.20.3: {}
 
   commondir@1.0.1: {}
@@ -14636,10 +14550,6 @@ snapshots:
   debounce@2.0.0: {}
 
   debug@4.3.7:
-    dependencies:
-      ms: 2.1.3
-
-  debug@4.4.0:
     dependencies:
       ms: 2.1.3
 
@@ -18172,7 +18082,7 @@ snapshots:
       '@vitest/spy': 3.1.4
       '@vitest/utils': 3.1.4
       chai: 5.2.0
-      debug: 4.4.0
+      debug: 4.4.1
       expect-type: 1.2.1
       magic-string: 0.30.17
       pathe: 2.0.3

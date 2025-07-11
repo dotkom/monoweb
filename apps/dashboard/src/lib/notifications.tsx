@@ -1,4 +1,4 @@
-import type { AppRouter } from "@dotkomonline/gateway-trpc"
+import type { AppRouter } from "@dotkomonline/rpc"
 import { Icon } from "@iconify/react"
 import { notifications } from "@mantine/notifications"
 import type { TRPCClientErrorLike } from "@trpc/client"

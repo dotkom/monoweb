@@ -34,7 +34,7 @@
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
-    "shell": "pnpm -F @dotkomonline/shell start"
+    "shell": "pnpm -F @dotkomonline/rpc shell"
   },
   "workspaces": [
     "packages/*",
