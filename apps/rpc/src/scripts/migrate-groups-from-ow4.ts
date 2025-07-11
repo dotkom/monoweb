@@ -12,7 +12,7 @@ function printEnvironment() {
 }
 
 const dependencies = createThirdPartyClients(configuration)
-const serviceLayer = await createServiceLayer(dependencies, configuration.AWS_S3_BUCKET)
+const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma
 
 async function dumpData() {
