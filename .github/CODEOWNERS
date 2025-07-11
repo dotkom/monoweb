@@ -22,7 +22,7 @@ docker-compose.yml    @junlarsen
 
 # Main applications
 apps/brevduen         @junlarsen
-apps/dashboard        @henrikskog
+apps/dashboard
 apps/rpc              @junlarsen
 apps/invoicification  @junlarsen
 apps/rif              @junlarsen
@@ -33,11 +33,11 @@ apps/splash-2025      @henrygraesberg @ellawaal @tharyng @madsab
 # Libraries and packages
 packages/auth         @junlarsen @jotjern
 packages/config
-packages/core         @junlarsen @jotjern @henrikskog @terbau @brage-andreas
+packages/core         @junlarsen @jotjern @terbau @brage-andreas
 packages/db           @jotjern
 packages/email
 packages/environment  @junlarsen
-packages/gateway-trpc @junlarsen @jotjern @henrikskog @terbau
+packages/gateway-trpc @junlarsen @jotjern @terbau
 packages/logger       @junlarsen
 packages/proxy-nextjs @junlarsen
 packages/tsconfig
@@ -47,7 +47,7 @@ packages/utils        @brage-andreas
 
 
 # Tools
-tools/shell           @henrikskog
+tools/shell
 
 
 # Infrastructure located in the monorepo
