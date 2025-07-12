@@ -1,4 +1,4 @@
-FROM node:22-alpine@sha256:a7c10fad0b8fa59578bf3cd1717b168df134db8362b89e1ea6f54676fee49d3b AS base
+FROM node:22-alpine@sha256:10962e8568729b0cfd506170c5a2d1918a2c10ac08c0e6900180b4bac061adc9 AS base
 
 # Next.js evaluates a lot of code at build-time for things like SSG and SSR. For this reason, we need some of the
 # runtime variables to be available at build-time.
