@@ -101,8 +101,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
   return (
     <Card
       classNames={{
-        outer: isAttendingAndReserved ? "bg-green-200" : isAttendingAndNotReserved ? "bg-yellow-200" : undefined,
-        title: isAttendingAndReserved ? "bg-green-300" : isAttendingAndNotReserved ? "bg-yellow-300" : undefined,
+        outer: isAttendingAndReserved ? "bg-green-200 dark:bg-green-800" : isAttendingAndNotReserved ? "bg-yellow-200 dark:bg-yellow-800" : undefined,
+        title: isAttendingAndReserved ? "bg-green-300 dark:bg-green-700" : isAttendingAndNotReserved ? "bg-yellow-300 dark:bg-yellow-700" : undefined,
       }}
       title={pool.title}
     >

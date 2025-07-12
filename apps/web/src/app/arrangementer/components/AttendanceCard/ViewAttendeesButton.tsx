@@ -84,7 +84,6 @@ export const ViewAttendeesButton = ({
               attendees={reservedAttendees}
               maxNumberOfAttendees={maxAttendees}
               userId={userId}
-              marginOnLastItem={hasWaitlist}
             />
           </div>
 
@@ -106,10 +105,9 @@ interface AttendeeListProps {
   attendees: Attendee[]
   maxNumberOfAttendees: number
   userId: User["id"] | undefined
-  marginOnLastItem?: boolean
 }
 
-const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastItem = false }: AttendeeListProps) => {
+const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, }: AttendeeListProps) => {
   if (!attendees.length) {
     return <Text className="text-gray-900 text-sm mx-2">Ingen påmeldte</Text>
   }

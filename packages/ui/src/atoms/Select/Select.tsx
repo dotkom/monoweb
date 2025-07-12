@@ -17,7 +17,7 @@ export const SelectTrigger = ({ className, children, ref, ...props }: SelectTrig
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "font-body flex h-10 w-full items-center justify-between rounded-md border",
+      "font-body flex h-10 w-full items-center justify-between rounded-md border text-left",
       "border-gray-400 bg-slate-50 px-3 py-2 text-sm ring-offset-background",
       "dark:border-stone-800 dark:bg-stone-900",
       "focus:outline-hidden focus:ring-2",
@@ -98,7 +98,7 @@ SelectContent.displayName = SelectPrimitive.Content.displayName
 
 type SelectLabelProps = React.ComponentPropsWithRef<typeof SelectPrimitive.Label>
 export const SelectLabel = ({ className, ref, ...props }: SelectLabelProps) => (
-  <SelectPrimitive.Label ref={ref} className={cn("font-body py-1.5 px-2 text-sm font-medium", className)} {...props} />
+  <SelectPrimitive.Label ref={ref} className={cn("font-body py-1.5 pl-8 pr-2 text-sm font-medium", className)} {...props} />
 )
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
@@ -108,15 +108,15 @@ export const SelectItem = ({ className, children, ref, ...props }: SelectItemPro
     ref={ref}
     className={cn(
       "font-body relative flex w-full cursor-default select-none items-center",
-      "rounded-xs py-1.5 px-2 text-sm outline-hidden focus:bg-gray-200 dark:focus:bg-stone-800",
+      "rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden focus:bg-gray-200 dark:focus:bg-stone-800",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute left-2 top-1/2 transform -translate-y-1/2">
       <SelectPrimitive.ItemIndicator>
-        <Icon icon="tabler:check" className="text-sm" />
+        <Icon icon="tabler:check" />
       </SelectPrimitive.ItemIndicator>
     </span>
 

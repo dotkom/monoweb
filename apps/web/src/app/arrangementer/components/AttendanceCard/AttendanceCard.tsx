@@ -151,7 +151,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
         <NonAttendablePoolsBox pools={nonAttendablePools} hasAttendablePool={Boolean(attendablePool)} />
       )}
 
-      {attendee && user ? (
+      {attendee ? (
         <div className="flex flex-col-reverse gap-4 sm:flex-row">
           <ViewAttendeesButton
             attendeeListOpen={attendeeListOpen}

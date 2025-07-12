@@ -1,64 +1,48 @@
 "use client"
 
 import type { AttendeeId } from "@dotkomonline/types"
-import { Button, Icon, Text, Title } from "@dotkomonline/ui"
-import { Cross2Icon } from "@radix-ui/react-icons"
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle, AlertDialogTrigger, Button, Icon, Text, Title } from "@dotkomonline/ui"
 import { QRCodeSVG } from "qrcode.react"
 import { useState } from "react"
 
 interface TicketButtonProps {
-  attendeeId: AttendeeId | null
+  attendeeId: AttendeeId
 }
 
 export const TicketButton = ({ attendeeId }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
 
-  const className = "w-full rounded-lg h-fit min-h-[4rem] font-medium"
-
-  if (!open) {
-    return (
+  return (
+  <AlertDialog open={open} onOpenChange={setOpen}>
+    <AlertDialogTrigger asChild>
       <Button
         onClick={() => setOpen(true)}
-        className={className}
+        className="w-full rounded-lg h-fit min-h-[4rem] font-medium"
         color="light"
         icon={<Icon icon="tabler:ticket" className="text-lg" />}
       >
         Vis billett
       </Button>
-    )
-  }
+    </AlertDialogTrigger>
+    <AlertDialogContent
+      className="flex flex-col gap-4 items-center w-full p-6 bg-gray-100 dark:bg-stone-800 max-w-2xl rounded-lg"
+      onOutsideClick={() => setOpen(false)}
+    >
+      <div className="flex flex-row w-full items-center justify-between">
+        <AlertDialogTitle asChild>
+          <Title element="h1" size="lg">Din billett</Title>
+        </AlertDialogTitle>
+        <AlertDialogCancel className="p-2">
+          <Icon className="text-xl" icon="tabler:x" />
+        </AlertDialogCancel>
+      </div>
 
-  return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-slate-50 z-50 overflow-hidden">
-      <div className="flex justify-start p-10">
-        <Button onClick={() => setOpen(false)}>
-          <Cross2Icon width={20} height={20} />
-        </Button>
+      <div className="p-4 bg-white rounded-lg w-fit drop-shadow-lg">
+        <QRCodeSVG
+          value={attendeeId}
+          size={256}
+        />
       </div>
-      <div className="flex flex-col items-center">
-        <div className="flex flex-col pt-20">
-          <Title element="h1" size="xl">
-            Din billett
-          </Title>
-          <Text className="text-lg">Dette er din billett til arrangementet</Text>
-        </div>
-        <div className="pt-10">
-          {attendeeId && (
-            <QRCodeSVG
-              value={attendeeId}
-              size={256}
-              imageSettings={{
-                src: "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/680/",
-                x: undefined,
-                y: undefined,
-                height: 60,
-                width: 60,
-                excavate: true,
-              }}
-            />
-          )}
-        </div>
-      </div>
-    </div>
-  )
+    </AlertDialogContent>
+  </AlertDialog>)
 }

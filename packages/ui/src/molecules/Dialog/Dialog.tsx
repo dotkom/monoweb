@@ -72,7 +72,7 @@ export const AlertDialogTitle: FC<ComponentPropsWithRef<typeof AlertDialogPrimit
   return (
     <AlertDialogPrimitive.Title
       ref={ref}
-      className={cn("text-black text-lg font-semibold leading-none tracking-tight", className)}
+      className={className}
       {...props}
     />
   )
