@@ -1,18 +1,6 @@
 import { TRPCError, initTRPC } from "@trpc/server"
 import superjson from "superjson"
-import { articleRouter } from "./modules/article/article-router"
-import { companyRouter } from "./modules/company/company-router"
 import type { ServiceLayer } from "./modules/core"
-import { attendanceRouter } from "./modules/event/attendance-router"
-import { eventRouter } from "./modules/event/event-router"
-import { groupRouter } from "./modules/group/group-router"
-import { interestGroupRouter } from "./modules/interest-group/interest-group-router"
-import { jobListingRouter } from "./modules/job-listing/job-listing-router"
-import { markRouter } from "./modules/mark/mark-router"
-import { personalMarkRouter } from "./modules/mark/personal-mark-router"
-import { offlineRouter } from "./modules/offline/offline-router"
-import { paymentRouter } from "./modules/payment/payment-router"
-import { userRouter } from "./modules/user/user-router"
 
 export type CreateContextOptions = {
   // auth0 sub

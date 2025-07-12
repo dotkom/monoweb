@@ -6,12 +6,12 @@ import fastifyCors from "@fastify/cors"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import fastify from "fastify"
+import { appRouter } from "src/app-router"
+import type { AppRouter } from "src/index"
 import { identifyCallerIAMIdentity } from "../aws"
 import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createContext } from "../trpc"
-import { appRouter } from "src/app-router"
-import { AppRouter } from "src/index"
 
 const logger = getLogger("rpc")
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
