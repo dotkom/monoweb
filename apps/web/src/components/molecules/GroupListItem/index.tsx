@@ -23,7 +23,7 @@ export const GroupListItem: FC<GroupListItemProps> = (props: GroupListItemProps)
 
     <div
       className={clsx(
-        "relative mx-auto min-w-[150px] max-w-[200px] aspect-square bg-slate-100 p-2 rounded-full overflow-hidden",
+        "relative mx-auto min-w-[150px] max-w-[200px] aspect-square bg-gray-100 p-2 rounded-full overflow-hidden",
         props.image && "shadow-lg",
         props.isActive === false && "opacity-80"
       )}

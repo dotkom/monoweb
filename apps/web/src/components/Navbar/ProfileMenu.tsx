@@ -78,11 +78,11 @@ export const ProfileMenu: FC = () => {
                 <Label
                   key={item.theme}
                   htmlFor={item.theme}
-                  className="flex flex-row items-center gap-2 p-2 w-full hover:bg-slate-200 dark:hover:bg-slate-950 rounded-md cursor-pointer"
+                  className="flex flex-row items-center gap-2 p-2 w-full hover:bg-gray-200 dark:hover:bg-gray-950 rounded-md cursor-pointer"
                 >
                   <RadioGroupItem value={item.theme} id={item.theme} className="hidden" />
                   <div
-                    className={cn("w-1 h-4 rounded-full bg-slate-500 invisible", theme === item.theme && "visible")}
+                    className={cn("w-1 h-4 rounded-full bg-gray-500 invisible", theme === item.theme && "visible")}
                   />
                   <Icon icon={item.icon} className="text-base dark:text-white" />
                   <Text className="dark:text-white">{item.label}</Text>
@@ -206,7 +206,7 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
                       {link.adminOnly ? (
                         <div className="flex flex-row items-center justify-between w-full">
                           <Text element="span">{link.label}</Text>
-                          <div className="flex flex-row items-center gap-1 text-[0.65rem] text-slate-800 dark:text-slate-700">
+                          <div className="flex flex-row items-center gap-1 text-[0.65rem] text-gray-800 dark:text-gray-700">
                             <Icon icon="tabler:lock" />
                             <Text element="span">Admin</Text>
                           </div>

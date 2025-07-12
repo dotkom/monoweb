@@ -7,7 +7,7 @@
     --color-brand: #0b5374;
     --color-accent: #fab759;
   }
-  
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
