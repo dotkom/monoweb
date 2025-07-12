@@ -16,7 +16,7 @@ export const Hero: FC<HeroProps> = ({ background, banner }) => {
         turer, fester, holder kurs og bedriftspresentasjoner gjennom hele året.
         <br />
         Ny på master? Se{" "}
-        <a href="https://online.ntnu.no" className="underline text-brand-8">
+        <a href="https://online.ntnu.no" className="underline text-brand-700">
           viktig info om IT-ekskursjonen
         </a>{" "}
         OBS - kort frist!

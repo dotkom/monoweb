@@ -25,7 +25,7 @@ export const ArticleView: FC<ArticleViewProps> = async (props: ArticleViewProps)
       <Byline author={article.author} createdAt={article.createdAt} updatedAt={article.updatedAt} />
 
       <section>
-        <Text className="whitespace-pre-line mt-4 text-slate-11 dark:text-slate-6">{article.excerpt}</Text>
+        <Text className="whitespace-pre-line mt-4 text-slate-950 dark:text-slate-500">{article.excerpt}</Text>
         <Text className="whitespace-pre-line mt-8">{article.content}</Text>
       </section>
 
@@ -65,7 +65,7 @@ const ArticleHeader = ({ article }: ArticleHeaderProps) => {
           )}
           <figcaption>
             <Text className="mt-2">
-              <span className="text-slate-12 dark:text-slate-2 font-medium">Fotograf: </span>
+              <span className="text-black dark:text-slate-100 font-medium">Fotograf: </span>
               {article.photographer}
             </Text>
           </figcaption>
@@ -89,7 +89,7 @@ interface BylineProps {
 }
 
 const Byline = ({ author, createdAt, updatedAt }: BylineProps) => (
-  <div className="flex flex-wrap gap-x-4 mt-2 border-b-2 border-slate-6 pb-2">
+  <div className="flex flex-wrap gap-x-4 mt-2 border-b-2 border-slate-500 pb-2">
     <BylineItem label="Skrevet av" value={author} className="md:hidden" />
     <BylineItem label="Publisert" value={formatDate(createdAt)} />
     {!isEqual(createdAt, updatedAt) && <BylineItem label="Sist endret" value={formatDate(updatedAt)} />}
@@ -104,7 +104,7 @@ interface BylineItemProps {
 
 const BylineItem = ({ label, value, className }: BylineItemProps) => (
   <Text className={clsx("whitespace-nowrap", className)}>
-    <span className="text-slate-12 dark:text-slate-2 font-medium">{label} </span>
+    <span className="text-black dark:text-slate-100 font-medium">{label} </span>
     {value}
   </Text>
 )
@@ -115,8 +115,8 @@ interface AuthorInfoProps {
 
 const AuthorInfo = ({ author }: AuthorInfoProps) => {
   return (
-    <div className="flex flex-col border-l-2 border-slate-10 pl-4">
-      <Text className="text-slate-12 dark:text-slate-2 font-medium">Skrevet av</Text>
+    <div className="flex flex-col border-l-2 border-slate-900 pl-4">
+      <Text className="text-black dark:text-slate-100 font-medium">Skrevet av</Text>
       <Text>{author}</Text>
     </div>
   )
@@ -128,8 +128,8 @@ interface TagListProps {
 
 const TagList = ({ tags }: TagListProps) => {
   return (
-    <section className="md:pl-4 pb-2 gap-2 md:border-l-2 border-slate-10 flex flex-col">
-      <Title element="h3" size="md" className="text-slate-12 dark:text-slate-2">
+    <section className="md:pl-4 pb-2 gap-2 md:border-l-2 border-slate-900 flex flex-col">
+      <Title element="h3" size="md" className="text-black dark:text-slate-100">
         Tags
       </Title>
 

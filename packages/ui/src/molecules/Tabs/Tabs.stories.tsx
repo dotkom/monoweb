@@ -11,10 +11,10 @@ export const Default = () => (
       <TabsTrigger value="password">Password</TabsTrigger>
     </TabsList>
     <TabsContent value="account">
-      <p className="text-slate-12 text-sm">Make changes to your account here. Click save when you&apos;re done.</p>
+      <p className="text-black text-sm">Make changes to your account here. Click save when you&apos;re done.</p>
     </TabsContent>
     <TabsContent value="password">
-      <p className="text-slate-12 text-sm">Change your password here. After saving, you&apos;ll be logged out.</p>
+      <p className="text-black text-sm">Change your password here. After saving, you&apos;ll be logged out.</p>
     </TabsContent>
   </Tabs>
 )

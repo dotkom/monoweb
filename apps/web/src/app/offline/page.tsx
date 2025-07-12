@@ -9,7 +9,7 @@ const OfflinePage = async () => {
 
   return (
     <div>
-      <div className="border-slate-7 border-b flex flex-col pb-5">
+      <div className="border-slate-600 border-b flex flex-col pb-5">
         <Title element="h1" className="text-3xl">
           Offline
         </Title>
@@ -47,7 +47,11 @@ interface OfflineYearSectionProps {
 const OfflineYearSection = ({ offlines, year }: OfflineYearSectionProps) => {
   return (
     <div className="mt-8">
-      <Title size="lg" element="h2" className="border-l-4 border-slate-6 pl-3 mb-2 font-semibold w-fit mx-auto sm:mx-0">
+      <Title
+        size="lg"
+        element="h2"
+        className="border-l-4 border-slate-500 pl-3 mb-2 font-semibold w-fit mx-auto sm:mx-0"
+      >
         {year}
       </Title>
 

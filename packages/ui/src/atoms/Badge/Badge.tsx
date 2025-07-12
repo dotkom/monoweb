@@ -17,14 +17,14 @@ export const Badge: FC<PropsWithChildren<BadgeProps>> = ({ children, color, vari
 }
 
 const styles = {
-  solid: cva("text-slate-12", {
+  solid: cva("text-black", {
     variants: {
       color: {
-        red: "bg-red-9",
-        blue: "bg-blue-9",
-        green: "bg-green-9",
-        amber: "bg-amber-9 text-slate-1",
-        slate: "bg-slate-9",
+        red: "bg-red-800",
+        blue: "bg-blue-800",
+        green: "bg-green-800",
+        amber: "bg-amber-800 text-slate-50",
+        slate: "bg-slate-800",
       },
     },
   }),
@@ -32,11 +32,11 @@ const styles = {
   light: cva("", {
     variants: {
       color: {
-        red: "bg-red-4 text-red-11",
-        blue: "bg-blue-4 text-blue-11",
-        green: "bg-green-4 text-green-11",
-        amber: "bg-amber-4 text-amber-11",
-        slate: "bg-slate-4 text-slate-11",
+        red: "bg-red-300 text-red-950",
+        blue: "bg-blue-300 text-blue-950",
+        green: "bg-green-300 text-green-950",
+        amber: "bg-amber-300 text-amber-950",
+        slate: "bg-slate-300 text-slate-950",
       },
     },
   }),
@@ -44,11 +44,11 @@ const styles = {
   outline: cva("border border-solid", {
     variants: {
       color: {
-        red: "border-red-7 text-red-11 bg-red-1",
-        blue: "border-blue-7 text-blue-11 bg-blue-1",
-        green: "border-green-7 text-green-11 bg-green-1",
-        amber: "border-amber-7 text-amber-11 bg-amber-1",
-        slate: "border-slate-7 text-slate-11 bg-slate-1",
+        red: "border-red-600 text-red-950 bg-red-50",
+        blue: "border-blue-600 text-blue-950 bg-blue-50",
+        green: "border-green-600 text-green-950 bg-green-50",
+        amber: "border-amber-600 text-amber-950 bg-amber-50",
+        slate: "border-slate-600 text-slate-950 bg-slate-50",
       },
     },
   }),

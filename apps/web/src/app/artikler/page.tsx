@@ -8,7 +8,7 @@ const ArticlePage = async () => {
 
   return (
     <div>
-      <div className="border-slate-7 border-b">
+      <div className="border-slate-600 border-b">
         <div className="flex flex-col pb-5">
           <Title element="h1" className="text-3xl">
             Artikler

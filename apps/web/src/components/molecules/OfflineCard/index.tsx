@@ -21,7 +21,7 @@ export const OfflineCard = ({ offline }: OfflineCardProps) => {
           />
         </Link>
       )}
-      <Text className="text-slate-11 dark:text-white">{offline.title}</Text>
+      <Text className="text-slate-950 dark:text-white">{offline.title}</Text>
     </div>
   )
 }

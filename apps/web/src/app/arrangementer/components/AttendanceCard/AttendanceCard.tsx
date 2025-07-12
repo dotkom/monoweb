@@ -117,7 +117,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   return (
-    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-slate-3 sm:p-4 sm:rounded-xl">
+    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-slate-200 sm:p-4 sm:rounded-xl">
       <Title element="h2" size="lg">
         Påmelding
       </Title>
@@ -184,14 +184,14 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
 
       <div className="hidden sm:block">
         <div className="flex flex-row gap-4">
-          <div className="flex flex-row gap-1 items-center text-sm text-slate-9 hover:text-slate-12 transition-colors cursor-pointer">
+          <div className="flex flex-row gap-1 items-center text-sm text-slate-800 hover:text-black transition-colors cursor-pointer">
             <Icon icon="tabler:book-2" className="text-lg" />
             <Text>Arrangementregler</Text>
           </div>
 
           <Link
             href="/profile"
-            className="flex flex-row gap-1 items-center text-sm text-slate-9 hover:text-slate-12 transition-colors"
+            className="flex flex-row gap-1 items-center text-sm text-slate-800 hover:text-black transition-colors"
           >
             <Icon icon="tabler:edit" className="text-lg" />
             <Text>Oppdater matallergier</Text>

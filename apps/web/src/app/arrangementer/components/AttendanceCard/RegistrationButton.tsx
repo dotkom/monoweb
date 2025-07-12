@@ -3,11 +3,11 @@ import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTr
 import type { FC } from "react"
 
 const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean) => {
-  if (disabled) return "bg-slate-3 text-slate-8 dark:bg-slate-3"
-  if (attendee) return "bg-red-7 hover:bg-red-8 dark:bg-red-7 dark:hover:bg-red-8"
-  if (isPoolFull) return "bg-yellow-5 hover:bg-yellow-6 dark:bg-yellow-10 dark:hover:bg-yellow-11"
+  if (disabled) return "bg-slate-200 text-slate-700 dark:bg-slate-200"
+  if (attendee) return "bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+  if (isPoolFull) return "bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-900 dark:hover:bg-yellow-950"
 
-  return "bg-green-7 hover:bg-green-8 dark:bg-green-7 dark:hover:bg-green-8"
+  return "bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700"
 }
 
 const getDisabledText = (
@@ -72,7 +72,7 @@ export const RegistrationButton: FC<Props> = ({
   const buttonContent = isLoading ? (
     <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
   ) : (
-    <div className={cn("flex flex-row gap-2 items-center", disabled ? "text-slate-9" : "text-slate-12")}>
+    <div className={cn("flex flex-row gap-2 items-center", disabled ? "text-slate-800" : "text-black")}>
       <Icon className="text-lg" icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`} />
       <Text className="font-medium">{buttonText}</Text>
     </div>
