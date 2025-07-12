@@ -1,4 +1,4 @@
-import "./instrumentation"
+import "../instrumentation"
 
 import { getLogger } from "@dotkomonline/logger"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
@@ -9,7 +9,9 @@ import fastify from "fastify"
 import { identifyCallerIAMIdentity } from "../aws"
 import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
-import { type AppRouter, appRouter, createContext } from "../trpc"
+import { createContext } from "../trpc"
+import { appRouter } from "src/app-router"
+import { AppRouter } from "src/index"
 
 const logger = getLogger("rpc")
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")

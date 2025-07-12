@@ -70,20 +70,3 @@ export const router = t.router
 export const publicProcedure = t.procedure
 export const protectedProcedure = publicProcedure.use(isAuthed)
 export const adminProcedure = protectedProcedure.use(isAdmin)
-
-export const appRouter = t.router({
-  group: groupRouter,
-  event: eventRouter,
-  attendance: attendanceRouter,
-  user: userRouter,
-  company: companyRouter,
-  payment: paymentRouter,
-  mark: markRouter,
-  personalMark: personalMarkRouter,
-  jobListing: jobListingRouter,
-  offline: offlineRouter,
-  article: articleRouter,
-  interestGroup: interestGroupRouter,
-})
-
-export type AppRouter = typeof appRouter
