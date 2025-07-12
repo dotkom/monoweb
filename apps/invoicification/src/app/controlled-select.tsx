@@ -33,7 +33,7 @@ export function ControlledSelect<TFieldValues extends FieldValues>({
           <SelectContent>
             <SelectScrollUpButton />
             {options.map((props) => (
-              <SelectItem key={props.value} className="hover:bg-slate-100 focus:bg-slate-100" {...props} />
+              <SelectItem key={props.value} className="hover:bg-gray-100 focus:bg-gray-100" {...props} />
             ))}
             <SelectScrollDownButton />
           </SelectContent>

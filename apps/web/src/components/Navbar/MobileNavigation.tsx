@@ -26,7 +26,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                   <Link
                     href={"href" in link ? link.href : "#"}
                     className={cn(
-                      "inline-flex py-2 text-lg font-semibold text-black hover:bg-slate-100 rounded-md px-2 transition-colors",
+                      "inline-flex py-2 text-lg font-semibold text-black hover:bg-gray-100 rounded-md px-2 transition-colors",
                       "href" in link && "font-normal"
                     )}
                   >
@@ -39,7 +39,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       <Link
                         href={"href" in link ? link.href : "#"}
                         className={cn(
-                          "ml-4 inline-flex py-2 text-base font-medium text-black hover:bg-slate-100 rounded-md px-2 transition-colors",
+                          "ml-4 inline-flex py-2 text-base font-medium text-black hover:bg-gray-100 rounded-md px-2 transition-colors",
                           "href" in link && "font-normal"
                         )}
                       >

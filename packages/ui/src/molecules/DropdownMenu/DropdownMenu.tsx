@@ -27,8 +27,8 @@ export const DropdownMenuSubTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       "flex cursor-default select-none items-center outline-hidden",
-      "data-[state=open]:bg-slate-200 data-[state=open]:dark:bg-slate-900",
-      "focus:bg-slate-200 focus:dark:bg-slate-900",
+      "data-[state=open]:bg-gray-200 data-[state=open]:dark:bg-gray-900",
+      "focus:bg-gray-200 focus:dark:bg-gray-900",
       "px-3 py-2 rounded-md",
       "text-sm",
       inset && "pl-8",
@@ -51,9 +51,9 @@ export const DropdownMenuSubContent = React.forwardRef<
     ref={ref}
     className={cn(
       "animate-in slide-in-from-left-1 z-50 min-w-[8rem] overflow-hidden",
-      "border border-slate-400 dark:border-black",
+      "border border-gray-400 dark:border-black",
       "rounded-lg p-2",
-      "bg-white dark:bg-slate-950",
+      "bg-white dark:bg-gray-950",
       className
     )}
     {...props}
@@ -73,9 +73,9 @@ export const DropdownMenuContent = React.forwardRef<
         "animate-in data-[side=right]:slide-in-from-left-2 data-[side=left]:slide-in-from-right-2",
         "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 z-50",
         "min-w-[8rem] overflow-hidden",
-        "border border-slate-400 dark:border-black",
+        "border border-gray-400 dark:border-black",
         "rounded-lg p-2",
-        "bg-white dark:bg-slate-950",
+        "bg-white dark:bg-gray-950",
         className
       )}
       {...props}
@@ -98,7 +98,7 @@ export const DropdownMenuItem = React.forwardRef<
       "px-3 py-2 rounded-md",
       "text-sm",
       inset && "pl-8",
-      "focus:bg-slate-200 focus:dark:bg-slate-900",
+      "focus:bg-gray-200 focus:dark:bg-gray-900",
       className
     )}
     {...props}
@@ -117,7 +117,7 @@ export const DropdownMenuCheckboxItem = React.forwardRef<
       "flex cursor-default select-none items-center",
       "px-3 py-2 rounded-md",
       "text-sm",
-      "focus:bg-slate-200 focus:dark:bg-slate-900",
+      "focus:bg-gray-200 focus:dark:bg-gray-900",
       className
     )}
     checked={checked}
@@ -144,14 +144,14 @@ export const DropdownMenuRadioItem = React.forwardRef<
       "flex cursor-default select-none items-center",
       "pr-3 pl-4 py-2 rounded-md",
       "text-sm",
-      "focus:bg-slate-200 focus:dark:bg-slate-900",
+      "focus:bg-gray-200 focus:dark:bg-gray-900",
       className
     )}
     {...props}
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator className="grid place-content-center">
-        <Icon icon="tabler:circle" width={6} className="bg-slate-950 rounded-full" />
+        <Icon icon="tabler:circle" width={6} className="bg-gray-950 rounded-full" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -167,7 +167,7 @@ export const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={cn("text-sm text-slate-950 px-2 py-1.5 font-semibold", inset && "pl-8", className)}
+    className={cn("text-sm text-gray-950 px-2 py-1.5 font-semibold", inset && "pl-8", className)}
     {...props}
   />
 ))
@@ -179,13 +179,13 @@ export const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("bg-slate-200 dark:bg-slate-900 mx-2 my-1 h-px", className)}
+    className={cn("bg-gray-200 dark:bg-gray-900 mx-2 my-1 h-px", className)}
     {...props}
   />
 ))
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
 export const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
-  <span className={cn("text-slate-950 ml-auto text-sm tracking-widest", className)} {...props} />
+  <span className={cn("text-gray-950 ml-auto text-sm tracking-widest", className)} {...props} />
 )
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut"

@@ -51,11 +51,11 @@ export const PasswordInput: FC<PasswordInputProps> = ({
   )
 }
 
-const input = cva("border-solid border outline-hidden focus:border-blue-600 bg-slate-200 rounded-md p-2 w-full ", {
+const input = cva("border-solid border outline-hidden focus:border-blue-600 bg-gray-200 rounded-md p-2 w-full ", {
   variants: {
     error: {
       true: "text-black border-red-600",
-      false: "text-black border-slate-500",
+      false: "text-black border-gray-500",
     },
   },
 })
@@ -64,8 +64,8 @@ const eye = cva("absolute top-2 right-2 flex hover: cursor-pointer", {
   variants: {
     color: {
       default: "text-solid",
-      slate: "text-slate-600",
-      gray: "text-slate-950",
+      slate: "text-gray-600",
+      gray: "text-gray-950",
     },
   },
 })

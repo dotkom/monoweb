@@ -40,13 +40,13 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
   return (
     <div className="flex flex-row items-center gap-2">
-      <Icon icon="tabler:users" className="text-base text-slate-800" />
+      <Icon icon="tabler:users" className="text-base text-gray-800" />
 
       <div
         className={cn(
           "flex flex-row gap-1 items-center",
           (justAttendanceClosed || isReserved || isUnreserved) && "px-1 py-0.5 rounded-md",
-          justAttendanceClosed && "bg-slate-100",
+          justAttendanceClosed && "bg-gray-100",
           isReserved && (inPast ? "bg-green-100" : "bg-green-300"),
           isUnreserved && (inPast ? "bg-yellow-100" : "bg-yellow-200")
         )}
@@ -54,9 +54,9 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
         <Text
           className={cn(
             "text-sm",
-            attendanceStatus === "NotOpened" && "text-slate-800",
+            attendanceStatus === "NotOpened" && "text-gray-800",
             isReserved ? "text-green-800" : isUnreserved ? "text-yellow-700" : null,
-            inPast ? (isReserved ? "text-green-500" : isUnreserved ? "text-yellow-500" : "text-slate-800") : null
+            inPast ? (isReserved ? "text-green-500" : isUnreserved ? "text-yellow-500" : "text-gray-800") : null
           )}
         >
           {numberOfAttendees}
@@ -64,7 +64,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
         </Text>
 
         {justAttendanceClosed ? (
-          <Icon icon="tabler:lock" className="text-slate-700 text-sm" />
+          <Icon icon="tabler:lock" className="text-gray-700 text-sm" />
         ) : isReserved ? (
           <Icon icon="tabler:check" className={cn("text-green-800 text-sm", inPast && "text-green-400")} />
         ) : isUnreserved ? (
@@ -74,7 +74,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
       {attendanceStatus === "NotOpened" && (
         <>
-          <div className="w-1 h-1 bg-slate-800 rounded-full" />
+          <div className="w-1 h-1 bg-gray-800 rounded-full" />
           <Text className="text-sm">
             Åpner {attendance ? formatDistanceToNow(attendance.registerStart, { locale: nb, addSuffix: true }) : ""}
           </Text>
