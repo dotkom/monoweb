@@ -1,4 +1,4 @@
-import "./instrumentation"
+import "../instrumentation"
 
 import { getLogger } from "@dotkomonline/logger"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
@@ -6,10 +6,11 @@ import fastifyCors from "@fastify/cors"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import fastify from "fastify"
+import { type AppRouter, appRouter } from "src/app-router"
 import { identifyCallerIAMIdentity } from "../aws"
 import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
-import { type AppRouter, appRouter, createContext } from "../trpc"
+import { createContext } from "../trpc"
 
 const logger = getLogger("rpc")
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
