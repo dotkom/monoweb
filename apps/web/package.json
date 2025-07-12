@@ -63,7 +63,7 @@
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/rpc": "workspace:*",
-    "@tailwindcss/postcss": "^4.1.11",
+    "@tailwindcss/postcss": "4.1.11",
     "@types/cors": "2.8.19",
     "@types/node": "22.15.29",
     "@types/react": "19.1.8",
