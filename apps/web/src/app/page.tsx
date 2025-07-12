@@ -109,7 +109,7 @@ const EventCard: FC<ComingEventProps> = ({
           height={150}
           src={imageUrl ? imageUrl : EventImagePlaceholder}
           alt={title}
-          className="rounded-lg border border-slate-200 object-cover aspect-[4/3]"
+          className="rounded-lg border border-gray-200 object-cover aspect-[4/3]"
         />
       </Tilt>
       <div className="flex flex-col gap-1">

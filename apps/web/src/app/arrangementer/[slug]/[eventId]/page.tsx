@@ -24,7 +24,7 @@ const mapToImageAndName = (item: Group | Company | InterestGroup, type: Organize
   <Link
     href={`${organizerTypeToLink[type]}/${item.id}`}
     key={item.name}
-    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-100 dark:hover:bg-slate-950"
+    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-950"
   >
     {item.image && (
       <Image
@@ -65,19 +65,19 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
           {organizers.length > 0 ? (
             <div className="flex flex-row gap-2">{organizers}</div>
           ) : (
-            <Text className="text-slate-900">Ingen arrangører</Text>
+            <Text className="text-gray-900">Ingen arrangører</Text>
           )}
           {eventDetail.event.description && <EventDescription description={eventDetail.event.description} />}
         </div>
 
         <div className="flex flex-1 flex-col gap-8 sm:gap-4">
-          <div className="sm:hidden h-1 rounded-full w-full bg-slate-200" />
+          <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
 
           {eventDetail.attendance !== null && (
             <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendees={attendees} user={user} />
           )}
 
-          <div className="sm:hidden h-1 rounded-full w-full bg-slate-200" />
+          <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
 
           <TimeLocationBox event={eventDetail.event} />
         </div>

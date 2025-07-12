@@ -30,10 +30,10 @@ const input = cva(
     variants: {
       error: {
         true: "text-red-950 border-red-600",
-        false: "text-black border-slate-500",
+        false: "text-black border-gray-500",
       },
       disabled: {
-        true: "cursor-not-allowed text-slate-900",
+        true: "cursor-not-allowed text-gray-900",
       },
     },
   }

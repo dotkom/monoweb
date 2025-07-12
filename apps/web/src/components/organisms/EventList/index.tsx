@@ -29,7 +29,7 @@ interface EventListProps {
 export const EventList: FC<EventListProps> = async (props: EventListProps) => {
   if (props.attendanceEvents.length === 0) {
     return (
-      <Text className="text-slate-800 text-sm">
+      <Text className="text-gray-800 text-sm">
         Det er ingen arrangementer å vise. Kom tilbake senere for oppdateringer.
       </Text>
     )
@@ -60,11 +60,11 @@ export const EventList: FC<EventListProps> = async (props: EventListProps) => {
       {pastEventItems.length > 0 && (
         <>
           <div className="w-full px-2 flex flex-row items-center gap-2 sm:-my-1">
-            <div className="grow h-[2px] bg-slate-200 rounded-full" />
-            <Text className="text-slate-400 text-xs uppercase tracking-widest font-medium select-none">
+            <div className="grow h-[2px] bg-gray-200 rounded-full" />
+            <Text className="text-gray-400 text-xs uppercase tracking-widest font-medium select-none">
               Tidligere arrangementer
             </Text>
-            <div className="grow h-[2px] bg-slate-200 rounded-full" />
+            <div className="grow h-[2px] bg-gray-200 rounded-full" />
           </div>
           {pastEventItems}
         </>

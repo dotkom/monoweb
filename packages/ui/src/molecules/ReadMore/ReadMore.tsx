@@ -100,7 +100,7 @@ export const ReadMore = ({
       <CollapsibleTrigger
         asChild
         onClick={handleToggle}
-        className={cn("cursor-pointer text-slate-900 hover:text-black", buttonClassName)}
+        className={cn("cursor-pointer text-gray-900 hover:text-black", buttonClassName)}
       >
         <Text>{open ? readLessText : readMoreText}</Text>
       </CollapsibleTrigger>
