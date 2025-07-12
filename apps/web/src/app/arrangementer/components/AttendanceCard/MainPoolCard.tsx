@@ -31,8 +31,8 @@ interface CardProps {
 }
 
 const Card: FC<CardProps> = ({ classNames, children, title }) => {
-  const baseOuterClassName = "flex flex-col w-full bg-slate-200 rounded-lg"
-  const baseHeaderClassName = "p-2 bg-slate-400 rounded-t-lg text-center text-sm font-bold"
+  const baseOuterClassName = "flex flex-col w-full bg-gray-200 dark:bg-stone-700 rounded-lg"
+  const baseHeaderClassName = "p-2 bg-gray-300 dark:bg-stone-600 rounded-t-lg text-center text-sm font-bold"
   const baseInnerClassName =
     "flex flex-col min-h-[10rem] gap-4 p-2 rounded-md items-center text-center justify-center w-full"
 
@@ -77,8 +77,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
         <Text>Du har ikke registert medlemskap</Text>
         <div className="flex gap-[0.5ch] text-sm">
           <Text>Gå til</Text>
-          <Link href="/profile" className="flex items-center text-blue-950 hover:text-blue-800">
-            <Text>profilsiden</Text> <Icon icon="tabler:arrow-up-right" />
+          <Link href="/profile" className="flex items-center text-blue-800 dark:text-blue-400 hover:underline">
+            <Text>profilsiden</Text> <Icon icon="tabler:arrow-up-right" className="text-base" />
           </Link>
           <Text>for å registrere deg</Text>
         </div>
@@ -101,8 +101,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
   return (
     <Card
       classNames={{
-        outer: isAttendingAndReserved ? "bg-green-200" : isAttendingAndNotReserved ? "bg-yellow-200" : "bg-slate-100",
-        title: isAttendingAndReserved ? "bg-green-300" : isAttendingAndNotReserved ? "bg-yellow-300" : "bg-slate-200",
+        outer: isAttendingAndReserved ? "bg-green-200" : isAttendingAndNotReserved ? "bg-yellow-200" : undefined,
+        title: isAttendingAndReserved ? "bg-green-300" : isAttendingAndNotReserved ? "bg-yellow-300" : undefined,
       }}
       title={pool.title}
     >

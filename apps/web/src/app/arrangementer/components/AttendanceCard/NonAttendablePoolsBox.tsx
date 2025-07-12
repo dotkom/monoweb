@@ -24,7 +24,7 @@ export const NonAttendablePoolsBox = ({ pools, hasAttendablePool }: NonAttendabl
         <Icon icon="tabler:chevron-right" className="transition-transform text-base -mt-[1px]" />
       </CollapsibleTrigger>
       <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-        <div className="flex flex-col gap-2 text-black text-sm mb-1">{pools.map(AttendanceBoxPoolSmall)}</div>
+        <div className="flex flex-col gap-2 text-sm mb-1">{pools.map(AttendanceBoxPoolSmall)}</div>
       </CollapsibleContent>
     </Collapsible>
   )
@@ -41,9 +41,9 @@ const DelayPill = ({ mergeDelayHours }: { mergeDelayHours: number | null }) => {
     <TooltipProvider>
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-slate-300 text-xs">
-            <Icon icon="tabler:clock" />
-            {mergeDelayHours ? <Text>{mergeDelayHours}t</Text> : <Text>TBD</Text>}
+          <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-gray-200 dark:bg-stone-700 text-gray-900 dark:text-stone-100">
+            <Icon icon="tabler:clock" className="text-sm" />
+            <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
           </div>
         </TooltipTrigger>
         <TooltipContent>{content}</TooltipContent>
@@ -54,7 +54,10 @@ const DelayPill = ({ mergeDelayHours }: { mergeDelayHours: number | null }) => {
 
 const AttendanceBoxPoolSmall = (pool: AttendancePool) => {
   return (
-    <div className="flex flex-row justify-between items-center p-2 bg-slate-100 rounded-lg" key={pool.id}>
+    <div
+      className="flex flex-row justify-between items-center p-2 bg-gray-50 border border-gray-50 dark:bg-transparent dark:border-stone-800 rounded-lg"
+      key={pool.id}
+    >
       <div className="flex flex-row gap-2 items-center">
         <Text>{pool.title}</Text>
 
@@ -67,7 +70,7 @@ const AttendanceBoxPoolSmall = (pool: AttendancePool) => {
           {pool.capacity > 0 && `/${pool.capacity}`}
         </Text>
 
-        {pool.numUnreservedAttendees > 0 && <Text className="text-slate-900">+{pool.numUnreservedAttendees} i kø</Text>}
+        {pool.numUnreservedAttendees > 0 && <Text className="text-gray-900">+{pool.numUnreservedAttendees} i kø</Text>}
       </div>
     </div>
   )
