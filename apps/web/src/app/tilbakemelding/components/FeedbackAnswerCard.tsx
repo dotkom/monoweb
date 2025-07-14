@@ -85,7 +85,7 @@ export const FeedbackAnswerCard = ({ question, answers, canDelete }: FeedbackQue
 
   return (
     <div className="flex flex-col gap-4 shadow-md p-6 rounded-lg border border-slate-4 w-full">
-      <Title element="h3" size="md" className="break-all">
+      <Title element="h3" size="md" className="break-words">
         {question.label}
       </Title>
       {questionAnswers.length > 0 ? chart : <Text>Ingen svar</Text>}
@@ -174,7 +174,7 @@ const TextTable = ({ answers, canDelete, onDelete }: TextTableProps) => {
           key={answer.id}
           className="flex flex-row justify-between items-start dark:bg-transparent p-3 rounded shadow-sm border border-slate-4 dark:border-slate-10"
         >
-          <Text size="sm" className="break-all">
+          <Text size="sm" className="break-words">
             {answer.value}
           </Text>
           {canDelete && (

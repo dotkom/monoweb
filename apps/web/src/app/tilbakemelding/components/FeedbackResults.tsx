@@ -110,7 +110,7 @@ const QuestionCardList = ({ questions, answers, title, canDelete }: QuestionCard
       <Title element="h2" size="lg" className="border-b border-slate-7 mb-4 pb-2">
         {title}
       </Title>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-wrap">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {questions.map((question) => (
           <FeedbackAnswerCard key={question.id} question={question} answers={answers} canDelete={canDelete} />
         ))}

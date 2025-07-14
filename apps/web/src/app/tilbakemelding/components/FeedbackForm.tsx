@@ -137,7 +137,7 @@ const QuestionCard = React.forwardRef<HTMLDivElement, Props>(({ question, index,
   return (
     <div ref={ref} className={clsx("shadow-md p-6 rounded-lg border-2", hasErrors ? "border-red-9" : "border-slate-4")}>
       <div className="mb-6">
-        <Label htmlFor={question.id} className="text-lg inline dark:text-white break-all">
+        <Label htmlFor={question.id} className="text-lg inline dark:text-white break-words">
           {question.label}
           {question.required && <span className="text-red-11 ml-1">*</span>}
         </Label>

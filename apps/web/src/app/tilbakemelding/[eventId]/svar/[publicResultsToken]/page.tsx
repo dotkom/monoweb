@@ -1,6 +1,6 @@
 import { FeedbackAnswersPage } from "@/app/tilbakemelding/components/FeedbackAnswersPage"
 
-const EventPublicFeedbackPage = async ({
+const PublicFeedbackAnswersPage = async ({
   params,
 }: { params: Promise<{ eventId: string; publicResultsToken: string }> }) => {
   const { eventId, publicResultsToken } = await params
@@ -8,4 +8,4 @@ const EventPublicFeedbackPage = async ({
   return <FeedbackAnswersPage eventId={eventId} publicResultsToken={publicResultsToken} />
 }
 
-export default EventPublicFeedbackPage
+export default PublicFeedbackAnswersPage

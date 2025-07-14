@@ -19,6 +19,7 @@ export const useCreateFeedbackAnswerMutation = ({ onSuccess }: useCreateFeedback
           })
         )
         await queryClient.invalidateQueries(trpc.event.feedback.getAllAnswers.queryOptions(data.feedbackFormId))
+        await queryClient.invalidateQueries({ queryKey: trpc.event.feedback.getPublicAnswers.queryKey() })
 
         onSuccess?.()
       },
