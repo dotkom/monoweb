@@ -23,16 +23,16 @@ export const EventHeader: FC<Props> = ({ event }) => {
           style={{ objectFit: "cover" }}
           className="w-full rounded-xl bg-gray-400 aspect-[16/9] md:aspect-[24/9] dark:hidden"
         />
+        <Image
+          src={imageUrlDark}
+          alt="Banner"
+          width="0"
+          height="0"
+          sizes="100%"
+          style={{ objectFit: "cover" }}
+          className="w-full rounded-xl bg-gray-400 aspect-[16/9] md:aspect-[24/9] hidden dark:block"
+        />
       </Tilt>
-      <Image
-        src={imageUrlDark}
-        alt="Banner"
-        width="0"
-        height="0"
-        sizes="100%"
-        style={{ objectFit: "cover" }}
-        className="w-full rounded-xl bg-gray-400 aspect-[16/9] md:aspect-[24/9] hidden dark:block"
-      />
 
       <Title element="h1" size="xl" className="text-4xl">
         {event.title}
@@ -42,7 +42,10 @@ export const EventHeader: FC<Props> = ({ event }) => {
 }
 
 export const SkeletonEventHeader = () => (
-  <section className="flex flex-col gap-8">
+  <section
+    className="flex flex-col gap-8
+  "
+  >
     <div className="h-[30rem] w-full rounded-2xl bg-gray-400 animate-pulse" />
     <h1 className="w-1/2 bg-gray-400 text-transparent rounded-2xl animate-pulse">Lorem ipsum</h1>
     <div className="h-[50vh]" />

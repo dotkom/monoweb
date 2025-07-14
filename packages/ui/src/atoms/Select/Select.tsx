@@ -98,7 +98,11 @@ SelectContent.displayName = SelectPrimitive.Content.displayName
 
 type SelectLabelProps = React.ComponentPropsWithRef<typeof SelectPrimitive.Label>
 export const SelectLabel = ({ className, ref, ...props }: SelectLabelProps) => (
-  <SelectPrimitive.Label ref={ref} className={cn("font-body py-1.5 pl-8 pr-2 text-sm font-medium", className)} {...props} />
+  <SelectPrimitive.Label
+    ref={ref}
+    className={cn("font-body py-1.5 pl-8 pr-2 text-sm font-medium", className)}
+    {...props}
+  />
 )
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 

@@ -69,13 +69,7 @@ export const AlertDialogTitle: FC<ComponentPropsWithRef<typeof AlertDialogPrimit
   ref,
   ...props
 }) => {
-  return (
-    <AlertDialogPrimitive.Title
-      ref={ref}
-      className={className}
-      {...props}
-    />
-  )
+  return <AlertDialogPrimitive.Title ref={ref} className={className} {...props} />
 }
 
 export const AlertDialogDescription: FC<ComponentPropsWithRef<typeof AlertDialogPrimitive.Description>> = ({

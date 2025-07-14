@@ -37,7 +37,7 @@ export const navigationMenuTriggerStyle = cn(
   "inline-flex items-center justify-center relative rounded-md text-sm font-semibold transition-colors focus:outline-hidden",
   "disabled:opacity-50 disabled:pointer-events-none",
   "h-10 py-2 px-4 group hover:text-brand data-[state=open]:text-brand",
-  "dark:text-stone-400 dark:hover:text-white dark:data-[state=open]:text-white",
+  "dark:text-stone-400 dark:hover:text-white dark:data-[state=open]:text-white"
 )
 
 export const NavigationMenuTrigger = React.forwardRef<

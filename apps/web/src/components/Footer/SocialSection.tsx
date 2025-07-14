@@ -2,7 +2,7 @@ import { FacebookIcon } from "@/components/icons/FacebookIcon"
 import { GitHubIcon } from "@/components/icons/GitHubIcon"
 import { InstagramIcon } from "@/components/icons/InstagramIcon"
 import { SlackIcon } from "@/components/icons/SlackIcon"
-import { cn, Text } from "@dotkomonline/ui"
+import { Text, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 
 interface SocialSectionProps {
@@ -11,7 +11,7 @@ interface SocialSectionProps {
 }
 
 export const SocialSection = ({ fill, className }: SocialSectionProps) => {
-    const links = [
+  const links = [
     {
       icon: <SlackIcon className="h-6" fill={fill} />, //
       url: "https://onlinentnu.slack.com/",
@@ -35,7 +35,12 @@ export const SocialSection = ({ fill, className }: SocialSectionProps) => {
   ]
 
   return (
-    <div className={cn("inline-grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-start md:flex md:flex-row md:gap-12", className)}>
+    <div
+      className={cn(
+        "inline-grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-start md:flex md:flex-row md:gap-12",
+        className
+      )}
+    >
       {links.map((link) => (
         <Link href={link.url} key={link.key} className="flex flex-row gap-2 items-center hover:underline">
           {link.icon}{" "}

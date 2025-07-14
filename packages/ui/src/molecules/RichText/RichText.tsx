@@ -1,10 +1,10 @@
 import DOMPurify from "isomorphic-dompurify"
+import { Text } from "../../atoms/Typography/Text"
 import { cn } from "../../utils"
-import { Text } from "../../atoms/Typography/Text";
 
 interface RichTextProps {
-  content: string;
-  className?: string;
+  content: string
+  className?: string
 }
 
 export function RichText({ content, className }: RichTextProps) {

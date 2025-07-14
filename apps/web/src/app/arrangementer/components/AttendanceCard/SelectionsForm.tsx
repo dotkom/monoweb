@@ -78,12 +78,16 @@ export function SelectionsForm({ selections, onSubmit, attendeeSelections, disab
                 <SelectTrigger
                   className={cn(
                     "w-full transition-all",
-                    hasError(index) && "border-red-600 focus:ring-red-600 focus:border-red-600 dark:border-red-400 dark:focus:ring-red-400 dark:focus:border-red-400"
+                    hasError(index) &&
+                      "border-red-600 focus:ring-red-600 focus:border-red-600 dark:border-red-400 dark:focus:ring-red-400 dark:focus:border-red-400"
                   )}
                 >
                   <SelectValue
                     placeholder={selections[index].name}
-                    className={cn("placeholder:text-gray-700 transition-all", hasError(index) && "text-red-600 dark:text-red-400")}
+                    className={cn(
+                      "placeholder:text-gray-700 transition-all",
+                      hasError(index) && "text-red-600 dark:text-red-400"
+                    )}
                   />
                 </SelectTrigger>
                 <SelectGroup>

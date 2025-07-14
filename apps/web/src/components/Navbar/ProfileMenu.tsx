@@ -82,7 +82,10 @@ export const ProfileMenu: FC = () => {
                 >
                   <RadioGroupItem value={item.theme} id={item.theme} className="hidden" />
                   <div
-                    className={cn("w-1 h-4 rounded-full bg-gray-500 dark:bg-stone-500 invisible", theme === item.theme && "visible")}
+                    className={cn(
+                      "w-1 h-4 rounded-full bg-gray-500 dark:bg-stone-500 invisible",
+                      theme === item.theme && "visible"
+                    )}
                   />
                   <Icon icon={item.icon} className="text-base dark:text-white" />
                   <Text className="dark:text-white">{item.label}</Text>

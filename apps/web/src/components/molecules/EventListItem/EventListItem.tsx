@@ -1,6 +1,5 @@
-import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
 import type { AttendanceEvent } from "@dotkomonline/types"
-import { Tilt, Title, cn } from "@dotkomonline/ui"
+import { Title, cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import Link from "next/link"
@@ -9,56 +8,42 @@ import { AttendanceStatus } from "./AttendanceStatus"
 import { DateAndTime } from "./DateAndTime"
 import { Thumbnail } from "./Thumbnail"
 
-const PLACEHOLDER_IMAGE_URL = "https://placehold.co/320x240/png?text=Arrangement"
-
-export interface EventCardProps {
+export interface EventListItemProps {
   attendanceEvent: AttendanceEvent
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
-  direction: "row" | "column"
 }
 
-export const EventCard: FC<EventCardProps> = ({ attendanceEvent, attendeeStatus, direction }: EventCardProps) => {
+export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attendeeStatus }: EventListItemProps) => {
   const { id, title, type, imageUrl: customImageUrl } = attendanceEvent
 
-  const imageUrl = customImageUrl || PLACEHOLDER_IMAGE_URL
   const url = `/arrangementer/${slugify(title)}/${id}`
 
-  const attendanceStatus = attendanceEvent.attendance && getAttendanceStatus(attendanceEvent.attendance)
-
-  const startInPast = isPast(attendanceEvent.start)
-  const isReserved = attendeeStatus === "RESERVED"
-  const isUnreserved = attendeeStatus === "UNRESERVED"
-  const inPast = attendanceStatus === "Closed" || startInPast
+  const past = isPast(attendanceEvent.end)
 
   return (
     <section>
       <Link
         href={url}
         className={cn(
-          "group flex w-full rounded-lg p-2",
-          "hover:bg-gray-100 transition-colors",
-          isReserved && !inPast && "bg-green-50 hover:bg-green-100",
-          isUnreserved && !inPast && "bg-yellow-50 hover:bg-yellow-100",
-          startInPast && "text-gray-950 hover:text-black",
-          direction === "row" ? "flex-row gap-3" : "flex-col gap-1"
+          "group flex flex-row gap-3 w-full rounded-xl p-2",
+          "hover:bg-gray-100 dark:hover:bg-stone-800 transition-colors",
+          past && "text-gray-600 dark:text-stone-600 hover:text-gray-800 dark:hover:text-stone-400"
         )}
       >
-        <Tilt>
-          <Thumbnail imageUrl={imageUrl} alt={title} startInPast={startInPast} eventType={type} />
-        </Tilt>
+        <Thumbnail imageUrl={customImageUrl} alt={title} startInPast={past} eventType={type} />
 
         <div className="flex flex-col gap-1">
           <Title element="h3" size="sm" className="font-normal">
             {title}
           </Title>
 
-          <div className={cn("flex", direction === "row" ? "flex-col gap-2" : "flex-row gap-4")}>
+          <div className="flex flex-col gap-2">
             <DateAndTime start={attendanceEvent.start} end={attendanceEvent.end} />
 
             <AttendanceStatus
               attendance={attendanceEvent.attendance}
               attendeeStatus={attendeeStatus}
-              startInPast={startInPast}
+              startInPast={past}
             />
           </div>
         </div>
