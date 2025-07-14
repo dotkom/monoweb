@@ -11,7 +11,7 @@ export const FeedbackAnswersPage = async ({ eventId, publicResultsToken }: Props
   const event = await server.event.get.query(eventId)
 
   const feedbackForm = publicResultsToken
-    ? await server.event.feedback.getFormByPublicResultsToken.query(publicResultsToken)
+    ? await server.event.feedback.getPublicForm.query(publicResultsToken)
     : await server.event.feedback.getFormByEventid.query(eventId)
 
   const attendees = event.attendanceId

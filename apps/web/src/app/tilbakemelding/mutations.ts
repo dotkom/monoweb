@@ -1,5 +1,5 @@
 import { useTRPC } from "@/utils/trpc/client"
-import { useQueryClient, useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 interface useCreateFeedbackAnswerMutationInput {
   onSuccess?: () => void
@@ -38,7 +38,7 @@ export const useDeleteFeedbackQuestionAnswerMutation = () => {
     trpc.event.feedback.deleteQuestionAnswer.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries({ queryKey: trpc.event.feedback.getAllAnswers.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.feedback.getAnswersByPublicResultsToken.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.feedback.getPublicAnswers.queryKey() })
       },
       onError: (error) => {
         alert("Noe gikk galt")

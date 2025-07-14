@@ -10,7 +10,7 @@ import type {
 } from "@dotkomonline/types"
 import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
 import { FeedbackFormNotFoundError } from "./feedback-form-errors"
-import type { FeedbackFormRepository } from "./feedback-form-repository"
+import type { FeedbackFormService } from "./feedback-form-service"
 
 export interface FeedbackFormAnswerService {
   create(
@@ -19,21 +19,18 @@ export interface FeedbackFormAnswerService {
     questionAnswers: FeedbackQuestionAnswerWrite[]
   ): Promise<FeedbackFormAnswer>
   getAllAnswers(handle: DBHandle, formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
-  getAnswersByPublicResultsToken(
-    handle: DBHandle,
-    publicResultsToken: FeedbackPublicResultsToken
-  ): Promise<FeedbackFormAnswer[]>
+  getPublicAnswers(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackFormAnswer[]>
   findAnswerByAttendee(
     handle: DBHandle,
     formId: FeedbackFormId,
     attendeeId: AttendeeId
   ): Promise<FeedbackFormAnswer | null>
-    deleteQuestionAnswer(handle: DBHandle, id: FeedbackQuestionAnswer["id"]): Promise<void>
+  deleteQuestionAnswer(handle: DBHandle, id: FeedbackQuestionAnswer["id"]): Promise<void>
 }
 
 export function getFeedbackFormAnswerService(
   formAnswerRepository: FeedbackFormAnswerRepository,
-  formRepository: FeedbackFormRepository
+  formService: FeedbackFormService
 ): FeedbackFormAnswerService {
   return {
     async create(handle, formAnswer, questionAnswers) {
@@ -46,19 +43,19 @@ export function getFeedbackFormAnswerService(
     async getAllAnswers(handle, formId) {
       return await formAnswerRepository.getAllAnswers(handle, formId)
     },
-    async getAnswersByPublicResultsToken(handle, publicResultsToken) {
+    async getPublicAnswers(handle, publicResultsToken) {
       const answers = await formAnswerRepository.getAnswersByPublicResultsToken(handle, publicResultsToken)
-      const form = await formRepository.getByPublicResultsToken(handle, publicResultsToken)
+      const form = await formService.getPublicForm(handle, publicResultsToken)
 
       if (!form) {
         throw new FeedbackFormNotFoundError()
       }
 
-      const questionIdsToInclude = form.questions.map((q) => q.id)
+      const publicQuestionIds = form.questions.map((q) => q.id)
 
       return answers.map((formAnswer) => ({
         ...formAnswer,
-        questionAnswers: formAnswer.questionAnswers.filter((qa) => questionIdsToInclude.includes(qa.questionId)),
+        questionAnswers: formAnswer.questionAnswers.filter((qa) => publicQuestionIds.includes(qa.questionId)),
       }))
     },
     async findAnswerByAttendee(handle, formId, attendeeId) {

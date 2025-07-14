@@ -22,7 +22,7 @@ export interface FeedbackFormService {
   getById(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackForm>
   findByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
   getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm>
-  getByPublicResultsToken(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackForm>
+  getPublicForm(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackForm>
   getPublicResultsToken(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackPublicResultsToken>
 }
 
@@ -56,18 +56,18 @@ export function getFeedbackFormService(formRepository: FeedbackFormRepository): 
 
       return feedbackForm
     },
-    async getByPublicResultsToken(handle, publicResultsToken) {
+    async getPublicForm(handle, publicResultsToken) {
       const feedbackForm = await formRepository.getByPublicResultsToken(handle, publicResultsToken)
       if (!feedbackForm) {
         throw new FeedbackFormNotFoundError()
       }
 
       const { questions, ...form } = feedbackForm
-      const filteredQuestions = questions.filter((question) => question.showInPublicResults)
+      const publicQuestions = questions.filter((question) => question.showInPublicResults)
 
       return {
         ...form,
-        questions: filteredQuestions,
+        questions: publicQuestions,
       }
     },
     async getPublicResultsToken(handle, id) {

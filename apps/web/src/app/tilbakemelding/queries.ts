@@ -8,7 +8,7 @@ export const useFeedbackAnswersGetQuery = (id: FeedbackFormId, publicResultsToke
   const initialAnswers: FeedbackFormAnswer[] = []
 
   const queryOptions = publicResultsToken
-    ? trpc.event.feedback.getAnswersByPublicResultsToken.queryOptions(publicResultsToken, {
+    ? trpc.event.feedback.getPublicAnswers.queryOptions(publicResultsToken, {
         initialData: initialAnswers,
       })
     : trpc.event.feedback.getAllAnswers.queryOptions(id, { initialData: initialAnswers })

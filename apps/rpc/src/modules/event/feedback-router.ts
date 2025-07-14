@@ -58,10 +58,10 @@ export const feedbackRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getByEventId(handle, input))
     ),
-  getFormByPublicResultsToken: publicProcedure
+  getPublicForm: publicProcedure
     .input(FeedbackPublicResultsTokenSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getByPublicResultsToken(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getPublicForm(handle, input))
     ),
   getPublicResultsToken: adminProcedure
     .input(FeedbackFormIdSchema)
@@ -97,12 +97,10 @@ export const feedbackRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getAllAnswers(handle, input))
     ),
-  getAnswersByPublicResultsToken: publicProcedure
+  getPublicAnswers: publicProcedure
     .input(FeedbackPublicResultsTokenSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
-        ctx.feedbackFormAnswerService.getAnswersByPublicResultsToken(handle, input)
-      )
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getPublicAnswers(handle, input))
     ),
   deleteQuestionAnswer: adminProcedure
     .input(FeedbackQuestionAnswerSchema.shape.id)
