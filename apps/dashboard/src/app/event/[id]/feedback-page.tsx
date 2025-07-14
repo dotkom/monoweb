@@ -50,6 +50,7 @@ export const FeedbackPage: FC = () => {
             onSubmit={onSubmit}
             defaultValues={defaultValues}
             feedbackFormId={feedbackFormQuery.data?.id}
+            eventId={event.id}
           />
         ) : (
           <Button onClick={createEmptyFeedbackForm}>Opprett</Button>

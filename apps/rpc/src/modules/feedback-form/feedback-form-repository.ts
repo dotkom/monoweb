@@ -4,6 +4,7 @@ import type {
   FeedbackForm,
   FeedbackFormId,
   FeedbackFormWrite,
+  FeedbackPublicResultsToken,
   FeedbackQuestionWrite,
 } from "@dotkomonline/types"
 
@@ -18,6 +19,11 @@ export interface FeedbackFormRepository {
   delete(handle: DBHandle, id: FeedbackFormId): Promise<void>
   getById(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackForm | null>
   getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
+  getByPublicResultsToken(
+    handle: DBHandle,
+    publicResultsToken: FeedbackPublicResultsToken
+  ): Promise<FeedbackForm | null>
+  getPublicResultsToken(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackPublicResultsToken | null>
 }
 
 export function getFeedbackFormRepository(): FeedbackFormRepository {
@@ -32,6 +38,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
               order: question.order,
               type: question.type,
               required: question.required,
+              showInPublicResults: question.showInPublicResults,
               options: {
                 create: question.options.map(
                   (option): Prisma.FeedbackQuestionOptionCreateWithoutQuestionInput => ({
@@ -66,6 +73,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
                 order: q.order,
                 type: q.type,
                 required: q.required,
+                showInPublicResults: q.showInPublicResults,
                 options: {
                   create: q.options.map((opt) => ({ name: opt.name })),
                 },
@@ -75,6 +83,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
                 order: q.order,
                 type: q.type,
                 required: q.required,
+                showInPublicResults: q.showInPublicResults,
                 options: {
                   deleteMany: {
                     questionId: q.id,
@@ -105,22 +114,50 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
       })
     },
     async getById(handle, id) {
-      return await handle.feedbackForm.findFirst({
+      return await handle.feedbackForm.findUnique({
         where: {
           id: id,
         },
         include: QUERY_WITH_QUESTIONS,
+        omit: {
+          publicResultsToken: true,
+        },
       })
     },
     async getByEventId(handle, eventId) {
-      const feedbackForm = handle.feedbackForm.findFirst({
+      const feedbackForm = await handle.feedbackForm.findFirst({
         where: {
           eventId: eventId,
+        },
+        include: QUERY_WITH_QUESTIONS,
+        omit: {
+          publicResultsToken: true,
+        },
+      })
+
+      return feedbackForm
+    },
+    async getByPublicResultsToken(handle, publicResultsToken) {
+      const feedbackForm = await handle.feedbackForm.findUnique({
+        where: {
+          publicResultsToken: publicResultsToken,
         },
         include: QUERY_WITH_QUESTIONS,
       })
 
       return feedbackForm
+    },
+    async getPublicResultsToken(handle, id) {
+      const result = await handle.feedbackForm.findUnique({
+        where: {
+          id: id,
+        },
+        select: {
+          publicResultsToken: true,
+        },
+      })
+
+      return result?.publicResultsToken ?? null
     },
   }
 }

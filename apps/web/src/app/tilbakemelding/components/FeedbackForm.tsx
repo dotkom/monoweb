@@ -19,8 +19,7 @@ import {
 import clsx from "clsx"
 import React, { type ReactNode, useRef, useState } from "react"
 import { type Control, Controller, type FieldErrors, useForm } from "react-hook-form"
-import { useCreateFeedbackAnswerMutation } from "../mutations"
-
+import { useCreateFeedbackAnswerMutation } from "../../arrangementer/components/mutations"
 interface FormValues {
   answers: FeedbackQuestionAnswer[]
 }
@@ -137,7 +136,7 @@ const QuestionCard = React.forwardRef<HTMLDivElement, Props>(({ question, index,
   return (
     <div ref={ref} className={clsx("shadow-md p-6 rounded-lg border-2", hasErrors ? "border-red-9" : "border-slate-4")}>
       <div className="mb-6">
-        <Label htmlFor={question.id} className="text-lg inline dark:text-white">
+        <Label htmlFor={question.id} className="text-lg inline dark:text-white break-all">
           {question.label}
           {question.required && <span className="text-red-11 ml-1">*</span>}
         </Label>

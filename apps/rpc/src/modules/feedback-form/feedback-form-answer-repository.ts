@@ -4,6 +4,7 @@ import {
   type FeedbackFormAnswer,
   type FeedbackFormAnswerWrite,
   type FeedbackFormId,
+  type FeedbackPublicResultsToken,
   FeedbackQuestionAnswerSchema,
   type FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
@@ -16,6 +17,10 @@ export interface FeedbackFormAnswerRepository {
     questionAnswers: FeedbackQuestionAnswerWrite[]
   ): Promise<FeedbackFormAnswer>
   getAllAnswers(handle: DBHandle, formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
+  getAnswersByPublicResultsToken(
+    handle: DBHandle,
+    publicResultsToken: FeedbackPublicResultsToken
+  ): Promise<FeedbackFormAnswer[]>
   findAnswerByAttendee(
     handle: DBHandle,
     formId: FeedbackFormId,
@@ -58,6 +63,18 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
       const formAnswers = await handle.feedbackFormAnswer.findMany({
         where: {
           feedbackFormId: formId,
+        },
+        include: QUERY_WITH_ANSWERS,
+      })
+
+      return formAnswers.map((answer) => mapFormAnswer(answer, answer.answers))
+    },
+    async getAnswersByPublicResultsToken(handle, publicResultsToken) {
+      const formAnswers = await handle.feedbackFormAnswer.findMany({
+        where: {
+          feedbackForm: {
+            publicResultsToken: publicResultsToken,
+          },
         },
         include: QUERY_WITH_ANSWERS,
       })

@@ -60,6 +60,11 @@ export const useEventFeedbackFormGetQuery = (eventId: EventId) => {
   return useQuery(trpc.event.feedback.findFormByEventId.queryOptions(eventId))
 }
 
+export const useEventFeedbackPublicResultsTokenGetQuery = (formId: FeedbackFormId) => {
+  const trpc = useTRPC()
+  return useQuery(trpc.event.feedback.getPublicResultsToken.queryOptions(formId))
+}
+
 export const useFeedbackAnswersGetQuery = (formId: FeedbackFormId) => {
   const trpc = useTRPC()
   return useQuery(trpc.event.feedback.getAllAnswers.queryOptions(formId))

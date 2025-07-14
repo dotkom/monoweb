@@ -1,4 +1,4 @@
-import { EventFeedbackForm } from "@/app/arrangementer/components/Feedback/FeedbackForm"
+import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"

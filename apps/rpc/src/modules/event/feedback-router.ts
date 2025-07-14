@@ -4,11 +4,12 @@ import {
   FeedbackFormAnswerWriteSchema,
   FeedbackFormIdSchema,
   FeedbackFormWriteSchema,
+  FeedbackPublicResultsTokenSchema,
   FeedbackQuestionAnswerWriteSchema,
   FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, protectedProcedure, t } from "../../trpc"
+import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const feedbackRouter = t.router({
   createForm: adminProcedure
@@ -51,6 +52,21 @@ export const feedbackRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.findByEventId(handle, input))
     ),
+  getFormByEventid: protectedProcedure
+    .input(EventSchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getByEventId(handle, input))
+    ),
+  getFormByPublicResultsToken: publicProcedure
+    .input(FeedbackPublicResultsTokenSchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getByPublicResultsToken(handle, input))
+    ),
+  getPublicResultsToken: adminProcedure
+    .input(FeedbackFormIdSchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getPublicResultsToken(handle, input))
+    ),
   createAnswer: protectedProcedure
     .input(
       z.object({
@@ -79,5 +95,12 @@ export const feedbackRouter = t.router({
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getAllAnswers(handle, input))
+    ),
+  getAnswersByPublicResultsToken: publicProcedure
+    .input(FeedbackPublicResultsTokenSchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.feedbackFormAnswerService.getAnswersByPublicResultsToken(handle, input)
+      )
     ),
 })
