@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react"
 import {
   ActionIcon,
+  Anchor,
   Button,
   Card,
   Checkbox,
@@ -26,7 +27,6 @@ import {
   Tooltip,
 } from "@mantine/core"
 
-import { Label } from "@dotkomonline/ui"
 
 import { env } from "@/lib/env"
 import React, { type FC } from "react"
@@ -125,17 +125,22 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
 
   return (
     <Stack>
-      <Title order={4}>Svar</Title>
-      <Stack gap={2}>
-        <Label>Privat link</Label>
-        <LinkCopyButton url={resultsPageUrl.toString()} />
+      <Stack gap={4}>
+        <Title order={4}>Svar</Title>
+        <CopyLinkRow
+          url={resultsPageUrl.toString()}
+          label="Privat lenke"
+          info="Alle svar. Kun tilgjengelig for administratorer"
+        />
+        {publicResultsTokenQuery?.data && (
+          <CopyLinkRow
+            url={publicResultsPageUrl.toString()}
+            label="Bedriftslenke"
+            info="Viser kun svar markert med 'Vis til bedrift'. Tilgjengelig for alle med lenken"
+          />
+        )}
       </Stack>
-      {publicResultsTokenQuery?.data && (
-        <Stack gap={2}>
-          <Label>Offentlig link</Label>
-          <LinkCopyButton url={publicResultsPageUrl.toString()} />
-        </Stack>
-      )}
+
       <Divider />
       <Title order={4}>Rediger</Title>
       <FormProvider {...form}>
@@ -205,9 +210,9 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
   )
 }
 
-const LinkCopyButton = ({ url }: { url: string }) => (
-  <Group>
-    <TextInput value={url} readOnly />
+const CopyLinkRow = ({ url, label, info }: { url: string; label: string; info: string }) => (
+  <Group gap={8}>
+    <Anchor href={url}>{label}</Anchor>
     <CopyButton value={url}>
       {({ copied, copy }) => (
         <Tooltip label={copied ? "Kopiert" : "Kopier"}>
@@ -217,6 +222,11 @@ const LinkCopyButton = ({ url }: { url: string }) => (
         </Tooltip>
       )}
     </CopyButton>
+    <Tooltip label={info}>
+      <ActionIcon variant="subtle" color="gray" size="sm">
+        <Icon icon="tabler:info-circle" />
+      </ActionIcon>
+    </Tooltip>
   </Group>
 )
 
