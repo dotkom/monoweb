@@ -27,11 +27,7 @@ interface FeedbackQuestionAnswerCardProps {
   canDelete: boolean
 }
 
-export const FeedbackAnswerCard = ({
-  question,
-  answers,
-  canDelete,
-}: FeedbackQuestionAnswerCardProps) => {
+export const FeedbackAnswerCard = ({ question, answers, canDelete }: FeedbackQuestionAnswerCardProps) => {
   const questionAnswers = answers.flatMap((a) => a.questionAnswers).filter((qa) => qa.questionId === question.id)
   const selectedOptions = questionAnswers.flatMap((a) => a.selectedOptions)
 

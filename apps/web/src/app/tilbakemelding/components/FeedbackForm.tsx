@@ -19,7 +19,8 @@ import {
 import clsx from "clsx"
 import React, { type ReactNode, useRef, useState } from "react"
 import { type Control, Controller, type FieldErrors, useForm } from "react-hook-form"
-import { useCreateFeedbackAnswerMutation } from "../../arrangementer/components/mutations"
+import { useCreateFeedbackAnswerMutation } from "../mutations"
+
 interface FormValues {
   answers: FeedbackQuestionAnswer[]
 }
