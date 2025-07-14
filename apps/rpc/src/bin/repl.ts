@@ -3,7 +3,7 @@ import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 
 const dependencies = createThirdPartyClients(configuration)
-const serviceLayer = await createServiceLayer(dependencies, configuration.AWS_S3_BUCKET)
+const serviceLayer = await createServiceLayer(dependencies, configuration)
 
 // Start the REPL
 const replServer = repl.start({
