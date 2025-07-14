@@ -19,7 +19,7 @@ const adminPrincipals = configuration.ADMIN_USERS.split(",")
 const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
 
 const dependencies = createThirdPartyClients(configuration)
-const serviceLayer = await createServiceLayer(dependencies, configuration.AWS_S3_BUCKET)
+const serviceLayer = await createServiceLayer(dependencies, configuration)
 
 // This spins of all potentially remaining jobs in the queue that this system was not aware of. For this reason, it does
 // not need to be awaited. While the task execution itself is not blocked on, await here adds unnecessary latency to the

@@ -21,7 +21,6 @@ import { getEventHostingGroupRepository } from "./event/event-hosting-group-repo
 import { getEventHostingGroupService } from "./event/event-hosting-group-service"
 import { getEventRepository } from "./event/event-repository"
 import { getEventService } from "./event/event-service"
-import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-answer-repository"
 import { getFeedbackFormAnswerService } from "./feedback-form/feedback-form-answer-service"
 import { getFeedbackFormRepository } from "./feedback-form/feedback-form-repository"
@@ -66,6 +65,7 @@ export type StripeAccount = {
   webhookSecret: string
 }
 
+/** Build API clients for third-party services like S3, Auth0, and Stripe. */
 export function createThirdPartyClients(configuration: Configuration) {
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
   const auth0Client = new ManagementClient({
@@ -93,14 +93,23 @@ export function createThirdPartyClients(configuration: Configuration) {
   return { s3Client, auth0Client, stripeAccounts, prisma }
 }
 
+/**
+ * Build the services for the application.
+ *
+ * In computer science terms this is building a dependency graph. The name comes from the fact that we are instantiating
+ * several components (service, repository, etc.) that depend on each other, but form a directed acyclic graph (DAG).
+ *
+ * For ease of mocking and testing, the function does not construct third-party clients like the AWS S3 client or the
+ * Auth0 Management client. Instead it takes a `clients` parameter that holds the clients. This allows us to mock them
+ * in tests without having to mock the entire service layer.
+ */
 export async function createServiceLayer(
-  dependencies: ReturnType<typeof createThirdPartyClients>,
-  s3BucketName: string
+  clients: ReturnType<typeof createThirdPartyClients>,
+  configuration: Configuration
 ) {
   const taskRepository = getTaskRepository()
   const taskService = getTaskService(taskRepository)
   const taskSchedulingService = getLocalTaskSchedulingService(taskRepository, taskService)
-  const s3Repository: S3Repository = new S3RepositoryImpl(dependencies.s3Client, s3BucketName)
   const eventRepository = getEventRepository()
   const groupRepository = getGroupRepository()
   const jobListingRepository = getJobListingRepository()
@@ -108,7 +117,7 @@ export async function createServiceLayer(
   const companyEventRepository = getCompanyEventRepository()
   const eventCompanyRepository = getEventCompanyRepository()
   const eventHostingGroupRepository = getEventHostingGroupRepository()
-  const userRepository = getUserRepository(dependencies.auth0Client)
+  const userRepository = getUserRepository(clients.auth0Client)
   const attendanceRepository = getAttendanceRepository()
   const attendeeRepository = getAttendeeRepository()
   const productRepository = getProductRepository()
@@ -168,7 +177,7 @@ export async function createServiceLayer(
     productRepository,
     eventRepository,
     refundRequestRepository,
-    dependencies.stripeAccounts
+    clients.stripeAccounts
   )
   const productPaymentProviderService = getProductPaymentProviderService(productPaymentProviderRepository)
   const refundRequestService = getRefundRequestService(
@@ -179,11 +188,11 @@ export async function createServiceLayer(
   )
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService)
-  const offlineService = getOfflineService(offlineRepository, s3Repository)
+  const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
-  const taskDiscoveryService = getLocalTaskDiscoveryService(dependencies.prisma, taskService)
+  const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
   const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
 
   return {
@@ -212,9 +221,9 @@ export async function createServiceLayer(
     taskExecutor,
     feedbackFormService,
     feedbackFormAnswerService,
-    executeTransaction: dependencies.prisma.$transaction.bind(dependencies.prisma),
-    startTaskExecutor: () => taskExecutor.start(dependencies.prisma),
+    executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
+    startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only
-    prisma: dependencies.prisma,
+    prisma: clients.prisma,
   }
 }
