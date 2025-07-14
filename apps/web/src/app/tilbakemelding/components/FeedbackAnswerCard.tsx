@@ -15,25 +15,39 @@ import {
   YAxis,
 } from "recharts"
 
-import { Text, Title } from "@dotkomonline/ui"
+import { Button, Icon, Text, Title } from "@dotkomonline/ui"
 import type { Payload } from "recharts/types/component/DefaultTooltipContent"
+import { useDeleteFeedbackQuestionAnswerMutation } from "../mutations"
 
 const CHART_COLORS: string[] = ["#2b7fff", "#00bc7d", "#fd9a00", "#fb2c36", "#8e51ff", "#f6339a"] as const
 
 interface FeedbackQuestionAnswerCardProps {
   question: FeedbackQuestion
   answers: FeedbackFormAnswer[]
+  canDelete: boolean
 }
 
-export const FeedbackAnswerCard = ({ question, answers }: FeedbackQuestionAnswerCardProps) => {
+export const FeedbackAnswerCard = ({
+  question,
+  answers,
+  canDelete,
+}: FeedbackQuestionAnswerCardProps) => {
   const questionAnswers = answers.flatMap((a) => a.questionAnswers).filter((qa) => qa.questionId === question.id)
   const selectedOptions = questionAnswers.flatMap((a) => a.selectedOptions)
+
+  const deleteQuestionAnswerMutation = useDeleteFeedbackQuestionAnswerMutation()
+
+  function deleteQuestionAnswer(id: string) {
+    if (canDelete && confirm("Er du sikker på at du vil slette tilbakemeldingen?")) {
+      deleteQuestionAnswerMutation.mutate(id)
+    }
+  }
 
   const chart = (() => {
     switch (question.type) {
       case "TEXT":
       case "LONGTEXT":
-        return <TextTable answers={questionAnswers} />
+        return <TextTable answers={questionAnswers} canDelete={canDelete} onDelete={deleteQuestionAnswer} />
       case "CHECKBOX": {
         const checkedCount = questionAnswers.filter((qa) => qa.value === true).length
 
@@ -150,9 +164,11 @@ const QuestionBarChart = ({ data }: ChartProps) => {
 
 interface TextTableProps {
   answers: FeedbackQuestionAnswer[]
+  canDelete?: boolean
+  onDelete(id: string): void
 }
 
-const TextTable = ({ answers }: TextTableProps) => {
+const TextTable = ({ answers, canDelete, onDelete }: TextTableProps) => {
   const filteredAnswers = answers.filter((a) => !!a.value)
 
   return (
@@ -160,11 +176,16 @@ const TextTable = ({ answers }: TextTableProps) => {
       {filteredAnswers.map((answer) => (
         <div
           key={answer.id}
-          className="dark:bg-transparent p-2 rounded shadow-sm border border-slate-4 dark:border-slate-10"
+          className="flex flex-row justify-between items-start dark:bg-transparent p-3 rounded shadow-sm border border-slate-4 dark:border-slate-10"
         >
           <Text size="sm" className="break-all">
             {answer.value}
           </Text>
+          {canDelete && (
+            <Button variant="text" color="red" onClick={() => onDelete(answer.id)}>
+              <Icon icon="tabler:trash" className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       ))}
     </div>

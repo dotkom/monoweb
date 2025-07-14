@@ -5,6 +5,7 @@ import {
   FeedbackFormIdSchema,
   FeedbackFormWriteSchema,
   FeedbackPublicResultsTokenSchema,
+  FeedbackQuestionAnswerSchema,
   FeedbackQuestionAnswerWriteSchema,
   FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
@@ -102,5 +103,10 @@ export const feedbackRouter = t.router({
       ctx.executeTransaction(async (handle) =>
         ctx.feedbackFormAnswerService.getAnswersByPublicResultsToken(handle, input)
       )
+    ),
+  deleteQuestionAnswer: adminProcedure
+    .input(FeedbackQuestionAnswerSchema.shape.id)
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input))
     ),
 })

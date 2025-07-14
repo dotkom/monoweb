@@ -7,16 +7,12 @@ interface Props {
   publicResultsToken?: FeedbackPublicResultsToken
 }
 
-export const FeedbackPage = async ({ eventId, publicResultsToken }: Props) => {
+export const FeedbackAnswersPage = async ({ eventId, publicResultsToken }: Props) => {
   const event = await server.event.get.query(eventId)
 
   const feedbackForm = publicResultsToken
     ? await server.event.feedback.getFormByPublicResultsToken.query(publicResultsToken)
     : await server.event.feedback.getFormByEventid.query(eventId)
-
-  const answers = publicResultsToken
-    ? await server.event.feedback.getAnswersByPublicResultsToken.query(publicResultsToken)
-    : await server.event.feedback.getAllAnswers.query(feedbackForm.id)
 
   const attendees = event.attendanceId
     ? await server.attendance.getAttendees.query({ attendanceId: event.attendanceId })
@@ -26,11 +22,12 @@ export const FeedbackPage = async ({ eventId, publicResultsToken }: Props) => {
 
   return (
     <FeedbackResults
-      answers={answers}
       questions={feedbackForm.questions}
       attendees={attendees}
       event={event}
       pools={attendance?.pools ?? []}
+      publicResultsToken={publicResultsToken}
+      feedbackFormId={feedbackForm.id}
     />
   )
 }

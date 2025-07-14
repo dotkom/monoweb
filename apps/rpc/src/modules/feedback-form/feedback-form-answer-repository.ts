@@ -26,6 +26,7 @@ export interface FeedbackFormAnswerRepository {
     formId: FeedbackFormId,
     attendeeId: AttendeeId
   ): Promise<FeedbackFormAnswer | null>
+  deleteQuestionAnswer(handle: DBHandle, id: FeedbackQuestionAnswer["id"]): Promise<void>
 }
 
 export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository {
@@ -93,6 +94,13 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
       if (!answer) return null
 
       return mapFormAnswer(answer, answer.answers)
+    },
+    async deleteQuestionAnswer(handle, id) {
+      await handle.feedbackQuestionAnswer.delete({
+        where: {
+          id: id,
+        },
+      })
     },
   }
 }

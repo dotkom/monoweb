@@ -1,10 +1,19 @@
 "use client"
 
-import type { AttendancePool, Attendee, Event, FeedbackFormAnswer, FeedbackQuestion } from "@dotkomonline/types"
+import type {
+  AttendancePool,
+  Attendee,
+  Event,
+  FeedbackFormAnswer,
+  FeedbackFormId,
+  FeedbackPublicResultsToken,
+  FeedbackQuestion,
+} from "@dotkomonline/types"
 
 import { Icon, Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import { isSameDay } from "date-fns"
+import { useFeedbackAnswersGetQuery } from "../queries"
 import { type ChartValue, FeedbackAnswerCard, QuestionPieChart } from "./FeedbackAnswerCard"
 
 const formatPoolYears = (yearCriterias: number[][]): string => {
@@ -14,14 +23,17 @@ const formatPoolYears = (yearCriterias: number[][]): string => {
 }
 
 interface Props {
-  answers: FeedbackFormAnswer[]
   questions: FeedbackQuestion[]
   attendees: Attendee[]
   event: Event
   pools: AttendancePool[]
+  publicResultsToken?: FeedbackPublicResultsToken
+  feedbackFormId: FeedbackFormId
 }
 
-export const FeedbackResults = ({ answers, questions, attendees, event, pools }: Props) => {
+export const FeedbackResults = ({ questions, attendees, event, pools, publicResultsToken, feedbackFormId }: Props) => {
+  const answers = useFeedbackAnswersGetQuery(feedbackFormId, publicResultsToken)
+
   questions.sort((a, b) => a.order - b.order)
 
   const formattedYears = formatPoolYears(pools.map((pool) => pool.yearCriteria))
@@ -57,24 +69,42 @@ export const FeedbackResults = ({ answers, questions, attendees, event, pools }:
       </div>
       <div className="flex flex-col gap-16">
         {ratingQuestions.length > 0 && (
-          <QuestionCardList questions={ratingQuestions} answers={answers} title="Vurderinger" />
+          <QuestionCardList
+            questions={ratingQuestions}
+            canDelete={!publicResultsToken}
+            answers={answers}
+            title="Vurderinger"
+          />
         )}
         {multipleChoiceQuestions.length > 0 && (
-          <QuestionCardList questions={multipleChoiceQuestions} answers={answers} title="Flervalgspørsmål" />
+          <QuestionCardList
+            questions={multipleChoiceQuestions}
+            canDelete={!publicResultsToken}
+            answers={answers}
+            title="Flervalgspørsmål"
+          />
         )}
         {textQuestions.length > 0 && (
-          <QuestionCardList questions={textQuestions} answers={answers} title="Tilbakemeldinger" />
+          <QuestionCardList
+            questions={textQuestions}
+            canDelete={!publicResultsToken}
+            answers={answers}
+            title="Tilbakemeldinger"
+          />
         )}
       </div>
     </div>
   )
 }
 
-const QuestionCardList = ({
-  questions,
-  answers,
-  title,
-}: { questions: FeedbackQuestion[]; answers: FeedbackFormAnswer[]; title: string }) => {
+interface QuestionCardListProps {
+  questions: FeedbackQuestion[]
+  answers: FeedbackFormAnswer[]
+  title: string
+  canDelete: boolean
+}
+
+const QuestionCardList = ({ questions, answers, title, canDelete }: QuestionCardListProps) => {
   return (
     <div>
       <Title element="h2" size="lg" className="border-b border-slate-7 mb-4 pb-2">
@@ -82,7 +112,7 @@ const QuestionCardList = ({
       </Title>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-wrap">
         {questions.map((question) => (
-          <FeedbackAnswerCard key={question.id} question={question} answers={answers} />
+          <FeedbackAnswerCard key={question.id} question={question} answers={answers} canDelete={canDelete} />
         ))}
       </div>
     </div>

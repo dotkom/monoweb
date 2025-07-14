@@ -5,6 +5,7 @@ import type {
   FeedbackFormAnswerWrite,
   FeedbackFormId,
   FeedbackPublicResultsToken,
+  FeedbackQuestionAnswer,
   FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
 import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
@@ -27,6 +28,7 @@ export interface FeedbackFormAnswerService {
     formId: FeedbackFormId,
     attendeeId: AttendeeId
   ): Promise<FeedbackFormAnswer | null>
+    deleteQuestionAnswer(handle: DBHandle, id: FeedbackQuestionAnswer["id"]): Promise<void>
 }
 
 export function getFeedbackFormAnswerService(
@@ -61,6 +63,9 @@ export function getFeedbackFormAnswerService(
     },
     async findAnswerByAttendee(handle, formId, attendeeId) {
       return await formAnswerRepository.findAnswerByAttendee(handle, formId, attendeeId)
+    },
+    async deleteQuestionAnswer(handle, id) {
+      await formAnswerRepository.deleteQuestionAnswer(handle, id)
     },
   }
 }
