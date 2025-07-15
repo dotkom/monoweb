@@ -84,7 +84,7 @@ export const FeedbackAnswerCard = ({ question, answers, canDelete }: FeedbackQue
   })()
 
   return (
-    <div className="flex flex-col gap-4 shadow-md p-6 rounded-lg border border-slate-4 w-full">
+    <div className="flex flex-col gap-4 shadow-md p-6 rounded-lg border border-gray-300 w-full">
       <Title element="h3" size="md" className="break-words">
         {question.label}
       </Title>
@@ -172,7 +172,7 @@ const TextTable = ({ answers, canDelete, onDelete }: TextTableProps) => {
       {filteredAnswers.map((answer) => (
         <div
           key={answer.id}
-          className="flex flex-row justify-between items-start dark:bg-transparent p-3 rounded shadow-sm border border-slate-4 dark:border-slate-10"
+          className="flex flex-row justify-between items-start dark:bg-transparent p-3 rounded shadow-sm border border-gray-300 dark:border-stone-400"
         >
           <Text size="sm" className="break-words">
             {answer.value}
@@ -198,7 +198,7 @@ const ChartTooltip = ({ payload, active }: ChartTooltipProps) => {
   const { name, value } = payload[0].payload
 
   return (
-    <div className="bg-white dark:bg-slate-12 py-1 px-2 rounded shadow flex flex-row gap-4">
+    <div className="bg-white dark:bg-stone-600 py-1 px-2 rounded shadow flex flex-row gap-4">
       <Text size="sm">{name}</Text>
       <Text className="font-semibold" size="sm">
         {value}

@@ -34,7 +34,7 @@ export const FeedbackResults = ({ questions, attendees, event, pools, publicResu
   const answers = useFeedbackAnswersGetQuery(feedbackFormId, publicResultsToken)
 
   const sortedQuestions = questions.toSorted((a, b) => a.order - b.order)
-  
+
   const formattedYears = formatPoolYears(pools.map((pool) => pool.yearCriteria))
   const eventDate = isSameDay(event.start, event.end)
     ? formatDate(event.start)
@@ -48,18 +48,18 @@ export const FeedbackResults = ({ questions, attendees, event, pools, publicResu
 
   return (
     <div>
-      <div className="flex flex-col gap-2 border-b border-slate-7">
+      <div className="flex flex-col gap-2 border-b border-gray-600 dark:border-stone-300">
         <Title element="h1" className="text-3xl">
           Tilbakemelding for {event.title}
         </Title>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">
-            <Icon icon="tabler:calendar-event" className="text-slate-9" />
-            <Text className="text-slate-9">{eventDate}</Text>
+            <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-300" />
+            <Text className="text-gray-800 dark:text-stone-300">{eventDate}</Text>
           </div>
           <div className="flex items-center gap-1">
-            <Icon icon="tabler:school" className="text-slate-9" />
-            <Text className="text-slate-9">{formattedYears}</Text>
+            <Icon icon="tabler:school" className="text-gray-800 dark:text-stone-300" />
+            <Text className="text-gray-800 dark:text-stone-300">{formattedYears}</Text>
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@ interface QuestionCardListProps {
 const QuestionCardList = ({ questions, answers, title, canDelete }: QuestionCardListProps) => {
   return (
     <div>
-      <Title element="h2" size="lg" className="border-b border-slate-7 mb-4 pb-2">
+      <Title element="h2" size="lg" className="border-b border-gray-600 mb-4 pb-2">
         {title}
       </Title>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -132,7 +132,7 @@ const Statistics = ({ answers, attendees }: { answers: FeedbackFormAnswer[]; att
     <div className="flex flex-col md:flex-row gap-12">
       <div className="min-w-96 flex flex-col gap-4">
         <Title>Statistikk</Title>
-        <div className="rounded overflow-hidden border border-slate-8 divide-y divide-slate-8">
+        <div className="rounded overflow-hidden border border-gray-700 divide-y divide-gray-700">
           <Table>
             <TableBody>
               <StatisticsTableRow name="Påmeldte" value={attendees.length} />
@@ -152,7 +152,7 @@ const Statistics = ({ answers, attendees }: { answers: FeedbackFormAnswer[]; att
 }
 
 const StatisticsTableRow = ({ name, value }: { name: string; value: number }) => (
-  <TableRow className="border-slate-8">
+  <TableRow className="border-gray-700">
     <TableCell className="px-4 py-3">
       <Text>{name}</Text>
     </TableCell>
