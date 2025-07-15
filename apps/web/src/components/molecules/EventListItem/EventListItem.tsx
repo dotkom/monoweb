@@ -55,26 +55,26 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
 export const EventListItemSkeleton: FC = () => {
   return (
     <div className="flex flex-row gap-2 w-full rounded-lg p-2">
-      <div className="aspect-[4/3] h-[6rem] bg-gray-300 rounded-lg animate-pulse" />
+      <div className="aspect-[4/3] h-[6rem] bg-gray-300 dark:bg-stone-700 rounded-lg animate-pulse" />
 
       <div className="flex flex-col gap-4">
         <div
-          className="w-32 h-6 bg-gray-300 rounded-sm animate-pulse"
+          className="w-32 h-6 bg-gray-300 dark:bg-stone-700 rounded-sm animate-pulse"
           style={{ width: `${Math.random() * 10 + 5}rem` }}
         />
 
         <div className="flex gap-2">
-          <div className="w-4 h-4 bg-gray-300 rounded-sm animate-pulse" />
+          <div className="w-4 h-4 bg-gray-300 dark:bg-stone-700 rounded-sm animate-pulse" />
           <div
-            className="w-24 h-4 bg-gray-300 rounded-sm animate-pulse"
+            className="w-24 h-4 bg-gray-300 dark:bg-stone-700 rounded-sm animate-pulse"
             style={{ width: `${Math.random() * 2 + 4}rem` }}
           />
         </div>
 
         <div className="flex gap-2">
-          <div className="w-4 h-4 bg-gray-300 rounded-sm animate-pulse" />
+          <div className="w-4 h-4 bg-gray-300 dark:bg-stone-700 rounded-sm animate-pulse" />
           <div
-            className="w-16 h-4 bg-gray-300 rounded-sm animate-pulse"
+            className="w-16 h-4 bg-gray-300 dark:bg-stone-700 rounded-sm animate-pulse"
             style={{ width: `${Math.random() * 1 + 2}rem` }}
           />
         </div>

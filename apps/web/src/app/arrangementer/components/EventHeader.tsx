@@ -42,12 +42,8 @@ export const EventHeader: FC<Props> = ({ event }) => {
 }
 
 export const SkeletonEventHeader = () => (
-  <section
-    className="flex flex-col gap-8
-  "
-  >
-    <div className="h-[30rem] w-full rounded-2xl bg-gray-400 animate-pulse" />
-    <h1 className="w-1/2 bg-gray-400 text-transparent rounded-2xl animate-pulse">Lorem ipsum</h1>
-    <div className="h-[50vh]" />
-  </section>
+  <div className="flex flex-col gap-8">
+    <div className="w-full rounded-xl aspect-[16/9] md:aspect-[24/9] bg-gray-300 dark:bg-stone-700 animate-pulse" />
+    <div className="w-1/2 h-10 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+  </div>
 )
