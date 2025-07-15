@@ -43,7 +43,7 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
             <AttendanceStatus
               attendance={attendanceEvent.attendance}
               attendeeStatus={attendeeStatus}
-              startInPast={past}
+              eventEndInPast={past}
             />
           </div>
         </div>

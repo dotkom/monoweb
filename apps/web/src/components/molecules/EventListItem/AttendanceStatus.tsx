@@ -15,13 +15,13 @@ const getAttendeeCountAndCapacity = (attendance: Attendance): [number, number] =
 interface EventListItemAttendanceStatusProps {
   attendance: Attendance | null
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
-  startInPast: boolean
+  eventEndInPast: boolean
 }
 
 export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   attendance,
   attendeeStatus,
-  startInPast,
+  eventEndInPast,
 }) => {
   if (attendance === null) {
     return null
@@ -33,8 +33,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
   const [numberOfAttendees, capacity] = getAttendeeCountAndCapacity(attendance)
 
-  const justAttendanceClosed = attendanceStatus === "Closed" && !isReserved && !isUnreserved && !startInPast
-  const inPast = attendanceStatus === "Closed" || startInPast
+  const justAttendanceClosed = attendanceStatus === "Closed" && !isReserved && !isUnreserved && !eventEndInPast
+  const inPast = attendanceStatus === "Closed" || eventEndInPast
 
   const hasCapacity = capacity > 0
 

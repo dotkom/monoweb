@@ -120,7 +120,7 @@ const EventCard: FC<ComingEventProps> = ({
         <div className="flex flex-row gap-4 items-center">
           <DateAndTime start={start} end={end} />
           {attendance && (
-            <AttendanceStatus attendance={attendance} attendeeStatus={attendeeStatus} startInPast={isPast(start)} />
+            <AttendanceStatus attendance={attendance} attendeeStatus={attendeeStatus} eventEndInPast={isPast(start)} />
           )}
         </div>
       </div>
