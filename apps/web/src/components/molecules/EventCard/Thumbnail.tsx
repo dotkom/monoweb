@@ -5,23 +5,23 @@ import type { FC } from "react"
 const EVENTS = {
   ACADEMIC: {
     label: "Akademisk",
-    backgroundColor: "bg-blue-4",
-    textColor: "text-blue-11",
+    backgroundColor: "bg-blue-300",
+    textColor: "text-blue-950",
   },
   BEDPRES: {
     label: "Bedpres",
-    backgroundColor: "bg-green-4",
-    textColor: "text-green-11",
+    backgroundColor: "bg-green-300",
+    textColor: "text-green-950",
   },
   COMPANY: {
     label: "Bedrift",
-    backgroundColor: "bg-yellow-4",
-    textColor: "text-yellow-11",
+    backgroundColor: "bg-yellow-300",
+    textColor: "text-yellow-950",
   },
   SOCIAL: {
     label: "Sosialt",
-    backgroundColor: "bg-red-4",
-    textColor: "text-red-11",
+    backgroundColor: "bg-red-300",
+    textColor: "text-red-950",
   },
 } as const satisfies Record<EventType, { label: string; backgroundColor: string; textColor: string }>
 

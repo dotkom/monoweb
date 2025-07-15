@@ -10,7 +10,7 @@ export const Toggle = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.
   ({ className, ...props }, ref) => (
     <SwitchPrimitives.Root
       className={cn(
-        "focus:ring-slate-7 data-[state=unchecked]:bg-slate-6 data-[state=checked]:bg-blue-8 peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus:outline-hidden focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "focus:ring-slate-600 data-[state=unchecked]:bg-slate-500 data-[state=checked]:bg-blue-700 peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus:outline-hidden focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}

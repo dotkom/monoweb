@@ -31,18 +31,18 @@ export const EventsViewToggle: FC<EventsViewToggleProps> = ({ active }) => {
   )
 
   return (
-    <div className="w-full sm:w-fit border border-slate-3 flex flex-row items-center rounded-lg p-1">
+    <div className="w-full sm:w-fit border border-slate-200 flex flex-row items-center rounded-lg p-1">
       {active === "list" ? (
         listButton
       ) : (
-        <Link href="/arrangementer" className="w-full text-slate-9 hover:text-slate-12">
+        <Link href="/arrangementer" className="w-full text-slate-800 hover:text-black">
           {listButton}
         </Link>
       )}
       {active === "cal" ? (
         calendarButton
       ) : (
-        <Link href="/arrangementer/kalender" className="w-full text-slate-9 hover:text-slate-12">
+        <Link href="/arrangementer/kalender" className="w-full text-slate-800 hover:text-black">
           {calendarButton}
         </Link>
       )}

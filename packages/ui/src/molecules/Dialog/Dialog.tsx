@@ -27,7 +27,7 @@ export const AlertDialogOverlay: FC<ComponentPropsWithRef<typeof AlertDialogPrim
   return (
     <AlertDialogPrimitive.Overlay
       className={cn(
-        "animate-in fade-in bg-slate-1/50 fixed inset-0 z-50 backdrop-blur-xs transition-opacity",
+        "animate-in fade-in bg-slate-50/50 fixed inset-0 z-50 backdrop-blur-xs transition-opacity",
         className
       )}
       {...props}
@@ -47,7 +47,7 @@ export const AlertDialogContent: FC<AlertDialogContentProps> = ({ className, ref
       <AlertDialogPrimitive.Content
         ref={ref}
         className={cn(
-          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 bg-slate-3 fixed z-50 grid w-full max-w-lg scale-100 gap-4 p-6 opacity-100 sm:rounded-lg md:w-full",
+          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 bg-slate-200 fixed z-50 grid w-full max-w-lg scale-100 gap-4 p-6 opacity-100 sm:rounded-lg md:w-full",
           className
         )}
         {...props}
@@ -72,7 +72,7 @@ export const AlertDialogTitle: FC<ComponentPropsWithRef<typeof AlertDialogPrimit
   return (
     <AlertDialogPrimitive.Title
       ref={ref}
-      className={cn("text-slate-12 text-lg font-semibold leading-none tracking-tight", className)}
+      className={cn("text-black text-lg font-semibold leading-none tracking-tight", className)}
       {...props}
     />
   )
@@ -83,7 +83,7 @@ export const AlertDialogDescription: FC<ComponentPropsWithRef<typeof AlertDialog
   ref,
   ...props
 }) => {
-  return <AlertDialogPrimitive.Description ref={ref} className={cn("text-slate-10 text-md", className)} {...props} />
+  return <AlertDialogPrimitive.Description ref={ref} className={cn("text-slate-900 text-md", className)} {...props} />
 }
 
 export type AlertDialogActionProps = Omit<ComponentPropsWithRef<typeof AlertDialogPrimitive.Action>, "color"> & {

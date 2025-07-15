@@ -1,11 +1,3 @@
-@import "@radix-ui/colors/amber.css";
-@import "@radix-ui/colors/red.css";
-@import "@radix-ui/colors/blue.css";
-@import "@radix-ui/colors/green.css";
-@import "@radix-ui/colors/slate.css";
-@import "@radix-ui/colors/indigo.css";
-@import "@radix-ui/colors/yellow.css";
-
 @import "tailwindcss";
 
 @config "./tailwind-preset.js";
@@ -14,31 +6,18 @@
   :root,
   .light,
   .light-theme {
-    --brand-1: #f8feff;
-    --brand-2: #f0faff;
-    --brand-3: #dcf7ff;
-    --brand-4: #c9f0ff;
-    --brand-5: #b3e7ff;
-    --brand-6: #9adbff;
-    --brand-7: #77cbf9;
-    --brand-8: #48b4ea;
-    --brand-9: #0d5474;
-    --brand-10: #004463;
-    --brand-11: #0074a7;
-    --brand-12: #00415f;
-
-    --brand-a1: #00dbff07;
-    --brand-a2: #00aaff0f;
-    --brand-a3: #00c5ff23;
-    --brand-a4: #00b9ff36;
-    --brand-a5: #00afff4c;
-    --brand-a6: #00a5ff65;
-    --brand-a7: #009ef488;
-    --brand-a8: #0097e2b7;
-    --brand-a9: #004b6df2;
-    --brand-a10: #004463;
-    --brand-a11: #0074a7;
-    --brand-a12: #00415f;
+    --brand-50: #f8feff;
+    --brand-100: #f0faff;
+    --brand-200: #dcf7ff;
+    --brand-300: #c9f0ff;
+    --brand-400: #b3e7ff;
+    --brand-500: #9adbff;
+    --brand-600: #77cbf9;
+    --brand-700: #48b4ea;
+    --brand-800: #0d5474;
+    --brand-900: #004463;
+    --brand-950: #0074a7;
+    --black: #00415f;
 
     --brand-contrast: #fff;
     --brand-surface: #ecf9ffcc;
@@ -56,31 +35,18 @@
       :root,
       .light,
       .light-theme {
-        --brand-1: oklch(99.3% 0.0078 234.5);
-        --brand-2: oklch(98% 0.0145 234.5);
-        --brand-3: oklch(96.1% 0.0347 234.5);
-        --brand-4: oklch(93.6% 0.0519 234.5);
-        --brand-5: oklch(90.3% 0.0678 234.5);
-        --brand-6: oklch(86.1% 0.0841 234.5);
-        --brand-7: oklch(80.6% 0.1045 234.5);
-        --brand-8: oklch(72.9% 0.1251 234.5);
-        --brand-9: oklch(42.1% 0.0834 234.5);
-        --brand-10: oklch(36.4% 0.0834 234.5);
-        --brand-11: oklch(52.6% 0.1251 234.5);
-        --brand-12: oklch(35.1% 0.0834 234.5);
-
-        --brand-a1: color(display-p3 0.0235 0.8392 1 / 0.024);
-        --brand-a2: color(display-p3 0.0039 0.6157 0.9255 / 0.051);
-        --brand-a3: color(display-p3 0.0039 0.702 0.9686 / 0.118);
-        --brand-a4: color(display-p3 0.0039 0.6549 0.9569 / 0.181);
-        --brand-a5: color(display-p3 0.0039 0.6157 0.9569 / 0.255);
-        --brand-a6: color(display-p3 0.0039 0.5647 0.9569 / 0.342);
-        --brand-a7: color(display-p3 0.0039 0.5373 0.9176 / 0.455);
-        --brand-a8: color(display-p3 0 0.4941 0.8275 / 0.597);
-        --brand-a9: color(display-p3 0 0.2078 0.3451 / 0.851);
-        --brand-a10: color(display-p3 0 0.1804 0.3059 / 0.899);
-        --brand-a11: color(display-p3 0 0.3176 0.5529 / 0.808);
-        --brand-a12: color(display-p3 0 0.1725 0.2941 / 0.906);
+        --brand-50: oklch(99.3% 0.0078 234.5);
+        --brand-100: oklch(98% 0.0145 234.5);
+        --brand-200: oklch(96.1% 0.0347 234.5);
+        --brand-300: oklch(93.6% 0.0519 234.5);
+        --brand-400: oklch(90.3% 0.0678 234.5);
+        --brand-500: oklch(86.1% 0.0841 234.5);
+        --brand-600: oklch(80.6% 0.1045 234.5);
+        --brand-700: oklch(72.9% 0.1251 234.5);
+        --brand-800: oklch(42.1% 0.0834 234.5);
+        --brand-900: oklch(36.4% 0.0834 234.5);
+        --brand-950: oklch(52.6% 0.1251 234.5);
+        --black: oklch(35.1% 0.0834 234.5);
 
         --brand-contrast: #fff;
         --brand-surface: color(display-p3 0.9373 0.9765 1 / 0.8);
@@ -92,31 +58,18 @@
 
   .dark,
   .dark-theme {
-    --brand-1: #081319;
-    --brand-2: #0d1b23;
-    --brand-3: #072a3b;
-    --brand-4: #003750;
-    --brand-5: #034561;
-    --brand-6: #0d5474;
-    --brand-7: #17678c;
-    --brand-8: #197daa;
-    --brand-9: #0d5474;
-    --brand-10: #014460;
-    --brand-11: #71c6f5;
-    --brand-12: #c3edff;
-
-    --brand-a1: #004af409;
-    --brand-a2: #0091f714;
-    --brand-a3: #009fff2d;
-    --brand-a4: #00a0fe44;
-    --brand-a5: #00acff56;
-    --brand-a6: #08b1fd6b;
-    --brand-a7: #1db8ff84;
-    --brand-a8: #1eb9ffa4;
-    --brand-a9: #08b1fd6b;
-    --brand-a10: #00aaff55;
-    --brand-a11: #75cdfef5;
-    --brand-a12: #c3edff;
+    --brand-50: #081319;
+    --brand-100: #0d1b23;
+    --brand-200: #072a3b;
+    --brand-300: #003750;
+    --brand-400: #034561;
+    --brand-500: #0d5474;
+    --brand-600: #17678c;
+    --brand-700: #197daa;
+    --brand-800: #0d5474;
+    --brand-900: #014460;
+    --brand-950: #71c6f5;
+    --black: #c3edff;
 
     --brand-contrast: #fff;
     --brand-surface: #0a253580;
@@ -128,31 +81,18 @@
     @media (color-gamut: p3) {
       .dark,
       .dark-theme {
-        --brand-1: oklch(17.8% 0.0211 234.5);
-        --brand-2: oklch(21.3% 0.0248 234.5);
-        --brand-3: oklch(27% 0.05 234.5);
-        --brand-4: oklch(31.9% 0.0673 234.5);
-        --brand-5: oklch(36.8% 0.0762 234.5);
-        --brand-6: oklch(42.2% 0.0834 234.5);
-        --brand-7: oklch(48.4% 0.0935 234.5);
-        --brand-8: oklch(55.7% 0.11 234.5);
-        --brand-9: oklch(42.1% 0.0834 234.5);
-        --brand-10: oklch(36.4% 0.0762 234.5);
-        --brand-11: oklch(79% 0.1058 234.5);
-        --brand-12: oklch(92.5% 0.0554 234.5);
-
-        --brand-a1: color(display-p3 0 0.3294 0.9843 / 0.03);
-        --brand-a2: color(display-p3 0.0157 0.6118 0.9961 / 0.072);
-        --brand-a3: color(display-p3 0.0902 0.6275 0.9961 / 0.169);
-        --brand-a4: color(display-p3 0.1137 0.6314 0.9961 / 0.257);
-        --brand-a5: color(display-p3 0.2 0.6863 1 / 0.324);
-        --brand-a6: color(display-p3 0.2706 0.7098 1 / 0.404);
-        --brand-a7: color(display-p3 0.3176 0.7216 1 / 0.505);
-        --brand-a8: color(display-p3 0.3294 0.7333 1 / 0.627);
-        --brand-a9: color(display-p3 0.2706 0.7098 1 / 0.404);
-        --brand-a10: color(display-p3 0.1765 0.6745 1 / 0.324);
-        --brand-a11: color(display-p3 0.5529 0.8157 1 / 0.937);
-        --brand-a12: color(display-p3 0.8039 0.9333 1 / 0.992);
+        --brand-50: oklch(17.8% 0.0211 234.5);
+        --brand-100: oklch(21.3% 0.0248 234.5);
+        --brand-200: oklch(27% 0.05 234.5);
+        --brand-300: oklch(31.9% 0.0673 234.5);
+        --brand-400: oklch(36.8% 0.0762 234.5);
+        --brand-500: oklch(42.2% 0.0834 234.5);
+        --brand-600: oklch(48.4% 0.0935 234.5);
+        --brand-700: oklch(55.7% 0.11 234.5);
+        --brand-800: oklch(42.1% 0.0834 234.5);
+        --brand-900: oklch(36.4% 0.0762 234.5);
+        --brand-950: oklch(79% 0.1058 234.5);
+        --black: oklch(92.5% 0.0554 234.5);
 
         --brand-contrast: #fff;
         --brand-surface: color(display-p3 0.0588 0.1412 0.1961 / 0.5);
@@ -165,31 +105,18 @@
   :root,
   .light,
   .light-theme {
-    --accent-1: #fefdfb;
-    --accent-2: #fffbe7;
-    --accent-3: #fff4ba;
-    --accent-4: #ffec91;
-    --accent-5: #fee388;
-    --accent-6: #f2d67c;
-    --accent-7: #e0c56a;
-    --accent-8: #caaf54;
-    --accent-9: #eace74;
-    --accent-10: #dfc46a;
-    --accent-11: #8f7407;
-    --accent-12: #453a17;
-
-    --accent-a1: #c0800004;
-    --accent-a2: #ffd50018;
-    --accent-a3: #ffd70045;
-    --accent-a4: #ffd3006e;
-    --accent-a5: #fdc30077;
-    --accent-a6: #e6b00083;
-    --accent-a7: #ca9c0095;
-    --accent-a8: #b08800ab;
-    --accent-a9: #d9a6008b;
-    --accent-a10: #c99a0095;
-    --accent-a11: #8c7000f8;
-    --accent-a12: #332700e8;
+    --accent-50: #fefdfb;
+    --accent-100: #fffbe7;
+    --accent-200: #fff4ba;
+    --accent-300: #ffec91;
+    --accent-400: #fee388;
+    --accent-500: #f2d67c;
+    --accent-600: #e0c56a;
+    --accent-700: #caaf54;
+    --accent-800: #eace74;
+    --accent-900: #dfc46a;
+    --accent-950: #8f7407;
+    --black: #453a17;
 
     --accent-contrast: #282109;
     --accent-surface: #fffae1cc;
@@ -202,31 +129,18 @@
       :root,
       .light,
       .light-theme {
-        --accent-1: oklch(99.4% 0.0031 92.89);
-        --accent-2: oklch(98.6% 0.0268 92.89);
-        --accent-3: oklch(96.9% 0.0765 92.89);
-        --accent-4: oklch(94.5% 0.1147 92.89);
-        --accent-5: oklch(91.8% 0.1147 92.89);
-        --accent-6: oklch(88.1% 0.1147 92.89);
-        --accent-7: oklch(82.7% 0.1147 92.89);
-        --accent-8: oklch(75.8% 0.1147 92.89);
-        --accent-9: oklch(85.6% 0.1147 92.89);
-        --accent-10: oklch(82.5% 0.1147 92.89);
-        --accent-11: oklch(56.9% 0.1147 92.89);
-        --accent-12: oklch(35.2% 0.0541 92.89);
-
-        --accent-a1: color(display-p3 0.7569 0.5137 0.0235 / 0.016);
-        --accent-a2: color(display-p3 0.9569 0.8235 0.0118 / 0.087);
-        --accent-a3: color(display-p3 0.9686 0.8275 0.0039 / 0.248);
-        --accent-a4: color(display-p3 0.9725 0.8196 0.0039 / 0.385);
-        --accent-a5: color(display-p3 0.9451 0.749 0.0039 / 0.42);
-        --accent-a6: color(display-p3 0.851 0.6667 0.0039 / 0.467);
-        --accent-a7: color(display-p3 0.7451 0.5804 0 / 0.534);
-        --accent-a8: color(display-p3 0.6392 0.498 0 / 0.616);
-        --accent-a9: color(display-p3 0.7961 0.6196 0.0039 / 0.495);
-        --accent-a10: color(display-p3 0.7373 0.5765 0 / 0.534);
-        --accent-a11: color(display-p3 0.4667 0.3647 0 / 0.851);
-        --accent-a12: color(display-p3 0.1725 0.1333 0 / 0.891);
+        --accent-50: oklch(99.4% 0.0031 92.89);
+        --accent-100: oklch(98.6% 0.0268 92.89);
+        --accent-200: oklch(96.9% 0.0765 92.89);
+        --accent-300: oklch(94.5% 0.1147 92.89);
+        --accent-400: oklch(91.8% 0.1147 92.89);
+        --accent-500: oklch(88.1% 0.1147 92.89);
+        --accent-600: oklch(82.7% 0.1147 92.89);
+        --accent-700: oklch(75.8% 0.1147 92.89);
+        --accent-800: oklch(85.6% 0.1147 92.89);
+        --accent-900: oklch(82.5% 0.1147 92.89);
+        --accent-950: oklch(56.9% 0.1147 92.89);
+        --black: oklch(35.2% 0.0541 92.89);
 
         --accent-contrast: #282109;
         --accent-surface: color(display-p3 1 0.9804 0.8941 / 0.8);
@@ -238,31 +152,18 @@
 
   .dark,
   .dark-theme {
-    --accent-1: #12110d;
-    --accent-2: #1a1812;
-    --accent-3: #282312;
-    --accent-4: #352c0e;
-    --accent-5: #403613;
-    --accent-6: #4e4322;
-    --accent-7: #605532;
-    --accent-8: #7a6d41;
-    --accent-9: #eace74;
-    --accent-10: #e0c46a;
-    --accent-11: #f2d67b;
-    --accent-12: #f5eac6;
-
-    --accent-a1: #91110002;
-    --accent-a2: #f7c42b0a;
-    --accent-a3: #fcc91c19;
-    --accent-a4: #fdc20027;
-    --accent-a5: #fcca1b33;
-    --accent-a6: #fdd25342;
-    --accent-a7: #ffde7455;
-    --accent-a8: #fee17e71;
-    --accent-a9: #ffe07ee9;
-    --accent-a10: #ffdf78de;
-    --accent-a11: #fee081f2;
-    --accent-a12: #fef3cdf5;
+    --accent-50: #12110d;
+    --accent-100: #1a1812;
+    --accent-200: #282312;
+    --accent-300: #352c0e;
+    --accent-400: #403613;
+    --accent-500: #4e4322;
+    --accent-600: #605532;
+    --accent-700: #7a6d41;
+    --accent-800: #eace74;
+    --accent-900: #e0c46a;
+    --accent-950: #f2d67b;
+    --black: #f5eac6;
 
     --accent-contrast: #282109;
     --accent-surface: #231f1380;
@@ -274,31 +175,18 @@
     @media (color-gamut: p3) {
       .dark,
       .dark-theme {
-        --accent-1: oklch(17.8% 0.0085 92.56);
-        --accent-2: oklch(21% 0.0117 92.56);
-        --accent-3: oklch(25.8% 0.0295 92.56);
-        --accent-4: oklch(29.5% 0.0468 92.56);
-        --accent-5: oklch(33.6% 0.0532 92.56);
-        --accent-6: oklch(38.6% 0.0516 92.56);
-        --accent-7: oklch(45.3% 0.0538 92.56);
-        --accent-8: oklch(53.6% 0.0635 92.56);
-        --accent-9: oklch(85.6% 0.1145 92.56);
-        --accent-10: oklch(82.5% 0.1145 92.56);
-        --accent-11: oklch(87.9% 0.1145 92.56);
-        --accent-12: oklch(93.7% 0.048 92.56);
-
-        --accent-a1: color(display-p3 0.8549 0.0706 0 / 0.005);
-        --accent-a2: color(display-p3 0.9961 0.7922 0.2745 / 0.038);
-        --accent-a3: color(display-p3 0.9961 0.8275 0.1961 / 0.093);
-        --accent-a4: color(display-p3 0.9961 0.7843 0.1216 / 0.148);
-        --accent-a5: color(display-p3 0.9961 0.8314 0.2353 / 0.19);
-        --accent-a6: color(display-p3 1 0.8588 0.4157 / 0.248);
-        --accent-a7: color(display-p3 1 0.8902 0.5294 / 0.324);
-        --accent-a8: color(display-p3 1 0.898 0.5569 / 0.433);
-        --accent-a9: color(display-p3 1 0.902 0.5608 / 0.891);
-        --accent-a10: color(display-p3 1 0.898 0.5373 / 0.849);
-        --accent-a11: color(display-p3 1 0.9059 0.5686 / 0.925);
-        --accent-a12: color(display-p3 1 0.9608 0.8314 / 0.95);
+        --accent-50: oklch(17.8% 0.0085 92.56);
+        --accent-100: oklch(21% 0.0117 92.56);
+        --accent-200: oklch(25.8% 0.0295 92.56);
+        --accent-300: oklch(29.5% 0.0468 92.56);
+        --accent-400: oklch(33.6% 0.0532 92.56);
+        --accent-500: oklch(38.6% 0.0516 92.56);
+        --accent-600: oklch(45.3% 0.0538 92.56);
+        --accent-700: oklch(53.6% 0.0635 92.56);
+        --accent-800: oklch(85.6% 0.1145 92.56);
+        --accent-900: oklch(82.5% 0.1145 92.56);
+        --accent-950: oklch(87.9% 0.1145 92.56);
+        --black: oklch(93.7% 0.048 92.56);
 
         --accent-contrast: #282109;
         --accent-surface: color(display-p3 0.1333 0.1176 0.0784 / 0.5);

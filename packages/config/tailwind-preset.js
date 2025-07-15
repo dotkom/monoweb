@@ -1,10 +1,4 @@
-const createColorScale = (name) => {
-  const entries = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [step, `var(--${name}-${step})`])
-
-  // Set the default to the ninth step
-  entries.push(["DEFAULT", `var(--${name}-9)`])
-  return Object.fromEntries(entries)
-}
+const colors = require("tailwindcss/colors")
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -12,17 +6,7 @@ module.exports = {
   // Relative to the project when the preset is loaded from a tailwind.config.js
   content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ui/src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    colors: {
-      brand: createColorScale("brand"),
-      accent: createColorScale("accent"),
-      slate: createColorScale("slate"),
-      blue: createColorScale("blue"),
-      amber: createColorScale("amber"),
-      red: createColorScale("red"),
-      green: createColorScale("green"),
-      indigo: createColorScale("indigo"),
-      yellow: createColorScale("yellow"),
-    },
+    colors,
     extend: {
       fontFamily: {
         title: ["var(--font-title, 'Figtree')"],
@@ -36,7 +20,7 @@ module.exports = {
         white: "#fff",
         black: "#000",
         background: "var(--color-background)",
-        foreground: "var(--slate-12)",
+        foreground: "var(--black)",
       },
       keyframes: {
         "accordion-down": {
@@ -63,7 +47,7 @@ module.exports = {
         "collapsible-up": "collapsible-up 0.2s ease-out",
       },
       ringColor: {
-        DEFAULT: "var(--blue-7)",
+        DEFAULT: "var(--blue-600)",
       },
     },
   },

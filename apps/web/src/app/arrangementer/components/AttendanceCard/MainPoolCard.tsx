@@ -31,8 +31,8 @@ interface CardProps {
 }
 
 const Card: FC<CardProps> = ({ classNames, children, title }) => {
-  const baseOuterClassName = "flex flex-col w-full bg-slate-3 rounded-lg"
-  const baseHeaderClassName = "p-2 bg-slate-5 rounded-t-lg text-center text-sm font-bold"
+  const baseOuterClassName = "flex flex-col w-full bg-slate-200 rounded-lg"
+  const baseHeaderClassName = "p-2 bg-slate-400 rounded-t-lg text-center text-sm font-bold"
   const baseInnerClassName =
     "flex flex-col min-h-[10rem] gap-4 p-2 rounded-md items-center text-center justify-center w-full"
 
@@ -77,7 +77,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
         <Text>Du har ikke registert medlemskap</Text>
         <div className="flex gap-[0.5ch] text-sm">
           <Text>Gå til</Text>
-          <Link href="/profile" className="flex items-center text-blue-11 hover:text-blue-9">
+          <Link href="/profile" className="flex items-center text-blue-950 hover:text-blue-800">
             <Text>profilsiden</Text> <Icon icon="tabler:arrow-up-right" />
           </Link>
           <Text>for å registrere deg</Text>
@@ -101,17 +101,17 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
   return (
     <Card
       classNames={{
-        outer: isAttendingAndReserved ? "bg-green-4" : isAttendingAndNotReserved ? "bg-yellow-4" : "bg-slate-3",
-        title: isAttendingAndReserved ? "bg-green-5" : isAttendingAndNotReserved ? "bg-yellow-5" : "bg-slate-5",
+        outer: isAttendingAndReserved ? "bg-green-300" : isAttendingAndNotReserved ? "bg-yellow-300" : "bg-slate-200",
+        title: isAttendingAndReserved ? "bg-green-400" : isAttendingAndNotReserved ? "bg-yellow-400" : "bg-slate-400",
       }}
       title={pool.title}
     >
       <div className="flex grow flex-col gap-2 items-center text-center justify-center">
-        <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
+        <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-400 rounded-lg")}>
           {pool.numAttendees}/{pool.capacity}
         </Text>
         {pool.numUnreservedAttendees > 0 && (
-          <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-5 rounded-lg")}>
+          <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-400 rounded-lg")}>
             +{pool.numUnreservedAttendees} i kø
           </Text>
         )}

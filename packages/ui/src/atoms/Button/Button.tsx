@@ -93,32 +93,32 @@ export const button = cva(
         color: "light",
         variant: "solid",
         className: [
-          "bg-slate-3 hover:bg-slate-4 disabled:hover:bg-slate-3",
-          "dark:bg-slate-11 dark:hover:bg-slate-12 dark:disabled:hover:bg-slate-11",
+          "bg-slate-200 hover:bg-slate-300 disabled:hover:bg-slate-200",
+          "dark:bg-slate-950 dark:hover:bg-black dark:disabled:hover:bg-slate-950",
         ].join(" "),
       },
       {
         color: "light",
         variant: "pill",
         className: [
-          "bg-slate-3 hover:bg-slate-4 disabled:hover:bg-slate-3",
-          "dark:bg-slate-11 dark:hover:bg-slate-12 dark:disabled:hover:bg-slate-11",
+          "bg-slate-200 hover:bg-slate-300 disabled:hover:bg-slate-200",
+          "dark:bg-slate-950 dark:hover:bg-black dark:disabled:hover:bg-slate-950",
         ].join(" "),
       },
       {
         color: "light",
         variant: "outline",
         className: [
-          "border-slate-5 hover:bg-slate-3 disabled:hover:bg-inherit",
-          "dark:border-slate-11 dark:hover:bg-slate-11 dark:disabled:hover:bg-inherit",
+          "border-slate-400 hover:bg-slate-200 disabled:hover:bg-inherit",
+          "dark:border-slate-950 dark:hover:bg-slate-950 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
       {
         color: "light",
         variant: "text",
         className: [
-          "hover:bg-slate-3 disabled:hover:bg-inherit",
-          "dark:hover:bg-slate-11 dark:disabled:hover:bg-inherit",
+          "hover:bg-slate-200 disabled:hover:bg-inherit",
+          "dark:hover:bg-slate-950 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
 
@@ -126,32 +126,32 @@ export const button = cva(
         color: "slate",
         variant: "solid",
         className: [
-          "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5",
-          "dark:bg-slate-9 dark:hover:bg-slate-10 dark:disabled:hover:bg-slate-9",
+          "bg-slate-400 hover:bg-slate-500 disabled:hover:bg-slate-400",
+          "dark:bg-slate-800 dark:hover:bg-slate-900 dark:disabled:hover:bg-slate-800",
         ].join(" "),
       },
       {
         color: "slate",
         variant: "pill",
         className: [
-          "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5",
-          "dark:bg-slate-9 dark:hover:bg-slate-10 dark:disabled:hover:bg-slate-9",
+          "bg-slate-400 hover:bg-slate-500 disabled:hover:bg-slate-400",
+          "dark:bg-slate-800 dark:hover:bg-slate-900 dark:disabled:hover:bg-slate-800",
         ].join(" "),
       },
       {
         color: "slate",
         variant: "outline",
         className: [
-          "border-slate-7 hover:bg-slate-3 disabled:hover:bg-inherit",
-          "dark:border-slate-9 dark:hover:border-slate-11 dark:hover:bg-slate-11 dark:disabled:hover:bg-inherit",
+          "border-slate-600 hover:bg-slate-200 disabled:hover:bg-inherit",
+          "dark:border-slate-800 dark:hover:border-slate-950 dark:hover:bg-slate-950 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
       {
         color: "slate",
         variant: "text",
         className: [
-          "hover:bg-slate-3 disabled:hover:bg-inherit",
-          "dark:hover:bg-slate-9 dark:disabled:hover:bg-inherit",
+          "hover:bg-slate-200 disabled:hover:bg-inherit",
+          "dark:hover:bg-slate-800 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
 
@@ -159,8 +159,8 @@ export const button = cva(
         color: "dark",
         variant: "solid",
         className: [
-          "bg-slate-11 hover:bg-slate-12 disabled:hover:bg-slate-11",
-          "dark:bg-slate-3 dark:hover:bg-slate-4 dark:disabled:hover:bg-slate-3",
+          "bg-slate-950 hover:bg-black disabled:hover:bg-slate-950",
+          "dark:bg-slate-200 dark:hover:bg-slate-300 dark:disabled:hover:bg-slate-200",
           "text-white dark:text-black",
         ].join(" "),
       },
@@ -168,8 +168,8 @@ export const button = cva(
         color: "dark",
         variant: "pill",
         className: [
-          "bg-slate-11 hover:bg-slate-12 disabled:hover:bg-slate-11",
-          "dark:bg-slate-3 dark:hover:bg-slate-4 dark:disabled:hover:bg-slate-3",
+          "bg-slate-950 hover:bg-black disabled:hover:bg-slate-950",
+          "dark:bg-slate-200 dark:hover:bg-slate-300 dark:disabled:hover:bg-slate-200",
           "text-white dark:text-black",
         ].join(" "),
       },
@@ -177,8 +177,8 @@ export const button = cva(
         color: "dark",
         variant: "outline",
         className: [
-          "border-slate-11 hover:bg-slate-11 disabled:hover:bg-inherit",
-          "dark:border-slate-5 dark:hover:bg-slate-7 dark:disabled:hover:bg-inherit",
+          "border-slate-950 hover:bg-slate-950 disabled:hover:bg-inherit",
+          "dark:border-slate-400 dark:hover:bg-slate-600 dark:disabled:hover:bg-inherit",
           "hover:text-white disabled:hover:text-inherit",
           "dark:hover:text-black dark:disabled:hover:text-inherit",
         ].join(" "),
@@ -187,8 +187,8 @@ export const button = cva(
         color: "dark",
         variant: "text",
         className: [
-          "hover:bg-slate-11 disabled:hover:bg-inherit",
-          "dark:hover:bg-slate-4 dark:disabled:hover:bg-inherit",
+          "hover:bg-slate-950 disabled:hover:bg-inherit",
+          "dark:hover:bg-slate-300 dark:disabled:hover:bg-inherit",
           "hover:text-white disabled:hover:text-inherit",
           "dark:hover:text-black dark:disabled:hover:text-inherit",
         ].join(" "),
@@ -198,8 +198,8 @@ export const button = cva(
         color: "brand",
         variant: "solid",
         className: [
-          "bg-brand-9 hover:bg-brand-10 disabled:hover:bg-brand-9",
-          "dark:bg-brand-9 dark:hover:bg-brand-10 dark:disabled:hover:bg-brand-9",
+          "bg-brand-800 hover:bg-brand-900 disabled:hover:bg-brand-800",
+          "dark:bg-brand-800 dark:hover:bg-brand-900 dark:disabled:hover:bg-brand-800",
           "text-white dark:text-white",
         ].join(" "),
       },
@@ -207,8 +207,8 @@ export const button = cva(
         color: "brand",
         variant: "pill",
         className: [
-          "bg-brand-9 hover:bg-brand-10 disabled:hover:bg-brand-9",
-          "dark:bg-brand-9 dark:hover:bg-brand-10 dark:disabled:hover:bg-brand-9",
+          "bg-brand-800 hover:bg-brand-900 disabled:hover:bg-brand-800",
+          "dark:bg-brand-800 dark:hover:bg-brand-900 dark:disabled:hover:bg-brand-800",
           "text-white dark:text-white",
         ].join(" "),
       },
@@ -216,8 +216,8 @@ export const button = cva(
         color: "brand",
         variant: "outline",
         className: [
-          "border-brand-9 text-brand-9 hover:bg-brand-9 disabled:hover:bg-inherit",
-          "dark:border-brand-9 dark:text-brand-11 dark:hover:bg-brand-9 dark:disabled:hover:bg-inherit",
+          "border-brand-800 text-brand-800 hover:bg-brand-800 disabled:hover:bg-inherit",
+          "dark:border-brand-800 dark:text-brand-950 dark:hover:bg-brand-800 dark:disabled:hover:bg-inherit",
           "hover:text-white disabled:hover:text-inherit",
           "dark:hover:text-white dark:disabled:hover:text-inherit",
         ].join(" "),
@@ -226,8 +226,8 @@ export const button = cva(
         color: "brand",
         variant: "text",
         className: [
-          "text-brand-9 hover:bg-brand-3 disabled:hover:bg-inherit",
-          "dark:text-brand-11 dark:hover:bg-brand-5 dark:disabled:hover:bg-inherit",
+          "text-brand-800 hover:bg-brand-200 disabled:hover:bg-inherit",
+          "dark:text-brand-950 dark:hover:bg-brand-400 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
 
@@ -235,32 +235,32 @@ export const button = cva(
         color: "blue",
         variant: "solid",
         className: [
-          "bg-blue-9 hover:bg-blue-10 disabled:hover:bg-blue-9",
-          "dark:bg-blue-9 dark:hover:bg-blue-10 dark:disabled:hover:bg-blue-9",
+          "bg-blue-800 hover:bg-blue-900 disabled:hover:bg-blue-800",
+          "dark:bg-blue-800 dark:hover:bg-blue-900 dark:disabled:hover:bg-blue-800",
         ].join(" "),
       },
       {
         color: "blue",
         variant: "pill",
         className: [
-          "bg-blue-9 hover:bg-blue-10 disabled:hover:bg-blue-9",
-          "dark:bg-blue-9 dark:hover:bg-blue-10 dark:disabled:hover:bg-blue-9",
+          "bg-blue-800 hover:bg-blue-900 disabled:hover:bg-blue-800",
+          "dark:bg-blue-800 dark:hover:bg-blue-900 dark:disabled:hover:bg-blue-800",
         ].join(" "),
       },
       {
         color: "blue",
         variant: "outline",
         className: [
-          "border-blue-8 text-blue-11 hover:bg-blue-3 disabled:hover:bg-inherit",
-          "dark:border-blue-12 dark:text-blue-9 dark:hover:text-white dark:hover:bg-blue-12 dark:disabled:hover:bg-inherit",
+          "border-blue-700 text-blue-950 hover:bg-blue-200 disabled:hover:bg-inherit",
+          "dark:border-black dark:text-blue-800 dark:hover:text-white dark:hover:bg-black dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
       {
         color: "blue",
         variant: "text",
         className: [
-          "text-blue-11 hover:bg-blue-3 disabled:hover:bg-inherit",
-          "dark:text-blue-4 dark:hover:bg-blue-12 dark:disabled:hover:bg-inherit",
+          "text-blue-950 hover:bg-blue-200 disabled:hover:bg-inherit",
+          "dark:text-blue-300 dark:hover:bg-black dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
 
@@ -268,32 +268,32 @@ export const button = cva(
         color: "green",
         variant: "solid",
         className: [
-          "bg-green-9 hover:bg-green-10 disabled:hover:bg-green-9",
-          "dark:bg-green-9 dark:hover:bg-green-10 dark:disabled:hover:bg-green-9",
+          "bg-green-800 hover:bg-green-900 disabled:hover:bg-green-800",
+          "dark:bg-green-800 dark:hover:bg-green-900 dark:disabled:hover:bg-green-800",
         ].join(" "),
       },
       {
         color: "green",
         variant: "pill",
         className: [
-          "bg-green-9 hover:bg-green-10 disabled:hover:bg-green-9",
-          "dark:bg-green-9 dark:hover:bg-green-10 dark:disabled:hover:bg-green-9",
+          "bg-green-800 hover:bg-green-900 disabled:hover:bg-green-800",
+          "dark:bg-green-800 dark:hover:bg-green-900 dark:disabled:hover:bg-green-800",
         ].join(" "),
       },
       {
         color: "green",
         variant: "outline",
         className: [
-          "border-green-8 text-green-11 hover:bg-green-3 disabled:hover:bg-inherit",
-          "dark:border-green-12 dark:text-green-9 dark:hover:bg-green-12 dark:disabled:hover:bg-inherit",
+          "border-green-700 text-green-950 hover:bg-green-200 disabled:hover:bg-inherit",
+          "dark:border-black dark:text-green-800 dark:hover:bg-black dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
       {
         color: "green",
         variant: "text",
         className: [
-          "text-green-11 hover:bg-green-3 disabled:hover:bg-inherit",
-          "dark:text-green-4 dark:hover:bg-green-12 dark:disabled:hover:bg-inherit",
+          "text-green-950 hover:bg-green-200 disabled:hover:bg-inherit",
+          "dark:text-green-300 dark:hover:bg-black dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
 
@@ -301,32 +301,32 @@ export const button = cva(
         color: "red",
         variant: "solid",
         className: [
-          "bg-red-9 hover:bg-red-10 disabled:hover:bg-red-9",
-          "dark:bg-red-9 dark:hover:bg-red-10 dark:disabled:hover:bg-red-9",
+          "bg-red-800 hover:bg-red-900 disabled:hover:bg-red-800",
+          "dark:bg-red-800 dark:hover:bg-red-900 dark:disabled:hover:bg-red-800",
         ].join(" "),
       },
       {
         color: "red",
         variant: "pill",
         className: [
-          "bg-red-9 hover:bg-red-10 disabled:hover:bg-red-9",
-          "dark:bg-red-9 dark:hover:bg-red-10 dark:disabled:hover:bg-red-9",
+          "bg-red-800 hover:bg-red-900 disabled:hover:bg-red-800",
+          "dark:bg-red-800 dark:hover:bg-red-900 dark:disabled:hover:bg-red-800",
         ].join(" "),
       },
       {
         color: "red",
         variant: "outline",
         className: [
-          "border-red-8 text-red-11 hover:bg-red-3 disabled:hover:bg-inherit",
-          "dark:border-red-12 dark:text-red-9 dark:hover:bg-red-12 dark:disabled:hover:bg-inherit",
+          "border-red-700 text-red-950 hover:bg-red-200 disabled:hover:bg-inherit",
+          "dark:border-black dark:text-red-800 dark:hover:bg-black dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
       {
         color: "red",
         variant: "text",
         className: [
-          "text-red-11 hover:bg-red-3 disabled:hover:bg-inherit",
-          "dark:text-red-4 dark:hover:bg-red-12 dark:disabled:hover:bg-inherit",
+          "text-red-950 hover:bg-red-200 disabled:hover:bg-inherit",
+          "dark:text-red-300 dark:hover:bg-black dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
 
@@ -334,8 +334,8 @@ export const button = cva(
         color: "yellow",
         variant: "solid",
         className: [
-          "bg-yellow-9 hover:bg-yellow-10 disabled:hover:bg-yellow-9",
-          "dark:bg-yellow-9 dark:hover:bg-yellow-10 dark:disabled:hover:bg-yellow-9",
+          "bg-yellow-800 hover:bg-yellow-900 disabled:hover:bg-yellow-800",
+          "dark:bg-yellow-800 dark:hover:bg-yellow-900 dark:disabled:hover:bg-yellow-800",
           "dark:text-black",
         ].join(" "),
       },
@@ -343,8 +343,8 @@ export const button = cva(
         color: "yellow",
         variant: "pill",
         className: [
-          "bg-yellow-9 hover:bg-yellow-10 disabled:hover:bg-yellow-9",
-          "dark:bg-yellow-9 dark:hover:bg-yellow-10 dark:disabled:hover:bg-yellow-9",
+          "bg-yellow-800 hover:bg-yellow-900 disabled:hover:bg-yellow-800",
+          "dark:bg-yellow-800 dark:hover:bg-yellow-900 dark:disabled:hover:bg-yellow-800",
           "dark:text-black",
         ].join(" "),
       },
@@ -352,16 +352,16 @@ export const button = cva(
         color: "yellow",
         variant: "outline",
         className: [
-          "border-yellow-8 text-yellow-11 hover:bg-yellow-3 disabled:hover:bg-inherit",
-          "dark:border-yellow-12 dark:text-yellow-9 dark:hover:bg-yellow-12 dark:disabled:hover:bg-inherit",
+          "border-yellow-700 text-yellow-950 hover:bg-yellow-200 disabled:hover:bg-inherit",
+          "dark:border-black dark:text-yellow-800 dark:hover:bg-black dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
       {
         color: "yellow",
         variant: "text",
         className: [
-          "text-yellow-11 hover:bg-yellow-3 disabled:hover:bg-inherit",
-          "dark:text-yellow-4 dark:hover:bg-yellow-12 dark:disabled:hover:bg-inherit",
+          "text-yellow-950 hover:bg-yellow-200 disabled:hover:bg-inherit",
+          "dark:text-yellow-300 dark:hover:bg-black dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
     ],

@@ -25,7 +25,7 @@ export const AvatarImgChange: FC<AvatarImgChangeProps> = ({ session }) => (
         <AvatarImage src={session.picture ?? undefined} alt="UserAvatar" />
         <AvatarFallback className="w-40 h-40">{session.name}</AvatarFallback>
       </Avatar>
-      <div className=" bg-slate-1 absolute top-0 w-full h-full rounded-full opacity-60 flex justify-center items-center hover:cursor-pointer">
+      <div className=" bg-slate-50 absolute top-0 w-full h-full rounded-full opacity-60 flex justify-center items-center hover:cursor-pointer">
         <Icon icon={"tabler:pencil"} className="text-3xl" />
       </div>
     </DropdownMenuTrigger>
