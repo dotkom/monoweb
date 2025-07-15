@@ -4,10 +4,10 @@ import type { FC } from "react"
 
 const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean) => {
   if (disabled) return "bg-gray-200 dark:bg-stone-800 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-800"
-  if (attendee) return "bg-red-500/75 hover:bg-red-300 dark:bg-red-800 dark:hover:bg-red-700"
-  if (isPoolFull) return "bg-yellow-500/75 hover:bg-yellow-300 dark:bg-yellow-800 dark:hover:bg-yellow-700"
+  if (attendee) return "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
+  if (isPoolFull) return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
 
-  return "bg-green-400 hover:bg-green-300 dark:bg-green-800 dark:hover:bg-green-700"
+  return "bg-green-300 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800"
 }
 
 const getDisabledText = (

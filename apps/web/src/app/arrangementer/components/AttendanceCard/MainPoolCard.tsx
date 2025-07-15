@@ -31,8 +31,8 @@ interface CardProps {
 }
 
 const Card: FC<CardProps> = ({ classNames, children, title }) => {
-  const baseOuterClassName = "flex flex-col w-full bg-gray-200 dark:bg-stone-700 rounded-lg"
-  const baseHeaderClassName = "p-2 bg-gray-300 dark:bg-stone-600 rounded-t-lg text-center text-sm font-bold"
+  const baseOuterClassName = "flex flex-col w-full bg-gray-100 dark:bg-stone-800 rounded-lg"
+  const baseHeaderClassName = "p-2 bg-gray-200 dark:bg-stone-700/50 rounded-t-lg text-center text-sm font-bold"
   const baseInnerClassName =
     "flex flex-col min-h-[10rem] gap-4 p-2 rounded-md items-center text-center justify-center w-full"
 
@@ -102,24 +102,25 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
     <Card
       classNames={{
         outer: isAttendingAndReserved
-          ? "bg-green-200 dark:bg-green-800"
+          ? "bg-green-100 dark:bg-green-900"
           : isAttendingAndNotReserved
-            ? "bg-yellow-200 dark:bg-yellow-800"
+            ? "bg-yellow-100 dark:bg-yellow-800"
             : undefined,
         title: isAttendingAndReserved
-          ? "bg-green-300 dark:bg-green-700"
+          ? "bg-green-200 dark:bg-green-800"
           : isAttendingAndNotReserved
-            ? "bg-yellow-300 dark:bg-yellow-700"
+            ? "bg-yellow-200 dark:bg-yellow-700"
             : undefined,
       }}
       title={pool.title}
     >
       <div className="flex grow flex-col gap-2 items-center text-center justify-center">
-        <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-400 rounded-lg")}>
+        <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-400 dark:bg-green-800 rounded-lg")}>
           {pool.numAttendees}/{pool.capacity}
         </Text>
-        {pool.numUnreservedAttendees > 0 && (
-          <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-400 rounded-lg")}>
+
+        {poolHasQueue && (
+          <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-400 dark:bg-yellow-700 rounded-lg")}>
             +{pool.numUnreservedAttendees} i kø
           </Text>
         )}
