@@ -107,16 +107,17 @@ const links: MenuLink[] = [
 
 export const Navbar: FC = () => {
   return (
-    <header className="px-4 mt-4 lg:px-12">
-      <div className="flex flex-row w-full max-w-screen-xl px-6 py-3 mt-3 rounded-2xl bg-blue-50 dark:bg-stone-900">
-        <MobileNavigation links={links} />
-        <Link href={env.NEXT_PUBLIC_HOME_URL} className="hidden lg:flex items-center">
-          <OnlineIcon className="h-[2.5rem]" />
-        </Link>
-        <MainNavigation links={links} />
-        <div className="flex grow items-center justify-end md:grow-0">
-          <ProfileMenu />
-        </div>
+    <header className="flex flex-row items-center w-full max-w-screen-xl mt-8 p-3 rounded-2xl bg-blue-50 dark:bg-stone-900">
+      <MobileNavigation links={links} />
+
+      <Link href={env.NEXT_PUBLIC_HOME_URL} className="hidden lg:block">
+        <OnlineIcon className="h-8 w-8" />
+      </Link>
+
+      <MainNavigation links={links} />
+
+      <div className="grow md:grow-0">
+        <ProfileMenu />
       </div>
     </header>
   )

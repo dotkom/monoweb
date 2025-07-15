@@ -54,16 +54,14 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth.getServerSession()
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-    <html lang="en" suppressHydrationWarning>
+    <html lang="no" suppressHydrationWarning>
       <body className={cn(fontTitle.variable, fontBody.variable, "bg-white dark:bg-stone-950")}>
         <SessionProvider session={session}>
           <QueryProvider>
             <ThemeProvider defaultTheme="light" enableSystem={false} attribute="data-theme">
-              <div className="min-h-screen flex flex-col gap-8 mx-auto w-full max-w-screen-xl">
+              <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
                 <Navbar />
-                <main className="grow px-4 lg:px-12">
-                  <div className="">{children}</div>
-                </main>
+                <main className="grow">{children}</main>
                 <Footer />
               </div>
             </ThemeProvider>
