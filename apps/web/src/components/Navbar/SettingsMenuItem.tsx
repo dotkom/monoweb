@@ -17,14 +17,14 @@ export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon 
   const [isCurrent, setCurrent] = useState("")
 
   useEffect(() => {
-    setCurrent(path === slug ? "bg-slate-300" : "")
+    setCurrent(path === slug ? "bg-gray-300" : "")
   }, [path, slug])
 
   return (
     <Link
       href={slug}
       className={cn(
-        "text-black w-full flex flex-row items-center hover:cursor-pointer hover:bg-slate-300 px-3 py-2 rounded-lg",
+        "text-black w-full flex flex-row items-center hover:cursor-pointer hover:bg-gray-300 px-3 py-2 rounded-lg",
         isCurrent
       )}
     >

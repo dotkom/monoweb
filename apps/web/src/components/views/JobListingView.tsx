@@ -49,33 +49,33 @@ export const JobListingView: FC<JobListingViewProps> = ({ jobListing }: JobListi
             <p className="m-0 border-0 pl-2 text-base text-blue-500"> ANDRE MULIGHETER</p>
           </div>
         </Link>
-        <div className="bg-slate-800 mb-7 mt-3 h-[0.5px] w-full" />
+        <div className="bg-gray-800 mb-7 mt-3 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <Icon icon="mdi:globe" className="text-blue-800" width={20} height={20} />
           <p className="m-0 pl-2">{locations.map((location) => location.name)}</p>
         </div>
-        <div className="bg-slate-800 my-7 h-[0.5px] w-full" />
+        <div className="bg-gray-800 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-800 mb-[-3px] inline">
             <Icon icon="mdi:clock-outline" className="text-blue-800" width={20} height={20} />
           </div>
           {deadline ? <p className="m-0 pl-2">{formatDate(deadline)}</p> : <p className="m-0 pl-2">Ingen frist</p>}
         </div>
-        <div className="bg-slate-800 my-7 h-[0.5px] w-full" />
+        <div className="bg-gray-800 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-800 mb-[-3px] inline">
             <Icon icon="mdi:briefcase-outline" className="text-blue-800" width={20} height={20} />
           </div>
           <p className="m-0 pl-2">{employment}</p>
         </div>
-        <div className="bg-slate-800 my-7 h-[0.5px] w-full" />
+        <div className="bg-gray-800 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-800 mb-[-3px] inline">
             <Icon icon="mdi:content-copy" className="text-blue-800" width={20} height={20} />
           </div>
           <p className="m-0 pl-2">{employment}</p>
         </div>
-        <div className="bg-slate-800 mb-3 mt-7 h-[0.5px] w-full" />
+        <div className="bg-gray-800 mb-3 mt-7 h-[0.5px] w-full" />
         {applicationLink ? (
           <Link href={applicationLink}>
             <Button className="bg-blue-700 mt-3 w-20 mb-20">Søk</Button>

@@ -20,7 +20,7 @@ export const PersonalInfo: FC<PersonalInfoProps> = ({ user, className }) => {
           {user.lastName?.[0]}
         </AvatarFallback>
       </Avatar>
-      <p className="text-lg text-slate-900">{user.email}</p>
+      <p className="text-lg text-gray-900">{user.email}</p>
       <Button color="brand" className="self-auto">
         <Link href="/settings">Profilinnstillinger</Link>
       </Button>

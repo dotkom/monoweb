@@ -3,11 +3,11 @@ import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTr
 import type { FC } from "react"
 
 const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean) => {
-  if (disabled) return "bg-slate-200 text-slate-700 dark:bg-slate-200"
-  if (attendee) return "bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
-  if (isPoolFull) return "bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-900 dark:hover:bg-yellow-950"
+  if (disabled) return "bg-gray-200 dark:bg-stone-800 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-800"
+  if (attendee) return "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
+  if (isPoolFull) return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
 
-  return "bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700"
+  return "bg-green-300 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800"
 }
 
 const getDisabledText = (
@@ -72,7 +72,12 @@ export const RegistrationButton: FC<Props> = ({
   const buttonContent = isLoading ? (
     <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
   ) : (
-    <div className={cn("flex flex-row gap-2 items-center", disabled ? "text-slate-800" : "text-black")}>
+    <div
+      className={cn(
+        "flex flex-row gap-2 items-center",
+        disabled ? "text-gray-800 dark:text-stone-400" : "text-black dark:text-white"
+      )}
+    >
       <Icon className="text-lg" icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`} />
       <Text className="font-medium">{buttonText}</Text>
     </div>
@@ -94,7 +99,7 @@ export const RegistrationButton: FC<Props> = ({
   }
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
         <TooltipContent sideOffset={-10}>

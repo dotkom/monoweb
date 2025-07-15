@@ -1,5 +1,15 @@
 import type { AttendanceSelection, AttendanceSelectionResponse } from "@dotkomonline/types"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Text, cn } from "@dotkomonline/ui"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+  Text,
+  cn,
+} from "@dotkomonline/ui"
 import { useEffect } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 
@@ -68,30 +78,36 @@ export function SelectionsForm({ selections, onSubmit, attendeeSelections, disab
                 <SelectTrigger
                   className={cn(
                     "w-full transition-all",
-                    hasError(index) && "border-red-800 focus:ring-red-800 focus:border-red-800"
+                    hasError(index) &&
+                      "border-red-600 focus:ring-red-600 focus:border-red-600 dark:border-red-400 dark:focus:ring-red-400 dark:focus:border-red-400"
                   )}
                 >
                   <SelectValue
                     placeholder={selections[index].name}
-                    className={cn("placeholder:text-slate-700 transition-all", hasError(index) && "text-red-950")}
+                    className={cn(
+                      "placeholder:text-gray-700 transition-all",
+                      hasError(index) && "text-red-600 dark:text-red-400"
+                    )}
                   />
                 </SelectTrigger>
-                <SelectContent>
-                  {/* Label for the current selection */}
-                  <SelectItem key={"label"} value={"label"} disabled>
-                    <Text className="text-slate-950 text-xs font-medium text-left">{selections[index].name}</Text>
-                  </SelectItem>
+                <SelectGroup>
+                  <SelectContent>
+                    <SelectLabel className="text-gray-800 dark:text-stone-400 text-xs">
+                      {" "}
+                      {selections[index].name}
+                    </SelectLabel>
 
-                  {selections[index].options.map(({ id, name }) => (
-                    <SelectItem key={id} value={id}>
-                      {name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                    {selections[index].options.map(({ id, name }) => (
+                      <SelectItem key={id} value={id}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectGroup>
               </Select>
 
               {hasError(index) && (
-                <Text className="text-red-950 text-xs text-left transition-all fade-in fade-out">
+                <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
                   {errors.attendeeOptions?.[index]?.optionId?.message ?? "En feil oppstod"}
                 </Text>
               )}

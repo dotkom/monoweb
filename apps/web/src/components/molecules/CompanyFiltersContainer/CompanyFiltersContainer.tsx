@@ -23,8 +23,8 @@ export const translationJobTypes = {
 }
 
 export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
-  <div className="border-slate-200 h-fit xl:w-72 rounded-lg border shadow-b-sm">
-    <div className="border-slate-200 flex flex-row justify-between border-b py-4">
+  <div className="border-gray-200 h-fit xl:w-72 rounded-lg border shadow-b-sm">
+    <div className="border-gray-200 flex flex-row justify-between border-b py-4">
       <h4 className="mx-4 my-auto text-lg align-middle">Filter</h4>
     </div>
     <div className="mx-4">
@@ -33,7 +33,7 @@ export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: Comp
         onChange={(e) => {
           props.setSearchName(e.target.value)
         }}
-        className="border-slate-700 w-full rounded-md border-2 py-2 pl-2"
+        className="border-gray-700 w-full rounded-md border-2 py-2 pl-2"
         type="text"
         placeholder="Søk jobbtittel eller nøkkelord"
       />
@@ -59,13 +59,13 @@ export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: Comp
       </div>
       <div />
     </div>
-    <div className="border-slate-700 mb-4 border-b">
+    <div className="border-gray-700 mb-4 border-b">
       <div className="mx-4">
         <p className="mt-2 font-semibold">Sted</p>
         <select
           value={props.chosenLocation}
           onChange={(e) => props.setChosenLocation(e.target.value)}
-          className="border-slate-700 radius my-2 mb-4 h-10 w-full rounded-md border"
+          className="border-gray-700 radius my-2 mb-4 h-10 w-full rounded-md border"
           name="places"
         >
           {props.places.map((place) => (
@@ -84,7 +84,7 @@ export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: Comp
           onChange={(e) => {
             props.setChosenSort(e.target.value as SortOption)
           }}
-          className="border-slate-700 radius my-2 mb-4 h-10 w-full rounded-md border"
+          className="border-gray-700 radius my-2 mb-4 h-10 w-full rounded-md border"
           name="kategorier"
         >
           {sortOption.map((category) => (

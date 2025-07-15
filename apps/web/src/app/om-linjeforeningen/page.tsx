@@ -29,7 +29,7 @@ export default async function AboutOnlinePage() {
         </Text>
       </div>
       <div className="flex flex-col items-center text-center mt-7">
-        <Title size={"lg"} element="h2" className="border-b border-slate-500 pb-1 w-full mb-4">
+        <Title size={"lg"} element="h2" className="border-b border-gray-500 pb-1 w-full mb-4">
           Generalforsamlingen
         </Title>
 
@@ -57,7 +57,7 @@ export default async function AboutOnlinePage() {
         </div>
       </div>
       <div className="flex flex-col items-center text-center mt-7">
-        <Title size={"lg"} element="h2" className="border-b border-slate-500 pb-1 w-full mb-4">
+        <Title size={"lg"} element="h2" className="border-b border-gray-500 pb-1 w-full mb-4">
           Komiteer
         </Title>
         <Text className="md:w-2/3 lg:w-1/2 sm:mx-12 text-left md:text-center">
@@ -67,7 +67,7 @@ export default async function AboutOnlinePage() {
         <GroupList groups={committees} />
       </div>
       <div className="flex flex-col items-center text-center mt-7">
-        <Title size={"lg"} element="h2" className="border-b border-slate-500 pb-1 w-full mb-4">
+        <Title size={"lg"} element="h2" className="border-b border-gray-500 pb-1 w-full mb-4">
           Nodekomiteer
         </Title>
         <Text className="md:w-2/3 lg:w-1/2 sm:mx-12 text-left md:text-center">

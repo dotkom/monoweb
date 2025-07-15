@@ -2,8 +2,8 @@ import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
 import { auth } from "@/auth"
 import { ArticleListItem } from "@/components/molecules/ArticleListItem"
 import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
-import { AttendanceStatus } from "@/components/molecules/EventCard/AttendanceStatus"
-import { DateAndTime } from "@/components/molecules/EventCard/DateAndTime"
+import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
+import { DateAndTime } from "@/components/molecules/EventListItem/DateAndTime"
 import { OfflineCard } from "@/components/molecules/OfflineCard"
 import { server } from "@/utils/trpc/server"
 import type { AttendanceId, EventDetail } from "@dotkomonline/types"
@@ -109,7 +109,7 @@ const EventCard: FC<ComingEventProps> = ({
           height={150}
           src={imageUrl ? imageUrl : EventImagePlaceholder}
           alt={title}
-          className="rounded-lg border border-slate-200 object-cover aspect-[4/3]"
+          className="rounded-lg border border-gray-200 object-cover aspect-[4/3]"
         />
       </Tilt>
       <div className="flex flex-col gap-1">
@@ -120,7 +120,7 @@ const EventCard: FC<ComingEventProps> = ({
         <div className="flex flex-row gap-4 items-center">
           <DateAndTime start={start} end={end} />
           {attendance && (
-            <AttendanceStatus attendance={attendance} attendeeStatus={attendeeStatus} startInPast={isPast(start)} />
+            <AttendanceStatus attendance={attendance} attendeeStatus={attendeeStatus} eventEndInPast={isPast(start)} />
           )}
         </div>
       </div>

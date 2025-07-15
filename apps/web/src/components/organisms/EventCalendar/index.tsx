@@ -56,13 +56,13 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           </h2>
           <div className="flex pb-2 gap-2 sm:gap-0">
             <Link
-              className="rounded-full hover:bg-slate-300 flex p-3 sm:p-2 duration-200"
+              className="rounded-full hover:bg-gray-300 flex p-3 sm:p-2 duration-200"
               href={`/arrangementer/kalender/${month === 0 ? year - 1 : year}/${month === 0 ? 12 : month}`}
             >
               <Icon icon="tabler:chevron-left" width={24} height={24} />
             </Link>
             <Link
-              className="rounded-full hover:bg-slate-300 flex p-3 sm:p-2 duration-200"
+              className="rounded-full hover:bg-gray-300 flex p-3 sm:p-2 duration-200"
               href={`/arrangementer/kalender/${month === 11 ? year + 1 : year}/${month === 11 ? 1 : month + 2}`}
             >
               <Icon icon="tabler:chevron-right" width={24} height={24} />
@@ -71,13 +71,13 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
         </div>
       </div>
       <div className="grid grid-cols-7 sm:grid-cols-[auto,1fr,1fr,1fr,1fr,1fr,1fr,1fr]">
-        <div className="hidden sm:block w-6 pr-2 text-slate-900 text-xs leading-5">Uke</div>
+        <div className="hidden sm:block w-6 pr-2 text-gray-900 text-xs leading-5">Uke</div>
         {weekdays.map((day) => (
           <div
             key={day}
             className={`
                 text-center sm:text-end sm:pr-3 leading-5
-                ${(nowDate.getDay() === 0 ? 6 : nowDate.getDay() - 1) === weekdays.indexOf(day) ? "font-semibold text-sm" : "text-slate-900 text-xs"}
+                ${(nowDate.getDay() === 0 ? 6 : nowDate.getDay() - 1) === weekdays.indexOf(day) ? "font-semibold text-sm" : "text-gray-900 text-xs"}
               `}
           >
             <span className="sm:hidden">{day[0]}</span>
@@ -91,7 +91,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
             <div
               className={cn(
                 "hidden sm:flex w-6 pr-2 items-center justify-center",
-                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-slate-900 text-xs"
+                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-900 text-xs"
               )}
             >
               {getWeek(week.dates[1])}
@@ -100,7 +100,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
               <div
                 key={new Date(day).toISOString()}
                 className={cn(
-                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-slate-700",
+                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-700",
                   week.dates.indexOf(day) % 7 === 0 ? "p-l-[5px]" : "pl-1 border-l-[1px]",
                   weekIndex > 0 ? "border-t-[1px]" : ""
                 )}
@@ -108,7 +108,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
                 <span
                   className={cn(
                     "text-sm w-7 h-7 leading-7 text-center",
-                    new Date(day).getTime() > nowDate.getTime() ? "" : "text-slate-900",
+                    new Date(day).getTime() > nowDate.getTime() ? "" : "text-gray-900",
                     new Date(day).getTime() === nowDate.getTime()
                       ? "font-semibold rounded-full bg-red-900 text-white"
                       : ""
