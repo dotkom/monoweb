@@ -17,8 +17,7 @@ import { useFeedbackAnswersGetQuery } from "../queries"
 import { type ChartValue, FeedbackAnswerCard, QuestionPieChart } from "./FeedbackAnswerCard"
 
 const formatPoolYears = (yearCriterias: number[][]): string => {
-  const flat = yearCriterias.flat()
-  flat.sort((a, b) => a - b)
+  const flat = yearCriterias.flat().toSorted((a, b) => a - b)
   return `${flat.join(". ")}. klasse`
 }
 
@@ -34,18 +33,18 @@ interface Props {
 export const FeedbackResults = ({ questions, attendees, event, pools, publicResultsToken, feedbackFormId }: Props) => {
   const answers = useFeedbackAnswersGetQuery(feedbackFormId, publicResultsToken)
 
-  questions.sort((a, b) => a.order - b.order)
-
+  const sortedQuestions = questions.toSorted((a, b) => a.order - b.order)
+  
   const formattedYears = formatPoolYears(pools.map((pool) => pool.yearCriteria))
   const eventDate = isSameDay(event.start, event.end)
     ? formatDate(event.start)
     : `${formatDate(event.start)} - ${formatDate(event.end)}`
 
-  const ratingQuestions = questions.filter((q) => q.type === "RATING")
-  const multipleChoiceQuestions = questions.filter(
+  const ratingQuestions = sortedQuestions.filter((q) => q.type === "RATING")
+  const multipleChoiceQuestions = sortedQuestions.filter(
     (q) => q.type === "SELECT" || q.type === "MULTISELECT" || q.type === "CHECKBOX"
   )
-  const textQuestions = questions.filter((q) => ["TEXT", "LONGTEXT"].includes(q.type))
+  const textQuestions = sortedQuestions.filter((q) => ["TEXT", "LONGTEXT"].includes(q.type))
 
   return (
     <div>
