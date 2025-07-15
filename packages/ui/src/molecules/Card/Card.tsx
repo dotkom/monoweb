@@ -18,7 +18,7 @@ const card = cva("box-border m-0 min-w-0 border p-1 rounded-sm", {
       true: "shadow-md",
     },
     outlined: {
-      true: "border-slate-12",
+      true: "border-black",
     },
   },
   defaultVariants: {

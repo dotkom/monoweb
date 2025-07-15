@@ -15,7 +15,7 @@ export const toggleItems = [
 
 export function PrivacyModule() {
   return (
-    <div className="divide-slate-7 my-5 flex w-full flex-col divide-y">
+    <div className="divide-gray-600 my-5 flex w-full flex-col divide-y">
       {toggleItems.map((item) => (
         <PrivacyOption key={item.key}>{item.optionsText}</PrivacyOption>
       ))}

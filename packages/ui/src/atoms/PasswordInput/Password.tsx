@@ -30,7 +30,7 @@ export const PasswordInput: FC<PasswordInputProps> = ({
     <div className="flex flex-col gap-1">
       {label && (
         <Label htmlFor={props.id} className="mb-1">
-          {label} {withAsterisk && <span className="text-red-11">*</span>}
+          {label} {withAsterisk && <span className="text-red-950">*</span>}
         </Label>
       )}
       <p>{inputInfo}</p>
@@ -46,16 +46,16 @@ export const PasswordInput: FC<PasswordInputProps> = ({
           </span>
         </div>
       </div>
-      {typeof error === "string" && <span className="text-red-11 mt-1 text-xs">{error}</span>}
+      {typeof error === "string" && <span className="text-red-950 mt-1 text-xs">{error}</span>}
     </div>
   )
 }
 
-const input = cva("border-solid border outline-hidden focus:border-blue-7 bg-slate-3 rounded-md p-2 w-full ", {
+const input = cva("border-solid border outline-hidden focus:border-blue-600 bg-gray-200 rounded-md p-2 w-full ", {
   variants: {
     error: {
-      true: "text-slate-12 border-red-7",
-      false: "text-slate-12 border-slate-6",
+      true: "text-black border-red-600",
+      false: "text-black border-gray-500",
     },
   },
 })
@@ -64,8 +64,8 @@ const eye = cva("absolute top-2 right-2 flex hover: cursor-pointer", {
   variants: {
     color: {
       default: "text-solid",
-      slate: "text-slate-7",
-      gray: "text-slate-11",
+      slate: "text-gray-600",
+      gray: "text-gray-950",
     },
   },
 })

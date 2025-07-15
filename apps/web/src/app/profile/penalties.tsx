@@ -45,7 +45,7 @@ const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => (
 
 export const PenaltiesPage = () => (
   <div className="ml-3 flex flex-col space-y-12">
-    <p className="text-slate-10">Oversikt over dine prikker</p>
+    <p className="text-gray-900">Oversikt over dine prikker</p>
     <div className="flex flex-col">
       <p className="text-2xl font-medium">Aktive Prikker</p>
       {/* TODO - Get active marks */}

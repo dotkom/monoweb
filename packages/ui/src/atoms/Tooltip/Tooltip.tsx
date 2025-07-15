@@ -18,8 +18,8 @@ const TooltipContent = React.forwardRef<
     ref={ref}
     sideOffset={sideOffset}
     className={cn(
-      "bg-slate-1 border border-slate-4 dark:bg-slate-12 dark:border-slate-11",
-      "text-sm text-slate-12 dark:text-slate-2",
+      "bg-slate-50 border border-gray-300 dark:bg-black dark:border-gray-950",
+      "text-sm text-black dark:text-gray-100",
       "rounded-md p-2 shadow-sm",
       "animate-in fade-in-0",
       "z-50 overflow-hidden",

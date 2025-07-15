@@ -30,10 +30,10 @@ const iconKey = (status: AlertIconProps["status"]) => {
 const iconVariant = cva("", {
   variants: {
     status: {
-      info: "text-blue-11",
-      success: "text-green-11",
-      danger: "text-red-11",
-      warning: "text-amber-11",
+      info: "text-blue-950",
+      success: "text-green-950",
+      danger: "text-red-950",
+      warning: "text-amber-950",
     },
   },
 })

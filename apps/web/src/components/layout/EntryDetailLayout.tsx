@@ -14,14 +14,14 @@ export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = 
   color = "BLUE",
 }) => {
   const borderColorClass = cn({
-    "border-blue-8": color === "BLUE",
-    "border-green-8": color === "GREEN",
-    "border-amber-8": color === "AMBER",
+    "border-blue-700": color === "BLUE",
+    "border-green-700": color === "GREEN",
+    "border-amber-700": color === "AMBER",
   })
   const textColorClass = cn({
-    "text-blue-11": color === "BLUE",
-    "text-green-11": color === "GREEN",
-    "text-amber-11": color === "AMBER",
+    "text-blue-950": color === "BLUE",
+    "text-green-950": color === "GREEN",
+    "text-amber-950": color === "AMBER",
   })
 
   return (

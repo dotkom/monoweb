@@ -32,7 +32,7 @@ export function Link<E extends ElementType = typeof NextLink>({
   )
 }
 
-const link = cva("text-slate-12 font-body underline", {
+const link = cva("text-black font-body underline", {
   variants: {
     size: {
       sm: "text-sm",

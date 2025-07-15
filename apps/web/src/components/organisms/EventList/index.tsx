@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { EventCard } from "@/components/molecules/EventCard/EventCard"
+import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { server } from "@/utils/trpc/server"
 import type { AttendanceEvent, AttendanceId } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
@@ -12,14 +12,7 @@ const mapEventDetailToItem = (
 ) => {
   const attendeeStatus = attendanceStatuses?.get(attendanceEvent.attendance?.id ?? "") ?? null
 
-  return (
-    <EventCard
-      attendanceEvent={attendanceEvent}
-      attendeeStatus={attendeeStatus}
-      direction="row"
-      key={attendanceEvent.id}
-    />
-  )
+  return <EventListItem attendanceEvent={attendanceEvent} attendeeStatus={attendeeStatus} key={attendanceEvent.id} />
 }
 
 interface EventListProps {
@@ -29,7 +22,7 @@ interface EventListProps {
 export const EventList: FC<EventListProps> = async (props: EventListProps) => {
   if (props.attendanceEvents.length === 0) {
     return (
-      <Text className="text-slate-9 text-sm">
+      <Text className="text-gray-800 dark:text-stone-400 text-sm">
         Det er ingen arrangementer å vise. Kom tilbake senere for oppdateringer.
       </Text>
     )
@@ -38,7 +31,7 @@ export const EventList: FC<EventListProps> = async (props: EventListProps) => {
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
 
-  const lastFuture = props.attendanceEvents.findLastIndex((event) => !isPast(event.start))
+  const lastFuture = props.attendanceEvents.findLastIndex((event) => !isPast(event.end))
   const attendanceIds = props.attendanceEvents.map((event) => event.attendance?.id).filter(Boolean) as AttendanceId[]
   const futureEvents = props.attendanceEvents.slice(0, lastFuture + 1)
   const pastEvents = props.attendanceEvents.slice(lastFuture + 1)
@@ -60,11 +53,11 @@ export const EventList: FC<EventListProps> = async (props: EventListProps) => {
       {pastEventItems.length > 0 && (
         <>
           <div className="w-full px-2 flex flex-row items-center gap-2 sm:-my-1">
-            <div className="grow h-[2px] bg-slate-3 rounded-full" />
-            <Text className="text-slate-5 text-xs uppercase tracking-widest font-medium select-none">
+            <div className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
+            <Text className="text-gray-400 dark:text-stone-700 text-xs uppercase tracking-widest font-medium select-none">
               Tidligere arrangementer
             </Text>
-            <div className="grow h-[2px] bg-slate-3 rounded-full" />
+            <div className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
           </div>
           {pastEventItems}
         </>

@@ -9,7 +9,7 @@ import {
   type User,
   canUserAttendPool,
 } from "@dotkomonline/types"
-import { Icon, Text, Title } from "@dotkomonline/ui"
+import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
@@ -117,7 +117,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   return (
-    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-slate-3 sm:p-4 sm:rounded-xl">
+    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-900 sm:dark:bg-stone-900 sm:p-4 sm:rounded-xl">
       <Title element="h2" size="lg">
         Påmelding
       </Title>
@@ -151,7 +151,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
         <NonAttendablePoolsBox pools={nonAttendablePools} hasAttendablePool={Boolean(attendablePool)} />
       )}
 
-      {attendee && user ? (
+      {attendee ? (
         <div className="flex flex-col-reverse gap-4 sm:flex-row">
           <ViewAttendeesButton
             attendeeListOpen={attendeeListOpen}
@@ -183,21 +183,58 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
       />
 
       <div className="hidden sm:block">
-        <div className="flex flex-row gap-4">
-          <div className="flex flex-row gap-1 items-center text-sm text-slate-9 hover:text-slate-12 transition-colors cursor-pointer">
+        <div className="flex flex-row gap-4 text-gray-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
+          <div className="flex flex-row gap-1 items-center cursor-pointer">
             <Icon icon="tabler:book-2" className="text-lg" />
-            <Text>Arrangementregler</Text>
+            <Text className="text-sm">Arrangementregler</Text>
           </div>
 
-          <Link
-            href="/profile"
-            className="flex flex-row gap-1 items-center text-sm text-slate-9 hover:text-slate-12 transition-colors"
-          >
+          <Link href="/profile" className="flex flex-row gap-1 items-center">
             <Icon icon="tabler:edit" className="text-lg" />
-            <Text>Oppdater matallergier</Text>
+            <Text className="text-sm">Oppdater matallergier</Text>
           </Link>
         </div>
       </div>
+    </section>
+  )
+}
+
+export const AttendanceCardSkeleton = () => {
+  const skeletonText = (min: number, max: number, height?: string) => (
+    <div
+      className={cn("h-4 bg-gray-300 dark:bg-stone-700 rounded-full animate-pulse", height)}
+      style={{ width: `${Math.random() * (max - min) + min}%` }}
+    />
+  )
+
+  const dateInfo = () => (
+    <div className="flex flex-col gap-1 w-[25%]">
+      {skeletonText(80, 100, "h-5")}
+      {skeletonText(80, 100)}
+    </div>
+  )
+
+  const title = skeletonText(40, 60, "h-8")
+  const card = <div className="min-h-[12rem] rounded-lg bg-gray-300 dark:bg-stone-700 animate-pulse" />
+  const button = <div className="min-h-[4rem] rounded-lg bg-gray-300 dark:bg-stone-700 animate-pulse" />
+
+  return (
+    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-900 sm:dark:bg-stone-900 sm:p-4 sm:rounded-xl">
+      {title}
+
+      <div className="flex flex-row gap-2 items-center">
+        {dateInfo()}
+        <span className="grow h-0.5 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse invisible sm:visible" />
+        {dateInfo()}
+        <span className="grow h-0.5 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse invisible sm:visible" />
+        {dateInfo()}
+      </div>
+
+      {card}
+
+      {button}
+
+      {button}
     </section>
   )
 }

@@ -11,7 +11,7 @@ const formatTime = (date: Date) => formatDate(date, "HH:mm", { locale: nb })
 const dateComponent = (label: string, dateStr: string, time: string) => (
   <div>
     <Text className="text-base">{label}</Text>
-    <div className="flex flex-row gap-2 text-slate-12 text-base sm:flex-col sm:gap-0 sm:text-sm">
+    <div className="flex flex-row gap-2 dark:text-stone-300 text-base sm:flex-col sm:gap-0 sm:text-sm">
       <Text>{dateStr}</Text>
       <Text>kl. {time}</Text>
     </div>
@@ -77,7 +77,7 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
         <React.Fragment key={key}>
           {element}
           {index < sortedElements.length - 1 && (
-            <span className="grow h-0.5 rounded-full bg-slate-7 invisible sm:visible" />
+            <span className="grow h-0.5 rounded-full bg-gray-600 dark:bg-stone-700 invisible sm:visible" />
           )}
         </React.Fragment>
       ))}

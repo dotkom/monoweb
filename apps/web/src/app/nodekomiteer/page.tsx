@@ -8,7 +8,7 @@ export default async function NodeCommitteePage() {
 
   return (
     <div>
-      <div className="border-slate-7 border-b">
+      <div className="border-gray-600 border-b">
         <div className="flex flex-col pb-5">
           <Title element="h1" className="text-3xl">
             Nodekomiteer
@@ -21,10 +21,10 @@ export default async function NodeCommitteePage() {
             deres medlemmer bare er aktive under visse perioder, og ikke kontinuerlig slik som kjernekomiteene.
             Hovedoppgaven til nodekomiteene er å organisere og gjennomføre sentrale hendelser i linjeforeningen Online.
           </Text>
-          <Text className="text-slate-11 pt-2">
+          <Text className="text-gray-950 pt-2">
             Mer informasjon finnes{" "}
             <Link
-              className="hover:underline text-blue-8"
+              className="hover:underline text-blue-700"
               href={"https://wiki.online.ntnu.no/info/innsikt-og-interface/nodekomiteer/"}
             >
               her.

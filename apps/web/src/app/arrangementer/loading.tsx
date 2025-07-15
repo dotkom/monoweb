@@ -1,4 +1,4 @@
-import { EventListItemSkeleton } from "@/components/molecules/EventCard/EventCard"
+import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { EventsViewToggle } from "@/components/molecules/EventsViewToggle/index"
 import { Title } from "@dotkomonline/ui"
 

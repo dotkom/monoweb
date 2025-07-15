@@ -67,21 +67,26 @@ export const ProfileMenu: FC = () => {
       <div className="flex flex-row gap-4">
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="text" size="sm" className="font-semibold px-3 hover:bg-blue-3">
+            <Button variant="text" size="sm" className="text-sm font-semibold px-3 hover:bg-blue-200">
               <Icon icon="tabler:sun-moon" className="text-base" />
               Tema
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="bg-slate-1 dark:bg-slate-12 p-2">
+          <PopoverContent>
             <RadioGroup defaultValue={theme} onValueChange={(val) => setTheme(val)} className="flex flex-col gap-2">
               {THEME_OPTIONS.map((item) => (
                 <Label
                   key={item.theme}
                   htmlFor={item.theme}
-                  className="flex flex-row items-center gap-2 p-2 w-full hover:bg-slate-3 dark:hover:bg-slate-11 rounded-md cursor-pointer"
+                  className="flex flex-row items-center gap-2 p-2 w-full hover:bg-gray-200 dark:hover:bg-stone-700 rounded-md cursor-pointer"
                 >
                   <RadioGroupItem value={item.theme} id={item.theme} className="hidden" />
-                  <div className={cn("w-1 h-4 rounded-full bg-slate-6 invisible", theme === item.theme && "visible")} />
+                  <div
+                    className={cn(
+                      "w-1 h-4 rounded-full bg-gray-500 dark:bg-stone-500 invisible",
+                      theme === item.theme && "visible"
+                    )}
+                  />
                   <Icon icon={item.icon} className="text-base dark:text-white" />
                   <Text className="dark:text-white">{item.label}</Text>
                 </Label>
@@ -95,7 +100,7 @@ export const ProfileMenu: FC = () => {
           variant="solid"
           size="sm"
           color="brand"
-          className="font-semibold py-2"
+          className="text-sm font-semibold px-3 py-2"
           href="/api/auth/authorize"
         >
           Logg inn
@@ -109,7 +114,7 @@ export const ProfileMenu: FC = () => {
       <AvatarDropdown>
         <Avatar>
           <AvatarImage src={user?.image ?? undefined} alt={user?.displayName ?? "Profilbilde"} />
-          <AvatarFallback className="bg-blue-6">
+          <AvatarFallback className="bg-blue-500">
             <Icon className="text-lg" icon="tabler:user" />
           </AvatarFallback>
         </Avatar>
@@ -204,7 +209,7 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
                       {link.adminOnly ? (
                         <div className="flex flex-row items-center justify-between w-full">
                           <Text element="span">{link.label}</Text>
-                          <div className="flex flex-row items-center gap-1 text-[0.65rem] text-slate-9 dark:text-slate-8">
+                          <div className="flex flex-row items-center gap-1 text-[0.65rem] text-gray-800 dark:text-stone-400">
                             <Icon icon="tabler:lock" />
                             <Text element="span">Admin</Text>
                           </div>

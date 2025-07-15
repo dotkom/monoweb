@@ -9,6 +9,6 @@ export interface ArticleTagProps {
 
 export const ArticleTag: FC<ArticleTagProps> = ({ tag }: ArticleTagProps) => (
   <Link href={`/artikler?tag=${tag}`}>
-    <Text className="bg-[#153e75] hover:bg-blue-12 py-1 px-3 rounded-full text-white font-semibold">{tag}</Text>
+    <Text className="bg-[#153e75] hover:bg-black py-1 px-3 rounded-full text-white font-semibold">{tag}</Text>
   </Link>
 )

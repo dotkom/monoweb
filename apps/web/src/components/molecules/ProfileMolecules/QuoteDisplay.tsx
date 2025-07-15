@@ -10,8 +10,8 @@ export type QuoteDisplayProps = {
 export const QuoteDisplay: FC<QuoteDisplayProps> = ({ quote, name, year, className }) => {
   return (
     <div className={`px-16 items-center justify-center ${className}`}>
-      <p className="text-slate-10">{quote}</p>
-      <p className="text-slate-10">
+      <p className="text-gray-900">{quote}</p>
+      <p className="text-gray-900">
         - {name} {year}
       </p>
     </div>

@@ -42,56 +42,56 @@ export const JobListingView: FC<JobListingViewProps> = ({ jobListing }: JobListi
 
         <p>{ingress}</p>
 
-        <div className="bg-slate-12 mx-auto mb-14 mt-10 h-[0.5px] w-full" />
+        <div className="bg-black mx-auto mb-14 mt-10 h-[0.5px] w-full" />
         <Link href="/karriere">
           <div className="flex items-center">
-            <Icon icon="mdi:arrow-left" className="text-blue-9" width={20} height={20} />
+            <Icon icon="mdi:arrow-left" className="text-blue-800" width={20} height={20} />
             <p className="m-0 border-0 pl-2 text-base text-blue-500"> ANDRE MULIGHETER</p>
           </div>
         </Link>
-        <div className="bg-slate-9 mb-7 mt-3 h-[0.5px] w-full" />
+        <div className="bg-gray-800 mb-7 mt-3 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
-          <Icon icon="mdi:globe" className="text-blue-9" width={20} height={20} />
+          <Icon icon="mdi:globe" className="text-blue-800" width={20} height={20} />
           <p className="m-0 pl-2">{locations.map((location) => location.name)}</p>
         </div>
-        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
+        <div className="bg-gray-800 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
-          <div className="text-blue-9 mb-[-3px] inline">
-            <Icon icon="mdi:clock-outline" className="text-blue-9" width={20} height={20} />
+          <div className="text-blue-800 mb-[-3px] inline">
+            <Icon icon="mdi:clock-outline" className="text-blue-800" width={20} height={20} />
           </div>
           {deadline ? <p className="m-0 pl-2">{formatDate(deadline)}</p> : <p className="m-0 pl-2">Ingen frist</p>}
         </div>
-        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
+        <div className="bg-gray-800 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
-          <div className="text-blue-9 mb-[-3px] inline">
-            <Icon icon="mdi:briefcase-outline" className="text-blue-9" width={20} height={20} />
+          <div className="text-blue-800 mb-[-3px] inline">
+            <Icon icon="mdi:briefcase-outline" className="text-blue-800" width={20} height={20} />
           </div>
           <p className="m-0 pl-2">{employment}</p>
         </div>
-        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
+        <div className="bg-gray-800 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
-          <div className="text-blue-9 mb-[-3px] inline">
-            <Icon icon="mdi:content-copy" className="text-blue-9" width={20} height={20} />
+          <div className="text-blue-800 mb-[-3px] inline">
+            <Icon icon="mdi:content-copy" className="text-blue-800" width={20} height={20} />
           </div>
           <p className="m-0 pl-2">{employment}</p>
         </div>
-        <div className="bg-slate-9 mb-3 mt-7 h-[0.5px] w-full" />
+        <div className="bg-gray-800 mb-3 mt-7 h-[0.5px] w-full" />
         {applicationLink ? (
           <Link href={applicationLink}>
-            <Button className="bg-blue-8 mt-3 w-20 mb-20">Søk</Button>
+            <Button className="bg-blue-700 mt-3 w-20 mb-20">Søk</Button>
           </Link>
         ) : (
           <div>ingen link</div>
         )}
       </div>
       <div className="w-2/3">
-        <div className="border-amber-9 ml-[38px] mt-2 border-l-[1px] pl-4 mb-10">
+        <div className="border-amber-800 ml-[38px] mt-2 border-l-[1px] pl-4 mb-10">
           <p className="m-0 text-4xl font-bold">{company.name}</p>
           <p className="m-0 text-3xl">{title}</p>
         </div>
         <div
           className="[&_[dir='ltr']]:text-white
-                      [&_[dir='ltr']]:border-amber-9
+                      [&_[dir='ltr']]:border-amber-800
                         [&_[dir='ltr']]:border-l-[1px]
                         [&_[dir='ltr']]:pl-4
                         mb-12 ml-8 flex flex-col"

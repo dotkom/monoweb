@@ -26,7 +26,7 @@ export const AvatarFallback: FC<ComponentPropsWithRef<typeof AvatarPrimitive.Fal
   return (
     <AvatarPrimitive.Fallback
       ref={ref}
-      className={cn("bg-slate-11 flex h-full w-full items-center justify-center rounded-full", className)}
+      className={cn("bg-gray-950 flex h-full w-full items-center justify-center rounded-full", className)}
       {...props}
     />
   )

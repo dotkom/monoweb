@@ -455,7 +455,7 @@ export function ReceiptForm() {
                     dropzoneOptions={dropZoneConfig}
                     className="relative bg-background rounded-lg p-2"
                   >
-                    <FileInput id="fileInput" className="outline-dashed outline-1 outline-slate-500">
+                    <FileInput id="fileInput" className="outline-dashed outline-1 outline-gray-500">
                       <div className="flex items-center justify-center flex-col p-8 w-full ">
                         <CloudUpload className="text-gray-500 w-10 h-10" />
                         <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">

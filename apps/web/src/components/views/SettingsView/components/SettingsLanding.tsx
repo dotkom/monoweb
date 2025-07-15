@@ -14,7 +14,7 @@ interface FormInputProps {
 }
 
 const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
-  <div className="w-full border-t-[1px] first-of-type:border-0 first-of-type:pt-0 border-slate-7 flex pt-16 justify-between px-4">
+  <div className="w-full border-t-[1px] first-of-type:border-0 first-of-type:pt-0 border-gray-600 flex pt-16 justify-between px-4">
     <div className="w-1/4">{title}:</div>
     <div className="flex-1 flex justify-center">{children}</div>
   </div>
