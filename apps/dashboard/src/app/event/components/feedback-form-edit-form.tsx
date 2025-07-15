@@ -1,4 +1,5 @@
 import {
+  type EventId,
   type FeedbackFormId,
   type FeedbackFormWrite,
   FeedbackFormWriteSchema,
@@ -9,9 +10,25 @@ import {
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react"
-import { Button, Card, Checkbox, Divider, Group, Select, Stack, TagsInput, TextInput, Tooltip } from "@mantine/core"
-import React, { type FC } from "react"
+import {
+  ActionIcon,
+  Anchor,
+  Button,
+  Card,
+  Checkbox,
+  CopyButton,
+  Divider,
+  Group,
+  Select,
+  Stack,
+  TagsInput,
+  TextInput,
+  Title,
+  Tooltip,
+} from "@mantine/core"
 
+import { env } from "@/lib/env"
+import React, { type FC } from "react"
 import {
   type Control,
   Controller,
@@ -24,7 +41,7 @@ import {
 import { useConfirmDeleteModal } from "src/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import z from "zod"
 import { useDeleteFeedbackFormMutation } from "../mutations"
-import { useFeedbackAnswersGetQuery } from "../queries"
+import { useEventFeedbackPublicResultsTokenGetQuery, useFeedbackAnswersGetQuery } from "../queries"
 
 const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map((type) => ({
   value: type,
@@ -42,9 +59,12 @@ interface Props {
   onSubmit(id: FeedbackFormId, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): void
   defaultValues?: FormValues
   feedbackFormId: FeedbackFormId
+  eventId: EventId
 }
 
-export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedbackFormId }) => {
+export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedbackFormId, eventId }) => {
+  const publicResultsTokenQuery = useEventFeedbackPublicResultsTokenGetQuery(feedbackFormId)
+
   defaultValues?.questions.sort((a, b) => a.order - b.order)
 
   const form = useForm<FormValues>({
@@ -66,6 +86,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
       required: false,
       options: [],
       order: fields.length,
+      showInPublicResults: true,
     }
 
     append(question)
@@ -98,72 +119,115 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
     },
   })
 
+  const resultsPageUrl = new URL(`tilbakemelding/${eventId}/svar/`, env.NEXT_PUBLIC_WEB_URL)
+  const publicResultsPageUrl = new URL(`${publicResultsTokenQuery.data}`, resultsPageUrl)
+
   return (
-    <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <Stack>
-          <Controller
-            name={"feedbackForm.isActive"}
-            control={form.control}
-            render={({ field }) => (
-              <Checkbox
-                label="Aktiv"
-                checked={!!field.value}
-                onChange={(e) => field.onChange(e.currentTarget.checked)}
-              />
-            )}
+    <Stack>
+      <Stack gap={4}>
+        <Title order={4}>Svar</Title>
+        <CopyLinkRow
+          url={resultsPageUrl.toString()}
+          label="Privat lenke"
+          info="Alle svar. Kun tilgjengelig for administratorer"
+        />
+        {publicResultsTokenQuery?.data && (
+          <CopyLinkRow
+            url={publicResultsPageUrl.toString()}
+            label="Bedriftslenke"
+            info="Viser kun svar markert med 'Vis til bedrift'. Tilgjengelig for alle med lenken"
           />
-          <Group mt={16}>
-            <Button onClick={addQuestion}>Legg til spørsmål</Button>
-          </Group>
-          <Divider />
-          <Card withBorder>
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="questions" direction="vertical">
-                {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {fields.map((field, index) => (
-                      <QuestionCard
-                        key={field.fieldId}
-                        fieldId={field.fieldId}
-                        control={form.control}
-                        index={index}
-                        onRemove={remove}
-                        hasAnswers={!!field.id && answeredQuestionIds.has(field.id)}
-                      />
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </Card>
-          <Group>
-            <Tooltip label="Legg til minst ett spørsmål først" disabled={fields.length > 0}>
-              <Button type="submit" disabled={fields.length === 0}>
-                Lagre skjema
-              </Button>
-            </Tooltip>
-            <Tooltip
-              disabled={!hasFormAnswers}
-              label="Skjemaet har mottatt svar og kan ikke slettes. Deaktiver det for å stoppe nye svar"
-            >
-              <Button
-                type="button"
-                onClick={openDeleteFormModal}
-                variant="outline"
-                color="red"
-                disabled={hasFormAnswers}
+        )}
+      </Stack>
+
+      <Divider />
+      <Title order={4}>Rediger</Title>
+      <FormProvider {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <Stack>
+            <Controller
+              name={"feedbackForm.isActive"}
+              control={form.control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Aktiv"
+                  checked={!!field.value}
+                  onChange={(e) => field.onChange(e.currentTarget.checked)}
+                />
+              )}
+            />
+            <Group mt={16}>
+              <Button onClick={addQuestion}>Legg til spørsmål</Button>
+            </Group>
+            <Divider />
+            <Card withBorder>
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="questions" direction="vertical">
+                  {(provided) => (
+                    <div {...provided.droppableProps} ref={provided.innerRef}>
+                      {fields.map((field, index) => (
+                        <QuestionCard
+                          key={field.fieldId}
+                          fieldId={field.fieldId}
+                          control={form.control}
+                          index={index}
+                          onRemove={remove}
+                          hasAnswers={!!field.id && answeredQuestionIds.has(field.id)}
+                        />
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </Card>
+            <Group>
+              <Tooltip label="Legg til minst ett spørsmål først" disabled={fields.length > 0}>
+                <Button type="submit" disabled={fields.length === 0}>
+                  Lagre skjema
+                </Button>
+              </Tooltip>
+              <Tooltip
+                disabled={!hasFormAnswers}
+                label="Skjemaet har mottatt svar og kan ikke slettes. Deaktiver det for å stoppe nye svar"
               >
-                <Icon icon="tabler:trash" />
-              </Button>
-            </Tooltip>
-          </Group>
-        </Stack>
-      </form>
-    </FormProvider>
+                <Button
+                  type="button"
+                  onClick={openDeleteFormModal}
+                  variant="outline"
+                  color="red"
+                  disabled={hasFormAnswers}
+                >
+                  <Icon icon="tabler:trash" />
+                </Button>
+              </Tooltip>
+            </Group>
+          </Stack>
+        </form>
+      </FormProvider>
+    </Stack>
   )
 }
+
+const CopyLinkRow = ({ url, label, info }: { url: string; label: string; info: string }) => (
+  <Group gap={8}>
+    <Anchor href={url}>{label}</Anchor>
+    <CopyButton value={url}>
+      {({ copied, copy }) => (
+        <Tooltip label={copied ? "Kopiert" : "Kopier"}>
+          <ActionIcon color="gray" variant="subtle" onClick={copy}>
+            {copied ? <Icon icon="tabler:check" /> : <Icon icon="tabler:copy" />}
+          </ActionIcon>
+        </Tooltip>
+      )}
+    </CopyButton>
+    <Tooltip label={info}>
+      <ActionIcon variant="subtle" color="gray" size="sm">
+        <Icon icon="tabler:info-circle" />
+      </ActionIcon>
+    </Tooltip>
+  </Group>
+)
 
 interface QuestionCardProps {
   index: number
@@ -231,6 +295,17 @@ const QuestionCard = React.memo(function QuestionCard({
                   render={({ field }) => (
                     <Checkbox
                       label="Obligatorisk"
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.currentTarget.checked)}
+                    />
+                  )}
+                />
+                <Controller
+                  name={`questions.${index}.showInPublicResults`}
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      label="Vis til bedrift"
                       checked={field.value}
                       onChange={(e) => field.onChange(e.currentTarget.checked)}
                     />

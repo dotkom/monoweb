@@ -191,7 +191,7 @@ export async function createServiceLayer(
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
-  const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository)
+  const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
   const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
 

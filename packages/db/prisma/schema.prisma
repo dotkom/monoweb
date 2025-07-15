@@ -552,22 +552,24 @@ model FeedbackForm {
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
   isActive  Boolean              @default(false)
+  publicResultsToken  String     @unique @default(uuid())
 
   @@map("feedback_form")
 }
 
 model FeedbackQuestion {
-  id             String                   @id @default(uuid())
-  createdAt      DateTime                 @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime                 @updatedAt @db.Timestamptz(3)
-  feedbackFormId String
-  feedbackForm   FeedbackForm             @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
-  label          String
-  required       Boolean                  @default(false)
-  type           FeedbackQuestionType
-  order          Int
-  options        FeedbackQuestionOption[]
-  answers        FeedbackQuestionAnswer[] @relation("QuestionAnswers")
+  id                   String                   @id @default(uuid())
+  createdAt            DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt            DateTime                 @updatedAt @db.Timestamptz(3)
+  feedbackFormId       String
+  feedbackForm         FeedbackForm             @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
+  label                String
+  required             Boolean                  @default(false)
+  showInPublicResults  Boolean                  @default(true)
+  type                 FeedbackQuestionType
+  order                Int
+  options              FeedbackQuestionOption[]
+  answers              FeedbackQuestionAnswer[] @relation("QuestionAnswers")
 
   @@map("feedback_question")
 }

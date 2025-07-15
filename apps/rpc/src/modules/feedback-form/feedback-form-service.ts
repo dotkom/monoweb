@@ -4,6 +4,7 @@ import type {
   FeedbackForm,
   FeedbackFormId,
   FeedbackFormWrite,
+  FeedbackPublicResultsToken,
   FeedbackQuestionWrite,
 } from "@dotkomonline/types"
 import { FeedbackFormNotFoundError } from "./feedback-form-errors"
@@ -20,6 +21,9 @@ export interface FeedbackFormService {
   delete(handle: DBHandle, id: FeedbackFormId): Promise<void>
   getById(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackForm>
   findByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
+  getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm>
+  getPublicForm(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackForm>
+  getPublicResultsToken(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackPublicResultsToken>
 }
 
 export function getFeedbackFormService(formRepository: FeedbackFormRepository): FeedbackFormService {
@@ -36,13 +40,43 @@ export function getFeedbackFormService(formRepository: FeedbackFormRepository): 
     async getById(handle, id) {
       const feedbackForm = await formRepository.getById(handle, id)
       if (!feedbackForm) {
-        throw new FeedbackFormNotFoundError(id)
+        throw new FeedbackFormNotFoundError()
       }
 
       return feedbackForm
     },
     async findByEventId(handle, eventId) {
       return await formRepository.getByEventId(handle, eventId)
+    },
+    async getByEventId(handle, eventId) {
+      const feedbackForm = await formRepository.getByEventId(handle, eventId)
+      if (!feedbackForm) {
+        throw new FeedbackFormNotFoundError()
+      }
+
+      return feedbackForm
+    },
+    async getPublicForm(handle, publicResultsToken) {
+      const feedbackForm = await formRepository.getByPublicResultsToken(handle, publicResultsToken)
+      if (!feedbackForm) {
+        throw new FeedbackFormNotFoundError()
+      }
+
+      const { questions, ...form } = feedbackForm
+      const publicQuestions = questions.filter((question) => question.showInPublicResults)
+
+      return {
+        ...form,
+        questions: publicQuestions,
+      }
+    },
+    async getPublicResultsToken(handle, id) {
+      const token = await formRepository.getPublicResultsToken(handle, id)
+      if (!token) {
+        throw new FeedbackFormNotFoundError()
+      }
+
+      return token
     },
   }
 }

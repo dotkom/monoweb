@@ -135,11 +135,14 @@ const QuestionCard = React.forwardRef<HTMLDivElement, Props>(({ question, index,
   const hasErrors = Boolean(errors.answers?.[index])
 
   return (
-    <div ref={ref} className={clsx("shadow-md p-6 rounded-lg border-2", hasErrors ? "border-red-9" : "border-slate-4")}>
+    <div
+      ref={ref}
+      className={clsx("shadow-md p-6 rounded-lg border-2", hasErrors ? "border-red-600" : "border-gray-100")}
+    >
       <div className="mb-6">
-        <Label htmlFor={question.id} className="text-lg inline dark:text-white">
+        <Label htmlFor={question.id} className="text-lg inline dark:text-white break-words">
           {question.label}
-          {question.required && <span className="text-red-11 ml-1">*</span>}
+          {question.required && <span className="text-red-600 ml-1">*</span>}
         </Label>
       </div>
       {questionInput}
@@ -170,6 +173,7 @@ const TextQuestion = ({ question, index, control }: QuestionProps) => (
           value={typeof value === "string" ? value : ""}
           onChange={onChange}
           placeholder="Svaret ditt"
+          className="dark:placeholder-stone-300!"
         />
       </InputWrapper>
     )}
@@ -193,7 +197,7 @@ const LongTextQuestion = ({ question, index, control }: QuestionProps) => (
           value={typeof value === "string" ? value : ""}
           onChange={onChange}
           placeholder="Svaret ditt"
-          className="text-[16px] "
+          className="text-[16px] dark:placeholder-stone-300!"
         />
       </InputWrapper>
     )}
@@ -227,13 +231,13 @@ const SelectQuestion = ({ question, index, control }: QuestionProps) => (
           onValueChange={(id) => onChange([question.options.find((o) => o.id === id)])}
           required={question.required}
         >
-          <SelectTrigger className="w-full transition-all bg-white-3" id={question.id}>
+          <SelectTrigger className="w-full transition-all bg-gray-50 dark:bg-stone-600" id={question.id}>
             <SelectValue placeholder="Velg et alternativ" className="transition-all" />
           </SelectTrigger>
           <SelectContent>
             {!question.required && (
               <SelectItem value="0">
-                <Text className="text-slate-11 text-xs font-medium">Fjern valg</Text>
+                <Text className="text-gray-500 text-xs font-medium">Fjern valg</Text>
               </SelectItem>
             )}
             {question.options.map((option) => (
@@ -264,9 +268,9 @@ const RatingQuestion = ({ question, index, control }: QuestionProps) => (
               key={`${question.id}.${n}`}
               htmlFor={`${question.id}.${n}`}
               className={clsx(
-                "items-center justify-center w-10 h-10 hover:bg-slate-3 dark:hover:bg-slate-11 active:bg-slate-6 dark:active:bg-slate-10 rounded-full border border-slate-8 cursor-pointer",
+                "items-center justify-center w-10 h-10 hover:bg-gray-200 dark:hover:bg-stone-400 active:bg-gray-300 dark:active:bg-stone-500 rounded-full border border-gray-600 dark:border-stone-400 cursor-pointer",
                 Number(value) === n &&
-                  "bg-brand-11 text-white hover:bg-brand-9 dark:hover:bg-brand-9 active:bg-brand-10 dark:active:bg-brand-10"
+                  "bg-brand text-white hover:bg-gray-400 dark:hover:bg-stone-400 active:bg-gray-500 dark:active:bg-stone-500"
               )}
             >
               <RadioGroupItem
@@ -331,7 +335,7 @@ const InputWrapper = ({ children, error }: { children: ReactNode; error?: string
   <div>
     {children}
     {error && (
-      <Text className="text-red-9 text-sm mt-2" role="alert">
+      <Text className="text-red-600 text-sm mt-2" role="alert">
         {error}
       </Text>
     )}

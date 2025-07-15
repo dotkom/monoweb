@@ -1,4 +1,4 @@
-import { EventFeedbackForm } from "@/app/arrangementer/components/Feedback/FeedbackForm"
+import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"
@@ -38,11 +38,11 @@ const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string
 
   return (
     <div>
-      <div className="flex flex-col gap-2 border-b border-slate-7">
+      <div className="flex flex-col gap-2 border-b border-gray-600">
         <Title element="h1" className="text-3xl">
           Tilbakemelding
         </Title>
-        <Text className="text-slate-9">Gi tilbakemelding på {event.title}</Text>
+        <Text className="text-gray-800 dark:text-stone-300">Gi tilbakemelding på {event.title}</Text>
       </div>
 
       <div className="mt-8">

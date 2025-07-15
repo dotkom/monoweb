@@ -31,6 +31,8 @@ export type FeedbackQuestionWrite = z.infer<typeof FeedbackQuestionWriteSchema>
 
 export const FeedbackFormSchema = schemas.FeedbackFormSchema.extend({
   questions: FeedbackQuestionSchema.array(),
+}).omit({
+  publicResultsToken: true,
 })
 export type FeedbackForm = z.infer<typeof FeedbackFormSchema>
 
@@ -66,6 +68,10 @@ export type FeedbackQuestionType = FeedbackQuestion["type"]
 export const FeedbackFormIdSchema = FeedbackFormSchema.shape.id
 
 export type FeedbackFormId = z.infer<typeof FeedbackFormIdSchema>
+
+export const FeedbackPublicResultsTokenSchema = schemas.FeedbackFormSchema.shape.publicResultsToken
+
+export type FeedbackPublicResultsToken = z.infer<typeof FeedbackPublicResultsTokenSchema>
 
 export const FeedbackFormWriteSchema = FeedbackFormSchema.omit({
   id: true,

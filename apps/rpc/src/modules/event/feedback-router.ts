@@ -4,11 +4,13 @@ import {
   FeedbackFormAnswerWriteSchema,
   FeedbackFormIdSchema,
   FeedbackFormWriteSchema,
+  FeedbackPublicResultsTokenSchema,
+  FeedbackQuestionAnswerSchema,
   FeedbackQuestionAnswerWriteSchema,
   FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, protectedProcedure, t } from "../../trpc"
+import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const feedbackRouter = t.router({
   createForm: adminProcedure
@@ -51,6 +53,21 @@ export const feedbackRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.findByEventId(handle, input))
     ),
+  getFormByEventid: protectedProcedure
+    .input(EventSchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getByEventId(handle, input))
+    ),
+  getPublicForm: publicProcedure
+    .input(FeedbackPublicResultsTokenSchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getPublicForm(handle, input))
+    ),
+  getPublicResultsToken: adminProcedure
+    .input(FeedbackFormIdSchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getPublicResultsToken(handle, input))
+    ),
   createAnswer: protectedProcedure
     .input(
       z.object({
@@ -79,5 +96,15 @@ export const feedbackRouter = t.router({
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getAllAnswers(handle, input))
+    ),
+  getPublicAnswers: publicProcedure
+    .input(FeedbackPublicResultsTokenSchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getPublicAnswers(handle, input))
+    ),
+  deleteQuestionAnswer: adminProcedure
+    .input(FeedbackQuestionAnswerSchema.shape.id)
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input))
     ),
 })

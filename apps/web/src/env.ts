@@ -25,7 +25,7 @@ export const env = defineConfiguration({
   NEXT_PUBLIC_DASHBOARD_URL: config(process.env.NEXT_PUBLIC_DASHBOARD_URL, {
     prd: "https://dashboard.online.ntnu.no",
     stg: "https://staging.dashboard.online.ntnu.no",
-    dev: "http://localhost:3000",
+    dev: "http://localhost:3002",
   }),
   NEXT_PUBLIC_HOME_URL: config(process.env.NEXT_PUBLIC_HOME_URL, "/"),
 })

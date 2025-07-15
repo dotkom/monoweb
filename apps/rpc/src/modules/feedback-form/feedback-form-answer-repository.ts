@@ -4,6 +4,7 @@ import {
   type FeedbackFormAnswer,
   type FeedbackFormAnswerWrite,
   type FeedbackFormId,
+  type FeedbackPublicResultsToken,
   FeedbackQuestionAnswerSchema,
   type FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
@@ -16,11 +17,16 @@ export interface FeedbackFormAnswerRepository {
     questionAnswers: FeedbackQuestionAnswerWrite[]
   ): Promise<FeedbackFormAnswer>
   getAllAnswers(handle: DBHandle, formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
+  getAnswersByPublicResultsToken(
+    handle: DBHandle,
+    publicResultsToken: FeedbackPublicResultsToken
+  ): Promise<FeedbackFormAnswer[]>
   findAnswerByAttendee(
     handle: DBHandle,
     formId: FeedbackFormId,
     attendeeId: AttendeeId
   ): Promise<FeedbackFormAnswer | null>
+  deleteQuestionAnswer(handle: DBHandle, id: FeedbackQuestionAnswer["id"]): Promise<void>
 }
 
 export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository {
@@ -64,6 +70,18 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
 
       return formAnswers.map((answer) => mapFormAnswer(answer, answer.answers))
     },
+    async getAnswersByPublicResultsToken(handle, publicResultsToken) {
+      const formAnswers = await handle.feedbackFormAnswer.findMany({
+        where: {
+          feedbackForm: {
+            publicResultsToken: publicResultsToken,
+          },
+        },
+        include: QUERY_WITH_ANSWERS,
+      })
+
+      return formAnswers.map((answer) => mapFormAnswer(answer, answer.answers))
+    },
     async findAnswerByAttendee(handle, formId, attendeeId) {
       const answer = await handle.feedbackFormAnswer.findFirst({
         where: {
@@ -76,6 +94,13 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
       if (!answer) return null
 
       return mapFormAnswer(answer, answer.answers)
+    },
+    async deleteQuestionAnswer(handle, id) {
+      await handle.feedbackQuestionAnswer.delete({
+        where: {
+          id: id,
+        },
+      })
     },
   }
 }
