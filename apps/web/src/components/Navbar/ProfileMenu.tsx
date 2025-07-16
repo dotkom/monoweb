@@ -113,7 +113,7 @@ export const ProfileMenu: FC = () => {
     <button type="button">
       <AvatarDropdown>
         <Avatar>
-          <AvatarImage src={user?.image ?? undefined} alt={user?.displayName ?? "Profilbilde"} />
+          <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? "Profilbilde"} />
           <AvatarFallback className="bg-blue-500">
             <Icon className="text-lg" icon="tabler:user" />
           </AvatarFallback>
@@ -135,7 +135,7 @@ const linkGroups: LinkDetail[][] = [
     {
       icon: "tabler:user",
       label: "Min profil",
-      href: "/profile",
+      href: "/profil",
     },
     {
       icon: "tabler:settings",

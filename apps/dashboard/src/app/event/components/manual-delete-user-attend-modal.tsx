@@ -9,7 +9,7 @@ import { useDeregisterForEventMutation } from "../mutations"
 
 interface ModalProps {
   attendeeId: AttendeeId
-  attendeeDisplayName: string
+  attendeeName: string
   poolName: string
   onSuccess?: () => void
 }
@@ -74,9 +74,9 @@ export const ManualDeleteUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
   return <Form />
 }
 
-export const openDeleteManualUserAttendModal = ({ attendeeId, attendeeDisplayName, poolName, onSuccess }: ModalProps) =>
+export const openDeleteManualUserAttendModal = ({ attendeeId, attendeeName, poolName, onSuccess }: ModalProps) =>
   modals.openContextModal({
     modal: "event/attendance/attendee/delete",
-    title: `Meld av ${attendeeDisplayName}`,
-    innerProps: { attendeeId, attendeeDisplayName, poolName, onSuccess },
+    title: `Meld av ${attendeeName}`,
+    innerProps: { attendeeId, attendeeName, poolName, onSuccess },
   })

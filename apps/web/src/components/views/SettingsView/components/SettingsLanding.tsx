@@ -26,8 +26,8 @@ export const Landing: NextPage<{ user: User }> = ({ user }) => {
   const trpc = useTRPC()
   const { register, handleSubmit } = useForm<EditableFields>({
     defaultValues: {
-      firstName: user.firstName,
-      lastName: user.lastName,
+      givenName: user.givenName,
+      familyName: user.familyName,
       biography: user.biography,
       allergies: user.allergies,
       gender: user.gender,
@@ -61,13 +61,13 @@ export const Landing: NextPage<{ user: User }> = ({ user }) => {
           <TextInput
             width="flex-1 mb-2 mx-1"
             placeholder="Fornavn"
-            defaultValue={user.firstName ?? undefined}
+            defaultValue={user.givenName ?? undefined}
             {...register("firstName")}
           />
           <TextInput
             width="flex-1 mx-1"
             placeholder="Etternavn"
-            defaultValue={user.lastName ?? undefined}
+            defaultValue={user.familyName ?? undefined}
             {...register("lastName")}
           />
         </div>

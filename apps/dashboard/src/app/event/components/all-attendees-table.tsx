@@ -41,7 +41,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((attendee) => attendee.user.displayName, {
+      columnHelper.accessor((attendee) => attendee.user.name, {
         id: "user",
         header: "Bruker",
         cell: (info) => info.getValue(),
@@ -100,7 +100,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             onClick={() => {
               openDeleteManualUserAttendModal({
                 attendeeId: info.getValue().id,
-                attendeeDisplayName: info.getValue().user.displayName || "bruker",
+                attendeeName: info.getValue().user.name || "bruker",
                 poolName: pools[info.getValue().attendancePoolId]?.title ?? "gruppen",
               })
             }}

@@ -1,12 +1,16 @@
 import type { DBHandle } from "@dotkomonline/db"
 import {
+  type Auth0UserWrite,
+  Auth0UserWriteSchema,
   GenderSchema,
   MembershipSchema,
+  type OwUser,
+  OwUserWriteSchema,
   type User,
   UserFlagSchema,
   type UserId,
+  UserProfileSlug,
   type UserWrite,
-  getDisplayName,
 } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import { hoursToMilliseconds } from "date-fns"
@@ -15,15 +19,19 @@ import { z } from "zod"
 import { BulkUserFetchError, UserCreationError, UserFetchError, UserUpdateError } from "./user-error"
 
 export interface UserRepository {
-  getById(userId: UserId): Promise<User | null>
-  getAll(limit: number, page: number): Promise<User[]>
-  update(userId: UserId, data: Partial<UserWrite>): Promise<User>
+  getById(handle: DBHandle, userId: UserId): Promise<User | null>
+  getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
+  getAll(handle: DBHandle, limit: number, page: number): Promise<User[]>
+  update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   /**
    * @see https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
    */
-  searchForUser(query: string, limit: number, page: number): Promise<User[]>
-  create(data: UserWrite, password: string): Promise<User>
-  getByIdWithFeideAccessToken(userId: UserId): Promise<{ user: User; feideAccessToken: string | null }>
+  searchForUser(handle: DBHandle, query: string, limit: number, page: number): Promise<User[]>
+  create(handle: DBHandle, data: UserWrite, password: string): Promise<User>
+  getByIdWithFeideAccessToken(
+    handle: DBHandle,
+    userId: UserId
+  ): Promise<{ user: User; feideAccessToken: string | null }>
   register(handle: DBHandle, auth0Id: string): Promise<void>
 }
 
@@ -33,14 +41,25 @@ export function getUserRepository(managementClient: ManagementClient): UserRepos
     ttl: hoursToMilliseconds(1),
   })
   return {
-    async create(data, password) {
-      const response = await managementClient.users.create(mapUserToAuth0UserCreate(data, password))
+    async create(handle, data, password) {
+      const auth0UserData = Auth0UserWriteSchema.parse(data)
+      const response = await managementClient.users.create(mapAuth0UserWriteToCreate(auth0UserData, password))
+
       if (response.status !== 201) {
         throw new UserCreationError(response.status, response.statusText)
       }
 
-      const user = mapAuth0UserToUser(response.data)
+      const owUserData = OwUserWriteSchema.parse(data)
+      const owUser = await handle.owUser.create({
+        data: {
+          id: response.data.user_id,
+          ...owUserData,
+        },
+      })
+
+      const user = mapAuth0UserToUser(response.data, owUser)
       cache.set(user.id, user)
+
       return user
     },
     async register(handle, auth0Id) {
@@ -56,7 +75,7 @@ export function getUserRepository(managementClient: ManagementClient): UserRepos
         },
       })
     },
-    async getById(userId) {
+    async getById(handle, userId) {
       const cachedUser = cache.get(userId)
       if (cachedUser !== undefined) {
         return cachedUser
@@ -64,7 +83,8 @@ export function getUserRepository(managementClient: ManagementClient): UserRepos
       const response = await managementClient.users.get({ id: userId })
       switch (response.status) {
         case 200: {
-          const user = mapAuth0UserToUser(response.data)
+          const owUser = await handle.owUser.findUniqueOrThrow({ where: { id: userId } })
+          const user = mapAuth0UserToUser(response.data, owUser)
           cache.set(user.id, user)
           return user
         }
@@ -74,91 +94,125 @@ export function getUserRepository(managementClient: ManagementClient): UserRepos
           throw new UserFetchError(userId, response.status, response.statusText)
       }
     },
-    async getByIdWithFeideAccessToken(userId) {
+    async getByProfileSlug(handle, profileSlug) {
+      const owUser = await handle.owUser.findUnique({ where: { profileSlug } })
+      if (!owUser) {
+        return null
+      }
+      return this.getById(handle, owUser.id)
+    },
+    async getByIdWithFeideAccessToken(handle, userId) {
       const response = await managementClient.users.get({ id: userId })
       if (response.status !== 200) {
         throw new UserFetchError(userId, response.status, response.statusText)
       }
-      const user = mapAuth0UserToUser(response.data)
+      const owUser = await handle.owUser.findUniqueOrThrow({ where: { id: userId } })
+      const user = mapAuth0UserToUser(response.data, owUser)
       cache.set(user.id, user)
       const feideIdentity = response.data.identities.find(({ connection }) => connection === "FEIDE")
       const feideAccessToken = feideIdentity?.access_token ?? null
       return { user, feideAccessToken }
     },
-    async getAll(limit, page) {
+    async getAll(handle, limit, page) {
       const response = await managementClient.users.getAll({ per_page: limit, page: page })
       if (response.status !== 200) {
         throw new BulkUserFetchError(response.status, response.statusText)
       }
-      return response.data.map((auth0User) => {
-        const user = mapAuth0UserToUser(auth0User)
+      const users = response.data.map(async (auth0User) => {
+        const owUser = await handle.owUser.findUniqueOrThrow({ where: { id: auth0User.user_id } })
+        const user = mapAuth0UserToUser(auth0User, owUser)
         cache.set(user.id, user)
         return user
       })
+      return Promise.all(users)
     },
-    async searchForUser(query, limit, page) {
+    async searchForUser(handle, query, limit, page) {
       // See https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
       const response = await managementClient.users.getAll({ q: query, per_page: limit, page })
       if (response.status !== 200) {
         throw new BulkUserFetchError(response.status, response.statusText)
       }
-      return response.data.map((auth0User) => {
-        const user = mapAuth0UserToUser(auth0User)
+      const users = response.data.map(async (auth0User) => {
+        const owUser = await handle.owUser.findUniqueOrThrow({ where: { id: auth0User.user_id } })
+        const user = mapAuth0UserToUser(auth0User, owUser)
         cache.set(user.id, user)
         return user
       })
+      return Promise.all(users)
     },
-    async update(userId, data) {
-      const response = await managementClient.users.update({ id: userId }, mapUserWriteToPatch(data))
+    async update(handle, userId, data) {
+      const auth0UserData = Auth0UserWriteSchema.parse(data)
+      const owUserData = OwUserWriteSchema.parse(data)
+
+      const response = await managementClient.users.update({ id: userId }, mapAuth0UserWriteToPatch(auth0UserData))
+
       if (response.status !== 200) {
         throw new UserUpdateError(userId, response.status, response.statusText)
       }
-      const user = mapAuth0UserToUser(response.data)
+
+      const owUser = await handle.owUser.update({ where: { id: userId }, data: owUserData })
+
+      const user = mapAuth0UserToUser(response.data, owUser)
       cache.set(user.id, user)
+
       return user
     },
   }
 }
 
-const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
-  const appMetadata: Record<string, unknown> = auth0User.app_metadata ?? {}
-  const firstName = auth0User.given_name ?? null
-  const lastName = auth0User.family_name ?? null
-  const displayName = getDisplayName({ name: auth0User.name, firstName, lastName })
+const getAuth0UserName = (auth0User: GetUsers200ResponseOneOfInner): string | null => {
+  if (auth0User.name) {
+    return auth0User.name
+  }
+
+  if (auth0User.firstName && auth0User.lastName) {
+    const middleName = auth0User.user_metadata.middle_name
+      ? z.string().safeParse(auth0User.user_metadata.middle_name).data
+      : null
+
+    if (middleName) {
+      return `${auth0User.firstName} ${middleName} ${auth0User.lastName}`
+    }
+
+    return `${auth0User.firstName} ${auth0User.lastName}`
+  }
+
+  return auth0User.lastName || auth0User.firstName || null
+}
+
+const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner, owUser: OwUser): User => {
+  const appMetadata: Record<string, unknown> = auth0User.app_metadata
+
+  const createdAt = typeof auth0User.created_at === "string" ? new Date(auth0User.created_at) : null
 
   return {
+    ...owUser,
     id: auth0User.user_id,
-    firstName,
-    lastName,
+    createdAt,
+    name: getAuth0UserName(auth0User) ?? "Ukjent bruker",
     email: auth0User.email,
     image: auth0User.picture,
     biography: z.string().safeParse(appMetadata.biography).data ?? null,
-    address: z.string().safeParse(appMetadata.address).data ?? null,
     allergies: z.string().safeParse(appMetadata.allergies).data ?? null,
-    rfid: z.string().safeParse(appMetadata.rfid).data ?? null,
     compiled: z.boolean().default(false).parse(appMetadata.compiled),
     gender: GenderSchema.safeParse(appMetadata.gender).data ?? null,
     phone: z.string().safeParse(appMetadata.phone).data ?? null,
     membership: MembershipSchema.safeParse(appMetadata.membership).data ?? null,
-    displayName,
+    ntnuUsername: z.string().safeParse(appMetadata.ntnu_username).data ?? null,
     flags: UserFlagSchema.safeParse(appMetadata.flags).data ?? [],
   }
 }
 
-const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate => ({
+const mapAuth0UserWriteToCreate = (user: Auth0UserWrite, password: string): UserCreate => ({
   email: user.email,
-  name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : undefined,
-  given_name: user.firstName ?? undefined,
-  family_name: user.lastName ?? undefined,
+  name: user.name ?? undefined,
   picture: user.image ?? undefined,
   connection: "Username-Password-Authentication",
   password: password,
   app_metadata: {
-    rfid: user.rfid,
     allergies: user.allergies,
     biography: user.biography,
     compiled: user.compiled,
-    address: user.address,
     gender: user.gender,
     phone: user.phone,
     membership: user.membership,
@@ -166,17 +220,13 @@ const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate
   },
 })
 
-const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
+const mapAuth0UserWriteToPatch = (data: Partial<Auth0UserWrite>): UserUpdate => {
   const userUpdate: UserUpdate = {
     email: data.email,
-    family_name: data.lastName,
-    given_name: data.firstName,
-    name: data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : undefined,
+    name: data.name,
     picture: data.image,
     app_metadata: {
-      address: data.address,
       allergies: data.allergies,
-      rfid: data.rfid,
       compiled: data.compiled,
       gender: data.gender,
       phone: data.phone,
