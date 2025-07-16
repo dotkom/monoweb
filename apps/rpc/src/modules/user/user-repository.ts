@@ -1,16 +1,14 @@
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type Auth0UserWrite,
-  Auth0UserWriteSchema,
   GenderSchema,
   MembershipSchema,
   type OwUser,
-  OwUserWriteSchema,
+  type OwUserWrite,
   type User,
   UserFlagSchema,
   type UserId,
-  UserProfileSlug,
-  type UserWrite,
+  type UserProfileSlug,
 } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import { hoursToMilliseconds } from "date-fns"
@@ -22,12 +20,17 @@ export interface UserRepository {
   getById(handle: DBHandle, userId: UserId): Promise<User | null>
   getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
   getAll(handle: DBHandle, limit: number, page: number): Promise<User[]>
-  update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
+  update(
+    handle: DBHandle,
+    userId: UserId,
+    auth0UserData: Partial<Auth0UserWrite>,
+    owUserData: Partial<OwUserWrite>
+  ): Promise<User>
   /**
    * @see https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
    */
   searchForUser(handle: DBHandle, query: string, limit: number, page: number): Promise<User[]>
-  create(handle: DBHandle, data: UserWrite, password: string): Promise<User>
+  create(handle: DBHandle, auth0UserData: Auth0UserWrite, owUserData: OwUserWrite, password: string): Promise<User>
   getByIdWithFeideAccessToken(
     handle: DBHandle,
     userId: UserId
@@ -40,20 +43,19 @@ export function getUserRepository(managementClient: ManagementClient): UserRepos
     max: 1000,
     ttl: hoursToMilliseconds(1),
   })
+
   return {
-    async create(handle, data, password) {
-      const auth0UserData = Auth0UserWriteSchema.parse(data)
+    async create(handle, auth0UserData, owUserData, password) {
       const response = await managementClient.users.create(mapAuth0UserWriteToCreate(auth0UserData, password))
 
       if (response.status !== 201) {
         throw new UserCreationError(response.status, response.statusText)
       }
 
-      const owUserData = OwUserWriteSchema.parse(data)
       const owUser = await handle.owUser.create({
         data: {
-          id: response.data.user_id,
           ...owUserData,
+          id: response.data.user_id,
         },
       })
 
@@ -62,30 +64,32 @@ export function getUserRepository(managementClient: ManagementClient): UserRepos
 
       return user
     },
+
     async register(handle, auth0Id) {
       await handle.owUser.upsert({
-        where: {
-          id: auth0Id,
-        },
-        update: {
-          id: auth0Id,
-        },
-        create: {
-          id: auth0Id,
-        },
+        where: { id: auth0Id },
+        update: { id: auth0Id },
+        create: { id: auth0Id },
       })
     },
+
     async getById(handle, userId) {
       const cachedUser = cache.get(userId)
+
       if (cachedUser !== undefined) {
         return cachedUser
       }
+
       const response = await managementClient.users.get({ id: userId })
+
       switch (response.status) {
         case 200: {
-          const owUser = await handle.owUser.findUniqueOrThrow({ where: { id: userId } })
+          let owUser = await handle.owUser.findUnique({ where: { id: userId } })
+          owUser ??= await handle.owUser.create({ data: { id: userId } })
+
           const user = mapAuth0UserToUser(response.data, owUser)
           cache.set(user.id, user)
+
           return user
         }
         case 404:
@@ -94,6 +98,7 @@ export function getUserRepository(managementClient: ManagementClient): UserRepos
           throw new UserFetchError(userId, response.status, response.statusText)
       }
     },
+
     async getByProfileSlug(handle, profileSlug) {
       const owUser = await handle.owUser.findUnique({ where: { profileSlug } })
       if (!owUser) {
@@ -101,56 +106,79 @@ export function getUserRepository(managementClient: ManagementClient): UserRepos
       }
       return this.getById(handle, owUser.id)
     },
+
     async getByIdWithFeideAccessToken(handle, userId) {
       const response = await managementClient.users.get({ id: userId })
+
       if (response.status !== 200) {
         throw new UserFetchError(userId, response.status, response.statusText)
       }
-      const owUser = await handle.owUser.findUniqueOrThrow({ where: { id: userId } })
+
+      let owUser = await handle.owUser.findUnique({ where: { id: userId } })
+      owUser ??= await handle.owUser.create({ data: { id: userId } })
+
       const user = mapAuth0UserToUser(response.data, owUser)
       cache.set(user.id, user)
+
       const feideIdentity = response.data.identities.find(({ connection }) => connection === "FEIDE")
       const feideAccessToken = feideIdentity?.access_token ?? null
+
       return { user, feideAccessToken }
     },
+
     async getAll(handle, limit, page) {
       const response = await managementClient.users.getAll({ per_page: limit, page: page })
+
       if (response.status !== 200) {
         throw new BulkUserFetchError(response.status, response.statusText)
       }
+
       const users = response.data.map(async (auth0User) => {
-        const owUser = await handle.owUser.findUniqueOrThrow({ where: { id: auth0User.user_id } })
+        let owUser = await handle.owUser.findUnique({ where: { id: auth0User.user_id } })
+        owUser ??= await handle.owUser.create({ data: { id: auth0User.user_id } })
+
         const user = mapAuth0UserToUser(auth0User, owUser)
         cache.set(user.id, user)
+
         return user
       })
+
       return Promise.all(users)
     },
+
     async searchForUser(handle, query, limit, page) {
       // See https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
       const response = await managementClient.users.getAll({ q: query, per_page: limit, page })
+
       if (response.status !== 200) {
         throw new BulkUserFetchError(response.status, response.statusText)
       }
+
       const users = response.data.map(async (auth0User) => {
-        const owUser = await handle.owUser.findUniqueOrThrow({ where: { id: auth0User.user_id } })
+        let owUser = await handle.owUser.findUnique({ where: { id: auth0User.user_id } })
+        owUser ??= await handle.owUser.create({ data: { id: auth0User.user_id } })
+
         const user = mapAuth0UserToUser(auth0User, owUser)
         cache.set(user.id, user)
+
         return user
       })
+
       return Promise.all(users)
     },
-    async update(handle, userId, data) {
-      const auth0UserData = Auth0UserWriteSchema.parse(data)
-      const owUserData = OwUserWriteSchema.parse(data)
 
+    async update(handle, userId, auth0UserData, owUserData) {
       const response = await managementClient.users.update({ id: userId }, mapAuth0UserWriteToPatch(auth0UserData))
 
       if (response.status !== 200) {
         throw new UserUpdateError(userId, response.status, response.statusText)
       }
 
-      const owUser = await handle.owUser.update({ where: { id: userId }, data: owUserData })
+      const owUser = await handle.owUser.upsert({
+        where: { id: userId },
+        update: owUserData,
+        create: { ...owUserData, id: userId },
+      })
 
       const user = mapAuth0UserToUser(response.data, owUser)
       cache.set(user.id, user)

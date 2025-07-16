@@ -1,13 +1,15 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Auth0UserWrite,
-  Membership,
-  NTNUGroup,
-  PrivacyPermissions,
-  PrivacyPermissionsWrite,
-  User,
-  UserId,
-  UserProfileSlug,
+import {
+  type Auth0UserWrite,
+  Auth0UserWriteSchema,
+  type Membership,
+  type NTNUGroup,
+  OwUserWriteSchema,
+  type PrivacyPermissions,
+  type PrivacyPermissionsWrite,
+  type User,
+  type UserId,
+  type UserProfileSlug,
 } from "@dotkomonline/types"
 import { getAcademicYear } from "@dotkomonline/utils"
 import type { FeideGroupsRepository } from "../feide/feide-groups-repository"
@@ -57,17 +59,29 @@ export function getUserService(
     }
     return currentMembership.type === "SOCIAL"
   }
+
   async function refreshMembership(handle: DBHandle, feideAccessToken: string, user: User | null, auth0Id: string) {
     const { studyProgrammes, studySpecializations, courses } =
       await feideGroupsRepository.getStudentInformation(feideAccessToken)
-    const defaultMembership = await calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
-    if (shouldReplaceMembership(user?.membership ?? null, defaultMembership)) {
-      await userRepository.update(handle, auth0Id, {
-        membership: defaultMembership,
-      })
+
+    const currentMembership = user?.membership ?? null
+    const newMembership = await calculateMembership(studyProgrammes, studySpecializations, courses)
+
+    if (!shouldReplaceMembership(currentMembership, newMembership)) {
+      return
     }
+
+    await userRepository.update(
+      handle,
+      auth0Id,
+      {
+        membership: newMembership,
+      },
+      {}
+    )
   }
-  async function calculateDefaultMembership(
+
+  async function calculateMembership(
     studyProgrammes: NTNUGroup[],
     studySpecializations: NTNUGroup[],
     courses: NTNUGroup[]
@@ -171,7 +185,10 @@ export function getUserService(
       return user
     },
     async update(handle, userId, data) {
-      return await userRepository.update(handle, userId, data)
+      const auth0UserData = Auth0UserWriteSchema.partial().parse(data)
+      const owUserData = OwUserWriteSchema.partial().parse(data)
+
+      return await userRepository.update(handle, userId, auth0UserData, owUserData)
     },
     async getAll(handle, limit, offset) {
       return await userRepository.getAll(handle, limit, offset)
