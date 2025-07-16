@@ -3,7 +3,6 @@ import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { server } from "@/utils/trpc/server"
 import { type Membership, getMembershipGrade } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title } from "@dotkomonline/ui"
-import { group } from "console"
 import { formatDistanceToNow } from "date-fns"
 import { nb } from "date-fns/locale"
 
@@ -49,7 +48,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
     server.group.allByMember.query(user.id),
     server.interestGroup.getByMember.query(user.id),
   ])
-  
+
   const isUser = user.id === session?.sub
 
   const grade = getMembershipGrade(user.membership)
