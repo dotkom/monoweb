@@ -152,6 +152,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
                 variant={user.membership ? "outline" : "solid"}
                 element="a"
                 href={AUTHORIZE_WITH_FEIDE(profileSlug)}
+                className="h-fit w-fit"
               >
                 {user.membership ? "Oppdater medlemskap" : "Registrer medlemskap"}
               </Button>
