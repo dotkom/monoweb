@@ -11,6 +11,7 @@ import type {
   EventWrite,
   GroupId,
   InterestGroupId,
+  UserId,
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
 import type { AttendanceService } from "../attendance/attendance-service"
@@ -30,7 +31,7 @@ export interface EventService {
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
   getEvents(handle: DBHandle, page?: Pageable, filter?: EventFilter): Promise<Event[]>
-  getEventsByUserAttending(handle: DBHandle, userId: string): Promise<Event[]>
+  getAttendanceEventsByUserAttending(handle: DBHandle, userId: UserId): Promise<AttendanceEvent[]>
   getAttendanceEventsByGroupId(handle: DBHandle, groupId: GroupId, page: Pageable): Promise<AttendanceEvent[]>
   getAttendanceEventsByInterestGroupId(
     handle: DBHandle,
@@ -70,8 +71,16 @@ export function getEventService(
     async getEvents(handle, page, filter) {
       return await eventRepository.getAll(handle, page, filter)
     },
-    async getEventsByUserAttending(handle, userId) {
-      return await eventRepository.getAllByUserAttending(handle, userId)
+    async getAttendanceEventsByUserAttending(handle, userId) {
+      const events = await eventRepository.getAllByUserAttending(handle, userId)
+      const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
+      const attendances = await attendanceService.getByIds(handle, attendanceIds)
+      const attendanceEvents: AttendanceEvent[] = events.map((event) => {
+        const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
+        return { ...event, attendance }
+      })
+
+      return attendanceEvents
     },
     async getAttendanceEventsByGroupId(handle, groupId, page) {
       const events = await eventRepository.getAllByHostingGroupId(handle, groupId, page)
