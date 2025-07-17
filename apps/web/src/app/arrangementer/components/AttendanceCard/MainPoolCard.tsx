@@ -77,7 +77,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
         <Text>Du har ikke registert medlemskap</Text>
         <div className="flex gap-[0.5ch] text-sm">
           <Text>Gå til</Text>
-          <Link href="/profile" className="flex items-center text-blue-800 dark:text-blue-400 hover:underline">
+          <Link href="/profil" className="flex items-center text-blue-800 dark:text-blue-400 hover:underline">
             <Text>profilsiden</Text> <Icon icon="tabler:arrow-up-right" className="text-base" />
           </Link>
           <Text>for å registrere deg</Text>

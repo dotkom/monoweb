@@ -189,7 +189,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
             <Text className="text-sm">Arrangementregler</Text>
           </div>
 
-          <Link href="/profile" className="flex flex-row gap-1 items-center">
+          <Link href="/profil" className="flex flex-row gap-1 items-center">
             <Icon icon="tabler:edit" className="text-lg" />
             <Text className="text-sm">Oppdater matallergier</Text>
           </Link>
