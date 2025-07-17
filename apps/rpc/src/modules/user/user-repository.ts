@@ -209,7 +209,7 @@ const getAuth0UserName = (auth0User: GetUsers200ResponseOneOfInner): string | nu
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner, owUser: OwUser): User => {
-  const appMetadata: Record<string, unknown> = auth0User.app_metadata
+  const appMetadata: Record<string, unknown> = auth0User.app_metadata ?? {}
 
   const createdAt = typeof auth0User.created_at === "string" ? new Date(auth0User.created_at) : null
 
