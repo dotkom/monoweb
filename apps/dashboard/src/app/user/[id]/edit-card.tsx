@@ -14,14 +14,8 @@ export const UserEditCard: FC = () => {
     onSubmit: (data) => {
       const result = UserWriteSchema.parse(data)
 
-      if (result.address === "") {
-        result.address = null
-      }
       if (result.phone === "") {
         result.phone = null
-      }
-      if (result.rfid === "") {
-        result.rfid = null
       }
 
       update.mutate({

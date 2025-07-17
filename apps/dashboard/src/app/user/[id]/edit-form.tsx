@@ -17,13 +17,9 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
     defaultValues,
     label,
     fields: {
-      firstName: createTextInput({
-        label: "Fornavn",
-        placeholder: "Ola",
-      }),
-      lastName: createTextInput({
-        label: "Etternavn",
-        placeholder: "Nordmann",
+      name: createTextInput({
+        label: "Navn",
+        placeholder: "Ola Nordmann",
       }),
       phone: createTextInput({
         label: "Telefon",
@@ -41,10 +37,6 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       allergies: createTextInput({
         label: "Allergier",
         placeholder: "Melk, nøtter, gluten",
-      }),
-      rfid: createTextInput({
-        label: "RFID",
-        placeholder: "123456",
       }),
       compiled: createCheckboxInput({
         label: "Kompilert",

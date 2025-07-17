@@ -20,18 +20,17 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
   </div>
 )
 
-type EditableFields = Pick<User, "firstName" | "lastName" | "biography" | "allergies" | "gender" | "phone">
+type EditableFields = Pick<User, "biography" | "allergies" | "gender" | "phone" | "profileSlug">
 
 export const Landing: NextPage<{ user: User }> = ({ user }) => {
   const trpc = useTRPC()
   const { register, handleSubmit } = useForm<EditableFields>({
     defaultValues: {
-      givenName: user.givenName,
-      familyName: user.familyName,
       biography: user.biography,
       allergies: user.allergies,
       gender: user.gender,
       phone: user.phone,
+      profileSlug: user.profileSlug,
     },
   })
 
@@ -56,22 +55,6 @@ export const Landing: NextPage<{ user: User }> = ({ user }) => {
       <FormInput title="Epost">
         <TextInput width="flex-1" placeholder="Epost" defaultValue={user.email} disabled />
       </FormInput>
-      <FormInput title="Navn">
-        <div className="w-full flex flex-wrap justify-center ">
-          <TextInput
-            width="flex-1 mb-2 mx-1"
-            placeholder="Fornavn"
-            defaultValue={user.givenName ?? undefined}
-            {...register("firstName")}
-          />
-          <TextInput
-            width="flex-1 mx-1"
-            placeholder="Etternavn"
-            defaultValue={user.familyName ?? undefined}
-            {...register("lastName")}
-          />
-        </div>
-      </FormInput>
       <FormInput title="Telefon">
         <div className="w-full flex space-x-2">
           <TextInput
@@ -83,11 +66,12 @@ export const Landing: NextPage<{ user: User }> = ({ user }) => {
           />
         </div>
       </FormInput>
-      {/*
+      <FormInput title="Profillenke">
+        <Textarea placeholder="superroger22" {...register("profileSlug")} />
+      </FormInput>
       <FormInput title="Bio">
         <Textarea placeholder="Din råkule bio" {...register("biography")} />
       </FormInput>
-      */}
       <FormInput title="Allergier">
         <Textarea placeholder="Dine allergier" {...register("allergies")} />
       </FormInput>
