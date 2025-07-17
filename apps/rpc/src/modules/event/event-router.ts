@@ -1,5 +1,6 @@
 import {
   AttendanceWriteSchema,
+  Auth0UserSchema,
   CompanySchema,
   type EventDetail,
   EventDetailSchema,
@@ -10,7 +11,6 @@ import {
   EventWriteSchema,
   GroupSchema,
   InterestGroupSchema,
-  UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
@@ -102,10 +102,10 @@ export const eventRouter = t.router({
         )
       })
     ),
-  allByUserId: publicProcedure
-    .input(z.object({ id: UserSchema.shape.id }))
+  allByUserIdWithAttendance: publicProcedure
+    .input(z.object({ id: Auth0UserSchema.shape.id }))
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.eventService.getEventsByUserAttending(handle, input.id))
+      ctx.executeTransaction(async (handle) => ctx.eventService.getAttendanceEventsByUserAttending(handle, input.id))
     ),
   allByCompanyWithAttendance: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))

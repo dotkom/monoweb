@@ -78,8 +78,12 @@ export function getAttendeeService(
   userService: UserService,
   taskSchedulingService: TaskSchedulingService
 ): AttendeeService {
-  async function addUserToAttendee(attendeeWithoutUser: AttendeeWithoutUser, user?: User): Promise<Attendee> {
-    const resolvedUser = user ?? (await userService.getById(attendeeWithoutUser.userId))
+  async function addUserToAttendee(
+    handle: DBHandle,
+    attendeeWithoutUser: AttendeeWithoutUser,
+    user?: User
+  ): Promise<Attendee> {
+    const resolvedUser = user ?? (await userService.getById(handle, attendeeWithoutUser.userId))
     return { ...attendeeWithoutUser, user: resolvedUser }
   }
   return {
@@ -88,7 +92,7 @@ export function getAttendeeService(
       if (!attendeeWithoutUser) {
         throw new AttendeeNotFoundError(userId, attendanceId)
       }
-      return await addUserToAttendee(attendeeWithoutUser)
+      return await addUserToAttendee(handle, attendeeWithoutUser)
     },
     async registerForEvent(handle: DBHandle, userId: string, attendanceId: string, attendancePoolId: string) {
       const registerTime = new Date()
@@ -106,7 +110,7 @@ export function getAttendeeService(
         throw new AttendanceNotOpenError()
       }
 
-      const user = await userService.getById(userId)
+      const user = await userService.getById(handle, userId)
       if (!canUserAttendPool(attendancePool, user)) {
         throw new AttendeeRegistrationError(`User ${user.id} does not qualify for pool ${attendancePool.id}`)
       }
@@ -129,7 +133,7 @@ export function getAttendeeService(
         reserveTime,
         reserved: false,
       })
-      const attendee = await addUserToAttendee(attendeeWithoutUser, user)
+      const attendee = await addUserToAttendee(handle, attendeeWithoutUser, user)
       if (attendancePool.id !== attendeeWithoutUser.attendancePoolId) {
         throw new WrongAttendancePoolError(attendeeWithoutUser.attendancePoolId, attendancePool.id)
       }
@@ -143,7 +147,7 @@ export function getAttendeeService(
           new TZDate(reserveTime)
         )
       }
-      return await addUserToAttendee(attendeeWithoutUser, user)
+      return await addUserToAttendee(handle, attendeeWithoutUser, user)
     },
     async adminRegisterForEvent(handle: DBHandle, userId: string, attendanceId: string, attendancePoolId: string) {
       const registerTime = new Date()
@@ -157,7 +161,7 @@ export function getAttendeeService(
         throw new AttendancePoolNotFoundError(attendancePoolId)
       }
 
-      const user = await userService.getById(userId)
+      const user = await userService.getById(handle, userId)
       const userGrade = getMembershipGrade(user.membership)
 
       const attendeeWithoutUser = await attendeeRepository.create(handle, {
@@ -169,7 +173,7 @@ export function getAttendeeService(
         reserved: true,
       })
 
-      return addUserToAttendee(attendeeWithoutUser, user)
+      return addUserToAttendee(handle, attendeeWithoutUser, user)
     },
     async deregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
       const deregisterTime = new Date()
@@ -200,7 +204,7 @@ export function getAttendeeService(
         if (!nextUnreservedAttendeeWithoutUser) {
           return
         }
-        const nextUnreservedAttendee = await addUserToAttendee(nextUnreservedAttendeeWithoutUser)
+        const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
 
         await this.attemptReserve(handle, nextUnreservedAttendee, attendedPool, { bypassCriteria: false })
       }
@@ -210,19 +214,19 @@ export function getAttendeeService(
     },
     async updateSelectionResponses(handle: DBHandle, id: AttendeeId, responses: AttendanceSelectionResponse[]) {
       const attendeeWithoutUser = await attendeeRepository.update(handle, id, { selections: responses })
-      return await addUserToAttendee(attendeeWithoutUser)
+      return await addUserToAttendee(handle, attendeeWithoutUser)
     },
     async getByAttendanceId(handle: DBHandle, attendanceId: string) {
       const attendeesWithoutUsers = await attendeeRepository.getByAttendanceId(handle, attendanceId)
-      return await Promise.all(attendeesWithoutUsers.map((attendee) => addUserToAttendee(attendee)))
+      return await Promise.all(attendeesWithoutUsers.map((attendee) => addUserToAttendee(handle, attendee)))
     },
     async getByAttendancePoolId(handle: DBHandle, attendancePoolId: AttendancePoolId) {
       const attendeesWithoutUsers = await attendeeRepository.getByAttendancePoolId(handle, attendancePoolId)
-      return await Promise.all(attendeesWithoutUsers.map((attendee) => addUserToAttendee(attendee)))
+      return await Promise.all(attendeesWithoutUsers.map((attendee) => addUserToAttendee(handle, attendee)))
     },
     async updateAttended(handle: DBHandle, attendeeId: AttendeeId, attended: boolean) {
       const attendeeWithoutUser = await attendeeRepository.update(handle, attendeeId, { attended })
-      return await addUserToAttendee(attendeeWithoutUser)
+      return await addUserToAttendee(handle, attendeeWithoutUser)
     },
     async attemptReserve(
       handle: DBHandle,
@@ -269,7 +273,7 @@ export function getAttendeeService(
         if (!nextUnreservedAttendeeWithoutUser) {
           return
         }
-        const nextUnreservedAttendee = await addUserToAttendee(nextUnreservedAttendeeWithoutUser)
+        const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
         await this.attemptReserve(handle, nextUnreservedAttendee, pool, {
           bypassCriteria: bypassCriteriaOnReserveNextAttendee,
         })

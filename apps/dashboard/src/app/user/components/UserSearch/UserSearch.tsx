@@ -24,7 +24,7 @@ export const UserSearch: FC<UserSearchProps> = ({ onSubmit, excludeUserIds }) =>
         onSubmit(user)
       }}
       items={users.filter((user) => !excludeUserIds || !excludeUserIds.includes(user.id))}
-      dataMapper={(item: User) => `${item.email} ${item.firstName ?? ""} ${item.lastName ?? ""}`}
+      dataMapper={(item: User) => `${item.email} ${item.name}`}
       placeholder="Søk etter bruker..."
       resetOnClick
     />

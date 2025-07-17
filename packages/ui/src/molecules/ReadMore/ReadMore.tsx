@@ -1,32 +1,13 @@
 "use client"
 
-import { useLayoutEffect, useRef, useState } from "react"
+import { type ReactNode, useLayoutEffect, useRef, useState } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms/Collapsible/Collapsible"
 import { Text } from "../../atoms/Typography/Text"
 import { cn } from "../../utils"
 
-const getLineClamp = (number: number) => {
-  switch (number) {
-    case 1:
-      return "line-clamp-1"
-    case 2:
-      return "line-clamp-2"
-    case 3:
-      return "line-clamp-3"
-    case 4:
-      return "line-clamp-4"
-    case 5:
-      return "line-clamp-5"
-    case 6:
-      return "line-clamp-6"
-    default:
-      return "line-clamp-3"
-  }
-}
-
 interface ReadMoreProps {
-  text: string
-  lines?: number
+  children: ReactNode
+  lineClamp?: `line-clamp-${number}`
   readMoreText?: string
   readLessText?: string
   textClassName?: string
@@ -35,8 +16,8 @@ interface ReadMoreProps {
 }
 
 export const ReadMore = ({
-  text,
-  lines = 3,
+  children,
+  lineClamp = "line-clamp-3",
   readMoreText = "Vis mer...",
   readLessText = "Vis mindre",
   textClassName,
@@ -49,8 +30,6 @@ export const ReadMore = ({
 
   const containerRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLParagraphElement>(null)
-
-  const lineClamp = !open && getLineClamp(lines)
 
   useLayoutEffect(() => {
     if (open || previousHeight === null || !containerRef.current) {
@@ -74,7 +53,7 @@ export const ReadMore = ({
     if (element) {
       setIsOverflowed(element.scrollHeight > element.clientHeight)
     }
-  }, [text, lines])
+  }, [children, lineClamp])
 
   const handleToggle = () => {
     if (open && containerRef.current) {
@@ -85,8 +64,8 @@ export const ReadMore = ({
   }
 
   const textElement = (
-    <Text ref={textRef} className={cn("mb-2 whitespace-pre-line overflow-hidden", lineClamp, textClassName)}>
-      {text}
+    <Text ref={textRef} className={cn("whitespace-pre-line overflow-hidden", !open && lineClamp, textClassName)}>
+      {children}
     </Text>
   )
 
@@ -100,9 +79,12 @@ export const ReadMore = ({
       <CollapsibleTrigger
         asChild
         onClick={handleToggle}
-        className={cn("cursor-pointer text-gray-900 hover:text-black", buttonClassName)}
+        className={cn(
+          "mt-2 transition-color dark:transition-color text-gray-600 dark:text-stone-400 hover:text-black dark:hover:text-white",
+          buttonClassName
+        )}
       >
-        <Text>{open ? readLessText : readMoreText}</Text>
+        <Text element="button">{open ? readLessText : readMoreText}</Text>
       </CollapsibleTrigger>
     </Collapsible>
   )

@@ -90,18 +90,22 @@ enum GroupType {
 }
 
 model OwUser {
-  id                        String                   @id
+  id          String @id
+  profileSlug String @unique @default(uuid())
+
+  privacyPermissionsId      String?             @unique
+  PrivacyPermissions        PrivacyPermissions?
+
+  notificationPermissionsId String?                  @unique
+  NotificationPermissions   NotificationPermissions?
+
   Attendee                  Attendee[]
   Payment                   Payment[]
-  RequestedRefunds          RefundRequest[]          @relation("RequestedBy")
-  HandledRefunds            RefundRequest[]          @relation("HandledBy")
-  PrivacyPermissions        PrivacyPermissions?
-  NotificationPermissions   NotificationPermissions?
+  RequestedRefunds          RefundRequest[]       @relation("RequestedBy")
+  HandledRefunds            RefundRequest[]       @relation("HandledBy")
   PersonalMark              PersonalMark[]
   InterestGroupsMemberships InterestGroupMember[]
   GroupMemberships          GroupMember[]
-  privacyPermissionsId      String?                  @unique
-  notificationPermissionsId String?                  @unique
 
   @@map("ow_user")
 }

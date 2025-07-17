@@ -1,5 +1,5 @@
 import { AttendancePoolWriteSchema, type TaskKind } from "@dotkomonline/types"
-import { AttendanceSchema, UserSchema } from "@dotkomonline/types"
+import { AttendanceSchema, Auth0UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { TaskDefinitionNotFoundError } from "./task-error"
 
@@ -26,7 +26,7 @@ export const tasks = {
     kind: "ATTEMPT_RESERVE_ATTENDEE",
     getSchema: () =>
       z.object({
-        userId: UserSchema.shape.id,
+        userId: Auth0UserSchema.shape.id,
         attendanceId: AttendanceSchema.shape.id,
       }),
   }),

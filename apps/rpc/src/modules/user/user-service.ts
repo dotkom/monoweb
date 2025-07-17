@@ -1,12 +1,15 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Membership,
-  NTNUGroup,
-  PrivacyPermissions,
-  PrivacyPermissionsWrite,
-  User,
-  UserId,
-  UserWrite,
+import {
+  type Auth0UserWrite,
+  Auth0UserWriteSchema,
+  type Membership,
+  type NTNUGroup,
+  OwUserWriteSchema,
+  type PrivacyPermissions,
+  type PrivacyPermissionsWrite,
+  type User,
+  type UserId,
+  type UserProfileSlug,
 } from "@dotkomonline/types"
 import { getAcademicYear } from "@dotkomonline/utils"
 import type { FeideGroupsRepository } from "../feide/feide-groups-repository"
@@ -17,19 +20,20 @@ import { UserNotFoundError } from "./user-error"
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
-  getById(id: UserId): Promise<User>
-  getAll(limit: number, offset: number): Promise<User[]>
+  getById(handle: DBHandle, id: UserId): Promise<User>
+  getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User>
+  getAll(handle: DBHandle, limit: number, offset: number): Promise<User[]>
   /**
    * @see https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
    */
-  searchForUser(query: string, limit: number, offset: number): Promise<User[]>
+  searchForUser(handle: DBHandle, query: string, limit: number, offset: number): Promise<User[]>
   getPrivacyPermissionsByUserId(handle: DBHandle, id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     handle: DBHandle,
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
-  update(userId: UserId, data: Partial<UserWrite>): Promise<User>
+  update(handle: DBHandle, userId: UserId, data: Partial<Auth0UserWrite>): Promise<User>
   register(handle: DBHandle, auth0Id: string): Promise<void>
 }
 
@@ -55,17 +59,29 @@ export function getUserService(
     }
     return currentMembership.type === "SOCIAL"
   }
-  async function refreshMembership(feideAccessToken: string, user: User | null, auth0Id: string) {
+
+  async function refreshMembership(handle: DBHandle, feideAccessToken: string, user: User | null, auth0Id: string) {
     const { studyProgrammes, studySpecializations, courses } =
       await feideGroupsRepository.getStudentInformation(feideAccessToken)
-    const defaultMembership = await calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
-    if (shouldReplaceMembership(user?.membership ?? null, defaultMembership)) {
-      await userRepository.update(auth0Id, {
-        membership: defaultMembership,
-      })
+
+    const currentMembership = user?.membership ?? null
+    const newMembership = await calculateMembership(studyProgrammes, studySpecializations, courses)
+
+    if (!shouldReplaceMembership(currentMembership, newMembership)) {
+      return
     }
+
+    await userRepository.update(
+      handle,
+      auth0Id,
+      {
+        membership: newMembership,
+      },
+      {}
+    )
   }
-  async function calculateDefaultMembership(
+
+  async function calculateMembership(
     studyProgrammes: NTNUGroup[],
     studySpecializations: NTNUGroup[],
     courses: NTNUGroup[]
@@ -148,27 +164,37 @@ export function getUserService(
 
   return {
     async register(handle, auth0Id) {
-      const { user, feideAccessToken } = await userRepository.getByIdWithFeideAccessToken(auth0Id)
+      const { user, feideAccessToken } = await userRepository.getByIdWithFeideAccessToken(handle, auth0Id)
       await userRepository.register(handle, auth0Id)
       if (feideAccessToken) {
-        await refreshMembership(feideAccessToken, user, auth0Id)
+        await refreshMembership(handle, feideAccessToken, user, auth0Id)
       }
     },
-    async getById(userId) {
-      const user = await userRepository.getById(userId)
+    async getById(handle, userId) {
+      const user = await userRepository.getById(handle, userId)
       if (!user) {
         throw new UserNotFoundError(userId)
       }
       return user
     },
-    async update(userId, data) {
-      return await userRepository.update(userId, data)
+    async getByProfileSlug(handle, profileSlug) {
+      const user = await userRepository.getByProfileSlug(handle, profileSlug)
+      if (!user) {
+        throw new UserNotFoundError(profileSlug)
+      }
+      return user
     },
-    async getAll(limit, offset) {
-      return await userRepository.getAll(limit, offset)
+    async update(handle, userId, data) {
+      const auth0UserData = Auth0UserWriteSchema.partial().parse(data)
+      const owUserData = OwUserWriteSchema.partial().parse(data)
+
+      return await userRepository.update(handle, userId, auth0UserData, owUserData)
     },
-    async searchForUser(query, limit, offset) {
-      return await userRepository.searchForUser(query, limit, offset)
+    async getAll(handle, limit, offset) {
+      return await userRepository.getAll(handle, limit, offset)
+    },
+    async searchForUser(handle, query, limit, offset) {
+      return await userRepository.searchForUser(handle, query, limit, offset)
     },
     async getPrivacyPermissionsByUserId(handle, id) {
       let privacyPermissions = await privacyPermissionsRepository.getByUserId(handle, id)

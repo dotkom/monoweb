@@ -156,14 +156,14 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId }: AttendeeListP
           <div className="flex flex-col gap-0.5">
             {isVerified ? (
               <div className="flex items-center gap-1">
-                <Text className="text-sm dark:text-black">{attendee.user.displayName}</Text>
+                <Text className="text-sm dark:text-black">{attendee.user.name}</Text>
                 <Icon
                   icon="tabler:rosette-discount-check-filled"
                   className="text-base text-blue-600 dark:text-sky-700"
                 />
               </div>
             ) : (
-              <Text className="text-sm">{attendee.user.displayName}</Text>
+              <Text className="text-sm">{attendee.user.name}</Text>
             )}
             <Text
               className={cn(

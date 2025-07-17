@@ -53,6 +53,7 @@ export const button = cva(
   [
     "font-body cursor-pointer appearance-none transition-colors",
     "disabled:opacity-50 disabled:cursor-not-allowed",
+    "h-fit w-fit",
     "text-black dark:text-white",
   ],
   {
