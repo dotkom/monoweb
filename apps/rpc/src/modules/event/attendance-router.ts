@@ -5,7 +5,7 @@ import {
   AttendanceWriteSchema,
   AttendeeSchema,
   AttendeeSelectionResponsesSchema,
-  Auth0UserSchema,
+  UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../trpc"
@@ -56,7 +56,7 @@ export const attendanceRouter = t.router({
       z.object({
         attendancePoolId: AttendancePoolSchema.shape.id,
         attendanceId: AttendanceSchema.shape.id,
-        userId: Auth0UserSchema.shape.id,
+        userId: UserSchema.shape.id,
       })
     )
     .mutation(async ({ input, ctx }) =>
@@ -202,7 +202,7 @@ export const attendanceRouter = t.router({
   getAttendeeStatuses: adminProcedure
     .input(
       z.object({
-        userId: Auth0UserSchema.shape.id,
+        userId: UserSchema.shape.id,
         attendanceIds: z.array(AttendanceSchema.shape.id),
       })
     )

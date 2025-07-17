@@ -1,11 +1,11 @@
-import { Auth0UserSchema, PersonalMarkSchema } from "@dotkomonline/types"
+import { PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
 import { adminProcedure, t } from "../../trpc"
 
 export const personalMarkRouter = t.router({
   getByUser: adminProcedure
-    .input(z.object({ id: Auth0UserSchema.shape.id }))
+    .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.getPersonalMarksForUserId(handle, input.id))
     ),
@@ -34,7 +34,7 @@ export const personalMarkRouter = t.router({
       )
     ),
   getExpiryDateForUser: adminProcedure
-    .input(Auth0UserSchema.shape.id)
+    .input(UserSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.getExpiryDateForUserId(handle, input))
     ),

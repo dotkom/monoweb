@@ -1,4 +1,4 @@
-import { Auth0UserSchema, Auth0UserWriteSchema, PrivacyPermissionsWriteSchema } from "@dotkomonline/types"
+import { PrivacyPermissionsWriteSchema, UserSchema, UserWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
 import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../trpc"
@@ -9,7 +9,7 @@ export const userRouter = t.router({
       return ctx.userService.getAll(handle, input.take, 0)
     })
   ),
-  get: adminProcedure.input(Auth0UserSchema.shape.id).query(async ({ input, ctx }) =>
+  get: adminProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.getById(handle, input)
     })
@@ -19,7 +19,7 @@ export const userRouter = t.router({
       return ctx.userService.getByProfileSlug(handle, input)
     })
   ),
-  registerAndGet: protectedProcedure.input(Auth0UserSchema.shape.id).mutation(async ({ input, ctx }) =>
+  registerAndGet: protectedProcedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.register(handle, input)
     })
@@ -32,8 +32,8 @@ export const userRouter = t.router({
   update: protectedProcedure
     .input(
       z.object({
-        id: Auth0UserSchema.shape.id,
-        input: Auth0UserWriteSchema.partial(),
+        id: UserSchema.shape.id,
+        input: UserWriteSchema.partial(),
       })
     )
     .mutation(async ({ input: changes, ctx }) =>
