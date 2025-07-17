@@ -157,8 +157,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
               </Button>
 
               <Text className="text-gray-500 dark:text-stone-500 text-sm">
-                For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med
-                Hovedstyret.
+                For å {user.membership ? "oppdatere medlemskapet" : "registrere medlemskap"} må du logge inn med Feide.
+                Dersom du oppdager feil, ta kontakt med Hovedstyret.
               </Text>
             </div>
           </div>
