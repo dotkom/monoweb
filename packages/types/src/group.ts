@@ -24,3 +24,16 @@ export type GroupMember = z.infer<typeof GroupMemberSchema>
 export const GroupMemberWriteSchema = GroupMemberSchema
 
 export type GroupMemberWrite = z.infer<typeof GroupMemberWriteSchema>
+
+export const createGroupPageUrl = (group: Group) => {
+  switch (group.type) {
+    case "COMMITTEE":
+      return `/komiteer/${group.id}`
+    case "NODECOMMITTEE":
+      return `/nodekomiteer/${group.id}`
+    case "OTHERGROUP":
+      return `/interessegrupper/${group.id}`
+    default:
+      throw new Error(`Unknown group type: ${group.type}`)
+  }
+}

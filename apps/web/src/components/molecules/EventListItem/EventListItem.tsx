@@ -25,7 +25,7 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
       <Link
         href={url}
         className={cn(
-          "group flex flex-row gap-3 w-full rounded-xl p-2",
+          "group flex flex-row gap-3 w-full rounded-xl p-2 -mx-2",
           "hover:bg-gray-100 dark:hover:bg-stone-800 transition-colors",
           past && "text-gray-600 dark:text-stone-600 hover:text-gray-800 dark:hover:text-stone-400"
         )}

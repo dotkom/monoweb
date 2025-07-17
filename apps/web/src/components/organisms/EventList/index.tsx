@@ -47,21 +47,20 @@ export const EventList: FC<EventListProps> = async (props: EventListProps) => {
   const pastEventItems = pastEvents.map((eventDetail) => mapEventDetailToItem(attendanceStatuses, eventDetail))
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <section className="w-full flex flex-col gap-2">
       {futureEventItems}
 
-      {pastEventItems.length > 0 && (
-        <>
-          <div className="w-full px-2 flex flex-row items-center gap-2 sm:-my-1">
-            <div className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
-            <Text className="text-gray-400 dark:text-stone-700 text-xs uppercase tracking-widest font-medium select-none">
-              Tidligere arrangementer
-            </Text>
-            <div className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
-          </div>
-          {pastEventItems}
-        </>
+      {futureEventItems.length > 0 && pastEventItems.length > 0 && (
+        <div className="w-full flex flex-row items-center gap-2 sm:-my-1">
+          <span className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
+          <Text className="text-gray-400 dark:text-stone-700 text-xs uppercase tracking-widest font-medium select-none">
+            Tidligere arrangementer
+          </Text>
+          <span className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
+        </div>
       )}
-    </div>
+
+      {pastEventItems.length > 0 && pastEventItems}
+    </section>
   )
 }

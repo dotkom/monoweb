@@ -68,6 +68,7 @@ export function getEventRepository() {
     },
     async getAllByUserAttending(handle: DBHandle, userId: string) {
       return await handle.event.findMany({
+        orderBy: { start: "desc" },
         where: {
           status: { not: "DELETED" },
 
@@ -87,24 +88,26 @@ export function getEventRepository() {
     },
     async getAllByHostingGroupId(handle: DBHandle, groupId: string, page: Pageable) {
       return await handle.event.findMany({
+        ...pageQuery(page),
+        orderBy: { start: "desc" },
         where: {
           status: { not: "DELETED" },
           hostingGroups: {
             some: { groupId },
           },
         },
-        ...pageQuery(page),
       })
     },
     async getAllByInterestGroupId(handle: DBHandle, interestGroupId: string, page: Pageable) {
       return await handle.event.findMany({
+        ...pageQuery(page),
+        orderBy: { start: "desc" },
         where: {
           status: { not: "DELETED" },
           interestGroups: {
             some: { interestGroupId },
           },
         },
-        ...pageQuery(page),
       })
     },
     async getById(handle: DBHandle, id: string) {
