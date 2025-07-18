@@ -1,33 +1,7 @@
-import { Badge, Icon, Text, cn } from "@dotkomonline/ui"
+import { Icon, Text, cn } from "@dotkomonline/ui"
 import { differenceInDays, formatDate, isPast, isSameDay, isSameYear, isThisYear } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
-
-const useDateFormats = (
-  start: Date,
-  end: Date
-): {
-  singleDay: boolean
-  showTime: boolean
-  startDate: string
-  endDate: string
-  startTime: string
-  endTime: string
-  ongoing: boolean
-} => {
-  const withinAWeek = Math.abs(differenceInDays(start, new Date())) < 7
-  const excludeYear = isSameYear(start, end) && isThisYear(start)
-
-  return {
-    singleDay: isSameDay(start, end),
-    showTime: withinAWeek && !isPast(end),
-    startDate: formatDate(start, excludeYear ? "dd. MMM" : "dd.MM.yyyy", { locale: nb }),
-    endDate: formatDate(end, excludeYear ? "dd. MMM" : "dd.MM.yyyy", { locale: nb }),
-    startTime: formatDate(start, "HH:mm", { locale: nb }),
-    endTime: formatDate(end, "HH:mm", { locale: nb }),
-    ongoing: isPast(start) && !isPast(end),
-  }
-}
 
 interface EventListItemDateAndTimeProps {
   start: Date
@@ -35,42 +9,45 @@ interface EventListItemDateAndTimeProps {
 }
 
 export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) => {
-  const { singleDay, showTime, startDate, endDate, startTime, endTime, ongoing } = useDateFormats(start, end)
+  const withinAWeek = Math.abs(differenceInDays(start, new Date())) < 7
+  const excludeYear = isSameYear(start, end) && isThisYear(start)
   const past = isPast(end)
 
-  const ongoingBadge = (
-    <Badge
-      variant="light"
-      color="slate"
-      className="px-1.5 bg-gray-100 dark:bg-stone-800 group-hover:bg-gray-200 dark:group-hover:bg-stone-700 transition-color text-[0.65rem] font-semibold text-gray-500 uppercase tracking-wider"
-    >
-      Pågående
-    </Badge>
-  )
+  const singleDay = isSameDay(start, end)
+  const showTime = withinAWeek && !past
+  const startDate = formatDate(start, excludeYear ? "dd. MMM" : "dd.MM.yyyy", { locale: nb })
+  const endDate = formatDate(end, excludeYear ? "dd. MMM" : "dd.MM.yyyy", { locale: nb })
+  const startTime = formatDate(start, "HH:mm", { locale: nb })
+  const endTime = formatDate(end, "HH:mm", { locale: nb })
+  const ongoing = isPast(start) && !past
 
-  if (singleDay) {
+  if (singleDay || ongoing) {
     return (
       <div
         className={cn(
           "flex flex-row gap-2 items-center dark:text-stone-400",
+          "text-xs md:text-sm",
           past && "text-gray-600 dark:text-stone-700 group-hover:text-gray-800 dark:group-hover:text-stone-500"
         )}
       >
-        <div className="flex flex-row gap-2 items-center">
-          <Icon icon="tabler:calendar-event" className={cn(!past && "text-gray-800 dark:text-stone-500")} />
-          <Text className="text-sm">{startDate}</Text>
-        </div>
+        <Icon
+          icon="tabler:calendar-event"
+          className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-500")}
+        />
 
-        {showTime && (
-          <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:clock" className={cn("ml-2", !past && "text-gray-800 dark:text-stone-800")} />
-            <Text className="text-sm">
-              {startTime} - {endTime}
-            </Text>
+        {ongoing ? (
+          <Text>Pågår nå</Text>
+        ) : (
+          <div className="flex flex-col md:flex-row md:gap-1">
+            <Text>{startDate}</Text>
+
+            {showTime && (
+              <Text>
+                {startTime} - {endTime}
+              </Text>
+            )}
           </div>
         )}
-
-        {ongoing && ongoingBadge}
       </div>
     )
   }
@@ -79,24 +56,29 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
     <div
       className={cn(
         "flex flex-row gap-2 items-center dark:text-stone-400",
+        "text-xs md:text-sm",
         past && "text-gray-600 group-hover:text-gray-800 dark:text-stone-700 dark:group-hover:text-stone-500"
       )}
     >
-      <Icon icon="tabler:calendar-event" className={cn(!past && "text-gray-800 dark:text-stone-500")} />
+      <Icon
+        icon="tabler:calendar-event"
+        className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-500")}
+      />
 
-      <div className="flex flex-row gap-1 text-sm">
+      <div className="flex flex-col md:flex-row md:gap-1">
         <Text>{startDate}</Text>
         {showTime && <Text> kl. {startTime}</Text>}
       </div>
 
-      <Icon icon="tabler:arrow-right" className={cn(!past && "text-gray-800 dark:text-stone-400")} />
+      <Icon
+        icon="tabler:arrow-right"
+        className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-400")}
+      />
 
-      <div className="flex flex-row gap-1 text-sm">
+      <div className="flex flex-col md:flex-row md:gap-1">
         <Text>{endDate}</Text>
         {showTime && <Text>kl. {endTime}</Text>}
       </div>
-
-      {ongoing && ongoingBadge}
     </div>
   )
 }

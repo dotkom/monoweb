@@ -15,7 +15,7 @@ import {
 } from "./NavigationMenu"
 
 export const MainNavigation: FC<{ links: MenuLink[] }> = ({ links }) => (
-  <NavigationMenu className="ml-6 hidden w-min flex-1 justify-start md:flex">
+  <NavigationMenu className="grow hidden md:flex justify-start ml-4">
     <NavigationMenuList>
       {links.map((link) => (
         <NavigationMenuItem key={link.title}>

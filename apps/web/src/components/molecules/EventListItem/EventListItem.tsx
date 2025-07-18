@@ -26,14 +26,14 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
         href={url}
         className={cn(
           "group flex flex-row gap-3 w-full rounded-xl p-2 -mx-2",
-          "hover:bg-gray-100 dark:hover:bg-stone-800 transition-colors",
+          "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
           past && "text-gray-600 dark:text-stone-600 hover:text-gray-800 dark:hover:text-stone-400"
         )}
       >
         <Thumbnail imageUrl={customImageUrl} alt={title} startInPast={past} eventType={type} />
 
         <div className="flex flex-col gap-1">
-          <Title element="h3" size="sm" className="font-normal">
+          <Title element="h3" size="sm" className="font-normal text-base md:text-lg">
             {title}
           </Title>
 

@@ -116,9 +116,7 @@ export const Navbar: FC = () => {
 
       <MainNavigation links={links} />
 
-      <div className="grow md:grow-0">
-        <ProfileMenu />
-      </div>
+      <ProfileMenu />
     </header>
   )
 }
