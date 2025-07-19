@@ -34,8 +34,8 @@ export const articleRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => {
-        const article = ctx.articleService.update(handle, input.id, input.input)
-        const tags = ctx.articleService.setTags(handle, input.id, input.tags)
+        const article = await ctx.articleService.update(handle, input.id, input.input)
+        const tags = await ctx.articleService.setTags(handle, input.id, input.tags)
         return { ...article, tags }
       })
     }),
