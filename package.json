@@ -47,8 +47,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "turbo": "2.5.4",
-    "turbo-ignore": "2.5.4",
+    "turbo": "2.5.5",
+    "turbo-ignore": "2.5.5",
     "typescript": "5.8.3"
   }
 }
