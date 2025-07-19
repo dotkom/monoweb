@@ -791,7 +791,7 @@ importers:
         version: 1.14.2
       isomorphic-dompurify:
         specifier: ^2.24.0
-        version: 2.25.0
+        version: 2.26.0
       jose:
         specifier: ^6.0.11
         version: 6.0.12
@@ -1212,7 +1212,7 @@ importers:
         version: class-variance-authority@0.7.1
       isomorphic-dompurify:
         specifier: ^2.24.0
-        version: 2.25.0
+        version: 2.26.0
       jsdom:
         specifier: 26.1.0
         version: 26.1.0
@@ -6542,8 +6542,8 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  isomorphic-dompurify@2.25.0:
-    resolution: {integrity: sha512-bcpJzu9DOjN21qaCVpcoCwUX1ytpvA6EFqCK5RNtPg5+F0Jz9PX50jl6jbEicBNeO87eDDfC7XtPs4zjDClZJg==}
+  isomorphic-dompurify@2.26.0:
+    resolution: {integrity: sha512-nZmoK4wKdzPs5USq4JHBiimjdKSVAOm2T1KyDoadtMPNXYHxiENd19ou4iU/V4juFM6LVgYQnpxCYmxqNP4Obw==}
     engines: {node: '>=18'}
 
   istanbul-lib-coverage@3.2.2:
@@ -14996,7 +14996,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  isomorphic-dompurify@2.25.0:
+  isomorphic-dompurify@2.26.0:
     dependencies:
       dompurify: 3.2.6
       jsdom: 26.1.0
@@ -15896,7 +15896,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      styled-jsx: 5.1.6(react@19.1.0)
+      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.3.5
       '@next/swc-darwin-x64': 15.3.5
@@ -17087,11 +17087,6 @@ snapshots:
       react: 19.1.0
     optionalDependencies:
       '@babel/core': 7.26.10
-
-  styled-jsx@5.1.6(react@19.1.0):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.1.0
 
   sugarss@4.0.1(postcss@8.5.6):
     dependencies:
