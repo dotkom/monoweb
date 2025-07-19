@@ -1,5 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type { Group, GroupId, GroupMember, GroupMemberWrite, GroupType, GroupWrite, UserId } from "@dotkomonline/types"
+import { slugify } from "@dotkomonline/utils"
 import { GroupNotFoundError } from "./group-error"
 import type { GroupRepository } from "./group-repository"
 
@@ -48,7 +49,18 @@ export function getGroupService(groupRepository: GroupRepository): GroupService 
       return groupRepository.getAllByType(handle, groupType)
     },
     async create(handle, payload) {
-      return groupRepository.create(handle, payload)
+      let id = slugify(payload.name)
+      // We try to find an available slug. This should hopefully never run more than once, but maybe some future idiot
+      // is trying to break the authorization system by creating a group with a name that is already taken.
+      for (let i = 1; ; i++) {
+        const match = await groupRepository.getById(handle, id)
+        if (match === null) {
+          break
+        }
+        // If the id already exists, we try something like slug-1
+        id = `${slugify(payload.name)}-${i}`
+      }
+      return groupRepository.create(handle, id, payload)
     },
     async update(handle, groupId, values) {
       return groupRepository.update(handle, groupId, values)

@@ -571,6 +571,9 @@ importers:
       superjson:
         specifier: ^2.0.0
         version: 2.2.2
+      tiny-invariant:
+        specifier: ^1.3.3
+        version: 1.3.3
       zod:
         specifier: ^3.25.47
         version: 3.25.76

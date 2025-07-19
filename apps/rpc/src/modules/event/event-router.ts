@@ -14,18 +14,19 @@ import {
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { adminProcedure, publicProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
 import { feedbackRouter } from "./feedback-router"
 
 export const eventRouter = t.router({
-  get: publicProcedure
+  get: procedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.eventService.getEventById(handle, input))
     ),
-  create: adminProcedure
+
+  create: authenticatedProcedure
     .input(
       z.object({
         event: EventWriteSchema,
@@ -33,8 +34,9 @@ export const eventRouter = t.router({
         interestGroupIds: z.array(EventInterestGroupSchema.shape.interestGroupId),
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => {
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireAffiliation()
+      return ctx.executeTransaction(async (handle) => {
         const event = await ctx.eventService.createEvent(handle, input.event)
         const groups = await ctx.eventHostingGroupService.setEventHostingGroups(handle, event.id, input.groupIds)
         const interestGroups = await ctx.eventService.setEventInterestGroups(handle, event.id, input.interestGroupIds)
@@ -44,18 +46,21 @@ export const eventRouter = t.router({
           interestGroups,
         }
       })
-    ),
-  edit: adminProcedure
+    }),
+
+  edit: authenticatedProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
         event: EventWriteSchema,
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.eventService.updateEvent(handle, input.id, input.event))
-    ),
-  editWithGroups: adminProcedure
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireAffiliation()
+      return ctx.executeTransaction(async (handle) => ctx.eventService.updateEvent(handle, input.id, input.event))
+    }),
+
+  editWithGroups: authenticatedProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
@@ -64,15 +69,17 @@ export const eventRouter = t.router({
         interestGroups: z.array(EventInterestGroupSchema.shape.interestGroupId),
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => {
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireAffiliation()
+      return ctx.executeTransaction(async (handle) => {
         const event = await ctx.eventService.updateEvent(handle, input.id, input.event)
         await ctx.eventHostingGroupService.setEventHostingGroups(handle, input.id, input.groups)
         await ctx.eventService.setEventInterestGroups(handle, input.id, input.interestGroups)
         return event
       })
-    ),
-  all: publicProcedure
+    }),
+
+  all: procedure
     .input(z.object({ page: PaginateInputSchema, filter: EventFilterSchema.optional() }).optional())
     .output(z.array(EventDetailSchema))
     .query(async ({ input, ctx }) =>
@@ -102,39 +109,45 @@ export const eventRouter = t.router({
         )
       })
     ),
-  allByUserIdWithAttendance: publicProcedure
+
+  allByUserIdWithAttendance: procedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.eventService.getAttendanceEventsByUserAttending(handle, input.id))
     ),
-  allByCompanyWithAttendance: publicProcedure
+
+  allByCompanyWithAttendance: procedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
         ctx.companyEventService.getAttendanceEventsByCompanyId(handle, input.id, input.paginate)
       )
     ),
-  allByGroupWithAttendance: publicProcedure
+
+  allByGroupWithAttendance: procedure
     .input(z.object({ id: GroupSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
         ctx.eventService.getAttendanceEventsByGroupId(handle, input.id, input.paginate)
       )
     ),
-  allByInterestGroupWithAttendance: publicProcedure
+
+  allByInterestGroupWithAttendance: procedure
     .input(z.object({ id: InterestGroupSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
         ctx.eventService.getAttendanceEventsByInterestGroupId(handle, input.id, input.paginate)
       )
     ),
-  getEventDetail: publicProcedure
+
+  getEventDetail: procedure
     .input(EventSchema.shape.id)
     .output(EventDetailSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.eventService.getEventDetail(handle, input))
     ),
-  addAttendance: adminProcedure
+
+  addAttendance: procedure
     .input(
       z.object({
         values: AttendanceWriteSchema,
@@ -144,6 +157,7 @@ export const eventRouter = t.router({
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.eventService.addAttendance(handle, input.eventId, input.values))
     ),
+
   attendance: attendanceRouter,
   company: eventCompanyRouter,
   feedback: feedbackRouter,

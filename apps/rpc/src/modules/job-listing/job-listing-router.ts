@@ -1,10 +1,10 @@
 import { CompanySchema, JobListingLocationSchema, JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export const jobListingRouter = t.router({
-  create: adminProcedure
+  create: procedure
     .input(
       z.object({
         input: JobListingWriteSchema,
@@ -17,7 +17,7 @@ export const jobListingRouter = t.router({
         ctx.jobListingService.create(handle, input.input, input.companyId, input.locationIds)
       )
     ),
-  edit: protectedProcedure
+  edit: procedure
     .input(
       z.object({
         id: JobListingSchema.shape.id,
@@ -31,22 +31,22 @@ export const jobListingRouter = t.router({
         ctx.jobListingService.update(handle, input.id, input.input, input.companyId, input.locationIds)
       )
     ),
-  all: publicProcedure
+  all: procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.jobListingService.getAll(handle, input))
     ),
-  active: publicProcedure
+  active: procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.jobListingService.getActive(handle, input))
     ),
-  get: publicProcedure
+  get: procedure
     .input(JobListingSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.jobListingService.getById(handle, input))
     ),
-  getLocations: publicProcedure.query(async ({ ctx }) =>
+  getLocations: procedure.query(async ({ ctx }) =>
     ctx.executeTransaction(async (handle) => ctx.jobListingService.getLocations(handle))
   ),
 })

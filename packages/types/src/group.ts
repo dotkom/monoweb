@@ -10,7 +10,7 @@ export type Group = z.infer<typeof GroupSchema>
 
 export type GroupType = z.infer<typeof GroupTypeSchema>
 
-export const GroupWriteSchema = GroupSchema.partial({
+export const GroupWriteSchema = GroupSchema.omit({
   id: true,
   createdAt: true,
 })

@@ -11,6 +11,7 @@ import { getAttendanceRepository } from "./attendance/attendance-repository"
 import { getAttendanceService } from "./attendance/attendance-service"
 import { getAttendeeRepository } from "./attendance/attendee-repository"
 import { getAttendeeService } from "./attendance/attendee-service"
+import { getAuthorizationService } from "./authorization-service"
 import { getCompanyEventRepository } from "./company/company-event-repository"
 import { getCompanyEventService } from "./company/company-event-service"
 import { getCompanyRepository } from "./company/company-repository"
@@ -194,6 +195,7 @@ export async function createServiceLayer(
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
   const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
+  const authorizationService = getAuthorizationService()
 
   return {
     userService,
@@ -221,6 +223,7 @@ export async function createServiceLayer(
     taskExecutor,
     feedbackFormService,
     feedbackFormAnswerService,
+    authorizationService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only

@@ -1,10 +1,10 @@
 import { PaymentSchema, RefundRequestSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { adminProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, t } from "../../trpc"
 
 export const refundRequestRouter = t.router({
-  create: adminProcedure
+  create: authenticatedProcedure
     .input(
       z.object({
         paymentId: PaymentSchema.shape.id,
@@ -13,39 +13,39 @@ export const refundRequestRouter = t.router({
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
-        ctx.refundRequestService.createRefundRequest(handle, input.paymentId, ctx.principal, input.reason)
+        ctx.refundRequestService.createRefundRequest(handle, input.paymentId, ctx.principal.subject, input.reason)
       )
     ),
-  edit: adminProcedure
+  edit: procedure
     .input(z.object({ id: RefundRequestSchema.shape.id, reason: z.string().min(0).max(255) }))
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.refundRequestService.updateRefundRequest(handle, input.id, input))
     ),
-  approve: adminProcedure
+  approve: authenticatedProcedure
     .input(RefundRequestSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
-        ctx.refundRequestService.approveRefundRequest(handle, input, ctx.principal)
+        ctx.refundRequestService.approveRefundRequest(handle, input, ctx.principal.subject)
       )
     ),
-  reject: adminProcedure
+  reject: authenticatedProcedure
     .input(RefundRequestSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
-        ctx.refundRequestService.rejectRefundRequest(handle, input, ctx.principal)
+        ctx.refundRequestService.rejectRefundRequest(handle, input, ctx.principal.subject)
       )
     ),
-  delete: adminProcedure
+  delete: procedure
     .input(RefundRequestSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.refundRequestService.deleteRefundRequest(handle, input))
     ),
-  get: adminProcedure
+  get: procedure
     .input(RefundRequestSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.refundRequestService.getRefundRequestById(handle, input))
     ),
-  all: adminProcedure
+  all: procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.refundRequestService.getRefundRequests(handle, input))

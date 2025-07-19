@@ -1,3 +1,4 @@
+import crypto from "node:crypto"
 import fs from "node:fs"
 import fsp from "node:fs/promises"
 import path from "node:path"
@@ -76,10 +77,11 @@ import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 
 async function insertDump() {
+  const pathOfThisScript = import.meta.dirname
   // biome-ignore lint/suspicious/noExplicitAny: files don't exist and cannot provide types until they are created
-  const groups = JSON.parse(await fsp.readFile("./groups.json", "utf-8")) as any[]
+  const groups = JSON.parse(await fsp.readFile(path.resolve(pathOfThisScript, "./groups.json"), "utf-8")) as any[]
   // biome-ignore lint/suspicious/noExplicitAny: files don't exist and cannot provide types until they are created
-  const hobbies = JSON.parse(await fsp.readFile("./hobbys.json", "utf-8")) as any[]
+  const hobbies = JSON.parse(await fsp.readFile(path.resolve(pathOfThisScript, "./hobbys.json"), "utf-8")) as any[]
 
   const committees = groups.filter((item) => item.group_type === "committee")
   const nodeCommittees = groups.filter((item) => item.group_type === "node_committee")
@@ -119,6 +121,7 @@ async function insertDump() {
     console.log(`Inserting ${item.name_short}`)
     await prisma.group.create({
       data: {
+        id: crypto.randomUUID(),
         name: item.name_short,
         description: item.description_short,
         type: "COMMITTEE",
@@ -133,6 +136,7 @@ async function insertDump() {
     console.log(`Inserting ${item.name_short}`)
     await prisma.group.create({
       data: {
+        id: crypto.randomUUID(),
         name: item.name_short,
         description: item.description_short,
         type: "NODECOMMITTEE",

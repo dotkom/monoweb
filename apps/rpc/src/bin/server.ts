@@ -31,21 +31,20 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
   if (bearer !== undefined) {
     const token = bearer.substring("Bearer ".length)
     const principal = await jwtService.verify(token)
+    const subject = principal.payload.sub
+    if (subject === undefined) {
+      return createContext(null, serviceLayer)
+    }
+    const affiliations = await serviceLayer.authorizationService.getAffiliations(serviceLayer.prisma, subject)
     return createContext(
       {
-        adminPrincipals,
-        principal: principal.payload.sub ?? null,
+        subject,
+        affiliations,
       },
       serviceLayer
     )
   }
-  return createContext(
-    {
-      adminPrincipals,
-      principal: null,
-    },
-    serviceLayer
-  )
+  return createContext(null, serviceLayer)
 }
 
 const server = fastify({
