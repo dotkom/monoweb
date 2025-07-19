@@ -7,6 +7,7 @@ export const formSchema = z.object({
   contactTel: z.string(),
   requestsCompanyPresentation: z.boolean().default(false),
   requestsCourseEvent: z.boolean().default(false),
+  requestsTwoInOneDeal: z.boolean().default(false),
   requestsInstagramTakeover: z.boolean().default(false),
   requestsExcursionParticipation: z.boolean().default(false),
   requestsCollaborationEvent: z.boolean().default(false),

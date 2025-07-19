@@ -131,6 +131,17 @@ export const Form: FC = () => {
           name="requestsCourseEvent"
           render={({ field }) => <Checkbox label="Kurs" onCheckedChange={field.onChange} checked={field.value} />}
         />
+        <Controller
+          control={control}
+          name="requestsTwoInOneDeal"
+          render={({ field }) => (
+            <Checkbox
+              label="Bedriftspresentasjon + Kurs (pakkedeal)"
+              onCheckedChange={field.onChange}
+              checked={field.value}
+            />
+          )}
+        />
 
         <CheckboxWithTooltip
           name="requestsInstagramTakeover"

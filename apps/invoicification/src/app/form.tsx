@@ -103,7 +103,7 @@ export const Form: FC = () => {
             placeholder="Velg anledning"
             options={Object.values(InvoiceRelation).map((value) => ({
               value,
-              label: value,
+              children: value,
             }))}
           />
         </div>
@@ -127,7 +127,7 @@ export const Form: FC = () => {
             placeholder="Velg leveringsmetode"
             options={Object.entries(DeliveryMethod).map(([key, value]) => ({
               value,
-              label: value,
+              children: value,
             }))}
           />
         </div>
@@ -139,7 +139,7 @@ export const Form: FC = () => {
       </Label>
 
       <Label>
-        Ønsker PO-nummer
+        Ønsket PO-nummer
         <TextInput placeholder="Ingen preferanse" {...register("preferredPurchaseOrderNumber")} />
         <ErrorMessage
           name="preferredPurchaseOrderNumber"
@@ -149,7 +149,7 @@ export const Form: FC = () => {
       </Label>
 
       <Label>
-        Ønsker spesiell antall dager til forfallsdato
+        Ønsket antall dager til forfallsdato
         <TextInput type="number" placeholder="Ingen preferanse" {...register("preferredDueDateLength")} />
         <ErrorMessage
           name="preferredDueDateLength"
