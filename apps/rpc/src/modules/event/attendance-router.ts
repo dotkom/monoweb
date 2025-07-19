@@ -199,7 +199,7 @@ export const attendanceRouter = t.router({
       )
     ),
 
-  getAttendeeStatuses: adminProcedure
+  getAttendeeStatuses: protectedProcedure
     .input(
       z.object({
         userId: UserSchema.shape.id,
