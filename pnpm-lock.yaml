@@ -964,7 +964,7 @@ importers:
         version: 1.1.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@react-email/tailwind':
         specifier: ^1.0.5
-        version: 1.0.5(react@19.1.0)
+        version: 1.2.2(react@19.1.0)
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -3799,12 +3799,6 @@ packages:
 
   '@react-email/section@0.0.16':
     resolution: {integrity: sha512-FjqF9xQ8FoeUZYKSdt8sMIKvoT9XF8BrzhT3xiFKdEMwYNbsDflcjfErJe3jb7Wj/es/lKTbV5QR1dnLzGpL3w==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      react: ^18.0 || ^19.0 || ^19.0.0-rc
-
-  '@react-email/tailwind@1.0.5':
-    resolution: {integrity: sha512-BH00cZSeFfP9HiDASl+sPHi7Hh77W5nzDgdnxtsVr/m3uQD9g180UwxcE3PhOfx0vRdLzQUU8PtmvvDfbztKQg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
@@ -11909,10 +11903,6 @@ snapshots:
     dependencies:
       react: 19.1.0
 
-  '@react-email/tailwind@1.0.5(react@19.1.0)':
-    dependencies:
-      react: 19.1.0
-
   '@react-email/tailwind@1.2.2(react@19.1.0)':
     dependencies:
       react: 19.1.0
@@ -15898,7 +15888,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      styled-jsx: 5.1.6(react@19.1.0)
+      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.3.5
       '@next/swc-darwin-x64': 15.3.5
@@ -17089,11 +17079,6 @@ snapshots:
       react: 19.1.0
     optionalDependencies:
       '@babel/core': 7.26.10
-
-  styled-jsx@5.1.6(react@19.1.0):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.1.0
 
   sugarss@4.0.1(postcss@8.5.6):
     dependencies:
