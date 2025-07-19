@@ -129,7 +129,7 @@ model Company {
 }
 
 model Group {
-  id              String              @id @default(uuid())
+  id              String              @id @unique
   createdAt       DateTime            @default(now()) @db.Timestamptz(3)
   name            String
   description     String

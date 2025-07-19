@@ -1,24 +1,24 @@
 import { EventSchema, InterestGroupSchema, InterestGroupWriteSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, publicProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export const interestGroupRouter = t.router({
-  create: adminProcedure.input(InterestGroupWriteSchema).mutation(async ({ input, ctx }) =>
+  create: procedure.input(InterestGroupWriteSchema).mutation(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return await ctx.interestGroupService.create(handle, input)
     })
   ),
-  all: publicProcedure.query(async ({ ctx }) =>
+  all: procedure.query(async ({ ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return await ctx.interestGroupService.getAll(handle)
     })
   ),
-  get: publicProcedure.input(InterestGroupSchema.shape.id).query(async ({ input, ctx }) =>
+  get: procedure.input(InterestGroupSchema.shape.id).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return await ctx.interestGroupService.getById(handle, input)
     })
   ),
-  update: adminProcedure
+  update: procedure
     .input(
       z.object({
         id: InterestGroupSchema.shape.id,
@@ -30,36 +30,36 @@ export const interestGroupRouter = t.router({
         return await ctx.interestGroupService.update(handle, input.id, input.values)
       })
     ),
-  delete: adminProcedure.input(InterestGroupSchema.shape.id).mutation(async ({ input, ctx }) =>
+  delete: procedure.input(InterestGroupSchema.shape.id).mutation(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return await ctx.interestGroupService.delete(handle, input)
     })
   ),
-  getByMember: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) =>
+  getByMember: procedure.input(UserSchema.shape.id).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return await ctx.interestGroupService.getByMember(handle, input)
     })
   ),
-  getMembers: publicProcedure.input(InterestGroupSchema.shape.id).query(async ({ input, ctx }) =>
+  getMembers: procedure.input(InterestGroupSchema.shape.id).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return await ctx.interestGroupService.getMembers(handle, input)
     })
   ),
-  addMember: adminProcedure
+  addMember: procedure
     .input(z.object({ interestGroupId: InterestGroupSchema.shape.id, userId: UserSchema.shape.id }))
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
         return await ctx.interestGroupService.addMember(handle, input.interestGroupId, input.userId)
       })
     ),
-  removeMember: adminProcedure
+  removeMember: procedure
     .input(z.object({ interestGroupId: InterestGroupSchema.shape.id, userId: UserSchema.shape.id }))
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
         return await ctx.interestGroupService.removeMember(handle, input.interestGroupId, input.userId)
       })
     ),
-  allByEventId: publicProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) =>
+  allByEventId: procedure.input(EventSchema.shape.id).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return await ctx.interestGroupService.getAllByEventId(handle, input)
     })

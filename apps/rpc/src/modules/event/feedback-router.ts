@@ -10,22 +10,24 @@ import {
   FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, t } from "../../trpc"
 
 export const feedbackRouter = t.router({
-  createForm: adminProcedure
+  createForm: authenticatedProcedure
     .input(
       z.object({
         feedbackForm: FeedbackFormWriteSchema,
         questions: FeedbackQuestionWriteSchema.array(),
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireAffiliation()
+      return ctx.executeTransaction(async (handle) =>
         ctx.feedbackFormService.create(handle, input.feedbackForm, input.questions)
       )
-    ),
-  updateForm: adminProcedure
+    }),
+
+  updateForm: procedure
     .input(
       z.object({
         id: FeedbackFormIdSchema,
@@ -38,37 +40,37 @@ export const feedbackRouter = t.router({
         ctx.feedbackFormService.update(handle, input.id, input.feedbackForm, input.questions)
       )
     ),
-  deleteForm: adminProcedure
+  deleteForm: procedure
     .input(FeedbackFormIdSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.delete(handle, input))
     ),
-  getFormById: protectedProcedure
+  getFormById: procedure
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getById(handle, input))
     ),
-  findFormByEventId: protectedProcedure
+  findFormByEventId: procedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.findByEventId(handle, input))
     ),
-  getFormByEventid: protectedProcedure
+  getFormByEventid: procedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getByEventId(handle, input))
     ),
-  getPublicForm: publicProcedure
+  getPublicForm: procedure
     .input(FeedbackPublicResultsTokenSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getPublicForm(handle, input))
     ),
-  getPublicResultsToken: adminProcedure
+  getPublicResultsToken: procedure
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getPublicResultsToken(handle, input))
     ),
-  createAnswer: protectedProcedure
+  createAnswer: procedure
     .input(
       z.object({
         formAnswer: FeedbackFormAnswerWriteSchema,
@@ -80,7 +82,7 @@ export const feedbackRouter = t.router({
         ctx.feedbackFormAnswerService.create(handle, input.formAnswer, input.questionAnswers)
       )
     ),
-  findAnswerByAttendee: adminProcedure
+  findAnswerByAttendee: procedure
     .input(
       z.object({
         formId: FeedbackFormIdSchema,
@@ -92,17 +94,17 @@ export const feedbackRouter = t.router({
         ctx.feedbackFormAnswerService.findAnswerByAttendee(handle, input.formId, input.attendeeId)
       )
     ),
-  getAllAnswers: adminProcedure
+  getAllAnswers: procedure
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getAllAnswers(handle, input))
     ),
-  getPublicAnswers: publicProcedure
+  getPublicAnswers: procedure
     .input(FeedbackPublicResultsTokenSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getPublicAnswers(handle, input))
     ),
-  deleteQuestionAnswer: adminProcedure
+  deleteQuestionAnswer: procedure
     .input(FeedbackQuestionAnswerSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input))

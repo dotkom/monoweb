@@ -3,7 +3,7 @@ import type { Group, GroupId, GroupMember, GroupMemberWrite, GroupWrite, UserId 
 import type { GroupType } from "@prisma/client"
 
 export interface GroupRepository {
-  create(handle: DBHandle, values: GroupWrite): Promise<Group>
+  create(handle: DBHandle, id: GroupId, values: GroupWrite): Promise<Group>
   update(handle: DBHandle, id: GroupId, data: Partial<GroupWrite>): Promise<Group>
   delete(handle: DBHandle, id: GroupId): Promise<void>
   getById(handle: DBHandle, id: GroupId): Promise<Group | null>
@@ -19,8 +19,8 @@ export interface GroupRepository {
 
 export function getGroupRepository(): GroupRepository {
   return {
-    async create(handle, data) {
-      return await handle.group.create({ data })
+    async create(handle, id, data) {
+      return await handle.group.create({ data: { ...data, id } })
     },
     async update(handle, groupId, data) {
       return await handle.group.update({ where: { id: groupId }, data })

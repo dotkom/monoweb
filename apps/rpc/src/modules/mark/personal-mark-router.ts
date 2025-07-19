@@ -1,39 +1,39 @@
 import { PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { adminProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export const personalMarkRouter = t.router({
-  getByUser: adminProcedure
+  getByUser: procedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.getPersonalMarksForUserId(handle, input.id))
     ),
-  getByMark: adminProcedure
+  getByMark: procedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.getPersonalMarksByMarkId(handle, input.id))
     ),
-  addToUser: adminProcedure
+  addToUser: procedure
     .input(PersonalMarkSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
         ctx.personalMarkService.addPersonalMarkToUserId(handle, input.userId, input.markId)
       )
     ),
-  countUsersWithMark: adminProcedure
+  countUsersWithMark: procedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.countUsersByMarkId(handle, input.id))
     ),
-  removeFromUser: adminProcedure
+  removeFromUser: procedure
     .input(PersonalMarkSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
         ctx.personalMarkService.removePersonalMarkFromUserId(handle, input.userId, input.markId)
       )
     ),
-  getExpiryDateForUser: adminProcedure
+  getExpiryDateForUser: procedure
     .input(UserSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.getExpiryDateForUserId(handle, input))

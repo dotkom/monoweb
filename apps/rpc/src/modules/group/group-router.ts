@@ -1,38 +1,36 @@
 import { GroupMemberSchema, GroupMemberWriteSchema, GroupSchema, GroupWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export const groupRouter = t.router({
-  create: adminProcedure
+  create: procedure
     .input(GroupWriteSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.create(handle, input))
     ),
-  all: publicProcedure.query(async ({ ctx }) =>
-    ctx.executeTransaction(async (handle) => ctx.groupService.getAll(handle))
-  ),
-  allByType: publicProcedure
+  all: procedure.query(async ({ ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.getAll(handle))),
+  allByType: procedure
     .input(GroupSchema.shape.type)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getAllByType(handle, input))
     ),
-  allIds: publicProcedure.query(async ({ ctx }) =>
+  allIds: procedure.query(async ({ ctx }) =>
     ctx.executeTransaction(async (handle) => ctx.groupService.getAllIds(handle))
   ),
-  allIdsByType: publicProcedure
+  allIdsByType: procedure
     .input(GroupSchema.shape.type)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getAllIdsByType(handle, input))
     ),
-  get: publicProcedure
+  get: procedure
     .input(GroupSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.getById(handle, input))),
-  getByType: publicProcedure
+  getByType: procedure
     .input(z.object({ groupId: GroupSchema.shape.id, type: GroupSchema.shape.type }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getByIdAndType(handle, input.groupId, input.type))
     ),
-  update: protectedProcedure
+  update: procedure
     .input(
       z.object({
         id: GroupSchema.shape.id,
@@ -42,27 +40,27 @@ export const groupRouter = t.router({
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.update(handle, input.id, input.values))
     ),
-  delete: protectedProcedure
+  delete: procedure
     .input(GroupSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.delete(handle, input))
     ),
-  getMembers: publicProcedure
+  getMembers: procedure
     .input(GroupMemberSchema.shape.userId)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getMembers(handle, input))
     ),
-  allByMember: publicProcedure
+  allByMember: procedure
     .input(GroupMemberSchema.shape.userId)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getAllByMember(handle, input))
     ),
-  addMember: adminProcedure
+  addMember: procedure
     .input(GroupMemberWriteSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.addMember(handle, input))
     ),
-  removeMember: adminProcedure
+  removeMember: procedure
     .input(z.object({ groupId: GroupMemberSchema.shape.groupId, userId: GroupMemberSchema.shape.userId }))
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.removeMember(handle, input.userId, input.groupId))

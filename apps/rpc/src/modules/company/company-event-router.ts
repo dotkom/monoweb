@@ -1,10 +1,10 @@
 import { CompanySchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { publicProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export const companyEventRouter = t.router({
-  get: publicProcedure
+  get: procedure
     .input(
       z.object({
         id: CompanySchema.shape.id,

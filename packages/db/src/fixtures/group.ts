@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client"
 
 export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
   {
+    id: "dotkom",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     name: "Dotkom",
     description:
@@ -12,6 +13,7 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
     type: "COMMITTEE",
   },
   {
+    id: "bedkom",
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     name: "Bedkom",
     description:
@@ -22,6 +24,7 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
     type: "COMMITTEE",
   },
   {
+    id: "arrkom",
     createdAt: new Date("2023-02-25 11:03:49.289+00"),
     name: "Arrkom",
     description:
@@ -32,6 +35,7 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
     type: "COMMITTEE",
   },
   {
+    id: "hs",
     createdAt: new Date("2023-02-15 11:03:49.289+00"),
     name: "Hovedstyret",
     email: "hovedstyret@online.ntnu.no",
@@ -40,19 +44,12 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
     type: "COMMITTEE",
   },
   {
+    id: "ekskom",
     createdAt: new Date("2023-02-10 11:03:49.289+00"),
     name: "Ekskom",
     email: "ekskom@online.ntnu.no",
     description:
       "Ekskursjonskomiteens hovedmål er å planlegge og gjennomføre ekskursjoner for studenter ved linjeforeningen Online, spesielt rettet mot studenter i 3. året eller høyere.",
     type: "NODECOMMITTEE",
-  },
-  {
-    createdAt: new Date("2022-02-10 11:03:49.289+00"),
-    name: "Realfagskjelleren",
-    email: "styret@realfagskjelleren.no",
-    description:
-      "Kjelleren arrangerer lavterskel arrangementer hvor alle er velkomne, til vanlig er det åpent hver Fredag hvor en etter en tung uke kan ta seg en rolig tur for å slappe av og møte andre medstudenter. I tillegg pleier det å arrangeres andre fester nå og da hvor igjen alle er velkomne.",
-    type: "OTHERGROUP",
   },
 ]
