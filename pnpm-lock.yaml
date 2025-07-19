@@ -958,7 +958,7 @@ importers:
     dependencies:
       '@react-email/components':
         specifier: ^0.3.0
-        version: 0.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 0.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@react-email/render':
         specifier: ^1.1.2
         version: 1.1.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3719,8 +3719,8 @@ packages:
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
 
-  '@react-email/components@0.3.1':
-    resolution: {integrity: sha512-FqcyGaUpJJu8zfYGSS+qaSy7Zc2BFAswBc/LvHeSV4iTQMZMD8Dy7aS/NvP1SQMg5vjsO1aMpGFdrD4NBY58dw==}
+  '@react-email/components@0.3.2':
+    resolution: {integrity: sha512-nVbo0KtBdZbj19lvfFpe0ZhjKPh6LE229+NyQLuTDt6dfaLzNRpSu/rHP+jlvdWBAk93slsoGyWDRldbqklpaA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
@@ -3809,8 +3809,8 @@ packages:
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
 
-  '@react-email/tailwind@1.2.1':
-    resolution: {integrity: sha512-SmVyDuNQLJwO3wHEe/snSTaRhf/Exldy5DQU/RyPjcSPC0EuXXYwFlBr16br8jJSxkZA/fL91AxKL7HbbWp0Rw==}
+  '@react-email/tailwind@1.2.2':
+    resolution: {integrity: sha512-heO9Khaqxm6Ulm6p7HQ9h01oiiLRrZuuEQuYds/O7Iyp3c58sMVHZGIxiRXO/kSs857NZQycpjewEVKF3jhNTw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
@@ -4301,6 +4301,7 @@ packages:
   '@smithy/middleware-endpoint@4.1.14':
     resolution: {integrity: sha512-+BGLpK5D93gCcSEceaaYhUD/+OCGXM1IDaq/jKUQ+ujB0PTWlWN85noodKw/IPFZhIKFCNEe19PGd/reUMeLSQ==}
     engines: {node: '>=18.0.0'}
+    deprecated: Please upgrade to @smithy/middleware-endpoint@4.1.15 or higher to fix a bug preventing the resolution of ENV and config file custom endpoints https://github.com/smithy-lang/smithy-typescript/issues/1645
 
   '@smithy/middleware-retry@4.1.15':
     resolution: {integrity: sha512-iKYUJpiyTQ33U2KlOZeUb0GwtzWR3C0soYcKuCnTmJrvt6XwTPQZhMfsjJZNw7PpQ3TU4Ati1qLSrkSJxnnSMQ==}
@@ -5883,8 +5884,8 @@ packages:
   electron-to-chromium@1.5.114:
     resolution: {integrity: sha512-DFptFef3iktoKlFQK/afbo274/XNWD00Am0xa7M8FZUepHlHT8PEuiNBoRfFHbH1okqN58AlhbJ4QTkcnXorjA==}
 
-  electron-to-chromium@1.5.182:
-    resolution: {integrity: sha512-Lv65Btwv9W4J9pyODI6EWpdnhfvrve/us5h1WspW8B2Fb0366REPtY3hX7ounk1CkV/TBjWCEvCBBbYbmV0qCA==}
+  electron-to-chromium@1.5.187:
+    resolution: {integrity: sha512-cl5Jc9I0KGUoOoSbxvTywTa40uspGJt/BDBoDLoxJRSBpWh4FFXBsjNRHfQrONsV/OoEjDfHUmZQa2d6Ze4YgA==}
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -11826,7 +11827,7 @@ snapshots:
     dependencies:
       react: 19.1.0
 
-  '@react-email/components@0.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@react-email/components@0.3.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@react-email/body': 0.0.11(react@19.1.0)
       '@react-email/button': 0.2.0(react@19.1.0)
@@ -11846,7 +11847,7 @@ snapshots:
       '@react-email/render': 1.1.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@react-email/row': 0.0.12(react@19.1.0)
       '@react-email/section': 0.0.16(react@19.1.0)
-      '@react-email/tailwind': 1.2.1(react@19.1.0)
+      '@react-email/tailwind': 1.2.2(react@19.1.0)
       '@react-email/text': 0.1.5(react@19.1.0)
       react: 19.1.0
     transitivePeerDependencies:
@@ -11913,7 +11914,7 @@ snapshots:
     dependencies:
       react: 19.1.0
 
-  '@react-email/tailwind@1.2.1(react@19.1.0)':
+  '@react-email/tailwind@1.2.2(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
@@ -13719,7 +13720,7 @@ snapshots:
   browserslist@4.25.1:
     dependencies:
       caniuse-lite: 1.0.30001727
-      electron-to-chromium: 1.5.182
+      electron-to-chromium: 1.5.187
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.1)
 
@@ -14192,7 +14193,7 @@ snapshots:
 
   electron-to-chromium@1.5.114: {}
 
-  electron-to-chromium@1.5.182: {}
+  electron-to-chromium@1.5.187: {}
 
   emoji-regex@10.4.0: {}
 
@@ -15898,7 +15899,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      styled-jsx: 5.1.6(react@19.1.0)
+      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.3.5
       '@next/swc-darwin-x64': 15.3.5
@@ -17089,11 +17090,6 @@ snapshots:
       react: 19.1.0
     optionalDependencies:
       '@babel/core': 7.26.10
-
-  styled-jsx@5.1.6(react@19.1.0):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.1.0
 
   sugarss@4.0.1(postcss@8.5.6):
     dependencies:
