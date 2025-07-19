@@ -67,8 +67,17 @@ WORKDIR /app
 
 COPY . .
 
+# First, we install the prerequisites to build the Prisma client.
 RUN apk update && apk add --no-cache libc6-compat
 RUN npm install -g pnpm@9.15.5 --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
+# Ensure the Prisma .prisma/client/default directory is generated at the monorepo root.
+WORKDIR /app/packages/db
+RUN pnpm run generate
+WORKDIR /app
+
+# We can now install the actual production dependencies.
 RUN pnpm install --frozen-lockfile --ignore-scripts --production
 
 # Step 3: Run the actual application and finalize the image.
