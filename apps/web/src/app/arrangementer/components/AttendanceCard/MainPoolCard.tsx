@@ -118,7 +118,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
         <Text
           className={cn(
             "text-3xl px-2 py-1",
-            poolHasQueue && isAttendingAndReserved && "bg-green-400 dark:bg-green-800 rounded-lg"
+            poolHasQueue && isAttendingAndReserved && "bg-green-200 dark:bg-green-800 rounded-lg"
           )}
         >
           {pool.numAttendees}/{pool.capacity}
@@ -128,7 +128,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
           <Text
             className={cn(
               "text-lg px-2 py-0.5",
-              isAttendingAndNotReserved && "bg-yellow-400 dark:bg-yellow-700 rounded-lg"
+              isAttendingAndNotReserved && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
             )}
           >
             +{pool.numUnreservedAttendees} i kø
