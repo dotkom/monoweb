@@ -11,7 +11,9 @@ type TemplateKey = keyof typeof templates
 
 const FormValuesSchema = z.object({
   selection: z.string(),
-  alternatives: z.array(z.object({ value: z.string().min(1, "Dette feltet er påkrevd") })),
+  alternatives: z
+    .array(z.object({ value: z.string().min(1, "Dette feltet er påkrevd") }))
+    .min(1, "Du må legge til minst ett alternativ"),
 })
 
 export type SelectionsFormValues = z.infer<typeof FormValuesSchema>
@@ -89,6 +91,11 @@ export const SelectionsForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => 
                 )}
               </Box>
             ))}
+            {errors.alternatives?.message && (
+              <Text size="sm" c="red">
+                {errors.alternatives.message}
+              </Text>
+            )}
           </Box>
           <Button
             type="button"

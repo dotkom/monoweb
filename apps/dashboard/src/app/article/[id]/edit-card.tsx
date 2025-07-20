@@ -13,7 +13,7 @@ export const ArticleEditCard: FC = () => {
       const { tags, ...articleData } = data
       edit.mutate({ id: article.id, input: articleData, tags: tags })
     },
-    defaultValues: { ...article, tags: article.tags.map(tag => tag.name) },
+    defaultValues: { ...article, tags: article.tags.map((tag) => tag.name) },
   })
   return <FormComponent />
 }

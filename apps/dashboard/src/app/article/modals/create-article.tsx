@@ -11,7 +11,7 @@ export const CreateArticleModal: FC<ContextModalProps> = ({ context, id }) => {
       const { tags, ...article } = data
       create.mutate({
         article,
-        tags: tags.map((tag) => tag.name),
+        tags,
       })
       close()
     },
