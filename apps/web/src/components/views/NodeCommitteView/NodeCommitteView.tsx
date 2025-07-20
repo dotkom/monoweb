@@ -1,4 +1,5 @@
 import type { Group } from "@dotkomonline/types"
+import Image from "next/image"
 import type { FC } from "react"
 
 interface NodeCommitteeProps {
@@ -17,13 +18,10 @@ export const NodeCommitteeView: FC<NodeCommitteeProps> = (props: NodeCommitteePr
             {nodeCommittee.longDescription ? nodeCommittee.longDescription : nodeCommittee.description}
           </p>
         </div>
-        {nodeCommittee.image && (
-          <img
-            className="max-w-[200px] min-w-[200px] py-auto ml-auto sm:mb-auto mb-9 mt-2"
-            src={nodeCommittee.image}
-            alt={nodeCommittee.name}
-          />
-        )}
+
+        <div className="max-w-[200px] min-w-[200px] py-auto ml-auto sm:mb-auto mb-9 mt-2">
+          {nodeCommittee.image && <Image fill src={nodeCommittee.image} alt={nodeCommittee.name} />}
+        </div>
       </div>
     </div>
   )

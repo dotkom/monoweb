@@ -1,4 +1,5 @@
 import type { Group } from "@dotkomonline/types"
+import Image from "next/image"
 import type { FC } from "react"
 
 interface OtherGroupViewProps {
@@ -15,13 +16,10 @@ export const OtherGroupView: FC<OtherGroupViewProps> = (props: OtherGroupViewPro
           <h2 className="text-lg border-none !mt-4">{otherGroup.name}</h2>
           <p className="mt-2">{otherGroup.longDescription ? otherGroup.longDescription : otherGroup.description}</p>
         </div>
-        {otherGroup.image && (
-          <img
-            className="max-w-[200px] min-w-[200px] py-auto ml-auto sm:mb-auto mb-9 mt-2"
-            src={otherGroup.image}
-            alt={otherGroup.name}
-          />
-        )}
+
+        <div className="max-w-[200px] min-w-[200px] py-auto ml-auto sm:mb-auto mb-9 mt-2">
+          {otherGroup.image && <Image fill src={otherGroup.image} alt={otherGroup.name} />}
+        </div>
       </div>
     </div>
   )

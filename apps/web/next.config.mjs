@@ -8,10 +8,19 @@ const config = {
   images: {
     remotePatterns: [
       {
-        hostname: "**",
         protocol: "https",
-        pathname: "**",
-        port: "",
+        hostname: "**.online.ntnu.no",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "s3.eu-north-1.amazonaws.com",
+        pathname: "/cdn.online.ntnu.no/**",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+        pathname: "/**",
       },
     ],
   },
