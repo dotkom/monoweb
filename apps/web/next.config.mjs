@@ -7,19 +7,13 @@ const config = {
   reactStrictMode: true,
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "s3.eu-north-1.amazonaws.com",
-        pathname: "/cdn.online.ntnu.no/**",
-      },
-      {
-        protocol: "https",
-        hostname: "**.online.ntnu.no",
-      },
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-      },
+      new URL("https://s3.eu-north-1.amazonaws.com/cdn.online.ntnu.no/**"),
+      new URL("https://placehold.co/**"), // For placeholder images used for events
+
+      new URL("https://online.ntnu.no/**"),
+      new URL("https://cdn.online.ntnu.no/**"),
+      new URL("https://wiki.online.ntnu.no/**"),
+      new URL("https://web.online.ntnu.no/**"),
     ],
   },
 }
