@@ -9,21 +9,16 @@ const config = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**.online.ntnu.no",
-        pathname: "/**",
-        port: "",
+        hostname: "s3.eu-north-1.amazonaws.com",
+        pathname: "/cdn.online.ntnu.no/**",
       },
       {
         protocol: "https",
-        hostname: "s3.eu-north-1.amazonaws.com",
-        pathname: "/**",
-        port: "",
+        hostname: "**.online.ntnu.no",
       },
       {
         protocol: "https",
         hostname: "placehold.co",
-        pathname: "/**",
-        port: "",
       },
     ],
   },
