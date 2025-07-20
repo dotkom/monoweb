@@ -5,18 +5,19 @@ import { useFormBuilder } from "@/components/forms/Form"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { ArticleSchema, type ArticleWrite, ArticleWriteSchema } from "@dotkomonline/types"
+import { ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 
-const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWrite> = {}
+const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWriteFormSchema> = {}
 
 export const ArticleWriteFormSchema = ArticleWriteSchema.extend({
-  tags: ArticleSchema.shape.tags,
+  tags: ArticleTagSchema.shape.name.array(),
 })
+type ArticleWriteFormSchema = z.infer<typeof ArticleWriteFormSchema>
 
 interface UseArticleWriteFormProps {
   onSubmit(data: z.infer<typeof ArticleWriteFormSchema>): void
-  defaultValues?: Partial<ArticleWrite>
+  defaultValues?: Partial<ArticleWriteFormSchema>
   label?: string
 }
 
