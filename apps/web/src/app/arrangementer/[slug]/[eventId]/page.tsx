@@ -44,11 +44,12 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
   const eventDetail = await server.event.getEventDetail.query(eventId)
-  const attendees = eventDetail.attendance
-    ? await server.attendance.getAttendees.query({
-        attendanceId: eventDetail.attendance.id,
-      })
-    : []
+  const attendees =
+    eventDetail.attendance && session
+      ? await server.attendance.getAttendees.query({
+          attendanceId: eventDetail.attendance.id,
+        })
+      : []
 
   const hostingGroups = eventDetail.hostingGroups.map((group) => mapToImageAndName(group, group.type))
   const hostingInterestGroups = eventDetail.hostingInterestGroups.map((interestGroup) =>

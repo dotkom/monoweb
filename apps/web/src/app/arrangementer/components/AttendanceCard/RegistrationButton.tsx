@@ -94,18 +94,18 @@ export const RegistrationButton: FC<Props> = ({
     </Button>
   )
 
-  if (!disabledText) {
-    return registrationButton
+  if (disabled) {
+    return (
+      <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
+          <TooltipContent sideOffset={-10}>
+            <Text>{disabledText}</Text>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
   }
 
-  return (
-    <TooltipProvider delayDuration={100}>
-      <Tooltip>
-        <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
-        <TooltipContent sideOffset={-10}>
-          <Text>{disabledText}</Text>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  )
+  return registrationButton
 }

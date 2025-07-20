@@ -12,6 +12,10 @@ import {
   Icon,
   Text,
   Title,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
 import Link from "next/link"
@@ -35,6 +39,7 @@ interface ViewAttendeesButtonProps {
   attendeeListOpen: boolean
   setAttendeeListOpen: (open: boolean) => void
   attendees: Attendee[]
+  isLoggedIn: boolean
   userId: User["id"] | undefined
 }
 
@@ -42,6 +47,7 @@ export const ViewAttendeesButton = ({
   attendeeListOpen,
   setAttendeeListOpen,
   attendees,
+  isLoggedIn,
   userId,
 }: ViewAttendeesButtonProps) => {
   const reservedAttendees = attendees.filter((attendee) => attendee.reserved)
@@ -51,17 +57,33 @@ export const ViewAttendeesButton = ({
 
   const hasWaitlist = waitlistAttendees.length > 0
 
+  const button = (
+    <Button
+      color="light"
+      className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
+      icon={<Icon className="text-lg" icon="tabler:users" />}
+      disabled={!isLoggedIn}
+    >
+      Vis påmeldte
+    </Button>
+  )
+
+  if (!isLoggedIn) {
+    return (
+      <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipContent sideOffset={-10}>
+            <Text>Du må være innlogget for å se påmeldte</Text>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  }
+
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
-      <AlertDialogTrigger asChild>
-        <Button
-          color="light"
-          className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
-          icon={<Icon className="text-lg" icon="tabler:users" />}
-        >
-          Vis påmeldte
-        </Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
       <AlertDialogContent
         className="flex flex-col gap-4 w-full p-0 bg-white dark:bg-stone-900 drop-shadow-lg max-w-2xl rounded-lg"
         onOutsideClick={() => setAttendeeListOpen(false)}
