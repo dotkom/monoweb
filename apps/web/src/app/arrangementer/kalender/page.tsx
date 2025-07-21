@@ -11,7 +11,7 @@ export default async function EventCalendarPage() {
         Arrangementer
       </Title>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col">
         <EventsViewToggle active="cal" />
         <EventCalendar year={now.getFullYear()} month={now.getMonth()} />
       </div>
