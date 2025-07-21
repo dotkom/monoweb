@@ -32,80 +32,79 @@ interface EventTypeConfig {
 const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
   SOCIAL: {
     colors: {
-      itemBg: "bg-green-300",
-      itemBgGradientFade: "to-green-300",
-      itemBgHover: "hover:bg-green-400",
-      itemBorder: "border-green-800",
-      itemBorderLight: "border-green-400",
-      itemText: "text-green-950",
-      cardBg: "bg-green-100",
-      cardText: "text-black",
-      cardBorderHover: "hover:border-green-600",
-      badgeBg: "bg-green-300",
-      badgeText: "text-green-950",
+      itemBg: "bg-green-100 dark:bg-green-950",
+      itemBgGradientFade: "to-green-100 dark:to-green-950",
+      itemBgHover: "hover:bg-green-200 dark:hover:bg-green-900",
+      itemBorder: "border-green-400 dark:border-green-600",
+      itemBorderLight: "border-green-200 dark:border-green-800",
+      itemText: "text-green-900 dark:text-green-300",
+      cardBg: "bg-green-100 dark:bg-green-950",
+      cardText: "text-green-950 dark:text-green-50",
+      cardBorderHover: "hover:border-green-400 dark:hover:border-green-800",
+      badgeBg: "bg-green-200 dark:bg-green-900",
+      badgeText: "text-green-800 dark:text-green-300",
     },
     displayName: "Sosialt",
   },
   BEDPRES: {
     colors: {
-      itemBg: "bg-blue-300",
-      itemBgGradientFade: "to-blue-300",
-      itemBgHover: "hover:bg-blue-400",
-      itemBorder: "border-blue-800",
-      itemBorderLight: "border-blue-400",
-      itemText: "text-blue-950",
-      cardBg: "bg-blue-100",
-      cardText: "text-black",
-      cardBorderHover: "hover:border-blue-600",
-      badgeBg: "bg-blue-300",
-      badgeText: "text-blue-950",
+      itemBg: "bg-blue-100 dark:bg-blue-950",
+      itemBgGradientFade: "to-blue-100 dark:to-blue-950",
+      itemBgHover: "hover:bg-blue-200 dark:hover:bg-blue-900",
+      itemBorder: "border-blue-400 dark:border-blue-600",
+      itemBorderLight: "border-blue-200 dark:border-blue-800",
+      itemText: "text-blue-900 dark:text-blue-300",
+      cardBg: "bg-blue-100 dark:bg-blue-950",
+      cardText: "text-blue-950 dark:text-blue-50",
+      cardBorderHover: "hover:border-blue-400 dark:hover:border-blue-800",
+      badgeBg: "bg-blue-200 dark:bg-blue-900",
+      badgeText: "text-blue-800 dark:text-blue-300",
     },
     displayName: "Bedpres",
   },
   ACADEMIC: {
     colors: {
-      itemBg: "bg-red-300",
-      itemBgGradientFade: "to-red-300",
-      itemBgHover: "hover:bg-red-400",
-      itemBorder: "border-red-800",
-      itemBorderLight: "border-red-400",
-      itemText: "text-red-950",
-      cardBg: "bg-red-100",
-      cardText: "text-black",
-      cardBorderHover: "hover:border-red-600",
-      badgeBg: "bg-red-300",
-      badgeText: "text-red-950",
+      itemBg: "bg-red-100 dark:bg-red-950",
+      itemBgGradientFade: "to-red-100 dark:to-red-950",
+      itemBgHover: "hover:bg-red-200 dark:hover:bg-red-900",
+      itemBorder: "border-red-400 dark:border-red-600",
+      itemBorderLight: "border-red-200 dark:border-red-800",
+      itemText: "text-red-900 dark:text-red-300",
+      cardBg: "bg-red-100 dark:bg-red-950",
+      cardText: "text-red-950 dark:text-red-50",
+      cardBorderHover: "hover:border-red-400 dark:hover:border-red-800",
+      badgeBg: "bg-red-200 dark:bg-red-900",
+      badgeText: "text-red-800 dark:text-red-300",
     },
     displayName: "Kurs",
   },
   COMPANY: {
     colors: {
-      itemBg: "bg-indigo-300",
-      itemBgGradientFade: "to-indigo-300",
-      itemBgHover: "hover:bg-indigo-400",
-      itemBorder: "border-indigo-800",
-      itemBorderLight: "border-indigo-400",
-      itemText: "text-indigo-950",
-      cardBg: "bg-indigo-100",
-      cardText: "text-black",
-      cardBorderHover: "hover:border-indigo-600",
-      badgeBg: "bg-indigo-300",
-      badgeText: "text-indigo-950",
+      itemBg: "bg-indigo-100 dark:bg-indigo-950",
+      itemBgGradientFade: "to-indigo-100 dark:to-indigo-950",
+      itemBgHover: "hover:bg-indigo-200 dark:hover:bg-indigo-900",
+      itemBorder: "border-indigo-400 dark:border-indigo-600",
+      itemBorderLight: "border-indigo-200 dark:border-indigo-800",
+      itemText: "text-indigo-900 dark:text-indigo-300",
+      cardBg: "bg-indigo-100 dark:bg-indigo-950",
+      cardText: "text-indigo-950 dark:text-indigo-50",
+      cardBorderHover: "hover:border-indigo-400 dark:hover:border-indigo-800",
+      badgeBg: "bg-indigo-200 dark:bg-indigo-900",
+      badgeText: "text-indigo-800 dark:text-indigo-300",
     },
-    displayName: "Bedriftsarragement",
+    displayName: "Bedriftsarrangement",
   },
 }
 
 const DEFAULT_STYLES = {
-  itemBg: "bg-gray-300",
-  itemBgGradientFade: "to-gray-300",
-  itemBgHover: "hover:bg-gray-400",
-  itemBorder: "border-gray-500",
-  itemText: "text-gray-950",
-  cardBg: "bg-gray-100",
-  cardText: "text-gray-950",
-  cardBorder: "border-gray-400",
-  cardBorderHover: "hover:border-gray-600",
+  itemBg: "bg-gray-100 dark:bg-stone-900",
+  itemBgGradientFade: "to-gray-100 dark:to-stone-900",
+  itemBgHover: "hover:bg-gray-200 dark:hover:bg-stone-800",
+  itemBorder: "border-gray-400 dark:border-gray-600",
+  itemText: "text-gray-500 dark:text-gray-300",
+  cardBg: "bg-gray-100 dark:bg-stone-800",
+  cardText: "text-gray-900 dark:text-gray-100",
+  cardBorderHover: "hover:border-gray-400 dark:hover:border-gray-800",
 }
 
 interface EventTheme {
@@ -189,7 +188,7 @@ export const EventCalendarItem = ({ event, className }: EventCalendarItemProps) 
         <Link
           href={`/arrangementer/${slugify(event.title)}/${event.id}`}
           className={cn(
-            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden relative",
+            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden relative transition-colors duration-300",
             theme.item.base,
             className || ""
           )}
@@ -217,19 +216,21 @@ export const EventCalendarItem = ({ event, className }: EventCalendarItemProps) 
           <div className={cn("p-4", theme.card.text)}>
             <p className="text-l font-semibold mb-2">{event.title}</p>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <Icon icon="tabler:clock" width={16} height={16} />
                 <span className="text-sm">
                   {String(event.start.getHours()).padStart(2, "0")}:{String(event.start.getMinutes()).padStart(2, "0")}
                 </span>
               </div>
-              <div className="flex items-center gap-1 overflow-hidden">
-                <Icon icon="tabler:map-pin" width={16} height={16} />
-                <span className="text-sm truncate">{event.locationTitle}</span>
-              </div>
+              {event.locationTitle && (
+                <div className="flex items-center gap-1 overflow-hidden">
+                  <Icon icon="tabler:map-pin" width={16} height={16} />
+                  <span className="text-sm truncate">{event.locationTitle}</span>
+                </div>
+              )}
             </div>
             <div className="flex justify-between items-center gap-2 mt-2">
-              <div className="flex gap-2 items-center text-sm">
+              <div className="flex gap-1 items-center text-sm">
                 <Icon icon="tabler:users" width={16} height={16} />
                 <span>3/40</span>
               </div>

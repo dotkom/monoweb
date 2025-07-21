@@ -16,7 +16,7 @@ const EventPage = async ({ params }: { params: Promise<{ year: number; month: nu
         Arrangementer
       </Title>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col">
         <EventsViewToggle active="cal" />
         <EventCalendar year={year} month={month - 1} />
       </div>
