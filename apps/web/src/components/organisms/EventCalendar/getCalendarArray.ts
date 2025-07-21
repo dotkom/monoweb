@@ -1,7 +1,7 @@
-import type { Event } from "@dotkomonline/types"
+import type { EventDetail } from "@dotkomonline/types"
 import type { CalendarData, EventDisplayProps, Week } from "./types"
 
-export function getCalendarArray(year: number, month: number, events: Event[]): CalendarData {
+export function getCalendarArray(year: number, month: number, eventDetails: EventDetail[]): CalendarData {
   const firstDayOfMonth = new Date(year, month, 1)
   const lastDayOfMonth = new Date(year, month + 1, 0)
 
@@ -41,7 +41,9 @@ export function getCalendarArray(year: number, month: number, events: Event[]): 
     const slotMatrix: (number | null)[][] = []
 
     for (const [dayIndex, day] of week.dates.entries()) {
-      for (const event of events) {
+      for (const eventDetail of eventDetails) {
+        const event = eventDetail.event
+
         if (!completedEvents.includes(event.id)) {
           const dayEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 23, 59, 59)
 
@@ -54,8 +56,7 @@ export function getCalendarArray(year: number, month: number, events: Event[]): 
 
             const now = new Date()
 
-            const eventObj: EventDisplayProps = {
-              ...event,
+            const eventDisplayProps: EventDisplayProps = {
               startCol: dayIndex,
               span,
               leftEdge: event.start >= day,
@@ -76,7 +77,7 @@ export function getCalendarArray(year: number, month: number, events: Event[]): 
               let canPlaceEvent = true
 
               // check if there is space for the event
-              for (let i = eventObj.startCol; i < eventObj.startCol + eventObj.span; i++) {
+              for (let i = eventDisplayProps.startCol; i < eventDisplayProps.startCol + eventDisplayProps.span; i++) {
                 if (slotMatrix[row][i] !== null) {
                   canPlaceEvent = false
                   break
@@ -85,10 +86,10 @@ export function getCalendarArray(year: number, month: number, events: Event[]): 
 
               // if there is space add the event and mark the slots as taken (1)
               if (canPlaceEvent) {
-                for (let i = eventObj.startCol; i < eventObj.startCol + eventObj.span; i++) {
+                for (let i = eventDisplayProps.startCol; i < eventDisplayProps.startCol + eventDisplayProps.span; i++) {
                   slotMatrix[row][i] = 1
                 }
-                week.events[row].push(eventObj)
+                week.events[row].push({ ...eventDetail, eventDisplayProps })
                 completedEvents.push(event.id)
                 placed = true
               } else {

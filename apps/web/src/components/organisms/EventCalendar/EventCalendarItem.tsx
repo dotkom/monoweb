@@ -1,14 +1,16 @@
 "use client"
 
-import type { Event, EventType } from "@dotkomonline/types"
-import { Icon } from "@dotkomonline/ui"
+import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
+import type { Event, EventDetail, EventType } from "@dotkomonline/types"
+import { Icon, Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import Link from "next/link"
 
 interface EventCalendarItemProps {
-  event: Event
+  eventDetail: EventDetail
+  attendeeStatus: "RESERVED" | "UNRESERVED" | null
   className?: string
 }
 
@@ -178,7 +180,8 @@ function getEventTheme(event: Event, isActive: boolean): EventTheme {
   }
 }
 
-export const EventCalendarItem = ({ event, className }: EventCalendarItemProps) => {
+export const EventCalendarItem = ({ eventDetail, attendeeStatus, className }: EventCalendarItemProps) => {
+  const event = eventDetail.event
   const isActive = new Date() < event.end
   const theme = getEventTheme(event, isActive)
 
@@ -214,29 +217,37 @@ export const EventCalendarItem = ({ event, className }: EventCalendarItemProps) 
       >
         <Link href={`/arrangementer/${slugify(event.title)}/${event.id}`}>
           <div className={cn("p-4", theme.card.text)}>
-            <p className="text-l font-semibold mb-2">{event.title}</p>
+            <Title element="p" size="md" className="mb-2">
+              {event.title}
+            </Title>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
                 <Icon icon="tabler:clock" width={16} height={16} />
-                <span className="text-sm">
+                <Text element="span" className="text-sm">
                   {String(event.start.getHours()).padStart(2, "0")}:{String(event.start.getMinutes()).padStart(2, "0")}
-                </span>
+                </Text>
               </div>
               {event.locationTitle && (
                 <div className="flex items-center gap-1 overflow-hidden">
                   <Icon icon="tabler:map-pin" width={16} height={16} />
-                  <span className="text-sm truncate">{event.locationTitle}</span>
+                  <Text element="span" className="text-sm truncate">
+                    {event.locationTitle}
+                  </Text>
                 </div>
               )}
             </div>
             <div className="flex justify-between items-center gap-2 mt-2">
-              <div className="flex gap-1 items-center text-sm">
-                <Icon icon="tabler:users" width={16} height={16} />
-                <span>3/40</span>
-              </div>
+              {eventDetail.attendance && (
+                <AttendanceStatus
+                  attendance={eventDetail.attendance}
+                  attendeeStatus={attendeeStatus}
+                  eventEndInPast={new Date() > event.end}
+                />
+              )}
               {theme.badge && (
                 <div>
-                  <span
+                  <Text
+                    element="span"
                     className={cn(
                       "inline-block px-3 py-1 text-sm rounded-full font-semibold",
                       theme.badge.bg,
@@ -244,7 +255,7 @@ export const EventCalendarItem = ({ event, className }: EventCalendarItemProps) 
                     )}
                   >
                     {theme.badge.displayName}
-                  </span>
+                  </Text>
                 </div>
               )}
             </div>

@@ -1,3 +1,4 @@
+import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
@@ -53,19 +54,28 @@ interface CalendarProps {
 }
 
 export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
-  const events = await server.event.all.query({
-    page: { take: 100 },
-    filter: {
-      after: new Date(year, month, 1),
-      before: new Date(year, month + 1, 0),
-    },
-  })
+  const [session, eventDetails] = await Promise.all([
+    auth.getServerSession(),
+    server.event.all.query({
+      page: { take: 100 },
+      filter: {
+        after: new Date(year, month, 1),
+        before: new Date(year, month + 1, 0),
+      },
+    }),
+  ])
 
-  const cal = getCalendarArray(
-    year,
-    month,
-    events.map(({ event }) => event)
-  )
+  const attendanceIds = eventDetails.map(({ attendance }) => attendance?.id).filter(Boolean) as string[]
+  const userId = session?.sub
+
+  const attendeeStatuses = userId
+    ? await server.attendance.getAttendeeStatuses.query({
+        attendanceIds,
+        userId,
+      })
+    : null
+
+  const cal = getCalendarArray(year, month, eventDetails)
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
   const months = [
@@ -168,18 +178,23 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
                 key={`week-${getWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
-                {row.map((event) => (
-                  <EventCalendarItem
-                    key={event.id}
-                    event={event}
-                    className={cn(
-                      getColStartClass(event.startCol + 2),
-                      getColSpanClass(event.span),
-                      event.leftEdge && "sm:border-l-4 rounded-l-md",
-                      event.rightEdge && "rounded-r-md"
-                    )}
-                  />
-                ))}
+                {row.map(({ eventDisplayProps, ...eventDetail }) => {
+                  const attendeeStatus = attendeeStatuses?.get(eventDetail.attendance?.id ?? "") || null
+
+                  return (
+                    <EventCalendarItem
+                      key={eventDetail.event.id}
+                      eventDetail={eventDetail}
+                      attendeeStatus={attendeeStatus}
+                      className={cn(
+                        getColStartClass(eventDisplayProps.startCol + 2),
+                        getColSpanClass(eventDisplayProps.span),
+                        eventDisplayProps.leftEdge && "sm:border-l-4 rounded-l-md",
+                        eventDisplayProps.rightEdge && "rounded-r-md"
+                      )}
+                    />
+                  )
+                })}
               </div>
             ))}
           </div>

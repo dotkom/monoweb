@@ -1,6 +1,6 @@
-import type { Event } from "@dotkomonline/types"
+import type { EventDetail } from "@dotkomonline/types"
 
-export interface EventDisplayProps extends Event {
+export interface EventDisplayProps {
   startCol: number
   span: number
   leftEdge: boolean
@@ -10,7 +10,7 @@ export interface EventDisplayProps extends Event {
 
 export interface Week {
   dates: Date[]
-  events: EventDisplayProps[][]
+  events: (EventDetail & { eventDisplayProps: EventDisplayProps })[][]
 }
 
 export interface CalendarData {
