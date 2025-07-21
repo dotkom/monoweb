@@ -6,15 +6,7 @@ import { withSentryConfig } from "@sentry/nextjs"
 const config = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [
-      new URL("https://s3.eu-north-1.amazonaws.com/cdn.online.ntnu.no/**"),
-      new URL("https://placehold.co/**"), // For placeholder images used for events
-
-      new URL("https://online.ntnu.no/**"),
-      new URL("https://cdn.online.ntnu.no/**"),
-      new URL("https://wiki.online.ntnu.no/**"),
-      new URL("https://web.online.ntnu.no/**"),
-    ],
+    unoptimized: true,
   },
 }
 
