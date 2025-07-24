@@ -52,7 +52,7 @@ export function getInterestGroupRepository(): InterestGroupRepository {
       return await handle.interestGroupMember.create({ data: { interestGroupId, userId } })
     },
     async removeMember(handle, interestGroupId, userId) {
-      await handle.interestGroupMember.delete({ where: { interestGroupId, userId } })
+      await handle.interestGroupMember.delete({ where: { interestGroupId_userId: { interestGroupId, userId } } })
     },
     async getAllByEventId(handle, eventId) {
       return await handle.interestGroup.findMany({

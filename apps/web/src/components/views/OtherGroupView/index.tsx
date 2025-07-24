@@ -14,7 +14,7 @@ export const OtherGroupView: FC<OtherGroupViewProps> = (props: OtherGroupViewPro
       <div className="flex md:flex-row flex-col-reverse">
         <div className="mr-4">
           <h2 className="text-lg border-none !mt-4">{otherGroup.name}</h2>
-          <p className="mt-2">{otherGroup.longDescription ? otherGroup.longDescription : otherGroup.description}</p>
+          <p className="mt-2">{otherGroup.description}</p>
         </div>
 
         <div className="max-w-[200px] min-w-[200px] py-auto ml-auto sm:mb-auto mb-9 mt-2">
