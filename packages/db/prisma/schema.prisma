@@ -129,16 +129,17 @@ model Company {
 }
 
 model Group {
-  id              String              @id @unique
-  createdAt       DateTime            @default(now()) @db.Timestamptz(3)
-  name            String
-  description     String
-  email           String
-  image           String?
-  longDescription String?
-  events          EventHostingGroup[]
-  type            GroupType
-  members         GroupMember[]
+  id               String              @id @unique
+  createdAt        DateTime            @default(now()) @db.Timestamptz(3)
+  name             String
+  fullName         String?
+  description      String
+  email            String
+  image            String?
+  shortDescription String?
+  events           EventHostingGroup[]
+  type             GroupType
+  members          GroupMember[]
 
   @@map("group")
 }
@@ -150,8 +151,38 @@ model GroupMember {
   userId String
   user   OwUser @relation(fields: [userId], references: [id])
 
-  @@id([groupId])
+  createdAt DateTime            @default(now()) @db.Timestamptz(3)
+  active    Boolean             @default(true)
+  periods   GroupMemberPeriod[]
+
+  @@id([groupId, userId])
   @@map("group_member")
+}
+
+model GroupMemberPeriod {
+  id          String          @id @default(uuid())
+
+  groupId     String
+  userId      String
+  groupMember GroupMember @relation(fields: [groupId, userId], references: [groupId, userId])
+
+  startedAt DateTime          @default(now()) @db.Timestamptz(3)
+  endedAt   DateTime?         @db.Timestamptz(3)
+  roles     GroupMemberRole[] @default([MEDLEM])
+
+  @@map("group_member_period")
+}
+
+enum GroupMemberRole {
+  LEDER
+  NESTLEDER
+  OKONOMIANSVARLIG
+  TILLITSVALGT
+  // Responsible for giving tickets to members who don't do assigments in time, break rules, misbehave, etc.
+  VINSTRAFFANSVARLIG
+  MEDLEM
+
+  @@map("group_member_role")
 }
 
 model Attendance {
@@ -488,7 +519,7 @@ model InterestGroupMember {
   userId String
   user   OwUser @relation(fields: [userId], references: [id])
 
-  @@id([interestGroupId])
+  @@id([interestGroupId, userId])
   @@map("interest_group_member")
 }
 
