@@ -88,8 +88,8 @@ const GroupList: FC<GroupListProps> = ({ groups }: GroupListProps) => {
     <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 sm:px-12 pt-8">
       {groups.map(
         (group) =>
-          group.image && (
-            <Card key={group.id} imageUrl={group.image} title={group.name} description={group.description} />
+          group.imageUrl && (
+            <Card key={group.id} imageUrl={group.imageUrl} title={group.name} description={group.description} />
           )
       )}
     </ul>

@@ -1,4 +1,3 @@
-import crypto from "node:crypto"
 import fs from "node:fs"
 import fsp from "node:fs/promises"
 import path from "node:path"
@@ -73,8 +72,25 @@ async function dumpData() {
   fs.writeFileSync(path.resolve(pathOfThisScript, "./hobbys.json"), JSON.stringify(hobbies, null, 2))
 }
 
+import type { DBClient } from "@dotkomonline/db"
+import { getDefaultGroupMemberRoles } from "@dotkomonline/types"
+import { slugify } from "@dotkomonline/utils"
 import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
+
+// Copied from group-service.ts
+const createIdFromGroupName = async (prisma: DBClient, name: string) => {
+  let id = slugify(name)
+  for (let i = 1; ; i++) {
+    const match = await prisma.group.findUnique({ where: { id } })
+    if (match === null) {
+      break
+    }
+    // If the id already exists, we try something like slug-1
+    id = `${slugify(name)}-${i}`
+  }
+  return id
+}
 
 async function insertDump() {
   const pathOfThisScript = import.meta.dirname
@@ -111,7 +127,7 @@ async function insertDump() {
       data: {
         name: item.title,
         description: item.description,
-        image: item.image?.original,
+        imageUrl: item.image?.original,
       },
     })
   }
@@ -119,14 +135,18 @@ async function insertDump() {
   console.log("\n\nInserting committees:")
   for (const item of committees) {
     console.log(`Inserting ${item.name_short}`)
+    const id = await createIdFromGroupName(prisma, item.name_short)
+    await prisma.groupMemberRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
     await prisma.group.create({
       data: {
-        id: crypto.randomUUID(),
+        id,
         name: item.name_short,
-        description: item.description_short,
-        type: "COMMITTEE",
+        createdAt: item.created,
+        description: item.description_long || item.application_description || "",
+        shortDescription: item.description_short,
         email: item.email,
-        image: item.image?.original,
+        imageUrl: item.image?.original,
+        type: "COMMITTEE",
       },
     })
   }
@@ -134,14 +154,37 @@ async function insertDump() {
   console.log("\n\nInserting node committees:")
   for (const item of nodeCommittees) {
     console.log(`Inserting ${item.name_short}`)
+    const id = await createIdFromGroupName(prisma, item.name_short)
+    await prisma.groupMemberRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
     await prisma.group.create({
       data: {
-        id: crypto.randomUUID(),
+        id,
         name: item.name_short,
-        description: item.description_short,
-        type: "NODECOMMITTEE",
+        createdAt: item.created,
+        description: item.description_long || item.application_description || "",
+        shortDescription: item.description_short,
         email: item.email,
-        image: item.image?.original,
+        imageUrl: item.image?.original,
+        type: "NODECOMMITTEE",
+      },
+    })
+  }
+
+  console.log("\n\nInserting other groups:")
+  for (const item of other) {
+    console.log(`Inserting ${item.name_short}`)
+    const id = await createIdFromGroupName(prisma, item.name_short)
+    await prisma.groupMemberRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
+    await prisma.group.create({
+      data: {
+        id,
+        name: item.name_short,
+        createdAt: item.created,
+        description: item.description_long || item.application_description || "",
+        shortDescription: item.description_short,
+        email: item.email,
+        imageUrl: item.image?.original,
+        type: "OTHERGROUP",
       },
     })
   }

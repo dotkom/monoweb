@@ -1,6 +1,16 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { Group, GroupId, GroupMember, GroupMemberWrite, GroupType, GroupWrite, UserId } from "@dotkomonline/types"
+import {
+  type Group,
+  type GroupId,
+  type GroupMember,
+  type GroupMemberWrite,
+  type GroupType,
+  type GroupWrite,
+  type UserId,
+  getDefaultGroupMemberRoles,
+} from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
+import type { UserService } from "../user/user-service"
 import { GroupNotFoundError } from "./group-error"
 import type { GroupRepository } from "./group-repository"
 
@@ -21,16 +31,16 @@ export interface GroupService {
   getAllByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   create(handle: DBHandle, payload: GroupWrite): Promise<Group>
   update(handle: DBHandle, groupId: GroupId, values: Partial<GroupWrite>): Promise<Group>
-  delete(handle: DBHandle, groupId: GroupId): Promise<void>
+  delete(handle: DBHandle, groupId: GroupId): Promise<Group>
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, groupType: GroupType): Promise<GroupId[]>
   getMembers(handle: DBHandle, groupId: GroupId): Promise<GroupMember[]>
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
   addMember(handle: DBHandle, data: GroupMemberWrite): Promise<GroupMember>
-  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<void>
+  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMember, "user">>
 }
 
-export function getGroupService(groupRepository: GroupRepository): GroupService {
+export function getGroupService(groupRepository: GroupRepository, userService: UserService): GroupService {
   return {
     async getById(handle, groupId) {
       const group = await groupRepository.getById(handle, groupId)
@@ -50,6 +60,7 @@ export function getGroupService(groupRepository: GroupRepository): GroupService 
     },
     async create(handle, payload) {
       let id = slugify(payload.name)
+
       // We try to find an available slug. This should hopefully never run more than once, but maybe some future idiot
       // is trying to break the authorization system by creating a group with a name that is already taken.
       for (let i = 1; ; i++) {
@@ -60,13 +71,14 @@ export function getGroupService(groupRepository: GroupRepository): GroupService 
         // If the id already exists, we try something like slug-1
         id = `${slugify(payload.name)}-${i}`
       }
-      return groupRepository.create(handle, id, payload)
+
+      return groupRepository.create(handle, id, payload, getDefaultGroupMemberRoles(id))
     },
     async update(handle, groupId, values) {
       return groupRepository.update(handle, groupId, values)
     },
     async delete(handle, groupId) {
-      await groupRepository.delete(handle, groupId)
+      return await groupRepository.delete(handle, groupId)
     },
     async getAllIds(handle) {
       return groupRepository.getAllIds(handle)
@@ -75,16 +87,38 @@ export function getGroupService(groupRepository: GroupRepository): GroupService 
       return groupRepository.getAllIdsByType(handle, groupType)
     },
     async getMembers(handle, groupId) {
-      return groupRepository.getMembers(handle, groupId)
+      const membersWithoutUsers = await groupRepository.getMembers(handle, groupId)
+
+      if (!membersWithoutUsers) {
+        return []
+      }
+
+      const usersPromises = membersWithoutUsers.map((member) => userService.getById(handle, member.userId))
+      const users = await Promise.all(usersPromises)
+
+      const members = users.map((user) => {
+        const member = membersWithoutUsers.find((member) => member.userId === user.id)
+
+        if (!member) {
+          throw new Error(`Member not found for user ${user.id} in group ${groupId}`)
+        }
+
+        return { ...member, user }
+      })
+
+      return members
     },
     async getAllByMember(handle, userId) {
       return groupRepository.getAllByMember(handle, userId)
     },
     async addMember(handle, data) {
-      return groupRepository.addMember(handle, data)
+      const member = await groupRepository.addMember(handle, data)
+      const user = await userService.getById(handle, data.userId)
+
+      return { ...member, user }
     },
     async removeMember(handle, userId, groupId) {
-      await groupRepository.removeMember(handle, userId, groupId)
+      return await groupRepository.removeMember(handle, userId, groupId)
     },
   }
 }

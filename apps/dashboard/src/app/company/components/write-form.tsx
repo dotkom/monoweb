@@ -7,7 +7,7 @@ import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   type: "CONSULTING",
-  image: null,
+  imageUrl: null,
 }
 
 interface UseCompanyWriteFormProps {
@@ -74,7 +74,7 @@ export const useCompanyWriteForm = ({
         label: "Lokasjon",
         placeholder: "Oslo",
       }),
-      image: createFileInput({
+      imageUrl: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
       }),

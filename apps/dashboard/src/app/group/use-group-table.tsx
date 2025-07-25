@@ -33,7 +33,7 @@ export const useGroupTable = ({ data }: Props) => {
         header: () => "Kontakt-e-post",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("image", {
+      columnHelper.accessor("imageUrl", {
         header: () => "Bilde",
         cell: (info) => {
           const val = info.getValue()

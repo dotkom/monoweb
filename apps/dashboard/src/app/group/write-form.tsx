@@ -31,13 +31,13 @@ export const useGroupWriteForm = ({
         required: true,
       }),
       description: createTextareaInput({
-        label: "Kort beskrivelse",
+        label: "Beskrivelse",
         withAsterisk: true,
         required: true,
         rows: 5,
       }),
-      longDescription: createTextareaInput({
-        label: "Lang beskrivelse",
+      shortDescription: createTextareaInput({
+        label: "Kort beskrivelse",
         withAsterisk: false,
         required: false,
         rows: 5,
@@ -48,7 +48,7 @@ export const useGroupWriteForm = ({
         type: "email",
         required: true,
       }),
-      image: createFileInput({
+      imageUrl: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
         required: true,

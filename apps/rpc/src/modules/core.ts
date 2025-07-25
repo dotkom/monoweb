@@ -146,7 +146,7 @@ export async function createServiceLayer(
     ntnuStudyplanRepository
   )
   const eventHostingGroupService = getEventHostingGroupService(eventHostingGroupRepository)
-  const groupService = getGroupService(groupRepository)
+  const groupService = getGroupService(groupRepository, userService)
   const jobListingService = getJobListingService(jobListingRepository)
   const attendeeService = getAttendeeService(
     attendeeRepository,

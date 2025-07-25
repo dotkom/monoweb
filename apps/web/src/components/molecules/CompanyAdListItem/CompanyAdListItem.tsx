@@ -33,12 +33,12 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
       rel="noopener noreferrer"
     >
       <div className="flex flex-row items-center gap-8 w-full">
-        {jobListing.company.image && (
+        {jobListing.company.imageUrl && (
           <Image
-            src={jobListing.company.image}
+            src={jobListing.company.imageUrl}
             width={140}
             height={80}
-            alt={`${jobListing.company.name}’s job posting`}
+            alt={`${jobListing.company.name}'s job posting`}
             className="hidden md:block rounded-sm"
           />
         )}

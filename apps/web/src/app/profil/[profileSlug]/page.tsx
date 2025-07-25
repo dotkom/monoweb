@@ -195,7 +195,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
                 className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
               >
                 <Avatar className="w-14 h-14">
-                  <AvatarImage src={group.image ?? undefined} />
+                  <AvatarImage src={group.imageUrl ?? undefined} />
                   <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
                     <Icon className="text-3xl" icon="tabler:photo" />
                   </AvatarFallback>

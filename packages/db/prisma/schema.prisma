@@ -106,6 +106,7 @@ model OwUser {
   PersonalMark              PersonalMark[]
   InterestGroupsMemberships InterestGroupMember[]
   GroupMemberships          GroupMember[]
+  Groups                    Group[]               @relation("ContactUser")
 
   @@map("ow_user")
 }
@@ -121,7 +122,7 @@ model Company {
   website     String
   location    String?
   type        CompanyType
-  image       String?
+  imageUrl    String?
   events      EventCompany[]
   JobListing  JobListing[]
 
@@ -129,17 +130,30 @@ model Company {
 }
 
 model Group {
-  id              String              @id @unique
-  createdAt       DateTime            @default(now()) @db.Timestamptz(3)
-  name            String
-  description     String
-  email           String
-  image           String?
-  longDescription String?
-  events          EventHostingGroup[]
-  type            GroupType
-  members         GroupMember[]
+  id               String   @id @unique
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  name             String
+  fullName         String?
+  description      String
+  imageUrl         String?
+  shortDescription String?
+  
+  email         String?
+  link          String?
+  contactUserId String?
+  contactUser   OwUser? @relation("ContactUser", fields: [contactUserId], references: [id])
 
+  events  EventHostingGroup[]
+  type    GroupType
+  members GroupMember[]
+
+  leaderRoleName   String           @default("Leder")
+  leaderRole       GroupMemberRole  @relation("LeaderRole", fields: [id, leaderRoleName], references: [groupId, name])
+  punisherRoleName String?
+  punisherRole     GroupMemberRole? @relation("PunisherRole", fields: [id, punisherRoleName], references: [groupId, name])
+
+  @@unique([id, leaderRoleName])
+  @@unique([id, punisherRoleName])
   @@map("group")
 }
 
@@ -150,8 +164,51 @@ model GroupMember {
   userId String
   user   OwUser @relation(fields: [userId], references: [id])
 
-  @@id([groupId])
+  createdAt DateTime            @default(now()) @db.Timestamptz(3)
+  active    Boolean             @default(true)
+  periods   GroupMemberPeriod[]
+
+  @@id([groupId, userId])
   @@map("group_member")
+}
+
+model GroupMemberPeriod {
+  id String @id @default(uuid())
+
+  groupId     String
+  userId      String
+  groupMember GroupMember @relation(fields: [groupId, userId], references: [groupId, userId])
+
+  startedAt DateTime  @default(now()) @db.Timestamptz(3)
+  endedAt   DateTime? @db.Timestamptz(3)
+
+  roles GroupMemberPeriodRole[]
+
+  @@map("group_member_period")
+}
+
+model GroupMemberPeriodRole {
+  periodId String
+  period   GroupMemberPeriod @relation(fields: [periodId], references: [id])
+  groupId  String
+  roleName String
+  role     GroupMemberRole   @relation(fields: [groupId, roleName], references: [groupId, name])
+
+  @@id([periodId, groupId, roleName])
+  @@map("group_member_period_role")
+}
+
+model GroupMemberRole {
+  groupId String
+  name    String
+
+  leaderIn   Group? @relation("LeaderRole")
+  punisherIn Group? @relation("PunisherRole")
+
+  groupMemberPeriods GroupMemberPeriodRole[]
+
+  @@id([groupId, name])
+  @@map("group_member_role")
 }
 
 model Attendance {
@@ -474,7 +531,7 @@ model InterestGroup {
   isActive        Boolean               @default(true)
   longDescription String?
   joinInfo        String?
-  image           String?
+  imageUrl        String?
   members         InterestGroupMember[]
   events          EventInterestGroup[]
 
@@ -488,7 +545,7 @@ model InterestGroupMember {
   userId String
   user   OwUser @relation(fields: [userId], references: [id])
 
-  @@id([interestGroupId])
+  @@id([interestGroupId, userId])
   @@map("interest_group_member")
 }
 
