@@ -122,7 +122,7 @@ model Company {
   website     String
   location    String?
   type        CompanyType
-  image       String?
+  imageUrl    String?
   events      EventCompany[]
   JobListing  JobListing[]
 
@@ -531,7 +531,7 @@ model InterestGroup {
   isActive        Boolean               @default(true)
   longDescription String?
   joinInfo        String?
-  image           String?
+  imageUrl        String?
   members         InterestGroupMember[]
   events          EventInterestGroup[]
 

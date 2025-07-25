@@ -26,9 +26,9 @@ const mapToImageAndName = (item: Group | Company | InterestGroup, type: Organize
     key={item.name}
     className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-800 dark:hover:bg-stone-900"
   >
-    {item.image && (
+    {item.imageUrl && (
       <Image
-        src={item.image}
+        src={item.imageUrl}
         alt={item.name}
         width={22}
         height={22}

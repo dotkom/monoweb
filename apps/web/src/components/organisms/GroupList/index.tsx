@@ -1,18 +1,9 @@
 import { GroupListItem } from "@/components/molecules/GroupListItem"
-import type { GroupType } from "@dotkomonline/types"
+import type { Group, InterestGroup } from "@dotkomonline/types"
 import type { FC } from "react"
 
-interface Group {
-  id: string
-  name: string
-  description: string
-  image: string | null
-  isActive?: boolean
-  type: GroupType | "INTERESTGROUP"
-}
-
 interface GroupListProps {
-  groups: Group[]
+  groups: (InterestGroup | Group)[]
   baseLink: string
 }
 
@@ -25,9 +16,8 @@ export const GroupList: FC<GroupListProps> = ({ groups, baseLink }) => (
           title={group.name}
           description={group.description}
           link={`/${baseLink}/${group.id}`}
-          image={group.image}
-          isActive={group.isActive}
-          type={group.type}
+          image={group.imageUrl}
+          isActive={"isActive" in group ? group.isActive : true}
         />
       ))}
     </div>

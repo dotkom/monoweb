@@ -41,7 +41,7 @@ export const useInterestGroupWriteForm = ({
         withAsterisk: false,
         rows: 5,
       }),
-      image: createFileInput({
+      imageUrl: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
         withAsterisk: true,

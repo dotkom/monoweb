@@ -8,6 +8,8 @@ CREATE TABLE "group_member_role" (
 
 -- AlterTable
 ALTER TABLE "group" RENAME COLUMN "image" TO "imageUrl";
+ALTER TABLE "interest_group" RENAME COLUMN "image" TO "imageUrl";
+ALTER TABLE "company" RENAME COLUMN "image" TO "imageUrl";
 
 -- AlterTable
 ALTER TABLE "group" DROP COLUMN "longDescription",

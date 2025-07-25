@@ -35,8 +35,8 @@ export const JobListingView: FC<JobListingViewProps> = ({ jobListing }: JobListi
     <div className="mx-auto mt-10 flex w-10/12 justify-between">
       <div className="w-1/3">
         <div className="relative pb-10">
-          {company.image && (
-            <Image src={company.image} width={4000} height={250} alt="company_image" className="rounded-lg" />
+          {company.imageUrl && (
+            <Image src={company.imageUrl} width={4000} height={250} alt="company_image" className="rounded-lg" />
           )}
         </div>
 

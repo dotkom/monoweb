@@ -27,7 +27,7 @@ export const EventCompaniesPage: FC = () => {
         header: () => "Navn",
         cell: (info) => {
           const name = companies.find((x) => x.id === info.getValue().id)?.name ?? "Ingen navn"
-          const image = info.getValue().image
+          const image = info.getValue().imageUrl
           return image !== null ? (
             <Group>
               <Image width={40} height={40} fit="contain" src={image} alt="company logo" />
