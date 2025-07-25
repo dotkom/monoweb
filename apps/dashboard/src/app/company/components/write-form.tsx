@@ -74,7 +74,7 @@ export const useCompanyWriteForm = ({
         label: "Lokasjon",
         placeholder: "Oslo",
       }),
-      image: createFileInput({
+      imageUrl: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
       }),

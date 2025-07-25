@@ -48,7 +48,7 @@ export const useGroupWriteForm = ({
         type: "email",
         required: true,
       }),
-      image: createFileInput({
+      imageUrl: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
         required: true,
