@@ -5,10 +5,11 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
     id: "dotkom",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     name: "Dotkom",
+    fullName: "Drifts- og utviklingskomiteen",
     description:
-      "Drifts- og Utviklingskomiteen er komiteen som er ansvarlig for utvikling og vedlikehold av Online sine nettsider, samt drift av maskinparken.\n\nDotkom har også ansvaret for å sikre at Online på best mulig måte benytter IT i sine arbeidsprosesser, der Online er tjent med det. Dotkom er som følge av det, også forpliktet til å utvikle og vedlikeholde IT-systemer som Online er tjent med - med hensyn til Online som linjeforening og Online sine studenter.",
+      "Dotkom er komiteen som er ansvarlig for utvikling og vedlikehold av Online sine nettsider, samt drift av maskinparken.\n\nDotkom har også ansvaret for å sikre at Online på best mulig måte benytter IT i sine arbeidsprosesser, der Online er tjent med det. Dotkom er som følge av det, også forpliktet til å utvikle og vedlikeholde IT-systemer som Online er tjent med - med hensyn til Online som linjeforening og Online sine studenter.",
     email: "dotkom@online.ntnu.no",
-    image:
+    imageUrl:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/0990ab67-0f5b-4c4d-95f1-50a5293335a5.png",
     type: "COMMITTEE",
   },
@@ -19,7 +20,7 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
     description:
       "Bedriftskomiteen er bindeleddet mellom næringslivet og informatikkstudenter, og skal i tillegg samarbeide med andre linjeforeninger på NTNU for å ivareta informatikkstudentenes interesser. Vårt mål er å kommunisere og formidle våre studenter som potensielle arbeidstakere til aktuelle bedrifter på en positiv måte. For å fremme dette er bedriftspresentasjoner en viktig del av vårt virke, i tillegg til andre måter å kommunisere ut informasjon til studentene - på en god måte.\n\nVi er en hardtarbeidende komitè som igjennom mange år har opparbeidet oss et meget stort kontaktnett av bedrifter. Bedriftskomiteen opererer som en kontaktpunkt for bedrifter og studentene på informatikkstudiet.\n\nSom medlem i bedriftskomiteen får du en unik mulighet til å komme i kontakt med mange bedrifter, som vil gagne dine medstudenter og deg selv.",
     email: "bedkom@online.ntnu.no",
-    image:
+    imageUrl:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/974b88bd-de01-4b59-856f-f53d9bb600a0.png",
     type: "COMMITTEE",
   },
@@ -30,7 +31,7 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
     description:
       "Arrangementskomiteen har som hovedansvar å arrangere sosiale tilstelninger for informatikkstudenter.\n\nOnline arrangerer både tradisjonsrike fester, og andre sosiale arrangementer, i løpet av skoleåret. Dette er et tilbud til deg slik at du kan ha det moro og knytte nye kontakter innad i linjeforeningen. Vi bidrar jobber for økt samhold og sosialisering blant Onlines medlemmer. Dette gjør vi ved å bidra til et variert sosialt tilbud for alle Onlinere.\n\nVi skal være en aktiv og synlig komité som inkluderer alle og sørger for å tilby et så variert tilbud av arrangementer at enhver av Onlines medlemmer kan stille på flest mulig av disse.",
     email: "arrkom@online.ntnu.no",
-    image:
+    imageUrl:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/0954f3de-da25-44eb-b3a9-7dbba7e23f25.png",
     type: "COMMITTEE",
   },
@@ -53,3 +54,31 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
     type: "NODECOMMITTEE",
   },
 ]
+
+export const getGroupMemberRoleFixtures: () => Prisma.GroupMemberRoleCreateManyInput[] = () =>
+  getGroupFixtures().flatMap((group) => [
+    {
+      groupId: group.id,
+      name: "Leder",
+    },
+    {
+      groupId: group.id,
+      name: "Nestleder",
+    },
+    {
+      groupId: group.id,
+      name: "Tillitsvalgt",
+    },
+    {
+      groupId: group.id,
+      name: "Økonomiansvarlig",
+    },
+    {
+      groupId: group.id,
+      name: "Vinstraffansvarlig",
+    },
+    {
+      groupId: group.id,
+      name: "Medlem",
+    },
+  ])

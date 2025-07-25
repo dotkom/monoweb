@@ -18,7 +18,11 @@ export const GroupWriteSchema = GroupSchema.omit({
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
 
-export const GroupMemberPeriodSchema = schemas.GroupMemberPeriodSchema.extend({})
+export type GroupMemberRole = z.infer<typeof schemas.GroupMemberRoleSchema>
+
+export const GroupMemberPeriodSchema = schemas.GroupMemberPeriodSchema.extend({
+  roles: schemas.GroupMemberPeriodRoleSchema.array(),
+})
 
 export type GroupMemberPeriod = z.infer<typeof GroupMemberPeriodSchema>
 
@@ -35,7 +39,15 @@ export const GroupMemberWriteSchema = GroupMemberSchema.omit({ user: true })
 
 export type GroupMemberWrite = z.infer<typeof GroupMemberWriteSchema>
 
-export type GroupMemberRole = z.infer<typeof schemas.GroupMemberRoleSchema>
+export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
+  [
+    { groupId, name: "Leder" },
+    { groupId, name: "Nestleder" },
+    { groupId, name: "Tillitsvalgt" },
+    { groupId, name: "Økonomiansvarlig" },
+    { groupId, name: "Vinstraffansvarlig" },
+    { groupId, name: "Medlem" },
+  ] as const satisfies GroupMemberRole[]
 
 export const createGroupPageUrl = (group: Group) => {
   switch (group.type) {
@@ -50,29 +62,15 @@ export const createGroupPageUrl = (group: Group) => {
   }
 }
 
-export const getGroupRoleName = (role: GroupMemberRole | null | undefined) => {
-  switch (role) {
-    case "LEDER":
-      return "Leder"
-    case "NESTLEDER":
-      return "Nestleder"
-    case "OKONOMIANSVARLIG":
-      return "Økonomiansvarlig"
-    case "TILLITSVALGT":
-      return "Tillitsvalgt"
-    case "VINSTRAFFANSVARLIG":
-      return "Vinstraffansvarlig"
-    case "MEDLEM":
-      return "Medlem"
+export const getGroupTypeName = (type: GroupType | null | undefined) => {
+  switch (type) {
+    case "COMMITTEE":
+      return "Komité"
+    case "NODECOMMITTEE":
+      return "Nodekomité"
+    case "OTHERGROUP":
+      return "Annen gruppe"
     default:
-      return "Ukjent rolle"
+      return "Ukjent type"
   }
-}
-
-export const getGroupRoleNames = (roles: GroupMemberRole[] | null | undefined) => {
-  if (!roles) {
-    return getGroupRoleName(null)
-  }
-
-  return roles.map((role) => getGroupRoleName(role)).join(", ")
 }

@@ -106,6 +106,7 @@ model OwUser {
   PersonalMark              PersonalMark[]
   InterestGroupsMemberships InterestGroupMember[]
   GroupMemberships          GroupMember[]
+  Groups                    Group[]               @relation("ContactUser")
 
   @@map("ow_user")
 }
@@ -129,18 +130,30 @@ model Company {
 }
 
 model Group {
-  id               String              @id @unique
-  createdAt        DateTime            @default(now()) @db.Timestamptz(3)
+  id               String   @id @unique
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
   name             String
   fullName         String?
   description      String
-  email            String
-  image            String?
+  imageUrl         String?
   shortDescription String?
-  events           EventHostingGroup[]
-  type             GroupType
-  members          GroupMember[]
+  
+  email         String?
+  link          String?
+  contactUserId String?
+  contactUser   OwUser? @relation("ContactUser", fields: [contactUserId], references: [id])
 
+  events  EventHostingGroup[]
+  type    GroupType
+  members GroupMember[]
+
+  leaderRoleName   String           @default("Leder")
+  leaderRole       GroupMemberRole  @relation("LeaderRole", fields: [id, leaderRoleName], references: [groupId, name])
+  punisherRoleName String?
+  punisherRole     GroupMemberRole? @relation("PunisherRole", fields: [id, punisherRoleName], references: [groupId, name])
+
+  @@unique([id, leaderRoleName])
+  @@unique([id, punisherRoleName])
   @@map("group")
 }
 
@@ -160,28 +173,41 @@ model GroupMember {
 }
 
 model GroupMemberPeriod {
-  id          String          @id @default(uuid())
+  id String @id @default(uuid())
 
   groupId     String
   userId      String
   groupMember GroupMember @relation(fields: [groupId, userId], references: [groupId, userId])
 
-  startedAt DateTime          @default(now()) @db.Timestamptz(3)
-  endedAt   DateTime?         @db.Timestamptz(3)
-  roles     GroupMemberRole[] @default([MEDLEM])
+  startedAt DateTime  @default(now()) @db.Timestamptz(3)
+  endedAt   DateTime? @db.Timestamptz(3)
+
+  roles GroupMemberPeriodRole[]
 
   @@map("group_member_period")
 }
 
-enum GroupMemberRole {
-  LEDER
-  NESTLEDER
-  OKONOMIANSVARLIG
-  TILLITSVALGT
-  // Responsible for giving tickets to members who don't do assigments in time, break rules, misbehave, etc.
-  VINSTRAFFANSVARLIG
-  MEDLEM
+model GroupMemberPeriodRole {
+  periodId String
+  period   GroupMemberPeriod @relation(fields: [periodId], references: [id])
+  groupId  String
+  roleName String
+  role     GroupMemberRole   @relation(fields: [groupId, roleName], references: [groupId, name])
 
+  @@id([periodId, groupId, roleName])
+  @@map("group_member_period_role")
+}
+
+model GroupMemberRole {
+  groupId String
+  name    String
+
+  leaderIn   Group? @relation("LeaderRole")
+  punisherIn Group? @relation("PunisherRole")
+
+  groupMemberPeriods GroupMemberPeriodRole[]
+
+  @@id([groupId, name])
   @@map("group_member_role")
 }
 

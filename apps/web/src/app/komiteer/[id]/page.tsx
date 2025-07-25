@@ -1,18 +1,25 @@
 import { auth } from "@/auth"
 import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
-import { type GroupMember, type UserId, getGroupRoleNames } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { type GroupMember, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
+import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 
-const CommitteePage = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
+interface CommitteePageProps {
+  params: Promise<{ id: string }>
+  groupType?: GroupType
+}
 
-  const [session, committee, committeeAttendanceEvents, members] = await Promise.all([
+const CommitteePage = async ({ params, groupType = "COMMITTEE" }: CommitteePageProps) => {
+  const { id } = await params
+  const showMembers = groupType !== "OTHERGROUP"
+
+  const [session, group, events, members] = await Promise.all([
     auth.getServerSession(),
-    server.group.getByType.query({ groupId: id, type: "COMMITTEE" }),
+    server.group.getByType.query({ groupId: id, type: groupType }),
     server.event.allByGroupWithAttendance.query({ id }),
-    server.group.getMembers.query(id),
+    // We do not show members for OTHERGROUP types because they often have members outside of Online
+    showMembers ? server.group.getMembers.query(id) : Promise.resolve([]),
   ])
 
   const activeMembers = members.filter((member) => member.active)
@@ -21,33 +28,34 @@ const CommitteePage = async ({ params }: { params: Promise<{ id: string }> }) =>
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
         <Avatar className="w-24 h-24 md:w-32 md:h-32">
-          <AvatarImage src={committee.image ?? undefined} alt={committee.name} />
+          <AvatarImage src={group.imageUrl ?? undefined} alt={group.name} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
             <Icon className="text-5xl md:text-6xl" icon="tabler:users" />
           </AvatarFallback>
         </Avatar>
 
         <div className="flex flex-col gap-4">
-          {committee.fullName ? (
-            <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col gap-0.5">
+            <div className="flex flex-row items-center gap-4">
               <Title element="h1" size="xl">
-                {committee.name}
+                {group.name}
               </Title>
-              <Text className=" text-gray-500 dark:text-stone-500">{committee.fullName}</Text>
-            </div>
-          ) : (
-            <Title element="h1" size="xl">
-              {committee.name}
-            </Title>
-          )}
 
-          <Text>{committee.description}</Text>
+              <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-500">
+                {getGroupTypeName(group.type)}
+              </Badge>
+            </div>
+
+            <Text className="text-gray-500 dark:text-stone-500">{group.fullName}</Text>
+          </div>
+
+          <Text>{group.description}</Text>
 
           <div className="flex flex-row gap-2 items-center text-sm text-gray-500 dark:text-stone-500">
             <Text>Kontakt:</Text>
 
             <Link
-              href={`mailto:${committee.email}`}
+              href={`mailto:${group.email}`}
               target="_blank"
               rel="noreferrer"
               className={cn(
@@ -56,7 +64,7 @@ const CommitteePage = async ({ params }: { params: Promise<{ id: string }> }) =>
                 "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
               )}
             >
-              <Text>{committee.email}</Text>
+              <Text>{group.email}</Text>
 
               <Icon icon="tabler:arrow-up-right" className="text-base" />
             </Link>
@@ -64,28 +72,30 @@ const CommitteePage = async ({ params }: { params: Promise<{ id: string }> }) =>
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-row items-center gap-2">
-          <Title>Medlemmer</Title>
-          {members.length > 0 && (
-            <Text className="text-lg font-semibold text-gray-500 dark:text-stone-500">({members.length})</Text>
+      {showMembers && (
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-row items-center gap-2">
+            <Title>Medlemmer</Title>
+            {members.length > 0 && (
+              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-500">({members.length})</Text>
+            )}
+          </div>
+
+          {activeMembers.length ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {activeMembers.map((member) => (
+                <GroupMemberEntry key={member.user.id} userId={session?.sub} member={member} />
+              ))}
+            </div>
+          ) : (
+            <Text className="text-gray-500 dark:text-stone-500">Ingen aktive medlemmer</Text>
           )}
         </div>
-
-        {activeMembers.length ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-            {activeMembers.map((member) => (
-              <GroupMemberEntry key={member.user.id} userId={session?.sub} member={member} />
-            ))}
-          </div>
-        ) : (
-          <Text className="text-gray-500 dark:text-stone-500">Ingen aktive medlemmer</Text>
-        )}
-      </div>
+      )}
 
       <div className="flex flex-col gap-4">
-        <Title>{committee.name}s arrangementer</Title>
-        <EventList attendanceEvents={committeeAttendanceEvents} />
+        <Title>{group.name}s arrangementer</Title>
+        <EventList attendanceEvents={events} />
       </div>
     </div>
   )
@@ -101,7 +111,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   const isUser = userId === member.user.id
 
   // This requires periods to be sorted by startedAt in descending order
-  const roles = getGroupRoleNames(member.periods.find((period) => period.endedAt === null)?.roles)
+  const roles = member.periods.find((period) => period.endedAt === null)?.roles.map((role) => role.roleName) ?? []
 
   return (
     <Link
@@ -133,7 +143,9 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
         ) : (
           <Text className="text-lg/6">{member.user.name}</Text>
         )}
-        <Text className={cn("text-sm", isVerified && "dark:text-black")}>{roles}</Text>
+        <Text className={cn("text-sm", isVerified && "dark:text-black")}>
+          {roles.length > 0 ? roles.join(", ") : "Ingen roller"}
+        </Text>
       </div>
     </Link>
   )

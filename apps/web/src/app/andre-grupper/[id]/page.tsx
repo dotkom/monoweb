@@ -1,11 +1,11 @@
-import { OtherGroupView } from "@/components/views/OtherGroupView"
-import { server } from "@/utils/trpc/server"
+import CommitteePage from "@/app/komiteer/[id]/page"
 
-const OtherGroupPage = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
-  const otherGroup = await server.group.getByType.query({ groupId: id, type: "OTHERGROUP" })
-
-  return <OtherGroupView otherGroup={otherGroup} />
+interface OtherGroupsPageProps {
+  params: Promise<{ id: string }>
 }
 
-export default OtherGroupPage
+const OtherGroupsPage = ({ params }: OtherGroupsPageProps) => {
+  return <CommitteePage params={params} groupType="OTHERGROUP" />
+}
+
+export default OtherGroupsPage
