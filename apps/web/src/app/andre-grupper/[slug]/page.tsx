@@ -1,7 +1,7 @@
-import { CommitteePage } from "@/app/komiteer/[id]/page"
+import { CommitteePage } from "@/app/komiteer/components/CommiteePage"
 
 interface OtherGroupsPageProps {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 }
 
 const OtherGroupsPage = ({ params }: OtherGroupsPageProps) => {

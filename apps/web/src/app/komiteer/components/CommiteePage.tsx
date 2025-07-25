@@ -6,20 +6,20 @@ import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } fro
 import Link from "next/link"
 
 interface CommitteePageProps {
-  params: Promise<{ id: string }>
-  groupType?: GroupType
+  params: Promise<{ slug: string }>
+  groupType: GroupType
 }
 
-export const CommitteePage = async ({ params, groupType = "COMMITTEE" }: CommitteePageProps) => {
-  const { id } = await params
+export const CommitteePage = async ({ params, groupType }: CommitteePageProps) => {
+  const { slug } = await params
   const showMembers = groupType !== "OTHERGROUP"
 
   const [session, group, events, members] = await Promise.all([
     auth.getServerSession(),
-    server.group.getByType.query({ groupId: id, type: groupType }),
-    server.event.allByGroupWithAttendance.query({ id }),
+    server.group.getByType.query({ groupId: slug, type: groupType }),
+    server.event.allByGroupWithAttendance.query({ id: slug }),
     // We do not show members for OTHERGROUP types because they often have members outside of Online
-    showMembers ? server.group.getMembers.query(id) : Promise.resolve([]),
+    showMembers ? server.group.getMembers.query(slug) : Promise.resolve([]),
   ])
 
   const activeMembers = members.filter((member) => member.active)
@@ -149,8 +149,4 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       </div>
     </Link>
   )
-}
-
-export default function Page({ params }: { params: Promise<{ id: string }> }) {
-  return <CommitteePage groupType="COMMITTEE" params={params} />
 }
