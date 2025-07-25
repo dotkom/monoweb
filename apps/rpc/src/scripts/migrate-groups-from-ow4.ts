@@ -1,4 +1,3 @@
-import crypto from "node:crypto"
 import fs from "node:fs"
 import fsp from "node:fs/promises"
 import path from "node:path"
@@ -73,11 +72,11 @@ async function dumpData() {
   fs.writeFileSync(path.resolve(pathOfThisScript, "./hobbys.json"), JSON.stringify(hobbies, null, 2))
 }
 
+import type { DBClient } from "@dotkomonline/db"
+import { getDefaultGroupMemberRoles } from "@dotkomonline/types"
+import { slugify } from "@dotkomonline/utils"
 import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
-import { slugify } from "@dotkomonline/utils"
-import { DBClient } from "@dotkomonline/db"
-import { getDefaultGroupMemberRoles } from "@dotkomonline/types"
 
 // Copied from group-service.ts
 const createIdFromGroupName = async (prisma: DBClient, name: string) => {
@@ -151,7 +150,7 @@ async function insertDump() {
       },
     })
   }
-  
+
   console.log("\n\nInserting node committees:")
   for (const item of nodeCommittees) {
     console.log(`Inserting ${item.name_short}`)
