@@ -10,7 +10,7 @@ interface CommitteePageProps {
   groupType?: GroupType
 }
 
-const CommitteePage = async ({ params, groupType = "COMMITTEE" }: CommitteePageProps) => {
+export const CommitteePage = async ({ params, groupType = "COMMITTEE" }: CommitteePageProps) => {
   const { id } = await params
   const showMembers = groupType !== "OTHERGROUP"
 
@@ -151,4 +151,6 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   )
 }
 
-export default CommitteePage
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  return <CommitteePage groupType="COMMITTEE" params={params} />
+}

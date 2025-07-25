@@ -1,4 +1,4 @@
-import CommitteePage from "@/app/komiteer/[id]/page"
+import { CommitteePage } from "@/app/komiteer/[id]/page"
 
 interface OtherGroupsPageProps {
   params: Promise<{ id: string }>
