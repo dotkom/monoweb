@@ -127,7 +127,7 @@ async function insertDump() {
       data: {
         name: item.title,
         description: item.description,
-        image: item.image?.original,
+        imageUrl: item.image?.original,
       },
     })
   }
