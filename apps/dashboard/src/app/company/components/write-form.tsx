@@ -7,7 +7,7 @@ import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   type: "CONSULTING",
-  image: null,
+  imageUrl: null,
 }
 
 interface UseCompanyWriteFormProps {
