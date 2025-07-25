@@ -1,21 +1,21 @@
 import { randomUUID } from "node:crypto"
 import type { Group } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
-import { ManagementClient } from "auth0"
+import type { ManagementClient } from "auth0"
 import { getFeideGroupsRepository } from "src/modules/feide/feide-groups-repository"
 import { getNTNUStudyplanRepository } from "src/modules/ntnu-study-plan/ntnu-study-plan-repository"
 import { getNotificationPermissionsRepository } from "src/modules/user/notification-permissions-repository"
 import { getPrivacyPermissionsRepository } from "src/modules/user/privacy-permissions-repository"
 import { getUserRepository } from "src/modules/user/user-repository"
 import { getUserService } from "src/modules/user/user-service"
+import { mockDeep } from "vitest-mock-extended"
 import { GroupNotFoundError } from "../group-error"
 import { getGroupRepository } from "../group-repository"
 import { getGroupService } from "../group-service"
 
 describe("GroupService", () => {
   const db = vi.mocked(PrismaClient.prototype)
-  // i dont think this works
-  const auth0Client = vi.mocked(ManagementClient.prototype)
+  const auth0Client = mockDeep<ManagementClient>()
 
   const userRepository = getUserRepository(auth0Client)
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
@@ -42,8 +42,12 @@ describe("GroupService", () => {
       description: "Dotkom er har ansvaret for å gjøre ting",
       shortDescription: "Dotkom gjør ting",
       email: "dotkom@online.ntnu.no",
-      image: null,
+      imageUrl: null,
       type: "COMMITTEE",
+      contactUserId: null,
+      leaderRoleName: "Leder",
+      link: null,
+      punisherRoleName: null,
     }
     const id = randomUUID()
     vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ id, ...group })
