@@ -18,9 +18,11 @@ export const GroupWriteSchema = GroupSchema.omit({
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
 
-export type GroupRole = z.infer<typeof schemas.GroupRoleSchema>
+export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
+export type GroupRole = z.infer<typeof GroupRoleSchema>
 
 export const GroupMembershipSchema = schemas.GroupMembershipSchema.extend({
+  roles: GroupRoleSchema.array(),
   user: UserSchema,
 })
 
