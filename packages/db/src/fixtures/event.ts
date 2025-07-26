@@ -13,7 +13,6 @@ export const getEventFixtures: (attendanceIds: string[]) => Prisma.EventCreateMa
     end: addHours(now, 8),
     status: "PUBLIC",
     type: "SOCIAL",
-    public: true,
     description: "Dette er et kurs i å lage fixtures",
     subtitle: "Kurs i fixtures",
     imageUrl:
@@ -32,7 +31,6 @@ export const getEventFixtures: (attendanceIds: string[]) => Prisma.EventCreateMa
     end: new Date("2023-02-23 11:03:38.63+00"),
     status: "PUBLIC",
     type: "SOCIAL",
-    public: false,
     description: `Her kommer påmeldingen til å gå fort, så sett alarmen klar og vær rask!:)
 
     I billettprisen er reise både fra og til, losji og skipass for 2 dager inkludert. Hyttene ligger i hele Fjällbyområdet. Informasjon om området finnes på: https://www.skistar.com/sv/vara-skidorter/are/vinter-i-are/boendekartor/
