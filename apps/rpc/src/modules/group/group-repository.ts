@@ -78,12 +78,21 @@ export function getGroupRepository(): GroupRepository {
       ).map((group) => group.slug)
     },
     async getMemberships(handle, groupId) {
-      return await handle.groupMembership.findMany({
+      const memberships = await handle.groupMembership.findMany({
         where: { groupId },
         include: {
-          roles: true,
+          roles: {
+            include: {
+              role: true,
+            },
+          },
         },
       })
+
+      return memberships.map(({ roles, ...membership }) => ({
+        ...membership,
+        roles: roles.map((role) => role.role),
+      }))
     },
     async getGroupsByUserId(handle, userId) {
       return await handle.group.findMany({
@@ -100,22 +109,34 @@ export function getGroupRepository(): GroupRepository {
       })
     },
     async startMembership(handle, data) {
-      return await handle.groupMembership.create({
+      const membership = await handle.groupMembership.create({
         data,
         include: {
-          roles: true,
+          roles: {
+            include: {
+              role: true,
+            },
+          },
         },
       })
+
+      return { ...membership, roles: membership.roles.map((role) => role.role) }
     },
     async endMembership(handle, membershipId) {
-      return await handle.groupMembership.delete({
+      const membership = await handle.groupMembership.delete({
         where: {
           id: membershipId,
         },
         include: {
-          roles: true,
+          roles: {
+            include: {
+              role: true,
+            },
+          },
         },
       })
+
+      return { ...membership, roles: membership.roles.map((role) => role.role) }
     },
   }
 }

@@ -37,7 +37,7 @@ const mapToImageAndName = (item: Group | Company | InterestGroup, type: Organize
         className={clsx((type === "COMMITTEE" || type === "NODE_COMMITTEE") && "dark:invert")}
       />
     )}
-    <Text>{item.name}</Text>
+    <Text>{"abbreviation" in item ? item.abbreviation : item.name}</Text>
   </Link>
 )
 
