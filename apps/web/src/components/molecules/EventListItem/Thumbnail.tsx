@@ -8,8 +8,16 @@ const EVENTS = {
     label: "Kurs",
     backgroundColor: "blue",
   },
-  BEDPRES: {
-    label: "Bedpres",
+  GENERAL_ASSEMBLY: {
+    label: "Generalforsamling",
+    backgroundColor: "amber",
+  },
+  INTERNAL: {
+    label: "Intern",
+    backgroundColor: "amber",
+  },
+  OTHER: {
+    label: "Annet",
     backgroundColor: "amber",
   },
   COMPANY: {

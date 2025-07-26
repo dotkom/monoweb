@@ -28,15 +28,14 @@ export const getCompanyMock = (defaults: Partial<CompanyWrite> = {}): CompanyWri
   email: "foo@example.net",
   location: "Oslo",
   phone: "+47 123 45 678",
-  type: "CONSULTING",
   ...defaults,
 })
 
 export const getJobListingMock = (defaults: Partial<JobListingWrite> = {}): JobListingWrite => ({
   title: "Core Developer",
-  ingress:
-    "As a Core Developer, you will design, implement, and optimize core functionalities of Vespa, ensuring top-notch performance and reliability.",
   description:
+    "As a Core Developer, you will design, implement, and optimize core functionalities of Vespa, ensuring top-notch performance and reliability.",
+  about:
     "You will work on challenging search and recommendation use cases, collaborating with a cross-functional team of engineers and developer advocates.",
   start: addWeeks(addYears(new Date(), 1), 2),
   end: addWeeks(addYears(new Date(), 1), 4),
@@ -47,5 +46,6 @@ export const getJobListingMock = (defaults: Partial<JobListingWrite> = {}): JobL
   applicationLink: "https://example.com",
   applicationEmail: "hello@example.com",
   deadlineAsap: false,
+  updatedAt: new Date(),
   ...defaults,
 })

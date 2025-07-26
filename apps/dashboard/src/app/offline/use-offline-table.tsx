@@ -24,7 +24,7 @@ export const useOfflineTable = ({ data }: Props) => {
           </Anchor>
         ),
       }),
-      columnHelper.accessor("published", {
+      columnHelper.accessor("publishedAt", {
         header: () => "Utgivelsesdato",
         cell: (info) => formatDate(info.getValue(), { relativeDateThresholdDays: 7 }),
       }),

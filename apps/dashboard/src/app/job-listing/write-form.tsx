@@ -50,13 +50,13 @@ export const useJobListingWriteForm = ({
         searchable: true,
         withAsterisk: true,
       }),
-      ingress: createTextareaInput({
+      description: createTextareaInput({
         label: "Ingress",
         placeholder: "Kort introduksjon om stillingen...",
         required: true,
         rows: 4,
       }),
-      description: createRichTextInput({
+      about: createRichTextInput({
         label: "Beskrivelse",
         required: true,
       }),

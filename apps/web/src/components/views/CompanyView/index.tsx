@@ -11,7 +11,7 @@ interface CompanyViewProps {
 }
 
 export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
-  const { name, description, phone, email, website, location, type, imageUrl } = props.company
+  const { name, description, phone, email, website, location, imageUrl } = props.company
 
   const icons = [
     { icon: "material-symbols:location-on", text: location, href: null },
@@ -21,7 +21,7 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
   ]
 
   return (
-    <EntryDetailLayout title={name} type={type} color={"BLUE"}>
+    <EntryDetailLayout title={name} color={"BLUE"}>
       <div className="grid gap-x-12 gap-y-6 sm:grid-cols-[18rem_minmax(100px,_1fr)] md:grid-cols-[24rem_minmax(100px,_1fr)]">
         <div className="border-blue-600 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
           {imageUrl && (

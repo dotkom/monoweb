@@ -18,7 +18,6 @@ describe("EventCompanyService", () => {
     name: "Bekk",
     slug: "bekk",
     phone: "+47 123 45 678",
-    type: "CONSULTING",
     website: "https://bekk.no",
     location: "Oslo & Trondheim",
     imageUrl: null,

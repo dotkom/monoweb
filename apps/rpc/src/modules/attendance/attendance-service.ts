@@ -201,7 +201,7 @@ export function getAttendanceService(
 
       await taskSchedulingService.scheduleAt(
         handle,
-        tasks.MERGE_POOLS.kind,
+        tasks.MERGE_POOLS.type,
         {
           attendanceId,
           newMergePoolData,

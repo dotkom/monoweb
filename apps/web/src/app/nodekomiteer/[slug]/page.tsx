@@ -5,7 +5,7 @@ interface NodeCommitteePageProps {
 }
 
 const NodeCommitteePage = ({ params }: NodeCommitteePageProps) => {
-  return <CommitteePage params={params} groupType="NODECOMMITTEE" />
+  return <CommitteePage params={params} groupType="NODE_COMMITTEE" />
 }
 
 export default NodeCommitteePage

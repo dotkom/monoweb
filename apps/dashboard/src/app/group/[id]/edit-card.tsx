@@ -16,7 +16,7 @@ export const GroupEditCard: FC = () => {
     title: "Slett gruppe",
     text: `Er du sikker på at du vil slette ${group.name}?`,
     onConfirm: () => {
-      remove.mutate(group.id)
+      remove.mutate(group.slug)
       router.push("/group/")
     },
   })
@@ -26,7 +26,7 @@ export const GroupEditCard: FC = () => {
     label: "Oppdater gruppe",
     onSubmit: (data) => {
       edit.mutate({
-        id: group.id,
+        id: group.slug,
         values: data,
       })
       router.push("/group/")

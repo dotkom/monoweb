@@ -5,7 +5,7 @@ interface OtherGroupsPageProps {
 }
 
 const OtherGroupsPage = ({ params }: OtherGroupsPageProps) => {
-  return <CommitteePage params={params} groupType="OTHERGROUP" />
+  return <CommitteePage params={params} groupType="ASSOCIATED" />
 }
 
 export default OtherGroupsPage

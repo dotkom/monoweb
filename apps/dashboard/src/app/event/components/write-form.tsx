@@ -1,6 +1,5 @@
 import { useGroupAllQuery } from "@/app/group/queries/use-group-all-query"
 import { useInterestGroupAllQuery } from "@/app/interest-group/queries/use-interest-group-all-query"
-import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
@@ -21,7 +20,6 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   subtitle: null,
   hostingGroupIds: [],
   interestGroupIds: [],
-  public: false,
   status: "DRAFT",
   title: "",
   type: "SOCIAL",
@@ -88,7 +86,7 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
       hostingGroupIds: createMultipleSelectInput({
         label: "Arrangerende komité",
         placeholder: "Arrkom",
-        data: groups.map((group) => ({ value: group.id, label: group.name })),
+        data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
         searchable: true,
       }),
       interestGroupIds: createMultipleSelectInput({
@@ -115,9 +113,6 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
           { value: "COMPANY", label: "Bedriftsarrangement" },
         ],
         withAsterisk: true,
-      }),
-      public: createCheckboxInput({
-        label: "Offentlig arrangement",
       }),
     },
   })

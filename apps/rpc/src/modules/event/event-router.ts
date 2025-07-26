@@ -125,7 +125,7 @@ export const eventRouter = t.router({
     ),
 
   allByGroupWithAttendance: procedure
-    .input(z.object({ id: GroupSchema.shape.id, paginate: PaginateInputSchema }))
+    .input(z.object({ id: GroupSchema.shape.slug, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
         ctx.eventService.getAttendanceEventsByGroupId(handle, input.id, input.paginate)

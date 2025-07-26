@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
-import { type GroupMember, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
+import { type GroupMembership, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 
@@ -12,23 +12,23 @@ interface CommitteePageProps {
 
 export const CommitteePage = async ({ params, groupType }: CommitteePageProps) => {
   const { slug } = await params
-  const showMembers = groupType !== "OTHERGROUP"
+  const showMembers = groupType !== "ASSOCIATED"
 
   const [session, group, events, members] = await Promise.all([
     auth.getServerSession(),
     server.group.getByType.query({ groupId: slug, type: groupType }),
     server.event.allByGroupWithAttendance.query({ id: slug }),
-    // We do not show members for OTHERGROUP types because they often have members outside of Online
+    // We do not show members for ASSOCIATED types because they often have members outside of Online
     showMembers ? server.group.getMembers.query(slug) : Promise.resolve([]),
   ])
 
-  const activeMembers = members.filter((member) => member.active)
+  const activeMembers = members.filter((member) => member.end === null)
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
         <Avatar className="w-24 h-24 md:w-32 md:h-32">
-          <AvatarImage src={group.imageUrl ?? undefined} alt={group.name} />
+          <AvatarImage src={group.imageUrl ?? undefined} alt={group.abbreviation} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
             <Icon className="text-5xl md:text-6xl" icon="tabler:users" />
           </AvatarFallback>
@@ -46,7 +46,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
               </Badge>
             </div>
 
-            <Text className="text-gray-500 dark:text-stone-500">{group.fullName}</Text>
+            <Text className="text-gray-500 dark:text-stone-500">{group.name}</Text>
           </div>
 
           <Text>{group.description}</Text>
@@ -103,7 +103,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
 interface GroupMemberEntryProps {
   userId: UserId | null | undefined
-  member: GroupMember
+  member: GroupMembership
 }
 
 const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
@@ -111,7 +111,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   const isUser = userId === member.user.id
 
   // This requires periods to be sorted by startedAt in descending order
-  const roles = member.periods.find((period) => period.endedAt === null)?.roles.map((role) => role.roleName) ?? []
+  // const roles = member.periods.find((period) => period.endedAt === null)?.roles.map((role) => role.roleName) ?? []
 
   return (
     <Link
@@ -143,9 +143,9 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
         ) : (
           <Text className="text-lg/6">{member.user.name}</Text>
         )}
-        <Text className={cn("text-sm", isVerified && "dark:text-black")}>
-          {roles.length > 0 ? roles.join(", ") : "Ingen roller"}
-        </Text>
+        {/*<Text className={cn("text-sm", isVerified && "dark:text-black")}>*/}
+        {/*  {roles.length > 0 ? roles.join(", ") : "Ingen roller"}*/}
+        {/*</Text>*/}
       </div>
     </Link>
   )

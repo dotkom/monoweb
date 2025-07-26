@@ -1,13 +1,13 @@
 import type { SQSClient } from "@aws-sdk/client-sqs"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task, TaskKind } from "@dotkomonline/types"
+import type { Task, TaskType } from "@dotkomonline/types"
 import { NotImplementedError } from "../../error"
 import { tasks } from "./task-definition"
 import type { TaskService } from "./task-service"
 
 export interface TaskDiscoveryService {
-  discover(kind: TaskKind): Promise<Task[]>
+  discover(kind: TaskType): Promise<Task[]>
   discoverAll(): Promise<Task[]>
 }
 
@@ -22,8 +22,8 @@ export function getLocalTaskDiscoveryService(client: DBClient, taskService: Task
   return {
     async discoverAll() {
       const discoveredTasks = await Promise.all([
-        this.discover(tasks.ATTEMPT_RESERVE_ATTENDEE.kind),
-        this.discover(tasks.MERGE_POOLS.kind),
+        this.discover(tasks.ATTEMPT_RESERVE_ATTENDEE.type),
+        this.discover(tasks.MERGE_POOLS.type),
       ])
       return discoveredTasks.flat()
     },

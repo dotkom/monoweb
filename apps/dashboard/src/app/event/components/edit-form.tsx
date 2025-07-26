@@ -1,4 +1,3 @@
-import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
@@ -83,7 +82,7 @@ export const useEventEditForm = ({
       hostingGroupIds: createMultipleSelectInput({
         label: "Arrangerende komité",
         placeholder: "Arrkom",
-        data: hostingGroups.map((group) => ({ value: group.id, label: group.name })),
+        data: hostingGroups.map((group) => ({ value: group.slug, label: group.abbreviation })),
         searchable: true,
       }),
       interestGroupIds: createMultipleSelectInput({
@@ -110,9 +109,6 @@ export const useEventEditForm = ({
           { value: "COMPANY", label: "Bedriftsarrangement" },
         ],
         withAsterisk: true,
-      }),
-      public: createCheckboxInput({
-        label: "Offentlig arrangement",
       }),
     },
   })

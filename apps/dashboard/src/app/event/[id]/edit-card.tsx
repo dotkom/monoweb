@@ -13,7 +13,7 @@ export const EventEditCard: FC = () => {
 
   const defaultValues = {
     ...event,
-    hostingGroupIds: hostingGroups.map((group) => group.id),
+    hostingGroupIds: hostingGroups.map((group) => group.slug),
     interestGroupIds: hostingInterestGroups.map((interestGroup) => interestGroup.id),
   }
 

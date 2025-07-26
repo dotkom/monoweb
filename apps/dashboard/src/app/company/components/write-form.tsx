@@ -1,12 +1,10 @@
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { createTextareaInput } from "@/components/forms/TextareaInput"
 import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
-  type: "CONSULTING",
   imageUrl: null,
 }
 
@@ -53,17 +51,6 @@ export const useCompanyWriteForm = ({
         placeholder: "https://bekk.no",
         type: "url",
         withAsterisk: true,
-      }),
-      type: createSelectInput({
-        label: "Bedriftstype",
-        placeholder: "Velg en",
-        withAsterisk: true,
-        data: [
-          { value: "CONSULTING", label: "Konsulentfirma" },
-          { value: "RESEARCH", label: "Forskning" },
-          { value: "DEVELOPMENT", label: "In-house" },
-          { value: "OTHER", label: "Annet" },
-        ],
       }),
       phone: createTextInput({
         label: "Kontakttelefon",

@@ -2,16 +2,17 @@ import type { DBHandle } from "@dotkomonline/db"
 import type {
   Group,
   GroupId,
-  GroupMember,
-  GroupMemberRole,
-  GroupMemberWrite,
+  GroupMembership,
+  GroupMembershipId,
+  GroupMembershipWrite,
+  GroupRole,
   GroupWrite,
   UserId,
 } from "@dotkomonline/types"
 import type { GroupType } from "@prisma/client"
 
 export interface GroupRepository {
-  create(handle: DBHandle, groupId: GroupId, data: GroupWrite, groupMemberRoles: GroupMemberRole[]): Promise<Group>
+  create(handle: DBHandle, groupId: GroupId, data: GroupWrite, groupMemberRoles: GroupRole[]): Promise<Group>
   update(handle: DBHandle, groupId: GroupId, data: Partial<GroupWrite>): Promise<Group>
   delete(handle: DBHandle, groupId: GroupId): Promise<Group>
   getById(handle: DBHandle, groupId: GroupId): Promise<Group | null>
@@ -19,38 +20,38 @@ export interface GroupRepository {
   getAllByType(handle: DBHandle, type: GroupType): Promise<Group[]>
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, type: GroupType): Promise<GroupId[]>
-  getMembers(handle: DBHandle, groupId: GroupId): Promise<Omit<GroupMember, "user">[]>
-  getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
-  addMember(handle: DBHandle, data: GroupMemberWrite): Promise<Omit<GroupMember, "user">>
-  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMember, "user">>
+  getMemberships(handle: DBHandle, groupId: GroupId): Promise<Omit<GroupMembership, "user">[]>
+  getGroupsByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
+  startMembership(handle: DBHandle, data: GroupMembershipWrite): Promise<Omit<GroupMembership, "user">>
+  endMembership(handle: DBHandle, membership: GroupMembershipId): Promise<Omit<GroupMembership, "user">>
 }
 
 export function getGroupRepository(): GroupRepository {
   return {
     async create(handle, groupId, data, groupMemberRoles) {
       // Group needs a role to have as its leader role, so we must create roles first
-      await handle.groupMemberRole.createMany({
+      await handle.groupRole.createMany({
         data: groupMemberRoles,
       })
 
       return await handle.group.create({
-        data: { ...data, id: groupId },
+        data: { ...data, slug: groupId },
       })
     },
     async update(handle, groupId, data) {
       return await handle.group.update({
-        where: { id: groupId },
+        where: { slug: groupId },
         data,
       })
     },
     async delete(handle, groupId) {
       return await handle.group.delete({
-        where: { id: groupId },
+        where: { slug: groupId },
       })
     },
     async getById(handle, groupId) {
       return await handle.group.findUnique({
-        where: { id: groupId },
+        where: { slug: groupId },
       })
     },
     async getAll(handle) {
@@ -64,74 +65,55 @@ export function getGroupRepository(): GroupRepository {
     async getAllIds(handle) {
       return (
         await handle.group.findMany({
-          select: { id: true },
+          select: { slug: true },
         })
-      ).map((group) => group.id)
+      ).map((group) => group.slug)
     },
     async getAllIdsByType(handle, groupType) {
       return (
         await handle.group.findMany({
           where: { type: groupType },
-          select: { id: true },
+          select: { slug: true },
         })
-      ).map((group) => group.id)
+      ).map((group) => group.slug)
     },
-    async getMembers(handle, groupId) {
-      return await handle.groupMember.findMany({
+    async getMemberships(handle, groupId) {
+      return await handle.groupMembership.findMany({
         where: { groupId },
         include: {
-          periods: {
-            orderBy: { startedAt: "desc" },
-            include: {
-              roles: true,
-            },
-          },
+          roles: true,
         },
       })
     },
-    async getAllByMember(handle, userId) {
+    async getGroupsByUserId(handle, userId) {
       return await handle.group.findMany({
         where: {
-          members: {
+          memberships: {
             some: {
               userId,
             },
           },
         },
-      })
-    },
-    async addMember(handle, data) {
-      const { periods, ...rest } = data
-
-      const member = await handle.groupMember.create({
-        data: rest,
         include: {
-          periods: {
-            include: {
-              roles: true,
-            },
-          },
+          memberships: true,
         },
       })
-
-      await handle.groupMemberPeriod.createMany({ data: periods })
-
-      return member
     },
-    async removeMember(handle, userId, groupId) {
-      return await handle.groupMember.delete({
+    async startMembership(handle, data) {
+      return await handle.groupMembership.create({
+        data,
+        include: {
+          roles: true,
+        },
+      })
+    },
+    async endMembership(handle, membershipId) {
+      return await handle.groupMembership.delete({
         where: {
-          groupId_userId: {
-            groupId,
-            userId,
-          },
+          id: membershipId,
         },
         include: {
-          periods: {
-            include: {
-              roles: true,
-            },
-          },
+          roles: true,
         },
       })
     },

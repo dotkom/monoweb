@@ -7,7 +7,7 @@ import Link from "next/link"
 import type { FC } from "react"
 
 export default async function AboutOnlinePage() {
-  const nodeCommittees = await server.group.allByType.query("NODECOMMITTEE")
+  const nodeCommittees = await server.group.allByType.query("NODE_COMMITTEE")
   const committees = await server.group.allByType.query("COMMITTEE")
 
   return (
@@ -89,7 +89,7 @@ const GroupList: FC<GroupListProps> = ({ groups }: GroupListProps) => {
       {groups.map(
         (group) =>
           group.imageUrl && (
-            <Card key={group.id} imageUrl={group.imageUrl} title={group.name} description={group.description} />
+            <Card key={group.slug} imageUrl={group.imageUrl} title={group.abbreviation} description={group.about} />
           )
       )}
     </ul>

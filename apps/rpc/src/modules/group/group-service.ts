@@ -2,8 +2,8 @@ import type { DBHandle } from "@dotkomonline/db"
 import {
   type Group,
   type GroupId,
-  type GroupMember,
-  type GroupMemberWrite,
+  type GroupMembership,
+  type GroupMembershipWrite,
   type GroupType,
   type GroupWrite,
   type UserId,
@@ -34,10 +34,10 @@ export interface GroupService {
   delete(handle: DBHandle, groupId: GroupId): Promise<Group>
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, groupType: GroupType): Promise<GroupId[]>
-  getMembers(handle: DBHandle, groupId: GroupId): Promise<GroupMember[]>
+  getMembers(handle: DBHandle, groupId: GroupId): Promise<GroupMembership[]>
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
-  addMember(handle: DBHandle, data: GroupMemberWrite): Promise<GroupMember>
-  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMember, "user">>
+  addMember(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMembership>
+  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMembership, "user">>
 }
 
 export function getGroupService(groupRepository: GroupRepository, userService: UserService): GroupService {
@@ -59,7 +59,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       return groupRepository.getAllByType(handle, groupType)
     },
     async create(handle, payload) {
-      let id = slugify(payload.name)
+      let id = slugify(payload.abbreviation)
 
       // We try to find an available slug. This should hopefully never run more than once, but maybe some future idiot
       // is trying to break the authorization system by creating a group with a name that is already taken.
@@ -69,7 +69,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
           break
         }
         // If the id already exists, we try something like slug-1
-        id = `${slugify(payload.name)}-${i}`
+        id = `${slugify(payload.abbreviation)}-${i}`
       }
 
       return groupRepository.create(handle, id, payload, getDefaultGroupMemberRoles(id))
@@ -87,7 +87,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       return groupRepository.getAllIdsByType(handle, groupType)
     },
     async getMembers(handle, groupId) {
-      const membersWithoutUsers = await groupRepository.getMembers(handle, groupId)
+      const membersWithoutUsers = await groupRepository.getMemberships(handle, groupId)
 
       if (!membersWithoutUsers) {
         return []
@@ -109,16 +109,18 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       return members
     },
     async getAllByMember(handle, userId) {
-      return groupRepository.getAllByMember(handle, userId)
+      return groupRepository.getGroupsByUserId(handle, userId)
     },
     async addMember(handle, data) {
-      const member = await groupRepository.addMember(handle, data)
-      const user = await userService.getById(handle, data.userId)
-
-      return { ...member, user }
+      // TODO: const member = await groupRepository.addMember(handle, data)
+      // const user = await userService.getById(handle, data.userId)
+      //
+      // return { ...member, user }
+      throw new Error("Not implemented yet")
     },
     async removeMember(handle, userId, groupId) {
-      return await groupRepository.removeMember(handle, userId, groupId)
+      // TODO: return await groupRepository.removeMember(handle, userId, groupId)
+      throw new Error("Not implemented yet")
     },
   }
 }

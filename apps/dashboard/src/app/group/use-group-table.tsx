@@ -24,7 +24,7 @@ export const useGroupTable = ({ data }: Props) => {
         id: "name",
         header: () => "Navn",
         cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/group/${info.getValue().id}`}>
+          <Anchor component={Link} size="sm" href={`/group/${info.getValue().slug}`}>
             {info.getValue().name}
           </Anchor>
         ),

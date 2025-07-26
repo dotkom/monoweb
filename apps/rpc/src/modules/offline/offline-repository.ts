@@ -15,7 +15,7 @@ export function getOfflineRepository(): OfflineRepository {
       return await handle.offline.findUnique({ where: { id: offlineId } })
     },
     async getAll(handle, page) {
-      return await handle.offline.findMany({ ...pageQuery(page), orderBy: { published: "desc" } })
+      return await handle.offline.findMany({ ...pageQuery(page), orderBy: { publishedAt: "desc" } })
     },
     async create(handle, data) {
       return await handle.offline.create({ data })

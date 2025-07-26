@@ -16,23 +16,25 @@ const organizerTypeToLink: Record<OrganizerType, string> = {
   COMMITTEE: "/komiteer",
   INTERESTGROUP: "/interessegrupper",
   COMPANY: "/karriere",
-  NODECOMMITTEE: "/nodekomiteer",
-  OTHERGROUP: "/andre-grupper",
+  NODE_COMMITTEE: "/nodekomiteer",
+  ASSOCIATED: "/andre-grupper",
 }
 
 const mapToImageAndName = (item: Group | Company | InterestGroup, type: OrganizerType) => (
   <Link
-    href={`${organizerTypeToLink[type]}/${item.id}`}
+    // TODO: Reconsider life
+    href={`${organizerTypeToLink[type]}/${"slug" in item ? item.slug : item.id}`}
     key={item.name}
     className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-800 dark:hover:bg-stone-900"
   >
     {item.imageUrl && (
       <Image
         src={item.imageUrl}
-        alt={item.name}
+        // TODO: Reconsider life once more
+        alt={"abbreviation" in item ? item.abbreviation : item.name}
         width={22}
         height={22}
-        className={clsx((type === "COMMITTEE" || type === "NODECOMMITTEE") && "dark:invert")}
+        className={clsx((type === "COMMITTEE" || type === "NODE_COMMITTEE") && "dark:invert")}
       />
     )}
     <Text>{item.name}</Text>
