@@ -61,21 +61,22 @@ export const CompanySplash: FC = () => {
           Her burde det stå en kort tekst om linjeforeningen og hva vi gjør. Helst ikke mer enn to setninger
         </Text>
 
-        <div className="flex flex-row gap-2 items-center">
-          <Icon icon="tabler:briefcase-filled" className="text-lg" />
+        <div className="flex flex-col md:flex-row gap-1 md:items-center">
+          <div className="flex flex-row gap-2 items-center">
+            <Icon icon="tabler:briefcase-filled" className="text-lg" />
 
-          <div className="flex flex-row gap- items-center">
             <Text>Er du fra en bedrift og ønsker å vise interesse?</Text>
-
-            <Button
-              variant="text"
-              element="a"
-              href="https://interesse.online.ntnu.no"
-              iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
-            >
-              Ta kontakt her
-            </Button>
           </div>
+
+          <Button
+            variant="text"
+            element="a"
+            href="https://interesse.online.ntnu.no"
+            iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
+            className="ml-5 md:ml-0 w-fit"
+          >
+            Ta kontakt her
+          </Button>
         </div>
       </div>
 
