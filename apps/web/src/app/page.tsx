@@ -1,23 +1,17 @@
 import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
 import { auth } from "@/auth"
-import { ArticleListItem } from "@/components/molecules/ArticleListItem"
 import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import { DateAndTime } from "@/components/molecules/EventListItem/DateAndTime"
-import { OfflineCard } from "@/components/molecules/OfflineCard"
 import { server } from "@/utils/trpc/server"
 import type { AttendanceId, EventDetail } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
-import { isPast } from "date-fns"
-import Image from "next/image"
+import { formatDate, isPast } from "date-fns"
 import Link from "next/link"
 import type { FC } from "react"
 
 export default async function App() {
   const events = await server.event.all.query({ page: { take: 3 } })
-  const featuredArticles = await server.article.featured.query()
-  const offlines = await server.offline.all.query()
 
   const attendanceIds = events.map((event) => event.attendance?.id).filter(Boolean) as AttendanceId[]
 
@@ -32,24 +26,26 @@ export default async function App() {
     : null
 
   return (
-    <section className="flex flex-col gap-12 w-full">
+    <section className="flex flex-col gap-16 w-full">
+      <ConstructionNotice />
+
       <CompanySplash />
 
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {events.map((eventDetail) => {
             const attendeeStatus = attendanceStatuses?.get(eventDetail.attendance?.id ?? "") ?? null
 
             return <EventCard key={eventDetail.event.id} eventDetail={eventDetail} attendeeStatus={attendeeStatus} />
           })}
 
-          <Tilt className="grow" tiltMaxAngleX={2} tiltMaxAngleY={2} scale={1.05}>
+          <Tilt className="grow">
             <Button
               element="a"
               href="/arrangementer"
-              className="w-full h-full bg-blue-200 hover:bg-blue-300 text-brand-800 hover:text-black"
+              className="w-full h-full bg-blue-100 hover:bg-blue-200 text-brand-800 hover:text-black"
               iconRight={<Icon icon="tabler:arrow-up-right" />}
             >
               <Text>Se alle arrangementer</Text>
@@ -57,35 +53,46 @@ export default async function App() {
           </Tilt>
         </div>
       </div>
-
-      <div className="flex scroll-m-20 justify-between pb-1 tracking-tight transition-colors mt-16">
-        <Link href="/artikler" className="text-3xl font-semibold hover:underline">
-          Artikler
-        </Link>
-        <Link href="/artikler" className="hidden sm:block">
-          <Button>Flere artikler</Button>
-        </Link>
-      </div>
-      <div className="grid gap-4 mt-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {featuredArticles.slice(0, 6).map((article) => (
-          <ArticleListItem article={article} orientation="vertical" key={article.id} />
-        ))}
-      </div>
-
-      <div className="flex scroll-m-20 justify-between pb-1 tracking-tight transition-colors mt-16">
-        <Link href="/offline" className="text-3xl font-semibold hover:underline">
-          Offline
-        </Link>
-        <Link href="/offline" className="hidden sm:block">
-          <Button>Flere Offline</Button>
-        </Link>
-      </div>
-      <div className="grid gap-8 mt-2 grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {offlines.slice(0, 5).map((offline) => (
-          <OfflineCard offline={offline} key={offline.id} />
-        ))}
-      </div>
     </section>
+  )
+}
+
+const ConstructionNotice = () => {
+  return (
+    <div className="flex flex-col gap-0 bg-yellow-100 dark:bg-amber-100 dark:text-black rounded-2xl">
+      <div className="flex flex-col gap-4 pt-5 px-5 pb-4 bg-yellow-200 dark:bg-amber-200 dark:text-black rounded-t-2xl">
+        <Title className="text-lg md:text-xl font-bold">🚧 OW5 er under konstruksjon</Title>
+      </div>
+
+      <div className="flex flex-col gap-4 px-6 pb-6 pt-4 text-sm md:text-base rounded-b-2xl">
+        <span className="inline-flex flex-row items-center gap-1">
+          <Text>
+            Vi jobber med å oppdatere{" "}
+            <img
+              src="/online-logo-o.svg"
+              alt="Logo Online Linjeforening NTNU Trondheim"
+              className="h-[1.75ch] w-[1.75ch] inline-block align-text-bottom"
+            />{" "}
+            OnlineWeb til en ny og bedre versjon. Det vil komme flere oppdateringer fremover, så følg med!
+          </Text>
+        </span>
+
+        <span>
+          <Text>
+            Dersom du har tilbakemeldinger eller har funnet en feil, kan du sende en e-post til{" "}
+            <Button
+              variant="text"
+              element="a"
+              href="mailto:dotkom@online.ntnu.no"
+              iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
+              className="text-sm md:text-base font-semibold hover:bg-yellow-200 dark:text-black dark:hover:bg-amber-200"
+            >
+              dotkom@online.ntnu.no
+            </Button>
+          </Text>
+        </span>
+      </div>
+    </div>
   )
 }
 
@@ -102,11 +109,12 @@ const EventCard: FC<ComingEventProps> = ({
   attendeeStatus,
 }) => {
   return (
-    <Link href={`/arrangementer/${slugify(title)}/${id}`} className="flex flex-col gap-2">
+    <Link
+      href={`/arrangementer/${slugify(title)}/${id}`}
+      className="flex flex-col w-full gap-2 p-2 -m-2 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-800"
+    >
       <Tilt>
-        <Image
-          width={200}
-          height={150}
+        <img
           src={imageUrl ? imageUrl : EventImagePlaceholder}
           alt={title}
           className="rounded-lg border border-gray-200 object-cover aspect-[4/3]"
@@ -118,7 +126,11 @@ const EventCard: FC<ComingEventProps> = ({
         </Title>
 
         <div className="flex flex-row gap-4 items-center">
-          <DateAndTime start={start} end={end} />
+          <div className="flex flex-row gap-2 items-center">
+            <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-500" />
+            <Text className="text-sm">{formatDate(start, "dd.MM")}</Text>
+          </div>
+
           {attendance && (
             <AttendanceStatus attendance={attendance} attendeeStatus={attendeeStatus} eventEndInPast={isPast(start)} />
           )}
