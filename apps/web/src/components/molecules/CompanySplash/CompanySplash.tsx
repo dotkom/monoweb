@@ -81,11 +81,11 @@ export const CompanySplash: FC = () => {
 
       <div className="relative w-full aspect-[10/9]">
         {isLoading && (
-          <div className="absolute bg-gray-100 dark:bg-gray-950 rounded-xl animate-pulse z-20 w-[65%] h-[65%] inset-0 m-auto" />
+          <div className="absolute bg-gray-100 dark:bg-gray-950 rounded-xl animate-pulse w-[65%] h-[65%] inset-0 m-auto" />
         )}
         <div
           className={cn(
-            "absolute inset-0 max-w-[600px] duration-700 transition-opacity z-10",
+            "absolute inset-0 max-w-[600px] duration-700 transition-opacity",
             isLoading ? "opacity-0" : "opacity-100"
           )}
         >
