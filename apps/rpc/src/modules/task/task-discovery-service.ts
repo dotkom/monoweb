@@ -28,9 +28,15 @@ export function getLocalTaskDiscoveryService(client: DBClient, taskService: Task
       return discoveredTasks.flat()
     },
     async discover(kind) {
-      logger.info("Running task discovery for Kind=%s", kind)
+      logger.debug("Running task discovery for Kind=%s", kind)
       const jobs = await taskService.getPendingTasks(client, kind)
-      logger.info("Task discovery for Kind=%s yielded %d tasks", kind, jobs.length)
+
+      if (jobs.length > 0) {
+        logger.info("Task discovery for Kind=%s yielded %d tasks", kind, jobs.length)
+      } else {
+        logger.debug("Task discovery for Kind=%s yielded no tasks", kind)
+      }
+
       return jobs
     },
   }

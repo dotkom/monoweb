@@ -15,6 +15,8 @@ import type { TaskDiscoveryService } from "./task-discovery-service"
 import { InvalidTaskKind } from "./task-error"
 import type { TaskService } from "./task-service"
 
+const INTERVAL = minutesToMilliseconds(1)
+
 export interface TaskExecutor {
   start(client: DBClient): Promise<void>
   stop(): void
@@ -39,19 +41,19 @@ export function getLocalTaskExecutor(
         logger.warn("TaskExecutor is already running, skipping initialization")
         return
       }
-      logger.info("Starting TaskExecutor and executing all pending tasks")
+      logger.info("Starting TaskExecutor with interval of %d milliseconds", INTERVAL)
       // CORRECTNESS: We do not run the tasks immediately, as we don't want to interrupt the application startup and
       // hog system resources at startup. This should allow us to run the tasks in a more controlled manner and keep the
       // system resources more stable.
       intervalId = setInterval(async () => {
-        logger.info("TaskExecutor performing discovery and execution of all pending tasks")
+        logger.debug("TaskExecutor performing discovery and execution of all pending tasks")
         const tasks = await taskDiscoveryService.discoverAll()
         for (const task of tasks) {
           // CORRECTNESS: Do not await here, as we would block the entire event loop on each task execution which is
           // very slow for large task queues.
           void this.run(client, task)
         }
-      }, minutesToMilliseconds(1))
+      }, INTERVAL)
     },
     stop() {
       if (intervalId === null) {
