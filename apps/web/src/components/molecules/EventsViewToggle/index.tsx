@@ -27,7 +27,7 @@ export const EventsViewToggle: FC<EventsViewToggleProps> = ({ active }) => {
   )
 
   return (
-    <div className="w-fit z-2 border border-gray-200 dark:border-none dark:bg-stone-800 flex flex-row items-center rounded-lg p-1">
+    <div className="w-fit border border-gray-200 dark:border-none dark:bg-stone-800 flex flex-row items-center rounded-lg p-1">
       {active === "list" ? (
         listButton
       ) : (
