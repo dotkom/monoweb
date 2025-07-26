@@ -23,7 +23,7 @@ export function getEventHostingGroupService(
     async setEventHostingGroups(handle, eventId, groups) {
       // Fetch all groups associated with the event
       const eventHostingGroups = await this.getHostingGroupsForEvent(handle, eventId)
-      const currentHostingGroupIds = eventHostingGroups.map((hostingGroup) => hostingGroup.id)
+      const currentHostingGroupIds = eventHostingGroups.map((hostingGroup) => hostingGroup.slug)
 
       // Identify hosting groups to add and remove
       const hostingGroupsToRemove = currentHostingGroupIds.filter((groupId) => !groups.includes(groupId))

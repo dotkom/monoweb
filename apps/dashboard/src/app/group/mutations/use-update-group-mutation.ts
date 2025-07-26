@@ -22,7 +22,7 @@ export const useUpdateGroupMutation = () => {
           message: `Gruppen "${data.name}" har blitt oppdatert.`,
         })
 
-        await queryClient.invalidateQueries(trpc.group.get.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.group.get.queryOptions(data.slug))
         await queryClient.invalidateQueries(trpc.group.all.queryOptions())
       },
       onError: (err) => {

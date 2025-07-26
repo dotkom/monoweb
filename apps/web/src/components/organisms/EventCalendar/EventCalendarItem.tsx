@@ -48,7 +48,7 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
     },
     displayName: "Sosialt",
   },
-  BEDPRES: {
+  GENERAL_ASSEMBLY: {
     colors: {
       itemBg: "bg-blue-100 dark:bg-blue-950",
       itemBgGradientFade: "to-blue-100 dark:to-blue-950",
@@ -63,6 +63,38 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
       badgeText: "text-blue-800 dark:text-blue-300",
     },
     displayName: "Bedpres",
+  },
+  INTERNAL: {
+    colors: {
+      itemBg: "bg-blue-100 dark:bg-blue-950",
+      itemBgGradientFade: "to-blue-100 dark:to-blue-950",
+      itemBgHover: "hover:bg-blue-200 dark:hover:bg-blue-900",
+      itemBorder: "border-blue-400 dark:border-blue-600",
+      itemBorderLight: "border-blue-200 dark:border-blue-800",
+      itemText: "text-blue-900 dark:text-blue-300",
+      cardBg: "bg-blue-100 dark:bg-blue-950",
+      cardText: "text-blue-950 dark:text-blue-50",
+      cardBorderHover: "hover:border-blue-400 dark:hover:border-blue-800",
+      badgeBg: "bg-blue-200 dark:bg-blue-900",
+      badgeText: "text-blue-800 dark:text-blue-300",
+    },
+    displayName: "Intern",
+  },
+  OTHER: {
+    colors: {
+      itemBg: "bg-blue-100 dark:bg-blue-950",
+      itemBgGradientFade: "to-blue-100 dark:to-blue-950",
+      itemBgHover: "hover:bg-blue-200 dark:hover:bg-blue-900",
+      itemBorder: "border-blue-400 dark:border-blue-600",
+      itemBorderLight: "border-blue-200 dark:border-blue-800",
+      itemText: "text-blue-900 dark:text-blue-300",
+      cardBg: "bg-blue-100 dark:bg-blue-950",
+      cardText: "text-blue-950 dark:text-blue-50",
+      cardBorderHover: "hover:border-blue-400 dark:hover:border-blue-800",
+      badgeBg: "bg-blue-200 dark:bg-blue-900",
+      badgeText: "text-blue-800 dark:text-blue-300",
+    },
+    displayName: "Annet",
   },
   ACADEMIC: {
     colors: {

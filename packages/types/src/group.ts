@@ -6,57 +6,48 @@ import { UserSchema } from "./user/user"
 export const GroupSchema = schemas.GroupSchema.extend({})
 export const GroupTypeSchema = schemas.GroupTypeSchema
 
-export type GroupId = Group["id"]
+export type GroupId = Group["slug"]
 export type Group = z.infer<typeof GroupSchema>
 
 export type GroupType = z.infer<typeof GroupTypeSchema>
 
 export const GroupWriteSchema = GroupSchema.omit({
-  id: true,
+  slug: true,
   createdAt: true,
 })
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
 
-export type GroupMemberRole = z.infer<typeof schemas.GroupMemberRoleSchema>
+export type GroupRole = z.infer<typeof schemas.GroupRoleSchema>
 
-export const GroupMemberPeriodSchema = schemas.GroupMemberPeriodSchema.extend({
-  roles: schemas.GroupMemberPeriodRoleSchema.array(),
-})
-
-export type GroupMemberPeriod = z.infer<typeof GroupMemberPeriodSchema>
-
-export type GroupMemberPeriodWrite = z.infer<typeof GroupMemberPeriodSchema>
-
-export const GroupMemberSchema = schemas.GroupMemberSchema.extend({
-  periods: GroupMemberPeriodSchema.array().min(1),
+export const GroupMembershipSchema = schemas.GroupMembershipSchema.extend({
   user: UserSchema,
 })
 
-export type GroupMember = z.infer<typeof GroupMemberSchema>
+export type GroupMembership = z.infer<typeof GroupMembershipSchema>
 
-export const GroupMemberWriteSchema = GroupMemberSchema.omit({ user: true })
-
-export type GroupMemberWrite = z.infer<typeof GroupMemberWriteSchema>
+export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({ user: true })
+export type GroupMembershipId = GroupMembership["id"]
+export type GroupMembershipWrite = z.infer<typeof GroupMembershipWriteSchema>
 
 export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
   [
-    { groupId, name: "Leder" },
-    { groupId, name: "Nestleder" },
-    { groupId, name: "Tillitsvalgt" },
-    { groupId, name: "Økonomiansvarlig" },
-    { groupId, name: "Vinstraffansvarlig" },
-    { groupId, name: "Medlem" },
-  ] as const satisfies GroupMemberRole[]
+    { groupId, type: "LEADER", name: "Leder" },
+    { groupId, type: "PUNISHER", name: "Vinstraffansvarlig" },
+    { groupId, type: "COSMETIC", name: "Nestleder" },
+    { groupId, type: "COSMETIC", name: "Tillitsvalgt" },
+    { groupId, type: "COSMETIC", name: "Økonomiansvarlig" },
+    { groupId, type: "COSMETIC", name: "Medlem" },
+  ] as const satisfies GroupRole[]
 
 export const createGroupPageUrl = (group: Group) => {
   switch (group.type) {
     case "COMMITTEE":
-      return `/komiteer/${group.id}`
-    case "NODECOMMITTEE":
-      return `/nodekomiteer/${group.id}`
-    case "OTHERGROUP":
-      return `/interessegrupper/${group.id}`
+      return `/komiteer/${group.slug}`
+    case "NODE_COMMITTEE":
+      return `/nodekomiteer/${group.slug}`
+    case "ASSOCIATED":
+      return `/andre-grupper/${group.slug}`
     default:
       throw new Error(`Unknown group type: ${group.type}`)
   }
@@ -66,9 +57,9 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
   switch (type) {
     case "COMMITTEE":
       return "Komité"
-    case "NODECOMMITTEE":
+    case "NODE_COMMITTEE":
       return "Nodekomité"
-    case "OTHERGROUP":
+    case "ASSOCIATED":
       return "Annen gruppe"
     default:
       return "Ukjent type"

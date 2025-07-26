@@ -29,7 +29,7 @@ export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, 
         </Anchor>
       ))}
       {groups.map((group) => (
-        <Anchor key={group.id} component={Link} size="sm" href={`/group/${group.id}`}>
+        <Anchor key={group.slug} component={Link} size="sm" href={`/group/${group.slug}`}>
           {group.name}
         </Anchor>
       ))}

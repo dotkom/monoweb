@@ -36,21 +36,19 @@ describe("GroupService", () => {
 
   it("creates a new group", async () => {
     const group: Omit<Group, "id"> = {
-      name: "Dotkom",
-      fullName: "Drifts- og utviklingskomiteen",
+      slug: "dotkom",
+      abbreviation: "Dotkom",
+      name: "Drifts- og utviklingskomiteen",
       createdAt: new Date(),
-      description: "Dotkom er har ansvaret for å gjøre ting",
-      shortDescription: "Dotkom gjør ting",
+      about: "Dotkom er har ansvaret for å gjøre ting",
+      description: "Dotkom gjør ting",
       email: "dotkom@online.ntnu.no",
       imageUrl: null,
       type: "COMMITTEE",
-      contactUserId: null,
-      leaderRoleName: "Leder",
-      link: null,
-      punisherRoleName: null,
+      contactUrl: null,
     }
     const id = randomUUID()
-    vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ id, ...group })
+    vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ ...group })
     const created = await groupService.create(db, group)
     expect(created).toEqual({ id, ...group })
     expect(groupRepository.create).toHaveBeenCalledWith(db, group)

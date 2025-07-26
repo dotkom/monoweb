@@ -35,7 +35,6 @@ const eventPayload: Omit<Event, "id"> = {
   locationTitle: "Verkstedteknisk: VE22",
   locationLink: null,
   locationAddress: null,
-  public: false,
   start: new Date(),
   end: new Date(),
   createdAt: new Date(2022, 1, 1),

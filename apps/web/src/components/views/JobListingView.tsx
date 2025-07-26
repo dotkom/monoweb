@@ -25,7 +25,7 @@ export const JobListingView: FC<JobListingViewProps> = ({ jobListing }: JobListi
     end,
     featured,
     id,
-    ingress,
+    about,
     locations,
     start,
     deadline,
@@ -40,7 +40,7 @@ export const JobListingView: FC<JobListingViewProps> = ({ jobListing }: JobListi
           )}
         </div>
 
-        <p>{ingress}</p>
+        <p>{about}</p>
 
         <div className="bg-black mx-auto mb-14 mt-10 h-[0.5px] w-full" />
         <Link href="/karriere">

@@ -19,7 +19,6 @@ describe("CompanyService", () => {
       phone: "+47 123 45 678",
       website: "www.duckmouse.no",
       location: "Mars",
-      type: "OTHER",
       createdAt: new Date(),
       imageUrl: null,
     }

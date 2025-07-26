@@ -31,15 +31,15 @@ export const useGroupWriteForm = ({
         required: true,
       }),
       description: createTextareaInput({
-        label: "Beskrivelse",
-        withAsterisk: true,
-        required: true,
-        rows: 5,
-      }),
-      shortDescription: createTextareaInput({
         label: "Kort beskrivelse",
         withAsterisk: false,
         required: false,
+        rows: 5,
+      }),
+      about: createTextareaInput({
+        label: "Beskrivelse",
+        withAsterisk: true,
+        required: true,
         rows: 5,
       }),
       email: createTextInput({

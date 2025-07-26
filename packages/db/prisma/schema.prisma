@@ -17,232 +17,162 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum EventStatus {
-  DRAFT
-  PUBLIC
-  DELETED
-
-  @@map("event_status")
-}
-
-enum EventType {
-  SOCIAL
-  ACADEMIC
-  COMPANY
-  BEDPRES
-
-  @@map("event_type")
-}
-
-enum PaymentProvider {
-  STRIPE
-
-  @@map("payment_provider")
-}
-
-enum ProductType {
-  EVENT
-
-  @@map("product_type")
-}
-
-enum PaymentStatus {
-  UNPAID
-  PAID
-  REFUNDED
-
-  @@map("payment_status")
-}
-
-enum RefundRequestStatus {
-  PENDING
-  APPROVED
-  REJECTED
-
-  @@map("refund_request_status")
-}
-
-enum CompanyType {
-  CONSULTING
-  RESEARCH
-  DEVELOPMENT
-  OTHER
-  UNKNOWN
-
-  @@map("company_type")
-}
-
-enum EmploymentType {
-  PARTTIME
-  FULLTIME
-  SUMMER_INTERNSHIP
-  OTHER
-
-  @@map("employment_type")
-}
-
-enum GroupType {
-  COMMITTEE
-  NODECOMMITTEE
-  OTHERGROUP
-
-  @@map("group_type")
-}
-
-model OwUser {
+model User {
   id          String @id
   profileSlug String @unique @default(uuid())
 
-  privacyPermissionsId      String?             @unique
-  PrivacyPermissions        PrivacyPermissions?
+  privacyPermissionsId String?             @unique
+  privacyPermissions   PrivacyPermissions?
 
   notificationPermissionsId String?                  @unique
-  NotificationPermissions   NotificationPermissions?
+  notificationPermissions   NotificationPermissions?
 
-  Attendee                  Attendee[]
-  Payment                   Payment[]
-  RequestedRefunds          RefundRequest[]       @relation("RequestedBy")
-  HandledRefunds            RefundRequest[]       @relation("HandledBy")
-  PersonalMark              PersonalMark[]
-  InterestGroupsMemberships InterestGroupMember[]
-  GroupMemberships          GroupMember[]
-  Groups                    Group[]               @relation("ContactUser")
+  attendee                  Attendee[]
+  payment                   Payment[]
+  requestedRefunds          RefundRequest[]       @relation("RequestedBy")
+  handledRefunds            RefundRequest[]       @relation("HandledBy")
+  personalMark              PersonalMark[]
+  interestGroupsMemberships InterestGroupMember[]
+  groupMemberships          GroupMembership[]
 
   @@map("ow_user")
 }
 
 model Company {
-  id          String         @id @default(uuid())
-  createdAt   DateTime       @default(now()) @db.Timestamptz(3)
+  id          String   @id @default(uuid())
   name        String
-  slug        String         @unique
+  slug        String   @unique
   description String?
   phone       String?
   email       String?
   website     String
   location    String?
-  type        CompanyType
   imageUrl    String?
-  events      EventCompany[]
-  JobListing  JobListing[]
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  events     EventCompany[]
+  JobListing JobListing[]
 
   @@map("company")
 }
 
+enum GroupType {
+  COMMITTEE      @map("COMMITTEE")
+  NODE_COMMITTEE @map("NODE_COMMITTEE")
+  ASSOCIATED     @map("ASSOCIATED")
+
+  @@map("group_type")
+}
+
 model Group {
-  id               String   @id @unique
-  createdAt        DateTime @default(now()) @db.Timestamptz(3)
-  name             String
-  fullName         String?
-  description      String
-  imageUrl         String?
-  shortDescription String?
-  
-  email         String?
-  link          String?
-  contactUserId String?
-  contactUser   OwUser? @relation("ContactUser", fields: [contactUserId], references: [id])
+  slug         String   @id @unique
+  abbreviation String
+  name         String?
+  description  String?
+  about        String
+  imageUrl     String?
+  email        String?
+  contactUrl   String?
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
 
-  events  EventHostingGroup[]
-  type    GroupType
-  members GroupMember[]
+  events      EventHostingGroup[]
+  type        GroupType
+  memberships GroupMembership[]
 
-  leaderRoleName   String           @default("Leder")
-  leaderRole       GroupMemberRole  @relation("LeaderRole", fields: [id, leaderRoleName], references: [groupId, name])
-  punisherRoleName String?
-  punisherRole     GroupMemberRole? @relation("PunisherRole", fields: [id, punisherRoleName], references: [groupId, name])
-
-  @@unique([id, leaderRoleName])
-  @@unique([id, punisherRoleName])
   @@map("group")
 }
 
-model GroupMember {
-  groupId String
-  group   Group  @relation(fields: [groupId], references: [id])
+model GroupMembership {
+  id        String    @id @default(uuid())
+  groupId   String
+  group     Group     @relation(fields: [groupId], references: [slug])
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  start     DateTime  @db.Timestamptz(3)
+  end       DateTime? @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
 
-  userId String
-  user   OwUser @relation(fields: [userId], references: [id])
+  roles GroupMembershipRole[]
 
-  createdAt DateTime            @default(now()) @db.Timestamptz(3)
-  active    Boolean             @default(true)
-  periods   GroupMemberPeriod[]
-
-  @@id([groupId, userId])
-  @@map("group_member")
+  @@map("group_membership")
 }
 
-model GroupMemberPeriod {
-  id String @id @default(uuid())
+model GroupMembershipRole {
+  membershipId String
+  membership   GroupMembership @relation(fields: [membershipId], references: [id])
+  groupId      String
+  roleName     String
+  role         GroupRole       @relation(fields: [groupId, roleName], references: [groupId, name])
 
-  groupId     String
-  userId      String
-  groupMember GroupMember @relation(fields: [groupId, userId], references: [groupId, userId])
-
-  startedAt DateTime  @default(now()) @db.Timestamptz(3)
-  endedAt   DateTime? @db.Timestamptz(3)
-
-  roles GroupMemberPeriodRole[]
-
-  @@map("group_member_period")
+  @@id([membershipId, groupId, roleName])
+  @@map("group_membership_role")
 }
 
-model GroupMemberPeriodRole {
-  periodId String
-  period   GroupMemberPeriod @relation(fields: [periodId], references: [id])
-  groupId  String
-  roleName String
-  role     GroupMemberRole   @relation(fields: [groupId, roleName], references: [groupId, name])
+enum GroupRoleType {
+  LEADER   @map("LEADER")
+  PUNISHER @map("PUNISHER")
+  COSMETIC @map("COSMETIC")
 
-  @@id([periodId, groupId, roleName])
-  @@map("group_member_period_role")
+  @@map("group_role_type")
 }
 
-model GroupMemberRole {
+model GroupRole {
   groupId String
   name    String
+  type    GroupRoleType @default(COSMETIC)
 
-  leaderIn   Group? @relation("LeaderRole")
-  punisherIn Group? @relation("PunisherRole")
-
-  groupMemberPeriods GroupMemberPeriodRole[]
+  groupMembershipRoles GroupMembershipRole[]
 
   @@id([groupId, name])
-  @@map("group_member_role")
+  @@map("group_role")
+}
+
+enum EventStatus {
+  DRAFT   @map("DRAFT")
+  PUBLIC  @map("PUBLIC")
+  DELETED @map("DELETED")
+
+  @@map("event_status")
+}
+
+enum EventType {
+  SOCIAL           @map("SOCIAL")
+  ACADEMIC         @map("ACADEMIC")
+  COMPANY          @map("COMPANY")
+  // This is called "Generalforsamling" in Norwegian and happens twice a year.
+  GENERAL_ASSEMBLY @map("GENERAL_ASSEMBLY")
+  INTERNAL         @map("INTERNAL")
+  OTHER            @map("OTHER")
+
+  @@map("event_type")
 }
 
 model Attendance {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-
+  id                 String   @id @default(uuid())
   registerStart      DateTime @db.Timestamptz(3)
-  deregisterDeadline DateTime @db.Timestamptz(3)
   registerEnd        DateTime @db.Timestamptz(3)
-
-  selections Json @default("[]")
+  deregisterDeadline DateTime @db.Timestamptz(3)
+  selections         Json     @default("[]")
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
 
   pools     AttendancePool[]
   attendees Attendee[]
-
-  events Event[]
+  events    Event[]
 
   @@map("attendance")
 }
 
 model AttendancePool {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-
-  attendance   Attendance @relation(fields: [attendanceId], references: [id])
-  attendanceId String
-
-  title String
-
+  id              String     @id @default(uuid())
+  attendanceId    String
+  attendance      Attendance @relation(fields: [attendanceId], references: [id])
+  title           String
   mergeDelayHours Int?
   yearCriteria    Json
   capacity        Int
+  createdAt       DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime   @updatedAt @db.Timestamptz(3)
 
   attendees Attendee[]
 
@@ -250,58 +180,50 @@ model AttendancePool {
 }
 
 model Attendee {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-
-  attendance   Attendance @relation(fields: [attendanceId], references: [id])
-  attendanceId String
-
-  user   OwUser @relation(fields: [userId], references: [id])
-  userId String
-
-  attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
-  attendancePoolId String
-
-  feedbackFormAnswer FeedbackFormAnswer?
-
+  id                    String              @id @default(uuid())
+  attendance            Attendance          @relation(fields: [attendanceId], references: [id])
+  attendanceId          String
+  user                  User                @relation(fields: [userId], references: [id])
+  userId                String
+  userGrade             Int?
+  attendancePool        AttendancePool      @relation(fields: [attendancePoolId], references: [id])
+  attendancePoolId      String
+  feedbackFormAnswer    FeedbackFormAnswer?
   /// Which options the user has selected from the Attendance selections
-  selections Json @default("[]")
-
+  selections            Json                @default("[]")
   /// To preserve the user's grade at the time of registration
-  userGrade Int?
-
-  reserved Boolean
-  attended Boolean @default(false)
-
-  reserveTime DateTime @db.Timestamptz(3)
+  attended              Boolean             @default(false)
+  reserved              Boolean
+  earliestReservationAt DateTime            @db.Timestamptz(3)
+  createdAt             DateTime            @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime            @updatedAt @db.Timestamptz(3)
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
 }
 
 model Event {
-  id              String               @id @default(uuid())
-  createdAt       DateTime             @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime             @updatedAt @db.Timestamptz(3)
+  id              String        @id @default(uuid())
   title           String
-  start           DateTime             @db.Timestamptz(3)
-  end             DateTime             @db.Timestamptz(3)
+  start           DateTime      @db.Timestamptz(3)
+  end             DateTime      @db.Timestamptz(3)
   status          EventStatus
-  public          Boolean
   description     String?
   subtitle        String?
   imageUrl        String?
   locationTitle   String
   locationAddress String?
   locationLink    String?
-  attendance      Attendance?          @relation(fields: [attendanceId], references: [id])
+  attendance      Attendance?   @relation(fields: [attendanceId], references: [id])
   attendanceId    String?
   type            EventType
-  companies       EventCompany[]
-  hostingGroups   EventHostingGroup[]
-  interestGroups  EventInterestGroup[]
   feedbackForm    FeedbackForm?
+  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
+
+  companies      EventCompany[]
+  hostingGroups  EventHostingGroup[]
+  interestGroups EventInterestGroup[]
 
   @@map("event")
 }
@@ -317,14 +239,16 @@ model EventCompany {
 }
 
 model Mark {
-  id        String         @id @default(uuid())
-  title     String
-  updatedAt DateTime       @updatedAt @db.Timestamptz(3)
-  createdAt DateTime       @default(now()) @db.Timestamptz(3)
-  category  String
-  details   String?
-  duration  Int
-  users     PersonalMark[]
+  id       String  @id @default(uuid())
+  title    String
+  category String
+  details  String?
+  duration Int
+
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  users PersonalMark[]
 
   @@map("mark")
 }
@@ -332,42 +256,72 @@ model Mark {
 model PersonalMark {
   mark   Mark   @relation(fields: [markId], references: [id])
   markId String
-  user   OwUser @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
   userId String
 
   @@id([markId, userId])
   @@map("personal_mark")
 }
 
+enum PaymentProvider {
+  STRIPE @map("STRIPE")
+
+  @@map("payment_provider")
+}
+
+enum ProductType {
+  EVENT @map("EVENT")
+
+  @@map("product_type")
+}
+
+enum PaymentStatus {
+  UNPAID   @map("UNPAID")
+  PAID     @map("PAID")
+  REFUNDED @map("REFUNDED")
+
+  @@map("payment_status")
+}
+
+enum RefundRequestStatus {
+  PENDING  @map("PENDING")
+  APPROVED @map("APPROVED")
+  REJECTED @map("REJECTED")
+
+  @@map("refund_request_status")
+}
+
 model Product {
-  id                     String                   @id @default(uuid())
-  createdAt              DateTime                 @default(now()) @db.Timestamptz(3)
-  updatedAt              DateTime                 @updatedAt @db.Timestamptz(3)
+  id                     String      @id @default(uuid())
   type                   ProductType
-  objectId               String?                  @unique
+  objectId               String?     @unique
   amount                 Int
-  deletedAt              DateTime?                @db.Timestamptz(3)
-  isRefundable           Boolean                  @default(true)
-  refundRequiresApproval Boolean                  @default(true)
-  payments               Payment[]
-  paymentProviders       ProductPaymentProvider[]
+  deletedAt              DateTime?   @db.Timestamptz(3)
+  isRefundable           Boolean     @default(true)
+  refundRequiresApproval Boolean     @default(true)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  payments         Payment[]
+  paymentProviders ProductPaymentProvider[]
 
   @@map("product")
 }
 
 model Payment {
   id                       String         @id @default(uuid())
-  createdAt                DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt                DateTime       @updatedAt @db.Timestamptz(3)
   product                  Product        @relation(fields: [productId], references: [id])
   productId                String
-  user                     OwUser         @relation(fields: [userId], references: [id])
+  user                     User           @relation(fields: [userId], references: [id])
   userId                   String
   paymentProviderId        String
   paymentProviderSessionId String
   paymentProviderOrderId   String?
   status                   PaymentStatus
   refundRequest            RefundRequest?
+  createdAt                DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt                DateTime       @updatedAt @db.Timestamptz(3)
 
   @@map("payment")
 }
@@ -384,16 +338,17 @@ model ProductPaymentProvider {
 
 model RefundRequest {
   id          String              @id @default(uuid())
-  createdAt   DateTime            @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime            @updatedAt @db.Timestamptz(3)
   payment     Payment             @relation(fields: [paymentId], references: [id])
   paymentId   String              @unique
-  user        OwUser              @relation("RequestedBy", fields: [userId], references: [id])
+  user        User                @relation("RequestedBy", fields: [userId], references: [id])
   userId      String
   reason      String
   status      RefundRequestStatus @default(PENDING)
-  handledBy   OwUser?             @relation("HandledBy", fields: [handledById], references: [id])
+  handledBy   User?               @relation("HandledBy", fields: [handledById], references: [id])
   handledById String?
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   @@map("refund_request")
 }
@@ -402,7 +357,7 @@ model PrivacyPermissions {
   id                String   @id @default(uuid())
   createdAt         DateTime @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime @updatedAt @db.Timestamptz(3)
-  user              OwUser   @relation(fields: [userId], references: [id])
+  user              User     @relation(fields: [userId], references: [id])
   userId            String   @unique
   profileVisible    Boolean  @default(true)
   usernameVisible   Boolean  @default(true)
@@ -418,7 +373,7 @@ model NotificationPermissions {
   id                          String   @id @default(uuid())
   createdAt                   DateTime @default(now()) @db.Timestamptz(3)
   updatedAt                   DateTime @updatedAt @db.Timestamptz(3)
-  user                        OwUser   @relation(fields: [userId], references: [id])
+  user                        User     @relation(fields: [userId], references: [id])
   userId                      String   @unique
   applications                Boolean  @default(true)
   newArticles                 Boolean  @default(true)
@@ -435,31 +390,44 @@ model NotificationPermissions {
 model EventHostingGroup {
   groupId String
   eventId String
-  group   Group  @relation(fields: [groupId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [slug])
   event   Event  @relation(fields: [eventId], references: [id])
 
   @@id([groupId, eventId])
   @@map("event_hosting_group")
 }
 
+enum EmploymentType {
+  PARTTIME          @map("PARTTIME")
+  FULLTIME          @map("FULLTIME")
+  SUMMER_INTERNSHIP @map("SUMMER_INTERNSHIP")
+  OTHER             @map("OTHER")
+
+  @@map("employment_type")
+}
+
 model JobListing {
-  id               String               @id @default(uuid())
-  createdAt        DateTime             @default(now()) @db.Timestamptz(3)
-  company          Company              @relation(fields: [companyId], references: [id])
+  id               String         @id @default(uuid())
   companyId        String
+  company          Company        @relation(fields: [companyId], references: [id])
   title            String
-  ingress          String
   description      String
-  start            DateTime             @db.Timestamptz(3)
-  end              DateTime             @db.Timestamptz(3)
+  about            String
+  start            DateTime       @db.Timestamptz(3)
+  end              DateTime       @db.Timestamptz(3)
   featured         Boolean
   hidden           Boolean
-  deadline         DateTime?            @db.Timestamptz(3)
+  deadline         DateTime?      @db.Timestamptz(3)
   employment       EmploymentType
   applicationLink  String?
   applicationEmail String?
+  // TODO: Find a better name for this
   deadlineAsap     Boolean
-  locations        JobListingLocation[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  locations JobListingLocation[]
 
   @@map("job_listing")
 }
@@ -475,37 +443,40 @@ model JobListingLocation {
 }
 
 model Offline {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-  title     String
-  published DateTime @db.Timestamptz(3)
-  fileUrl   String?
-  imageUrl  String?
+  id          String   @id @default(uuid())
+  title       String
+  fileUrl     String?
+  imageUrl    String?
+  publishedAt DateTime @db.Timestamptz(3)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
 
   @@map("offline")
 }
 
 model Article {
-  id           String           @id @default(uuid())
-  createdAt    DateTime         @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime         @updatedAt @db.Timestamptz(3)
+  id           String  @id @default(uuid())
   title        String
   author       String
   photographer String
   imageUrl     String
-  slug         String           @unique
+  slug         String  @unique
   excerpt      String
   content      String
-  isFeatured   Boolean          @default(false)
+  isFeatured   Boolean @default(false)
   vimeoId      String?
-  tags         ArticleTagLink[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  tags ArticleTagLink[]
 
   @@map("article")
 }
 
 model ArticleTag {
-  name     String           @id
+  name String @id
+
   articles ArticleTagLink[]
 
   @@map("article_tag")
@@ -522,18 +493,20 @@ model ArticleTagLink {
 }
 
 model InterestGroup {
-  id              String                @id @default(uuid())
-  createdAt       DateTime              @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime              @updatedAt @db.Timestamptz(3)
+  id              String  @id @default(uuid())
   name            String
   description     String
   link            String?
-  isActive        Boolean               @default(true)
+  isActive        Boolean @default(true)
   longDescription String?
   joinInfo        String?
   imageUrl        String?
-  members         InterestGroupMember[]
-  events          EventInterestGroup[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  members InterestGroupMember[]
+  events  EventInterestGroup[]
 
   @@map("interest_group")
 }
@@ -543,7 +516,7 @@ model InterestGroupMember {
   interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
 
   userId String
-  user   OwUser @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   @@id([interestGroupId, userId])
   @@map("interest_group_member")
@@ -559,87 +532,88 @@ model EventInterestGroup {
   @@map("event_interest_group")
 }
 
-enum TaskKind {
-  ATTEMPT_RESERVE_ATTENDEE
-  MERGE_POOLS
+enum TaskType {
+  ATTEMPT_RESERVE_ATTENDEE @map("ATTEMPT_RESERVE_ATTENDEE")
+  MERGE_POOLS              @map("MERGE_POOLS")
 
   // The table is called job_name for legacy reasons.
-  @@map("job_name")
+  @@map("task_type")
 }
 
 enum TaskStatus {
-  PENDING
-  RUNNING
-  COMPLETED
-  FAILED
-  CANCELED
+  PENDING   @map("PENDING")
+  RUNNING   @map("RUNNING")
+  COMPLETED @map("COMPLETED")
+  FAILED    @map("FAILED")
+  CANCELED  @map("CANCELED")
 
   // The table is called job_status for legacy reasons.
-  @@map("job_status")
+  @@map("task_status")
 }
 
 model Task {
   id          String     @id @default(uuid())
+  type        TaskType
+  status      TaskStatus @default(PENDING)
+  payload     Json       @default("{}")
   createdAt   DateTime   @default(now()) @db.Timestamptz(3)
   scheduledAt DateTime   @db.Timestamptz(3)
   processedAt DateTime?  @db.Timestamptz(3)
-  // The field is called name for legacy reasons.
-  kind        TaskKind   @map("name")
-  status      TaskStatus @default(PENDING)
-  payload     Json       @default("{}")
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
-  // The table is called job for legacy reasons.
-  @@map("job")
+  @@map("task")
 }
 
 enum FeedbackQuestionType {
-  TEXT
-  LONGTEXT
-  RATING
-  CHECKBOX
-  SELECT
-  MULTISELECT
+  TEXT        @map("TEXT")
+  LONGTEXT    @map("LONGTEXT")
+  RATING      @map("RATING")
+  CHECKBOX    @map("CHECKBOX")
+  SELECT      @map("SELECT")
+  MULTISELECT @map("MULTISELECT")
 
   @@map("feedback_question_type")
 }
 
 model FeedbackForm {
-  id        String               @id @default(uuid())
-  createdAt DateTime             @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime             @updatedAt @db.Timestamptz(3)
-  eventId   String               @unique
-  event     Event                @relation(fields: [eventId], references: [id])
+  id                 String   @id @default(uuid())
+  eventId            String   @unique
+  event              Event    @relation(fields: [eventId], references: [id])
+  isActive           Boolean  @default(false)
+  publicResultsToken String   @unique @default(uuid())
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
-  isActive  Boolean              @default(false)
-  publicResultsToken  String     @unique @default(uuid())
 
   @@map("feedback_form")
 }
 
 model FeedbackQuestion {
-  id                   String                   @id @default(uuid())
-  createdAt            DateTime                 @default(now()) @db.Timestamptz(3)
-  updatedAt            DateTime                 @updatedAt @db.Timestamptz(3)
-  feedbackFormId       String
-  feedbackForm         FeedbackForm             @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
-  label                String
-  required             Boolean                  @default(false)
-  showInPublicResults  Boolean                  @default(true)
-  type                 FeedbackQuestionType
-  order                Int
-  options              FeedbackQuestionOption[]
-  answers              FeedbackQuestionAnswer[] @relation("QuestionAnswers")
+  id                  String               @id @default(uuid())
+  feedbackFormId      String
+  feedbackForm        FeedbackForm         @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
+  label               String
+  required            Boolean              @default(false)
+  showInPublicResults Boolean              @default(true)
+  type                FeedbackQuestionType
+  order               Int
+  createdAt           DateTime             @default(now()) @db.Timestamptz(3)
+  updatedAt           DateTime             @updatedAt @db.Timestamptz(3)
+
+  options FeedbackQuestionOption[]
+  answers FeedbackQuestionAnswer[] @relation("QuestionAnswers")
 
   @@map("feedback_question")
 }
 
 model FeedbackQuestionOption {
-  id                String                             @id @default(uuid())
-  name              String
-  questionId        String
-  question          FeedbackQuestion                   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  id         String           @id @default(uuid())
+  name       String
+  questionId String
+  question   FeedbackQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
   selectedInAnswers FeedbackQuestionAnswerOptionLink[]
 
   @@unique([questionId, name])
@@ -647,12 +621,13 @@ model FeedbackQuestionOption {
 }
 
 model FeedbackQuestionAnswer {
-  id              String                             @id @default(uuid())
-  questionId      String
-  question        FeedbackQuestion                   @relation("QuestionAnswers", fields: [questionId], references: [id])
-  formAnswerId    String
-  formAnswer      FeedbackFormAnswer                 @relation("FormAnswers", fields: [formAnswerId], references: [id], onDelete: Cascade)
-  value           Json?
+  id           String             @id @default(uuid())
+  questionId   String
+  question     FeedbackQuestion   @relation("QuestionAnswers", fields: [questionId], references: [id])
+  formAnswerId String
+  formAnswer   FeedbackFormAnswer @relation("FormAnswers", fields: [formAnswerId], references: [id], onDelete: Cascade)
+  value        Json?
+
   selectedOptions FeedbackQuestionAnswerOptionLink[]
 
   @@map("feedback_question_answer")
@@ -669,14 +644,15 @@ model FeedbackQuestionAnswerOptionLink {
 }
 
 model FeedbackFormAnswer {
-  id             String                   @id @default(uuid())
-  createdAt      DateTime                 @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime                 @updatedAt @db.Timestamptz(3)
+  id             String       @id @default(uuid())
   feedbackFormId String
-  feedbackForm   FeedbackForm             @relation(fields: [feedbackFormId], references: [id])
-  answers        FeedbackQuestionAnswer[] @relation("FormAnswers")
-  attendeeId     String                   @unique
-  attendee       Attendee                 @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
+  feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id])
+  attendeeId     String       @unique
+  attendee       Attendee     @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @db.Timestamptz(3)
+
+  answers FeedbackQuestionAnswer[] @relation("FormAnswers")
 
   @@map("feedback_form_answer")
 }

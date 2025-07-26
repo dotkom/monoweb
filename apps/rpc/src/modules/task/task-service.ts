@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task, TaskId, TaskKind, TaskStatus, TaskWrite } from "@dotkomonline/types"
+import type { Task, TaskId, TaskStatus, TaskType, TaskWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { IllegalStateError } from "../../error"
 import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
@@ -9,7 +9,7 @@ import type { TaskRepository } from "./task-repository"
 
 export type TaskService = {
   getById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
-  getPendingTasks(handle: DBHandle, kind: TaskKind): Promise<Task[]>
+  getPendingTasks(handle: DBHandle, kind: TaskType): Promise<Task[]>
   /**
    * Updates a task
    *
@@ -47,7 +47,7 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
       // If the caller wants to update the task data, we must validate it against the task kind.
       let newPayload = requestedTask.payload
       if (data.payload) {
-        const definition = getTaskDefinition(requestedTask.kind)
+        const definition = getTaskDefinition(requestedTask.type)
         newPayload = this.parse(definition, data.payload) as JsonValue
       }
       // Update the task with the new data and the updated and validated payload.
@@ -75,8 +75,8 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
       const schema = taskDefinition.getSchema()
       const result = schema.safeParse(payload)
       if (!result.success) {
-        logger.error("Failed to parse task payload for TaskKind=%s: %o", taskDefinition.kind, result.error)
-        throw new TaskDataValidationError(taskDefinition.kind, result.error)
+        logger.error("Failed to parse task payload for TaskKind=%s: %o", taskDefinition.type, result.error)
+        throw new TaskDataValidationError(taskDefinition.type, result.error)
       }
       return result.data
     },

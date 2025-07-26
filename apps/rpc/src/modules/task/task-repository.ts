@@ -1,21 +1,21 @@
 import type { DBHandle, TaskStatus } from "@dotkomonline/db"
-import type { Task, TaskId, TaskKind, TaskWrite } from "@dotkomonline/types"
+import type { Task, TaskId, TaskType, TaskWrite } from "@dotkomonline/types"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 
 export interface TaskRepository {
-  create(handle: DBHandle, kind: TaskKind, data: TaskWrite): Promise<Task>
+  create(handle: DBHandle, type: TaskType, data: TaskWrite): Promise<Task>
   update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState?: TaskStatus): Promise<Task | null>
   delete(handle: DBHandle, taskId: TaskId): Promise<void>
   getById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
   getAll(handle: DBHandle): Promise<Task[]>
-  getPendingTasks(handle: DBHandle, kind: TaskKind): Promise<Task[]>
+  getPendingTasks(handle: DBHandle, type: TaskType): Promise<Task[]>
 }
 
 export function getTaskRepository(): TaskRepository {
   return {
-    async create(handle, kind, data) {
+    async create(handle, type, data) {
       const payload = data.payload ?? undefined
-      return await handle.task.create({ data: { ...data, payload, kind } })
+      return await handle.task.create({ data: { ...data, payload, type } })
     },
     async update(handle, taskId, data, oldStatus) {
       try {
@@ -46,12 +46,12 @@ export function getTaskRepository(): TaskRepository {
     async getAll(handle) {
       return await handle.task.findMany()
     },
-    async getPendingTasks(handle, kind) {
+    async getPendingTasks(handle, type) {
       return await handle.task.findMany({
         where: {
           scheduledAt: { lte: new Date() },
           status: "PENDING",
-          kind,
+          type,
         },
       })
     },

@@ -30,7 +30,7 @@ const OfflinePage = async () => {
 
 function groupOfflinesByYear(offlines: Offline[]) {
   return offlines.reduce<Record<number, Offline[]>>((acc, offline) => {
-    const year = offline.published.getFullYear()
+    const year = offline.publishedAt.getFullYear()
 
     acc[year] ??= []
     acc[year].push(offline)

@@ -1,18 +1,18 @@
-import { AttendancePoolWriteSchema, AttendanceSchema, type TaskKind, UserSchema } from "@dotkomonline/types"
+import { AttendancePoolWriteSchema, AttendanceSchema, type TaskType, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { TaskDefinitionNotFoundError } from "./task-error"
 
-export interface TaskDefinition<TData, TKind extends TaskKind> {
+export interface TaskDefinition<TData, TType extends TaskType> {
   getSchema(): z.ZodSchema<TData>
-  kind: TKind
+  type: TType
 }
 
-export type InferTaskData<TDef> = TDef extends TaskDefinition<infer TData, infer TKind> ? TData : never
-export type InferTaskKind<TDef> = TDef extends TaskDefinition<infer TData, infer TKind extends TaskKind> ? TKind : never
+export type InferTaskData<TDef> = TDef extends TaskDefinition<infer TData, infer TType> ? TData : never
+export type InferTaskType<TDef> = TDef extends TaskDefinition<infer TData, infer TType extends TaskType> ? TType : never
 
-export function createTaskDefinition<const TData, const TKind extends TaskKind>(
-  definition: TaskDefinition<TData, TKind>
-): TaskDefinition<TData, TKind> {
+export function createTaskDefinition<const TData, const TType extends TaskType>(
+  definition: TaskDefinition<TData, TType>
+): TaskDefinition<TData, TType> {
   return definition
 }
 
@@ -22,7 +22,7 @@ export type AnyTaskDefinition = AttemptReserveAttendeeTaskDefinition | MergePool
 
 export const tasks = {
   ATTEMPT_RESERVE_ATTENDEE: createTaskDefinition({
-    kind: "ATTEMPT_RESERVE_ATTENDEE",
+    type: "ATTEMPT_RESERVE_ATTENDEE",
     getSchema: () =>
       z.object({
         userId: UserSchema.shape.id,
@@ -30,7 +30,7 @@ export const tasks = {
       }),
   }),
   MERGE_POOLS: createTaskDefinition({
-    kind: "MERGE_POOLS",
+    type: "MERGE_POOLS",
     getSchema: () =>
       z.object({
         attendanceId: AttendanceSchema.shape.id,
@@ -39,10 +39,10 @@ export const tasks = {
   }),
 }
 
-export function getTaskDefinition<TKind extends TaskKind>(kind: TKind): TaskDefinition<unknown, TKind> {
-  const task = Object.values(tasks).find((task) => task.kind === kind)
+export function getTaskDefinition<TType extends TaskType>(type: TType): TaskDefinition<unknown, TType> {
+  const task = Object.values(tasks).find((task) => task.type === type)
   if (task === undefined) {
-    throw new TaskDefinitionNotFoundError(kind)
+    throw new TaskDefinitionNotFoundError(type)
   }
-  return task as TaskDefinition<unknown, TKind>
+  return task as TaskDefinition<unknown, TType>
 }

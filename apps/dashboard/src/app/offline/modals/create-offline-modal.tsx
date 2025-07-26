@@ -14,7 +14,7 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
     onSubmit: async (data) => {
       const toSave: OfflineWrite = {
         title: data.title,
-        published: data.published,
+        publishedAt: data.publishedAt,
         id: data.id,
         fileUrl: data.fileUrl,
         imageUrl: data.imageUrl,

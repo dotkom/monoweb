@@ -26,7 +26,7 @@ export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValu
         placeholder: "Offline #50",
         required: true,
       }),
-      published: createDateTimeInput({
+      publishedAt: createDateTimeInput({
         label: "Utgivelsesdato",
         placeholder: "2023-10-05",
       }),

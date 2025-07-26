@@ -1,11 +1,6 @@
 {
   "extends": "../../packages/config/tsconfig.json",
-  "include": [
-    "./**/*.ts",
-    "./**/*.tsx",
-    "next-env.d.ts",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["./**/*.ts", "./**/*.tsx", "next-env.d.ts"],
   "exclude": [],
   "compilerOptions": {
     "baseUrl": ".",

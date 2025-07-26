@@ -3,7 +3,7 @@ import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"
 
 export default async function OtherGroupsPage() {
-  const otherGroups = await server.group.allByType.query("OTHERGROUP")
+  const otherGroups = await server.group.allByType.query("ASSOCIATED")
 
   return (
     <div>

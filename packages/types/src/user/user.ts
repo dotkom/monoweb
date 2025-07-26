@@ -2,15 +2,15 @@ import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 import { MembershipSchema } from "./membership"
 
-export const OwUserSchema = schemas.OwUserSchema.extend({})
+export const DBUserSchema = schemas.UserSchema.extend({})
 
-export type OwUser = z.infer<typeof OwUserSchema>
+export type DBUSer = z.infer<typeof DBUserSchema>
 
-export const OwUserWriteSchema = OwUserSchema.omit({
+export const DBUserWriteSchema = DBUserSchema.omit({
   id: true,
 })
 
-export type OwUserWrite = z.infer<typeof OwUserWriteSchema>
+export type DBUserWrite = z.infer<typeof DBUserWriteSchema>
 
 export const GenderSchema = z.enum(["male", "female", "other"])
 
@@ -51,8 +51,8 @@ export const Auth0UserWriteSchema = Auth0UserSchema.omit({
 export type Auth0User = z.infer<typeof Auth0UserSchema>
 export type Auth0UserWrite = z.infer<typeof Auth0UserWriteSchema>
 
-export const UserSchema = OwUserSchema.merge(Auth0UserSchema)
-export const UserWriteSchema = OwUserWriteSchema.merge(Auth0UserWriteSchema)
+export const UserSchema = DBUserSchema.merge(Auth0UserSchema)
+export const UserWriteSchema = DBUserWriteSchema.merge(Auth0UserWriteSchema)
 
 export type User = z.infer<typeof UserSchema>
 export type UserWrite = z.infer<typeof UserWriteSchema>

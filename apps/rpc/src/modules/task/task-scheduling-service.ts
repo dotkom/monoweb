@@ -2,7 +2,7 @@ import type { SchedulerClient } from "@aws-sdk/client-scheduler"
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { TaskKind } from "@dotkomonline/types"
+import type { TaskType } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { NotImplementedError } from "../../error"
 import { getTaskDefinition } from "./task-definition"
@@ -13,7 +13,7 @@ export interface TaskSchedulingService {
   /**
    * Schedule a task of a given kind with the expected payload for the task.
    */
-  scheduleAt(handle: DBHandle, kind: TaskKind, data: JsonValue, executeAt: TZDate): Promise<void>
+  scheduleAt(handle: DBHandle, kind: TaskType, data: JsonValue, executeAt: TZDate): Promise<void>
 }
 
 export function getLocalTaskSchedulingService(

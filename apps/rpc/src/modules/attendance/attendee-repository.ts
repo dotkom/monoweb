@@ -74,21 +74,21 @@ export function getAttendeeRepository(): AttendeeRepository {
     async getByAttendanceId(handle, attendanceId) {
       const attendees = await handle.attendee.findMany({
         where: { attendanceId },
-        orderBy: { reserveTime: "asc" },
+        orderBy: { earliestReservationAt: "asc" },
       })
       return attendees.map(parse)
     },
     async getByAttendancePoolId(handle, attendancePoolId) {
       const attendees = await handle.attendee.findMany({
         where: { attendancePoolId },
-        orderBy: { reserveTime: "asc" },
+        orderBy: { earliestReservationAt: "asc" },
       })
       return attendees.map(parse)
     },
     async getFirstUnreservedByAttendancePoolId(handle, attendancePoolId) {
       const attendee = await handle.attendee.findFirst({
         where: { attendancePoolId, reserved: false },
-        orderBy: { reserveTime: "asc" },
+        orderBy: { earliestReservationAt: "asc" },
       })
       if (!attendee) {
         return null

@@ -6,8 +6,7 @@ export const TaskSchema = schemas.TaskSchema.extend({})
 export type Task = z.infer<typeof TaskSchema>
 export type TaskId = Task["id"]
 export type TaskStatus = Task["status"]
-export type TaskKind = Task["kind"]
-export type TaskScheduledAt = Task["scheduledAt"]
+export type TaskType = Task["type"]
 
 export const TaskWriteSchema = TaskSchema.pick({
   scheduledAt: true,

@@ -2,9 +2,9 @@ import type { DBHandle } from "@dotkomonline/db"
 import {
   type Auth0UserWrite,
   Auth0UserWriteSchema,
+  DBUserWriteSchema,
   type Membership,
   type NTNUGroup,
-  OwUserWriteSchema,
   type PrivacyPermissions,
   type PrivacyPermissionsWrite,
   type User,
@@ -186,7 +186,7 @@ export function getUserService(
     },
     async update(handle, userId, data) {
       const auth0UserData = Auth0UserWriteSchema.partial().parse(data)
-      const owUserData = OwUserWriteSchema.partial().parse(data)
+      const owUserData = DBUserWriteSchema.partial().parse(data)
 
       return await userRepository.update(handle, userId, auth0UserData, owUserData)
     },

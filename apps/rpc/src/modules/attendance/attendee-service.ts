@@ -130,7 +130,7 @@ export function getAttendeeService(
         attendancePoolId,
         attendanceId,
         userGrade,
-        reserveTime,
+        earliestReservationAt: reserveTime,
         reserved: false,
       })
       const attendee = await addUserToAttendee(handle, attendeeWithoutUser, user)
@@ -142,7 +142,7 @@ export function getAttendeeService(
       } else {
         await taskSchedulingService.scheduleAt(
           handle,
-          tasks.ATTEMPT_RESERVE_ATTENDEE.kind,
+          tasks.ATTEMPT_RESERVE_ATTENDEE.type,
           { userId, attendanceId },
           new TZDate(reserveTime)
         )
@@ -169,7 +169,7 @@ export function getAttendeeService(
         attendancePoolId,
         attendanceId: attendancePool.attendanceId,
         userGrade,
-        reserveTime: registerTime,
+        earliestReservationAt: registerTime,
         reserved: true,
       })
 
@@ -238,7 +238,7 @@ export function getAttendeeService(
         return true
       }
 
-      const isPastReserveTime = !isFuture(attendee.reserveTime)
+      const isPastReserveTime = !isFuture(attendee.earliestReservationAt)
       const poolHasCapacity = pool.numAttendees < pool.capacity
 
       if ((isPastReserveTime && poolHasCapacity) || bypassCriteria) {

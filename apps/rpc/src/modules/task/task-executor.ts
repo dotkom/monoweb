@@ -72,15 +72,15 @@ export function getLocalTaskExecutor(
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
         // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
         await client.$transaction(async (handle) => {
-          const definition = getTaskDefinition(task.kind)
+          const definition = getTaskDefinition(task.type)
           const payload = taskService.parse(definition, task.payload)
-          switch (task.kind) {
-            case tasks.ATTEMPT_RESERVE_ATTENDEE.kind:
+          switch (task.type) {
+            case tasks.ATTEMPT_RESERVE_ATTENDEE.type:
               return await attendanceService.handleAttemptReserveAttendeeTask(
                 handle,
                 payload as InferTaskData<AttemptReserveAttendeeTaskDefinition>
               )
-            case tasks.MERGE_POOLS.kind:
+            case tasks.MERGE_POOLS.type:
               return await attendanceService.handleMergePoolsTask(
                 handle,
                 payload as InferTaskData<MergePoolsTaskDefinition>
@@ -88,7 +88,7 @@ export function getLocalTaskExecutor(
           }
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
           // still keep this block here to prevent subtle bugs or missed cases in the future.
-          throw new InvalidTaskKind(task.kind, task.id)
+          throw new InvalidTaskKind(task.type, task.id)
         })
       } catch (error: unknown) {
         isError = true

@@ -190,7 +190,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {allGroups.map((group) => (
               <Link
-                key={group.id}
+                // TODO: Reconsider life
+                key={"slug" in group ? group.slug : group.id}
                 href={group.pageUrl}
                 className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
               >

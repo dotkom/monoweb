@@ -4,7 +4,7 @@ import { Text, Title } from "@dotkomonline/ui"
 import Link from "next/link"
 
 export default async function NodeCommitteePage() {
-  const nodeCommittees = await server.group.allByType.query("NODECOMMITTEE")
+  const nodeCommittees = await server.group.allByType.query("NODE_COMMITTEE")
 
   return (
     <div>
