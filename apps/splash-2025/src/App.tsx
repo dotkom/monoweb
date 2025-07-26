@@ -18,6 +18,10 @@ export function App() {
           <Hero {...HeroData} />
           <DebugInfo />
           <div className="bg-brand">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 32" role="img" aria-labelledby="desc">
+              <desc id="desc">A decorative slant</desc>
+              <path fill="white" fill-opacity="1" d="M0,32L1440,0L1440,0L0,0Z" />
+            </svg>
             <LinjeforeningInfo />
           </div>
         </main>
