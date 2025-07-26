@@ -55,11 +55,11 @@ export function getAuthorizationService(): AuthorizationService {
       type Row = { userId: UserId; groups: GroupId[] }
       const records = await handle.$queryRawUnsafe<Row[]>(
         `
-            SELECT ow_user.id                                         AS "userId",
-                   array_agg(group_member."groupId")                  AS "groups"
+            SELECT ow_user.id                                      AS "userId",
+                   array_agg(group_membership."groupId")           AS "groups"
             FROM ow_user
-                     LEFT JOIN group_member ON ow_user.id = group_member."userId"
-            WHERE ow_user.id = $1
+                   LEFT JOIN group_membership ON ow_user.id = group_membership."userId"
+            WHERE group_membership.end IS NULL AND ow_user.id = $1
             GROUP BY ow_user.id LIMIT 1;
         `,
         userId
