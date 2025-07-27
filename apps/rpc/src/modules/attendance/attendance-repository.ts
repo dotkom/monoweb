@@ -34,18 +34,15 @@ const ATTENDANCE_ATTENDEE_COUNT_INCLUDE = {
 
 export interface AttendanceRepository {
   create(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
-  delete(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance>
-  getById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
-  getByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
-  getByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Map<AttendanceId, Attendance>>
-  update(handle: DBHandle, attendanceId: AttendanceId, data: Partial<AttendanceWrite>): Promise<Attendance>
-  getAll(handle: DBHandle): Promise<Attendance[]>
+  delete(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
+  findById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
+  updateById(handle: DBHandle, attendanceId: AttendanceId, data: Partial<AttendanceWrite>): Promise<Attendance>
 
   getPoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendancePool | null>
   getPoolByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<AttendancePool | null>
-  createPool(handle: DBHandle, data: AttendancePoolWrite): Promise<AttendancePool>
-  deletePool(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendancePool>
-  updatePool(
+  addAttendancePool(handle: DBHandle, data: AttendancePoolWrite): Promise<AttendancePool>
+  removeAttendancePool(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendancePool>
+  updateAttendancePool(
     handle: DBHandle,
     attendancePoolId: AttendancePoolId,
     data: Partial<AttendancePoolWrite>
@@ -68,51 +65,20 @@ export function getAttendanceRepository(): AttendanceRepository {
       })
       return mapAttendance(deletedAttendance)
     },
-    async getById(handle, attendanceId) {
+    async findById(handle, attendanceId) {
       const attendance = await handle.attendance.findUnique({
         where: { id: attendanceId },
         include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
       })
       return attendance ? mapAttendance(attendance) : null
     },
-    async getByAttendeeId(handle, attendeeId) {
-      const attendance = await handle.attendance.findFirst({
-        where: {
-          attendees: {
-            some: {
-              id: attendeeId,
-            },
-          },
-        },
-        include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
-      })
-      return attendance ? mapAttendance(attendance) : null
-    },
-    async getByIds(handle, attendanceIds) {
-      const attendances = await handle.attendance.findMany({
-        where: { id: { in: attendanceIds } },
-        include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
-      })
-
-      const result = new Map<AttendanceId, Attendance>()
-      for (const attendance of attendances) {
-        result.set(attendance.id, mapAttendance(attendance))
-      }
-      return result
-    },
-    async update(handle, attendanceId, data) {
+    async updateById(handle, attendanceId, data) {
       const updatedAttendance = await handle.attendance.update({
         where: { id: attendanceId },
         data,
         include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
       })
       return mapAttendance(updatedAttendance)
-    },
-    async getAll(handle) {
-      const attendances = await handle.attendance.findMany({
-        include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
-      })
-      return attendances.map(mapAttendance)
     },
     async getPoolById(handle, attendancePoolId) {
       const pool = await handle.attendancePool.findUnique({
@@ -140,21 +106,21 @@ export function getAttendanceRepository(): AttendanceRepository {
       }
       return validateAttendancePool(pool)
     },
-    async createPool(handle, data) {
+    async addAttendancePool(handle, data) {
       const createdPool = await handle.attendancePool.create({
         data,
         include: POOL_ATTENDEE_COUNT_INCLUDE,
       })
       return validateAttendancePool(createdPool)
     },
-    async deletePool(handle, attendancePoolId) {
+    async removeAttendancePool(handle, attendancePoolId) {
       const deletedPool = await handle.attendancePool.delete({
         where: { id: attendancePoolId },
         include: POOL_ATTENDEE_COUNT_INCLUDE,
       })
       return validateAttendancePool(deletedPool)
     },
-    async updatePool(handle, attendancePoolId, data) {
+    async updateAttendancePool(handle, attendancePoolId, data) {
       const updatedPool = await handle.attendancePool.update({
         where: { id: attendancePoolId },
         data,
