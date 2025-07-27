@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "biome check --write --unsafe .",
     "lint-check": "biome check .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@dotkomonline/ui": "workspace:*",
