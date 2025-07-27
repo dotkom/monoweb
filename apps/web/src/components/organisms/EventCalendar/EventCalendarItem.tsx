@@ -268,9 +268,9 @@ export const EventCalendarItem = ({ event, attendeeStatus, className }: EventCal
               )}
             </div>
             <div className="flex justify-between items-center gap-2 mt-2">
-              {event.attendance && (
+              {event.attendanceId && (
                 <AttendanceStatus
-                  attendance={event.attendance}
+                  attendanceId={event.attendanceId}
                   attendeeStatus={attendeeStatus}
                   eventEndInPast={new Date() > event.end}
                 />

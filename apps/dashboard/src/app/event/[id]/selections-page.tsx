@@ -13,16 +13,16 @@ import {
   useUpdateAttendanceMutation,
 } from "../mutations"
 import { useEventContext } from "./provider"
+import { useAttendanceGetQuery } from "@/app/event/queries"
 
 export const SelectionsPage: FC = () => {
-  const { attendance } = useEventContext()
   const event = useEventContext()
-
-  if (!attendance) {
+  const attendance = useAttendanceGetQuery(event.attendanceId as string, event.attendanceId !== null)
+  if (event.attendanceId === null || attendance.isLoading || attendance.data === undefined) {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <SelectionsPageDetail attendance={attendance} />
+  return <SelectionsPageDetail attendance={attendance.data} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {

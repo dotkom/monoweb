@@ -6,16 +6,16 @@ import { PoolBox } from "../components/pools-box"
 import { usePoolsForm } from "../components/pools-form"
 import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
 import { useEventContext } from "./provider"
+import { useAttendanceGetQuery } from "@/app/event/queries"
 
 export const AttendancePage: FC = () => {
-  const { attendance } = useEventContext()
   const event = useEventContext()
-
-  if (!attendance) {
+  const attendance = useAttendanceGetQuery(event.attendanceId as string, event.attendanceId !== null)
+  if (event.attendanceId === null || attendance.isLoading || attendance.data === undefined) {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <AttendancePageDetail attendance={attendance} />
+  return <AttendancePageDetail attendance={attendance.data} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {

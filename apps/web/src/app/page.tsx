@@ -3,7 +3,7 @@ import { auth } from "@/auth"
 import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { server } from "@/utils/trpc/server"
-import type { AttendanceId, Event } from "@dotkomonline/types"
+import type { Attendance, AttendanceId, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { formatDate, isPast } from "date-fns"
@@ -12,8 +12,7 @@ import type { FC } from "react"
 
 export default async function App() {
   const events = await server.event.all.query({ page: { take: 3 } })
-
-  const attendanceIds = events.map((event) => event.attendance?.id).filter(Boolean) as AttendanceId[]
+  const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
 
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
@@ -36,8 +35,7 @@ export default async function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {events.map((event) => {
-            const attendeeStatus = attendanceStatuses?.get(event.attendance?.id ?? "") ?? null
-
+            const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
             return <EventCard key={event.id} event={event} attendeeStatus={attendeeStatus} />
           })}
 
@@ -101,32 +99,36 @@ interface ComingEventProps {
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
 }
 
-const EventCard: FC<ComingEventProps> = ({ event: { id, title, start, imageUrl, attendance }, attendeeStatus }) => {
+const EventCard: FC<ComingEventProps> = ({ event, attendeeStatus }) => {
   return (
     <Link
-      href={`/arrangementer/${slugify(title)}/${id}`}
+      href={`/arrangementer/${slugify(event.title)}/${event.id}`}
       className="flex flex-col w-full gap-2 p-2 -m-2 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-800"
     >
       <Tilt>
         <img
-          src={imageUrl ? imageUrl : EventImagePlaceholder}
-          alt={title}
+          src={event.imageUrl ? event.imageUrl : EventImagePlaceholder}
+          alt={event.title}
           className="rounded-lg border border-gray-200 object-cover aspect-[4/3]"
         />
       </Tilt>
       <div className="flex flex-col gap-1">
         <Title element="p" size="sm" className="font-normal">
-          {title}
+          {event.title}
         </Title>
 
         <div className="flex flex-row gap-4 items-center">
           <div className="flex flex-row gap-2 items-center">
             <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-500" />
-            <Text className="text-sm">{formatDate(start, "dd.MM")}</Text>
+            <Text className="text-sm">{formatDate(event.start, "dd.MM")}</Text>
           </div>
 
-          {attendance && (
-            <AttendanceStatus attendance={attendance} attendeeStatus={attendeeStatus} eventEndInPast={isPast(start)} />
+          {event.attendanceId && (
+            <AttendanceStatus
+              attendanceId={event.attendanceId}
+              attendeeStatus={attendeeStatus}
+              eventEndInPast={isPast(event.start)}
+            />
           )}
         </div>
       </div>

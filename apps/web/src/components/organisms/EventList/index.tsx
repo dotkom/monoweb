@@ -10,7 +10,7 @@ const mapEventDetailToItem = (
   attendanceStatuses: Map<AttendanceId, "RESERVED" | "UNRESERVED"> | null,
   event: Event
 ) => {
-  const attendeeStatus = attendanceStatuses?.get(event.attendance?.id ?? "") ?? null
+  const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
 
   return <EventListItem event={event} attendeeStatus={attendeeStatus} key={event.id} />
 }
@@ -32,7 +32,7 @@ export const EventList: FC<EventListProps> = async (props: EventListProps) => {
   const user = session ? await server.user.getMe.query() : undefined
 
   const lastFuture = props.events.findLastIndex((event) => !isPast(event.end))
-  const attendanceIds = props.events.map((event) => event.attendance?.id).filter(Boolean) as AttendanceId[]
+  const attendanceIds = props.events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
   const futureEvents = props.events.slice(0, lastFuture + 1)
   const pastEvents = props.events.slice(lastFuture + 1)
 

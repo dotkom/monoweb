@@ -1,6 +1,6 @@
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import type { Company, Group, GroupType, InterestGroup } from "@dotkomonline/types"
+import type { Attendance, Attendee, Company, Group, GroupType, InterestGroup } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import Image from "next/image"
@@ -46,12 +46,15 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
   const event = await server.event.get.query(eventId)
-  const attendees =
-    event.attendance && session
-      ? await server.attendance.getAttendees.query({
-          attendanceId: event.attendance.id,
-        })
-      : []
+
+  let attendance: Attendance | null = null
+  let attendees: Attendee[] = []
+  if (event.attendanceId) {
+    attendance = await server.event.attendance.getAttendance.query({ id: event.attendanceId })
+    attendees = await server.attendance.getAttendees.query({
+      attendanceId: event.attendanceId,
+    })
+  }
 
   const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group, group.type))
   const hostingInterestGroups = event.hostingGroups.map((interestGroup) =>
@@ -76,8 +79,8 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
         <div className="flex flex-1 flex-col gap-8 sm:gap-4">
           <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
 
-          {event.attendance !== null && (
-            <AttendanceCard initialAttendance={event.attendance} initialAttendees={attendees} user={user} />
+          {attendance !== null && (
+            <AttendanceCard initialAttendance={attendance} initialAttendees={attendees} user={user} />
           )}
 
           <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />

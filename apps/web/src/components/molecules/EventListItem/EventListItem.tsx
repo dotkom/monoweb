@@ -40,7 +40,7 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendeeStatus }:
           <div className="flex flex-col gap-2">
             <DateAndTime start={event.start} end={event.end} />
 
-            <AttendanceStatus attendance={event.attendance} attendeeStatus={attendeeStatus} eventEndInPast={past} />
+            <AttendanceStatus attendanceId={event.attendanceId} attendeeStatus={attendeeStatus} eventEndInPast={past} />
           </div>
         </div>
       </Link>

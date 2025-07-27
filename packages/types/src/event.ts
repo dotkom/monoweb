@@ -4,7 +4,6 @@ import { CompanySchema } from "./company"
 import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter } from "./filters"
 import { GroupSchema } from "./group"
 import { InterestGroupSchema } from "./interest-group/interest-group"
-import { AttendancePoolWithoutAttendeeCount } from "./attendance/attendance-pool"
 
 /**
  * @packageDocumentation
@@ -20,7 +19,6 @@ export const EventSchema = schemas.EventSchema.extend({
   companies: z.array(CompanySchema),
   hostingGroups: z.array(GroupSchema),
   interestGroups: z.array(InterestGroupSchema),
-  attendance: AttendancePoolWithoutAttendeeCount.nullable(),
 })
 
 export type EventWrite = z.infer<typeof EventWriteSchema>

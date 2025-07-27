@@ -42,7 +42,6 @@ const eventPayload: Omit<Event, "id"> = {
   status: "PUBLIC",
   type: "COMPANY",
   attendanceId: randomUUID(),
-  attendance: null,
   companies: [],
   hostingGroups: [],
   interestGroups: [],

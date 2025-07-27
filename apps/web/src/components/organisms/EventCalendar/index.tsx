@@ -67,7 +67,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
     }),
   ])
 
-  const attendanceIds = eventDetails.map(({ attendance }) => attendance?.id).filter(Boolean) as string[]
+  const attendanceIds = eventDetails.map((event) => event.attendanceId).filter(Boolean) as string[]
   const userId = session?.sub
 
   const attendeeStatuses = userId
@@ -181,7 +181,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
                 {row.map(({ eventDisplayProps, ...event }) => {
-                  const attendeeStatus = attendeeStatuses?.get(event.attendance?.id ?? "") || null
+                  const attendeeStatus = attendeeStatuses?.get(event.attendanceId ?? "") || null
 
                   return (
                     <EventCalendarItem

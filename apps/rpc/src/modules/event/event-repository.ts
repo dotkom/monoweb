@@ -4,7 +4,6 @@ import {
   type Event,
   type EventFilterQuery,
   type EventId,
-  EventSchema,
   type EventWrite,
   type GroupId,
   type InterestGroupId,
@@ -129,16 +128,10 @@ export function getEventRepository(): EventRepository {
               interestGroup: true,
             },
           },
-          attendance: {
-            include: {
-              pools: true,
-            },
-          },
         },
       })
       return events.map((event) => ({
         ...event,
-        attendance: event?.attendance !== null ? EventSchema.shape.attendance.parse(event.attendance) : null,
         companies: event.companies.map((c) => c.company),
         hostingGroups: event.hostingGroups.map((g) => g.group),
         interestGroups: event.interestGroups.map((ig) => ig.interestGroup),
@@ -163,11 +156,6 @@ export function getEventRepository(): EventRepository {
               interestGroup: true,
             },
           },
-          attendance: {
-            include: {
-              pools: true,
-            },
-          },
         },
       })
       if (event === null) {
@@ -175,7 +163,6 @@ export function getEventRepository(): EventRepository {
       }
       return {
         ...event,
-        attendance: event?.attendance !== null ? EventSchema.shape.attendance.parse(event.attendance) : null,
         companies: event?.companies.map((c) => c.company) ?? [],
         hostingGroups: event?.hostingGroups.map((g) => g.group) ?? [],
         interestGroups: event?.interestGroups.map((ig) => ig.interestGroup) ?? [],
