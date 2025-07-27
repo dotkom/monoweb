@@ -152,7 +152,7 @@ export async function createServiceLayer(
   )
   const interestGroupRepository = getInterestGroupRepository()
   const interestGroupService = getInterestGroupService(interestGroupRepository)
-  const eventService = getEventService(eventRepository, attendanceService)
+  const eventService = getEventService(eventRepository)
   const companyService = getCompanyService(companyRepository)
   const productService = getProductService(productRepository)
   const paymentService = getPaymentService(
