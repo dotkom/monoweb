@@ -171,7 +171,7 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId }: AttendeeListP
               isUser && !isVerified && "outline-blue-500 dark:outline-sky-800"
             )}
           >
-            <AvatarImage src={attendee.user.image ?? undefined} />
+            <AvatarImage src={attendee.user.imageUrl ?? undefined} />
             <AvatarFallback
               className={
                 isVerified
