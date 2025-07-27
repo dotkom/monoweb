@@ -40,7 +40,6 @@ export interface AttendanceService {
   create(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
   delete(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   getById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance>
-  getByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Map<AttendanceId, Attendance>>
   update(handle: DBHandle, attendanceId: AttendanceId, data: Partial<AttendanceWrite>): Promise<Attendance>
   mergeAttendancePools(
     handle: DBHandle,
@@ -132,22 +131,14 @@ export function getAttendanceService(
       await attendanceRepository.delete(handle, attendanceId)
     },
     async getById(handle, attendanceId: AttendanceId) {
-      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      const attendance = await attendanceRepository.findById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
       return attendance
     },
-    async getByIds(handle, attendanceIds: AttendanceId[]) {
-      const attendances = await attendanceRepository.getByIds(handle, attendanceIds)
-      if (attendances.size !== attendanceIds.length) {
-        const missingIds = attendanceIds.filter((id) => !attendances.has(id))
-        throw new AttendanceNotFound(missingIds.join(", "))
-      }
-      return attendances
-    },
     async update(handle, attendanceId: AttendanceId, data: Partial<AttendanceWrite>) {
-      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      const attendance = await attendanceRepository.findById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
@@ -163,11 +154,11 @@ export function getAttendanceService(
         await validateSelections(handle, attendanceId, attendance.selections, data.selections)
       }
 
-      return await attendanceRepository.update(handle, attendanceId, data)
+      return await attendanceRepository.updateById(handle, attendanceId, data)
     },
     async mergeAttendancePools(handle, attendanceId, newMergePoolData, mergeTime = new Date()) {
       if (!mergeTime || !isFuture(mergeTime)) {
-        const attendance = await attendanceRepository.getById(handle, attendanceId)
+        const attendance = await attendanceRepository.findById(handle, attendanceId)
         if (!attendance) {
           throw new AttendanceNotFound(attendanceId)
         }
@@ -183,7 +174,7 @@ export function getAttendanceService(
         const yearCriteria = [...new Set([...combinedYearCriteria, ...newYearCriteria])]
         const combinedPoolCapacity = poolsToMerge.reduce((sum, pool) => sum + pool.capacity, 0)
         const capacity = Math.max(newMergePoolData.capacity || 0, combinedPoolCapacity)
-        const newMergePool = await attendanceRepository.createPool(handle, {
+        const newMergePool = await attendanceRepository.addAttendancePool(handle, {
           attendanceId,
           title: newMergePoolData.title ?? "Merged pool",
           mergeDelayHours: null,
@@ -195,7 +186,7 @@ export function getAttendanceService(
         await attendeeRepository.moveFromMultiplePoolsToPool(handle, poolsToMergeIds, newMergePool.id)
 
         for (const pool of poolsToMerge) {
-          await attendanceRepository.deletePool(handle, pool.id)
+          await attendanceRepository.removeAttendancePool(handle, pool.id)
         }
       }
 
@@ -210,7 +201,7 @@ export function getAttendanceService(
       )
     },
     async getSelectionsResponseSummary(handle, attendanceId) {
-      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      const attendance = await attendanceRepository.findById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
@@ -233,13 +224,13 @@ export function getAttendanceService(
       })
     },
     async createPool(handle, data: AttendancePoolWrite) {
-      return await attendanceRepository.createPool(handle, data)
+      return await attendanceRepository.addAttendancePool(handle, data)
     },
     async deletePool(handle, attendancePoolId) {
       if (await attendeeRepository.poolHasAttendees(handle, attendancePoolId)) {
         throw new AttendanceDeletionError("Cannot delete attendance pool with attendees")
       }
-      return await attendanceRepository.deletePool(handle, attendancePoolId)
+      return await attendanceRepository.removeAttendancePool(handle, attendancePoolId)
     },
     async updatePool(handle, attendancePoolId, data) {
       const currentPool = await attendanceRepository.getPoolById(handle, attendancePoolId)
@@ -247,7 +238,7 @@ export function getAttendanceService(
         throw new AttendancePoolNotFoundError(attendancePoolId)
       }
 
-      const newPool = await attendanceRepository.updatePool(handle, attendancePoolId, data)
+      const newPool = await attendanceRepository.updateAttendancePool(handle, attendancePoolId, data)
       if (data.capacity) {
         await attemptReserveAttendeesOnCapacityChange(handle, currentPool.capacity, newPool)
       }

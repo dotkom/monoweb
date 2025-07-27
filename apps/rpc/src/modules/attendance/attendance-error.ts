@@ -19,18 +19,6 @@ export class AttendanceDeletionError extends ApplicationError {
   }
 }
 
-export class InvalidParametersError extends ApplicationError {
-  constructor(detail: string) {
-    super(PROBLEM_DETAILS.UnprocessableContent, detail)
-  }
-}
-
-export class SelectionResponseUpdateAfterRegistrationStartError extends ApplicationError {
-  constructor() {
-    super(PROBLEM_DETAILS.BadRequest, "If you need to modify selections after registration has started contact dotkom")
-  }
-}
-
 export class AttendanceNotOpenError extends ApplicationError {
   constructor() {
     super(PROBLEM_DETAILS.BadRequest, "This attendance is not open")
