@@ -8,7 +8,6 @@ import {
   type Attendee,
   type Punishment,
   type User,
-  canUserAttendPool,
   getActiveMembership,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
@@ -273,4 +272,23 @@ export const AttendanceCardSkeleton = () => {
       {button}
     </section>
   )
+}
+
+// TODO: Deduplicate this and simply send the value back in the router response.
+function canUserAttendPool(pool: AttendancePool, user: User) {
+  if (user.membership === null) {
+    return false
+  }
+
+  if (pool.yearCriteria.length === 0) {
+    return true
+  }
+
+  const grade = getMembershipGrade(user.membership)
+
+  if (grade === null) {
+    return false
+  }
+
+  return pool.yearCriteria.includes(grade)
 }

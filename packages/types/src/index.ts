@@ -1,5 +1,5 @@
 export * from "./article"
-export * from "./attendance/attendance"
+export * from "./attendance"
 export * from "./attendance/attendance-pool"
 export * from "./attendance/attendance-selections"
 export * from "./attendance/attendee"
