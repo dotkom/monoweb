@@ -1,13 +1,10 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type {
-  AttendanceEvent,
-  AttendanceId,
   AttendanceWrite,
+  CompanyId,
   Event,
-  EventDetail,
-  EventFilter,
+  EventFilterQuery,
   EventId,
-  EventInterestGroup,
   EventWrite,
   GroupId,
   InterestGroupId,
@@ -15,45 +12,32 @@ import type {
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
 import type { AttendanceService } from "../attendance/attendance-service"
-import type { InterestGroupService } from "../interest-group/interest-group-service"
-import type { EventCompanyService } from "./event-company-service"
 import { EventNotFoundError } from "./event-error"
-import type { EventHostingGroupService } from "./event-hosting-group-service"
 import type { EventRepository } from "./event-repository"
 
 export interface EventService {
   createEvent(handle: DBHandle, eventCreate: EventWrite): Promise<Event>
   updateEvent(handle: DBHandle, eventId: EventId, data: EventWrite): Promise<Event>
+  updateEventOrganizers(
+    handle: DBHandle,
+    eventId: EventId,
+    hostingGroups: Set<GroupId>,
+    interestGroups: Set<InterestGroupId>,
+    companies: Set<CompanyId>
+  ): Promise<Event>
+  findEvents(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<Event[]>
+  findEventByAttendingUserId(handle: DBHandle, userId: UserId, page?: Pageable): Promise<Event[]>
+  findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
   /**
    * Get an event by its id
    *
    * @throws {EventNotFoundError} if the event does not exist
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
-  getEvents(handle: DBHandle, page?: Pageable, filter?: EventFilter): Promise<Event[]>
-  getAttendanceEventsByUserAttending(handle: DBHandle, userId: UserId): Promise<AttendanceEvent[]>
-  getAttendanceEventsByGroupId(handle: DBHandle, groupId: GroupId, page: Pageable): Promise<AttendanceEvent[]>
-  getAttendanceEventsByInterestGroupId(
-    handle: DBHandle,
-    interestGroupId: InterestGroupId,
-    page: Pageable
-  ): Promise<AttendanceEvent[]>
   addAttendance(handle: DBHandle, eventId: EventId, data: AttendanceWrite): Promise<Event>
-  getEventDetail(handle: DBHandle, eventId: EventId): Promise<EventDetail>
-  setEventInterestGroups(
-    handle: DBHandle,
-    eventId: EventId,
-    interestGroupsIds: InterestGroupId[]
-  ): Promise<EventInterestGroup[]>
 }
 
-export function getEventService(
-  eventRepository: EventRepository,
-  attendanceService: AttendanceService,
-  eventCompanyService: EventCompanyService,
-  eventHostingGroupService: EventHostingGroupService,
-  interestGroupService: InterestGroupService
-): EventService {
+export function getEventService(eventRepository: EventRepository, attendanceService: AttendanceService): EventService {
   return {
     async createEvent(handle, eventCreate) {
       return await eventRepository.create(handle, eventCreate)
@@ -61,94 +45,43 @@ export function getEventService(
     async updateEvent(handle, eventId, data) {
       return await eventRepository.update(handle, eventId, data)
     },
+    async findEvents(handle, query, page) {
+      return await eventRepository.findMany(handle, query, page ?? { take: 20 })
+    },
+    async findEventById(handle, eventId) {
+      return await eventRepository.findById(handle, eventId)
+    },
     async getEventById(handle, eventId) {
-      const event = await eventRepository.getById(handle, eventId)
+      const event = await eventRepository.findById(handle, eventId)
       if (!event) {
         throw new EventNotFoundError(eventId)
       }
       return event
     },
-    async getEvents(handle, page, filter) {
-      return await eventRepository.getAll(handle, page, filter)
-    },
-    async getAttendanceEventsByUserAttending(handle, userId) {
-      const events = await eventRepository.getAllByUserAttending(handle, userId)
-      const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
-      const attendances = await attendanceService.getByIds(handle, attendanceIds)
-      const attendanceEvents: AttendanceEvent[] = events.map((event) => {
-        const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
-        return { ...event, attendance }
-      })
-
-      return attendanceEvents
-    },
-    async getAttendanceEventsByGroupId(handle, groupId, page) {
-      const events = await eventRepository.getAllByHostingGroupId(handle, groupId, page)
-      const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
-      const attendances = await attendanceService.getByIds(handle, attendanceIds)
-      const attendanceEvents: AttendanceEvent[] = events.map((event) => {
-        const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
-        return { ...event, attendance }
-      })
-
-      return attendanceEvents
-    },
-    async getAttendanceEventsByInterestGroupId(handle, interestGroupId, page) {
-      const events = await eventRepository.getAllByInterestGroupId(handle, interestGroupId, page)
-      const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
-      const attendances = await attendanceService.getByIds(handle, attendanceIds)
-      const attendanceEvents: AttendanceEvent[] = events.map((event) => {
-        const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
-        return { ...event, attendance }
-      })
-
-      return attendanceEvents
+    async findEventByAttendingUserId(handle, userId, page) {
+      return await eventRepository.findByAttendingUserId(handle, userId, page ?? { take: 20 })
     },
     async addAttendance(handle, eventId, data) {
       const attendance = await attendanceService.create(handle, data)
       return await eventRepository.addAttendance(handle, eventId, attendance.id)
     },
-    async getEventDetail(handle, eventId) {
+    async updateEventOrganizers(handle, eventId, hostingGroups, interestGroups, companies) {
       const event = await this.getEventById(handle, eventId)
-      const hostingCompanies = await eventCompanyService.getCompaniesByEventId(handle, event.id)
-      const attendance = event.attendanceId ? await attendanceService.getById(handle, event.attendanceId) : null
+      // The easiest way to determine which elements to add and remove is to use basic set theory. The difference of a
+      // set A from B (A - B) is the set of elements that are in A, but not in B.
+      const eventHostingGroups = new Set(event.hostingGroups.map((it) => it.slug))
+      await eventRepository.addEventHostingGroups(handle, eventId, hostingGroups.difference(eventHostingGroups))
+      await eventRepository.deleteEventHostingGroups(handle, eventId, eventHostingGroups.difference(hostingGroups))
 
-      const hostingGroups = await eventHostingGroupService.getHostingGroupsForEvent(handle, event.id)
-      const hostingInterestGroups = await interestGroupService.getAllByEventId(handle, event.id)
+      const eventInterestGroups = new Set(event.interestGroups.map((it) => it.id))
+      await eventRepository.addEventInterestGroups(handle, eventId, interestGroups.difference(eventInterestGroups))
+      await eventRepository.deleteEventInterestGroups(handle, eventId, eventInterestGroups.difference(interestGroups))
 
-      return {
-        event,
-        attendance,
-        hostingCompanies,
-        hostingGroups,
-        hostingInterestGroups,
-      }
-    },
-    async setEventInterestGroups(handle, eventId, interestGroupsIds) {
-      const eventInterestGroups = await interestGroupService.getAllByEventId(handle, eventId)
-      const currentInterestGroupIds = eventInterestGroups.map((interestGroup) => interestGroup.id)
+      const eventCompanies = new Set(event.companies.map((it) => it.id))
+      await eventRepository.addEventCompanies(handle, eventId, companies.difference(eventCompanies))
+      await eventRepository.deleteEventCompanies(handle, eventId, eventCompanies.difference(companies))
 
-      const interestGroupsToRemove = currentInterestGroupIds.filter((groupId) => !interestGroupsIds.includes(groupId))
-      const interestGroupsToAdd = interestGroupsIds.filter((groupId) => !currentInterestGroupIds.includes(groupId))
-
-      const removePromises = interestGroupsToRemove.map(async (groupId) =>
-        eventRepository.removeEventFromInterestGroup(handle, eventId, groupId)
-      )
-
-      const addPromises = interestGroupsToAdd.map(async (groupId) =>
-        eventRepository.addEventToInterestGroup(handle, eventId, groupId)
-      )
-
-      await Promise.all([...removePromises, ...addPromises])
-
-      const remainingInterestGroups = currentInterestGroupIds
-        .filter((groupId) => !interestGroupsToRemove.includes(groupId))
-        .concat(interestGroupsToAdd)
-
-      return remainingInterestGroups.map((interestGroupId) => ({
-        eventId,
-        interestGroupId: interestGroupId,
-      }))
+      return await this.getEventById(handle, eventId)
     },
   }
 }

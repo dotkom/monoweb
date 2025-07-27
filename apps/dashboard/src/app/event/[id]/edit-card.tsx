@@ -2,19 +2,19 @@ import { useGroupAllQuery } from "@/app/group/queries/use-group-all-query"
 import { useInterestGroupAllQuery } from "@/app/interest-group/queries/use-interest-group-all-query"
 import type { FC } from "react"
 import { useEventEditForm } from "../components/edit-form"
-import { useEditEventWithGroupsMutation } from "../mutations"
-import { useEventDetailsContext } from "./provider"
+import { useUpdateEventMutation } from "../mutations"
+import { useEventContext } from "./provider"
 
 export const EventEditCard: FC = () => {
-  const { event, hostingGroups, hostingInterestGroups } = useEventDetailsContext()
-  const edit = useEditEventWithGroupsMutation()
+  const event = useEventContext()
+  const edit = useUpdateEventMutation()
   const { groups } = useGroupAllQuery()
   const { interestGroups } = useInterestGroupAllQuery()
 
   const defaultValues = {
     ...event,
-    hostingGroupIds: hostingGroups.map((group) => group.slug),
-    interestGroupIds: hostingInterestGroups.map((interestGroup) => interestGroup.id),
+    hostingGroupIds: event.hostingGroups.map((group) => group.slug),
+    interestGroupIds: event.interestGroups.map((interestGroup) => interestGroup.id),
   }
 
   const FormComponent = useEventEditForm({
@@ -26,8 +26,9 @@ export const EventEditCard: FC = () => {
       edit.mutate({
         id: data.id,
         event,
-        groups: hostingGroupIds,
-        interestGroups: interestGroupIds,
+        groupIds: hostingGroupIds,
+        interestGroupIds: interestGroupIds,
+        companies: data.companies.map((company) => company.id),
       })
     },
     defaultValues,

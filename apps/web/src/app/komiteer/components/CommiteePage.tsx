@@ -17,7 +17,11 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
   const [session, group, events, members] = await Promise.all([
     auth.getServerSession(),
     server.group.getByType.query({ groupId: slug, type: groupType }),
-    server.event.allByGroupWithAttendance.query({ id: slug }),
+    server.event.all.query({
+      filter: {
+        byOrganizingGroup: [slug],
+      },
+    }),
     // We do not show members for ASSOCIATED types because they often have members outside of Online
     showMembers ? server.group.getMembers.query(slug) : Promise.resolve([]),
   ])
@@ -95,7 +99,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
       <div className="flex flex-col gap-4">
         <Title>{group.name}s arrangementer</Title>
-        <EventList attendanceEvents={events} />
+        <EventList events={events} />
       </div>
     </div>
   )

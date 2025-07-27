@@ -4,10 +4,10 @@ import type { FC } from "react"
 import { FeedbackFormEditForm } from "../components/feedback-form-edit-form"
 import { useCreateFeedbackFormMutation, useUpdateFeedbackFormMutation } from "../mutations"
 import { useEventFeedbackFormGetQuery } from "../queries"
-import { useEventDetailsContext } from "./provider"
+import { useEventContext } from "./provider"
 
 export const FeedbackPage: FC = () => {
-  const { event } = useEventDetailsContext()
+  const event = useEventContext()
   const feedbackFormQuery = useEventFeedbackFormGetQuery(event.id)
   const createMutation = useCreateFeedbackFormMutation()
   const updateMutation = useUpdateFeedbackFormMutation()

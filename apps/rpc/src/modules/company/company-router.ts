@@ -2,7 +2,6 @@ import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
 import { authenticatedProcedure, procedure, t } from "../../trpc"
-import { companyEventRouter } from "./company-event-router"
 
 export const companyRouter = t.router({
   create: authenticatedProcedure.input(CompanyWriteSchema).mutation(async ({ input, ctx }) => {
@@ -41,6 +40,4 @@ export const companyRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.companyService.getCompanyBySlug(handle, input))
     ),
-
-  event: companyEventRouter,
 })

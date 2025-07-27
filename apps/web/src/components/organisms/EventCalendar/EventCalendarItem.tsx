@@ -1,7 +1,7 @@
 "use client"
 
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import type { Event, EventDetail, EventType } from "@dotkomonline/types"
+import type { Event, EventType } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
@@ -9,7 +9,7 @@ import { slugify } from "@dotkomonline/utils"
 import Link from "next/link"
 
 interface EventCalendarItemProps {
-  eventDetail: EventDetail
+  event: Event
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
   className?: string
 }
@@ -212,8 +212,7 @@ function getEventTheme(event: Event, isActive: boolean): EventTheme {
   }
 }
 
-export const EventCalendarItem = ({ eventDetail, attendeeStatus, className }: EventCalendarItemProps) => {
-  const event = eventDetail.event
+export const EventCalendarItem = ({ event, attendeeStatus, className }: EventCalendarItemProps) => {
   const isActive = new Date() < event.end
   const theme = getEventTheme(event, isActive)
 
@@ -269,9 +268,9 @@ export const EventCalendarItem = ({ eventDetail, attendeeStatus, className }: Ev
               )}
             </div>
             <div className="flex justify-between items-center gap-2 mt-2">
-              {eventDetail.attendance && (
+              {event.attendance && (
                 <AttendanceStatus
-                  attendance={eventDetail.attendance}
+                  attendance={event.attendance}
                   attendeeStatus={attendeeStatus}
                   eventEndInPast={new Date() > event.end}
                 />

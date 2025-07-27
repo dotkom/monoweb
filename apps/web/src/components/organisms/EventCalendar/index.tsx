@@ -59,8 +59,10 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
     server.event.all.query({
       page: { take: 100 },
       filter: {
-        after: new Date(year, month, 1),
-        before: new Date(year, month + 1, 0),
+        byStartDate: {
+          min: new Date(year, month, 1),
+          max: new Date(year, month + 1, 0),
+        },
       },
     }),
   ])
@@ -178,13 +180,13 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
                 key={`week-${getWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
-                {row.map(({ eventDisplayProps, ...eventDetail }) => {
-                  const attendeeStatus = attendeeStatuses?.get(eventDetail.attendance?.id ?? "") || null
+                {row.map(({ eventDisplayProps, ...event }) => {
+                  const attendeeStatus = attendeeStatuses?.get(event.attendance?.id ?? "") || null
 
                   return (
                     <EventCalendarItem
-                      key={eventDetail.event.id}
-                      eventDetail={eventDetail}
+                      key={event.id}
+                      event={event}
                       attendeeStatus={attendeeStatus}
                       className={cn(
                         getColStartClass(eventDisplayProps.startCol + 2),

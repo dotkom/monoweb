@@ -45,24 +45,24 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   const { eventId } = await params
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
-  const eventDetail = await server.event.getEventDetail.query(eventId)
+  const event = await server.event.get.query(eventId)
   const attendees =
-    eventDetail.attendance && session
+    event.attendance && session
       ? await server.attendance.getAttendees.query({
-          attendanceId: eventDetail.attendance.id,
+          attendanceId: event.attendance.id,
         })
       : []
 
-  const hostingGroups = eventDetail.hostingGroups.map((group) => mapToImageAndName(group, group.type))
-  const hostingInterestGroups = eventDetail.hostingInterestGroups.map((interestGroup) =>
+  const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group, group.type))
+  const hostingInterestGroups = event.hostingGroups.map((interestGroup) =>
     mapToImageAndName(interestGroup, "INTERESTGROUP")
   )
-  const companyList = eventDetail.hostingCompanies.map((company) => mapToImageAndName(company, "COMPANY"))
+  const companyList = event.companies.map((company) => mapToImageAndName(company, "COMPANY"))
   const organizers = [...companyList, ...hostingGroups, ...hostingInterestGroups]
 
   return (
     <div className="flex flex-col gap-8">
-      <EventHeader event={eventDetail.event} />
+      <EventHeader event={event} />
       <div className="flex w-full flex-col gap-8 md:flex-row">
         <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
           {organizers.length > 0 ? (
@@ -70,19 +70,19 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
           ) : (
             <Text className="text-gray-900">Ingen arrangører</Text>
           )}
-          {eventDetail.event.description && <EventDescription description={eventDetail.event.description} />}
+          {event.description && <EventDescription description={event.description} />}
         </div>
 
         <div className="flex flex-1 flex-col gap-8 sm:gap-4">
           <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
 
-          {eventDetail.attendance !== null && (
-            <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendees={attendees} user={user} />
+          {event.attendance !== null && (
+            <AttendanceCard initialAttendance={event.attendance} initialAttendees={attendees} user={user} />
           )}
 
           <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
 
-          <TimeLocationBox event={eventDetail.event} />
+          <TimeLocationBox event={event} />
         </div>
       </div>
     </div>

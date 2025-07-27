@@ -3,7 +3,7 @@ import { auth } from "@/auth"
 import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { server } from "@/utils/trpc/server"
-import type { AttendanceId, EventDetail } from "@dotkomonline/types"
+import type { AttendanceId, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { formatDate, isPast } from "date-fns"
@@ -35,10 +35,10 @@ export default async function App() {
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {events.map((eventDetail) => {
-            const attendeeStatus = attendanceStatuses?.get(eventDetail.attendance?.id ?? "") ?? null
+          {events.map((event) => {
+            const attendeeStatus = attendanceStatuses?.get(event.attendance?.id ?? "") ?? null
 
-            return <EventCard key={eventDetail.event.id} eventDetail={eventDetail} attendeeStatus={attendeeStatus} />
+            return <EventCard key={event.id} event={event} attendeeStatus={attendeeStatus} />
           })}
 
           <Tilt className="grow">
@@ -97,17 +97,11 @@ const ConstructionNotice = () => {
 }
 
 interface ComingEventProps {
-  eventDetail: EventDetail
+  event: Event
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
 }
 
-const EventCard: FC<ComingEventProps> = ({
-  eventDetail: {
-    event: { id, imageUrl, title, start, end },
-    attendance,
-  },
-  attendeeStatus,
-}) => {
+const EventCard: FC<ComingEventProps> = ({ event: { id, title, start, imageUrl, attendance }, attendeeStatus }) => {
   return (
     <Link
       href={`/arrangementer/${slugify(title)}/${id}`}

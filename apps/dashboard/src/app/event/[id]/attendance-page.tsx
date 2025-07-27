@@ -5,11 +5,11 @@ import { useAttendanceForm } from "../components/attendance-form"
 import { PoolBox } from "../components/pools-box"
 import { usePoolsForm } from "../components/pools-form"
 import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
-import { useEventDetailsContext } from "./provider"
+import { useEventContext } from "./provider"
 
 export const AttendancePage: FC = () => {
-  const { attendance } = useEventDetailsContext()
-  const { event } = useEventDetailsContext()
+  const { attendance } = useEventContext()
+  const event = useEventContext()
 
   if (!attendance) {
     return <NoAttendanceFallback eventId={event.id} />

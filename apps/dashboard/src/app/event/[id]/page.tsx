@@ -8,7 +8,7 @@ import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { FeedbackPage } from "./feedback-page"
-import { useEventDetailsContext } from "./provider"
+import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
 
 const SIDEBAR_LINKS = [
@@ -51,7 +51,7 @@ const SIDEBAR_LINKS = [
 ]
 
 export default function EventDetailsPage() {
-  const { event } = useEventDetailsContext()
+  const event = useEventContext()
   const router = useRouter()
   return (
     <Box p="md">

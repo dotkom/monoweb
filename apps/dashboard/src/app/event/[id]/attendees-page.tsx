@@ -6,10 +6,10 @@ import { AllAttendeesTable } from "../components/all-attendees-table"
 import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
 import { QrCodeScanner } from "../components/qr-code-scanner"
 import { useEventAttendeesGetQuery } from "../queries"
-import { useEventDetailsContext } from "./provider"
+import { useEventContext } from "./provider"
 
 export const AttendeesPage: FC = () => {
-  const { attendance } = useEventDetailsContext()
+  const { attendance } = useEventContext()
 
   if (!attendance) {
     return <div>Arrangementet har ikke påmelding</div>

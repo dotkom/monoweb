@@ -12,11 +12,11 @@ import {
   useRemoveSelectionResponsesMutation,
   useUpdateAttendanceMutation,
 } from "../mutations"
-import { useEventDetailsContext } from "./provider"
+import { useEventContext } from "./provider"
 
 export const SelectionsPage: FC = () => {
-  const { attendance } = useEventDetailsContext()
-  const { event } = useEventDetailsContext()
+  const { attendance } = useEventContext()
+  const event = useEventContext()
 
   if (!attendance) {
     return <NoAttendanceFallback eventId={event.id} />

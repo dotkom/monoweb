@@ -3,7 +3,7 @@
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use } from "react"
 import { useEventDetailsGetQuery } from "../queries"
-import { EventDetailsContext } from "./provider"
+import { EventContext } from "./provider"
 
 export default function EventDetailsLayout({
   children,
@@ -16,5 +16,5 @@ export default function EventDetailsLayout({
     return <Loader />
   }
 
-  return <EventDetailsContext.Provider value={data}>{children}</EventDetailsContext.Provider>
+  return <EventContext.Provider value={data}>{children}</EventContext.Provider>
 }
