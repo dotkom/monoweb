@@ -1,6 +1,6 @@
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
-import type { Event, Company } from "@dotkomonline/types"
+import type { Company, Event } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"

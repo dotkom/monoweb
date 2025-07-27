@@ -1,3 +1,4 @@
+import { useAttendanceGetQuery } from "@/app/event/queries"
 import type { Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
@@ -6,7 +7,6 @@ import { PoolBox } from "../components/pools-box"
 import { usePoolsForm } from "../components/pools-form"
 import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
 import { useEventContext } from "./provider"
-import { useAttendanceGetQuery } from "@/app/event/queries"
 
 export const AttendancePage: FC = () => {
   const event = useEventContext()

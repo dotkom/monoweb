@@ -1,13 +1,13 @@
 import type { DBHandle } from "@dotkomonline/db"
-import {
-  type CompanyId,
-  type Event,
-  type EventFilterQuery,
-  type EventId,
-  type EventWrite,
-  type GroupId,
-  type InterestGroupId,
-  type UserId,
+import type {
+  CompanyId,
+  Event,
+  EventFilterQuery,
+  EventId,
+  EventWrite,
+  GroupId,
+  InterestGroupId,
+  UserId,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
 import { type Pageable, pageQuery } from "../../query"

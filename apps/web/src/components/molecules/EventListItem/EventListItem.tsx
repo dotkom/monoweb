@@ -1,3 +1,4 @@
+import type { Event } from "@dotkomonline/types"
 import { Title, cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
@@ -6,7 +7,6 @@ import type { FC } from "react"
 import { AttendanceStatus } from "./AttendanceStatus"
 import { DateAndTime } from "./DateAndTime"
 import { Thumbnail } from "./Thumbnail"
-import type { Event } from "@dotkomonline/types"
 
 export interface EventListItemProps {
   event: Event

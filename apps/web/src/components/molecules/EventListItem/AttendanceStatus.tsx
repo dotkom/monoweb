@@ -1,13 +1,13 @@
 "use client"
 
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
+import { useTRPC } from "@/utils/trpc/client"
 import type { Attendance, AttendanceId } from "@dotkomonline/types"
 import { Icon, Text, cn } from "@dotkomonline/ui"
+import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
-import { skipToken, useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import { useTRPC } from "@/utils/trpc/client"
 
 const getAttendeeCountAndCapacity = (attendance: Attendance): [number, number] => {
   return attendance.pools.reduce(

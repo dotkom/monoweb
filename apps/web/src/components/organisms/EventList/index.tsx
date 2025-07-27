@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { server } from "@/utils/trpc/server"
-import type { Event, AttendanceId } from "@dotkomonline/types"
+import type { AttendanceId, Event } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
 import type { FC } from "react"

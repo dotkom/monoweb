@@ -1,3 +1,4 @@
+import { useUpdateEventMutation } from "@/app/event/mutations"
 import { GenericTable } from "@/components/GenericTable"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
@@ -9,7 +10,6 @@ import { type FC, useMemo } from "react"
 import { z } from "zod"
 import { useCompanyAllQuery } from "../../company/queries"
 import { useEventContext } from "./provider"
-import { useUpdateEventMutation } from "@/app/event/mutations"
 
 export const EventCompaniesPage: FC = () => {
   const event = useEventContext()

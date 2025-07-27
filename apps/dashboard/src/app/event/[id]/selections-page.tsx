@@ -1,3 +1,4 @@
+import { useAttendanceGetQuery } from "@/app/event/queries"
 import { useTRPC } from "@/lib/trpc"
 import type { Attendance, AttendanceSelectionResults } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
@@ -13,7 +14,6 @@ import {
   useUpdateAttendanceMutation,
 } from "../mutations"
 import { useEventContext } from "./provider"
-import { useAttendanceGetQuery } from "@/app/event/queries"
 
 export const SelectionsPage: FC = () => {
   const event = useEventContext()
