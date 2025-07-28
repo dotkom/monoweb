@@ -1,10 +1,10 @@
+import { trpc } from "@/lib/trpc"
 import type { Event } from "@dotkomonline/types"
 import { Icon, Text } from "@dotkomonline/ui"
+import { slugify } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { compareAsc, formatDate, getDate } from "date-fns"
 import { nb } from "date-fns/locale"
-import { slugify } from "@dotkomonline/utils"
-import { trpc } from "@/lib/trpc"
 
 export const Events = () => {
   // TODO: filter by "Velkom"
