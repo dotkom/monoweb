@@ -3,7 +3,6 @@ import { Icon, Text } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import { compareAsc, formatDate, getDate } from "date-fns"
 import { nb } from "date-fns/locale"
-import { slugify } from "../../../../packages/utils/src/slugify"
 import { trpc } from "../lib/trpc"
 
 export const Events = () => {
