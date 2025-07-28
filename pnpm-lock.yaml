@@ -629,6 +629,9 @@ importers:
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@fontsource/figtree':
         specifier: ^5.2.8
         version: 5.2.8
