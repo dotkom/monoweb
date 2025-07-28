@@ -1,4 +1,4 @@
-import type { AttendanceEvent } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/types"
 import { Title, cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
@@ -9,16 +9,16 @@ import { DateAndTime } from "./DateAndTime"
 import { Thumbnail } from "./Thumbnail"
 
 export interface EventListItemProps {
-  attendanceEvent: AttendanceEvent
+  event: Event
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
 }
 
-export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attendeeStatus }: EventListItemProps) => {
-  const { id, title, type, imageUrl: customImageUrl } = attendanceEvent
+export const EventListItem: FC<EventListItemProps> = ({ event, attendeeStatus }: EventListItemProps) => {
+  const { id, title, type, imageUrl: customImageUrl } = event
 
   const url = `/arrangementer/${slugify(title)}/${id}`
 
-  const past = isPast(attendanceEvent.end)
+  const past = isPast(event.end)
 
   return (
     <section>
@@ -38,13 +38,9 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
           </Title>
 
           <div className="flex flex-col gap-2">
-            <DateAndTime start={attendanceEvent.start} end={attendanceEvent.end} />
+            <DateAndTime start={event.start} end={event.end} />
 
-            <AttendanceStatus
-              attendance={attendanceEvent.attendance}
-              attendeeStatus={attendeeStatus}
-              eventEndInPast={past}
-            />
+            <AttendanceStatus attendanceId={event.attendanceId} attendeeStatus={attendeeStatus} eventEndInPast={past} />
           </div>
         </div>
       </Link>

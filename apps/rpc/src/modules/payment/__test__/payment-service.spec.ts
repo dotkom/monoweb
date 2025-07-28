@@ -42,6 +42,9 @@ const eventPayload: Omit<Event, "id"> = {
   status: "PUBLIC",
   type: "COMPANY",
   attendanceId: randomUUID(),
+  companies: [],
+  hostingGroups: [],
+  interestGroups: [],
 }
 
 // from https://stripe.com/docs/api
@@ -256,7 +259,7 @@ describe("PaymentService", () => {
 
     // test that a redirectUrl is returned
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(productPayloadExtended)
-    vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(eventPayloadExtended)
+    vi.spyOn(eventRepository, "findById").mockResolvedValueOnce(eventPayloadExtended)
     vi.spyOn(stripe.checkout.sessions, "create").mockResolvedValueOnce(stripeResponseCheckoutSessionPayloadExtended)
     vi.spyOn(paymentRepository, "create").mockResolvedValueOnce(paymentPayloadExtended)
     expect(

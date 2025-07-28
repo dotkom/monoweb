@@ -1,126 +1,270 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { EventInterestGroup } from "@dotkomonline/db"
-import type { Event, EventFilter, EventId, EventWrite, InterestGroupId } from "@dotkomonline/types"
+import type {
+  AttendanceId,
+  CompanyId,
+  Event,
+  EventFilterQuery,
+  EventId,
+  EventWrite,
+  GroupId,
+  InterestGroupId,
+  UserId,
+} from "@dotkomonline/types"
+import invariant from "tiny-invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface EventRepository {
   create(handle: DBHandle, data: EventWrite): Promise<Event>
   update(handle: DBHandle, id: EventId, data: Partial<EventWrite>): Promise<Event>
-  getAll(handle: DBHandle, page?: Pageable, filter?: EventFilter): Promise<Event[]>
-  getAllByUserAttending(handle: DBHandle, userId: string): Promise<Event[]>
-  getAllByHostingGroupId(handle: DBHandle, groupId: string, page: Pageable): Promise<Event[]>
-  getAllByInterestGroupId(handle: DBHandle, interestGroupId: string, page: Pageable): Promise<Event[]>
-  getById(handle: DBHandle, id: string): Promise<Event | null>
-  addAttendance(handle: DBHandle, eventId: EventId, attendanceId: string): Promise<Event>
-  addEventToInterestGroup(
-    handle: DBHandle,
-    eventId: EventId,
-    interestGroupId: InterestGroupId
-  ): Promise<EventInterestGroup>
-  removeEventFromInterestGroup(handle: DBHandle, eventId: EventId, interestGroupId: InterestGroupId): Promise<void>
+  findById(handle: DBHandle, id: string): Promise<Event | null>
+  /**
+   * Find events based on a set of search criteria.
+   *
+   * You can query events by their IDs (for multiple events), start date range, search term, and the companies, groups,
+   * or interest groups organizing the event.
+   *
+   * The following describes the filters in a "predicate logic" style:
+   *
+   * @example
+   * ```ts
+   * AND(
+   *   id IN byId,
+   *   start >= byStartDate.min,
+   *   start <= byStartDate.max,
+   *   title CONTAINS bySearchTerm,
+   *   OR(
+   *     companies.companyId IN byOrganizingCompany,
+   *     hostingGroups.groupId IN byOrganizingGroup,
+   *     interestGroups.interestGroupId IN byOrganizingInterestGroup
+   *   )
+   * )
+   * ```
+   *
+   * NOTE: Yes, this is a monster query, but if - a future developer find it slow, you should probably look into finding
+   * the right indexing strategy rather than rewrite or split up this query. OnlineWeb has relatively little data, and
+   * as such this query should be performant enough with good indexing.
+   */
+  findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
+  findByAttendingUserId(handle: DBHandle, userId: UserId, page: Pageable): Promise<Event[]>
+  addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
+  addEventInterestGroups(handle: DBHandle, eventId: EventId, interestGroupIds: Set<InterestGroupId>): Promise<void>
+  addEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
+  deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
+  deleteEventInterestGroups(handle: DBHandle, eventId: EventId, interestGroupIds: Set<InterestGroupId>): Promise<void>
+  deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
+  updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
 }
 
-export function getEventRepository() {
+export function getEventRepository(): EventRepository {
   return {
-    async create(handle: DBHandle, data: EventWrite) {
-      return await handle.event.create({ data })
+    async create(handle, data) {
+      const row = await handle.event.create({ data })
+      const event = await this.findById(handle, row.id)
+      invariant(event !== null, "Event should exist within same transaction after creation")
+      return event
     },
-    async update(handle: DBHandle, id: EventId, data: Partial<EventWrite>) {
-      return await handle.event.update({ where: { id }, data })
+    async update(handle, id, data) {
+      const row = await handle.event.update({ where: { id }, data })
+      const event = await this.findById(handle, row.id)
+      invariant(event !== null, "Event should exist within same transaction after update")
+      return event
     },
-    async getAll(handle: DBHandle, page?: Pageable, filter?: EventFilter) {
-      return await handle.event.findMany({
-        ...pageQuery(page ?? { take: 100 }),
+    async findMany(handle, query, page) {
+      const events = await handle.event.findMany({
+        ...pageQuery(page),
         orderBy: { start: "desc" },
-
         where: {
-          status: { not: "DELETED" },
-          OR: filter?.query
-            ? [
+          AND: [
+            {
+              status: { not: "DELETED" },
+              start: {
+                gte: query.byStartDate.min ?? undefined,
+                lte: query.byStartDate.max ?? undefined,
+              },
+              title:
+                query.bySearchTerm !== null
+                  ? {
+                      contains: query.bySearchTerm,
+                    }
+                  : undefined,
+              id: query.byId.length > 0 ? { in: query.byId } : undefined,
+            },
+            {
+              OR: [
                 {
-                  title: {
-                    contains: filter.query,
-                    mode: "insensitive",
-                  },
+                  companies:
+                    query.byOrganizingCompany.length > 0
+                      ? { some: { companyId: { in: query.byOrganizingCompany } } }
+                      : undefined,
                 },
                 {
-                  description: {
-                    contains: filter.query,
-                    mode: "insensitive",
-                  },
+                  hostingGroups:
+                    query.byOrganizingGroup.length > 0
+                      ? { some: { groupId: { in: query.byOrganizingGroup } } }
+                      : undefined,
                 },
-              ]
-            : undefined,
-
-          start: filter?.after
-            ? {
-                gte: filter.after,
-              }
-            : undefined,
-
-          end: filter?.before
-            ? {
-                lte: filter.before,
-              }
-            : undefined,
+                {
+                  interestGroups:
+                    query.byOrganizingInterestGroup.length > 0
+                      ? { some: { interestGroupId: { in: query.byOrganizingInterestGroup } } }
+                      : undefined,
+                },
+              ],
+            },
+          ],
+        },
+        include: {
+          companies: {
+            include: {
+              company: true,
+            },
+          },
+          hostingGroups: {
+            include: {
+              group: true,
+            },
+          },
+          interestGroups: {
+            include: {
+              interestGroup: true,
+            },
+          },
         },
       })
+      return events.map((event) => ({
+        ...event,
+        companies: event.companies.map((c) => c.company),
+        hostingGroups: event.hostingGroups.map((g) => g.group),
+        interestGroups: event.interestGroups.map((ig) => ig.interestGroup),
+      }))
     },
-    async getAllByUserAttending(handle: DBHandle, userId: string) {
-      return await handle.event.findMany({
-        orderBy: { start: "desc" },
+    async findById(handle, id) {
+      const event = await handle.event.findUnique({
+        where: { id, status: { not: "DELETED" } },
+        include: {
+          companies: {
+            include: {
+              company: true,
+            },
+          },
+          hostingGroups: {
+            include: {
+              group: true,
+            },
+          },
+          interestGroups: {
+            include: {
+              interestGroup: true,
+            },
+          },
+        },
+      })
+      if (event === null) {
+        return null
+      }
+      return {
+        ...event,
+        companies: event?.companies.map((c) => c.company) ?? [],
+        hostingGroups: event?.hostingGroups.map((g) => g.group) ?? [],
+        interestGroups: event?.interestGroups.map((ig) => ig.interestGroup) ?? [],
+      }
+    },
+    async findByAttendingUserId(handle, userId, page) {
+      const events = await handle.attendee.findMany({
         where: {
-          status: { not: "DELETED" },
-
+          userId,
+        },
+        include: {
           attendance: {
-            pools: {
-              some: {
-                attendees: {
-                  some: {
-                    userId,
-                  },
+            include: {
+              events: {
+                select: {
+                  id: true,
                 },
               },
             },
           },
         },
       })
+      const ids = events.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
+      return this.findMany(
+        handle,
+        {
+          byId: ids,
+          byStartDate: { min: null, max: null },
+          bySearchTerm: null,
+          byOrganizingCompany: [],
+          byOrganizingGroup: [],
+          byOrganizingInterestGroup: [],
+        },
+        page
+      )
     },
-    async getAllByHostingGroupId(handle: DBHandle, groupId: string, page: Pageable) {
-      return await handle.event.findMany({
-        ...pageQuery(page),
-        orderBy: { start: "desc" },
+    async addEventHostingGroups(handle, eventId, hostingGroupIds) {
+      await handle.eventHostingGroup.createMany({
+        data: hostingGroupIds
+          .values()
+          .map((groupId) => ({
+            eventId,
+            groupId,
+          }))
+          .toArray(),
+      })
+    },
+    async addEventInterestGroups(handle, eventId, interestGroupIds) {
+      await handle.eventInterestGroup.createMany({
+        data: interestGroupIds
+          .values()
+          .map((interestGroupId) => ({
+            eventId,
+            interestGroupId,
+          }))
+          .toArray(),
+      })
+    },
+    async addEventCompanies(handle, eventId, companyIds) {
+      await handle.eventCompany.createMany({
+        data: companyIds
+          .values()
+          .map((companyId) => ({
+            eventId,
+            companyId,
+          }))
+          .toArray(),
+      })
+    },
+    async deleteEventHostingGroups(handle, eventId, hostingGroupIds) {
+      await handle.eventHostingGroup.deleteMany({
         where: {
-          status: { not: "DELETED" },
-          hostingGroups: {
-            some: { groupId },
-          },
+          eventId,
+          groupId: { in: Array.from(hostingGroupIds.values()) },
         },
       })
     },
-    async getAllByInterestGroupId(handle: DBHandle, interestGroupId: string, page: Pageable) {
-      return await handle.event.findMany({
-        ...pageQuery(page),
-        orderBy: { start: "desc" },
+    async deleteEventInterestGroups(handle, eventId, interestGroupIds) {
+      await handle.eventInterestGroup.deleteMany({
         where: {
-          status: { not: "DELETED" },
-          interestGroups: {
-            some: { interestGroupId },
-          },
+          eventId,
+          interestGroupId: { in: Array.from(interestGroupIds.values()) },
         },
       })
     },
-    async getById(handle: DBHandle, id: string) {
-      return await handle.event.findUnique({ where: { id, status: { not: "DELETED" } } })
+    async deleteEventCompanies(handle, eventId, companyIds) {
+      await handle.eventCompany.deleteMany({
+        where: {
+          eventId,
+          companyId: { in: Array.from(companyIds.values()) },
+        },
+      })
     },
-    async addAttendance(handle: DBHandle, eventId: EventId, attendanceId: string) {
-      return await handle.event.update({ where: { id: eventId }, data: { attendanceId } })
-    },
-    async addEventToInterestGroup(handle: DBHandle, eventId: EventId, interestGroupId: InterestGroupId) {
-      return await handle.eventInterestGroup.create({ data: { interestGroupId, eventId } })
-    },
-    async removeEventFromInterestGroup(handle: DBHandle, eventId: EventId, interestGroupId: InterestGroupId) {
-      await handle.eventInterestGroup.delete({ where: { eventId_interestGroupId: { interestGroupId, eventId } } })
+    async updateEventAttendance(handle, eventId, attendanceId) {
+      const row = await handle.event.update({
+        where: { id: eventId },
+        data: { attendanceId },
+      })
+      const event = await this.findById(handle, row.id)
+      invariant(event !== null, "Event should exist within same transaction after updating attendance")
+      return event
     },
   }
 }

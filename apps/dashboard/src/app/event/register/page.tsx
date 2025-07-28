@@ -12,6 +12,7 @@ export default function Page() {
       create.mutate({
         groupIds: hostingGroupIds,
         interestGroupIds: interestGroupIds,
+        companies: [],
         event,
       })
     },

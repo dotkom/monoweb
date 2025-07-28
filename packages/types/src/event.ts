@@ -1,47 +1,47 @@
-import { z } from "zod"
-
 import { schemas } from "@dotkomonline/db/schemas"
-
-import { AttendanceSchema } from "./attendance/attendance"
+import { z } from "zod"
 import { CompanySchema } from "./company"
+import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter } from "./filters"
 import { GroupSchema } from "./group"
 import { InterestGroupSchema } from "./interest-group/interest-group"
 
-export const EventSchema = schemas.EventSchema.extend({})
+/**
+ * @packageDocumentation
+ *
+ * Types related to events, and the "edge relations" on events, such as attendance, hosting groups, interest groups,
+ * companies, attendance pools, and attendees.
+ */
 
-export type Event = z.infer<typeof EventSchema>
 export type EventId = Event["id"]
-export type EventWithAttendanceSummarySchema = z.infer<typeof EventSchema>
-
-export type EventType = schemas.EventTypeType
-
-export const EventWriteSchema = EventSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
+export type EventType = Event["type"]
+export type Event = z.infer<typeof EventSchema>
+export const EventSchema = schemas.EventSchema.extend({
+  companies: z.array(CompanySchema),
+  hostingGroups: z.array(GroupSchema),
+  interestGroups: z.array(InterestGroupSchema),
 })
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
-
-export const EventDetailSchema = z.object({
-  event: EventSchema,
-  hostingCompanies: z.array(CompanySchema),
-  hostingGroups: z.array(GroupSchema),
-  hostingInterestGroups: z.array(InterestGroupSchema),
-  attendance: AttendanceSchema.nullable(),
+export const EventWriteSchema = EventSchema.pick({
+  status: true,
+  type: true,
+  title: true,
+  start: true,
+  end: true,
+  description: true,
+  subtitle: true,
+  imageUrl: true,
+  locationTitle: true,
+  locationAddress: true,
+  locationLink: true,
 })
 
-export type EventDetail = z.infer<typeof EventDetailSchema>
-
-const AttendanceEventSchema = EventSchema.extend({
-  attendance: AttendanceSchema.nullable(),
+export type EventFilterQuery = z.infer<typeof EventFilterQuerySchema>
+export const EventFilterQuerySchema = z.object({
+  byId: buildAnyOfFilter(EventSchema.shape.id),
+  byStartDate: buildDateRangeFilter(),
+  bySearchTerm: buildSearchFilter(),
+  byOrganizingCompany: buildAnyOfFilter(CompanySchema.shape.id),
+  byOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
+  byOrganizingInterestGroup: buildAnyOfFilter(InterestGroupSchema.shape.id),
 })
-
-export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
-
-export const EventFilterSchema = z.object({
-  query: z.string().optional(),
-  before: z.date().optional(),
-  after: z.date().optional(),
-})
-export type EventFilter = z.infer<typeof EventFilterSchema>

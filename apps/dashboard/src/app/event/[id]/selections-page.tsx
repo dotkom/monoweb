@@ -1,3 +1,4 @@
+import { useAttendanceGetQuery } from "@/app/event/queries"
 import { useTRPC } from "@/lib/trpc"
 import type { Attendance, AttendanceSelectionResults } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
@@ -12,17 +13,16 @@ import {
   useRemoveSelectionResponsesMutation,
   useUpdateAttendanceMutation,
 } from "../mutations"
-import { useEventDetailsContext } from "./provider"
+import { useEventContext } from "./provider"
 
 export const SelectionsPage: FC = () => {
-  const { attendance } = useEventDetailsContext()
-  const { event } = useEventDetailsContext()
-
-  if (!attendance) {
+  const event = useEventContext()
+  const attendance = useAttendanceGetQuery(event.attendanceId as string, event.attendanceId !== null)
+  if (event.attendanceId === null || attendance.isLoading || attendance.data === undefined) {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <SelectionsPageDetail attendance={attendance} />
+  return <SelectionsPageDetail attendance={attendance.data} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {

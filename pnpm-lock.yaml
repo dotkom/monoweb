@@ -629,6 +629,9 @@ importers:
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@fontsource/figtree':
         specifier: ^5.2.8
         version: 5.2.8
@@ -1128,12 +1131,18 @@ importers:
 
   packages/types:
     dependencies:
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../db
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../utils
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       zod:
         specifier: ^3.25.47
         version: 3.25.76

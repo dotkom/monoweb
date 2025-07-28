@@ -23,7 +23,6 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   status: "DRAFT",
   title: "",
   type: "SOCIAL",
-  attendanceId: null,
   locationLink: null,
   locationTitle: "",
 }

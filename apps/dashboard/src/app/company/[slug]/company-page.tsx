@@ -9,7 +9,7 @@ import { useCompanyDetailsContext } from "./provider"
 
 export const CompanyEventsPage: FC = () => {
   const { company } = useCompanyDetailsContext()
-  const { companyEvents } = useCompanyEventsAllQuery(company.id)
+  const { events } = useCompanyEventsAllQuery(company.id)
 
   const columnHelper = createColumnHelper<Event>()
   const columns = useMemo(
@@ -27,7 +27,7 @@ export const CompanyEventsPage: FC = () => {
     [columnHelper]
   )
   const table = useReactTable<Event>({
-    data: companyEvents,
+    data: events,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })

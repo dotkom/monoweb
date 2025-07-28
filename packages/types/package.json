@@ -11,8 +11,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.2.0",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
+    "date-fns": "^4.1.0",
     "zod": "^3.25.47"
   },
   "devDependencies": {

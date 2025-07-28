@@ -55,7 +55,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
     auth.getServerSession(),
     server.group.allByMember.query(user.id),
     server.interestGroup.getByMember.query(user.id),
-    server.event.allByUserIdWithAttendance.query({ id: user.id }),
+    server.event.allByAttendingUserId.query({ id: user.id }),
   ])
 
   const allGroups = [
@@ -217,7 +217,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
         <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-800 md:rounded-xl">
           <Title>Arrangementer</Title>
 
-          <EventList attendanceEvents={events} />
+          <EventList events={events} />
         </div>
       )}
     </div>

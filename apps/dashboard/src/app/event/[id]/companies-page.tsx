@@ -1,3 +1,4 @@
+import { useUpdateEventMutation } from "@/app/event/mutations"
 import { GenericTable } from "@/components/GenericTable"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
@@ -8,16 +9,12 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import { type FC, useMemo } from "react"
 import { z } from "zod"
 import { useCompanyAllQuery } from "../../company/queries"
-import { useAddCompanyToEventMutation, useRemoveCompanyFromEventMutation } from "../mutations"
-import { useEventCompanyGetQuery } from "../queries"
-import { useEventDetailsContext } from "./provider"
+import { useEventContext } from "./provider"
 
 export const EventCompaniesPage: FC = () => {
-  const { event } = useEventDetailsContext()
-  const { eventCompanies } = useEventCompanyGetQuery(event.id)
+  const event = useEventContext()
+  const updateEventMutation = useUpdateEventMutation()
   const { companies } = useCompanyAllQuery()
-  const add = useAddCompanyToEventMutation()
-  const remove = useRemoveCompanyFromEventMutation()
 
   const columnHelper = createColumnHelper<Company>()
   const columns = useMemo(
@@ -48,17 +45,34 @@ export const EventCompaniesPage: FC = () => {
           <Button
             variant="outline"
             leftSection={<Icon icon="tabler:trash" />}
-            onClick={() => remove.mutate({ id: event.id, company: info.getValue().id })}
+            onClick={() =>
+              updateEventMutation.mutate({
+                id: event.id,
+                event,
+                companies: event.companies.filter((x) => x.id !== info.getValue().id).map((x) => x.id),
+                groupIds: event.hostingGroups.map((x) => x.slug),
+                interestGroupIds: event.interestGroups.map((x) => x.id),
+              })
+            }
           >
             Fjern
           </Button>
         ),
       }),
     ],
-    [companies, columnHelper, remove, event.id]
+    [
+      companies,
+      columnHelper,
+      updateEventMutation,
+      event.id,
+      event.companies,
+      event.hostingGroups,
+      event.interestGroups,
+      event,
+    ]
   )
   const table = useReactTable<Company>({
-    data: eventCompanies,
+    data: event.companies,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
@@ -75,13 +89,19 @@ export const EventCompaniesPage: FC = () => {
         label: "Bedriftsnavn",
         searchable: true,
         data: companies
-          .filter((company) => !eventCompanies.map((x) => x.id).includes(company.id))
+          .filter((company) => !event.companies.map((x) => x.id).includes(company.id))
           .map((company) => ({ label: company.name, value: company.id })),
       }),
     },
     label: "Legg til ny bedrift",
     onSubmit: (data) => {
-      add.mutate(data)
+      updateEventMutation.mutate({
+        id: event.id,
+        event,
+        companies: event.companies.map((x) => x.id).concat([data.company]),
+        groupIds: event.hostingGroups.map((x) => x.slug),
+        interestGroupIds: event.interestGroups.map((x) => x.id),
+      })
     },
   })
 

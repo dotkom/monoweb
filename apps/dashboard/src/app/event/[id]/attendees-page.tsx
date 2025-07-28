@@ -5,17 +5,17 @@ import type { FC } from "react"
 import { AllAttendeesTable } from "../components/all-attendees-table"
 import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
 import { QrCodeScanner } from "../components/qr-code-scanner"
-import { useEventAttendeesGetQuery } from "../queries"
-import { useEventDetailsContext } from "./provider"
+import { useAttendanceGetQuery, useEventAttendeesGetQuery } from "../queries"
+import { useEventContext } from "./provider"
 
 export const AttendeesPage: FC = () => {
-  const { attendance } = useEventDetailsContext()
-
-  if (!attendance) {
-    return <div>Arrangementet har ikke påmelding</div>
+  const event = useEventContext()
+  const attendance = useAttendanceGetQuery(event.attendanceId as string, event.attendanceId !== null)
+  if (event.attendanceId === null || attendance.isLoading || attendance.data === undefined) {
+    // TODO: Return something useful here
+    return null
   }
-
-  return <Page attendance={attendance} />
+  return <Page attendance={attendance.data} />
 }
 
 interface Props {
