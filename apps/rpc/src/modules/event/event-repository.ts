@@ -1,5 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type {
+  AttendanceId,
   CompanyId,
   Event,
   EventFilterQuery,
@@ -51,7 +52,7 @@ export interface EventRepository {
   deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   deleteEventInterestGroups(handle: DBHandle, eventId: EventId, interestGroupIds: Set<InterestGroupId>): Promise<void>
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
-  addAttendance(handle: DBHandle, eventId: EventId, attendanceId: string): Promise<Event>
+  updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
 }
 
 export function getEventRepository(): EventRepository {
@@ -256,10 +257,13 @@ export function getEventRepository(): EventRepository {
         },
       })
     },
-    async addAttendance(handle, eventId, attendanceId) {
-      const row = await handle.event.update({ where: { id: eventId }, data: { attendanceId } })
+    async updateEventAttendance(handle, eventId, attendanceId) {
+      const row = await handle.event.update({
+        where: { id: eventId },
+        data: { attendanceId },
+      })
       const event = await this.findById(handle, row.id)
-      invariant(event !== null, "Event should exist within same transaction after adding attendance")
+      invariant(event !== null, "Event should exist within same transaction after updating attendance")
       return event
     },
   }

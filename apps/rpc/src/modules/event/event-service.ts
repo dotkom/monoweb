@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type {
-  AttendanceWrite,
+  AttendanceId,
   CompanyId,
   Event,
   EventFilterQuery,
@@ -11,7 +11,6 @@ import type {
   UserId,
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
-import type { AttendanceService } from "../attendance/attendance-service"
 import { EventNotFoundError } from "./event-error"
 import type { EventRepository } from "./event-repository"
 
@@ -25,6 +24,7 @@ export interface EventService {
     interestGroups: Set<InterestGroupId>,
     companies: Set<CompanyId>
   ): Promise<Event>
+  updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   findEvents(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<Event[]>
   findEventByAttendingUserId(handle: DBHandle, userId: UserId, page?: Pageable): Promise<Event[]>
   findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
@@ -34,10 +34,9 @@ export interface EventService {
    * @throws {EventNotFoundError} if the event does not exist
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
-  addAttendance(handle: DBHandle, eventId: EventId, data: AttendanceWrite): Promise<Event>
 }
 
-export function getEventService(eventRepository: EventRepository, attendanceService: AttendanceService): EventService {
+export function getEventService(eventRepository: EventRepository): EventService {
   return {
     async createEvent(handle, eventCreate) {
       return await eventRepository.create(handle, eventCreate)
@@ -61,10 +60,6 @@ export function getEventService(eventRepository: EventRepository, attendanceServ
     async findEventByAttendingUserId(handle, userId, page) {
       return await eventRepository.findByAttendingUserId(handle, userId, page ?? { take: 20 })
     },
-    async addAttendance(handle, eventId, data) {
-      const attendance = await attendanceService.create(handle, data)
-      return await eventRepository.addAttendance(handle, eventId, attendance.id)
-    },
     async updateEventOrganizers(handle, eventId, hostingGroups, interestGroups, companies) {
       const event = await this.getEventById(handle, eventId)
       // The easiest way to determine which elements to add and remove is to use basic set theory. The difference of a
@@ -82,6 +77,10 @@ export function getEventService(eventRepository: EventRepository, attendanceServ
       await eventRepository.deleteEventCompanies(handle, eventId, eventCompanies.difference(companies))
 
       return await this.getEventById(handle, eventId)
+    },
+    async updateEventAttendance(handle, eventId, attendanceId) {
+      const event = await this.getEventById(handle, eventId)
+      return await eventRepository.updateEventAttendance(handle, event.id, attendanceId)
     },
   }
 }

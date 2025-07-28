@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "biome check --write --unsafe .",
+    "lint": "biome check --write .",
     "lint-check": "biome check .",
     "preview": "vite preview",
     "type-check": "tsc --noEmit"
@@ -14,6 +14,7 @@
   "dependencies": {
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
+    "@dotkomonline/utils": "workspace:*",
     "@fontsource/figtree": "^5.2.8",
     "@fontsource/inter": "^5.2.6",
     "@tanstack/react-query": "^5.67.2",
