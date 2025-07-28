@@ -12,6 +12,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@fontsource/figtree": "^5.2.8",
     "@fontsource/inter": "^5.2.6",
@@ -20,6 +21,7 @@
     "@trpc/tanstack-react-query": "11.0.0-rc.828",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
+    "date-fns": "^4.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "superjson": "^2.0.0",
