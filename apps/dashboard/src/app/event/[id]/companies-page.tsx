@@ -51,7 +51,6 @@ export const EventCompaniesPage: FC = () => {
                 event,
                 companies: event.companies.filter((x) => x.id !== info.getValue().id).map((x) => x.id),
                 groupIds: event.hostingGroups.map((x) => x.slug),
-                interestGroupIds: event.interestGroups.map((x) => x.id),
               })
             }
           >
@@ -67,7 +66,6 @@ export const EventCompaniesPage: FC = () => {
       event.id,
       event.companies,
       event.hostingGroups,
-      event.interestGroups,
       event,
     ]
   )
@@ -100,7 +98,6 @@ export const EventCompaniesPage: FC = () => {
         event,
         companies: event.companies.map((x) => x.id).concat([data.company]),
         groupIds: event.hostingGroups.map((x) => x.slug),
-        interestGroupIds: event.interestGroups.map((x) => x.id),
       })
     },
   })

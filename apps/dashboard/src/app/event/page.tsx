@@ -36,7 +36,6 @@ export default function EventPage() {
         cell: (info) => (
           <EventHostingGroupList
             groups={info.getValue().hostingGroups}
-            interestGroups={info.getValue().interestGroups}
             companies={info.getValue().companies}
           />
         ),

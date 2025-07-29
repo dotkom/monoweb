@@ -3,12 +3,11 @@ import { z } from "zod"
 import { CompanySchema } from "./company"
 import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter } from "./filters"
 import { GroupSchema } from "./group"
-import { InterestGroupSchema } from "./interest-group/interest-group"
 
 /**
  * @packageDocumentation
  *
- * Types related to events, and the "edge relations" on events, such as attendance, hosting groups, interest groups,
+ * Types related to events, and the "edge relations" on events, such as attendance, hosting groups,
  * companies, attendance pools, and attendees.
  */
 
@@ -18,7 +17,6 @@ export type Event = z.infer<typeof EventSchema>
 export const EventSchema = schemas.EventSchema.extend({
   companies: z.array(CompanySchema),
   hostingGroups: z.array(GroupSchema),
-  interestGroups: z.array(InterestGroupSchema),
 })
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
@@ -43,5 +41,4 @@ export const EventFilterQuerySchema = z.object({
   bySearchTerm: buildSearchFilter(),
   byOrganizingCompany: buildAnyOfFilter(CompanySchema.shape.id),
   byOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
-  byOrganizingInterestGroup: buildAnyOfFilter(InterestGroupSchema.shape.id),
 })

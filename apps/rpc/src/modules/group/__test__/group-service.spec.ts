@@ -47,6 +47,7 @@ describe("GroupService", () => {
       imageUrl: null,
       type: "COMMITTEE",
       contactUrl: null,
+      deactivatedAt: null,
     }
     const id = randomUUID()
     vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ ...group })

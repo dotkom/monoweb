@@ -1,6 +1,6 @@
 "use client"
 
-import type { Group } from "@dotkomonline/types"
+import { getGroupTypeName, type Group } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -12,11 +12,6 @@ interface Props {
 
 export const useGroupTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<Group>()
-  const groupTypeLabels: Record<string, string> = {
-    COMMITTEE: "Komité",
-    NODECOMMITTEE: "NodeKomité",
-    OTHERGROUP: "Andre grupper",
-  }
 
   const columns = useMemo(
     () => [
@@ -50,7 +45,7 @@ export const useGroupTable = ({ data }: Props) => {
       columnHelper.accessor("type", {
         header: () => "Type",
         cell: (info) => {
-          return groupTypeLabels[info.getValue()] ?? info.getValue()
+          return getGroupTypeName(info.getValue())
         },
       }),
     ],

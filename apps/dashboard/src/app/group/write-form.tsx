@@ -62,6 +62,7 @@ export const useGroupWriteForm = ({
           { value: "COMMITTEE", label: "Komité" },
           { value: "NODECOMMITTEE", label: "Nodekomité" },
           { value: "OTHERGROUP", label: "Annen gruppe" },
+          { value: "INTEREST_GROUP", label: "Interessegruppe" },
         ],
       }),
     },

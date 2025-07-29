@@ -5,7 +5,6 @@ import {
   EventSchema,
   EventWriteSchema,
   GroupSchema,
-  InterestGroupSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -29,7 +28,6 @@ export const eventRouter = t.router({
       z.object({
         event: EventWriteSchema,
         groupIds: z.array(GroupSchema.shape.slug),
-        interestGroupIds: z.array(InterestGroupSchema.shape.id),
         companies: z.array(CompanySchema.shape.id),
       })
     )
@@ -41,7 +39,6 @@ export const eventRouter = t.router({
           handle,
           event.id,
           new Set(input.groupIds),
-          new Set(input.interestGroupIds),
           new Set(input.companies)
         )
       })
@@ -53,7 +50,6 @@ export const eventRouter = t.router({
         id: EventSchema.shape.id,
         event: EventWriteSchema,
         groupIds: z.array(GroupSchema.shape.slug),
-        interestGroupIds: z.array(InterestGroupSchema.shape.id),
         companies: z.array(CompanySchema.shape.id),
       })
     )
@@ -65,7 +61,6 @@ export const eventRouter = t.router({
           handle,
           event.id,
           new Set(input.groupIds),
-          new Set(input.interestGroupIds),
           new Set(input.companies)
         )
       })
@@ -91,7 +86,6 @@ export const eventRouter = t.router({
             bySearchTerm: input?.filter?.bySearchTerm ?? null,
             byOrganizingCompany: input?.filter?.byOrganizingCompany ?? [],
             byOrganizingGroup: input?.filter?.byOrganizingGroup ?? [],
-            byOrganizingInterestGroup: input?.filter?.byOrganizingInterestGroup ?? [],
           },
           input?.page
         )

@@ -25,6 +25,7 @@ function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     contactUrl: faker.internet.url(),
     email: faker.internet.email(),
     imageUrl: faker.image.url(),
+    deactivatedAt: null,
     ...input,
   }
 }
@@ -71,7 +72,6 @@ describe("event integration tests", () => {
     const event = await eventService.createEvent(dbClient, mock)
     expect(event.title).toBe(mock.title)
     expect(event.companies).toHaveLength(0)
-    expect(event.interestGroups).toHaveLength(0)
     expect(event.hostingGroups).toHaveLength(0)
     expect(event.attendanceId).toBeNull()
   })
@@ -79,26 +79,14 @@ describe("event integration tests", () => {
   it("should update event organizers by diffing organizers", async () => {
     const event = await eventService.createEvent(dbClient, getMockEvent())
     const group = await groupService.create(dbClient, getMockGroup())
-    const updated = await eventService.updateEventOrganizers(
-      dbClient,
-      event.id,
-      new Set([group.slug]),
-      new Set(),
-      new Set()
-    )
+    const updated = await eventService.updateEventOrganizers(dbClient, event.id, new Set([group.slug]), new Set())
     expect(updated.hostingGroups).toHaveLength(1)
     // Updating with new ones and removing some
     const group2 = await groupService.create(
       dbClient,
       getMockGroup({ abbreviation: "fagkom", name: "Fag- og kurskomiteen" })
     )
-    const updated2 = await eventService.updateEventOrganizers(
-      dbClient,
-      updated.id,
-      new Set([group2.slug]),
-      new Set(),
-      new Set()
-    )
+    const updated2 = await eventService.updateEventOrganizers(dbClient, updated.id, new Set([group2.slug]), new Set())
     expect(updated2.hostingGroups).toHaveLength(1)
     expect(updated2.hostingGroups).not.toContainEqual(
       expect.objectContaining({
@@ -110,13 +98,7 @@ describe("event integration tests", () => {
   it("should find events by various filter criteria", async () => {
     const eventObject = await eventService.createEvent(dbClient, getMockEvent())
     const group = await groupService.create(dbClient, getMockGroup())
-    const event = await eventService.updateEventOrganizers(
-      dbClient,
-      eventObject.id,
-      new Set([group.slug]),
-      new Set(),
-      new Set()
-    )
+    const event = await eventService.updateEventOrganizers(dbClient, eventObject.id, new Set([group.slug]), new Set())
     // It finds events by a search term
     {
       const events = await eventService.findEvents(dbClient, {
@@ -125,7 +107,6 @@ describe("event integration tests", () => {
         byStartDate: { min: null, max: null },
         byOrganizingCompany: [],
         byOrganizingGroup: [],
-        byOrganizingInterestGroup: [],
       })
       expect(events).toHaveLength(1)
     }
@@ -137,7 +118,6 @@ describe("event integration tests", () => {
         byStartDate: { min: null, max: null },
         byOrganizingCompany: [],
         byOrganizingGroup: [group.slug],
-        byOrganizingInterestGroup: [],
       })
       expect(events).toHaveLength(1)
     }
@@ -149,7 +129,6 @@ describe("event integration tests", () => {
         byStartDate: { min: null, max: null },
         byOrganizingCompany: [],
         byOrganizingGroup: [],
-        byOrganizingInterestGroup: [],
       })
       expect(events).toHaveLength(1)
     }

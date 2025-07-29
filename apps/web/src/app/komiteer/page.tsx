@@ -20,7 +20,7 @@ const CommitteePage = async () => {
       </div>
 
       <div className="mt-8">
-        <GroupList groups={committees} baseLink="komiteer" />
+        <GroupList groups={committees} />
       </div>
     </div>
   )

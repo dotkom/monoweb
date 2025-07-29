@@ -44,7 +44,6 @@ const eventPayload: Omit<Event, "id"> = {
   attendanceId: randomUUID(),
   companies: [],
   hostingGroups: [],
-  interestGroups: [],
 }
 
 // from https://stripe.com/docs/api

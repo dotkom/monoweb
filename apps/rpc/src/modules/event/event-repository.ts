@@ -8,7 +8,6 @@ import {
   EventSchema,
   type EventWrite,
   type GroupId,
-  type InterestGroupId,
   type UserId,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
@@ -22,8 +21,7 @@ export interface EventRepository {
   /**
    * Find events based on a set of search criteria.
    *
-   * You can query events by their IDs (for multiple events), start date range, search term, and the companies, groups,
-   * or interest groups organizing the event.
+   * You can query events by their IDs (for multiple events), start date range, search term, and the companies or groups organizing the event.
    *
    * The following describes the filters in a "predicate logic" style:
    *
@@ -36,8 +34,7 @@ export interface EventRepository {
    *   title CONTAINS bySearchTerm,
    *   OR(
    *     companies.companyId IN byOrganizingCompany,
-   *     hostingGroups.groupId IN byOrganizingGroup,
-   *     interestGroups.interestGroupId IN byOrganizingInterestGroup
+   *     hostingGroups.groupId IN byOrganizingGroup
    *   )
    * )
    * ```
@@ -49,10 +46,8 @@ export interface EventRepository {
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
   findByAttendingUserId(handle: DBHandle, userId: UserId, page: Pageable): Promise<Event[]>
   addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
-  addEventInterestGroups(handle: DBHandle, eventId: EventId, interestGroupIds: Set<InterestGroupId>): Promise<void>
   addEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
-  deleteEventInterestGroups(handle: DBHandle, eventId: EventId, interestGroupIds: Set<InterestGroupId>): Promise<void>
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
 }
@@ -105,12 +100,6 @@ export function getEventRepository(): EventRepository {
                       ? { some: { groupId: { in: query.byOrganizingGroup } } }
                       : undefined,
                 },
-                {
-                  interestGroups:
-                    query.byOrganizingInterestGroup.length > 0
-                      ? { some: { interestGroupId: { in: query.byOrganizingInterestGroup } } }
-                      : undefined,
-                },
               ],
             },
           ],
@@ -126,11 +115,6 @@ export function getEventRepository(): EventRepository {
               group: true,
             },
           },
-          interestGroups: {
-            include: {
-              interestGroup: true,
-            },
-          },
         },
       })
       return events.map((event) =>
@@ -138,7 +122,6 @@ export function getEventRepository(): EventRepository {
           ...event,
           companies: event.companies.map((c) => c.company),
           hostingGroups: event.hostingGroups.map((g) => g.group),
-          interestGroups: event.interestGroups.map((ig) => ig.interestGroup),
         })
       )
     },
@@ -156,11 +139,6 @@ export function getEventRepository(): EventRepository {
               group: true,
             },
           },
-          interestGroups: {
-            include: {
-              interestGroup: true,
-            },
-          },
         },
       })
       if (event === null) {
@@ -170,7 +148,6 @@ export function getEventRepository(): EventRepository {
         ...event,
         companies: event?.companies.map((c) => c.company) ?? [],
         hostingGroups: event?.hostingGroups.map((g) => g.group) ?? [],
-        interestGroups: event?.interestGroups.map((ig) => ig.interestGroup) ?? [],
       })
     },
     async findByAttendingUserId(handle, userId, page) {
@@ -199,7 +176,6 @@ export function getEventRepository(): EventRepository {
           bySearchTerm: null,
           byOrganizingCompany: [],
           byOrganizingGroup: [],
-          byOrganizingInterestGroup: [],
         },
         page
       )
@@ -211,17 +187,6 @@ export function getEventRepository(): EventRepository {
           .map((groupId) => ({
             eventId,
             groupId,
-          }))
-          .toArray(),
-      })
-    },
-    async addEventInterestGroups(handle, eventId, interestGroupIds) {
-      await handle.eventInterestGroup.createMany({
-        data: interestGroupIds
-          .values()
-          .map((interestGroupId) => ({
-            eventId,
-            interestGroupId,
           }))
           .toArray(),
       })
@@ -242,14 +207,6 @@ export function getEventRepository(): EventRepository {
         where: {
           eventId,
           groupId: { in: Array.from(hostingGroupIds.values()) },
-        },
-      })
-    },
-    async deleteEventInterestGroups(handle, eventId, interestGroupIds) {
-      await handle.eventInterestGroup.deleteMany({
-        where: {
-          eventId,
-          interestGroupId: { in: Array.from(interestGroupIds.values()) },
         },
       })
     },

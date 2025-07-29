@@ -81,7 +81,6 @@ model User {
   requestedRefunds          RefundRequest[]       @relation("RequestedBy")
   handledRefunds            RefundRequest[]       @relation("HandledBy")
   personalMark              PersonalMark[]
-  interestGroupsMemberships InterestGroupMember[]
   groupMemberships          GroupMembership[]
   memberships               Membership[]
 
@@ -107,23 +106,25 @@ model Company {
 }
 
 enum GroupType {
-  COMMITTEE      @map("COMMITTEE")
-  NODE_COMMITTEE @map("NODE_COMMITTEE")
-  ASSOCIATED     @map("ASSOCIATED")
+  COMMITTEE       @map("COMMITTEE")
+  NODE_COMMITTEE  @map("NODE_COMMITTEE")
+  ASSOCIATED      @map("ASSOCIATED")
+  INTEREST_GROUP  @map("INTEREST_GROUP")
 
   @@map("group_type")
 }
 
 model Group {
-  slug         String   @id @unique
-  abbreviation String
-  name         String?
-  description  String?
-  about        String
-  imageUrl     String?
-  email        String?
-  contactUrl   String?
-  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  slug          String    @id @unique
+  abbreviation  String
+  name          String?
+  description   String?
+  about         String
+  imageUrl      String?
+  email         String?
+  contactUrl    String?
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+  deactivatedAt DateTime?
 
   events      EventHostingGroup[]
   type        GroupType
@@ -273,7 +274,6 @@ model Event {
 
   companies      EventCompany[]
   hostingGroups  EventHostingGroup[]
-  interestGroups EventInterestGroup[]
 
   @@map("event")
 }
@@ -540,46 +540,6 @@ model ArticleTagLink {
 
   @@id([articleId, tagName])
   @@map("article_tag_link")
-}
-
-model InterestGroup {
-  id              String  @id @default(uuid())
-  name            String
-  description     String
-  link            String?
-  isActive        Boolean @default(true)
-  longDescription String?
-  joinInfo        String?
-  imageUrl        String?
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-
-  members InterestGroupMember[]
-  events  EventInterestGroup[]
-
-  @@map("interest_group")
-}
-
-model InterestGroupMember {
-  interestGroupId String
-  interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  @@id([interestGroupId, userId])
-  @@map("interest_group_member")
-}
-
-model EventInterestGroup {
-  eventId         String
-  interestGroupId String
-  event           Event         @relation(fields: [eventId], references: [id])
-  interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
-
-  @@id([eventId, interestGroupId])
-  @@map("event_interest_group")
 }
 
 enum TaskType {

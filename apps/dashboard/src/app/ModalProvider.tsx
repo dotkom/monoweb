@@ -13,7 +13,6 @@ import { EditPoolModal } from "./event/components/edit-pool-modal"
 import { AlreadyAttendedModal } from "./event/components/error-attendance-registered-modal"
 import { MergePoolsModal } from "./event/components/merge-pools-modal"
 import { CreateGroupModal } from "./group/modals/create-group-modal"
-import { CreateInterestGroupModal } from "./interest-group/modals/create-interest-group-modal"
 import { CreateJobListingModal } from "./job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "./offline/modals/create-offline-modal"
 
@@ -28,7 +27,6 @@ const modals = {
   "attendance/selections/create": CreateAttendanceSelectionsModal,
   "attendance/selections/update": UpdateAttendanceSelectionsModal,
   "article/create": CreateArticleModal,
-  "interestGroup/create": CreateInterestGroupModal,
   "group/create": CreateGroupModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,

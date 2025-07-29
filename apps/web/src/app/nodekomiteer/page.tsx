@@ -33,7 +33,7 @@ export default async function NodeCommitteePage() {
         </div>
       </div>
       <div className="mt-8">
-        <GroupList groups={nodeCommittees} baseLink="nodekomiteer" />
+        <GroupList groups={nodeCommittees} />
       </div>
     </div>
   )
