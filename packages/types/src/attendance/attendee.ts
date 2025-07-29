@@ -1,6 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { UserSchema } from "../user/user"
+import { UserSchema } from "../user"
 import { AttendanceSelectionResponseSchema } from "./attendance-selections"
 
 export const AttendeeSelectionResponsesSchema = z.array(AttendanceSelectionResponseSchema)

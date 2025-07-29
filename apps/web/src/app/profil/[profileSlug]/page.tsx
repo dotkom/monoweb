@@ -2,9 +2,9 @@ import { auth } from "@/auth"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
-import { type Membership, createGroupPageUrl, getMembershipGrade } from "@dotkomonline/types"
+import { type Membership, createGroupPageUrl, getActiveMembership, getMembershipGrade } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title } from "@dotkomonline/ui"
-import { formatDistanceToNowStrict } from "date-fns"
+import { formatDistanceToNowStrict, getYear } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 
@@ -13,14 +13,16 @@ const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
 
 function membershipDescription(membership: Membership) {
   switch (membership.type) {
-    case "BACHELOR":
+    case "BACHELOR_STUDENT":
       return "Bachelor"
-    case "MASTER":
+    case "MASTER_STUDENT":
       return "Master"
-    case "SOCIAL":
+    case "SOCIAL_MEMBER":
       return "Sosialt medlem"
     case "KNIGHT":
       return "Ridder"
+    case "PHD_STUDENT":
+      return "PhD-student"
   }
 }
 
@@ -71,13 +73,14 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
 
   const isUser = user.id === session?.sub
 
-  const grade = getMembershipGrade(user.membership)
+  const activeMembership = getActiveMembership(user)
+  const grade = activeMembership ? getMembershipGrade(activeMembership) : null
 
   return (
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-row gap-4">
         <Avatar className="w-16 h-16 md:w-32 md:h-32">
-          <AvatarImage src={user.image ?? undefined} />
+          <AvatarImage src={user.imageUrl ?? undefined} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
             <Icon className="text-6xl" icon="tabler:user" />
           </AvatarFallback>
@@ -96,10 +99,10 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
           </div>
 
           <div className="flex flex-col text-sm gap-1 md:flex-row md:items-center md:gap-2">
-            {user.membership ? (
+            {activeMembership ? (
               <Text>
                 {grade && `${grade}. klasse (`}
-                {membershipDescription(user.membership)}
+                {membershipDescription(activeMembership)}
                 {grade && ")"}
               </Text>
             ) : (
@@ -114,12 +117,15 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
           </div>
 
           <div className="flex flex-row items-center gap-2 text-sm">
-            {user.compiled && (
-              <div className="flex flex-row items-center w-fit gap-2 p-1.5 bg-gray-100 dark:bg-stone-800 rounded-md">
-                <OnlineIcon height={16} width={16} />
-                <Text>Kompilert</Text>
-              </div>
-            )}
+            {
+              // TODO: Reimplement compilation with flags
+              false && (
+                <div className="flex flex-row items-center w-fit gap-2 p-1.5 bg-gray-100 dark:bg-stone-800 rounded-md">
+                  <OnlineIcon height={16} width={16} />
+                  <Text>Kompilert</Text>
+                </div>
+              )
+            }
           </div>
 
           {user.biography ? (
@@ -139,7 +145,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
                 {renderUserInfo("E-post", user.email)}
                 {renderUserInfo("Kjønn", user.gender)}
                 {renderUserInfo("Telefon", user.phone)}
-                {renderUserInfo("Allergier", user.allergies || "Ingen allergier")}
+                {renderUserInfo("Allergier", user.dietaryRestrictions || "Ingen allergier")}
               </div>
             </div>
           </div>
@@ -148,13 +154,13 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
             <Title>Medlemskap</Title>
 
             <div className="flex flex-row gap-2 items-center p-3 bg-gray-100 dark:bg-stone-800 rounded-md w-fit">
-              {user.membership ? (
+              {activeMembership ? (
                 <>
                   <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
                   <div className="flex flex-col gap-1">
-                    <Text className="text-xl">{membershipDescription(user.membership)}</Text>
-                    {user.membership.specialization && <Text>{user.membership.specialization}</Text>}
-                    <Text>Startet studiet i {user.membership.start_year}</Text>
+                    <Text className="text-xl">{membershipDescription(activeMembership)}</Text>
+                    {activeMembership.specialization && <Text>{activeMembership.specialization}</Text>}
+                    <Text>Startet studiet i {getYear(activeMembership.start)}</Text>
                   </div>
                 </>
               ) : (
@@ -166,17 +172,17 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
             </div>
 
             <Button
-              color={user.membership ? "light" : "brand"}
-              variant={user.membership ? "outline" : "solid"}
+              color={activeMembership ? "light" : "brand"}
+              variant={activeMembership ? "outline" : "solid"}
               element="a"
               href={AUTHORIZE_WITH_FEIDE(profileSlug)}
               className="h-fit w-fit"
             >
-              {user.membership ? "Oppdater medlemskap" : "Registrer medlemskap"}
+              {activeMembership ? "Oppdater medlemskap" : "Registrer medlemskap"}
             </Button>
 
             <Text className="text-gray-500 dark:text-stone-500 text-sm">
-              For å {user.membership ? "oppdatere medlemskapet" : "registrere medlemskap"} må du logge inn med Feide.
+              For å {activeMembership ? "oppdatere medlemskapet" : "registrere medlemskap"} må du logge inn med Feide.
               Dersom du oppdager feil, ta kontakt med Hovedstyret.
             </Text>
           </div>

@@ -3,19 +3,13 @@ import { addWeeks, addYears } from "date-fns"
 
 export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
   email: "test-mail-that-does-not-exist6123123@gmail.com",
-  membership: null,
-  image: null,
+  imageUrl: null,
   name: "Test Test",
-  allergies: null,
+  dietaryRestrictions: null,
   gender: "other",
   phone: null,
-  compiled: false,
   biography: null,
-  flags: [],
   profileSlug: "test-test",
-  privacyPermissionsId: null,
-  notificationPermissionsId: null,
-  ntnuUsername: null,
   ...defaults,
 })
 

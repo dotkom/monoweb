@@ -48,7 +48,7 @@ function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
 
 describe("event integration tests", () => {
   const managementClient = mockDeep<ManagementClient>()
-  const userRepository = getUserRepository(managementClient)
+  const userRepository = getUserRepository()
   const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
   const feideGroupsRepository = getFeideGroupsRepository()
@@ -58,7 +58,8 @@ describe("event integration tests", () => {
     privacyPermissionsRepository,
     notificationPermissionsRepository,
     feideGroupsRepository,
-    ntnuStudyPlanRepository
+    ntnuStudyPlanRepository,
+    managementClient
   )
   const groupRepository = getGroupRepository()
   const groupService = getGroupService(groupRepository, userService)

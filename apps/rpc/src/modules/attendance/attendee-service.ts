@@ -13,6 +13,7 @@ import {
   canDeregisterForAttendance as attendanceOpenForDeregistration,
   canRegisterForAttendance as attendanceOpenForRegistration,
   canUserAttendPool,
+  getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours, isFuture } from "date-fns"
@@ -123,7 +124,8 @@ export function getAttendeeService(
       const reserveDelayHours = markDelayHours + mergePoolDelayHours
       const reserveTime = addHours(registerTime, reserveDelayHours)
 
-      const userGrade = getMembershipGrade(user.membership)
+      const activeMembership = getActiveMembership(user)
+      const userGrade = activeMembership !== null ? getMembershipGrade(activeMembership) : null
 
       const attendeeWithoutUser = await attendeeRepository.create(handle, {
         userId,
@@ -162,7 +164,8 @@ export function getAttendeeService(
       }
 
       const user = await userService.getById(handle, userId)
-      const userGrade = getMembershipGrade(user.membership)
+      const activeMembership = getActiveMembership(user)
+      const userGrade = activeMembership !== null ? getMembershipGrade(activeMembership) : null
 
       const attendeeWithoutUser = await attendeeRepository.create(handle, {
         userId,
