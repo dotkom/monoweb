@@ -113,7 +113,7 @@ export const ProfileMenu: FC = () => {
     <button type="button">
       <AvatarDropdown>
         <Avatar>
-          <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? "Profilbilde"} />
+          <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
           <AvatarFallback className="bg-blue-500">
             <Icon className="text-lg" icon="tabler:user" />
           </AvatarFallback>

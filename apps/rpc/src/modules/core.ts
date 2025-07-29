@@ -109,7 +109,7 @@ export async function createServiceLayer(
   const groupRepository = getGroupRepository()
   const jobListingRepository = getJobListingRepository()
   const companyRepository = getCompanyRepository()
-  const userRepository = getUserRepository(clients.auth0Client)
+  const userRepository = getUserRepository()
   const attendanceRepository = getAttendanceRepository()
   const attendeeRepository = getAttendeeRepository()
   const productRepository = getProductRepository()
@@ -134,7 +134,8 @@ export async function createServiceLayer(
     privacyPermissionsRepository,
     notificationPermissionsRepository,
     feideGroupsRepository,
-    ntnuStudyplanRepository
+    ntnuStudyplanRepository,
+    clients.auth0Client
   )
   const groupService = getGroupService(groupRepository, userService)
   const jobListingService = getJobListingService(jobListingRepository)

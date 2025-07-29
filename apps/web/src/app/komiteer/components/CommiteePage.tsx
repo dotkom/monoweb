@@ -133,7 +133,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       )}
     >
       <Avatar className="w-10 h-10 md:w-12 md:h-12">
-        <AvatarImage src={member.user.image ?? undefined} />
+        <AvatarImage src={member.user.imageUrl ?? undefined} />
         <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
           <Icon className="text-xl" icon="tabler:user" />
         </AvatarFallback>

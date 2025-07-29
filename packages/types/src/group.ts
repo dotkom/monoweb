@@ -1,7 +1,7 @@
 import type { z } from "zod"
 
 import { schemas } from "@dotkomonline/db/schemas"
-import { UserSchema } from "./user/user"
+import { UserSchema } from "./user"
 
 export const GroupSchema = schemas.GroupSchema.extend({})
 export const GroupTypeSchema = schemas.GroupTypeSchema

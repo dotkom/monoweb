@@ -8,6 +8,7 @@ import {
   type Attendee,
   type User,
   canUserAttendPool,
+  getActiveMembership,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
@@ -111,7 +112,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
 
   const isLoading = attendanceLoading || attendeesLoading || deregisterMutation.isPending || registerMutation.isPending
   const isLoggedIn = Boolean(user)
-  const hasMembership = Boolean(user?.membership)
+  const hasMembership = user !== undefined && getActiveMembership(user) !== null
 
   const queuePosition = getQueuePosition(attendee, attendees, attendablePool)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null

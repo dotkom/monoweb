@@ -1,4 +1,3 @@
-import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
@@ -34,12 +33,9 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
           { label: "Ikke oppgitt", value: "unknown" },
         ],
       }),
-      allergies: createTextInput({
+      dietaryRestrictions: createTextInput({
         label: "Allergier",
         placeholder: "Melk, nøtter, gluten",
-      }),
-      compiled: createCheckboxInput({
-        label: "Kompilert",
       }),
     },
   })

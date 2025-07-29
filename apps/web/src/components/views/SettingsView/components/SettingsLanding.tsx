@@ -20,14 +20,14 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
   </div>
 )
 
-type EditableFields = Pick<User, "biography" | "allergies" | "gender" | "phone" | "profileSlug">
+type EditableFields = Pick<User, "biography" | "dietaryRestrictions" | "gender" | "phone" | "profileSlug">
 
 export const Landing: NextPage<{ user: User }> = ({ user }) => {
   const trpc = useTRPC()
   const { register, handleSubmit } = useForm<EditableFields>({
     defaultValues: {
       biography: user.biography,
-      allergies: user.allergies,
+      dietaryRestrictions: user.dietaryRestrictions,
       gender: user.gender,
       phone: user.phone,
       profileSlug: user.profileSlug,
@@ -53,7 +53,7 @@ export const Landing: NextPage<{ user: User }> = ({ user }) => {
       </div>
       */}
       <FormInput title="Epost">
-        <TextInput width="flex-1" placeholder="Epost" defaultValue={user.email} disabled />
+        <TextInput width="flex-1" placeholder="Epost" defaultValue={user.email ?? "Ingen epost oppgitt"} disabled />
       </FormInput>
       <FormInput title="Telefon">
         <div className="w-full flex space-x-2">
@@ -73,7 +73,7 @@ export const Landing: NextPage<{ user: User }> = ({ user }) => {
         <Textarea placeholder="Din råkule bio" {...register("biography")} />
       </FormInput>
       <FormInput title="Allergier">
-        <Textarea placeholder="Dine allergier" {...register("allergies")} />
+        <Textarea placeholder="Dine allergier" {...register("dietaryRestrictions")} />
       </FormInput>
       <FormInput title="Kjønn">
         <div className="w-full">
