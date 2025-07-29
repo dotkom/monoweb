@@ -31,10 +31,11 @@ export function App() {
               className="block"
             >
               <desc id="desc">A decorative slant</desc>
-              <path fill="white" d="M1440,0.5L0,32L0,32L1440,32Z" />
+              {/* #ffedd4 is Tailwind's orange-100 */}
+              <path fill="#ffedd4" d="M1440,0.5L0,32L0,32L1440,32Z" />
             </svg>
-            {/* Line of white to hide pixel gap under svg */}
-            <div className="absolute bottom-0 left-0 w-full h-px bg-white pointer-events-none" />
+            {/* Line to hide pixel gap under svg */}
+            <div className="absolute bottom-0 left-0 w-full h-px bg-orange-100 pointer-events-none" />
           </div>
           <Events />
         </main>

@@ -1,18 +1,21 @@
 import { trpc } from "@/lib/trpc"
 import type { Event } from "@dotkomonline/types"
-import { Icon, Text } from "@dotkomonline/ui"
+import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { compareAsc, formatDate, getDate } from "date-fns"
 import { nb } from "date-fns/locale"
 
+const baseUrl = import.meta.env.VITE_WEB_URL || "http://localhost:3000"
+
 export const Events = () => {
-  // TODO: filter by "Velkom"
-  const { data: events, isLoading } = useQuery(trpc.event.all.queryOptions())
+  const { data: events, isLoading } = useQuery(
+    trpc.event.all.queryOptions({ filter: { byOrganizingGroup: ["velkom"] } })
+  )
 
   if (isLoading) {
     return (
-      <div className="bg-white min-h-[500px] w-full flex gap-2 justify-center items-center">
+      <div className="bg-orange-100 min-h-[500px] w-full flex gap-2 justify-center items-center">
         <Icon icon="tabler:loader-2" className="animate-spin text-2xl" />
         <Text className="text-2xl">Laster...</Text>
       </div>
@@ -21,7 +24,7 @@ export const Events = () => {
 
   if (!events || events.length === 0) {
     return (
-      <div className="bg-white min-h-[500px] w-full flex gap-2 justify-center items-center">
+      <div className="bg-orange-100 min-h-[500px] w-full flex gap-2 justify-center items-center">
         <Text className="text-2xl">Ingen arrangementer funnet</Text>
       </div>
     )
@@ -44,57 +47,82 @@ export const Events = () => {
     }, new Map<string, Map<number, Event[]>>())
 
   return (
-    <div className="bg-white min-h-[500px] w-full">
-      <div className="relative max-w-screen-xl py-20 px-8 md:px-16 mx-auto">
-        <div className="absolute inset-y-0 left-1/4 w-1 rounded-full bg-gray-300" />
+    <div className="bg-orange-100 min-h-[500px] py-20 w-full">
+      <div className="max-w-screen-xl mx-auto space-y-8">
+        <Title size="lg" className="text-4xl px-8 md:px-16">
+          Arrangementer
+        </Title>
 
-        <div className="space-y-18">
-          {eventsByDate.entries().map(([month, eventsInMonth]) => (
-            <div key={month} className="space-y-4">
-              <div className="w-1/4 pr-12 flex justify-end-safe">
-                <Text className="relative w-fit z-1 text-2xl font-bold capitalize p-1 -m-1 bg-white rounded-md">
+        <div className="px-8 md:px-16">
+          <div className="space-y-18">
+            {eventsByDate.entries().map(([month, eventsInMonth]) => (
+              <div key={month} className="relative space-y-4">
+                {/* The vertical line */}
+                <div
+                  className={cn(
+                    "absolute w-1 rounded-full bg-orange-200",
+                    "top-10 -bottom-10 transform -translate-x-1/2",
+                    // 25 % is to align with event card
+                    // -18px/-26px is to align with the dot
+                    "left-[calc(25%-18px)] md:left-[calc(25%-26px)] "
+                  )}
+                />
+
+                <Text
+                  className={cn(
+                    "text-2xl font-bold capitalize",
+                    "sm:w-1/4 sm:pr-12 max-sm:relative sm:flex sm:justify-end-safe"
+                  )}
+                >
                   {month}
                 </Text>
-              </div>
 
-              <div className="space-y-12">
-                {eventsInMonth.entries().map(([date, events]) => (
-                  <div className="space-y-4" key={`${month}-${date}`}>
-                    <Text className="text-gray-500 uppercase font-bold text-xs max-sm:relative max-sm:left-1/4 sm:w-1/4 sm:pr-12 sm:text-right mb-1 sm:-mb-0.5">
-                      {events[0] ? formatDate(new Date(events[0]?.start), "EEEE dd.", { locale: nb }) : "Ukjent ukedag"}
-                    </Text>
+                <div className="space-y-12">
+                  {eventsInMonth.entries().map(([date, events]) => (
+                    <div className="space-y-4" key={`${month}-${date}`}>
+                      <Text
+                        className={cn(
+                          "text-orange-800 uppercase font-bold text-xs",
+                          "max-sm:relative max-sm:left-1/4 sm:w-1/4 sm:pr-12 sm:text-right mb-1 sm:-mb-0.5"
+                        )}
+                      >
+                        {events[0]
+                          ? formatDate(new Date(events[0]?.start), "EEEE dd.", { locale: nb })
+                          : "Ukjent ukedag"}
+                      </Text>
 
-                    {events.map((event) => (
-                      <div key={event.id} className="flex items-center">
-                        <Text className="w-1/4 pr-12 text-right">
-                          {formatDate(event.start, "HH:mm", { locale: nb })}
-                        </Text>
+                      {events.map((event) => (
+                        <div key={event.id} className="flex items-center">
+                          <Text className="w-1/4 pr-12 text-right">
+                            {formatDate(event.start, "HH:mm", { locale: nb })}
+                          </Text>
 
-                        <div className="relative w-3/4">
-                          <div className="absolute -left-[14px] md:-left-[30px] top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <div className="h-3 w-3 rounded-full bg-brand" />
+                          <div className="relative w-3/4">
+                            {/* The dot for the event. The pixel offsets need to be synced with the vertical line */}
+                            <div className="absolute -left-[18px] md:-left-[26px] top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                              <div className="h-3 w-3 rounded-full bg-yellow-800" />
+                            </div>
+
+                            <a
+                              href={`${baseUrl}/arrangementer/${slugify(event.title)}/${event.id}`}
+                              className="flex items-center gap-2 transition-colors p-2 -m-2 rounded-lg hover:bg-orange-200/50"
+                            >
+                              <img
+                                src={event.imageUrl ?? "https://placehold.co/120x90/fdba74/854d0e/?text=Online"}
+                                alt={event.title}
+                                className="w-14 h-auto aspect-4/3 object-cover rounded-sm"
+                              />
+                              <Text className="text-lg/5">{event.title}</Text>
+                            </a>
                           </div>
-
-                          <a
-                            /* TODO: update href */
-                            href={`http://localhost:3000/arrangementer/${slugify(event.title)}/${event.id}`}
-                            className="flex items-center gap-2 transition-colors p-2 -m-2 rounded-lg hover:bg-gray-100"
-                          >
-                            <img
-                              src={event.imageUrl ?? "https://placehold.co/120x90?text=Online"}
-                              alt={event.title}
-                              className="w-14 h-auto aspect-4/3 object-cover rounded-sm"
-                            />
-                            <Text className="text-lg/5">{event.title}</Text>
-                          </a>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
