@@ -20,10 +20,10 @@ export interface GroupRepository {
   getAllByType(handle: DBHandle, type: GroupType): Promise<Group[]>
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, type: GroupType): Promise<GroupId[]>
-  getMemberships(handle: DBHandle, groupId: GroupId): Promise<Omit<GroupMembership, "user">[]>
+  getMemberships(handle: DBHandle, groupId: GroupId): Promise<GroupMembership[]>
   getGroupsByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
-  startMembership(handle: DBHandle, data: GroupMembershipWrite): Promise<Omit<GroupMembership, "user">>
-  endMembership(handle: DBHandle, membership: GroupMembershipId): Promise<Omit<GroupMembership, "user">>
+  startMembership(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMembership>
+  endMembership(handle: DBHandle, membership: GroupMembershipId): Promise<GroupMembership>
 }
 
 export function getGroupRepository(): GroupRepository {
