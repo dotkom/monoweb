@@ -1,12 +1,15 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  EventId,
-  InterestGroup,
-  InterestGroupId,
-  InterestGroupMember,
-  InterestGroupWrite,
-  UserId,
+import {
+  type EventId,
+  type InterestGroup,
+  type InterestGroupId,
+  type InterestGroupMember,
+  InterestGroupMemberSchema,
+  InterestGroupSchema,
+  type InterestGroupWrite,
+  type UserId,
 } from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 
 export interface InterestGroupRepository {
   getById(handle: DBHandle, interestGroupId: InterestGroupId): Promise<InterestGroup | null>
@@ -28,40 +31,48 @@ export interface InterestGroupRepository {
 export function getInterestGroupRepository(): InterestGroupRepository {
   return {
     async getById(handle, interestGroupId) {
-      return await handle.interestGroup.findUnique({ where: { id: interestGroupId } })
+      const group = await handle.interestGroup.findUnique({ where: { id: interestGroupId } })
+      return parseOrReport(InterestGroupSchema, group)
     },
     async getAll(handle) {
-      return await handle.interestGroup.findMany()
+      const groups = await handle.interestGroup.findMany()
+      return groups.map((group) => parseOrReport(InterestGroupSchema, group))
     },
     async create(handle, values) {
-      return await handle.interestGroup.create({ data: values })
+      const group = await handle.interestGroup.create({ data: values })
+      return parseOrReport(InterestGroupSchema, group)
     },
     async update(handle, interestGroupId, values) {
-      return await handle.interestGroup.update({ where: { id: interestGroupId }, data: values })
+      const group = await handle.interestGroup.update({ where: { id: interestGroupId }, data: values })
+      return parseOrReport(InterestGroupSchema, group)
     },
     async delete(handle, interestGroupId) {
       await handle.interestGroup.delete({ where: { id: interestGroupId } })
     },
     async getAllMembers(handle, interestGroupId) {
-      return await handle.interestGroupMember.findMany({ where: { interestGroupId } })
+      const members = await handle.interestGroupMember.findMany({ where: { interestGroupId } })
+      return members.map((member) => parseOrReport(InterestGroupMemberSchema, member))
     },
     async getAllByMember(handle, userId) {
-      return await handle.interestGroup.findMany({ where: { members: { some: { userId } } } })
+      const groups = await handle.interestGroup.findMany({ where: { members: { some: { userId } } } })
+      return groups.map((group) => parseOrReport(InterestGroupSchema, group))
     },
     async addMember(handle, interestGroupId, userId) {
-      return await handle.interestGroupMember.create({ data: { interestGroupId, userId } })
+      const member = await handle.interestGroupMember.create({ data: { interestGroupId, userId } })
+      return parseOrReport(InterestGroupMemberSchema, member)
     },
     async removeMember(handle, interestGroupId, userId) {
       await handle.interestGroupMember.delete({ where: { interestGroupId_userId: { interestGroupId, userId } } })
     },
     async getAllByEventId(handle, eventId) {
-      return await handle.interestGroup.findMany({
+      const groups = await handle.interestGroup.findMany({
         where: {
           events: {
             some: { eventId },
           },
         },
       })
+      return groups.map((group) => parseOrReport(InterestGroupSchema, group))
     },
   }
 }

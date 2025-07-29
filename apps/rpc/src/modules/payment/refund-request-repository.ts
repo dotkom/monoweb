@@ -1,5 +1,12 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { PaymentId, RefundRequest, RefundRequestId, RefundRequestWrite } from "@dotkomonline/types"
+import {
+  type PaymentId,
+  type RefundRequest,
+  type RefundRequestId,
+  RefundRequestSchema,
+  type RefundRequestWrite,
+} from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface RefundRequestRepository {
@@ -14,22 +21,27 @@ export interface RefundRequestRepository {
 export function getRefundRequestRepository(): RefundRequestRepository {
   return {
     async create(handle, data) {
-      return await handle.refundRequest.create({ data })
+      const request = await handle.refundRequest.create({ data })
+      return parseOrReport(RefundRequestSchema, request)
     },
     async update(handle, refundRequestId, data) {
-      return await handle.refundRequest.update({ where: { id: refundRequestId }, data })
+      const request = await handle.refundRequest.update({ where: { id: refundRequestId }, data })
+      return parseOrReport(RefundRequestSchema, request)
     },
     async delete(handle, refundRequestId) {
       await handle.refundRequest.delete({ where: { id: refundRequestId } })
     },
     async getById(handle, refundRequestId) {
-      return await handle.refundRequest.findUnique({ where: { id: refundRequestId } })
+      const request = await handle.refundRequest.findUnique({ where: { id: refundRequestId } })
+      return request ? parseOrReport(RefundRequestSchema, request) : null
     },
     async getByPaymentId(handle, paymentId) {
-      return await handle.refundRequest.findUnique({ where: { paymentId } })
+      const request = await handle.refundRequest.findUnique({ where: { paymentId } })
+      return request ? parseOrReport(RefundRequestSchema, request) : null
     },
     async getAll(handle, page) {
-      return await handle.refundRequest.findMany({ ...pageQuery(page) })
+      const requests = await handle.refundRequest.findMany({ ...pageQuery(page) })
+      return requests.map((request) => parseOrReport(RefundRequestSchema, request))
     },
   }
 }

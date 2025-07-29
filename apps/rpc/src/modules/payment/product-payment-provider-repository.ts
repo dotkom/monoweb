@@ -1,10 +1,13 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  PaymentProvider,
-  ProductId,
-  ProductPaymentProvider,
-  ProductPaymentProviderWrite,
+import {
+  type PaymentProvider,
+  PaymentProviderSchema,
+  type ProductId,
+  type ProductPaymentProvider,
+  ProductPaymentProviderSchema,
+  type ProductPaymentProviderWrite,
 } from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 
 export interface ProductPaymentProviderRepository {
   create(handle: DBHandle, data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | null>
@@ -16,7 +19,8 @@ export interface ProductPaymentProviderRepository {
 export function getProductPaymentProviderRepository(): ProductPaymentProviderRepository {
   return {
     async create(handle, data) {
-      return await handle.productPaymentProvider.create({ data })
+      const provider = await handle.productPaymentProvider.create({ data })
+      return parseOrReport(ProductPaymentProviderSchema, provider)
     },
     async delete(handle, productId, paymentProviderId) {
       await handle.productPaymentProvider.delete({
@@ -24,15 +28,15 @@ export function getProductPaymentProviderRepository(): ProductPaymentProviderRep
       })
     },
     async getAllByProductId(handle, productId) {
-      return await handle.productPaymentProvider.findMany({ where: { productId } })
+      const providers = await handle.productPaymentProvider.findMany({ where: { productId } })
+      return providers.map((provider) => parseOrReport(PaymentProviderSchema, provider))
     },
     async productHasPaymentProviderId(handle, productId, paymentProviderId) {
-      return Boolean(
-        await handle.productPaymentProvider.findUnique({
-          where: { productId_paymentProviderId: { productId, paymentProviderId } },
-          select: {},
-        })
-      )
+      const provider = await handle.productPaymentProvider.findUnique({
+        where: { productId_paymentProviderId: { productId, paymentProviderId } },
+        select: {},
+      })
+      return provider !== null
     },
   }
 }

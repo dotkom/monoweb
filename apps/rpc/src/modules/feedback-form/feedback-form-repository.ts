@@ -1,12 +1,14 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
-import type {
-  EventId,
-  FeedbackForm,
-  FeedbackFormId,
-  FeedbackFormWrite,
-  FeedbackPublicResultsToken,
-  FeedbackQuestionWrite,
+import {
+  type EventId,
+  type FeedbackForm,
+  type FeedbackFormId,
+  FeedbackFormSchema,
+  type FeedbackFormWrite,
+  type FeedbackPublicResultsToken,
+  type FeedbackQuestionWrite,
 } from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 
 export interface FeedbackFormRepository {
   create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>
@@ -29,7 +31,7 @@ export interface FeedbackFormRepository {
 export function getFeedbackFormRepository(): FeedbackFormRepository {
   return {
     async create(handle, feedbackForm, questions) {
-      const createdFeedbackForm = await handle.feedbackForm.create({
+      const form = await handle.feedbackForm.create({
         data: {
           ...feedbackForm,
           questions: {
@@ -52,10 +54,10 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
         include: QUERY_WITH_QUESTIONS,
       })
 
-      return createdFeedbackForm
+      return parseOrReport(FeedbackFormSchema, form)
     },
     async update(handle, id, feedbackForm, questions) {
-      const createdFeedbackForm = await handle.feedbackForm.update({
+      const form = await handle.feedbackForm.update({
         where: { id },
         data: {
           ...feedbackForm,
@@ -104,7 +106,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
         include: QUERY_WITH_QUESTIONS,
       })
 
-      return createdFeedbackForm
+      return parseOrReport(FeedbackFormSchema, form)
     },
     async delete(handle, id) {
       await handle.feedbackForm.delete({
@@ -114,7 +116,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
       })
     },
     async getById(handle, id) {
-      return await handle.feedbackForm.findUnique({
+      const form = await handle.feedbackForm.findUnique({
         where: {
           id: id,
         },
@@ -123,9 +125,10 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
           publicResultsToken: true,
         },
       })
+      return form ? parseOrReport(FeedbackFormSchema, form) : null
     },
     async getByEventId(handle, eventId) {
-      const feedbackForm = await handle.feedbackForm.findFirst({
+      const form = await handle.feedbackForm.findFirst({
         where: {
           eventId: eventId,
         },
@@ -135,17 +138,17 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
         },
       })
 
-      return feedbackForm
+      return form ? parseOrReport(FeedbackFormSchema, form) : null
     },
     async getByPublicResultsToken(handle, publicResultsToken) {
-      const feedbackForm = await handle.feedbackForm.findUnique({
+      const form = await handle.feedbackForm.findUnique({
         where: {
           publicResultsToken: publicResultsToken,
         },
         include: QUERY_WITH_QUESTIONS,
       })
 
-      return feedbackForm
+      return form ? parseOrReport(FeedbackFormSchema, form) : null
     },
     async getPublicResultsToken(handle, id) {
       const result = await handle.feedbackForm.findUnique({

@@ -2,6 +2,7 @@ import type { DBHandle, FeedbackQuestionAnswer, FeedbackQuestionOption } from "@
 import {
   type AttendeeId,
   type FeedbackFormAnswer,
+  FeedbackFormAnswerSchema,
   type FeedbackFormAnswerWrite,
   type FeedbackFormId,
   type FeedbackPublicResultsToken,
@@ -9,6 +10,7 @@ import {
   type FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
 import { Prisma } from "@prisma/client"
+import { parseOrReport } from "../../invariant"
 
 export interface FeedbackFormAnswerRepository {
   create(
@@ -125,10 +127,10 @@ function mapFormAnswer(
     })),
   }))
 
-  return {
+  return parseOrReport(FeedbackFormAnswerSchema, {
     ...formAnswer,
     questionAnswers: parsedAnswers,
-  }
+  })
 }
 
 const QUERY_WITH_ANSWERS = {

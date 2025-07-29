@@ -1,5 +1,11 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { PrivacyPermissions, PrivacyPermissionsWrite, UserId } from "@dotkomonline/types"
+import {
+  type PrivacyPermissions,
+  PrivacyPermissionsSchema,
+  type PrivacyPermissionsWrite,
+  type UserId,
+} from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 
 export interface PrivacyPermissionsRepository {
   getByUserId(handle: DBHandle, userId: UserId): Promise<PrivacyPermissions | null>
@@ -10,13 +16,16 @@ export interface PrivacyPermissionsRepository {
 export function getPrivacyPermissionsRepository(): PrivacyPermissionsRepository {
   return {
     async getByUserId(handle, userId) {
-      return await handle.privacyPermissions.findUnique({ where: { userId } })
+      const permissions = await handle.privacyPermissions.findUnique({ where: { userId } })
+      return parseOrReport(PrivacyPermissionsSchema, permissions)
     },
     async create(handle, userId, data) {
-      return await handle.privacyPermissions.create({ data: { ...data, userId } })
+      const permissions = await handle.privacyPermissions.create({ data: { ...data, userId } })
+      return parseOrReport(PrivacyPermissionsSchema, permissions)
     },
     async update(handle, userId, data) {
-      return await handle.privacyPermissions.update({ where: { userId }, data })
+      const permissions = await handle.privacyPermissions.update({ where: { userId }, data })
+      return parseOrReport(PrivacyPermissionsSchema, permissions)
     },
   }
 }

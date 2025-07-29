@@ -1,16 +1,18 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  AttendanceId,
-  CompanyId,
-  Event,
-  EventFilterQuery,
-  EventId,
-  EventWrite,
-  GroupId,
-  InterestGroupId,
-  UserId,
+import {
+  type AttendanceId,
+  type CompanyId,
+  type Event,
+  type EventFilterQuery,
+  type EventId,
+  EventSchema,
+  type EventWrite,
+  type GroupId,
+  type InterestGroupId,
+  type UserId,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
+import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface EventRepository {
@@ -131,12 +133,14 @@ export function getEventRepository(): EventRepository {
           },
         },
       })
-      return events.map((event) => ({
-        ...event,
-        companies: event.companies.map((c) => c.company),
-        hostingGroups: event.hostingGroups.map((g) => g.group),
-        interestGroups: event.interestGroups.map((ig) => ig.interestGroup),
-      }))
+      return events.map((event) =>
+        parseOrReport(EventSchema, {
+          ...event,
+          companies: event.companies.map((c) => c.company),
+          hostingGroups: event.hostingGroups.map((g) => g.group),
+          interestGroups: event.interestGroups.map((ig) => ig.interestGroup),
+        })
+      )
     },
     async findById(handle, id) {
       const event = await handle.event.findUnique({
@@ -162,12 +166,12 @@ export function getEventRepository(): EventRepository {
       if (event === null) {
         return null
       }
-      return {
+      return parseOrReport(EventSchema, {
         ...event,
         companies: event?.companies.map((c) => c.company) ?? [],
         hostingGroups: event?.hostingGroups.map((g) => g.group) ?? [],
         interestGroups: event?.interestGroups.map((ig) => ig.interestGroup) ?? [],
-      }
+      })
     },
     async findByAttendingUserId(handle, userId, page) {
       const events = await handle.attendee.findMany({
