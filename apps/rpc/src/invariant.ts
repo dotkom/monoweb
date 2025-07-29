@@ -1,5 +1,5 @@
-import type { z } from "zod"
 import { getLogger } from "@dotkomonline/logger"
+import type { z } from "zod"
 
 /**
  * Ensure that the value conforms to the schema, or throw an error.
