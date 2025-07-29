@@ -1,6 +1,8 @@
 import { getLogger } from "@dotkomonline/logger"
 import type { z } from "zod"
 
+const logger = getLogger("db-query-invariant-checker")
+
 /**
  * Ensure that the value conforms to the schema, or throw an error.
  *
@@ -8,8 +10,6 @@ import type { z } from "zod"
  * there is ZERO RUNTIME GUARANTEES that the data conforms to the schema. In fact, TypeScript will HAPPILY lie to us
  * since we never checked.
  */
-const logger = getLogger("db-query-invariant-checker")
-
 export function parseOrReport<T>(schema: z.ZodSchema<T>, value: T): T {
   const result = schema.safeParse(value)
   if (!result.success) {
