@@ -8,7 +8,7 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { authenticatedProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
   getAttendee: authenticatedProcedure
@@ -151,7 +151,7 @@ export const attendanceRouter = t.router({
       )
     ),
 
-  getAttendees: authenticatedProcedure
+  getAttendees: procedure
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
@@ -161,7 +161,7 @@ export const attendanceRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.attendeeService.getByAttendanceId(handle, input.attendanceId))
     ),
 
-  getAttendance: authenticatedProcedure
+  getAttendance: procedure
     .input(
       z.object({
         id: AttendanceSchema.shape.id,

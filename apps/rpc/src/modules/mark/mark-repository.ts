@@ -1,5 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
+import { type Mark, type MarkId, MarkSchema, type MarkWrite } from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface MarkRepository {
@@ -13,19 +14,24 @@ export interface MarkRepository {
 export function getMarkRepository(): MarkRepository {
   return {
     async getById(handle, markId) {
-      return await handle.mark.findUnique({ where: { id: markId } })
+      const mark = await handle.mark.findUnique({ where: { id: markId } })
+      return parseOrReport(MarkSchema, mark)
     },
     async getAll(handle, page) {
-      return await handle.mark.findMany({ ...pageQuery(page) })
+      const marks = await handle.mark.findMany({ ...pageQuery(page) })
+      return marks.map((mark) => parseOrReport(MarkSchema, mark))
     },
     async create(handle, data) {
-      return await handle.mark.create({ data })
+      const mark = await handle.mark.create({ data })
+      return parseOrReport(MarkSchema, mark)
     },
     async update(handle, markId, data) {
-      return await handle.mark.update({ where: { id: markId }, data })
+      const mark = await handle.mark.update({ where: { id: markId }, data })
+      return parseOrReport(MarkSchema, mark)
     },
     async delete(handle, markId) {
-      return await handle.mark.delete({ where: { id: markId } })
+      const mark = await handle.mark.delete({ where: { id: markId } })
+      return parseOrReport(MarkSchema, mark)
     },
   }
 }

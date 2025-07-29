@@ -2,11 +2,7 @@
   "name": "monorepo",
   "version": "1.0.0",
   "description": "Monoweb is the next-generation web application for Online. This is the monorepo source.",
-  "keywords": [
-    "online",
-    "ntnu",
-    "student-association"
-  ],
+  "keywords": ["online", "ntnu", "student-association"],
   "homepage": "https://online.ntnu.no",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
   "bugs": {
@@ -30,16 +26,15 @@
     "migrate:dev-with-fixtures": "pnpm -F @dotkomonline/db prisma migrate dev && pnpm -F @dotkomonline/db apply-fixtures",
     "migrate:deploy": "pnpm -F @dotkomonline/db prisma migrate deploy",
     "migrate:deploy-with-fixtures": "pnpm -F @dotkomonline/db prisma migrate deploy && pnpm -F @dotkomonline/db apply-fixtures",
+    "migrate:staging": "doppler run --config stg --project monoweb-rpc -- pnpm migrate:deploy",
+    "migrate:prod": "doppler run --config prd --project monoweb-rpc -- pnpm migrate:deploy",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "shell": "pnpm -F @dotkomonline/rpc shell"
   },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
+  "workspaces": ["packages/*", "apps/*"],
   "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=22.0.0",

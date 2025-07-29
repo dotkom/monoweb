@@ -3,8 +3,8 @@ import { server } from "@/utils/trpc/server"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import Link from "next/link"
 
-export default async function InterestPage() {
-  const interestGroups = await server.interestGroup.all.query()
+export default async function InterestGroupPage() {
+  const interestGroups = await server.group.allByType.query("INTEREST_GROUP")
 
   return (
     <div>
@@ -47,13 +47,7 @@ export default async function InterestPage() {
         </Link>
       </div>
       <div className="mt-8">
-        <GroupList
-          groups={interestGroups.map((group) => ({
-            ...group,
-            type: "INTERESTGROUP",
-          }))}
-          baseLink="interessegrupper"
-        />
+        <GroupList groups={interestGroups} />
       </div>
     </div>
   )

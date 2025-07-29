@@ -1,11 +1,10 @@
-import type { Company, Group, InterestGroup } from "@dotkomonline/types"
+import type { Company, Group } from "@dotkomonline/types"
 import { Anchor, Group as MantineGroup, Text } from "@mantine/core"
 import Link from "next/link"
 import type { FC } from "react"
 
 export type EventHostingGroupListProps = {
   groups: Group[]
-  interestGroups: InterestGroup[]
   companies: Company[]
 }
 
@@ -13,11 +12,11 @@ export type EventHostingGroupListProps = {
  * Component for displaying a list of groups that are hosting an event
  *
  * This list is strictly ordered based on the highest interest priority. The
- * order is companies, groups, then interest groups.
+ * order is companies then groups.
  */
-export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, interestGroups, companies }) => {
+export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, companies }) => {
   // Nobody is set as organizer yet
-  if (groups.length === 0 && interestGroups.length === 0 && companies.length === 0) {
+  if (groups.length === 0 && companies.length === 0) {
     return <Text>Ingen arrangører</Text>
   }
 
@@ -31,11 +30,6 @@ export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, 
       {groups.map((group) => (
         <Anchor key={group.slug} component={Link} size="sm" href={`/group/${group.slug}`}>
           {group.name}
-        </Anchor>
-      ))}
-      {interestGroups.map((interestGroup) => (
-        <Anchor key={interestGroup.id} component={Link} size="sm" href={`/interest-group/${interestGroup.id}`}>
-          {interestGroup.name}
         </Anchor>
       ))}
     </MantineGroup>

@@ -3,6 +3,7 @@ import {
   type AttendanceId,
   type AttendancePoolId,
   type AttendeeId,
+  AttendeeSchema,
   AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
   AttendeeSelectionResponsesSchema,
   type AttendeeWithoutUser,
@@ -10,6 +11,7 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
+import { parseOrReport } from "../../invariant"
 import { AttendeeWriteError } from "./attendee-error"
 
 type UnparsedAttendeeWithoutUser = Omit<AttendeeWithoutUser, "selections"> & {
@@ -193,8 +195,8 @@ function parse(unparsedAttendee: UnparsedAttendeeWithoutUser): AttendeeWithoutUs
     ? AttendeeSelectionResponsesSchema.parse(unparsedAttendee.selections)
     : []
 
-  return {
+  return parseOrReport(AttendeeSchema.omit({ user: true }), {
     ...unparsedAttendee,
     selections: parsedSelections,
-  }
+  })
 }

@@ -12,14 +12,8 @@ import { getAttendanceService } from "./attendance/attendance-service"
 import { getAttendeeRepository } from "./attendance/attendee-repository"
 import { getAttendeeService } from "./attendance/attendee-service"
 import { getAuthorizationService } from "./authorization-service"
-import { getCompanyEventRepository } from "./company/company-event-repository"
-import { getCompanyEventService } from "./company/company-event-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
-import { getEventCompanyRepository } from "./event/event-company-repository"
-import { getEventCompanyService } from "./event/event-company-service"
-import { getEventHostingGroupRepository } from "./event/event-hosting-group-repository"
-import { getEventHostingGroupService } from "./event/event-hosting-group-service"
 import { getEventRepository } from "./event/event-repository"
 import { getEventService } from "./event/event-service"
 import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-answer-repository"
@@ -29,8 +23,6 @@ import { getFeedbackFormService } from "./feedback-form/feedback-form-service"
 import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
 import { getGroupService } from "./group/group-service"
-import { getInterestGroupRepository } from "./interest-group/interest-group-repository"
-import { getInterestGroupService } from "./interest-group/interest-group-service"
 import { getJobListingRepository } from "./job-listing/job-listing-repository"
 import { getJobListingService } from "./job-listing/job-listing-service"
 import { getMarkRepository } from "./mark/mark-repository"
@@ -115,10 +107,7 @@ export async function createServiceLayer(
   const groupRepository = getGroupRepository()
   const jobListingRepository = getJobListingRepository()
   const companyRepository = getCompanyRepository()
-  const companyEventRepository = getCompanyEventRepository()
-  const eventCompanyRepository = getEventCompanyRepository()
-  const eventHostingGroupRepository = getEventHostingGroupRepository()
-  const userRepository = getUserRepository(clients.auth0Client)
+  const userRepository = getUserRepository()
   const attendanceRepository = getAttendanceRepository()
   const attendeeRepository = getAttendeeRepository()
   const productRepository = getProductRepository()
@@ -143,9 +132,9 @@ export async function createServiceLayer(
     privacyPermissionsRepository,
     notificationPermissionsRepository,
     feideGroupsRepository,
-    ntnuStudyplanRepository
+    ntnuStudyplanRepository,
+    clients.auth0Client
   )
-  const eventHostingGroupService = getEventHostingGroupService(eventHostingGroupRepository)
   const groupService = getGroupService(groupRepository, userService)
   const jobListingService = getJobListingService(jobListingRepository)
   const attendeeService = getAttendeeService(
@@ -160,18 +149,8 @@ export async function createServiceLayer(
     attendeeService,
     taskSchedulingService
   )
-  const interestGroupRepository = getInterestGroupRepository()
-  const interestGroupService = getInterestGroupService(interestGroupRepository)
-  const eventCompanyService = getEventCompanyService(eventCompanyRepository)
-  const eventService = getEventService(
-    eventRepository,
-    attendanceService,
-    eventCompanyService,
-    eventHostingGroupService,
-    interestGroupService
-  )
+  const eventService = getEventService(eventRepository)
   const companyService = getCompanyService(companyRepository)
-  const companyEventService = getCompanyEventService(companyEventRepository, attendanceService)
   const productService = getProductService(productRepository)
   const paymentService = getPaymentService(
     paymentRepository,
@@ -202,23 +181,18 @@ export async function createServiceLayer(
     eventService,
     groupService,
     companyService,
-    companyEventService,
-    eventCompanyService,
     productService,
     paymentService,
     productPaymentProviderService,
     refundRequestService,
     markService,
     personalMarkService,
-    eventHostingGroupService,
     jobListingService,
     offlineService,
     articleService,
     attendanceService,
     attendanceRepository,
     attendeeService,
-    interestGroupRepository,
-    interestGroupService,
     taskService,
     taskExecutor,
     feedbackFormService,

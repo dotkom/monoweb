@@ -1,5 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { ArticleId, ArticleTag, ArticleTagName } from "@dotkomonline/types"
+import { type ArticleId, type ArticleTag, type ArticleTagName, ArticleTagSchema } from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 
 export interface ArticleTagRepository {
   getAll(handle: DBHandle): Promise<ArticleTag[]>
@@ -12,21 +13,25 @@ export interface ArticleTagRepository {
 export function getArticleTagRepository(): ArticleTagRepository {
   return {
     async getAll(handle) {
-      return await handle.articleTag.findMany()
+      const tags = await handle.articleTag.findMany()
+      return tags.map((tag) => parseOrReport(ArticleTagSchema, tag))
     },
     async create(handle, tagName) {
-      return await handle.articleTag.create({
+      const tag = await handle.articleTag.create({
         data: { name: tagName },
       })
+      return parseOrReport(ArticleTagSchema, tag)
     },
     async delete(handle, tagName) {
-      return await handle.articleTag.delete({ where: { name: tagName } })
+      const tag = await handle.articleTag.delete({ where: { name: tagName } })
+      return parseOrReport(ArticleTagSchema, tag)
     },
     async getByName(handle, tagName) {
-      return await handle.articleTag.findUnique({ where: { name: tagName } })
+      const tag = await handle.articleTag.findUnique({ where: { name: tagName } })
+      return tag ? parseOrReport(ArticleTagSchema, tag) : null
     },
     async getAllByArticle(handle, articleId) {
-      return await handle.articleTag.findMany({
+      const tags = await handle.articleTag.findMany({
         where: {
           articles: {
             some: {
@@ -37,6 +42,7 @@ export function getArticleTagRepository(): ArticleTagRepository {
           },
         },
       })
+      return tags.map((tag) => parseOrReport(ArticleTagSchema, tag))
     },
   }
 }

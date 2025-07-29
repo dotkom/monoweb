@@ -17,7 +17,7 @@ describe("GroupService", () => {
   const db = vi.mocked(PrismaClient.prototype)
   const auth0Client = mockDeep<ManagementClient>()
 
-  const userRepository = getUserRepository(auth0Client)
+  const userRepository = getUserRepository()
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
   const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const feideGroupsRepository = getFeideGroupsRepository()
@@ -28,7 +28,8 @@ describe("GroupService", () => {
     privacyPermissionsRepository,
     notificationPermissionsRepository,
     feideGroupsRepository,
-    ntnuStudyplanRepository
+    ntnuStudyplanRepository,
+    auth0Client
   )
 
   const groupRepository = getGroupRepository()
@@ -46,6 +47,7 @@ describe("GroupService", () => {
       imageUrl: null,
       type: "COMMITTEE",
       contactUrl: null,
+      deactivatedAt: null,
     }
     const id = randomUUID()
     vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ ...group })

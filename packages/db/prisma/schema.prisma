@@ -17,9 +17,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum MembershipType {
+  BACHELOR_STUDENT @map("BACHELOR_STUDENT")
+  MASTER_STUDENT   @map("MASTER_STUDENT")
+  PHD_STUDENT      @map("PHD_STUDENT")
+  KNIGHT           @map("KNIGHT")
+  SOCIAL_MEMBER    @map("SOCIAL_MEMBER")
+
+  @@map("membership_type")
+}
+
+/// Taken from the Feide API. The values were found by digging around in our Auth0 user profiles.
+///
+/// We have an additional value `UNKNOWN` to represent users that do not have a specialization or if some new value is
+/// suddenly added to the Feide API that we do not yet know about.
+enum MembershipSpecialization {
+  ARTIFICIAL_INTELLIGENCE @map("ARTIFICIAL_INTELLIGENCE")
+  DATABASE_AND_SEARCH     @map("DATABASE_AND_SEARCH")
+  INTERACTION_DESIGN      @map("INTERACTION_DESIGN")
+  SOFTWARE_ENGINEERING    @map("SOFTWARE_ENGINEERING")
+  UNKNOWN                 @map("UNKNOWN")
+
+  @@map("membership_specialization")
+}
+
+model Membership {
+  id             String                    @id @default(uuid())
+  userId         String
+  user           User                      @relation(fields: [userId], references: [id])
+  type           MembershipType
+  specialization MembershipSpecialization? @default(UNKNOWN)
+  start          DateTime                  @db.Timestamptz(3)
+  end            DateTime                  @db.Timestamptz(3)
+
+  @@map("membership")
+}
+
 model User {
-  id          String @id
-  profileSlug String @unique @default(uuid())
+  /// OpenID Connect Subject claim
+  id                  String   @id
+  profileSlug         String   @unique @default(uuid())
+  name                String?
+  email               String?
+  imageUrl            String?
+  biography           String?
+  phone               String?
+  gender              String?
+  dietaryRestrictions String?
+  ntnuUsername        String?
+  flags               String[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   privacyPermissionsId String?             @unique
   privacyPermissions   PrivacyPermissions?
@@ -32,8 +81,8 @@ model User {
   requestedRefunds          RefundRequest[]       @relation("RequestedBy")
   handledRefunds            RefundRequest[]       @relation("HandledBy")
   personalMark              PersonalMark[]
-  interestGroupsMemberships InterestGroupMember[]
   groupMemberships          GroupMembership[]
+  memberships               Membership[]
 
   @@map("ow_user")
 }
@@ -57,23 +106,25 @@ model Company {
 }
 
 enum GroupType {
-  COMMITTEE      @map("COMMITTEE")
-  NODE_COMMITTEE @map("NODE_COMMITTEE")
-  ASSOCIATED     @map("ASSOCIATED")
+  COMMITTEE       @map("COMMITTEE")
+  NODE_COMMITTEE  @map("NODE_COMMITTEE")
+  ASSOCIATED      @map("ASSOCIATED")
+  INTEREST_GROUP  @map("INTEREST_GROUP")
 
   @@map("group_type")
 }
 
 model Group {
-  slug         String   @id @unique
-  abbreviation String
-  name         String?
-  description  String?
-  about        String
-  imageUrl     String?
-  email        String?
-  contactUrl   String?
-  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  slug          String    @id @unique
+  abbreviation  String
+  name          String?
+  description   String?
+  about         String
+  imageUrl      String?
+  email         String?
+  contactUrl    String?
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+  deactivatedAt DateTime?
 
   events      EventHostingGroup[]
   type        GroupType
@@ -223,7 +274,6 @@ model Event {
 
   companies      EventCompany[]
   hostingGroups  EventHostingGroup[]
-  interestGroups EventInterestGroup[]
 
   @@map("event")
 }
@@ -490,46 +540,6 @@ model ArticleTagLink {
 
   @@id([articleId, tagName])
   @@map("article_tag_link")
-}
-
-model InterestGroup {
-  id              String  @id @default(uuid())
-  name            String
-  description     String
-  link            String?
-  isActive        Boolean @default(true)
-  longDescription String?
-  joinInfo        String?
-  imageUrl        String?
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-
-  members InterestGroupMember[]
-  events  EventInterestGroup[]
-
-  @@map("interest_group")
-}
-
-model InterestGroupMember {
-  interestGroupId String
-  interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  @@id([interestGroupId, userId])
-  @@map("interest_group_member")
-}
-
-model EventInterestGroup {
-  eventId         String
-  interestGroupId String
-  event           Event         @relation(fields: [eventId], references: [id])
-  interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
-
-  @@id([eventId, interestGroupId])
-  @@map("event_interest_group")
 }
 
 enum TaskType {

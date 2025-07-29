@@ -46,7 +46,7 @@ export const groupRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.groupService.delete(handle, input))
     ),
   getMembers: procedure
-    .input(GroupMembershipSchema.shape.userId)
+    .input(GroupSchema.shape.slug)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getMembers(handle, input))
     ),

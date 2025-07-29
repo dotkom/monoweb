@@ -5,7 +5,6 @@ import { getCompanyFixtures } from "./fixtures/company"
 import { getEventFixtures } from "./fixtures/event"
 import { getEventHostingGroupFixtures } from "./fixtures/event-hosting-group"
 import { getGroupFixtures, getGroupRoleFixtures } from "./fixtures/group"
-import { getInterestGroupFixtures } from "./fixtures/interest-group"
 import { getJobListingFixtures, getJobListingLocationFixtures } from "./fixtures/job-listing"
 import { getMarkFixtures } from "./fixtures/mark"
 import { getOfflineFixtures } from "./fixtures/offline"
@@ -41,10 +40,6 @@ await db.jobListingLocation.createManyAndReturn({
 
 await db.offline.createMany({
   data: getOfflineFixtures(),
-})
-
-await db.interestGroup.createMany({
-  data: getInterestGroupFixtures(),
 })
 
 await db.eventHostingGroup.createManyAndReturn({

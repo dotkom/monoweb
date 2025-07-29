@@ -1,6 +1,10 @@
+"use client"
+
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
-import type { Attendance } from "@dotkomonline/types"
+import { useTRPC } from "@/utils/trpc/client"
+import type { Attendance, AttendanceId } from "@dotkomonline/types"
 import { Icon, Text, cn } from "@dotkomonline/ui"
+import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
@@ -13,20 +17,25 @@ const getAttendeeCountAndCapacity = (attendance: Attendance): [number, number] =
 }
 
 interface EventListItemAttendanceStatusProps {
-  attendance: Attendance | null
+  attendanceId: AttendanceId | null
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
   eventEndInPast: boolean
 }
 
 export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
-  attendance,
+  attendanceId,
   attendeeStatus,
   eventEndInPast,
 }) => {
-  if (attendance === null) {
+  // TODO: This load should be handled by the parent, and preferably in batch on the server.
+  const trpc = useTRPC()
+  const { data: attendance } = useQuery({
+    ...trpc.event.attendance.getAttendance.queryOptions({ id: attendanceId as string }),
+    enabled: attendanceId !== null,
+  })
+  if (!attendance) {
     return null
   }
-
   const attendanceStatus = getAttendanceStatus(attendance)
   const isReserved = attendeeStatus === "RESERVED"
   const isUnreserved = attendeeStatus === "UNRESERVED"

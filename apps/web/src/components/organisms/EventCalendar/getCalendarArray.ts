@@ -1,7 +1,7 @@
-import type { EventDetail } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/types"
 import type { CalendarData, EventDisplayProps, Week } from "./types"
 
-export function getCalendarArray(year: number, month: number, eventDetails: EventDetail[]): CalendarData {
+export function getCalendarArray(year: number, month: number, events: Event[]): CalendarData {
   const firstDayOfMonth = new Date(year, month, 1)
   const lastDayOfMonth = new Date(year, month + 1, 0)
 
@@ -41,9 +41,7 @@ export function getCalendarArray(year: number, month: number, eventDetails: Even
     const slotMatrix: (number | null)[][] = []
 
     for (const [dayIndex, day] of week.dates.entries()) {
-      for (const eventDetail of eventDetails) {
-        const event = eventDetail.event
-
+      for (const event of events) {
         if (!completedEvents.includes(event.id)) {
           const dayEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 23, 59, 59)
 
@@ -89,7 +87,7 @@ export function getCalendarArray(year: number, month: number, eventDetails: Even
                 for (let i = eventDisplayProps.startCol; i < eventDisplayProps.startCol + eventDisplayProps.span; i++) {
                   slotMatrix[row][i] = 1
                 }
-                week.events[row].push({ ...eventDetail, eventDisplayProps })
+                week.events[row].push({ ...event, eventDisplayProps })
                 completedEvents.push(event.id)
                 placed = true
               } else {

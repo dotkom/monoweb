@@ -1,5 +1,4 @@
 import { useGroupAllQuery } from "@/app/group/queries/use-group-all-query"
-import { useInterestGroupAllQuery } from "@/app/interest-group/queries/use-interest-group-all-query"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
@@ -19,11 +18,9 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   locationAddress: null,
   subtitle: null,
   hostingGroupIds: [],
-  interestGroupIds: [],
   status: "DRAFT",
   title: "",
   type: "SOCIAL",
-  attendanceId: null,
   locationLink: null,
   locationTitle: "",
 }
@@ -34,7 +31,6 @@ interface UseEventWriteFormProps {
 
 export const EventWriteFormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
-  interestGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
   for (const issue of issues) {
@@ -46,7 +42,6 @@ type FormValidationResult = z.infer<typeof EventWriteFormValidationSchema>
 
 export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
-  const { interestGroups } = useInterestGroupAllQuery()
   return useFormBuilder({
     schema: EventWriteFormValidationSchema,
     defaultValues: EVENT_FORM_DEFAULT_VALUES,
@@ -84,15 +79,9 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         withAsterisk: true,
       }),
       hostingGroupIds: createMultipleSelectInput({
-        label: "Arrangerende komité",
+        label: "Arrangerende gruppe",
         placeholder: "Arrkom",
         data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
-        searchable: true,
-      }),
-      interestGroupIds: createMultipleSelectInput({
-        label: "Arrangerende interessegruppe",
-        placeholder: "Stipendsushi",
-        data: interestGroups.map((interestGroup) => ({ value: interestGroup.id, label: interestGroup.name })),
         searchable: true,
       }),
       status: createSelectInput({

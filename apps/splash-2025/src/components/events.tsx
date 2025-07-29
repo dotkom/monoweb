@@ -1,10 +1,10 @@
-import type { EventDetail } from "@dotkomonline/types"
+import { trpc } from "@/lib/trpc"
+import type { Event } from "@dotkomonline/types"
 import { Icon, Text } from "@dotkomonline/ui"
+import { slugify } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { compareAsc, formatDate, getDate } from "date-fns"
 import { nb } from "date-fns/locale"
-import { slugify } from "../../../../packages/utils/src/slugify"
-import { trpc } from "../lib/trpc"
 
 export const Events = () => {
   // TODO: filter by "Velkom"
@@ -28,12 +28,12 @@ export const Events = () => {
   }
 
   const eventsByDate = events
-    .toSorted((a, b) => compareAsc(a.event.start, b.event.start))
+    .toSorted((a, b) => compareAsc(a.start, b.start))
     .reduce((acc, eventDetail) => {
-      const month = formatDate(eventDetail.event.start, "MMMM", { locale: nb })
-      const date = getDate(eventDetail.event.start)
+      const month = formatDate(eventDetail.start, "MMMM", { locale: nb })
+      const date = getDate(eventDetail.start)
 
-      const eventsInMonth = acc.get(month) || new Map<number, EventDetail[]>()
+      const eventsInMonth = acc.get(month) || new Map<number, Event[]>()
       const eventsInDate = eventsInMonth.get(date) || []
 
       eventsInDate.push(eventDetail)
@@ -41,7 +41,7 @@ export const Events = () => {
       acc.set(month, eventsInMonth)
 
       return acc
-    }, new Map<string, Map<number, EventDetail[]>>())
+    }, new Map<string, Map<number, Event[]>>())
 
   return (
     <div className="bg-white min-h-[500px] w-full">
@@ -58,18 +58,16 @@ export const Events = () => {
               </div>
 
               <div className="space-y-12">
-                {eventsInMonth.entries().map(([date, details]) => (
+                {eventsInMonth.entries().map(([date, events]) => (
                   <div className="space-y-4" key={`${month}-${date}`}>
                     <Text className="text-gray-500 uppercase font-bold text-xs max-sm:relative max-sm:left-1/4 sm:w-1/4 sm:pr-12 sm:text-right mb-1 sm:-mb-0.5">
-                      {details[0]
-                        ? formatDate(new Date(details[0]?.event.start), "EEEE dd.", { locale: nb })
-                        : "Ukjent ukedag"}
+                      {events[0] ? formatDate(new Date(events[0]?.start), "EEEE dd.", { locale: nb }) : "Ukjent ukedag"}
                     </Text>
 
-                    {details.map((detail) => (
-                      <div key={detail.event.id} className="flex items-center">
+                    {events.map((event) => (
+                      <div key={event.id} className="flex items-center">
                         <Text className="w-1/4 pr-12 text-right">
-                          {formatDate(detail.event.start, "HH:mm", { locale: nb })}
+                          {formatDate(event.start, "HH:mm", { locale: nb })}
                         </Text>
 
                         <div className="relative w-3/4">
@@ -79,15 +77,15 @@ export const Events = () => {
 
                           <a
                             /* TODO: update href */
-                            href={`http://localhost:3000/arrangementer/${slugify(detail.event.title)}/${detail.event.id}`}
+                            href={`http://localhost:3000/arrangementer/${slugify(event.title)}/${event.id}`}
                             className="flex items-center gap-2 transition-colors p-2 -m-2 rounded-lg hover:bg-gray-100"
                           >
                             <img
-                              src={detail.event.imageUrl ?? "https://placehold.co/120x90?text=Online"}
-                              alt={detail.event.title}
+                              src={event.imageUrl ?? "https://placehold.co/120x90?text=Online"}
+                              alt={event.title}
                               className="w-14 h-auto aspect-4/3 object-cover rounded-sm"
                             />
-                            <Text className="text-lg/5">{detail.event.title}</Text>
+                            <Text className="text-lg/5">{event.title}</Text>
                           </a>
                         </div>
                       </div>

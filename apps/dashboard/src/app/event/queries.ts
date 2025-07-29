@@ -12,21 +12,9 @@ export const useEventAllQuery = () => {
   return { events, ...query }
 }
 
-export const useEventCompanyGetQuery = (id: EventId) => {
-  const trpc = useTRPC()
-  const { data: eventCompanies, ...query } = useQuery({
-    ...trpc.event.company.get.queryOptions({
-      id,
-    }),
-    initialData: [],
-  })
-  return { eventCompanies, ...query }
-}
-
 export const useEventDetailsGetQuery = (id: EventId) => {
   const trpc = useTRPC()
-
-  return useQuery(trpc.event.getEventDetail.queryOptions(id))
+  return useQuery(trpc.event.get.queryOptions(id))
 }
 
 export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {

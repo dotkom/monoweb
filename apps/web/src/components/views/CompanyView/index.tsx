@@ -1,13 +1,13 @@
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
-import type { AttendanceEvent, Company } from "@dotkomonline/types"
+import type { Company, Event } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 
 interface CompanyViewProps {
   company: Company
-  attendanceEvents: AttendanceEvent[]
+  events: Event[]
 }
 
 export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
@@ -52,7 +52,7 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-2">
         <Title element="h2">Arrangementer</Title>
-        <EventList attendanceEvents={props.attendanceEvents} />
+        <EventList events={props.events} />
       </div>
     </EntryDetailLayout>
   )

@@ -1,6 +1,6 @@
 "use client"
 
-import type { EventDetail } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Box, Button, ButtonGroup, Skeleton, Stack } from "@mantine/core"
@@ -14,19 +14,19 @@ import { useEventAllQuery } from "./queries"
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
-  const columnHelper = createColumnHelper<EventDetail>()
+  const columnHelper = createColumnHelper<Event>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((event) => event, {
-        id: "event.title",
+        id: "title",
         header: () => "Arrangementnavn",
         cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/event/${info.getValue().event.id}`}>
-            {info.getValue().event.title}
+          <Anchor component={Link} size="sm" href={`/event/${info.getValue().id}`}>
+            {info.getValue().title}
           </Anchor>
         ),
       }),
-      columnHelper.accessor("event.start", {
+      columnHelper.accessor("start", {
         header: () => "Startdato",
         cell: (info) => formatDate(info.getValue()),
       }),
@@ -34,14 +34,10 @@ export default function EventPage() {
         id: "organizers",
         header: () => "Arrangører",
         cell: (info) => (
-          <EventHostingGroupList
-            groups={info.getValue().hostingGroups}
-            interestGroups={info.getValue().hostingInterestGroups}
-            companies={info.getValue().hostingCompanies}
-          />
+          <EventHostingGroupList groups={info.getValue().hostingGroups} companies={info.getValue().companies} />
         ),
       }),
-      columnHelper.accessor("event.type", {
+      columnHelper.accessor("type", {
         header: () => "Type",
       }),
     ],

@@ -3,7 +3,6 @@ import { companyRouter } from "./modules/company/company-router"
 import { attendanceRouter } from "./modules/event/attendance-router"
 import { eventRouter } from "./modules/event/event-router"
 import { groupRouter } from "./modules/group/group-router"
-import { interestGroupRouter } from "./modules/interest-group/interest-group-router"
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
 import { markRouter } from "./modules/mark/mark-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
@@ -24,7 +23,6 @@ export const appRouter = t.router({
   jobListing: jobListingRouter,
   offline: offlineRouter,
   article: articleRouter,
-  interestGroup: interestGroupRouter,
 })
 
 export type AppRouter = typeof appRouter

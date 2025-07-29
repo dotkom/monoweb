@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "event" ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP;

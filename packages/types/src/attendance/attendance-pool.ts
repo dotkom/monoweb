@@ -1,18 +1,20 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { getMembershipGrade } from "../user/membership"
-import type { User } from "../user/user"
+import { type User, getActiveMembership, getMembershipGrade } from "../user"
 
 export const YearCriteriaSchema = z.array(z.number())
 
 export type YearCriteria = z.infer<typeof YearCriteriaSchema>
 
+export type AttendancePoolId = AttendancePool["id"]
+export type AttendancePool = z.infer<typeof AttendancePoolSchema>
 export const AttendancePoolSchema = schemas.AttendancePoolSchema.extend({
   numAttendees: z.number(),
   numUnreservedAttendees: z.number(),
   yearCriteria: YearCriteriaSchema,
 })
 
+export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
 export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({
   id: true,
   createdAt: true,
@@ -21,19 +23,8 @@ export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({
   numUnreservedAttendees: true,
 })
 
-export type AttendancePool = z.infer<typeof AttendancePoolSchema>
-export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
-export type AttendancePoolId = AttendancePool["id"]
-
-export const AttendancePoolWithoutAttendeeCount = AttendancePoolSchema.omit({
-  numAttendees: true,
-  numUnreservedAttendees: true,
-})
-
-export type AttendancePoolWithoutAttendeeCount = z.infer<typeof AttendancePoolWithoutAttendeeCount>
-
 export function canUserAttendPool(pool: AttendancePool, user: User) {
-  if (user.membership === null) {
+  if (user.memberships.length === 0) {
     return false
   }
 
@@ -41,8 +32,11 @@ export function canUserAttendPool(pool: AttendancePool, user: User) {
     return true
   }
 
-  const grade = getMembershipGrade(user.membership)
-
+  const activeMembership = getActiveMembership(user)
+  if (activeMembership === null) {
+    return false
+  }
+  const grade = getMembershipGrade(activeMembership)
   if (grade === null) {
     return false
   }

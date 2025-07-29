@@ -1,3 +1,4 @@
+import { useAttendanceGetQuery } from "@/app/event/queries"
 import type { Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
@@ -5,17 +6,16 @@ import { useAttendanceForm } from "../components/attendance-form"
 import { PoolBox } from "../components/pools-box"
 import { usePoolsForm } from "../components/pools-form"
 import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
-import { useEventDetailsContext } from "./provider"
+import { useEventContext } from "./provider"
 
 export const AttendancePage: FC = () => {
-  const { attendance } = useEventDetailsContext()
-  const { event } = useEventDetailsContext()
-
-  if (!attendance) {
+  const event = useEventContext()
+  const attendance = useAttendanceGetQuery(event.attendanceId as string, event.attendanceId !== null)
+  if (event.attendanceId === null || attendance.isLoading || attendance.data === undefined) {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <AttendancePageDetail attendance={attendance} />
+  return <AttendancePageDetail attendance={attendance.data} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {

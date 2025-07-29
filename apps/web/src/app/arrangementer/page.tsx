@@ -4,13 +4,7 @@ import { server } from "@/utils/trpc/server"
 import { Title } from "@dotkomonline/ui"
 
 const EventPage = async () => {
-  const eventDetails = await server.event.all.query()
-
-  const attendanceEvents = eventDetails.map((eventDetail) => ({
-    ...eventDetail.event,
-    attendance: eventDetail.attendance || null,
-  }))
-
+  const events = await server.event.all.query()
   return (
     <div className="flex flex-col gap-4">
       <Title element="h1" size="xl">
@@ -19,7 +13,7 @@ const EventPage = async () => {
 
       <div className="flex flex-col gap-4">
         <EventsViewToggle active="list" />
-        <EventList attendanceEvents={attendanceEvents} />
+        <EventList events={events} />
       </div>
     </div>
   )

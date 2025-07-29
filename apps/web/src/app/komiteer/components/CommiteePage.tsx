@@ -18,7 +18,11 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
   const [session, group, events, members] = await Promise.all([
     auth.getServerSession(),
     server.group.getByType.query({ groupId: slug, type: groupType }),
-    server.event.allByGroupWithAttendance.query({ id: slug }),
+    server.event.all.query({
+      filter: {
+        byOrganizingGroup: [slug],
+      },
+    }),
     // We do not show members for ASSOCIATED types because they often have members outside of Online
     // meaning the member list would be incomplete.
     showMembers ? server.group.getMembers.query(slug) : Promise.resolve(new Map<UserId, GroupMember>()),
@@ -43,11 +47,13 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
       )
     )
 
+  const name = group.name ?? group.abbreviation
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
         <Avatar className="w-24 h-24 md:w-32 md:h-32">
-          <AvatarImage src={group.imageUrl ?? undefined} alt={group.abbreviation} />
+          <AvatarImage src={group.imageUrl ?? undefined} alt={name} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
             <Icon className="text-5xl md:text-6xl" icon="tabler:users" />
           </AvatarFallback>
@@ -65,7 +71,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
               </Badge>
             </div>
 
-            <Text className="text-gray-500 dark:text-stone-500">{group.name}</Text>
+            <Text className="text-gray-500 dark:text-stone-500">{name}</Text>
           </div>
 
           <Text>{group.about || group.description || "Ingen beskrivelse"}</Text>
@@ -118,7 +124,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
                   )}
                 >
                   <Avatar className="h-5 w-5">
-                    <AvatarImage src={leader.image ?? undefined} />
+                    <AvatarImage src={leader.imageUrl ?? undefined} />
                     <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
                       <Icon className="text-xs" icon="tabler:user" />
                     </AvatarFallback>
@@ -155,7 +161,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
       <div className="flex flex-col gap-4">
         <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
-        <EventList attendanceEvents={events} />
+        <EventList events={events} />
       </div>
     </div>
   )
@@ -190,7 +196,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       )}
     >
       <Avatar className="w-10 h-10 md:w-12 md:h-12">
-        <AvatarImage src={member.image ?? undefined} />
+        <AvatarImage src={member.imageUrl ?? undefined} />
         <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
           <Icon className="text-xl" icon="tabler:user" />
         </AvatarFallback>
