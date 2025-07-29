@@ -97,7 +97,7 @@ export function getGroupRepository(): GroupRepository {
       })
 
       return memberships.map(({ roles, ...membership }) =>
-        parseOrReport(GroupMembershipSchema.omit({ user: true }), {
+        parseOrReport(GroupMembershipSchema, {
           ...membership,
           roles: roles.map((role) => role.role),
         })
@@ -130,7 +130,7 @@ export function getGroupRepository(): GroupRepository {
         },
       })
 
-      return parseOrReport(GroupMembershipSchema.omit({ user: true }), {
+      return parseOrReport(GroupMembershipSchema, {
         ...membership,
         roles: membership.roles.map((role) => role.role),
       })
@@ -149,7 +149,7 @@ export function getGroupRepository(): GroupRepository {
         },
       })
 
-      return parseOrReport(GroupMembershipSchema.omit({ user: true }), {
+      return parseOrReport(GroupMembershipSchema, {
         ...membership,
         roles: membership.roles.map((role) => role.role),
       })
