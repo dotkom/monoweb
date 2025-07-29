@@ -1,5 +1,11 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { NotificationPermissions, NotificationPermissionsWrite, UserId } from "@dotkomonline/types"
+import {
+  type NotificationPermissions,
+  NotificationPermissionsSchema,
+  type NotificationPermissionsWrite,
+  type UserId,
+} from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 
 export interface NotificationPermissionsRepository {
   getByUserId(handle: DBHandle, id: UserId): Promise<NotificationPermissions | null>
@@ -14,13 +20,16 @@ export interface NotificationPermissionsRepository {
 export function getNotificationPermissionsRepository(): NotificationPermissionsRepository {
   return {
     async getByUserId(handle, userId) {
-      return await handle.notificationPermissions.findUnique({ where: { userId } })
+      const permissions = await handle.notificationPermissions.findUnique({ where: { userId } })
+      return parseOrReport(NotificationPermissionsSchema, permissions)
     },
     async create(handle, userId, data) {
-      return await handle.notificationPermissions.create({ data: { ...data, userId } })
+      const permissions = await handle.notificationPermissions.create({ data: { ...data, userId } })
+      return parseOrReport(NotificationPermissionsSchema, permissions)
     },
     async update(handle, userId, data) {
-      return await handle.notificationPermissions.update({ where: { userId }, data })
+      const permissions = await handle.notificationPermissions.update({ where: { userId }, data })
+      return parseOrReport(NotificationPermissionsSchema, permissions)
     },
   }
 }

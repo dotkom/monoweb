@@ -1,5 +1,14 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
+import {
+  type Article,
+  type ArticleId,
+  ArticleSchema,
+  type ArticleSlug,
+  type ArticleTag,
+  type ArticleTagName,
+  type ArticleWrite,
+} from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface ArticleRepository {
@@ -70,10 +79,10 @@ export function getArticleRepository(): ArticleRepository {
 }
 
 function mapArticle(article: Omit<Article, "tags">, tags: { tag: ArticleTag }[]): Article {
-  return {
+  return parseOrReport(ArticleSchema, {
     ...article,
     tags: tags.map((link) => link.tag),
-  }
+  })
 }
 
 const QUERY_WITH_TAGS = {

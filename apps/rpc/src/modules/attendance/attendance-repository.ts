@@ -4,7 +4,9 @@ import {
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
+  AttendancePoolSchema,
   type AttendancePoolWrite,
+  AttendanceSchema,
   AttendanceSelectionSchema,
   type AttendanceWrite,
   type AttendeeId,
@@ -12,6 +14,7 @@ import {
 } from "@dotkomonline/types"
 import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool, Prisma } from "@prisma/client"
 import { z } from "zod"
+import { parseOrReport } from "../../invariant"
 
 type UnmappedAttendancePool = DBAttendancePool & { _count: { attendees: number } }
 
@@ -170,11 +173,11 @@ function mapAttendance({
   pools,
   ...attendance
 }: DBAttendance & { pools: UnmappedAttendancePool[] }): Attendance {
-  return {
+  return parseOrReport(AttendanceSchema, {
     ...attendance,
     selections: z.array(AttendanceSelectionSchema).parse(selections),
     pools: pools.map(validateAttendancePool),
-  }
+  })
 }
 
 function validateAttendancePool({
@@ -185,5 +188,10 @@ function validateAttendancePool({
   // TODO: fix this
   const numAttendees = Math.min(totalAttendees, attendee.capacity)
   const numUnreservedAttendees = Math.max(0, totalAttendees - numAttendees)
-  return { numAttendees, numUnreservedAttendees, yearCriteria: YearCriteriaSchema.parse(yearCriteria), ...attendee }
+  return parseOrReport(AttendancePoolSchema, {
+    numAttendees,
+    numUnreservedAttendees,
+    yearCriteria: YearCriteriaSchema.parse(yearCriteria),
+    ...attendee,
+  })
 }

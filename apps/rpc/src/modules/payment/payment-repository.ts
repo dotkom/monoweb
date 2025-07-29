@@ -1,13 +1,15 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Payment,
-  PaymentId,
-  PaymentProviderOrderId,
-  PaymentProviderSessionId,
-  PaymentWrite,
-  ProductId,
-  UserId,
+import {
+  type Payment,
+  type PaymentId,
+  type PaymentProviderOrderId,
+  type PaymentProviderSessionId,
+  PaymentSchema,
+  type PaymentWrite,
+  type ProductId,
+  type UserId,
 } from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface PaymentRepository {
@@ -30,10 +32,12 @@ export interface PaymentRepository {
 export function getPaymentRepository(): PaymentRepository {
   return {
     async create(handle, data) {
-      return await handle.payment.create({ data })
+      const payment = await handle.payment.create({ data })
+      return parseOrReport(PaymentSchema, payment)
     },
     async update(handle, paymentId, data) {
-      return await handle.payment.update({ where: { id: paymentId }, data })
+      const payment = await handle.payment.update({ where: { id: paymentId }, data })
+      return parseOrReport(PaymentSchema, payment)
     },
     async updateByPaymentProviderSessionId(handle, paymentProviderSessionId, data) {
       const payments = await handle.payment.updateManyAndReturn({
@@ -46,22 +50,27 @@ export function getPaymentRepository(): PaymentRepository {
       if (payment === undefined) {
         throw new Error("Expected one payment from specific payment provider session id")
       }
-      return payment
+      return parseOrReport(PaymentSchema, payment)
     },
     async getById(handle, paymentId) {
-      return await handle.payment.findUnique({ where: { id: paymentId } })
+      const payment = await handle.payment.findUnique({ where: { id: paymentId } })
+      return payment ? parseOrReport(PaymentSchema, payment) : null
     },
     async getByPaymentProviderOrderId(handle, paymentProviderOrderId) {
-      return await handle.payment.findFirst({ where: { paymentProviderOrderId } })
+      const payment = await handle.payment.findFirst({ where: { paymentProviderOrderId } })
+      return payment ? parseOrReport(PaymentSchema, payment) : null
     },
     async getAll(handle, page) {
-      return await handle.payment.findMany({ ...pageQuery(page) })
+      const payments = await handle.payment.findMany({ ...pageQuery(page) })
+      return payments.map((payment) => parseOrReport(PaymentSchema, payment))
     },
     async getAllByUserId(handle, userId, page) {
-      return handle.payment.findMany({ where: { userId }, ...pageQuery(page) })
+      const payments = await handle.payment.findMany({ where: { userId }, ...pageQuery(page) })
+      return payments.map((payment) => parseOrReport(PaymentSchema, payment))
     },
     async getAllByProductId(handle, productId, page) {
-      return handle.payment.findMany({ where: { productId }, ...pageQuery(page) })
+      const payments = await handle.payment.findMany({ where: { productId }, ...pageQuery(page) })
+      return payments.map((payment) => parseOrReport(PaymentSchema, payment))
     },
     async delete(handle, paymentId) {
       await handle.payment.delete({ where: { id: paymentId } })

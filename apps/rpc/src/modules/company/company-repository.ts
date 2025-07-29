@@ -1,5 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
+import { type Company, type CompanyId, CompanySchema, type CompanyWrite } from "@dotkomonline/types"
+import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface CompanyRepository {
@@ -13,19 +14,24 @@ export interface CompanyRepository {
 export function getCompanyRepository(): CompanyRepository {
   return {
     async getById(handle, id) {
-      return await handle.company.findUnique({ where: { id } })
+      const company = await handle.company.findUnique({ where: { id } })
+      return company ? parseOrReport(CompanySchema, company) : null
     },
     async getBySlug(handle, slug) {
-      return await handle.company.findUnique({ where: { slug } })
+      const company = await handle.company.findUnique({ where: { slug } })
+      return company ? parseOrReport(CompanySchema, company) : null
     },
     async getAll(handle, page) {
-      return await handle.company.findMany({ ...pageQuery(page) })
+      const companies = await handle.company.findMany({ ...pageQuery(page) })
+      return companies.map((company) => parseOrReport(CompanySchema, company))
     },
     async create(handle, values) {
-      return await handle.company.create({ data: values })
+      const company = await handle.company.create({ data: values })
+      return parseOrReport(CompanySchema, company)
     },
     async update(handle, id, data) {
-      return await handle.company.update({ where: { id }, data })
+      const company = await handle.company.update({ where: { id }, data })
+      return parseOrReport(CompanySchema, company)
     },
   }
 }

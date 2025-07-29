@@ -1,6 +1,7 @@
 import type { DBHandle, TaskStatus } from "@dotkomonline/db"
-import type { Task, TaskId, TaskType, TaskWrite } from "@dotkomonline/types"
+import { type Task, type TaskId, TaskSchema, type TaskType, type TaskWrite } from "@dotkomonline/types"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
+import { parseOrReport } from "../../invariant"
 
 export interface TaskRepository {
   create(handle: DBHandle, type: TaskType, data: TaskWrite): Promise<Task>
@@ -15,14 +16,16 @@ export function getTaskRepository(): TaskRepository {
   return {
     async create(handle, type, data) {
       const payload = data.payload ?? undefined
-      return await handle.task.create({ data: { ...data, payload, type } })
+      const task = await handle.task.create({ data: { ...data, payload, type } })
+      return parseOrReport(TaskSchema, task)
     },
     async update(handle, taskId, data, oldStatus) {
       try {
-        return await handle.task.update({
+        const task = await handle.task.update({
           where: { id: taskId, status: oldStatus ? { equals: oldStatus } : undefined },
           data: { ...data, payload: data.payload ?? undefined },
         })
+        return parseOrReport(TaskSchema, task)
       } catch (e) {
         if (e instanceof PrismaClientKnownRequestError) {
           // "An operation failed because it depends on one or more records that were required but not found. {cause}"
@@ -39,21 +42,24 @@ export function getTaskRepository(): TaskRepository {
       })
     },
     async getById(handle, taskId) {
-      return await handle.task.findUnique({
+      const task = await handle.task.findUnique({
         where: { id: taskId },
       })
+      return task ? parseOrReport(TaskSchema, task) : null
     },
     async getAll(handle) {
-      return await handle.task.findMany()
+      const tasks = await handle.task.findMany()
+      return tasks.map((task) => parseOrReport(TaskSchema, task))
     },
     async getPendingTasks(handle, type) {
-      return await handle.task.findMany({
+      const tasks = await handle.task.findMany({
         where: {
           scheduledAt: { lte: new Date() },
           status: "PENDING",
           type,
         },
       })
+      return tasks.map((task) => parseOrReport(TaskSchema, task))
     },
   }
 }

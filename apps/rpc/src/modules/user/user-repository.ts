@@ -1,6 +1,15 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { MembershipWrite, User, UserFilterQuery, UserId, UserProfileSlug, UserWrite } from "@dotkomonline/types"
+import {
+  type MembershipWrite,
+  type User,
+  type UserFilterQuery,
+  type UserId,
+  type UserProfileSlug,
+  UserSchema,
+  type UserWrite,
+} from "@dotkomonline/types"
 import invariant from "tiny-invariant"
+import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface UserRepository {
@@ -18,7 +27,7 @@ export interface UserRepository {
 export function getUserRepository(): UserRepository {
   return {
     async register(handle, subject) {
-      return await handle.user.upsert({
+      const user = await handle.user.upsert({
         where: { id: subject },
         update: { id: subject },
         create: { id: subject },
@@ -26,16 +35,16 @@ export function getUserRepository(): UserRepository {
           memberships: true,
         },
       })
+      return parseOrReport(UserSchema, user)
     },
     async findById(handle, userId) {
-      return await handle.user.findUnique({
+      const user = await handle.user.findUnique({
         where: { id: userId },
         include: {
-          memberships: {
-            include: {},
-          },
+          memberships: true,
         },
       })
+      return parseOrReport(UserSchema, user)
     },
     async findByProfileSlug(handle, profileSlug) {
       const owUser = await handle.user.findUnique({ where: { profileSlug } })
@@ -45,7 +54,7 @@ export function getUserRepository(): UserRepository {
       return this.findById(handle, owUser.id)
     },
     async findMany(handle, query, page) {
-      return await handle.user.findMany({
+      const users = await handle.user.findMany({
         ...pageQuery(page),
         where: {
           AND: [
@@ -63,6 +72,7 @@ export function getUserRepository(): UserRepository {
           memberships: true,
         },
       })
+      return users.map((user) => parseOrReport(UserSchema, user))
     },
     async update(handle, userId, data) {
       const row = await handle.user.update({

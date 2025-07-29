@@ -1,0 +1,16 @@
+import type { z } from "zod"
+
+/**
+ * Ensure that the value conforms to the schema, or throw an error.
+ *
+ * This is VERY important to ALWAYS use when returning values from the database. If we do not parse the rows returned,
+ * there is ZERO RUNTIME GUARANTEES that the data conforms to the schema. In fact, TypeScript will HAPPILY lie to us
+ * since we never checked.
+ */
+export function parseOrReport<T>(schema: z.ZodSchema<T>, value: T): T {
+  const result = schema.safeParse(value)
+  if (!result.success) {
+    throw new Error("Database returned value that does not conform to schema")
+  }
+  return result.data
+}
