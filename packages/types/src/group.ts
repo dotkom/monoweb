@@ -23,12 +23,16 @@ export type GroupRole = z.infer<typeof GroupRoleSchema>
 
 export const GroupMembershipSchema = schemas.GroupMembershipSchema.extend({
   roles: GroupRoleSchema.array(),
-  user: UserSchema,
 })
+
+export const GroupMemberSchema = UserSchema.extend({
+  groupMemberships: GroupMembershipSchema.array(),
+})
+export type GroupMember = z.infer<typeof GroupMemberSchema>
 
 export type GroupMembership = z.infer<typeof GroupMembershipSchema>
 
-export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({ user: true, roles: true })
+export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({ roles: true })
 export type GroupMembershipId = GroupMembership["id"]
 export type GroupMembershipWrite = z.infer<typeof GroupMembershipWriteSchema>
 

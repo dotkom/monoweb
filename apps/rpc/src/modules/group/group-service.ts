@@ -2,7 +2,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import {
   type Group,
   type GroupId,
-  type GroupMembership,
+  type GroupMember,
   type GroupMembershipWrite,
   type GroupType,
   type GroupWrite,
@@ -10,6 +10,7 @@ import {
   getDefaultGroupMemberRoles,
 } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
+import { compareDesc } from "date-fns"
 import type { UserService } from "../user/user-service"
 import { GroupNotFoundError } from "./group-error"
 import type { GroupRepository } from "./group-repository"
@@ -34,10 +35,10 @@ export interface GroupService {
   delete(handle: DBHandle, groupId: GroupId): Promise<Group>
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, groupType: GroupType): Promise<GroupId[]>
-  getMembers(handle: DBHandle, groupId: GroupId): Promise<GroupMembership[]>
+  getMembers(handle: DBHandle, groupId: GroupId): Promise<Map<UserId, GroupMember>>
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
-  addMember(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMembership>
-  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMembership, "user">>
+  addMember(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMember>
+  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMember, "user">>
 }
 
 export function getGroupService(groupRepository: GroupRepository, userService: UserService): GroupService {
@@ -87,24 +88,31 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       return groupRepository.getAllIdsByType(handle, groupType)
     },
     async getMembers(handle, groupId) {
-      const membersWithoutUsers = await groupRepository.getMemberships(handle, groupId)
+      const memberships = await groupRepository.getMemberships(handle, groupId)
 
-      if (!membersWithoutUsers) {
-        return []
+      if (!memberships) {
+        return new Map()
       }
 
-      const usersPromises = membersWithoutUsers.map((member) => userService.getById(handle, member.userId))
+      const members = new Map<UserId, GroupMember>()
+
+      const usersPromises = memberships.map((member) => userService.getById(handle, member.userId))
       const users = await Promise.all(usersPromises)
 
-      const members = users.map((user) => {
-        const member = membersWithoutUsers.find((member) => member.userId === user.id)
+      for (const user of users) {
+        const groupMemberships = memberships
+          .filter((membership) => membership.userId === user.id)
+          .sort((a, b) => compareDesc(a.start, b.start))
 
-        if (!member) {
+        if (groupMemberships.length === 0) {
           throw new Error(`Member not found for user ${user.id} in group ${groupId}`)
         }
 
-        return { ...member, user }
-      })
+        members.set(user.id, {
+          ...user,
+          groupMemberships,
+        })
+      }
 
       return members
     },

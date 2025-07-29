@@ -23,10 +23,10 @@ export interface GroupRepository {
   getAllByType(handle: DBHandle, type: GroupType): Promise<Group[]>
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, type: GroupType): Promise<GroupId[]>
-  getMemberships(handle: DBHandle, groupId: GroupId): Promise<Omit<GroupMembership, "user">[]>
+  getMemberships(handle: DBHandle, groupId: GroupId): Promise<GroupMembership[]>
   getGroupsByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
-  startMembership(handle: DBHandle, data: GroupMembershipWrite): Promise<Omit<GroupMembership, "user">>
-  endMembership(handle: DBHandle, membership: GroupMembershipId): Promise<Omit<GroupMembership, "user">>
+  startMembership(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMembership>
+  endMembership(handle: DBHandle, membership: GroupMembershipId): Promise<GroupMembership>
 }
 
 export function getGroupRepository(): GroupRepository {
@@ -97,7 +97,7 @@ export function getGroupRepository(): GroupRepository {
       })
 
       return memberships.map(({ roles, ...membership }) =>
-        parseOrReport(GroupMembershipSchema.omit({ user: true }), {
+        parseOrReport(GroupMembershipSchema, {
           ...membership,
           roles: roles.map((role) => role.role),
         })
@@ -130,7 +130,7 @@ export function getGroupRepository(): GroupRepository {
         },
       })
 
-      return parseOrReport(GroupMembershipSchema.omit({ user: true }), {
+      return parseOrReport(GroupMembershipSchema, {
         ...membership,
         roles: membership.roles.map((role) => role.role),
       })
@@ -149,7 +149,7 @@ export function getGroupRepository(): GroupRepository {
         },
       })
 
-      return parseOrReport(GroupMembershipSchema.omit({ user: true }), {
+      return parseOrReport(GroupMembershipSchema, {
         ...membership,
         roles: membership.roles.map((role) => role.role),
       })

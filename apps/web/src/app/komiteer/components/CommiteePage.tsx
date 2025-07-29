@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
-import { type GroupMembership, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
+import { type GroupMember, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 
@@ -12,6 +12,7 @@ interface CommitteePageProps {
 
 export const CommitteePage = async ({ params, groupType }: CommitteePageProps) => {
   const { slug } = await params
+
   const showMembers = groupType !== "ASSOCIATED"
 
   const [session, group, events, members] = await Promise.all([
@@ -23,10 +24,28 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
       },
     }),
     // We do not show members for ASSOCIATED types because they often have members outside of Online
-    showMembers ? server.group.getMembers.query(slug) : Promise.resolve([]),
+    // meaning the member list would be incomplete.
+    showMembers ? server.group.getMembers.query(slug) : Promise.resolve(new Map<UserId, GroupMember>()),
   ])
 
-  const activeMembers = members.filter((member) => member.end === null)
+  const hasContactInfo = group.email || group.contactUrl
+
+  // TODO: sort roles inside each membership and sort members by their roles
+  const activeMembers = [...members.values()].reduce((activeMembers, member) => {
+    if (member.groupMemberships.some((membership) => membership.end === null)) {
+      activeMembers.set(member.id, member)
+    }
+
+    return activeMembers
+  }, new Map<UserId, GroupMember>())
+
+  const leader = activeMembers
+    .values()
+    .find((member) =>
+      member.groupMemberships.some(
+        (membership) => membership.end === null && membership.roles.some((role) => role.type === "LEADER")
+      )
+    )
 
   const name = group.name ?? group.abbreviation
 
@@ -44,7 +63,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
           <div className="flex flex-col gap-0.5">
             <div className="flex flex-row items-center gap-4">
               <Title element="h1" size="xl">
-                {name}
+                {group.abbreviation}
               </Title>
 
               <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-500">
@@ -55,12 +74,12 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
             <Text className="text-gray-500 dark:text-stone-500">{name}</Text>
           </div>
 
-          <Text>{group.description}</Text>
+          <Text>{group.about || group.description || "Ingen beskrivelse"}</Text>
 
-          {group.email && (
-            <div className="flex flex-row gap-2 items-center text-sm text-gray-500 dark:text-stone-500">
-              <Text>Kontakt:</Text>
+          <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-500">
+            <Text>Kontakt:</Text>
 
+            {group.email && (
               <Link
                 href={`mailto:${group.email}`}
                 target="_blank"
@@ -71,12 +90,51 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
                   "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
                 )}
               >
+                <Icon icon="tabler:mail" className="text-base" />
                 <Text>{group.email}</Text>
-
                 <Icon icon="tabler:arrow-up-right" className="text-base" />
               </Link>
-            </div>
-          )}
+            )}
+
+            {group.contactUrl && (
+              <Link
+                href={group.contactUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(
+                  "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
+                  "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
+                  "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                )}
+              >
+                <Icon icon="tabler:world" className="text-base" />
+                <Text>{group.contactUrl}</Text>
+                <Icon icon="tabler:arrow-up-right" className="text-base" />
+              </Link>
+            )}
+
+            {!hasContactInfo &&
+              (leader ? (
+                <Link
+                  href={`/profil/${leader.profileSlug}`}
+                  className={cn(
+                    "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
+                    "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
+                    "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                  )}
+                >
+                  <Avatar className="h-5 w-5">
+                    <AvatarImage src={leader.imageUrl ?? undefined} />
+                    <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+                      <Icon className="text-xs" icon="tabler:user" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <Text>{leader.name}</Text>
+                </Link>
+              ) : (
+                <Text className="text-gray-500 dark:text-stone-500">Ingen kontaktinformasjon</Text>
+              ))}
+          </div>
         </div>
       </div>
 
@@ -84,15 +142,15 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
         <div className="flex flex-col gap-2">
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
-            {members.length > 0 && (
-              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-500">({members.length})</Text>
+            {members.size > 0 && (
+              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-500">({members.size})</Text>
             )}
           </div>
 
-          {activeMembers.length ? (
+          {activeMembers.size ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {activeMembers.map((member) => (
-                <GroupMemberEntry key={member.user.id} userId={session?.sub} member={member} />
+              {activeMembers.entries().map(([id, member]) => (
+                <GroupMemberEntry key={id} userId={session?.sub} member={member} />
               ))}
             </div>
           ) : (
@@ -102,7 +160,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
       )}
 
       <div className="flex flex-col gap-4">
-        <Title>{name}s arrangementer</Title>
+        <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
         <EventList events={events} />
       </div>
     </div>
@@ -111,20 +169,21 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
 interface GroupMemberEntryProps {
   userId: UserId | null | undefined
-  member: GroupMembership
+  member: GroupMember
 }
 
 const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
-  const isVerified = member.user.flags.includes("VANITY_VERIFIED")
-  const isUser = userId === member.user.id
+  const isVerified = member.flags.includes("VANITY_VERIFIED")
+  const isUser = userId === member.id
 
   // This requires periods to be sorted by startedAt in descending order
-  // const roles = member.periods.find((period) => period.endedAt === null)?.roles.map((role) => role.roleName) ?? []
+  const firstActiveMembership = member.groupMemberships.find((m) => m.end === null)
+  const roles = firstActiveMembership?.roles.map(({ name }) => name).join(", ") || "Ingen roller"
 
   return (
     <Link
-      key={member.user.id}
-      href={`/profil/${member.user.profileSlug}`}
+      key={member.id}
+      href={`/profil/${member.profileSlug}`}
       className={cn(
         "flex flex-row items-center gap-3 p-2 rounded-lg transition-colors",
         !isVerified && !isUser && "bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800",
@@ -137,7 +196,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       )}
     >
       <Avatar className="w-10 h-10 md:w-12 md:h-12">
-        <AvatarImage src={member.user.imageUrl ?? undefined} />
+        <AvatarImage src={member.imageUrl ?? undefined} />
         <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
           <Icon className="text-xl" icon="tabler:user" />
         </AvatarFallback>
@@ -145,15 +204,13 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       <div className="flex flex-col gap-0">
         {isVerified ? (
           <div className="flex items-center gap-1">
-            <Text className="text-lg/6 dark:text-black">{member.user.name}</Text>
+            <Text className="text-lg/6 dark:text-black">{member.name}</Text>
             <Icon icon="tabler:rosette-discount-check-filled" className="text-base text-blue-600 dark:text-sky-700" />
           </div>
         ) : (
-          <Text className="text-lg/6">{member.user.name}</Text>
+          <Text className="text-lg/6">{member.name}</Text>
         )}
-        {/*<Text className={cn("text-sm", isVerified && "dark:text-black")}>*/}
-        {/*  {roles.length > 0 ? roles.join(", ") : "Ingen roller"}*/}
-        {/*</Text>*/}
+        <Text className={cn("text-sm", isVerified && "dark:text-black")}>{roles}</Text>
       </div>
     </Link>
   )
