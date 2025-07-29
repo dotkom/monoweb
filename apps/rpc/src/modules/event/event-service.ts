@@ -7,7 +7,6 @@ import type {
   EventId,
   EventWrite,
   GroupId,
-  InterestGroupId,
   UserId,
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
@@ -21,7 +20,6 @@ export interface EventService {
     handle: DBHandle,
     eventId: EventId,
     hostingGroups: Set<GroupId>,
-    interestGroups: Set<InterestGroupId>,
     companies: Set<CompanyId>
   ): Promise<Event>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
@@ -60,17 +58,13 @@ export function getEventService(eventRepository: EventRepository): EventService 
     async findEventByAttendingUserId(handle, userId, page) {
       return await eventRepository.findByAttendingUserId(handle, userId, page ?? { take: 20 })
     },
-    async updateEventOrganizers(handle, eventId, hostingGroups, interestGroups, companies) {
+    async updateEventOrganizers(handle, eventId, hostingGroups, companies) {
       const event = await this.getEventById(handle, eventId)
       // The easiest way to determine which elements to add and remove is to use basic set theory. The difference of a
       // set A from B (A - B) is the set of elements that are in A, but not in B.
       const eventHostingGroups = new Set(event.hostingGroups.map((it) => it.slug))
       await eventRepository.addEventHostingGroups(handle, eventId, hostingGroups.difference(eventHostingGroups))
       await eventRepository.deleteEventHostingGroups(handle, eventId, eventHostingGroups.difference(hostingGroups))
-
-      const eventInterestGroups = new Set(event.interestGroups.map((it) => it.id))
-      await eventRepository.addEventInterestGroups(handle, eventId, interestGroups.difference(eventInterestGroups))
-      await eventRepository.deleteEventInterestGroups(handle, eventId, eventInterestGroups.difference(interestGroups))
 
       const eventCompanies = new Set(event.companies.map((it) => it.id))
       await eventRepository.addEventCompanies(handle, eventId, companies.difference(eventCompanies))

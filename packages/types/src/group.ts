@@ -50,6 +50,8 @@ export const createGroupPageUrl = (group: Group) => {
       return `/nodekomiteer/${group.slug}`
     case "ASSOCIATED":
       return `/andre-grupper/${group.slug}`
+    case "INTEREST_GROUP":
+      return `/interessegrupper/${group.slug}`
     default:
       throw new Error(`Unknown group type: ${group.type}`)
   }
@@ -63,6 +65,8 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
       return "Nodekomité"
     case "ASSOCIATED":
       return "Annen gruppe"
+    case "INTEREST_GROUP":
+      return "Interessegruppe"
     default:
       return "Ukjent type"
   }

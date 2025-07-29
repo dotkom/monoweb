@@ -53,6 +53,14 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
       "Ekskursjonskomiteens hovedmål er å planlegge og gjennomføre ekskursjoner for studenter ved linjeforeningen Online, spesielt rettet mot studenter i 3. året eller høyere.",
     type: "NODE_COMMITTEE",
   },
+  {
+    slug: "stipendsushi",
+    createdAt: new Date("2023-02-20 11:03:49.289+00"),
+    abbreviation: "Stipendsushi",
+    about:
+      "Stipendsushi er en interessegruppe for alle onlinere som liker sushi. Rundt den 15. hver måned arrangeres det felles tur til et spisested i byen som serverer sushi.",
+    type: "INTEREST_GROUP",
+  },
 ]
 
 export const getGroupRoleFixtures: () => Prisma.GroupRoleCreateInput[] = () =>

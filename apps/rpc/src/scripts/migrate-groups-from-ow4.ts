@@ -123,11 +123,16 @@ async function insertDump() {
   console.log("\n\nInserting interest groups:")
   for (const item of interestGroups) {
     console.log(`Inserting ${item.title}`)
-    await prisma.interestGroup.create({
+    const title = item.title.replace(" [inaktiv]", "")
+    const id = await createIdFromGroupName(prisma, title)
+    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
+    await prisma.group.create({
       data: {
-        name: item.title,
-        description: item.description,
+        slug: id,
+        abbreviation: title,
+        about: item.description || "",
         imageUrl: item.image?.original,
+        type: "INTEREST_GROUP",
       },
     })
   }
@@ -231,12 +236,11 @@ program
 
 program
   .command("3")
-  .description("Delete all groups and interest groups from the database")
+  .description("Delete all groups from the database")
   .action(async () => {
     try {
       await prisma.group.deleteMany()
-      await prisma.interestGroup.deleteMany()
-      console.log("Successfully deleted all groups and interest groups")
+      console.log("Successfully deleted all groups")
     } catch (error) {
       console.error("Error deleting data:", error)
       process.exit(1)
@@ -260,12 +264,10 @@ program
 
 program
   .command("5")
-  .description("Show groups and interest groups in database")
+  .description("Show groups in database")
   .action(async () => {
     const groups = await prisma.group.findMany()
-    const interestGroups = await prisma.interestGroup.findMany()
     console.log("\nGroups: \n", groups)
-    console.log("\nInterest groups: \n", interestGroups)
   })
 
 program.parse()

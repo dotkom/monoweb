@@ -53,10 +53,9 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
 
   const user = await server.user.getByProfileSlug.query(profileSlug)
 
-  const [session, groups, interestGroups, events] = await Promise.all([
+  const [session, groups, events] = await Promise.all([
     auth.getServerSession(),
     server.group.allByMember.query(user.id),
-    server.interestGroup.getByMember.query(user.id),
     server.event.allByAttendingUserId.query({ id: user.id }),
   ])
 
@@ -64,10 +63,6 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
     ...groups.map((group) => ({
       ...group,
       pageUrl: createGroupPageUrl(group),
-    })),
-    ...interestGroups.map((group) => ({
-      ...group,
-      pageUrl: `/interessegrupper/${group.id}`,
     })),
   ]
 
@@ -196,8 +191,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {allGroups.map((group) => (
               <Link
-                // TODO: Reconsider life
-                key={"slug" in group ? group.slug : group.id}
+                key={group.slug}
                 href={group.pageUrl}
                 className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
               >

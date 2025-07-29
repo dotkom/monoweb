@@ -42,7 +42,6 @@ const navigations = [
     icon: "tabler:campfire",
     children: [
       { label: "Grupper", href: "/group" },
-      { label: "Interessegrupper", href: "/interest-group" },
       { label: "Komitesøknader", href: "/committee-application" },
     ],
   },

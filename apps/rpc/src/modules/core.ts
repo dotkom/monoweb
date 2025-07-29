@@ -23,8 +23,6 @@ import { getFeedbackFormService } from "./feedback-form/feedback-form-service"
 import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
 import { getGroupService } from "./group/group-service"
-import { getInterestGroupRepository } from "./interest-group/interest-group-repository"
-import { getInterestGroupService } from "./interest-group/interest-group-service"
 import { getJobListingRepository } from "./job-listing/job-listing-repository"
 import { getJobListingService } from "./job-listing/job-listing-service"
 import { getMarkRepository } from "./mark/mark-repository"
@@ -151,8 +149,6 @@ export async function createServiceLayer(
     attendeeService,
     taskSchedulingService
   )
-  const interestGroupRepository = getInterestGroupRepository()
-  const interestGroupService = getInterestGroupService(interestGroupRepository)
   const eventService = getEventService(eventRepository)
   const companyService = getCompanyService(companyRepository)
   const productService = getProductService(productRepository)
@@ -197,8 +193,6 @@ export async function createServiceLayer(
     attendanceService,
     attendanceRepository,
     attendeeService,
-    interestGroupRepository,
-    interestGroupService,
     taskService,
     taskExecutor,
     feedbackFormService,

@@ -51,7 +51,6 @@ export const EventCompaniesPage: FC = () => {
                 event,
                 companies: event.companies.filter((x) => x.id !== info.getValue().id).map((x) => x.id),
                 groupIds: event.hostingGroups.map((x) => x.slug),
-                interestGroupIds: event.interestGroups.map((x) => x.id),
               })
             }
           >
@@ -60,16 +59,7 @@ export const EventCompaniesPage: FC = () => {
         ),
       }),
     ],
-    [
-      companies,
-      columnHelper,
-      updateEventMutation,
-      event.id,
-      event.companies,
-      event.hostingGroups,
-      event.interestGroups,
-      event,
-    ]
+    [companies, columnHelper, updateEventMutation, event.id, event.companies, event.hostingGroups, event]
   )
   const table = useReactTable<Company>({
     data: event.companies,
@@ -100,7 +90,6 @@ export const EventCompaniesPage: FC = () => {
         event,
         companies: event.companies.map((x) => x.id).concat([data.company]),
         groupIds: event.hostingGroups.map((x) => x.slug),
-        interestGroupIds: event.interestGroups.map((x) => x.id),
       })
     },
   })

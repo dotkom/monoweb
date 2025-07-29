@@ -1,6 +1,6 @@
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Attendee, Company, Group, GroupType, InterestGroup } from "@dotkomonline/types"
+import type { Attendance, Attendee, Company, Group, GroupType } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import Image from "next/image"
@@ -10,20 +10,19 @@ import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
 import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBox"
 
-type OrganizerType = GroupType | "INTERESTGROUP" | "COMPANY"
+type OrganizerType = GroupType | "COMPANY"
 
 const organizerTypeToLink: Record<OrganizerType, string> = {
   COMMITTEE: "/komiteer",
-  INTERESTGROUP: "/interessegrupper",
+  INTEREST_GROUP: "/interessegrupper",
   COMPANY: "/karriere",
   NODE_COMMITTEE: "/nodekomiteer",
   ASSOCIATED: "/andre-grupper",
 }
 
-const mapToImageAndName = (item: Group | Company | InterestGroup, type: OrganizerType) => (
+const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
   <Link
-    // TODO: Reconsider life
-    href={`${organizerTypeToLink[type]}/${"slug" in item ? item.slug : item.id}`}
+    href={`${organizerTypeToLink[type]}/${item.slug}`}
     key={item.name}
     className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-800 dark:hover:bg-stone-900"
   >
@@ -57,11 +56,8 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   }
 
   const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group, group.type))
-  const hostingInterestGroups = event.hostingGroups.map((interestGroup) =>
-    mapToImageAndName(interestGroup, "INTERESTGROUP")
-  )
   const companyList = event.companies.map((company) => mapToImageAndName(company, "COMPANY"))
-  const organizers = [...companyList, ...hostingGroups, ...hostingInterestGroups]
+  const organizers = [...companyList, ...hostingGroups]
 
   return (
     <div className="flex flex-col gap-8">

@@ -20,7 +20,7 @@ export default async function OtherGroupsPage() {
       </div>
 
       <div className="mt-8">
-        <GroupList groups={otherGroups} baseLink="andre-grupper" />
+        <GroupList groups={otherGroups} />
       </div>
     </div>
   )

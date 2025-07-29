@@ -5,7 +5,7 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { EventSchema, type Group, type InterestGroup } from "@dotkomonline/types"
+import { EventSchema, type Group } from "@dotkomonline/types"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
@@ -14,14 +14,12 @@ interface UseEventEditFormProps {
   defaultValues?: Partial<FormValidationResult>
   label?: string
   hostingGroups: Group[]
-  interestGroups: InterestGroup[]
 }
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
 const FormValidationSchema = EventSchema.extend({
   hostingGroupIds: z.array(z.string()),
-  interestGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
   for (const issue of issues) {
@@ -31,7 +29,6 @@ const FormValidationSchema = EventSchema.extend({
 
 export const useEventEditForm = ({
   hostingGroups,
-  interestGroups,
   onSubmit,
   label = "Opprett arrangement",
   defaultValues,
@@ -80,15 +77,9 @@ export const useEventEditForm = ({
         withAsterisk: true,
       }),
       hostingGroupIds: createMultipleSelectInput({
-        label: "Arrangerende komité",
+        label: "Arrangerende gruppe",
         placeholder: "Arrkom",
         data: hostingGroups.map((group) => ({ value: group.slug, label: group.abbreviation })),
-        searchable: true,
-      }),
-      interestGroupIds: createMultipleSelectInput({
-        label: "Arrangerende interessegruppe",
-        placeholder: "Stipendsushi",
-        data: interestGroups.map((interestGroup) => ({ value: interestGroup.id, label: interestGroup.name })),
         searchable: true,
       }),
       status: createSelectInput({

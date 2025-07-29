@@ -28,11 +28,13 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
   const activeMembers = members.filter((member) => member.end === null)
 
+  const name = group.name ?? group.abbreviation
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
         <Avatar className="w-24 h-24 md:w-32 md:h-32">
-          <AvatarImage src={group.imageUrl ?? undefined} alt={group.abbreviation} />
+          <AvatarImage src={group.imageUrl ?? undefined} alt={name} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
             <Icon className="text-5xl md:text-6xl" icon="tabler:users" />
           </AvatarFallback>
@@ -42,7 +44,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
           <div className="flex flex-col gap-0.5">
             <div className="flex flex-row items-center gap-4">
               <Title element="h1" size="xl">
-                {group.name}
+                {name}
               </Title>
 
               <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-500">
@@ -50,29 +52,31 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
               </Badge>
             </div>
 
-            <Text className="text-gray-500 dark:text-stone-500">{group.name}</Text>
+            <Text className="text-gray-500 dark:text-stone-500">{name}</Text>
           </div>
 
           <Text>{group.description}</Text>
 
-          <div className="flex flex-row gap-2 items-center text-sm text-gray-500 dark:text-stone-500">
-            <Text>Kontakt:</Text>
+          {group.email && (
+            <div className="flex flex-row gap-2 items-center text-sm text-gray-500 dark:text-stone-500">
+              <Text>Kontakt:</Text>
 
-            <Link
-              href={`mailto:${group.email}`}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(
-                "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
-                "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
-              )}
-            >
-              <Text>{group.email}</Text>
+              <Link
+                href={`mailto:${group.email}`}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(
+                  "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
+                  "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
+                  "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                )}
+              >
+                <Text>{group.email}</Text>
 
-              <Icon icon="tabler:arrow-up-right" className="text-base" />
-            </Link>
-          </div>
+                <Icon icon="tabler:arrow-up-right" className="text-base" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
@@ -98,7 +102,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
       )}
 
       <div className="flex flex-col gap-4">
-        <Title>{group.name}s arrangementer</Title>
+        <Title>{name}s arrangementer</Title>
         <EventList events={events} />
       </div>
     </div>
