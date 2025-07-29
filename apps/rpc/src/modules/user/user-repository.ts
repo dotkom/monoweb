@@ -44,7 +44,7 @@ export function getUserRepository(): UserRepository {
           memberships: true,
         },
       })
-      return parseOrReport(UserSchema, user)
+      return parseOrReport(UserSchema.nullable(), user)
     },
     async findByProfileSlug(handle, profileSlug) {
       const owUser = await handle.user.findUnique({ where: { profileSlug } })
@@ -92,7 +92,9 @@ export function getUserRepository(): UserRepository {
           ...membership,
           userId,
         },
-        select: {},
+        select: {
+          id: true,
+        },
       })
       const user = await this.findById(handle, userId)
       invariant(user !== null, `User with id ${userId} not found after creating membership`)
