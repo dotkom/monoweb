@@ -1,8 +1,7 @@
 "use client"
 
 import { useUserQuery } from "@/app/user/components/UserSearch/queries"
-import { GenericTable } from "@/components/GenericTable"
-import { MarkWriteSchema, type PersonalMark } from "@dotkomonline/types"
+import type { PersonalMark } from "@dotkomonline/types"
 import { Box, CloseButton, Group, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useRouter } from "next/navigation"
@@ -34,8 +33,7 @@ export default function MarkEditCard() {
   const FormComponent = useMarkWriteForm({
     label: "Oppdater prikk",
     onSubmit: (data) => {
-      MarkWriteSchema.parse(data)
-      edit.mutate({ id: mark.id, ...data })
+      edit.mutate({ ...data, id: mark.id, type: "MANUAL" })
     },
     defaultValues: { ...mark },
   })
@@ -53,7 +51,7 @@ export default function MarkEditCard() {
         <Title>{mark.title}</Title>
       </Group>
       <FormComponent />
-      <GenericTable table={table} />
+      {/* <GenericTable table={table} /> */}
     </Box>
   )
 }

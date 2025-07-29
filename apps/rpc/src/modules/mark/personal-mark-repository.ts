@@ -1,12 +1,5 @@
-import type { DBHandle } from "@dotkomonline/db"
-import {
-  type Mark,
-  type MarkId,
-  MarkSchema,
-  type PersonalMark,
-  PersonalMarkSchema,
-  type UserId,
-} from "@dotkomonline/types"
+import type { DBHandle, Mark, PersonalMark } from "@dotkomonline/db"
+import { type MarkId, MarkSchema, PersonalMarkSchema, type UserId } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
 
 export interface PersonalMarkRepository {
