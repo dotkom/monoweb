@@ -1,8 +1,8 @@
-import { Command } from "commander"
 import fs from "node:fs"
 import fsp from "node:fs/promises"
 import path from "node:path"
 import { exit } from "node:process"
+import { Command } from "commander"
 
 function printEnvironment() {
   console.log("\nEnvironment Variables:")

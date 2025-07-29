@@ -47,9 +47,7 @@ export default async function InterestGroupPage() {
         </Link>
       </div>
       <div className="mt-8">
-        <GroupList
-          groups={interestGroups}
-        />
+        <GroupList groups={interestGroups} />
       </div>
     </div>
   )

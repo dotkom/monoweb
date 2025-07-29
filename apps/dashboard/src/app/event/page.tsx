@@ -34,10 +34,7 @@ export default function EventPage() {
         id: "organizers",
         header: () => "Arrangører",
         cell: (info) => (
-          <EventHostingGroupList
-            groups={info.getValue().hostingGroups}
-            companies={info.getValue().companies}
-          />
+          <EventHostingGroupList groups={info.getValue().hostingGroups} companies={info.getValue().companies} />
         ),
       }),
       columnHelper.accessor("type", {

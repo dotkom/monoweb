@@ -59,15 +59,7 @@ export const EventCompaniesPage: FC = () => {
         ),
       }),
     ],
-    [
-      companies,
-      columnHelper,
-      updateEventMutation,
-      event.id,
-      event.companies,
-      event.hostingGroups,
-      event,
-    ]
+    [companies, columnHelper, updateEventMutation, event.id, event.companies, event.hostingGroups, event]
   )
   const table = useReactTable<Company>({
     data: event.companies,

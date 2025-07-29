@@ -57,26 +57,26 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
           <Text>{group.description}</Text>
 
-          {group.email && 
-          <div className="flex flex-row gap-2 items-center text-sm text-gray-500 dark:text-stone-500">
-            <Text>Kontakt:</Text>
+          {group.email && (
+            <div className="flex flex-row gap-2 items-center text-sm text-gray-500 dark:text-stone-500">
+              <Text>Kontakt:</Text>
 
-            <Link
-              href={`mailto:${group.email}`}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(
-                "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
-                "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
-              )}
+              <Link
+                href={`mailto:${group.email}`}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(
+                  "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
+                  "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
+                  "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                )}
               >
-              <Text>{group.email}</Text>
+                <Text>{group.email}</Text>
 
-              <Icon icon="tabler:arrow-up-right" className="text-base" />
-            </Link>
-          </div>
-          }
+                <Icon icon="tabler:arrow-up-right" className="text-base" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 

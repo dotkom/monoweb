@@ -1,6 +1,6 @@
 "use client"
 
-import { getGroupTypeName, type Group } from "@dotkomonline/types"
+import { type Group, getGroupTypeName } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"

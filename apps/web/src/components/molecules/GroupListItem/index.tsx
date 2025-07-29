@@ -16,9 +16,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
 
   return (
     <div className="flex flex-col h-full p-4 py-8 text-center rounded-lg shadow-[0_4px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_14px_rgba(0,0,0,0.15)] transform transition duration-300 hover:scale-[1.03] animate-fadeIn sm:max-w-sm relative">
-      {!isActive && (
-        <div className="absolute top-3 right-4 text-gray-700 text-sm font-semibold">Inaktiv</div>
-      )}
+      {!isActive && <div className="absolute top-3 right-4 text-gray-700 text-sm font-semibold">Inaktiv</div>}
 
       <div
         className={clsx(
