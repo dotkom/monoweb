@@ -1,10 +1,12 @@
 import { auth } from "@/auth"
+import { getEventSlug, getEventUrl } from "@/utils/getEventUrl"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Attendee, Company, Group, GroupType } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import Image from "next/image"
 import Link from "next/link"
+import { RedirectType, permanentRedirect } from "next/navigation"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
 import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
@@ -40,11 +42,15 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
   </Link>
 )
 
-const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
-  const { eventId } = await params
+const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eventId: string }> }) => {
+  const { slug, eventId } = await params
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
   const event = await server.event.get.query(eventId)
+
+  if (slug !== getEventSlug(event.title)) {
+    permanentRedirect(getEventUrl(eventId, event.title), RedirectType.replace)
+  }
 
   let attendance: Attendance | null = null
   let attendees: Attendee[] = []
