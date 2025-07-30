@@ -42,7 +42,7 @@ runs:
       uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
       with:
         aws-region: eu-north-1
-        role-to-assume: arn:aws:iam::891459268445:role/monoweb-prod-splash-frontend-ci-role
+        role-to-assume: arn:aws:iam::891459268445:role/monoweb-prd-splash-frontend-ci-role
     - name: Deploy to S3
       if: ${{ inputs.deploy == 'true' }}
       shell: bash
