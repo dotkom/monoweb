@@ -8,7 +8,7 @@ export default {
 
 export const Default = () => {
   const [content, setContent] = useState(
-    "<h2>This is rich text!</h2>\n" + "<p>Content passed here will be safely sanitized and rendered as HTML. </p>"
+    "<strong>This is rich text!</strong>\n<p>Content passed here will be safely sanitized and rendered as HTML.</p>"
   )
 
   return (
