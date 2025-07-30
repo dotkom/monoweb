@@ -15,6 +15,7 @@ const isValidMapUrl = (value: string | null) => {
     const url = new URL(value)
     return (
       url.hostname === "use.mazemap.com" ||
+      url.hostname === "link.mazemap.com" ||
       url.hostname === "maps.app.goo.gl" ||
       (url.href.startsWith("https://www.google.") && url.pathname.startsWith("/maps/place/"))
     )
