@@ -950,12 +950,18 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../config
+      '@types/common-tags':
+        specifier: ^1.8.4
+        version: 1.8.4
       '@types/node':
         specifier: 22.16.5
         version: 22.16.5
       '@types/pg':
         specifier: 8.15.4
         version: 8.15.4
+      common-tags:
+        specifier: ^1.8.2
+        version: 1.8.2
       prisma:
         specifier: 6.8.2
         version: 6.8.2(typescript@5.8.3)
@@ -5060,6 +5066,9 @@ packages:
   '@types/babel__traverse@7.20.6':
     resolution: {integrity: sha512-r1bzfrm0tomOI8g1SzvCaQHo6Lcv6zu0EA+W2kHrt8dyrHQxGzBBL4kdkzIS+jBMV+EYcMAEAqXqYaLJq5rOZg==}
 
+  '@types/common-tags@1.8.4':
+    resolution: {integrity: sha512-S+1hLDJPjWNDhcGxsxEbepzaxWqURP/o+3cP4aa2w7yBXgdcmKGQtZzP8JbyfOd0m+33nh+8+kvxYE2UJtBDkg==}
+
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
@@ -5796,6 +5805,10 @@ packages:
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
+
+  common-tags@1.8.2:
+    resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
+    engines: {node: '>=4.0.0'}
 
   commondir@1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
@@ -13539,6 +13552,8 @@ snapshots:
     dependencies:
       '@babel/types': 7.28.0
 
+  '@types/common-tags@1.8.4': {}
+
   '@types/connect@3.4.38':
     dependencies:
       '@types/node': 22.16.5
@@ -14340,6 +14355,8 @@ snapshots:
   commander@14.0.0: {}
 
   commander@2.20.3: {}
+
+  common-tags@1.8.2: {}
 
   commondir@1.0.1: {}
 

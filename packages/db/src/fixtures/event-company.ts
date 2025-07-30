@@ -5,15 +5,15 @@ export const getEventCompany: (event_ids: string[], company_ids: string[]) => Pr
   company_ids
 ) => [
   {
-    eventId: event_ids[0],
+    eventId: event_ids[4],
     companyId: company_ids[0],
   },
   {
-    eventId: event_ids[0],
+    eventId: event_ids[4],
     companyId: company_ids[1],
   },
   {
-    eventId: event_ids[1],
+    eventId: event_ids[3],
     companyId: company_ids[1],
   },
 ]
