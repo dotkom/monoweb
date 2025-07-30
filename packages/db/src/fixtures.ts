@@ -43,10 +43,7 @@ await db.offline.createMany({
 })
 
 await db.eventHostingGroup.createManyAndReturn({
-  data: getEventHostingGroupFixtures(
-    events.map((e) => e.id),
-    groups.map((c) => c.slug)
-  ),
+  data: getEventHostingGroupFixtures(events.map((e) => e.id)),
 })
 
 await db.productPaymentProvider.createMany({
