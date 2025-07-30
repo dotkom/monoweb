@@ -1,5 +1,12 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { DashboardPersonalMark, Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
+import type {
+  DashboardPersonalMark,
+  Mark,
+  MarkId,
+  PersonalMark,
+  PersonalMarkVisibleInformation,
+  UserId,
+} from "@dotkomonline/types"
 import { add, compareAsc, isBefore, isPast, isWithinInterval, set } from "date-fns"
 import type { MarkService } from "./mark-service"
 import { PersonalMarkNotFoundError } from "./personal-mark-error"
@@ -16,6 +23,9 @@ export interface PersonalMarkService {
    *
    * @throws {PersonalMarkNotFoundError} if the personal mark does not exist
    */
+
+  getVisiblePersonalMarksForUserId(handle: DBHandle, userId: UserId): Promise<PersonalMarkVisibleInformation[]>
+
   removePersonalMarkFromUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
   countUsersByMarkId(handle: DBHandle, markId: MarkId): Promise<number>
   getExpiryDateForUserId(handle: DBHandle, userId: UserId): Promise<Date | null>
@@ -41,6 +51,20 @@ export function getPersonalMarkService(
     async addPersonalMarkToUserId(handle, userId, markId, givenById) {
       const mark = await markService.getMark(handle, markId)
       return await personalMarkRepository.addToUserId(handle, userId, mark.id, givenById)
+    },
+    async getVisiblePersonalMarksForUserId(handle, userId) {
+      const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
+      const marks = await Promise.all(
+        personalMarks.map(async ({ givenById, ...personalMark }) => {
+          const mark = await markService.getMark(handle, personalMark.markId)
+
+          return {
+            mark,
+            personalMark,
+          } satisfies PersonalMarkVisibleInformation
+        })
+      )
+      return marks
     },
     async removePersonalMarkFromUserId(handle, userId, markId) {
       const personalMark = await personalMarkRepository.removeFromUserId(handle, userId, markId)

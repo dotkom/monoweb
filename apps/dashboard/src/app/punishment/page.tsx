@@ -29,10 +29,10 @@ const columns = [
   columnHelper.accessor("weight", {
     header: () => "Vekt",
     cell: (info) => {
-      const value = info.getValue();
+      const value = info.getValue()
 
       return <>{value === 6 ? "Suspensjon" : value.toString()}</>
-    }
+    },
   }),
   columnHelper.accessor("duration", {
     header: () => "Varighet",

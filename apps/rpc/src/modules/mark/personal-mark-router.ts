@@ -9,6 +9,13 @@ export const personalMarkRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.getPersonalMarksForUserId(handle, input.id))
     ),
+  getVisibleInformationByUser: authenticatedProcedure
+    .input(z.object({ id: UserSchema.shape.id, paginate: PaginateInputSchema }))
+    .query(async ({ ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.personalMarkService.getVisiblePersonalMarksForUserId(handle, ctx.principal.subject)
+      )
+    ),
   getByMark: procedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>

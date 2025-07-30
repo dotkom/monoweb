@@ -92,7 +92,7 @@ export default function MarkEditCard() {
       <Stack>
         <FormComponent />
 
-        <Title order={2}>Gi {mark.weight === 6 ? 'suspensjon' : 'prikk'} til flere</Title>
+        <Title order={2}>Gi {mark.weight === 6 ? "suspensjon" : "prikk"} til flere</Title>
         <UserSearch
           excludeUserIds={personalMarks.map((mark) => mark.user.id)}
           onSubmit={(data: User) => {
