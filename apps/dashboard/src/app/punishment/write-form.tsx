@@ -47,6 +47,9 @@ export const useMarkWriteForm = ({
   suspension,
 }: UseMarkWriteFormProps) => {
   const trpc = useTRPC()
+
+  // Should probably be replaced with a query for only groups user is in at some point
+  // (will it though? 💀)
   const { data: groups } = useQuery(trpc.group.all.queryOptions())
 
   return useFormBuilder({
@@ -57,8 +60,8 @@ export const useMarkWriteForm = ({
     label,
     fields: {
       title: createTextInput({
-        label: "Tittel",
-        placeholder: "Tittel",
+        label: "Navn",
+        placeholder: "Navn",
         withAsterisk: true,
       }),
       details: createTextInput({

@@ -321,8 +321,8 @@ model PersonalMark {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  givenBy User? @relation("GivenBy", fields: [givenById], references: [id])
-  givenById String?
+  givenBy User @relation("GivenBy", fields: [givenById], references: [id])
+  givenById String
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
 

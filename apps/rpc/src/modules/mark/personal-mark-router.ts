@@ -1,7 +1,7 @@
-import { PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
+import { CreatePersonalMarkSchema, PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { procedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, t } from "../../trpc"
 
 export const personalMarkRouter = t.router({
   getByUser: procedure
@@ -14,11 +14,16 @@ export const personalMarkRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.getPersonalMarksByMarkId(handle, input.id))
     ),
-  addToUser: procedure
-    .input(PersonalMarkSchema)
+  getDashboardPersonalMarksByMark: procedure
+    .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
+    .query(({ input, ctx }) =>
+      ctx.executeTransaction((handle) => ctx.personalMarkService.getDashboardPersonalMarksByMarkId(handle, input.id))
+    ),
+  addToUser: authenticatedProcedure
+    .input(CreatePersonalMarkSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
-        ctx.personalMarkService.addPersonalMarkToUserId(handle, input.userId, input.markId)
+        ctx.personalMarkService.addPersonalMarkToUserId(handle, input.userId, input.markId, ctx.principal.subject)
       )
     ),
   countUsersWithMark: procedure
@@ -27,7 +32,7 @@ export const personalMarkRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.countUsersByMarkId(handle, input.id))
     ),
   removeFromUser: procedure
-    .input(PersonalMarkSchema)
+    .input(PersonalMarkSchema.pick({ userId: true, markId: true }))
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
         ctx.personalMarkService.removePersonalMarkFromUserId(handle, input.userId, input.markId)

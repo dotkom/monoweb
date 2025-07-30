@@ -4,6 +4,7 @@
   - You are about to drop the column `category` on the `mark` table. All the data in the column will be lost.
   - Added the required column `groupSlug` to the `mark` table without a default value. This is not possible if the table is not empty.
   - Added the required column `weight` to the `mark` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `givenById` to the `personal_mark` table without a default value. This is not possible if the table is not empty.
 
 */
 -- CreateEnum
@@ -17,10 +18,10 @@ ADD COLUMN     "weight" INTEGER NOT NULL;
 
 -- AlterTable
 ALTER TABLE "personal_mark" ADD COLUMN     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "givenById" TEXT;
+ADD COLUMN     "givenById" TEXT NOT NULL;
 
 -- AddForeignKey
 ALTER TABLE "mark" ADD CONSTRAINT "mark_groupSlug_fkey" FOREIGN KEY ("groupSlug") REFERENCES "group"("slug") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "personal_mark" ADD CONSTRAINT "personal_mark_givenById_fkey" FOREIGN KEY ("givenById") REFERENCES "ow_user"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "personal_mark" ADD CONSTRAINT "personal_mark_givenById_fkey" FOREIGN KEY ("givenById") REFERENCES "ow_user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
+import type { DashboardPersonalMark, Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
 import { add, compareAsc, isBefore, isPast, isWithinInterval, set } from "date-fns"
 import type { MarkService } from "./mark-service"
 import { PersonalMarkNotFoundError } from "./personal-mark-error"
@@ -7,9 +7,10 @@ import type { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
   getPersonalMarksByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
+  getDashboardPersonalMarksByMarkId(handle: DBHandle, markId: MarkId): Promise<DashboardPersonalMark[]>
   getPersonalMarksForUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
   getMarksForUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
-  addPersonalMarkToUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
+  addPersonalMarkToUserId(handle: DBHandle, userId: UserId, markId: MarkId, givenById: UserId): Promise<PersonalMark>
   /**
    * Remove a personal mark from a user
    *
@@ -28,15 +29,18 @@ export function getPersonalMarkService(
     async getPersonalMarksByMarkId(handle, markId) {
       return await personalMarkRepository.getByMarkId(handle, markId)
     },
+    async getDashboardPersonalMarksByMarkId(handle, markId) {
+      return await personalMarkRepository.getDashboardByMarkId(handle, markId)
+    },
     async getMarksForUserId(handle, userId) {
       return await personalMarkRepository.getAllMarksByUserId(handle, userId)
     },
     async getPersonalMarksForUserId(handle, userId) {
       return await personalMarkRepository.getAllByUserId(handle, userId)
     },
-    async addPersonalMarkToUserId(handle, userId, markId) {
+    async addPersonalMarkToUserId(handle, userId, markId, givenById) {
       const mark = await markService.getMark(handle, markId)
-      return await personalMarkRepository.addToUserId(handle, userId, mark.id)
+      return await personalMarkRepository.addToUserId(handle, userId, mark.id, givenById)
     },
     async removePersonalMarkFromUserId(handle, userId, markId) {
       const personalMark = await personalMarkRepository.removeFromUserId(handle, userId, markId)

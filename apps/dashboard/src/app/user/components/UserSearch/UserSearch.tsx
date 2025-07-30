@@ -6,9 +6,10 @@ import { useSearchUsersQuery } from "./queries"
 interface UserSearchProps {
   onSubmit(data: User): void
   excludeUserIds?: string[]
+  placeholder?: string
 }
 
-export const UserSearch: FC<UserSearchProps> = ({ onSubmit, excludeUserIds }) => {
+export const UserSearch: FC<UserSearchProps> = ({ placeholder, onSubmit, excludeUserIds }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const { data: users } = useSearchUsersQuery(searchQuery)
 
@@ -30,7 +31,7 @@ export const UserSearch: FC<UserSearchProps> = ({ onSubmit, excludeUserIds }) =>
         }
         return item.email ?? item.id
       }}
-      placeholder="Søk etter bruker..."
+      placeholder={placeholder ?? "Søk etter bruker..."}
       resetOnClick
     />
   )
