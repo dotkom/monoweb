@@ -99,7 +99,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   nowDate.setHours(0, 0, 0, 0)
 
   return (
-    <div className="mb-10 mt-2 sm:mt-[-40px]">
+    <div className="mb-10">
       <div className="flex flex-col sm:flex-row justify-between items-center">
         <div className="w-full flex items-center gap-4 justify-between sm:justify-end pb-4">
           <h2 className="text-xl">
