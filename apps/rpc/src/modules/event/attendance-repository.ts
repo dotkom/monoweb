@@ -10,7 +10,6 @@ import {
   AttendanceSelectionSchema,
   type AttendanceWrite,
   type AttendeeId,
-  YearCriteriaSchema,
 } from "@dotkomonline/types"
 import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool, Prisma } from "@prisma/client"
 import { z } from "zod"
@@ -88,7 +87,7 @@ export function getAttendanceRepository(): AttendanceRepository {
       if (!pool) {
         return null
       }
-      return validateAttendancePool(pool)
+      return mapAttendancePool(pool)
     },
     async getPoolByAttendeeId(handle, attendeeId) {
       const pool = await handle.attendancePool.findFirst({
@@ -104,21 +103,21 @@ export function getAttendanceRepository(): AttendanceRepository {
       if (!pool) {
         return null
       }
-      return validateAttendancePool(pool)
+      return mapAttendancePool(pool)
     },
     async addAttendancePool(handle, data) {
       const createdPool = await handle.attendancePool.create({
         data,
         include: POOL_ATTENDEE_COUNT_INCLUDE,
       })
-      return validateAttendancePool(createdPool)
+      return mapAttendancePool(createdPool)
     },
     async removeAttendancePool(handle, attendancePoolId) {
       const deletedPool = await handle.attendancePool.delete({
         where: { id: attendancePoolId },
         include: POOL_ATTENDEE_COUNT_INCLUDE,
       })
-      return validateAttendancePool(deletedPool)
+      return mapAttendancePool(deletedPool)
     },
     async updateAttendancePool(handle, attendancePoolId, data) {
       const updatedPool = await handle.attendancePool.update({
@@ -126,14 +125,11 @@ export function getAttendanceRepository(): AttendanceRepository {
         data,
         include: POOL_ATTENDEE_COUNT_INCLUDE,
       })
-      return validateAttendancePool(updatedPool)
+      return mapAttendancePool(updatedPool)
     },
   }
 }
 
-/**
- * Parses the selections with AttendanceSelectionSchema and maps the pools
- */
 function mapAttendance({
   selections,
   pools,
@@ -142,11 +138,11 @@ function mapAttendance({
   return parseOrReport(AttendanceSchema, {
     ...attendance,
     selections: z.array(AttendanceSelectionSchema).parse(selections),
-    pools: pools.map(validateAttendancePool),
+    pools: pools.map(mapAttendancePool),
   })
 }
 
-function validateAttendancePool({
+function mapAttendancePool({
   _count: { attendees: totalAttendees },
   yearCriteria,
   ...attendee

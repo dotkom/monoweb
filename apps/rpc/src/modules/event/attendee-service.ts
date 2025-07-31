@@ -9,7 +9,7 @@ import {
   type Attendee,
   type AttendeeId,
   type User,
-  type UserId,s
+  type UserId,
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
