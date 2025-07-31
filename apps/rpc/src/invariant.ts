@@ -13,9 +13,7 @@ const logger = getLogger("db-query-invariant-checker")
 export function parseOrReport<T>(schema: z.ZodSchema<T>, value: T): T {
   const result = schema.safeParse(value)
   if (!result.success) {
-    logger.error("Database failed to parse value into schema:")
-    logger.error("Value:", JSON.stringify(value, null, 2))
-    logger.error(JSON.stringify(result.error.issues, null, 2))
+    logger.error("Database failed to parse value into schema: %s emitted for object %o", result.error.message, value)
     throw new Error("Database returned value that does not conform to schema")
   }
   return result.data
