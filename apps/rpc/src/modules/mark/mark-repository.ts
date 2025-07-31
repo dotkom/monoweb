@@ -2,9 +2,11 @@ import type { DBHandle } from "@dotkomonline/db"
 import { type Mark, type MarkId, MarkSchema, type MarkWrite } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
+import z from "zod"
 
 export interface MarkRepository {
   getById(handle: DBHandle, markId: MarkId): Promise<Mark | null>
+  getMany(handle: DBHandle, markId: MarkId[]): Promise<Mark[]>
   getAll(handle: DBHandle, page: Pageable): Promise<Mark[]>
   create(handle: DBHandle, data: MarkWrite): Promise<Mark>
   update(handle: DBHandle, markId: MarkId, data: MarkWrite): Promise<Mark>
@@ -16,6 +18,11 @@ export function getMarkRepository(): MarkRepository {
     async getById(handle, markId) {
       const mark = await handle.mark.findUnique({ where: { id: markId } })
       return parseOrReport(MarkSchema, mark)
+    },
+    async getMany(handle, markIds) {
+      const marks = await handle.mark.findMany({ where: { id: { in: markIds } } })
+
+      return parseOrReport(z.array(MarkSchema), marks)
     },
     async getAll(handle, page) {
       const marks = await handle.mark.findMany({ ...pageQuery(page) })

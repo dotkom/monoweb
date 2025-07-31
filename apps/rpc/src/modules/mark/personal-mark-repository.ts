@@ -1,7 +1,7 @@
 import type { DBHandle, Mark, PersonalMark } from "@dotkomonline/db"
 import {
-  type DashboardPersonalMark,
-  DashboardPersonalMarkSchema,
+  type PersonalMarkDetails,
+  PersonalMarkDetailsSchema,
   type MarkId,
   MarkSchema,
   PersonalMarkSchema,
@@ -13,7 +13,7 @@ import { parseOrReport } from "../../invariant"
 export interface PersonalMarkRepository {
   getByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
   getAllByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
-  getDashboardByMarkId(handle: DBHandle, markId: MarkId): Promise<DashboardPersonalMark[]>
+  getDetailsByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
   getAllMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
   addToUserId(handle: DBHandle, userId: UserId, markId: MarkId, givenByid: UserId): Promise<PersonalMark>
   removeFromUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
@@ -24,14 +24,19 @@ export interface PersonalMarkRepository {
 export function getPersonalMarkRepository(): PersonalMarkRepository {
   return {
     async getAllByUserId(handle, userId) {
-      const personalMarks = await handle.personalMark.findMany({ where: { userId } })
+      const personalMarks = await handle.personalMark.findMany({
+        where: { userId },
+      })
       return personalMarks.map((personalMark) => parseOrReport(PersonalMarkSchema, personalMark))
     },
     async getAllMarksByUserId(handle, userId) {
-      const personalMarks = await handle.personalMark.findMany({ where: { userId }, select: { mark: true } })
+      const personalMarks = await handle.personalMark.findMany({
+        where: { userId },
+        select: { mark: true },
+      })
       return personalMarks.map((personalMark) => parseOrReport(MarkSchema, personalMark.mark))
     },
-    async getDashboardByMarkId(handle, markId) {
+    async getDetailsByMarkId(handle, markId) {
       const personalMarks = await handle.personalMark.findMany({
         where: { markId },
         include: {
@@ -57,7 +62,7 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
       })
 
       return parseOrReport(
-        z.array(DashboardPersonalMarkSchema),
+        z.array(PersonalMarkDetailsSchema),
         personalMarks.map(({ user, givenBy, ...personalMark }) => ({
           personalMark,
           user,
@@ -66,19 +71,27 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
       )
     },
     async getByMarkId(handle, markId) {
-      const personalMarks = await handle.personalMark.findMany({ where: { markId } })
+      const personalMarks = await handle.personalMark.findMany({
+        where: { markId },
+      })
       return personalMarks.map((personalMark) => parseOrReport(PersonalMarkSchema, personalMark))
     },
     async addToUserId(handle, userId, markId, givenById) {
-      const personalMark = await handle.personalMark.create({ data: { userId, markId, givenById } })
+      const personalMark = await handle.personalMark.create({
+        data: { userId, markId, givenById },
+      })
       return parseOrReport(PersonalMarkSchema, personalMark)
     },
     async removeFromUserId(handle, userId, markId) {
-      const personalMark = await handle.personalMark.delete({ where: { markId_userId: { userId, markId } } })
+      const personalMark = await handle.personalMark.delete({
+        where: { markId_userId: { userId, markId } },
+      })
       return parseOrReport(PersonalMarkSchema, personalMark)
     },
     async getByUserId(handle, userId, markId) {
-      const personalMark = await handle.personalMark.findUnique({ where: { markId_userId: { userId, markId } } })
+      const personalMark = await handle.personalMark.findUnique({
+        where: { markId_userId: { userId, markId } },
+      })
       return personalMark ? parseOrReport(PersonalMarkSchema, personalMark) : null
     },
     async countUsersByMarkId(handle, markId) {

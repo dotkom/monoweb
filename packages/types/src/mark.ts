@@ -1,6 +1,7 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 import { PublicUserSchema } from "./user"
+import { GroupSchema } from "./group"
 
 export const MarkSchema = schemas.MarkSchema.extend({})
 
@@ -25,23 +26,23 @@ export const CreatePersonalMarkSchema = PersonalMarkSchema.omit({
 })
 
 // User should not see which user gave the mark
-export const PersonalMarkVisibleInformationSchema = z.object({
+export const VisiblePersonalMarkDetailsSchema = z.object({
   mark: MarkSchema,
-  personalMark: PersonalMarkSchema.pick({
-    markId: true,
-    userId: true,
-    createdAt: true,
+  givenByGroup: GroupSchema,
+  personalMark: PersonalMarkSchema.omit({
+    givenById: true,
   }),
 })
 
-export const DashboardPersonalMarkSchema = z.object({
+export const PersonalMarkDetailsSchema = z.object({
   personalMark: PersonalMarkSchema,
+  givenByGroup: GroupSchema,
   user: PublicUserSchema,
-  givenBy: PublicUserSchema.nullable(),
+  givenBy: PublicUserSchema,
 })
 
-export type DashboardPersonalMark = z.infer<typeof DashboardPersonalMarkSchema>
+export type PersonalMarkDetails = z.infer<typeof PersonalMarkDetailsSchema>
 
-export type PersonalMarkVisibleInformation = z.infer<typeof PersonalMarkVisibleInformationSchema>
+export type VisiblePersonalMarkDetails = z.infer<typeof VisiblePersonalMarkDetailsSchema>
 
 export type PersonalMark = z.infer<typeof PersonalMarkSchema>

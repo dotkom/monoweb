@@ -4,7 +4,7 @@ import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
 import {
   type Membership,
-  type PersonalMarkVisibleInformation,
+  type VisiblePersonalMarkDetailsSchema,
   createGroupPageUrl,
   getActiveMembership,
   getMembershipGrade,
@@ -57,7 +57,7 @@ const renderUserInfo = (label: string, value: string | number | null) => {
 function MarkDisplay({
   markInformation: { mark, personalMark },
 }: {
-  markInformation: PersonalMarkVisibleInformation
+  markInformation: CensoredPersonalMarkSchema
 }) {
   const expires = addDays(personalMark.createdAt, mark.duration)
   const hasExpired = expires < new Date()
@@ -100,7 +100,7 @@ export default async function ProfilePage({
     auth.getServerSession(),
     server.group.allByMember.query(user.id),
     server.event.allByAttendingUserId.query({ id: user.id }),
-    server.personalMark.getVisibleInformationByUser.query({ id: user.id }),
+    server.personalMark.getVisibleInformationForUser.query({ id: user.id }),
   ])
 
   const allGroups = [

@@ -11,6 +11,7 @@ export interface MarkService {
    * @throws {MarkNotFoundError} if the mark does not exist
    */
   getMark(handle: DBHandle, markId: MarkId): Promise<Mark>
+  getMany(handle: DBHandle, markIds: MarkId[]): Promise<Mark[]>
   getMarks(handle: DBHandle, page: Pageable): Promise<Mark[]>
   createMark(handle: DBHandle, data: MarkWrite): Promise<Mark>
   /**
@@ -35,6 +36,9 @@ export function getMarkService(markRepository: MarkRepository): MarkService {
         throw new MarkNotFoundError(markId)
       }
       return mark
+    },
+    async getMany(handle, markIds) {
+      return await markRepository.getMany(handle, markIds)
     },
     async getMarks(handle, page) {
       return await markRepository.getAll(handle, page)

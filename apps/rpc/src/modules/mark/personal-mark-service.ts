@@ -1,72 +1,82 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type {
-  DashboardPersonalMark,
   Mark,
   MarkId,
   PersonalMark,
-  PersonalMarkVisibleInformation,
   UserId,
+  VisiblePersonalMarkDetails,
+  PersonalMarkDetails,
 } from "@dotkomonline/types"
 import { add, compareAsc, isBefore, isPast, isWithinInterval, set } from "date-fns"
 import type { MarkService } from "./mark-service"
 import { PersonalMarkNotFoundError } from "./personal-mark-error"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
+import { GroupService } from "../group/group-service"
+import { unique } from "@dotkomonline/utils"
 
 export interface PersonalMarkService {
-  getPersonalMarksByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
-  getDashboardPersonalMarksByMarkId(handle: DBHandle, markId: MarkId): Promise<DashboardPersonalMark[]>
-  getPersonalMarksForUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
-  getMarksForUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
-  addPersonalMarkToUserId(handle: DBHandle, userId: UserId, markId: MarkId, givenById: UserId): Promise<PersonalMark>
+  listByMark(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
+  listDetails(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
+  listForUser(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
+  listMarksForUser(handle: DBHandle, userId: UserId): Promise<Mark[]>
+  addToUser(handle: DBHandle, userId: UserId, markId: MarkId, givenById: UserId): Promise<PersonalMark>
   /**
    * Remove a personal mark from a user
    *
    * @throws {PersonalMarkNotFoundError} if the personal mark does not exist
    */
-
-  getVisiblePersonalMarksForUserId(handle: DBHandle, userId: UserId): Promise<PersonalMarkVisibleInformation[]>
-
-  removePersonalMarkFromUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
+  removeFromUser(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
+  listVisibleInformationForUser(handle: DBHandle, userId: UserId): Promise<VisiblePersonalMarkDetails[]>
   countUsersByMarkId(handle: DBHandle, markId: MarkId): Promise<number>
   getExpiryDateForUserId(handle: DBHandle, userId: UserId): Promise<Date | null>
 }
 
 export function getPersonalMarkService(
   personalMarkRepository: PersonalMarkRepository,
-  markService: MarkService
+  markService: MarkService,
+  groupService: GroupService
 ): PersonalMarkService {
   return {
-    async getPersonalMarksByMarkId(handle, markId) {
+    async listByMark(handle, markId) {
       return await personalMarkRepository.getByMarkId(handle, markId)
     },
-    async getDashboardPersonalMarksByMarkId(handle, markId) {
-      return await personalMarkRepository.getDashboardByMarkId(handle, markId)
+    async listDetails(handle, markId) {
+      return await personalMarkRepository.getDetailsByMarkId(handle, markId)
     },
-    async getMarksForUserId(handle, userId) {
+    async listMarksForUser(handle, userId) {
       return await personalMarkRepository.getAllMarksByUserId(handle, userId)
     },
-    async getPersonalMarksForUserId(handle, userId) {
+    async listForUser(handle, userId) {
       return await personalMarkRepository.getAllByUserId(handle, userId)
     },
-    async addPersonalMarkToUserId(handle, userId, markId, givenById) {
+    async addToUser(handle, userId, markId, givenById) {
       const mark = await markService.getMark(handle, markId)
       return await personalMarkRepository.addToUserId(handle, userId, mark.id, givenById)
     },
-    async getVisiblePersonalMarksForUserId(handle, userId) {
+    async listVisibleInformationForUser(handle, userId) {
       const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
-      const marks = await Promise.all(
-        personalMarks.map(async ({ givenById, ...personalMark }) => {
-          const mark = await markService.getMark(handle, personalMark.markId)
-
-          return {
-            mark,
-            personalMark,
-          } satisfies PersonalMarkVisibleInformation
-        })
+      const marks = await markService.getMany(
+        handle,
+        personalMarks.map(({ markId }) => markId)
       )
-      return marks
+      const groups = await groupService.getMany(handle, unique(marks.map((m) => m.groupSlug)))
+
+      return personalMarks.map(({ givenById: _, ...personalMark }): VisiblePersonalMarkDetails => {
+        const mark = marks.find((mark) => mark.id === personalMark.markId)
+        const givenByGroup = groups.find((group) => group.slug === mark?.groupSlug)
+
+        if (!mark || !givenByGroup) {
+          throw new PersonalMarkNotFoundError("Failed to find group and mark for personalMark")
+        }
+
+        return {
+          mark,
+          givenByGroup,
+          personalMark,
+        }
+      })
     },
-    async removePersonalMarkFromUserId(handle, userId, markId) {
+    async removeFromUser(handle, userId, markId) {
       const personalMark = await personalMarkRepository.removeFromUserId(handle, userId, markId)
       if (!personalMark) {
         throw new PersonalMarkNotFoundError(markId)
