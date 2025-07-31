@@ -6,7 +6,6 @@ import {
   AttendeeSchema,
   AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
   AttendeeSelectionResponsesSchema,
-  type AttendeeWithoutUser,
   type AttendeeWrite,
   type UserId,
 } from "@dotkomonline/types"

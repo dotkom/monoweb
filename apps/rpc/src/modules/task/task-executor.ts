@@ -3,7 +3,7 @@ import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
-import type { AttendanceService } from "../attendance/attendance-service"
+import type { AttendanceService } from "../event/attendance-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
   type InferTaskData,
