@@ -1,7 +1,7 @@
 import type { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
 import { getCurrentUtc } from "@dotkomonline/utils"
-import { differenceInYears, isAfter, setMonth, startOfMonth } from "date-fns"
+import { differenceInYears, isBefore, setMonth, startOfMonth } from "date-fns"
 import { z } from "zod"
 import { buildSearchFilter } from "./filters"
 
@@ -55,7 +55,7 @@ export const UserFilterQuerySchema = z.object({
 /** Get the most relevant active membership for a user. */
 export function getActiveMembership(user: User): Membership | null {
   const now = getCurrentUtc()
-  return user.memberships.findLast((membership) => isAfter(membership.end, now)) ?? null
+  return user.memberships.findLast((membership) => isBefore(membership.end, now)) ?? null
 }
 
 export function getMembershipGrade(membership: Membership): number | null {

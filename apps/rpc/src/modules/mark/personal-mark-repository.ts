@@ -1,9 +1,9 @@
 import type { DBHandle, Mark, PersonalMark } from "@dotkomonline/db"
 import {
-  type PersonalMarkDetails,
-  PersonalMarkDetailsSchema,
   type MarkId,
   MarkSchema,
+  type PersonalMarkDetails,
+  PersonalMarkDetailsSchema,
   PersonalMarkSchema,
   type UserId,
 } from "@dotkomonline/types"

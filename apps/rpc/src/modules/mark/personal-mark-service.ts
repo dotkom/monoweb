@@ -3,16 +3,17 @@ import type {
   Mark,
   MarkId,
   PersonalMark,
+  PersonalMarkDetails,
+  Punishment,
   UserId,
   VisiblePersonalMarkDetails,
-  PersonalMarkDetails,
 } from "@dotkomonline/types"
-import { add, compareAsc, isBefore, isPast, isWithinInterval, set } from "date-fns"
+import { getExpiryDate, unique } from "@dotkomonline/utils"
+import { isPast } from "date-fns"
+import type { GroupService } from "../group/group-service"
 import type { MarkService } from "./mark-service"
 import { PersonalMarkNotFoundError } from "./personal-mark-error"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
-import { GroupService } from "../group/group-service"
-import { unique } from "@dotkomonline/utils"
 
 export interface PersonalMarkService {
   listByMark(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
@@ -28,7 +29,7 @@ export interface PersonalMarkService {
   removeFromUser(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
   listVisibleInformationForUser(handle: DBHandle, userId: UserId): Promise<VisiblePersonalMarkDetails[]>
   countUsersByMarkId(handle: DBHandle, markId: MarkId): Promise<number>
-  getExpiryDateForUserId(handle: DBHandle, userId: UserId): Promise<Date | null>
+  getUserPunishment(handle: DBHandle, userId: UserId): Promise<Punishment | null>
 }
 
 export function getPersonalMarkService(
@@ -86,56 +87,39 @@ export function getPersonalMarkService(
     async countUsersByMarkId(handle, markId) {
       return await personalMarkRepository.countUsersByMarkId(handle, markId)
     },
-    async getExpiryDateForUserId(handle, userId) {
+    async getUserPunishment(handle, userId) {
       const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
-      const marks = await Promise.all(personalMarks.map(async (mark) => markService.getMark(handle, mark.markId)))
-      return calculateExpiryDate(marks)
+      const marks = await markService.getMany(
+        handle,
+        personalMarks.map((pm) => pm.markId)
+      )
+
+      const currentMarkWeight = personalMarks.reduce((acc, pm) => {
+        const mark = marks.find((m) => m.id === pm.markId)
+
+        if (!mark) return acc
+        if (isPast(getExpiryDate(pm.createdAt, mark.duration))) return acc
+
+        return acc + mark.weight
+      }, 0)
+
+      if (currentMarkWeight >= 6) {
+        return { suspended: true }
+      }
+
+      if (currentMarkWeight >= 3) {
+        return { delay: 24 }
+      }
+
+      if (currentMarkWeight === 2) {
+        return { delay: 4 }
+      }
+
+      if (currentMarkWeight === 1) {
+        return { delay: 1 }
+      }
+
+      return null
     },
   }
-}
-
-function calculateExpiryDate(marks: Mark[]) {
-  const sortedMarks = marks.toSorted((a, b) => compareAsc(a.createdAt, b.createdAt))
-  let endDate: Date | null = null
-
-  for (const mark of sortedMarks) {
-    const date =
-      endDate && isBefore(mark.createdAt, endDate)
-        ? new Date(adjustDateIfStartingInHoliday(endDate).getTime())
-        : new Date(adjustDateIfStartingInHoliday(mark.createdAt).getTime())
-    date.setDate(date.getDate() + mark.duration)
-
-    endDate = adjustDateIfEndingInHoliday(date)
-  }
-
-  if (!endDate || isPast(endDate)) {
-    return null
-  }
-
-  return endDate
-}
-
-function adjustDateIfStartingInHoliday(date: Date) {
-  if (isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
-    return set(date, { month: 7, date: 15 })
-  }
-  if (date.getMonth() === 11) {
-    return set(date, { year: date.getFullYear() + 1, month: 0, date: 15 })
-  }
-  if (date.getMonth() === 0 && date.getDate() < 15) {
-    return set(date, { month: 0, date: 15 })
-  }
-  return date
-}
-
-function adjustDateIfEndingInHoliday(date: Date) {
-  let additionalDays = 0
-  if (isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
-    additionalDays = 75
-  } else if (date.getMonth() === 11) {
-    additionalDays = 45
-  } else if (date.getMonth() === 0 && date.getDate() < 15) {
-    additionalDays = 45
-  }
-  return add(date, { days: additionalDays })
 }

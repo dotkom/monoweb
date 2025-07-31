@@ -1,8 +1,8 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { type Mark, type MarkId, MarkSchema, type MarkWrite } from "@dotkomonline/types"
+import z from "zod"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
-import z from "zod"
 
 export interface MarkRepository {
   getById(handle: DBHandle, markId: MarkId): Promise<Mark | null>

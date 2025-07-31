@@ -48,6 +48,6 @@ export const personalMarkRouter = t.router({
   getExpiryDateForUser: procedure
     .input(UserSchema.shape.id)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.personalMarkService.getExpiryDateForUserId(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.personalMarkService.getUserPunishment(handle, input))
     ),
 })

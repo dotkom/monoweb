@@ -1,8 +1,7 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { PublicUserSchema } from "./user"
 import { GroupSchema } from "./group"
-import { addDays, differenceInDays, Interval, isWithinInterval, parse } from "date-fns"
+import { PublicUserSchema } from "./user"
 
 export const MarkSchema = schemas.MarkSchema.extend({})
 
@@ -42,8 +41,15 @@ export const PersonalMarkDetailsSchema = z.object({
   givenBy: PublicUserSchema,
 })
 
+export const PunishmentSchema = z.object({
+  suspended: z.boolean().optional(),
+  delay: z.number().optional(),
+})
+
 export type PersonalMarkDetails = z.infer<typeof PersonalMarkDetailsSchema>
 
 export type VisiblePersonalMarkDetails = z.infer<typeof VisiblePersonalMarkDetailsSchema>
 
 export type PersonalMark = z.infer<typeof PersonalMarkSchema>
+
+export type Punishment = z.infer<typeof PunishmentSchema>
