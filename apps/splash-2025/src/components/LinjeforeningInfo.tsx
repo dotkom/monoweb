@@ -39,7 +39,7 @@ export const LinjeforeningInfo = () => {
           color="light"
           element="a"
           href="https://opptak.online.ntnu.no/"
-          className="w-fit text-2xl px-10 min-h-[6rem]"
+          className="w-fit text-2xl px-8 min-h-[5rem] rounded-xl"
         >
           Gå til opptakssiden
         </Button>

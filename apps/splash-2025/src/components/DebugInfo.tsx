@@ -48,7 +48,7 @@ export const DebugInfo = () => {
             color="brand"
             element="a"
             href="https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
-            className="w-fit text-2xl px-10 min-h-[6rem]"
+            className="w-fit text-2xl px-8 min-h-[5rem] rounded-xl"
           >
             Ta kontakt med Debug
           </Button>

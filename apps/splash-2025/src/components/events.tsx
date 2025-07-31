@@ -49,7 +49,7 @@ export const Events = () => {
   return (
     <div className="bg-orange-100 min-h-[500px] py-20 w-full">
       <div className="max-w-screen-xl mx-auto space-y-8">
-        <Title size="lg" className="text-4xl px-8 md:px-16">
+        <Title id="events-title" size="lg" className="text-4xl px-8 md:px-16">
           Arrangementer
         </Title>
 

@@ -1,4 +1,4 @@
-import { Text, Title, cn } from "@dotkomonline/ui"
+import { Button, Icon, Text, Title, cn } from "@dotkomonline/ui"
 import type { FC } from "react"
 import type { HeroProps } from "../data/hero"
 
@@ -7,15 +7,15 @@ export const Hero: FC<HeroProps> = ({ background, banner }) => {
     <div
       className={cn(
         "flex flex-col items-center py-16 md:py-32 text-white",
-        "h-screen bg-no-repeat bg-cover bg-center",
+        "min-h-screen bg-no-repeat bg-cover bg-center",
         background
       )}
     >
-      <div className="max-w-screen-xl px-8 md:px-16 mx-auto flex flex-col gap-24 items-center mt-48 md:mt-0">
-        <div className="flex flex-col w-full items-center justify-center gap-16 drop-shadow-xl">
-          <Title className="text-2xl md:text-4xl mx-auto uppercase font-bold tracking-wider">Velkommen til</Title>
+      <div className="max-w-screen-xl px-8 md:px-16 mx-auto flex flex-col gap-12 md:gap-24 items-center mt-48 md:mt-0">
+        <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-16 drop-shadow-xl">
+          <Title className="text-2xl md:text-4xl font-semibold tracking-wider">Velkommen til</Title>
 
-          <img src={banner} alt="Logo for Onlines fadderuker" className="scale-75 drop-shadow-2xl" />
+          <img src={banner} alt="Logo for Onlines fadderuker" className="sm:scale-75 drop-shadow-2xl" />
 
           <Title className="text-2xl md:text-4xl">Linjeforeningen for informatikkstudenter ved NTNU!</Title>
         </div>
@@ -30,6 +30,16 @@ export const Hero: FC<HeroProps> = ({ background, banner }) => {
           </a>{" "}
           OBS - kort frist!
         </Text>
+
+        <Button
+          className="w-fit text-2xl px-8 min-h-[5rem] rounded-xl bg-[#ffb564] hover:bg-[#ffce9d] gap-3"
+          onClick={() => {
+            document.getElementById("events-title")?.scrollIntoView({ behavior: "smooth", block: "start" })
+          }}
+          icon={<Icon icon="tabler:arrow-down" className="text-2xl" />}
+        >
+          Gå til arrangementer
+        </Button>
       </div>
     </div>
   )
