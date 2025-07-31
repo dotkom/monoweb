@@ -5,7 +5,7 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type EventStatus, type EventType, EventWriteSchema, type Group } from "@dotkomonline/types"
+import { EventSchema, type EventStatus, type EventType, type Group } from "@dotkomonline/types"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
@@ -23,7 +23,7 @@ const EVENT_FORM_DATA_STATUS = [
   { value: "PUBLIC", label: "Publisert" },
 ] as const satisfies { value: EventStatus; label: string }[]
 
-const FormValidationSchema = EventWriteSchema.extend({
+const FormValidationSchema = EventSchema.extend({
   hostingGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
