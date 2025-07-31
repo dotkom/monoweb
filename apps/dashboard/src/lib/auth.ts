@@ -45,7 +45,6 @@ export const auth = createAuthenticationHandler(oauth2Service, {
       if (!jwt.payload.sub) {
         throw new Error("No sub in JWT")
       }
-      console.log("WOWA WEWEA")
       await client.user.registerAndGet.mutate(jwt.payload.sub)
     } catch (err) {
       oauth2Logger.error("failed to verify access token", err)
