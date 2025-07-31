@@ -8,7 +8,7 @@ const CompanyPage = async () => {
     <ul className="text-blue-950 text-center text-2xl">
       {data?.map((company) => (
         <li className="text-blue-950 hover:text-blue-800 cursor-pointer" key={company.id}>
-          <Link href={`company/${company.id}`}>{company.name}</Link>
+          <Link href={`bedrifter/${company.slug}`}>{company.name}</Link>
         </li>
       ))}
     </ul>

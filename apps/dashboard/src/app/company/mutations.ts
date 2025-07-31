@@ -22,7 +22,7 @@ export const useCreateCompanyMutation = () => {
           message: `Bedriften "${data.name}" har blitt opprettet.`,
         })
 
-        router.replace(`/company/${data.id}`)
+        router.replace(`/company/${data.slug}`)
       },
       onError: (err) => {
         notification.fail({
@@ -53,7 +53,7 @@ export const useEditCompanyMutation = () => {
           message: `Bedriften "${data.name}" har blitt oppdatert.`,
         })
 
-        await queryClient.invalidateQueries(trpc.company.getById.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.company.getBySlug.queryOptions(data.slug))
       },
       onError: (err) => {
         notification.fail({

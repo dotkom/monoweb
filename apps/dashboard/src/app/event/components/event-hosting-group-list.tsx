@@ -23,7 +23,7 @@ export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, 
   return (
     <MantineGroup>
       {companies.map((company) => (
-        <Anchor key={company.id} component={Link} size="sm" href={`/company/${company.id}`}>
+        <Anchor key={company.id} component={Link} size="sm" href={`/company/${company.slug}`}>
           {company.name}
         </Anchor>
       ))}

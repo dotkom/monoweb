@@ -18,7 +18,7 @@ export const useCompanyTable = ({ data }: Props) => {
         id: "title",
         header: () => "Bedrift",
         cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/company/${info.getValue().id}`}>
+          <Anchor component={Link} size="sm" href={`/company/${info.getValue().slug}`}>
             {info.getValue().name}
           </Anchor>
         ),

@@ -2,15 +2,15 @@
 
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use } from "react"
-import { useCompanyByIdQuery } from "../queries"
+import { useCompanyBySlugQuery } from "../queries"
 import { CompanyDetailsContext } from "./provider"
 
 export default function CompanyDetailsLayout({
   children,
   params,
-}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
-  const { id } = use(params)
-  const { data, isLoading } = useCompanyByIdQuery(id)
+}: PropsWithChildren<{ params: Promise<{ slug: string }> }>) {
+  const { slug } = use(params)
+  const { data, isLoading } = useCompanyBySlugQuery(slug)
   return (
     <>
       {isLoading || !data ? (

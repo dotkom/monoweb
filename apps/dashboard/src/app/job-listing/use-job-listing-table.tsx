@@ -28,7 +28,7 @@ export const useJobListingTable = ({ data }: Props) => {
         id: "company",
         header: () => "Bedrift",
         cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/company/${info.getValue().company.id}`}>
+          <Anchor component={Link} size="sm" href={`/company/${info.getValue().company.slug}`}>
             {info.getValue().company.name}
           </Anchor>
         ),
