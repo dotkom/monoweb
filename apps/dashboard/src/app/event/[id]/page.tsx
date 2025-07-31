@@ -1,8 +1,10 @@
 "use client"
 
 import { Icon } from "@iconify/react"
-import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { Button, Group, Modal, Stack, Tabs, Title } from "@mantine/core"
+import { useDisclosure } from "@mantine/hooks"
 import { useRouter } from "next/navigation"
+import { useDeleteEventMutation } from "../mutations"
 import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
@@ -53,10 +55,41 @@ const SIDEBAR_LINKS = [
 export default function EventDetailsPage() {
   const event = useEventContext()
   const router = useRouter()
+
+  const deleteEvent = useDeleteEventMutation()
+  const [opened, { open, close }] = useDisclosure(false)
+
   return (
-    <Box p="md">
+    <Stack>
       <Group>
-        <CloseButton onClick={() => router.back()} />
+        <Button bg="gray" onClick={() => router.back()} leftSection={<Icon icon="tabler:arrow-left" />}>
+          Tilbake
+        </Button>
+
+        <Modal opened={opened} onClose={close} title={`Er du sikker på at du vil slette ${event.title}?`} centered>
+          <Group>
+            <Button
+              bg="red"
+              onClick={() => {
+                deleteEvent.mutate({ id: event.id })
+                router.back()
+              }}
+              leftSection={<Icon icon="tabler:trash" />}
+            >
+              Ja, slett
+            </Button>
+            <Button bg="gray" onClick={close} leftSection={<Icon icon="tabler:cancel" />}>
+              Nei
+            </Button>
+          </Group>
+        </Modal>
+
+        <Button bg="red" onClick={open} leftSection={<Icon icon="tabler:trash" />}>
+          Slett
+        </Button>
+      </Group>
+
+      <Group>
         <Title>{event.title}</Title>
       </Group>
 
@@ -74,6 +107,6 @@ export default function EventDetailsPage() {
           </Tabs.Panel>
         ))}
       </Tabs>
-    </Box>
+    </Stack>
   )
 }

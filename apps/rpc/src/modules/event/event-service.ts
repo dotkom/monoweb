@@ -15,7 +15,7 @@ import type { EventRepository } from "./event-repository"
 
 export interface EventService {
   createEvent(handle: DBHandle, eventCreate: EventWrite): Promise<Event>
-  updateEvent(handle: DBHandle, eventId: EventId, data: EventWrite): Promise<Event>
+  updateEvent(handle: DBHandle, eventId: EventId, data: Partial<EventWrite>): Promise<Event>
   updateEventOrganizers(
     handle: DBHandle,
     eventId: EventId,

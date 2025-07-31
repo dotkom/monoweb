@@ -17,7 +17,7 @@ import { type Pageable, pageQuery } from "../../query"
 export interface EventRepository {
   create(handle: DBHandle, data: EventWrite): Promise<Event>
   update(handle: DBHandle, id: EventId, data: Partial<EventWrite>): Promise<Event>
-  findById(handle: DBHandle, id: string): Promise<Event | null>
+  findById(handle: DBHandle, id: string, options?: { includeDeleted?: boolean }): Promise<Event | null>
   /**
    * Find events based on a set of search criteria.
    *
@@ -56,13 +56,13 @@ export function getEventRepository(): EventRepository {
   return {
     async create(handle, data) {
       const row = await handle.event.create({ data })
-      const event = await this.findById(handle, row.id)
+      const event = await this.findById(handle, row.id, { includeDeleted: true })
       invariant(event !== null, "Event should exist within same transaction after creation")
       return event
     },
     async update(handle, id, data) {
       const row = await handle.event.update({ where: { id }, data })
-      const event = await this.findById(handle, row.id)
+      const event = await this.findById(handle, row.id, { includeDeleted: true })
       invariant(event !== null, "Event should exist within same transaction after update")
       return event
     },
@@ -125,9 +125,9 @@ export function getEventRepository(): EventRepository {
         })
       )
     },
-    async findById(handle, id) {
+    async findById(handle, id, { includeDeleted = false } = {}) {
       const event = await handle.event.findUnique({
-        where: { id, status: { not: "DELETED" } },
+        where: { id, status: includeDeleted ? undefined : { not: "DELETED" } },
         include: {
           companies: {
             include: {
