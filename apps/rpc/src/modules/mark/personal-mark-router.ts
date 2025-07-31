@@ -21,7 +21,7 @@ export const personalMarkRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.listByMark(handle, input.id))
     ),
-  getDashboardPersonalMarksByMark: procedure
+  getPersonalMarkDetailsByMark: procedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
     .query(({ input, ctx }) =>
       ctx.executeTransaction((handle) => ctx.personalMarkService.listDetails(handle, input.id))

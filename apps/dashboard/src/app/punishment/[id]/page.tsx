@@ -2,7 +2,7 @@
 import { UserSearch } from "@/app/user/components/UserSearch/UserSearch"
 import { GenericTable } from "@/components/GenericTable"
 import { useTRPC } from "@/lib/trpc"
-import type { DashboardPersonalMark, User } from "@dotkomonline/types"
+import type { PersonalMarkDetails, User } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Box, Button, CloseButton, Group, Stack, Title } from "@mantine/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -13,7 +13,7 @@ import { useEditMarkMutation } from "../mutations/use-edit-mark-mutation"
 import { useMarkWriteForm } from "../write-form"
 import { useMarkDetailsContext } from "./provider"
 
-const columnHelper = createColumnHelper<DashboardPersonalMark>()
+const columnHelper = createColumnHelper<PersonalMarkDetails>()
 
 export default function MarkEditCard() {
   const trpc = useTRPC()
@@ -23,7 +23,7 @@ export default function MarkEditCard() {
   const edit = useEditMarkMutation()
   const router = useRouter()
 
-  const markQueryOptions = trpc.personalMark.getDashboardPersonalMarksByMark.queryOptions({
+  const markQueryOptions = trpc.personalMark.getPersonalMarkDetailsByMark.queryOptions({
     id: mark.id,
   })
   const { data: personalMarks } = useQuery({ ...markQueryOptions, initialData: [] })

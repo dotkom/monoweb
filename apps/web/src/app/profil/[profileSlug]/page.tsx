@@ -4,14 +4,14 @@ import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
 import {
   type Membership,
-  type VisiblePersonalMarkDetailsSchema,
+  type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, cn } from "@dotkomonline/ui"
-import { formatDate, formatRelativeTime } from "@dotkomonline/utils"
-import { addDays, formatDistanceToNowStrict, getYear } from "date-fns"
+import { formatDate, formatRelativeTime, getExpiryDate } from "@dotkomonline/utils"
+import { formatDistanceToNowStrict, getYear } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 
@@ -57,9 +57,9 @@ const renderUserInfo = (label: string, value: string | number | null) => {
 function MarkDisplay({
   markInformation: { mark, personalMark },
 }: {
-  markInformation: CensoredPersonalMarkSchema
+  markInformation: VisiblePersonalMarkDetails
 }) {
-  const expires = addDays(personalMark.createdAt, mark.duration)
+  const expires = getExpiryDate(personalMark.createdAt, mark.duration)
   const hasExpired = expires < new Date()
 
   return (

@@ -167,7 +167,7 @@ export async function createServiceLayer(
     paymentService
   )
   const markService = getMarkService(markRepository)
-  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService)
+  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)

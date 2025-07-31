@@ -58,15 +58,21 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
               biography: true,
             },
           },
+          mark: {
+            select: {
+              group: true,
+            },
+          },
         },
       })
 
       return parseOrReport(
         z.array(PersonalMarkDetailsSchema),
-        personalMarks.map(({ user, givenBy, ...personalMark }) => ({
+        personalMarks.map(({ user, mark: { group: givenByGroup }, givenBy, ...personalMark }) => ({
           personalMark,
           user,
           givenBy,
+          givenByGroup,
         }))
       )
     },
