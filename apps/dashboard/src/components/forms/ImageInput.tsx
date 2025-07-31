@@ -30,7 +30,7 @@ export function createImageInput<F extends FieldValues>({
               }}
             />
             {(field.value ?? props.existingImageUrl) && (
-              <Image radius="sm" src={field.value ?? props.existingImageUrl} />
+              <Image src={field.value ?? props.existingImageUrl} radius="md" maw="max(35dvw, 32rem)" />
             )}
           </>
         )}

@@ -5,20 +5,25 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { EventSchema, type Group } from "@dotkomonline/types"
+import { type EventStatus, type EventType, EventWriteSchema, type Group } from "@dotkomonline/types"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
-interface UseEventEditFormProps {
-  onSubmit(data: FormValidationResult): void
-  defaultValues?: Partial<FormValidationResult>
-  label?: string
-  hostingGroups: Group[]
-}
+const EVENT_FORM_DATA_TYPE = [
+  { value: "SOCIAL", label: "Sosialt" },
+  { value: "COMPANY", label: "Bedpres" },
+  { value: "GENERAL_ASSEMBLY", label: "Generalforsamling" },
+  { value: "INTERNAL", label: "Internt" },
+  { value: "OTHER", label: "Annet" },
+] as const satisfies { value: EventType; label: string }[]
 
-type FormValidationResult = z.infer<typeof FormValidationSchema>
+const EVENT_FORM_DATA_STATUS = [
+  { value: "DELETED", label: "Slettet" },
+  { value: "DRAFT", label: "Utkast" },
+  { value: "PUBLIC", label: "Publisert" },
+] as const satisfies { value: EventStatus; label: string }[]
 
-const FormValidationSchema = EventSchema.extend({
+const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
@@ -27,10 +32,19 @@ const FormValidationSchema = EventSchema.extend({
   }
 })
 
+type FormValidationResult = z.infer<typeof FormValidationSchema>
+
+interface UseEventEditFormProps {
+  onSubmit(data: FormValidationResult): void
+  defaultValues?: Partial<FormValidationResult>
+  label?: string
+  hostingGroups: Group[]
+}
+
 export const useEventEditForm = ({
   hostingGroups,
   onSubmit,
-  label = "Opprett arrangement",
+  label = "Oppdater arrangement",
   defaultValues,
 }: UseEventEditFormProps) =>
   useFormBuilder({
@@ -41,28 +55,31 @@ export const useEventEditForm = ({
     fields: {
       title: createTextInput({
         label: "Arrangementnavn",
-        placeholder: "Åre 2024",
+        placeholder: "Silent Disco",
         withAsterisk: true,
       }),
       subtitle: createTextInput({
-        label: "Ingress",
-        placeholder:
-          "Tidspunktet for Åreturen 2023 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!!",
+        label: "Ledetekst",
+        placeholder: "En uforglemmelig kveld med musikk og dans!",
       }),
       description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
       }),
       locationTitle: createTextInput({
-        label: "Tittel på lokasjon",
-        placeholder: "Åre",
+        label: "Stedsnavn",
+        placeholder: "Havet",
+        description: "Fritekst uten validering",
       }),
       locationAddress: createTextInput({
-        label: "Adresse",
-        placeholder: "Høgskoleringen 1, 7034 Trondheim",
+        label: "Stedsadresse",
+        placeholder: "Strandveien 104, 7067 Trondheim",
+        description: "Fritekst uten validering",
       }),
       locationLink: createTextInput({
-        label: "Lenke til kart",
+        label: "Stedslenke",
+        placeholder: "https://...",
+        description: "Lenke til Google Maps eller MazeMap. Må være en gyldig lenke.",
       }),
       imageUrl: createImageInput({
         label: "Bilde",
@@ -75,30 +92,24 @@ export const useEventEditForm = ({
       end: createDateTimeInput({
         label: "Sluttidspunkt",
         withAsterisk: true,
+        description: "Må være etter starttidspunktet",
       }),
       hostingGroupIds: createMultipleSelectInput({
-        label: "Arrangerende gruppe",
-        placeholder: "Arrkom",
+        label: "Arrangører",
+        placeholder: "Velg grupper",
         data: hostingGroups.map((group) => ({ value: group.slug, label: group.abbreviation })),
         searchable: true,
       }),
       status: createSelectInput({
-        label: "Event status",
-        placeholder: "Velg en",
-        data: [
-          { value: "DRAFT", label: "Utkast" },
-          { value: "PUBLIC", label: "Publisert" },
-          { value: "DELETED", label: "Slettet" },
-        ],
+        label: "Status",
+        placeholder: "Velg status",
+        data: EVENT_FORM_DATA_STATUS,
         withAsterisk: true,
       }),
       type: createSelectInput({
         label: "Type",
-        placeholder: "Velg en",
-        data: [
-          { value: "SOCIAL", label: "Sosialt" },
-          { value: "COMPANY", label: "Bedriftsarrangement" },
-        ],
+        placeholder: "Velg type",
+        data: EVENT_FORM_DATA_TYPE,
         withAsterisk: true,
       }),
     },

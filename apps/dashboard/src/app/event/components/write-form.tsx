@@ -6,30 +6,26 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { EventWriteSchema } from "@dotkomonline/types"
+import { type EventStatus, type EventType, EventWriteSchema } from "@dotkomonline/types"
+import { addHours, roundToNearestHours } from "date-fns"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
-const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
-  start: new Date(),
-  end: new Date(),
-  description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
-  imageUrl: null,
-  locationAddress: null,
-  subtitle: null,
-  hostingGroupIds: [],
-  status: "DRAFT",
-  title: "",
-  type: "SOCIAL",
-  locationLink: null,
-  locationTitle: "",
-}
+const EVENT_FORM_DATA_TYPE = [
+  { value: "SOCIAL", label: "Sosialt" },
+  { value: "COMPANY", label: "Bedpres" },
+  { value: "GENERAL_ASSEMBLY", label: "Generalforsamling" },
+  { value: "INTERNAL", label: "Internt" },
+  { value: "OTHER", label: "Annet" },
+] as const satisfies { value: EventType; label: string }[]
 
-interface UseEventWriteFormProps {
-  onSubmit(data: z.infer<typeof EventWriteFormValidationSchema>): void
-}
+const EVENT_FORM_DATA_STATUS = [
+  { value: "DELETED", label: "Slettet" },
+  { value: "DRAFT", label: "Utkast" },
+  { value: "PUBLIC", label: "Publisert" },
+] as const satisfies { value: EventStatus; label: string }[]
 
-export const EventWriteFormValidationSchema = EventWriteSchema.extend({
+const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
@@ -38,37 +34,68 @@ export const EventWriteFormValidationSchema = EventWriteSchema.extend({
   }
 })
 
-type FormValidationResult = z.infer<typeof EventWriteFormValidationSchema>
+type FormValidationResult = z.infer<typeof FormValidationSchema>
+
+const nextHour = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
+
+const DEFAULT_VALUES = {
+  start: nextHour,
+  end: addHours(nextHour, 1),
+  status: "PUBLIC",
+  type: "SOCIAL",
+
+  title: "",
+  subtitle: null,
+  description: "",
+  locationTitle: null,
+  locationAddress: null,
+  locationLink: null,
+  imageUrl: null,
+  hostingGroupIds: [],
+} as const satisfies FormValidationResult
+
+interface UseEventWriteFormProps {
+  onSubmit(data: FormValidationResult): void
+}
 
 export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
   return useFormBuilder({
-    schema: EventWriteFormValidationSchema,
-    defaultValues: EVENT_FORM_DEFAULT_VALUES,
+    schema: FormValidationSchema,
+    defaultValues: DEFAULT_VALUES,
     onSubmit,
     label: "Opprett arrangement",
     fields: {
       title: createTextInput({
         label: "Arrangementnavn",
-        placeholder: "Åre 2024",
+        placeholder: "Silent Disco",
         withAsterisk: true,
       }),
       subtitle: createTextInput({
-        label: "Ingress",
-        placeholder:
-          "Tidspunktet for Åreturen 2023 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!!",
+        label: "Ledetekst",
+        placeholder: "En uforglemmelig kveld med musikk og dans!",
       }),
       description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
       }),
+      locationTitle: createTextInput({
+        label: "Stedsnavn",
+        placeholder: "Havet",
+        description: "Fritekst uten validering",
+      }),
       locationAddress: createTextInput({
-        label: "Sted",
-        placeholder: "Åre",
+        label: "Stedsadresse",
+        placeholder: "Strandveien 104, 7067 Trondheim",
+        description: "Fritekst uten validering",
+      }),
+      locationLink: createTextInput({
+        label: "Stedslenke",
+        placeholder: "https://...",
+        description: "Lenke til Google Maps eller MazeMap. Må være en gyldig lenke.",
       }),
       imageUrl: createImageInput({
         label: "Bilde",
-        placeholder: "Last opp",
       }),
       start: createDateTimeInput({
         label: "Starttidspunkt",
@@ -77,30 +104,24 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
       end: createDateTimeInput({
         label: "Sluttidspunkt",
         withAsterisk: true,
+        description: "Må være etter starttidspunktet",
       }),
       hostingGroupIds: createMultipleSelectInput({
-        label: "Arrangerende gruppe",
-        placeholder: "Arrkom",
+        label: "Arrangører",
+        placeholder: "Velg grupper",
         data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
         searchable: true,
       }),
       status: createSelectInput({
-        label: "Event status",
-        placeholder: "Velg en",
-        data: [
-          { value: "DRAFT", label: "Utkast" },
-          { value: "PUBLIC", label: "Publisert" },
-          { value: "DELETED", label: "Slettet" },
-        ],
+        label: "Status",
+        placeholder: "Velg status",
+        data: EVENT_FORM_DATA_STATUS,
         withAsterisk: true,
       }),
       type: createSelectInput({
         label: "Type",
-        placeholder: "Velg en",
-        data: [
-          { value: "SOCIAL", label: "Sosialt" },
-          { value: "COMPANY", label: "Bedriftsarrangement" },
-        ],
+        placeholder: "Velg type",
+        data: EVENT_FORM_DATA_TYPE,
         withAsterisk: true,
       }),
     },

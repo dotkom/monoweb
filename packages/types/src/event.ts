@@ -13,11 +13,15 @@ import { GroupSchema } from "./group"
 
 export type EventId = Event["id"]
 export type EventType = Event["type"]
+export type EventStatus = Event["status"]
 export type Event = z.infer<typeof EventSchema>
 export const EventSchema = schemas.EventSchema.extend({
   companies: z.array(CompanySchema),
   hostingGroups: z.array(GroupSchema),
 })
+
+export const EventTypeSchema = schemas.EventTypeSchema
+export const EventStatusSchema = schemas.EventStatusSchema
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
 export const EventWriteSchema = EventSchema.pick({

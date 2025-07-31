@@ -28,6 +28,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
 }: FormBuilderOptions<T>): FC {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(schema),
+    mode: "onBlur",
     defaultValues,
   })
 

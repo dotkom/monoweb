@@ -259,10 +259,10 @@ model Event {
   start           DateTime      @db.Timestamptz(3)
   end             DateTime      @db.Timestamptz(3)
   status          EventStatus
-  description     String?
+  description     String
   subtitle        String?
   imageUrl        String?
-  locationTitle   String
+  locationTitle   String?
   locationAddress String?
   locationLink    String?
   attendance      Attendance?   @relation(fields: [attendanceId], references: [id])

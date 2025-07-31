@@ -10,6 +10,7 @@ import StarterKit from "@tiptap/starter-kit"
 import { Controller, type FieldValues } from "react-hook-form"
 import type { InputProducerResult } from "./types"
 import "@mantine/tiptap/styles.css"
+import { ErrorMessage } from "@hookform/error-message"
 
 export function createRichTextInput<F extends FieldValues>({
   onChange,
@@ -20,9 +21,9 @@ export function createRichTextInput<F extends FieldValues>({
   required: boolean
   label: string
 }): InputProducerResult<F> {
-  return function RichTextInput({ name, control }) {
+  return function RichTextInput({ name, state, control }) {
     return (
-      <Input.Wrapper>
+      <Input.Wrapper error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}>
         <Input.Label required={required}>{label}</Input.Label>
         <Controller
           control={control}
