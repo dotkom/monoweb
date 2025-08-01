@@ -309,7 +309,7 @@ export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
   },
 ]
 
-export const getGroupRoleFixtures: () => Prisma.GroupRoleCreateInput[] = () =>
+export const getGroupRoleFixtures: () => Prisma.GroupRoleCreateManyInput[] = () =>
   getGroupFixtures().flatMap((group) => [
     {
       groupId: group.slug,

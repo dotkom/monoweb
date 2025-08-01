@@ -1,6 +1,13 @@
-import { GroupMembershipSchema, GroupMembershipWriteSchema, GroupSchema, GroupWriteSchema } from "@dotkomonline/types"
+import {
+  GroupMembershipSchema,
+  GroupMembershipWriteSchema,
+  GroupRoleSchema,
+  GroupRoleWriteSchema,
+  GroupSchema,
+  GroupWriteSchema,
+} from "@dotkomonline/types"
 import { z } from "zod"
-import { procedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, t } from "../../trpc"
 
 export const groupRouter = t.router({
   create: procedure
@@ -64,5 +71,20 @@ export const groupRouter = t.router({
     .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.removeMember(handle, input.userId, input.groupId))
+    ),
+  createRole: authenticatedProcedure
+    .input(GroupRoleWriteSchema)
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.createRole(handle, input))
+    ),
+  updateRole: authenticatedProcedure
+    .input(
+      z.object({
+        id: GroupRoleSchema.shape.id,
+        role: GroupRoleWriteSchema,
+      })
+    )
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.updateRole(handle, input.id, input.role))
     ),
 })

@@ -22,8 +22,8 @@ if (process.env.DATABASE_URL.includes("prod")) {
 const db = createPrisma(process.env.DATABASE_URL)
 
 const companies = await db.company.createManyAndReturn({ data: getCompanyFixtures() })
-await db.groupRole.createManyAndReturn({ data: getGroupRoleFixtures() })
 const groups = await db.group.createManyAndReturn({ data: getGroupFixtures() })
+await db.groupRole.createManyAndReturn({ data: getGroupRoleFixtures() })
 const attendances = await db.attendance.createManyAndReturn({ data: getAttendanceFixtures() })
 const events = await db.event.createManyAndReturn({ data: getEventFixtures(attendances.map((a) => a.id)) })
 await db.attendancePool.createManyAndReturn({ data: getPoolFixtures(attendances.map((a) => a.id)) })

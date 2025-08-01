@@ -1,4 +1,4 @@
-import { useGroupAllQuery } from "@/app/group/queries/use-group-all-query"
+import { useGroupAllQuery } from "@/app/group/queries"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"

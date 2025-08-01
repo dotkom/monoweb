@@ -7,6 +7,9 @@ import {
   GroupMembershipSchema,
   type GroupMembershipWrite,
   type GroupRole,
+  type GroupRoleId,
+  GroupRoleSchema,
+  type GroupRoleWrite,
   GroupSchema,
   type GroupWrite,
   type UserId,
@@ -15,7 +18,7 @@ import type { GroupType } from "@prisma/client"
 import { parseOrReport } from "../../invariant"
 
 export interface GroupRepository {
-  create(handle: DBHandle, groupId: GroupId, data: GroupWrite, groupMemberRoles: GroupRole[]): Promise<Group>
+  create(handle: DBHandle, groupId: GroupId, data: GroupWrite): Promise<Group>
   update(handle: DBHandle, groupId: GroupId, data: Partial<GroupWrite>): Promise<Group>
   delete(handle: DBHandle, groupId: GroupId): Promise<Group>
   getById(handle: DBHandle, groupId: GroupId): Promise<Group | null>
@@ -27,18 +30,17 @@ export interface GroupRepository {
   getGroupsByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
   startMembership(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMembership>
   endMembership(handle: DBHandle, membership: GroupMembershipId): Promise<GroupMembership>
+  createRoles(handle: DBHandle, roles: GroupRoleWrite[]): Promise<void>
+  deleteRoles(handle: DBHandle, groupId: GroupId, roleNames: Set<string>): Promise<void>
+  updateRole(handle: DBHandle, id: GroupRoleId, role: Partial<GroupRoleWrite>): Promise<GroupRole>
 }
 
 export function getGroupRepository(): GroupRepository {
   return {
-    async create(handle, groupId, data, groupMemberRoles) {
-      // Group needs a role to have as its leader role, so we must create roles first
-      await handle.groupRole.createMany({
-        data: groupMemberRoles,
-      })
-
+    async create(handle, groupId, data) {
       const group = await handle.group.create({
         data: { ...data, slug: groupId },
+        include: QUERY_WITH_ROLES,
       })
       return parseOrReport(GroupSchema, group)
     },
@@ -46,28 +48,34 @@ export function getGroupRepository(): GroupRepository {
       const group = await handle.group.update({
         where: { slug: groupId },
         data,
+        include: QUERY_WITH_ROLES,
       })
       return parseOrReport(GroupSchema, group)
     },
     async delete(handle, groupId) {
       const group = await handle.group.delete({
         where: { slug: groupId },
+        include: QUERY_WITH_ROLES,
       })
       return parseOrReport(GroupSchema, group)
     },
     async getById(handle, groupId) {
       const group = await handle.group.findUnique({
         where: { slug: groupId },
+        include: QUERY_WITH_ROLES,
       })
       return group ? parseOrReport(GroupSchema, group) : null
     },
     async getAll(handle) {
-      const groups = await handle.group.findMany()
+      const groups = await handle.group.findMany({
+        include: QUERY_WITH_ROLES,
+      })
       return groups.map((group) => parseOrReport(GroupSchema, group))
     },
     async getAllByType(handle, groupType) {
       const groups = await handle.group.findMany({
         where: { type: groupType },
+        include: QUERY_WITH_ROLES,
       })
       return groups.map((group) => parseOrReport(GroupSchema, group))
     },
@@ -114,6 +122,7 @@ export function getGroupRepository(): GroupRepository {
         },
         include: {
           memberships: true,
+          roles: true,
         },
       })
       return groups.map((group) => parseOrReport(GroupSchema, group))
@@ -154,5 +163,32 @@ export function getGroupRepository(): GroupRepository {
         roles: membership.roles.map((role) => role.role),
       })
     },
+    async createRoles(handle, roles) {
+      await handle.groupRole.createMany({
+        data: roles,
+      })
+    },
+    async deleteRoles(handle, groupId, roleNames) {
+      await handle.groupRole.deleteMany({
+        where: {
+          groupId,
+          name: { in: Array.from(roleNames.values()) },
+        },
+      })
+    },
+    async updateRole(handle, id, role) {
+      const row = await handle.groupRole.update({
+        where: {
+          id,
+        },
+        data: role,
+      })
+
+      return parseOrReport(GroupRoleSchema, row)
+    },
   }
 }
+
+const QUERY_WITH_ROLES = {
+  roles: true,
+} as const

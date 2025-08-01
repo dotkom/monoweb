@@ -4,6 +4,9 @@ import {
   type GroupId,
   type GroupMember,
   type GroupMembershipWrite,
+  type GroupRole,
+  type GroupRoleId,
+  type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
   type UserId,
@@ -39,6 +42,8 @@ export interface GroupService {
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
   addMember(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMember>
   removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMember, "user">>
+  createRole(handle: DBHandle, data: GroupRoleWrite): Promise<void>
+  updateRole(handle: DBHandle, id: GroupRoleId, role: GroupRoleWrite): Promise<GroupRole>
 }
 
 export function getGroupService(groupRepository: GroupRepository, userService: UserService): GroupService {
@@ -73,7 +78,10 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
         id = `${slugify(payload.abbreviation)}-${i}`
       }
 
-      return groupRepository.create(handle, id, payload, getDefaultGroupMemberRoles(id))
+      await groupRepository.create(handle, id, payload)
+      await groupRepository.createRoles(handle, getDefaultGroupMemberRoles(id))
+
+      return await this.getById(handle, id)
     },
     async update(handle, groupId, values) {
       return groupRepository.update(handle, groupId, values)
@@ -129,6 +137,12 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     async removeMember(handle, userId, groupId) {
       // TODO: return await groupRepository.removeMember(handle, userId, groupId)
       throw new Error("Not implemented yet")
+    },
+    async createRole(handle, data) {
+      await groupRepository.createRoles(handle, [data])
+    },
+    async updateRole(handle, id, role) {
+      return await groupRepository.updateRole(handle, id, role)
     },
   }
 }

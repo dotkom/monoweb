@@ -3,7 +3,19 @@ import type { z } from "zod"
 import { schemas } from "@dotkomonline/db/schemas"
 import { UserSchema } from "./user"
 
-export const GroupSchema = schemas.GroupSchema.extend({})
+export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
+export type GroupRole = z.infer<typeof GroupRoleSchema>
+export type GroupRoleId = GroupRole["id"]
+
+export const GroupRoleWriteSchema = GroupRoleSchema.omit({
+  id: true,
+})
+
+export type GroupRoleWrite = z.infer<typeof GroupRoleWriteSchema>
+
+export const GroupSchema = schemas.GroupSchema.extend({
+  roles: GroupRoleSchema.array(),
+})
 export const GroupTypeSchema = schemas.GroupTypeSchema
 
 export type GroupId = Group["slug"]
@@ -14,12 +26,13 @@ export type GroupType = z.infer<typeof GroupTypeSchema>
 export const GroupWriteSchema = GroupSchema.omit({
   slug: true,
   createdAt: true,
+  roles: true,
 })
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
 
-export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
-export type GroupRole = z.infer<typeof GroupRoleSchema>
+export const GroupRoleTypeSchema = schemas.GroupRoleTypeSchema
+export type GroupRoleType = z.infer<typeof GroupRoleTypeSchema>
 
 export const GroupMembershipSchema = schemas.GroupMembershipSchema.extend({
   roles: GroupRoleSchema.array(),
@@ -44,7 +57,7 @@ export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
     { groupId, type: "COSMETIC", name: "Tillitsvalgt" },
     { groupId, type: "COSMETIC", name: "Økonomiansvarlig" },
     { groupId, type: "COSMETIC", name: "Medlem" },
-  ] as const satisfies GroupRole[]
+  ] as const satisfies GroupRoleWrite[]
 
 export const createGroupPageUrl = (group: Group) => {
   switch (group.type) {
@@ -71,6 +84,19 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
       return "Annen gruppe"
     case "INTEREST_GROUP":
       return "Interessegruppe"
+    default:
+      return "Ukjent type"
+  }
+}
+
+export const getGroupRoleTypeName = (type: GroupRoleType) => {
+  switch (type) {
+    case "LEADER":
+      return "Leder"
+    case "PUNISHER":
+      return "Straffeansvarlig"
+    case "COSMETIC":
+      return "Komsetisk" //TODO: Better name
     default:
       return "Ukjent type"
   }

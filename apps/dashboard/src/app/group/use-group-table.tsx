@@ -16,17 +16,35 @@ export const useGroupTable = ({ data }: Props) => {
   const columns = useMemo(
     () => [
       columnHelper.accessor((group) => group, {
-        id: "name",
-        header: () => "Navn",
+        id: "abbreviation",
+        header: () => "Kort navn",
         cell: (info) => (
           <Anchor component={Link} size="sm" href={`/group/${info.getValue().slug}`}>
-            {info.getValue().name}
+            {info.getValue().abbreviation}
           </Anchor>
         ),
+      }),
+      columnHelper.accessor("name", {
+        header: () => "Navn",
+        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("email", {
         header: () => "Kontakt-e-post",
         cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("contactUrl", {
+        header: () => "Kontakt-lenke",
+        cell: (info) => {
+          const val = info.getValue()
+          if (!val) {
+            return "Ingen lenke"
+          }
+          return (
+            <Anchor component={Link} size="sm" target="_blank" href={val} rel="noopener">
+              Link
+            </Anchor>
+          )
+        },
       }),
       columnHelper.accessor("imageUrl", {
         header: () => "Bilde",
@@ -47,6 +65,11 @@ export const useGroupTable = ({ data }: Props) => {
         cell: (info) => {
           return getGroupTypeName(info.getValue())
         },
+      }),
+      columnHelper.accessor((group) => group, {
+        id: "status",
+        header: () => "Status",
+        cell: (info) => (!info.getValue().deactivatedAt ? "Aktiv" : "Inaktiv"),
       }),
     ],
     [columnHelper]
