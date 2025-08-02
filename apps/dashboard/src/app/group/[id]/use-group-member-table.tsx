@@ -14,7 +14,6 @@ interface Props {
 
 function formatRoles(memberships: GroupMembership[]) {
   const latestRoles = memberships.at(0)?.roles.map((role) => role.name)
-
   return latestRoles?.join(", ")
 }
 
@@ -22,7 +21,7 @@ function formatMembershipDate(date: Date | undefined | null) {
   return date ? formatDate(date) : "-"
 }
 
-export const useMemberTable = ({ data, groupId }: Props) => {
+export const useGroupMemberTable = ({ data, groupId }: Props) => {
   const columnHelper = createColumnHelper<GroupMember>()
 
   const columns = useMemo(

@@ -5,11 +5,11 @@ import { useQuery } from "@tanstack/react-query"
 
 export const useGroupAllQuery = () => {
   const trpc = useTRPC()
-  const { data, ...query } = useQuery(trpc.group.all.queryOptions())
-  if (data === undefined || query.isLoading) {
-    return { groups: [], ...query }
-  }
-  return { groups: data, ...query }
+  const { data: groups, ...query } = useQuery({
+    ...trpc.group.all.queryOptions(),
+    initialData: [],
+  })
+  return { groups, ...query }
 }
 
 export const useGroupGetQuery = (id: GroupId) => {
@@ -19,18 +19,14 @@ export const useGroupGetQuery = (id: GroupId) => {
 
 export const useGroupMembersAllQuery = (groupId: GroupId) => {
   const trpc = useTRPC()
-  const { data, ...query } = useQuery(trpc.group.getMembers.queryOptions(groupId))
-  if (data === undefined || query.isLoading) {
-    return { members: null, ...query }
-  }
-  return { members: data, ...query }
+  const { data: members, ...query } = useQuery({
+    ...trpc.group.getMembers.queryOptions(groupId),
+    initialData: new Map(),
+  })
+  return { members, ...query }
 }
 
 export const useGroupMemberGetQuery = (groupId: GroupId, userId: UserId) => {
   const trpc = useTRPC()
-  const { data, ...query } = useQuery(trpc.group.getMember.queryOptions({ groupId, userId }))
-  if (data === undefined || query.isLoading) {
-    return { member: null, ...query }
-  }
-  return { member: data, ...query }
+  return useQuery(trpc.group.getMember.queryOptions({ groupId, userId }))
 }

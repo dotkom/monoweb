@@ -18,6 +18,7 @@ const SIDEBAR_LINKS = [
 export default function GroupMemberDetailsPage() {
   const router = useRouter()
   const { groupMember } = useGroupMemberDetailsContext()
+
   return (
     <Box p="md">
       <Group>

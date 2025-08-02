@@ -3,6 +3,7 @@ import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useGroupMemberForm } from "../group-member-form"
 import { useStartGroupMembershipMutation } from "../mutations"
+
 export const CreateGroupMemberModal: FC<ContextModalProps<{ group: Group; userId: UserId }>> = ({
   context,
   id,

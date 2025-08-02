@@ -103,7 +103,3 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
       return "Ukjent type"
   }
 }
-
-export const getCurrentMembershipRoles = (memberships: GroupMembership[] | undefined) => {
-  return memberships?.filter((membership) => membership.end === null).flatMap((membership) => membership.roles) ?? []
-}

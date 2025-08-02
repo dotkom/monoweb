@@ -97,7 +97,6 @@ export const useUpdateGroupMutation = () => {
   )
 }
 
-
 export const useCreateGroupRoleMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -112,7 +111,9 @@ export const useCreateGroupRoleMutation = () => {
       onSuccess: async (_, input) => {
         complete()
 
+        await queryClient.invalidateQueries(trpc.group.all.queryOptions())
         await queryClient.invalidateQueries(trpc.group.get.queryOptions(input.groupId))
+        await queryClient.invalidateQueries(trpc.group.getMembers.queryOptions(input.groupId))
       },
     })
   )
@@ -132,7 +133,9 @@ export const useUpdateGroupRoleMutation = () => {
       onSuccess: async (data) => {
         complete()
 
+        await queryClient.invalidateQueries(trpc.group.all.queryOptions())
         await queryClient.invalidateQueries(trpc.group.get.queryOptions(data.groupId))
+        await queryClient.invalidateQueries(trpc.group.getMembers.queryOptions(data.groupId))
       },
     })
   )

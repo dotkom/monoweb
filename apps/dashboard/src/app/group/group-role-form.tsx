@@ -18,18 +18,16 @@ const FormSchema = GroupRoleWriteSchema.omit({
 
 type FormResult = z.infer<typeof FormSchema>
 
-const DEFAULT_VALUES: Partial<FormResult> = {}
-
 interface UseGroupRoleForm {
   onSubmit(data: FormResult): void
   defaultValues?: Partial<FormResult>
   label?: string
 }
 
-export const useGroupRoleForm = ({ onSubmit, label = "Lagre", defaultValues = DEFAULT_VALUES }: UseGroupRoleForm) =>
+export const useGroupRoleForm = ({ onSubmit, label = "Lagre", defaultValues }: UseGroupRoleForm) =>
   useFormBuilder({
     schema: FormSchema,
-    defaultValues: defaultValues,
+    defaultValues,
     onSubmit,
     label,
     fields: {

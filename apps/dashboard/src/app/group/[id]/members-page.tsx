@@ -6,18 +6,18 @@ import { type FC, useMemo } from "react"
 import { useCreateGroupMemberModal } from "../modals/create-group-member-modal"
 import { useGroupMembersAllQuery } from "../queries"
 import { useGroupDetailsContext } from "./provider"
-import { useMemberTable } from "./use-member-table"
+import { useGroupMemberTable } from "./use-group-member-table"
 
 export const GroupMembersPage: FC = () => {
   const { group } = useGroupDetailsContext()
-  const openCreate = useCreateGroupMemberModal({ group })
-
   const { members } = useGroupMembersAllQuery(group.slug)
+
+  const openCreate = useCreateGroupMemberModal({ group })
 
   const membersList = useMemo(() => {
     if (!members) return []
 
-    // Sorts active members first, then by newest start date
+    // Sorts active members first, then by start date
     return Array.from(members.values()).sort((a, b) => {
       const aIsActive = a.groupMemberships.some((membership) => membership.end === null)
       const bIsActive = b.groupMemberships.some((membership) => membership.end === null)
@@ -37,7 +37,7 @@ export const GroupMembersPage: FC = () => {
     })
   }, [members])
 
-  const membersTable = useMemberTable({ data: membersList, groupId: group.slug })
+  const membersTable = useGroupMemberTable({ data: membersList, groupId: group.slug })
 
   return (
     <Box>

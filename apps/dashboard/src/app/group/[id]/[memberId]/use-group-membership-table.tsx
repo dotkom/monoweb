@@ -11,7 +11,7 @@ interface Props {
   groupMember: GroupMember
 }
 
-export const useMembershipTable = ({ groupMember }: Props) => {
+export const useGroupMembershipTable = ({ groupMember }: Props) => {
   const columnHelper = createColumnHelper<GroupMembership>()
   const open = useEditGroupMembershipModal()
 

@@ -8,8 +8,6 @@ import { GroupTypeSchema, type GroupWrite, GroupWriteSchema, getGroupTypeName } 
 import { getCurrentUtc } from "@dotkomonline/utils"
 import z from "zod"
 
-const GROUP_FORM_DEFAULT_VALUES: Partial<GroupWrite> = {}
-
 const FormSchema = GroupWriteSchema.omit({
   deactivatedAt: true,
 }).extend({
@@ -22,14 +20,10 @@ interface UseGroupWriteFormProps {
   label?: string
 }
 
-export const useGroupWriteForm = ({
-  onSubmit,
-  label = "Lag ny gruppe",
-  defaultValues = GROUP_FORM_DEFAULT_VALUES,
-}: UseGroupWriteFormProps) =>
+export const useGroupWriteForm = ({ onSubmit, label = "Lag ny gruppe", defaultValues }: UseGroupWriteFormProps) =>
   useFormBuilder({
     schema: FormSchema,
-    defaultValues: defaultValues,
+    defaultValues,
     onSubmit: (data) => {
       const deactivatedAt = data.isActive ? null : getCurrentUtc()
 
@@ -85,7 +79,7 @@ export const useGroupWriteForm = ({
       }),
       isActive: createCheckboxInput({
         label: "Aktiv",
-        defaultChecked: !defaultValues.deactivatedAt,
+        defaultChecked: !defaultValues?.deactivatedAt,
       }),
     },
   })

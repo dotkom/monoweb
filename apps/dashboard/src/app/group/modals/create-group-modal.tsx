@@ -1,7 +1,7 @@
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
-import { useGroupWriteForm } from "../write-form"
 import { useCreateGroupMutation } from "../mutations"
+import { useGroupWriteForm } from "../write-form"
 
 export const CreateGroupModal: FC<ContextModalProps> = ({ context, id }) => {
   const close = () => context.closeModal(id)

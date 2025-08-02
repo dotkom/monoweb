@@ -11,7 +11,7 @@ const FormSchema = GroupMembershipWriteSchema.pick({
   end: true,
 })
   .extend({
-    roleIds: GroupRoleSchema.shape.id.array().min(1, "Minst én rolle må være valgt"),
+    roleIds: GroupRoleSchema.shape.id.array().min(1, "Velg minst én rolle"),
   })
   .superRefine((data, ctx) => {
     if (isFuture(data.start)) {

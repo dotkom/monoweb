@@ -1,22 +1,27 @@
 import { GenericTable } from "@/components/GenericTable"
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
-import { getCurrentMembershipRoles } from "@dotkomonline/types"
+import type { GroupMembership } from "@dotkomonline/types"
 import { Box, Button, Divider, Stack, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useGroupMemberForm } from "../../group-member-form"
 import { useEndGroupMembershipMutation, useStartGroupMembershipMutation } from "../../mutations"
 import { useGroupDetailsContext } from "../provider"
 import { useGroupMemberDetailsContext } from "./provider"
-import { useMembershipTable } from "./use-membership-table"
+import { useGroupMembershipTable } from "./use-group-membership-table"
+
+const getCurrentMembershipRoles = (memberships: GroupMembership[] | undefined) => {
+  return memberships?.filter((membership) => membership.end === null).flatMap((membership) => membership.roles) ?? []
+}
+
 export const GroupMemberEditCard: FC = () => {
   const { groupMember } = useGroupMemberDetailsContext()
   const { group } = useGroupDetailsContext()
 
   const startMembership = useStartGroupMembershipMutation()
-
-  const table = useMembershipTable({ groupMember })
-
   const endMembership = useEndGroupMembershipMutation()
+
+  const table = useGroupMembershipTable({ groupMember })
+
   const open = useConfirmDeleteModal({
     title: "Avslutt medlemskap",
     text: `Er du sikker på at du vil avslutte medlemskapet for ${groupMember?.name}?`,
