@@ -7,12 +7,17 @@ import { Text } from "../Typography/Text"
 
 // TODO: Do not abuse CVA like styles does below
 export type BadgeProps = {
-  color: "amber" | "blue" | "green" | "red" | "slate"
-  variant: "light" | "outline" | "solid"
+  color?: "amber" | "blue" | "green" | "red" | "slate"
+  variant?: "light" | "outline" | "solid"
   className?: string
 }
 
-export const Badge: FC<PropsWithChildren<BadgeProps>> = ({ children, color, variant, className }) => {
+export const Badge: FC<PropsWithChildren<BadgeProps>> = ({
+  children,
+  color = "slate",
+  variant = "light",
+  className,
+}) => {
   const style = cn(
     styles[variant]({ color }),
     "flex w-fit items-center rounded-sm px-1.5 py-0.5 font-medium",

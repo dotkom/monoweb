@@ -1,9 +1,9 @@
 "use client"
 
 import type { Offline } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMemo } from "react"
 
@@ -26,7 +26,7 @@ export const useOfflineTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("publishedAt", {
         header: () => "Utgivelsesdato",
-        cell: (info) => formatDate(info.getValue(), { relativeDateThresholdDays: 7 }),
+        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
       }),
       columnHelper.accessor("fileUrl", {
         header: () => "Fil",

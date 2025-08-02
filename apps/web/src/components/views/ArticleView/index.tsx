@@ -3,8 +3,8 @@ import { ArticleTag } from "@/components/molecules/ArticleTag"
 import { server } from "@/utils/trpc/server"
 import type { Article, ArticleTag as ArticleTagType } from "@dotkomonline/types"
 import { Button, Text, Title, Video } from "@dotkomonline/ui"
-import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
+import { formatDate } from "date-fns"
 import { isEqual } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
@@ -91,8 +91,8 @@ interface BylineProps {
 const Byline = ({ author, createdAt, updatedAt }: BylineProps) => (
   <div className="flex flex-wrap gap-x-4 mt-2 border-b-2 border-gray-500 pb-2">
     <BylineItem label="Skrevet av" value={author} className="md:hidden" />
-    <BylineItem label="Publisert" value={formatDate(createdAt)} />
-    {!isEqual(createdAt, updatedAt) && <BylineItem label="Sist endret" value={formatDate(updatedAt)} />}
+    <BylineItem label="Publisert" value={formatDate(createdAt, "dd.MM.yyyy")} />
+    {!isEqual(createdAt, updatedAt) && <BylineItem label="Sist endret" value={formatDate(updatedAt, "dd.MM.yyyy")} />}
   </div>
 )
 
