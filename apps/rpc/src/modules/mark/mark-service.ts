@@ -38,7 +38,7 @@ export function getMarkService(markRepository: MarkRepository): MarkService {
       return mark
     },
     async getMany(handle, markIds) {
-      return await markRepository.getMany(handle, markIds)
+      return await markRepository.findMany(handle, markIds)
     },
     async getMarks(handle, page) {
       return await markRepository.getAll(handle, page)

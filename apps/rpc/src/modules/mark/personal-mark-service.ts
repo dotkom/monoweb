@@ -16,10 +16,10 @@ import { PersonalMarkNotFoundError } from "./personal-mark-error"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
-  listByMark(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
-  listDetails(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
-  listForUser(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
-  listMarksForUser(handle: DBHandle, userId: UserId): Promise<Mark[]>
+  findPersonalMarksByMark(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
+  findPersonalMarkDetails(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
+  findMarksByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
+  findPersonalMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
   addToUser(handle: DBHandle, userId: UserId, markId: MarkId, givenById: UserId): Promise<PersonalMark>
   /**
    * Remove a personal mark from a user
@@ -38,16 +38,16 @@ export function getPersonalMarkService(
   groupService: GroupService
 ): PersonalMarkService {
   return {
-    async listByMark(handle, markId) {
+    async findPersonalMarksByMark(handle, markId) {
       return await personalMarkRepository.getByMarkId(handle, markId)
     },
-    async listDetails(handle, markId) {
+    async findPersonalMarkDetails(handle, markId) {
       return await personalMarkRepository.getDetailsByMarkId(handle, markId)
     },
-    async listMarksForUser(handle, userId) {
+    async findPersonalMarksByUserId(handle, userId) {
       return await personalMarkRepository.getAllMarksByUserId(handle, userId)
     },
-    async listForUser(handle, userId) {
+    async findMarksByUserId(handle, userId) {
       return await personalMarkRepository.getAllByUserId(handle, userId)
     },
     async addToUser(handle, userId, markId, givenById) {

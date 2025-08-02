@@ -6,7 +6,7 @@ import { type Pageable, pageQuery } from "../../query"
 
 export interface MarkRepository {
   getById(handle: DBHandle, markId: MarkId): Promise<Mark | null>
-  getMany(handle: DBHandle, markId: MarkId[]): Promise<Mark[]>
+  findMany(handle: DBHandle, markId: MarkId[]): Promise<Mark[]>
   getAll(handle: DBHandle, page: Pageable): Promise<Mark[]>
   create(handle: DBHandle, data: MarkWrite): Promise<Mark>
   update(handle: DBHandle, markId: MarkId, data: MarkWrite): Promise<Mark>
@@ -19,7 +19,7 @@ export function getMarkRepository(): MarkRepository {
       const mark = await handle.mark.findUnique({ where: { id: markId } })
       return parseOrReport(MarkSchema, mark)
     },
-    async getMany(handle, markIds) {
+    async findMany(handle, markIds) {
       const marks = await handle.mark.findMany({ where: { id: { in: markIds } } })
 
       return parseOrReport(z.array(MarkSchema), marks)

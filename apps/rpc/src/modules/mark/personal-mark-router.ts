@@ -7,7 +7,7 @@ export const personalMarkRouter = t.router({
   getByUser: procedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.personalMarkService.listForUser(handle, input.id))
+      ctx.executeTransaction(async (handle) => ctx.personalMarkService.findMarksByUserId(handle, input.id))
     ),
   getVisibleInformationForUser: authenticatedProcedure
     .input(z.object({ id: UserSchema.shape.id, paginate: PaginateInputSchema }))
@@ -19,12 +19,12 @@ export const personalMarkRouter = t.router({
   getByMark: procedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.personalMarkService.listByMark(handle, input.id))
+      ctx.executeTransaction(async (handle) => ctx.personalMarkService.findPersonalMarksByMark(handle, input.id))
     ),
   getPersonalMarkDetailsByMark: procedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
     .query(({ input, ctx }) =>
-      ctx.executeTransaction((handle) => ctx.personalMarkService.listDetails(handle, input.id))
+      ctx.executeTransaction((handle) => ctx.personalMarkService.findPersonalMarkDetails(handle, input.id))
     ),
   addToUser: authenticatedProcedure
     .input(CreatePersonalMarkSchema)
