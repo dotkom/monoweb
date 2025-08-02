@@ -40,10 +40,10 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
-    "@types/common-tags": "^1.8.4",
+    "@types/common-tags": "1.8.4",
     "@types/node": "22.16.5",
-    "@types/pg": "8.15.4",
-    "common-tags": "^1.8.2",
+    "@types/pg": "8.15.5",
+    "common-tags": "1.8.2",
     "prisma": "6.8.2",
     "tsx": "4.20.3",
     "typescript": "5.8.3"
