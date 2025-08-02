@@ -16,8 +16,9 @@ import {
   getActiveMembership,
 } from "@dotkomonline/types"
 import { getCurrentUtc } from "@dotkomonline/utils"
+import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
-import { addYears, differenceInYears } from "date-fns"
+import { addYears, differenceInYears, subYears } from "date-fns"
 import type { Pageable } from "../../query"
 import type { FeideGroupsRepository } from "../feide/feide-groups-repository"
 import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
@@ -46,7 +47,13 @@ export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   /**
-   * Find the Feide federated access token for a user, if it exists
+   * Find the Feide federated access token for a user, if it exists.
+   *
+   * It is VERY important to note that this "access token" is not an OAuth2 access token that is verifiable against the
+   * issuer, but instead the legacy Feide opaque token.
+   *
+   * See https://docs.feide.no/reference/tokens.html for more information on the token format. The one we receive here
+   * is opaque with format like `afd4988b-a205-49f9-b2e0-03e00bb4b8c0`.
    */
   findFeideAccessTokenByUserId(userId: UserId): Promise<string | null>
 }
@@ -63,18 +70,7 @@ export function getUserService(
   managementClient: ManagementClient
 ): UserService {
   const logger = getLogger("user-service")
-  async function refreshMembership(handle: DBHandle, feideAccessToken: string, user: User) {
-    const { studyProgrammes, studySpecializations, courses } =
-      await feideGroupsRepository.getStudentInformation(feideAccessToken)
-    const activeMembership = getActiveMembership(user)
-    const applicableMembership = await findApplicableMembership(studyProgrammes, studySpecializations, courses)
-    // We can only replace memberships if there is a new applicable one for the user
-    if (!shouldReplaceMembership(activeMembership, applicableMembership) || applicableMembership === null) {
-      return
-    }
-    await userRepository.createMembership(handle, user.id, applicableMembership)
-  }
-
+  const tracer = trace.getTracer("user-service")
   async function findApplicableMembership(
     studyProgrammes: NTNUGroup[],
     studySpecializations: NTNUGroup[],
@@ -82,6 +78,8 @@ export function getUserService(
   ): Promise<MembershipWrite | null> {
     const masterProgramme = studyProgrammes.find((programme) => ONLINE_MASTER_PROGRAMMES.includes(programme.code))
     const bachelorProgramme = studyProgrammes.find((programme) => ONLINE_BACHELOR_PROGRAMMES.includes(programme.code))
+    logger.info("Discovered master programme: %o", masterProgramme)
+    logger.info("Discovered bachelor programme: %o", bachelorProgramme)
     // Master programmes take precedence over bachelor programmes
     const relevantProgramme = masterProgramme ?? bachelorProgramme
     if (relevantProgramme === undefined) {
@@ -95,7 +93,12 @@ export function getUserService(
     // We guesstimate which year of study the user is in, based on the courses they have taken and the courses in the
     // study plan.
     const estimatedStudyGrade = estimateStudyGrade(studyPlanCourses, courses)
-    const estimatedStudyStart = addYears(getAcademicStart(getCurrentUtc()), -estimatedStudyGrade + 1)
+    const estimatedStudyStart = subYears(getAcademicStart(getCurrentUtc()), estimatedStudyGrade)
+    logger.info(
+      "Estimated study start date to be %s for a student in grade %d",
+      estimatedStudyStart.toUTCString(),
+      estimatedStudyGrade
+    )
 
     if (masterProgramme !== undefined) {
       const code = MembershipSpecializationSchema.catch("UNKNOWN").parse(studySpecializations?.[0].code)
@@ -108,18 +111,24 @@ export function getUserService(
           studySpecializations
         )
       }
+      // This is something of a bolder assumption, but we assume that if the user's estimated grade is greater than 3,
+      // which is the duration of a bachelor programme, add 3 years to the estimated end date.
+      const expectedEnd = estimatedStudyGrade > 3 ? addYears(estimatedStudyStart, 5) : addYears(estimatedStudyStart, 2)
+      logger.info("Estimated end date for the master's programme to be %s", expectedEnd.toUTCString())
       return {
         type: "MASTER_STUDENT",
         start: estimatedStudyStart,
-        end: addYears(estimatedStudyStart, 2),
+        end: expectedEnd,
         specialization: code,
       }
     }
 
+    const expectedEnd = addYears(estimatedStudyStart, 3)
+    logger.info("Estimated end date for the bachelor's programme to be %s", expectedEnd)
     return {
       type: "BACHELOR_STUDENT",
       start: estimatedStudyStart,
-      end: addYears(estimatedStudyStart, 3),
+      end: expectedEnd,
       specialization: null,
     }
   }
@@ -152,44 +161,77 @@ export function getUserService(
     async findUsers(handle, query, page) {
       return await userRepository.findMany(handle, query, page ?? { take: 20 })
     },
-    async register(handle, subject) {
-      const accessToken = await this.findFeideAccessTokenByUserId(subject)
-      const user = await userRepository.register(handle, subject)
+    async register(handle, userId) {
+      const accessToken = await this.findFeideAccessTokenByUserId(userId)
+      const exisitingUser = await userRepository.findById(handle, userId)
+      /// No access token for existing user means there is no Feide connection, and no more work to do.
+      if (accessToken === null && exisitingUser !== null) {
+        return exisitingUser
+      }
+
       // Because Auth0 has historically been the source of truth for user data, and holds the OpenID Connect profile,
       // we need to migrate over the data to the local database.
-      const response = await managementClient.users.get({ id: subject })
+      const response = await managementClient.users.get({ id: userId })
       if (response.status !== 200) {
-        throw new UserFetchError(subject, response.status, response.statusText)
+        throw new UserFetchError(userId, response.status, response.statusText)
       }
 
-      // Slugs are unique, so if somebody has already sniped the app metadata registered username, we give them a new
-      // random UUID for now. They can always update this later.
-      const requestedSlug = UserWriteSchema.shape.profileSlug
-        .catch(crypto.randomUUID())
-        .parse(response.data.app_metadata?.username)
-      const match = await this.findByProfileSlug(handle, requestedSlug)
-      const slug = match !== null ? crypto.randomUUID() : requestedSlug
-
-      const profile: UserWrite = {
-        profileSlug: slug,
-        name: response.data.name,
-        email: response.data.email,
-        imageUrl: response.data.picture,
-        biography: response.data.app_metadata?.biography || null,
-        phone: response.data.app_metadata?.phone || null,
-        // NOTE: This field was called `allergies` in OnlineWeb 4, but today its called `dietaryRestrictions`.
-        dietaryRestrictions: response.data.app_metadata?.allergies || null,
-        // Gender is a standard OIDC claim, so we fallback to it if the app_metadata does not contain it.
-        gender: response.data.app_metadata?.gender || response.data.gender || null,
+      // We must prevent double registration (avoid two rows in the table) for a single physical person despite them
+      // having both Auth0 and Feide identities. Further, we must also prevent updating an existing user with the claims
+      // from the (potentially new) Feide identity, as this would reroll the profile slug and other data.
+      let user: User
+      if (exisitingUser === null) {
+        await userRepository.register(handle, userId)
+        // Slugs are unique, so if somebody has already sniped the app metadata registered username, we give them a new
+        // random UUID for now. They can always update this later.
+        const requestedSlug = UserWriteSchema.shape.profileSlug
+          .catch(crypto.randomUUID())
+          .parse(response.data.app_metadata?.username)
+        const match = await this.findByProfileSlug(handle, requestedSlug)
+        const slug = match !== null ? crypto.randomUUID() : requestedSlug
+        const profile: UserWrite = {
+          profileSlug: slug,
+          name: response.data.name,
+          email: response.data.email,
+          imageUrl: response.data.picture,
+          biography: response.data.app_metadata?.biography || null,
+          phone: response.data.app_metadata?.phone || null,
+          // NOTE: This field was called `allergies` in OnlineWeb 4, but today its called `dietaryRestrictions`.
+          dietaryRestrictions: response.data.app_metadata?.allergies || null,
+          // Gender is a standard OIDC claim, so we fallback to it if the app_metadata does not contain it.
+          gender: response.data.app_metadata?.gender || response.data.gender || null,
+        }
+        user = await userRepository.update(handle, userId, profile)
+      } else {
+        user = exisitingUser
       }
-      await userRepository.update(handle, user.id, profile)
 
       // We can only refresh the membership if we have a valid access token, which only happens if the user has a
       // federated identity connection through Feide.
       if (accessToken !== null) {
-        await refreshMembership(handle, accessToken, user)
+        // We spawn a separate OpenTelemetry span for the entire membership operation so that its easier to trace and
+        // track the call stack and timings of the operation.
+        await tracer.startActiveSpan("refreshMembership", async (span) => {
+          // According to Semantic Conventions (https://opentelemetry.io/docs/specs/semconv/registry/attributes/user/)
+          // we should set the user.id attribute on the span to the user's ID. It makes it easier to trace them across
+          // logs as well.
+          span.setAttribute("user.id", user.id)
+          try {
+            const { studyProgrammes, studySpecializations, courses } =
+              await feideGroupsRepository.getStudentInformation(accessToken)
+            const activeMembership = getActiveMembership(user)
+            const applicableMembership = await findApplicableMembership(studyProgrammes, studySpecializations, courses)
+            // We can only replace memberships if there is a new applicable one for the user
+            if (shouldReplaceMembership(activeMembership, applicableMembership) && applicableMembership !== null) {
+              logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
+              await userRepository.createMembership(handle, user.id, applicableMembership)
+            }
+          } finally {
+            span.end()
+          }
+        })
       }
-      return await this.getById(handle, user.id)
+      return user
     },
     async getById(handle, userId) {
       const user = await this.findById(handle, userId)

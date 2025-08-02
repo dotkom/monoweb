@@ -25,7 +25,7 @@ export const userRouter = t.router({
       return ctx.userService.getByProfileSlug(handle, input)
     })
   ),
-  registerAndGet: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
+  register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.register(handle, input)
     })
