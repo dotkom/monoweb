@@ -20,9 +20,9 @@ export type MarkWrite = z.infer<typeof MarkWriteSchema>
 
 export const PersonalMarkSchema = schemas.PersonalMarkSchema
 
-export const CreatePersonalMarkSchema = PersonalMarkSchema.omit({
-  createdAt: true,
-  givenById: true,
+export const CreatePersonalMarkSchema = PersonalMarkSchema.pick({
+  markId: true,
+  userId: true,
 })
 
 // User should not see which user gave the mark
