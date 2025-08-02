@@ -1,11 +1,10 @@
 import { GenericTable } from "@/components/GenericTable"
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import { getCurrentMembershipRoles } from "@dotkomonline/types"
-import { getCurrentUtc } from "@dotkomonline/utils"
 import { Box, Button, Divider, Stack, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useGroupMemberForm } from "../../group-member-form"
-import { useEndMembershipMutation, useStartMembershipMutation } from "../../mutations"
+import { useEndGroupMembershipMutation, useStartGroupMembershipMutation } from "../../mutations"
 import { useGroupDetailsContext } from "../provider"
 import { useGroupMemberDetailsContext } from "./provider"
 import { useMembershipTable } from "./use-membership-table"
@@ -13,11 +12,11 @@ export const GroupMemberEditCard: FC = () => {
   const { groupMember } = useGroupMemberDetailsContext()
   const { group } = useGroupDetailsContext()
 
-  const update = useStartMembershipMutation()
+  const startMembership = useStartGroupMembershipMutation()
 
   const table = useMembershipTable({ groupMember })
 
-  const endMembership = useEndMembershipMutation()
+  const endMembership = useEndGroupMembershipMutation()
   const open = useConfirmDeleteModal({
     title: "Avslutt medlemskap",
     text: `Er du sikker på at du vil avslutte medlemskapet for ${groupMember?.name}?`,
@@ -33,13 +32,9 @@ export const GroupMemberEditCard: FC = () => {
     groupId: group.slug,
     defaultValues: { roleIds: getCurrentMembershipRoles(groupMember.groupMemberships).map((role) => role.id) },
     onSubmit: (data) => {
-      update.mutate({
-        data: {
-          userId: groupMember.id,
-          groupId: group.slug,
-          start: getCurrentUtc(),
-          end: null,
-        },
+      startMembership.mutate({
+        userId: groupMember.id,
+        groupId: group.slug,
         roleIds: data.roleIds,
       })
       close()

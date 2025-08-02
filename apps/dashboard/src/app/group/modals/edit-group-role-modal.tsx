@@ -29,10 +29,10 @@ export const EditGroupRoleModal: FC<ContextModalProps<{ role: GroupRole }>> = ({
 
 export const useEditGroupRoleModal =
   () =>
-    ({ role }: { role: GroupRole }) => {
-      return modals.openContextModal({
-        modal: "group/role/update",
-        title: "Endre rolle",
-        innerProps: { role },
-      })
-    }
+  ({ role }: { role: GroupRole }) => {
+    return modals.openContextModal({
+      modal: "group/role/update",
+      title: "Endre rolle",
+      innerProps: { role },
+    })
+  }

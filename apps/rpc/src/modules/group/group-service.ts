@@ -10,13 +10,15 @@ import {
   type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
+  type MembershipId,
   type UserId,
   getDefaultGroupMemberRoles,
 } from "@dotkomonline/types"
-import { slugify } from "@dotkomonline/utils"
-import { compareDesc } from "date-fns"
+import { getCurrentUtc, slugify } from "@dotkomonline/utils"
+import { areIntervalsOverlapping, compareDesc } from "date-fns"
+import { maxTime } from "date-fns/constants"
 import type { UserService } from "../user/user-service"
-import { GroupNotFoundError } from "./group-error"
+import { GroupMembershipNotFoundError, GroupMembershipOverlap, GroupNotFoundError } from "./group-error"
 import type { GroupRepository } from "./group-repository"
 
 export interface GroupService {
@@ -42,8 +44,19 @@ export interface GroupService {
   getMembers(handle: DBHandle, groupId: GroupId): Promise<Map<UserId, GroupMember>>
   getMember(handle: DBHandle, groupId: GroupId, userId: UserId): Promise<GroupMember>
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
-  startMembership(handle: DBHandle, data: GroupMembershipWrite, roleIds: Set<GroupRoleId>): Promise<GroupMember>
+  startMembership(handle: DBHandle, userId: UserId, groupId: GroupId, roleIds: Set<GroupRoleId>): Promise<GroupMember>
   endMembership(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<GroupMembership[]>
+  /**
+   * Attempts to update a membership if it doesn't overlap with existing memberships
+   *
+   * @throws {GroupMembershipOverlap} if the membership overlaps others
+   */
+  updateMembership(
+    handle: DBHandle,
+    id: MembershipId,
+    data: GroupMembershipWrite,
+    roleIds: Set<GroupRoleId>
+  ): Promise<GroupMembership>
   createRole(handle: DBHandle, data: GroupRoleWrite): Promise<void>
   updateRole(handle: DBHandle, id: GroupRoleId, role: GroupRoleWrite): Promise<GroupRole>
 }
@@ -144,20 +157,64 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     async getAllByMember(handle, userId) {
       return groupRepository.getGroupsByUserId(handle, userId)
     },
-    async startMembership(handle, data, roleIds) {
-      await this.endMembership(handle, data.userId, data.groupId)
-      await groupRepository.startMembership(handle, data, roleIds)
+    async startMembership(handle, userId, groupId, roleIds) {
+      await this.endMembership(handle, userId, groupId)
 
-      return await this.getMember(handle, data.groupId, data.userId)
+      const data: GroupMembershipWrite = {
+        userId,
+        groupId,
+        start: getCurrentUtc(),
+        end: null,
+      }
+
+      await groupRepository.createMembership(handle, data, roleIds)
+      return await this.getMember(handle, groupId, userId)
     },
     async endMembership(handle, userId, groupId) {
       const memberships = await groupRepository.getMemberships(handle, groupId, userId)
       const activeMemberships = memberships.filter((membership) => !membership.end)
 
       const endMembershipPromises = activeMemberships.map((membership) =>
-        groupRepository.endMembership(handle, membership.id)
+        groupRepository.updateMembership(
+          handle,
+          membership.id,
+          {
+            ...membership,
+            end: getCurrentUtc(),
+          },
+          new Set(membership.roles.map((role) => role.id))
+        )
       )
+
       return await Promise.all(endMembershipPromises)
+    },
+    async updateMembership(handle, id, data, roleIds) {
+      const currentMembership = await groupRepository.getMembershipById(handle, id)
+      if (!currentMembership) throw new GroupMembershipNotFoundError(id)
+
+      const memberships = await groupRepository.getMemberships(
+        handle,
+        currentMembership.groupId,
+        currentMembership.userId
+      )
+
+      for (const membership of memberships) {
+        if (membership.id === id) continue
+
+        const maxDate = new Date(maxTime)
+
+        if (
+          areIntervalsOverlapping(
+            { start: membership.start, end: membership.end ?? maxDate },
+            { start: data.start, end: data.end ?? maxDate },
+            { inclusive: false }
+          )
+        ) {
+          throw new GroupMembershipOverlap()
+        }
+      }
+
+      return await groupRepository.updateMembership(handle, id, data, roleIds)
     },
     async createRole(handle, data) {
       await groupRepository.createRoles(handle, [data])

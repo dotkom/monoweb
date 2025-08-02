@@ -75,19 +75,33 @@ export const groupRouter = t.router({
   startMembership: procedure
     .input(
       z.object({
-        data: GroupMembershipWriteSchema,
+        userId: GroupMembershipSchema.shape.userId,
+        groupId: GroupMembershipSchema.shape.groupId,
         roleIds: GroupRoleSchema.shape.id.array(),
       })
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) =>
-        ctx.groupService.startMembership(handle, input.data, new Set(input.roleIds))
+        ctx.groupService.startMembership(handle, input.userId, input.groupId, new Set(input.roleIds))
       )
     ),
   endMembership: procedure
     .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.endMembership(handle, input.userId, input.groupId))
+    ),
+  updateMembership: procedure
+    .input(
+      z.object({
+        id: GroupMembershipSchema.shape.id,
+        data: GroupMembershipWriteSchema,
+        roleIds: GroupRoleSchema.shape.id.array(),
+      })
+    )
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.groupService.updateMembership(handle, input.id, input.data, new Set(input.roleIds))
+      )
     ),
   createRole: authenticatedProcedure
     .input(GroupRoleWriteSchema)

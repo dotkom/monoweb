@@ -43,7 +43,7 @@ export const useUpdateGroupRoleMutation = () => {
   )
 }
 
-export const useStartMembershipMutation = () => {
+export const useStartGroupMembershipMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
@@ -57,21 +57,20 @@ export const useStartMembershipMutation = () => {
       onSuccess: async (_, input) => {
         complete()
 
-        await queryClient.invalidateQueries(trpc.group.get.queryOptions(input.data.groupId))
-        await queryClient.invalidateQueries(trpc.group.getMembers.queryOptions(input.data.groupId))
+        await queryClient.invalidateQueries(trpc.group.getMembers.queryOptions(input.groupId))
         await queryClient.invalidateQueries(
-          trpc.group.getMember.queryOptions({ groupId: input.data.groupId, userId: input.data.userId })
+          trpc.group.getMember.queryOptions({ groupId: input.groupId, userId: input.userId })
         )
       },
     })
   )
 }
 
-export const useEndMembershipMutation = () => {
+export const useEndGroupMembershipMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
+    method: "delete",
   })
 
   return useMutation(
@@ -81,10 +80,32 @@ export const useEndMembershipMutation = () => {
       onSuccess: async (_, input) => {
         complete()
 
-        await queryClient.invalidateQueries(trpc.group.get.queryOptions(input.groupId))
         await queryClient.invalidateQueries(trpc.group.getMembers.queryOptions(input.groupId))
         await queryClient.invalidateQueries(
           trpc.group.getMember.queryOptions({ groupId: input.groupId, userId: input.userId })
+        )
+      },
+    })
+  )
+}
+
+export const useUpdateGroupMembershipMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.group.updateMembership.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (data) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.group.getMembers.queryOptions(data.groupId))
+        await queryClient.invalidateQueries(
+          trpc.group.getMember.queryOptions({ groupId: data.groupId, userId: data.userId })
         )
       },
     })

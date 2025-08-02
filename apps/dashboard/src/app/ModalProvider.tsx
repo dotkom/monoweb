@@ -15,6 +15,7 @@ import { MergePoolsModal } from "./event/components/merge-pools-modal"
 import { CreateGroupMemberModal } from "./group/modals/create-group-member-modal"
 import { CreateGroupModal } from "./group/modals/create-group-modal"
 import { CreateGroupRoleModal } from "./group/modals/create-group-role-modal"
+import { EditGroupMembershipModal } from "./group/modals/edit-group-membership-modal"
 import { EditGroupRoleModal } from "./group/modals/edit-group-role-modal"
 import { CreateJobListingModal } from "./job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "./offline/modals/create-offline-modal"
@@ -34,6 +35,7 @@ const modals = {
   "group/role/create": CreateGroupRoleModal,
   "group/role/update": EditGroupRoleModal,
   "group/member/create": CreateGroupMemberModal,
+  "group/membership/update": EditGroupMembershipModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
 } as const

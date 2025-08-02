@@ -2,8 +2,10 @@
 
 import type { GroupMember, GroupMembership } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
+import { Button, Tooltip } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
+import { useEditGroupMembershipModal } from "../../modals/edit-group-membership-modal"
 
 interface Props {
   groupMember: GroupMember
@@ -11,10 +13,11 @@ interface Props {
 
 export const useMembershipTable = ({ groupMember }: Props) => {
   const columnHelper = createColumnHelper<GroupMembership>()
+  const open = useEditGroupMembershipModal()
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor((member) => member, {
+      columnHelper.accessor((membership) => membership, {
         id: "roles",
         header: () => "Roller",
         cell: (info) =>
@@ -23,12 +26,12 @@ export const useMembershipTable = ({ groupMember }: Props) => {
             .roles.map((role) => role.name)
             .join(", "),
       }),
-      columnHelper.accessor((member) => member, {
+      columnHelper.accessor((membership) => membership, {
         id: "start",
         header: () => "Startdato",
         cell: (info) => formatDate(info.getValue().start),
       }),
-      columnHelper.accessor((member) => member, {
+      columnHelper.accessor((membership) => membership, {
         id: "end",
         header: () => "Sluttdato",
         cell: (info) => {
@@ -36,8 +39,24 @@ export const useMembershipTable = ({ groupMember }: Props) => {
           return end ? formatDate(end) : "-"
         },
       }),
+      columnHelper.accessor((membership) => membership, {
+        id: "actions",
+        header: () => "Rediger",
+        cell: (info) => {
+          const membership = info.getValue()
+          const isActive = membership.end === null
+
+          const button = (
+            <Button size="sm" disabled={isActive} onClick={() => open({ groupMembership: info.getValue() })}>
+              Rediger
+            </Button>
+          )
+
+          return isActive ? <Tooltip label="Kan ikke redigere nåværende medlemskap">{button}</Tooltip> : button
+        },
+      }),
     ],
-    [columnHelper]
+    [columnHelper, open]
   )
 
   return useReactTable({

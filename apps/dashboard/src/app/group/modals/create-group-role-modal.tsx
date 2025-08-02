@@ -25,10 +25,10 @@ export const CreateGroupRoleModal: FC<ContextModalProps<{ group: Group }>> = ({
 
 export const useCreateGroupRoleModal =
   ({ group }: { group: Group }) =>
-    () => {
-      return modals.openContextModal({
-        modal: "group/role/create",
-        title: "Lag en ny rolle",
-        innerProps: { group },
-      })
-    }
+  () => {
+    return modals.openContextModal({
+      modal: "group/role/create",
+      title: "Lag en ny rolle",
+      innerProps: { group },
+    })
+  }
