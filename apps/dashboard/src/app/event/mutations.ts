@@ -67,6 +67,38 @@ export const useUpdateEventMutation = () => {
   )
 }
 
+export const useDeleteEventMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.event.delete.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Sletter arrangement...",
+          message: "Arrangementet blir slettet.",
+        })
+      },
+      onSuccess: async (data) => {
+        notification.complete({
+          title: "Arrangement slettet",
+          message: `Arrangementet "${data.title}" har blitt slettet.`,
+        })
+
+        await queryClient.invalidateQueries(trpc.event.get.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.event.all.queryOptions())
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under sletting av arrangementet: ${err.toString()}.`,
+        })
+      },
+    })
+  )
+}
+
 export const useDeletePoolMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()

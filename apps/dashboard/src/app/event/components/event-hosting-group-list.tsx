@@ -17,11 +17,11 @@ export type EventHostingGroupListProps = {
 export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, companies }) => {
   // Nobody is set as organizer yet
   if (groups.length === 0 && companies.length === 0) {
-    return <Text>Ingen arrangører</Text>
+    return <Text c="dark">Ingen arrangører</Text>
   }
 
   return (
-    <MantineGroup>
+    <MantineGroup gap="xs">
       {companies.map((company) => (
         <Anchor key={company.id} component={Link} size="sm" href={`/company/${company.slug}`}>
           {company.name}
@@ -29,7 +29,7 @@ export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, 
       ))}
       {groups.map((group) => (
         <Anchor key={group.slug} component={Link} size="sm" href={`/group/${group.slug}`}>
-          {group.name}
+          {group.abbreviation}
         </Anchor>
       ))}
     </MantineGroup>

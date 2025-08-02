@@ -66,6 +66,19 @@ export const eventRouter = t.router({
       })
     }),
 
+  delete: authenticatedProcedure
+    .input(
+      z.object({
+        id: EventSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireAffiliation()
+      return ctx.executeTransaction(async (handle) => {
+        return await ctx.eventService.deleteEvent(handle, input.id)
+      })
+    }),
+
   all: procedure
     .input(
       z

@@ -5,7 +5,7 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { EventSchema, type EventStatus, type EventType, type Group } from "@dotkomonline/types"
+import { EventSchema, type EventStatusWrite, type EventType, type Group } from "@dotkomonline/types"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
@@ -18,10 +18,9 @@ const EVENT_FORM_DATA_TYPE = [
 ] as const satisfies { value: EventType; label: string }[]
 
 const EVENT_FORM_DATA_STATUS = [
-  { value: "DELETED", label: "Slettet" },
   { value: "DRAFT", label: "Utkast" },
   { value: "PUBLIC", label: "Publisert" },
-] as const satisfies { value: EventStatus; label: string }[]
+] as const satisfies { value: EventStatusWrite; label: string }[]
 
 const FormValidationSchema = EventSchema.extend({
   hostingGroupIds: z.array(z.string()),

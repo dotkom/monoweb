@@ -5,6 +5,7 @@ import { Title } from "@dotkomonline/ui"
 
 const EventPage = async () => {
   const events = await server.event.all.query()
+
   return (
     <div className="flex flex-col gap-4">
       <Title element="h1" size="xl">

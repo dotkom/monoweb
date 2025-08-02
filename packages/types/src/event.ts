@@ -22,10 +22,11 @@ export const EventSchema = schemas.EventSchema.extend({
 
 export const EventTypeSchema = schemas.EventTypeSchema
 export const EventStatusSchema = schemas.EventStatusSchema
+export const EventStatusWriteSchema = schemas.EventStatusSchema.exclude(["DELETED"])
+export type EventStatusWrite = z.infer<typeof EventStatusWriteSchema>
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
 export const EventWriteSchema = EventSchema.pick({
-  status: true,
   type: true,
   title: true,
   start: true,
@@ -36,6 +37,7 @@ export const EventWriteSchema = EventSchema.pick({
   locationTitle: true,
   locationAddress: true,
   locationLink: true,
+  status: true,
 })
 
 export type EventFilterQuery = z.infer<typeof EventFilterQuerySchema>
