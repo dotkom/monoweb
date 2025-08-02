@@ -1,9 +1,9 @@
 import type { Event } from "@dotkomonline/types"
 import { Icon, Text } from "@dotkomonline/ui"
+import { formatDate, isSameDay } from "date-fns"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { createGoogleCalendarLink } from "./utils"
-import { formatDate, isSameDay } from "date-fns"
 
 interface TimeBoxProps {
   event: Event
@@ -11,7 +11,6 @@ interface TimeBoxProps {
 
 export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
   const { start, end, locationAddress, description, title: eventSummary } = event
-
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,

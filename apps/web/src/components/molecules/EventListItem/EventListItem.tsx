@@ -1,6 +1,6 @@
 import { getEventUrl } from "@/utils/getEventUrl"
 import type { Event } from "@dotkomonline/types"
-import { Badge, Title, cn } from "@dotkomonline/ui"
+import { Title, cn } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
 import Link from "next/link"
 import type { FC } from "react"
@@ -16,7 +16,6 @@ export interface EventListItemProps {
 export const EventListItem: FC<EventListItemProps> = ({ event, attendeeStatus }: EventListItemProps) => {
   const { id, title, type, imageUrl: customImageUrl } = event
 
-  const isVelkom = event.hostingGroups.some((group) => group.slug === "velkom")
   const past = isPast(event.end)
 
   return (
@@ -33,8 +32,6 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendeeStatus }:
 
         <div className="flex flex-col gap-1">
           <div className="flex flex-row gap-1">
-            <Badge>Velkom</Badge>
-
             <Title element="h3" size="sm" className="font-normal text-base md:text-lg">
               {title}
             </Title>
