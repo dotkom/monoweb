@@ -39,6 +39,14 @@ export const UserWriteSchema = UserSchema.pick({
   dietaryRestrictions: true,
 })
 
+export const PublicUserSchema = UserSchema.pick({
+  id: true,
+  profileSlug: true,
+  name: true,
+  imageUrl: true,
+  biography: true,
+})
+
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 export const UserFilterQuerySchema = z.object({
   byName: buildSearchFilter(),

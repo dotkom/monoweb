@@ -12,6 +12,7 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import type { GroupType } from "@prisma/client"
+import z from "zod"
 import { parseOrReport } from "../../invariant"
 
 export interface GroupRepository {
@@ -19,6 +20,7 @@ export interface GroupRepository {
   update(handle: DBHandle, groupId: GroupId, data: Partial<GroupWrite>): Promise<Group>
   delete(handle: DBHandle, groupId: GroupId): Promise<Group>
   getById(handle: DBHandle, groupId: GroupId): Promise<Group | null>
+  getMany(handle: DBHandle, groupIds: GroupId[]): Promise<Group[]>
   getAll(handle: DBHandle): Promise<Group[]>
   getAllByType(handle: DBHandle, type: GroupType): Promise<Group[]>
   getAllIds(handle: DBHandle): Promise<GroupId[]>
@@ -60,6 +62,15 @@ export function getGroupRepository(): GroupRepository {
         where: { slug: groupId },
       })
       return group ? parseOrReport(GroupSchema, group) : null
+    },
+    async getMany(handle, groupIds) {
+      const groups = await handle.group.findMany({
+        where: {
+          slug: { in: groupIds },
+        },
+      })
+
+      return parseOrReport(z.array(GroupSchema), groups)
     },
     async getAll(handle) {
       const groups = await handle.group.findMany()

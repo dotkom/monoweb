@@ -15,6 +15,8 @@ import { MergePoolsModal } from "./event/components/merge-pools-modal"
 import { CreateGroupModal } from "./group/modals/create-group-modal"
 import { CreateJobListingModal } from "./job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "./offline/modals/create-offline-modal"
+import { CreateMarkModal } from "./punishment/modals/create-mark-modal"
+import { CreateSuspensionModal } from "./punishment/modals/create-suspension-modal"
 
 const modals = {
   "event/attendance/attendee/create": ManualCreateUserAttendModal,
@@ -30,6 +32,8 @@ const modals = {
   "group/create": CreateGroupModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
+  "punishment/mark/create": CreateMarkModal,
+  "punishment/suspension/create": CreateSuspensionModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

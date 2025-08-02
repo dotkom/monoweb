@@ -20,6 +20,7 @@ describe("CompanyService", () => {
       website: "www.duckmouse.no",
       location: "Mars",
       createdAt: new Date(),
+      updatedAt: new Date(),
       imageUrl: null,
     }
     const id = randomUUID()

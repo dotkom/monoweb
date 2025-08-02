@@ -31,7 +31,6 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     mode: "onBlur",
     defaultValues,
   })
-
   const components = entriesOf(fields).map(([name, fc]) => {
     if (!fc) {
       throw new Error()

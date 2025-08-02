@@ -17,6 +17,7 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours, isFuture } from "date-fns"
+import type { PersonalMarkService } from "../mark/personal-mark-service"
 import { tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
@@ -77,7 +78,8 @@ export function getAttendeeService(
   attendeeRepository: AttendeeRepository,
   attendanceRepository: AttendanceRepository,
   userService: UserService,
-  taskSchedulingService: TaskSchedulingService
+  taskSchedulingService: TaskSchedulingService,
+  personalMarkService: PersonalMarkService
 ): AttendeeService {
   async function addUserToAttendee(
     handle: DBHandle,
@@ -118,10 +120,17 @@ export function getAttendeeService(
 
       const isMergePool = attendancePool.capacity === 0
 
-      const markDelayHours = 0 // TODO
+      const markPunishment = await personalMarkService.getUserPunishment(handle, userId)
+
+      if (markPunishment?.suspended) {
+        throw new AttendeeRegistrationError(
+          `User ${userId} is suspended and cannot register for attendance ${attendanceId}`
+        )
+      }
+
       const mergePoolDelayHours = (isMergePool && attendancePool.mergeDelayHours) || 0
 
-      const reserveDelayHours = markDelayHours + mergePoolDelayHours
+      const reserveDelayHours = (markPunishment?.delay ?? 0) + mergePoolDelayHours
       const reserveTime = addHours(registerTime, reserveDelayHours)
 
       const activeMembership = getActiveMembership(user)
