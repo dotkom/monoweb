@@ -1,4 +1,5 @@
-import { type Interval, addDays, differenceInDays, isWithinInterval } from "date-fns"
+import { TZDate } from "@date-fns/tz"
+import { type Interval, addDays, differenceInDays, interval, isWithinInterval } from "date-fns"
 
 const MONTHS = {
   january: 0,
@@ -19,16 +20,8 @@ function getHolidaysThisYear(): Interval[] {
   const yearToday = new Date().getFullYear()
 
   return [
-    // Summer holiday - June 6th to August 15th
-    {
-      start: new Date(yearToday, MONTHS.june, 6),
-      end: new Date(yearToday, MONTHS.august, 15),
-    },
-    // Christmas holiday - December 19th to January 6th next year
-    {
-      start: new Date(yearToday, MONTHS.december, 19),
-      end: new Date(yearToday + 1, MONTHS.january, 6),
-    },
+    interval(new TZDate(yearToday, MONTHS.june, 6), new TZDate(yearToday, MONTHS.august, 15)),
+    interval(new TZDate(yearToday, MONTHS.december, 19), new TZDate(yearToday + 1, MONTHS.january, 6)),
   ]
 }
 
