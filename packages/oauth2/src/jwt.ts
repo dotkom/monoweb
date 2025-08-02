@@ -7,7 +7,11 @@ import {
 } from "jose"
 
 /**
- * JWT Service for verifying JWTs from Auth0.
+ * A simple service for verifying JWTs issued by an OAuth2/OpenID Connect provider.
+ *
+ * Monoweb uses two IDPs at the moment: Auth0 and Feide.
+ *
+ * NOTE: As of August 2025, Feide has a non-standard JWKS endpoint.
  */
 export class JwtService {
   private jwks: GetKeyFunction<JWTHeaderParameters, FlattenedJWSInput> | null = null
@@ -15,22 +19,20 @@ export class JwtService {
   private readonly issuer: string
   private readonly audiences: string[]
 
-  public constructor(issuer: string, audiences: string[]) {
+  public constructor(issuer: string, audiences: string[], jwksUrl?: URL) {
     this.issuer = issuer
     this.audiences = audiences
+    // It is clearer to compute the JWKS endpoint here without a trailing slash.
     const issuerWithoutTrailingSlash = issuer.replace(/\/$/, "")
-    this.jwksUrl = new URL(`${issuerWithoutTrailingSlash}/.well-known/jwks.json`)
+    this.jwksUrl = jwksUrl ?? new URL(`${issuerWithoutTrailingSlash}/.well-known/jwks.json`)
   }
 
   public async verify(accessToken: string) {
-    this.jwks ??= createRemoteJWKSet(this.jwksUrl, {
-      // Auth0 gives a max-age=15 and stale-while-revalidate=15 header. We will cache the JWKS for 30 seconds at a time.
-    })
+    this.jwks ??= createRemoteJWKSet(this.jwksUrl)
     return jwtVerify(accessToken, this.jwks, {
       clockTolerance: "5s",
       algorithms: ["RS256"],
-      // Auth0's issuer contains a trailing slash, but Next Auth does not
-      issuer: `${this.issuer}/`,
+      issuer: this.issuer,
       audience: this.audiences,
       typ: "JWT",
     })
