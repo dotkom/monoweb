@@ -3,6 +3,7 @@ import {
   type Group,
   type GroupId,
   type GroupMember,
+  type GroupMembership,
   type GroupMembershipWrite,
   type GroupRole,
   type GroupRoleId,
@@ -39,9 +40,10 @@ export interface GroupService {
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, groupType: GroupType): Promise<GroupId[]>
   getMembers(handle: DBHandle, groupId: GroupId): Promise<Map<UserId, GroupMember>>
+  getMember(handle: DBHandle, groupId: GroupId, userId: UserId): Promise<GroupMember>
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
-  addMember(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMember>
-  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMember, "user">>
+  startMembership(handle: DBHandle, data: GroupMembershipWrite, roleIds: Set<GroupRoleId>): Promise<GroupMember>
+  endMembership(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<GroupMembership[]>
   createRole(handle: DBHandle, data: GroupRoleWrite): Promise<void>
   updateRole(handle: DBHandle, id: GroupRoleId, role: GroupRoleWrite): Promise<GroupRole>
 }
@@ -124,19 +126,38 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
 
       return members
     },
+    async getMember(handle, groupId, userId) {
+      const memberships = await groupRepository.getMemberships(handle, groupId, userId)
+
+      if (memberships.length === 0) {
+        throw new Error(`Member not found for user ${userId} in group ${groupId}`)
+      }
+
+      const user = await userService.getById(handle, userId)
+      const groupMemberships = memberships.sort((a, b) => compareDesc(a.start, b.start))
+
+      return {
+        ...user,
+        groupMemberships,
+      }
+    },
     async getAllByMember(handle, userId) {
       return groupRepository.getGroupsByUserId(handle, userId)
     },
-    async addMember(handle, data) {
-      // TODO: const member = await groupRepository.addMember(handle, data)
-      // const user = await userService.getById(handle, data.userId)
-      //
-      // return { ...member, user }
-      throw new Error("Not implemented yet")
+    async startMembership(handle, data, roleIds) {
+      await this.endMembership(handle, data.userId, data.groupId)
+      await groupRepository.startMembership(handle, data, roleIds)
+
+      return await this.getMember(handle, data.groupId, data.userId)
     },
-    async removeMember(handle, userId, groupId) {
-      // TODO: return await groupRepository.removeMember(handle, userId, groupId)
-      throw new Error("Not implemented yet")
+    async endMembership(handle, userId, groupId) {
+      const memberships = await groupRepository.getMemberships(handle, groupId, userId)
+      const activeMemberships = memberships.filter((membership) => !membership.end)
+
+      const endMembershipPromises = activeMemberships.map((membership) =>
+        groupRepository.endMembership(handle, membership.id)
+      )
+      return await Promise.all(endMembershipPromises)
     },
     async createRole(handle, data) {
       await groupRepository.createRoles(handle, [data])

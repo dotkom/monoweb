@@ -14,6 +14,7 @@ import {
   type GroupWrite,
   type UserId,
 } from "@dotkomonline/types"
+import { getCurrentUtc } from "@dotkomonline/utils"
 import type { GroupType } from "@prisma/client"
 import { parseOrReport } from "../../invariant"
 
@@ -26,12 +27,11 @@ export interface GroupRepository {
   getAllByType(handle: DBHandle, type: GroupType): Promise<Group[]>
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, type: GroupType): Promise<GroupId[]>
-  getMemberships(handle: DBHandle, groupId: GroupId): Promise<GroupMembership[]>
+  getMemberships(handle: DBHandle, groupId: GroupId, userId?: UserId): Promise<GroupMembership[]>
   getGroupsByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
-  startMembership(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMembership>
+  startMembership(handle: DBHandle, data: GroupMembershipWrite, roleIds: Set<GroupRoleId>): Promise<GroupMembership>
   endMembership(handle: DBHandle, membership: GroupMembershipId): Promise<GroupMembership>
   createRoles(handle: DBHandle, roles: GroupRoleWrite[]): Promise<void>
-  deleteRoles(handle: DBHandle, groupId: GroupId, roleNames: Set<string>): Promise<void>
   updateRole(handle: DBHandle, id: GroupRoleId, role: Partial<GroupRoleWrite>): Promise<GroupRole>
 }
 
@@ -92,9 +92,9 @@ export function getGroupRepository(): GroupRepository {
       })
       return groups.map((group) => group.slug)
     },
-    async getMemberships(handle, groupId) {
+    async getMemberships(handle, groupId, userId) {
       const memberships = await handle.groupMembership.findMany({
-        where: { groupId },
+        where: { groupId, ...(userId ? { userId } : {}) },
         include: {
           roles: {
             include: {
@@ -127,9 +127,16 @@ export function getGroupRepository(): GroupRepository {
       })
       return groups.map((group) => parseOrReport(GroupSchema, group))
     },
-    async startMembership(handle, data) {
+    async startMembership(handle, data, roleIds) {
       const membership = await handle.groupMembership.create({
-        data,
+        data: {
+          ...data,
+          roles: {
+            createMany: {
+              data: Array.from(roleIds).map((roleId) => ({ roleId })),
+            },
+          },
+        },
         include: {
           roles: {
             include: {
@@ -145,9 +152,12 @@ export function getGroupRepository(): GroupRepository {
       })
     },
     async endMembership(handle, membershipId) {
-      const membership = await handle.groupMembership.delete({
+      const membership = await handle.groupMembership.update({
         where: {
           id: membershipId,
+        },
+        data: {
+          end: getCurrentUtc(),
         },
         include: {
           roles: {
@@ -166,14 +176,6 @@ export function getGroupRepository(): GroupRepository {
     async createRoles(handle, roles) {
       await handle.groupRole.createMany({
         data: roles,
-      })
-    },
-    async deleteRoles(handle, groupId, roleNames) {
-      await handle.groupRole.deleteMany({
-        where: {
-          groupId,
-          name: { in: Array.from(roleNames.values()) },
-        },
       })
     },
     async updateRole(handle, id, role) {

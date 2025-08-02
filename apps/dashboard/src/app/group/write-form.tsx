@@ -5,6 +5,7 @@ import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { createTextareaInput } from "@/components/forms/TextareaInput"
 import { GroupTypeSchema, type GroupWrite, GroupWriteSchema, getGroupTypeName } from "@dotkomonline/types"
+import { getCurrentUtc } from "@dotkomonline/utils"
 import z from "zod"
 
 const GROUP_FORM_DEFAULT_VALUES: Partial<GroupWrite> = {}
@@ -30,7 +31,7 @@ export const useGroupWriteForm = ({
     schema: FormSchema,
     defaultValues: defaultValues,
     onSubmit: (data) => {
-      const deactivatedAt = data.isActive ? null : new Date()
+      const deactivatedAt = data.isActive ? null : getCurrentUtc()
 
       onSubmit({
         ...data,

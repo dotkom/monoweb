@@ -5,7 +5,15 @@ import { GroupRoleTypeSchema, GroupRoleWriteSchema, getGroupRoleTypeName } from 
 import type z from "zod"
 
 const FormSchema = GroupRoleWriteSchema.omit({
-    groupId: true,
+  groupId: true,
+}).superRefine((data, ctx) => {
+  if (data.name.trim().length < 2) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Navn må være minst 2 tegn lang",
+      path: ["name"],
+    })
+  }
 })
 
 type FormResult = z.infer<typeof FormSchema>
@@ -13,35 +21,31 @@ type FormResult = z.infer<typeof FormSchema>
 const DEFAULT_VALUES: Partial<FormResult> = {}
 
 interface UseGroupRoleForm {
-    onSubmit(data: FormResult): void
-    defaultValues?: Partial<FormResult>
-    label?: string
+  onSubmit(data: FormResult): void
+  defaultValues?: Partial<FormResult>
+  label?: string
 }
 
-export const useGroupRoleForm = ({
+export const useGroupRoleForm = ({ onSubmit, label = "Lagre", defaultValues = DEFAULT_VALUES }: UseGroupRoleForm) =>
+  useFormBuilder({
+    schema: FormSchema,
+    defaultValues: defaultValues,
     onSubmit,
-    label = "Endre rolle",
-    defaultValues = DEFAULT_VALUES,
-}: UseGroupRoleForm) =>
-    useFormBuilder({
-        schema: FormSchema,
-        defaultValues: defaultValues,
-        onSubmit,
-        label,
-        fields: {
-            name: createTextInput({
-                label: "Navn",
-                placeholder: "Vinstraffansvarlig",
-                required: true,//TODO: ignore whitespace
-            }),
-            type: createSelectInput({
-                label: "Type",
-                placeholder: "Velg en",
-                required: true,
-                data: Object.values(GroupRoleTypeSchema.Values).map((groupRoleType) => ({
-                    value: groupRoleType,
-                    label: getGroupRoleTypeName(groupRoleType),
-                })),
-            }),
-        },
-    })
+    label,
+    fields: {
+      name: createTextInput({
+        label: "Navn",
+        placeholder: "Vinstraffansvarlig",
+        required: true,
+      }),
+      type: createSelectInput({
+        label: "Type",
+        placeholder: "Velg en",
+        required: true,
+        data: Object.values(GroupRoleTypeSchema.Values).map((groupRoleType) => ({
+          value: groupRoleType,
+          label: getGroupRoleTypeName(groupRoleType),
+        })),
+      }),
+    },
+  })

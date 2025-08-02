@@ -6,6 +6,8 @@ interface ConfirmDeleteModalProps {
   text: string
   // should contain a router push and a delete mutation
   onConfirm: () => void
+  confirmText?: string
+  cancelText?: string
 }
 
 export const useConfirmDeleteModal = (props: ConfirmDeleteModalProps) => () => {
@@ -19,7 +21,7 @@ export const useConfirmDeleteModal = (props: ConfirmDeleteModalProps) => () => {
       </Box>
     ),
     confirmProps: { color: "red" },
-    labels: { confirm: "Slett", cancel: "ikke slett" },
+    labels: { confirm: props.confirmText ?? "Slett", cancel: props.cancelText ?? "ikke slett" },
     onConfirm: props.onConfirm,
   })
 }

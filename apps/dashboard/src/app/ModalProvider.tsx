@@ -12,6 +12,7 @@ import { UpdateAttendanceSelectionsModal } from "./event/components/edit-event-s
 import { EditPoolModal } from "./event/components/edit-pool-modal"
 import { AlreadyAttendedModal } from "./event/components/error-attendance-registered-modal"
 import { MergePoolsModal } from "./event/components/merge-pools-modal"
+import { CreateGroupMemberModal } from "./group/modals/create-group-member-modal"
 import { CreateGroupModal } from "./group/modals/create-group-modal"
 import { CreateGroupRoleModal } from "./group/modals/create-group-role-modal"
 import { EditGroupRoleModal } from "./group/modals/edit-group-role-modal"
@@ -32,6 +33,7 @@ const modals = {
   "group/create": CreateGroupModal,
   "group/role/create": CreateGroupRoleModal,
   "group/role/update": EditGroupRoleModal,
+  "group/member/create": CreateGroupMemberModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
 } as const

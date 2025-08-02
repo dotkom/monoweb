@@ -57,20 +57,37 @@ export const groupRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getMembers(handle, input))
     ),
+  getMember: procedure
+    .input(
+      z.object({
+        groupId: GroupSchema.shape.slug,
+        userId: GroupMembershipSchema.shape.userId,
+      })
+    )
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.getMember(handle, input.groupId, input.userId))
+    ),
   allByMember: procedure
     .input(GroupMembershipSchema.shape.userId)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getAllByMember(handle, input))
     ),
-  addMember: procedure
-    .input(GroupMembershipWriteSchema)
+  startMembership: procedure
+    .input(
+      z.object({
+        data: GroupMembershipWriteSchema,
+        roleIds: GroupRoleSchema.shape.id.array(),
+      })
+    )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.addMember(handle, input))
+      ctx.executeTransaction(async (handle) =>
+        ctx.groupService.startMembership(handle, input.data, new Set(input.roleIds))
+      )
     ),
-  removeMember: procedure
+  endMembership: procedure
     .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.removeMember(handle, input.userId, input.groupId))
+      ctx.executeTransaction(async (handle) => ctx.groupService.endMembership(handle, input.userId, input.groupId))
     ),
   createRole: authenticatedProcedure
     .input(GroupRoleWriteSchema)

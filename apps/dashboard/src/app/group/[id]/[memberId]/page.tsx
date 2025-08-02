@@ -3,40 +3,26 @@
 import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { GroupEditCard } from "./edit-card"
-import { GroupMembersPage } from "./members-page"
-import { useGroupDetailsContext } from "./provider"
-import { GroupRolesPage } from "./roles-page"
+import { GroupMemberEditCard } from "./edit-card"
+import { useGroupMemberDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
   {
     icon: "tabler:list-details",
     label: "Info",
     slug: "info",
-    component: GroupEditCard,
-  },
-  {
-    icon: "tabler:users",
-    label: "Medlemmer",
-    slug: "memberships",
-    component: GroupMembersPage,
-  },
-  {
-    icon: "tabler:circles",
-    label: "Roller",
-    slug: "roles",
-    component: GroupRolesPage,
+    component: GroupMemberEditCard,
   },
 ] as const
 
-export default function GroupDetailsPage() {
+export default function GroupMemberDetailsPage() {
   const router = useRouter()
-  const { group } = useGroupDetailsContext()
+  const { groupMember } = useGroupMemberDetailsContext()
   return (
     <Box p="md">
       <Group>
         <CloseButton onClick={() => router.back()} />
-        <Title>{group.name}</Title>
+        <Title>{groupMember.name}</Title>
       </Group>
 
       <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>

@@ -49,10 +49,8 @@ export const GroupRolesPage: FC = () => {
 
   return (
     <Box>
-      <Title order={3} mb={10}>
-        Roller
-      </Title>
       <Stack>
+        <Title order={3}>Roller</Title>
         <Box>
           <Button onClick={openCreate}>Opprett rolle</Button>
         </Box>

@@ -7,8 +7,10 @@ export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
 export type GroupRole = z.infer<typeof GroupRoleSchema>
 export type GroupRoleId = GroupRole["id"]
 
-export const GroupRoleWriteSchema = GroupRoleSchema.omit({
-  id: true,
+export const GroupRoleWriteSchema = GroupRoleSchema.pick({
+  groupId: true,
+  name: true,
+  type: true,
 })
 
 export type GroupRoleWrite = z.infer<typeof GroupRoleWriteSchema>
@@ -45,7 +47,7 @@ export type GroupMember = z.infer<typeof GroupMemberSchema>
 
 export type GroupMembership = z.infer<typeof GroupMembershipSchema>
 
-export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({ roles: true })
+export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({ roles: true, id: true, createdAt: true })
 export type GroupMembershipId = GroupMembership["id"]
 export type GroupMembershipWrite = z.infer<typeof GroupMembershipWriteSchema>
 
@@ -96,8 +98,12 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
     case "PUNISHER":
       return "Straffeansvarlig"
     case "COSMETIC":
-      return "Komsetisk" //TODO: Better name
+      return "Komsetisk"
     default:
       return "Ukjent type"
   }
+}
+
+export const getCurrentMembershipRoles = (memberships: GroupMembership[] | undefined) => {
+  return memberships?.filter((membership) => membership.end === null).flatMap((membership) => membership.roles) ?? []
 }
