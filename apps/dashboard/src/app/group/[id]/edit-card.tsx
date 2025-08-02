@@ -3,10 +3,9 @@ import { Icon } from "@iconify/react"
 import { Button } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import type { FC } from "react"
-import { useDeleteGroupMutation } from "../mutations/use-delete-group-mutation"
-import { useUpdateGroupMutation } from "../mutations/use-update-group-mutation"
 import { useGroupWriteForm } from "../write-form"
 import { useGroupDetailsContext } from "./provider"
+import { useUpdateGroupMutation, useDeleteGroupMutation } from "../mutations"
 
 export const GroupEditCard: FC = () => {
   const { group } = useGroupDetailsContext()
