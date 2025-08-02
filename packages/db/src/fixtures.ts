@@ -10,6 +10,7 @@ import { getMarkFixtures } from "./fixtures/mark"
 import { getOfflineFixtures } from "./fixtures/offline"
 import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
+import { getUserFixtures } from "./fixtures/user"
 
 if (process.env.DATABASE_URL === undefined) {
   throw new Error("Missing database url")
@@ -21,31 +22,41 @@ if (process.env.DATABASE_URL.includes("prod")) {
 
 const db = createPrisma(process.env.DATABASE_URL)
 
-const companies = await db.company.createManyAndReturn({ data: getCompanyFixtures() })
-await db.groupRole.createManyAndReturn({ data: getGroupRoleFixtures() })
-const groups = await db.group.createManyAndReturn({ data: getGroupFixtures() })
-const attendances = await db.attendance.createManyAndReturn({ data: getAttendanceFixtures() })
-const events = await db.event.createManyAndReturn({ data: getEventFixtures(attendances.map((a) => a.id)) })
-await db.attendancePool.createManyAndReturn({ data: getPoolFixtures(attendances.map((a) => a.id)) })
-await db.mark.createManyAndReturn({ data: getMarkFixtures() })
-const products = await db.product.createManyAndReturn({ data: getProductFixtures() })
+// The ordering of things is *somewhat* important here, as some things depend on others. Developers modifying or adding
+// entires to this file should consider what makes sense for a user of the app to make first.
 
-const jobListings = await db.jobListing.createManyAndReturn({
-  data: getJobListingFixtures(companies.map((company) => company.id)),
-})
+const userInput = getUserFixtures()
+await db.user.createManyAndReturn({ data: userInput })
 
-await db.jobListingLocation.createManyAndReturn({
-  data: getJobListingLocationFixtures(jobListings.map((jobListing) => jobListing.id)),
-})
+const companyInput = getCompanyFixtures()
+const companies = await db.company.createManyAndReturn({ data: companyInput })
 
-await db.offline.createMany({
-  data: getOfflineFixtures(),
-})
+const groupInput = getGroupFixtures()
+await db.group.createManyAndReturn({ data: groupInput })
+const groupRoleInput = groupInput.flatMap(getGroupRoleFixtures)
+await db.groupRole.createManyAndReturn({ data: groupRoleInput })
 
-await db.eventHostingGroup.createManyAndReturn({
-  data: getEventHostingGroupFixtures(events.map((e) => e.id)),
-})
+const attendanceInput = getAttendanceFixtures()
+const attendances = await db.attendance.createManyAndReturn({ data: attendanceInput })
+const eventInput = getEventFixtures(attendances.map((a) => a.id))
+const events = await db.event.createManyAndReturn({ data: eventInput })
+const attendancePoolInput = getPoolFixtures(attendances.map((a) => a.id))
+await db.attendancePool.createManyAndReturn({ data: attendancePoolInput })
+const eventHostingGroupInput = getEventHostingGroupFixtures(events.map((e) => e.id))
+await db.eventHostingGroup.createManyAndReturn({ data: eventHostingGroupInput })
 
-await db.productPaymentProvider.createMany({
-  data: getProductPaymentProviderFixtures(products.map((p) => p.id)),
-})
+const markInput = getMarkFixtures()
+await db.mark.createManyAndReturn({ data: markInput })
+
+const jobListingInput = getJobListingFixtures(companies.map((company) => company.id))
+const jobListings = await db.jobListing.createManyAndReturn({ data: jobListingInput })
+const jobListingLocationInput = getJobListingLocationFixtures(jobListings.map((jobListing) => jobListing.id))
+await db.jobListingLocation.createManyAndReturn({ data: jobListingLocationInput })
+
+const offlineInput = getOfflineFixtures()
+await db.offline.createMany({ data: offlineInput })
+
+const productInput = getProductFixtures()
+const products = await db.product.createManyAndReturn({ data: productInput })
+const productPaymentProviderInput = getProductPaymentProviderFixtures(products.map((p) => p.id))
+await db.productPaymentProvider.createMany({ data: productPaymentProviderInput })
