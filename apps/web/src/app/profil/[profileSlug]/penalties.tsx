@@ -1,7 +1,7 @@
 import { PenaltyRules } from "@/utils/penalty-rules"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
-import { formatDate } from "@dotkomonline/utils"
 import { DotFilledIcon } from "@radix-ui/react-icons"
+import { formatDate } from "date-fns"
 import { addMinutes } from "date-fns"
 import type { FC } from "react"
 
@@ -27,7 +27,7 @@ const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => (
       <AccordionContent className="ml-4">
         <div className="flex flex-col space-y-4">
           <p>
-            Du har fått en prikk på grunn av {props.details} den {formatDate(props.givenAt, { forceAbsolute: true })}.
+            Du har fått en prikk på grunn av {props.details} den {formatDate(props.givenAt, "dd.MM.yyyy")}.
           </p>
           <p className="text-lg">
             <span className="font-bold">Katergori: </span>
@@ -35,7 +35,7 @@ const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => (
           </p>
           <p className="text-lg">
             <span className="font-bold">Utløpsdato: </span>
-            {formatDate(addMinutes(props.givenAt, props.duration), { forceAbsolute: true })}
+            {formatDate(addMinutes(props.givenAt, props.duration), "dd.MM.yyyy")}
           </p>
         </div>
       </AccordionContent>

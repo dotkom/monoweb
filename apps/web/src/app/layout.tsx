@@ -8,7 +8,11 @@ import { ThemeProvider } from "next-themes"
 import { Figtree, Inter } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
+import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
+import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
+
+setDateFnsDefaultOptions({ locale: nb })
 
 export const metadata: Metadata = {
   title: "Onlineweb 5",

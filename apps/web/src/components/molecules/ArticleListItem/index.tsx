@@ -1,7 +1,7 @@
 import type { Article } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
-import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
+import { formatDate } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
@@ -40,7 +40,7 @@ export const ArticleListItem: FC<ArticleListItemProps> = ({ article, orientation
           </div>
         )}
       </div>
-      <p className="text-gray-950 dark:text-gray-500 text-sm mt-1">{formatDate(article.updatedAt)}</p>
+      <p className="text-gray-950 dark:text-gray-500 text-sm mt-1">{formatDate(article.updatedAt, "dd.MM.yyyy")}</p>
     </div>
   </Link>
 )

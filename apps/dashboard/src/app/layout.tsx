@@ -7,10 +7,14 @@ import { auth } from "@/lib/auth"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
 import type { Session } from "@dotkomonline/oauth2/session"
 import { Notifications } from "@mantine/notifications"
+import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
+import { nb } from "date-fns/locale"
 import type { PropsWithChildren } from "react"
 import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
+
+setDateFnsDefaultOptions({ locale: nb })
 
 export const dynamic = "force-dynamic"
 

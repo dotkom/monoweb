@@ -2,7 +2,7 @@ import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"
-import { formatDate } from "@dotkomonline/utils"
+import { formatDate } from "date-fns"
 import { isAfter } from "date-fns"
 
 const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
@@ -32,7 +32,7 @@ const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string
   if (isAfter(event.end, Date.now()))
     return (
       <Text>
-        Du kan ikke sende inn tilbakemelding før arrangementet er over {formatDate(event.end, { includeTime: true })}.
+        Du kan ikke sende inn tilbakemelding før arrangementet er over {formatDate(event.end, "dd.MM.yyyy HH:mm")}.
       </Text>
     )
 

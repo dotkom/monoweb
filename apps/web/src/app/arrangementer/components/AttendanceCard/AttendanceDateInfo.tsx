@@ -1,12 +1,7 @@
 import type { Attendance } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
-import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
+import { formatDate, isPast, isThisYear } from "date-fns"
 import React from "react"
-
-const getFormatString = (isInSameYear: boolean) => (isInSameYear ? "dd. MMMM" : "dd.MM.yyyy")
-
-const formatTime = (date: Date) => formatDate(date, "HH:mm", { locale: nb })
 
 const dateComponent = (label: string, dateStr: string, time: string) => (
   <div>
@@ -23,49 +18,35 @@ interface AttendanceDateInfoProps {
 }
 
 export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
-  const now = new Date()
-
-  const isAttendanceStartInPast = attendance.registerStart < now
-  const isAttendanceStartInSameYear = attendance.registerStart.getFullYear() === now.getFullYear()
-  const isAttendanceClosedInPast = attendance.registerEnd < now
-  const isAttendanceClosedInSameYear = attendance.registerEnd.getFullYear() === now.getFullYear()
-  const isDeregisterDeadlineInSameYear = attendance.deregisterDeadline.getFullYear() === now.getFullYear()
-
-  const registerStartDate = formatDate(attendance.registerStart, getFormatString(isAttendanceStartInSameYear), {
-    locale: nb,
-  })
-  const registerEndDate = formatDate(attendance.registerEnd, getFormatString(isAttendanceClosedInSameYear), {
-    locale: nb,
-  })
-  const deregisterDeadlineDate = formatDate(
-    attendance.deregisterDeadline,
-    getFormatString(isDeregisterDeadlineInSameYear),
-    { locale: nb }
-  )
+  const { registerStart, registerEnd, deregisterDeadline } = attendance
 
   const dateBlocks = [
     {
       key: "registerStart",
       date: attendance.registerStart,
       element: dateComponent(
-        isAttendanceStartInPast ? "Åpnet" : "Åpner",
-        registerStartDate,
-        formatTime(attendance.registerStart)
+        isPast(attendance.registerStart) ? "Åpnet" : "Åpner",
+        formatDate(registerStart, isThisYear(registerStart) ? "dd. MMMM" : "dd.MM.yyyy"),
+        formatDate(attendance.registerStart, "HH:mm")
       ),
     },
     {
       key: "registerEnd",
       date: attendance.registerEnd,
       element: dateComponent(
-        isAttendanceClosedInPast ? "Lukket" : "Lukker",
-        registerEndDate,
-        formatTime(attendance.registerEnd)
+        isPast(attendance.registerEnd) ? "Lukket" : "Lukker",
+        formatDate(registerEnd, isThisYear(registerEnd) ? "dd. MMMM" : "dd.MM.yyyy"),
+        formatDate(attendance.registerEnd, "HH:mm")
       ),
     },
     {
       key: "deregisterDeadline",
       date: attendance.deregisterDeadline,
-      element: dateComponent("Avmeldingsfrist", deregisterDeadlineDate, formatTime(attendance.deregisterDeadline)),
+      element: dateComponent(
+        "Avmeldingsfrist",
+        formatDate(deregisterDeadline, isThisYear(deregisterDeadline) ? "dd. MMMM" : "dd.MM.yyyy"),
+        formatDate(attendance.deregisterDeadline, "HH:mm")
+      ),
     },
   ]
 

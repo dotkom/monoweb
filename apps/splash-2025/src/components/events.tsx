@@ -4,7 +4,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger, Icon, RichText, Te
 import { slugify } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { compareAsc, formatDate, getDate } from "date-fns"
-import { nb } from "date-fns/locale"
 
 const baseUrl = import.meta.env.VITE_WEB_URL || "http://localhost:3000"
 
@@ -33,7 +32,7 @@ export const Events = () => {
   const eventsByDate = events
     .toSorted((a, b) => compareAsc(a.start, b.start))
     .reduce((acc, eventDetail) => {
-      const month = formatDate(eventDetail.start, "MMMM", { locale: nb })
+      const month = formatDate(eventDetail.start, "MMMM")
       const date = getDate(eventDetail.start)
 
       const eventsInMonth = acc.get(month) || new Map<number, Event[]>()
@@ -86,9 +85,7 @@ export const Events = () => {
                           "max-sm:relative w-fit max-sm:left-1/4 sm:w-1/4 sm:pr-12 sm:text-right mb-3 sm:-mb-0.5"
                         )}
                       >
-                        {events[0]
-                          ? formatDate(new Date(events[0]?.start), "EEEE dd.", { locale: nb })
-                          : "Ukjent ukedag"}
+                        {events[0] ? formatDate(new Date(events[0]?.start), "EEEE dd.") : "Ukjent ukedag"}
                       </Text>
 
                       {events.map((event) => (
@@ -104,7 +101,7 @@ export const Events = () => {
                                   </div>
 
                                   <Text className="absolute text-right -left-[calc(50px)] md:-left-[60px] top-1/2 transform -translate-x-1/2 -translate-y-1/2 group-data-[state=open]:font-medium">
-                                    {formatDate(event.start, "HH:mm", { locale: nb })}
+                                    {formatDate(event.start, "HH:mm")}
                                   </Text>
 
                                   <Icon

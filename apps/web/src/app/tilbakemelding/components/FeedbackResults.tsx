@@ -11,7 +11,7 @@ import type {
 } from "@dotkomonline/types"
 
 import { Icon, Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
-import { formatDate } from "@dotkomonline/utils"
+import { formatDate } from "date-fns"
 import { isSameDay } from "date-fns"
 import { useFeedbackAnswersGetQuery } from "../queries"
 import { type ChartValue, FeedbackAnswerCard, QuestionPieChart } from "./FeedbackAnswerCard"
@@ -37,8 +37,8 @@ export const FeedbackResults = ({ questions, attendees, event, pools, publicResu
 
   const formattedYears = formatPoolYears(pools.map((pool) => pool.yearCriteria))
   const eventDate = isSameDay(event.start, event.end)
-    ? formatDate(event.start)
-    : `${formatDate(event.start)} - ${formatDate(event.end)}`
+    ? formatDate(event.start, "dd.MM.yyyy")
+    : `${formatDate(event.start, "dd.MM.yyyy")} - ${formatDate(event.end, "dd.MM.yyyy")}`
 
   const ratingQuestions = sortedQuestions.filter((q) => q.type === "RATING")
   const multipleChoiceQuestions = sortedQuestions.filter(
