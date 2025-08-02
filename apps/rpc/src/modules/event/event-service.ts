@@ -15,6 +15,10 @@ import type { EventRepository } from "./event-repository"
 
 export interface EventService {
   createEvent(handle: DBHandle, eventCreate: EventWrite): Promise<Event>
+  /**
+   * Soft-delete an event by setting its status to `DELETED`.
+   */
+  deleteEvent(handle: DBHandle, eventId: EventId): Promise<Event>
   updateEvent(handle: DBHandle, eventId: EventId, data: Partial<EventWrite>): Promise<Event>
   updateEventOrganizers(
     handle: DBHandle,
@@ -38,6 +42,9 @@ export function getEventService(eventRepository: EventRepository): EventService 
   return {
     async createEvent(handle, eventCreate) {
       return await eventRepository.create(handle, eventCreate)
+    },
+    async deleteEvent(handle, eventId) {
+      return await eventRepository.delete(handle, eventId)
     },
     async updateEvent(handle, eventId, data) {
       return await eventRepository.update(handle, eventId, data)

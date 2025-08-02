@@ -75,7 +75,7 @@ export const eventRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.eventService.updateEvent(handle, input.id, { status: "DELETED" })
+        return await ctx.eventService.deleteEvent(handle, input.id)
       })
     }),
 
