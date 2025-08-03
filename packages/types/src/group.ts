@@ -101,7 +101,7 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
     case "LEADER":
       return "Leder"
     case "PUNISHER":
-      return "Straffeansvarlig"
+      return "Vinstraffansvarlig"
     case "COSMETIC":
       return "Komsetisk"
     default:

@@ -14,13 +14,23 @@ const FormSchema = GroupWriteSchema.omit({
   isActive: z.boolean(),
 })
 
+type FormResult = z.infer<typeof FormSchema>
+
+const DEFAULT_VALUES: Partial<FormResult> = {
+  imageUrl: null,
+}
+
 interface UseGroupWriteFormProps {
   onSubmit(data: GroupWrite): void
   defaultValues?: Partial<GroupWrite>
   label?: string
 }
 
-export const useGroupWriteForm = ({ onSubmit, label = "Lag ny gruppe", defaultValues }: UseGroupWriteFormProps) =>
+export const useGroupWriteForm = ({
+  onSubmit,
+  label = "Lag ny gruppe",
+  defaultValues = DEFAULT_VALUES,
+}: UseGroupWriteFormProps) =>
   useFormBuilder({
     schema: FormSchema,
     defaultValues,
