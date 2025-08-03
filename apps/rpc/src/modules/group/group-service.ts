@@ -28,6 +28,7 @@ export interface GroupService {
    * @throws {GroupNotFoundError} if the group does not exist
    */
   getById(handle: DBHandle, groupId: GroupId): Promise<Group>
+  getMany(handle: DBHandle, groupIds: GroupId[]): Promise<Group[]>
   getByIdAndType(handle: DBHandle, groupId: GroupId, groupType: GroupType): Promise<Group>
   getAll(handle: DBHandle): Promise<Group[]>
   /**
@@ -78,6 +79,18 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     },
     async getAllByType(handle, groupType) {
       return groupRepository.getAllByType(handle, groupType)
+    },
+    async getMany(handle, groupSlugs) {
+      const groups = await groupRepository.getMany(handle, groupSlugs)
+
+      if (groups.length < groupSlugs.length) {
+        const missingGroupSlugs = groupSlugs.filter(
+          (groupSlug) => groups.find((group) => group.slug === groupSlug) === null
+        )
+        throw new GroupNotFoundError(`Failed to retrieve many groups, missing: ${missingGroupSlugs.join(", ")}`)
+      }
+
+      return groups
     },
     async create(handle, payload) {
       let id = slugify(payload.abbreviation)

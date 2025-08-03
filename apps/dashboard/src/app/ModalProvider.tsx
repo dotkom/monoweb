@@ -19,6 +19,8 @@ import { EditGroupMembershipModal } from "./group/modals/edit-group-membership-m
 import { EditGroupRoleModal } from "./group/modals/edit-group-role-modal"
 import { CreateJobListingModal } from "./job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "./offline/modals/create-offline-modal"
+import { CreateMarkModal } from "./punishment/modals/create-mark-modal"
+import { CreateSuspensionModal } from "./punishment/modals/create-suspension-modal"
 
 const modals = {
   "event/attendance/attendee/create": ManualCreateUserAttendModal,
@@ -38,6 +40,8 @@ const modals = {
   "group/membership/update": EditGroupMembershipModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
+  "punishment/mark/create": CreateMarkModal,
+  "punishment/suspension/create": CreateSuspensionModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

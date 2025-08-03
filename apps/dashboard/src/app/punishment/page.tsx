@@ -1,19 +1,15 @@
 "use client"
 
 import { GenericTable } from "@/components/GenericTable"
-import type { Mark, MarkId } from "@dotkomonline/types"
+import type { Mark } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import Link from "next/link"
-import { useMarkCountUsersQuery } from "./queries/use-count-users-with-mark-query"
+import { useCreateMarkModal } from "./modals/create-mark-modal"
+import { useCreateSuspensionModal } from "./modals/create-suspension-modal"
 import { usePunishmentAllQuery } from "./queries/use-punishment-all-query"
-
-function MarkUserCount({ markId }: Readonly<{ markId: MarkId }>) {
-  const { data } = useMarkCountUsersQuery(markId)
-  return <>{data ?? 0}</>
-}
 
 const columnHelper = createColumnHelper<Mark>()
 const columns = [
@@ -30,10 +26,21 @@ const columns = [
     header: () => "Opprettet",
     cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
   }),
-  columnHelper.accessor((mark) => mark, {
-    id: "count",
-    header: () => "Antall",
-    cell: (info) => <MarkUserCount markId={info.getValue().id} />,
+  columnHelper.accessor("weight", {
+    header: () => "Vekt",
+    cell: (info) => {
+      const value = info.getValue()
+
+      return <>{value === 6 ? "Suspensjon" : value.toString()}</>
+    },
+  }),
+  columnHelper.accessor("duration", {
+    header: () => "Varighet",
+    cell: (info) => `${info.getValue()} dager`,
+  }),
+  columnHelper.accessor("groupSlug", {
+    header: () => "Gruppe",
+    cell: (info) => info.getValue(),
   }),
 ]
 
@@ -46,10 +53,19 @@ export default function MarkPage() {
     columns,
   })
 
+  const openCreateMarkModal = useCreateMarkModal()
+  const openCreateSuspensionModal = useCreateSuspensionModal()
+
   return (
     <Skeleton visible={isMarksLoading}>
       <Stack>
+        <Group>
+          <Button onClick={openCreateMarkModal}>Gi ny prikk</Button>
+          <Button onClick={openCreateSuspensionModal}>Gi ny suspensjon</Button>
+        </Group>
+
         <GenericTable table={table} />
+
         <Group justify="space-between">
           <ButtonGroup>
             <Button variant="subtle">

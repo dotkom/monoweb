@@ -76,13 +76,14 @@ model User {
   notificationPermissionsId String?                  @unique
   notificationPermissions   NotificationPermissions?
 
-  attendee         Attendee[]
-  payment          Payment[]
-  requestedRefunds RefundRequest[]   @relation("RequestedBy")
-  handledRefunds   RefundRequest[]   @relation("HandledBy")
-  personalMark     PersonalMark[]
-  groupMemberships GroupMembership[]
-  memberships      Membership[]
+  attendee                  Attendee[]
+  payment                   Payment[]
+  requestedRefunds          RefundRequest[]       @relation("RequestedBy")
+  handledRefunds            RefundRequest[]       @relation("HandledBy")
+  personalMark              PersonalMark[]
+  groupMemberships          GroupMembership[]
+  memberships               Membership[]
+  givenMarks                PersonalMark[] @relation("GivenBy")
 
   @@map("ow_user")
 }
@@ -107,10 +108,10 @@ model Company {
 }
 
 enum GroupType {
-  COMMITTEE      @map("COMMITTEE")
-  NODE_COMMITTEE @map("NODE_COMMITTEE")
-  ASSOCIATED     @map("ASSOCIATED")
-  INTEREST_GROUP @map("INTEREST_GROUP")
+  COMMITTEE       @map("COMMITTEE")
+  NODE_COMMITTEE  @map("NODE_COMMITTEE")
+  ASSOCIATED      @map("ASSOCIATED")
+  INTEREST_GROUP  @map("INTEREST_GROUP")
 
   @@map("group_type")
 }
@@ -130,6 +131,7 @@ model Group {
   events      EventHostingGroup[]
   type        GroupType
   memberships GroupMembership[]
+  marks       Mark[]
   roles       GroupRole[]
 
   @@map("group")
@@ -276,8 +278,8 @@ model Event {
   createdAt       DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
-  companies     EventCompany[]
-  hostingGroups EventHostingGroup[]
+  companies      EventCompany[]
+  hostingGroups  EventHostingGroup[]
 
   @@map("event")
 }
@@ -292,17 +294,27 @@ model EventCompany {
   @@map("event_company")
 }
 
+enum MarkType {
+  MANUAL
+  LATE_ATTENDANCE
+  MISSED_ATTENDANCE
+}
+
 model Mark {
   id       String  @id @default(uuid())
   title    String
-  category String
   details  String?
   duration Int
+  weight   Int
+  type     MarkType @default(MANUAL)
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   users PersonalMark[]
+
+  group Group @relation(fields: [groupSlug], references: [slug])
+  groupSlug String
 
   @@map("mark")
 }
@@ -312,6 +324,11 @@ model PersonalMark {
   markId String
   user   User   @relation(fields: [userId], references: [id])
   userId String
+
+  givenBy User @relation("GivenBy", fields: [givenById], references: [id])
+  givenById String
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
   @@id([markId, userId])
   @@map("personal_mark")

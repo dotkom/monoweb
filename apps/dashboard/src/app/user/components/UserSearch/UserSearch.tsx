@@ -6,9 +6,10 @@ import { useSearchUsersQuery } from "./queries"
 interface UserSearchProps {
   onSubmit(data: User): void
   excludeUserIds?: string[]
+  placeholder?: string
 }
 
-export const UserSearch: FC<UserSearchProps> = ({ onSubmit, excludeUserIds }) => {
+export const UserSearch: FC<UserSearchProps> = ({ placeholder, onSubmit, excludeUserIds }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const { data: users } = useSearchUsersQuery(searchQuery)
 
@@ -24,8 +25,13 @@ export const UserSearch: FC<UserSearchProps> = ({ onSubmit, excludeUserIds }) =>
         onSubmit(user)
       }}
       items={users.filter((user) => !excludeUserIds || !excludeUserIds.includes(user.id))}
-      dataMapper={(item: User) => `${item.email} ${item.name}`}
-      placeholder="Søk etter bruker..."
+      dataMapper={(item: User) => {
+        if (item.name) {
+          return `${item.name} (${item.email})`
+        }
+        return item.email ?? item.id
+      }}
+      placeholder={placeholder ?? "Søk etter bruker..."}
       resetOnClick
     />
   )

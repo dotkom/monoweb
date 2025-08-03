@@ -2,9 +2,16 @@ import { auth } from "@/auth"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
-import { type Membership, createGroupPageUrl, getActiveMembership, getMembershipGrade } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title } from "@dotkomonline/ui"
-import { formatDistanceToNowStrict, getYear } from "date-fns"
+import {
+  type Membership,
+  type VisiblePersonalMarkDetails,
+  createGroupPageUrl,
+  getActiveMembership,
+  getMembershipGrade,
+} from "@dotkomonline/types"
+import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, cn } from "@dotkomonline/ui"
+import { getExpiryDate } from "@dotkomonline/utils"
+import { formatDate, formatDistanceToNowStrict, getYear } from "date-fns"
 import Link from "next/link"
 
 const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
@@ -46,16 +53,53 @@ const renderUserInfo = (label: string, value: string | number | null) => {
   )
 }
 
-export default async function ProfilePage({ params }: { params: Promise<{ profileSlug: string }> }) {
+function MarkDisplay({
+  markInformation: { mark, personalMark },
+}: {
+  markInformation: VisiblePersonalMarkDetails
+}) {
+  const expires = getExpiryDate(personalMark.createdAt, mark.duration)
+  const hasExpired = expires < new Date()
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg p-4 bg-gray-100 flex flex-col align-start gap-2",
+        !hasExpired && "bg-red-500 text-white"
+      )}
+    >
+      <div className="flex gap-2 justify-between">
+        <div className="flex items-center gap-2">
+          <Icon icon="tabler:alert-hexagon" className="text-4xl" />
+          <h2 className="font-bold text-lg">{mark.title}</h2>
+        </div>
+        {hasExpired ? <p>Utløpt</p> : <p>Utløper {formatDistanceToNowStrict(expires)}</p>}
+      </div>
+      <div className="flex justify-between">
+        <p>{mark.details}</p>
+        <p>
+          Gitt {formatDate(personalMark.createdAt, "dd.MM.yyyy")} av {mark.groupSlug}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ profileSlug: string }>
+}) {
   const { profileSlug: rawProfileSlug } = await params
   const profileSlug = decodeURIComponent(rawProfileSlug)
 
   const user = await server.user.getByProfileSlug.query(profileSlug)
 
-  const [session, groups, events] = await Promise.all([
+  const [session, groups, events, marks] = await Promise.all([
     auth.getServerSession(),
     server.group.allByMember.query(user.id),
     server.event.allByAttendingUserId.query({ id: user.id }),
+    server.personalMark.getVisibleInformationForUser.query({ id: user.id }),
   ])
 
   const allGroups = [
@@ -178,6 +222,16 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
               Dersom du oppdager feil, ta kontakt med Hovedstyret.
             </Text>
           </div>
+          {marks.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              <Title>Prikker og suspensjoner</Title>
+              <div className="flex flex-col gap-2">
+                {marks.map((markInfo) => (
+                  <MarkDisplay key={markInfo.mark.id} markInformation={markInfo} />
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       )}
 

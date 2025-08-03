@@ -1,7 +1,7 @@
 import { Autocomplete } from "@mantine/core"
-import React from "react"
+import { useState } from "react"
 
-interface GenericSearchProps<T> {
+export interface GenericSearchProps<T> {
   onSearch(query: string): void
   onSubmit(item: T): void
   items: T[]
@@ -18,7 +18,7 @@ export const GenericSearch = <T,>({
   placeholder,
   resetOnClick,
 }: GenericSearchProps<T>) => {
-  const [value, setValue] = React.useState("")
+  const [value, setValue] = useState<string>("")
 
   const handleChange = (newValue: string) => {
     setValue(newValue)
