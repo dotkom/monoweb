@@ -1,4 +1,3 @@
-import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
 import { auth } from "@/auth"
 import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
@@ -107,7 +106,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendeeStatus }) => {
     >
       <Tilt>
         <img
-          src={event.imageUrl ? event.imageUrl : EventImagePlaceholder}
+          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
           alt={event.title}
           className="rounded-lg border border-gray-200 object-cover aspect-[4/3]"
         />

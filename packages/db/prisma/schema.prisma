@@ -200,6 +200,7 @@ enum EventType {
   GENERAL_ASSEMBLY @map("GENERAL_ASSEMBLY")
   INTERNAL         @map("INTERNAL")
   OTHER            @map("OTHER")
+  WELCOME          @map("WELCOME")
 
   @@map("event_type")
 }

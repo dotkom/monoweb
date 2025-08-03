@@ -44,6 +44,7 @@
     "fastify": "^5.3.3",
     "import-in-the-middle": "^1.14.2",
     "lru-cache": "^11.1.0",
+    "marked": "^16.1.1",
     "require-in-the-middle": "^7.5.2",
     "stripe": "^13.11.0",
     "superjson": "^2.0.0",
