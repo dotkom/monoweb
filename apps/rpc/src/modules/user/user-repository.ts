@@ -11,6 +11,7 @@ import {
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
+import { randomUUID } from "node:crypto"
 
 /**
  * UserRepository is an interface for interacting with the user database.
@@ -35,7 +36,7 @@ export function getUserRepository(): UserRepository {
       const user = await handle.user.upsert({
         where: { id: subject },
         update: { id: subject },
-        create: { id: subject },
+        create: { id: subject, profileSlug: randomUUID() },
         include: {
           memberships: true,
         },
