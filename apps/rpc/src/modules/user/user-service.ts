@@ -101,7 +101,7 @@ export function getUserService(
     )
 
     if (masterProgramme !== undefined) {
-      const code = MembershipSpecializationSchema.catch("UNKNOWN").parse(studySpecializations?.[0].code)
+      const code = MembershipSpecializationSchema.catch("UNKNOWN").parse(studySpecializations?.[0].name)
       // If we have a new code that we have not seen, or for some other reason the code catches and returns UNKNOWN, we
       // emit a trace for it.
       if (code === "UNKNOWN") {
@@ -217,14 +217,19 @@ export function getUserService(
           // logs as well.
           span.setAttribute("user.id", user.id)
           try {
-            const { studyProgrammes, studySpecializations, courses } =
-              await feideGroupsRepository.getStudentInformation(accessToken)
-            const activeMembership = getActiveMembership(user)
-            const applicableMembership = await findApplicableMembership(studyProgrammes, studySpecializations, courses)
-            // We can only replace memberships if there is a new applicable one for the user
-            if (shouldReplaceMembership(activeMembership, applicableMembership) && applicableMembership !== null) {
-              logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
-              await userRepository.createMembership(handle, user.id, applicableMembership)
+            const studentInformation = await feideGroupsRepository.getStudentInformation(accessToken)
+            if (studentInformation !== null) {
+              const activeMembership = getActiveMembership(user)
+              const applicableMembership = await findApplicableMembership(
+                studentInformation.studyProgrammes,
+                studentInformation.studySpecializations,
+                studentInformation.courses
+              )
+              // We can only replace memberships if there is a new applicable one for the user
+              if (shouldReplaceMembership(activeMembership, applicableMembership) && applicableMembership !== null) {
+                logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
+                await userRepository.createMembership(handle, user.id, applicableMembership)
+              }
             }
           } finally {
             span.end()
