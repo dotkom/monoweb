@@ -7,9 +7,15 @@ export type CompanyId = Company["id"]
 export type CompanySlug = Company["slug"]
 export type Company = z.infer<typeof CompanySchema>
 
-export const CompanyWriteSchema = CompanySchema.omit({
-  id: true,
-  createdAt: true,
+export const CompanyWriteSchema = CompanySchema.pick({
+  name: true,
+  slug: true,
+  description: true,
+  phone: true,
+  email: true,
+  website: true,
+  location: true,
+  imageUrl: true,
 })
 
 export type CompanyWrite = z.infer<typeof CompanyWriteSchema>
