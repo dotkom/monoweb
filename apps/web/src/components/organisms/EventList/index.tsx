@@ -21,11 +21,7 @@ interface EventListProps {
 
 export const EventList: FC<EventListProps> = async (props: EventListProps) => {
   if (props.events.length === 0) {
-    return (
-      <Text className="text-gray-800 dark:text-stone-400 text-sm">
-        Det er ingen arrangementer å vise. Kom tilbake senere for oppdateringer.
-      </Text>
-    )
+    return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
   }
 
   const session = await auth.getServerSession()

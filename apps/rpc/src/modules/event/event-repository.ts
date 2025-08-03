@@ -185,6 +185,9 @@ export function getEventRepository(): EventRepository {
           },
         },
       })
+      if (events.length === 0) {
+        return []
+      }
       const ids = events.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
       return this.findMany(
         handle,

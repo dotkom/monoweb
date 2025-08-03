@@ -22,15 +22,15 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       }),
       phone: createTextInput({
         label: "Telefon",
-        placeholder: "+4712345678",
+        placeholder: "+47 123 45 678",
       }),
       gender: createSelectInput({
         label: "Kjønn",
         data: [
-          { label: "Mann", value: "male" },
-          { label: "Kvinne", value: "female" },
-          { label: "Annet", value: "other" },
-          { label: "Ikke oppgitt", value: "unknown" },
+          { label: "Mann", value: "Mann" },
+          { label: "Kvinne", value: "Kvinne" },
+          { label: "Annet", value: "Annet" },
+          { label: "Ikke oppgitt", value: "Ikke oppgitt" },
         ],
       }),
       dietaryRestrictions: createTextInput({
