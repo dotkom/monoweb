@@ -6,7 +6,7 @@ import { Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import Image from "next/image"
 import Link from "next/link"
-import { RedirectType, permanentRedirect } from "next/navigation"
+import { RedirectType, notFound, permanentRedirect } from "next/navigation"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
 import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
@@ -46,7 +46,11 @@ const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eve
   const { slug, eventId } = await params
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
-  const event = await server.event.get.query(eventId)
+  const event = await server.event.find.query(eventId)
+
+  if (!event) {
+    notFound()
+  }
 
   if (slug !== getEventSlug(event.title)) {
     permanentRedirect(getEventUrl(eventId, event.title), RedirectType.replace)

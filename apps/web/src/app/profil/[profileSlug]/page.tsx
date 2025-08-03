@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Titl
 import { getExpiryDate } from "@dotkomonline/utils"
 import { formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 
 const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
   `/api/auth/authorize?connection=FEIDE&redirectAfter=/profil/${profileSlug}` as const
@@ -110,7 +111,11 @@ export default async function ProfilePage({
   const { profileSlug: rawProfileSlug } = await params
   const profileSlug = decodeURIComponent(rawProfileSlug)
 
-  const [user, session] = await Promise.all([server.user.getByProfileSlug.query(profileSlug), auth.getServerSession()])
+  const [user, session] = await Promise.all([server.user.findByProfileSlug.query(profileSlug), auth.getServerSession()])
+
+  if (!user) {
+    notFound()
+  }
 
   const isLoggedIn = Boolean(session)
 

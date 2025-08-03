@@ -20,9 +20,14 @@ export const userRouter = t.router({
       return ctx.userService.getById(handle, input)
     })
   ),
-  getByProfileSlug: procedure.input(z.string()).query(async ({ input, ctx }) =>
+  getByProfileSlug: procedure.input(UserSchema.shape.profileSlug).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.getByProfileSlug(handle, input)
+    })
+  ),
+  findByProfileSlug: procedure.input(UserSchema.shape.profileSlug).query(async ({ input, ctx }) =>
+    ctx.executeTransaction(async (handle) => {
+      return ctx.userService.findByProfileSlug(handle, input)
     })
   ),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
