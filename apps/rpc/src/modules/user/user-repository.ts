@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type MembershipWrite,
@@ -11,7 +12,6 @@ import {
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
-import { randomUUID } from "node:crypto"
 
 /**
  * UserRepository is an interface for interacting with the user database.
