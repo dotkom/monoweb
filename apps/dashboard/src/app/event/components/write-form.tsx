@@ -13,6 +13,7 @@ import { validateEventWrite } from "../validation"
 
 const EVENT_FORM_DATA_TYPE = [
   { value: "SOCIAL", label: "Sosialt" },
+  { value: "WELCOME", label: "Fadderuke" },
   { value: "COMPANY", label: "Bedpres" },
   { value: "GENERAL_ASSEMBLY", label: "Generalforsamling" },
   { value: "INTERNAL", label: "Internt" },

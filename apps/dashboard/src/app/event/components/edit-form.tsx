@@ -10,6 +10,7 @@ import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
 const EVENT_FORM_DATA_TYPE = [
+  { value: "WELCOME", label: "Fadderuke" },
   { value: "SOCIAL", label: "Sosialt" },
   { value: "COMPANY", label: "Bedpres" },
   { value: "GENERAL_ASSEMBLY", label: "Generalforsamling" },

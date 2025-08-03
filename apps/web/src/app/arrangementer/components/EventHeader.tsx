@@ -8,8 +8,8 @@ interface Props {
 }
 
 export const EventHeader: FC<Props> = ({ event }) => {
-  const imageUrlLight = event.imageUrl || "https://placehold.co/1920x1080/png?text=Arrangementbanner"
-  const imageUrlDark = event.imageUrl || "https://placehold.co/1920x1080/27272a/9f9fa9/png?text=Arrangementbanner"
+  const imageUrlLight = event.imageUrl || "/placeholder.svg"
+  const imageUrlDark = event.imageUrl || "/placeholder.svg"
 
   return (
     <section className="flex flex-col gap-8">

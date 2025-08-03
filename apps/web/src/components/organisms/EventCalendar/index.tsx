@@ -215,6 +215,10 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           <span className="w-3 h-3 bg-blue-400 dark:bg-blue-400 rounded-full mr-1" />
           Bedpres
         </span>
+        <span className="flex items-center">
+          <span className="w-3 h-3 bg-yellow-400 dark:bg-yellow-400 rounded-full mr-1" />
+          Fadderuke
+        </span>
       </div>
     </div>
   )

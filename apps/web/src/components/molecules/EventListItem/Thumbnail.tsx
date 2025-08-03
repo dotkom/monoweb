@@ -28,6 +28,10 @@ const EVENTS = {
     label: "Sosialt",
     backgroundColor: "red",
   },
+  WELCOME: {
+    label: "Fadderuke",
+    backgroundColor: "amber",
+  },
 } as const satisfies Record<EventType, { label: string; backgroundColor: string }>
 
 interface EventListItemThumbnailProps {

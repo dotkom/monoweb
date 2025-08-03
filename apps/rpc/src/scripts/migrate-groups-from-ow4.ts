@@ -3,13 +3,7 @@ import fsp from "node:fs/promises"
 import path from "node:path"
 import { exit } from "node:process"
 import { Command } from "commander"
-
-function printEnvironment() {
-  console.log("\nEnvironment Variables:")
-  console.log("---------------------")
-  console.dir(configuration, { depth: null })
-  console.log("---------------------")
-}
+import { marked } from "marked"
 
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
@@ -72,9 +66,10 @@ async function dumpData() {
   fs.writeFileSync(path.resolve(pathOfThisScript, "./hobbys.json"), JSON.stringify(hobbies, null, 2))
 }
 
-import type { DBClient } from "@dotkomonline/db"
+import type { DBClient, Prisma } from "@dotkomonline/db"
 import { getDefaultGroupMemberRoles } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
+import z from "zod"
 import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 
@@ -200,13 +195,7 @@ async function insertDump() {
 
 const program = new Command()
 
-program
-  .name("migrate-groups")
-  .description("CLI tool for migrating groups from OW4")
-  .addHelpText("beforeAll", () => {
-    printEnvironment()
-    return ""
-  })
+program.name("migrate-groups").description("CLI tool for migrating groups from OW4")
 
 program
   .command("1")
@@ -268,6 +257,71 @@ program
   .action(async () => {
     const groups = await prisma.group.findMany()
     console.log("\nGroups: \n", groups)
+  })
+
+async function listSplashEvents() {
+  const events = []
+
+  let url = "https://old.online.ntnu.no/api/v1/splash-events/?page=2&page_size=100000"
+
+  while (true) {
+    const response = await fetch(url)
+    const data = z
+      .object({
+        next: z.string().nullable(),
+        results: z.array(
+          z.object({
+            id: z.number(),
+            title: z.string(),
+            content: z.string(),
+            start_time: z.string().transform((d) => new Date(d)),
+            end_time: z.string().transform((d) => new Date(d)),
+          })
+        ),
+      })
+      .parse(await response.json())
+
+    events.push(...data.results)
+
+    if (data.next) {
+      url = data.next
+    } else {
+      break
+    }
+  }
+
+  return events
+}
+
+program
+  .command("import-velkom-events")
+  .description("Import events from splash")
+  .action(async () => {
+    const events = await listSplashEvents()
+
+    const newEvents: Prisma.EventCreateManyInput[] = []
+
+    for (const event of events) {
+      if (event.start_time.getFullYear() !== 2025) {
+        continue
+      }
+
+      newEvents.push({
+        description: await marked(event.content),
+        imageUrl: null,
+        type: "WELCOME",
+        status: "PUBLIC",
+        title: event.title,
+        start: event.start_time,
+        end: event.end_time,
+        subtitle: null,
+        locationTitle: null,
+        locationAddress: null,
+        locationLink: null,
+      })
+    }
+
+    await prisma.event.createMany({ data: newEvents })
   })
 
 program.parse()

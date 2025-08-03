@@ -37,6 +37,8 @@ const mapEventTypeToLabel = (eventType: EventType) => {
       return "Bedpres"
     case "SOCIAL":
       return "Sosialt"
+    case "WELCOME":
+      return "Fadderuke"
     default:
       return "Ukjent"
   }
