@@ -47,7 +47,12 @@ export type GroupMember = z.infer<typeof GroupMemberSchema>
 
 export type GroupMembership = z.infer<typeof GroupMembershipSchema>
 
-export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({ roles: true, id: true, createdAt: true })
+export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({
+  roles: true,
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
 export type GroupMembershipId = GroupMembership["id"]
 export type GroupMembershipWrite = z.infer<typeof GroupMembershipWriteSchema>
 

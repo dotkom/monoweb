@@ -1,9 +1,9 @@
 "use client"
 
 import type { GroupMember, GroupMembership } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
 import { Button, Tooltip } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 import { useMemo } from "react"
 import { useEditGroupMembershipModal } from "../../modals/edit-group-membership-modal"
 
@@ -29,14 +29,14 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
       columnHelper.accessor((membership) => membership, {
         id: "start",
         header: () => "Startdato",
-        cell: (info) => formatDate(info.getValue().start),
+        cell: (info) => formatDate(info.getValue().start, "dd.MM.yyyy"),
       }),
       columnHelper.accessor((membership) => membership, {
         id: "end",
         header: () => "Sluttdato",
         cell: (info) => {
           const end = info.getValue().end
-          return end ? formatDate(end) : "-"
+          return end ? formatDate(end, "dd.MM.yyyy") : "-"
         },
       }),
       columnHelper.accessor((membership) => membership, {

@@ -47,20 +47,19 @@ export function startOpenTelemetry(resource: Resource) {
   process.on("SIGTERM", () =>
     telemetry
       .shutdown()
-      .then(() => logger.error("opentelemetry terminated"))
-      .catch((e) => logger.error("opentelemetry failed to terminate: %o", e))
+      .then(() => logger.error("OpenTelemetry terminated"))
+      .catch((e) => logger.error("OpenTelemetry failed to terminate: %o", e))
   )
   process.on("beforeExit", () =>
     telemetry
       .shutdown()
-      .then(() => logger.error("opentelemetry terminated"))
-      .catch((e) => logger.error("opentelemetry failed to terminate: %o", e))
+      .then(() => logger.error("OpenTelemetry terminated"))
+      .catch((e) => logger.error("OpenTelemetry failed to terminate: %o", e))
   )
 
-  if ("OTEL_EXPORTER_OTLP_ENDPOINT" in process.env) {
-    logger.info("using opentelemetry otlp endpoint: %s", process.env.OTEL_EXPORTER_OTLP_ENDPOINT)
-  }
-  logger.info("opentelemetry instrumentation installed (service-name=%s)", resource.attributes[ATTR_SERVICE_NAME])
+  logger.info("Using opentelemetry otlp endpoint: %s", process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "localhost:4317")
+  logger.info("OpenTelemetry instrumentation installed (service-name=%s)", resource.attributes[ATTR_SERVICE_NAME])
+  return telemetry
 }
 
 interface Message {

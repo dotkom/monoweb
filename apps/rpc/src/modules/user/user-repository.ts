@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type MembershipWrite,
@@ -12,6 +13,11 @@ import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
+/**
+ * UserRepository is an interface for interacting with the user database.
+ *
+ * NOTE: The `userId` field in the table maps directly onto the OAuth2 subject claim.
+ */
 export interface UserRepository {
   findById(handle: DBHandle, userId: UserId): Promise<User | null>
   findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
@@ -20,7 +26,7 @@ export interface UserRepository {
   /**
    * Register a new user to the database by their Auth0 subject claim.
    */
-  register(handle: DBHandle, subject: string): Promise<User>
+  register(handle: DBHandle, userId: UserId): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
 }
 
@@ -30,7 +36,7 @@ export function getUserRepository(): UserRepository {
       const user = await handle.user.upsert({
         where: { id: subject },
         update: { id: subject },
-        create: { id: subject },
+        create: { id: subject, profileSlug: randomUUID() },
         include: {
           memberships: true,
         },

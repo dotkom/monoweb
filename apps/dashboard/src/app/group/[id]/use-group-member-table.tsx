@@ -1,9 +1,9 @@
 "use client"
 
 import type { GroupId, GroupMember, GroupMembership } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMemo } from "react"
 
@@ -18,7 +18,7 @@ function formatRoles(memberships: GroupMembership[]) {
 }
 
 function formatMembershipDate(date: Date | undefined | null) {
-  return date ? formatDate(date) : "-"
+  return date ? formatDate(date, "dd.MM.yyyy") : "-"
 }
 
 export const useGroupMemberTable = ({ data, groupId }: Props) => {
