@@ -56,7 +56,9 @@ model Membership {
 model User {
   /// OpenID Connect Subject claim - for this reason there is no @default(uuid()) here.
   id                  String   @id
-  profileSlug         String   @unique @default(uuid())
+  // We cannot use `@default(uuid())` because our zod generator will infer `.string().uuid()`
+  // for this field, which will break for custom profile slugs.
+  profileSlug         String   @unique @default(dbgenerated("gen_random_uuid()::text"))
   name                String?
   email               String?
   imageUrl            String?
