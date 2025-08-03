@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type MembershipWrite,
@@ -35,7 +36,7 @@ export function getUserRepository(): UserRepository {
       const user = await handle.user.upsert({
         where: { id: subject },
         update: { id: subject },
-        create: { id: subject },
+        create: { id: subject, profileSlug: randomUUID() },
         include: {
           memberships: true,
         },

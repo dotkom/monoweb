@@ -1,4 +1,4 @@
-import { useGroupAllQuery } from "@/app/group/queries/use-group-all-query"
+import { useGroupAllQuery } from "@/app/group/queries"
 import type { FC } from "react"
 import { useEventEditForm } from "../components/edit-form"
 import { useUpdateEventMutation } from "../mutations"

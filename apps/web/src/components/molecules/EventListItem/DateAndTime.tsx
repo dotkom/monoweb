@@ -1,6 +1,5 @@
 import { Icon, Text, cn } from "@dotkomonline/ui"
 import { differenceInDays, formatDate, isPast, isSameDay, isSameYear, isThisYear } from "date-fns"
-import { nb } from "date-fns/locale"
 import type { FC } from "react"
 
 interface EventListItemDateAndTimeProps {
@@ -15,10 +14,10 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
 
   const singleDay = isSameDay(start, end)
   const showTime = withinAWeek && !past
-  const startDate = formatDate(start, excludeYear ? "dd. MMM" : "dd.MM.yyyy", { locale: nb })
-  const endDate = formatDate(end, excludeYear ? "dd. MMM" : "dd.MM.yyyy", { locale: nb })
-  const startTime = formatDate(start, "HH:mm", { locale: nb })
-  const endTime = formatDate(end, "HH:mm", { locale: nb })
+  const startDate = formatDate(start, excludeYear ? "dd. MMM" : "dd.MM.yyyy")
+  const endDate = formatDate(end, excludeYear ? "dd. MMM" : "dd.MM.yyyy")
+  const startTime = formatDate(start, "HH:mm")
+  const endTime = formatDate(end, "HH:mm")
   const ongoing = isPast(start) && !past
 
   if (singleDay || ongoing) {

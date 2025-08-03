@@ -1,16 +1,48 @@
 "use client"
 
-import type { Event } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
+import { GenericTable } from "@/components/GenericTable"
+import type { Event, EventType } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
-import { Anchor, Box, Button, ButtonGroup, Skeleton, Stack } from "@mantine/core"
+import {
+  ActionIcon,
+  ActionIconGroup,
+  Anchor,
+  Button,
+  Group,
+  Skeleton,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMemo } from "react"
-
-import { GenericTable } from "@/components/GenericTable"
 import { EventHostingGroupList } from "./components/event-hosting-group-list"
 import { useEventAllQuery } from "./queries"
+
+const mapEventTypeToLabel = (eventType: EventType) => {
+  switch (eventType) {
+    case "ACADEMIC":
+      return "Kurs"
+    case "GENERAL_ASSEMBLY":
+      return "Generalforsamling"
+    case "INTERNAL":
+      return "Intern"
+    case "OTHER":
+      return "Annet"
+    case "COMPANY":
+      return "Bedpres"
+    case "SOCIAL":
+      return "Sosialt"
+    default:
+      return "Ukjent"
+  }
+}
+
+const capitalizeFirstLetter = (string: string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
@@ -28,7 +60,18 @@ export default function EventPage() {
       }),
       columnHelper.accessor("start", {
         header: () => "Startdato",
-        cell: (info) => formatDate(info.getValue()),
+        cell: (info) => {
+          const longDate = formatDate(info.getValue(), "eeee dd. MMMM yyyy HH:mm")
+          const shortDate = formatDate(info.getValue(), "dd. MMM yyyy")
+
+          return (
+            <Tooltip label={capitalizeFirstLetter(longDate)}>
+              <Text size="sm" w="fit-content">
+                {shortDate}
+              </Text>
+            </Tooltip>
+          )
+        },
       }),
       columnHelper.accessor((event) => event, {
         id: "organizers",
@@ -39,6 +82,7 @@ export default function EventPage() {
       }),
       columnHelper.accessor("type", {
         header: () => "Type",
+        cell: (info) => mapEventTypeToLabel(info.getValue()),
       }),
     ],
     [columnHelper]
@@ -53,20 +97,32 @@ export default function EventPage() {
   return (
     <Skeleton visible={isEventsLoading}>
       <Stack>
-        <Box>
-          <Button component={Link} href="/event/register">
-            Nytt arrangement
-          </Button>
-        </Box>
+        <Title order={1}>Arrangementer</Title>
+
+        <Group justify="space-between">
+          <Group>
+            {/* TODO: add pagination */}
+            <ActionIconGroup>
+              <ActionIcon variant="subtle" c="gray" size="input-sm">
+                <Icon icon="tabler:arrow-left" />
+              </ActionIcon>
+              <ActionIcon variant="subtle" c="gray" size="input-sm">
+                <Icon icon="tabler:arrow-right" />
+              </ActionIcon>
+            </ActionIconGroup>
+
+            {/* TODO: add search */}
+            <TextInput placeholder="Søk etter arrangementer..." size="sm" disabled />
+          </Group>
+
+          <Group>
+            <Button component={Link} href="/event/register" leftSection={<Icon icon="tabler:pencil" />}>
+              Nytt arrangement
+            </Button>
+          </Group>
+        </Group>
+
         <GenericTable table={table} />
-        <ButtonGroup ml="auto">
-          <Button variant="subtle">
-            <Icon icon="tabler:caret-left" />
-          </Button>
-          <Button variant="subtle">
-            <Icon icon="tabler:caret-right" />
-          </Button>
-        </ButtonGroup>
       </Stack>
     </Skeleton>
   )

@@ -17,7 +17,11 @@ import { type Pageable, pageQuery } from "../../query"
 export interface EventRepository {
   create(handle: DBHandle, data: EventWrite): Promise<Event>
   update(handle: DBHandle, id: EventId, data: Partial<EventWrite>): Promise<Event>
-  findById(handle: DBHandle, id: string): Promise<Event | null>
+  /**
+   * Soft-delete an event by setting its status to "DELETED".
+   */
+  delete(handle: DBHandle, id: EventId): Promise<Event>
+  findById(handle: DBHandle, id: string, options?: { includeDeleted?: boolean }): Promise<Event | null>
   /**
    * Find events based on a set of search criteria.
    *
@@ -66,6 +70,12 @@ export function getEventRepository(): EventRepository {
       invariant(event !== null, "Event should exist within same transaction after update")
       return event
     },
+    async delete(handle, id) {
+      const row = await handle.event.update({ where: { id }, data: { status: "DELETED" } })
+      const event = await this.findById(handle, row.id, { includeDeleted: true })
+      invariant(event !== null, "Event should exist within same transaction after deletion")
+      return event
+    },
     async findMany(handle, query, page) {
       const events = await handle.event.findMany({
         ...pageQuery(page),
@@ -112,7 +122,11 @@ export function getEventRepository(): EventRepository {
           },
           hostingGroups: {
             include: {
-              group: true,
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
             },
           },
         },
@@ -125,9 +139,9 @@ export function getEventRepository(): EventRepository {
         })
       )
     },
-    async findById(handle, id) {
+    async findById(handle, id, { includeDeleted = false } = {}) {
       const event = await handle.event.findUnique({
-        where: { id, status: { not: "DELETED" } },
+        where: { id, status: includeDeleted ? undefined : { not: "DELETED" } },
         include: {
           companies: {
             include: {
@@ -136,7 +150,11 @@ export function getEventRepository(): EventRepository {
           },
           hostingGroups: {
             include: {
-              group: true,
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
             },
           },
         },

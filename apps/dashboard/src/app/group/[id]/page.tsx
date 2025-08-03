@@ -4,14 +4,28 @@ import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { GroupEditCard } from "./edit-card"
+import { GroupMembersPage } from "./members-page"
 import { useGroupDetailsContext } from "./provider"
+import { GroupRolesPage } from "./roles-page"
 
 const SIDEBAR_LINKS = [
   {
-    icon: "tabler:users-group",
+    icon: "tabler:list-details",
     label: "Info",
     slug: "info",
     component: GroupEditCard,
+  },
+  {
+    icon: "tabler:users",
+    label: "Medlemmer",
+    slug: "memberships",
+    component: GroupMembersPage,
+  },
+  {
+    icon: "tabler:circles",
+    label: "Roller",
+    slug: "roles",
+    component: GroupRolesPage,
   },
 ] as const
 

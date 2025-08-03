@@ -1,4 +1,4 @@
-import { useGroupAllQuery } from "@/app/group/queries/use-group-all-query"
+import { useGroupAllQuery } from "@/app/group/queries"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
@@ -20,10 +20,9 @@ const EVENT_FORM_DATA_TYPE = [
 ] as const satisfies { value: EventType; label: string }[]
 
 const EVENT_FORM_DATA_STATUS = [
-  { value: "DELETED", label: "Slettet" },
   { value: "DRAFT", label: "Utkast" },
   { value: "PUBLIC", label: "Publisert" },
-] as const satisfies { value: EventStatus; label: string }[]
+] as const satisfies { value: Omit<EventStatus, "DELETED">; label: string }[]
 
 const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),

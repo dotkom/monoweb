@@ -12,7 +12,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, cn } from "@dotkomonline/ui"
 import { formatDate, formatRelativeTime, getExpiryDate } from "@dotkomonline/utils"
 import { formatDistanceToNowStrict, getYear } from "date-fns"
-import { nb } from "date-fns/locale"
 import Link from "next/link"
 
 const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
@@ -150,9 +149,7 @@ export default async function ProfilePage({
 
             <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-500 hidden md:block" />
 
-            {user.createdAt && (
-              <Text>{capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt, { locale: nb }))} i Online</Text>
-            )}
+            {user.createdAt && <Text>{capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt))} i Online</Text>}
           </div>
 
           <div className="flex flex-row items-center gap-2 text-sm">

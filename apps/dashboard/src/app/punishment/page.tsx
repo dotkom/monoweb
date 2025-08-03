@@ -2,10 +2,10 @@
 
 import { GenericTable } from "@/components/GenericTable"
 import type { Mark } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useCreateMarkModal } from "./modals/create-mark-modal"
 import { useCreateSuspensionModal } from "./modals/create-suspension-modal"
@@ -24,7 +24,7 @@ const columns = [
   }),
   columnHelper.accessor("createdAt", {
     header: () => "Opprettet",
-    cell: (info) => formatDate(info.getValue()),
+    cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
   }),
   columnHelper.accessor("weight", {
     header: () => "Vekt",

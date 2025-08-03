@@ -3,6 +3,7 @@ import "../instrumentation"
 import { getLogger } from "@dotkomonline/logger"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
 import fastifyCors from "@fastify/cors"
+import { captureException } from "@sentry/node"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import fastify from "fastify"
@@ -63,6 +64,7 @@ server.register(fastifyTRPCPlugin, {
     router: appRouter,
     createContext: createFastifyContext,
     onError: ({ path, error }) => {
+      captureException(error)
       logger.error(`Error in tRPC handler on path '${path}': %o`, error)
       if (error.cause instanceof AggregateError) {
         for (const err of error.cause.errors) {

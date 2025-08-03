@@ -1,6 +1,6 @@
 import type { Event } from "@dotkomonline/types"
 import { Icon, Text } from "@dotkomonline/ui"
-import { IntlFormats } from "@dotkomonline/utils"
+import { formatDate, isSameDay } from "date-fns"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { createGoogleCalendarLink } from "./utils"
@@ -9,16 +9,8 @@ interface TimeBoxProps {
   event: Event
 }
 
-const formatWithIntl = (date: Date, format: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat("nb-NO", format).format(date)
-
 export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
   const { start, end, locationAddress, description, title: eventSummary } = event
-
-  const multipleDays = start.getDate() !== end.getDate()
-
-  const time = { start: formatWithIntl(start, IntlFormats.Time), end: formatWithIntl(end, IntlFormats.Time) }
-  const date = { start: formatWithIntl(start, IntlFormats.ShortDate), end: formatWithIntl(end, IntlFormats.ShortDate) }
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,
@@ -34,17 +26,17 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
 
       <div className="flex flex-row grow gap-4 items-center">
         <div className="flex flex-col">
-          <Text>{date.start}</Text>
+          <Text>{formatDate(start, "dd. MMMM")}</Text>
           <Text>
-            {time.start} {!multipleDays ? ` - ${time.end}` : null}
+            {formatDate(start, "HH:mm")} {isSameDay(start, end) ? ` - ${formatDate(end, "HH:mm")}` : null}
           </Text>
         </div>
-        {multipleDays && (
+        {!isSameDay(start, end) && (
           <>
             <Icon icon="tabler:arrow-right" className="text-2xl" />
             <div className="flex flex-col">
-              <Text>{date.end}</Text>
-              <Text>{time.end}</Text>
+              <Text>{formatDate(end, "dd. MMMM")}</Text>
+              <Text>{formatDate(end, "HH:mm")}</Text>
             </div>
           </>
         )}
