@@ -54,7 +54,7 @@ model Membership {
 }
 
 model User {
-  /// OpenID Connect Subject claim
+  /// OpenID Connect Subject claim - for this reason there is no @default(uuid()) here.
   id                  String   @id
   profileSlug         String   @unique @default(uuid())
   name                String?
@@ -76,13 +76,13 @@ model User {
   notificationPermissionsId String?                  @unique
   notificationPermissions   NotificationPermissions?
 
-  attendee                  Attendee[]
-  payment                   Payment[]
-  requestedRefunds          RefundRequest[]       @relation("RequestedBy")
-  handledRefunds            RefundRequest[]       @relation("HandledBy")
-  personalMark              PersonalMark[]
-  groupMemberships          GroupMembership[]
-  memberships               Membership[]
+  attendee         Attendee[]
+  payment          Payment[]
+  requestedRefunds RefundRequest[]   @relation("RequestedBy")
+  handledRefunds   RefundRequest[]   @relation("HandledBy")
+  personalMark     PersonalMark[]
+  groupMemberships GroupMembership[]
+  memberships      Membership[]
 
   @@map("ow_user")
 }
@@ -98,6 +98,7 @@ model Company {
   location    String?
   imageUrl    String?
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   events     EventCompany[]
   JobListing JobListing[]
@@ -106,10 +107,10 @@ model Company {
 }
 
 enum GroupType {
-  COMMITTEE       @map("COMMITTEE")
-  NODE_COMMITTEE  @map("NODE_COMMITTEE")
-  ASSOCIATED      @map("ASSOCIATED")
-  INTEREST_GROUP  @map("INTEREST_GROUP")
+  COMMITTEE      @map("COMMITTEE")
+  NODE_COMMITTEE @map("NODE_COMMITTEE")
+  ASSOCIATED     @map("ASSOCIATED")
+  INTEREST_GROUP @map("INTEREST_GROUP")
 
   @@map("group_type")
 }
@@ -142,6 +143,7 @@ model GroupMembership {
   start     DateTime  @db.Timestamptz(3)
   end       DateTime? @db.Timestamptz(3)
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
 
   roles GroupMembershipRole[]
 
@@ -205,7 +207,7 @@ model Attendance {
   deregisterDeadline DateTime @db.Timestamptz(3)
   selections         Json     @default("[]")
   createdAt          DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+  updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   pools     AttendancePool[]
   attendees Attendee[]
@@ -223,7 +225,7 @@ model AttendancePool {
   yearCriteria    Json
   capacity        Int
   createdAt       DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime   @updatedAt @db.Timestamptz(3)
+  updatedAt       DateTime   @default(now()) @updatedAt @db.Timestamptz(3)
 
   attendees Attendee[]
 
@@ -247,7 +249,7 @@ model Attendee {
   reserved              Boolean
   earliestReservationAt DateTime            @db.Timestamptz(3)
   createdAt             DateTime            @default(now()) @db.Timestamptz(3)
-  updatedAt             DateTime            @updatedAt @db.Timestamptz(3)
+  updatedAt             DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
@@ -272,8 +274,8 @@ model Event {
   createdAt       DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
-  companies      EventCompany[]
-  hostingGroups  EventHostingGroup[]
+  companies     EventCompany[]
+  hostingGroups EventHostingGroup[]
 
   @@map("event")
 }
@@ -295,8 +297,8 @@ model Mark {
   details  String?
   duration Int
 
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   users PersonalMark[]
 
@@ -351,7 +353,7 @@ model Product {
   refundRequiresApproval Boolean     @default(true)
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   payments         Payment[]
   paymentProviders ProductPaymentProvider[]
@@ -371,7 +373,7 @@ model Payment {
   status                   PaymentStatus
   refundRequest            RefundRequest?
   createdAt                DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt                DateTime       @updatedAt @db.Timestamptz(3)
+  updatedAt                DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@map("payment")
 }
@@ -398,15 +400,13 @@ model RefundRequest {
   handledById String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@map("refund_request")
 }
 
 model PrivacyPermissions {
   id                String   @id @default(uuid())
-  createdAt         DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt         DateTime @updatedAt @db.Timestamptz(3)
   user              User     @relation(fields: [userId], references: [id])
   userId            String   @unique
   profileVisible    Boolean  @default(true)
@@ -415,14 +415,14 @@ model PrivacyPermissions {
   phoneVisible      Boolean  @default(false)
   addressVisible    Boolean  @default(false)
   attendanceVisible Boolean  @default(false)
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@map("privacy_permissions")
 }
 
 model NotificationPermissions {
   id                          String   @id @default(uuid())
-  createdAt                   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt                   DateTime @updatedAt @db.Timestamptz(3)
   user                        User     @relation(fields: [userId], references: [id])
   userId                      String   @unique
   applications                Boolean  @default(true)
@@ -433,6 +433,8 @@ model NotificationPermissions {
   receipts                    Boolean  @default(true)
   registrationByAdministrator Boolean  @default(true)
   registrationStart           Boolean  @default(true)
+  createdAt                   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt                   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@map("notification_permissions")
 }
@@ -475,7 +477,7 @@ model JobListing {
   deadlineAsap     Boolean
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   locations JobListingLocation[]
 
@@ -499,7 +501,7 @@ model Offline {
   imageUrl    String?
   publishedAt DateTime @db.Timestamptz(3)
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@map("offline")
 }
@@ -517,7 +519,7 @@ model Article {
   vimeoId      String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   tags ArticleTagLink[]
 
@@ -592,7 +594,7 @@ model FeedbackForm {
   isActive           Boolean  @default(false)
   publicResultsToken String   @unique @default(uuid())
   createdAt          DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+  updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
@@ -610,7 +612,7 @@ model FeedbackQuestion {
   type                FeedbackQuestionType
   order               Int
   createdAt           DateTime             @default(now()) @db.Timestamptz(3)
-  updatedAt           DateTime             @updatedAt @db.Timestamptz(3)
+  updatedAt           DateTime             @default(now()) @updatedAt @db.Timestamptz(3)
 
   options FeedbackQuestionOption[]
   answers FeedbackQuestionAnswer[] @relation("QuestionAnswers")
@@ -660,7 +662,7 @@ model FeedbackFormAnswer {
   attendeeId     String       @unique
   attendee       Attendee     @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime     @updatedAt @db.Timestamptz(3)
+  updatedAt      DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
 
   answers FeedbackQuestionAnswer[] @relation("FormAnswers")
 

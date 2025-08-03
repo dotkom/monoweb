@@ -20,10 +20,9 @@ const EVENT_FORM_DATA_TYPE = [
 ] as const satisfies { value: EventType; label: string }[]
 
 const EVENT_FORM_DATA_STATUS = [
-  { value: "DELETED", label: "Slettet" },
   { value: "DRAFT", label: "Utkast" },
   { value: "PUBLIC", label: "Publisert" },
-] as const satisfies { value: EventStatus; label: string }[]
+] as const satisfies { value: Omit<EventStatus, "DELETED">; label: string }[]
 
 const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
