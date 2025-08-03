@@ -70,7 +70,6 @@ export function getUserService(
   managementClient: ManagementClient
 ): UserService {
   const logger = getLogger("user-service")
-  const tracer = trace.getTracer("user-service")
   async function findApplicableMembership(
     studyProgrammes: NTNUGroup[],
     studySpecializations: NTNUGroup[],
@@ -211,7 +210,7 @@ export function getUserService(
       if (accessToken !== null) {
         // We spawn a separate OpenTelemetry span for the entire membership operation so that its easier to trace and
         // track the call stack and timings of the operation.
-        await tracer.startActiveSpan("refreshMembership", async (span) => {
+        await trace.getTracer("@dotkomonline/rpc/user-service").startActiveSpan("refreshMembership", async (span) => {
           // According to Semantic Conventions (https://opentelemetry.io/docs/specs/semconv/registry/attributes/user/)
           // we should set the user.id attribute on the span to the user's ID. It makes it easier to trace them across
           // logs as well.
