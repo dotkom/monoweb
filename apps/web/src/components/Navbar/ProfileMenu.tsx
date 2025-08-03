@@ -180,10 +180,10 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter()
   const trpc = useTRPC()
 
-  const { data: isAdmin } = useQuery(trpc.user.isAdmin.queryOptions(undefined, { enabled: Boolean(session) }))
+  const { data: isStaff } = useQuery(trpc.user.isStaff.queryOptions(undefined, { enabled: Boolean(session) }))
 
   const filteredLinkGroups = linkGroups
-    .map((group) => group.filter((link) => !link.adminOnly || isAdmin))
+    .map((group) => group.filter((link) => !link.adminOnly || isStaff))
     .filter((group) => group.length > 0)
 
   return (

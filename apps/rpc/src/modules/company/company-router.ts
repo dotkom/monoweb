@@ -1,15 +1,14 @@
 import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { procedure, staffProcedure, t } from "../../trpc"
 
 export const companyRouter = t.router({
-  create: authenticatedProcedure.input(CompanyWriteSchema).mutation(async ({ input, ctx }) => {
-    ctx.authorize.requireAffiliation()
+  create: staffProcedure.input(CompanyWriteSchema).mutation(async ({ input, ctx }) => {
     return ctx.executeTransaction(async (handle) => ctx.companyService.createCompany(handle, input))
   }),
 
-  edit: authenticatedProcedure
+  edit: staffProcedure
     .input(
       z.object({
         id: CompanySchema.shape.id,
@@ -17,7 +16,6 @@ export const companyRouter = t.router({
       })
     )
     .mutation(async ({ input: changes, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.companyService.updateCompany(handle, changes.id, changes.input)
       )

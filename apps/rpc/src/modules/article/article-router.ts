@@ -1,10 +1,10 @@
 import { ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { procedure, staffProcedure, t } from "../../trpc"
 
 export const articleRouter = t.router({
-  create: authenticatedProcedure
+  create: staffProcedure
     .input(
       z.object({
         article: ArticleWriteSchema,
@@ -12,7 +12,6 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => {
         const article = await ctx.articleService.create(handle, input.article)
         const tags = await ctx.articleService.setTags(handle, article.id, input.tags)
@@ -23,7 +22,7 @@ export const articleRouter = t.router({
       })
     }),
 
-  edit: authenticatedProcedure
+  edit: staffProcedure
     .input(
       z.object({
         id: ArticleSchema.shape.id,
@@ -32,7 +31,6 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => {
         const article = await ctx.articleService.update(handle, input.id, input.input)
         const tags = await ctx.articleService.setTags(handle, input.id, input.tags)
@@ -66,7 +64,7 @@ export const articleRouter = t.router({
     ctx.executeTransaction(async (handle) => ctx.articleService.getTags(handle))
   ),
 
-  addTag: authenticatedProcedure
+  addTag: staffProcedure
     .input(
       z.object({
         id: ArticleSchema.shape.id,
@@ -74,11 +72,10 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => ctx.articleService.addTag(handle, input.id, input.tag))
     }),
 
-  removeTag: authenticatedProcedure
+  removeTag: staffProcedure
     .input(
       z.object({
         id: ArticleSchema.shape.id,
@@ -86,7 +83,6 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => ctx.articleService.removeTag(handle, input.id, input.tag))
     }),
 })

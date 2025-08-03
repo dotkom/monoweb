@@ -8,7 +8,7 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
   getAttendee: authenticatedProcedure
@@ -24,12 +24,11 @@ export const attendanceRouter = t.router({
       )
     ),
 
-  createPool: authenticatedProcedure.input(AttendancePoolWriteSchema).mutation(async ({ input, ctx }) => {
-    ctx.authorize.requireAffiliation()
+  createPool: staffProcedure.input(AttendancePoolWriteSchema).mutation(async ({ input, ctx }) => {
     return ctx.executeTransaction(async (handle) => ctx.attendanceService.createPool(handle, input))
   }),
 
-  updatePool: authenticatedProcedure
+  updatePool: staffProcedure
     .input(
       z.object({
         id: AttendancePoolSchema.shape.id,
@@ -37,22 +36,20 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input: { id, input }, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => ctx.attendanceService.updatePool(handle, id, input))
     }),
 
-  deletePool: authenticatedProcedure
+  deletePool: staffProcedure
     .input(
       z.object({
         id: AttendancePoolSchema.shape.id,
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => ctx.attendanceService.deletePool(handle, input.id))
     }),
 
-  adminRegisterForEvent: authenticatedProcedure
+  adminRegisterForEvent: staffProcedure
     .input(
       z.object({
         attendancePoolId: AttendancePoolSchema.shape.id,
@@ -61,7 +58,6 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.attendeeService.adminRegisterForEvent(handle, input.userId, input.attendanceId, input.attendancePoolId)
       )
@@ -87,13 +83,12 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.attendeeService.deregisterForEvent(handle, ctx.principal.subject, input.attendanceId)
       )
     }),
 
-  adminDeregisterForEvent: authenticatedProcedure
+  adminDeregisterForEvent: staffProcedure
     .input(
       z.object({
         attendeeId: AttendeeSchema.shape.id,
@@ -102,7 +97,6 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.attendeeService.adminDeregisterForEvent(handle, input.attendeeId, {
           reserveNextAttendee: input.reserveNextAttendee,
@@ -111,20 +105,19 @@ export const attendanceRouter = t.router({
       )
     }),
 
-  getSelectionsResults: authenticatedProcedure
+  getSelectionsResults: staffProcedure
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
     .query(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.attendanceService.getSelectionsResponseSummary(handle, input.attendanceId)
       )
     }),
 
-  registerAttendance: authenticatedProcedure
+  registerAttendance: staffProcedure
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
@@ -132,7 +125,6 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.attendeeService.updateAttended(handle, input.id, input.attended)
       )
@@ -182,7 +174,7 @@ export const attendanceRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.attendanceService.update(handle, input.id, input.attendance))
     ),
 
-  mergeAttendancePools: authenticatedProcedure
+  mergeAttendancePools: staffProcedure
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
@@ -190,20 +182,18 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.attendanceService.mergeAttendancePools(handle, input.attendanceId, input.attendancePool)
       )
     }),
 
-  getSelectionResponseResults: authenticatedProcedure
+  getSelectionResponseResults: staffProcedure
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
     .query(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.attendanceService.getSelectionsResponseSummary(handle, input.attendanceId)
       )
@@ -222,14 +212,13 @@ export const attendanceRouter = t.router({
       )
     ),
 
-  removeSelectionResponses: authenticatedProcedure
+  removeSelectionResponses: staffProcedure
     .input(
       z.object({
         selectionId: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) =>
         ctx.attendeeService.removeSelectionResponses(handle, input.selectionId)
       )

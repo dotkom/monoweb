@@ -68,3 +68,14 @@ export const authenticatedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   })
 })
+
+export const staffProcedure = t.procedure.use(({ ctx, next }) => {
+  ctx.authorize.requireSignIn()
+  return next({
+    ctx: {
+      ...ctx,
+      // biome-ignore lint/style/noNonNullAssertion: the above assertion ensures ctx.principal is not null
+      principal: ctx.principal!,
+    },
+  })
+})
