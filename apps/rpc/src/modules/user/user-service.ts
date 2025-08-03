@@ -93,7 +93,7 @@ export function getUserService(
     // We guesstimate which year of study the user is in, based on the courses they have taken and the courses in the
     // study plan.
     const estimatedStudyGrade = estimateStudyGrade(studyPlanCourses, courses)
-    const estimatedStudyStart = subYears(getAcademicStart(getCurrentUtc()), estimatedStudyGrade)
+    const estimatedStudyStart = subYears(getAcademicStart(getCurrentUtc()), estimatedStudyGrade - 1)
     logger.info(
       "Estimated study start date to be %s for a student in grade %d",
       estimatedStudyStart.toUTCString(),
