@@ -1,6 +1,6 @@
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
-import { useCreateGroupMutation } from "../mutations/use-create-group-mutation"
+import { useCreateGroupMutation } from "../mutations"
 import { useGroupWriteForm } from "../write-form"
 
 export const CreateGroupModal: FC<ContextModalProps> = ({ context, id }) => {

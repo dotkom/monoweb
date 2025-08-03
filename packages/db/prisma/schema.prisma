@@ -130,6 +130,7 @@ model Group {
   events      EventHostingGroup[]
   type        GroupType
   memberships GroupMembership[]
+  roles       GroupRole[]
 
   @@map("group")
 }
@@ -153,11 +154,10 @@ model GroupMembership {
 model GroupMembershipRole {
   membershipId String
   membership   GroupMembership @relation(fields: [membershipId], references: [id])
-  groupId      String
-  roleName     String
-  role         GroupRole       @relation(fields: [groupId, roleName], references: [groupId, name])
+  roleId       String
+  role         GroupRole       @relation(fields: [roleId], references: [id])
 
-  @@id([membershipId, groupId, roleName])
+  @@id([membershipId, roleId])
   @@map("group_membership_role")
 }
 
@@ -170,13 +170,15 @@ enum GroupRoleType {
 }
 
 model GroupRole {
+  id      String        @id @default(uuid())
   groupId String
+  group   Group         @relation(fields: [groupId], references: [slug])
   name    String
   type    GroupRoleType @default(COSMETIC)
 
   groupMembershipRoles GroupMembershipRole[]
 
-  @@id([groupId, name])
+  @@unique([groupId, name])
   @@map("group_role")
 }
 
