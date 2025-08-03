@@ -3,10 +3,10 @@ import { UserSearch } from "@/app/user/components/UserSearch/UserSearch"
 import { GenericTable } from "@/components/GenericTable"
 import { useTRPC } from "@/lib/trpc"
 import type { PersonalMarkDetails, User } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
 import { Box, Button, CloseButton, Group, Stack, Title } from "@mantine/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEditMarkMutation } from "../mutations/use-edit-mark-mutation"
@@ -54,7 +54,7 @@ export default function MarkEditCard() {
       header: () => "Bruker",
       cell: (info) => <Link href={`/user/${info.getValue().id}`}>{info.getValue().name}</Link>,
     }),
-    columnHelper.accessor((personalMark) => formatDate(personalMark.personalMark.createdAt), {
+    columnHelper.accessor((personalMark) => formatDate(personalMark.personalMark.createdAt, "dd.MM.yyyy"), {
       id: "createdAt",
       header: () => "Gitt",
     }),
