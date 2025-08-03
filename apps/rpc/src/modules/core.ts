@@ -137,11 +137,14 @@ export async function createServiceLayer(
   )
   const groupService = getGroupService(groupRepository, userService)
   const jobListingService = getJobListingService(jobListingRepository)
+  const markService = getMarkService(markRepository)
+  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
   const attendeeService = getAttendeeService(
     attendeeRepository,
     attendanceRepository,
     userService,
-    taskSchedulingService
+    taskSchedulingService,
+    personalMarkService
   )
   const attendanceService = getAttendanceService(
     attendanceRepository,
@@ -166,8 +169,6 @@ export async function createServiceLayer(
     productRepository,
     paymentService
   )
-  const markService = getMarkService(markRepository)
-  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)

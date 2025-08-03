@@ -1,44 +1,81 @@
 "use client"
-
-import { useUserQuery } from "@/app/user/components/UserSearch/queries"
+import { UserSearch } from "@/app/user/components/UserSearch/UserSearch"
 import { GenericTable } from "@/components/GenericTable"
-import { MarkWriteSchema, type PersonalMark } from "@dotkomonline/types"
-import { Box, CloseButton, Group, Title } from "@mantine/core"
+import { useTRPC } from "@/lib/trpc"
+import type { PersonalMarkDetails, User } from "@dotkomonline/types"
+import { Box, Button, CloseButton, Group, Stack, Title } from "@mantine/core"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
-import type { FC } from "react"
 import { useEditMarkMutation } from "../mutations/use-edit-mark-mutation"
-import { usePersonalMarkGetByMarkId } from "../queries/use-personal-mark-get-by-mark-id"
 import { useMarkWriteForm } from "../write-form"
 import { useMarkDetailsContext } from "./provider"
 
-const UserNameCell: FC<{ userId: string }> = ({ userId }) => {
-  const { data: user } = useUserQuery(userId)
-  return <span>{user?.id || "Loading..."}</span>
-}
-
-const columnHelper = createColumnHelper<PersonalMark>()
-const columns = [
-  columnHelper.accessor((personalMark) => personalMark, {
-    id: "userName",
-    header: () => "Bruker",
-    cell: (info) => <UserNameCell userId={info.getValue().userId} />,
-  }),
-]
+const columnHelper = createColumnHelper<PersonalMarkDetails>()
 
 export default function MarkEditCard() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const { mark } = useMarkDetailsContext()
+
   const edit = useEditMarkMutation()
   const router = useRouter()
-  const { personalMarks } = usePersonalMarkGetByMarkId(mark.id)
+
+  const markQueryOptions = trpc.personalMark.getPersonalMarkDetailsByMark.queryOptions({
+    id: mark.id,
+  })
+  const { data: personalMarks } = useQuery({ ...markQueryOptions, initialData: [] })
+
   const FormComponent = useMarkWriteForm({
     label: "Oppdater prikk",
     onSubmit: (data) => {
-      MarkWriteSchema.parse(data)
-      edit.mutate({ id: mark.id, ...data })
+      edit.mutate({ ...data, id: mark.id, type: "MANUAL" })
     },
     defaultValues: { ...mark },
   })
+
+  const removeMark = useMutation(
+    trpc.personalMark.removeFromUser.mutationOptions({
+      onSuccess: () => queryClient.invalidateQueries(markQueryOptions),
+    })
+  )
+
+  const giveMark = useMutation(
+    trpc.personalMark.addToUser.mutationOptions({
+      onSuccess: () => queryClient.invalidateQueries(markQueryOptions),
+    })
+  )
+
+  const columns = [
+    columnHelper.accessor((personalMark) => personalMark.user, {
+      id: "userName",
+      header: () => "Bruker",
+      cell: (info) => <Link href={`/user/${info.getValue().id}`}>{info.getValue().name}</Link>,
+    }),
+    columnHelper.accessor((personalMark) => formatDate(personalMark.personalMark.createdAt, "dd.MM.yyyy"), {
+      id: "createdAt",
+      header: () => "Gitt",
+    }),
+    columnHelper.accessor((personalMark) => personalMark, {
+      id: "remove",
+      header: () => "Fjern prikk",
+      cell: (info) => (
+        <Button
+          onClick={() => {
+            const {
+              user: { id: userId },
+              personalMark: { markId },
+            } = info.getValue()
+            removeMark.mutate({ userId, markId })
+          }}
+        >
+          Fjern
+        </Button>
+      ),
+    }),
+  ]
 
   const table = useReactTable({
     data: personalMarks,
@@ -52,8 +89,21 @@ export default function MarkEditCard() {
         <CloseButton onClick={() => router.back()} />
         <Title>{mark.title}</Title>
       </Group>
-      <FormComponent />
-      <GenericTable table={table} />
+      <Stack>
+        <FormComponent />
+
+        <Title order={2}>Gi {mark.weight === 6 ? "suspensjon" : "prikk"} til flere</Title>
+        <UserSearch
+          excludeUserIds={personalMarks.map((mark) => mark.user.id)}
+          onSubmit={(data: User) => {
+            giveMark.mutate({
+              userId: data.id,
+              markId: mark.id,
+            })
+          }}
+        />
+        <GenericTable table={table} />
+      </Stack>
     </Box>
   )
 }

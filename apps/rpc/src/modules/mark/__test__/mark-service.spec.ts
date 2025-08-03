@@ -12,11 +12,13 @@ describe("MarkService", () => {
   it("creates a new mark", async () => {
     const mark = {
       title: "",
-      category: "",
       details: "",
       createdAt: new Date(),
       duration: 20,
       updatedAt: new Date(),
+      weight: 3,
+      groupSlug: "bedkom",
+      type: "MANUAL" as const,
     }
     const id = randomUUID()
     vi.spyOn(markRepository, "create").mockResolvedValueOnce({ id, ...mark })
