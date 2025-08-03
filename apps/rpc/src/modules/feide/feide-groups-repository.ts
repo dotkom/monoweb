@@ -1,3 +1,4 @@
+import { getLogger } from "@dotkomonline/logger"
 import {
   type FeideResponseGroup,
   FeideResponseGroupSchema,
@@ -5,7 +6,6 @@ import {
   type StudentInformation,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { StudentGroupsNotFoundError } from "./feide-groups-error"
 
 const SUBJECT_GROUP_TYPE = "fc:fs:emne"
 const STUDY_PROGRAMME_GROUP_TYPE = "fc:fs:prg"
@@ -19,12 +19,16 @@ export interface FeideGroupsRepository {
    * @returns A promise that resolves to an object containing the student's courses, study programmes, and specializations.
    * @throws An error if the request fails or if the response is not in the expected format.
    *
+   * NOTE: The access token (which is opaque) can be expired in which case we get a 401 unauthorized response. In this
+   * scenario, the caller should handle the error and re-authenticate the user to get a new access token.
+   *
    * @see https://docs.feide.no/reference/apis/groups_api/index.html
    */
-  getStudentInformation(accessToken: string): Promise<StudentInformation>
+  getStudentInformation(accessToken: string): Promise<StudentInformation | null>
 }
 
 export function getFeideGroupsRepository(): FeideGroupsRepository {
+  const logger = getLogger("feide-groups-repository")
   return {
     async getStudentInformation(accessToken) {
       const response = await fetch("https://groups-api.dataporten.no/groups/me/groups", {
@@ -33,7 +37,20 @@ export function getFeideGroupsRepository(): FeideGroupsRepository {
         },
       })
       if (!response.ok) {
-        throw new StudentGroupsNotFoundError(await response.text())
+        const output = await response.text()
+        logger.error(
+          "Failed to fetch student groups from Feide Groups API: %o for HTTP response %d",
+          output,
+          response.status
+        )
+        // In case of a 401, we can continue as the access token is likely expired.
+        if (response.status === 401) {
+          logger.warn("Access token is likely expired, returning null")
+          return null
+        }
+        throw new Error(
+          `Failed to fetch student groups from Feide Groups API: ${output} for HTTP response ${response.status}`
+        )
       }
 
       const responseGroups = z.array(FeideResponseGroupSchema).parse(await response.json())
