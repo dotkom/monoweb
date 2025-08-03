@@ -375,7 +375,9 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
     auth0_client.appkom_veldedighet.client_id,
-    auth0_client.voting.client_id
+    auth0_client.voting.client_id,
+    auth0_client.auth0_account_management_api_management_client.client_id,
+    auth0_client.feide_account_linker.client_id,
   ]
 }
 
@@ -392,7 +394,9 @@ resource "auth0_connection_clients" "feide" {
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
     auth0_client.appkom_veldedighet.client_id,
-    auth0_client.voting.client_id
+    auth0_client.voting.client_id,
+    auth0_client.auth0_account_management_api_management_client.client_id,
+    auth0_client.feide_account_linker.client_id,
   ]
 }
 
@@ -854,8 +858,6 @@ resource "auth0_client_credentials" "feide_account_linker" {
 }
 
 resource "auth0_client_grant" "m2m_grant" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
   client_id = auth0_client.feide_account_linker.client_id
   audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
 
@@ -866,8 +868,6 @@ resource "auth0_client_grant" "m2m_grant" {
 }
 
 resource "auth0_action" "feide_account_linking" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
   name    = "Feide Account Linking"
   runtime = "node18"
   code    = file("js/actions/linkFeideAccounts.js")
@@ -934,12 +934,10 @@ resource "auth0_action" "update_membership" {
 }
 
 resource "auth0_trigger_actions" "login_flow" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
   trigger = "post-login"
 
   actions {
-    id           = auth0_action.feide_account_linking[0].id
-    display_name = auth0_action.feide_account_linking[0].name
+    id           = auth0_action.feide_account_linking.id
+    display_name = auth0_action.feide_account_linking.name
   }
 }
