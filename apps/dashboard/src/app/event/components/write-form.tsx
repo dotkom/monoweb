@@ -6,7 +6,7 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type EventStatusWrite, type EventType, EventWriteSchema } from "@dotkomonline/types"
+import { type EventStatus, type EventType, EventWriteSchema } from "@dotkomonline/types"
 import { addHours, roundToNearestHours } from "date-fns"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
@@ -22,7 +22,7 @@ const EVENT_FORM_DATA_TYPE = [
 const EVENT_FORM_DATA_STATUS = [
   { value: "DRAFT", label: "Utkast" },
   { value: "PUBLIC", label: "Publisert" },
-] as const satisfies { value: EventStatusWrite; label: string }[]
+] as const satisfies { value: Omit<EventStatus, "DELETED">; label: string }[]
 
 const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
