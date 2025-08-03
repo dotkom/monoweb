@@ -1,5 +1,6 @@
 "use client"
 
+import { GenericTable } from "@/components/GenericTable"
 import type { Event, EventType } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import {
@@ -16,12 +17,9 @@ import {
   Tooltip,
 } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMemo } from "react"
-
-import { GenericTable } from "@/components/GenericTable"
-import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
 import { EventHostingGroupList } from "./components/event-hosting-group-list"
 import { useEventAllQuery } from "./queries"
 
@@ -63,8 +61,8 @@ export default function EventPage() {
       columnHelper.accessor("start", {
         header: () => "Startdato",
         cell: (info) => {
-          const longDate = formatDate(info.getValue(), "eeee dd. MMMM yyyy HH:mm", { locale: nb })
-          const shortDate = formatDate(info.getValue(), "dd. MMM yyyy", { locale: nb })
+          const longDate = formatDate(info.getValue(), "eeee dd. MMMM yyyy HH:mm")
+          const shortDate = formatDate(info.getValue(), "dd. MMM yyyy")
 
           return (
             <Tooltip label={capitalizeFirstLetter(longDate)}>

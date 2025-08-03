@@ -6,7 +6,6 @@ import type { Attendance, AttendanceId } from "@dotkomonline/types"
 import { Icon, Text, cn } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
-import { nb } from "date-fns/locale"
 import type { FC } from "react"
 
 const getAttendeeCountAndCapacity = (attendance: Attendance): [number, number] => {
@@ -92,7 +91,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
       {attendanceStatus === "NotOpened" && (
         <Text className="hidden md:block text-sm text-black dark:text-stone-400">
-          Åpner {formatDistanceToNowStrict(attendance.registerStart, { locale: nb, addSuffix: true })}
+          Åpner {formatDistanceToNowStrict(attendance.registerStart, { addSuffix: true })}
         </Text>
       )}
     </div>

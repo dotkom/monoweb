@@ -2,10 +2,10 @@
 
 import { GenericTable } from "@/components/GenericTable"
 import type { Mark, MarkId } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMarkCountUsersQuery } from "./queries/use-count-users-with-mark-query"
 import { usePunishmentAllQuery } from "./queries/use-punishment-all-query"
@@ -28,7 +28,7 @@ const columns = [
   }),
   columnHelper.accessor("createdAt", {
     header: () => "Opprettet",
-    cell: (info) => formatDate(info.getValue()),
+    cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
   }),
   columnHelper.accessor((mark) => mark, {
     id: "count",
