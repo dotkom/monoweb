@@ -77,7 +77,7 @@ export const groupRouter = t.router({
       z.object({
         userId: GroupMembershipSchema.shape.userId,
         groupId: GroupMembershipSchema.shape.groupId,
-        roleIds: GroupRoleSchema.shape.id.array(),
+        roleIds: GroupRoleSchema.shape.type.array(),
       })
     )
     .mutation(async ({ input, ctx }) =>
@@ -95,7 +95,7 @@ export const groupRouter = t.router({
       z.object({
         id: GroupMembershipSchema.shape.id,
         data: GroupMembershipWriteSchema,
-        roleIds: GroupRoleSchema.shape.id.array(),
+        roleIds: GroupRoleSchema.shape.type.array(),
       })
     )
     .mutation(async ({ input, ctx }) =>
@@ -111,7 +111,7 @@ export const groupRouter = t.router({
   updateRole: authenticatedProcedure
     .input(
       z.object({
-        id: GroupRoleSchema.shape.id,
+        id: GroupRoleSchema.shape.type,
         role: GroupRoleWriteSchema,
       })
     )
