@@ -832,8 +832,6 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
 }
 
 resource "auth0_client" "feide_account_linker" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
   name     = "Feide Account Linker"
   app_type = "non_interactive"
 
@@ -851,16 +849,14 @@ resource "auth0_client" "feide_account_linker" {
 }
 
 resource "auth0_client_credentials" "feide_account_linker" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
-  client_id             = auth0_client.feide_account_linker[0].client_id
+  client_id             = auth0_client.feide_account_linker.client_id
   authentication_method = "client_secret_post"
 }
 
 resource "auth0_client_grant" "m2m_grant" {
   count = terraform.workspace == "prd" ? 0 : 1
 
-  client_id = auth0_client.feide_account_linker[0].client_id
+  client_id = auth0_client.feide_account_linker.client_id
   audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
 
   scopes = [
@@ -899,12 +895,12 @@ resource "auth0_action" "feide_account_linking" {
 
   secrets {
     name  = "CLIENT_ID"
-    value = auth0_client.feide_account_linker[0].client_id
+    value = auth0_client.feide_account_linker.client_id
   }
 
   secrets {
     name  = "CLIENT_SECRET"
-    value = auth0_client_credentials.feide_account_linker[0].client_secret
+    value = auth0_client_credentials.feide_account_linker.client_secret
   }
 
   secrets {
