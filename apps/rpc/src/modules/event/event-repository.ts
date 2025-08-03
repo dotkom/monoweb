@@ -122,7 +122,11 @@ export function getEventRepository(): EventRepository {
           },
           hostingGroups: {
             include: {
-              group: true,
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
             },
           },
         },
@@ -146,7 +150,11 @@ export function getEventRepository(): EventRepository {
           },
           hostingGroups: {
             include: {
-              group: true,
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
             },
           },
         },

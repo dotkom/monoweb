@@ -1,11 +1,24 @@
+import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { createTextareaInput } from "@/components/forms/TextareaInput"
-import { type GroupWrite, GroupWriteSchema } from "@dotkomonline/types"
+import { GroupTypeSchema, type GroupWrite, GroupWriteSchema, getGroupTypeName } from "@dotkomonline/types"
+import { getCurrentUtc } from "@dotkomonline/utils"
+import z from "zod"
 
-const GROUP_FORM_DEFAULT_VALUES: Partial<GroupWrite> = {}
+const FormSchema = GroupWriteSchema.omit({
+  deactivatedAt: true,
+}).extend({
+  isActive: z.boolean(),
+})
+
+type FormResult = z.infer<typeof FormSchema>
+
+const DEFAULT_VALUES: Partial<FormResult> = {
+  imageUrl: null,
+}
 
 interface UseGroupWriteFormProps {
   onSubmit(data: GroupWrite): void
@@ -16,54 +29,67 @@ interface UseGroupWriteFormProps {
 export const useGroupWriteForm = ({
   onSubmit,
   label = "Lag ny gruppe",
-  defaultValues = GROUP_FORM_DEFAULT_VALUES,
+  defaultValues = DEFAULT_VALUES,
 }: UseGroupWriteFormProps) =>
   useFormBuilder({
-    schema: GroupWriteSchema,
-    defaultValues: defaultValues,
-    onSubmit,
+    schema: FormSchema,
+    defaultValues,
+    onSubmit: (data) => {
+      const deactivatedAt = data.isActive ? null : getCurrentUtc()
+
+      onSubmit({
+        ...data,
+        deactivatedAt,
+      })
+    },
     label,
     fields: {
       name: createTextInput({
         label: "Navn",
-        placeholder: "Gruppe",
+        placeholder: "Drifts- og utviklingskomiteen",
+      }),
+      abbreviation: createTextInput({
+        label: "Kort navn",
+        placeholder: "Dotkom",
         withAsterisk: true,
         required: true,
       }),
+      about: createTextareaInput({
+        label: "Om gruppen",
+        withAsterisk: true,
+        required: true,
+        rows: 5,
+      }),
       description: createTextareaInput({
-        label: "Kort beskrivelse",
+        label: "Beskrivelse",
         withAsterisk: false,
         required: false,
         rows: 5,
       }),
-      about: createTextareaInput({
-        label: "Beskrivelse",
-        withAsterisk: true,
-        required: true,
-        rows: 5,
-      }),
       email: createTextInput({
         label: "Kontakt-e-post",
-        withAsterisk: true,
         type: "email",
-        required: true,
+      }),
+      contactUrl: createTextInput({
+        label: "Kontakt-lenke",
       }),
       imageUrl: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
-        required: true,
       }),
       type: createSelectInput({
         label: "Type",
         placeholder: "Velg en",
         withAsterisk: true,
         required: true,
-        data: [
-          { value: "COMMITTEE", label: "Komité" },
-          { value: "NODECOMMITTEE", label: "Nodekomité" },
-          { value: "OTHERGROUP", label: "Annen gruppe" },
-          { value: "INTEREST_GROUP", label: "Interessegruppe" },
-        ],
+        data: Object.values(GroupTypeSchema.Values).map((groupType) => ({
+          value: groupType,
+          label: getGroupTypeName(groupType),
+        })),
+      }),
+      isActive: createCheckboxInput({
+        label: "Aktiv",
+        defaultChecked: !defaultValues?.deactivatedAt,
       }),
     },
   })

@@ -3,16 +3,22 @@ import {
   type Group,
   type GroupId,
   type GroupMember,
+  type GroupMembership,
   type GroupMembershipWrite,
+  type GroupRole,
+  type GroupRoleId,
+  type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
+  type MembershipId,
   type UserId,
   getDefaultGroupMemberRoles,
 } from "@dotkomonline/types"
-import { slugify } from "@dotkomonline/utils"
-import { compareDesc } from "date-fns"
+import { getCurrentUtc, slugify } from "@dotkomonline/utils"
+import { areIntervalsOverlapping, compareDesc } from "date-fns"
+import { maxTime } from "date-fns/constants"
 import type { UserService } from "../user/user-service"
-import { GroupNotFoundError } from "./group-error"
+import { GroupMembershipNotFoundError, GroupMembershipOverlap, GroupNotFoundError } from "./group-error"
 import type { GroupRepository } from "./group-repository"
 
 export interface GroupService {
@@ -36,9 +42,23 @@ export interface GroupService {
   getAllIds(handle: DBHandle): Promise<GroupId[]>
   getAllIdsByType(handle: DBHandle, groupType: GroupType): Promise<GroupId[]>
   getMembers(handle: DBHandle, groupId: GroupId): Promise<Map<UserId, GroupMember>>
+  getMember(handle: DBHandle, groupId: GroupId, userId: UserId): Promise<GroupMember>
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
-  addMember(handle: DBHandle, data: GroupMembershipWrite): Promise<GroupMember>
-  removeMember(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<Omit<GroupMember, "user">>
+  startMembership(handle: DBHandle, userId: UserId, groupId: GroupId, roleIds: Set<GroupRoleId>): Promise<GroupMember>
+  endMembership(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<GroupMembership[]>
+  /**
+   * Attempts to update a membership if it doesn't overlap with existing memberships
+   *
+   * @throws {GroupMembershipOverlap} if the membership overlaps others
+   */
+  updateMembership(
+    handle: DBHandle,
+    id: MembershipId,
+    data: GroupMembershipWrite,
+    roleIds: Set<GroupRoleId>
+  ): Promise<GroupMembership>
+  createRole(handle: DBHandle, data: GroupRoleWrite): Promise<void>
+  updateRole(handle: DBHandle, id: GroupRoleId, role: GroupRoleWrite): Promise<GroupRole>
 }
 
 export function getGroupService(groupRepository: GroupRepository, userService: UserService): GroupService {
@@ -73,7 +93,10 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
         id = `${slugify(payload.abbreviation)}-${i}`
       }
 
-      return groupRepository.create(handle, id, payload, getDefaultGroupMemberRoles(id))
+      await groupRepository.create(handle, id, payload)
+      await groupRepository.createRoles(handle, getDefaultGroupMemberRoles(id))
+
+      return await this.getById(handle, id)
     },
     async update(handle, groupId, values) {
       return groupRepository.update(handle, groupId, values)
@@ -116,19 +139,88 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
 
       return members
     },
+    async getMember(handle, groupId, userId) {
+      const memberships = await groupRepository.getMemberships(handle, groupId, userId)
+
+      if (memberships.length === 0) {
+        throw new Error(`Member not found for user ${userId} in group ${groupId}`)
+      }
+
+      const user = await userService.getById(handle, userId)
+      const groupMemberships = memberships.sort((a, b) => compareDesc(a.start, b.start))
+
+      return {
+        ...user,
+        groupMemberships,
+      }
+    },
     async getAllByMember(handle, userId) {
       return groupRepository.getGroupsByUserId(handle, userId)
     },
-    async addMember(handle, data) {
-      // TODO: const member = await groupRepository.addMember(handle, data)
-      // const user = await userService.getById(handle, data.userId)
-      //
-      // return { ...member, user }
-      throw new Error("Not implemented yet")
+    async startMembership(handle, userId, groupId, roleIds) {
+      await this.endMembership(handle, userId, groupId)
+
+      const data: GroupMembershipWrite = {
+        userId,
+        groupId,
+        start: getCurrentUtc(),
+        end: null,
+      }
+
+      await groupRepository.createMembership(handle, data, roleIds)
+      return await this.getMember(handle, groupId, userId)
     },
-    async removeMember(handle, userId, groupId) {
-      // TODO: return await groupRepository.removeMember(handle, userId, groupId)
-      throw new Error("Not implemented yet")
+    async endMembership(handle, userId, groupId) {
+      const memberships = await groupRepository.getMemberships(handle, groupId, userId)
+      const activeMemberships = memberships.filter((membership) => !membership.end)
+
+      const endMembershipPromises = activeMemberships.map((membership) =>
+        groupRepository.updateMembership(
+          handle,
+          membership.id,
+          {
+            ...membership,
+            end: getCurrentUtc(),
+          },
+          new Set(membership.roles.map((role) => role.id))
+        )
+      )
+
+      return await Promise.all(endMembershipPromises)
+    },
+    async updateMembership(handle, id, data, roleIds) {
+      const currentMembership = await groupRepository.getMembershipById(handle, id)
+      if (!currentMembership) throw new GroupMembershipNotFoundError(id)
+
+      const memberships = await groupRepository.getMemberships(
+        handle,
+        currentMembership.groupId,
+        currentMembership.userId
+      )
+
+      for (const membership of memberships) {
+        if (membership.id === id) continue
+
+        const maxDate = new Date(maxTime)
+
+        if (
+          areIntervalsOverlapping(
+            { start: membership.start, end: membership.end ?? maxDate },
+            { start: data.start, end: data.end ?? maxDate },
+            { inclusive: false }
+          )
+        ) {
+          throw new GroupMembershipOverlap()
+        }
+      }
+
+      return await groupRepository.updateMembership(handle, id, data, roleIds)
+    },
+    async createRole(handle, data) {
+      await groupRepository.createRoles(handle, [data])
+    },
+    async updateRole(handle, id, role) {
+      return await groupRepository.updateRole(handle, id, role)
     },
   }
 }

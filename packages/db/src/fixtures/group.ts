@@ -342,4 +342,4 @@ export const getGroupRoleFixtures = (groupInput: Prisma.GroupCreateInput) =>
       name: "Medlem",
       type: "COSMETIC",
     },
-  ] as const satisfies Prisma.GroupRoleCreateInput[]
+  ] as const satisfies Prisma.GroupRoleCreateManyInput[]

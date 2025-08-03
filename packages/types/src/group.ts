@@ -3,7 +3,21 @@ import type { z } from "zod"
 import { schemas } from "@dotkomonline/db/schemas"
 import { UserSchema } from "./user"
 
-export const GroupSchema = schemas.GroupSchema.extend({})
+export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
+export type GroupRole = z.infer<typeof GroupRoleSchema>
+export type GroupRoleId = GroupRole["id"]
+
+export const GroupRoleWriteSchema = GroupRoleSchema.pick({
+  groupId: true,
+  name: true,
+  type: true,
+})
+
+export type GroupRoleWrite = z.infer<typeof GroupRoleWriteSchema>
+
+export const GroupSchema = schemas.GroupSchema.extend({
+  roles: GroupRoleSchema.array(),
+})
 export const GroupTypeSchema = schemas.GroupTypeSchema
 
 export type GroupId = Group["slug"]
@@ -14,12 +28,13 @@ export type GroupType = z.infer<typeof GroupTypeSchema>
 export const GroupWriteSchema = GroupSchema.omit({
   slug: true,
   createdAt: true,
+  roles: true,
 })
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
 
-export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
-export type GroupRole = z.infer<typeof GroupRoleSchema>
+export const GroupRoleTypeSchema = schemas.GroupRoleTypeSchema
+export type GroupRoleType = z.infer<typeof GroupRoleTypeSchema>
 
 export const GroupMembershipSchema = schemas.GroupMembershipSchema.extend({
   roles: GroupRoleSchema.array(),
@@ -32,7 +47,12 @@ export type GroupMember = z.infer<typeof GroupMemberSchema>
 
 export type GroupMembership = z.infer<typeof GroupMembershipSchema>
 
-export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({ roles: true })
+export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({
+  roles: true,
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
 export type GroupMembershipId = GroupMembership["id"]
 export type GroupMembershipWrite = z.infer<typeof GroupMembershipWriteSchema>
 
@@ -44,7 +64,7 @@ export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
     { groupId, type: "COSMETIC", name: "Tillitsvalgt" },
     { groupId, type: "COSMETIC", name: "Økonomiansvarlig" },
     { groupId, type: "COSMETIC", name: "Medlem" },
-  ] as const satisfies GroupRole[]
+  ] as const satisfies GroupRoleWrite[]
 
 export const createGroupPageUrl = (group: Group) => {
   switch (group.type) {
@@ -71,6 +91,19 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
       return "Annen gruppe"
     case "INTEREST_GROUP":
       return "Interessegruppe"
+    default:
+      return "Ukjent type"
+  }
+}
+
+export const getGroupRoleTypeName = (type: GroupRoleType) => {
+  switch (type) {
+    case "LEADER":
+      return "Leder"
+    case "PUNISHER":
+      return "Vinstraffansvarlig"
+    case "COSMETIC":
+      return "Komsetisk"
     default:
       return "Ukjent type"
   }
