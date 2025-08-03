@@ -9,7 +9,7 @@ import {
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { procedure, staffProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { feedbackRouter } from "./feedback-router"
 
@@ -29,7 +29,7 @@ export const eventRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.eventService.findEventById(handle, input))
     ),
 
-  create: authenticatedProcedure
+  create: staffProcedure
     .input(
       z.object({
         event: EventWriteSchema,
@@ -38,7 +38,6 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => {
         const event = await ctx.eventService.createEvent(handle, input.event)
         return await ctx.eventService.updateEventOrganizers(
@@ -50,7 +49,7 @@ export const eventRouter = t.router({
       })
     }),
 
-  edit: authenticatedProcedure
+  edit: staffProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
@@ -60,7 +59,6 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => {
         const event = await ctx.eventService.updateEvent(handle, input.id, input.event)
         return await ctx.eventService.updateEventOrganizers(
@@ -72,14 +70,13 @@ export const eventRouter = t.router({
       })
     }),
 
-  delete: authenticatedProcedure
+  delete: staffProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation()
       return ctx.executeTransaction(async (handle) => {
         return await ctx.eventService.deleteEvent(handle, input.id)
       })

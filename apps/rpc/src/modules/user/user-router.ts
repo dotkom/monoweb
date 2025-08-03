@@ -59,7 +59,7 @@ export const userRouter = t.router({
       })
     })
   ),
-  isAdmin: authenticatedProcedure.query(async ({ ctx }) => {
+  isStaff: authenticatedProcedure.query(async ({ ctx }) => {
     try {
       ctx.authorize.requireAffiliation()
       return true
