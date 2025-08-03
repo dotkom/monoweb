@@ -2,15 +2,34 @@ import { auth } from "@/auth"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
-import { type Membership, createGroupPageUrl, getActiveMembership, getMembershipGrade } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title } from "@dotkomonline/ui"
-import { formatDistanceToNowStrict, getYear } from "date-fns"
+import {
+  type Membership,
+  type MembershipSpecialization,
+  createGroupPageUrl,
+  getActiveMembership,
+  getMembershipGrade,
+} from "@dotkomonline/types"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Icon,
+  ReadMore,
+  Text,
+  Title,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@dotkomonline/ui"
+import { formatDate, formatDistanceToNowStrict } from "date-fns"
 import Link from "next/link"
 
 const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
   `/api/auth/authorize?connection=FEIDE&redirectAfter=/profil/${profileSlug}` as const
 
-function membershipDescription(membership: Membership) {
+const getMembershipTypeString = (membership: Membership) => {
   switch (membership.type) {
     case "BACHELOR_STUDENT":
       return "Bachelor"
@@ -22,6 +41,21 @@ function membershipDescription(membership: Membership) {
       return "Ridder"
     case "PHD_STUDENT":
       return "PhD-student"
+  }
+}
+
+const getSpecializationString = (specialization: MembershipSpecialization) => {
+  switch (specialization) {
+    case "ARTIFICIAL_INTELLIGENCE":
+      return "Kunstig intelligens"
+    case "DATABASE_AND_SEARCH":
+      return "Database og søk"
+    case "INTERACTION_DESIGN":
+      return "Interaksjonsdesign"
+    case "SOFTWARE_ENGINEERING":
+      return "Programvareutvikling"
+    case "UNKNOWN":
+      return "Ukjent spesialisering"
   }
 }
 
@@ -50,12 +84,16 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
   const { profileSlug: rawProfileSlug } = await params
   const profileSlug = decodeURIComponent(rawProfileSlug)
 
-  const user = await server.user.getByProfileSlug.query(profileSlug)
-
-  const [session, groups, events] = await Promise.all([
+  const [user, session] = await Promise.all([
+    server.user.getByProfileSlug.query(profileSlug), //
     auth.getServerSession(),
+  ])
+
+  const isLoggedIn = Boolean(session)
+
+  const [groups, events] = await Promise.all([
     server.group.allByMember.query(user.id),
-    server.event.allByAttendingUserId.query({ id: user.id }),
+    isLoggedIn ? server.event.allByAttendingUserId.query({ id: user.id }) : Promise.resolve([]),
   ])
 
   const allGroups = [
@@ -65,6 +103,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
     })),
   ]
 
+  // "Compilation" is an inaugural tradition in Online where you "officially" become a member
+  const isCompiled = false // TODO: Reimplement compilation with flags
   const isUser = user.id === session?.sub
 
   const activeMembership = getActiveMembership(user)
@@ -96,7 +136,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
             {activeMembership ? (
               <Text>
                 {grade && `${grade}. klasse (`}
-                {membershipDescription(activeMembership)}
+                {getMembershipTypeString(activeMembership)}
                 {grade && ")"}
               </Text>
             ) : (
@@ -105,19 +145,29 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
 
             <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-500 hidden md:block" />
 
-            {user.createdAt && <Text>{capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt))} i Online</Text>}
+            {user.createdAt && (
+              <TooltipProvider>
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger>
+                    <Text>{capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt))} i Online</Text>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <Text className="text-xs text-gray-500 dark:text-stone-500">
+                      Registrert {formatDate(user.createdAt, "dd. MMMM yyyy HH:mm")}
+                    </Text>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
 
           <div className="flex flex-row items-center gap-2 text-sm">
-            {
-              // TODO: Reimplement compilation with flags
-              false && (
-                <div className="flex flex-row items-center w-fit gap-2 p-1.5 bg-gray-100 dark:bg-stone-800 rounded-md">
-                  <OnlineIcon height={16} width={16} />
-                  <Text>Kompilert</Text>
-                </div>
-              )
-            }
+            {isCompiled && (
+              <div className="flex flex-row items-center w-fit gap-2 p-1.5 bg-gray-100 dark:bg-stone-800 rounded-md">
+                <OnlineIcon height={16} width={16} />
+                <Text>Kompilert</Text>
+              </div>
+            )}
           </div>
 
           {user.biography ? (
@@ -134,8 +184,9 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
             <Title>Din bruker</Title>
             <div className="flex flex-row gap-8">
               <div className="flex flex-col gap-2">
+                {renderUserInfo("Brukernavn", user.profileSlug)}
                 {renderUserInfo("E-post", user.email)}
-                {renderUserInfo("Kjønn", user.gender)}
+                {renderUserInfo("Kjønn", user.gender || "Ikke oppgitt")}
                 {renderUserInfo("Telefon", user.phone)}
                 {renderUserInfo("Allergier", user.dietaryRestrictions || "Ingen allergier")}
               </div>
@@ -145,14 +196,20 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
           <div className="flex flex-col gap-3">
             <Title>Medlemskap</Title>
 
-            <div className="flex flex-row gap-2 items-center p-3 bg-gray-100 dark:bg-stone-800 rounded-md w-fit">
+            <div className="flex flex-row gap-4 items-center p-6 bg-gray-100 dark:bg-stone-800 rounded-xl w-fit">
               {activeMembership ? (
                 <>
                   <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
                   <div className="flex flex-col gap-1">
-                    <Text className="text-xl">{membershipDescription(activeMembership)}</Text>
-                    {activeMembership.specialization && <Text>{activeMembership.specialization}</Text>}
-                    <Text>Startet studiet i {getYear(activeMembership.start)}</Text>
+                    <Text className="text-xl">{getMembershipTypeString(activeMembership)}</Text>
+                    {activeMembership.specialization && (
+                      <Text>{getSpecializationString(activeMembership.specialization)}</Text>
+                    )}
+                    <Text>{grade}. klasse</Text>
+                    <Text className="text-xs text-gray-500 dark:text-stone-500">
+                      Medlemskapet varer fra {formatDate(activeMembership.start, "MMM yyyy")} til{" "}
+                      {formatDate(activeMembership.end, "MMM yyyy")}
+                    </Text>
                   </div>
                 </>
               ) : (
@@ -163,20 +220,36 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
               )}
             </div>
 
-            <Button
-              color={activeMembership ? "light" : "brand"}
-              variant={activeMembership ? "outline" : "solid"}
-              element="a"
-              href={AUTHORIZE_WITH_FEIDE(profileSlug)}
-              className="h-fit w-fit"
-            >
-              {activeMembership ? "Oppdater medlemskap" : "Registrer medlemskap"}
-            </Button>
+            {!activeMembership ? (
+              <>
+                <Button
+                  color={activeMembership ? "light" : "brand"}
+                  variant={activeMembership ? "outline" : "solid"}
+                  element="a"
+                  href={AUTHORIZE_WITH_FEIDE(profileSlug)}
+                  className="h-fit w-fit"
+                >
+                  Registrer medlemskap
+                </Button>
 
-            <Text className="text-gray-500 dark:text-stone-500 text-sm">
-              For å {activeMembership ? "oppdatere medlemskapet" : "registrere medlemskap"} må du logge inn med Feide.
-              Dersom du oppdager feil, ta kontakt med Hovedstyret.
-            </Text>
+                <Text className="text-gray-500 dark:text-stone-500 text-sm">
+                  For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med
+                  Hovedstyret.
+                </Text>
+              </>
+            ) : (
+              <Text className="text-gray-500 dark:text-stone-500 text-sm">
+                Ved feil angitt informasjon, ta kontakt med{" "}
+                <Button
+                  element="a"
+                  href="/komiteer/hs"
+                  variant="text"
+                  className="-ml-0.5 text-sm text-gray-500 dark:text-stone-500"
+                >
+                  Hovedstyret
+                </Button>
+              </Text>
+            )}
           </div>
         </div>
       )}
@@ -210,13 +283,17 @@ export default async function ProfilePage({ params }: { params: Promise<{ profil
         </div>
       )}
 
-      {events.length > 0 && (
-        <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-800 md:rounded-xl">
-          <Title>Arrangementer</Title>
+      <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-800 md:rounded-xl">
+        <Title>Arrangementer</Title>
 
+        {isLoggedIn ? (
           <EventList events={events} />
-        </div>
-      )}
+        ) : (
+          <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-500">
+            <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
