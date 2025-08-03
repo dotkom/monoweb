@@ -94,7 +94,7 @@ export const authenticatedProcedure = procedure.use(({ ctx, next }) => {
 })
 
 export const staffProcedure = t.procedure.use(({ ctx, next }) => {
-  ctx.authorize.requireSignIn()
+  ctx.authorize.requireAffiliation()
   return next({
     ctx: {
       ...ctx,
