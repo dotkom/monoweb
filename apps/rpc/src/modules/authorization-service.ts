@@ -2,7 +2,6 @@ import type { DBHandle } from "@dotkomonline/db"
 import type { GroupId, UserId } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import { LRUCache } from "lru-cache"
-import invariant from "tiny-invariant"
 
 export type AffiliationSet = Set<GroupId>
 
@@ -52,25 +51,21 @@ export function getAuthorizationService(): AuthorizationService {
       }
       // We use a raw query here to avoid the disturbing amount of objects the Prisma client query would be constructed
       // with. The query is simple enough that it is safe to use a raw query here.
-      type Row = { userId: UserId; groups: GroupId[] }
-      const records = await handle.$queryRawUnsafe<Row[]>(
-        `
-            SELECT ow_user.id                                      AS "userId",
-                   array_agg(group_membership."groupId")           AS "groups"
-            FROM ow_user
-                   LEFT JOIN group_membership ON ow_user.id = group_membership."userId"
-            WHERE group_membership.end IS NULL AND ow_user.id = $1
-            GROUP BY ow_user.id LIMIT 1;
-        `,
-        userId
-      )
-      invariant(records.length <= 1, "query should never return more than one row")
-      const record = records.at(0)
-      if (record === undefined) {
-        cache.delete(userId)
-        return new Set()
-      }
-      const affiliations = new Set([...record.groups])
+      const memberGroups = await handle.group.findMany({
+        where: {
+          memberships: {
+            some: {
+              userId,
+              end: null,
+            },
+          },
+        },
+        select: {
+          slug: true,
+        },
+      })
+      const memberGroupSlugs = memberGroups.map((m) => m.slug)
+      const affiliations = new Set(memberGroupSlugs)
       cache.set(userId, affiliations)
       return affiliations
     },
