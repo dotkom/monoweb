@@ -3,6 +3,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
   type Membership,
+  type MembershipSpecialization,
   MembershipSpecializationSchema,
   type MembershipWrite,
   type NTNUGroup,
@@ -100,7 +101,9 @@ export function getUserService(
     )
 
     if (masterProgramme !== undefined) {
-      const code = MembershipSpecializationSchema.catch("UNKNOWN").parse(studySpecializations?.[0].name)
+      const code = MembershipSpecializationSchema.catch("UNKNOWN").parse(
+        getSpecializationFromCode(studySpecializations?.[0].code)
+      )
       // If we have a new code that we have not seen, or for some other reason the code catches and returns UNKNOWN, we
       // emit a trace for it.
       if (code === "UNKNOWN") {
@@ -324,4 +327,19 @@ function estimateStudyGrade(studyPlanCourses: StudyplanCourse[], coursesTaken: N
 
   // Find the key with highest value - JS has ZERO nice utility functions :(
   return Number.parseInt(Object.entries(totalGradeIndications).reduce((a, b) => (a[1] > b[1] ? a : b))[0])
+}
+
+function getSpecializationFromCode(code: string): MembershipSpecialization {
+  // Derived from 'MSIT.json' file which is pulled from Feide Groups API and the NTNU study plan.
+  switch (code) {
+    case "MSIT-AI":
+      return "ARTIFICIAL_INTELLIGENCE"
+    case "MSIT-DBS":
+      return "DATABASE_AND_SEARCH"
+    case "MSIT-IXDGLT":
+      return "INTERACTION_DESIGN"
+    case "MSIT-SWE":
+      return "SOFTWARE_ENGINEERING"
+  }
+  return "UNKNOWN"
 }
