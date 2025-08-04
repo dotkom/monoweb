@@ -1,11 +1,12 @@
-import type { Attendance, AttendancePool, AttendanceStatus, Attendee } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, AttendanceStatus, Attendee, Punishment } from "@dotkomonline/types"
 import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import type { FC } from "react"
 
-const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean) => {
+const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean, hasPunishment: boolean) => {
   if (disabled) return "bg-gray-200 dark:bg-stone-800 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-800"
   if (attendee) return "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
-  if (isPoolFull) return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
+  if (isPoolFull || hasPunishment)
+    return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
 
   return "bg-green-300 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800"
 }
@@ -16,7 +17,8 @@ const getDisabledText = (
   pool: boolean,
   isPastDeregisterDeadline: boolean,
   isLoggedIn: boolean,
-  hasMembership?: boolean
+  hasMembership?: boolean,
+  isSuspended?: boolean
 ) => {
   if (!isLoggedIn) return "Du må være innlogget for å melde deg på"
   if (!hasMembership) return "Du må ha registrert medlemskap for å melde deg på"
@@ -24,6 +26,7 @@ const getDisabledText = (
   if (status === "Closed" && !attendee) return "Påmeldingen er stengt"
   if (!pool && !attendee) return "Du har ingen påmeldingsgruppe"
   if (isPastDeregisterDeadline && attendee) return "Avmeldingsfristen har utløpt"
+  if (isSuspended) return "Du er suspendert fra Online"
 
   return null
 }
@@ -38,6 +41,7 @@ interface Props {
   isLoggedIn: boolean
   hasMembership?: boolean
   status: AttendanceStatus
+  punishment?: Punishment | null
 }
 
 export const RegistrationButton: FC<Props> = ({
@@ -50,12 +54,15 @@ export const RegistrationButton: FC<Props> = ({
   isLoggedIn,
   hasMembership,
   status,
+  punishment,
 }) => {
-  const buttonText = attendee ? "Meld meg av" : "Meld meg på"
-  const buttonIcon = null
-
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
   const isPoolFull = pool ? pool.numAttendees >= pool.capacity : false
+  const isSuspended = punishment?.suspended ?? false
+  const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
+
+  const buttonText = attendee ? "Meld meg av" : "Meld meg på"
+  const buttonIcon = null
 
   const disabledText = getDisabledText(
     status,
@@ -63,11 +70,10 @@ export const RegistrationButton: FC<Props> = ({
     Boolean(pool),
     isPastDeregisterDeadline,
     isLoggedIn,
-    hasMembership
+    hasMembership,
+    isSuspended
   )
   const disabled = Boolean(disabledText)
-
-  const className = cn("rounded-lg h-fit min-h-[4rem] p-2", getButtonColor(disabled, Boolean(attendee), isPoolFull))
 
   const buttonContent = isLoading ? (
     <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
@@ -85,10 +91,13 @@ export const RegistrationButton: FC<Props> = ({
 
   const registrationButton = (
     <Button
-      className={className}
       onClick={attendee ? unregisterForAttendance : registerForAttendance}
       disabled={disabled}
       icon={buttonIcon}
+      className={cn(
+        "rounded-lg h-fit min-h-[4rem] flex-col gap-1",
+        getButtonColor(disabled, Boolean(attendee), isPoolFull, hasPunishment)
+      )}
     >
       {buttonContent}
     </Button>

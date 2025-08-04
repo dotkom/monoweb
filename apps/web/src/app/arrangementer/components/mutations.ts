@@ -30,7 +30,7 @@ interface UseRegisterMutationInput {
   onSuccess?: () => void
 }
 
-export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => {
+export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput = {}) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 

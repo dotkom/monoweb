@@ -12,7 +12,7 @@ import {
 } from "@dotkomonline/types"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, cn } from "@dotkomonline/ui"
-import { getExpiryDate } from "@dotkomonline/utils"
+import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -76,16 +76,11 @@ function MarkDisplay({
 }: {
   markInformation: VisiblePersonalMarkDetails
 }) {
-  const expires = getExpiryDate(personalMark.createdAt, mark.duration)
+  const expires = getPunishmentExpiryDate(personalMark.createdAt, mark.duration)
   const hasExpired = isPast(expires)
 
   return (
-    <div
-      className={cn(
-        "rounded-lg p-4 bg-gray-100 flex flex-col align-start gap-2",
-        !hasExpired && "bg-red-500 text-white"
-      )}
-    >
+    <div className={cn("rounded-lg p-4 bg-gray-100 flex flex-col align-start gap-2", !hasExpired && "bg-red-200")}>
       <div className="flex gap-2 justify-between">
         <div className="flex items-center gap-2">
           <Icon icon="tabler:alert-hexagon" className="text-4xl" />
@@ -310,10 +305,10 @@ export default async function ProfilePage({
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-0.5">
-                  <Title size="sm" className="font-medium">
-                    {group.name}
-                  </Title>
-                  <Text className="text-sm text-wrap overflow-hidden line-clamp-2">{group.description}</Text>
+                  <Text className="text-lg">{group.name}</Text>
+                  <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
+                    {group.description || group.about}
+                  </Text>
                 </div>
               </Link>
             ))}
