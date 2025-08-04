@@ -1,13 +1,13 @@
-import { server } from "@/utils/trpc/server";
-import type { Article, ArticleTagName, ArticleTag as ArticleTagType } from "@dotkomonline/types";
-import { Button, RichText, Text, Title, Video } from "@dotkomonline/ui";
-import clsx from "clsx";
-import { formatDate, isEqual } from "date-fns";
-import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import type { FC } from "react";
-import { ArticleListItem } from "../../ArticleListItem";
+import { server } from "@/utils/trpc/server"
+import type { Article, ArticleTagName, ArticleTag as ArticleTagType } from "@dotkomonline/types"
+import { Button, RichText, Text, Title, Video } from "@dotkomonline/ui"
+import clsx from "clsx"
+import { formatDate, isEqual } from "date-fns"
+import Image from "next/image"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import type { FC } from "react"
+import { ArticleListItem } from "../../ArticleListItem"
 
 const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: string }> }) => {
   const { id } = await params
@@ -16,7 +16,6 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
   if (!article) {
     return notFound()
   }
-
 
   const relatedArticles = (await server.article.related.query(article)).slice(0, 6)
 

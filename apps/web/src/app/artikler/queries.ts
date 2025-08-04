@@ -13,7 +13,7 @@ export const useArticleFilterQuery = (filters: ArticleFilterQuery) => {
 
   const { data, ...query } = useInfiniteQuery({
     ...trpc.article.findArticles.infiniteQueryOptions({
-      filters
+      filters,
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
