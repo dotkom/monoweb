@@ -149,13 +149,13 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
         <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
 
         {attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt) && (
-        <div className="flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg bg-black/5">
-          <Icon icon="tabler:clock-hour-2" className="text-base" />
-          <Text className={cn("text-sm")}>
-            {formatDistanceToNowStrict(attendee?.earliestReservationAt, { locale: nb })} utsettelse
-          </Text>
-        </div>
-      )}
+          <div className="flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg bg-black/5">
+            <Icon icon="tabler:clock-hour-2" className="text-base" />
+            <Text className={cn("text-sm")}>
+              {formatDistanceToNowStrict(attendee?.earliestReservationAt, { locale: nb })} utsettelse
+            </Text>
+          </div>
+        )}
       </div>
     </Card>
   )
