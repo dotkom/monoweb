@@ -1,33 +1,24 @@
 import { TZDate } from "@date-fns/tz"
-import { type Interval, addDays, differenceInDays, interval, isWithinInterval } from "date-fns"
+import { type Interval, addDays, addYears, differenceInDays, getYear, interval, isWithinInterval } from "date-fns"
 
-const MONTHS = {
-  january: 0,
-  february: 1,
-  march: 2,
-  april: 3,
-  may: 4,
-  june: 5,
-  july: 6,
-  august: 7,
-  september: 8,
-  october: 9,
-  november: 10,
-  december: 11,
-} as const
+const JANUARY = 0 as const
+const JUNE = 5 as const
+const AUGUST = 7 as const
+const DECEMBER = 11 as const
 
 function getHolidaysThisYear(): Interval[] {
-  const yearToday = new Date().getFullYear()
+  const currentYear = getYear(new Date())
+  const nextYear = getYear(addYears(new Date(), 1))
 
   return [
-    interval(new TZDate(yearToday, MONTHS.june, 6), new TZDate(yearToday, MONTHS.august, 15)),
-    interval(new TZDate(yearToday, MONTHS.december, 19), new TZDate(yearToday + 1, MONTHS.january, 6)),
+    interval(new TZDate(currentYear, JUNE, 6), new TZDate(currentYear, AUGUST, 15)),
+    interval(new TZDate(currentYear, DECEMBER, 19), new TZDate(nextYear, JANUARY, 6)),
   ]
 }
 
 // If the mark lasts over a holiday, it is not extended. I think that is fine,
 // as really long marks should probably not take into account holidays.
-export function getExpiryDate(startDate: Date, durationDays: number) {
+export function getPunishmentExpiryDate(startDate: Date, durationDays: number) {
   let endDate = addDays(startDate, durationDays)
 
   const holidays = getHolidaysThisYear()

@@ -42,8 +42,9 @@ export const PersonalMarkDetailsSchema = z.object({
 })
 
 export const PunishmentSchema = z.object({
-  suspended: z.boolean().optional(),
-  delay: z.number().optional(),
+  suspended: z.boolean(),
+  /** Delay in hours */
+  delay: z.number(),
 })
 
 export type PersonalMarkDetails = z.infer<typeof PersonalMarkDetailsSchema>

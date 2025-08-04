@@ -6,12 +6,13 @@ import {
   type AttendancePool,
   type AttendanceSelectionResponse,
   type Attendee,
+  type Punishment,
   type User,
   canUserAttendPool,
   getActiveMembership,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
-import { useQuery } from "@tanstack/react-query"
+import { useQueries, useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -19,6 +20,7 @@ import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMuta
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
+import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton } from "./RegistrationButton"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
@@ -46,19 +48,34 @@ const getQueuePosition = (
 interface AttendanceCardProps {
   initialAttendance: Attendance
   initialAttendees: Attendee[]
+  initialPunishment: Punishment | null
   user?: User
 }
 
-export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: AttendanceCardProps) => {
+export const AttendanceCard = ({
+  user,
+  initialAttendance,
+  initialAttendees,
+  initialPunishment,
+}: AttendanceCardProps) => {
   const trpc = useTRPC()
-  const { data: attendance, isLoading: attendanceLoading } = useQuery(
-    trpc.attendance.getAttendance.queryOptions(
-      {
-        id: initialAttendance.id,
-      },
-      { initialData: initialAttendance, enabled: user !== undefined }
-    )
-  )
+
+  const [{ data: attendance, isLoading: attendanceLoading }, { data: punishment, isLoading: punishmentLoading }] =
+    useQueries({
+      queries: [
+        trpc.attendance.getAttendance.queryOptions(
+          {
+            id: initialAttendance.id,
+          },
+          { initialData: initialAttendance, enabled: user !== undefined }
+        ),
+        trpc.personalMark.getExpiryDateForUser.queryOptions(
+          // biome-ignore lint/style/noNonNullAssertion: enabled if user is defined
+          user!.id,
+          { initialData: initialPunishment, enabled: user !== undefined }
+        ),
+      ],
+    })
 
   const { data: attendees, isLoading: attendeesLoading } = useQuery(
     trpc.attendance.getAttendees.queryOptions(
@@ -71,7 +88,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
 
   const attendee = user && attendees?.find((attendee) => attendee.userId === user.id)
 
-  const registerMutation = useRegisterMutation({})
+  const registerMutation = useRegisterMutation()
   const deregisterMutation = useDeregisterMutation()
   const selectionsMutation = useSetSelectionsOptionsMutation()
 
@@ -110,9 +127,17 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
   const deregisterForAttendance = () =>
     attendablePool && attendee && deregisterMutation.mutate({ attendanceId: attendance.id })
 
-  const isLoading = attendanceLoading || attendeesLoading || deregisterMutation.isPending || registerMutation.isPending
+  const isLoading =
+    attendanceLoading ||
+    attendeesLoading ||
+    punishmentLoading ||
+    deregisterMutation.isPending ||
+    registerMutation.isPending
+
   const isLoggedIn = Boolean(user)
+  const isAttending = Boolean(attendee)
   const hasMembership = user !== undefined && getActiveMembership(user) !== null
+  const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
 
   const queuePosition = getQueuePosition(attendee, attendees, attendablePool)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
@@ -125,12 +150,15 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
 
       <AttendanceDateInfo attendance={attendance} />
 
+      {punishment && hasPunishment && !isAttending && <PunishmentBox punishment={punishment} />}
+
       <MainPoolCard
         pool={attendablePool}
         attendee={attendee}
         queuePosition={queuePosition}
         isLoggedIn={isLoggedIn}
         hasMembership={hasMembership}
+        punishment={punishment}
       />
 
       {isAttendingAndReserved && attendance.selections.length > 0 && attendee && (
@@ -183,6 +211,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
         isLoggedIn={isLoggedIn}
         hasMembership={hasMembership}
         status={attendanceStatus}
+        punishment={punishment}
       />
 
       <div className="hidden sm:block">

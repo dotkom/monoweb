@@ -1,5 +1,7 @@
-import type { AttendancePool, Attendee } from "@dotkomonline/types"
+import type { AttendancePool, Attendee, Punishment } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { formatDistanceToNowStrict, isFuture } from "date-fns"
+import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
 
@@ -34,7 +36,7 @@ const Card: FC<CardProps> = ({ classNames, children, title }) => {
   const baseOuterClassName = "flex flex-col w-full bg-gray-100 dark:bg-stone-800 rounded-lg"
   const baseHeaderClassName = "p-2 bg-gray-200 dark:bg-stone-700/50 rounded-t-lg text-center text-sm font-bold"
   const baseInnerClassName =
-    "flex flex-col min-h-[10rem] gap-4 p-2 rounded-md items-center text-center justify-center w-full"
+    "flex flex-col min-h-[10rem] gap-2 p-2 rounded-md items-center text-center justify-center w-full"
 
   if (!title) {
     return <section className={cn(baseOuterClassName, baseInnerClassName, classNames?.inner)}>{children}</section>
@@ -58,9 +60,17 @@ interface MainPoolCardProps {
   isLoggedIn: boolean
   queuePosition: number | null
   hasMembership: boolean
+  punishment: Punishment | null
 }
 
-export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosition, isLoggedIn, hasMembership }) => {
+export const MainPoolCard: FC<MainPoolCardProps> = ({
+  pool,
+  attendee,
+  queuePosition,
+  isLoggedIn,
+  hasMembership,
+  punishment,
+}) => {
   if (!isLoggedIn) {
     return (
       <Card>
@@ -97,6 +107,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
   const isAttendingAndReserved = isAttending && queuePosition === null
   const isAttendingAndNotReserved = isAttending && queuePosition !== null
   const poolHasQueue = pool.numUnreservedAttendees > 0
+  const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
 
   return (
     <Card
@@ -134,7 +145,17 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ pool, attendee, queuePosit
             +{pool.numUnreservedAttendees} i kø
           </Text>
         )}
+
         <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
+
+        {attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt) && (
+        <div className="flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg bg-black/5">
+          <Icon icon="tabler:clock-hour-2" className="text-base" />
+          <Text className={cn("text-sm")}>
+            {formatDistanceToNowStrict(attendee?.earliestReservationAt, { locale: nb })} utsettelse
+          </Text>
+        </div>
+      )}
       </div>
     </Card>
   )

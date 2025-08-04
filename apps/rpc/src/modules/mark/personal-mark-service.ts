@@ -8,7 +8,7 @@ import type {
   UserId,
   VisiblePersonalMarkDetails,
 } from "@dotkomonline/types"
-import { getExpiryDate, unique } from "@dotkomonline/utils"
+import { getPunishmentExpiryDate, unique } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import type { GroupService } from "../group/group-service"
 import type { MarkService } from "./mark-service"
@@ -98,25 +98,25 @@ export function getPersonalMarkService(
         const mark = marks.find((m) => m.id === pm.markId)
 
         if (!mark) return acc
-        if (isPast(getExpiryDate(pm.createdAt, mark.duration))) return acc
+        if (isPast(getPunishmentExpiryDate(pm.createdAt, mark.duration))) return acc
 
         return acc + mark.weight
       }, 0)
 
       if (currentMarkWeight >= 6) {
-        return { suspended: true }
+        return { delay: 0, suspended: true }
       }
 
       if (currentMarkWeight >= 3) {
-        return { delay: 24 }
+        return { delay: 24, suspended: false }
       }
 
       if (currentMarkWeight === 2) {
-        return { delay: 4 }
+        return { delay: 4, suspended: false }
       }
 
       if (currentMarkWeight === 1) {
-        return { delay: 1 }
+        return { delay: 1, suspended: false }
       }
 
       return null

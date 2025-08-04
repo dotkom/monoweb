@@ -305,6 +305,7 @@ model Mark {
   id       String  @id @default(uuid())
   title    String
   details  String?
+  /// Duration in days
   duration Int
   weight   Int
   type     MarkType @default(MANUAL)
