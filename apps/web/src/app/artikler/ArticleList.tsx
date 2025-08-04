@@ -16,6 +16,11 @@ export const ArticleList: FC<ArticleListProps> = ({ tags }: ArticleListProps) =>
   const [filters, setFilters] = useState<ArticleFilterQuery>({ byTags: queryTag ? [queryTag] : [] })
   const { data, fetchNextPage } = useArticleFilterQuery(filters)
 
+  let tagNames = tags.map((tag) => tag.name)
+
+  // Always show the query tag so it can be deselected
+  if (queryTag && !tagNames.includes(queryTag)) tagNames = [queryTag, ...tagNames]
+
   const articles = data?.pages.flatMap((page) => page.items) ?? []
 
   const loaderRef = useRef<HTMLDivElement>(null)
@@ -35,7 +40,7 @@ export const ArticleList: FC<ArticleListProps> = ({ tags }: ArticleListProps) =>
     <>
       <div className="flex md:flex-row flex-col gap-12">
         <div className="md:w-[30%] w-full scroll">
-          <ArticleFilters onChange={setFilters} tags={tags.map((tag) => tag.name)} defaultValues={filters} />
+          <ArticleFilters onChange={setFilters} tags={tagNames} defaultValues={filters} />
         </div>
         <div className="flex flex-col gap-8 md:w-[70%] h-fit">
           {articles.map((article) => (

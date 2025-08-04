@@ -17,7 +17,7 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
     return notFound()
   }
 
-  const relatedArticles = (await server.article.related.query(article)).slice(0, 6)
+  const relatedArticles = await server.article.related.query(article)
 
   return (
     <div>
@@ -33,7 +33,7 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
         <TagList tags={article.tags} />
       </div>
 
-      <RelatedArticles articles={relatedArticles} />
+      <RelatedArticles articles={relatedArticles.slice(0, 6)} />
     </div>
   )
 }
