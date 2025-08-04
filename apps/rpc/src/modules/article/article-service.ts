@@ -1,5 +1,13 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
+import type {
+  Article,
+  ArticleFilterQuery,
+  ArticleId,
+  ArticleSlug,
+  ArticleTag,
+  ArticleTagName,
+  ArticleWrite,
+} from "@dotkomonline/types"
 import { compareAsc, compareDesc } from "date-fns"
 import type { Pageable } from "../../query"
 import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
@@ -19,6 +27,7 @@ export interface ArticleService {
   getAllByTags(handle: DBHandle, tags: ArticleTagName[]): Promise<Article[]>
   getById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
   getBySlug(handle: DBHandle, slug: ArticleSlug): Promise<Article | null>
+  findMany(handle: DBHandle, query: ArticleFilterQuery, page: Pageable): Promise<Article[]>
   /**
    * Gets the top 10 related articles based on tags
    */
@@ -73,6 +82,9 @@ export function getArticleService(
     },
     async getBySlug(handle, slug) {
       return await articleRepository.getBySlug(handle, slug)
+    },
+    async findMany(handle, query, page) {
+      return articleRepository.findMany(handle, query, page)
     },
     async getRelated(handle, article) {
       const articleTags = new Set(article.tags)

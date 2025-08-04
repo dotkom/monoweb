@@ -1,6 +1,6 @@
-import { ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
+import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const articleRouter = t.router({
@@ -43,6 +43,19 @@ export const articleRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.articleService.getAll(handle, input))
     ),
+
+  findArticles: procedure
+    .input(BasePaginateInputSchema.extend({ filters: ArticleFilterQuerySchema }))
+    .query(async ({ input, ctx }) => {
+      const items = await ctx.executeTransaction(async (handle) =>
+        ctx.articleService.findMany(handle, input.filters, input)
+      )
+
+      return {
+        items,
+        nextCursor: items.at(-1)?.id,
+      }
+    }),
 
   get: procedure
     .input(ArticleSchema.shape.id)

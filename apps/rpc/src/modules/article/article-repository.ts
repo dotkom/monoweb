@@ -1,6 +1,7 @@
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type Article,
+  type ArticleFilterQuery,
   type ArticleId,
   ArticleSchema,
   type ArticleSlug,
@@ -18,6 +19,7 @@ export interface ArticleRepository {
   getById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
   getBySlug(handle: DBHandle, slug: ArticleSlug): Promise<Article | null>
   getByTags(handle: DBHandle, tags: ArticleTagName[], page?: Pageable): Promise<Article[]>
+  findMany(handle: DBHandle, query: ArticleFilterQuery, page: Pageable): Promise<Article[]>
   getFeatured(handle: DBHandle): Promise<Article[]>
 }
 
@@ -64,6 +66,32 @@ export function getArticleRepository(): ArticleRepository {
         ...(page ? pageQuery(page) : {}),
         include: QUERY_WITH_TAGS,
       })
+      return articles.map((article) => mapArticle(article, article.tags))
+    },
+    async findMany(handle, query, page) {
+      const articles = await handle.article.findMany({
+        where: {
+          ...(query.bySearchTerm && {
+            title: {
+              contains: query.bySearchTerm,
+              mode: "insensitive",
+            },
+          }),
+          ...(query.byTags &&
+            query.byTags.length > 0 && {
+              tags: {
+                some: {
+                  tagName: {
+                    in: query.byTags,
+                  },
+                },
+              },
+            }),
+        },
+        include: QUERY_WITH_TAGS,
+        ...pageQuery(page),
+      })
+
       return articles.map((article) => mapArticle(article, article.tags))
     },
     async getFeatured(handle) {

@@ -1,12 +1,11 @@
 import { z } from "zod"
 
-export const PaginateInputSchema = z
-  .object({
-    take: z.number(),
-    cursor: z.string().uuid().optional(),
-  })
-  .optional()
-  .default({ take: 20, cursor: undefined })
+export const BasePaginateInputSchema = z.object({
+  take: z.number().default(20),
+  cursor: z.string().uuid().optional(),
+})
+
+export const PaginateInputSchema = BasePaginateInputSchema.optional().default({ take: 20, cursor: undefined })
 
 export type Pageable = z.infer<typeof PaginateInputSchema>
 export type Cursor = Pageable["cursor"]

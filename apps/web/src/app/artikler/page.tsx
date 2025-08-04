@@ -1,4 +1,4 @@
-import { ArticleList } from "@/components/organisms/ArticleList"
+import { ArticleList } from "@/app/artikler/ArticleList"
 import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"
 
@@ -18,7 +18,7 @@ const ArticlePage = async () => {
       </div>
 
       <div className="mt-8">
-        <ArticleList articles={articles} tags={tags} />
+        <ArticleList tags={tags} />
       </div>
     </div>
   )
