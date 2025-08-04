@@ -3,8 +3,7 @@ import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"
 
 const ArticlePage = async () => {
-  const articles = await server.article.all.query()
-  const tags = await server.article.getTags.query()
+  const tags = await server.article.getPopularTags.query()
 
   return (
     <div>

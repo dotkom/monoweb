@@ -7,6 +7,7 @@ import {
   type ArticleSlug,
   type ArticleTag,
   type ArticleTagName,
+  ArticleTagSchema,
   type ArticleWrite,
 } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
@@ -21,6 +22,7 @@ export interface ArticleRepository {
   getByTags(handle: DBHandle, tags: ArticleTagName[], page?: Pageable): Promise<Article[]>
   findMany(handle: DBHandle, query: ArticleFilterQuery, page: Pageable): Promise<Article[]>
   getFeatured(handle: DBHandle): Promise<Article[]>
+  getMostUsedTags(handle: DBHandle, take: number): Promise<ArticleTag[]>
 }
 
 export function getArticleRepository(): ArticleRepository {
@@ -102,6 +104,26 @@ export function getArticleRepository(): ArticleRepository {
         include: QUERY_WITH_TAGS,
       })
       return articles.map((article) => mapArticle(article, article.tags))
+    },
+    async getMostUsedTags(handle, take) {
+      const tags = await handle.articleTagLink.groupBy({
+        by: "tagName",
+        _count: {
+          tagName: true,
+        },
+        orderBy: {
+          _count: {
+            tagName: "desc",
+          },
+        },
+        take: take,
+      })
+
+      return tags.map((tag) =>
+        parseOrReport(ArticleTagSchema, {
+          name: tag.tagName,
+        })
+      )
     },
   }
 }

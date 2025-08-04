@@ -77,6 +77,10 @@ export const articleRouter = t.router({
     ctx.executeTransaction(async (handle) => ctx.articleService.getTags(handle))
   ),
 
+  getPopularTags: procedure.query(async ({ ctx }) =>
+    ctx.executeTransaction(async (handle) => ctx.articleService.getMostUsedTags(handle))
+  ),
+
   addTag: staffProcedure
     .input(
       z.object({

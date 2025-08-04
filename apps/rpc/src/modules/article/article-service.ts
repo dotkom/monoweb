@@ -47,6 +47,7 @@ export interface ArticleService {
    */
   removeTag(handle: DBHandle, articleId: ArticleId, tag: ArticleTagName): Promise<void>
   setTags(handle: DBHandle, articleId: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
+  getMostUsedTags(handle: DBHandle): Promise<ArticleTag[]>
 }
 
 export function getArticleService(
@@ -158,6 +159,9 @@ export function getArticleService(
 
       await Promise.all([...removePromises, ...addPromises])
       return currentTags.filter((tag) => !tagsToRemove.includes(tag)).concat(tagsToAdd)
+    },
+    async getMostUsedTags(handle) {
+      return articleRepository.getMostUsedTags(handle, 30)
     },
   }
 }
