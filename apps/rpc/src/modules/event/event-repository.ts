@@ -85,28 +85,29 @@ export function getEventRepository(): EventRepository {
             {
               status: { not: "DELETED" },
               start: {
-                gte: query.byStartDate.min ?? undefined,
-                lte: query.byStartDate.max ?? undefined,
+                gte: query.byStartDate?.min ?? undefined,
+                lte: query.byStartDate?.max ?? undefined,
               },
               title:
                 query.bySearchTerm !== null
                   ? {
                       contains: query.bySearchTerm,
+                      mode: "insensitive",
                     }
                   : undefined,
-              id: query.byId.length > 0 ? { in: query.byId } : undefined,
+              id: query.byId && query.byId.length > 0 ? { in: query.byId } : undefined,
             },
             {
               OR: [
                 {
                   companies:
-                    query.byOrganizingCompany.length > 0
+                    query.byOrganizingCompany && query.byOrganizingCompany.length > 0
                       ? { some: { companyId: { in: query.byOrganizingCompany } } }
                       : undefined,
                 },
                 {
                   hostingGroups:
-                    query.byOrganizingGroup.length > 0
+                    query.byOrganizingGroup && query.byOrganizingGroup.length > 0
                       ? { some: { groupId: { in: query.byOrganizingGroup } } }
                       : undefined,
                 },

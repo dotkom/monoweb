@@ -29,6 +29,12 @@ export const eventRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.eventService.findEventById(handle, input))
     ),
 
+  findEvents: procedure
+    .input(EventFilterQuerySchema)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.eventService.findEvents(handle, input))
+    ),
+
   create: staffProcedure
     .input(
       z.object({
