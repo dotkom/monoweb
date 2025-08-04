@@ -117,12 +117,15 @@ export default async function ProfilePage({
     notFound()
   }
 
+  // "Compilation" is an inaugural tradition in Online where you "officially" become a member
+  const isCompiled = false // TODO: Reimplement compilation with flags
   const isLoggedIn = Boolean(session)
+  const isUser = user.id === session?.sub
 
   const [groups, events, marks] = await Promise.all([
     server.group.allByMember.query(user.id),
     isLoggedIn ? server.event.allByAttendingUserId.query({ id: user.id }) : Promise.resolve([]),
-    server.personalMark.getVisibleInformationForUser.query({ id: user.id }),
+    isUser ? server.personalMark.getVisibleInformation.query({ id: user.id }) : Promise.resolve([]),
   ])
 
   const allGroups = [
@@ -131,10 +134,6 @@ export default async function ProfilePage({
       pageUrl: createGroupPageUrl(group),
     })),
   ]
-
-  // "Compilation" is an inaugural tradition in Online where you "officially" become a member
-  const isCompiled = false // TODO: Reimplement compilation with flags
-  const isUser = user.id === session?.sub
 
   const activeMembership = getActiveMembership(user)
   const grade = activeMembership ? getMembershipGrade(activeMembership) : null
