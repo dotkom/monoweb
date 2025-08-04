@@ -88,72 +88,82 @@ export const Events = () => {
                         {events[0] ? formatDate(new Date(events[0]?.start), "EEEE dd.") : "Ukjent ukedag"}
                       </Text>
 
-                      {events.map((event) => (
-                        <div key={event.id} className="flex flex-row items-center">
-                          <div className="w-1/4" />
-                          <div className="w-3/4">
-                            <Collapsible className="group">
-                              <CollapsibleTrigger className="[&[data-state=open]>div>iconify-icon]:rotate-90">
-                                <div className="relative flex flex-row items-center gap-2 transition-colors p-2 -m-2 rounded-lg hover:bg-orange-200/50 group-data-[state=open]:bg-orange-200/25">
-                                  {/* The dot for the event. The pixel offsets need to be synced with the vertical lines */}
-                                  <div className="absolute -left-[10px] md:-left-[18px] top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                    <div className="h-3 w-3 rounded-2xl bg-yellow-800" />
-                                  </div>
+                      {events.map((event) => {
+                        const hasLocationLink = Boolean(event.locationLink)
+                        const hasLocation = Boolean(hasLocationLink || event.locationTitle || event.locationAddress)
 
-                                  <Text className="absolute text-right -left-[calc(50px)] md:-left-[60px] top-1/2 transform -translate-x-1/2 -translate-y-1/2 group-data-[state=open]:font-medium">
-                                    {formatDate(event.start, "HH:mm")}
-                                  </Text>
-
-                                  <Icon
-                                    icon="tabler:chevron-right"
-                                    className="transition-transform text-xl w-fit text-yellow-800"
-                                  />
-                                  <img
-                                    src={event.imageUrl ?? "https://placehold.co/120x90/fdba74/854d0e/?text=Online"}
-                                    alt={event.title}
-                                    className="w-14 h-auto aspect-4/3 object-cover rounded-sm hidden sm:block"
-                                  />
-                                  <Text className="text-lg/5 text-left group-data-[state=open]:font-medium">
-                                    {event.title}
-                                  </Text>
-                                </div>
-                              </CollapsibleTrigger>
-                              <CollapsibleContent className="relative md:ml-23 mt-3 overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-                                <RichText content={event.description ?? "<p>Ingen beskrivelse</p>"} />
-
-                                <div className="flex flex-col gap-4 md:flex-row my-4 md:my-2 text-black">
-                                  <a
-                                    href={event.locationLink ?? undefined}
-                                    className="flex flex-row items-center w-fit gap-3 px-3 py-2 rounded-lg min-h-14 bg-indigo-200/35 hover:bg-indigo-200/65 transition-colors"
-                                  >
-                                    <Icon icon="tabler:map-pin-filled" className="text-lg text-indigo-800/75" />
-                                    <div className="flex flex-col gap-0">
-                                      <Text>{event.locationTitle ?? "Gå til kart"}</Text>
-                                      {event.locationAddress ? (
-                                        <Text className="text-xs">{event.locationAddress}</Text>
-                                      ) : null}
+                        return (
+                          <div key={event.id} className="flex flex-row items-center">
+                            <div className="w-1/4" />
+                            <div className="w-3/4">
+                              <Collapsible className="group">
+                                <CollapsibleTrigger className="[&[data-state=open]>div>iconify-icon]:rotate-90">
+                                  <div className="relative flex flex-row items-center gap-2 transition-colors p-2 -m-2 rounded-lg hover:bg-orange-200/50 group-data-[state=open]:bg-orange-200/25">
+                                    {/* The dot for the event. The pixel offsets need to be synced with the vertical lines */}
+                                    <div className="absolute -left-[10px] md:-left-[18px] top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                      <div className="h-3 w-3 rounded-2xl bg-yellow-800" />
                                     </div>
-                                    <Icon icon="tabler:arrow-up-right" className="text-lg" />
-                                  </a>
 
-                                  <a
-                                    href={`${baseUrl}/arrangementer/${slugify(event.title)}/${event.id}`}
-                                    className={cn(
-                                      "flex flex-row items-center w-fit gap-3 px-3 py-2 rounded-lg transition-colors min-h-14",
-                                      event.attendanceId
-                                        ? "bg-indigo-300 hover:bg-indigo-200"
-                                        : "max-sm:bg-indigo-200/35 max-sm:hover:bg-indigo-200/65 sm:hover:bg-indigo-200/35"
+                                    <Text className="absolute text-right -left-[calc(50px)] md:-left-[60px] top-1/2 transform -translate-x-1/2 -translate-y-1/2 group-data-[state=open]:font-medium">
+                                      {formatDate(event.start, "HH:mm")}
+                                    </Text>
+
+                                    <Icon
+                                      icon="tabler:chevron-right"
+                                      className="transition-transform text-xl w-fit text-yellow-800"
+                                    />
+                                    <img
+                                      src={event.imageUrl ?? "https://placehold.co/120x90/fdba74/854d0e/?text=Online"}
+                                      alt={event.title}
+                                      className="w-14 h-auto aspect-4/3 object-cover rounded-sm hidden sm:block"
+                                    />
+                                    <Text className="text-lg/5 text-left group-data-[state=open]:font-medium">
+                                      {event.title}
+                                    </Text>
+                                  </div>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent className="relative md:ml-23 mt-3 overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
+                                  <RichText content={event.description ?? "<p>Ingen beskrivelse</p>"} />
+
+                                  <div className="flex flex-col gap-4 md:flex-row my-4 md:my-2 text-black">
+                                    {hasLocation && (
+                                      <a
+                                        href={event.locationLink ?? undefined}
+                                        className={cn(
+                                          "flex flex-row items-center w-fit gap-3 px-3 py-2 rounded-lg min-h-14 bg-indigo-200/35 transition-colors",
+                                          hasLocationLink && "hover:bg-indigo-200/65"
+                                        )}
+                                      >
+                                        <Icon icon="tabler:map-pin-filled" className="text-lg text-indigo-800/75" />
+                                        <div className="flex flex-col gap-0">
+                                          <Text>{event.locationTitle ?? "Gå til kart"}</Text>
+                                          {event.locationAddress ? (
+                                            <Text className="text-xs">{event.locationAddress}</Text>
+                                          ) : null}
+                                        </div>
+                                        {hasLocationLink && <Icon icon="tabler:arrow-up-right" className="text-lg" />}
+                                      </a>
                                     )}
-                                  >
-                                    <Text>Gå til {event.attendanceId ? "påmelding" : "arrangement"}</Text>
-                                    <Icon icon="tabler:arrow-up-right" className="text-lg" />
-                                  </a>
-                                </div>
-                              </CollapsibleContent>
-                            </Collapsible>
+
+                                    <a
+                                      href={`${baseUrl}/arrangementer/${slugify(event.title)}/${event.id}`}
+                                      className={cn(
+                                        "flex flex-row items-center w-fit gap-3 px-3 py-2 rounded-lg transition-colors min-h-14",
+                                        event.attendanceId
+                                          ? "bg-indigo-300 hover:bg-indigo-200"
+                                          : "max-sm:bg-indigo-200/35 max-sm:hover:bg-indigo-200/65 sm:hover:bg-indigo-200/35"
+                                      )}
+                                    >
+                                      <Text>Gå til {event.attendanceId ? "påmelding" : "arrangement"}</Text>
+                                      <Icon icon="tabler:arrow-up-right" className="text-lg" />
+                                    </a>
+                                  </div>
+                                </CollapsibleContent>
+                              </Collapsible>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   ))}
                 </div>
