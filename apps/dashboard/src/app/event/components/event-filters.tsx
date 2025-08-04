@@ -2,15 +2,15 @@ import type { EventFilterQuery } from "@dotkomonline/types"
 import { TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 
 interface Props {
   onChange(filters: EventFilterQuery): void
 }
 
 export const EventFilters = ({ onChange }: Props) => {
-  const { register, watch } = useForm<EventFilterQuery>({})
-  const data = watch()
+  const form = useForm<EventFilterQuery>()
+  const data = useWatch(form) as EventFilterQuery
   const [debouncedData] = useDebouncedValue(data, 300)
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export const EventFilters = ({ onChange }: Props) => {
 
   return (
     <form>
-      <TextInput placeholder="Søk etter arrangementer..." {...register("bySearchTerm")} />
+      <TextInput placeholder="Søk etter arrangementer..." {...form.register("bySearchTerm")} />
     </form>
   )
 }

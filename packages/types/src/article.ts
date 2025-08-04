@@ -1,5 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
+import { buildAnyOfFilter, buildSearchFilter } from "./filters"
 
 export const ArticleTagSchema = schemas.ArticleTagSchema.extend({})
 
@@ -25,3 +26,11 @@ export const ArticleWriteSchema = ArticleSchema.omit({
 })
 
 export type ArticleWrite = z.infer<typeof ArticleWriteSchema>
+
+export type ArticleFilterQuery = z.infer<typeof ArticleFilterQuerySchema>
+export const ArticleFilterQuerySchema = z
+  .object({
+    bySearchTerm: buildSearchFilter(),
+    byTags: buildAnyOfFilter(ArticleTagSchema.shape.name),
+  })
+  .partial()
