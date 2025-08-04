@@ -1,5 +1,6 @@
 import { TZDate } from "@date-fns/tz"
 import { type Interval, addDays, addYears, differenceInDays, getYear, interval, isWithinInterval } from "date-fns"
+import { getCurrentUTC } from "./utc"
 
 const JANUARY = 0 as const
 const JUNE = 5 as const
@@ -7,8 +8,9 @@ const AUGUST = 7 as const
 const DECEMBER = 11 as const
 
 function getHolidaysThisYear(): Interval[] {
-  const currentYear = getYear(new Date())
-  const nextYear = getYear(addYears(new Date(), 1))
+  const now = getCurrentUTC()
+  const currentYear = getYear(now)
+  const nextYear = getYear(addYears(now, 1))
 
   return [
     interval(new TZDate(currentYear, JUNE, 6), new TZDate(currentYear, AUGUST, 15)),

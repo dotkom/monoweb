@@ -1,7 +1,12 @@
 import type { Punishment } from "@dotkomonline/types"
 import { Button, Icon, Text } from "@dotkomonline/ui"
+import type { FC } from "react"
 
-export const PunishmentBox = ({ punishment }: { punishment: Punishment }) => {
+interface PunishmentBoxProps {
+  punishment: Punishment
+}
+
+export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
   if (punishment.suspended) {
     return (
       <div className="flex flex-col gap-3 p-4 rounded-lg bg-black dark:bg-white text-white dark:text-black text-sm">
