@@ -301,6 +301,12 @@ program
 
     const newEvents: Prisma.EventCreateManyInput[] = []
 
+    await prisma.event.deleteMany({
+      where: {
+        type: "WELCOME",
+      },
+    })
+
     for (const event of events) {
       if (event.start_time.getFullYear() !== 2025) {
         continue
@@ -321,7 +327,13 @@ program
       })
     }
 
-    await prisma.event.createMany({ data: newEvents })
+    const createdEvents = await prisma.event.createManyAndReturn({ data: newEvents })
+    await prisma.eventHostingGroup.createMany({
+      data: createdEvents.map((createdEvent) => ({
+        groupId: "velkom",
+        eventId: createdEvent.id,
+      })),
+    })
   })
 
 program.parse()

@@ -9,7 +9,7 @@ const baseUrl = import.meta.env.VITE_WEB_URL || "http://localhost:3000"
 
 export const Events = () => {
   const { data: events, isLoading } = useQuery(
-    trpc.event.all.queryOptions({ filter: { byOrganizingGroup: ["velkom"] } })
+    trpc.event.all.queryOptions({ filter: { byOrganizingGroup: ["velkom"] }, page: { take: 10000 } })
   )
 
   if (isLoading) {
