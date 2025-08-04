@@ -39,10 +39,12 @@ export const EventWriteSchema = EventSchema.pick({
 })
 
 export type EventFilterQuery = z.infer<typeof EventFilterQuerySchema>
-export const EventFilterQuerySchema = z.object({
-  byId: buildAnyOfFilter(EventSchema.shape.id),
-  byStartDate: buildDateRangeFilter(),
-  bySearchTerm: buildSearchFilter(),
-  byOrganizingCompany: buildAnyOfFilter(CompanySchema.shape.id),
-  byOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
-})
+export const EventFilterQuerySchema = z
+  .object({
+    byId: buildAnyOfFilter(EventSchema.shape.id),
+    byStartDate: buildDateRangeFilter(),
+    bySearchTerm: buildSearchFilter(),
+    byOrganizingCompany: buildAnyOfFilter(CompanySchema.shape.id),
+    byOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
+  })
+  .partial()

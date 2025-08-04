@@ -1,7 +1,7 @@
 "use client"
 
 import { GenericTable } from "@/components/GenericTable"
-import type { Event, EventType } from "@dotkomonline/types"
+import type { Event, EventFilterQuery, EventType } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import {
   ActionIcon,
@@ -12,16 +12,16 @@ import {
   Skeleton,
   Stack,
   Text,
-  TextInput,
   Title,
   Tooltip,
 } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import Link from "next/link"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
+import { EventFilters } from "./components/event-filters"
 import { EventHostingGroupList } from "./components/event-hosting-group-list"
-import { useEventAllQuery } from "./queries"
+import { useEventFilterQuery } from "./queries"
 
 const mapEventTypeToLabel = (eventType: EventType) => {
   switch (eventType) {
@@ -47,7 +47,6 @@ const mapEventTypeToLabel = (eventType: EventType) => {
 const capitalizeFirstLetter = (string: string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`
 
 export default function EventPage() {
-  const { events, isLoading: isEventsLoading } = useEventAllQuery()
   const columnHelper = createColumnHelper<Event>()
   const columns = useMemo(
     () => [
@@ -90,6 +89,9 @@ export default function EventPage() {
     [columnHelper]
   )
 
+  const [filters, setFilters] = useState<EventFilterQuery>({})
+  const { events, isLoading: isEventsLoading } = useEventFilterQuery(filters)
+
   const table = useReactTable({
     data: events,
     getCoreRowModel: getCoreRowModel(),
@@ -113,8 +115,7 @@ export default function EventPage() {
               </ActionIcon>
             </ActionIconGroup>
 
-            {/* TODO: add search */}
-            <TextInput placeholder="Søk etter arrangementer..." size="sm" disabled />
+            <EventFilters onChange={setFilters} />
           </Group>
 
           <Group>
