@@ -134,9 +134,7 @@ const TagList = ({ tags }: TagListProps) => {
       </Title>
 
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <Tag tag={tag.name} key={tag.name} />
-        ))}
+        {tags.length > 0 ? tags.map((tag) => <Tag tag={tag.name} key={tag.name} />) : <Text>Ingen tags</Text>}
       </div>
     </section>
   )
@@ -158,9 +156,11 @@ const RelatedArticles = ({ articles }: RelatedArticlesProps) => {
         </Link>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-3 auto-rows-fr">
-        {articles.map((article) => (
-          <ArticleListItem article={article} key={article.id} orientation="vertical" />
-        ))}
+        {articles.length > 0 ? (
+          articles.map((article) => <ArticleListItem article={article} key={article.id} orientation="vertical" />)
+        ) : (
+          <Text>Ingen relaterte artikler</Text>
+        )}
       </div>
     </section>
   )
