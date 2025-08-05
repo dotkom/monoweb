@@ -68,12 +68,21 @@ async function dumpData() {
   fs.writeFileSync(path.resolve(pathOfThisScript, "./hobbys.json"), JSON.stringify(hobbies, null, 2))
 }
 
+import { TZDate } from "@date-fns/tz"
 import type { DBClient, Prisma } from "@dotkomonline/db"
-import { getDefaultGroupMemberRoles } from "@dotkomonline/types"
+import { type GroupId, type GroupRoleWrite, getDefaultGroupMemberRoles } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import z from "zod"
 import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
+
+type OW4GroupMembership = z.infer<typeof OW4GroupMembershipSchema>
+const OW4GroupMembershipSchema = z.object({
+  added: z.string().transform((data) => new TZDate(data, "UTC")),
+  group_id: z.number(),
+  auth0_subject: z.string(),
+  roles: z.string().array(),
+})
 
 // Copied from group-service.ts
 const createIdFromGroupName = async (prisma: DBClient, name: string) => {
@@ -89,12 +98,108 @@ const createIdFromGroupName = async (prisma: DBClient, name: string) => {
   return id
 }
 
+const getOW4RoleDisplayname = (roleType: string): string => {
+  switch (roleType) {
+    case "leader":
+      return "Leder"
+    case "board_member":
+      return "Styremedlem"
+    case "deputy_leader":
+      return "Nestleder"
+    case "treasurer":
+      return "Økonomiansvarlig"
+    case "chief_editor":
+      return "Redaktør"
+    case "wine_penalty_manager":
+      return "Vinstraffansvarlig"
+    default:
+      throw new Error(`Unknown ow4 role type ${roleType}`)
+  }
+}
+
+const insertGroupMembers = async (prisma: DBClient, groupId: GroupId, groupMemberships: OW4GroupMembership[]) => {
+  let groupRoles = await prisma.groupRole.findMany({ where: { groupId } })
+  const rolesToCreate: GroupRoleWrite[] = groupMemberships
+    .flatMap((membership) => membership.roles)
+    .filter((role) => !groupRoles.some((existingRole) => existingRole.name === role))
+    .map((role) => ({ groupId, type: "COSMETIC", name: getOW4RoleDisplayname(role) }))
+
+  const newRoles = await prisma.groupRole.createManyAndReturn({ data: rolesToCreate, skipDuplicates: true })
+  groupRoles = [...groupRoles, ...newRoles]
+
+  for (const membership of groupMemberships) {
+    const user = prisma.user.findUnique({ where: { id: membership.auth0_subject } })
+    if (user === null) {
+      console.error(`User with id ${membership.auth0_subject} does not exist`)
+      continue
+    }
+
+    const roleNames = membership.roles.map(getOW4RoleDisplayname)
+    if (roleNames.length === 0) roleNames.push("Medlem")
+
+    const roles = groupRoles.filter((role) => roleNames.includes(role.name))
+    await prisma.groupMembership.create({
+      data: {
+        start: membership.added,
+        end: null,
+        groupId,
+        userId: membership.auth0_subject,
+        roles: {
+          createMany: {
+            data: Array.from(roles).map((role) => ({ roleId: role.id })),
+          },
+        },
+      },
+    })
+  }
+}
+
 async function insertDump() {
   const pathOfThisScript = import.meta.dirname
   // biome-ignore lint/suspicious/noExplicitAny: files don't exist and cannot provide types until they are created
   const groups = JSON.parse(await fsp.readFile(path.resolve(pathOfThisScript, "./groups.json"), "utf-8")) as any[]
   // biome-ignore lint/suspicious/noExplicitAny: files don't exist and cannot provide types until they are created
   const hobbies = JSON.parse(await fsp.readFile(path.resolve(pathOfThisScript, "./hobbys.json"), "utf-8")) as any[]
+
+  /**
+   * Export result to json
+   * 
+  SELECT
+    json_agg(member_json)
+  FROM
+  (
+    SELECT
+      json_build_object(
+        'added',
+        member.added,
+        'group_id',
+        member.group_id,
+        'auth0_subject',
+        onlineuser.auth0_subject,
+        'roles',
+        COALESCE(
+          jsonb_agg(role.role_type) FILTER (
+            WHERE
+              role.role_type IS NOT NULL
+          ),
+          '[]'::jsonb
+        )
+      ) AS member_json
+    FROM
+      authentication_groupmember AS member
+      LEFT JOIN authentication_onlineuser AS onlineuser ON onlineuser.id = member.user_id
+      LEFT JOIN authentication_grouprole_memberships AS rolemembership ON rolemembership.groupmember_id = member.id
+      LEFT JOIN authentication_grouprole AS role ON role.id = rolemembership.grouprole_id
+    GROUP BY
+      member.added,
+      member.group_id,
+      onlineuser.auth0_subject
+  ) AS sub;
+   */
+  const rawGroupMemberships = JSON.parse(
+    await fsp.readFile(path.resolve(pathOfThisScript, "./group-memberships.json"), "utf-8")
+  )
+  const groupMemberships = OW4GroupMembershipSchema.array().parse(rawGroupMemberships)
 
   const committees = groups.filter((item) => item.group_type === "committee")
   const nodeCommittees = groups.filter((item) => item.group_type === "node_committee")
@@ -122,7 +227,6 @@ async function insertDump() {
     console.log(`Inserting ${item.title}`)
     const title = item.title.replace(" [inaktiv]", "")
     const id = await createIdFromGroupName(prisma, title)
-    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
     await prisma.group.create({
       data: {
         slug: id,
@@ -132,13 +236,13 @@ async function insertDump() {
         type: "INTEREST_GROUP",
       },
     })
+    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
   }
 
   console.log("\n\nInserting committees:")
   for (const item of committees) {
     console.log(`Inserting ${item.name_short}`)
     const id = await createIdFromGroupName(prisma, item.name_short)
-    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
     await prisma.group.create({
       data: {
         slug: id,
@@ -152,13 +256,18 @@ async function insertDump() {
         type: "COMMITTEE",
       },
     })
+    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
+    insertGroupMembers(
+      prisma,
+      id,
+      groupMemberships.filter((groupMembership) => groupMembership.group_id === item.id)
+    )
   }
 
   console.log("\n\nInserting node committees:")
   for (const item of nodeCommittees) {
     console.log(`Inserting ${item.name_short}`)
     const id = await createIdFromGroupName(prisma, item.name_short)
-    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
     await prisma.group.create({
       data: {
         slug: id,
@@ -172,13 +281,18 @@ async function insertDump() {
         type: "NODE_COMMITTEE",
       },
     })
+    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
+    insertGroupMembers(
+      prisma,
+      id,
+      groupMemberships.filter((groupMembership) => groupMembership.group_id === item.id)
+    )
   }
 
   console.log("\n\nInserting other groups:")
   for (const item of other) {
     console.log(`Inserting ${item.name_short}`)
     const id = await createIdFromGroupName(prisma, item.name_short)
-    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
     await prisma.group.create({
       data: {
         slug: id,
@@ -192,6 +306,12 @@ async function insertDump() {
         type: "ASSOCIATED",
       },
     })
+    await prisma.groupRole.createMany({ data: getDefaultGroupMemberRoles(id), skipDuplicates: true })
+    insertGroupMembers(
+      prisma,
+      id,
+      groupMemberships.filter((groupMembership) => groupMembership.group_id === item.id)
+    )
   }
 }
 
