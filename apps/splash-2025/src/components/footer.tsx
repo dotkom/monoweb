@@ -1,15 +1,15 @@
 import { FooterWave } from "@/components/icons/FooterWave.js"
+import Sponsors from "@/data/sponsors"
 import { Text, Title } from "@dotkomonline/ui"
-import type { ReactNode } from "react"
 import { SoMeLinks } from "./someLinks"
 
-export const Footer = ({ sponsorLogo }: { sponsorLogo?: ReactNode }) => {
+export const Footer = () => {
   return (
     <footer className="text-white bg-orange-100 pt-20">
       <div className="overflow-hidden">
         <FooterWave color="#C1842E" className="size-[135%]" />
       </div>
-      <div className="bg-[#C1842E] flex flex-col items-center pb-4">
+      <div className="bg-[#C1842E] flex flex-col items-center py-20">
         <Title element="h3" className="text-4xl m-3 mt-0">
           Har du noen spørsmål?
         </Title>
@@ -22,12 +22,23 @@ export const Footer = ({ sponsorLogo }: { sponsorLogo?: ReactNode }) => {
         <SoMeLinks />
       </div>
 
-      {sponsorLogo && (
+      {Sponsors && (
         <div className="overflow-hidden">
           <div className="bg-[#C1842E] ">
             <FooterWave color="#F9B759" className="h-[100%] w-[135%] relative left-[-30%]" />
           </div>
-          <div className="bg-[#F9B759] flex justify-center p-10 pb-40">{sponsorLogo}</div>
+          <div className="bg-[#F9B759] flex flex-col items-center py-20">
+            <Title element="h3" className="text-4xl m-3 mt-0">
+              Våre sponsorer
+            </Title>
+            <section className="flex flex-wrap justify-center gap-10 mt-4">
+              {Sponsors.map((sponsor) => (
+                <a key={sponsor.name} href={sponsor.link} target="_blank" className="flex flex-col items-center">
+                  <img src={sponsor.logo} alt={`${sponsor.name} logo`} className="h-16 max-sm:h-12 w-auto mb-2" />
+                </a>
+              ))}
+            </section>
+          </div>
         </div>
       )}
     </footer>
