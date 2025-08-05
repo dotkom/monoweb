@@ -29,7 +29,7 @@ export const DebugInfo = () => {
         </svg>
       </div>
       <div className="bg-[#FFFF] py-20 w-full">
-        <div className="max-w-screen-xl px-8 md:px-16 mx-auto flex flex-col gap-6">
+        <div className="max-w-screen-xl px-8 md:px-16 mx-auto flex flex-col gap-6 max-sm:items-center">
           <Title element="h1" size="xl">
             Har du opplevd noe ugreit?
           </Title>
