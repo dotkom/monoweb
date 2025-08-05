@@ -54,7 +54,7 @@ export const Events = () => {
 
         <div className="px-8 md:px-16">
           <div className="space-y-18">
-            {eventsByDate.entries().map(([month, eventsInMonth]) => (
+            {[...eventsByDate.entries()].map(([month, eventsInMonth]) => (
               <div key={month} className="relative space-y-4">
                 {/* The vertical line */}
                 <div
@@ -77,7 +77,7 @@ export const Events = () => {
                 </Text>
 
                 <div className="space-y-12 text-orange-900">
-                  {eventsInMonth.entries().map(([date, events]) => (
+                  {[...eventsInMonth.entries()].map(([date, events]) => (
                     <div className="space-y-4" key={`${month}-${date}`}>
                       <Text
                         className={cn(
