@@ -1,5 +1,5 @@
 import { FooterWave } from "@/components/icons/FooterWave.js"
-import Sponsors from "@/data/sponsors"
+import { Sponsors } from "@/data/sponsors"
 import { Text, Title } from "@dotkomonline/ui"
 import { SoMeLinks } from "./someLinks"
 
@@ -33,7 +33,13 @@ export const Footer = () => {
             </Title>
             <section className="flex flex-wrap justify-center gap-10 mt-4">
               {Sponsors.map((sponsor) => (
-                <a key={sponsor.name} href={sponsor.link} target="_blank" className="flex flex-col items-center">
+                <a
+                  key={sponsor.name}
+                  href={sponsor.link}
+                  target="_blank"
+                  className="flex flex-col items-center"
+                  rel="noreferrer"
+                >
                   <img src={sponsor.logo} alt={`${sponsor.name} logo`} className="h-16 max-sm:h-12 w-auto mb-2" />
                 </a>
               ))}

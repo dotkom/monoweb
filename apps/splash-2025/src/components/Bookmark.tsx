@@ -3,7 +3,7 @@ import { Text, cn } from "@dotkomonline/ui"
 const bgColor = "bg-black"
 const borderColor = "border-x-black"
 
-export const Header = () => {
+export const BookMark = () => {
   return (
     <header className="w-full fixed top-0 text-white p-10 flex justify-center z-50">
       <a href="https://online.ntnu.no" className={cn("absolute top-0 left-5 sm:left-7 md:left-16 lg:left-24 group")}>
