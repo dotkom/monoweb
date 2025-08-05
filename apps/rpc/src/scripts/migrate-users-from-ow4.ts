@@ -4,11 +4,12 @@ import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 import { TZDate } from "@date-fns/tz"
 import { type Membership, type UserId, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 
+import fsp from "node:fs/promises"
+import path from "node:path"
 import type { DBHandle } from "@dotkomonline/db"
 import type { ManagementClient } from "auth0"
 import { z } from "zod"
-import rawMemberships from "./authentication_membership.json"
-import rawUsers from "./authentication_onlineuser.json"
+
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma
@@ -54,6 +55,15 @@ const OW4MembershipSchema = z.object({
   description: z.string().nullable(),
 })
 type OW4Membership = z.infer<typeof OW4MembershipSchema>
+
+const pathOfThisScript = import.meta.dirname
+
+const rawUsers = JSON.parse(
+  await fsp.readFile(path.resolve(pathOfThisScript, "./authentication_onlineuser.json"), "utf-8")
+)
+const rawMemberships = JSON.parse(
+  await fsp.readFile(path.resolve(pathOfThisScript, "./authentication_membership.json"), "utf-8")
+)
 
 const users = OW4UserSchema.array().parse(rawUsers)
 const memberships = OW4MembershipSchema.array().parse(rawMemberships)
@@ -198,6 +208,6 @@ function getGender(gender?: string) {
     case "female":
       return "Kvinne"
     default:
-      return "Annet"
+      return null
   }
 }
