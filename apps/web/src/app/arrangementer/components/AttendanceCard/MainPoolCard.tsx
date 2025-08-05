@@ -1,6 +1,6 @@
 import type { AttendancePool, Attendee, Punishment } from "@dotkomonline/types"
-import { Icon, Text, Title, cn } from "@dotkomonline/ui"
-import { formatDistanceToNowStrict, isFuture } from "date-fns"
+import { Icon, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { formatDate, formatDistanceToNowStrict, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
@@ -28,15 +28,16 @@ const getAttendanceStatusText = (
 
 interface CardProps {
   classNames?: { outer?: string; inner?: string; title?: string }
-  title?: string
+  title?: ReactNode
   children: ReactNode
 }
 
 const Card: FC<CardProps> = ({ classNames, children, title }) => {
   const baseOuterClassName = "flex flex-col w-full bg-gray-100 dark:bg-stone-800 rounded-lg"
-  const baseHeaderClassName = "p-2 bg-gray-200 dark:bg-stone-700/50 rounded-t-lg text-center text-sm font-bold"
+  const baseHeaderClassName =
+    "flex flex-row gap-2 px-3 py-2 bg-gray-200 dark:bg-stone-700/50 rounded-t-lg justify-center text-sm font-bold"
   const baseInnerClassName =
-    "flex flex-col min-h-[10rem] gap-2 p-2 rounded-md items-center text-center justify-center w-full"
+    "flex flex-col min-h-[10rem] gap-2 p-3 rounded-md items-center text-center justify-center w-full"
 
   if (!title) {
     return <section className={cn(baseOuterClassName, baseInnerClassName, classNames?.inner)}>{children}</section>
@@ -44,13 +45,33 @@ const Card: FC<CardProps> = ({ classNames, children, title }) => {
 
   return (
     <section className={cn(baseOuterClassName, classNames?.outer)}>
-      <div className={cn(baseHeaderClassName, classNames?.title)}>
-        <Title element="p" className="text-base">
-          {title}
-        </Title>
-      </div>
+      <div className={cn(baseHeaderClassName, classNames?.title)}>{title}</div>
       <div className={cn(baseInnerClassName, "rounded-b-lg", classNames?.inner)}>{children}</div>
     </section>
+  )
+}
+
+const DelayPill = ({ mergeDelayHours, className }: { mergeDelayHours: number | null; className?: string }) => {
+  const content = mergeDelayHours ? (
+    <Text>Denne gruppen får plasser {mergeDelayHours} timer etter påmeldingsstart</Text>
+  ) : (
+    <Text>Denne påmeldingsgruppen kan få plasser senere</Text>
+  )
+
+  return (
+    <TooltipProvider>
+      <Tooltip delayDuration={100}>
+        <TooltipTrigger asChild>
+          <div
+            className={cn("flex items-center gap-0.5 px-1 rounded-md bg-gray-300/50 dark:bg-stone-700/50", className)}
+          >
+            <Icon icon="tabler:clock" className="text-sm" />
+            <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className="font-normal">{content}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
 
@@ -107,7 +128,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const isAttendingAndReserved = isAttending && queuePosition === null
   const isAttendingAndNotReserved = isAttending && queuePosition !== null
   const poolHasQueue = pool.numUnreservedAttendees > 0
-  const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
+  const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
 
   return (
     <Card
@@ -123,7 +144,25 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             ? "bg-yellow-200 dark:bg-yellow-700"
             : undefined,
       }}
-      title={pool.title}
+      title={
+        <>
+          <Title element="p" className="text-base">
+            {pool.title}
+          </Title>
+          {pool.mergeDelayHours && pool.mergeDelayHours > 0 && (
+            <DelayPill
+              mergeDelayHours={pool.mergeDelayHours}
+              className={cn(
+                isAttendingAndReserved
+                  ? "bg-green-300/50 dark:bg-green-700/50"
+                  : isAttendingAndNotReserved
+                    ? "bg-yellow-300/50 dark:bg-yellow-600/50"
+                    : undefined
+              )}
+            />
+          )}
+        </>
+      }
     >
       <div className="flex grow flex-col gap-2 items-center text-center justify-center">
         <Text
@@ -132,7 +171,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             poolHasQueue && isAttendingAndReserved && "bg-green-200 dark:bg-green-800 rounded-lg"
           )}
         >
-          {pool.numAttendees}/{pool.capacity}
+          {pool.numAttendees}
+          {pool.capacity > 0 && `/${pool.capacity}`}
         </Text>
 
         {poolHasQueue && (
@@ -146,15 +186,36 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
           </Text>
         )}
 
-        <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
+        {!servingPunishment && (
+          <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
+        )}
 
-        {attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt) && (
-          <div className="flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg bg-black/5">
-            <Icon icon="tabler:clock-hour-2" className="text-base" />
-            <Text className={cn("text-sm")}>
-              {formatDistanceToNowStrict(attendee?.earliestReservationAt, { locale: nb })} utsettelse
-            </Text>
-          </div>
+        {servingPunishment && (
+          <TooltipProvider>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <div
+                  className={cn(
+                    "flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg",
+                    isAttendingAndReserved
+                      ? "bg-green-300/25 dark:bg-green-700/25"
+                      : isAttendingAndNotReserved
+                        ? "bg-yellow-300/25 dark:bg-yellow-600/25"
+                        : "bg-gray-300/25 dark:bg-stone-700/25"
+                  )}
+                >
+                  <Icon icon="tabler:clock-hour-2" className="text-base" />
+                  <Text className={cn("text-sm")}>
+                    {formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse
+                  </Text>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="font-normal">
+                Utsettelsen varer til{" "}
+                {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
     </Card>
