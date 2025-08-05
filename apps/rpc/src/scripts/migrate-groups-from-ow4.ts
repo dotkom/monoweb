@@ -128,7 +128,7 @@ const insertGroupMembers = async (prisma: DBClient, groupId: GroupId, groupMembe
   groupRoles = [...groupRoles, ...newRoles]
 
   for (const membership of groupMemberships) {
-    const user = prisma.user.findUnique({ where: { id: membership.auth0_subject } })
+    const user = await prisma.user.findUnique({ where: { id: membership.auth0_subject } })
     if (user === null) {
       console.error(`User with id ${membership.auth0_subject} does not exist`)
       continue
@@ -162,7 +162,7 @@ async function insertDump() {
   const hobbies = JSON.parse(await fsp.readFile(path.resolve(pathOfThisScript, "./hobbys.json"), "utf-8")) as any[]
 
   /**
-   * Export result to json
+   * Export result from query under to file ./group-memberships.json
    * 
   SELECT
     json_agg(member_json)
