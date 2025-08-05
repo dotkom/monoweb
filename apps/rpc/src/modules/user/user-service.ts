@@ -6,7 +6,6 @@ import {
   type MembershipSpecialization,
   MembershipSpecializationSchema,
   type MembershipWrite,
-  type NTNUGroup,
   type User,
   type UserFilterQuery,
   type UserId,
@@ -21,7 +20,7 @@ import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import { addYears, differenceInYears, subYears } from "date-fns"
 import type { Pageable } from "../../query"
-import type { FeideGroupsRepository } from "../feide/feide-groups-repository"
+import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
 import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"

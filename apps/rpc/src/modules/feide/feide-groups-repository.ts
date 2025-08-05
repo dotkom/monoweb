@@ -1,10 +1,4 @@
 import { getLogger } from "@dotkomonline/logger"
-import {
-  type FeideResponseGroup,
-  FeideResponseGroupSchema,
-  type NTNUGroup,
-  type StudentInformation,
-} from "@dotkomonline/types"
 import { z } from "zod"
 
 const SUBJECT_GROUP_TYPE = "fc:fs:emne"
@@ -83,3 +77,32 @@ const feideGroupToNTNUGroup = (group: FeideResponseGroup): NTNUGroup => ({
   name: group.displayName,
   finished: group.membership?.notAfter ? new Date(group.membership.notAfter) : undefined,
 })
+
+const FeideResponseGroupSchema = z.object({
+  id: z.string(),
+  type: z.string(),
+  displayName: z.string(),
+  parent: z.string().optional(),
+  membership: z
+    .object({
+      basic: z.string(),
+      displayName: z.string().optional(),
+      notAfter: z.string().optional(),
+      notBefore: z.string().optional(),
+    })
+    .optional(),
+})
+
+type FeideResponseGroup = z.infer<typeof FeideResponseGroupSchema>
+
+export type NTNUGroup = {
+  name: string
+  code: string
+  finished?: Date
+}
+
+type StudentInformation = {
+  courses: NTNUGroup[]
+  studyProgrammes: NTNUGroup[]
+  studySpecializations: NTNUGroup[]
+}
