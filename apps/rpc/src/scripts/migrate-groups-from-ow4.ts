@@ -21,15 +21,16 @@ async function dumpData() {
     while (true) {
       const response = await fetch(getGroupUrl(page))
       const data = await response.json()
-      if (data.next === null) {
-        break
-      }
       page++
       result.push(...data.results)
 
       if (page > PAGE_LIMIT) {
         console.error("Page limit reached in dumpGroups")
         exit(1)
+      }
+
+      if (data.next === null) {
+        break
       }
     }
 
@@ -44,15 +45,16 @@ async function dumpData() {
     while (true) {
       const response = await fetch(getHobbyUrl(page))
       const data = await response.json()
-      if (data.next === null) {
-        break
-      }
       page++
       result.push(...data.results)
 
       if (page > PAGE_LIMIT) {
         console.error("Page limit reached in dumpHobbys")
         exit(1)
+      }
+
+      if (data.next === null) {
+        break
       }
     }
     return result
