@@ -71,6 +71,8 @@ export function getMembershipGrade(membership: Membership): number | null {
       // Take the difference, and add one because if `startYear == currentYear` they are in their first year
       return differenceInYears(getAcademicStart(getCurrentUtc()), getAcademicStart(membership.start)) + 1
     }
+    case "OTHER":
+      return null
   }
 }
 

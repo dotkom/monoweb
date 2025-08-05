@@ -23,6 +23,7 @@ enum MembershipType {
   PHD_STUDENT      @map("PHD_STUDENT")
   KNIGHT           @map("KNIGHT")
   SOCIAL_MEMBER    @map("SOCIAL_MEMBER")
+  OTHER            @map("OTHER")
 
   @@map("membership_type")
 }
