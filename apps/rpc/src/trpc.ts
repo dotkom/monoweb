@@ -59,7 +59,7 @@ export const createContext = async (principal: Principal | null, context: Servic
        * - The user is signed in and that the provided user id is the user's id.
        * - The user is a member of at least one of the provided groups (or any group if empty).
        */
-      requireMeOrAffiliation({ userId, affiliations }: { userId: UserId; affiliations: Affiliation[] }) {
+      requireMeOrAffiliation(userId: UserId, affiliations: Affiliation[]) {
         this.requireSignIn()
         invariant(principal !== null)
         if (principal.subject !== userId) {

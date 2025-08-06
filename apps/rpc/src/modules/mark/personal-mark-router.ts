@@ -5,19 +5,13 @@ import { authenticatedProcedure, staffProcedure, t } from "../../trpc"
 
 export const personalMarkRouter = t.router({
   getByUser: authenticatedProcedure.input(z.object({ userId: UserSchema.shape.id })).query(async ({ input, ctx }) => {
-    ctx.authorize.requireMeOrAffiliation({
-      userId: input.userId,
-      affiliations: [],
-    })
+    ctx.authorize.requireMeOrAffiliation(input.userId, [])
     ctx.executeTransaction(async (handle) => ctx.personalMarkService.findMarksByUserId(handle, input.userId))
   }),
   getVisibleInformation: authenticatedProcedure
     .input(z.object({ userId: UserSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ ctx, input }) => {
-      ctx.authorize.requireMeOrAffiliation({
-        userId: input.userId,
-        affiliations: [],
-      })
+      ctx.authorize.requireMeOrAffiliation(input.userId, [])
       return ctx.executeTransaction(async (handle) => {
         return ctx.personalMarkService.listVisibleInformationForUser(handle, ctx.principal.subject)
       })
@@ -56,10 +50,7 @@ export const personalMarkRouter = t.router({
   getExpiryDateForUser: authenticatedProcedure
     .input(z.object({ userId: UserSchema.shape.id }))
     .query(async ({ input, ctx }) => {
-      ctx.authorize.requireMeOrAffiliation({
-        userId: input.userId,
-        affiliations: [],
-      })
+      ctx.authorize.requireMeOrAffiliation(input.userId, [])
       ctx.executeTransaction(async (handle) => ctx.personalMarkService.getUserPunishment(handle, input.userId))
     }),
 })
