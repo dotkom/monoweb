@@ -65,7 +65,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eve
       attendanceId: event.attendanceId,
     })
     if (user) {
-      punishment = await server.personalMark.getExpiryDateForUser.query(user.id)
+      punishment = await server.personalMark.getExpiryDateForUser.query({ userId: user.id })
     }
   }
 
