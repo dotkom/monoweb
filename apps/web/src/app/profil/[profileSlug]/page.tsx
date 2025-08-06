@@ -120,7 +120,7 @@ export default async function ProfilePage({
   const [groups, events, marks] = await Promise.all([
     server.group.allByMember.query(user.id),
     isLoggedIn ? server.event.allByAttendingUserId.query({ id: user.id }) : Promise.resolve([]),
-    isUser ? server.personalMark.getVisibleInformationForUser.query({ id: user.id }) : Promise.resolve([]),
+    isUser ? server.personalMark.getVisibleInformation.query({ userId: user.id }) : Promise.resolve([]),
   ])
 
   const allGroups = [
