@@ -24,10 +24,10 @@ const links: MenuLink[] = [
     title: "Arrangementer",
     href: "/arrangementer",
   },
-  {
+  /*{
     title: "Jobbannonser",
     href: "/karriere",
-  },
+  },*/
   {
     title: "Om oss",
     items: [
