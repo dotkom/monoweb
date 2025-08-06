@@ -1,30 +1,30 @@
 import { ProductPaymentProviderWriteSchema, ProductSchema, ProductWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { procedure, t } from "../../trpc"
+import { staffProcedure, t } from "../../trpc"
 
 export const productRouter = t.router({
-  create: procedure
+  create: staffProcedure
     .input(ProductWriteSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.productService.create(handle, input))
     ),
-  get: procedure
+  get: staffProcedure
     .input(ProductSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.productService.getById(handle, input))
     ),
-  all: procedure
+  all: staffProcedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.productService.getProducts(handle, input))
     ),
-  addPaymentProvider: procedure
+  addPaymentProvider: staffProcedure
     .input(ProductPaymentProviderWriteSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.productPaymentProviderService.addPaymentProvider(handle, input))
     ),
-  deletePaymentProvider: procedure
+  deletePaymentProvider: staffProcedure
     .input(
       z.object({
         productId: ProductSchema.shape.id,
@@ -36,12 +36,12 @@ export const productRouter = t.router({
         ctx.productPaymentProviderService.deletePaymentProvider(handle, input.productId, input.paymentProviderId)
       )
     ),
-  getPaymentProvidersByProductId: procedure
+  getPaymentProvidersByProductId: staffProcedure
     .input(ProductSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.productPaymentProviderService.getAllByProductId(handle, input))
     ),
-  hasPaymentProviderId: procedure
+  hasPaymentProviderId: staffProcedure
     .input(
       z.object({
         productId: ProductSchema.shape.id,

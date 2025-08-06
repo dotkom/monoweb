@@ -1,20 +1,20 @@
 import { PaymentSchema, ProductSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { staffProcedure, t } from "../../trpc"
 import { productRouter } from "./product-router"
 import { refundRequestRouter } from "./refund-request-router"
 
 export const paymentRouter = t.router({
   product: productRouter,
   refundRequest: refundRequestRouter,
-  getPaymentProviders: procedure.query(({ ctx }) => ctx.paymentService.getPaymentProviders()),
-  all: procedure.input(PaginateInputSchema).query(async ({ input, ctx }) =>
+  getPaymentProviders: staffProcedure.query(({ ctx }) => ctx.paymentService.getPaymentProviders()),
+  all: staffProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.paymentService.getPayments(handle, input)
     })
   ),
-  createStripeCheckoutSession: authenticatedProcedure
+  createStripeCheckoutSession: staffProcedure
     .input(
       z.object({
         productId: ProductSchema.shape.id,
@@ -35,7 +35,7 @@ export const paymentRouter = t.router({
         )
       )
     ),
-  refundPayment: procedure
+  refundPayment: staffProcedure
     .input(
       z.object({
         paymentId: PaymentSchema.shape.id,
