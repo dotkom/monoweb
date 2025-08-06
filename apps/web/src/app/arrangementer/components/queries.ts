@@ -43,12 +43,12 @@ export const useEventAllPagedQuery = ({ filter, page }: UseEventAllQueryProps) =
   return { events, ...query }
 }
 
-type UseGetAttendeeStatuses = {
+type UseGetAttendeeStatusesQueryProps = {
   userId?: UserId
   attendanceIds: AttendanceId[]
 }
 
-export const useGetAttendeeStatusesQuery = ({ userId, attendanceIds }: UseGetAttendeeStatuses) => {
+export const useGetAttendeeStatusesQuery = ({ userId, attendanceIds }: UseGetAttendeeStatusesQueryProps) => {
   const trpc = useTRPC()
 
   return useQuery(

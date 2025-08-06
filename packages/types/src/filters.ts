@@ -49,7 +49,7 @@ export function buildSearchFilter() {
 
 export type SortOrder = z.infer<ReturnType<typeof createSortOrder>>
 
-/** Expect a field to be a valid order by value */
+/** Expect a field to be a sort order value */
 export function createSortOrder() {
   return z.enum(["asc", "desc"]).default("desc")
 }

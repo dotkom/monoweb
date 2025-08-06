@@ -83,7 +83,7 @@ export const eventRouter = t.router({
     }),
 
   all: procedure
-    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }))
+    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).optional())
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => await ctx.eventService.findEvents(handle, { ...input?.filter }, input))
     ),
