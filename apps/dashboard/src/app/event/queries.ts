@@ -3,19 +3,10 @@ import { useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc"
 
-export const useEventAllQuery = () => {
+export const useEventAllQuery = (filter?: EventFilterQuery) => {
   const trpc = useTRPC()
   const { data: events, ...query } = useQuery({
-    ...trpc.event.all.queryOptions(),
-    initialData: [],
-  })
-  return { events, ...query }
-}
-
-export const useEventFilterQuery = (filters: EventFilterQuery) => {
-  const trpc = useTRPC()
-  const { data: events, ...query } = useQuery({
-    ...trpc.event.findEvents.queryOptions(filters),
+    ...trpc.event.all.queryOptions({ filter }),
     initialData: [],
   })
   return { events, ...query }

@@ -22,7 +22,7 @@ export const useCreateEventMutation = () => {
           message: `Arrangementet "${data.title}" har blitt opprettet.`,
         })
 
-        await queryClient.invalidateQueries(trpc.event.all.queryOptions())
+        await queryClient.invalidateQueries({ queryKey: trpc.event.all.queryKey() })
 
         router.replace(`/event/${data.id}`)
       },
@@ -87,7 +87,7 @@ export const useDeleteEventMutation = () => {
         })
 
         await queryClient.invalidateQueries(trpc.event.get.queryOptions(data.id))
-        await queryClient.invalidateQueries(trpc.event.all.queryOptions())
+        await queryClient.invalidateQueries({ queryKey: trpc.event.all.queryKey() })
       },
       onError: (err) => {
         notification.fail({

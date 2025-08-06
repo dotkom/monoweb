@@ -1,8 +1,9 @@
 "use client"
 
 import { useGetAttendeeStatusesQuery } from "@/app/arrangementer/components/queries"
-import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
-import type { AttendanceId, Event, UserId } from "@dotkomonline/types"
+import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { useSession } from "@dotkomonline/oauth2/react"
+import type { AttendanceId, Event } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
@@ -18,7 +19,6 @@ const mapEventDetailToItem = (
 
 interface EventListProps {
   events: Event[]
-  userId: UserId | undefined
   fetchNextPage?(): void
 }
 
@@ -32,7 +32,9 @@ export const EventList: FC<EventListProps> = (props: EventListProps) => {
   const futureEvents = props.events.slice(0, lastFuture + 1)
   const pastEvents = props.events.slice(lastFuture + 1)
 
-  const attendanceStatusesQuery = useGetAttendeeStatusesQuery({ userId: props.userId, attendanceIds })
+  const session = useSession()
+
+  const attendanceStatusesQuery = useGetAttendeeStatusesQuery({ userId: session?.sub, attendanceIds })
   const attendanceStatuses = attendanceStatusesQuery.data ?? null
 
   const futureEventItems = futureEvents.map((eventDetail) => mapEventDetailToItem(attendanceStatuses, eventDetail))
@@ -45,11 +47,11 @@ export const EventList: FC<EventListProps> = (props: EventListProps) => {
       if (entry.isIntersecting) {
         props.fetchNextPage?.()
       }
-      })
+    })
 
-      if (loaderRef.current) observer.observe(loaderRef.current)
-      return () => observer.disconnect()
-    }, [props.fetchNextPage])
+    if (loaderRef.current) observer.observe(loaderRef.current)
+    return () => observer.disconnect()
+  }, [props.fetchNextPage])
 
   return (
     <section className="w-full flex flex-col gap-2">
@@ -68,5 +70,20 @@ export const EventList: FC<EventListProps> = (props: EventListProps) => {
       {pastEventItems.length > 0 && pastEventItems}
       <div ref={loaderRef} />
     </section>
+  )
+}
+
+export const EventListSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-1">
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+    </div>
   )
 }

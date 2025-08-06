@@ -1,6 +1,6 @@
+import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
 import {
   type Membership,
@@ -10,7 +10,21 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Icon,
+  ReadMore,
+  Text,
+  Title,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  cn,
+} from "@dotkomonline/ui"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import Link from "next/link"
@@ -319,7 +333,7 @@ export default async function ProfilePage({
         <Title>Arrangementer</Title>
 
         {isLoggedIn ? (
-          <EventList events={events} userId={user.id} />
+          <EventList events={events} />
         ) : (
           <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-500">
             <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>

@@ -79,7 +79,7 @@ export function getEventRepository(): EventRepository {
     async findMany(handle, query, page) {
       const events = await handle.event.findMany({
         ...pageQuery(page),
-        orderBy: { start: "desc" },
+        orderBy: { start: query.orderBy ?? "desc" },
         where: {
           AND: [
             {

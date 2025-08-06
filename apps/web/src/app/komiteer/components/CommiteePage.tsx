@@ -1,5 +1,5 @@
+import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
-import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
@@ -15,7 +15,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
   const showMembers = groupType !== "ASSOCIATED"
 
-  const [session, group, eventQuery, members] = await Promise.all([
+  const [session, group, events, members] = await Promise.all([
     auth.getServerSession(),
     server.group.getByType.query({ groupId: slug, type: groupType }),
     server.event.all.query({
@@ -48,8 +48,6 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
     )
 
   const name = group.name ?? group.abbreviation
-
-  const events = eventQuery.items.flat()
 
   return (
     <div className="flex flex-col gap-8">
@@ -163,7 +161,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
       <div className="flex flex-col gap-4">
         <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
-        <EventList events={events} userId={session?.sub} />
+        <EventList events={events} />
       </div>
     </div>
   )

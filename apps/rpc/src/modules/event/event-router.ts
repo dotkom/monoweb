@@ -29,12 +29,6 @@ export const eventRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.eventService.findEventById(handle, input))
     ),
 
-  findEvents: procedure
-    .input(EventFilterQuerySchema)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.eventService.findEvents(handle, input))
-    ),
-
   create: staffProcedure
     .input(
       z.object({
@@ -89,6 +83,12 @@ export const eventRouter = t.router({
     }),
 
   all: procedure
+    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }))
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => await ctx.eventService.findEvents(handle, { ...input?.filter }, input))
+    ),
+
+  allPaged: procedure
     .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {

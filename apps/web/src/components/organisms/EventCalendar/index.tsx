@@ -63,7 +63,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           max: new Date(year, month + 1, 0),
         },
       },
-      take: 100
+      take: 100,
     }),
   ])
 

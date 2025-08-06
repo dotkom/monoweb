@@ -1,7 +1,7 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 import { CompanySchema } from "./company"
-import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter } from "./filters"
+import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
 import { GroupSchema } from "./group"
 
 /**
@@ -47,5 +47,6 @@ export const EventFilterQuerySchema = z
     bySearchTerm: buildSearchFilter(),
     byOrganizingCompany: buildAnyOfFilter(CompanySchema.shape.id),
     byOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
+    orderBy: createSortOrder(),
   })
   .partial()

@@ -1,6 +1,6 @@
-import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { EventsViewToggle } from "@/components/molecules/EventsViewToggle/index"
 import { Title } from "@dotkomonline/ui"
+import { EventListSkeleton } from "./components/EventList"
 
 export default () => {
   return (
@@ -10,17 +10,7 @@ export default () => {
       </Title>
 
       <EventsViewToggle active="list" />
-
-      <div className="flex flex-col gap-1">
-        <EventListItemSkeleton />
-        <EventListItemSkeleton />
-        <EventListItemSkeleton />
-        <EventListItemSkeleton />
-        <EventListItemSkeleton />
-        <EventListItemSkeleton />
-        <EventListItemSkeleton />
-        <EventListItemSkeleton />
-      </div>
+      <EventListSkeleton />
     </div>
   )
 }

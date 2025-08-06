@@ -21,7 +21,7 @@ import Link from "next/link"
 import { useMemo, useState } from "react"
 import { EventFilters } from "./components/event-filters"
 import { EventHostingGroupList } from "./components/event-hosting-group-list"
-import { useEventFilterQuery } from "./queries"
+import { useEventAllQuery } from "./queries"
 
 const mapEventTypeToLabel = (eventType: EventType) => {
   switch (eventType) {
@@ -90,7 +90,7 @@ export default function EventPage() {
   )
 
   const [filters, setFilters] = useState<EventFilterQuery>({})
-  const { events, isLoading: isEventsLoading } = useEventFilterQuery(filters)
+  const { events, isLoading: isEventsLoading } = useEventAllQuery(filters)
 
   const table = useReactTable({
     data: events,
