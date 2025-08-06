@@ -12,7 +12,7 @@ import {
   getActiveMembership,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
-import { useQueries, useQuery } from "@tanstack/react-query"
+import { skipToken, useQueries, useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -70,8 +70,7 @@ export const AttendanceCard = ({
           { initialData: initialAttendance, enabled: user !== undefined }
         ),
         trpc.personalMark.getExpiryDateForUser.queryOptions(
-          // biome-ignore lint/style/noNonNullAssertion: enabled if user is defined
-          user!.id,
+          user?.id ?? skipToken,
           { initialData: initialPunishment, enabled: user !== undefined }
         ),
       ],

@@ -10,8 +10,7 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, cn } from "@dotkomonline/ui"
+import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import Link from "next/link"
@@ -320,7 +319,7 @@ export default async function ProfilePage({
         <Title>Arrangementer</Title>
 
         {isLoggedIn ? (
-          <EventList events={events} />
+          <EventList events={events} userId={user.id} />
         ) : (
           <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-500">
             <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>

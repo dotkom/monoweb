@@ -1,23 +1,10 @@
-import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
-import { EventList } from "@/components/organisms/EventList"
-import { server } from "@/utils/trpc/server"
-import { Title } from "@dotkomonline/ui"
+import { auth } from "@/auth"
+import { EventListWithFilters } from "./components/EventListWithFilters"
 
 const EventPage = async () => {
-  const events = await server.event.all.query()
+  const session = await auth.getServerSession()
 
-  return (
-    <div className="flex flex-col gap-4">
-      <Title element="h1" size="xl">
-        Arrangementer
-      </Title>
-
-      <div className="flex flex-col gap-4">
-        <EventsViewToggle active="list" />
-        <EventList events={events} />
-      </div>
-    </div>
-  )
+  return <EventListWithFilters userId={session?.sub} />
 }
 
 export default EventPage

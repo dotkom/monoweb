@@ -43,6 +43,7 @@ export const EventFilterQuerySchema = z
   .object({
     byId: buildAnyOfFilter(EventSchema.shape.id),
     byStartDate: buildDateRangeFilter(),
+    byEndDate: buildDateRangeFilter(),
     bySearchTerm: buildSearchFilter(),
     byOrganizingCompany: buildAnyOfFilter(CompanySchema.shape.id),
     byOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),

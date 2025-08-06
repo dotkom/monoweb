@@ -88,6 +88,10 @@ export function getEventRepository(): EventRepository {
                 gte: query.byStartDate?.min ?? undefined,
                 lte: query.byStartDate?.max ?? undefined,
               },
+              end: {
+                gte: query.byEndDate?.min ?? undefined,
+                lte: query.byEndDate?.max ?? undefined,
+              },
               title:
                 query.bySearchTerm !== null
                   ? {

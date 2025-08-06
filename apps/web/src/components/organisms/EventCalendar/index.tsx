@@ -57,13 +57,13 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const [session, eventDetails] = await Promise.all([
     auth.getServerSession(),
     server.event.all.query({
-      page: { take: 100 },
       filter: {
         byStartDate: {
           min: new Date(year, month, 1),
           max: new Date(year, month + 1, 0),
         },
       },
+      take: 100
     }),
   ])
 

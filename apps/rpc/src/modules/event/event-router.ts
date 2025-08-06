@@ -8,7 +8,7 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { feedbackRouter } from "./feedback-router"
@@ -89,28 +89,15 @@ export const eventRouter = t.router({
     }),
 
   all: procedure
-    .input(
-      z
-        .object({
-          page: PaginateInputSchema,
-          filter: EventFilterQuerySchema.optional(),
-        })
-        .optional()
-    )
-    .output(z.array(EventSchema))
+    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        return await ctx.eventService.findEvents(
-          handle,
-          {
-            byId: input?.filter?.byId ?? [],
-            byStartDate: input?.filter?.byStartDate ?? { min: null, max: null },
-            bySearchTerm: input?.filter?.bySearchTerm ?? null,
-            byOrganizingCompany: input?.filter?.byOrganizingCompany ?? [],
-            byOrganizingGroup: input?.filter?.byOrganizingGroup ?? [],
-          },
-          input?.page
-        )
+        const items = await ctx.eventService.findEvents(handle, { ...input?.filter }, input)
+
+        return {
+          items,
+          nextCursor: items.at(-1)?.id,
+        }
       })
     ),
 
