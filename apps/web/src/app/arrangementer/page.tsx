@@ -24,6 +24,7 @@ const EventPage = () => {
       orderBy: "asc",
     },
     page: {
+      // There should never be a lot of future events, so we fetch them all here to support different client-side groupings
       take: 1000,
     },
   })
