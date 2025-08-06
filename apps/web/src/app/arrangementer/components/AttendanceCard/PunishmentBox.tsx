@@ -37,7 +37,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
     <div className="flex flex-col gap-3 p-4 rounded-lg bg-red-200 dark:bg-red-900 text-sm">
       <div className="flex flex-row gap-2 items-center">
         <Icon icon="tabler:alert-triangle" className="text-lg" />
-        <Text className="text-base">Du har {punishment.delay} timer utsatt påmelding</Text>
+        <Text className="text-base">{punishment.delay} timer utsatt påmelding pga. prikk</Text>
       </div>
 
       <Text>

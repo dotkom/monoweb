@@ -1,6 +1,7 @@
 import type { Attendance } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { formatDate, isPast, isThisYear } from "date-fns"
+import { nb } from "date-fns/locale"
 import React from "react"
 
 const dateComponent = (label: string, dateStr: string, time: string) => (
@@ -26,8 +27,8 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
       date: attendance.registerStart,
       element: dateComponent(
         isPast(attendance.registerStart) ? "Åpnet" : "Åpner",
-        formatDate(registerStart, isThisYear(registerStart) ? "dd. MMMM" : "dd.MM.yyyy"),
-        formatDate(attendance.registerStart, "HH:mm")
+        formatDate(registerStart, isThisYear(registerStart) ? "dd. MMMM" : "dd.MM.yyyy", { locale: nb }),
+        formatDate(attendance.registerStart, "HH:mm", { locale: nb })
       ),
     },
     {
@@ -35,8 +36,8 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
       date: attendance.registerEnd,
       element: dateComponent(
         isPast(attendance.registerEnd) ? "Lukket" : "Lukker",
-        formatDate(registerEnd, isThisYear(registerEnd) ? "dd. MMMM" : "dd.MM.yyyy"),
-        formatDate(attendance.registerEnd, "HH:mm")
+        formatDate(registerEnd, isThisYear(registerEnd) ? "dd. MMMM" : "dd.MM.yyyy", { locale: nb }),
+        formatDate(attendance.registerEnd, "HH:mm", { locale: nb })
       ),
     },
     {
@@ -44,8 +45,8 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
       date: attendance.deregisterDeadline,
       element: dateComponent(
         "Avmeldingsfrist",
-        formatDate(deregisterDeadline, isThisYear(deregisterDeadline) ? "dd. MMMM" : "dd.MM.yyyy"),
-        formatDate(attendance.deregisterDeadline, "HH:mm")
+        formatDate(deregisterDeadline, isThisYear(deregisterDeadline) ? "dd. MMMM" : "dd.MM.yyyy", { locale: nb }),
+        formatDate(attendance.deregisterDeadline, "HH:mm", { locale: nb })
       ),
     },
   ]

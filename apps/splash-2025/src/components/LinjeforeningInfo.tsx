@@ -2,8 +2,12 @@ import { Button, Text, Title } from "@dotkomonline/ui"
 
 export const LinjeforeningInfo = () => {
   return (
-    <section className="relative text-white py-24 lg:py-48">
-      <div className="max-w-screen-xl px-8 md:px-16 mx-auto flex flex-col gap-10">
+    <section className="relative text-white bg-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 32" role="img" aria-labelledby="desc">
+        <desc id="desc">A decorative slant</desc>
+        <path fill="white" fill-opacity="1" d="M0,32L1440,0L1440,0L0,0Z" />
+      </svg>
+      <div className="max-w-screen-xl px-8 md:px-16 mx-auto flex flex-col gap-10 py-48 max-sm:py-20 max-sm:items-center ">
         <Title element="h1" size="xl">
           Bli aktiv i linjeforeningen!
         </Title>
@@ -44,6 +48,11 @@ export const LinjeforeningInfo = () => {
           Gå til opptakssiden
         </Button>
       </div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 32" role="img" aria-labelledby="desc" className="block">
+        <desc id="desc">A decorative slant</desc>
+        {/* #ffedd4 is Tailwind's orange-100 */}
+        <path fill="#ffedd4" d="M1440,0.5L0,32L0,32L1440,32Z" />
+      </svg>
     </section>
   )
 }
