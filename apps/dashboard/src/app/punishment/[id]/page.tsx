@@ -24,7 +24,7 @@ export default function MarkEditCard() {
   const router = useRouter()
 
   const markQueryOptions = trpc.personalMark.getPersonalMarkDetailsByMark.queryOptions({
-    id: mark.id,
+    markId: mark.id,
   })
   const { data: personalMarks } = useQuery({ ...markQueryOptions, initialData: [] })
 
