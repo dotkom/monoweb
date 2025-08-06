@@ -4,7 +4,7 @@ import { marked } from "marked"
 import { configuration } from "src/configuration"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 import z from "zod"
-import { DEFAULT_IMAGE_URL, dumpData } from "./migrate-from-ow4"
+import { DEFAULT_IMAGE_URL, dumpOW4Data } from "./migrate-from-ow4"
 
 const createUniqueSlug = async (prisma: DBClient, slug: string) => {
   let uniqueSlug = slug
@@ -44,7 +44,7 @@ const OW4ArticleSchema = z.object({
 })
 
 console.log("Dumping articles")
-const data = await dumpData("https://old.online.ntnu.no/api/v1/articles/?format=json")
+const data = await dumpOW4Data("https://old.online.ntnu.no/api/v1/articles/?format=json")
 
 const articles = OW4ArticleSchema.array().parse(data)
 const articleService = serviceLayer.articleService
