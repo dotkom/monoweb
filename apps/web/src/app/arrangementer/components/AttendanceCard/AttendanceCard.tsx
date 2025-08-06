@@ -69,10 +69,15 @@ export const AttendanceCard = ({
           },
           { initialData: initialAttendance, enabled: user !== undefined }
         ),
-        trpc.personalMark.getExpiryDateForUser.queryOptions({ userId: user?.id ?? "" }, {
-          initialData: initialPunishment,
-          enabled: user !== undefined,
-        }),
+        trpc.personalMark.getExpiryDateForUser.queryOptions(
+          {
+            userId: user?.id ?? "",
+          },
+          {
+            initialData: initialPunishment,
+            enabled: user !== undefined,
+          }
+        ),
       ],
     })
 
