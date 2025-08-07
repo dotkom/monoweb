@@ -11,13 +11,14 @@ import type { FC } from "react"
 
 export default async function App() {
   const eventResult = await server.event.all.query({
-    take: 3, filter: {
+    take: 3,
+    filter: {
       byEndDate: {
         max: null,
         min: getCurrentUtc(),
       },
       orderBy: "asc",
-    }
+    },
   })
   const events = eventResult.items
   const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
@@ -27,9 +28,9 @@ export default async function App() {
 
   const attendanceStatuses = user
     ? await server.attendance.getAttendeeStatuses.query({
-      userId: user.id,
-      attendanceIds,
-    })
+        userId: user.id,
+        attendanceIds,
+      })
     : null
 
   return (
