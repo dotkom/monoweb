@@ -70,9 +70,13 @@ export const AttendanceCard = ({
           { initialData: initialAttendance, enabled: user !== undefined }
         ),
         trpc.personalMark.getExpiryDateForUser.queryOptions(
-          // biome-ignore lint/style/noNonNullAssertion: enabled if user is defined
-          user!.id,
-          { initialData: initialPunishment, enabled: user !== undefined }
+          {
+            userId: user?.id ?? "",
+          },
+          {
+            initialData: initialPunishment,
+            enabled: user !== undefined,
+          }
         ),
       ],
     })

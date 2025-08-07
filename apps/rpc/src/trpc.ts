@@ -32,7 +32,7 @@ export const createContext = async (principal: Principal | null, context: Servic
         require(principal !== null)
       },
       /**
-       * Require that the user is a member of at least one group.
+       * Require that the user is a member of at least one of the provided groups.
        *
        * If the provided list is empty, we assume permission for any group affiliation is sufficient.
        */
@@ -42,6 +42,28 @@ export const createContext = async (principal: Principal | null, context: Servic
         require(principal.affiliations.size > 0)
         for (const affiliation of affiliations) {
           require(principal.affiliations.has(affiliation))
+        }
+      },
+      /**
+       * Require that the user is signed in and that the provided user id is the user's id.
+       */
+      requireMe(userId: UserId) {
+        this.requireSignIn()
+        invariant(principal !== null)
+        require(principal.subject === userId)
+      },
+      /**
+       * Requires either `requireMe` or `requireAffiliation` to be true.
+       *
+       * One of the following must be true:
+       * - The user is signed in and that the provided user id is the user's id.
+       * - The user is a member of at least one of the provided groups (or any group if empty).
+       */
+      requireMeOrAffiliation(userId: UserId, affiliations: Affiliation[]) {
+        this.requireSignIn()
+        invariant(principal !== null)
+        if (principal.subject !== userId) {
+          this.requireAffiliation(...affiliations)
         }
       },
     },

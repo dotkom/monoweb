@@ -5,6 +5,15 @@ import { withSentryConfig } from "@sentry/nextjs"
  */
 const config = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/event",
+        permanent: false,
+      },
+    ]
+  },
 }
 
 export default withSentryConfig(config, {
