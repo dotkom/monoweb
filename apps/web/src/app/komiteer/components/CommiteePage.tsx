@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { getCurrentUtc } from "@dotkomonline/utils"
 import Link from "next/link"
 
 interface CommitteePageProps {
@@ -21,6 +22,11 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
     server.event.all.query({
       filter: {
         byOrganizingGroup: [slug],
+        byEndDate: {
+          max: null,
+          min: getCurrentUtc(),
+        },
+        orderBy: "asc",
       },
     }),
     // We do not show members for ASSOCIATED types because they often have members outside of Online
