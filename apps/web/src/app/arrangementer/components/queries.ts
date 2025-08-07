@@ -1,7 +1,9 @@
 import { useTRPC } from "@/utils/trpc/client"
-import { skipToken } from "@tanstack/react-query"
+import type { AttendanceId, EventFilterQuery, UserId } from "@dotkomonline/types"
+import { skipToken, useInfiniteQuery } from "@tanstack/react-query"
 
 import { useQuery } from "@tanstack/react-query"
+import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
 
 interface Props {
   userId?: string
@@ -15,6 +17,56 @@ export const useGetAttendee = ({ userId, attendanceId }: Props) => {
         ? {
             attendanceId,
             userId: userId ?? "",
+          }
+        : skipToken
+    )
+  )
+}
+
+interface UseEventAllQueryProps {
+  filter: EventFilterQuery
+  page?: Pageable
+}
+
+export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery({
+    ...trpc.event.all.queryOptions({ filter, ...page }),
+  })
+
+  return { events: data?.items ?? [], ...query }
+}
+
+export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps) => {
+  const trpc = useTRPC()
+
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.event.all.infiniteQueryOptions({
+      filter,
+      ...page,
+    }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  })
+
+  const events = data?.pages.flatMap((page) => page.items) ?? []
+
+  return { events, ...query }
+}
+
+type UseGetAttendeeStatusesQueryProps = {
+  userId?: UserId
+  attendanceIds: AttendanceId[]
+}
+
+export const useGetAttendeeStatusesQuery = ({ userId, attendanceIds }: UseGetAttendeeStatusesQueryProps) => {
+  const trpc = useTRPC()
+
+  return useQuery(
+    trpc.attendance.getAttendeeStatuses.queryOptions(
+      userId
+        ? {
+            userId,
+            attendanceIds,
           }
         : skipToken
     )

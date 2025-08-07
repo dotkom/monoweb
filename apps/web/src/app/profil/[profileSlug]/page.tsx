@@ -1,6 +1,6 @@
+import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
 import {
   type Membership,
@@ -10,8 +10,22 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { RadialProgress, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, cn } from "@dotkomonline/ui"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Icon,
+  RadialProgress,
+  ReadMore,
+  Text,
+  Title,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  cn,
+} from "@dotkomonline/ui"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import Link from "next/link"

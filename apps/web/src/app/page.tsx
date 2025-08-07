@@ -4,13 +4,23 @@ import { AttendanceStatus } from "@/components/molecules/EventListItem/Attendanc
 import { server } from "@/utils/trpc/server"
 import type { AttendanceId, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
-import { slugify } from "@dotkomonline/utils"
+import { getCurrentUtc, slugify } from "@dotkomonline/utils"
 import { formatDate, isPast } from "date-fns"
 import Link from "next/link"
 import type { FC } from "react"
 
 export default async function App() {
-  const events = await server.event.all.query({ page: { take: 3 } })
+  const eventResult = await server.event.all.query({
+    take: 3,
+    filter: {
+      byEndDate: {
+        max: null,
+        min: getCurrentUtc(),
+      },
+      orderBy: "asc",
+    },
+  })
+  const events = eventResult.items
   const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
 
   const session = await auth.getServerSession()

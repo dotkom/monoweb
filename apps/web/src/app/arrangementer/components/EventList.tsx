@@ -1,10 +1,12 @@
-import { auth } from "@/auth"
-import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
-import { server } from "@/utils/trpc/server"
+"use client"
+
+import { useGetAttendeeStatusesQuery } from "@/app/arrangementer/components/queries"
+import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { useSession } from "@dotkomonline/oauth2/react"
 import type { AttendanceId, Event } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
-import type { FC } from "react"
+import { type FC, useEffect, useRef } from "react"
 
 const mapEventDetailToItem = (
   attendanceStatuses: Map<AttendanceId, "RESERVED" | "UNRESERVED"> | null,
@@ -17,30 +19,39 @@ const mapEventDetailToItem = (
 
 interface EventListProps {
   events: Event[]
+  fetchNextPage?(): void
 }
 
-export const EventList: FC<EventListProps> = async (props: EventListProps) => {
+export const EventList: FC<EventListProps> = (props: EventListProps) => {
   if (props.events.length === 0) {
     return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
   }
-
-  const session = await auth.getServerSession()
-  const user = session ? await server.user.getMe.query() : undefined
 
   const lastFuture = props.events.findLastIndex((event) => !isPast(event.end))
   const attendanceIds = props.events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
   const futureEvents = props.events.slice(0, lastFuture + 1)
   const pastEvents = props.events.slice(lastFuture + 1)
 
-  const attendanceStatuses = user
-    ? await server.attendance.getAttendeeStatuses.query({
-        userId: user.id,
-        attendanceIds: attendanceIds,
-      })
-    : null
+  const session = useSession()
+
+  const attendanceStatusesQuery = useGetAttendeeStatusesQuery({ userId: session?.sub, attendanceIds })
+  const attendanceStatuses = attendanceStatusesQuery.data ?? null
 
   const futureEventItems = futureEvents.map((eventDetail) => mapEventDetailToItem(attendanceStatuses, eventDetail))
   const pastEventItems = pastEvents.map((eventDetail) => mapEventDetailToItem(attendanceStatuses, eventDetail))
+
+  const loaderRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        props.fetchNextPage?.()
+      }
+    })
+
+    if (loaderRef.current) observer.observe(loaderRef.current)
+    return () => observer.disconnect()
+  }, [props.fetchNextPage])
 
   return (
     <section className="w-full flex flex-col gap-2">
@@ -57,6 +68,22 @@ export const EventList: FC<EventListProps> = async (props: EventListProps) => {
       )}
 
       {pastEventItems.length > 0 && pastEventItems}
+      <div ref={loaderRef} />
     </section>
+  )
+}
+
+export const EventListSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-1">
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+      <EventListItemSkeleton />
+    </div>
   )
 }

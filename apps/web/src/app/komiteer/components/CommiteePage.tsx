@@ -1,8 +1,9 @@
+import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
-import { EventList } from "@/components/organisms/EventList/index"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { getCurrentUtc } from "@dotkomonline/utils"
 import Link from "next/link"
 
 interface CommitteePageProps {
@@ -21,6 +22,11 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
     server.event.all.query({
       filter: {
         byOrganizingGroup: [slug],
+        byEndDate: {
+          max: null,
+          min: getCurrentUtc(),
+        },
+        orderBy: "asc",
       },
     }),
     // We do not show members for ASSOCIATED types because they often have members outside of Online
@@ -161,7 +167,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
       <div className="flex flex-col gap-4">
         <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
-        <EventList events={events} />
+        <EventList events={events.items} />
       </div>
     </div>
   )

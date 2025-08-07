@@ -10,16 +10,15 @@ export const useCompanyAllQuery = () => {
 
 export const useCompanyEventsAllQuery = (id: CompanyId) => {
   const trpc = useTRPC()
-  const { data: events, ...query } = useQuery({
+  const { data, ...query } = useQuery({
     ...trpc.event.all.queryOptions({
       filter: {
         byOrganizingCompany: [id],
       },
     }),
-    initialData: [],
   })
 
-  return { events, ...query }
+  return { events: data?.items ?? [], ...query }
 }
 
 export const useCompanyBySlugQuery = (slug: CompanySlug) => {

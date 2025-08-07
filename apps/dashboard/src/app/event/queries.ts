@@ -2,23 +2,20 @@ import type { AttendanceId, EventFilterQuery, EventId, FeedbackFormId } from "@d
 import { useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc"
+import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
 
-export const useEventAllQuery = () => {
-  const trpc = useTRPC()
-  const { data: events, ...query } = useQuery({
-    ...trpc.event.all.queryOptions(),
-    initialData: [],
-  })
-  return { events, ...query }
+interface UseEventAllQueryProps {
+  filter: EventFilterQuery
+  page?: Pageable
 }
 
-export const useEventFilterQuery = (filters: EventFilterQuery) => {
+export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
   const trpc = useTRPC()
-  const { data: events, ...query } = useQuery({
-    ...trpc.event.findEvents.queryOptions(filters),
-    initialData: [],
+  const { data, ...query } = useQuery({
+    ...trpc.event.all.queryOptions({ filter, ...page }),
   })
-  return { events, ...query }
+
+  return { events: data?.items ?? [], ...query }
 }
 
 export const useEventDetailsGetQuery = (id: EventId) => {

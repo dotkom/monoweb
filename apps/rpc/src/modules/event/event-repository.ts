@@ -79,7 +79,7 @@ export function getEventRepository(): EventRepository {
     async findMany(handle, query, page) {
       const events = await handle.event.findMany({
         ...pageQuery(page),
-        orderBy: { start: "desc" },
+        orderBy: { start: query.orderBy ?? "desc" },
         where: {
           AND: [
             {
@@ -87,6 +87,10 @@ export function getEventRepository(): EventRepository {
               start: {
                 gte: query.byStartDate?.min ?? undefined,
                 lte: query.byStartDate?.max ?? undefined,
+              },
+              end: {
+                gte: query.byEndDate?.min ?? undefined,
+                lte: query.byEndDate?.max ?? undefined,
               },
               title:
                 query.bySearchTerm !== null

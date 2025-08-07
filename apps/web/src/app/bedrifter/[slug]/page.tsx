@@ -9,7 +9,7 @@ const CompanyPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
       byOrganizingCompany: [company.id],
     },
   })
-  return <CompanyView company={company} events={attendanceEvents} />
+  return <CompanyView company={company} events={attendanceEvents.items} />
 }
 
 export default CompanyPage
