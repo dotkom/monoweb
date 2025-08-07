@@ -1,6 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { UserSchema } from "./user/user"
+import { UserSchema } from "./user"
 
 // TODO: Where on earth does this come from?
 export type AttendanceStatus = "NotOpened" | "Open" | "Closed"
@@ -29,7 +29,8 @@ export type AttendanceSelectionResults = z.infer<typeof AttendanceSelectionResul
 export const AttendanceSelectionResultSchema = z.object({
   id: z.string(),
   name: z.string(),
-  totalCount: z.number(),
+  /** The number of attendees who have answered this selection. */
+  count: z.number(),
   options: z.array(
     z.object({
       id: z.string(),
@@ -41,17 +42,23 @@ export const AttendanceSelectionResultSchema = z.object({
 
 export type AttendeeId = Attendee["id"]
 export type Attendee = z.infer<typeof AttendeeSchema>
+/**
+ * Attendee is a user who has registered for an event, with their selections.
+ *
+ * The attendee's User object is included, but without memberships.
+ */
 export const AttendeeSchema = schemas.AttendeeSchema.extend({
-  user: UserSchema,
+  user: UserSchema.omit({ memberships: true }),
   selections: z.array(AttendanceSelectionResponseSchema),
 })
 
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export const AttendeeWriteSchema = AttendeeSchema.pick({
-  attended: true,
+  attendedAt: true,
   earliestReservationAt: true,
   reserved: true,
   selections: true,
+  /** The attending user's grade at time of registration. */
   userGrade: true,
 })
 
@@ -59,7 +66,6 @@ export type AttendancePoolId = AttendancePool["id"]
 export type AttendancePool = z.infer<typeof AttendancePoolSchema>
 export const AttendancePoolSchema = schemas.AttendancePoolSchema.extend({
   yearCriteria: z.array(z.number()),
-  attendees: z.array(AttendeeSchema),
 })
 
 export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
@@ -80,6 +86,7 @@ export type Attendance = z.infer<typeof AttendanceSchema>
 export type AttendanceId = Attendance["id"]
 export const AttendanceSchema = schemas.AttendanceSchema.extend({
   pools: z.array(AttendancePoolSchema),
+  attendees: z.array(AttendeeSchema),
   selections: z.array(AttendanceSelectionSchema),
 })
 

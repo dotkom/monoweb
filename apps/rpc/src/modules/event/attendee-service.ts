@@ -96,7 +96,7 @@ export function getAttendeeService(
     },
     async registerForEvent(handle: DBHandle, userId: string, attendanceId: string, attendancePoolId: string) {
       const registerTime = new Date()
-      const attendance = await attendanceRepository.findById(handle, attendanceId)
+      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
@@ -117,7 +117,7 @@ export function getAttendeeService(
 
       const isMergePool = attendancePool.capacity === 0
 
-      const markPunishment = await personalMarkService.getUserPunishment(handle, userId)
+      const markPunishment = await personalMarkService.findPunishmentByUserId(handle, userId)
 
       if (markPunishment?.suspended) {
         throw new AttendeeRegistrationError(
@@ -150,7 +150,7 @@ export function getAttendeeService(
       } else {
         await taskSchedulingService.scheduleAt(
           handle,
-          tasks.ATTEMPT_RESERVE_ATTENDEE.type,
+          tasks.RESERVE_ATTENDEE.type,
           { userId, attendanceId },
           new TZDate(reserveTime)
         )
@@ -159,7 +159,7 @@ export function getAttendeeService(
     },
     async adminRegisterForEvent(handle: DBHandle, userId: string, attendanceId: string, attendancePoolId: string) {
       const registerTime = new Date()
-      const attendance = await attendanceRepository.findById(handle, attendanceId)
+      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
@@ -186,7 +186,7 @@ export function getAttendeeService(
     },
     async deregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
       const deregisterTime = new Date()
-      const attendance = await attendanceRepository.findById(handle, attendanceId)
+      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }

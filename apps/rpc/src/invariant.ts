@@ -10,7 +10,7 @@ const logger = getLogger("db-query-invariant-checker")
  * there is ZERO RUNTIME GUARANTEES that the data conforms to the schema. In fact, TypeScript will HAPPILY lie to us
  * since we never checked.
  */
-export function parseOrReport<T>(schema: z.ZodSchema<T>, value: T): T {
+export function parseOrReport<T extends z.ZodSchema>(schema: T, value: z.infer<T> | unknown): z.infer<T> {
   const result = schema.safeParse(value)
   if (!result.success) {
     logger.error("Database failed to parse value into schema: %s emitted for object %o", result.error.message, value)

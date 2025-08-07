@@ -9,19 +9,14 @@ import {
   type AttendeeWrite,
   type UserId,
 } from "@dotkomonline/types"
-import type { JsonValue } from "@prisma/client/runtime/library"
 import { parseOrReport } from "../../invariant"
 import { AttendeeWriteError } from "./attendee-error"
 
-type UnparsedAttendeeWithoutUser = Omit<AttendeeWithoutUser, "selections"> & {
-  selections?: JsonValue
-}
-
 export interface AttendeeRepository {
-  create(handle: DBHandle, data: AttendeeWrite): Promise<AttendeeWithoutUser>
-  delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
-  getById(handle: DBHandle, attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
-  update(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<AttendeeWithoutUser>
+  // create(handle: DBHandle, data: AttendeeWrite): Promise<AttendeeWithoutUser>
+  // delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
+  // getById(handle: DBHandle, attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
+  // update(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<AttendeeWithoutUser>
   getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<AttendeeWithoutUser[]>
   getByAttendancePoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser[]>
   getFirstUnreservedByAttendancePoolId(
