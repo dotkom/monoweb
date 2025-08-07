@@ -1,5 +1,5 @@
-import { useUploadFile } from "@/lib/uploadFile"
-import type { User, UserWrite } from "@dotkomonline/types"
+import { useUploadFile } from "@/utils/s3/uploadFile"
+import { type User, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 import {
   Button,
   Label,
@@ -12,27 +12,41 @@ import {
   SelectValue,
   Text,
   TextInput,
+  Textarea,
   cn,
 } from "@dotkomonline/ui"
-import { slugify } from "@dotkomonline/utils"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 
 interface FormProps {
   user: User
-  onSubmit: (selections: UserWrite) => void
+  onSubmit: (data: UserWrite) => void
 }
 
 export function ProfileForm({ user, onSubmit }: FormProps) {
+  const defaultValues: UserWrite = {
+    profileSlug: user.profileSlug,
+    name: user.name ?? null,
+    email: user.email ?? null,
+    imageUrl: user.imageUrl ?? null,
+    biography: user.biography ?? null,
+    phone: user.phone ?? null,
+    gender: user.gender ?? null,
+    dietaryRestrictions: user.dietaryRestrictions ?? null,
+  }
+
   const {
+    register,
     control,
     trigger,
     formState: { errors },
     handleSubmit,
   } = useForm<UserWrite>({
-    defaultValues: user,
-    mode: "onSubmit",
-    reValidateMode: "onChange",
+    defaultValues,
+    mode: "onTouched",
+    reValidateMode: "onBlur",
+    resolver: zodResolver(UserWriteSchema),
   })
 
   // This validates the default values without the user having to interact with the form
@@ -44,77 +58,36 @@ export function ProfileForm({ user, onSubmit }: FormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-      <Controller
-        control={control}
-        name={"profileSlug"}
-        rules={{
-          required: "Du må velge et brukernavn",
-          minLength: { value: 3, message: "Brukernavnet må være minst 3 tegn lang" },
-          maxLength: { value: 32, message: "Brukernavnet kan ikke være lengre enn 32 tegn" },
-          validate: (value) => {
-            // TODO: add debounce and check for uniqueness
-            return value !== "rediger"
-          },
-        }}
-        render={({ field: { onChange, value } }) => (
-          <div className="w-full flex flex-col gap-1">
-            <TextInput
-              label="Brukernavn"
-              required
-              value={value}
-              onChange={(event) => onChange(slugify(event.target.value))}
-              placeholder="supermann99"
-            />
-            {errors.profileSlug && (
-              <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-                {errors.profileSlug?.message ?? "En feil oppstod"}
-              </Text>
-            )}
-          </div>
+      <div className="w-full flex flex-col gap-1">
+        <TextInput label="Brukernavn" placeholder="supermann99" required {...register("profileSlug")} />
+        {errors.profileSlug && (
+          <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
+            {errors.profileSlug?.message ?? "En feil oppstod"}
+          </Text>
         )}
-      />
+      </div>
+
+      <div className="w-full flex flex-col gap-1">
+        <TextInput label="Fullt navn" placeholder="Ola Nordmann" required {...register("name")} />
+        {errors.name && (
+          <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
+            {errors.name?.message ?? "En feil oppstod"}
+          </Text>
+        )}
+      </div>
+
+      <div className="w-full flex flex-col gap-1">
+        <TextInput label="E-post" placeholder="ola.nordmann@epost.no" required {...register("email")} />
+        {errors.email && (
+          <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
+            {errors.email?.message ?? "En feil oppstod"}
+          </Text>
+        )}
+      </div>
 
       <Controller
         control={control}
-        name={"name"}
-        rules={{ required: "Du må skrive inn et navn" }}
-        render={({ field: { onChange, value } }) => (
-          <div className="w-full flex flex-col gap-1">
-            <TextInput
-              label="Fullt navn"
-              required
-              value={value ?? undefined}
-              onChange={onChange}
-              placeholder="Ola Nordmann"
-            />
-            {errors.name && (
-              <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-                {errors.name?.message ?? "En feil oppstod"}
-              </Text>
-            )}
-          </div>
-        )}
-      />
-
-      <Controller
-        control={control}
-        name={"email"}
-        rules={{ required: "Du må skrive en e-post" }}
-        render={({ field: { onChange, value } }) => (
-          <div className="w-full flex flex-col gap-1">
-            <TextInput label="E-post" required value={value ?? ""} onChange={onChange} placeholder={"supermann99"} />
-            {errors.email && (
-              <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-                {errors.email?.message ?? "En feil oppstod"}
-              </Text>
-            )}
-          </div>
-        )}
-      />
-
-      <Controller
-        control={control}
-        name={"imageUrl"}
+        name="imageUrl"
         render={({ field: { onChange, value } }) => (
           <div className="w-full flex flex-col gap-1">
             <Label htmlFor="pfp" className="text-base">
@@ -132,10 +105,10 @@ export function ProfileForm({ user, onSubmit }: FormProps) {
                   const result = await upload(file)
                   onChange(result)
                 }}
-                placeholder={"https://example.com/image.jpg"}
+                placeholder="https://example.com/image.jpg"
                 className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-500 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               />
-              <TextInput value={value ?? ""} onChange={onChange} placeholder={"https://..."} />
+              <TextInput value={value ?? ""} onChange={onChange} placeholder="https://..." />
             </div>
             {errors.imageUrl && (
               <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
@@ -146,44 +119,27 @@ export function ProfileForm({ user, onSubmit }: FormProps) {
         )}
       />
 
-      <Controller
-        control={control}
-        name={"biography"}
-        render={({ field: { onChange, value } }) => (
-          <div className="w-full flex flex-col gap-1">
-            <TextInput
-              label="Biografi"
-              value={value ?? ""}
-              onChange={onChange}
-              placeholder="Skriv noe om deg selv..."
-            />
-            {errors.biography && (
-              <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-                {errors.biography?.message ?? "En feil oppstod"}
-              </Text>
-            )}
-          </div>
+      <div className="w-full flex flex-col gap-1">
+        <Textarea label="Biografi" placeholder="Skriv noe om deg selv..." {...register("biography")} />
+        {errors.biography && (
+          <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
+            {errors.biography?.message ?? "En feil oppstod"}
+          </Text>
         )}
-      />
+      </div>
+
+      <div className="w-full flex flex-col gap-1">
+        <TextInput label="Telefonnummer" placeholder="+47 999 88 777" {...register("phone")} />
+        {errors.phone && (
+          <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
+            {errors.phone?.message ?? "En feil oppstod"}
+          </Text>
+        )}
+      </div>
 
       <Controller
         control={control}
-        name={"phone"}
-        render={({ field: { onChange, value } }) => (
-          <div className="w-full flex flex-col gap-1">
-            <TextInput label="Telefonnummer" value={value ?? ""} onChange={onChange} placeholder={"+47 999 88 777"} />
-            {errors.phone && (
-              <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-                {errors.phone?.message ?? "En feil oppstod"}
-              </Text>
-            )}
-          </div>
-        )}
-      />
-
-      <Controller
-        control={control}
-        name={"gender"}
+        name="gender"
         rules={{ validate: (value) => (value ? ["Mann", "Kvinne", "Annet", "Ikke oppgitt"].includes(value) : true) }}
         render={({ field: { onChange, value } }) => (
           <div className="w-full flex flex-col gap-1">
@@ -220,25 +176,18 @@ export function ProfileForm({ user, onSubmit }: FormProps) {
         )}
       />
 
-      <Controller
-        control={control}
-        name={"dietaryRestrictions"}
-        render={({ field: { onChange, value } }) => (
-          <div className="w-full flex flex-col gap-1">
-            <TextInput
-              label="Kostholdsrestriksjoner"
-              value={value ?? ""}
-              onChange={onChange}
-              placeholder={"Ingen kostholdsrestriksjoner"}
-            />
-            {errors.dietaryRestrictions && (
-              <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-                {errors.dietaryRestrictions?.message ?? "En feil oppstod"}
-              </Text>
-            )}
-          </div>
+      <div className="w-full flex flex-col gap-1">
+        <TextInput
+          label="Kostholdsrestriksjoner"
+          placeholder="Ingen kostholdsrestriksjoner"
+          {...register("dietaryRestrictions")}
+        />
+        {errors.dietaryRestrictions && (
+          <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
+            {errors.dietaryRestrictions?.message ?? "En feil oppstod"}
+          </Text>
         )}
-      />
+      </div>
 
       <Button type="submit" className="w-fit">
         Oppdater
