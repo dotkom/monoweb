@@ -10,12 +10,13 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
+import { RadialProgress, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon, ReadMore, Text, Title, cn } from "@dotkomonline/ui"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
-import { formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
+import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { useMemo } from "react"
 
 const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
   `/api/auth/authorize?connection=FEIDE&redirectAfter=/profil/${profileSlug}` as const
@@ -79,20 +80,64 @@ function MarkDisplay({
   const expires = getPunishmentExpiryDate(personalMark.createdAt, mark.duration)
   const hasExpired = isPast(expires)
 
+  const percentageLeft = useMemo(() => {
+    const totalDuration = differenceInMilliseconds(expires, personalMark.createdAt)
+    const remainingDuration = Math.max(0, differenceInMilliseconds(expires, new Date()))
+    const ratio = Math.min(1, Math.max(0, remainingDuration / totalDuration))
+
+    return ratio * 100
+  }, [expires, personalMark.createdAt])
+
   return (
-    <div className={cn("rounded-lg p-4 bg-gray-100 flex flex-col align-start gap-2", !hasExpired && "bg-red-200")}>
-      <div className="flex gap-2 justify-between">
-        <div className="flex items-center gap-2">
-          <Icon icon="tabler:alert-hexagon" className="text-4xl" />
-          <Title>{mark.title}</Title>
+    <div
+      className={cn(
+        "p-3 border rounded-md flex flex-row gap-3 justify-between w-full border-gray-200 dark:border-stone-800",
+        hasExpired && "text-gray-500 dark:text-stone-500"
+      )}
+    >
+      <div className="flex gap-3 items-center h-fit w-full">
+        <div className="flex flex-col gap-3 w-full">
+          <div className={cn("flex flex-col", hasExpired ? "gap-1" : "gap-2")}>
+            {hasExpired ? (
+              <Text className="text-base">{mark.title}</Text>
+            ) : (
+              <div className="flex flex-col gap-1 text-sm">
+                <div className="flex flex-row gap-1 items-center">
+                  {!hasExpired && <Icon icon="tabler:point-filled" className="text-red-500 text-xl -mx-1" />}
+                  <Text className={cn(!hasExpired && "text-lg font-medium")}>{mark.title}</Text>
+                </div>
+                <div className={cn("flex flex-row gap-2 items-center")}>
+                  <Text>
+                    {mark.weight} prikk{mark.weight !== 1 ? "er" : ""}
+                  </Text>
+
+                  <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-500" />
+
+                  <TooltipProvider>
+                    <Tooltip delayDuration={100}>
+                      <TooltipTrigger className="flex flex-row items-center gap-2">
+                        <RadialProgress percentage={percentageLeft} size={16} strokeWidth={4} reverse hideText />
+
+                        <Text>Utløper om {formatDistanceToNowStrict(expires)}</Text>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <Text className="text-xs text-gray-500 dark:text-stone-500">
+                          Utløper {formatDate(expires, "dd. MMMM yyyy HH:mm")}
+                        </Text>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+            )}
+
+            <Text className="text-sm">{mark.details}</Text>
+          </div>
+
+          <Text className={cn("text-xs text-gray-500 dark:text-stone-500")}>
+            Gitt {formatDate(personalMark.createdAt, "dd. MMM yyyy")} av {mark.groupSlug}
+          </Text>
         </div>
-        {hasExpired ? <Text>Utløpt</Text> : <Text>Utløper {formatDistanceToNowStrict(expires)}</Text>}
-      </div>
-      <div className="flex justify-between">
-        <Text>{mark.details}</Text>
-        <Text>
-          Gitt {formatDate(personalMark.createdAt, "dd.MM.yyyy")} av {mark.groupSlug}
-        </Text>
       </div>
     </div>
   )
@@ -202,7 +247,7 @@ export default async function ProfilePage({
       </div>
 
       {isUser && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-3 p-4 border border-gray-200 dark:border-stone-800 rounded-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border border-gray-200 dark:border-stone-800 rounded-xl">
           <div className="flex flex-col gap-3">
             <Title>Din bruker</Title>
             <div className="flex flex-row gap-8">
@@ -219,12 +264,12 @@ export default async function ProfilePage({
           <div className="flex flex-col gap-3">
             <Title>Medlemskap</Title>
 
-            <div className="flex flex-row gap-4 items-center p-6 bg-gray-100 dark:bg-stone-800 rounded-xl w-fit">
+            <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-900 rounded-xl w-fit">
               {activeMembership ? (
                 <>
                   <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
                   <div className="flex flex-col gap-1">
-                    <Text className="text-xl">{getMembershipTypeString(activeMembership)}</Text>
+                    <Text className="text-xl font-medium">{getMembershipTypeString(activeMembership)}</Text>
                     {activeMembership.specialization && (
                       <Text>{getSpecializationString(activeMembership.specialization)}</Text>
                     )}
@@ -274,7 +319,8 @@ export default async function ProfilePage({
               </Text>
             )}
           </div>
-          {marks.length > 0 ? (
+
+          {marks.length > 0 && (
             <div className="flex flex-col gap-3">
               <Title>Prikker og suspensjoner</Title>
               <div className="flex flex-col gap-2">
@@ -283,7 +329,7 @@ export default async function ProfilePage({
                 ))}
               </div>
             </div>
-          ) : null}
+          )}
         </div>
       )}
 
