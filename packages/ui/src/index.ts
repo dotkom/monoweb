@@ -30,5 +30,6 @@ export * from "./molecules/Dialog/Dialog"
 export * from "./molecules/Card/Card"
 export * from "./molecules/ReadMore/ReadMore"
 export * from "./molecules/RichText/RichText"
+export * from "./molecules/Progress/RadialProgress"
 
 export * from "./utils"
