@@ -8,8 +8,8 @@ export const useUploadFile = () => {
 
   return async (file: File) => {
     const presignedPost = await presignedPostMut.mutateAsync({
-        filename: `${file.name}`,
-        mimeType: file.type,
+      filename: `${file.name}`,
+      mimeType: file.type,
     })
 
     return await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
