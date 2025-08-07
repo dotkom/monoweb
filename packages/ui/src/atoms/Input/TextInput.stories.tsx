@@ -5,11 +5,13 @@ export default {
   title: "TextInput",
 }
 
-export const Template: Story = () => <TextInput id="name" label="Full name" />
-export const Required: Story = () => <TextInput id="name" label="Full name" required />
-export const Placeholder: Story = () => <TextInput id="name" label="Full name" placeholder="Chad Thunder" />
-export const WithError: Story = () => <TextInput id="name" label="Full name" value="Invalid text" error />
-export const ErrorWithMessage: Story = () => (
-  <TextInput id="name" label="Full name" value="Invalid text" error="Too short" />
+export const Default: Story = () => (
+  <div className="flex flex-col gap-3">
+    <TextInput id="name" label="Full name" placeholder="Ola Nordmann" />
+    <TextInput id="name" label="Full name" required />
+    <TextInput id="name" label="Full name" placeholder="Chad Thunder" />
+    <TextInput id="name" label="Full name" value="Invalid text" error />
+    <TextInput id="name" label="Full name" value="Invalid text" error="Too short" />
+    <TextInput id="name" label="Full name" disabled />
+  </div>
 )
-export const Disabled: Story = () => <TextInput id="name" label="Full name" disabled />

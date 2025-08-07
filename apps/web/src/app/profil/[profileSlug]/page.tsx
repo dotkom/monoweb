@@ -178,7 +178,13 @@ export default async function ProfilePage({
               {user.name}
             </Title>
             {isUser && (
-              <Button color="dark" className="hidden md:block">
+              <Button
+                element="a"
+                href="/profil/rediger"
+                color="dark"
+                icon={<Icon icon="tabler:edit" className="text-lg" />}
+                className="hidden gap-2 md:flex"
+              >
                 Rediger profil
               </Button>
             )}
