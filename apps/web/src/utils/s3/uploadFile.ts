@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
-import { useTRPC } from "../utils/trpc/client"
+import { useTRPC } from "../trpc/client"
 import { uploadFileToS3PresignedUrl } from "./s3"
 
 export const useUploadFile = () => {
