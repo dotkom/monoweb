@@ -161,7 +161,7 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
 
       <div className="flex flex-col gap-4">
         <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
-        <EventList events={events} />
+        <EventList events={events.items} />
       </div>
     </div>
   )

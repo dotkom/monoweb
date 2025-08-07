@@ -8,9 +8,11 @@ import { compareAsc, formatDate, getDate } from "date-fns"
 const baseUrl = import.meta.env.VITE_WEB_URL || "http://localhost:3000"
 
 export const Events = () => {
-  const { data: events, isLoading } = useQuery(
+  const { data, isLoading } = useQuery(
     trpc.event.all.queryOptions({ filter: { byOrganizingGroup: ["velkom"] }, take: 10000 })
   )
+
+  const events = data?.items ?? []
 
   if (isLoading) {
     return (

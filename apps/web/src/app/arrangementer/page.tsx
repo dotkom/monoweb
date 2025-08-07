@@ -8,13 +8,13 @@ import { roundToNearestMinutes } from "date-fns"
 import { useState } from "react"
 import { EventFilters } from "./components/EventFilters"
 import { EventList, EventListSkeleton } from "./components/EventList"
-import { useEventAllPagedQuery } from "./components/queries"
+import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
 const EventPage = () => {
   const [filter, setFilter] = useState<EventFilterQuery>({})
 
   const now = roundToNearestMinutes(getCurrentUtc(), { roundingMethod: "floor" })
-  const { events: futureEvents, isLoading } = useEventAllPagedQuery({
+  const { events: futureEvents, isLoading } = useEventAllQuery({
     filter: {
       ...filter,
       byEndDate: {
@@ -29,7 +29,7 @@ const EventPage = () => {
     },
   })
 
-  const { events: pastEvents, fetchNextPage } = useEventAllPagedQuery({
+  const { events: pastEvents, fetchNextPage } = useEventAllInfiniteQuery({
     filter: {
       ...filter,
       byEndDate: {

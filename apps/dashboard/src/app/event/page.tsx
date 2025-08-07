@@ -89,8 +89,8 @@ export default function EventPage() {
     [columnHelper]
   )
 
-  const [filters, setFilters] = useState<EventFilterQuery>({})
-  const { events, isLoading: isEventsLoading } = useEventAllQuery(filters)
+  const [filter, setFilter] = useState<EventFilterQuery>({})
+  const { events, isLoading: isEventsLoading } = useEventAllQuery({ filter })
 
   const table = useReactTable({
     data: events,
@@ -115,7 +115,7 @@ export default function EventPage() {
               </ActionIcon>
             </ActionIconGroup>
 
-            <EventFilters onChange={setFilters} />
+            <EventFilters onChange={setFilter} />
           </Group>
 
           <Group>

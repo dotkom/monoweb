@@ -10,7 +10,8 @@ import Link from "next/link"
 import type { FC } from "react"
 
 export default async function App() {
-  const events = await server.event.all.query({ take: 3 })
+  const eventResult = await server.event.all.query({ take: 3 })
+  const events = eventResult.items
   const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
 
   const session = await auth.getServerSession()
@@ -18,9 +19,9 @@ export default async function App() {
 
   const attendanceStatuses = user
     ? await server.attendance.getAttendeeStatuses.query({
-        userId: user.id,
-        attendanceIds,
-      })
+      userId: user.id,
+      attendanceIds,
+    })
     : null
 
   return (

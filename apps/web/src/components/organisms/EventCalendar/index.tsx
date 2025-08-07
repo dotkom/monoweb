@@ -54,7 +54,7 @@ interface CalendarProps {
 }
 
 export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
-  const [session, eventDetails] = await Promise.all([
+  const [session, eventResult] = await Promise.all([
     auth.getServerSession(),
     server.event.all.query({
       filter: {
@@ -67,7 +67,9 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
     }),
   ])
 
-  const attendanceIds = eventDetails.map((event) => event.attendanceId).filter(Boolean) as string[]
+  const events = eventResult.items ?? []
+
+  const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as string[]
   const userId = session?.sub
 
   const attendeeStatuses = userId
@@ -77,7 +79,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
       })
     : null
 
-  const cal = getCalendarArray(year, month, eventDetails)
+  const cal = getCalendarArray(year, month, events)
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
   const months = [

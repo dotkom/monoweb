@@ -27,11 +27,21 @@ interface UseEventAllQueryProps {
   filter: EventFilterQuery
   page?: Pageable
 }
-export const useEventAllPagedQuery = ({ filter, page }: UseEventAllQueryProps) => {
+
+export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery({
+    ...trpc.event.all.queryOptions({ filter, ...page }),
+  })
+
+  return { events: data?.items ?? [], ...query }
+}
+
+export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps) => {
   const trpc = useTRPC()
 
   const { data, ...query } = useInfiniteQuery({
-    ...trpc.event.allPaged.infiniteQueryOptions({
+    ...trpc.event.all.infiniteQueryOptions({
       filter,
       ...page,
     }),
