@@ -5,9 +5,9 @@ import type { Task } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import type { AttendanceService } from "../event/attendance-service"
 import {
-  type AttemptReserveAttendeeTaskDefinition,
   type InferTaskData,
-  type MergePoolsTaskDefinition,
+  type MergeAttendancePoolsTaskDef,
+  type ReserveAttendeeTaskDef,
   getTaskDefinition,
   tasks,
 } from "./task-definition"
@@ -77,15 +77,15 @@ export function getLocalTaskExecutor(
           const definition = getTaskDefinition(task.type)
           const payload = taskService.parse(definition, task.payload)
           switch (task.type) {
-            case tasks.ATTEMPT_RESERVE_ATTENDEE.type:
+            case tasks.RESERVE_ATTENDEE.type:
               return await attendanceService.handleAttemptReserveAttendeeTask(
                 handle,
-                payload as InferTaskData<AttemptReserveAttendeeTaskDefinition>
+                payload as InferTaskData<ReserveAttendeeTaskDef>
               )
-            case tasks.MERGE_POOLS.type:
+            case tasks.MERGE_ATTENDANCE_POOLS.type:
               return await attendanceService.handleMergePoolsTask(
                 handle,
-                payload as InferTaskData<MergePoolsTaskDefinition>
+                payload as InferTaskData<MergeAttendancePoolsTaskDef>
               )
           }
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We

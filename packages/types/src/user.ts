@@ -81,23 +81,24 @@ export const UserFilterQuerySchema = z
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
 /** Get the most relevant active membership for a user. */
-export function getActiveMembership(user: User): Membership | null {
+export function findActiveMembership(user: User): Membership | null {
   const now = getCurrentUtc()
   return user.memberships.findLast((membership) => isAfter(membership.end, now)) ?? null
 }
 
-export function getMembershipGrade(membership: Membership): number | null {
+export function getMembershipGrade(membership: Membership): 1 | 2 | 3 | 4 | 5 | null {
   switch (membership.type) {
     case "KNIGHT":
       return null
     case "PHD_STUDENT":
-      return 6
+      return 5
     case "SOCIAL_MEMBER":
       return 1
     case "BACHELOR_STUDENT":
     case "MASTER_STUDENT": {
       // Take the difference, and add one because if `startYear == currentYear` they are in their first year
-      return differenceInYears(getAcademicStart(getCurrentUtc()), getAcademicStart(membership.start)) + 1
+      const delta = differenceInYears(getAcademicStart(getCurrentUtc()), getAcademicStart(membership.start)) + 1
+      return Math.max(0, Math.min(5, delta)) as 1 | 2 | 3 | 4 | 5
     }
     case "OTHER":
       return null

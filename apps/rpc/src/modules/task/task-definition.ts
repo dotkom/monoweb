@@ -1,4 +1,4 @@
-import { AttendancePoolWriteSchema, AttendanceSchema, type TaskType, UserSchema } from "@dotkomonline/types"
+import { AttendancePoolWriteSchema, AttendanceSchema, AttendeeSchema, type TaskType } from "@dotkomonline/types"
 import { z } from "zod"
 import { TaskDefinitionNotFoundError } from "./task-error"
 
@@ -16,21 +16,21 @@ export function createTaskDefinition<const TData, const TType extends TaskType>(
   return definition
 }
 
-export type AttemptReserveAttendeeTaskDefinition = typeof tasks.ATTEMPT_RESERVE_ATTENDEE
-export type MergePoolsTaskDefinition = typeof tasks.MERGE_POOLS
-export type AnyTaskDefinition = AttemptReserveAttendeeTaskDefinition | MergePoolsTaskDefinition
+export type ReserveAttendeeTaskDef = typeof tasks.RESERVE_ATTENDEE
+export type MergeAttendancePoolsTaskDef = typeof tasks.MERGE_ATTENDANCE_POOLS
+export type AnyTaskDefinition = ReserveAttendeeTaskDef | MergeAttendancePoolsTaskDef
 
 export const tasks = {
-  ATTEMPT_RESERVE_ATTENDEE: createTaskDefinition({
-    type: "ATTEMPT_RESERVE_ATTENDEE",
+  RESERVE_ATTENDEE: createTaskDefinition({
+    type: "RESERVE_ATTENDEE",
     getSchema: () =>
       z.object({
-        userId: UserSchema.shape.id,
+        attendeeId: AttendeeSchema.shape.id,
         attendanceId: AttendanceSchema.shape.id,
       }),
   }),
-  MERGE_POOLS: createTaskDefinition({
-    type: "MERGE_POOLS",
+  MERGE_ATTENDANCE_POOLS: createTaskDefinition({
+    type: "MERGE_ATTENDANCE_POOLS",
     getSchema: () =>
       z.object({
         attendanceId: AttendanceSchema.shape.id,

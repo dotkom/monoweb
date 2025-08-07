@@ -25,7 +25,7 @@ export const attendanceRouter = t.router({
     ),
 
   createPool: staffProcedure.input(AttendancePoolWriteSchema).mutation(async ({ input, ctx }) => {
-    return ctx.executeTransaction(async (handle) => ctx.attendanceService.createPool(handle, input))
+    return ctx.executeTransaction(async (handle) => ctx.attendanceService.createAttendancePool(handle, input))
   }),
 
   updatePool: staffProcedure
@@ -36,7 +36,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input: { id, input }, ctx }) => {
-      return ctx.executeTransaction(async (handle) => ctx.attendanceService.updatePool(handle, id, input))
+      return ctx.executeTransaction(async (handle) => ctx.attendanceService.updateAttendancePool(handle, id, input))
     }),
 
   deletePool: staffProcedure
@@ -46,7 +46,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => ctx.attendanceService.deletePool(handle, input.id))
+      return ctx.executeTransaction(async (handle) => ctx.attendanceService.deleteAttendancePool(handle, input.id))
     }),
 
   adminRegisterForEvent: staffProcedure
@@ -160,7 +160,7 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.attendanceService.getById(handle, input.id))
+      ctx.executeTransaction(async (handle) => ctx.attendanceService.getAttendanceById(handle, input.id))
     ),
 
   updateAttendance: authenticatedProcedure
@@ -171,7 +171,9 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.attendanceService.update(handle, input.id, input.attendance))
+      ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.updateAttendanceById(handle, input.id, input.attendance)
+      )
     ),
 
   mergeAttendancePools: staffProcedure
@@ -198,7 +200,6 @@ export const attendanceRouter = t.router({
         ctx.attendanceService.getSelectionsResponseSummary(handle, input.attendanceId)
       )
     }),
-
   getAttendeeStatuses: authenticatedProcedure
     .input(
       z.object({

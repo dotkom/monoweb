@@ -1,7 +1,17 @@
 import type { DBHandle, TaskStatus } from "@dotkomonline/db"
-import { type Task, type TaskId, TaskSchema, type TaskType, type TaskWrite } from "@dotkomonline/types"
+import {
+  type AttendanceId,
+  type AttendeeId,
+  type EventId,
+  type Task,
+  type TaskId,
+  TaskSchema,
+  type TaskType,
+  type TaskWrite,
+} from "@dotkomonline/types"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { parseOrReport } from "../../invariant"
+import { tasks } from "./task-definition"
 
 export interface TaskRepository {
   create(handle: DBHandle, type: TaskType, data: TaskWrite): Promise<Task>
@@ -10,6 +20,8 @@ export interface TaskRepository {
   getById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
   getAll(handle: DBHandle): Promise<Task[]>
   getPendingTasks(handle: DBHandle, type: TaskType): Promise<Task[]>
+  findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
+  findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
 }
 
 export function getTaskRepository(): TaskRepository {
@@ -60,6 +72,40 @@ export function getTaskRepository(): TaskRepository {
         },
       })
       return tasks.map((task) => parseOrReport(TaskSchema, task))
+    },
+    async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.RESERVE_ATTENDEE.type,
+          AND: [
+            {
+              payload: {
+                path: ["attendeeId"],
+                equals: attendeeId,
+              },
+            },
+            {
+              payload: {
+                path: ["attendanceId"],
+                equals: attendanceId,
+              },
+            },
+          ],
+        },
+      })
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+    async findMergeEventPoolsTask(handle, eventId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.MERGE_ATTENDANCE_POOLS.type,
+          payload: {
+            path: ["eventId"],
+            equals: eventId,
+          },
+        },
+      })
+      return parseOrReport(TaskSchema.nullable(), task)
     },
   }
 }
