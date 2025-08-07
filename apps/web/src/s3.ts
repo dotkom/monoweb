@@ -1,3 +1,6 @@
+import { useMutation } from "@tanstack/react-query"
+import { useTRPC } from "./utils/trpc/client"
+
 // Expected response: 204 No Content
 export async function uploadFileToS3PresignedUrl(
   file: File,
@@ -27,5 +30,19 @@ export async function uploadFileToS3PresignedUrl(
     return location
   } catch (e) {
     throw new Error(`File upload failed: ${e}`)
+  }
+}
+
+export const useUploadFile = () => {
+  const trpc = useTRPC()
+  const presignedPostMut = useMutation(trpc.offline.createPresignedPost.mutationOptions())
+
+  return async (file: File) => {
+    const presignedPost = await presignedPostMut.mutateAsync({
+      filename: `${file.name}`,
+      mimeType: file.type,
+    })
+
+    return await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
   }
 }
