@@ -48,7 +48,7 @@ export const CompanySplash: FC = () => {
 
   return (
     <div className="flex flex-col lg:justify-stretch gap-4 items-center lg:flex-row">
-      <div className="flex flex-col gap-8 w-full">
+      <div className="flex flex-col gap-8 w-full max-w-[600px] mx-auto lg:mx-0">
         <span aria-hidden="true" className="w-full max-w-[300px]">
           <Logo />
         </span>
@@ -61,7 +61,7 @@ export const CompanySplash: FC = () => {
           Her burde det stå en kort tekst om linjeforeningen og hva vi gjør. Helst ikke mer enn to setninger
         </Text>
 
-        <div className="flex flex-col md:flex-row gap-1 md:items-center">
+        <div className="flex flex-col flex-wrap md:flex-row gap-1 md:items-center">
           <div className="flex flex-row gap-2 items-center">
             <Icon icon="tabler:briefcase-filled" className="text-lg" />
 
@@ -80,18 +80,18 @@ export const CompanySplash: FC = () => {
         </div>
       </div>
 
-      <div className="relative w-full aspect-[10/9]">
+      <div className="relative w-full">
         {isLoading && (
-          <div className="absolute bg-gray-100 dark:bg-gray-950 rounded-xl animate-pulse w-[65%] h-[65%] inset-0 m-auto" />
+          <div className="absolute bg-gray-100 dark:bg-stone-900 rounded-xl animate-pulse w-[80%] h-[80%] inset-0 m-auto" />
         )}
         <div
           className={cn(
-            "absolute inset-0 max-w-[600px] duration-700 transition-opacity",
+            "inset-0 max-w-[600px] aspect-[10/9] mx-auto lg:mx-0 duration-700 transition-opacity",
             isLoading ? "opacity-0" : "opacity-100"
           )}
         >
           <Spline
-            scene="https://prod.spline.design/yapmhg7y5iZdf9u4/scene.splinecode"
+            scene="https://prod.spline.design/VwzWzojgCJ6CErSI/scene.splinecode"
             onLoad={onSplineLoad}
             onSplineMouseDown={lightSwitch}
           />
