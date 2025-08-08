@@ -1,4 +1,4 @@
-import { useUploadFile } from "@/utils/s3/uploadFile"
+import { useUploadFile } from "@/s3"
 import { type User, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 import {
   Button,
