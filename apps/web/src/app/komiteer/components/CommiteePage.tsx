@@ -1,27 +1,27 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import { type GroupMember, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
+import { type GroupMember, type GroupRole, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUtc } from "@dotkomonline/utils"
+import { compareDesc } from "date-fns"
 import Link from "next/link"
 
 interface CommitteePageProps {
-  params: Promise<{ slug: string }>
+  groupId: string
   groupType: GroupType
 }
 
-export const CommitteePage = async ({ params, groupType }: CommitteePageProps) => {
-  const { slug } = await params
-
+//TODO: Rename
+export const CommitteePage = async ({ groupId, groupType }: CommitteePageProps) => {
   const showMembers = groupType !== "ASSOCIATED"
 
   const [session, group, events, members] = await Promise.all([
     auth.getServerSession(),
-    server.group.getByType.query({ groupId: slug, type: groupType }),
+    server.group.getByType.query({ groupId, type: groupType }),
     server.event.all.query({
       filter: {
-        byOrganizingGroup: [slug],
+        byOrganizingGroup: [groupId],
         byEndDate: {
           max: null,
           min: getCurrentUtc(),
@@ -31,19 +31,28 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
     }),
     // We do not show members for ASSOCIATED types because they often have members outside of Online
     // meaning the member list would be incomplete.
-    showMembers ? server.group.getMembers.query(slug) : Promise.resolve(new Map<UserId, GroupMember>()),
+    showMembers ? server.group.getMembers.query(groupId) : Promise.resolve(new Map<UserId, GroupMember>()),
   ])
 
   const hasContactInfo = group.email || group.contactUrl
 
-  // TODO: sort roles inside each membership and sort members by their roles
-  const activeMembers = [...members.values()].reduce((activeMembers, member) => {
-    if (member.groupMemberships.some((membership) => membership.end === null)) {
-      activeMembers.set(member.id, member)
-    }
+  const activeMembers: Map<UserId, GroupMember> = new Map(
+    [...members.entries()]
+      .filter(([, member]) => member.groupMemberships.some((membership) => membership.end === null))
+      .toSorted(([, a], [, b]) => {
+        const aRoles = getLatestActiveMembership(a)?.roles ?? []
+        const bRoles = getLatestActiveMembership(b)?.roles ?? []
 
-    return activeMembers
-  }, new Map<UserId, GroupMember>())
+        const aPriority = Math.max(...aRoles.map((role) => getRolePriority(role)))
+        const bPriority = Math.max(...bRoles.map((role) => getRolePriority(role)))
+
+        if (aPriority !== bPriority) {
+          return bPriority - aPriority
+        }
+
+        return compareDesc(a.createdAt, b.createdAt)
+      })
+  )
 
   const leader = activeMembers
     .values()
@@ -149,13 +158,13 @@ export const CommitteePage = async ({ params, groupType }: CommitteePageProps) =
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
             {members.size > 0 && (
-              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-500">({members.size})</Text>
+              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-500">({activeMembers.size})</Text>
             )}
           </div>
 
           {activeMembers.size ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {activeMembers.entries().map(([id, member]) => (
+              {Array.from(activeMembers.entries()).map(([id, member]) => (
                 <GroupMemberEntry key={id} userId={session?.sub} member={member} />
               ))}
             </div>
@@ -183,8 +192,13 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   const isUser = userId === member.id
 
   // This requires periods to be sorted by startedAt in descending order
-  const firstActiveMembership = member.groupMemberships.find((m) => m.end === null)
-  const roles = firstActiveMembership?.roles.map(({ name }) => name).join(", ") || "Ingen roller"
+  const firstActiveMembership = getLatestActiveMembership(member)
+
+  const roles = firstActiveMembership?.roles.toSorted((a, b) => {
+    return getRolePriority(b) - getRolePriority(a)
+  })
+
+  const roleNames = roles?.map(({ name }) => name).join(", ") || "Ingen roller"
 
   return (
     <Link
@@ -216,8 +230,25 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
         ) : (
           <Text className="text-lg/6">{member.name}</Text>
         )}
-        <Text className={cn("text-sm", isVerified && "dark:text-black")}>{roles}</Text>
+        <Text className={cn("text-sm", isVerified && "dark:text-black")}>{roleNames}</Text>
       </div>
     </Link>
   )
+}
+
+function getLatestActiveMembership(member: GroupMember) {
+  return member.groupMemberships.find((m) => m.end === null)
+}
+
+function getRolePriority(role: GroupRole) {
+  switch (role.type) {
+    case "LEADER":
+      return 3
+    case "PUNISHER":
+      return 2
+    case "COSMETIC":
+      return 1
+    default:
+      return 0
+  }
 }

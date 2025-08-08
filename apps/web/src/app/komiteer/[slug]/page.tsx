@@ -4,6 +4,7 @@ interface CommitteePageProps {
   params: Promise<{ slug: string }>
 }
 
-export default function Page({ params }: CommitteePageProps) {
-  return <CommitteePage groupType="COMMITTEE" params={params} />
+export default async function Page({ params }: CommitteePageProps) {
+  const { slug } = await params
+  return <CommitteePage groupType="COMMITTEE" groupId={slug} />
 }
