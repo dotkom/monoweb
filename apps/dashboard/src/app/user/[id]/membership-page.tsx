@@ -1,7 +1,7 @@
 import { GenericTable } from "@/components/GenericTable"
 import { Box, Button, Stack, Text, Title } from "@mantine/core"
 import { compareDesc } from "date-fns"
-import type { FC } from "react"
+import { type FC, useMemo } from "react"
 import { useCreateMembershipModal } from "../components/create-membership-modal"
 import { useMembershipTable } from "../components/use-membership-table"
 import { useUserDetailsContext } from "./provider"
@@ -10,7 +10,10 @@ export const MembershipPage: FC = () => {
   const { user } = useUserDetailsContext()
   const open = useCreateMembershipModal({ user })
 
-  const memberships = user.memberships.toSorted((a, b) => compareDesc(a.start, b.start))
+  const memberships = useMemo(
+    () => user.memberships.toSorted((a, b) => compareDesc(a.start, b.start)),
+    [user.memberships]
+  )
   const table = useMembershipTable({ data: memberships, userId: user.id })
 
   return (
