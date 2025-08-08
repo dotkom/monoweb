@@ -8,20 +8,21 @@ import { compareDesc } from "date-fns"
 import Link from "next/link"
 
 interface CommitteePageProps {
-  groupId: string
+  params: Promise<{ slug: string }>
   groupType: GroupType
 }
 
-//TODO: Rename
-export const CommitteePage = async ({ groupId, groupType }: CommitteePageProps) => {
+export const GroupPage = async ({ params, groupType }: CommitteePageProps) => {
+  const { slug } = await params
+
   const showMembers = groupType !== "ASSOCIATED"
 
   const [session, group, events, members] = await Promise.all([
     auth.getServerSession(),
-    server.group.getByType.query({ groupId, type: groupType }),
+    server.group.getByType.query({ groupId: slug, type: groupType }),
     server.event.all.query({
       filter: {
-        byOrganizingGroup: [groupId],
+        byOrganizingGroup: [slug],
         byEndDate: {
           max: null,
           min: getCurrentUtc(),
@@ -31,7 +32,7 @@ export const CommitteePage = async ({ groupId, groupType }: CommitteePageProps) 
     }),
     // We do not show members for ASSOCIATED types because they often have members outside of Online
     // meaning the member list would be incomplete.
-    showMembers ? server.group.getMembers.query(groupId) : Promise.resolve(new Map<UserId, GroupMember>()),
+    showMembers ? server.group.getMembers.query(slug) : Promise.resolve(new Map<UserId, GroupMember>()),
   ])
 
   const hasContactInfo = group.email || group.contactUrl
