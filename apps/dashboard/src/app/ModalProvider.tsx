@@ -21,6 +21,8 @@ import { CreateJobListingModal } from "./job-listing/modals/create-job-listing-m
 import { CreateOfflineModal } from "./offline/modals/create-offline-modal"
 import { CreateMarkModal } from "./punishment/modals/create-mark-modal"
 import { CreateSuspensionModal } from "./punishment/modals/create-suspension-modal"
+import { CreateMembershipModal } from "./user/components/create-membership-modal"
+import { EditMembershipModal } from "./user/components/edit-membership-modal"
 
 const modals = {
   "event/attendance/attendee/create": ManualCreateUserAttendModal,
@@ -42,6 +44,8 @@ const modals = {
   "event/attendance/registered-error": AlreadyAttendedModal,
   "punishment/mark/create": CreateMarkModal,
   "punishment/suspension/create": CreateSuspensionModal,
+  "user/membership/create": CreateMembershipModal,
+  "user/membership/update": EditMembershipModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

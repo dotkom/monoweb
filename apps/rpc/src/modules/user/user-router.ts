@@ -1,7 +1,7 @@
-import { UserSchema, UserWriteSchema } from "@dotkomonline/types"
+import { MembershipSchema, MembershipWriteSchema, UserSchema, UserWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
 export const userRouter = t.router({
   all: procedure.input(PaginateInputSchema).query(async ({ input, ctx }) =>
@@ -35,6 +35,30 @@ export const userRouter = t.router({
       return ctx.userService.register(handle, input)
     })
   ),
+  createMembership: staffProcedure
+    .input(
+      z.object({
+        userId: UserSchema.shape.id,
+        data: MembershipWriteSchema,
+      })
+    )
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        return ctx.userService.createMembership(handle, input.userId, input.data)
+      })
+    ),
+  updateMembership: staffProcedure
+    .input(
+      z.object({
+        membershipId: MembershipSchema.shape.id,
+        data: MembershipWriteSchema,
+      })
+    )
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        return ctx.userService.updateMembership(handle, input.membershipId, input.data)
+      })
+    ),
   getMe: authenticatedProcedure.query(async ({ ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.getById(handle, ctx.principal.subject)

@@ -3,6 +3,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
   type Membership,
+  type MembershipId,
   type MembershipSpecialization,
   MembershipSpecializationSchema,
   type MembershipWrite,
@@ -46,6 +47,7 @@ export interface UserService {
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   register(handle: DBHandle, subject: string): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
+  updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   /**
    * Find the Feide federated access token for a user, if it exists.
    *
@@ -259,6 +261,9 @@ export function getUserService(
     async createMembership(handle, userId, data) {
       const user = await this.getById(handle, userId)
       return await userRepository.createMembership(handle, user.id, data)
+    },
+    async updateMembership(handle, membershipId, membership) {
+      return userRepository.updateMembership(handle, membershipId, membership)
     },
     async findFeideAccessTokenByUserId(userId) {
       const response = await managementClient.users.get({ id: userId })
