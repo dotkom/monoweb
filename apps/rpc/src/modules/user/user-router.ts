@@ -8,11 +8,11 @@ export const userRouter = t.router({
     .input(BasePaginateInputSchema.extend({ filter: UserFilterQuerySchema.optional() }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        const items = await ctx.userService.findUsers(handle, {...input.filter}, input)
+        const items = await ctx.userService.findUsers(handle, { ...input.filter }, input)
 
         return {
           items,
-          nextCursor: items.at(-1)?.id
+          nextCursor: items.at(-1)?.id,
         }
       })
     ),

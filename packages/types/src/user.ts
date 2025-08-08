@@ -48,10 +48,12 @@ export const PublicUserSchema = UserSchema.pick({
 })
 
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
-export const UserFilterQuerySchema = z.object({
-  byName: buildSearchFilter(),
-  byEmail: buildSearchFilter()
-}).partial()
+export const UserFilterQuerySchema = z
+  .object({
+    byName: buildSearchFilter(),
+    byEmail: buildSearchFilter(),
+  })
+  .partial()
 
 /** Get the most relevant active membership for a user. */
 export function getActiveMembership(user: User): Membership | null {

@@ -17,7 +17,7 @@ export const useUpdateUserMutation = () => {
         complete()
 
         await queryClient.invalidateQueries(trpc.user.get.queryOptions(data.id))
-        await queryClient.invalidateQueries(trpc.user.all.queryOptions())
+        await queryClient.invalidateQueries({ queryKey: trpc.user.all.queryKey() })
       },
     })
   )

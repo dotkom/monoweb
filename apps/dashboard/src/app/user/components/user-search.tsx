@@ -14,8 +14,8 @@ export const UserSearch: FC<UserSearchProps> = ({ placeholder, onSubmit, exclude
   const { users } = useUserAllQuery({
     filter: {
       byName: searchQuery,
-      byEmail: searchQuery
-    }
+      byEmail: searchQuery,
+    },
   })
 
   const handleUserSearch = (query: string) => {

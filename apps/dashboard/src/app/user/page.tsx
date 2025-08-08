@@ -15,7 +15,7 @@ export default function UserPage() {
   const table = useUserTable({ data: users ?? [] })
 
   const loaderRef = useRef<HTMLDivElement>(null)
-  
+
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && hasNextPage) {
