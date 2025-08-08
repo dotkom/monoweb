@@ -66,6 +66,9 @@ jobs:
 
       - name: Install dependencies from pnpm lockfile
         run: pnpm install --frozen-lockfile --offline --ignore-scripts
+      
+      - name: Check package size
+        run: pnpm store usage
 
       - name: Run linting and formatting checks
         run: pnpm lint-check
