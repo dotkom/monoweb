@@ -14,9 +14,7 @@ export function parseOrReport<T>(schema: z.ZodSchema<T>, value: T): T {
   const result = schema.safeParse(value)
   if (!result.success) {
     logger.error("Database failed to parse value into schema: %s emitted for object %o", result.error.message, value)
-    throw new Error(
-      `Database failed to parse value into schema: ${result.error.message} emitted for object ${JSON.stringify(value, null, 2)}`
-    )
+    throw new Error("Database returned value that does not conform to schema")
   }
   return result.data
 }
