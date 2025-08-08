@@ -49,9 +49,6 @@ jobs:
           node-version: 22.17.1
           cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
-      - run: pnpm fetch --ignore-scripts
-        name: Fetch
-
       - run: pnpm install --frozen-lockfile
         name: Install dependencies from pnpm lockfile
       - run: pnpm lint-check
