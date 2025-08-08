@@ -68,7 +68,7 @@ jobs:
         run: pnpm install --frozen-lockfile --offline --ignore-scripts
       
       - name: Check package size
-        run: pnpm store usage
+        run: du -sh node_modules/.pnpm/* | sort -h
 
       - name: Run linting and formatting checks
         run: pnpm lint-check
