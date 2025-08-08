@@ -37,24 +37,41 @@ jobs:
       - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           path: .turbo
-
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 9.15.5
+
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22.17.1
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
-      - run: pnpm install --frozen-lockfile --ignore-scripts
-        name: Install dependencies from pnpm lockfile
-      - run: pnpm lint-check
-        name: Run linting and formatting checks
-      - run: pnpm type-check
-        name: Run TypeScript type checker
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9.15.5
+
+      # Ensure a stable store path in HOME (matches the cache path below)
+      - name: Configure pnpm store path
+        run: pnpm config set store-dir ~/.pnpm-store
+
+      - name: Cache pnpm store
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ runner.arch }}-node-22.17.1-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-node-22.17.1-pnpm-
+
+      # Populate store on a miss (no scripts needed for lint/type-check)
+      - run: pnpm fetch --ignore-scripts
+
+      - name: Install dependencies from pnpm lockfile
+        run: pnpm install --frozen-lockfile --offline --ignore-scripts
+
+      - name: Run linting and formatting checks
+        run: pnpm lint-check
+
+      - name: Run TypeScript type checker
+        run: pnpm type-check
 
   build-brevduen:
     name: brevduen
