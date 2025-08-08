@@ -1,7 +1,7 @@
 import { GenericSearch } from "@/components/GenericSearch"
 import type { User } from "@dotkomonline/types"
 import { type FC, useState } from "react"
-import { useSearchUsersQuery } from "./queries"
+import { useUserAllQuery } from "../queries"
 
 interface UserSearchProps {
   onSubmit(data: User): void
@@ -11,7 +11,12 @@ interface UserSearchProps {
 
 export const UserSearch: FC<UserSearchProps> = ({ placeholder, onSubmit, excludeUserIds }) => {
   const [searchQuery, setSearchQuery] = useState("")
-  const { data: users } = useSearchUsersQuery(searchQuery)
+  const { users } = useUserAllQuery({
+    filter: {
+      byName: searchQuery,
+      byEmail: searchQuery,
+    },
+  })
 
   const handleUserSearch = (query: string) => {
     setSearchQuery(query)
