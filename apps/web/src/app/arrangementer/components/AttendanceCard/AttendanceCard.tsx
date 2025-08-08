@@ -13,19 +13,20 @@ import {
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { useQueries, useQuery } from "@tanstack/react-query"
+import { differenceInSeconds } from "date-fns"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
+import { PaymentCard } from "./PaymentCard"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton } from "./RegistrationButton"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
-import { PaymentCard } from "./PaymentCard"
 
 const getQueuePosition = (
   attendee: Attendee | undefined,
@@ -61,6 +62,18 @@ export const AttendanceCard = ({
 }: AttendanceCardProps) => {
   const trpc = useTRPC()
 
+  const [closeToEvent, setCloseToEvent] = useState(false)
+
+  const { data: attendees, isLoading: attendeesLoading } = useQuery(
+    trpc.attendance.getAttendees.queryOptions(
+      {
+        attendanceId: initialAttendance.id,
+      },
+      { initialData: initialAttendees, enabled: user !== undefined, refetchInterval: closeToEvent ? 1000 : 60000 }
+    )
+  )
+  const attendee = user && attendees?.find((attendee) => attendee.userId === user.id)
+
   const [{ data: attendance, isLoading: attendanceLoading }, { data: punishment, isLoading: punishmentLoading }] =
     useQueries({
       queries: [
@@ -68,7 +81,7 @@ export const AttendanceCard = ({
           {
             id: initialAttendance.id,
           },
-          { initialData: initialAttendance, enabled: user !== undefined }
+          { initialData: initialAttendance, enabled: user !== undefined, refetchInterval: closeToEvent ? 1000 : 60000 }
         ),
         trpc.personalMark.getExpiryDateForUser.queryOptions(
           {
@@ -82,16 +95,16 @@ export const AttendanceCard = ({
       ],
     })
 
-  const { data: attendees, isLoading: attendeesLoading } = useQuery(
-    trpc.attendance.getAttendees.queryOptions(
-      {
-        attendanceId: attendance?.id,
-      },
-      { initialData: initialAttendees, enabled: user !== undefined }
+  useEffect(() => {
+    // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
+    // right before even open (as if we don't have enough already)
+    // const attendanceEventDateTimes = [attendance.registerStart, attendance.registerEnd, attendance.deregisterDeadline, attendee?.paymentDeadline]
+    const attendanceEventDateTimes = [attendee?.paymentDeadline]
+    setCloseToEvent(
+      attendanceEventDateTimes.some((date) => date && Math.abs(differenceInSeconds(date, new Date())) < 60)
     )
-  )
-
-  const attendee = user && attendees?.find((attendee) => attendee.userId === user.id)
+    // }, [attendance, attendee])
+  }, [attendee])
 
   const registerMutation = useRegisterMutation()
   const deregisterMutation = useDeregisterMutation()

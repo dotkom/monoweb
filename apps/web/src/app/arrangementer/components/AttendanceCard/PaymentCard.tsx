@@ -1,10 +1,10 @@
 "use client"
 
 import type { Attendance, Attendee } from "@dotkomonline/types"
-import { cn, Icon } from "@dotkomonline/ui"
+import { Icon, cn } from "@dotkomonline/ui"
 import { intervalToDuration } from "date-fns"
 import Link from "next/link"
-import { useEffect, useState, type HTMLProps, type PropsWithChildren } from "react"
+import { type HTMLProps, type PropsWithChildren, useEffect, useState } from "react"
 
 function formatTimeLeft(target: Date) {
   const now = new Date()
@@ -43,6 +43,10 @@ function useCountdown(deadline: Date | null) {
     }, 1000)
     return () => clearInterval(interval)
   }, [deadline])
+
+  if (deadline && deadline < new Date()) {
+    return "nå"
+  }
 
   return deadlineCountdown
 }

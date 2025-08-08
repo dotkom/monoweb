@@ -481,6 +481,7 @@ model ArticleTagLink {
 enum TaskType {
   ATTEMPT_RESERVE_ATTENDEE @map("ATTEMPT_RESERVE_ATTENDEE")
   MERGE_POOLS              @map("MERGE_POOLS")
+  VERIFY_PAYMENT           @map("VERIFY_PAYMENT")
 
   // The table is called job_name for legacy reasons.
   @@map("task_type")

@@ -1,8 +1,8 @@
 import { Box, Button, Group, Input, Title } from "@mantine/core"
-import { useRef, type FC } from "react"
-import { useEventContext } from "./provider"
+import { type FC, useRef } from "react"
 import { useUpdateAttendanceMutation } from "../mutations"
 import { useAttendanceGetQuery } from "../queries"
+import { useEventContext } from "./provider"
 
 export const PaymentPage: FC = () => {
   const { attendanceId } = useEventContext()

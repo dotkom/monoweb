@@ -151,7 +151,7 @@ export async function createServiceLayer(
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
-  const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
+  const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService, attendeeService)
   const authorizationService = getAuthorizationService()
 
   return {

@@ -10,9 +10,9 @@ import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { FeedbackPage } from "./feedback-page"
+import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
-import { PaymentPage } from "./payment-page"
 
 const SIDEBAR_LINKS = [
   {

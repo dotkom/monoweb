@@ -1,4 +1,4 @@
-import type Stripe from "stripe"
+import Stripe from "stripe"
 import { PaymentAmbiguousPriceError, PaymentMissingPriceError } from "./payment-error"
 
 export interface PaymentService {
@@ -56,9 +56,14 @@ export function getPaymentService(stripe: Stripe): PaymentService {
 
   return {
     createOrUpdateProduct: async (productId, name, price) => {
-      const existingProduct = await stripe.products.retrieve(productId)
+      try {
+        await stripe.products.retrieve(productId)
+      } catch (e) {
+        if (!(e instanceof Stripe.errors.StripeInvalidRequestError)) {
+          throw e
+        }
 
-      if (!existingProduct) {
+        // If product does not exist
         return await createProduct(productId, name, price)
       }
 

@@ -17,9 +17,10 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { addHours, addMinutes, isFuture } from "date-fns"
+import { addHours, addSeconds, isFuture } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
-import { tasks } from "../task/task-definition"
+import type { PaymentService } from "../payment/payment-service"
+import { type InferTaskData, type VerifyPaymentTaskDefinition, tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenError } from "./attendance-error"
@@ -27,7 +28,6 @@ import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attenda
 import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeNotFoundError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
-import type { PaymentService } from "../payment/payment-service"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
@@ -69,6 +69,7 @@ export interface AttendeeService {
     attendance: Attendance,
     options: { bypassCriteria: boolean; immediate?: boolean }
   ): Promise<boolean>
+  handleVerifyPaymentTask(handle: DBHandle, payload: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
   getAttendeeStatuses(
     handle: DBHandle,
     userId: UserId,
@@ -277,13 +278,45 @@ export function getAttendeeService(
             "http://localhost:3000/arrangementer/alle-avslutningskos/83f1d181-5eb1-4c62-b319-85d3c80f679f"
           )
 
-          paymentDeadline = immediate ? addMinutes(new Date(), 15) : addHours(new Date(), 24)
+          paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
+
+          taskSchedulingService.scheduleAt(
+            handle,
+            tasks.VERIFY_PAYMENT.type,
+            {
+              attendeeId: attendee.id,
+            },
+            paymentDeadline
+          )
         }
 
         return await attendeeRepository.reserveAttendee(handle, attendee.id, url, paymentDeadline)
       }
 
       return false
+    },
+    async handleVerifyPaymentTask(handle, { attendeeId }) {
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+
+      // User has deregistered
+      if (!attendee) {
+        return
+      }
+
+      // User has paid
+      if (attendee.paid) {
+        return
+      }
+
+      // User has a changed payment deadline
+      if (attendee.paymentDeadline === null || attendee.paymentDeadline > new TZDate()) {
+        return
+      }
+
+      await this.adminDeregisterForEvent(handle, attendeeId, {
+        bypassCriteriaOnReserveNextAttendee: false,
+        reserveNextAttendee: true,
+      })
     },
     async getAttendeeStatuses(handle: DBHandle, userId: UserId, attendanceIds: AttendanceId[]) {
       return await attendeeRepository.getAttendeeStatuses(handle, userId, attendanceIds)

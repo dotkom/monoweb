@@ -11,6 +11,7 @@ import type {
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
 import { addHours, differenceInMinutes, isAfter, isBefore, isFuture } from "date-fns"
+import type { PaymentService } from "../payment/payment-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
   type InferTaskData,
@@ -23,7 +24,6 @@ import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
-import type { PaymentService } from "../payment/payment-service"
 
 const areSelectionsEqual = (a: AttendanceSelection, b: AttendanceSelection) => {
   if (a.id !== b.id) return false

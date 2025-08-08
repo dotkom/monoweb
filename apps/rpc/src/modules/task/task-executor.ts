@@ -4,10 +4,12 @@ import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import type { AttendanceService } from "../attendance/attendance-service"
+import type { AttendeeService } from "../attendance/attendee-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
   type InferTaskData,
   type MergePoolsTaskDefinition,
+  type VerifyPaymentTaskDefinition,
   getTaskDefinition,
   tasks,
 } from "./task-definition"
@@ -31,7 +33,8 @@ export interface TaskExecutor {
 export function getLocalTaskExecutor(
   taskService: TaskService,
   taskDiscoveryService: TaskDiscoveryService,
-  attendanceService: AttendanceService
+  attendanceService: AttendanceService,
+  attendeeService: AttendeeService
 ): TaskExecutor {
   const logger = getLogger("task-executor")
   let intervalId: ReturnType<typeof setInterval> | null = null
@@ -68,7 +71,7 @@ export function getLocalTaskExecutor(
       let isError = false
       // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
       // as running regardless of whether the child transaction commits or rollbacks.
-      await taskService.setTaskExecutionStatus(client, task.id, "RUNNING")
+      await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
       try {
         // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
@@ -87,6 +90,11 @@ export function getLocalTaskExecutor(
                 handle,
                 payload as InferTaskData<MergePoolsTaskDefinition>
               )
+            case tasks.VERIFY_PAYMENT.type:
+              return await attendeeService.handleVerifyPaymentTask(
+                handle,
+                payload as InferTaskData<VerifyPaymentTaskDefinition>
+              )
           }
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
           // still keep this block here to prevent subtle bugs or missed cases in the future.
@@ -97,13 +105,13 @@ export function getLocalTaskExecutor(
         // TODO: Sentry.captureExecutionError(error)
         // Mark the job as failed using the client, so that regardless of whether the child transaction commits or not,
         // status is updated accordingly.
-        await taskService.setTaskExecutionStatus(client, task.id, "FAILED")
+        await taskService.setTaskExecutionStatus(client, task.id, "FAILED", "RUNNING")
         logger.error("Job with ID=%s failed with error: %o", task.id, error)
       } finally {
         // If nothing failed, we mark the job as completed. The reason this is in a finally block is to ensure that
         // regardless of whether the job execution was successful or not, we always update the job status.
         if (!isError) {
-          await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED")
+          await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED", "RUNNING")
           logger.debug("Job with ID=%s completed successfully", task.id)
         }
       }
