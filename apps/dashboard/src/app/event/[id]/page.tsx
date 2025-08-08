@@ -12,6 +12,7 @@ import { EventEditCard } from "./edit-card"
 import { FeedbackPage } from "./feedback-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
+import { PaymentPage } from "./payment-page"
 
 const SIDEBAR_LINKS = [
   {
@@ -49,6 +50,12 @@ const SIDEBAR_LINKS = [
     label: "Valg",
     slug: "selections",
     component: SelectionsPage,
+  },
+  {
+    icon: "tabler:credit-card",
+    label: "Betaling",
+    slug: "payment",
+    component: PaymentPage,
   },
 ]
 

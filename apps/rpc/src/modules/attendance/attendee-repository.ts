@@ -32,7 +32,12 @@ export interface AttendeeRepository {
   getByUserId(handle: DBHandle, userId: UserId, attendanceId: AttendanceId): Promise<AttendeeWithoutUser | null>
   poolHasAttendees(handle: DBHandle, poolId: AttendancePoolId): Promise<boolean>
   attendanceHasAttendees(handle: DBHandle, attendanceId: AttendanceId): Promise<boolean>
-  reserveAttendee(handle: DBHandle, attendeeId: AttendeeId): Promise<boolean>
+  reserveAttendee(
+    handle: DBHandle,
+    attendeeId: AttendeeId,
+    paymentUrl: string | null,
+    paymentDeadline: Date | null
+  ): Promise<boolean>
   moveFromMultiplePoolsToPool(
     handle: DBHandle,
     fromPoolIds: AttendancePoolId[],
@@ -112,13 +117,15 @@ export function getAttendeeRepository(): AttendeeRepository {
       const numberOfAttendees = await handle.attendee.count({ where: { attendanceId } })
       return numberOfAttendees > 0
     },
-    async reserveAttendee(handle, attendeeId) {
+    async reserveAttendee(handle, attendeeId, paymentLink = null, paymentDeadline = null) {
       const attendee = await handle.attendee.update({
         where: {
           id: attendeeId,
         },
         data: {
           reserved: true,
+          paymentDeadline: paymentDeadline,
+          paymentLink: paymentLink,
         },
       })
       return attendee.reserved

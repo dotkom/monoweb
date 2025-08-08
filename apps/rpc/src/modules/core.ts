@@ -32,14 +32,7 @@ import { getPersonalMarkService } from "./mark/personal-mark-service"
 import { getNTNUStudyplanRepository } from "./ntnu-study-plan/ntnu-study-plan-repository"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
-import { getPaymentRepository } from "./payment/payment-repository"
 import { getPaymentService } from "./payment/payment-service"
-import { getProductPaymentProviderRepository } from "./payment/product-payment-provider-repository"
-import { getProductPaymentProviderService } from "./payment/product-payment-provider-service"
-import { getProductRepository } from "./payment/product-repository"
-import { getProductService } from "./payment/product-service"
-import { getRefundRequestRepository } from "./payment/refund-request-repository"
-import { getRefundRequestService } from "./payment/refund-request-service"
 import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
 import { getLocalTaskExecutor } from "./task/task-executor"
 import { getTaskRepository } from "./task/task-repository"
@@ -110,10 +103,6 @@ export async function createServiceLayer(
   const userRepository = getUserRepository()
   const attendanceRepository = getAttendanceRepository()
   const attendeeRepository = getAttendeeRepository()
-  const productRepository = getProductRepository()
-  const paymentRepository = getPaymentRepository()
-  const productPaymentProviderRepository = getProductPaymentProviderRepository()
-  const refundRequestRepository = getRefundRequestRepository()
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
@@ -139,36 +128,24 @@ export async function createServiceLayer(
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
+  const paymentService = getPaymentService(clients.stripeAccounts.trikom.stripe)
   const attendeeService = getAttendeeService(
     attendeeRepository,
     attendanceRepository,
     userService,
     taskSchedulingService,
-    personalMarkService
+    personalMarkService,
+    paymentService
   )
   const attendanceService = getAttendanceService(
     attendanceRepository,
     attendeeRepository,
     attendeeService,
-    taskSchedulingService
+    taskSchedulingService,
+    paymentService
   )
   const eventService = getEventService(eventRepository)
   const companyService = getCompanyService(companyRepository)
-  const productService = getProductService(productRepository)
-  const paymentService = getPaymentService(
-    paymentRepository,
-    productRepository,
-    eventRepository,
-    refundRequestRepository,
-    clients.stripeAccounts
-  )
-  const productPaymentProviderService = getProductPaymentProviderService(productPaymentProviderRepository)
-  const refundRequestService = getRefundRequestService(
-    refundRequestRepository,
-    paymentRepository,
-    productRepository,
-    paymentService
-  )
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
@@ -182,10 +159,7 @@ export async function createServiceLayer(
     eventService,
     groupService,
     companyService,
-    productService,
     paymentService,
-    productPaymentProviderService,
-    refundRequestService,
     markService,
     personalMarkService,
     jobListingService,

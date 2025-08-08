@@ -1,6 +1,7 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import {
+  type Attendance,
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
@@ -16,7 +17,7 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { addHours, isFuture } from "date-fns"
+import { addHours, addMinutes, isFuture } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import { tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
@@ -26,6 +27,7 @@ import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attenda
 import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeNotFoundError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
+import type { PaymentService } from "../payment/payment-service"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
@@ -64,7 +66,8 @@ export interface AttendeeService {
     handle: DBHandle,
     attendee: Attendee,
     pool: AttendancePool,
-    options: { bypassCriteria: boolean }
+    attendance: Attendance,
+    options: { bypassCriteria: boolean; immediate?: boolean }
   ): Promise<boolean>
   getAttendeeStatuses(
     handle: DBHandle,
@@ -79,7 +82,8 @@ export function getAttendeeService(
   attendanceRepository: AttendanceRepository,
   userService: UserService,
   taskSchedulingService: TaskSchedulingService,
-  personalMarkService: PersonalMarkService
+  personalMarkService: PersonalMarkService,
+  paymentService: PaymentService
 ): AttendeeService {
   async function addUserToAttendee(
     handle: DBHandle,
@@ -143,13 +147,19 @@ export function getAttendeeService(
         userGrade,
         earliestReservationAt: reserveTime,
         reserved: false,
+        paymentLink: null,
+        paymentDeadline: null,
+        paid: false,
       })
       const attendee = await addUserToAttendee(handle, attendeeWithoutUser, user)
       if (attendancePool.id !== attendeeWithoutUser.attendancePoolId) {
         throw new WrongAttendancePoolError(attendeeWithoutUser.attendancePoolId, attendancePool.id)
       }
       if (!isFuture(reserveTime)) {
-        attendee.reserved = await this.attemptReserve(handle, attendee, attendancePool, { bypassCriteria: false })
+        attendee.reserved = await this.attemptReserve(handle, attendee, attendancePool, attendance, {
+          bypassCriteria: false,
+          immediate: true,
+        })
       } else {
         await taskSchedulingService.scheduleAt(
           handle,
@@ -183,6 +193,9 @@ export function getAttendeeService(
         userGrade,
         earliestReservationAt: registerTime,
         reserved: true,
+        paid: false,
+        paymentDeadline: null,
+        paymentLink: null,
       })
 
       return addUserToAttendee(handle, attendeeWithoutUser, user)
@@ -218,7 +231,7 @@ export function getAttendeeService(
         }
         const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
 
-        await this.attemptReserve(handle, nextUnreservedAttendee, attendedPool, { bypassCriteria: false })
+        await this.attemptReserve(handle, nextUnreservedAttendee, attendedPool, attendance, { bypassCriteria: false })
       }
     },
     async delete(handle: DBHandle, attendeeId: AttendeeId) {
@@ -244,7 +257,8 @@ export function getAttendeeService(
       handle: DBHandle,
       attendee: Attendee,
       pool: AttendancePool,
-      { bypassCriteria }: { bypassCriteria: boolean }
+      attendance: Attendance,
+      { bypassCriteria, immediate = false }
     ) {
       if (attendee.reserved) {
         return true
@@ -254,7 +268,19 @@ export function getAttendeeService(
       const poolHasCapacity = pool.numAttendees < pool.capacity
 
       if ((isPastReserveTime && poolHasCapacity) || bypassCriteria) {
-        return await attendeeRepository.reserveAttendee(handle, attendee.id)
+        let url = null
+        let paymentDeadline = null
+        if (attendance.attendancePrice) {
+          url = await paymentService.createProductPayment(
+            attendance.id,
+            attendance.attendancePrice,
+            "http://localhost:3000/arrangementer/alle-avslutningskos/83f1d181-5eb1-4c62-b319-85d3c80f679f"
+          )
+
+          paymentDeadline = immediate ? addMinutes(new Date(), 15) : addHours(new Date(), 24)
+        }
+
+        return await attendeeRepository.reserveAttendee(handle, attendee.id, url, paymentDeadline)
       }
 
       return false
@@ -270,6 +296,10 @@ export function getAttendeeService(
       attendeeId: AttendeeId,
       { reserveNextAttendee, bypassCriteriaOnReserveNextAttendee }: AdminDeregisterForEventOptions
     ) {
+      const attendance = await attendanceRepository.getByAttendeeId(handle, attendeeId)
+      if (!attendance) {
+        throw new AttendanceNotFound("")
+      }
       const pool = await attendanceRepository.getPoolByAttendeeId(handle, attendeeId)
       if (!pool) {
         throw new AttendancePoolNotFoundError(`${attendeeId} (attendee id)`)
@@ -286,7 +316,7 @@ export function getAttendeeService(
           return
         }
         const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
-        await this.attemptReserve(handle, nextUnreservedAttendee, pool, {
+        await this.attemptReserve(handle, nextUnreservedAttendee, pool, attendance, {
           bypassCriteria: bypassCriteriaOnReserveNextAttendee,
         })
       }

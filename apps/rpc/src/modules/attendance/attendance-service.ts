@@ -23,6 +23,7 @@ import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
+import type { PaymentService } from "../payment/payment-service"
 
 const areSelectionsEqual = (a: AttendanceSelection, b: AttendanceSelection) => {
   if (a.id !== b.id) return false
@@ -67,7 +68,8 @@ export function getAttendanceService(
   attendanceRepository: AttendanceRepository,
   attendeeRepository: AttendeeRepository,
   attendeeService: AttendeeService,
-  taskSchedulingService: TaskSchedulingService
+  taskSchedulingService: TaskSchedulingService,
+  paymentService: PaymentService
 ): AttendanceService {
   async function validateSelections(
     handle: DBHandle,
@@ -101,9 +103,15 @@ export function getAttendanceService(
     const attendees = await attendeeService.getByAttendancePoolId(handle, newPool.id) // These are in order of reserveTime
     const unreservedAttendees = attendees.filter((attendee) => !attendee.reserved)
     const toAttemptReserve = unreservedAttendees.slice(0, capacityDifference)
+    const attendance = await attendanceRepository.getById(handle, newPool.attendanceId)
+    if (!attendance) {
+      throw new AttendanceNotFound(newPool.attendanceId)
+    }
 
     for (const attendee of toAttemptReserve) {
-      const result = await attendeeService.attemptReserve(handle, attendee, newPool, { bypassCriteria: false })
+      const result = await attendeeService.attemptReserve(handle, attendee, newPool, attendance, {
+        bypassCriteria: false,
+      })
       // reserveTime and pool capacity are the only metrics we use to reserve. If one fail the next will also fail
       if (!result) {
         break
@@ -121,6 +129,9 @@ export function getAttendanceService(
   }
   return {
     async create(handle, data: AttendanceWrite) {
+      if (data.attendancePrice) {
+        throw new Error("Can only set attendance price after creating")
+      }
       validateRegisterTime(data.registerStart, data.registerEnd)
       return await attendanceRepository.create(handle, data)
     },
@@ -150,6 +161,10 @@ export function getAttendanceService(
       const attendance = await attendanceRepository.getById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
+      }
+
+      if (data.attendancePrice) {
+        await paymentService.createOrUpdateProduct(attendanceId, "Betaling", data.attendancePrice)
       }
 
       if (data.registerStart || data.registerEnd) {
@@ -264,7 +279,7 @@ export function getAttendanceService(
       if (!pool) {
         throw new AttendancePoolNotFoundError(attendee.attendancePoolId)
       }
-      await attendeeService.attemptReserve(handle, attendee, pool, { bypassCriteria: false })
+      await attendeeService.attemptReserve(handle, attendee, pool, attendance, { bypassCriteria: false })
     },
   }
 }

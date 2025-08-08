@@ -25,6 +25,7 @@ import { RegistrationButton } from "./RegistrationButton"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
+import { PaymentCard } from "./PaymentCard"
 
 const getQueuePosition = (
   attendee: Attendee | undefined,
@@ -217,6 +218,7 @@ export const AttendanceCard = ({
         status={attendanceStatus}
         punishment={punishment}
       />
+      <PaymentCard attendance={attendance} attendee={attendee} />
 
       <div className="hidden sm:block">
         <div className="flex flex-row gap-4 text-gray-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">

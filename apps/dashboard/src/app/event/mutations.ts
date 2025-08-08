@@ -326,7 +326,8 @@ export const useUpdateAttendanceMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
+        await queryClient.invalidateQueries({ queryKey: trpc.attendance.getAttendance.queryFilter() })
       },
     })
   )
