@@ -63,6 +63,7 @@ export async function convertPdfToLongImage(
       await page.render({
         canvasContext: context,
         viewport: viewport,
+        canvas,
       }).promise
 
       pageCanvases.push({
