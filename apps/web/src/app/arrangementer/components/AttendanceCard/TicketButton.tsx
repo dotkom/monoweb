@@ -1,6 +1,6 @@
 "use client"
 
-import type { AttendeeId } from "@dotkomonline/types"
+import type { Attendee } from "@dotkomonline/types"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,17 +9,27 @@ import {
   AlertDialogTrigger,
   Button,
   Icon,
+  Text,
   Title,
 } from "@dotkomonline/ui"
 import { QRCodeSVG } from "qrcode.react"
 import { useState } from "react"
 
 interface TicketButtonProps {
-  attendeeId: AttendeeId
+  attendee: Attendee
 }
 
-export const TicketButton = ({ attendeeId }: TicketButtonProps) => {
+export const TicketButton = ({ attendee }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
+
+  const imageSettings = attendee.user.imageUrl
+    ? {
+        src: attendee.user.imageUrl,
+        excavate: true,
+        height: 58,
+        width: 58,
+      }
+    : undefined
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -48,8 +58,15 @@ export const TicketButton = ({ attendeeId }: TicketButtonProps) => {
           </AlertDialogCancel>
         </div>
 
-        <div className="p-4 bg-white rounded-lg w-fit drop-shadow-lg">
-          <QRCodeSVG value={attendeeId} size={256} />
+        <div className="flex flex-col gap-2">
+          <div className="p-4 bg-white rounded-lg w-fit drop-shadow-lg">
+            <QRCodeSVG value={attendee.id} size={240} imageSettings={imageSettings} />
+          </div>
+
+          <div className="flex flex-col">
+            <Text className="text-xs text-gray-500 dark:text-stone-500">ID: {attendee.id}</Text>
+            <Text className="text-xs text-gray-500 dark:text-stone-500">Navn: {attendee.user.name}</Text>
+          </div>
         </div>
       </AlertDialogContent>
     </AlertDialog>
