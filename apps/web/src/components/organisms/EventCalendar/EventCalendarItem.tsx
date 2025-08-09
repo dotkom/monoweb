@@ -18,7 +18,6 @@ interface EventTypeConfig {
   colors: {
     itemBg: string
     itemBgGradientFade: string
-    itemBgHover: string
     itemBorder: string
     itemBorderLight: string
     itemText: string
@@ -36,13 +35,12 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
     colors: {
       itemBg: "bg-green-100 dark:bg-green-950",
       itemBgGradientFade: "to-green-100 dark:to-green-950",
-      itemBgHover: "hover:bg-green-200 dark:hover:bg-green-900",
       itemBorder: "border-green-400 dark:border-green-600",
       itemBorderLight: "border-green-200 dark:border-green-800",
       itemText: "text-green-900 dark:text-green-300",
-      cardBg: "bg-green-100 dark:bg-green-950",
+      cardBg: "bg-green-100 dark:bg-green-950 border-green-200 dark:border-green-900",
       cardText: "text-green-950 dark:text-green-50",
-      cardBorderHover: "hover:border-green-400 dark:hover:border-green-800",
+      cardBorderHover: "hover:border-green-400 dark:hover:border-green-600",
       badgeBg: "bg-green-200 dark:bg-green-900",
       badgeText: "text-green-800 dark:text-green-300",
     },
@@ -50,65 +48,61 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
   },
   GENERAL_ASSEMBLY: {
     colors: {
-      itemBg: "bg-blue-100 dark:bg-blue-950",
-      itemBgGradientFade: "to-blue-100 dark:to-blue-950",
-      itemBgHover: "hover:bg-blue-200 dark:hover:bg-blue-900",
-      itemBorder: "border-blue-400 dark:border-blue-600",
-      itemBorderLight: "border-blue-200 dark:border-blue-800",
-      itemText: "text-blue-900 dark:text-blue-300",
-      cardBg: "bg-blue-100 dark:bg-blue-950",
-      cardText: "text-blue-950 dark:text-blue-50",
-      cardBorderHover: "hover:border-blue-400 dark:hover:border-blue-800",
-      badgeBg: "bg-blue-200 dark:bg-blue-900",
-      badgeText: "text-blue-800 dark:text-blue-300",
+      itemBg: "bg-purple-100 dark:bg-purple-950",
+      itemBgGradientFade: "to-purple-100 dark:to-purple-950",
+      itemBorder: "border-purple-400 dark:border-purple-600",
+      itemBorderLight: "border-purple-200 dark:border-purple-800",
+      itemText: "text-purple-900 dark:text-purple-300",
+      cardBg: "bg-purple-100 dark:bg-purple-950 border-purple-200 dark:border-purple-900",
+      cardText: "text-purple-950 dark:text-purple-50",
+      cardBorderHover: "hover:border-purple-400 dark:hover:border-purple-600",
+      badgeBg: "bg-purple-200 dark:bg-purple-900",
+      badgeText: "text-purple-800 dark:text-purple-300",
     },
-    displayName: "Bedpres",
+    displayName: "Genfors",
   },
   INTERNAL: {
     colors: {
-      itemBg: "bg-blue-100 dark:bg-blue-950",
-      itemBgGradientFade: "to-blue-100 dark:to-blue-950",
-      itemBgHover: "hover:bg-blue-200 dark:hover:bg-blue-900",
-      itemBorder: "border-blue-400 dark:border-blue-600",
-      itemBorderLight: "border-blue-200 dark:border-blue-800",
-      itemText: "text-blue-900 dark:text-blue-300",
-      cardBg: "bg-blue-100 dark:bg-blue-950",
-      cardText: "text-blue-950 dark:text-blue-50",
-      cardBorderHover: "hover:border-blue-400 dark:hover:border-blue-800",
-      badgeBg: "bg-blue-200 dark:bg-blue-900",
-      badgeText: "text-blue-800 dark:text-blue-300",
+      itemBg: "bg-purple-100 dark:bg-purple-950",
+      itemBgGradientFade: "to-purple-100 dark:to-purple-950",
+      itemBorder: "border-purple-400 dark:border-purple-600",
+      itemBorderLight: "border-purple-200 dark:border-purple-800",
+      itemText: "text-purple-900 dark:text-purple-300",
+      cardBg: "bg-purple-100 dark:bg-purple-950 border-purple-200 dark:border-purple-900",
+      cardText: "text-purple-950 dark:text-purple-50",
+      cardBorderHover: "hover:border-purple-400 dark:hover:border-purple-600",
+      badgeBg: "bg-purple-200 dark:bg-purple-900",
+      badgeText: "text-purple-800 dark:text-purple-300",
     },
     displayName: "Intern",
   },
   WELCOME: {
     colors: {
-      itemBg: "bg-blue-100 dark:bg-blue-950",
-      itemBgGradientFade: "to-blue-100 dark:to-blue-950",
-      itemBgHover: "hover:bg-blue-200 dark:hover:bg-blue-900",
-      itemBorder: "border-blue-400 dark:border-blue-600",
-      itemBorderLight: "border-blue-200 dark:border-blue-800",
-      itemText: "text-blue-900 dark:text-blue-300",
-      cardBg: "bg-blue-100 dark:bg-blue-950",
-      cardText: "text-blue-950 dark:text-blue-50",
-      cardBorderHover: "hover:border-blue-400 dark:hover:border-blue-800",
-      badgeBg: "bg-blue-200 dark:bg-blue-900",
-      badgeText: "text-blue-800 dark:text-blue-300",
+      itemBg: "bg-yellow-100 dark:bg-yellow-950",
+      itemBgGradientFade: "to-yellow-100 dark:to-yellow-950",
+      itemBorder: "border-orange-400 dark:border-orange-600",
+      itemBorderLight: "border-yellow-200 dark:border-yellow-800",
+      itemText: "text-orange-900 dark:text-orange-300",
+      cardBg: "bg-yellow-100 dark:bg-yellow-950 border-orange-200 dark:border-orange-900",
+      cardText: "text-orange-950 dark:text-orange-50",
+      cardBorderHover: "hover:border-orange-400 dark:hover:border-orange-600",
+      badgeBg: "bg-orange-200 dark:bg-orange-900",
+      badgeText: "text-orange-800 dark:text-orange-300",
     },
-    displayName: "Annet",
+    displayName: "Fadderuke",
   },
   OTHER: {
     colors: {
-      itemBg: "bg-blue-100 dark:bg-blue-950",
-      itemBgGradientFade: "to-blue-100 dark:to-blue-950",
-      itemBgHover: "hover:bg-blue-200 dark:hover:bg-blue-900",
-      itemBorder: "border-blue-400 dark:border-blue-600",
-      itemBorderLight: "border-blue-200 dark:border-blue-800",
-      itemText: "text-blue-900 dark:text-blue-300",
-      cardBg: "bg-blue-100 dark:bg-blue-950",
-      cardText: "text-blue-950 dark:text-blue-50",
-      cardBorderHover: "hover:border-blue-400 dark:hover:border-blue-800",
-      badgeBg: "bg-blue-200 dark:bg-blue-900",
-      badgeText: "text-blue-800 dark:text-blue-300",
+      itemBg: "bg-purple-100 dark:bg-purple-950",
+      itemBgGradientFade: "to-purple-100 dark:to-purple-950",
+      itemBorder: "border-purple-400 dark:border-purple-600",
+      itemBorderLight: "border-purple-200 dark:border-purple-800",
+      itemText: "text-purple-900 dark:text-purple-300",
+      cardBg: "bg-purple-100 dark:bg-purple-950 border-purple-200 dark:border-purple-900",
+      cardText: "text-purple-950 dark:text-purple-50",
+      cardBorderHover: "hover:border-purple-400 dark:hover:border-purple-600",
+      badgeBg: "bg-purple-200 dark:bg-purple-900",
+      badgeText: "text-purple-800 dark:text-purple-300",
     },
     displayName: "Annet",
   },
@@ -116,13 +110,12 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
     colors: {
       itemBg: "bg-red-100 dark:bg-red-950",
       itemBgGradientFade: "to-red-100 dark:to-red-950",
-      itemBgHover: "hover:bg-red-200 dark:hover:bg-red-900",
       itemBorder: "border-red-400 dark:border-red-600",
       itemBorderLight: "border-red-200 dark:border-red-800",
       itemText: "text-red-900 dark:text-red-300",
-      cardBg: "bg-red-100 dark:bg-red-950",
+      cardBg: "bg-red-100 dark:bg-red-950 border-red-200 dark:border-red-900",
       cardText: "text-red-950 dark:text-red-50",
-      cardBorderHover: "hover:border-red-400 dark:hover:border-red-800",
+      cardBorderHover: "hover:border-red-400 dark:hover:border-red-600",
       badgeBg: "bg-red-200 dark:bg-red-900",
       badgeText: "text-red-800 dark:text-red-300",
     },
@@ -130,17 +123,16 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
   },
   COMPANY: {
     colors: {
-      itemBg: "bg-indigo-100 dark:bg-indigo-950",
-      itemBgGradientFade: "to-indigo-100 dark:to-indigo-950",
-      itemBgHover: "hover:bg-indigo-200 dark:hover:bg-indigo-900",
-      itemBorder: "border-indigo-400 dark:border-indigo-600",
-      itemBorderLight: "border-indigo-200 dark:border-indigo-800",
-      itemText: "text-indigo-900 dark:text-indigo-300",
-      cardBg: "bg-indigo-100 dark:bg-indigo-950",
-      cardText: "text-indigo-950 dark:text-indigo-50",
-      cardBorderHover: "hover:border-indigo-400 dark:hover:border-indigo-800",
-      badgeBg: "bg-indigo-200 dark:bg-indigo-900",
-      badgeText: "text-indigo-800 dark:text-indigo-300",
+      itemBg: "bg-blue-100 dark:bg-blue-950",
+      itemBgGradientFade: "to-blue-100 dark:to-blue-950",
+      itemBorder: "border-blue-400 dark:border-blue-600",
+      itemBorderLight: "border-blue-200 dark:border-blue-800",
+      itemText: "text-blue-900 dark:text-blue-300",
+      cardBg: "bg-blue-100 dark:bg-blue-950 border-blue-200 dark:border-blue-900",
+      cardText: "text-blue-950 dark:text-blue-50",
+      cardBorderHover: "hover:border-blue-400 dark:hover:border-blue-600",
+      badgeBg: "bg-blue-200 dark:bg-blue-900",
+      badgeText: "text-blue-800 dark:text-blue-300",
     },
     displayName: "Bedriftsarrangement",
   },
@@ -149,12 +141,10 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
 const DEFAULT_STYLES = {
   itemBg: "bg-gray-100 dark:bg-stone-900",
   itemBgGradientFade: "to-gray-100 dark:to-stone-900",
-  itemBgHover: "hover:bg-gray-200 dark:hover:bg-stone-800",
-  itemBorder: "border-gray-400 dark:border-gray-600",
-  itemText: "text-gray-500 dark:text-gray-300",
-  cardBg: "bg-gray-100 dark:bg-stone-800",
+  itemText: "text-gray-500 dark:text-stone-400",
+  cardBg: "bg-gray-100 dark:bg-stone-800 border-gray-200 dark:border-stone-700",
   cardText: "text-gray-900 dark:text-gray-100",
-  cardBorderHover: "hover:border-gray-400 dark:hover:border-gray-800",
+  cardBorderHover: "hover:border-gray-400 dark:hover:border-stone-600",
 }
 
 interface EventTheme {
@@ -175,26 +165,13 @@ interface EventTheme {
 }
 
 function getEventTheme(event: Event, isActive: boolean): EventTheme {
-  const config = EVENT_TYPE_CONFIG[event.type as EventType]
-
-  if (!config) {
-    return {
-      item: {
-        base: `${DEFAULT_STYLES.itemBg} ${DEFAULT_STYLES.itemBorder} ${DEFAULT_STYLES.itemText}`,
-        gradient: DEFAULT_STYLES.itemBgGradientFade,
-      },
-      card: {
-        bg: DEFAULT_STYLES.cardBg,
-        text: DEFAULT_STYLES.cardText,
-        borderHover: DEFAULT_STYLES.cardBorderHover,
-      },
-    }
-  }
+  // Use OTHER config as fallback if event type is not found
+  const config = EVENT_TYPE_CONFIG[event.type as EventType] || EVENT_TYPE_CONFIG.OTHER
 
   if (isActive) {
     return {
       item: {
-        base: `${config.colors.itemBg} ${config.colors.itemBgHover} ${config.colors.itemBorder} ${config.colors.itemText}`,
+        base: `${config.colors.itemBg} ${config.colors.itemBorder} ${config.colors.itemText}`,
         gradient: config.colors.itemBgGradientFade,
       },
       card: {
@@ -210,9 +187,10 @@ function getEventTheme(event: Event, isActive: boolean): EventTheme {
     }
   }
 
+  // For inactive events, use DEFAULT_STYLES for item styling but keep the config colors for card and badge
   return {
     item: {
-      base: `${DEFAULT_STYLES.itemBg} ${DEFAULT_STYLES.itemBgHover} ${config.colors.itemBorderLight} ${DEFAULT_STYLES.itemText}`,
+      base: `${DEFAULT_STYLES.itemBg} ${config.colors.itemBorderLight} ${DEFAULT_STYLES.itemText}`,
       gradient: DEFAULT_STYLES.itemBgGradientFade,
     },
     card: {
@@ -238,7 +216,7 @@ export const EventCalendarItem = ({ event, attendeeStatus, className }: EventCal
         <Link
           href={`/arrangementer/${slugify(event.title)}/${event.id}`}
           className={cn(
-            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden relative transition-colors duration-300",
+            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden relative",
             theme.item.base,
             className || ""
           )}
@@ -296,7 +274,7 @@ export const EventCalendarItem = ({ event, attendeeStatus, className }: EventCal
                   <Text
                     element="span"
                     className={cn(
-                      "inline-block px-3 py-1 text-sm rounded-full font-semibold",
+                      "inline-block px-2 py-1 text-sm rounded-md font-semibold",
                       theme.badge.bg,
                       theme.badge.text
                     )}

@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
+import type { Event } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
 import Link from "next/link"
@@ -48,6 +49,28 @@ function getColSpanClass(span: number) {
   }
 }
 
+function getEventTypeGuide(events: Event[]) {
+  const eventTypeConfig = {
+    SOCIAL: { color: "bg-green-400 dark:bg-green-400", label: "Sosialt" },
+    ACADEMIC: { color: "bg-red-400 dark:bg-red-400", label: "Kurs" },
+    COMPANY: { color: "bg-blue-400 dark:bg-blue-400", label: "Bedriftsarrangement" },
+    WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
+    OTHER: { color: "bg-purple-400 dark:bg-purple-400", label: "Annet" },
+    GENERAL_ASSEMBLY: { color: "bg-purple-400 dark:bg-purple-400", label: "Generalforsamling" },
+    INTERNAL: { color: "bg-purple-400 dark:bg-purple-400", label: "Internt" },
+  }
+
+  const presentTypes = new Set(events.map((event) => event.type))
+
+  // Return only the items for types that are present
+  return Array.from(presentTypes)
+    .filter((type) => eventTypeConfig[type as keyof typeof eventTypeConfig]) // Filter out unknown types
+    .map((type) => ({
+      type,
+      ...eventTypeConfig[type as keyof typeof eventTypeConfig],
+    }))
+}
+
 interface CalendarProps {
   year: number
   month: number
@@ -80,6 +103,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
     : null
 
   const cal = getCalendarArray(year, month, events)
+  const eventTypeGuideItems = getEventTypeGuide(events)
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
   const months = [
@@ -141,7 +165,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
         ))}
       </div>
       {cal.weeks.map((week, weekIndex) => (
-        <div className="relative min-h-28" key={`week-${getWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
+        <div className="relative min-h-24 sm:min-h-28" key={`week-${getWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
           <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 absolute w-full h-full">
             <div
               className={cn(
@@ -155,9 +179,9 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
               <div
                 key={new Date(day).toISOString()}
                 className={cn(
-                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-300 dark:border-stone-700",
-                  week.dates.indexOf(day) % 7 === 0 ? "p-l-[5px]" : "pl-1 border-l-[1px]",
-                  weekIndex > 0 ? "border-t-[1px]" : ""
+                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-300 dark:border-stone-700 border-t-[1px] ",
+                  week.dates.indexOf(day) % 7 === 0 ? "pl-1 sm:p-l-[5px]" : "pl-1 sm:border-l-[1px]",
+                  weekIndex > 0 ? "" : "sm:border-t-0"
                 )}
               >
                 <span
@@ -204,24 +228,16 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           </div>
         </div>
       ))}
-      <div className="flex gap-4 text-sm p-2 sm:pl-6">
-        <span className="flex items-center">
-          <span className="w-3 h-3 bg-green-400 dark:bg-green-400 rounded-full mr-1" />
-          Sosialt
-        </span>
-        <span className="flex items-center">
-          <span className="w-3 h-3 bg-red-400 dark:bg-red-400 rounded-full mr-1" />
-          Kurs
-        </span>
-        <span className="flex items-center">
-          <span className="w-3 h-3 bg-blue-400 dark:bg-blue-400 rounded-full mr-1" />
-          Bedpres
-        </span>
-        <span className="flex items-center">
-          <span className="w-3 h-3 bg-yellow-400 dark:bg-yellow-400 rounded-full mr-1" />
-          Fadderuke
-        </span>
-      </div>
+      {eventTypeGuideItems.length > 0 && (
+        <div className="flex gap-y-2 gap-x-4 text-sm p-2 sm:pl-6 flex-wrap">
+          {eventTypeGuideItems.map(({ type, color, label }) => (
+            <span key={type} className="flex items-center">
+              <span className={`w-3 h-3 ${color} rounded-full mr-1`} />
+              {label}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
