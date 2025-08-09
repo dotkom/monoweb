@@ -25,9 +25,13 @@ import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { logger } from "@sentry/node"
 import { PaymentAlreadyChargedError } from "../payment/payment-error"
+import { EventRepository } from "../event/event-repository"
+import { EventNotFoundError } from "../event/event-error"
+import { configuration } from "src/configuration"
+import { EventService } from "../event/event-service"
 
 const areSelectionsEqual = (a: AttendanceSelection, b: AttendanceSelection) => {
   if (a.id !== b.id) return false
@@ -77,7 +81,8 @@ export function getAttendanceService(
   attendeeRepository: AttendeeRepository,
   attendeeService: AttendeeService,
   taskSchedulingService: TaskSchedulingService,
-  paymentService: PaymentService
+  paymentService: PaymentService,
+  eventService: EventService
 ): AttendanceService {
   async function validateSelections(
     handle: DBHandle,
@@ -185,7 +190,30 @@ export function getAttendanceService(
       const newAttendance = await attendanceRepository.update(handle, attendanceId, data)
 
       if (newAttendance.attendancePrice) {
-        await paymentService.createOrUpdateProduct(attendanceId, "Betaling", newAttendance.attendancePrice)
+        const event = await eventService.getByAttendance(handle, attendanceId)
+        if (event === null) {
+          throw new EventNotFoundError(`(attendanceId): ${attendanceId}`)
+        }
+
+        const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
+
+        const metadata = {
+          group: event.hostingGroups.map((group) => group.slug).join(", "),
+        }
+
+        const groupsText = ogJoin(event.hostingGroups.map((group) => group.name ?? group.slug))
+
+        const description = event.hostingGroups ? `Arrangert av ${groupsText}` : undefined
+
+        await paymentService.createOrUpdateProduct(
+          attendanceId,
+          event.title,
+          newAttendance.attendancePrice,
+          url,
+          event.imageUrl,
+          description,
+          metadata
+        )
         await taskSchedulingService.scheduleAt(
           handle,
           "CHARGE_ATTENDANCE_PAYMENTS",

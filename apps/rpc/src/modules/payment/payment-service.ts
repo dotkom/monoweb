@@ -14,8 +14,16 @@ export type ProductPayment = {
 type PaymentStatus = "UNPAID" | "RESERVED" | "PAID"
 
 export interface PaymentService {
-  createOrUpdateProduct(productId: string, name: string, price: number): Promise<string>
-  createProductPayment(productId: string, price: number, redirect: string, chargeNow?: boolean): Promise<ProductPayment>
+  createOrUpdateProduct(
+    productId: string,
+    name: string,
+    price: number,
+    url: string,
+    imageUrl: string | null,
+    description: string | undefined,
+    metadata: Record<string, string>
+  ): Promise<string>
+  createProductPayment(productId: string, price: number, chargeNow?: boolean): Promise<ProductPayment>
   cancelProductPayment(paymentId: string, refundChargedPayments?: boolean): Promise<void>
   chargeProductPayment(paymentId: string): Promise<void>
   getPaymentStatus(paymentId: string): Promise<PaymentStatus>
@@ -28,11 +36,23 @@ const priceDataEqual = (price_1: PriceData, price_2: PriceData) =>
   price_1.currency.toLowerCase() === price_2.currency.toLowerCase() && price_1.unit_amount === price_2.unit_amount
 
 export function getPaymentService(stripe: Stripe): PaymentService {
-  const createProduct = async (productId: string, name: string, price: number) => {
+  const createProduct = async (
+    productId: string,
+    name: string,
+    price: number,
+    url: string,
+    imageUrl: string | null,
+    description: string | undefined,
+    metadata: Record<string, string>
+  ) => {
     const product = await stripe.products.create({
       name,
       id: productId,
+      url,
       default_price_data: getPriceData(price),
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+      metadata,
     })
 
     if (!product.default_price) {
@@ -42,7 +62,15 @@ export function getPaymentService(stripe: Stripe): PaymentService {
     return typeof product.default_price === "string" ? product.default_price : product.default_price.id
   }
 
-  const updateProduct = async (productId: string, name: string, newPrice: number) => {
+  const updateProduct = async (
+    productId: string,
+    name: string,
+    newPrice: number,
+    url: string,
+    imageUrl: string | null,
+    description: string,
+    metadata: Record<string, string>
+  ) => {
     const newPriceData = getPriceData(newPrice)
 
     const activeStripePrice = await getActiveProductStripePrice(productId)
@@ -59,6 +87,10 @@ export function getPaymentService(stripe: Stripe): PaymentService {
     await stripe.products.update(productId, {
       default_price: defaultPriceId,
       name,
+      url,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+      metadata,
     })
 
     if (oldStripePriceId !== null) {
@@ -88,7 +120,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
   }
 
   return {
-    createOrUpdateProduct: async (productId, name, price) => {
+    createOrUpdateProduct: async (productId, name, price, url, imageUrl, description, metadata) => {
       try {
         await stripe.products.retrieve(productId)
       } catch (e) {
@@ -97,12 +129,13 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         }
 
         // If product does not exist
-        return await createProduct(productId, name, price)
+        return await createProduct(productId, name, price, url, imageUrl, description, metadata)
       }
 
-      return await updateProduct(productId, name, price)
+      return await updateProduct(productId, name, price, url, imageUrl, description, metadata)
     },
-    createProductPayment: async (productId, price, redirect, immediate = false) => {
+    createProductPayment: async (productId, price, immediate = false) => {
+      const product = await stripe.products.retrieve(productId)
       const priceData = getPriceData(price)
       const activePrice = await getActiveProductStripePrice(productId)
 
@@ -114,8 +147,8 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       const session = await stripe.checkout.sessions.create({
         line_items: [{ price: activePrice.id, quantity: 1 }],
         payment_intent_data: { capture_method: immediate ? undefined : "manual" },
-        success_url: redirect,
-        cancel_url: redirect,
+        success_url: product.url,
+        cancel_url: product.url,
         mode: "payment",
       })
 

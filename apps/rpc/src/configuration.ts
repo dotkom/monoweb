@@ -8,6 +8,7 @@ export const configuration = defineConfiguration({
   AUTH0_CLIENT_SECRET: config(process.env.AUTH0_CLIENT_SECRET),
   AUTH0_MGMT_TENANT: config(process.env.AUTH0_MGMT_TENANT),
 
+  WEB_PUBLIC_ORIGIN: config(process.env.WEB_PUBLIC_ORIGIN),
   ALLOWED_ORIGINS: config(process.env.ALLOWED_ORIGINS, {
     prd: "https://online.ntnu.no",
     stg: "https://staging.online.ntnu.no",

@@ -319,7 +319,6 @@ export function getAttendeeService(
         const payment = await paymentService.createProductPayment(
           attendance.id,
           attendance.attendancePrice,
-          "http://localhost:3000/arrangementer/vinkurs/7a7d0d92-7393-4fb1-a56b-51cb30e6d88c",
           isPast(attendance.deregisterDeadline)
         )
 

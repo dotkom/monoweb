@@ -135,14 +135,15 @@ export async function createServiceLayer(
     personalMarkService,
     paymentService
   )
+  const eventService = getEventService(eventRepository)
   const attendanceService = getAttendanceService(
     attendanceRepository,
     attendeeRepository,
     attendeeService,
     taskSchedulingService,
-    paymentService
+    paymentService,
+    eventService
   )
-  const eventService = getEventService(eventRepository)
   const companyService = getCompanyService(companyRepository)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
