@@ -57,7 +57,7 @@
     "@dotkomonline/types": "workspace:*",
     "@faker-js/faker": "9.9.0",
     "@testcontainers/postgresql": "10.28.0",
-    "@types/node": "22.16.5",
+    "@types/node": "22.17.1",
     "@vitest/coverage-v8": "3.1.4",
     "@vitest/ui": "3.1.4",
     "dotenv-cli": "8.0.0",
