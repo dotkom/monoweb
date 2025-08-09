@@ -6,8 +6,10 @@ import type { AttendanceId, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { getCurrentUtc, slugify } from "@dotkomonline/utils"
 import { formatDate, isPast } from "date-fns"
+import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
+import { ConstructionNotice } from "./construction-notice"
 
 export default async function App() {
   const eventResult = await server.event.all.query({
@@ -33,9 +35,12 @@ export default async function App() {
       })
     : null
 
+  const cookies = await getCookies()
+  const constructionNoticeHidden = cookies.get("hide-construction-notice")?.value === "1"
+
   return (
     <section className="flex flex-col gap-16 w-full">
-      <ConstructionNotice />
+      {!constructionNoticeHidden && <ConstructionNotice />}
 
       <CompanySplash />
 
@@ -61,45 +66,6 @@ export default async function App() {
         </div>
       </div>
     </section>
-  )
-}
-
-const ConstructionNotice = () => {
-  return (
-    <div className="flex flex-col gap-0 bg-yellow-100 dark:bg-amber-100 dark:text-black rounded-2xl">
-      <div className="flex flex-col gap-4 pt-5 px-5 pb-4 bg-yellow-200 dark:bg-amber-200 dark:text-black rounded-t-2xl">
-        <Title className="text-lg md:text-xl font-bold">🚧 OW5 er under konstruksjon</Title>
-      </div>
-
-      <div className="flex flex-col gap-4 px-6 pb-6 pt-4 text-sm md:text-base rounded-b-2xl">
-        <span className="inline-flex flex-row items-center gap-1">
-          <Text>
-            Vi jobber med å oppdatere{" "}
-            <img
-              src="/online-logo-o.svg"
-              alt="Logo Online Linjeforening NTNU Trondheim"
-              className="h-[1.75ch] w-[1.75ch] inline-block align-text-bottom"
-            />{" "}
-            OnlineWeb til en ny og bedre versjon. Det vil komme flere oppdateringer fremover, så følg med!
-          </Text>
-        </span>
-
-        <span>
-          <Text>
-            Dersom du har tilbakemeldinger eller har funnet en feil, kan du sende en e-post til{" "}
-            <Button
-              variant="text"
-              element="a"
-              href="mailto:dotkom@online.ntnu.no"
-              iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
-              className="text-sm md:text-base font-semibold hover:bg-yellow-200 dark:text-black dark:hover:bg-amber-200"
-            >
-              dotkom@online.ntnu.no
-            </Button>
-          </Text>
-        </span>
-      </div>
-    </div>
   )
 }
 
