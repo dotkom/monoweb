@@ -260,20 +260,21 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
             Tilbakestill
           </Button>
         </div>
+
         {isSaving && (
-          <div className="flex items-center gap-1 text-slate-600 dark:text-stone-300">
+          <div className="flex items-center gap-1 text-slate-600 dark:text-stone-300 fade-in transition-all">
             <Icon icon="tabler:loader" className="animate-spin text-sm" />
             <Text className="text-sm">Lagrer</Text>
           </div>
         )}
         {!isSaving && saveSuccess && (
-          <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+          <div className="flex items-center gap-1 text-green-600 dark:text-green-400 fade-out transition-all">
             <Icon icon="tabler:check" className="text-sm" />
             <Text className="text-sm">Profil oppdatert</Text>
           </div>
         )}
         {!isSaving && Boolean(saveError) && (
-          <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-1 text-red-600 dark:text-red-400 fade-out transition-all">
             <Icon icon="tabler:alert-triangle" className="text-sm" />
             <Text className="text-sm">Kunne ikke oppdatere: {saveError}</Text>
           </div>

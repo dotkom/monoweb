@@ -39,7 +39,7 @@ export const UserWriteSchema = z.object({
   profileSlug: z
     .string()
     .min(3, "Brukernavnet må være minst 3 tegn lang")
-    .max(32, "Brukernavnet kan ikke være lengre enn 32 tegn")
+    .max(64, "Brukernavnet kan ikke være lengre enn 64 tegn")
     .regex(PROFILE_SLUG_REGEX, "Brukernavnet kan bare inneholde små bokstaver, tall og bindestrek")
     // This would make it impossible to enter their profile
     .refine((value) => value !== "rediger", {
@@ -51,7 +51,7 @@ export const UserWriteSchema = z.object({
   name: z
     .string()
     .min(3, "Du må skrive inn et navn")
-    .max(64, "Navnet kan ikke være lengre enn 64 tegn")
+    .max(128, "Navnet kan ikke være lengre enn 128 tegn")
     .regex(NAME_REGEX, "Du kan bare bruke bokstaver, bindestrek, apostrof og mellomrom i navnet")
     .nullable(),
   email: z

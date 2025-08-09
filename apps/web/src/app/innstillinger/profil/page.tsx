@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { notFound } from "next/navigation"
 import { ProfileForm } from "./form"
 
-const Page = () => {
+const EditProfilePage = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
@@ -72,4 +72,4 @@ const Page = () => {
   )
 }
 
-export default Page
+export default EditProfilePage
