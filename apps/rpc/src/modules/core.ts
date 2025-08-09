@@ -60,7 +60,7 @@ export function createThirdPartyClients(configuration: Configuration) {
     clientSecret: configuration.AUTH0_CLIENT_SECRET,
   })
   const stripe = new Stripe(configuration.STRIPE_SECRET_KEY, {
-    apiVersion: "2023-08-16",
+    apiVersion: "2025-07-30.basil",
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
   return { s3Client, auth0Client, stripe, prisma }

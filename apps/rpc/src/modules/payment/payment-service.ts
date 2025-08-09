@@ -68,7 +68,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
     newPrice: number,
     url: string,
     imageUrl: string | null,
-    description: string,
+    description: string | undefined,
     metadata: Record<string, string>
   ) => {
     const newPriceData = getPriceData(newPrice)
@@ -146,11 +146,11 @@ export function getPaymentService(stripe: Stripe): PaymentService {
 
       const session = await stripe.checkout.sessions.create({
         line_items: [{ price: activePrice.id, quantity: 1 }],
-        payment_intent_data: { capture_method: immediate ? undefined : "manual" },
-        success_url: product.url,
-        cancel_url: product.url,
+        success_url: product.url ?? undefined,
+        cancel_url: product.url ?? undefined,
         mode: "payment",
-      })
+        ...(immediate ? {} : { payment_intent_data: { capture_method: "manual" } }),
+      } satisfies Stripe.Checkout.SessionCreateParams)
 
       if (!session.url) {
         throw new Error("URL was not created for product")
