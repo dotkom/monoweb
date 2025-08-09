@@ -17,15 +17,12 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { addHours, addSeconds, isFuture, isPast } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
+import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
 import type { PaymentService } from "../payment/payment-service"
-import {
-  ChargeAttendancePaymentsTaskDefinition,
-  type InferTaskData,
-  type VerifyPaymentTaskDefinition,
-  tasks,
-} from "../task/task-definition"
+import { type InferTaskData, type VerifyPaymentTaskDefinition, tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenError } from "./attendance-error"
@@ -38,8 +35,6 @@ import {
   AttendeeRegistrationError,
 } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
-import { getCurrentUTC } from "@dotkomonline/utils"
-import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
@@ -377,6 +372,9 @@ export function getAttendeeService(
       if (!attendee.paymentId) {
         return
       }
+      if (attendee.paymentChargedAt) {
+        return
+      }
 
       try {
         await paymentService.chargeProductPayment(attendee.paymentId)
@@ -385,7 +383,11 @@ export function getAttendeeService(
         })
       } catch (e) {
         if (e instanceof PaymentAlreadyChargedError) {
-          console.log(`Skipping attendee ${attendee.id} as they have already been charged`)
+          console.log(`Attendee ${attendee.id} as they have already been charged`)
+
+          await attendeeRepository.update(handle, attendeeId, {
+            paymentChargedAt: getCurrentUTC(),
+          })
         } else {
           console.error("Failed to charge attendee", attendee.id, e)
         }

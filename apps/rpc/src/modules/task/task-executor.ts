@@ -2,12 +2,11 @@ import { clearInterval, setInterval } from "node:timers"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
-import { minutesToMilliseconds } from "date-fns"
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { AttendeeService } from "../attendance/attendee-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
-  ChargeAttendancePaymentsTaskDefinition,
+  type ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
   type MergePoolsTaskDefinition,
   type VerifyPaymentTaskDefinition,

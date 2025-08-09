@@ -4,11 +4,11 @@ import { ActionIcon, Badge, Checkbox, Tooltip } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo } from "react"
 
+import { useTRPC } from "@/lib/trpc"
+import { useMutation } from "@tanstack/react-query"
 import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
-import { useTRPC } from "@/lib/trpc"
-import { useMutation } from "@tanstack/react-query"
 
 interface AllAttendeesTableProps {
   attendees: Attendee[]
@@ -154,7 +154,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         }),
       ],
     ],
-    [columnHelper, updateAttendanceMut, pools, waitlists, attendance.attendancePrice]
+    [columnHelper, updateAttendanceMut, pools, waitlists, attendance.attendancePrice, refundMutation]
   )
 
   const tableOptions = useMemo(

@@ -10,11 +10,15 @@ import type {
   AttendanceWrite,
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
+import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { addHours, differenceInMinutes, isAfter, isBefore, isFuture } from "date-fns"
+import { configuration } from "src/configuration"
+import { EventNotFoundError } from "../event/event-error"
+import type { EventService } from "../event/event-service"
 import type { PaymentService } from "../payment/payment-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
-  ChargeAttendancePaymentsTaskDefinition,
+  type ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
   type MergePoolsTaskDefinition,
   tasks,
@@ -25,13 +29,6 @@ import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
-import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
-import { logger } from "@sentry/node"
-import { PaymentAlreadyChargedError } from "../payment/payment-error"
-import { EventRepository } from "../event/event-repository"
-import { EventNotFoundError } from "../event/event-error"
-import { configuration } from "src/configuration"
-import { EventService } from "../event/event-service"
 
 const areSelectionsEqual = (a: AttendanceSelection, b: AttendanceSelection) => {
   if (a.id !== b.id) return false
