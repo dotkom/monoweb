@@ -7,6 +7,7 @@ import { captureException } from "@sentry/node"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import fastify from "fastify"
+import z from "zod"
 import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
 import { configuration } from "../configuration"
@@ -51,6 +52,10 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
 const server = fastify({
   maxParamLength: 5000,
 })
+server.setErrorHandler((error) => {
+  console.error(error)
+  captureException(error)
+})
 server.register(fastifyCors, {
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -63,20 +68,37 @@ server.register(fastifyTRPCPlugin, {
   trpcOptions: {
     router: appRouter,
     createContext: createFastifyContext,
-    onError: ({ path, error }) => {
+    onError: ({ path, input, error }) => {
       captureException(error)
-      logger.error(`Error in tRPC handler on path '${path}': %o`, error)
-      if (error.cause instanceof AggregateError) {
-        for (const err of error.cause.errors) {
-          logger.error(`  AggregateError Child in tRPC handler on path '${path}': %o`, err)
-        }
-      }
+      // logger.error(`Error in tRPC handler on path '${path}': %o`, error)
+      logger.error(`${path}: ${JSON.stringify(input)}`)
+      console.error(error)
     },
   } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
 })
 
 server.get("/health", (_, res) => {
   res.send({ status: "ok" })
+})
+
+server.post("/webhook/stripe", async (req, res) => {
+  const checkoutSessionCompletedSchema = z.object({
+    type: z.literal("checkout.session.completed"),
+    data: z.object({
+      object: z
+        .object({
+          id: z.string(),
+        })
+        .passthrough(),
+    }),
+  })
+  const { data: payload, success } = checkoutSessionCompletedSchema.safeParse(req.body)
+  if (success) {
+    console.log("gangam style:", payload.data.object)
+    await serviceLayer.attendeeService.handleOnPaymentTask(serviceLayer.prisma, payload.data.object.id)
+  }
+
+  res.status(204)
 })
 
 await identifyCallerIAMIdentity()

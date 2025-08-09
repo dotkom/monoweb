@@ -1,6 +1,7 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import {
+  type Attendance,
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
@@ -16,15 +17,23 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { addHours, isFuture } from "date-fns"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { addHours, addSeconds, isFuture, isPast } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
-import { tasks } from "../task/task-definition"
+import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
+import type { PaymentService } from "../payment/payment-service"
+import { type InferTaskData, type VerifyPaymentTaskDefinition, tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenError } from "./attendance-error"
 import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import { AttendeeDeregistrationError, AttendeeNotFoundError, AttendeeRegistrationError } from "./attendee-error"
+import {
+  AttendeeDeregistrationError,
+  AttendeeHasNotPaidError,
+  AttendeeNotFoundError,
+  AttendeeRegistrationError,
+} from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
@@ -38,12 +47,9 @@ export interface AttendeeService {
     attendanceId: string,
     attendancePoolId: string
   ): Promise<Attendee>
-  deregisterForEvent(handle: DBHandle, userId: string, attendanceId: string): Promise<void>
-  adminDeregisterForEvent(
-    handle: DBHandle,
-    attendeeId: AttendeeId,
-    options: AdminDeregisterForEventOptions
-  ): Promise<void>
+  refundAttendee(handle: DBHandle, attendeeId: string): Promise<void>
+  tryDeregisterForEvent(handle: DBHandle, userId: string, attendanceId: string): Promise<void>
+  deregisterForEvent(handle: DBHandle, attendeeId: AttendeeId, options: AdminDeregisterForEventOptions): Promise<void>
   delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   updateSelectionResponses(
     handle: DBHandle,
@@ -64,8 +70,13 @@ export interface AttendeeService {
     handle: DBHandle,
     attendee: Attendee,
     pool: AttendancePool,
-    options: { bypassCriteria: boolean }
+    attendance: Attendance,
+    options: { bypassCriteria: boolean; immediate?: boolean }
   ): Promise<boolean>
+  reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean): Promise<boolean>
+  handleVerifyPaymentTask(handle: DBHandle, payload: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
+  handleOnPaymentTask(handle: DBHandle, paymentId: string): Promise<void>
+  chargeAttendee(handle: DBHandle, attendeeId: string): Promise<void>
   getAttendeeStatuses(
     handle: DBHandle,
     userId: UserId,
@@ -79,7 +90,8 @@ export function getAttendeeService(
   attendanceRepository: AttendanceRepository,
   userService: UserService,
   taskSchedulingService: TaskSchedulingService,
-  personalMarkService: PersonalMarkService
+  personalMarkService: PersonalMarkService,
+  paymentService: PaymentService
 ): AttendeeService {
   async function addUserToAttendee(
     handle: DBHandle,
@@ -96,6 +108,61 @@ export function getAttendeeService(
         throw new AttendeeNotFoundError(userId, attendanceId)
       }
       return await addUserToAttendee(handle, attendeeWithoutUser)
+    },
+    async refundAttendee(handle: DBHandle, attendeeId: string) {
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+      if (!attendee) {
+        throw new AttendeeNotFoundError(attendeeId, "")
+      }
+      if (!attendee.paymentId || (!attendee.paymentChargedAt && !attendee.paymentReservedAt)) {
+        throw new AttendeeHasNotPaidError(attendeeId)
+      }
+
+      await paymentService.cancelProductPayment(attendee.paymentId, true)
+      await attendeeRepository.update(handle, attendeeId, {
+        paymentChargedAt: null,
+        paymentId: null,
+        paymentDeadline: null,
+        paymentLink: null,
+        paymentReservedAt: null,
+      })
+    },
+    async tryDeregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
+      const deregisterTime = new Date()
+      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      if (!attendance) {
+        throw new AttendanceNotFound(attendanceId)
+      }
+
+      if (!attendanceOpenForDeregistration(attendance, deregisterTime)) {
+        throw new AttendanceDeregisterClosedError()
+      }
+
+      const attendee = await attendeeRepository.getByUserId(handle, userId, attendanceId)
+      if (!attendee) {
+        throw new AttendeeDeregistrationError(
+          `Tried to deregister attendee with user id '${userId}' in attendance with id '${attendanceId}' but attendee is not registered.`
+        )
+      }
+
+      if (attendee.paymentId) {
+        await paymentService.cancelProductPayment(attendee.paymentId)
+      }
+      await attendeeRepository.delete(handle, attendee.id)
+      const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+      if (attendedPool) {
+        const nextUnreservedAttendeeWithoutUser = await attendeeRepository.getFirstUnreservedByAttendancePoolId(
+          handle,
+          attendedPool.id
+        )
+
+        if (!nextUnreservedAttendeeWithoutUser) {
+          return
+        }
+        const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
+
+        await this.attemptReserve(handle, nextUnreservedAttendee, attendedPool, attendance, { bypassCriteria: false })
+      }
     },
     async registerForEvent(handle: DBHandle, userId: string, attendanceId: string, attendancePoolId: string) {
       const registerTime = new Date()
@@ -143,13 +210,21 @@ export function getAttendeeService(
         userGrade,
         earliestReservationAt: reserveTime,
         reserved: false,
+        paymentLink: null,
+        paymentDeadline: null,
+        paymentChargedAt: null,
+        paymentReservedAt: null,
+        paymentId: null,
       })
       const attendee = await addUserToAttendee(handle, attendeeWithoutUser, user)
       if (attendancePool.id !== attendeeWithoutUser.attendancePoolId) {
         throw new WrongAttendancePoolError(attendeeWithoutUser.attendancePoolId, attendancePool.id)
       }
       if (!isFuture(reserveTime)) {
-        attendee.reserved = await this.attemptReserve(handle, attendee, attendancePool, { bypassCriteria: false })
+        attendee.reserved = await this.attemptReserve(handle, attendee, attendancePool, attendance, {
+          bypassCriteria: false,
+          immediate: true,
+        })
       } else {
         await taskSchedulingService.scheduleAt(
           handle,
@@ -183,43 +258,14 @@ export function getAttendeeService(
         userGrade,
         earliestReservationAt: registerTime,
         reserved: true,
+        paymentDeadline: null,
+        paymentLink: null,
+        paymentId: null,
+        paymentReservedAt: null,
+        paymentChargedAt: null,
       })
 
       return addUserToAttendee(handle, attendeeWithoutUser, user)
-    },
-    async deregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
-      const deregisterTime = new Date()
-      const attendance = await attendanceRepository.getById(handle, attendanceId)
-      if (!attendance) {
-        throw new AttendanceNotFound(attendanceId)
-      }
-
-      if (!attendanceOpenForDeregistration(attendance, deregisterTime)) {
-        throw new AttendanceDeregisterClosedError()
-      }
-
-      const attendee = await attendeeRepository.getByUserId(handle, userId, attendanceId)
-      if (!attendee) {
-        throw new AttendeeDeregistrationError(
-          `Tried to deregister attendee with user id '${userId}' in attendance with id '${attendanceId}' but attendee is not registered.`
-        )
-      }
-
-      await attendeeRepository.delete(handle, attendee.id)
-      const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
-      if (attendedPool) {
-        const nextUnreservedAttendeeWithoutUser = await attendeeRepository.getFirstUnreservedByAttendancePoolId(
-          handle,
-          attendedPool.id
-        )
-
-        if (!nextUnreservedAttendeeWithoutUser) {
-          return
-        }
-        const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
-
-        await this.attemptReserve(handle, nextUnreservedAttendee, attendedPool, { bypassCriteria: false })
-      }
     },
     async delete(handle: DBHandle, attendeeId: AttendeeId) {
       await attendeeRepository.delete(handle, attendeeId)
@@ -244,7 +290,8 @@ export function getAttendeeService(
       handle: DBHandle,
       attendee: Attendee,
       pool: AttendancePool,
-      { bypassCriteria }: { bypassCriteria: boolean }
+      attendance: Attendance,
+      { bypassCriteria, immediate = false }
     ) {
       if (attendee.reserved) {
         return true
@@ -254,10 +301,97 @@ export function getAttendeeService(
       const poolHasCapacity = pool.numAttendees < pool.capacity
 
       if ((isPastReserveTime && poolHasCapacity) || bypassCriteria) {
-        return await attendeeRepository.reserveAttendee(handle, attendee.id)
+        return await this.reserve(handle, attendance, attendee, immediate)
       }
 
       return false
+    },
+    async reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean) {
+      let paymentUrl = null
+      let paymentDeadline = null
+      let paymentId = null
+      if (attendance.attendancePrice) {
+        const payment = await paymentService.createProductPayment(
+          attendance.id,
+          attendance.attendancePrice,
+          isPast(attendance.deregisterDeadline)
+        )
+
+        paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
+        paymentUrl = payment.url
+        paymentId = payment.id
+
+        taskSchedulingService.scheduleAt(
+          handle,
+          tasks.VERIFY_PAYMENT.type,
+          {
+            attendeeId: attendee.id,
+          },
+          paymentDeadline
+        )
+      }
+
+      return await attendeeRepository.reserveAttendee(handle, attendee.id, paymentUrl, paymentDeadline, paymentId)
+    },
+    async handleVerifyPaymentTask(handle, { attendeeId }) {
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+
+      if (attendee === null || attendee.paymentReservedAt) {
+        return
+      }
+      await this.deregisterForEvent(handle, attendeeId, {
+        bypassCriteriaOnReserveNextAttendee: false,
+        reserveNextAttendee: true,
+      })
+    },
+    async handleOnPaymentTask(handle, paymentId) {
+      const attendee = await attendeeRepository.getByPayment(handle, paymentId)
+
+      if (attendee === null || attendee.paymentReservedAt || !attendee.paymentDeadline) {
+        return
+      }
+
+      const status = await paymentService.getPaymentStatus(paymentId)
+
+      if (status === "UNPAID") {
+        throw new PaymentUnexpectedStateError(paymentId, "Got webhook about payment but API does not say so")
+      }
+
+      await attendeeRepository.update(handle, attendee.id, {
+        paymentReservedAt: getCurrentUTC(),
+        paymentChargedAt: status === "PAID" ? getCurrentUTC() : null,
+        paymentDeadline: null,
+        paymentLink: null,
+      })
+    },
+    async chargeAttendee(handle, attendeeId: string) {
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+      if (!attendee) {
+        throw new AttendeeNotFoundError(attendeeId, "")
+      }
+      if (!attendee.paymentId) {
+        return
+      }
+      if (attendee.paymentChargedAt) {
+        return
+      }
+
+      try {
+        await paymentService.chargeProductPayment(attendee.paymentId)
+        await attendeeRepository.update(handle, attendeeId, {
+          paymentChargedAt: getCurrentUTC(),
+        })
+      } catch (e) {
+        if (e instanceof PaymentAlreadyChargedError) {
+          console.log(`Attendee ${attendee.id} as they have already been charged`)
+
+          await attendeeRepository.update(handle, attendeeId, {
+            paymentChargedAt: getCurrentUTC(),
+          })
+        } else {
+          console.error("Failed to charge attendee", attendee.id, e)
+        }
+      }
     },
     async getAttendeeStatuses(handle: DBHandle, userId: UserId, attendanceIds: AttendanceId[]) {
       return await attendeeRepository.getAttendeeStatuses(handle, userId, attendanceIds)
@@ -265,14 +399,26 @@ export function getAttendeeService(
     async removeSelectionResponses(handle: DBHandle, selectionId: string) {
       return await attendeeRepository.removeSelectionResponses(handle, selectionId)
     },
-    async adminDeregisterForEvent(
+    async deregisterForEvent(
       handle: DBHandle,
       attendeeId: AttendeeId,
       { reserveNextAttendee, bypassCriteriaOnReserveNextAttendee }: AdminDeregisterForEventOptions
     ) {
+      const attendance = await attendanceRepository.getByAttendeeId(handle, attendeeId)
+      if (!attendance) {
+        throw new AttendanceNotFound("")
+      }
       const pool = await attendanceRepository.getPoolByAttendeeId(handle, attendeeId)
       if (!pool) {
         throw new AttendancePoolNotFoundError(`${attendeeId} (attendee id)`)
+      }
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+      if (!attendee) {
+        throw new AttendeeNotFoundError(attendeeId, attendance.id)
+      }
+
+      if (attendee.paymentId) {
+        await paymentService.cancelProductPayment(attendee.paymentId)
       }
 
       await attendeeRepository.delete(handle, attendeeId)
@@ -286,7 +432,7 @@ export function getAttendeeService(
           return
         }
         const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
-        await this.attemptReserve(handle, nextUnreservedAttendee, pool, {
+        await this.attemptReserve(handle, nextUnreservedAttendee, pool, attendance, {
           bypassCriteria: bypassCriteriaOnReserveNextAttendee,
         })
       }

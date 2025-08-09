@@ -8,8 +8,6 @@ import { getGroupFixtures, getGroupRoleFixtures } from "./fixtures/group"
 import { getJobListingFixtures, getJobListingLocationFixtures } from "./fixtures/job-listing"
 import { getMarkFixtures } from "./fixtures/mark"
 import { getOfflineFixtures } from "./fixtures/offline"
-import { getProductFixtures } from "./fixtures/product"
-import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 import { getUserFixtures } from "./fixtures/user"
 
 if (process.env.DATABASE_URL === undefined) {
@@ -55,8 +53,3 @@ await db.jobListingLocation.createManyAndReturn({ data: jobListingLocationInput 
 
 const offlineInput = getOfflineFixtures()
 await db.offline.createMany({ data: offlineInput })
-
-const productInput = getProductFixtures()
-const products = await db.product.createManyAndReturn({ data: productInput })
-const productPaymentProviderInput = getProductPaymentProviderFixtures(products.map((p) => p.id))
-await db.productPaymentProvider.createMany({ data: productPaymentProviderInput })

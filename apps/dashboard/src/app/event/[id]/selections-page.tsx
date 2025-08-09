@@ -37,7 +37,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       selections: [],
     },
     onSubmit: (values) => {
-      mutation.mutate({ eventId, values })
+      mutation.mutate({ eventId, values: { ...values, attendancePrice: null } })
     },
   })
 

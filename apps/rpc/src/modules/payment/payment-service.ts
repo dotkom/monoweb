@@ -1,321 +1,231 @@
-import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Payment,
-  PaymentId,
-  PaymentProvider,
-  PaymentProviderOrderId,
-  Product,
-  ProductId,
-  UserId,
-} from "@dotkomonline/types"
-import type Stripe from "stripe"
-import { IllegalStateError } from "../../error"
-import type { Pageable } from "../../query"
-import type { EventRepository } from "../event/event-repository"
+import Stripe from "stripe"
 import {
-  InvalidPaymentStatusError,
-  MissingStripeSessionUrlError,
-  PaymentNotFoundError,
-  StripeAccountNotFoundError,
-  UnrefundablePaymentError,
+  PaymentAlreadyChargedError,
+  PaymentAmbiguousPriceError,
+  PaymentMissingPriceError,
+  PaymentNotReadyToCharge,
 } from "./payment-error"
-import type { PaymentRepository } from "./payment-repository"
-import { ProductNotFoundError, ProductProviderMismatchError } from "./product-error"
-import type { ProductRepository } from "./product-repository"
-import {
-  InvalidRefundRequestStatusError,
-  RefundProcessingFailureError,
-  RefundRequestNotFoundError,
-} from "./refund-request-error"
-import type { RefundRequestRepository } from "./refund-request-repository"
 
-export interface StripeAccount {
-  stripe: Stripe
-  publicKey: string
-  webhookSecret: string
+export type ProductPayment = {
+  url: string
+  id: string
 }
+
+type PaymentStatus = "UNPAID" | "RESERVED" | "PAID"
 
 export interface PaymentService {
-  getStripeSdkByPublicKey(publicKey: string): Stripe | null
-  getWebhookSecretByPublicKey(publicKey: string): string | null
-  getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[]
-  getPayments(handle: DBHandle, page: Pageable): Promise<Payment[]>
-  /**
-   * Create a Stripe checkout session for a product.
-   *
-   * @throws {ProductNotFoundError} if the product does not exist
-   * @throws {ProductProviderMismatchError} if the product does not have the given payment provider
-   * @throws {StripeAccountNotFoundError} if the given stripe public key does not exist
-   * @throws {MissingStripeSessionUrlError} if the stripe session does not have a url
-   */
-  createStripeCheckoutSessionForProductId(
-    handle: DBHandle,
-    productId: ProductId,
-    stripePublicKey: string,
-    successRedirectUrl: string,
-    cancelRedirectUrl: string,
-    userId: UserId
-  ): Promise<{ redirectUrl: string }>
-  fulfillStripeCheckoutSession(handle: DBHandle, stripeSessionId: string, intentId: string): Promise<void>
-  expireStripeCheckoutSession(handle: DBHandle, stripeSessionId: string): Promise<void>
-  /**
-   * Refund a payment.
-   *
-   * @throws {IllegalStateError} if the payment provider is not recognized
-   */
-  refundPayment(handle: DBHandle, payment: Payment, product: Product): Promise<void>
-  refundPaymentById(handle: DBHandle, paymentId: string, options: { checkRefundApproval: boolean }): Promise<void>
-  refundPaymentByPaymentProviderOrderId(
-    handle: DBHandle,
-    paymentProviderOrderId: string,
-    options: { checkRefundApproval: boolean }
-  ): Promise<void>
-  /**
-   * Refund a Stripe payment.
-   *
-   * @throws {StripeAccountNotFoundError} if the payment provider is not recognized
-   * @throws {InvalidPaymentStatusError} if the payment status is not "PAID"
-   * @throws {RefundProcessingFailureError} if the refund processing failed
-   */
-  refundStripePayment(handle: DBHandle, payment: Payment): Promise<void>
-  refundStripePaymentById(handle: DBHandle, paymentId: string, options: { checkRefundApproval: boolean }): Promise<void>
-  refundStripePaymentByStripeOrderId(
-    handle: DBHandle,
-    stripeOrderId: string,
-    options: { checkRefundApproval: boolean }
-  ): Promise<void>
+  createOrUpdateProduct(
+    productId: string,
+    name: string,
+    price: number,
+    url: string,
+    imageUrl: string | null,
+    description: string | undefined,
+    metadata: Record<string, string>
+  ): Promise<string>
+  createProductPayment(productId: string, price: number, chargeNow?: boolean): Promise<ProductPayment>
+  cancelProductPayment(paymentId: string, refundChargedPayments?: boolean): Promise<void>
+  chargeProductPayment(paymentId: string): Promise<void>
+  getPaymentStatus(paymentId: string): Promise<PaymentStatus>
 }
 
-export function getPaymentService(
-  paymentRepository: PaymentRepository,
-  productRepository: ProductRepository,
-  eventRepository: EventRepository,
-  refundRequestRepository: RefundRequestRepository,
-  stripeAccounts: Record<string, StripeAccount>
-): PaymentService {
-  function getStripeAccountByPublicKey(publicKey: string): StripeAccount | null {
-    const accounts = Object.values(stripeAccounts)
-    const account = accounts.find((account) => account.publicKey === publicKey)
+type PriceData = { currency: string; unit_amount: number | null }
 
-    return account ?? null
+const getPriceData = (price: number) => ({ currency: "NOK" as const, unit_amount: price * 100 })
+const priceDataEqual = (price_1: PriceData, price_2: PriceData) =>
+  price_1.currency.toLowerCase() === price_2.currency.toLowerCase() && price_1.unit_amount === price_2.unit_amount
+
+export function getPaymentService(stripe: Stripe): PaymentService {
+  const createProduct = async (
+    productId: string,
+    name: string,
+    price: number,
+    url: string,
+    imageUrl: string | null,
+    description: string | undefined,
+    metadata: Record<string, string>
+  ) => {
+    const product = await stripe.products.create({
+      name,
+      id: productId,
+      url,
+      default_price_data: getPriceData(price),
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+      metadata,
+    })
+
+    if (!product.default_price) {
+      throw new Error("Default price was not created")
+    }
+
+    return typeof product.default_price === "string" ? product.default_price : product.default_price.id
   }
-  /**
-   * Validate and setup the common refund flow for a payment.
-   *
-   * @throws {PaymentNotFoundError} if the payment does not exist
-   * @throws {ProductNotFoundError} if the product does not exist
-   * @throws {UnrefundablePaymentError} if the product is not refundable
-   * @throws {InvalidPaymentStatusError} if the payment status is not "PAID"
-   * @throws {RefundRequestNotFoundError} if the payment has no refund request
-   * @throws {InvalidRefundRequestStatusError} if the refund request status is not "APPROVED"
-   */
-  async function prepareRefund(
-    handle: DBHandle,
-    ids:
-      | {
-          paymentId: PaymentId
-          paymentProviderOrderId?: undefined
-        }
-      | {
-          paymentId?: undefined
-          paymentProviderOrderId: NonNullable<PaymentProviderOrderId>
-        },
-    checkRefundApproval: boolean
-  ): Promise<{ payment: Payment; product: Product }> {
-    const { paymentId, paymentProviderOrderId } = ids
-    let payment: Payment | null
 
-    if (paymentId) {
-      payment = await paymentRepository.getById(handle, paymentId)
-    } else if (paymentProviderOrderId) {
-      payment = await paymentRepository.getByPaymentProviderOrderId(handle, paymentProviderOrderId)
-    } else {
-      throw new Error("Please provide either paymentId or paymentProviderId")
+  const updateProduct = async (
+    productId: string,
+    name: string,
+    newPrice: number,
+    url: string,
+    imageUrl: string | null,
+    description: string | undefined,
+    metadata: Record<string, string>
+  ) => {
+    const newPriceData = getPriceData(newPrice)
+
+    const activeStripePrice = await getActiveProductStripePrice(productId)
+
+    let defaultPriceId = activeStripePrice.id
+    let oldStripePriceId = null
+    if (!priceDataEqual(activeStripePrice, newPriceData)) {
+      const newStripePrice = await stripe.prices.create({ ...newPriceData, product: productId })
+
+      defaultPriceId = newStripePrice.id
+      oldStripePriceId = activeStripePrice.id
     }
 
-    if (payment === null) {
-      throw new PaymentNotFoundError(paymentId ?? paymentProviderOrderId)
+    await stripe.products.update(productId, {
+      default_price: defaultPriceId,
+      name,
+      url,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+      metadata,
+    })
+
+    if (oldStripePriceId !== null) {
+      await stripe.prices.update(oldStripePriceId, { active: false })
     }
 
-    const product = await productRepository.getById(handle, payment.productId)
-    if (!product) {
-      throw new ProductNotFoundError(payment.productId)
-    }
-
-    if (!product.isRefundable) {
-      throw new UnrefundablePaymentError()
-    }
-
-    if (payment.status !== "PAID") {
-      throw new InvalidPaymentStatusError("PAID")
-    }
-
-    if (product.refundRequiresApproval && checkRefundApproval) {
-      const refundRequest = await refundRequestRepository.getByPaymentId(handle, payment.id)
-      if (!refundRequest) {
-        throw new RefundRequestNotFoundError(payment.id)
-      }
-
-      if (refundRequest.status !== "APPROVED") {
-        throw new InvalidRefundRequestStatusError("APPROVED", refundRequest.status)
-      }
-    }
-
-    return {
-      payment,
-      product,
-    }
+    return defaultPriceId
   }
+
+  const getActiveProductStripePrice = async (productId: string): Promise<Stripe.Price> => {
+    const { data: prices } = await stripe.prices.list({
+      active: true,
+      product: productId,
+    })
+
+    if (prices.length === 0) {
+      throw new PaymentMissingPriceError(productId)
+    }
+
+    if (prices.length > 1) {
+      throw new PaymentAmbiguousPriceError(productId)
+    }
+
+    const activePrice = prices[0]
+
+    return activePrice
+  }
+
   return {
-    getStripeSdkByPublicKey(publicKey) {
-      return getStripeAccountByPublicKey(publicKey)?.stripe ?? null
-    },
-    getWebhookSecretByPublicKey(publicKey) {
-      return getStripeAccountByPublicKey(publicKey)?.webhookSecret ?? null
-    },
-    getPaymentProviders() {
-      return Object.entries(stripeAccounts).map(
-        ([alias, account]) =>
-          ({
-            paymentAlias: alias,
-            paymentProvider: "STRIPE",
-            paymentProviderId: account.publicKey,
-          }) as const
-      )
-    },
-    async getPayments(handle, page) {
-      return paymentRepository.getAll(handle, page)
-    },
-    async createStripeCheckoutSessionForProductId(
-      handle,
-      productId,
-      stripePublicKey,
-      successRedirectUrl,
-      cancelRedirectUrl,
-      userId
-    ) {
-      const product = await productRepository.getById(handle, productId)
-      if (!product) {
-        throw new ProductNotFoundError(productId)
-      }
-
-      if (!product.paymentProviders.find((p) => p.paymentProviderId === stripePublicKey)) {
-        throw new ProductProviderMismatchError()
-      }
-
-      let productName = `N/A (${product.id})`
-
-      if (product.objectId !== null) {
-        switch (product.type) {
-          case "EVENT": {
-            const event = await eventRepository.findById(handle, product.objectId)
-            if (event) {
-              productName = `Betaling for ${event.title}`
-            }
-            break
-          }
-          default: {
-            break
-          }
+    createOrUpdateProduct: async (productId, name, price, url, imageUrl, description, metadata) => {
+      try {
+        await stripe.products.retrieve(productId)
+      } catch (e) {
+        if (!(e instanceof Stripe.errors.StripeInvalidRequestError)) {
+          throw e
         }
+
+        // If product does not exist
+        return await createProduct(productId, name, price, url, imageUrl, description, metadata)
       }
 
-      const stripe = this.getStripeSdkByPublicKey(stripePublicKey)
-      if (!stripe) {
-        throw new StripeAccountNotFoundError(stripePublicKey)
+      return await updateProduct(productId, name, price, url, imageUrl, description, metadata)
+    },
+    createProductPayment: async (productId, price, immediate = false) => {
+      const product = await stripe.products.retrieve(productId)
+      const priceData = getPriceData(price)
+      const activePrice = await getActiveProductStripePrice(productId)
+
+      // Sanity check to not prank the user
+      if (!priceDataEqual(activePrice, priceData)) {
+        throw new Error("Active price did not match expected price")
       }
 
       const session = await stripe.checkout.sessions.create({
-        line_items: [
-          {
-            price_data: {
-              currency: "nok",
-              unit_amount: product.amount * 100, // in øre
-              product_data: {
-                name: productName,
-              },
-            },
-            quantity: 1,
-          },
-        ],
+        line_items: [{ price: activePrice.id, quantity: 1 }],
+        success_url: product.url ?? undefined,
+        cancel_url: product.url ?? undefined,
         mode: "payment",
-        success_url: successRedirectUrl,
-        cancel_url: cancelRedirectUrl,
-      })
+        ...(immediate ? {} : { payment_intent_data: { capture_method: "manual" } }),
+      } satisfies Stripe.Checkout.SessionCreateParams)
 
       if (!session.url) {
-        throw new MissingStripeSessionUrlError()
+        throw new Error("URL was not created for product")
       }
 
-      await paymentRepository.create(handle, {
-        productId: product.id,
-        userId,
-        status: "UNPAID",
-        paymentProviderId: stripePublicKey,
-        paymentProviderSessionId: session.id,
-      })
+      return { id: session.id, url: session.url }
+    },
+    cancelProductPayment: async (paymentId: string, refund = false) => {
+      const session = await stripe.checkout.sessions.retrieve(paymentId)
 
-      return {
-        redirectUrl: session.url,
+      if (session.payment_intent !== null) {
+        let paymentIntent: Stripe.PaymentIntent
+        if (typeof session.payment_intent === "string") {
+          paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent)
+        } else {
+          paymentIntent = session.payment_intent
+        }
+
+        if (paymentIntent.status === "succeeded") {
+          if (!refund) {
+            throw new PaymentAlreadyChargedError(paymentId)
+          }
+
+          await stripe.refunds.create({
+            payment_intent: paymentIntent.id,
+          })
+        } else if (paymentIntent.status !== "canceled") {
+          await stripe.paymentIntents.cancel(paymentIntent.id)
+        }
+      }
+
+      if (session.status !== "complete") {
+        await stripe.checkout.sessions.expire(paymentId)
       }
     },
-    async fulfillStripeCheckoutSession(handle, stripeSessionId, intentId) {
-      await paymentRepository.updateByPaymentProviderSessionId(handle, stripeSessionId, {
-        status: "PAID",
-        paymentProviderOrderId: intentId,
-      })
-    },
-    async expireStripeCheckoutSession(handle, stripeSessionId) {
-      // No need to keep expired sessions. Just delete them.
-      // NB: This does not mean that all expired sessions are deleted. Only the
-      // ones that was actually received by the webhook.
-      await paymentRepository.deleteByPaymentProviderSessionId(handle, stripeSessionId)
-    },
-    async refundPayment(handle, payment, product) {
-      const paymentProvider = product.paymentProviders.find((p) => p.paymentProviderId === payment.paymentProviderId)
-      const paymentProviderName = paymentProvider?.paymentProvider
+    chargeProductPayment: async (paymentId: string) => {
+      const session = await stripe.checkout.sessions.retrieve(paymentId)
 
-      switch (paymentProviderName) {
-        case "STRIPE":
-          return await this.refundStripePayment(handle, payment)
+      if (session.payment_intent === null) {
+        throw new PaymentNotReadyToCharge(paymentId)
+      }
+
+      let paymentIntent: Stripe.PaymentIntent
+      if (typeof session.payment_intent === "string") {
+        paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent)
+      } else {
+        paymentIntent = session.payment_intent
+      }
+
+      if (paymentIntent.status === "succeeded") {
+        throw new PaymentAlreadyChargedError(paymentId)
+      }
+
+      await stripe.paymentIntents.capture(paymentIntent.id)
+    },
+    async getPaymentStatus(paymentId) {
+      const session = await stripe.checkout.sessions.retrieve(paymentId, {
+        expand: ["payment_intent"],
+      })
+
+      if (!session.payment_intent) {
+        return "UNPAID"
+      }
+      if (typeof session.payment_intent === "string") {
+        throw new Error("This is unreachable")
+      }
+
+      switch (session.payment_intent.status) {
+        case "succeeded":
+          return "PAID"
+        case "requires_capture":
+          return "RESERVED"
         default:
-          throw new IllegalStateError(`Unrecognized payment provider ${paymentProviderName}`)
+          return "UNPAID"
       }
-    },
-    async refundPaymentById(handle, paymentId, { checkRefundApproval }) {
-      const { payment, product } = await prepareRefund(handle, { paymentId }, checkRefundApproval)
-      await this.refundPayment(handle, payment, product)
-    },
-    async refundPaymentByPaymentProviderOrderId(handle, paymentProviderOrderId, { checkRefundApproval }) {
-      const { payment, product } = await prepareRefund(handle, { paymentProviderOrderId }, checkRefundApproval)
-      await this.refundPayment(handle, payment, product)
-    },
-    async refundStripePaymentById(handle, paymentId, { checkRefundApproval }) {
-      const { payment } = await prepareRefund(handle, { paymentId }, checkRefundApproval)
-      await this.refundStripePayment(handle, payment)
-    },
-    async refundStripePaymentByStripeOrderId(handle, stripeOrderId, { checkRefundApproval }) {
-      const { payment } = await prepareRefund(handle, { paymentProviderOrderId: stripeOrderId }, checkRefundApproval)
-      await this.refundStripePayment(handle, payment)
-    },
-    async refundStripePayment(handle, payment) {
-      const stripe = this.getStripeSdkByPublicKey(payment.paymentProviderId)
-      if (!stripe) {
-        throw new StripeAccountNotFoundError(payment.paymentProviderId)
-      }
-
-      const paymentIntent = await stripe.paymentIntents.retrieve(payment.paymentProviderOrderId as string)
-      const chargeId = paymentIntent.latest_charge as string | null | undefined
-      if (!chargeId) {
-        throw new InvalidPaymentStatusError("PAID")
-      }
-
-      const refund = await stripe.refunds.create({ charge: chargeId })
-      if (refund.failure_reason) {
-        throw new RefundProcessingFailureError(refund.failure_reason)
-      }
-
-      await paymentRepository.update(handle, payment.id, { status: "REFUNDED" })
     },
   }
 }

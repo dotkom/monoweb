@@ -43,16 +43,16 @@ const Page: FC<Props> = ({ attendance }) => {
 
       <Stack>
         <Title my={10} order={3}>
-          Registrer oppmøte med QR-kode
+          Alle påmeldte
         </Title>
-        <QrCodeScanner />
+        <AllAttendeesTable attendees={attendees} attendance={attendance} />
       </Stack>
 
       <Stack>
         <Title my={10} order={3}>
-          Alle påmeldte
+          Registrer oppmøte med QR-kode
         </Title>
-        <AllAttendeesTable attendees={attendees} attendance={attendance} />
+        <QrCodeScanner />
       </Stack>
     </Stack>
   )

@@ -15,6 +15,7 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   registerEnd: true,
   deregisterDeadline: true,
   selections: true,
+  attendancePrice: true,
 })
 
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>

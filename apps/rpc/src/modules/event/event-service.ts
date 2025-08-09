@@ -36,6 +36,7 @@ export interface EventService {
    * @throws {EventNotFoundError} if the event does not exist
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
+  getByAttendance(handle: DBHandle, attendanceId: AttendanceId): Promise<Event>
 }
 
 export function getEventService(eventRepository: EventRepository): EventService {
@@ -59,6 +60,13 @@ export function getEventService(eventRepository: EventRepository): EventService 
       const event = await eventRepository.findById(handle, eventId)
       if (!event) {
         throw new EventNotFoundError(eventId)
+      }
+      return event
+    },
+    async getByAttendance(handle, attendanceId) {
+      const event = await eventRepository.findByAttendanceId(handle, attendanceId)
+      if (event === null) {
+        throw new EventNotFoundError(`(attendanceId: ${attendanceId})`)
       }
       return event
     },
