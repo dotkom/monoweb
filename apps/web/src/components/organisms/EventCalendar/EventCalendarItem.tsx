@@ -206,7 +206,6 @@ function getEventTheme(event: Event, isActive: boolean): EventTheme {
   }
 }
 
-
 export const EventCalendarItem = ({ event, attendeeStatus, className }: EventCalendarItemProps) => {
   const isActive = new Date() < event.end
   const theme = getEventTheme(event, isActive)
@@ -275,7 +274,7 @@ export const EventCalendarItem = ({ event, attendeeStatus, className }: EventCal
                   <Text
                     element="span"
                     className={cn(
-                      "inline-block px-3 py-1 text-sm rounded-full font-semibold",
+                      "inline-block px-2 py-1 text-sm rounded-md font-semibold",
                       theme.badge.bg,
                       theme.badge.text
                     )}

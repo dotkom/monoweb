@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
+import type { Event } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
 import Link from "next/link"
@@ -48,25 +49,25 @@ function getColSpanClass(span: number) {
   }
 }
 
-function getEventTypeGuide(events: any[]) {
+function getEventTypeGuide(events: Event[]) {
   const eventTypeConfig = {
-    SOCIAL: { color: 'bg-green-400 dark:bg-green-400', label: 'Sosialt' },
-    ACADEMIC: { color: 'bg-red-400 dark:bg-red-400', label: 'Kurs' },
-    COMPANY: { color: 'bg-blue-400 dark:bg-blue-400', label: 'Bedriftsarrangement' },
-    WELCOME: { color: 'bg-yellow-400 dark:bg-yellow-400', label: 'Fadderuke' },
-    OTHER: { color: 'bg-purple-400 dark:bg-purple-400', label: 'Annet' },
-    GENERAL_ASSEMBLY: { color: 'bg-purple-400 dark:bg-purple-400', label: 'Generalforsamling' },
-    INTERNAL: { color: 'bg-purple-400 dark:bg-purple-400', label: 'Internt' },
+    SOCIAL: { color: "bg-green-400 dark:bg-green-400", label: "Sosialt" },
+    ACADEMIC: { color: "bg-red-400 dark:bg-red-400", label: "Kurs" },
+    COMPANY: { color: "bg-blue-400 dark:bg-blue-400", label: "Bedriftsarrangement" },
+    WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
+    OTHER: { color: "bg-purple-400 dark:bg-purple-400", label: "Annet" },
+    GENERAL_ASSEMBLY: { color: "bg-purple-400 dark:bg-purple-400", label: "Generalforsamling" },
+    INTERNAL: { color: "bg-purple-400 dark:bg-purple-400", label: "Internt" },
   }
 
-  const presentTypes = new Set(events.map(event => event.type))
-  
+  const presentTypes = new Set(events.map((event) => event.type))
+
   // Return only the items for types that are present
   return Array.from(presentTypes)
-    .filter(type => eventTypeConfig[type as keyof typeof eventTypeConfig]) // Filter out unknown types
-    .map(type => ({
+    .filter((type) => eventTypeConfig[type as keyof typeof eventTypeConfig]) // Filter out unknown types
+    .map((type) => ({
       type,
-      ...eventTypeConfig[type as keyof typeof eventTypeConfig]
+      ...eventTypeConfig[type as keyof typeof eventTypeConfig],
     }))
 }
 
@@ -180,7 +181,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
                 className={cn(
                   "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-300 dark:border-stone-700 border-t-[1px] ",
                   week.dates.indexOf(day) % 7 === 0 ? "pl-1 sm:p-l-[5px]" : "pl-1 sm:border-l-[1px]",
-                  weekIndex > 0 ? "" : "sm:border-t-0",
+                  weekIndex > 0 ? "" : "sm:border-t-0"
                 )}
               >
                 <span
