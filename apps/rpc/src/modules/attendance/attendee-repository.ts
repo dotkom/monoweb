@@ -22,6 +22,7 @@ export interface AttendeeRepository {
   create(handle: DBHandle, data: AttendeeWrite): Promise<AttendeeWithoutUser>
   delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   getById(handle: DBHandle, attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
+  getByPayment(handle: DBHandle, attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
   update(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<AttendeeWithoutUser>
   getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<AttendeeWithoutUser[]>
   getByAttendancePoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser[]>
@@ -36,7 +37,8 @@ export interface AttendeeRepository {
     handle: DBHandle,
     attendeeId: AttendeeId,
     paymentUrl: string | null,
-    paymentDeadline: Date | null
+    paymentDeadline: Date | null,
+    paymentId: string | null
   ): Promise<boolean>
   moveFromMultiplePoolsToPool(
     handle: DBHandle,
@@ -68,6 +70,13 @@ export function getAttendeeRepository(): AttendeeRepository {
     },
     async getById(handle, attendeeId) {
       const attendee = await handle.attendee.findUnique({ where: { id: attendeeId } })
+      if (!attendee) {
+        return null
+      }
+      return parse(attendee)
+    },
+    async getByPayment(handle, paymentId) {
+      const attendee = await handle.attendee.findFirst({ where: { paymentId } })
       if (!attendee) {
         return null
       }
@@ -117,15 +126,16 @@ export function getAttendeeRepository(): AttendeeRepository {
       const numberOfAttendees = await handle.attendee.count({ where: { attendanceId } })
       return numberOfAttendees > 0
     },
-    async reserveAttendee(handle, attendeeId, paymentLink = null, paymentDeadline = null) {
+    async reserveAttendee(handle, attendeeId, paymentLink = null, paymentDeadline = null, paymentId = null) {
       const attendee = await handle.attendee.update({
         where: {
           id: attendeeId,
         },
         data: {
           reserved: true,
-          paymentDeadline: paymentDeadline,
-          paymentLink: paymentLink,
+          paymentDeadline,
+          paymentLink,
+          paymentId,
         },
       })
       return attendee.reserved

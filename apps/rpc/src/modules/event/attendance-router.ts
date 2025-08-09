@@ -84,7 +84,7 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.attendeeService.deregisterForEvent(handle, ctx.principal.subject, input.attendanceId)
+        ctx.attendeeService.tryDeregisterForEvent(handle, ctx.principal.subject, input.attendanceId)
       )
     }),
 
@@ -98,7 +98,7 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.attendeeService.adminDeregisterForEvent(handle, input.attendeeId, {
+        ctx.attendeeService.deregisterForEvent(handle, input.attendeeId, {
           reserveNextAttendee: input.reserveNextAttendee,
           bypassCriteriaOnReserveNextAttendee: input.bypassCriteriaOnReserveNextAttendee,
         })

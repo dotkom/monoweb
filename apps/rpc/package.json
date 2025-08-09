@@ -11,6 +11,7 @@
   },
   "scripts": {
     "dev": "dotenv -o -- tsx watch --import ./runtime.mjs src/bin/server.ts",
+    "dev:bun": "bun --hot --env-file .env src/bin/server.ts",
     "shell": "dotenv -o -- tsx --import ./runtime.mjs src/bin/repl.ts",
     "docker:build": "docker build -t rpc:latest -f Dockerfile --progress plain ../..",
     "lint": "biome check . --write",

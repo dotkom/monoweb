@@ -64,8 +64,6 @@ export function createThirdPartyClients(configuration: Configuration) {
       stripe: new Stripe(configuration.TRIKOM_STRIPE_SECRET_KEY, {
         apiVersion: "2023-08-16",
       }),
-      publicKey: configuration.TRIKOM_STRIPE_PUBLIC_KEY,
-      webhookSecret: configuration.TRIKOM_STRIPE_WEBHOOK_SECRET,
     },
     fagkom: {
       stripe: new Stripe(configuration.FAGKOM_STRIPE_SECRET_KEY, {

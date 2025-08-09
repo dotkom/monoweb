@@ -12,3 +12,9 @@ export class PaymentAmbiguousPriceError extends ApplicationError {
     super(PROBLEM_DETAILS.NotFound, `Payment with id ${id} has unclear cost because it has multiple active prices`)
   }
 }
+
+export class PaymentAlreadyChargedError extends ApplicationError {
+  constructor(id: string) {
+    super(PROBLEM_DETAILS.NotFound, `Payment with id ${id} has already been charged`)
+  }
+}

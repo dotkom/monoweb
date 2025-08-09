@@ -1,9 +1,17 @@
 import Stripe from "stripe"
-import { PaymentAmbiguousPriceError, PaymentMissingPriceError } from "./payment-error"
+import { PaymentAlreadyChargedError, PaymentAmbiguousPriceError, PaymentMissingPriceError } from "./payment-error"
+import z from "zod"
+
+export type ProductPayment = {
+  url: string
+  id: string
+}
 
 export interface PaymentService {
   createOrUpdateProduct(productId: string, name: string, price: number): Promise<string>
-  createProductPayment(productId: string, price: number, redirect: string): Promise<string>
+  createProductPayment(productId: string, price: number, redirect: string): Promise<ProductPayment>
+  cancelProductPayment(paymentId: string): Promise<void>
+  handleStripeWebhook(payload: unknown): Promise<void>
 }
 
 type PriceData = { currency: string; unit_amount: number | null }
@@ -91,26 +99,48 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       const priceData = getPriceData(price)
       const activePrice = await getActiveProductStripePrice(productId)
 
+      // Sanity check to not prank the user
       if (!priceDataEqual(activePrice, priceData)) {
         throw new Error("Active price did not match expected price")
       }
 
-      const paymentLink = await stripe.paymentLinks.create({
-        line_items: [
-          {
-            price: activePrice.id,
-            quantity: 1,
-          },
-        ],
-        after_completion: {
-          type: "redirect",
-          redirect: {
-            url: redirect,
-          },
-        },
+      const session = await stripe.checkout.sessions.create({
+        line_items: [{ price: activePrice.id, quantity: 1 }],
+        payment_intent_data: { capture_method: "manual" },
+        success_url: redirect,
+        cancel_url: redirect,
+        mode: "payment",
       })
 
-      return paymentLink.url
+      if (!session.url) {
+        throw new Error("URL was not created for product")
+      }
+
+      return { id: session.id, url: session.url }
+    },
+    cancelProductPayment: async (paymentId: string) => {
+      const session = await stripe.checkout.sessions.retrieve(paymentId)
+
+      if (session.payment_intent !== null) {
+        let paymentIntent: Stripe.PaymentIntent
+        if (typeof session.payment_intent === "string") {
+          paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent)
+        } else {
+          paymentIntent = session.payment_intent
+        }
+
+        if (paymentIntent.status === "succeeded") {
+          throw new PaymentAlreadyChargedError(paymentId)
+        }
+
+        if (paymentIntent.status !== "canceled") {
+          await stripe.paymentIntents.cancel(paymentIntent.id)
+        }
+      }
+
+      if (session.status !== "complete") {
+        await stripe.checkout.sessions.expire(paymentId)
+      }
     },
   }
 }

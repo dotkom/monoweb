@@ -257,7 +257,8 @@ model Attendee {
   updatedAt             DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
   paymentDeadline       DateTime?
   paymentLink           String?
-  paid                  Boolean             @default(false)
+  paymentId             String?
+  paidAt                DateTime?
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")

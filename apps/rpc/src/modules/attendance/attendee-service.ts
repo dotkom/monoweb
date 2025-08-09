@@ -40,12 +40,8 @@ export interface AttendeeService {
     attendanceId: string,
     attendancePoolId: string
   ): Promise<Attendee>
-  deregisterForEvent(handle: DBHandle, userId: string, attendanceId: string): Promise<void>
-  adminDeregisterForEvent(
-    handle: DBHandle,
-    attendeeId: AttendeeId,
-    options: AdminDeregisterForEventOptions
-  ): Promise<void>
+  tryDeregisterForEvent(handle: DBHandle, userId: string, attendanceId: string): Promise<void>
+  deregisterForEvent(handle: DBHandle, attendeeId: AttendeeId, options: AdminDeregisterForEventOptions): Promise<void>
   delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   updateSelectionResponses(
     handle: DBHandle,
@@ -71,6 +67,7 @@ export interface AttendeeService {
   ): Promise<boolean>
   reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean): Promise<boolean>
   handleVerifyPaymentTask(handle: DBHandle, payload: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
+  handleOnPaymentTask(handle: DBHandle, paymentId: string): Promise<void>
   getAttendeeStatuses(
     handle: DBHandle,
     userId: UserId,
@@ -102,6 +99,43 @@ export function getAttendeeService(
         throw new AttendeeNotFoundError(userId, attendanceId)
       }
       return await addUserToAttendee(handle, attendeeWithoutUser)
+    },
+    async tryDeregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
+      const deregisterTime = new Date()
+      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      if (!attendance) {
+        throw new AttendanceNotFound(attendanceId)
+      }
+
+      if (!attendanceOpenForDeregistration(attendance, deregisterTime)) {
+        throw new AttendanceDeregisterClosedError()
+      }
+
+      const attendee = await attendeeRepository.getByUserId(handle, userId, attendanceId)
+      if (!attendee) {
+        throw new AttendeeDeregistrationError(
+          `Tried to deregister attendee with user id '${userId}' in attendance with id '${attendanceId}' but attendee is not registered.`
+        )
+      }
+
+      if (attendee.paymentId) {
+        await paymentService.cancelProductPayment(attendee.paymentId)
+      }
+      await attendeeRepository.delete(handle, attendee.id)
+      const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+      if (attendedPool) {
+        const nextUnreservedAttendeeWithoutUser = await attendeeRepository.getFirstUnreservedByAttendancePoolId(
+          handle,
+          attendedPool.id
+        )
+
+        if (!nextUnreservedAttendeeWithoutUser) {
+          return
+        }
+        const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
+
+        await this.attemptReserve(handle, nextUnreservedAttendee, attendedPool, attendance, { bypassCriteria: false })
+      }
     },
     async registerForEvent(handle: DBHandle, userId: string, attendanceId: string, attendancePoolId: string) {
       const registerTime = new Date()
@@ -151,7 +185,8 @@ export function getAttendeeService(
         reserved: false,
         paymentLink: null,
         paymentDeadline: null,
-        paid: false,
+        paidAt: null,
+        paymentId: null,
       })
       const attendee = await addUserToAttendee(handle, attendeeWithoutUser, user)
       if (attendancePool.id !== attendeeWithoutUser.attendancePoolId) {
@@ -195,46 +230,13 @@ export function getAttendeeService(
         userGrade,
         earliestReservationAt: registerTime,
         reserved: true,
-        paid: false,
+        paidAt: null,
         paymentDeadline: null,
         paymentLink: null,
+        paymentId: null,
       })
 
       return addUserToAttendee(handle, attendeeWithoutUser, user)
-    },
-    async deregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
-      const deregisterTime = new Date()
-      const attendance = await attendanceRepository.getById(handle, attendanceId)
-      if (!attendance) {
-        throw new AttendanceNotFound(attendanceId)
-      }
-
-      if (!attendanceOpenForDeregistration(attendance, deregisterTime)) {
-        throw new AttendanceDeregisterClosedError()
-      }
-
-      const attendee = await attendeeRepository.getByUserId(handle, userId, attendanceId)
-      if (!attendee) {
-        throw new AttendeeDeregistrationError(
-          `Tried to deregister attendee with user id '${userId}' in attendance with id '${attendanceId}' but attendee is not registered.`
-        )
-      }
-
-      await attendeeRepository.delete(handle, attendee.id)
-      const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
-      if (attendedPool) {
-        const nextUnreservedAttendeeWithoutUser = await attendeeRepository.getFirstUnreservedByAttendancePoolId(
-          handle,
-          attendedPool.id
-        )
-
-        if (!nextUnreservedAttendeeWithoutUser) {
-          return
-        }
-        const nextUnreservedAttendee = await addUserToAttendee(handle, nextUnreservedAttendeeWithoutUser)
-
-        await this.attemptReserve(handle, nextUnreservedAttendee, attendedPool, attendance, { bypassCriteria: false })
-      }
     },
     async delete(handle: DBHandle, attendeeId: AttendeeId) {
       await attendeeRepository.delete(handle, attendeeId)
@@ -276,16 +278,19 @@ export function getAttendeeService(
       return false
     },
     async reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean) {
-      let url = null
+      let paymentUrl = null
       let paymentDeadline = null
+      let paymentId = null
       if (attendance.attendancePrice) {
-        url = await paymentService.createProductPayment(
+        const payment = await paymentService.createProductPayment(
           attendance.id,
           attendance.attendancePrice,
           "http://localhost:3000/arrangementer/alle-avslutningskos/83f1d181-5eb1-4c62-b319-85d3c80f679f"
         )
 
         paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
+        paymentUrl = payment.url
+        paymentId = payment.id
 
         taskSchedulingService.scheduleAt(
           handle,
@@ -297,29 +302,30 @@ export function getAttendeeService(
         )
       }
 
-      return await attendeeRepository.reserveAttendee(handle, attendee.id, url, paymentDeadline)
+      return await attendeeRepository.reserveAttendee(handle, attendee.id, paymentUrl, paymentDeadline, paymentId)
     },
     async handleVerifyPaymentTask(handle, { attendeeId }) {
       const attendee = await attendeeRepository.getById(handle, attendeeId)
 
-      // User has deregistered
-      if (!attendee) {
+      if (attendee === null || attendee.paidAt) {
         return
       }
-
-      // User has paid
-      if (attendee.paid) {
-        return
-      }
-
-      // User has a changed payment deadline
-      if (attendee.paymentDeadline === null || attendee.paymentDeadline > new TZDate()) {
-        return
-      }
-
-      await this.adminDeregisterForEvent(handle, attendeeId, {
+      await this.deregisterForEvent(handle, attendeeId, {
         bypassCriteriaOnReserveNextAttendee: false,
         reserveNextAttendee: true,
+      })
+    },
+    async handleOnPaymentTask(handle, paymentId) {
+      const attendee = await attendeeRepository.getByPayment(handle, paymentId)
+
+      if (attendee === null || attendee.paidAt) {
+        return
+      }
+
+      await attendeeRepository.update(handle, attendee.id, {
+        paidAt: null,
+        paymentDeadline: null,
+        paymentLink: null,
       })
     },
     async getAttendeeStatuses(handle: DBHandle, userId: UserId, attendanceIds: AttendanceId[]) {
@@ -328,7 +334,7 @@ export function getAttendeeService(
     async removeSelectionResponses(handle: DBHandle, selectionId: string) {
       return await attendeeRepository.removeSelectionResponses(handle, selectionId)
     },
-    async adminDeregisterForEvent(
+    async deregisterForEvent(
       handle: DBHandle,
       attendeeId: AttendeeId,
       { reserveNextAttendee, bypassCriteriaOnReserveNextAttendee }: AdminDeregisterForEventOptions
@@ -340,6 +346,14 @@ export function getAttendeeService(
       const pool = await attendanceRepository.getPoolByAttendeeId(handle, attendeeId)
       if (!pool) {
         throw new AttendancePoolNotFoundError(`${attendeeId} (attendee id)`)
+      }
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+      if (!attendee) {
+        throw new AttendeeNotFoundError(attendeeId, attendance.id)
+      }
+
+      if (attendee.paymentId) {
+        await paymentService.cancelProductPayment(attendee.paymentId)
       }
 
       await attendeeRepository.delete(handle, attendeeId)
