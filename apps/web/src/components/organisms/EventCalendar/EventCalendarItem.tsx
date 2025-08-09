@@ -216,7 +216,7 @@ export const EventCalendarItem = ({ event, attendeeStatus, className }: EventCal
         <Link
           href={`/arrangementer/${slugify(event.title)}/${event.id}`}
           className={cn(
-            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden relative transition-colors duration-300",
+            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden relative",
             theme.item.base,
             className || ""
           )}
