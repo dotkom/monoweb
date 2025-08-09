@@ -246,7 +246,7 @@ export default async function ProfilePage({
                 {renderUserInfo("E-post", user.email)}
                 {renderUserInfo("Kjønn", user.gender || "Ikke oppgitt")}
                 {renderUserInfo("Telefon", user.phone)}
-                {renderUserInfo("Allergier", user.dietaryRestrictions || "Ingen allergier")}
+                {renderUserInfo("Kostholdsrestriksjoner", user.dietaryRestrictions || "Ingen kostholdsrestriksjoner")}
               </div>
             </div>
           </div>

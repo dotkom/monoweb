@@ -18,7 +18,7 @@ import {
   getAcademicStart,
   getActiveMembership,
 } from "@dotkomonline/types"
-import { getCurrentUtc } from "@dotkomonline/utils"
+import { getCurrentUtc, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import { addYears, differenceInYears, subYears } from "date-fns"
@@ -27,7 +27,7 @@ import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-rep
 import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import { UserFetchError, UserNotFoundError } from "./user-error"
+import { UserFetchError, UserNotFoundError, UserUpdateError } from "./user-error"
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
@@ -261,6 +261,28 @@ export function getUserService(
       return user
     },
     async update(handle, userId, data) {
+      const result = UserWriteSchema.partial().safeParse(data)
+
+      if (!result.success) {
+        const error = result.error.errors[0]
+        throw new UserUpdateError(userId, `Invalid user data: ${error.message} at ${error.path.join(".")}`)
+      }
+
+      if (data.profileSlug) {
+        if (data.profileSlug !== slugify(data.profileSlug)) {
+          throw new UserUpdateError(userId, `Profile slug ${data.profileSlug} is not valid.`)
+        }
+
+        const existingUser = await this.findByProfileSlug(handle, data.profileSlug)
+
+        if (existingUser && existingUser.id !== userId) {
+          throw new UserUpdateError(
+            userId,
+            `Profile slug ${data.profileSlug} is already taken by another user (${existingUser.id}).`
+          )
+        }
+      }
+
       return await userRepository.update(handle, userId, data)
     },
     async createMembership(handle, userId, data) {

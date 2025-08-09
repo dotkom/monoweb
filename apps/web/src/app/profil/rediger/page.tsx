@@ -1,7 +1,7 @@
 "use client"
 import { useTRPC } from "@/utils/trpc/client"
 import type { UserWrite } from "@dotkomonline/types"
-import { Button, Icon, Title } from "@dotkomonline/ui"
+import { Button, Icon, Text, Title } from "@dotkomonline/ui"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { notFound } from "next/navigation"
 import { ProfileForm } from "./form"
@@ -27,7 +27,13 @@ const Page = () => {
   )
 
   if (userIsLoading) {
-    return <div>Loading...</div>
+    // TODO: Add skeleton loading
+    return (
+      <div className="flex w-fit items-center justify-center gap-2">
+        <Icon icon="tabler:loader" className="animate-spin text-lg" />
+        <Text>Laster</Text>
+      </div>
+    )
   }
 
   if (!user) {
@@ -35,27 +41,33 @@ const Page = () => {
   }
 
   const onSubmit = (data: UserWrite) => {
-    console.log("Submitting user data:", data)
     userEdit.mutate({ id: user.id, input: data })
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <Button
-          variant="outline"
-          element="a"
-          href={`/profil/${user.profileSlug}`}
-          icon={<Icon icon="tabler:arrow-left" />}
-          className="w-fit"
-        >
-          Til profil
-        </Button>
-        <Title element="h1" size="xl">
-          Rediger profil
-        </Title>
-      </div>
-      <ProfileForm user={user} onSubmit={onSubmit} />
+    <div className="flex flex-col gap-6">
+      <Button
+        variant="outline"
+        element="a"
+        href={`/profil/${user.profileSlug}`}
+        icon={<Icon icon="tabler:arrow-left" />}
+        className="w-fit"
+      >
+        Til profil
+      </Button>
+
+      <Title element="h1" size="xl">
+        Rediger profil
+      </Title>
+
+      <ProfileForm
+        user={user}
+        onSubmit={onSubmit}
+        isSaving={userEdit.isPending}
+        saveError={userEdit.error?.message}
+        saveSuccess={userEdit.isSuccess}
+        resetSaveState={userEdit.reset}
+      />
     </div>
   )
 }
