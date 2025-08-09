@@ -20,11 +20,5 @@ export const configuration = defineConfiguration({
   AWS_S3_BUCKET: config(process.env.AWS_S3_BUCKET),
   DATABASE_URL: config(process.env.DATABASE_URL),
 
-  TRIKOM_STRIPE_PUBLIC_KEY: config(process.env.TRIKOM_STRIPE_PUBLIC_KEY),
-  TRIKOM_STRIPE_SECRET_KEY: config(process.env.TRIKOM_STRIPE_SECRET_KEY),
-  TRIKOM_STRIPE_WEBHOOK_SECRET: config(process.env.TRIKOM_STRIPE_WEBHOOK_SECRET),
-
-  FAGKOM_STRIPE_PUBLIC_KEY: config(process.env.FAGKOM_STRIPE_PUBLIC_KEY),
-  FAGKOM_STRIPE_SECRET_KEY: config(process.env.FAGKOM_STRIPE_SECRET_KEY),
-  FAGKOM_STRIPE_WEBHOOK_SECRET: config(process.env.FAGKOM_STRIPE_WEBHOOK_SECRET),
+  STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
 })

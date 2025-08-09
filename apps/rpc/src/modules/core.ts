@@ -59,22 +59,11 @@ export function createThirdPartyClients(configuration: Configuration) {
     clientId: configuration.AUTH0_CLIENT_ID,
     clientSecret: configuration.AUTH0_CLIENT_SECRET,
   })
-  const stripeAccounts = {
-    trikom: {
-      stripe: new Stripe(configuration.TRIKOM_STRIPE_SECRET_KEY, {
-        apiVersion: "2023-08-16",
-      }),
-    },
-    fagkom: {
-      stripe: new Stripe(configuration.FAGKOM_STRIPE_SECRET_KEY, {
-        apiVersion: "2023-08-16",
-      }),
-      publicKey: configuration.FAGKOM_STRIPE_PUBLIC_KEY,
-      webhookSecret: configuration.FAGKOM_STRIPE_WEBHOOK_SECRET,
-    },
-  }
+  const stripe = new Stripe(configuration.STRIPE_SECRET_KEY, {
+    apiVersion: "2023-08-16",
+  })
   const prisma = createPrisma(configuration.DATABASE_URL)
-  return { s3Client, auth0Client, stripeAccounts, prisma }
+  return { s3Client, auth0Client, stripe, prisma }
 }
 
 /**
@@ -126,7 +115,7 @@ export async function createServiceLayer(
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
-  const paymentService = getPaymentService(clients.stripeAccounts.trikom.stripe)
+  const paymentService = getPaymentService(clients.stripe)
   const attendeeService = getAttendeeService(
     attendeeRepository,
     attendanceRepository,
