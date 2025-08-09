@@ -1,6 +1,6 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
-import { ActionIcon, Badge, Checkbox } from "@mantine/core"
+import { ActionIcon, Badge, Checkbox, Tooltip } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo } from "react"
 
@@ -75,7 +75,11 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             }
 
             if (value.paymentReservedAt) {
-              return <Badge color="lime">Reservert</Badge>
+              return (
+                <Tooltip label="Pengene er reservert og vil trekkes etter avmeldingsfristen">
+                  <Badge color="lime">Reservert</Badge>
+                </Tooltip>
+              )
             }
 
             return <Badge color="red">Ikke betalt</Badge>
