@@ -30,28 +30,46 @@ export function getPaymentService(stripe: Stripe): PaymentService {
   const updateProduct = async (productId: string, name: string, newPrice: number) => {
     const newPriceData = getPriceData(newPrice)
 
-    const activeStripePrices = await stripe.prices.list({ product: productId, active: true, limit: 1000 })
+    const activeStripePrice = await getActiveProductStripePrice(productId)
 
-    const correctActivePrice = activeStripePrices.data.find((activePrice) => priceDataEqual(newPriceData, activePrice))
-    if (correctActivePrice) {
-      await stripe.products.update(productId, { name })
-      return correctActivePrice.id
+    let defaultPriceId = activeStripePrice.id
+    let oldStripePriceId = null
+    if (!priceDataEqual(activeStripePrice, newPriceData)) {
+      const newStripePrice = await stripe.prices.create({ ...newPriceData, product: productId })
+
+      defaultPriceId = newStripePrice.id
+      oldStripePriceId = activeStripePrice.id
     }
 
-    const newStripePrice = await stripe.prices.create({ ...newPriceData, product: productId })
-
     await stripe.products.update(productId, {
-      default_price: newStripePrice.id,
+      default_price: defaultPriceId,
       name,
     })
 
-    for (const activePrice of activeStripePrices.data) {
-      await stripe.prices.update(activePrice.id, {
-        active: false,
-      })
+    if (oldStripePriceId !== null) {
+      await stripe.prices.update(oldStripePriceId, { active: false })
     }
 
-    return newStripePrice.id
+    return defaultPriceId
+  }
+
+  const getActiveProductStripePrice = async (productId: string): Promise<Stripe.Price> => {
+    const { data: prices } = await stripe.prices.list({
+      active: true,
+      product: productId,
+    })
+
+    if (prices.length === 0) {
+      throw new PaymentMissingPriceError(productId)
+    }
+
+    if (prices.length > 1) {
+      throw new PaymentAmbiguousPriceError(productId)
+    }
+
+    const activePrice = prices[0]
+
+    return activePrice
   }
 
   return {
@@ -70,21 +88,8 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       return await updateProduct(productId, name, price)
     },
     createProductPayment: async (productId, price, redirect) => {
-      const { data: prices } = await stripe.prices.list({
-        active: true,
-        product: productId,
-      })
-
-      if (prices.length === 0) {
-        throw new PaymentMissingPriceError(productId)
-      }
-
-      if (prices.length > 1) {
-        throw new PaymentAmbiguousPriceError(productId)
-      }
-
-      const activePrice = prices[0]
       const priceData = getPriceData(price)
+      const activePrice = await getActiveProductStripePrice(productId)
 
       if (!priceDataEqual(activePrice, priceData)) {
         throw new Error("Active price did not match expected price")
