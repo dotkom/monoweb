@@ -1,46 +1,68 @@
 import type { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
-import { getCurrentUtc } from "@dotkomonline/utils"
+import { getCurrentUtc, slugify } from "@dotkomonline/utils"
 import { differenceInYears, isAfter, setMonth, startOfMonth } from "date-fns"
 import { z } from "zod"
 import { buildSearchFilter } from "./filters"
 
-export type MembershipSpecialization = z.infer<typeof MembershipSpecializationSchema>
 export const MembershipSpecializationSchema = schemas.MembershipSpecializationSchema
+export type MembershipSpecialization = z.infer<typeof MembershipSpecializationSchema>
 
 export type MembershipType = z.infer<typeof MembershipTypeSchema>
 export const MembershipTypeSchema = schemas.MembershipTypeSchema
 
+export const MembershipSchema = schemas.MembershipSchema.extend({})
 export type MembershipId = Membership["id"]
 export type Membership = z.infer<typeof MembershipSchema>
-export const MembershipSchema = schemas.MembershipSchema.extend({})
 
-export type MembershipWrite = z.infer<typeof MembershipWriteSchema>
 export const MembershipWriteSchema = MembershipSchema.pick({
   type: true,
   start: true,
   end: true,
   specialization: true,
 })
+export type MembershipWrite = z.infer<typeof MembershipWriteSchema>
 
-export type UserId = User["id"]
-export type UserProfileSlug = User["profileSlug"]
-export type User = z.infer<typeof UserSchema>
 export const UserSchema = schemas.UserSchema.extend({
   memberships: z.array(MembershipSchema),
 })
+export type User = z.infer<typeof UserSchema>
+export type UserId = User["id"]
+export type UserProfileSlug = User["profileSlug"]
 
-export type UserWrite = z.infer<typeof UserWriteSchema>
-export const UserWriteSchema = UserSchema.pick({
-  profileSlug: true,
-  name: true,
-  email: true,
-  imageUrl: true,
-  biography: true,
-  phone: true,
-  gender: true,
-  dietaryRestrictions: true,
+export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
+export const PHONE_REGEX = /^[0-9+-\s]*$/
+export const PROFILE_SLUG_REGEX = /^[a-z0-9-]+$/
+
+// These max and min values are arbitrary
+export const UserWriteSchema = z.object({
+  profileSlug: z
+    .string()
+    .min(3, "Brukernavnet må være minst 3 tegn lang")
+    .max(64, "Brukernavnet kan ikke være lengre enn 64 tegn")
+    .regex(PROFILE_SLUG_REGEX, "Brukernavnet kan bare inneholde små bokstaver, tall og bindestrek")
+    .refine((value) => slugify(value) === value, {
+      message: "Brukernavnet kan bare inneholde små bokstaver, tall og bindestrek",
+    }),
+  name: z
+    .string()
+    .min(3, "Du må skrive inn et navn")
+    .max(128, "Navnet kan ikke være lengre enn 128 tegn")
+    .regex(NAME_REGEX, "Du kan bare bruke bokstaver, bindestrek, apostrof og mellomrom i navnet")
+    .nullable(),
+  email: z
+    .string()
+    .email("Ugyldig e-post")
+    .min(1, "Du må skrive en e-post")
+    .max(128, "E-posten kan ikke være lengre enn 128 tegn")
+    .nullable(),
+  phone: z.string().regex(PHONE_REGEX, "Ugyldig telefonnummer").nullable(),
+  imageUrl: z.string().url("Ugyldig URL").max(500, "Bildelenken kan ikke være lengre enn 500 tegn").nullable(),
+  biography: z.string().nullable(),
+  gender: z.string().nullable(),
+  dietaryRestrictions: z.string().max(200, "Kostholdsrestriksjoner kan ikke være lengre enn 200 tegn").nullable(),
 })
+export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export const PublicUserSchema = UserSchema.pick({
   id: true,
@@ -50,13 +72,13 @@ export const PublicUserSchema = UserSchema.pick({
   biography: true,
 })
 
-export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 export const UserFilterQuerySchema = z
   .object({
     byName: buildSearchFilter(),
     byEmail: buildSearchFilter(),
   })
   .partial()
+export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
 /** Get the most relevant active membership for a user. */
 export function getActiveMembership(user: User): Membership | null {

@@ -26,8 +26,8 @@ export class UserCreationError extends ApplicationError {
 }
 
 export class UserUpdateError extends ApplicationError {
-  constructor(id: string, status: number, statusText: string) {
-    super(PROBLEM_DETAILS.InternalServerError, `Failed to update user with ID '${id}': ${status} ${statusText}`)
+  constructor(userId: string, description: string) {
+    super(PROBLEM_DETAILS.BadRequest, `Failed to update user with ID '${userId}': ${description}`)
   }
 }
 

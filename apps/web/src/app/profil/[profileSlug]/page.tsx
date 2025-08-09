@@ -178,7 +178,13 @@ export default async function ProfilePage({
               {user.name}
             </Title>
             {isUser && (
-              <Button color="dark" className="hidden md:block">
+              <Button
+                element="a"
+                href="/instillinger/profil"
+                color="dark"
+                icon={<Icon icon="tabler:edit" className="text-lg" />}
+                className="hidden gap-2 md:flex"
+              >
                 Rediger profil
               </Button>
             )}
@@ -240,7 +246,7 @@ export default async function ProfilePage({
                 {renderUserInfo("E-post", user.email)}
                 {renderUserInfo("Kjønn", user.gender || "Ikke oppgitt")}
                 {renderUserInfo("Telefon", user.phone)}
-                {renderUserInfo("Allergier", user.dietaryRestrictions || "Ingen allergier")}
+                {renderUserInfo("Kostholdsrestriksjoner", user.dietaryRestrictions || "Ingen kostholdsrestriksjoner")}
               </div>
             </div>
           </div>

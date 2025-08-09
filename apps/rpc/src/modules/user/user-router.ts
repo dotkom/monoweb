@@ -82,6 +82,14 @@ export const userRouter = t.router({
       return ctx.userService.getById(handle, ctx.principal.subject)
     })
   ),
+  findMe: procedure.query(async ({ ctx }) =>
+    ctx.executeTransaction(async (handle) => {
+      if (!ctx?.principal?.subject) {
+        return null
+      }
+      return ctx.userService.findById(handle, ctx.principal.subject)
+    })
+  ),
   update: procedure
     .input(
       z.object({
