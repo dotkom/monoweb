@@ -20,7 +20,12 @@ import {
 import { addHours, addSeconds, isFuture } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import type { PaymentService } from "../payment/payment-service"
-import { type InferTaskData, type VerifyPaymentTaskDefinition, tasks } from "../task/task-definition"
+import {
+  ChargeAttendancePaymentsTaskDefinition,
+  type InferTaskData,
+  type VerifyPaymentTaskDefinition,
+  tasks,
+} from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenError } from "./attendance-error"
@@ -28,6 +33,7 @@ import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attenda
 import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeNotFoundError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
+import { getCurrentUTC } from "@dotkomonline/utils"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
@@ -323,7 +329,7 @@ export function getAttendeeService(
       }
 
       await attendeeRepository.update(handle, attendee.id, {
-        paidAt: null,
+        paidAt: getCurrentUTC(),
         paymentDeadline: null,
         paymentLink: null,
       })

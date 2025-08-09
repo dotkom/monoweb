@@ -18,3 +18,9 @@ export class PaymentAlreadyChargedError extends ApplicationError {
     super(PROBLEM_DETAILS.NotFound, `Payment with id ${id} has already been charged`)
   }
 }
+
+export class PaymentNotReadyToCharge extends ApplicationError {
+  constructor(id: string) {
+    super(PROBLEM_DETAILS.NotFound, `Payment with id ${id} is not ready to be charged`)
+  }
+}

@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "task_type" ADD VALUE 'CHARGE_ATTENDANCE_PAYMENTS';

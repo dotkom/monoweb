@@ -1,5 +1,10 @@
 import Stripe from "stripe"
-import { PaymentAlreadyChargedError, PaymentAmbiguousPriceError, PaymentMissingPriceError } from "./payment-error"
+import {
+  PaymentAlreadyChargedError,
+  PaymentAmbiguousPriceError,
+  PaymentMissingPriceError,
+  PaymentNotReadyToCharge,
+} from "./payment-error"
 import z from "zod"
 
 export type ProductPayment = {
@@ -11,7 +16,7 @@ export interface PaymentService {
   createOrUpdateProduct(productId: string, name: string, price: number): Promise<string>
   createProductPayment(productId: string, price: number, redirect: string): Promise<ProductPayment>
   cancelProductPayment(paymentId: string): Promise<void>
-  handleStripeWebhook(payload: unknown): Promise<void>
+  chargeProductPayment(paymentId: string): Promise<void>
 }
 
 type PriceData = { currency: string; unit_amount: number | null }
@@ -141,6 +146,26 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       if (session.status !== "complete") {
         await stripe.checkout.sessions.expire(paymentId)
       }
+    },
+    chargeProductPayment: async (paymentId: string) => {
+      const session = await stripe.checkout.sessions.retrieve(paymentId)
+
+      if (session.payment_intent === null) {
+        throw new PaymentNotReadyToCharge(paymentId)
+      }
+
+      let paymentIntent: Stripe.PaymentIntent
+      if (typeof session.payment_intent === "string") {
+        paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent)
+      } else {
+        paymentIntent = session.payment_intent
+      }
+
+      if (paymentIntent.status === "succeeded") {
+        throw new PaymentAlreadyChargedError(paymentId)
+      }
+
+      await stripe.paymentIntents.capture(paymentIntent.id)
     },
   }
 }

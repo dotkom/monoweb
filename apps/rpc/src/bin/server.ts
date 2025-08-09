@@ -54,6 +54,7 @@ const server = fastify({
 })
 server.setErrorHandler((error) => {
   console.error(error)
+  captureException(error)
 })
 server.register(fastifyCors, {
   origin: allowedOrigins,

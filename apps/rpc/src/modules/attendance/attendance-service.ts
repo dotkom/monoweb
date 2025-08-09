@@ -14,6 +14,7 @@ import { addHours, differenceInMinutes, isAfter, isBefore, isFuture } from "date
 import type { PaymentService } from "../payment/payment-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
+  ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
   type MergePoolsTaskDefinition,
   tasks,
@@ -24,6 +25,9 @@ import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { logger } from "@sentry/node"
+import { PaymentAlreadyChargedError } from "../payment/payment-error"
 
 const areSelectionsEqual = (a: AttendanceSelection, b: AttendanceSelection) => {
   if (a.id !== b.id) return false
@@ -61,6 +65,10 @@ export interface AttendanceService {
   handleAttemptReserveAttendeeTask(
     handle: DBHandle,
     payload: InferTaskData<AttemptReserveAttendeeTaskDefinition>
+  ): Promise<void>
+  handleChargePaymentTask(
+    handle: DBHandle,
+    payload: InferTaskData<ChargeAttendancePaymentsTaskDefinition>
   ): Promise<void>
 }
 
@@ -163,10 +171,6 @@ export function getAttendanceService(
         throw new AttendanceNotFound(attendanceId)
       }
 
-      if (data.attendancePrice) {
-        await paymentService.createOrUpdateProduct(attendanceId, "Betaling", data.attendancePrice)
-      }
-
       if (data.registerStart || data.registerEnd) {
         const registerStart = data.registerStart || attendance.registerStart
         const registerEnd = data.registerEnd || attendance.registerEnd
@@ -178,7 +182,19 @@ export function getAttendanceService(
         await validateSelections(handle, attendanceId, attendance.selections, data.selections)
       }
 
-      return await attendanceRepository.update(handle, attendanceId, data)
+      const newAttendance = await attendanceRepository.update(handle, attendanceId, data)
+
+      if (newAttendance.attendancePrice) {
+        await paymentService.createOrUpdateProduct(attendanceId, "Betaling", newAttendance.attendancePrice)
+        await taskSchedulingService.scheduleAt(
+          handle,
+          "CHARGE_ATTENDANCE_PAYMENTS",
+          { attendanceId },
+          new TZDate(attendance.deregisterDeadline)
+        )
+      }
+
+      return newAttendance
     },
     async mergeAttendancePools(handle, attendanceId, newMergePoolData, mergeTime = new Date()) {
       if (!mergeTime || !isFuture(mergeTime)) {
@@ -280,6 +296,32 @@ export function getAttendanceService(
         throw new AttendancePoolNotFoundError(attendee.attendancePoolId)
       }
       await attendeeService.attemptReserve(handle, attendee, pool, attendance, { bypassCriteria: false })
+    },
+    async handleChargePaymentTask(handle, { attendanceId }) {
+      console.log(`Charging attendees of attendance with id ${attendanceId}`)
+      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      if (!attendance) {
+        throw new AttendanceNotFound(attendanceId)
+      }
+      if (attendance.deregisterDeadline > getCurrentUTC()) {
+        console.log(`Not charging ${attendanceId} because task is too early`)
+        return
+      }
+      const attendees = await attendeeRepository.getByAttendanceId(handle, attendanceId)
+
+      for (const attendee of attendees) {
+        if (attendee.paymentId) {
+          try {
+            await paymentService.chargeProductPayment(attendee.paymentId)
+          } catch (e) {
+            if (e instanceof PaymentAlreadyChargedError) {
+              console.log(`Skipping attendee ${attendee.id} as they have already been charged`)
+            } else {
+              console.error("Failed to charge attendee", attendee.id, e)
+            }
+          }
+        }
+      }
     },
   }
 }

@@ -25,6 +25,7 @@ export function createTaskDefinition<const TData, const TType extends TaskType>(
 export type AttemptReserveAttendeeTaskDefinition = typeof tasks.ATTEMPT_RESERVE_ATTENDEE
 export type MergePoolsTaskDefinition = typeof tasks.MERGE_POOLS
 export type VerifyPaymentTaskDefinition = typeof tasks.VERIFY_PAYMENT
+export type ChargeAttendancePaymentsTaskDefinition = typeof tasks.CHARGE_ATTENDANCE_PAYMENTS
 export type AnyTaskDefinition = AttemptReserveAttendeeTaskDefinition | MergePoolsTaskDefinition
 
 export const tasks = {
@@ -49,6 +50,13 @@ export const tasks = {
     getSchema: () =>
       z.object({
         attendeeId: AttendeeSchema.shape.id,
+      }),
+  }),
+  CHARGE_ATTENDANCE_PAYMENTS: createTaskDefinition({
+    type: "CHARGE_ATTENDANCE_PAYMENTS",
+    getSchema: () =>
+      z.object({
+        attendanceId: z.string(),
       }),
   }),
 }

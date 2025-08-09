@@ -7,6 +7,7 @@ import type { AttendanceService } from "../attendance/attendance-service"
 import type { AttendeeService } from "../attendance/attendee-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
+  ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
   type MergePoolsTaskDefinition,
   type VerifyPaymentTaskDefinition,
@@ -17,7 +18,7 @@ import type { TaskDiscoveryService } from "./task-discovery-service"
 import { InvalidTaskKind } from "./task-error"
 import type { TaskService } from "./task-service"
 
-const INTERVAL = minutesToMilliseconds(1)
+const INTERVAL = 1000
 
 export interface TaskExecutor {
   start(client: DBClient): Promise<void>
@@ -71,6 +72,7 @@ export function getLocalTaskExecutor(
       let isError = false
       // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
       // as running regardless of whether the child transaction commits or rollbacks.
+      logger.info("Running task", task.type, "with arguments", task.payload)
       await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
       try {
         // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
@@ -95,6 +97,11 @@ export function getLocalTaskExecutor(
                 handle,
                 payload as InferTaskData<VerifyPaymentTaskDefinition>
               )
+            case tasks.CHARGE_ATTENDANCE_PAYMENTS.type:
+              return await attendanceService.handleChargePaymentTask(
+                handle,
+                payload as InferTaskData<ChargeAttendancePaymentsTaskDefinition>
+              )
           }
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
           // still keep this block here to prevent subtle bugs or missed cases in the future.
@@ -112,7 +119,7 @@ export function getLocalTaskExecutor(
         // regardless of whether the job execution was successful or not, we always update the job status.
         if (!isError) {
           await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED", "RUNNING")
-          logger.debug("Job with ID=%s completed successfully", task.id)
+          logger.info("Job with ID=%s completed successfully", task.id)
         }
       }
     },
