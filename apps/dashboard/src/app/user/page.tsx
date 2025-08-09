@@ -1,28 +1,41 @@
 "use client"
 
 import { GenericTable } from "@/components/GenericTable"
-import { Icon } from "@iconify/react"
-import { Button, ButtonGroup, Skeleton, Stack } from "@mantine/core"
-import { useUsersQuery } from "./components/UserSearch/queries"
+import type { UserFilterQuery } from "@dotkomonline/types"
+import { Group, Skeleton, Stack } from "@mantine/core"
+import { useEffect, useRef, useState } from "react"
+import { UserFilters } from "./components/user-filters"
+import { useUserAllInfiniteQuery } from "./queries"
 import { useUserTable } from "./use-user-table"
 
 export default function UserPage() {
-  const { data: users, isLoading: isUsersLoading } = useUsersQuery()
-  const table = useUserTable({ data: users })
+  const [filter, setFilter] = useState<UserFilterQuery>({})
+  const { users, isLoading: isUsersLoading, fetchNextPage, hasNextPage } = useUserAllInfiniteQuery({ filter })
+
+  const table = useUserTable({ data: users ?? [] })
+
+  const loaderRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasNextPage) {
+        fetchNextPage()
+      }
+    })
+
+    if (loaderRef.current) observer.observe(loaderRef.current)
+    return () => observer.disconnect()
+  }, [fetchNextPage, hasNextPage])
 
   return (
-    <Skeleton visible={isUsersLoading}>
-      <Stack>
+    <Stack>
+      <Group>
+        <UserFilters onChange={setFilter} />
+      </Group>
+      <Skeleton visible={isUsersLoading}>
         <GenericTable table={table} />
-        <ButtonGroup ml="auto">
-          <Button variant="subtle">
-            <Icon icon="tabler:caret-left" />
-          </Button>
-          <Button variant="subtle">
-            <Icon icon="tabler:caret-right" />
-          </Button>
-        </ButtonGroup>
-      </Stack>
-    </Skeleton>
+      </Skeleton>
+      <div ref={loaderRef} />
+    </Stack>
   )
 }

@@ -1,20 +1,27 @@
-import { MembershipSchema, MembershipWriteSchema, UserSchema, UserWriteSchema } from "@dotkomonline/types"
+import {
+  MembershipSchema,
+  MembershipWriteSchema,
+  UserFilterQuerySchema,
+  UserSchema,
+  UserWriteSchema,
+} from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema } from "../../query"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
 export const userRouter = t.router({
-  all: procedure.input(PaginateInputSchema).query(async ({ input, ctx }) =>
-    ctx.executeTransaction(async (handle) => {
-      return ctx.userService.findUsers(
-        handle,
-        {
-          byName: null,
-        },
-        input
-      )
-    })
-  ),
+  all: procedure
+    .input(BasePaginateInputSchema.extend({ filter: UserFilterQuerySchema.optional() }))
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        const items = await ctx.userService.findUsers(handle, { ...input.filter }, input)
+
+        return {
+          items,
+          nextCursor: items.at(-1)?.id,
+        }
+      })
+    ),
   get: procedure.input(UserSchema.shape.id).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.getById(handle, input)
@@ -76,13 +83,6 @@ export const userRouter = t.router({
         return ctx.userService.update(handle, changes.id, changes.input)
       })
     ),
-  searchByFullName: procedure.input(z.object({ searchQuery: z.string() })).query(async ({ input, ctx }) =>
-    ctx.executeTransaction(async (handle) => {
-      return ctx.userService.findUsers(handle, {
-        byName: input.searchQuery,
-      })
-    })
-  ),
   isStaff: authenticatedProcedure.query(async ({ ctx }) => {
     try {
       ctx.authorize.requireAffiliation()

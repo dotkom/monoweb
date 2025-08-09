@@ -24,7 +24,6 @@ const navigations = [
     icon: "tabler:wheelchair",
     children: [
       { label: "Arrangementer", href: "/event" },
-      { label: "Tilbakemeldingsskjema", href: "/feedback" },
       { label: "Prikker & Suspensjoner", href: "/punishment" },
       { label: "Betaling", href: "/payment" },
     ],

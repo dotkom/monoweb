@@ -1,4 +1,4 @@
-import { UserSearch } from "@/app/user/components/UserSearch/UserSearch"
+import { UserSearch } from "@/app/user/components/user-search"
 import { GenericTable } from "@/components/GenericTable"
 import { Box, Divider, Stack, Title } from "@mantine/core"
 import { compareDesc } from "date-fns"

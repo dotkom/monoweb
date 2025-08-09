@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto"
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, Prisma } from "@dotkomonline/db"
 import {
   type MembershipId,
   type MembershipWrite,
@@ -62,23 +62,17 @@ export function getUserRepository(): UserRepository {
       return this.findById(handle, owUser.id)
     },
     async findMany(handle, query, page) {
+      const or = [
+        ...(query.byName?.trim() ? [{ name: { contains: query.byName, mode: "insensitive" as const } }] : []),
+        ...(query.byEmail?.trim() ? [{ email: { contains: query.byEmail, mode: "insensitive" as const } }] : []),
+      ] satisfies Prisma.UserWhereInput[]
+
+      const where: Prisma.UserWhereInput = or.length ? { OR: or } : {}
+
       const users = await handle.user.findMany({
         ...pageQuery(page),
-        where: {
-          AND: [
-            {
-              name:
-                query.byName !== null
-                  ? {
-                      contains: query.byName,
-                    }
-                  : undefined,
-            },
-          ],
-        },
-        include: {
-          memberships: true,
-        },
+        where,
+        include: { memberships: true },
       })
       return users.map((user) => parseOrReport(UserSchema, user))
     },
