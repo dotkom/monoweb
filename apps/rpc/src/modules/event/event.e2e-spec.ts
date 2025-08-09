@@ -1,3 +1,4 @@
+import type { S3Client } from "@aws-sdk/client-s3"
 import type { EventWrite, GroupWrite } from "@dotkomonline/types"
 import { faker } from "@faker-js/faker"
 import type { ManagementClient } from "auth0"
@@ -49,6 +50,7 @@ function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
 
 describe("event integration tests", () => {
   const managementClient = mockDeep<ManagementClient>()
+  const s3Client = mockDeep<S3Client>()
   const userRepository = getUserRepository()
   const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
@@ -60,7 +62,9 @@ describe("event integration tests", () => {
     notificationPermissionsRepository,
     feideGroupsRepository,
     ntnuStudyPlanRepository,
-    managementClient
+    managementClient,
+    s3Client,
+    "fake-aws-bucket"
   )
   const groupRepository = getGroupRepository()
   const groupService = getGroupService(groupRepository, userService)
