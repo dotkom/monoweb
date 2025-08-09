@@ -69,6 +69,7 @@ export interface AttendeeService {
     attendance: Attendance,
     options: { bypassCriteria: boolean; immediate?: boolean }
   ): Promise<boolean>
+  reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean): Promise<boolean>
   handleVerifyPaymentTask(handle: DBHandle, payload: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
   getAttendeeStatuses(
     handle: DBHandle,
@@ -269,31 +270,34 @@ export function getAttendeeService(
       const poolHasCapacity = pool.numAttendees < pool.capacity
 
       if ((isPastReserveTime && poolHasCapacity) || bypassCriteria) {
-        let url = null
-        let paymentDeadline = null
-        if (attendance.attendancePrice) {
-          url = await paymentService.createProductPayment(
-            attendance.id,
-            attendance.attendancePrice,
-            "http://localhost:3000/arrangementer/alle-avslutningskos/83f1d181-5eb1-4c62-b319-85d3c80f679f"
-          )
-
-          paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
-
-          taskSchedulingService.scheduleAt(
-            handle,
-            tasks.VERIFY_PAYMENT.type,
-            {
-              attendeeId: attendee.id,
-            },
-            paymentDeadline
-          )
-        }
-
-        return await attendeeRepository.reserveAttendee(handle, attendee.id, url, paymentDeadline)
+        return await this.reserve(handle, attendance, attendee, immediate)
       }
 
       return false
+    },
+    async reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean) {
+      let url = null
+      let paymentDeadline = null
+      if (attendance.attendancePrice) {
+        url = await paymentService.createProductPayment(
+          attendance.id,
+          attendance.attendancePrice,
+          "http://localhost:3000/arrangementer/alle-avslutningskos/83f1d181-5eb1-4c62-b319-85d3c80f679f"
+        )
+
+        paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
+
+        taskSchedulingService.scheduleAt(
+          handle,
+          tasks.VERIFY_PAYMENT.type,
+          {
+            attendeeId: attendee.id,
+          },
+          paymentDeadline
+        )
+      }
+
+      return await attendeeRepository.reserveAttendee(handle, attendee.id, url, paymentDeadline)
     },
     async handleVerifyPaymentTask(handle, { attendeeId }) {
       const attendee = await attendeeRepository.getById(handle, attendeeId)
