@@ -351,8 +351,8 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       lucide-react:
-        specifier: ^0.525.0
-        version: 0.525.0(react@19.1.1)
+        specifier: ^0.539.0
+        version: 0.539.0(react@19.1.1)
       pdfjs-dist:
         specifier: ^5.3.31
         version: 5.3.93
@@ -7018,8 +7018,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@0.525.0:
-    resolution: {integrity: sha512-Tm1txJ2OkymCGkvwoHt33Y2JpN5xucVq1slHcgE6Lk0WjDfjgKWor5CdVER8U6DvcfMwh4M8XxmpTiyzfmfDYQ==}
+  lucide-react@0.539.0:
+    resolution: {integrity: sha512-VVISr+VF2krO91FeuCrm1rSOLACQUYVy7NQkzrOty52Y8TlTPcXcMdQFj9bYzBgXbWCiywlwSZ3Z8u6a+6bMlg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -15696,7 +15696,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.525.0(react@19.1.1):
+  lucide-react@0.539.0(react@19.1.1):
     dependencies:
       react: 19.1.1
 
@@ -16355,7 +16355,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.1)
+      styled-jsx: 5.1.6(react@19.1.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.4.6
       '@next/swc-darwin-x64': 15.4.6
@@ -17588,6 +17588,11 @@ snapshots:
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
+
+  styled-jsx@5.1.6(react@19.1.1):
+    dependencies:
+      client-only: 0.0.1
+      react: 19.1.1
 
   sugarss@5.0.0(postcss@8.5.6):
     dependencies:
