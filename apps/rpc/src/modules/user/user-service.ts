@@ -1,4 +1,6 @@
 import * as crypto from "node:crypto"
+import type { S3Client } from "@aws-sdk/client-s3"
+import { type PresignedPost, createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
@@ -48,6 +50,7 @@ export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
+  createAvatarUploadURL(handle: DBHandle, userId: UserId): Promise<PresignedPost>
   /**
    * Find the Feide federated access token for a user, if it exists.
    *
@@ -69,7 +72,9 @@ export function getUserService(
   notificationPermissionsRepository: NotificationPermissionsRepository,
   feideGroupsRepository: FeideGroupsRepository,
   ntnuStudyPlanRepository: NTNUStudyPlanRepository,
-  managementClient: ManagementClient
+  managementClient: ManagementClient,
+  client: S3Client,
+  bucket: string
 ): UserService {
   const logger = getLogger("user-service")
   async function findApplicableMembership(
@@ -264,6 +269,23 @@ export function getUserService(
     },
     async updateMembership(handle, membershipId, membership) {
       return userRepository.updateMembership(handle, membershipId, membership)
+    },
+    async createAvatarUploadURL(handle, userId) {
+      const user = await this.getById(handle, userId)
+      // There should be no reason for an image to be much larger than 500KB
+      const maxSizeKB = 500
+      const key = `/avatar/${user.id}`
+      logger.info(`Creating AWS S3 Presigned URL for User(ID=%s) at S3 address s3://${bucket}/${key}`, user.id)
+      return await createPresignedPost(client, {
+        Bucket: bucket,
+        Key: key,
+        Conditions: [
+          ["content-length-range", 0, maxSizeKB * 1024],
+          ["eq", "$Content-Type", "image/jpeg"],
+          ["eq", "$Content-Type", "image/png"],
+          ["eq", "$Content-Type", "image/webp"],
+        ],
+      })
     },
     async findFeideAccessTokenByUserId(userId) {
       const response = await managementClient.users.get({ id: userId })
