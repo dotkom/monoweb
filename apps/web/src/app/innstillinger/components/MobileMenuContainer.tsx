@@ -1,14 +1,15 @@
 "use client"
-import { settingsItems } from "@/utils/settingsLinks"
+
 import { Icon } from "@dotkomonline/ui"
 import * as Popover from "@radix-ui/react-popover"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
+import { settingsNavigationItems } from "../layout"
 import { SettingsMenuItem } from "./SettingsMenuItem"
 
 export const MobileMenuContainer = () => {
   const currentSlug = usePathname()
-  const currentLink = settingsItems.find((item) => item.slug === currentSlug)
+  const currentLink = settingsNavigationItems.find((item) => item.slug === currentSlug)
   const [open, setOpen] = useState(false)
 
   return (
@@ -32,7 +33,7 @@ export const MobileMenuContainer = () => {
         <Popover.Portal>
           <Popover.Content className="animate-in fade-in-10">
             <div className="bg-indigo-50 shadow-gray-700 flex w-screen flex-col rounded-lg p-3 shadow-xs md:hidden">
-              {settingsItems.map((item) => (
+              {settingsNavigationItems.map((item) => (
                 <Popover.Close key={item.title}>
                   <SettingsMenuItem {...item} />
                 </Popover.Close>

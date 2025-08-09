@@ -46,19 +46,20 @@ const EditProfilePage = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <Button
-        variant="outline"
-        element="a"
-        href={`/profil/${user.profileSlug}`}
-        icon={<Icon icon="tabler:arrow-left" />}
-        className="w-fit"
-      >
-        Til profil
-      </Button>
+      <div className="flex flex-row justify-between">
+        <Title element="h1" size="xl">
+          Rediger profil
+        </Title>
 
-      <Title element="h1" size="xl">
-        Rediger profil
-      </Title>
+        <Button
+          element="a"
+          href={`/profil/${user.profileSlug}`}
+          icon={<Icon icon="tabler:arrow-left" />}
+          className="w-fit"
+        >
+          Til profil
+        </Button>
+      </div>
 
       <ProfileForm
         user={user}
