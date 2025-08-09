@@ -69,6 +69,6 @@
     "postcss-simple-vars": "7.0.1",
     "tailwindcss": "4.1.11",
     "tslib": "2.8.1",
-    "typescript": "5.9.2"
+    "typescript": "5.8.3"
   }
 }
