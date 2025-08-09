@@ -12,7 +12,7 @@ import type {
 } from "@dotkomonline/types"
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { addHours, differenceInMinutes, isAfter, isBefore, isFuture } from "date-fns"
-import { configuration } from "src/configuration"
+import { configuration } from "../../configuration"
 import { EventNotFoundError } from "../event/event-error"
 import type { EventService } from "../event/event-service"
 import type { PaymentService } from "../payment/payment-service"
