@@ -180,7 +180,7 @@ export default async function ProfilePage({
             {isUser && (
               <Button
                 element="a"
-                href="/instillinger/profil"
+                href="/innstillinger/profil"
                 color="dark"
                 icon={<Icon icon="tabler:edit" className="text-lg" />}
                 className="hidden gap-2 md:flex"
