@@ -51,7 +51,7 @@
     "@types/react": "19.1.9",
     "postcss": "8.5.6",
     "tailwindcss": "4.1.11",
-    "typescript": "5.8.3",
+    "typescript": "5.9.2",
     "vite": "6.3.5",
     "vitest": "3.1.4"
   }
