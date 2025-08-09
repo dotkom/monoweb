@@ -17,7 +17,7 @@ import {
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { addHours, addSeconds, isFuture } from "date-fns"
+import { addHours, addSeconds, isFuture, isPast } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import type { PaymentService } from "../payment/payment-service"
 import {
@@ -39,7 +39,7 @@ import {
 } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { PaymentAlreadyChargedError } from "../payment/payment-error"
+import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
@@ -319,7 +319,8 @@ export function getAttendeeService(
         const payment = await paymentService.createProductPayment(
           attendance.id,
           attendance.attendancePrice,
-          "http://localhost:3000/arrangementer/alle-avslutningskos/83f1d181-5eb1-4c62-b319-85d3c80f679f"
+          "http://localhost:3000/arrangementer/vinkurs/7a7d0d92-7393-4fb1-a56b-51cb30e6d88c",
+          isPast(attendance.deregisterDeadline)
         )
 
         paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
@@ -356,8 +357,15 @@ export function getAttendeeService(
         return
       }
 
+      const status = await paymentService.getPaymentStatus(paymentId)
+
+      if (status === "UNPAID") {
+        throw new PaymentUnexpectedStateError(paymentId, "Got webhook about payment but API does not say so")
+      }
+
       await attendeeRepository.update(handle, attendee.id, {
         paymentReservedAt: getCurrentUTC(),
+        paymentChargedAt: status === "PAID" ? getCurrentUTC() : null,
         paymentDeadline: null,
         paymentLink: null,
       })

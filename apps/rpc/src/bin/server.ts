@@ -85,14 +85,16 @@ server.post("/webhook/stripe", async (req, res) => {
   const checkoutSessionCompletedSchema = z.object({
     type: z.literal("checkout.session.completed"),
     data: z.object({
-      object: z.object({
-        id: z.string(),
-      }),
+      object: z
+        .object({
+          id: z.string(),
+        })
+        .passthrough(),
     }),
   })
-
   const { data: payload, success } = checkoutSessionCompletedSchema.safeParse(req.body)
   if (success) {
+    console.log("gangam style:", payload.data.object)
     await serviceLayer.attendeeService.handleOnPaymentTask(serviceLayer.prisma, payload.data.object.id)
   }
 

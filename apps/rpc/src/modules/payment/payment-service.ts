@@ -4,20 +4,21 @@ import {
   PaymentAmbiguousPriceError,
   PaymentMissingPriceError,
   PaymentNotReadyToCharge,
-  PaymentUnexpectedStateError,
 } from "./payment-error"
-import z from "zod"
 
 export type ProductPayment = {
   url: string
   id: string
 }
 
+type PaymentStatus = "UNPAID" | "RESERVED" | "PAID"
+
 export interface PaymentService {
   createOrUpdateProduct(productId: string, name: string, price: number): Promise<string>
-  createProductPayment(productId: string, price: number, redirect: string): Promise<ProductPayment>
+  createProductPayment(productId: string, price: number, redirect: string, chargeNow?: boolean): Promise<ProductPayment>
   cancelProductPayment(paymentId: string, refundChargedPayments?: boolean): Promise<void>
   chargeProductPayment(paymentId: string): Promise<void>
+  getPaymentStatus(paymentId: string): Promise<PaymentStatus>
 }
 
 type PriceData = { currency: string; unit_amount: number | null }
@@ -101,7 +102,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
 
       return await updateProduct(productId, name, price)
     },
-    createProductPayment: async (productId, price, redirect) => {
+    createProductPayment: async (productId, price, redirect, immediate = false) => {
       const priceData = getPriceData(price)
       const activePrice = await getActiveProductStripePrice(productId)
 
@@ -112,7 +113,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
 
       const session = await stripe.checkout.sessions.create({
         line_items: [{ price: activePrice.id, quantity: 1 }],
-        payment_intent_data: { capture_method: "manual" },
+        payment_intent_data: { capture_method: immediate ? undefined : "manual" },
         success_url: redirect,
         cancel_url: redirect,
         mode: "payment",
@@ -171,6 +172,27 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       }
 
       await stripe.paymentIntents.capture(paymentIntent.id)
+    },
+    async getPaymentStatus(paymentId) {
+      const session = await stripe.checkout.sessions.retrieve(paymentId, {
+        expand: ["payment_intent"],
+      })
+
+      if (!session.payment_intent) {
+        return "UNPAID"
+      }
+      if (typeof session.payment_intent === "string") {
+        throw new Error("This is unreachable")
+      }
+
+      switch (session.payment_intent.status) {
+        case "succeeded":
+          return "PAID"
+        case "requires_capture":
+          return "RESERVED"
+        default:
+          return "UNPAID"
+      }
     },
   }
 }
