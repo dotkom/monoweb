@@ -8,6 +8,9 @@ import { buildSearchFilter } from "./filters"
 export type MembershipSpecialization = z.infer<typeof MembershipSpecializationSchema>
 export const MembershipSpecializationSchema = schemas.MembershipSpecializationSchema
 
+export type MembershipType = z.infer<typeof MembershipTypeSchema>
+export const MembershipTypeSchema = schemas.MembershipTypeSchema
+
 export type MembershipId = Membership["id"]
 export type Membership = z.infer<typeof MembershipSchema>
 export const MembershipSchema = schemas.MembershipSchema.extend({})
@@ -76,6 +79,38 @@ export function getMembershipGrade(membership: Membership): number | null {
     }
     case "OTHER":
       return null
+  }
+}
+
+export function getMembershipTypeName(type: MembershipType) {
+  switch (type) {
+    case "BACHELOR_STUDENT":
+      return "Bachelor"
+    case "MASTER_STUDENT":
+      return "Master"
+    case "SOCIAL_MEMBER":
+      return "Sosialt medlem"
+    case "KNIGHT":
+      return "Ridder"
+    case "PHD_STUDENT":
+      return "PhD-student"
+    case "OTHER":
+      return "Annen"
+  }
+}
+
+export function getSpecializationName(specialization: MembershipSpecialization) {
+  switch (specialization) {
+    case "ARTIFICIAL_INTELLIGENCE":
+      return "Kunstig intelligens"
+    case "DATABASE_AND_SEARCH":
+      return "Database og søk"
+    case "INTERACTION_DESIGN":
+      return "Interaksjonsdesign"
+    case "SOFTWARE_ENGINEERING":
+      return "Programvareutvikling"
+    case "UNKNOWN":
+      return "Ukjent spesialisering"
   }
 }
 

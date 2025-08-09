@@ -55,10 +55,7 @@ const navigations = [
   {
     label: "Brukere",
     icon: "tabler:users-group",
-    children: [
-      { label: "Brukere", href: "/user" },
-      { label: "Medlemskap", href: "/membership" },
-    ],
+    children: [{ label: "Brukere", href: "/user" }],
   },
 ] as const
 

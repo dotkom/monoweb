@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto"
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import {
+  type MembershipId,
   type MembershipWrite,
   type User,
   type UserFilterQuery,
@@ -28,6 +29,7 @@ export interface UserRepository {
    */
   register(handle: DBHandle, userId: UserId): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
+  updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
 }
 
 export function getUserRepository(): UserRepository {
@@ -98,6 +100,22 @@ export function getUserRepository(): UserRepository {
       })
       const user = await this.findById(handle, userId)
       invariant(user !== null, `User with id ${userId} not found after creating membership`)
+      return user
+    },
+    async updateMembership(handle, membershipId, membership) {
+      const row = await handle.membership.update({
+        where: {
+          id: membershipId,
+        },
+        data: {
+          ...membership,
+        },
+        select: {
+          userId: true,
+        },
+      })
+      const user = await this.findById(handle, row.userId)
+      invariant(user !== null, `User with id ${row.userId} not found after updating membership`)
       return user
     },
   }
