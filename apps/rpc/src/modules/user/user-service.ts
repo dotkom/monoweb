@@ -1,8 +1,11 @@
 import * as crypto from "node:crypto"
+import type { S3Client } from "@aws-sdk/client-s3"
+import { type PresignedPost, createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
   type Membership,
+  type MembershipId,
   type MembershipSpecialization,
   MembershipSpecializationSchema,
   type MembershipWrite,
@@ -15,7 +18,7 @@ import {
   getAcademicStart,
   getActiveMembership,
 } from "@dotkomonline/types"
-import { getCurrentUtc } from "@dotkomonline/utils"
+import { getCurrentUtc, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import { addYears, differenceInYears, subYears } from "date-fns"
@@ -24,7 +27,7 @@ import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-rep
 import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import { UserFetchError, UserNotFoundError } from "./user-error"
+import { UserFetchError, UserNotFoundError, UserUpdateError } from "./user-error"
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
@@ -46,6 +49,8 @@ export interface UserService {
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   register(handle: DBHandle, subject: string): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
+  updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
+  createAvatarUploadURL(handle: DBHandle, userId: UserId): Promise<PresignedPost>
   /**
    * Find the Feide federated access token for a user, if it exists.
    *
@@ -67,7 +72,9 @@ export function getUserService(
   notificationPermissionsRepository: NotificationPermissionsRepository,
   feideGroupsRepository: FeideGroupsRepository,
   ntnuStudyPlanRepository: NTNUStudyPlanRepository,
-  managementClient: ManagementClient
+  managementClient: ManagementClient,
+  client: S3Client,
+  bucket: string
 ): UserService {
   const logger = getLogger("user-service")
   async function findApplicableMembership(
@@ -254,11 +261,53 @@ export function getUserService(
       return user
     },
     async update(handle, userId, data) {
+      const result = UserWriteSchema.partial().safeParse(data)
+
+      if (!result.success) {
+        const errorPaths = result.error.errors.map((error) => error.path.join(".")).join(", ")
+        throw new UserUpdateError(userId, `Invalid user data: ${result.error.message} at ${errorPaths}`)
+      }
+
+      if (data.profileSlug) {
+        if (data.profileSlug !== slugify(data.profileSlug)) {
+          throw new UserUpdateError(userId, `Profile slug ${data.profileSlug} is not a valid slug`)
+        }
+
+        const existingUser = await this.findByProfileSlug(handle, data.profileSlug)
+
+        if (existingUser && existingUser.id !== userId) {
+          throw new UserUpdateError(
+            userId,
+            `Profile slug ${data.profileSlug} is already taken by another user (${existingUser.id})`
+          )
+        }
+      }
+
       return await userRepository.update(handle, userId, data)
     },
     async createMembership(handle, userId, data) {
       const user = await this.getById(handle, userId)
       return await userRepository.createMembership(handle, user.id, data)
+    },
+    async updateMembership(handle, membershipId, membership) {
+      return userRepository.updateMembership(handle, membershipId, membership)
+    },
+    async createAvatarUploadURL(handle, userId) {
+      const user = await this.getById(handle, userId)
+      // There should be no reason for an image to be much larger than 500KB
+      const maxSizeKB = 500
+      const key = `/avatar/${user.id}`
+      logger.info(`Creating AWS S3 Presigned URL for User(ID=%s) at S3 address s3://${bucket}/${key}`, user.id)
+      return await createPresignedPost(client, {
+        Bucket: bucket,
+        Key: key,
+        Conditions: [
+          ["content-length-range", 0, maxSizeKB * 1024],
+          ["eq", "$Content-Type", "image/jpeg"],
+          ["eq", "$Content-Type", "image/png"],
+          ["eq", "$Content-Type", "image/webp"],
+        ],
+      })
     },
     async findFeideAccessTokenByUserId(userId) {
       const response = await managementClient.users.get({ id: userId })

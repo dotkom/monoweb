@@ -3,12 +3,12 @@ import { auth } from "@/auth"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { server } from "@/utils/trpc/server"
 import {
-  type Membership,
-  type MembershipSpecialization,
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   getActiveMembership,
   getMembershipGrade,
+  getMembershipTypeName,
+  getSpecializationName,
 } from "@dotkomonline/types"
 import {
   Avatar,
@@ -34,36 +34,6 @@ import { useMemo } from "react"
 
 const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
   `/api/auth/authorize?connection=FEIDE&redirectAfter=/profil/${profileSlug}` as const
-
-const getMembershipTypeString = (membership: Membership) => {
-  switch (membership.type) {
-    case "BACHELOR_STUDENT":
-      return "Bachelor"
-    case "MASTER_STUDENT":
-      return "Master"
-    case "SOCIAL_MEMBER":
-      return "Sosialt medlem"
-    case "KNIGHT":
-      return "Ridder"
-    case "PHD_STUDENT":
-      return "PhD-student"
-  }
-}
-
-const getSpecializationString = (specialization: MembershipSpecialization) => {
-  switch (specialization) {
-    case "ARTIFICIAL_INTELLIGENCE":
-      return "Kunstig intelligens"
-    case "DATABASE_AND_SEARCH":
-      return "Database og søk"
-    case "INTERACTION_DESIGN":
-      return "Interaksjonsdesign"
-    case "SOFTWARE_ENGINEERING":
-      return "Programvareutvikling"
-    case "UNKNOWN":
-      return "Ukjent spesialisering"
-  }
-}
 
 const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
@@ -208,7 +178,13 @@ export default async function ProfilePage({
               {user.name}
             </Title>
             {isUser && (
-              <Button color="dark" className="hidden md:block">
+              <Button
+                element="a"
+                href="/innstillinger/profil"
+                color="dark"
+                icon={<Icon icon="tabler:edit" className="text-lg" />}
+                className="hidden gap-2 md:flex"
+              >
                 Rediger profil
               </Button>
             )}
@@ -218,7 +194,7 @@ export default async function ProfilePage({
             {activeMembership ? (
               <Text>
                 {grade && `${grade}. klasse (`}
-                {getMembershipTypeString(activeMembership)}
+                {getMembershipTypeName(activeMembership.type)}
                 {grade && ")"}
               </Text>
             ) : (
@@ -270,7 +246,7 @@ export default async function ProfilePage({
                 {renderUserInfo("E-post", user.email)}
                 {renderUserInfo("Kjønn", user.gender || "Ikke oppgitt")}
                 {renderUserInfo("Telefon", user.phone)}
-                {renderUserInfo("Allergier", user.dietaryRestrictions || "Ingen allergier")}
+                {renderUserInfo("Kostholdsrestriksjoner", user.dietaryRestrictions || "Ingen kostholdsrestriksjoner")}
               </div>
             </div>
           </div>
@@ -283,9 +259,9 @@ export default async function ProfilePage({
                 <>
                   <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
                   <div className="flex flex-col gap-1">
-                    <Text className="text-xl font-medium">{getMembershipTypeString(activeMembership)}</Text>
+                    <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
                     {activeMembership.specialization && (
-                      <Text>{getSpecializationString(activeMembership.specialization)}</Text>
+                      <Text>{getSpecializationName(activeMembership.specialization)}</Text>
                     )}
                     <Text>{grade}. klasse</Text>
                     <Text className="text-xs text-gray-500 dark:text-stone-500">

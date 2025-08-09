@@ -36,7 +36,7 @@ runs:
         role-to-assume: ${{ inputs.aws-iam-role }}
     - name: Render new task definition revision
       id: render-task-definition
-      uses: aws-actions/amazon-ecs-render-task-definition@acd72bc11233ac43bac45ddb7b8e54ada737e6cd # v1
+      uses: aws-actions/amazon-ecs-render-task-definition@64aefa8f68c9083d24d230e3099d046d5964bcba # v1
       with:
         container-name: ${{ inputs.container-name }}
         task-definition-arn: ${{ inputs.aws-task-definition-arn }}
@@ -48,4 +48,5 @@ runs:
         service: ${{ inputs.service-name }}
         cluster: ${{ inputs.cluster-name }}
         task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
-        wait-for-service-stability: false
+        wait-for-service-stability: true
+        wait-for-minutes: 10

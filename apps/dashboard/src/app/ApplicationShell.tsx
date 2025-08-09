@@ -24,7 +24,6 @@ const navigations = [
     icon: "tabler:wheelchair",
     children: [
       { label: "Arrangementer", href: "/event" },
-      { label: "Tilbakemeldingsskjema", href: "/feedback" },
       { label: "Prikker & Suspensjoner", href: "/punishment" },
       { label: "Betaling", href: "/payment" },
     ],
@@ -56,10 +55,7 @@ const navigations = [
   {
     label: "Brukere",
     icon: "tabler:users-group",
-    children: [
-      { label: "Brukere", href: "/user" },
-      { label: "Medlemskap", href: "/membership" },
-    ],
+    children: [{ label: "Brukere", href: "/user" }],
   },
 ] as const
 

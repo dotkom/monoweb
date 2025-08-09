@@ -18,9 +18,9 @@ Default.args = { ...Default.args, label: "What's your thought's?" }
 
 export const Status: Story<TextareaProps> = (args) => (
   <div className="grid gap-4">
-    <Textarea {...args} status="success" />
-    <Textarea {...args} status="warning" />
-    <Textarea {...args} status="danger" />
+    <Textarea {...args} />
+    <Textarea {...args} />
+    <Textarea {...args} />
   </div>
 )
 

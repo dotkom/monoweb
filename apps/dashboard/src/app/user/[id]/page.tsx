@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { UserEditCard } from "./edit-card"
+import { MembershipPage } from "./membership-page"
 import { useUserDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
@@ -12,6 +13,12 @@ const SIDEBAR_LINKS = [
     label: "Info",
     slug: "info",
     component: UserEditCard,
+  },
+  {
+    icon: "tabler:circles",
+    label: "Medlemskap",
+    slug: "Membership",
+    component: MembershipPage,
   },
 ] as const
 

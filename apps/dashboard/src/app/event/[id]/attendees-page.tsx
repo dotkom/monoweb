@@ -1,4 +1,4 @@
-import { UserSearch } from "@/app/user/components/UserSearch/UserSearch"
+import { UserSearch } from "@/app/user/components/user-search"
 import type { Attendance } from "@dotkomonline/types"
 import { Stack, Title } from "@mantine/core"
 import type { FC } from "react"

@@ -207,7 +207,7 @@ export const AttendanceCard = ({
             isLoggedIn={isLoggedIn}
             userId={user.id}
           />
-          <TicketButton attendeeId={attendee.id} />
+          <TicketButton attendee={attendee} />
         </div>
       ) : (
         <ViewAttendeesButton

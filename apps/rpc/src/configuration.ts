@@ -17,6 +17,13 @@ export const configuration = defineConfiguration({
   ADMIN_USERS: config(process.env.ADMIN_USERS),
 
   AWS_REGION: config(process.env.AWS_REGION, "eu-north-1"),
+  /**
+   * AWS S3 bucket corresponding to the OnlineWeb CDN.
+   *
+   * Typically, this is something like `cdn.online.ntnu.no`.
+   *
+   * NOTE: Users of this bucket MUST prefix their keys accordingly as to not pollute the bucket root.
+   */
   AWS_S3_BUCKET: config(process.env.AWS_S3_BUCKET),
   DATABASE_URL: config(process.env.DATABASE_URL),
 

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto"
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, Prisma } from "@dotkomonline/db"
 import {
+  type MembershipId,
   type MembershipWrite,
   type User,
   type UserFilterQuery,
@@ -28,6 +29,7 @@ export interface UserRepository {
    */
   register(handle: DBHandle, userId: UserId): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
+  updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
 }
 
 export function getUserRepository(): UserRepository {
@@ -60,23 +62,17 @@ export function getUserRepository(): UserRepository {
       return this.findById(handle, owUser.id)
     },
     async findMany(handle, query, page) {
+      const or = [
+        ...(query.byName?.trim() ? [{ name: { contains: query.byName, mode: "insensitive" as const } }] : []),
+        ...(query.byEmail?.trim() ? [{ email: { contains: query.byEmail, mode: "insensitive" as const } }] : []),
+      ] satisfies Prisma.UserWhereInput[]
+
+      const where: Prisma.UserWhereInput = or.length ? { OR: or } : {}
+
       const users = await handle.user.findMany({
         ...pageQuery(page),
-        where: {
-          AND: [
-            {
-              name:
-                query.byName !== null
-                  ? {
-                      contains: query.byName,
-                    }
-                  : undefined,
-            },
-          ],
-        },
-        include: {
-          memberships: true,
-        },
+        where,
+        include: { memberships: true },
       })
       return users.map((user) => parseOrReport(UserSchema, user))
     },
@@ -104,6 +100,22 @@ export function getUserRepository(): UserRepository {
       })
       const user = await this.findById(handle, userId)
       invariant(user !== null, `User with id ${userId} not found after creating membership`)
+      return user
+    },
+    async updateMembership(handle, membershipId, membership) {
+      const row = await handle.membership.update({
+        where: {
+          id: membershipId,
+        },
+        data: {
+          ...membership,
+        },
+        select: {
+          userId: true,
+        },
+      })
+      const user = await this.findById(handle, row.userId)
+      invariant(user !== null, `User with id ${row.userId} not found after updating membership`)
       return user
     },
   }

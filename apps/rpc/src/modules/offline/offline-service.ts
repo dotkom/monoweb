@@ -17,7 +17,7 @@ export interface OfflineService {
   getAll(handle: DBHandle, page: Pageable): Promise<Offline[]>
   create(handle: DBHandle, data: OfflineWrite): Promise<Offline>
   update(handle: DBHandle, offlineId: OfflineId, data: Partial<OfflineWrite>): Promise<Offline>
-  createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost>
+  createOfflineUploadURL(filename: string, mimeType: string): Promise<PresignedPost>
 }
 
 export function getOfflineService(
@@ -40,9 +40,9 @@ export function getOfflineService(
     async update(handle, id, data) {
       return offlineRepository.update(handle, id, data)
     },
-    async createPresignedPost(filename, mimeType) {
+    async createOfflineUploadURL(filename, mimeType) {
       const uuid = crypto.randomUUID()
-      const key = `${Date.now()}-${uuid}-${filename}`
+      const key = `offlines/${Date.now()}-${uuid}-${filename}`
       // Kind of arbitrary, but this is gmail max size for attachments, so I figured it's a sane max size.
       const maxSizeMB = 25
       return await createPresignedPost(client, {
