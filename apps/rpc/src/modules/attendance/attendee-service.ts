@@ -34,6 +34,7 @@ import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeNotFoundError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 import { getCurrentUTC } from "@dotkomonline/utils"
+import { PaymentAlreadyChargedError } from "../payment/payment-error"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
@@ -74,6 +75,7 @@ export interface AttendeeService {
   reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean): Promise<boolean>
   handleVerifyPaymentTask(handle: DBHandle, payload: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
   handleOnPaymentTask(handle: DBHandle, paymentId: string): Promise<void>
+  chargeAttendee(handle: DBHandle, attendeeId: string): Promise<void>
   getAttendeeStatuses(
     handle: DBHandle,
     userId: UserId,
@@ -191,7 +193,8 @@ export function getAttendeeService(
         reserved: false,
         paymentLink: null,
         paymentDeadline: null,
-        paidAt: null,
+        paymentChargedAt: null,
+        paymentReservedAt: null,
         paymentId: null,
       })
       const attendee = await addUserToAttendee(handle, attendeeWithoutUser, user)
@@ -236,10 +239,11 @@ export function getAttendeeService(
         userGrade,
         earliestReservationAt: registerTime,
         reserved: true,
-        paidAt: null,
         paymentDeadline: null,
         paymentLink: null,
         paymentId: null,
+        paymentReservedAt: null,
+        paymentChargedAt: null,
       })
 
       return addUserToAttendee(handle, attendeeWithoutUser, user)
@@ -313,7 +317,7 @@ export function getAttendeeService(
     async handleVerifyPaymentTask(handle, { attendeeId }) {
       const attendee = await attendeeRepository.getById(handle, attendeeId)
 
-      if (attendee === null || attendee.paidAt) {
+      if (attendee === null || attendee.paymentReservedAt) {
         return
       }
       await this.deregisterForEvent(handle, attendeeId, {
@@ -324,15 +328,37 @@ export function getAttendeeService(
     async handleOnPaymentTask(handle, paymentId) {
       const attendee = await attendeeRepository.getByPayment(handle, paymentId)
 
-      if (attendee === null || attendee.paidAt) {
+      if (attendee === null || attendee.paymentReservedAt) {
         return
       }
 
       await attendeeRepository.update(handle, attendee.id, {
-        paidAt: getCurrentUTC(),
+        paymentReservedAt: getCurrentUTC(),
         paymentDeadline: null,
         paymentLink: null,
       })
+    },
+    async chargeAttendee(handle, attendeeId: string) {
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+      if (!attendee) {
+        throw new AttendeeNotFoundError(attendeeId, "")
+      }
+      if (!attendee.paymentId) {
+        return
+      }
+
+      try {
+        await paymentService.chargeProductPayment(attendee.paymentId)
+        await attendeeRepository.update(handle, attendeeId, {
+          paymentChargedAt: getCurrentUTC(),
+        })
+      } catch (e) {
+        if (e instanceof PaymentAlreadyChargedError) {
+          console.log(`Skipping attendee ${attendee.id} as they have already been charged`)
+        } else {
+          console.error("Failed to charge attendee", attendee.id, e)
+        }
+      }
     },
     async getAttendeeStatuses(handle: DBHandle, userId: UserId, attendanceIds: AttendanceId[]) {
       return await attendeeRepository.getAttendeeStatuses(handle, userId, attendanceIds)

@@ -190,7 +190,7 @@ export function getAttendanceService(
           handle,
           "CHARGE_ATTENDANCE_PAYMENTS",
           { attendanceId },
-          new TZDate(attendance.deregisterDeadline)
+          new TZDate(newAttendance.deregisterDeadline)
         )
       }
 
@@ -310,17 +310,8 @@ export function getAttendanceService(
       const attendees = await attendeeRepository.getByAttendanceId(handle, attendanceId)
 
       for (const attendee of attendees) {
-        if (attendee.paymentId) {
-          try {
-            await paymentService.chargeProductPayment(attendee.paymentId)
-          } catch (e) {
-            if (e instanceof PaymentAlreadyChargedError) {
-              console.log(`Skipping attendee ${attendee.id} as they have already been charged`)
-            } else {
-              console.error("Failed to charge attendee", attendee.id, e)
-            }
-          }
-        }
+        console.log(`Charging attendee ${attendee.id}`)
+        await attendeeService.chargeAttendee(handle, attendee.id)
       }
     },
   }

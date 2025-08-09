@@ -255,10 +255,12 @@ model Attendee {
   earliestReservationAt DateTime            @db.Timestamptz(3)
   createdAt             DateTime            @default(now()) @db.Timestamptz(3)
   updatedAt             DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
+
   paymentDeadline       DateTime?
   paymentLink           String?
   paymentId             String?
-  paidAt                DateTime?
+  paymentReservedAt     DateTime?
+  paymentChargedAt      DateTime?
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
@@ -480,9 +482,10 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  ATTEMPT_RESERVE_ATTENDEE @map("ATTEMPT_RESERVE_ATTENDEE")
-  MERGE_POOLS              @map("MERGE_POOLS")
-  VERIFY_PAYMENT           @map("VERIFY_PAYMENT")
+  ATTEMPT_RESERVE_ATTENDEE    @map("ATTEMPT_RESERVE_ATTENDEE")
+  MERGE_POOLS                 @map("MERGE_POOLS")
+  VERIFY_PAYMENT              @map("VERIFY_PAYMENT")
+  CHARGE_ATTENDANCE_PAYMENTS  @map("CHARGE_ATTENDANCE_PAYMENTS")
 
   // The table is called job_name for legacy reasons.
   @@map("task_type")

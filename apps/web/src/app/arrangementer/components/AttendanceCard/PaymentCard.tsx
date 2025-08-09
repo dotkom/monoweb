@@ -77,7 +77,7 @@ export const PaymentCard = ({ attendance, attendee }: { attendance: Attendance; 
     return <GenericPaymentCard disabled>Pris: {attendance.attendancePrice} kr</GenericPaymentCard>
   }
 
-  if (attendee.paidAt) {
+  if (attendee.paymentReservedAt || attendee.paymentChargedAt) {
     return (
       <GenericPaymentCard disabled className="bg-green-200">
         {attendance.attendancePrice}kr betalt
