@@ -1,11 +1,11 @@
-import { CommitteePage } from "@/app/komiteer/components/CommiteePage"
+import { GroupPage } from "@/app/komiteer/components/GroupPage"
 
 interface InterestGroupPageProps {
   params: Promise<{ slug: string }>
 }
 
 const InterestGroupPage = ({ params }: InterestGroupPageProps) => {
-  return <CommitteePage groupType="INTEREST_GROUP" params={params} />
+  return <GroupPage groupType="INTEREST_GROUP" params={params} />
 }
 
 export default InterestGroupPage

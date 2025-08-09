@@ -1,9 +1,9 @@
-import { CommitteePage } from "../components/CommiteePage"
+import { GroupPage } from "../components/GroupPage"
 
 interface CommitteePageProps {
   params: Promise<{ slug: string }>
 }
 
 export default function Page({ params }: CommitteePageProps) {
-  return <CommitteePage groupType="COMMITTEE" params={params} />
+  return <GroupPage groupType="COMMITTEE" params={params} />
 }
