@@ -4,6 +4,7 @@ import {
   PaymentAmbiguousPriceError,
   PaymentMissingPriceError,
   PaymentNotReadyToCharge,
+  PaymentUnexpectedStateError,
 } from "./payment-error"
 import z from "zod"
 
@@ -15,7 +16,7 @@ export type ProductPayment = {
 export interface PaymentService {
   createOrUpdateProduct(productId: string, name: string, price: number): Promise<string>
   createProductPayment(productId: string, price: number, redirect: string): Promise<ProductPayment>
-  cancelProductPayment(paymentId: string): Promise<void>
+  cancelProductPayment(paymentId: string, refundChargedPayments?: boolean): Promise<void>
   chargeProductPayment(paymentId: string): Promise<void>
 }
 
@@ -123,7 +124,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
 
       return { id: session.id, url: session.url }
     },
-    cancelProductPayment: async (paymentId: string) => {
+    cancelProductPayment: async (paymentId: string, refund = false) => {
       const session = await stripe.checkout.sessions.retrieve(paymentId)
 
       if (session.payment_intent !== null) {
@@ -135,10 +136,14 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         }
 
         if (paymentIntent.status === "succeeded") {
-          throw new PaymentAlreadyChargedError(paymentId)
-        }
+          if (!refund) {
+            throw new PaymentAlreadyChargedError(paymentId)
+          }
 
-        if (paymentIntent.status !== "canceled") {
+          await stripe.refunds.create({
+            payment_intent: paymentIntent.id,
+          })
+        } else if (paymentIntent.status !== "canceled") {
           await stripe.paymentIntents.cancel(paymentIntent.id)
         }
       }
@@ -165,7 +170,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         throw new PaymentAlreadyChargedError(paymentId)
       }
 
-      await stripe.paymentIntents.capture(paymentIntent.id);
+      await stripe.paymentIntents.capture(paymentIntent.id)
     },
   }
 }

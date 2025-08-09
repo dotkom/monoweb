@@ -19,6 +19,12 @@ export class PaymentAlreadyChargedError extends ApplicationError {
   }
 }
 
+export class PaymentUnexpectedStateError extends ApplicationError {
+  constructor(id: string, message: string) {
+    super(PROBLEM_DETAILS.NotFound, `Payment with id ${id} had an unexpected state: ${message}`)
+  }
+}
+
 export class PaymentNotReadyToCharge extends ApplicationError {
   constructor(id: string) {
     super(PROBLEM_DETAILS.NotFound, `Payment with id ${id} is not ready to be charged`)

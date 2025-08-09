@@ -31,7 +31,12 @@ import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenError } from "./attendance-error"
 import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import { AttendeeDeregistrationError, AttendeeNotFoundError, AttendeeRegistrationError } from "./attendee-error"
+import {
+  AttendeeDeregistrationError,
+  AttendeeHasNotPaidError,
+  AttendeeNotFoundError,
+  AttendeeRegistrationError,
+} from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { PaymentAlreadyChargedError } from "../payment/payment-error"
@@ -47,6 +52,7 @@ export interface AttendeeService {
     attendanceId: string,
     attendancePoolId: string
   ): Promise<Attendee>
+  refundAttendee(handle: DBHandle, attendeeId: string): Promise<void>
   tryDeregisterForEvent(handle: DBHandle, userId: string, attendanceId: string): Promise<void>
   deregisterForEvent(handle: DBHandle, attendeeId: AttendeeId, options: AdminDeregisterForEventOptions): Promise<void>
   delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
@@ -107,6 +113,24 @@ export function getAttendeeService(
         throw new AttendeeNotFoundError(userId, attendanceId)
       }
       return await addUserToAttendee(handle, attendeeWithoutUser)
+    },
+    async refundAttendee(handle: DBHandle, attendeeId: string) {
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+      if (!attendee) {
+        throw new AttendeeNotFoundError(attendeeId, "")
+      }
+      if (!attendee.paymentId || (!attendee.paymentChargedAt && !attendee.paymentReservedAt)) {
+        throw new AttendeeHasNotPaidError(attendeeId)
+      }
+
+      await paymentService.cancelProductPayment(attendee.paymentId, true)
+      await attendeeRepository.update(handle, attendeeId, {
+        paymentChargedAt: null,
+        paymentId: null,
+        paymentDeadline: null,
+        paymentLink: null,
+        paymentReservedAt: null,
+      })
     },
     async tryDeregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
       const deregisterTime = new Date()
@@ -328,7 +352,7 @@ export function getAttendeeService(
     async handleOnPaymentTask(handle, paymentId) {
       const attendee = await attendeeRepository.getByPayment(handle, paymentId)
 
-      if (attendee === null || attendee.paymentReservedAt) {
+      if (attendee === null || attendee.paymentReservedAt || !attendee.paymentDeadline) {
         return
       }
 

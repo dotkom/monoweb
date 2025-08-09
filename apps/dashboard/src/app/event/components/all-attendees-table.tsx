@@ -7,6 +7,8 @@ import { useMemo } from "react"
 import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
+import { useTRPC } from "@/lib/trpc"
+import { useMutation } from "@tanstack/react-query"
 
 interface AllAttendeesTableProps {
   attendees: Attendee[]
@@ -14,7 +16,9 @@ interface AllAttendeesTableProps {
 }
 
 export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTableProps) => {
+  const trpc = useTRPC()
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
+  const refundMutation = useMutation(trpc.attendance.refundAttendee.mutationOptions())
 
   const pools = useMemo(() => {
     return (attendance?.pools ?? []).reduce<Record<string, AttendancePool>>((acc, pool) => {
@@ -143,7 +147,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           enableSorting: false,
           header: () => "Refunder",
           cell: (info) => (
-            <ActionIcon>
+            <ActionIcon onClick={() => refundMutation.mutate({ attendeeId: info.getValue().id })}>
               <Icon icon="tabler:credit-card-refund" />
             </ActionIcon>
           ),
