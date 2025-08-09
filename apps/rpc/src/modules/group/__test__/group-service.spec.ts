@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto"
+import type { S3Client } from "@aws-sdk/client-s3"
 import type { Group } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
 import type { ManagementClient } from "auth0"
@@ -16,7 +17,7 @@ import { getGroupService } from "../group-service"
 describe("GroupService", () => {
   const db = vi.mocked(PrismaClient.prototype)
   const auth0Client = mockDeep<ManagementClient>()
-
+  const s3Client = mockDeep<S3Client>()
   const userRepository = getUserRepository()
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
   const notificationPermissionsRepository = getNotificationPermissionsRepository()
@@ -29,7 +30,9 @@ describe("GroupService", () => {
     notificationPermissionsRepository,
     feideGroupsRepository,
     ntnuStudyplanRepository,
-    auth0Client
+    auth0Client,
+    s3Client,
+    "fake-aws-bucket"
   )
 
   const groupRepository = getGroupRepository()

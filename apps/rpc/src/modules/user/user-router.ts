@@ -37,6 +37,17 @@ export const userRouter = t.router({
       return ctx.userService.findByProfileSlug(handle, input)
     })
   ),
+  /**
+   * Create a presigned AWS S3 URL for uploading an avatar image to our S3 bucket.
+   *
+   * NOTE: At the moment, this is only used for a user's own avatar. It might be beneficial to allow administrators to
+   * modify other users' avatar in the future.
+   */
+  createAvatarUploadURL: authenticatedProcedure.mutation(async ({ ctx }) =>
+    ctx.executeTransaction(async (handle) => {
+      return await ctx.userService.createAvatarUploadURL(handle, ctx.principal.subject)
+    })
+  ),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.register(handle, input)

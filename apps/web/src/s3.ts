@@ -1,24 +1,23 @@
 import { useMutation } from "@tanstack/react-query"
 import { useTRPC } from "./utils/trpc/client"
 
-// Expected response: 204 No Content
-export async function uploadFileToS3PresignedUrl(
-  file: File,
-  fields: Record<string, string>,
-  url: string
-): Promise<string> {
+/**
+ * Manually upload a Web File to the given S3 presigned UTL.
+ *
+ * Parameters `fields` and `url` come from the presigned post response. See the `useCreateAvtarUploadURL` hook for an
+ * example of how this function is expected to be used.
+ */
+async function uploadFileToS3PresignedUrl(file: File, fields: Record<string, string>, url: string): Promise<string> {
   try {
     const formData = new FormData()
+    formData.append("file", file)
     for (const [key, value] of Object.entries(fields)) {
       formData.append(key, value)
     }
 
-    // Append the file to the formData
-    formData.append("file", file)
-
     const response = await fetch(url, {
       method: "POST",
-      body: formData, // No headers needed, fetch adds the correct one for FormData
+      body: formData,
     })
 
     // S3 returns a Location header with the url of the uploaded file
@@ -33,16 +32,17 @@ export async function uploadFileToS3PresignedUrl(
   }
 }
 
-export const useUploadFile = () => {
+/**
+ * Create a presigned S3 URL for uploading the calling user's avatar image.
+ *
+ * NOTE: Do not use this function for anything non-avatar related. The options on the backend are specifically set for
+ * avatar images.
+ */
+export const useCreateAvtarUploadURL = () => {
   const trpc = useTRPC()
-  const presignedPostMut = useMutation(trpc.offline.createPresignedPost.mutationOptions())
-
+  const presignedPostMut = useMutation(trpc.user.createAvatarUploadURL.mutationOptions())
   return async (file: File) => {
-    const presignedPost = await presignedPostMut.mutateAsync({
-      filename: `${file.name}`,
-      mimeType: file.type,
-    })
-
+    const presignedPost = await presignedPostMut.mutateAsync()
     return await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
   }
 }
