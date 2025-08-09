@@ -110,7 +110,7 @@ export const eventRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        const attendance = await ctx.attendanceService.create(handle, input.values)
+        const attendance = await ctx.attendanceService.createAttendance(handle, input.values)
         return ctx.eventService.updateEventAttendance(handle, input.eventId, attendance.id)
       })
     }),

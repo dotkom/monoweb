@@ -12,7 +12,7 @@ applications, you can use the following commands:
 Terminal 1:
 ```bash
 git clone https://github.com/dotkom/monoweb
-cd monoweb
+cd monoweba
 
 doppler login
 doppler setup # Press Y on every prompt
@@ -20,7 +20,7 @@ doppler setup # Press Y on every prompt
 docker compose up -d
 
 pnpm install
-pnpm migrate:dev # Only needs to be run once to set up the database
+pnpm migrate:dev # Only needs to be run onqce to set up the database
 pnpm dev
 ```
 

@@ -29,7 +29,7 @@ export interface PersonalMarkService {
   removeFromUser(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
   listVisibleInformationForUser(handle: DBHandle, userId: UserId): Promise<VisiblePersonalMarkDetails[]>
   countUsersByMarkId(handle: DBHandle, markId: MarkId): Promise<number>
-  getUserPunishment(handle: DBHandle, userId: UserId): Promise<Punishment | null>
+  findPunishmentByUserId(handle: DBHandle, userId: UserId): Promise<Punishment | null>
 }
 
 export function getPersonalMarkService(
@@ -87,7 +87,7 @@ export function getPersonalMarkService(
     async countUsersByMarkId(handle, markId) {
       return await personalMarkRepository.countUsersByMarkId(handle, markId)
     },
-    async getUserPunishment(handle, userId) {
+    async findPunishmentByUserId(handle, userId) {
       const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
       const marks = await markService.getMany(
         handle,

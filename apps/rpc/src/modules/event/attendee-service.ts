@@ -1,18 +1,15 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import {
+  type Attendance,
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
   type AttendanceSelectionResponse,
   type Attendee,
   type AttendeeId,
-  type AttendeeWithoutUser,
   type User,
   type UserId,
-  canDeregisterForAttendance as attendanceOpenForDeregistration,
-  canRegisterForAttendance as attendanceOpenForRegistration,
-  canUserAttendPool,
   getActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
@@ -81,14 +78,14 @@ export function getAttendeeService(
   taskSchedulingService: TaskSchedulingService,
   personalMarkService: PersonalMarkService
 ): AttendeeService {
-  async function addUserToAttendee(
-    handle: DBHandle,
-    attendeeWithoutUser: AttendeeWithoutUser,
-    user?: User
-  ): Promise<Attendee> {
-    const resolvedUser = user ?? (await userService.getById(handle, attendeeWithoutUser.userId))
-    return { ...attendeeWithoutUser, user: resolvedUser }
-  }
+  // async function addUserToAttendee(
+  //   handle: DBHandle,
+  //   attendeeWithoutUser: AttendeeWithoutUser,
+  //   user?: User
+  // ): Promise<Attendee> {
+  //   const resolvedUser = user ?? (await userService.getById(handle, attendeeWithoutUser.userId))
+  //   return { ...attendeeWithoutUser, user: resolvedUser }
+  // }
   return {
     async getByUserId(handle: DBHandle, userId: UserId, attendanceId: AttendanceId) {
       const attendeeWithoutUser = await attendeeRepository.getByUserId(handle, userId, attendanceId)
@@ -99,7 +96,7 @@ export function getAttendeeService(
     },
     async registerForEvent(handle: DBHandle, userId: string, attendanceId: string, attendancePoolId: string) {
       const registerTime = new Date()
-      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
@@ -109,7 +106,7 @@ export function getAttendeeService(
         throw new AttendancePoolNotFoundError(attendancePoolId)
       }
 
-      if (!attendanceOpenForRegistration(attendance, registerTime)) {
+      if (!canRegisterForAttendance(attendance, registerTime)) {
         throw new AttendanceNotOpenError()
       }
 
@@ -120,7 +117,7 @@ export function getAttendeeService(
 
       const isMergePool = attendancePool.capacity === 0
 
-      const markPunishment = await personalMarkService.getUserPunishment(handle, userId)
+      const markPunishment = await personalMarkService.findPunishmentByUserId(handle, userId)
 
       if (markPunishment?.suspended) {
         throw new AttendeeRegistrationError(
@@ -153,7 +150,7 @@ export function getAttendeeService(
       } else {
         await taskSchedulingService.scheduleAt(
           handle,
-          tasks.ATTEMPT_RESERVE_ATTENDEE.type,
+          tasks.RESERVE_ATTENDEE.type,
           { userId, attendanceId },
           new TZDate(reserveTime)
         )
@@ -162,7 +159,7 @@ export function getAttendeeService(
     },
     async adminRegisterForEvent(handle: DBHandle, userId: string, attendanceId: string, attendancePoolId: string) {
       const registerTime = new Date()
-      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
@@ -189,12 +186,12 @@ export function getAttendeeService(
     },
     async deregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
       const deregisterTime = new Date()
-      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
       }
 
-      if (!attendanceOpenForDeregistration(attendance, deregisterTime)) {
+      if (!canDeregisterForAttendance(attendance, deregisterTime)) {
         throw new AttendanceDeregisterClosedError()
       }
 
@@ -292,4 +289,30 @@ export function getAttendeeService(
       }
     },
   }
+}
+
+function canRegisterForAttendance(attendance: Attendance, atTime = new Date()) {
+  return attendance.registerEnd > atTime && atTime > attendance.registerStart
+}
+
+function canDeregisterForAttendance(attendance: Attendance, atTime = new Date()) {
+  return attendance.deregisterDeadline > atTime
+}
+
+function canUserAttendPool(pool: AttendancePool, user: User) {
+  if (user.membership === null) {
+    return false
+  }
+
+  if (pool.yearCriteria.length === 0) {
+    return true
+  }
+
+  const grade = getMembershipGrade(user.membership)
+
+  if (grade === null) {
+    return false
+  }
+
+  return pool.yearCriteria.includes(grade)
 }

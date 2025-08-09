@@ -2,10 +2,10 @@ import type { SchedulerClient } from "@aws-sdk/client-scheduler"
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { TaskType } from "@dotkomonline/types"
+import type { AttendanceId, AttendeeId, EventId, Task, TaskId } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { NotImplementedError } from "../../error"
-import { getTaskDefinition } from "./task-definition"
+import type { InferTaskData, TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 import type { TaskService } from "./task-service"
 
@@ -13,7 +13,15 @@ export interface TaskSchedulingService {
   /**
    * Schedule a task of a given kind with the expected payload for the task.
    */
-  scheduleAt(handle: DBHandle, kind: TaskType, data: JsonValue, executeAt: TZDate): Promise<void>
+  // biome-ignore lint/suspicious/noExplicitAny: Any is used for type inference here
+  scheduleAt<TTaskDef extends TaskDefinition<any, any>>(
+    handle: DBHandle,
+    kind: TTaskDef,
+    data: InferTaskData<TTaskDef>,
+    executeAt: TZDate
+  ): Promise<TaskId>
+  findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
+  findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
 }
 
 export function getLocalTaskSchedulingService(
@@ -22,16 +30,22 @@ export function getLocalTaskSchedulingService(
 ): TaskSchedulingService {
   const logger = getLogger("task-scheduling-service/local-backend")
   return {
-    async scheduleAt(handle, kind, data, executeAt) {
-      logger.info("Scheduling task of TaskKind=%s with data: %o", kind, data)
-      const definition = getTaskDefinition(kind)
-      const payload = taskService.parse(definition, data) as JsonValue
-      await taskRepository.create(handle, kind, {
+    async scheduleAt(handle, task, data, executeAt) {
+      logger.info("Scheduling task of TaskKind=%s with data: %o", task, data)
+      const payload = taskService.parse(task, data) as JsonValue
+      const scheduledTask = await taskRepository.create(handle, task.type, {
         payload,
         processedAt: null,
         scheduledAt: executeAt,
         status: "PENDING",
       })
+      return scheduledTask.id
+    },
+    async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
+      return taskRepository.findReserveAttendeeTask(handle, attendeeId, attendanceId)
+    },
+    async findMergeEventPoolsTask(handle, eventId) {
+      return taskRepository.findMergeEventPoolsTask(handle, eventId)
     },
   }
 }
@@ -43,6 +57,14 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
     // transaction, this one also needs to take a handle. Unfortunate but necessary.
     async scheduleAt(_, kind, data) {
       throw new NotImplementedError("EventBridgeSchedulingService#schedule")
+    },
+    async findReserveAttendeeTask(_, attendeeId, attendanceId) {
+      logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
+      return null
+    },
+    async findMergeEventPoolsTask(_, eventId) {
+      logger.warn("findMergeEventPoolsTask is not implemented in EventBridgeSchedulingService")
+      return null
     },
   }
 }

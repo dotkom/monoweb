@@ -139,7 +139,7 @@ function AttendanceSelectionsTable({ results }: AttendanceSelectionsTableProps) 
       {results.map((result, index) => (
         <div key={result.id}>
           <h2>
-            {result.name} - ({result.totalCount}) svar
+            {result.name} - ({result.count}) svar
           </h2>
           <Table striped>
             <Table.Thead>
