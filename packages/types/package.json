@@ -20,7 +20,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
-    "@types/node": "22.16.5",
+    "@types/node": "22.17.1",
     "typescript": "5.8.3"
   }
 }

@@ -41,7 +41,7 @@
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
     "@types/common-tags": "1.8.4",
-    "@types/node": "22.16.5",
+    "@types/node": "22.17.1",
     "@types/pg": "8.15.5",
     "common-tags": "1.8.2",
     "prisma": "6.8.2",
