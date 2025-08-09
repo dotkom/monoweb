@@ -36,5 +36,5 @@ export const offlineRouter = t.router({
         mimeType: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.offlineService.createPresignedPost(input.filename, input.mimeType)),
+    .mutation(async ({ input, ctx }) => ctx.offlineService.createOfflineUploadURL(input.filename, input.mimeType)),
 })
