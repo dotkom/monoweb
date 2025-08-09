@@ -549,7 +549,7 @@ importers:
         version: 11.0.0-rc.828(typescript@5.8.3)
       auth0:
         specifier: ^4.23.1
-        version: 4.27.0
+        version: 4.28.0
       commander:
         specifier: ^14.0.0
         version: 14.0.0
@@ -5472,8 +5472,8 @@ packages:
     resolution: {integrity: sha512-0bDNnY/u6pPwHDMoF0FieU354oBi0a8rD9FcsLwzcGWbc8KS8KPIi7y+s13OlVY+gMWc/9xEMUgNE6Qm8ZllYQ==}
     engines: {node: '>=4'}
 
-  auth0@4.27.0:
-    resolution: {integrity: sha512-4FGgjzKCH/f7rQLQVR5dM30asjOObeW3PyHa8bQrS4rKkuv22JoNxox26fb1FZ3hI4zEgbVbPm9x7pHrljZzrw==}
+  auth0@4.28.0:
+    resolution: {integrity: sha512-fBtJnZ+G/W53pkbkwMrPlfaJPLAD/wwDaNnUqta8sY+sgIxbQdTfkiaHc5FcRNtaX96M7cQBX9KEgKixF5XKlA==}
     engines: {node: '>=18'}
 
   avvio@9.1.0:
@@ -14007,7 +14007,7 @@ snapshots:
 
   attr-accept@2.2.5: {}
 
-  auth0@4.27.0:
+  auth0@4.28.0:
     dependencies:
       jose: 4.15.9
       undici-types: 6.21.0
