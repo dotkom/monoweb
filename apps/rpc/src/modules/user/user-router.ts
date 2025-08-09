@@ -48,12 +48,6 @@ export const userRouter = t.router({
       return await ctx.userService.createAvatarUploadURL(handle, ctx.principal.subject)
     })
   ),
-  profileSlugExists: procedure.input(UserSchema.shape.profileSlug).query(async ({ input, ctx }) =>
-    ctx.executeTransaction(async (handle) => {
-      const user = await ctx.userService.findByProfileSlug(handle, input)
-      return Boolean(user)
-    })
-  ),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.register(handle, input)

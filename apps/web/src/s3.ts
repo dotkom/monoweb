@@ -38,7 +38,7 @@ async function uploadFileToS3PresignedUrl(file: File, fields: Record<string, str
  * NOTE: Do not use this function for anything non-avatar related. The options on the backend are specifically set for
  * avatar images.
  */
-export const useCreateAvtarUploadURL = () => {
+export const useCreateAvatarUploadURL = () => {
   const trpc = useTRPC()
   const presignedPostMut = useMutation(trpc.user.createAvatarUploadURL.mutationOptions())
   return async (file: File) => {

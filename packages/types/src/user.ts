@@ -57,10 +57,10 @@ export const UserWriteSchema = z.object({
     .max(128, "E-posten kan ikke være lengre enn 128 tegn")
     .nullable(),
   phone: z.string().regex(PHONE_REGEX, "Ugyldig telefonnummer").nullable(),
-  imageUrl: z.string().url("Ugyldig URL").nullable(),
+  imageUrl: z.string().url("Ugyldig URL").max(500, "Bildelenken kan ikke være lengre enn 500 tegn").nullable(),
   biography: z.string().nullable(),
   gender: z.string().nullable(),
-  dietaryRestrictions: z.string().nullable(),
+  dietaryRestrictions: z.string().max(200, "Kostholdsrestriksjoner kan ikke være lengre enn 200 tegn").nullable(),
 })
 export type UserWrite = z.infer<typeof UserWriteSchema>
 

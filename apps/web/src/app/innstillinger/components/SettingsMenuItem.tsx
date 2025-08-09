@@ -1,9 +1,6 @@
-"use client"
-
 import { Button, Icon, cn } from "@dotkomonline/ui"
 import { usePathname } from "next/navigation"
 import type { FC } from "react"
-import { useEffect, useState } from "react"
 
 export type SettingsMenuItemProps = {
   title: string
@@ -13,11 +10,7 @@ export type SettingsMenuItemProps = {
 
 export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon }) => {
   const path = usePathname()
-  const [isCurrent, setCurrent] = useState<boolean>(false)
-
-  useEffect(() => {
-    setCurrent(path === slug)
-  }, [path, slug])
+  const isCurrent = path === slug
 
   return (
     <Button

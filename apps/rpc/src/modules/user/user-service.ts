@@ -264,13 +264,13 @@ export function getUserService(
       const result = UserWriteSchema.partial().safeParse(data)
 
       if (!result.success) {
-        const error = result.error.errors[0]
-        throw new UserUpdateError(userId, `Invalid user data: ${error.message} at ${error.path.join(".")}`)
+        const errorPaths = result.error.errors.map((error) => error.path.join(".")).join(", ")
+        throw new UserUpdateError(userId, `Invalid user data: ${result.error.message} at ${errorPaths}`)
       }
 
       if (data.profileSlug) {
         if (data.profileSlug !== slugify(data.profileSlug)) {
-          throw new UserUpdateError(userId, `Profile slug ${data.profileSlug} is not valid.`)
+          throw new UserUpdateError(userId, `Profile slug ${data.profileSlug} is not a valid slug`)
         }
 
         const existingUser = await this.findByProfileSlug(handle, data.profileSlug)
@@ -278,7 +278,7 @@ export function getUserService(
         if (existingUser && existingUser.id !== userId) {
           throw new UserUpdateError(
             userId,
-            `Profile slug ${data.profileSlug} is already taken by another user (${existingUser.id}).`
+            `Profile slug ${data.profileSlug} is already taken by another user (${existingUser.id})`
           )
         }
       }

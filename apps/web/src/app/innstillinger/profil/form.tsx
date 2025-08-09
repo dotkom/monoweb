@@ -1,6 +1,6 @@
 "use client"
 
-import { useUploadFile } from "@/s3"
+import { useCreateAvatarUploadURL } from "@/s3"
 import { useTRPC } from "@/utils/trpc/client"
 import { type User, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 import {
@@ -66,18 +66,13 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
   const trpc = useTRPC()
 
-  const { data: profileSlugExists, isFetching: profileSlugExistsFetching } = useQuery(
-    trpc.user.profileSlugExists.queryOptions(debouncedSlug, {
+  const { data: fetchedUser, isFetching: isUserFetching } = useQuery(
+    trpc.user.findByProfileSlug.queryOptions(debouncedSlug, {
       enabled: Boolean(debouncedSlug && debouncedSlug !== user.profileSlug),
     })
   )
 
-  const upload = useUploadFile()
-
-  // This validates the default values without the user having to interact with the form
-  useEffect(() => {
-    trigger()
-  }, [trigger])
+  const avatarUpload = useCreateAvatarUploadURL()
 
   // Clear the success/error message after x seconds
   useEffect(() => {
@@ -100,19 +95,19 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
               {errors.profileSlug?.message ?? "En feil oppstod"}
             </Text>
           )}
-          {!errors.profileSlug && profileSlugExistsFetching && (
+          {!errors.profileSlug && isUserFetching && (
             <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
               <Icon icon="tabler:loader" className="animate-spin text-sm" />
               <Text className="text-xs">Sjekker tilgjengelighet...</Text>
             </div>
           )}
-          {!errors.profileSlug && profileSlugExists === true && (
+          {!errors.profileSlug && Boolean(fetchedUser) && (
             <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
               <Icon icon="tabler:x" className="text-sm" />
               <Text className="text-xs">Brukernavnet er opptatt</Text>
             </div>
           )}
-          {!errors.profileSlug && profileSlugExists === false && (
+          {!errors.profileSlug && fetchedUser === null && (
             <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
               <Icon icon="tabler:check" className="text-sm" />
               <Text className="text-xs">Brukernavnet er ledig</Text>
@@ -155,7 +150,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                     if (!file) {
                       return
                     }
-                    const result = await upload(file)
+                    const result = await avatarUpload(file)
                     onChange(result)
                   }}
                   placeholder="https://example.com/image.jpg"
@@ -200,7 +195,6 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
         <Controller
           control={control}
           name="gender"
-          rules={{ validate: (value) => (value ? ["Mann", "Kvinne", "Annet", "Ikke oppgitt"].includes(value) : true) }}
           render={({ field: { onChange, value } }) => (
             <div className="w-full flex flex-col gap-1">
               <Label htmlFor="gender" className="text-base">
@@ -252,7 +246,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-row items-center gap-2">
-          <Button type="submit" className="w-fit" disabled={profileSlugExistsFetching || profileSlugExists === true}>
+          <Button type="submit" className="w-fit" disabled={isUserFetching || Boolean(fetchedUser)}>
             Oppdater
           </Button>
 
