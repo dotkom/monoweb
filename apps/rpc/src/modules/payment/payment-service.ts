@@ -165,7 +165,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         throw new PaymentAlreadyChargedError(paymentId)
       }
 
-      await stripe.paymentIntents.capture(paymentIntent.id)
+      await stripe.paymentIntents.capture(paymentIntent.id);
     },
   }
 }

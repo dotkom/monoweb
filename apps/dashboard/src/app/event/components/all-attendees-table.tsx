@@ -1,6 +1,6 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
-import { ActionIcon, Checkbox } from "@mantine/core"
+import { ActionIcon, Badge, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo } from "react"
 
@@ -41,76 +41,112 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((attendee) => attendee.user.name, {
-        id: "user",
-        header: "Bruker",
-        cell: (info) => info.getValue(),
-        sortingFn: "alphanumeric",
-      }),
-      columnHelper.accessor("attended", {
-        header: "Møtt",
-        filterFn: arrayOrEqualsFilter<Attendee>(),
-        cell: (info) => {
-          const row = info.row.original
-          return (
-            <Checkbox
-              onChange={(event) => {
-                updateAttendanceMut.mutate({ id: row.id, attended: event.currentTarget.checked })
-              }}
-              checked={info.getValue()}
-            />
-          )
-        },
-      }),
-      columnHelper.accessor(
-        (attendee) => {
-          const spot = waitlists[attendee.attendancePoolId]?.[attendee.id]
-          return spot ?? "-"
-        },
-        {
-          id: "waitlistSpot",
-          header: () => "Venteliste",
+      ...[
+        columnHelper.accessor((attendee) => attendee.user.name, {
+          id: "user",
+          header: "Bruker",
           cell: (info) => info.getValue(),
-          filterFn: (row, columnId, filterValue) => {
-            const value = row.getValue(columnId)
-            const isEmpty = value === "-"
-
-            const values = Array.isArray(filterValue) ? filterValue : [filterValue]
-
-            if (values.includes(true) && values.includes(false)) return true
-            if (values.includes(true)) return !isEmpty
-            if (values.includes(false)) return isEmpty
-
-            return false
+          sortingFn: "alphanumeric",
+        }),
+        columnHelper.accessor("attended", {
+          header: "Møtt",
+          filterFn: arrayOrEqualsFilter<Attendee>(),
+          cell: (info) => {
+            const row = info.row.original
+            return (
+              <Checkbox
+                onChange={(event) => {
+                  updateAttendanceMut.mutate({ id: row.id, attended: event.currentTarget.checked })
+                }}
+                checked={info.getValue()}
+              />
+            )
           },
-        }
-      ),
-      columnHelper.accessor((attendee) => pools[attendee.attendancePoolId]?.title ?? "", {
-        id: "pool",
-        header: () => "Påmeldingsgruppe",
-        sortingFn: "alphanumeric",
-      }),
-      columnHelper.accessor((attendee) => attendee, {
-        id: "deregister",
-        enableSorting: false,
-        header: () => "Meld av",
-        cell: (info) => (
-          <ActionIcon
-            color="red"
-            onClick={() => {
-              openDeleteManualUserAttendModal({
-                attendeeId: info.getValue().id,
-                attendeeName: info.getValue().user.name || "bruker",
-                poolName: pools[info.getValue().attendancePoolId]?.title ?? "gruppen",
-              })
-            }}
-          >
-            <Icon icon="tabler:x" />
-          </ActionIcon>
-        ),
-      }),
+        }),
+      ],
+      ...[
+        columnHelper.accessor((attendee) => attendee, {
+          header: "Betaling",
+          cell: (info) => {
+            const value = info.getValue()
+
+            if (value.paymentChargedAt) {
+              return <Badge color="green">Betalt</Badge>
+            }
+
+            if (value.paymentReservedAt) {
+              return <Badge color="lime">Reservert</Badge>
+            }
+
+            return <Badge color="red">Ikke betalt</Badge>
+          },
+        }),
+      ],
+      ...(attendance.attendancePrice
+        ? [
+            columnHelper.accessor(
+              (attendee) => {
+                const spot = waitlists[attendee.attendancePoolId]?.[attendee.id]
+                return spot ?? "-"
+              },
+              {
+                id: "waitlistSpot",
+                header: () => "Venteliste",
+                cell: (info) => info.getValue(),
+                filterFn: (row, columnId, filterValue) => {
+                  const value = row.getValue(columnId)
+                  const isEmpty = value === "-"
+
+                  const values = Array.isArray(filterValue) ? filterValue : [filterValue]
+
+                  if (values.includes(true) && values.includes(false)) return true
+                  if (values.includes(true)) return !isEmpty
+                  if (values.includes(false)) return isEmpty
+
+                  return false
+                },
+              }
+            ),
+          ]
+        : []),
+      ...[
+        columnHelper.accessor((attendee) => pools[attendee.attendancePoolId]?.title ?? "", {
+          id: "pool",
+          header: () => "Påmeldingsgruppe",
+          sortingFn: "alphanumeric",
+        }),
+        columnHelper.accessor((attendee) => attendee, {
+          id: "deregister",
+          enableSorting: false,
+          header: () => "Meld av",
+          cell: (info) => (
+            <ActionIcon
+              color="red"
+              onClick={() => {
+                openDeleteManualUserAttendModal({
+                  attendeeId: info.getValue().id,
+                  attendeeName: info.getValue().user.name || "bruker",
+                  poolName: pools[info.getValue().attendancePoolId]?.title ?? "gruppen",
+                })
+              }}
+            >
+              <Icon icon="tabler:x" />
+            </ActionIcon>
+          ),
+        }),
+        columnHelper.accessor((attendee) => attendee, {
+          id: "refund",
+          enableSorting: false,
+          header: () => "Refunder",
+          cell: (info) => (
+            <ActionIcon>
+              <Icon icon="tabler:credit-card-refund" />
+            </ActionIcon>
+          ),
+        }),
+      ],
     ],
-    [columnHelper, updateAttendanceMut, pools, waitlists]
+    [columnHelper, updateAttendanceMut, pools, waitlists, attendance.attendancePrice]
   )
 
   const tableOptions = useMemo(
