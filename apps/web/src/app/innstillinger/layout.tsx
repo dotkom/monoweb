@@ -1,42 +1,13 @@
-import { MobileMenuContainer } from "@/app/innstillinger/components/MobileMenuContainer"
-import { Title } from "@dotkomonline/ui"
+import { MobileProfileNavigationMenu } from "@/app/innstillinger/components/mobile-navigation-menu"
 import type { PropsWithChildren } from "react"
-import { SettingsMenuItem } from "./components/SettingsMenuItem"
-
-export const settingsNavigationItems = [
-  {
-    slug: "/innstillinger/profil",
-    icon: "tabler:user",
-    title: "Profil",
-  },
-  {
-    slug: "/innstillinger/personvern",
-    icon: "tabler:spy",
-    title: "Personvern",
-  },
-]
-
-const SettingsMenuContainer = () => {
-  return (
-    <section className="flex flex-col min-w-40 w-1/6 h-full gap-3 max-md:hidden">
-      <Title element="h1" className="text-base font-semibold text-gray-500 dark:text-stone-500">
-        Innstillinger
-      </Title>
-      <div className="flex flex-col gap-2">
-        {settingsNavigationItems.map((item) => (
-          <SettingsMenuItem key={item.slug} {...item} />
-        ))}
-      </div>
-    </section>
-  )
-}
+import { ProfileNavigationMenu } from "./components/navigation-menu"
 
 export default function SettingsPageLayout({ children }: PropsWithChildren) {
   return (
     <div className="flex flex-row w-full gap-4">
-      <SettingsMenuContainer />
+      <ProfileNavigationMenu />
       <div className="grow relative">
-        <MobileMenuContainer />
+        <MobileProfileNavigationMenu />
         <div>{children}</div>
       </div>
     </div>

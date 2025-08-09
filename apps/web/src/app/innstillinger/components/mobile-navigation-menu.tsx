@@ -4,10 +4,10 @@ import { Icon } from "@dotkomonline/ui"
 import * as Popover from "@radix-ui/react-popover"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { settingsNavigationItems } from "../layout"
-import { SettingsMenuItem } from "./SettingsMenuItem"
+import { settingsNavigationItems } from "./navigation-menu"
+import { SettingsMenuItem } from "./settings-menu-item"
 
-export const MobileMenuContainer = () => {
+export const MobileProfileNavigationMenu = () => {
   const currentSlug = usePathname()
   const currentLink = settingsNavigationItems.find((item) => item.slug === currentSlug)
   const [open, setOpen] = useState(false)
