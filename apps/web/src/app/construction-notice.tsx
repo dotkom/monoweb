@@ -1,7 +1,6 @@
 "use client"
 
 import { Button, Icon, Text, Title } from "@dotkomonline/ui"
-import { hoursToSeconds } from "date-fns"
 import { useState } from "react"
 
 export const ConstructionNotice = () => {
