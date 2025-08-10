@@ -50,8 +50,8 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
   const {
     register,
     control,
-    trigger,
     reset,
+    setError,
     formState: { errors },
     handleSubmit,
   } = useForm<UserWrite>({
@@ -84,6 +84,27 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
     return () => clearTimeout(timeout)
   }, [saveSuccess, resetSaveState])
+
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => {
+    const file = event.target.files?.[0]
+
+    if (!file) {
+      return
+    }
+
+    const result = await avatarUpload(file).catch(() => null)
+
+    if (!result) {
+      setError("imageUrl", {
+        type: "manual",
+        message: "Opplasting av profilbilde feilet",
+      })
+      reset({ imageUrl: user.imageUrl })
+      return
+    }
+
+    onChange(result)
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -145,16 +166,10 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 <input
                   id="pfp"
                   type="file"
-                  onChange={async (event) => {
-                    const file = event.target.files?.[0]
-                    if (!file) {
-                      return
-                    }
-                    const result = await avatarUpload(file)
-                    onChange(result)
-                  }}
+                  onChange={(event) => onFileChange(event, onChange)}
                   placeholder="https://example.com/image.jpg"
                   className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-500 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled
                 />
                 <TextInput value={value ?? ""} onChange={onChange} placeholder="https://..." />
               </div>
