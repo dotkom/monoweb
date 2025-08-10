@@ -39,6 +39,9 @@ const EventPage = () => {
     },
   })
 
+  const allEvents = [...futureEvents, ...pastEvents]
+  const hasEvents = allEvents.length > 0
+
   return (
     <div className="flex flex-col gap-4">
       <Title element="h1" size="xl">
@@ -48,11 +51,8 @@ const EventPage = () => {
       <div className="flex flex-col gap-4">
         <EventsViewToggle active="list" />
         <EventFilters onChange={setFilter} />
-        {isLoading ? (
-          <EventListSkeleton />
-        ) : (
-          <EventList events={[...futureEvents, ...pastEvents]} fetchNextPage={fetchNextPage} />
-        )}
+        {hasEvents && <EventList events={allEvents} fetchNextPage={fetchNextPage} />}
+        {isLoading && <EventListSkeleton />}
       </div>
     </div>
   )
