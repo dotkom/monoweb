@@ -33,7 +33,7 @@ export function createRichTextInput<F extends FieldValues>({
               extensions: [StarterKit, Underline, Link],
               content: field.value,
               immediatelyRender: false,
-              onUpdate: (value) => field.onChange(value.editor.getHTML()),
+              onUpdate: (value) => field.onChange(value.editor.getHTML().replaceAll("<p></p>", "<br />")),
             })
 
             return (
