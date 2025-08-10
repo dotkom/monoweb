@@ -78,12 +78,12 @@ export function getLocalTaskExecutor(
           const payload = taskService.parse(definition, task.payload)
           switch (task.type) {
             case tasks.RESERVE_ATTENDEE.type:
-              return await attendanceService.handleAttemptReserveAttendeeTask(
+              return await attendanceService.executeReserveAttendeeTask(
                 handle,
                 payload as InferTaskData<ReserveAttendeeTaskDef>
               )
             case tasks.MERGE_ATTENDANCE_POOLS.type:
-              return await attendanceService.handleMergePoolsTask(
+              return await attendanceService.executeMergeEventPoolsTask(
                 handle,
                 payload as InferTaskData<MergeAttendancePoolsTaskDef>
               )

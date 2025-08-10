@@ -12,8 +12,6 @@ import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
-import { getAttendeeRepository } from "./event/attendee-repository"
-import { getAttendeeService } from "./event/attendee-service"
 import { getEventRepository } from "./event/event-repository"
 import { getEventService } from "./event/event-service"
 import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-answer-repository"
@@ -109,7 +107,6 @@ export async function createServiceLayer(
   const companyRepository = getCompanyRepository()
   const userRepository = getUserRepository()
   const attendanceRepository = getAttendanceRepository()
-  const attendeeRepository = getAttendeeRepository()
   const productRepository = getProductRepository()
   const paymentRepository = getPaymentRepository()
   const productPaymentProviderRepository = getProductPaymentProviderRepository()
@@ -141,18 +138,11 @@ export async function createServiceLayer(
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
-  const attendeeService = getAttendeeService(
-    attendeeRepository,
-    attendanceRepository,
-    userService,
-    taskSchedulingService,
-    personalMarkService
-  )
   const attendanceService = getAttendanceService(
     attendanceRepository,
-    attendeeRepository,
-    attendeeService,
-    taskSchedulingService
+    taskSchedulingService,
+    userService,
+    personalMarkService
   )
   const eventService = getEventService(eventRepository)
   const companyService = getCompanyService(companyRepository)
@@ -195,7 +185,6 @@ export async function createServiceLayer(
     articleService,
     attendanceService,
     attendanceRepository,
-    attendeeService,
     taskService,
     taskExecutor,
     feedbackFormService,

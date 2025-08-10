@@ -51,6 +51,8 @@ export const personalMarkRouter = t.router({
     .input(z.object({ userId: UserSchema.shape.id }))
     .query(async ({ input, ctx }) => {
       ctx.authorize.requireMeOrAffiliation(input.userId, [])
-      return ctx.executeTransaction(async (handle) => ctx.personalMarkService.getUserPunishment(handle, input.userId))
+      return ctx.executeTransaction(async (handle) =>
+        ctx.personalMarkService.findPunishmentByUserId(handle, input.userId)
+      )
     }),
 })

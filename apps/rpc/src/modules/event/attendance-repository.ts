@@ -20,6 +20,8 @@ import { parseOrReport } from "../../invariant"
 export interface AttendanceRepository {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
   findAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
+  findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
+  findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
 
   createAttendee(
@@ -46,6 +48,7 @@ export interface AttendanceRepository {
     attendancePoolId: AttendancePoolId,
     data: Partial<AttendancePoolWrite>
   ): Promise<AttendancePool>
+  deleteAttendancePoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<void>
   deleteAttendancePoolsByIds(handle: DBHandle, attendancePoolIds: AttendancePoolId[]): Promise<void>
 }
 
@@ -70,10 +73,39 @@ export function getAttendanceRepository(): AttendanceRepository {
           attendees: true,
         },
       })
-      if (attendance === null) {
-        return null
-      }
-      return parseOrReport(AttendanceSchema, attendance)
+      return parseOrReport(AttendanceSchema.nullable(), attendance)
+    },
+    async findAttendanceByPoolId(handle, attendancePoolId) {
+      const attendance = await handle.attendance.findFirst({
+        where: {
+          pools: {
+            some: {
+              id: attendancePoolId,
+            },
+          },
+        },
+        include: {
+          pools: true,
+          attendees: true,
+        },
+      })
+      return parseOrReport(AttendanceSchema.nullable(), attendance)
+    },
+    async findAttendanceByAttendeeId(handle, attendeeId) {
+      const attendance = await handle.attendance.findFirst({
+        where: {
+          attendees: {
+            some: {
+              id: attendeeId,
+            },
+          },
+        },
+        include: {
+          pools: true,
+          attendees: true,
+        },
+      })
+      return parseOrReport(AttendanceSchema.nullable(), attendance)
     },
     async updateAttendanceById(handle, attendanceId, data) {
       const row = await handle.attendance.update({
@@ -121,7 +153,7 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
-            }
+            },
           },
         },
       })
@@ -139,7 +171,7 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
-            }
+            },
           },
         },
       })
@@ -153,7 +185,7 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
-            }
+            },
           },
         },
       })
@@ -180,6 +212,11 @@ export function getAttendanceRepository(): AttendanceRepository {
         data,
       })
       return parseOrReport(AttendancePoolSchema, pool)
+    },
+    async deleteAttendancePoolById(handle, attendancePoolId) {
+      await handle.attendancePool.delete({
+        where: { id: attendancePoolId },
+      })
     },
     async deleteAttendancePoolsByIds(handle, attendancePoolIds) {
       // TODO: set a deleted flag instead of deleting

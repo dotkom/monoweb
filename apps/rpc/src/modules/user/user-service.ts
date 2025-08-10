@@ -15,8 +15,8 @@ import {
   type UserProfileSlug,
   type UserWrite,
   UserWriteSchema,
+  findActiveMembership,
   getAcademicStart,
-  getActiveMembership,
 } from "@dotkomonline/types"
 import { getCurrentUtc, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
@@ -227,7 +227,7 @@ export function getUserService(
           try {
             const studentInformation = await feideGroupsRepository.getStudentInformation(accessToken)
             if (studentInformation !== null) {
-              const activeMembership = getActiveMembership(user)
+              const activeMembership = findActiveMembership(user)
               const applicableMembership = await findApplicableMembership(
                 studentInformation.studyProgrammes,
                 studentInformation.studySpecializations,

@@ -34,7 +34,11 @@ export const tasks = {
     getSchema: () =>
       z.object({
         attendanceId: AttendanceSchema.shape.id,
-        newMergePoolData: AttendancePoolWriteSchema.partial(),
+        // NOTE: The user of this value should turn it into a TZDate.
+        previousPoolMergeTime: z.coerce.date(),
+        data: AttendancePoolWriteSchema.pick({
+          title: true,
+        }),
       }),
   }),
 }

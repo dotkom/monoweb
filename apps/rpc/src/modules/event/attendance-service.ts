@@ -1,28 +1,25 @@
-import { TZDate } from "@date-fns/tz"
+import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
-import { getLogger } from "@dotkomonline/logger";
+import { getLogger } from "@dotkomonline/logger"
 import {
   type Attendance,
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
   type AttendancePoolWrite,
-  type AttendanceSelection,type AttendanceSelectionResponse,
-  type AttendanceWrite, type Attendee, type AttendeeId, type TaskId,
-  type UserId, findActiveMembership, getMembershipGrade, 
+  type AttendanceSelection,
+  type AttendanceWrite,
+  type Attendee,
+  type AttendeeId,
+  type AttendeeWrite,
+  type UserId,
+  findActiveMembership,
+  getMembershipGrade,
 } from "@dotkomonline/types"
-import {getCurrentUTC} from "@dotkomonline/utils";
-import {
-  addHours, compareDesc,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInYears,
-  isAfter,
-  isBefore,
-  isFuture, isPast
-} from "date-fns"
-import invariant from "tiny-invariant";
-import type {PersonalMarkService} from "../mark/personal-mark-service";
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { addHours, compareDesc, differenceInHours, differenceInYears, isAfter, isBefore, isPast } from "date-fns"
+import invariant from "tiny-invariant"
+import type { PersonalMarkService } from "../mark/personal-mark-service"
 import {
   type InferTaskData,
   type MergeAttendancePoolsTaskDef,
@@ -30,11 +27,9 @@ import {
   tasks,
 } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
-import type { UserService } from "../user/user-service";
+import type { UserService } from "../user/user-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import type { AttendeeRepository } from "./attendee-repository"
-import type { AttendeeService } from "./attendee-service"
 
 type EventRegistrationOptions = {
   /** Should the user be attended regardless of if registration has not yet opened? */
@@ -55,8 +50,16 @@ type EventDeregistrationOptions = {
 export interface AttendanceService {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
   findAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
+  findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
+  findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   getAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance>
-  updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: Partial<AttendanceWrite>): Promise<Attendance>
+  getAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance>
+  getAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance>
+  updateAttendanceById(
+    handle: DBHandle,
+    attendanceId: AttendanceId,
+    data: Partial<AttendanceWrite>
+  ): Promise<Attendance>
   /**
    * Create a new attendance pool for an event.
    *
@@ -68,10 +71,9 @@ export interface AttendanceService {
    *    entirely.
    */
   createAttendancePool(handle: DBHandle, attendanceId: AttendanceId, data: AttendancePoolWrite): Promise<AttendancePool>
-  deleteAttendancePool(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendancePool>
+  deleteAttendancePool(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<void>
   updateAttendancePool(
     handle: DBHandle,
-    attendanceId: AttendanceId,
     attendancePoolId: AttendancePoolId,
     data: AttendancePoolWrite
   ): Promise<AttendancePool>
@@ -87,33 +89,35 @@ export interface AttendanceService {
    *
    * NOTE: Be careful of the difference between this and {@link registerAttendance}.
    */
-  registerAttendee(handle: DBHandle, attendanceId: AttendanceId, user: UserId, options: EventRegistrationOptions): Promise<Attendee | null>
-  scheduleRegisterAttendeeTask(handle: DBHandle, attendanceId: AttendanceId, userId: UserId): Promise<TaskId | null>
-  executeRegisterAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDef>): Promise<void>
-  deregisterAttendee(handle: DBHandle, attendanceId: AttendanceId, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
+  registerAttendee(
+    handle: DBHandle,
+    attendanceId: AttendanceId,
+    user: UserId,
+    options: EventRegistrationOptions
+  ): Promise<Attendee | null>
+  updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
+  executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDef>): Promise<void>
+  deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
   /**
    * Register that an attendee has physically attended an event.
    *
    * NOTE: Be careful of the difference between this and {@link registerAttendee}.
    */
-  registerAttendance(handle: DBHandle, attendanceId: AttendanceId, attendee: AttendeeId): Promise<void>
-  scheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, data: Pick<AttendancePoolWrite, 'title'>, mergeTime?: TZDate): Promise<void>
-  executeMergeEventPoolsTask(
+  registerAttendance(handle: DBHandle, attendee: AttendeeId): Promise<void>
+  scheduleMergeEventPoolsTask(
     handle: DBHandle,
-    task: InferTaskData<MergeAttendancePoolsTaskDef>
+    attendanceId: AttendanceId,
+    data: Pick<AttendancePoolWrite, "title">,
+    mergeTime?: TZDate
   ): Promise<void>
-
-  updateAttendanceSelections(handle: DBHandle, attendanceId: AttendanceId, selections: AttendanceSelection[]): Promise<void>
-  updateAttendeeSelections(handle: DBHandle, attendeeId: AttendeeId, selections: AttendanceSelectionResponse[]): Promise<void>
+  executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDef>): Promise<void>
 }
 
 export function getAttendanceService(
   attendanceRepository: AttendanceRepository,
-  attendeeRepository: AttendeeRepository,
-  attendeeService: AttendeeService,
   taskSchedulingService: TaskSchedulingService,
   userService: UserService,
-  personalMarkService: PersonalMarkService,
+  personalMarkService: PersonalMarkService
 ): AttendanceService {
   const logger = getLogger("attendance-service")
   return {
@@ -124,10 +128,30 @@ export function getAttendanceService(
     async findAttendanceById(handle, attendanceId) {
       return await attendanceRepository.findAttendanceById(handle, attendanceId)
     },
+    async findAttendanceByPoolId(handle, attendancePoolId) {
+      return await attendanceRepository.findAttendanceByPoolId(handle, attendancePoolId)
+    },
+    async findAttendanceByAttendeeId(handle, attendeeId) {
+      return await attendanceRepository.findAttendanceByAttendeeId(handle, attendeeId)
+    },
     async getAttendanceById(handle, attendanceId) {
       const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
       if (!attendance) {
         throw new AttendanceNotFound(attendanceId)
+      }
+      return attendance
+    },
+    async getAttendanceByPoolId(handle, attendancePoolId) {
+      const attendance = await attendanceRepository.findAttendanceByPoolId(handle, attendancePoolId)
+      if (!attendance) {
+        throw new AttendanceNotFound(`Attendance for AttendancePool(ID=${attendancePoolId}) not found`)
+      }
+      return attendance
+    },
+    async getAttendanceByAttendeeId(handle, attendeeId) {
+      const attendance = await attendanceRepository.findAttendanceByAttendeeId(handle, attendeeId)
+      if (!attendance) {
+        throw new AttendanceNotFound(`Attendance for Attendee(ID=${attendeeId}) not found`)
       }
       return attendance
     },
@@ -138,6 +162,30 @@ export function getAttendanceService(
         ...data,
       } satisfies AttendanceWrite
       validateAttendanceWrite(input)
+      // If there are any selections in the existing attendance that are not in the input, we remove them and all the
+      // responses to them.
+      if (data.selections !== undefined) {
+        const selectionsForUpdate = attendance.selections.filter((selection) => {
+          const next = input.selections.find((s) => s.id === selection.id)
+          return next !== undefined && !isSelectionEqual(next, selection)
+        })
+        // TODO: Simplify this using a map or another constant time lookup because this is O(n^2) in the worst case.
+        const affectedAttendees = attendance.attendees
+          .map((attendee) => {
+            const attendeeSelectionsForUpdate = attendee.selections.filter((selection) => {
+              return selectionsForUpdate.some((s) => s.id === selection.selectionId)
+            })
+            const isAffected = attendeeSelectionsForUpdate.length > 0
+            return { isAffected, selectionsForUpdate: attendeeSelectionsForUpdate, attendee }
+          })
+          .filter((attendee) => attendee.isAffected)
+        // TODO: Collapse this into a single update query
+        for (const { selectionsForUpdate, attendee } of affectedAttendees) {
+          await this.updateAttendeeById(handle, attendee.id, {
+            selections: selectionsForUpdate,
+          })
+        }
+      }
       return await attendanceRepository.updateAttendanceById(handle, attendanceId, input)
     },
     async createAttendancePool(handle, attendanceId, data) {
@@ -162,22 +210,25 @@ export function getAttendanceService(
       }
       return await attendanceRepository.createAttendancePool(handle, attendanceId, data)
     },
-    async updateAttendancePool(handle, attendanceId, attendancePoolId, data) {
+    async updateAttendancePool(handle, attendancePoolId, data) {
       validateAttendancePoolWrite(data)
-      const attendance = await this.getAttendanceById(handle, attendanceId)
+      const attendance = await this.getAttendanceByPoolId(handle, attendancePoolId)
+      invariant(attendance.pools.some((p) => p.id === attendancePoolId))
       // Only pools except the current pool are relevant for the update.
       const relevantPools = attendance.pools.filter((pool) => pool.id !== attendancePoolId)
-      if (relevantPools.length === attendance.pools.length) {
-        throw new AttendanceNotFound(`AttendancePool(ID=${attendancePoolId}) was not found in Attendance(ID=${attendanceId})`)
-      }
       validateAttendancePoolDisjunction(data.yearCriteria, relevantPools)
       return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, data)
+    },
+    async deleteAttendancePool(handle, attendancePoolId) {
+      await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
     },
     async registerAttendee(handle, attendanceId, userId, options) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const user = await userService.getById(handle, userId)
-      if (attendance.attendees.some(a => a.userId === userId)) {
-        throw new AttendanceValidationError(`User(ID=${userId}) is already registered for Attendance(ID=${attendanceId})`)
+      if (attendance.attendees.some((a) => a.userId === userId)) {
+        throw new AttendanceValidationError(
+          `User(ID=${userId}) is already registered for Attendance(ID=${attendanceId})`
+        )
       }
 
       // Ensure the user has an active membership, and determine their effective grade
@@ -201,13 +252,13 @@ export function getAttendanceService(
 
       // If the user is suspended at time of registration, we simply do not register them at all.
       const punishment = await personalMarkService.findPunishmentByUserId(handle, userId)
-      if (punishment !== null && punishment.suspended) {
+      if (punishment?.suspended) {
         return null
       }
 
       // Determining the pool to register the user for is done by finding the current year assumed for the user's active
       // membership.
-      const applicablePool = attendance.pools.find(pool => {
+      const applicablePool = attendance.pools.find((pool) => {
         // Knights are not bound by any year criteria, and will thus occupy the first pool available.
         if (grade === null) {
           return true
@@ -216,7 +267,11 @@ export function getAttendanceService(
         return pool.yearCriteria.includes(delta)
       })
       if (applicablePool === undefined) {
-        logger.warn("User(ID=%s) attempted to register for Attendance(ID=%s) but no applicable pool was found", userId, attendanceId)
+        logger.warn(
+          "User(ID=%s) attempted to register for Attendance(ID=%s) but no applicable pool was found",
+          userId,
+          attendanceId
+        )
         return null
       }
 
@@ -235,13 +290,33 @@ export function getAttendanceService(
       })
       // When a user is immediately reserved, there is no reason to schedule a task for them.
       if (!options.immediateReservation) {
-        await taskSchedulingService.scheduleAt(handle, tasks.RESERVE_ATTENDEE, { attendeeId: attendee.id, attendanceId }, reservationTime)
+        await taskSchedulingService.scheduleAt(
+          handle,
+          tasks.RESERVE_ATTENDEE,
+          {
+            attendeeId: attendee.id,
+            attendanceId,
+          },
+          reservationTime
+        )
       }
       return attendee
     },
-    async executeRegisterAttendeeTask(handle, { attendanceId, attendeeId }) {
+    async updateAttendeeById(handle, attendeeId, data) {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+      invariant(attendee !== undefined)
+      // If the user is not suspended, we can update the attendee.
+      const input = {
+        ...attendee,
+        ...data,
+      } satisfies AttendeeWrite
+      validateAttendeeWrite(input)
+      return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
+    },
+    async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
-      const attendee = attendance.attendees.find(a => a.id === attendeeId)
+      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
       // NOTE: If the attendee does not exist, we have a non-critical bug in the app. The circumstances where this is
       // possible is when the attendee was removed from the attendance after the task was scheduled AND the task was not
       // cancelled.
@@ -254,28 +329,28 @@ export function getAttendanceService(
 
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
-      const adjacentAttendees = attendance.attendees.filter(a => a.attendancePoolId === pool.id)
+      const adjacentAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id)
       const isPoolAtMaxCapacity = adjacentAttendees.length === pool.capacity
       const isPastReservationTime = isPast(attendee.earliestReservationAt)
       if (isPoolAtMaxCapacity || isPastReservationTime) {
-        return;
+        return
       }
       await attendanceRepository.updateAttendeeById(handle, attendeeId, {
         ...attendee,
         reserved: true,
       })
     },
-    async deregisterAttendee(handle, attendanceId, attendeeId, options) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
+    async deregisterAttendee(handle, attendeeId, options) {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       if (isPast(attendance.registerEnd) && !options.ignoreDeregistrationWindow) {
         throw new AttendanceValidationError(
-          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendanceId}) after registration end`
+          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) after registration end`
         )
       }
 
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
-        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendanceId})`)
+        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
@@ -287,10 +362,10 @@ export function getAttendanceService(
       // 1. The attendee must be in the same pool as the deregistered attendee.
       // 2. The attendee must not yet be reserved
       // 3. The attendee must have a reservation time in the future
-      const firstUnreservedAdjacentAttendee = attendance.attendees.filter(
-        (a) => a.attendancePoolId === pool.id)
-      .filter(a => !a.reserved)
-        .filter(a => isPast(a.earliestReservationAt))
+      const firstUnreservedAdjacentAttendee = attendance.attendees
+        .filter((a) => a.attendancePoolId === pool.id)
+        .filter((a) => !a.reserved)
+        .filter((a) => isPast(a.earliestReservationAt))
         .toSorted((a, b) => compareDesc(a.earliestReservationAt, b.earliestReservationAt))
         .at(0)
       if (firstUnreservedAdjacentAttendee === undefined) {
@@ -302,11 +377,11 @@ export function getAttendanceService(
         reserved: true,
       })
     },
-    async registerAttendance(handle, attendanceId, attendeeId) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
+    async registerAttendance(handle, attendeeId) {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
-        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendanceId})`)
+        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
       // It is likely an error if the attendee is already marked as attended
@@ -319,19 +394,36 @@ export function getAttendanceService(
         attendedAt: getCurrentUTC(),
       })
     },
-    async scheduleMergeEventPoolsTask(handle, attendanceId, data, mergeTime = getCurrentUTC()) {
-
+    async scheduleMergeEventPoolsTask(handle, attendanceId, data, mergeTime) {
+      if (mergeTime === undefined) {
+        await this.executeMergeEventPoolsTask(handle, { attendanceId, data, previousPoolMergeTime: getCurrentUTC() })
+        return
+      }
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.MERGE_ATTENDANCE_POOLS,
+        {
+          data,
+          previousPoolMergeTime: mergeTime,
+          attendanceId,
+        },
+        mergeTime
+      )
     },
-    async executeMergeEventPoolsTask(handle, { attendanceId }) {
+    async executeMergeEventPoolsTask(handle, { attendanceId, previousPoolMergeTime, data }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
-      // TODO: refactor to partition by
-      const mergeablePools = attendance.pools.filter((pool) => {
+      const isMergeable = (pool: AttendancePool) => {
         if (pool.mergeDelayHours === null) {
-          return false
+          return true
         }
         const mergeEligibleAt = addHours(attendance.registerStart, pool.mergeDelayHours)
-        return isAfter(mergeTime, mergeEligibleAt)
-      })
+        return isAfter(previousPoolMergeTime, mergeEligibleAt)
+      }
+      // TODO: Maybe use a utility for partitioning the pools rather than two filters?
+      // A pending pool is one that is not yet mergeable, in other words; it has not yet passed the merge delay hours
+      // from registration start.
+      const mergeablePools = attendance.pools.filter(isMergeable)
+      const pendingPools = attendance.pools.filter((pool) => !isMergeable(pool))
       // Depending on if there is zero or one pools, we either update the matching pool, or do nothing
       if (mergeablePools.length <= 1) {
         if (mergeablePools.length === 1) {
@@ -345,10 +437,11 @@ export function getAttendanceService(
         return
       }
 
-      // We compute the next properties by summing up for all the pools.
+      // We compute the next properties by summing up for all the pools. The next pool should not have a merge delay
+      // since a potential pending pool should be merged into it.
       const defaultMergePool = {
         title: data.title,
-        mergeDelayHours: TODO,
+        mergeDelayHours: null,
         capacity: 0,
         yearCriteria: [] as number[],
       } satisfies AttendancePoolWrite
@@ -357,223 +450,26 @@ export function getAttendanceService(
           title: acc.title,
           mergeDelayHours: acc.mergeDelayHours,
           capacity: acc.capacity + curr.capacity,
-          yearCriteria: acc.yearCriteria.concat(...curr.yearCriteria)
+          yearCriteria: acc.yearCriteria.concat(...curr.yearCriteria),
         }
       }, defaultMergePool)
       validateAttendancePoolWrite(input)
-      // TODO: grab all pools that were not merged
-      validateAttendancePoolDisjunction(input.yearCriteria, TODO)
+      validateAttendancePoolDisjunction(input.yearCriteria, pendingPools)
       const pool = await attendanceRepository.createAttendancePool(handle, attendanceId, input)
       const mergeablePoolIds = mergeablePools.map((pool) => pool.id)
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
-    }
-  }
-
-  async function validateSelections(
-    handle: DBHandle,
-    attendanceId: AttendanceId,
-    currentSelections: AttendanceSelection[],
-    newSelections: AttendanceSelection[]
-  ) {
-    const updatedSelections = currentSelections.filter((currentSelection) => {
-      const newSelection = newSelections.find((newSelection) => newSelection.id === currentSelection.id)
-
-      return newSelection && !areSelectionsEqual(currentSelection, newSelection)
-    })
-
-    await Promise.all(
-      updatedSelections.map(async (selection) =>
-        attendeeRepository.removeAllSelectionResponsesForSelection(handle, attendanceId, selection.id)
-      )
-    )
-  }
-  async function attemptReserveAttendeesOnCapacityChange(
-    handle: DBHandle,
-    oldCapacity: number,
-    newPool: AttendancePool
-  ) {
-    const capacityDifference = newPool.capacity - oldCapacity
-
-    if (capacityDifference <= 0) {
-      return
-    }
-
-    const attendees = await attendeeService.getByAttendancePoolId(handle, newPool.id) // These are in order of reserveTime
-    const unreservedAttendees = attendees.filter((attendee) => !attendee.reserved)
-    const toAttemptReserve = unreservedAttendees.slice(0, capacityDifference)
-
-    for (const attendee of toAttemptReserve) {
-      const result = await attendeeService.attemptReserve(handle, attendee, newPool, { bypassCriteria: false })
-      // reserveTime and pool capacity are the only metrics we use to reserve. If one fail the next will also fail
-      if (!result) {
-        break
-      }
-    }
-  }
-  function canPoolMerge(registerStart: Date, poolMergeDelayHours: number | null, now = new Date()) {
-    if (poolMergeDelayHours === null) {
-      return true
-    }
-
-    const poolMergeEligibleAt = addHours(registerStart, poolMergeDelayHours)
-
-    return !isBefore(now, poolMergeEligibleAt)
-  }
-  return {
-    async createAttendance(handle, data: AttendanceWrite) {
-      validateRegisterTime(data.registerStart, data.registerEnd)
-      return await attendanceRepository.createAttendance(handle, data)
-    },
-    async findAttendanceById(handle, attendanceId) {
-
-    }
-    async getAttendanceById(handle, attendanceId) {
-      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
-      if (!attendance) {
-        throw new AttendanceNotFound(attendanceId)
-      }
-      return attendance
-    },
-    async updateAttendanceById(handle, attendanceId, data) {
-      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
-      if (!attendance) {
-        throw new AttendanceNotFound(attendanceId)
-      }
-
-      if (data.registerStart || data.registerEnd) {
-        const registerStart = data.registerStart || attendance.registerStart
-        const registerEnd = data.registerEnd || attendance.registerEnd
-
-        validateRegisterTime(registerStart, registerEnd)
-      }
-
-      if (data.selections) {
-        await validateSelections(handle, attendanceId, attendance.selections, data.selections)
-      }
-
-      return await attendanceRepository.updateAttendanceById(handle, attendanceId, data)
-    },
-    async mergeAttendancePools(handle, attendanceId, newMergePoolData, mergeTime = new Date()) {
-      if (!mergeTime || !isFuture(mergeTime)) {
-        const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
-        if (!attendance) {
-          throw new AttendanceNotFound(attendanceId)
-        }
-        const poolsToMerge = attendance.pools.filter((pool) =>
-          canPoolMerge(attendance.registerStart, pool.mergeDelayHours)
-        )
-        if (poolsToMerge.length === 0) {
-          return
-        }
-
-        const combinedYearCriteria = poolsToMerge.flatMap((pool) => pool.yearCriteria)
-        const newYearCriteria = newMergePoolData.yearCriteria ?? []
-        const yearCriteria = [...new Set([...combinedYearCriteria, ...newYearCriteria])]
-        const combinedPoolCapacity = poolsToMerge.reduce((sum, pool) => sum + pool.capacity, 0)
-        const capacity = Math.max(newMergePoolData.capacity || 0, combinedPoolCapacity)
-        const newMergePool = await attendanceRepository.addAttendancePool(handle, {
-          attendanceId,
-          title: newMergePoolData.title ?? "Merged pool",
-          mergeDelayHours: null,
-          yearCriteria,
-          capacity,
-        })
-
-        const poolsToMergeIds = poolsToMerge.map((pool) => pool.id)
-        await attendeeRepository.moveFromMultiplePoolsToPool(handle, poolsToMergeIds, newMergePool.id)
-
-        for (const pool of poolsToMerge) {
-          await attendanceRepository.removeAttendancePool(handle, pool.id)
-        }
-      }
-
-      await taskSchedulingService.scheduleAt(
-        handle,
-        tasks.MERGE_ATTENDANCE_POOLS.type,
-        {
-          attendanceId,
-          newMergePoolData,
-        },
-        new TZDate(mergeTime)
-      )
-    },
-    async getSelectionsResponseSummary(handle, attendanceId) {
-      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
-      if (!attendance) {
-        throw new AttendanceNotFound(attendanceId)
-      }
-      const attendees = await attendeeRepository.getByAttendanceId(handle, attendanceId)
-      const allSelectionResponses = attendees.flatMap((attendee) => attendee.selections)
-
-      return attendance.selections.map((selection) => {
-        const selectionResponses = allSelectionResponses.filter((response) => response.selectionId === selection.id)
-
-        return {
-          id: selection.id,
-          name: selection.name,
-          count: selectionResponses.length,
-          options: selection.options.map((option) => ({
-            id: option.id,
-            name: option.name,
-            count: selectionResponses.filter((response) => response.optionId === option.id).length,
-          })),
-        }
-      })
-    },
-    async createAttendancePool(handle, data: AttendancePoolWrite) {
-      return await attendanceRepository.addAttendancePool(handle, data)
-    },
-    async deleteAttendancePool(handle, attendancePoolId) {
-      if (await attendeeRepository.poolHasAttendees(handle, attendancePoolId)) {
-        throw new AttendanceDeletionError("Cannot delete attendance pool with attendees")
-      }
-      return await attendanceRepository.removeAttendancePool(handle, attendancePoolId)
-    },
-    async updateAttendancePool(handle, attendancePoolId, data) {
-      const currentPool = await attendanceRepository.getPoolById(handle, attendancePoolId)
-      if (!currentPool) {
-        throw new AttendancePoolNotFoundError(attendancePoolId)
-      }
-
-      const newPool = await attendanceRepository.updateAttendancePool(handle, attendancePoolId, data)
-      if (data.capacity) {
-        await attemptReserveAttendeesOnCapacityChange(handle, currentPool.capacity, newPool)
-      }
-
-      return newPool
-    },
-    async handleMergePoolsTask(handle, { attendanceId, newMergePoolData }) {
-      return this.mergeAttendancePools(handle, attendanceId, newMergePoolData)
-    },
-    async handleAttemptReserveAttendeeTask(handle, { userId, attendanceId }) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
-      const attendee = await attendeeService.getByUserId(handle, userId, attendanceId)
-      const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
-      if (!pool) {
-        throw new AttendancePoolNotFoundError(attendee.attendancePoolId)
-      }
-      await attendeeService.attemptReserve(handle, attendee, pool, { bypassCriteria: false })
     },
   }
 }
 
-function validateRegisterTime(registerStart: Date, registerEnd: Date) {
-  if (!isAfter(registerEnd, registerStart) || differenceInMinutes(registerEnd, registerStart) < 1) {
-    throw new AttendanceValidationError("Register end must be at least one minute after register start")
-  }
-}
-
-const areSelectionsEqual = (a: AttendanceSelection, b: AttendanceSelection) => {
-  if (a.id !== b.id) return false
-  if (a.name !== b.name) return false
-  if (a.options.length !== b.options.length) return false
-
-  return a.options.every((aOption) => {
-    const bOption = b.options.find((bOption) => bOption.id === aOption.id)
-
-    return bOption?.name === aOption.name
+function isSelectionEqual(left: AttendanceSelection, right: AttendanceSelection): boolean {
+  const isWeaklyEqual = left.id === right.id && left.name === right.name && left.options.length === right.options.length
+  const isOptionSetEqual = left.options.every((lOption) => {
+    const rOption = right.options.find((rOption) => rOption.id === lOption.id)
+    return rOption?.name === lOption.name
   })
+  return isWeaklyEqual && isOptionSetEqual
 }
 
 function validateAttendanceWrite(data: AttendanceWrite) {
@@ -592,7 +488,7 @@ function validateAttendancePoolWrite(data: AttendancePoolWrite) {
   if (data.capacity <= 0) {
     throw new AttendanceValidationError("Capacity for pool must be greater than 0")
   }
-  if (data.yearCriteria.some(v => v < 1 || v > 5)) {
+  if (data.yearCriteria.some((v) => v < 1 || v > 5)) {
     throw new AttendanceValidationError("Year criteria must be between 1 and 5")
   }
 }
@@ -606,8 +502,15 @@ function validateAttendancePoolDisjunction(plan: number[], pools: AttendancePool
     return new Set([...acc, ...curr.yearCriteria])
   }, new Set<number>())
 
-  const isOverlapping = plan.some(y => currentYearConstraints.has(y))
+  const isOverlapping = plan.some((y) => currentYearConstraints.has(y))
   if (isOverlapping) {
     throw new AttendanceValidationError("Planned years overlap with existing constrains defined in existing pools")
+  }
+}
+
+function validateAttendeeWrite(data: AttendeeWrite) {
+  // This is mostly a sanity check
+  if (data.userGrade !== null && (data.userGrade > 5 || data.userGrade < 1)) {
+    throw new AttendanceValidationError("User grade must be between 1 and 5")
   }
 }

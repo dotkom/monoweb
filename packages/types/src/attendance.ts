@@ -25,6 +25,9 @@ export const AttendanceSelectionResponseSchema = z.object({
   optionName: z.string(),
 })
 
+export type AttendeeSelectionResponsesSchema = z.infer<typeof AttendeeSelectionResponsesSchema>
+export const AttendeeSelectionResponsesSchema = z.array(AttendanceSelectionResponseSchema)
+
 export type AttendanceSelectionResults = z.infer<typeof AttendanceSelectionResultSchema>
 export const AttendanceSelectionResultSchema = z.object({
   id: z.string(),
