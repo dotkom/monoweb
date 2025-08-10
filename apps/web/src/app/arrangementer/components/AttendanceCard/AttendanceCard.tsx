@@ -77,7 +77,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
       ],
     })
 
-  const attendee = user && initialAttendance.attendees?.find((attendee) => attendee.userId === user.id)
+  const attendee = user && attendance.attendees?.find((attendee) => attendee.userId === user.id)
 
   useEffect(() => {
     // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
