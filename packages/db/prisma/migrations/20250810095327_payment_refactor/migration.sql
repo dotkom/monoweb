@@ -15,9 +15,6 @@
 -- the enum.
 
 
-ALTER TYPE "task_type" ADD VALUE 'VERIFY_PAYMENT';
-ALTER TYPE "task_type" ADD VALUE 'CHARGE_ATTENDANCE_PAYMENTS';
-
 -- DropForeignKey
 ALTER TABLE "payment" DROP CONSTRAINT "payment_productId_fkey";
 
