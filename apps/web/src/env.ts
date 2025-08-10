@@ -13,7 +13,7 @@ export const env = defineConfiguration({
   }),
   SIGNING_KEY: config(process.env.SIGNING_KEY),
   NEXT_PUBLIC_ORIGIN: config(process.env.NEXT_PUBLIC_ORIGIN, {
-    prd: "https://web.online.ntnu.no",
+    prd: "https://online.ntnu.no",
     stg: "https://staging.online.ntnu.no",
     dev: "http://localhost:3000",
   }),

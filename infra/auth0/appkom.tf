@@ -1,6 +1,6 @@
 resource "auth0_client" "appkom_opptak" {
-  allowed_clients = []
-    cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  allowed_clients   = []
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
     "stg" = ["http://localhost:3000"]
@@ -16,7 +16,7 @@ resource "auth0_client" "appkom_opptak" {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
     "stg" = ["http://localhost:3000/api/auth/callback/auth0"]
     "prd" = [
-      "https://online-opptak.vercel.app/api/auth/callback/auth0", 
+      "https://online-opptak.vercel.app/api/auth/callback/auth0",
       "https://opptak.online.ntnu.no/api/auth/callback/auth0",
       "http://localhost:3000/api/auth/callback/auth0",
     ]
@@ -43,7 +43,7 @@ data "auth0_client" "appkom_opptak" {
 
 resource "auth0_client" "appkom_autobank" {
   cross_origin_auth = false
-  allowed_clients = []
+  allowed_clients   = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000/"]
     "stg" = ["https://autobank-frontend.vercel.app/"]
@@ -77,9 +77,9 @@ data "auth0_client" "appkom_autobank" {
 }
 
 resource "auth0_client" "appkom_events_app" {
-  description     = "Appkom sin Online Events app"
-    cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  allowed_clients = []
+  description       = "Appkom sin Online Events app"
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  allowed_clients   = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
     "stg" = []
@@ -135,7 +135,7 @@ data "auth0_client" "appkom_events_app" {
 
 resource "auth0_client" "appkom_veldedighet" {
   cross_origin_auth = false
-  allowed_clients = []
+  allowed_clients   = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000/"]
     "stg" = ["https://charitystream-orcin.vercel.app/"]

@@ -22,8 +22,8 @@ export const env = defineConfiguration({
     dev: "http://localhost:4444",
   }),
   NEXT_PUBLIC_WEB_URL: config(process.env.NEXT_PUBLIC_WEB_URL, {
-    prd: "https://web.online.ntnu.no",
-    stg: "https://staging.web.online.ntnu.no",
+    prd: "https://online.ntnu.no",
+    stg: "https://staging.online.ntnu.no",
     dev: "http://localhost:3000",
   }),
   // Feature toggle for uploading files to S3. If disabled, uploads are faked and replaced with static URL

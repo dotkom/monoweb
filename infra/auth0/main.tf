@@ -542,7 +542,7 @@ resource "auth0_client_grant" "ow4_mgmt_grant" {
 
 resource "auth0_client" "monoweb_web" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc  = "https://web.online.ntnu.no/*"
+  cross_origin_loc  = "https://online.ntnu.no/*"
   allowed_clients   = []
   allowed_origins   = []
   app_type          = "regular_web"
@@ -550,18 +550,18 @@ resource "auth0_client" "monoweb_web" {
   initiate_login_uri = {
     "dev" = null
     "stg" = "https://staging.online.ntnu.no/api/auth/callback/auth0"
-    "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
+    "prd" = "https://online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
     "stg" = ["https://staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
-    "prd" = ["https://web.online.ntnu.no/api/auth/callback/auth0"]
+    "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace]
   allowed_logout_urls = concat(
     {
       "dev" = ["http://localhost:3000"]
       "stg" = ["https://staging.online.ntnu.no"]
-      "prd" = ["https://web.online.ntnu.no"]
+      "prd" = ["https://online.ntnu.no"]
     }[terraform.workspace]
   )
 
