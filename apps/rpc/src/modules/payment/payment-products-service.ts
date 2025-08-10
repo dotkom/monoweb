@@ -53,7 +53,10 @@ export function getPaymentProductsService(stripe: Stripe): PaymentProductsServic
       }
     }
 
-    const newPrice = await stripe.prices.create(priceData)
+    const newPrice = await stripe.prices.create({
+      ...priceData,
+      product: product.id,
+    })
     await stripe.products.update(product.id, {
       default_price: newPrice.id,
     })

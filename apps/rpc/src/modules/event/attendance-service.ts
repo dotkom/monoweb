@@ -55,7 +55,6 @@ import {
   AttendeeHasNotPaidError,
 } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import { EventNotFoundError } from "./event-error"
 import type { EventService } from "./event-service"
 
 type EventRegistrationOptions = {
@@ -454,9 +453,6 @@ export function getAttendanceService(
     async updateAttendancePayment(handle, attendanceId, price) {
       const event = await eventService.getByAttendance(handle, attendanceId)
       const attendance = await this.getAttendanceById(handle, attendanceId)
-      if (event === null) {
-        throw new EventNotFoundError(`Could not find event for Attendance(ID=${attendanceId})`)
-      }
 
       const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
       const groupsText = ogJoin(event.hostingGroups.map((group) => group.abbreviation))
