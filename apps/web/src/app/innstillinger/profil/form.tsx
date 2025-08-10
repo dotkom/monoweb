@@ -137,7 +137,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <TextInput label="Fullt navn" placeholder="Ola Nordmann" required {...register("name")} />
+          <TextInput label="Fullt navn" placeholder="Ola Nordmann" required {...register("name")} disabled />
           {errors.name && (
             <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
               {errors.name?.message ?? "En feil oppstod"}
