@@ -29,7 +29,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
     },
     label: "Opprett",
     onSubmit: (values) => {
-      mutation.mutate({ eventId, values: { ...values } })
+      mutation.mutate({ eventId, values })
     },
   })
 

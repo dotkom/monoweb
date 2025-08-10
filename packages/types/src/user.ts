@@ -89,7 +89,6 @@ export function findActiveMembership(user: User): Membership | null {
 export function getMembershipGrade(membership: Membership): 1 | 2 | 3 | 4 | 5 | null {
   switch (membership.type) {
     case "KNIGHT":
-      return null
     case "PHD_STUDENT":
       return 5
     case "SOCIAL_MEMBER":

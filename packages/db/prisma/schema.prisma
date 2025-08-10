@@ -486,17 +486,8 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  // Tasks related to Event/Attendance
-  /// Attempt to reserve an attendee for an event
-  ///
-  /// The associated payload contains the Event ID and the attending user's User ID.
   RESERVE_ATTENDEE       @map("RESERVE_ATTENDEE")
-  /// Merge all attendance pools for an event
-  ///
-  /// The associated payload contains the Event ID.
   MERGE_ATTENDANCE_POOLS @map("MERGE_ATTENDANCE_POOLS")
-
-  // Tasks related to Payments
   VERIFY_PAYMENT             @map("VERIFY_PAYMENT")
   CHARGE_ATTENDANCE_PAYMENTS @map("CHARGE_ATTENDANCE_PAYMENTS")
 

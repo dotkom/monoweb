@@ -23,6 +23,7 @@ interface Props {
 }
 
 const Page: FC<Props> = ({ attendance }) => {
+  const attendees = attendance.attendees.filter((attendee) => attendee.user.email !== null)
   return (
     <Stack gap="xl">
       <Stack gap="xs">

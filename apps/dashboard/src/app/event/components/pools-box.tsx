@@ -12,18 +12,18 @@ interface NormalPoolBoxProps {
 }
 
 const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGroup }) => {
-  const attendeeCount = attendance.attendees.filter((attendee) => attendee.attendancePoolId === pool.id).length
+  const reservedAttendeeCount = attendance.attendees.filter(
+    (attendee) => attendee.attendancePoolId === pool.id && attendee.reserved
+  ).length
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder key={pool.id} mt={16}>
       <Flex justify="space-between" direction="column" gap="lg">
         <Box>
           <Title order={2}>{pool.title}</Title>
-          <Text>
-            {pool.capacity > 0
-              ? `${Math.min(attendeeCount, pool.capacity)} / ${pool.capacity} påmeldte`
-              : "Ledige plasser"}
-          </Text>
-          {attendeeCount - pool.capacity > 0 && <Text>{attendeeCount - pool.capacity} på venteliste</Text>}
+          <Text>{pool.capacity > 0 ? `${reservedAttendeeCount} / ${pool.capacity} påmeldte` : "Ledige plasser"}</Text>
+          {reservedAttendeeCount - pool.capacity > 0 && (
+            <Text>{reservedAttendeeCount - pool.capacity} på venteliste</Text>
+          )}
         </Box>
         <Box>
           <Button
@@ -41,7 +41,7 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
           >
             Endre
           </Button>
-          <Button onClick={() => deleteGroup(pool.id, attendeeCount)} color="red">
+          <Button onClick={() => deleteGroup(pool.id, reservedAttendeeCount)} color="red">
             Slett
           </Button>
         </Box>

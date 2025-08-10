@@ -59,12 +59,12 @@ import { EventNotFoundError } from "./event-error"
 import type { EventService } from "./event-service"
 
 type EventRegistrationOptions = {
-  /** Should the user be attended regardless of if registration has not yet opened? */
+  /** Should the user be attended regardless of if registration is closed? */
   ignoreRegistrationWindow: boolean
   /** Should the user be immediately reserved? */
   immediateReservation: boolean
   /**
-   * Should the payment be scheduled with an immediate deadline, or give a 24-hour deadline?
+   * Should the payment be scheduled with an immediate deadline? If not, a 24 hour window is given.
    */
   immediatePayment: boolean
 }
@@ -311,9 +311,10 @@ export function getAttendanceService(
       // Determining the pool to register the user for is done by finding the current year assumed for the user's active
       // membership.
       const applicablePool = attendance.pools.find((pool) => {
-        // Knights are not bound by any year criteria, and will thus occupy the first pool available.
+        // People with unknown membership are assumed said to not be allowed so that we can actually discover them as
+        // the value represents a bug or unknown state.
         if (grade === null) {
-          return true
+          return false
         }
         const delta = differenceInYears(getCurrentUTC(), membership.start) + 1
         return pool.yearCriteria.includes(delta)
@@ -335,10 +336,14 @@ export function getAttendanceService(
       if (punishment !== null) {
         reservationTime = addHours(reservationTime, punishment.delay)
       }
+
+      const poolAttendees = attendance.attendees.filter((a) => a.attendancePoolId === applicablePool.id && a.reserved)
+      const isAvailableNow = isPast(reservationTime) && poolAttendees.length < applicablePool.capacity
+      const isImmediate = options.immediateReservation || isAvailableNow
       const attendee = await attendanceRepository.createAttendee(handle, attendanceId, applicablePool.id, userId, {
         attendedAt: null,
         earliestReservationAt: reservationTime,
-        reserved: options.immediateReservation,
+        reserved: isImmediate,
         selections: [],
         userGrade: grade,
       })
@@ -389,8 +394,8 @@ export function getAttendanceService(
 
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
-      const adjacentAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id)
-      const isPoolAtMaxCapacity = adjacentAttendees.length === pool.capacity
+      const adjacentAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved)
+      const isPoolAtMaxCapacity = adjacentAttendees.length >= pool.capacity
       const isPastReservationTime = isPast(attendee.earliestReservationAt)
       if (isPoolAtMaxCapacity || isPastReservationTime) {
         return
@@ -454,7 +459,7 @@ export function getAttendanceService(
       }
 
       const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
-      const groupsText = ogJoin(event.hostingGroups.map((group) => group.name ?? group.slug))
+      const groupsText = ogJoin(event.hostingGroups.map((group) => group.abbreviation))
 
       await paymentProductsService.createOrUpdate(attendanceId, {
         description: event.hostingGroups ? `Arrangert av ${groupsText}` : undefined,
