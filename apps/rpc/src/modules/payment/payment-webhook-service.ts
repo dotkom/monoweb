@@ -3,30 +3,23 @@ import type Stripe from "stripe"
 
 interface PaymentWebhookService {
   registerWebhook: (webhookUrl: string, identifier: string) => Promise<void>
+  constructEvent: (body: string | Buffer<ArrayBufferLike>, signature: string) => Promise<Stripe.Event>
 }
 
 // In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`
 export function getPaymentWebhookService(stripe: Stripe): PaymentWebhookService {
+  let webhookSecret: string | null = null
+
   return {
     async registerWebhook(webhookUrl: string, identifier: string) {
       logger.info(`Setting up webhook at url: ${webhookUrl}`)
       const endpoints = await stripe.webhookEndpoints.list({})
 
-      let matchedExistingWebhook = false
       for (const endpoint of endpoints.data) {
         if (endpoint.metadata.identifier === identifier) {
-          if (endpoint.url === webhookUrl) {
-            logger.info("Matched existing webhook.")
-            matchedExistingWebhook = true
-            continue
-          }
           await stripe.webhookEndpoints.del(endpoint.id)
           logger.info(`Deleting webhook with id ${endpoint.id}`)
         }
-      }
-
-      if (matchedExistingWebhook) {
-        return
       }
 
       const endpoint = await stripe.webhookEndpoints.create({
@@ -35,7 +28,14 @@ export function getPaymentWebhookService(stripe: Stripe): PaymentWebhookService 
         description: identifier,
         enabled_events: ["checkout.session.completed"],
       })
+      webhookSecret = endpoint.secret ?? null
       logger.info(`Set up webhook with id ${endpoint.id}`)
+    },
+    constructEvent: async (body, signature) => {
+      if (webhookSecret === null) {
+        throw new Error("Received webhook event but missing webhook secret")
+      }
+      return await stripe.webhooks.constructEventAsync(body, signature, webhookSecret)
     },
   }
 }
