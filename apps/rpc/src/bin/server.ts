@@ -7,7 +7,6 @@ import { captureException } from "@sentry/node"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import fastify from "fastify"
-import z from "zod"
 import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
 import { configuration } from "../configuration"
@@ -83,22 +82,23 @@ server.get("/health", (_, res) => {
 })
 
 server.post("/webhook/stripe", async (req, res) => {
-  const checkoutSessionCompletedSchema = z.object({
-    type: z.literal("checkout.session.completed"),
-    data: z.object({
-      object: z
-        .object({
-          id: z.string(),
-        })
-        .passthrough(),
-    }),
-  })
-  const { data: payload, success } = checkoutSessionCompletedSchema.safeParse(req.body)
-  if (success) {
-    await serviceLayer.attendanceService.completeAttendeePayment(serviceLayer.prisma, payload.data.object.id)
+  if (!req.headers["stripe-signature"]) {
+    return res.status(401)
   }
 
-  res.status(204)
+  const signature =
+    typeof req.headers["stripe-signature"] === "string"
+      ? req.headers["stripe-signature"]
+      : req.headers["stripe-signature"][0]
+
+  const event = await serviceLayer.paymentWebhookService.constructEvent(
+    req.body,
+    signature,
+    configuration.STRIPE_WEBHOOK_SECRET
+  )
+  if (event.type === "checkout.session.completed") {
+    await serviceLayer.attendanceService.completeAttendeePayment(serviceLayer.prisma, event.data.object.id)
+  }
 })
 
 await identifyCallerIAMIdentity()

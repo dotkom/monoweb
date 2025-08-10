@@ -19,6 +19,7 @@ export const configuration = defineConfiguration({
     stg: "stg",
     dev: "dev",
   }),
+  STRIPE_WEBHOOK_SECRET: config(process.env.STRIPE_WEBHOOK_SECRET),
   HOST: config(process.env.HOST, "http://localhost:4444"),
   ADMIN_USERS: config(process.env.ADMIN_USERS),
 

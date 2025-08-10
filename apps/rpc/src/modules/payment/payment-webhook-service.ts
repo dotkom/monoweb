@@ -3,6 +3,7 @@ import type Stripe from "stripe"
 
 interface PaymentWebhookService {
   registerWebhook: (webhookUrl: string, identifier: string) => Promise<void>
+  constructEvent: (body: unknown, signature: string, endpointSecret: string) => Promise<Stripe.Event>
 }
 
 // In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`
@@ -36,6 +37,9 @@ export function getPaymentWebhookService(stripe: Stripe): PaymentWebhookService 
         enabled_events: ["checkout.session.completed"],
       })
       logger.info(`Set up webhook with id ${endpoint.id}`)
+    },
+    constructEvent: async (body: unknown, signature: string, endpointSecret: string) => {
+      return await stripe.webhooks.constructEventAsync(body, signature, endpointSecret)
     },
   }
 }
