@@ -7,11 +7,9 @@ interface GroupListProps {
 }
 
 export const GroupList: FC<GroupListProps> = ({ groups }) => (
-  <div className="px-4 py-8 mx-auto max-w-7xl">
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(270px,1fr))] gap-8">
-      {groups.map((group) => (
-        <GroupListItem key={group.slug} group={group} />
-      ))}
-    </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(22rem,1fr))] gap-3 md:gap-6">
+    {groups.map((group) => (
+      <GroupListItem key={group.slug} group={group} />
+    ))}
   </div>
 )
