@@ -25,8 +25,14 @@ export class PaymentUnexpectedStateError extends ApplicationError {
   }
 }
 
-export class PaymentNotReadyToCharge extends ApplicationError {
+export class PaymentNotReadyToChargeError extends ApplicationError {
   constructor(id: string) {
     super(PROBLEM_DETAILS.NotFound, `Payment with id ${id} is not ready to be charged`)
+  }
+}
+
+export class PaymentNotChargedError extends ApplicationError {
+  constructor(id: string) {
+    super(PROBLEM_DETAILS.NotFound, `Payment with id ${id} has not been charged and cannot be refunded`)
   }
 }

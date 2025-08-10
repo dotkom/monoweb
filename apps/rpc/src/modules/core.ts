@@ -42,6 +42,7 @@ import { getNotificationPermissionsRepository } from "./user/notification-permis
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
+import { getPaymentProductsService } from "./payment/payment-products-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -118,6 +119,7 @@ export async function createServiceLayer(
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
   const paymentService = getPaymentService(clients.stripe)
+  const paymentProductsService = getPaymentProductsService(clients.stripe)
   const attendeeService = getAttendeeService(
     attendeeRepository,
     attendanceRepository,
@@ -132,7 +134,7 @@ export async function createServiceLayer(
     attendeeRepository,
     attendeeService,
     taskSchedulingService,
-    paymentService,
+    paymentProductsService,
     eventService
   )
   const companyService = getCompanyService(companyRepository)

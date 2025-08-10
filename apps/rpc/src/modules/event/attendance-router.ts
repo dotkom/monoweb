@@ -83,7 +83,9 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input: { attendeeId }, ctx }) => {
-      return ctx.executeTransaction(async (handle) => ctx.attendeeService.refundAttendee(handle, attendeeId))
+      return ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.refundAttendee(handle, attendeeId, ctx.principal.subject)
+      )
     }),
 
   deregisterForEvent: authenticatedProcedure

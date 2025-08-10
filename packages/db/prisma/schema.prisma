@@ -82,6 +82,7 @@ model User {
   groupMemberships          GroupMembership[]
   memberships               Membership[]
   givenMarks                PersonalMark[] @relation("GivenBy")
+  attendeesRefunded         Attendee[] @relation(name: "RefundedBy")
 
   @@map("ow_user")
 }
@@ -261,6 +262,9 @@ model Attendee {
   paymentId             String?
   paymentReservedAt     DateTime?
   paymentChargedAt      DateTime?
+  paymentRefundedAt     DateTime?
+  paymentRefundedById   String?
+  paymentRefundedBy     User?                @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")

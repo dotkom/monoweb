@@ -21,7 +21,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { addHours, addSeconds, isFuture, isPast } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
-import type { PaymentService } from "../payment/payment-service"
+import type { Payment, PaymentService } from "../payment/payment-service"
 import { type InferTaskData, type VerifyPaymentTaskDefinition, tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
@@ -29,6 +29,7 @@ import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenE
 import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import {
+  AttendeeAlreadyPaidError,
   AttendeeDeregistrationError,
   AttendeeHasNotPaidError,
   AttendeeNotFoundError,
@@ -47,7 +48,9 @@ export interface AttendeeService {
     attendanceId: string,
     attendancePoolId: string
   ): Promise<Attendee>
-  refundAttendee(handle: DBHandle, attendeeId: string): Promise<void>
+  createPayment(handle: DBHandle, attendeeId: AttendeeId, deadline: TZDate): Promise<Payment>
+  requestPayment(handle: DBHandle, attendeeId: string): Promise<Payment>
+  refundAttendee(handle: DBHandle, attendeeId: string, refundedById: string): Promise<void>
   tryDeregisterForEvent(handle: DBHandle, userId: string, attendanceId: string): Promise<void>
   deregisterForEvent(handle: DBHandle, attendeeId: AttendeeId, options: AdminDeregisterForEventOptions): Promise<void>
   delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
@@ -109,22 +112,61 @@ export function getAttendeeService(
       }
       return await addUserToAttendee(handle, attendeeWithoutUser)
     },
-    async refundAttendee(handle: DBHandle, attendeeId: string) {
+    async requestPayment(handle: DBHandle, attendeeId: string) {
+      const attendee = await attendeeRepository.getById(handle, attendeeId)
+      if (!attendee) {
+        throw new AttendeeNotFoundError(attendeeId, "")
+      }
+
+      if (attendee.paymentId) {
+        const payment = await paymentService.getById(attendee.paymentId)
+        if (payment.status === "PAID" || payment.status === "RESERVED") {
+          throw new AttendeeAlreadyPaidError(attendee.userId)
+        }
+        if (payment.status === "UNPAID" && payment.url) {
+          return payment
+        }
+      }
+
+      const paymentDeadline = addHours(getCurrentUTC(), 24)
+
+      const payment = await this.createPayment(handle, attendeeId, paymentDeadline)
+
+      await attendeeRepository.update(handle, attendeeId, {
+        paymentChargedAt: null,
+        paymentId: payment.id,
+        paymentDeadline,
+        paymentLink: payment.url,
+        paymentReservedAt: null,
+        paymentRefundedAt: null,
+        paymentRefundedById: null,
+      })
+
+      return payment
+    },
+    async refundAttendee(handle: DBHandle, attendeeId: string, refundedById: string) {
       const attendee = await attendeeRepository.getById(handle, attendeeId)
       if (!attendee) {
         throw new AttendeeNotFoundError(attendeeId, "")
       }
       if (!attendee.paymentId || (!attendee.paymentChargedAt && !attendee.paymentReservedAt)) {
-        throw new AttendeeHasNotPaidError(attendeeId)
+        throw new AttendeeHasNotPaidError(attendee.userId)
       }
 
-      await paymentService.cancelProductPayment(attendee.paymentId, true)
+      const payment = await paymentService.getById(attendee.paymentId)
+      if (payment.status === "PAID") {
+        await paymentService.refund(attendee.paymentId)
+      } else {
+        await paymentService.cancel(attendee.paymentId)
+      }
       await attendeeRepository.update(handle, attendeeId, {
         paymentChargedAt: null,
         paymentId: null,
         paymentDeadline: null,
         paymentLink: null,
         paymentReservedAt: null,
+        paymentRefundedAt: getCurrentUTC(),
+        paymentRefundedById: refundedById,
       })
     },
     async tryDeregisterForEvent(handle: DBHandle, userId: string, attendanceId: string) {
@@ -146,7 +188,7 @@ export function getAttendeeService(
       }
 
       if (attendee.paymentId) {
-        await paymentService.cancelProductPayment(attendee.paymentId)
+        await paymentService.cancel(attendee.paymentId)
       }
       await attendeeRepository.delete(handle, attendee.id)
       const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
@@ -215,6 +257,8 @@ export function getAttendeeService(
         paymentChargedAt: null,
         paymentReservedAt: null,
         paymentId: null,
+        paymentRefundedAt: null,
+        paymentRefundedById: null,
       })
       const attendee = await addUserToAttendee(handle, attendeeWithoutUser, user)
       if (attendancePool.id !== attendeeWithoutUser.attendancePoolId) {
@@ -263,6 +307,8 @@ export function getAttendeeService(
         paymentId: null,
         paymentReservedAt: null,
         paymentChargedAt: null,
+        paymentRefundedAt: null,
+        paymentRefundedById: null,
       })
 
       return addUserToAttendee(handle, attendeeWithoutUser, user)
@@ -307,31 +353,40 @@ export function getAttendeeService(
       return false
     },
     async reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean) {
-      let paymentUrl = null
-      let paymentDeadline = null
-      let paymentId = null
+      let payment: Payment | null = null
+
+      const paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
+
       if (attendance.attendancePrice) {
-        const payment = await paymentService.createProductPayment(
-          attendance.id,
-          attendance.attendancePrice,
-          isPast(attendance.deregisterDeadline)
-        )
-
-        paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
-        paymentUrl = payment.url
-        paymentId = payment.id
-
-        taskSchedulingService.scheduleAt(
-          handle,
-          tasks.VERIFY_PAYMENT.type,
-          {
-            attendeeId: attendee.id,
-          },
-          paymentDeadline
-        )
+        payment = await this.createPayment(handle, attendee.id, paymentDeadline)
       }
 
-      return await attendeeRepository.reserveAttendee(handle, attendee.id, paymentUrl, paymentDeadline, paymentId)
+      return await attendeeRepository.reserveAttendee(handle, attendee.id, payment, paymentDeadline)
+    },
+    async createPayment(handle: DBHandle, attendeeId: AttendeeId, deadline: TZDate) {
+      const attendance = await attendanceRepository.getByAttendeeId(handle, attendeeId)
+      if (!attendance) {
+        throw new AttendanceNotFound(`attendeeId: ${attendeeId}`)
+      }
+      if (!attendance.attendancePrice) {
+        throw new Error("Tried to create a payment for an attendance without a price")
+      }
+
+      const payment = await paymentService.create(
+        attendance.id,
+        isPast(attendance.deregisterDeadline) ? "CHARGE" : "RESERVE"
+      )
+
+      taskSchedulingService.scheduleAt(
+        handle,
+        tasks.VERIFY_PAYMENT.type,
+        {
+          attendeeId,
+        },
+        deadline
+      )
+
+      return payment
     },
     async handleVerifyPaymentTask(handle, { attendeeId }) {
       const attendee = await attendeeRepository.getById(handle, attendeeId)
@@ -351,15 +406,15 @@ export function getAttendeeService(
         return
       }
 
-      const status = await paymentService.getPaymentStatus(paymentId)
+      const payment = await paymentService.getById(paymentId)
 
-      if (status === "UNPAID") {
+      if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
         throw new PaymentUnexpectedStateError(paymentId, "Got webhook about payment but API does not say so")
       }
 
       await attendeeRepository.update(handle, attendee.id, {
         paymentReservedAt: getCurrentUTC(),
-        paymentChargedAt: status === "PAID" ? getCurrentUTC() : null,
+        paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
         paymentDeadline: null,
         paymentLink: null,
       })
@@ -377,7 +432,7 @@ export function getAttendeeService(
       }
 
       try {
-        await paymentService.chargeProductPayment(attendee.paymentId)
+        await paymentService.charge(attendee.paymentId)
         await attendeeRepository.update(handle, attendeeId, {
           paymentChargedAt: getCurrentUTC(),
         })
@@ -418,7 +473,7 @@ export function getAttendeeService(
       }
 
       if (attendee.paymentId) {
-        await paymentService.cancelProductPayment(attendee.paymentId)
+        await paymentService.cancel(attendee.paymentId)
       }
 
       await attendeeRepository.delete(handle, attendeeId)

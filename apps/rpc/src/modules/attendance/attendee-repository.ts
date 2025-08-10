@@ -13,6 +13,8 @@ import {
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { parseOrReport } from "../../invariant"
 import { AttendeeWriteError } from "./attendee-error"
+import type { Payment } from "../payment/payment-service"
+import type { TZDate } from "@date-fns/tz"
 
 type UnparsedAttendeeWithoutUser = Omit<AttendeeWithoutUser, "selections"> & {
   selections?: JsonValue
@@ -36,9 +38,8 @@ export interface AttendeeRepository {
   reserveAttendee(
     handle: DBHandle,
     attendeeId: AttendeeId,
-    paymentUrl: string | null,
-    paymentDeadline: Date | null,
-    paymentId: string | null
+    payment: Payment | null,
+    paymentDeadline: TZDate | null
   ): Promise<boolean>
   moveFromMultiplePoolsToPool(
     handle: DBHandle,
@@ -126,7 +127,7 @@ export function getAttendeeRepository(): AttendeeRepository {
       const numberOfAttendees = await handle.attendee.count({ where: { attendanceId } })
       return numberOfAttendees > 0
     },
-    async reserveAttendee(handle, attendeeId, paymentLink = null, paymentDeadline = null, paymentId = null) {
+    async reserveAttendee(handle, attendeeId, payment, paymentDeadline) {
       const attendee = await handle.attendee.update({
         where: {
           id: attendeeId,
@@ -134,8 +135,8 @@ export function getAttendeeRepository(): AttendeeRepository {
         data: {
           reserved: true,
           paymentDeadline,
-          paymentLink,
-          paymentId,
+          paymentLink: payment?.url,
+          paymentId: payment?.id,
         },
       })
       return attendee.reserved

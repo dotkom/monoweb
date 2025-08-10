@@ -1,231 +1,141 @@
-import Stripe from "stripe"
+import type Stripe from "stripe"
 import {
   PaymentAlreadyChargedError,
-  PaymentAmbiguousPriceError,
-  PaymentMissingPriceError,
-  PaymentNotReadyToCharge,
+  PaymentNotChargedError,
+  PaymentNotReadyToChargeError,
+  PaymentUnexpectedStateError,
 } from "./payment-error"
 
-export type ProductPayment = {
-  url: string
-  id: string
-}
+type PaymentStatus = "UNPAID" | "CANCELLED" | "RESERVED" | "PAID"
+type ChargeMode = "RESERVE" | "CHARGE"
 
-type PaymentStatus = "UNPAID" | "RESERVED" | "PAID"
+export type Payment =
+  | {
+      status: "UNPAID" | "CANCELLED"
+      url: string | null
+      id: string
+      paymentIntentId: null
+    }
+  | {
+      status: "RESERVED" | "PAID"
+      url: string
+      id: string
+      paymentIntentId: string
+    }
+
+type PaymentId = string
 
 export interface PaymentService {
-  createOrUpdateProduct(
-    productId: string,
-    name: string,
-    price: number,
-    url: string,
-    imageUrl: string | null,
-    description: string | undefined,
-    metadata: Record<string, string>
-  ): Promise<string>
-  createProductPayment(productId: string, price: number, chargeNow?: boolean): Promise<ProductPayment>
-  cancelProductPayment(paymentId: string, refundChargedPayments?: boolean): Promise<void>
-  chargeProductPayment(paymentId: string): Promise<void>
-  getPaymentStatus(paymentId: string): Promise<PaymentStatus>
+  create(productId: PaymentId, chargeMode?: ChargeMode): Promise<Payment>
+  cancel(paymentId: PaymentId): Promise<void>
+  refund(paymentId: PaymentId): Promise<void>
+  charge(paymentId: PaymentId): Promise<void>
+  getById(paymentId: PaymentId): Promise<Payment>
 }
 
-type PriceData = { currency: string; unit_amount: number | null }
-
-const getPriceData = (price: number) => ({ currency: "NOK" as const, unit_amount: price * 100 })
-const priceDataEqual = (price_1: PriceData, price_2: PriceData) =>
-  price_1.currency.toLowerCase() === price_2.currency.toLowerCase() && price_1.unit_amount === price_2.unit_amount
-
 export function getPaymentService(stripe: Stripe): PaymentService {
-  const createProduct = async (
-    productId: string,
-    name: string,
-    price: number,
-    url: string,
-    imageUrl: string | null,
-    description: string | undefined,
-    metadata: Record<string, string>
-  ) => {
-    const product = await stripe.products.create({
-      name,
-      id: productId,
-      url,
-      default_price_data: getPriceData(price),
-      description,
-      images: imageUrl ? [imageUrl] : undefined,
-      metadata,
-    })
-
-    if (!product.default_price) {
-      throw new Error("Default price was not created")
+  function paymentIntentStatus(intentStatus: Stripe.PaymentIntent.Status): PaymentStatus {
+    switch (intentStatus) {
+      case "succeeded":
+        return "PAID"
+      case "requires_capture":
+        return "RESERVED"
+      case "canceled":
+        return "CANCELLED"
+      default:
+        return "UNPAID"
     }
-
-    return typeof product.default_price === "string" ? product.default_price : product.default_price.id
-  }
-
-  const updateProduct = async (
-    productId: string,
-    name: string,
-    newPrice: number,
-    url: string,
-    imageUrl: string | null,
-    description: string | undefined,
-    metadata: Record<string, string>
-  ) => {
-    const newPriceData = getPriceData(newPrice)
-
-    const activeStripePrice = await getActiveProductStripePrice(productId)
-
-    let defaultPriceId = activeStripePrice.id
-    let oldStripePriceId = null
-    if (!priceDataEqual(activeStripePrice, newPriceData)) {
-      const newStripePrice = await stripe.prices.create({ ...newPriceData, product: productId })
-
-      defaultPriceId = newStripePrice.id
-      oldStripePriceId = activeStripePrice.id
-    }
-
-    await stripe.products.update(productId, {
-      default_price: defaultPriceId,
-      name,
-      url,
-      description,
-      images: imageUrl ? [imageUrl] : undefined,
-      metadata,
-    })
-
-    if (oldStripePriceId !== null) {
-      await stripe.prices.update(oldStripePriceId, { active: false })
-    }
-
-    return defaultPriceId
-  }
-
-  const getActiveProductStripePrice = async (productId: string): Promise<Stripe.Price> => {
-    const { data: prices } = await stripe.prices.list({
-      active: true,
-      product: productId,
-    })
-
-    if (prices.length === 0) {
-      throw new PaymentMissingPriceError(productId)
-    }
-
-    if (prices.length > 1) {
-      throw new PaymentAmbiguousPriceError(productId)
-    }
-
-    const activePrice = prices[0]
-
-    return activePrice
   }
 
   return {
-    createOrUpdateProduct: async (productId, name, price, url, imageUrl, description, metadata) => {
-      try {
-        await stripe.products.retrieve(productId)
-      } catch (e) {
-        if (!(e instanceof Stripe.errors.StripeInvalidRequestError)) {
-          throw e
-        }
-
-        // If product does not exist
-        return await createProduct(productId, name, price, url, imageUrl, description, metadata)
-      }
-
-      return await updateProduct(productId, name, price, url, imageUrl, description, metadata)
-    },
-    createProductPayment: async (productId, price, immediate = false) => {
-      const product = await stripe.products.retrieve(productId)
-      const priceData = getPriceData(price)
-      const activePrice = await getActiveProductStripePrice(productId)
-
-      // Sanity check to not prank the user
-      if (!priceDataEqual(activePrice, priceData)) {
-        throw new Error("Active price did not match expected price")
-      }
-
-      const session = await stripe.checkout.sessions.create({
-        line_items: [{ price: activePrice.id, quantity: 1 }],
-        success_url: product.url ?? undefined,
-        cancel_url: product.url ?? undefined,
-        mode: "payment",
-        ...(immediate ? {} : { payment_intent_data: { capture_method: "manual" } }),
-      } satisfies Stripe.Checkout.SessionCreateParams)
-
-      if (!session.url) {
-        throw new Error("URL was not created for product")
-      }
-
-      return { id: session.id, url: session.url }
-    },
-    cancelProductPayment: async (paymentId: string, refund = false) => {
-      const session = await stripe.checkout.sessions.retrieve(paymentId)
-
-      if (session.payment_intent !== null) {
-        let paymentIntent: Stripe.PaymentIntent
-        if (typeof session.payment_intent === "string") {
-          paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent)
-        } else {
-          paymentIntent = session.payment_intent
-        }
-
-        if (paymentIntent.status === "succeeded") {
-          if (!refund) {
-            throw new PaymentAlreadyChargedError(paymentId)
-          }
-
-          await stripe.refunds.create({
-            payment_intent: paymentIntent.id,
-          })
-        } else if (paymentIntent.status !== "canceled") {
-          await stripe.paymentIntents.cancel(paymentIntent.id)
-        }
-      }
-
-      if (session.status !== "complete") {
-        await stripe.checkout.sessions.expire(paymentId)
-      }
-    },
-    chargeProductPayment: async (paymentId: string) => {
-      const session = await stripe.checkout.sessions.retrieve(paymentId)
-
-      if (session.payment_intent === null) {
-        throw new PaymentNotReadyToCharge(paymentId)
-      }
-
-      let paymentIntent: Stripe.PaymentIntent
-      if (typeof session.payment_intent === "string") {
-        paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent)
-      } else {
-        paymentIntent = session.payment_intent
-      }
-
-      if (paymentIntent.status === "succeeded") {
-        throw new PaymentAlreadyChargedError(paymentId)
-      }
-
-      await stripe.paymentIntents.capture(paymentIntent.id)
-    },
-    async getPaymentStatus(paymentId) {
+    async getById(paymentId): Promise<Payment> {
       const session = await stripe.checkout.sessions.retrieve(paymentId, {
         expand: ["payment_intent"],
       })
 
       if (!session.payment_intent) {
-        return "UNPAID"
+        return { status: "UNPAID", url: null, id: session.id, paymentIntentId: null }
       }
       if (typeof session.payment_intent === "string") {
         throw new Error("This is unreachable")
       }
-
-      switch (session.payment_intent.status) {
-        case "succeeded":
-          return "PAID"
-        case "requires_capture":
-          return "RESERVED"
-        default:
-          return "UNPAID"
+      const status = paymentIntentStatus(session.payment_intent.status)
+      if (status === "UNPAID" || status === "CANCELLED") {
+        return { status, url: null, id: paymentId, paymentIntentId: null }
       }
+
+      const paymentIntentId = session.payment_intent.id
+      const url = session.url
+
+      if (url === null) {
+        throw new PaymentUnexpectedStateError(paymentId, "missing URL")
+      }
+
+      return {
+        status,
+        url,
+        id: session.id,
+        paymentIntentId: paymentIntentId,
+      }
+    },
+    async create(productId, chargeMode = "RESERVE") {
+      const product = await stripe.products.retrieve(productId)
+      const session = await stripe.checkout.sessions.create({
+        success_url: product.url ?? undefined,
+        cancel_url: product.url ?? undefined,
+        mode: "payment",
+        ...(chargeMode === "CHARGE" ? {} : { payment_intent_data: { capture_method: "manual" } }),
+        customer_email: "jotjernshaugen@gmail.com",
+      })
+
+      return {
+        status: "UNPAID",
+        url: session.url,
+        id: session.id,
+        paymentIntentId: null,
+      }
+    },
+    async cancel(paymentId): Promise<void> {
+      const payment = await this.getById(paymentId)
+
+      if (payment.status === "PAID") {
+        throw new PaymentAlreadyChargedError(paymentId)
+      }
+
+      if (payment.status === "CANCELLED") {
+        return
+      }
+
+      if (payment.paymentIntentId === "RESERVED") {
+        await stripe.paymentIntents.cancel(payment.paymentIntentId)
+      }
+    },
+    async charge(paymentId) {
+      const payment = await this.getById(paymentId)
+
+      switch (payment.status) {
+        case "UNPAID":
+        case "CANCELLED":
+          throw new PaymentNotReadyToChargeError(paymentId)
+        case "PAID":
+          throw new PaymentAlreadyChargedError(paymentId)
+        case "RESERVED":
+          await stripe.paymentIntents.capture(payment.paymentIntentId)
+          break
+        default:
+          throw new Error("This should be unreachable")
+      }
+    },
+    async refund(paymentId) {
+      const payment = await this.getById(paymentId)
+
+      if (payment.status !== "PAID") {
+        throw new PaymentNotChargedError(paymentId)
+      }
+
+      await stripe.refunds.create({
+        payment_intent: payment.paymentIntentId,
+      })
     },
   }
 }

@@ -15,7 +15,7 @@ import { addHours, differenceInMinutes, isAfter, isBefore, isFuture } from "date
 import { configuration } from "../../configuration"
 import { EventNotFoundError } from "../event/event-error"
 import type { EventService } from "../event/event-service"
-import type { PaymentService } from "../payment/payment-service"
+import type { PaymentProductsService } from "../payment/payment-products-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
   type ChargeAttendancePaymentsTaskDefinition,
@@ -78,7 +78,7 @@ export function getAttendanceService(
   attendeeRepository: AttendeeRepository,
   attendeeService: AttendeeService,
   taskSchedulingService: TaskSchedulingService,
-  paymentService: PaymentService,
+  paymentProductsService: PaymentProductsService,
   eventService: EventService
 ): AttendanceService {
   async function validateSelections(
@@ -193,24 +193,23 @@ export function getAttendanceService(
         }
 
         const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
-
         const metadata = {
           group: event.hostingGroups.map((group) => group.slug).join(", "),
         }
-
         const groupsText = ogJoin(event.hostingGroups.map((group) => group.name ?? group.slug))
-
         const description = event.hostingGroups ? `Arrangert av ${groupsText}` : undefined
+        const imageUrl = event.imageUrl
+        const price = newAttendance.attendancePrice
+        const name = event.title
 
-        await paymentService.createOrUpdateProduct(
-          attendanceId,
-          event.title,
-          newAttendance.attendancePrice,
-          url,
-          event.imageUrl,
+        await paymentProductsService.createOrUpdate(attendanceId, {
           description,
-          metadata
-        )
+          imageUrl,
+          metadata,
+          name,
+          price,
+          url,
+        })
         await taskSchedulingService.scheduleAt(
           handle,
           "CHARGE_ATTENDANCE_PAYMENTS",
