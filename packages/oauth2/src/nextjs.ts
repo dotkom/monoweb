@@ -3,7 +3,7 @@ import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension
 import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { type OAuth2Service, type OAuthScope, defaultSessionLengthSeconds, getHostname } from "./authentication"
+import { type OAuth2Service, type OAuthScope, defaultSessionLengthSeconds } from "./authentication"
 import { type Session, createSession, getSession } from "./session"
 
 /**
