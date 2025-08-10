@@ -1,6 +1,7 @@
 import { useTRPC } from "@/lib/trpc"
 import type { Company, CompanyId, CompanySlug } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
+import { useMemo } from "react"
 
 export const useCompanyAllQuery = () => {
   const trpc = useTRPC()
@@ -18,7 +19,9 @@ export const useCompanyEventsAllQuery = (id: CompanyId) => {
     }),
   })
 
-  return { events: data?.items ?? [], ...query }
+  const events = useMemo(() => data?.items ?? [], [data])
+
+  return { events, ...query }
 }
 
 export const useCompanyBySlugQuery = (slug: CompanySlug) => {
