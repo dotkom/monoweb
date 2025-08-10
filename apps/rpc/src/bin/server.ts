@@ -12,6 +12,9 @@ import { identifyCallerIAMIdentity } from "../aws"
 import { configuration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createContext } from "../trpc"
+import type Fastify from "fastify"
+import rawBody from "fastify-raw-body"
+import crypto from "node:crypto"
 
 const logger = getLogger("rpc")
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
@@ -51,6 +54,14 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
 const server = fastify({
   maxParamLength: 5000,
 })
+await server.register(rawBody, {
+  field: "rawBody",
+  global: false,
+  encoding: "utf8",
+  runFirst: true,
+  routes: [],
+  jsonContentTypes: [],
+})
 server.setErrorHandler((error) => {
   logger.error(error)
   console.error(error)
@@ -81,9 +92,13 @@ server.get("/health", (_, res) => {
   res.send({ status: "ok" })
 })
 
-server.post("/webhook/stripe", async (req, res) => {
+server.post("/webhook/stripe", { config: { rawBody: true } }, async (req, res) => {
   if (!req.headers["stripe-signature"]) {
     return res.status(401)
+  }
+
+  if (!req.rawBody) {
+    return res.status(400)
   }
 
   const signature =
@@ -91,11 +106,7 @@ server.post("/webhook/stripe", async (req, res) => {
       ? req.headers["stripe-signature"]
       : req.headers["stripe-signature"][0]
 
-  const event = await serviceLayer.paymentWebhookService.constructEvent(
-    req.body,
-    signature,
-    configuration.STRIPE_WEBHOOK_SECRET
-  )
+  const event = await serviceLayer.paymentWebhookService.constructEvent(req.rawBody, signature)
   if (event.type === "checkout.session.completed") {
     await serviceLayer.attendanceService.completeAttendeePayment(serviceLayer.prisma, event.data.object.id)
   }
