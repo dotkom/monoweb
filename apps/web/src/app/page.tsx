@@ -29,12 +29,12 @@ export default async function App() {
   const user = session ? await server.user.getMe.query() : undefined
 
   const cookies = await getCookies()
-  const constructionNoticeHidden = cookies.get("hide-construction-notice")?.value === "1"
+  const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
 
   return (
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
-        {!constructionNoticeHidden && <ConstructionNotice />}
+        {constructionNoticeShown && <ConstructionNotice />}
         <FadderukeNotice />
       </div>
 
