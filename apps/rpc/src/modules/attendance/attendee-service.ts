@@ -18,7 +18,7 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { addHours, addSeconds, isFuture, isPast } from "date-fns"
+import { addHours, addMinutes, addSeconds, isFuture, isPast } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
 import type { Payment, PaymentService } from "../payment/payment-service"
@@ -355,7 +355,7 @@ export function getAttendeeService(
     async reserve(handle: DBHandle, attendance: Attendance, attendee: Attendee, immediate: boolean) {
       let payment: Payment | null = null
 
-      const paymentDeadline = immediate ? addSeconds(new TZDate(), 60) : addHours(new TZDate(), 24)
+      const paymentDeadline = immediate ? addMinutes(new TZDate(), 15) : addHours(new TZDate(), 24)
 
       if (attendance.attendancePrice) {
         payment = await this.createPayment(handle, attendee.id, paymentDeadline)
