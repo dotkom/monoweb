@@ -18,7 +18,8 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { addHours, addMinutes, addSeconds, isFuture, isPast } from "date-fns"
+import { captureException } from "@sentry/node"
+import { addHours, addMinutes, isFuture, isPast } from "date-fns"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
 import type { Payment, PaymentService } from "../payment/payment-service"
@@ -36,7 +37,6 @@ import {
   AttendeeRegistrationError,
 } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
-import { captureException } from "@sentry/node"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
