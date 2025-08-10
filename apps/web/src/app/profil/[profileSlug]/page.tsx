@@ -179,7 +179,7 @@ export default async function ProfilePage({
             </Title>
             {isUser && (
               <Button
-                element="a"
+                element={Link}
                 href="/innstillinger/profil"
                 color="dark"
                 icon={<Icon icon="tabler:edit" className="text-lg" />}
@@ -299,7 +299,7 @@ export default async function ProfilePage({
               <Text className="text-gray-500 dark:text-stone-500 text-sm">
                 Ved feil angitt informasjon, ta kontakt med{" "}
                 <Button
-                  element="a"
+                  element={Link}
                   href="/komiteer/hs"
                   variant="text"
                   className="-ml-0.5 text-sm text-gray-500 dark:text-stone-500"

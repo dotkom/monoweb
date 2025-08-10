@@ -3,6 +3,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import type { UserWrite } from "@dotkomonline/types"
 import { Button, Icon, Text, Title } from "@dotkomonline/ui"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ProfileForm } from "./form"
 
@@ -52,7 +53,7 @@ const EditProfilePage = () => {
         </Title>
 
         <Button
-          element="a"
+          element={Link}
           href={`/profil/${user.profileSlug}`}
           icon={<Icon icon="tabler:arrow-left" />}
           className="w-fit"

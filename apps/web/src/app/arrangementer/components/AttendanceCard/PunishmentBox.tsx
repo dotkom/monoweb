@@ -1,5 +1,6 @@
 import type { Punishment } from "@dotkomonline/types"
 import { Button, Icon, Text } from "@dotkomonline/ui"
+import Link from "next/link"
 import type { FC } from "react"
 
 interface PunishmentBoxProps {
@@ -18,7 +19,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
         <Text>
           Gå til{" "}
           <Button
-            element="a"
+            element={Link}
             href="/profil"
             variant="text"
             color="dark"
@@ -49,7 +50,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
       <Text>
         Gå til{" "}
         <Button
-          element="a"
+          element={Link}
           href="/profil"
           variant="text"
           color="red"

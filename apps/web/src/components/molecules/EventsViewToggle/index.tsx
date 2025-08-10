@@ -1,4 +1,5 @@
 import { Button, Icon, Text, cn } from "@dotkomonline/ui"
+import Link from "next/link"
 import type { FC } from "react"
 
 interface EventsViewToggleProps {
@@ -17,7 +18,7 @@ export const EventsViewToggle: FC<EventsViewToggleProps> = ({ active }) => {
   return (
     <div className="w-fit border border-gray-200 dark:border-none dark:bg-stone-800 flex flex-row items-center rounded-lg p-1">
       <Button
-        element="a"
+        element={Link}
         href="/arrangementer"
         color="light"
         icon={listIcon}
@@ -27,7 +28,7 @@ export const EventsViewToggle: FC<EventsViewToggleProps> = ({ active }) => {
       </Button>
 
       <Button
-        element="a"
+        element={Link}
         href="/arrangementer/kalender"
         color="light"
         icon={calendarIcon}

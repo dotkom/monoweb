@@ -1,4 +1,5 @@
 import { Button, Icon, cn } from "@dotkomonline/ui"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { FC } from "react"
 
@@ -14,7 +15,7 @@ export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon 
 
   return (
     <Button
-      element="a"
+      element={Link}
       href={slug}
       icon={<Icon icon={icon} className="text-lg" />}
       variant="text"
