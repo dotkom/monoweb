@@ -8,7 +8,7 @@ export const FadderukeNotice = () => {
         <div
           className={cn(
             "flex flex-col px-12 py-18 gap-3 md:gap-6 items-center rounded-2xl text-white shadow-inner",
-            "bg-no-repeat bg-cover bg-center bg-[url(/bakgrunnsBilde.jpg)]",
+            "bg-no-repeat bg-cover bg-center bg-[url(/fadderuke-2025-background.jpg)]",
             "h-72 lg:h-92 xl:h-[500px]"
           )}
         >
