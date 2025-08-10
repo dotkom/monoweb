@@ -2,6 +2,7 @@ import { clearInterval, setInterval } from "node:timers"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
+import { minutesToMilliseconds } from "date-fns"
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { AttendeeService } from "../attendance/attendee-service"
 import {
@@ -17,7 +18,7 @@ import type { TaskDiscoveryService } from "./task-discovery-service"
 import { InvalidTaskKind } from "./task-error"
 import type { TaskService } from "./task-service"
 
-const INTERVAL = 1000
+const INTERVAL = minutesToMilliseconds(1)
 
 export interface TaskExecutor {
   start(client: DBClient): Promise<void>
