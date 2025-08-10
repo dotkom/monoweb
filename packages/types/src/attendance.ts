@@ -48,7 +48,7 @@ export type Attendee = z.infer<typeof AttendeeSchema>
  * The attendee's User object is included, but without memberships.
  */
 export const AttendeeSchema = schemas.AttendeeSchema.extend({
-  user: UserSchema.omit({ memberships: true }),
+  user: UserSchema,
   selections: z.array(AttendanceSelectionResponseSchema),
 })
 

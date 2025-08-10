@@ -118,7 +118,11 @@ export function getAttendanceRepository(): AttendanceRepository {
           },
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              memberships: true,
+            }
+          },
         },
       })
       return parseOrReport(AttendeeSchema, attendee)
@@ -132,7 +136,11 @@ export function getAttendanceRepository(): AttendanceRepository {
       const attendee = await handle.attendee.findUnique({
         where: { id: attendeeId },
         include: {
-          user: true,
+          user: {
+            include: {
+              memberships: true,
+            }
+          },
         },
       })
       return parseOrReport(AttendeeSchema.nullable(), attendee)
@@ -142,7 +150,11 @@ export function getAttendanceRepository(): AttendanceRepository {
         where: { id: attendeeId },
         data,
         include: {
-          user: true,
+          user: {
+            include: {
+              memberships: true,
+            }
+          },
         },
       })
       return parseOrReport(AttendeeSchema, attendee)
@@ -170,6 +182,7 @@ export function getAttendanceRepository(): AttendanceRepository {
       return parseOrReport(AttendancePoolSchema, pool)
     },
     async deleteAttendancePoolsByIds(handle, attendancePoolIds) {
+      // TODO: set a deleted flag instead of deleting
       await handle.attendancePool.deleteMany({
         where: {
           id: {

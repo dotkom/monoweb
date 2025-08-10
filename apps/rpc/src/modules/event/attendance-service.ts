@@ -324,6 +324,7 @@ export function getAttendanceService(
     },
     async executeMergeEventPoolsTask(handle, { attendanceId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
+      // TODO: refactor to partition by
       const mergeablePools = attendance.pools.filter((pool) => {
         if (pool.mergeDelayHours === null) {
           return false
@@ -347,7 +348,7 @@ export function getAttendanceService(
       // We compute the next properties by summing up for all the pools.
       const defaultMergePool = {
         title: data.title,
-        mergeDelayHours: null,
+        mergeDelayHours: TODO,
         capacity: 0,
         yearCriteria: [] as number[],
       } satisfies AttendancePoolWrite
@@ -359,6 +360,9 @@ export function getAttendanceService(
           yearCriteria: acc.yearCriteria.concat(...curr.yearCriteria)
         }
       }, defaultMergePool)
+      validateAttendancePoolWrite(input)
+      // TODO: grab all pools that were not merged
+      validateAttendancePoolDisjunction(input.yearCriteria, TODO)
       const pool = await attendanceRepository.createAttendancePool(handle, attendanceId, input)
       const mergeablePoolIds = mergeablePools.map((pool) => pool.id)
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
