@@ -8,9 +8,8 @@ export const ConstructionNotice = () => {
   const [hidden, setHidden] = useState(false)
 
   const dismiss = () => {
-    const oneWeekInHours = 24 * 7
-    const maxAge = hoursToSeconds(oneWeekInHours)
-    document.cookie = `hide-construction-notice=1; Max-Age=${maxAge}; Path=/; SameSite=Lax`
+    const oneYearInHours = 365 * 24 * 60 * 60
+    document.cookie = `hide-construction-notice=1; Max-Age=${oneYearInHours}; Path=/; SameSite=Lax`
     setHidden(true)
   }
 
