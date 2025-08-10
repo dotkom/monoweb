@@ -2,11 +2,11 @@ import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
+import { isPast } from "date-fns"
 import { useMemo } from "react"
 import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
-import { isPast } from "date-fns"
 
 interface AllAttendeesTableProps {
   attendees: Attendee[]

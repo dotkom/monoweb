@@ -1,3 +1,4 @@
+import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type AttendanceId,
@@ -12,9 +13,8 @@ import {
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { parseOrReport } from "../../invariant"
-import { AttendeeWriteError } from "./attendee-error"
 import type { Payment } from "../payment/payment-service"
-import type { TZDate } from "@date-fns/tz"
+import { AttendeeWriteError } from "./attendee-error"
 
 type UnparsedAttendeeWithoutUser = Omit<AttendeeWithoutUser, "selections"> & {
   selections?: JsonValue

@@ -32,7 +32,9 @@ import { getPersonalMarkService } from "./mark/personal-mark-service"
 import { getNTNUStudyplanRepository } from "./ntnu-study-plan/ntnu-study-plan-repository"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
+import { getPaymentProductsService } from "./payment/payment-products-service"
 import { getPaymentService } from "./payment/payment-service"
+import { getPaymentWebhookService } from "./payment/payment-webhook-service"
 import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
 import { getLocalTaskExecutor } from "./task/task-executor"
 import { getTaskRepository } from "./task/task-repository"
@@ -42,8 +44,6 @@ import { getNotificationPermissionsRepository } from "./user/notification-permis
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
-import { getPaymentProductsService } from "./payment/payment-products-service"
-import { getPaymentWebhookService } from "./payment/payment-webhook-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
