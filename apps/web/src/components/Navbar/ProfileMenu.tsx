@@ -140,7 +140,7 @@ const linkGroups: LinkDetail[][] = [
     {
       icon: "tabler:settings",
       label: "Innstillinger",
-      href: "/settings",
+      href: "/innstillinger/profil",
     },
   ],
   [
