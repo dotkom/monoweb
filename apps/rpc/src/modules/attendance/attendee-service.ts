@@ -475,7 +475,7 @@ export function getAttendeeService(
     ) {
       const attendance = await attendanceRepository.getByAttendeeId(handle, attendeeId)
       if (!attendance) {
-        throw new AttendanceNotFound("")
+        throw new AttendanceNotFound(`attendeeId: ${attendeeId}`)
       }
       const pool = await attendanceRepository.getPoolByAttendeeId(handle, attendeeId)
       if (!pool) {
