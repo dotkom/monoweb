@@ -4,6 +4,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger, Icon, RichText, Te
 import { slugify } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { compareAsc, formatDate, getDate } from "date-fns"
+import { useMemo } from "react"
 
 const baseUrl = import.meta.env.VITE_WEB_URL || "http://localhost:3000"
 
@@ -12,7 +13,7 @@ export const Events = () => {
     trpc.event.all.queryOptions({ filter: { byOrganizingGroup: ["velkom"] }, take: 10000 })
   )
 
-  const events = data?.items ?? []
+  const events = useMemo(() => data?.items ?? [], [data])
 
   if (isLoading) {
     return (
