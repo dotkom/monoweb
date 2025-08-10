@@ -1,6 +1,7 @@
 import type Stripe from "stripe"
 import { logger } from "@sentry/node"
 
+// In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`
 export function getPaymentWebhookService(stripe: Stripe) {
   return {
     registerWebhook: async (webhookUrl: string, identifier: string) => {
