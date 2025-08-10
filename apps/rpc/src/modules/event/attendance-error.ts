@@ -19,8 +19,13 @@ export class AttendanceDeletionError extends ApplicationError {
   }
 }
 
-export class AttendancePoolNotFoundError extends ApplicationError {
-  constructor(id: string) {
-    super(PROBLEM_DETAILS.NotFound, `Attendance pool with id ${id} not found`)
+export class AttendeeHasNotPaidError extends ApplicationError {
+  constructor(userId: string) {
+    super(PROBLEM_DETAILS.NotFound, `Attendee with user id '${userId}' has not paid and cannot be refunded`)
+  }
+}
+export class AttendeeAlreadyPaidError extends ApplicationError {
+  constructor(userId: string) {
+    super(PROBLEM_DETAILS.NotFound, `Attendee with user id '${userId}' has not paid and cannot be refunded`)
   }
 }

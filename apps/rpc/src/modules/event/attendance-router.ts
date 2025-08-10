@@ -84,6 +84,18 @@ export const attendanceRouter = t.router({
       })
     ),
 
+  refundAttendee: staffProcedure
+    .input(
+      z.object({
+        attendeeId: AttendeeSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input: { attendeeId }, ctx }) => {
+      return ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.createAttendeeRefund(handle, attendeeId, ctx.principal.subject)
+      )
+    }),
+
   deregisterForEvent: authenticatedProcedure
     .input(
       z.object({

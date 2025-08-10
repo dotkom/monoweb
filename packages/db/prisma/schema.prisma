@@ -77,14 +77,12 @@ model User {
   notificationPermissionsId String?                  @unique
   notificationPermissions   NotificationPermissions?
 
-  attendee         Attendee[]
-  payment          Payment[]
-  requestedRefunds RefundRequest[]   @relation("RequestedBy")
-  handledRefunds   RefundRequest[]   @relation("HandledBy")
-  personalMark     PersonalMark[]
-  groupMemberships GroupMembership[]
-  memberships      Membership[]
-  givenMarks       PersonalMark[]    @relation("GivenBy")
+  attendee          Attendee[]
+  personalMark      PersonalMark[]
+  groupMemberships  GroupMembership[]
+  memberships       Membership[]
+  givenMarks        PersonalMark[]    @relation("GivenBy")
+  attendeesRefunded Attendee[]        @relation(name: "RefundedBy")
 
   @@map("ow_user")
 }
@@ -215,6 +213,8 @@ model Attendance {
   createdAt          DateTime @default(now()) @db.Timestamptz(3)
   updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
+  attendancePrice Int?
+
   pools     AttendancePool[]
   attendees Attendee[]
   events    Event[]
@@ -256,6 +256,15 @@ model Attendee {
   attendedAt            DateTime?           @db.Timestamptz(3)
   createdAt             DateTime            @default(now()) @db.Timestamptz(3)
   updatedAt             DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
+
+  paymentDeadline     DateTime?
+  paymentLink         String?
+  paymentId           String?
+  paymentReservedAt   DateTime?
+  paymentChargedAt    DateTime?
+  paymentRefundedAt   DateTime?
+  paymentRefundedById String?
+  paymentRefundedBy   User?     @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
@@ -335,96 +344,6 @@ model PersonalMark {
 
   @@id([markId, userId])
   @@map("personal_mark")
-}
-
-enum PaymentProvider {
-  STRIPE @map("STRIPE")
-
-  @@map("payment_provider")
-}
-
-enum ProductType {
-  EVENT @map("EVENT")
-
-  @@map("product_type")
-}
-
-enum PaymentStatus {
-  UNPAID   @map("UNPAID")
-  PAID     @map("PAID")
-  REFUNDED @map("REFUNDED")
-
-  @@map("payment_status")
-}
-
-enum RefundRequestStatus {
-  PENDING  @map("PENDING")
-  APPROVED @map("APPROVED")
-  REJECTED @map("REJECTED")
-
-  @@map("refund_request_status")
-}
-
-model Product {
-  id                     String      @id @default(uuid())
-  type                   ProductType
-  objectId               String?     @unique
-  amount                 Int
-  deletedAt              DateTime?   @db.Timestamptz(3)
-  isRefundable           Boolean     @default(true)
-  refundRequiresApproval Boolean     @default(true)
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-
-  payments         Payment[]
-  paymentProviders ProductPaymentProvider[]
-
-  @@map("product")
-}
-
-model Payment {
-  id                       String         @id @default(uuid())
-  product                  Product        @relation(fields: [productId], references: [id])
-  productId                String
-  user                     User           @relation(fields: [userId], references: [id])
-  userId                   String
-  paymentProviderId        String
-  paymentProviderSessionId String
-  paymentProviderOrderId   String?
-  status                   PaymentStatus
-  refundRequest            RefundRequest?
-  createdAt                DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt                DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
-
-  @@map("payment")
-}
-
-model ProductPaymentProvider {
-  product           Product         @relation(fields: [productId], references: [id])
-  productId         String
-  paymentProvider   PaymentProvider
-  paymentProviderId String
-
-  @@id([productId, paymentProviderId])
-  @@map("product_payment_provider")
-}
-
-model RefundRequest {
-  id          String              @id @default(uuid())
-  payment     Payment             @relation(fields: [paymentId], references: [id])
-  paymentId   String              @unique
-  user        User                @relation("RequestedBy", fields: [userId], references: [id])
-  userId      String
-  reason      String
-  status      RefundRequestStatus @default(PENDING)
-  handledBy   User?               @relation("HandledBy", fields: [handledById], references: [id])
-  handledById String?
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-
-  @@map("refund_request")
 }
 
 model PrivacyPermissions {
@@ -576,6 +495,10 @@ enum TaskType {
   ///
   /// The associated payload contains the Event ID.
   MERGE_ATTENDANCE_POOLS @map("MERGE_ATTENDANCE_POOLS")
+
+  // Tasks related to Payments
+  VERIFY_PAYMENT             @map("VERIFY_PAYMENT")
+  CHARGE_ATTENDANCE_PAYMENTS @map("CHARGE_ATTENDANCE_PAYMENTS")
 
   @@map("task_type")
 }

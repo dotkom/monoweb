@@ -24,6 +24,8 @@ export function getLocalTaskDiscoveryService(client: DBClient, taskService: Task
       const discoveredTasks = await Promise.all([
         this.discover(tasks.RESERVE_ATTENDEE.type),
         this.discover(tasks.MERGE_ATTENDANCE_POOLS.type),
+        this.discover(tasks.VERIFY_PAYMENT.type),
+        this.discover(tasks.CHARGE_ATTENDANCE_PAYMENTS.type),
       ])
       return discoveredTasks.flat()
     },

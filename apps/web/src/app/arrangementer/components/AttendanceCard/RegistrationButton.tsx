@@ -15,6 +15,7 @@ const getDisabledText = (
   status: AttendanceStatus,
   attendee: boolean,
   pool: boolean,
+  hasBeenCharged: boolean,
   isPastDeregisterDeadline: boolean,
   isLoggedIn: boolean,
   hasMembership?: boolean,
@@ -23,6 +24,7 @@ const getDisabledText = (
   if (!isLoggedIn) return "Du må være innlogget for å melde deg på"
   if (!hasMembership) return "Du må ha registrert medlemskap for å melde deg på"
   if (status === "NotOpened") return "Påmeldinger har ikke åpnet"
+  if (hasBeenCharged) return "Betaling er utført. Kontakt komite for refusjon"
   if (status === "Closed" && !attendee) return "Påmeldingen er stengt"
   if (!pool && !attendee) return "Du har ingen påmeldingsgruppe"
   if (isPastDeregisterDeadline && attendee) return "Avmeldingsfristen har utløpt"
@@ -68,6 +70,7 @@ export const RegistrationButton: FC<Props> = ({
     status,
     Boolean(attendee),
     Boolean(pool),
+    Boolean(attendee?.paymentChargedAt),
     isPastDeregisterDeadline,
     isLoggedIn,
     hasMembership,

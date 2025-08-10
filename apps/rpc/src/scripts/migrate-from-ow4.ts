@@ -9,6 +9,7 @@ export async function dumpOW4Data(url: string) {
 
   while (true) {
     const response = await fetch(getUrl(page))
+    // biome-ignore lint/suspicious/noExplicitAny: script, we dont care
     const data: any = await response.json()
     page++
     result.push(...data.results)

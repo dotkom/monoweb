@@ -16,9 +16,15 @@ export function createTaskDefinition<const TData, const TType extends TaskType>(
   return definition
 }
 
-export type ReserveAttendeeTaskDef = typeof tasks.RESERVE_ATTENDEE
-export type MergeAttendancePoolsTaskDef = typeof tasks.MERGE_ATTENDANCE_POOLS
-export type AnyTaskDefinition = ReserveAttendeeTaskDef | MergeAttendancePoolsTaskDef
+export type ReserveAttendeeTaskDefinition = typeof tasks.RESERVE_ATTENDEE
+export type MergeAttendancePoolsTaskDefinition = typeof tasks.MERGE_ATTENDANCE_POOLS
+export type VerifyPaymentTaskDefinition = typeof tasks.VERIFY_PAYMENT
+export type ChargeAttendancePaymentsTaskDefinition = typeof tasks.CHARGE_ATTENDANCE_PAYMENTS
+export type AnyTaskDefinition =
+  | ReserveAttendeeTaskDefinition
+  | MergeAttendancePoolsTaskDefinition
+  | VerifyPaymentTaskDefinition
+  | ChargeAttendancePaymentsTaskDefinition
 
 export const tasks = {
   RESERVE_ATTENDEE: createTaskDefinition({
@@ -39,6 +45,20 @@ export const tasks = {
         data: AttendancePoolWriteSchema.pick({
           title: true,
         }),
+      }),
+  }),
+  VERIFY_PAYMENT: createTaskDefinition({
+    type: "VERIFY_PAYMENT",
+    getSchema: () =>
+      z.object({
+        attendeeId: AttendeeSchema.shape.id,
+      }),
+  }),
+  CHARGE_ATTENDANCE_PAYMENTS: createTaskDefinition({
+    type: "CHARGE_ATTENDANCE_PAYMENTS",
+    getSchema: () =>
+      z.object({
+        attendanceId: z.string(),
       }),
   }),
 }

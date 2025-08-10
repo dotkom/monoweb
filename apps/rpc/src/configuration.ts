@@ -8,11 +8,18 @@ export const configuration = defineConfiguration({
   AUTH0_CLIENT_SECRET: config(process.env.AUTH0_CLIENT_SECRET),
   AUTH0_MGMT_TENANT: config(process.env.AUTH0_MGMT_TENANT),
 
+  WEB_PUBLIC_ORIGIN: config(process.env.WEB_PUBLIC_ORIGIN),
   ALLOWED_ORIGINS: config(process.env.ALLOWED_ORIGINS, {
     prd: "https://online.ntnu.no",
     stg: "https://staging.online.ntnu.no",
     dev: "http://localhost:3000",
   }),
+  STRIPE_WEBHOOK_IDENTIFIER: config(process.env.STRIPE_WEBHOOK_IDENTIFIER, {
+    prd: "prd",
+    stg: "stg",
+    dev: "dev",
+  }),
+  HOST: config(process.env.HOST, "http://localhost:4444"),
   ADMIN_USERS: config(process.env.ADMIN_USERS),
 
   AWS_REGION: config(process.env.AWS_REGION, "eu-north-1"),
@@ -26,11 +33,5 @@ export const configuration = defineConfiguration({
   AWS_S3_BUCKET: config(process.env.AWS_S3_BUCKET),
   DATABASE_URL: config(process.env.DATABASE_URL),
 
-  TRIKOM_STRIPE_PUBLIC_KEY: config(process.env.TRIKOM_STRIPE_PUBLIC_KEY),
-  TRIKOM_STRIPE_SECRET_KEY: config(process.env.TRIKOM_STRIPE_SECRET_KEY),
-  TRIKOM_STRIPE_WEBHOOK_SECRET: config(process.env.TRIKOM_STRIPE_WEBHOOK_SECRET),
-
-  FAGKOM_STRIPE_PUBLIC_KEY: config(process.env.FAGKOM_STRIPE_PUBLIC_KEY),
-  FAGKOM_STRIPE_SECRET_KEY: config(process.env.FAGKOM_STRIPE_SECRET_KEY),
-  FAGKOM_STRIPE_WEBHOOK_SECRET: config(process.env.FAGKOM_STRIPE_WEBHOOK_SECRET),
+  STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
 })

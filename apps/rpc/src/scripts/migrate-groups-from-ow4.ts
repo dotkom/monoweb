@@ -20,6 +20,7 @@ async function dumpData() {
 
     while (true) {
       const response = await fetch(getGroupUrl(page))
+      // biome-ignore lint/suspicious/noExplicitAny: script, we dont care
       const data: any = await response.json()
       page++
       result.push(...data.results)
@@ -44,6 +45,7 @@ async function dumpData() {
 
     while (true) {
       const response = await fetch(getHobbyUrl(page))
+      // biome-ignore lint/suspicious/noExplicitAny: script, we dont care
       const data: any = await response.json()
       page++
       result.push(...data.results)

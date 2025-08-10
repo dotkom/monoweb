@@ -30,14 +30,9 @@ import { getPersonalMarkService } from "./mark/personal-mark-service"
 import { getNTNUStudyplanRepository } from "./ntnu-study-plan/ntnu-study-plan-repository"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
-import { getPaymentRepository } from "./payment/payment-repository"
+import { getPaymentProductsService } from "./payment/payment-products-service"
 import { getPaymentService } from "./payment/payment-service"
-import { getProductPaymentProviderRepository } from "./payment/product-payment-provider-repository"
-import { getProductPaymentProviderService } from "./payment/product-payment-provider-service"
-import { getProductRepository } from "./payment/product-repository"
-import { getProductService } from "./payment/product-service"
-import { getRefundRequestRepository } from "./payment/refund-request-repository"
-import { getRefundRequestService } from "./payment/refund-request-service"
+import { getPaymentWebhookService } from "./payment/payment-webhook-service"
 import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
 import { getLocalTaskExecutor } from "./task/task-executor"
 import { getTaskRepository } from "./task/task-repository"
@@ -64,24 +59,11 @@ export function createThirdPartyClients(configuration: Configuration) {
     clientId: configuration.AUTH0_CLIENT_ID,
     clientSecret: configuration.AUTH0_CLIENT_SECRET,
   })
-  const stripeAccounts = {
-    trikom: {
-      stripe: new Stripe(configuration.TRIKOM_STRIPE_SECRET_KEY, {
-        apiVersion: "2023-08-16",
-      }),
-      publicKey: configuration.TRIKOM_STRIPE_PUBLIC_KEY,
-      webhookSecret: configuration.TRIKOM_STRIPE_WEBHOOK_SECRET,
-    },
-    fagkom: {
-      stripe: new Stripe(configuration.FAGKOM_STRIPE_SECRET_KEY, {
-        apiVersion: "2023-08-16",
-      }),
-      publicKey: configuration.FAGKOM_STRIPE_PUBLIC_KEY,
-      webhookSecret: configuration.FAGKOM_STRIPE_WEBHOOK_SECRET,
-    },
-  }
+  const stripe = new Stripe(configuration.STRIPE_SECRET_KEY, {
+    apiVersion: "2025-07-30.basil",
+  })
   const prisma = createPrisma(configuration.DATABASE_URL)
-  return { s3Client, auth0Client, stripeAccounts, prisma }
+  return { s3Client, auth0Client, stripe, prisma }
 }
 
 /**
@@ -107,10 +89,6 @@ export async function createServiceLayer(
   const companyRepository = getCompanyRepository()
   const userRepository = getUserRepository()
   const attendanceRepository = getAttendanceRepository()
-  const productRepository = getProductRepository()
-  const paymentRepository = getPaymentRepository()
-  const productPaymentProviderRepository = getProductPaymentProviderRepository()
-  const refundRequestRepository = getRefundRequestRepository()
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
@@ -138,29 +116,21 @@ export async function createServiceLayer(
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
+  const paymentService = getPaymentService(clients.stripe)
+  const paymentProductsService = getPaymentProductsService(clients.stripe)
+  const paymentWebhookService = getPaymentWebhookService(clients.stripe)
+  const eventService = getEventService(eventRepository)
   const attendanceService = getAttendanceService(
     attendanceRepository,
     taskSchedulingService,
     userService,
-    personalMarkService
+    personalMarkService,
+    paymentService,
+    paymentProductsService,
+    eventService,
+    configuration
   )
-  const eventService = getEventService(eventRepository)
   const companyService = getCompanyService(companyRepository)
-  const productService = getProductService(productRepository)
-  const paymentService = getPaymentService(
-    paymentRepository,
-    productRepository,
-    eventRepository,
-    refundRequestRepository,
-    clients.stripeAccounts
-  )
-  const productPaymentProviderService = getProductPaymentProviderService(productPaymentProviderRepository)
-  const refundRequestService = getRefundRequestService(
-    refundRequestRepository,
-    paymentRepository,
-    productRepository,
-    paymentService
-  )
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
@@ -174,10 +144,6 @@ export async function createServiceLayer(
     eventService,
     groupService,
     companyService,
-    productService,
-    paymentService,
-    productPaymentProviderService,
-    refundRequestService,
     markService,
     personalMarkService,
     jobListingService,
@@ -190,6 +156,7 @@ export async function createServiceLayer(
     feedbackFormService,
     feedbackFormAnswerService,
     authorizationService,
+    paymentWebhookService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only

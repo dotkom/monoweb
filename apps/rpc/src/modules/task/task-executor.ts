@@ -2,12 +2,13 @@ import { clearInterval, setInterval } from "node:timers"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
-import { minutesToMilliseconds } from "date-fns"
 import type { AttendanceService } from "../event/attendance-service"
 import {
+  type ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
-  type MergeAttendancePoolsTaskDef,
-  type ReserveAttendeeTaskDef,
+  type MergeAttendancePoolsTaskDefinition,
+  type ReserveAttendeeTaskDefinition,
+  type VerifyPaymentTaskDefinition,
   getTaskDefinition,
   tasks,
 } from "./task-definition"
@@ -15,7 +16,7 @@ import type { TaskDiscoveryService } from "./task-discovery-service"
 import { InvalidTaskKind } from "./task-error"
 import type { TaskService } from "./task-service"
 
-const INTERVAL = minutesToMilliseconds(1)
+const INTERVAL = 1000
 
 export interface TaskExecutor {
   start(client: DBClient): Promise<void>
@@ -68,7 +69,8 @@ export function getLocalTaskExecutor(
       let isError = false
       // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
       // as running regardless of whether the child transaction commits or rollbacks.
-      await taskService.setTaskExecutionStatus(client, task.id, "RUNNING")
+      logger.info("Running task", task.type, "with arguments", task.payload)
+      await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
       try {
         // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
@@ -80,12 +82,22 @@ export function getLocalTaskExecutor(
             case tasks.RESERVE_ATTENDEE.type:
               return await attendanceService.executeReserveAttendeeTask(
                 handle,
-                payload as InferTaskData<ReserveAttendeeTaskDef>
+                payload as InferTaskData<ReserveAttendeeTaskDefinition>
               )
             case tasks.MERGE_ATTENDANCE_POOLS.type:
               return await attendanceService.executeMergeEventPoolsTask(
                 handle,
-                payload as InferTaskData<MergeAttendancePoolsTaskDef>
+                payload as InferTaskData<MergeAttendancePoolsTaskDefinition>
+              )
+            case tasks.VERIFY_PAYMENT.type:
+              return await attendanceService.executeVerifyPaymentTask(
+                handle,
+                payload as InferTaskData<VerifyPaymentTaskDefinition>
+              )
+            case tasks.CHARGE_ATTENDANCE_PAYMENTS.type:
+              return await attendanceService.executeChargeAttendancePaymentsTask(
+                handle,
+                payload as InferTaskData<ChargeAttendancePaymentsTaskDefinition>
               )
           }
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
@@ -97,14 +109,14 @@ export function getLocalTaskExecutor(
         // TODO: Sentry.captureExecutionError(error)
         // Mark the job as failed using the client, so that regardless of whether the child transaction commits or not,
         // status is updated accordingly.
-        await taskService.setTaskExecutionStatus(client, task.id, "FAILED")
+        await taskService.setTaskExecutionStatus(client, task.id, "FAILED", "RUNNING")
         logger.error("Job with ID=%s failed with error: %o", task.id, error)
       } finally {
         // If nothing failed, we mark the job as completed. The reason this is in a finally block is to ensure that
         // regardless of whether the job execution was successful or not, we always update the job status.
         if (!isError) {
-          await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED")
-          logger.debug("Job with ID=%s completed successfully", task.id)
+          await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED", "RUNNING")
+          logger.info("Job with ID=%s completed successfully", task.id)
         }
       }
     },

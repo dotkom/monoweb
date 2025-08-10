@@ -10,6 +10,7 @@ import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { FeedbackPage } from "./feedback-page"
+import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
 
@@ -49,6 +50,12 @@ const SIDEBAR_LINKS = [
     label: "Valg",
     slug: "selections",
     component: SelectionsPage,
+  },
+  {
+    icon: "tabler:credit-card",
+    label: "Betaling",
+    slug: "payment",
+    component: PaymentPage,
   },
 ]
 

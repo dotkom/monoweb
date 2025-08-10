@@ -65,6 +65,17 @@ export const AttendeeWriteSchema = AttendeeSchema.pick({
   userGrade: true,
 })
 
+export type AttendeePaymentWrite = z.infer<typeof AttendeePaymentWriteSchema>
+export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
+  paymentChargedAt: true,
+  paymentId: true,
+  paymentDeadline: true,
+  paymentLink: true,
+  paymentReservedAt: true,
+  paymentRefundedAt: true,
+  paymentRefundedById: true,
+})
+
 export type AttendancePoolId = AttendancePool["id"]
 export type AttendancePool = z.infer<typeof AttendancePoolSchema>
 export const AttendancePoolSchema = schemas.AttendancePoolSchema.extend({

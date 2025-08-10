@@ -10,6 +10,7 @@ import {
   type AttendanceWrite,
   type Attendee,
   type AttendeeId,
+  type AttendeePaymentWrite,
   AttendeeSchema,
   type AttendeeWrite,
   type UserId,
@@ -22,6 +23,7 @@ export interface AttendanceRepository {
   findAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
   findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
+  findAttendanceByAttendeePaymentId(handle: DBHandle, attendeePaymentId: string): Promise<Attendance | null>
   updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
 
   createAttendee(
@@ -34,6 +36,11 @@ export interface AttendanceRepository {
   deleteAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   findAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee | null>
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: AttendeeWrite): Promise<Attendee>
+  updateAttendeePaymentById(
+    handle: DBHandle,
+    attendeeId: AttendeeId,
+    data: Partial<AttendeePaymentWrite>
+  ): Promise<Attendee>
   /** Move all attendees from one of multiple old pools to a new pool. */
   updateAttendeeAttendancePoolIdByAttendancePoolIds(
     handle: DBHandle,
@@ -97,6 +104,22 @@ export function getAttendanceRepository(): AttendanceRepository {
           attendees: {
             some: {
               id: attendeeId,
+            },
+          },
+        },
+        include: {
+          pools: true,
+          attendees: true,
+        },
+      })
+      return parseOrReport(AttendanceSchema.nullable(), attendance)
+    },
+    async findAttendanceByAttendeePaymentId(handle, attendeePaymentId) {
+      const attendance = await handle.attendance.findFirst({
+        where: {
+          attendees: {
+            some: {
+              paymentId: attendeePaymentId,
             },
           },
         },
@@ -178,6 +201,20 @@ export function getAttendanceRepository(): AttendanceRepository {
       return parseOrReport(AttendeeSchema.nullable(), attendee)
     },
     async updateAttendeeById(handle, attendeeId, data) {
+      const attendee = await handle.attendee.update({
+        where: { id: attendeeId },
+        data,
+        include: {
+          user: {
+            include: {
+              memberships: true,
+            },
+          },
+        },
+      })
+      return parseOrReport(AttendeeSchema, attendee)
+    },
+    async updateAttendeePaymentById(handle, attendeeId, data) {
       const attendee = await handle.attendee.update({
         where: { id: attendeeId },
         data,

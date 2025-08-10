@@ -1,4 +1,4 @@
-import type { TZDate } from "@date-fns/tz"
+import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
@@ -16,26 +16,54 @@ import {
   findActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { getCurrentUTC } from "@dotkomonline/utils"
-import { addHours, compareDesc, differenceInHours, differenceInYears, isAfter, isBefore, isPast } from "date-fns"
-import invariant from "tiny-invariant"
-import type { PersonalMarkService } from "../mark/personal-mark-service"
+import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
+import { captureException } from "@sentry/node"
 import {
+  addHours,
+  addMinutes,
+  compareDesc,
+  differenceInHours,
+  differenceInYears,
+  isAfter,
+  isBefore,
+  isPast,
+} from "date-fns"
+import invariant from "tiny-invariant"
+import type { Configuration } from "../../configuration"
+import type { PersonalMarkService } from "../mark/personal-mark-service"
+import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
+import type { PaymentProductsService } from "../payment/payment-products-service"
+import type { Payment, PaymentService } from "../payment/payment-service"
+import {
+  type ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
-  type MergeAttendancePoolsTaskDef,
-  type ReserveAttendeeTaskDef,
+  type MergeAttendancePoolsTaskDefinition,
+  type ReserveAttendeeTaskDefinition,
+  type VerifyPaymentTaskDefinition,
   tasks,
 } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
-import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
+import {
+  AttendanceDeletionError,
+  AttendanceNotFound,
+  AttendanceValidationError,
+  AttendeeAlreadyPaidError,
+  AttendeeHasNotPaidError,
+} from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
+import { EventNotFoundError } from "./event-error"
+import type { EventService } from "./event-service"
 
 type EventRegistrationOptions = {
   /** Should the user be attended regardless of if registration has not yet opened? */
   ignoreRegistrationWindow: boolean
   /** Should the user be immediately reserved? */
   immediateReservation: boolean
+  /**
+   * Should the payment be scheduled with an immediate deadline, or give a 24-hour deadline?
+   */
+  immediatePayment?: boolean
 }
 
 type EventDeregistrationOptions = {
@@ -60,6 +88,7 @@ export interface AttendanceService {
     attendanceId: AttendanceId,
     data: Partial<AttendanceWrite>
   ): Promise<Attendance>
+
   /**
    * Create a new attendance pool for an event.
    *
@@ -82,7 +111,7 @@ export interface AttendanceService {
    *
    * Due to how the year constraints are modelled (disjunctive set of all years across all pools), there is ONLY ONE
    * pool that a user may be eligible to register for at a time. This means that we do not need to provide which pool
-   * to register for, as we can programatically determine this on our own.
+   * to register for, as we can programmatically determine this on our own.
    *
    * NOTE: This function does not necessarily register the attendee, it merely checks preconditions and schedules a task
    * to register the attendee which will be picked up by the task scheduling and executor services.
@@ -96,8 +125,21 @@ export interface AttendanceService {
     options: EventRegistrationOptions
   ): Promise<Attendee | null>
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
-  executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDef>): Promise<void>
+  executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
+
+  updateAttendancePayment(handle: DBHandle, attendanceId: AttendanceId, price: number): Promise<void>
+  executeChargeAttendancePaymentsTask(
+    handle: DBHandle,
+    task: InferTaskData<ChargeAttendancePaymentsTaskDefinition>
+  ): Promise<void>
+  createAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, deadline: TZDate): Promise<Payment>
+  createAttendeeRefund(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
+  requestAttendeePayment(handle: DBHandle, attendeeId: AttendeeId): Promise<Payment>
+  completeAttendeePayment(handle: DBHandle, paymentId: string): Promise<void>
+  createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
+  executeVerifyPaymentTask(handle: DBHandle, task: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
+
   /**
    * Register that an attendee has physically attended an event.
    *
@@ -110,14 +152,18 @@ export interface AttendanceService {
     data: Pick<AttendancePoolWrite, "title">,
     mergeTime?: TZDate
   ): Promise<void>
-  executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDef>): Promise<void>
+  executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
 }
 
 export function getAttendanceService(
   attendanceRepository: AttendanceRepository,
   taskSchedulingService: TaskSchedulingService,
   userService: UserService,
-  personalMarkService: PersonalMarkService
+  personalMarkService: PersonalMarkService,
+  paymentService: PaymentService,
+  paymentProductsService: PaymentProductsService,
+  eventService: EventService,
+  configuration: Configuration
 ): AttendanceService {
   const logger = getLogger("attendance-service")
   return {
@@ -288,6 +334,12 @@ export function getAttendanceService(
         selections: [],
         userGrade: grade,
       })
+
+      if (attendance.attendancePrice) {
+        const paymentDeadline = options.immediatePayment ? addMinutes(new TZDate(), 15) : addHours(new TZDate(), 24)
+        await this.createAttendeePayment(handle, attendee.id, paymentDeadline)
+      }
+
       // When a user is immediately reserved, there is no reason to schedule a task for them.
       if (!options.immediateReservation) {
         await taskSchedulingService.scheduleAt(
@@ -352,7 +404,9 @@ export function getAttendanceService(
       if (attendee === undefined) {
         throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
-
+      if (attendee.paymentId !== null) {
+        await paymentService.cancel(attendee.paymentId)
+      }
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
@@ -376,6 +430,212 @@ export function getAttendanceService(
         ...firstUnreservedAdjacentAttendee,
         reserved: true,
       })
+    },
+    async updateAttendancePayment(handle, attendanceId, price) {
+      const event = await eventService.getByAttendance(handle, attendanceId)
+      const attendance = await this.getAttendanceById(handle, attendanceId)
+      if (event === null) {
+        throw new EventNotFoundError(`Could not find event for Attendance(ID=${attendanceId})`)
+      }
+
+      const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
+      const groupsText = ogJoin(event.hostingGroups.map((group) => group.name ?? group.slug))
+
+      await paymentProductsService.createOrUpdate(attendanceId, {
+        description: event.hostingGroups ? `Arrangert av ${groupsText}` : undefined,
+        name: event.title,
+        imageUrl: event.imageUrl,
+        metadata: {
+          group: event.hostingGroups.map((group) => group.slug).join(", "),
+        },
+        price,
+        url,
+      })
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.CHARGE_ATTENDANCE_PAYMENTS,
+        { attendanceId },
+        new TZDate(attendance.deregisterDeadline)
+      )
+    },
+    async executeChargeAttendancePaymentsTask(handle, { attendanceId }) {
+      logger.info(`Charging attendees of attendance with id ${attendanceId}`)
+      const attendance = await this.getAttendanceById(handle, attendanceId)
+      if (attendance.deregisterDeadline > getCurrentUTC()) {
+        logger.warn(`Not charging ${attendanceId} because task is too early`)
+        return
+      }
+      for (const attendee of attendance.attendees) {
+        logger.info(`Charging attendee ${attendee.id}`)
+        await this.createAttendeePaymentCharge(handle, attendee.id)
+      }
+    },
+    async createAttendeePayment(handle, attendeeId, deadline): Promise<Payment> {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      if (!attendance.attendancePrice) {
+        throw new Error("Tried to create a payment for an attendance without a price")
+      }
+
+      const payment = await paymentService.create(
+        attendance.id,
+        isPast(attendance.deregisterDeadline) ? "CHARGE" : "RESERVE"
+      )
+
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.VERIFY_PAYMENT,
+        {
+          attendeeId,
+        },
+        deadline
+      )
+
+      return payment
+    },
+    async createAttendeePaymentCharge(handle, attendeeId) {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+      if (attendee === undefined) {
+        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+      }
+
+      if (!attendee.paymentId) {
+        return
+      }
+      if (attendee.paymentChargedAt) {
+        return
+      }
+
+      try {
+        await paymentService.charge(attendee.paymentId)
+        await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
+          paymentChargedAt: getCurrentUTC(),
+        })
+      } catch (e) {
+        if (e instanceof PaymentAlreadyChargedError) {
+          logger.info(`Attendee ${attendee.id} has already been charged`)
+
+          await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
+            paymentChargedAt: getCurrentUTC(),
+          })
+        } else {
+          logger.error("Failed to charge attendee", attendee.id, e)
+          captureException(e)
+        }
+      }
+    },
+    async createAttendeeRefund(handle, attendeeId, refundedByUserId: UserId) {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+      if (attendee === undefined) {
+        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+      }
+      if (!attendee.paymentId || (!attendee.paymentChargedAt && !attendee.paymentReservedAt)) {
+        throw new AttendeeHasNotPaidError(attendee.userId)
+      }
+
+      const payment = await paymentService.getById(attendee.paymentId)
+      if (payment.status === "PAID") {
+        await paymentService.refund(attendee.paymentId)
+      } else {
+        await paymentService.cancel(attendee.paymentId)
+      }
+      await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
+        paymentChargedAt: null,
+        paymentId: null,
+        paymentDeadline: null,
+        paymentLink: null,
+        paymentReservedAt: null,
+        paymentRefundedAt: getCurrentUTC(),
+        paymentRefundedById: refundedByUserId,
+      })
+    },
+    async completeAttendeePayment(handle, paymentId) {
+      const attendance = await attendanceRepository.findAttendanceByAttendeePaymentId(handle, paymentId)
+      if (attendance === null) {
+        throw new AttendanceNotFound(`Attendance for Payment(ID=${paymentId}) not found`)
+      }
+      const attendee = attendance.attendees.find((attendee) => attendee.paymentId === paymentId)
+      if (attendee === undefined) {
+        throw new AttendanceNotFound(
+          `Attendee for Payment(ID=${paymentId}) not found in Attendance(ID=${attendance.id})`
+        )
+      }
+
+      if (attendee.paymentReservedAt || !attendee.paymentDeadline) {
+        return
+      }
+
+      const payment = await paymentService.getById(paymentId)
+      if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
+        throw new PaymentUnexpectedStateError(paymentId, "Got webhook about payment but API does not say so")
+      }
+
+      await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
+        paymentReservedAt: getCurrentUTC(),
+        paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
+        paymentDeadline: null,
+        paymentLink: null,
+      })
+    },
+    async requestAttendeePayment(handle, attendeeId) {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+      if (attendee === undefined) {
+        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+      }
+
+      if (attendee.paymentId) {
+        const payment = await paymentService.getById(attendee.paymentId)
+        if (payment.status === "PAID" || payment.status === "RESERVED") {
+          throw new AttendeeAlreadyPaidError(attendee.userId)
+        }
+        if (payment.status === "UNPAID" && payment.url) {
+          return payment
+        }
+      }
+
+      const paymentDeadline = addHours(getCurrentUTC(), 24)
+      const payment = await this.createAttendeePayment(handle, attendeeId, paymentDeadline)
+
+      await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
+        paymentChargedAt: null,
+        paymentId: payment.id,
+        paymentDeadline,
+        paymentLink: payment.url,
+        paymentReservedAt: null,
+        paymentRefundedAt: null,
+        paymentRefundedById: null,
+      })
+
+      return payment
+    },
+    async executeVerifyPaymentTask(handle, { attendeeId }) {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+      if (attendee === undefined) {
+        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+      }
+
+      if (attendee.paymentId === null || attendee.paymentReservedAt) {
+        return
+      }
+
+      const payment = await paymentService.getById(attendee.paymentId)
+
+      if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
+        await this.deregisterAttendee(handle, attendeeId, {
+          // TODO: Maybe this should be false?
+          ignoreDeregistrationWindow: true,
+        })
+      } else {
+        await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
+          paymentReservedAt: getCurrentUTC(),
+          paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
+          paymentDeadline: null,
+          paymentLink: null,
+        })
+      }
     },
     async registerAttendance(handle, attendeeId) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
