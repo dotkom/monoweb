@@ -36,6 +36,7 @@ import {
   AttendeeRegistrationError,
 } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
+import { captureException } from "@sentry/node"
 
 type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
@@ -457,6 +458,7 @@ export function getAttendeeService(
           })
         } else {
           console.error("Failed to charge attendee", attendee.id, e)
+          captureException(e)
         }
       }
     },
