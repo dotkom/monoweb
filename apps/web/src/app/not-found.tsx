@@ -1,4 +1,5 @@
 import { Button, Text, Title } from "@dotkomonline/ui"
+import Link from "next/link"
 
 const NotFound = async () => {
   return (
@@ -8,7 +9,7 @@ const NotFound = async () => {
         <Text className="text-2xl">Side ikke funnet</Text>
       </div>
 
-      <Button className="w-fit text-xl rounded-lg px-6 py-4" color="brand" element="a" href="/">
+      <Button className="w-fit text-xl rounded-lg px-6 py-4" color="brand" element={Link} href="/">
         Gå til forsiden
       </Button>
     </div>

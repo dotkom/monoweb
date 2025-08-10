@@ -49,7 +49,7 @@ export default async function App() {
 
           <Tilt className="grow">
             <Button
-              element="a"
+              element={Link}
               href="/arrangementer"
               className="w-full h-full bg-blue-100 hover:bg-blue-200 text-brand-800 hover:text-black"
               iconRight={<Icon icon="tabler:arrow-up-right" />}
