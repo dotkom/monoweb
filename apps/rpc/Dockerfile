@@ -19,7 +19,7 @@ RUN pnpm install --ignore-scripts
 RUN pnpm generate
 
 # Install for production
-RUN pnpm install --production --ignore-scripts
+RUN pnpm install --prod --ignore-scripts
 
 FROM base AS runner
 WORKDIR /app

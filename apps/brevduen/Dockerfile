@@ -23,7 +23,7 @@ RUN pnpm install --ignore-scripts
 RUN pnpm run -F @dotkomonline/emails build
 
 # Install for production
-RUN pnpm install --production --ignore-scripts
+RUN pnpm install --prod --ignore-scripts
 
 FROM base AS runner
 WORKDIR /app
