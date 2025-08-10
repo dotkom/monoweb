@@ -338,7 +338,7 @@ export function getAttendanceService(
       }
 
       const poolAttendees = attendance.attendees.filter((a) => a.attendancePoolId === applicablePool.id && a.reserved)
-      const isAvailableNow = isPast(reservationTime) && poolAttendees.length < applicablePool.capacity
+      const isAvailableNow = !isFuture(reservationTime) && poolAttendees.length < applicablePool.capacity
       const isImmediate = options.immediateReservation || isAvailableNow
       const attendee = await attendanceRepository.createAttendee(handle, attendanceId, applicablePool.id, userId, {
         attendedAt: null,
