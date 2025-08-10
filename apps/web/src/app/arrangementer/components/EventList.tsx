@@ -2,18 +2,15 @@
 
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { AttendanceId, Event } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 
-const mapEventDetailToItem = (
-  attendanceStatuses: Map<AttendanceId, "RESERVED" | "UNRESERVED"> | null,
-  event: Event
-) => {
-  const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
-
-  return <EventListItem event={event} attendeeStatus={attendeeStatus} key={event.id} />
+const mapEventDetailToItem = (event: Event) => {
+  // const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
+  //
+  return <EventListItem event={event} attendeeStatus={null} key={event.id} />
 }
 
 interface EventListProps {
@@ -23,13 +20,12 @@ interface EventListProps {
 
 export const EventList: FC<EventListProps> = (props: EventListProps) => {
   const lastFuture = props.events.findLastIndex((event) => !isPast(event.end))
-  const attendanceIds = props.events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
   const futureEvents = props.events.slice(0, lastFuture + 1)
   const pastEvents = props.events.slice(lastFuture + 1)
   const session = useSession()
 
-  const futureEventItems = futureEvents.map((eventDetail) => mapEventDetailToItem(attendanceStatuses, eventDetail))
-  const pastEventItems = pastEvents.map((eventDetail) => mapEventDetailToItem(attendanceStatuses, eventDetail))
+  const futureEventItems = futureEvents.map((eventDetail) => mapEventDetailToItem(eventDetail))
+  const pastEventItems = pastEvents.map((eventDetail) => mapEventDetailToItem(eventDetail))
 
   const loaderRef = useRef<HTMLDivElement>(null)
 

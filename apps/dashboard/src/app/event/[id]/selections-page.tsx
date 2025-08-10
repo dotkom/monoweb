@@ -8,10 +8,7 @@ import type { FC } from "react"
 import { useAttendanceForm } from "../components/attendance-form"
 import { useCreateAttendanceSelectionsModal } from "../components/create-event-selections-modal"
 import { useEditSelectionsModal } from "../components/edit-event-selections-modal"
-import {
-  useAddAttendanceMutation,
-  useUpdateAttendanceMutation,
-} from "../mutations"
+import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
 import { useEventContext } from "./provider"
 
 export const SelectionsPage: FC = () => {

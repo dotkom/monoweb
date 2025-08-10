@@ -76,7 +76,8 @@ export const attendanceRouter = t.router({
         id: AttendanceSchema.shape.id,
         price: z.number().int(),
       })
-    ).mutation(async ({ input, ctx }) => {
+    )
+    .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceById(handle, input.id)
         if (attendance === undefined) {
@@ -93,8 +94,8 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) =>{
-        const attendance = await ctx.attendanceService.getAttendanceById(handle, input. attendanceId)
+      return ctx.executeTransaction(async (handle) => {
+        const attendance = await ctx.attendanceService.getAttendanceById(handle, input.attendanceId)
         const allSelectionResponses = attendance.attendees.flatMap((attendee) => attendee.selections)
 
         return attendance.selections.map((selection) => {
@@ -111,8 +112,7 @@ export const attendanceRouter = t.router({
             })),
           }
         })
-        }
-      )
+      })
     }),
 
   registerForEvent: authenticatedProcedure

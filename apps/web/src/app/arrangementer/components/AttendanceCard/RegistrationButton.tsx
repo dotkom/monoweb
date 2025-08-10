@@ -59,7 +59,8 @@ export const RegistrationButton: FC<Props> = ({
   punishment,
 }) => {
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
-  const isPoolFull = pool ? pool.numAttendees >= pool.capacity : false
+  const poolReservedAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool?.id && a.reserved).length
+  const isPoolFull = pool ? poolReservedAttendees >= pool.capacity : false
   const isSuspended = punishment?.suspended ?? false
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
 

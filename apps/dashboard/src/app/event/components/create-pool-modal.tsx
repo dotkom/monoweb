@@ -20,11 +20,12 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
     createPool({
       id: attendanceId,
 
-    input: { capacity: values.capacity,
-      yearCriteria: values.yearCriteria,
-      title: values.title,
-      mergeDelayHours: null,
-    }
+      input: {
+        capacity: values.capacity,
+        yearCriteria: values.yearCriteria,
+        title: values.title,
+        mergeDelayHours: null,
+      },
     })
 
     context.closeModal(id)

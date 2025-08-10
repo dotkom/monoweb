@@ -1,6 +1,6 @@
 import { Box, Button, Group, Input, Title } from "@mantine/core"
 import { type FC, useRef } from "react"
-import {useUpdateAttendanceMutation, useUpdateAttendancePaymentMutation} from "../mutations"
+import { useUpdateAttendancePaymentMutation } from "../mutations"
 import { useAttendanceGetQuery } from "../queries"
 import { useEventContext } from "./provider"
 
@@ -36,7 +36,7 @@ export const PaymentPage: FC = () => {
 
   const removePayment = async () => {
     // TODO: Use separate mutation for removing payment
-    updateAttendancePayment.mutate({ id: attendanceId, price: 0, })
+    updateAttendancePayment.mutate({ id: attendanceId, price: 0 })
   }
 
   return (

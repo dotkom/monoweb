@@ -55,10 +55,7 @@ interface AttendanceCardProps {
 
 export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: AttendanceCardProps) => {
   const trpc = useTRPC()
-
   const [closeToEvent, setCloseToEvent] = useState(false)
-  const attendee = user && initialAttendance.attendees?.find((attendee) => attendee.userId === user.id)
-
   const [{ data: attendance, isLoading: attendanceLoading }, { data: punishment, isLoading: punishmentLoading }] =
     useQueries({
       queries: [
@@ -79,6 +76,8 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
         ),
       ],
     })
+
+  const attendee = user && initialAttendance.attendees?.find((attendee) => attendee.userId === user.id)
 
   useEffect(() => {
     // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
@@ -150,8 +149,9 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
       {punishment && hasPunishment && !isAttending && <PunishmentBox punishment={punishment} />}
 
       <MainPoolCard
-        pool={attendablePool}
-        attendee={attendee}
+        attendance={attendance}
+        pool={attendablePool ?? null}
+        attendee={attendee ?? null}
         queuePosition={queuePosition}
         isLoggedIn={isLoggedIn}
         hasMembership={hasMembership}
@@ -174,7 +174,11 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
       )}
 
       {nonAttendablePools.length > 0 && (
-        <NonAttendablePoolsBox pools={nonAttendablePools} hasAttendablePool={Boolean(attendablePool)} />
+        <NonAttendablePoolsBox
+          attendance={attendance}
+          pools={nonAttendablePools}
+          hasAttendablePool={Boolean(attendablePool)}
+        />
       )}
 
       {attendee && isAttendingAndReserved ? (

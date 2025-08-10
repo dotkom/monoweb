@@ -1,4 +1,4 @@
-import type { AttendancePool, Attendee, Punishment } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Attendee, Punishment } from "@dotkomonline/types"
 import { Icon, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { formatDate, formatDistanceToNowStrict, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -76,8 +76,9 @@ const DelayPill = ({ mergeDelayHours, className }: { mergeDelayHours: number | n
 }
 
 interface MainPoolCardProps {
-  pool: AttendancePool | undefined | null
-  attendee: Attendee | undefined | null
+  attendance: Attendance | null
+  pool: AttendancePool | null
+  attendee: Attendee | null
   isLoggedIn: boolean
   queuePosition: number | null
   hasMembership: boolean
@@ -85,6 +86,7 @@ interface MainPoolCardProps {
 }
 
 export const MainPoolCard: FC<MainPoolCardProps> = ({
+  attendance,
   pool,
   attendee,
   queuePosition,
@@ -127,7 +129,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const isAttendingAndReserved = isAttending && queuePosition === null
   const isAttendingAndNotReserved = isAttending && queuePosition !== null
-  const poolHasQueue = pool.numUnreservedAttendees > 0
+  const poolUnreservedAttendees =
+    attendance?.attendees?.filter((a) => a.attendancePoolId === pool.id && !a.reserved)?.length ?? 0
+  const poolAttendees = attendance?.attendees?.filter((a) => a.attendancePoolId === pool.id && a.reserved)?.length ?? 0
+  const poolHasQueue = poolUnreservedAttendees > 0
   const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
 
   return (
@@ -171,7 +176,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             poolHasQueue && isAttendingAndReserved && "bg-green-200 dark:bg-green-800 rounded-lg"
           )}
         >
-          {pool.numAttendees}
+          {poolAttendees}
           {pool.capacity > 0 && `/${pool.capacity}`}
         </Text>
 
@@ -182,7 +187,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               isAttendingAndNotReserved && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
             )}
           >
-            +{pool.numUnreservedAttendees} i kø
+            +{poolUnreservedAttendees} i kø
           </Text>
         )}
 
