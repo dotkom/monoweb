@@ -1,6 +1,6 @@
 import { UserSearch } from "@/app/user/components/user-search"
 import type { Attendance } from "@dotkomonline/types"
-import { Stack, Title } from "@mantine/core"
+import { Button, Group, Stack, Title } from "@mantine/core"
 import type { FC } from "react"
 import { AllAttendeesTable } from "../components/all-attendees-table"
 import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
@@ -52,6 +52,20 @@ const Page: FC<Props> = ({ attendance }) => {
         <Title my={10} order={3}>
           Alle påmeldte
         </Title>
+        <Group>
+          <Button component="a" href={`mailto:${attendees.map((attendee) => attendee.user.email).join(",")}`}>
+            Send e-post til alle
+          </Button>
+          <Button
+            component="a"
+            href={`mailto:${attendees
+              .filter((attendee) => attendee.reserved)
+              .map((attendee) => attendee.user.email)
+              .join(",")}`}
+          >
+            Send e-post til påmeldte (uten venteliste)
+          </Button>
+        </Group>
         <AllAttendeesTable attendees={attendees} attendance={attendance} />
       </Stack>
     </Stack>
