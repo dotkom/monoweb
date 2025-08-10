@@ -53,6 +53,7 @@ const server = fastify({
   maxParamLength: 5000,
 })
 server.setErrorHandler((error) => {
+  logger.error(error)
   console.error(error)
   captureException(error)
 })
@@ -82,7 +83,6 @@ server.get("/health", (_, res) => {
 })
 
 server.post("/webhook/stripe", async (req, res) => {
-  console.log(req.body)
   const checkoutSessionCompletedSchema = z.object({
     type: z.literal("checkout.session.completed"),
     data: z.object({
