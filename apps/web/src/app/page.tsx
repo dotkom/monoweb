@@ -10,6 +10,7 @@ import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
 import { ConstructionNotice } from "./construction-notice"
+import { FadderukeNotice } from "./fadderuke-notice"
 
 export default async function App() {
   const eventResult = await server.event.all.query({
@@ -37,10 +38,17 @@ export default async function App() {
 
   const cookies = await getCookies()
   const constructionNoticeHidden = cookies.get("hide-construction-notice")?.value === "1"
+  const fadderukeNoticeHidden = cookies.get("hide-fadderuke-notice")?.value === "1"
+  const hasNotices = !constructionNoticeHidden || !fadderukeNoticeHidden
 
   return (
     <section className="flex flex-col gap-16 w-full">
-      {!constructionNoticeHidden && <ConstructionNotice />}
+      {hasNotices && (
+        <div className="flex flex-col gap-4">
+          {!constructionNoticeHidden && <ConstructionNotice />}
+          {!fadderukeNoticeHidden && <FadderukeNotice />}
+        </div>
+      )}
 
       <CompanySplash />
 

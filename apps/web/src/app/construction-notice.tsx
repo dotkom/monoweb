@@ -20,16 +20,16 @@ export const ConstructionNotice = () => {
 
   return (
     <div className="relative flex flex-col gap-0 bg-yellow-100 dark:bg-amber-100 dark:text-black rounded-2xl">
-      <Button
-        onClick={dismiss}
-        variant="text"
-        className="absolute right-2 top-2 inline-flex p-2 hover:bg-yellow-100 dark:hover:bg-amber-100 rounded-lg"
-      >
-        <Icon icon="tabler:x" className="text-xl dark:text-black" />
-      </Button>
-
-      <div className="flex flex-col gap-4 pt-5 px-5 pb-4 bg-yellow-200 dark:bg-amber-200 dark:text-black rounded-t-2xl">
+      <div className="flex flex-row justify-between gap-4 pt-5 px-5 pb-4 bg-yellow-200 dark:bg-amber-200 dark:text-black rounded-t-2xl">
         <Title className="text-lg md:text-xl font-bold">🚧 Siden er under konstruksjon</Title>
+
+        <Button
+          onClick={dismiss}
+          variant="text"
+          className="-m-1 p-2 hover:bg-yellow-100 dark:hover:bg-amber-100 rounded-lg"
+        >
+          <Icon icon="tabler:x" className="text-xl dark:text-black" />
+        </Button>
       </div>
 
       <div className="flex flex-col gap-4 px-6 pb-6 pt-4 text-sm md:text-base rounded-b-2xl">
@@ -52,6 +52,8 @@ export const ConstructionNotice = () => {
               variant="text"
               element="a"
               href="mailto:dotkom@online.ntnu.no"
+              target="_blank"
+              rel="noopener noreferrer"
               iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
               className="text-sm md:text-base font-semibold hover:bg-yellow-200 dark:text-black dark:hover:bg-amber-200"
             >
