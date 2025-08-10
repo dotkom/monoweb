@@ -26,6 +26,7 @@ import {
   differenceInYears,
   isAfter,
   isBefore,
+  isFuture,
   isPast,
 } from "date-fns"
 import invariant from "tiny-invariant"
@@ -63,7 +64,7 @@ type EventRegistrationOptions = {
   /**
    * Should the payment be scheduled with an immediate deadline, or give a 24-hour deadline?
    */
-  immediatePayment?: boolean
+  immediatePayment: boolean
 }
 
 type EventDeregistrationOptions = {
@@ -123,7 +124,7 @@ export interface AttendanceService {
     attendanceId: AttendanceId,
     user: UserId,
     options: EventRegistrationOptions
-  ): Promise<Attendee | null>
+  ): Promise<Attendee>
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
@@ -277,6 +278,18 @@ export function getAttendanceService(
         )
       }
 
+      // Ensure the attempted registration is within the registration window.
+      if (isFuture(attendance.registerStart) && !options.ignoreRegistrationWindow) {
+        throw new AttendanceValidationError(
+          `Cannot register user(ID=${userId}) for Attendance(ID=${attendanceId}) before registration start`
+        )
+      }
+      if (isPast(attendance.registerEnd) && !options.ignoreRegistrationWindow) {
+        throw new AttendanceValidationError(
+          `Cannot register user(ID=${userId}) for Attendance(ID=${attendanceId}) after registration end`
+        )
+      }
+
       // Ensure the user has an active membership, and determine their effective grade
       const membership = findActiveMembership(user)
       if (membership === null) {
@@ -284,22 +297,12 @@ export function getAttendanceService(
       }
       const grade = getMembershipGrade(membership)
 
-      // Ensure the attempted registration is within the registration window.
-      if (isBefore(getCurrentUTC(), attendance.registerStart) && !options.ignoreRegistrationWindow) {
-        throw new AttendanceValidationError(
-          `Cannot register user(ID=${userId}) for Attendance(ID=${attendanceId}) before registration start`
-        )
-      }
-      if (isAfter(getCurrentUTC(), attendance.registerEnd) && !options.ignoreRegistrationWindow) {
-        throw new AttendanceValidationError(
-          `Cannot register user(ID=${userId}) for Attendance(ID=${attendanceId}) after registration end`
-        )
-      }
-
       // If the user is suspended at time of registration, we simply do not register them at all.
       const punishment = await personalMarkService.findPunishmentByUserId(handle, userId)
       if (punishment?.suspended) {
-        return null
+        throw new AttendanceValidationError(
+          `User(ID=${userId}) is suspended and cannot register for Attendance(ID=${attendanceId})`
+        )
       }
 
       // Determining the pool to register the user for is done by finding the current year assumed for the user's active
@@ -318,7 +321,9 @@ export function getAttendanceService(
           userId,
           attendanceId
         )
-        return null
+        throw new AttendanceValidationError(
+          `User(ID=${userId}) cannot register for Attendance(ID=${attendanceId}) as no applicable pool was found`
+        )
       }
 
       // Marking the attendee as registered is only half of the job, as we also schedule a task to reserve their place
@@ -736,7 +741,7 @@ function validateAttendanceWrite(data: AttendanceWrite) {
   if (isBefore(data.registerEnd, data.registerStart)) {
     throw new AttendanceValidationError("Cannot specify registration end before start")
   }
-  if (differenceInHours(data.registerStart, data.registerEnd) < 1) {
+  if (Math.abs(differenceInHours(data.registerStart, data.registerEnd)) < 1) {
     throw new AttendanceValidationError("Registration time must be at least one hour long")
   }
 }

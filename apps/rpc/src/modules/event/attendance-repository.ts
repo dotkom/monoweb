@@ -77,7 +77,15 @@ export function getAttendanceRepository(): AttendanceRepository {
         where: { id: attendanceId },
         include: {
           pools: true,
-          attendees: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+          },
         },
       })
       return parseOrReport(AttendanceSchema.nullable(), attendance)
@@ -93,7 +101,15 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
         include: {
           pools: true,
-          attendees: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+          },
         },
       })
       return parseOrReport(AttendanceSchema.nullable(), attendance)
@@ -109,7 +125,15 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
         include: {
           pools: true,
-          attendees: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+          },
         },
       })
       return parseOrReport(AttendanceSchema.nullable(), attendance)
@@ -125,7 +149,15 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
         include: {
           pools: true,
-          attendees: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+          },
         },
       })
       return parseOrReport(AttendanceSchema.nullable(), attendance)

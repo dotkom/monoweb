@@ -16,7 +16,8 @@ import { getUserService } from "../user/user-service"
 import { getEventRepository } from "./event-repository"
 import { getEventService } from "./event-service"
 
-function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
+// biome-ignore lint/suspicious/noExportsInTest: used in another spec
+export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
   return {
     type: "COMMITTEE",
     abbreviation: "Dotkom",
@@ -31,7 +32,8 @@ function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
   }
 }
 
-function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
+// biome-ignore lint/suspicious/noExportsInTest: used in another spec
+export function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
   return {
     status: "PUBLIC",
     type: "SOCIAL",
