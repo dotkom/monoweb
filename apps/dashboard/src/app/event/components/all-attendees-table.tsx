@@ -2,8 +2,8 @@ import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
+import { isPast } from "date-fns"
 import { useMemo } from "react"
-
 import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
@@ -62,6 +62,23 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           )
         },
       }),
+      columnHelper.accessor((attendee) => attendee, {
+        header: "Betalt",
+        filterFn: arrayOrEqualsFilter<Attendee>(),
+        cell: (info) => {
+          const attendee = info.getValue()
+
+          if (!attendance.attendancePrice) {
+            return null
+          }
+
+          const hasPaid = Boolean(
+            isPast(attendance.deregisterDeadline) ? attendee.paymentChargedAt : attendee.paymentReservedAt
+          )
+
+          return <Checkbox readOnly checked={hasPaid} />
+        },
+      }),
       columnHelper.accessor(
         (attendee) => {
           const spot = waitlists[attendee.attendancePoolId]?.[attendee.id]
@@ -110,7 +127,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         ),
       }),
     ],
-    [columnHelper, updateAttendanceMut, pools, waitlists]
+    [columnHelper, updateAttendanceMut, pools, waitlists, attendance.deregisterDeadline, attendance.attendancePrice]
   )
 
   const tableOptions = useMemo(

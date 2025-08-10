@@ -16,7 +16,7 @@ export type TaskService = {
    * @throws {TaskNotFound} if the task with the given `taskId` does not exist
    */
   update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState: TaskStatus): Promise<Task>
-  setTaskExecutionStatus(handle: DBHandle, taskId: TaskId, status: TaskStatus): Promise<Task>
+  setTaskExecutionStatus(handle: DBHandle, taskId: TaskId, status: TaskStatus, oldStatus: TaskStatus): Promise<Task>
 
   /**
    * Parse and validate the payload for a given task, given its specification.
@@ -68,8 +68,8 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
       }
       return task
     },
-    async setTaskExecutionStatus(handle, taskId, status) {
-      return await this.update(handle, taskId, { processedAt: new Date(), status }, "PENDING")
+    async setTaskExecutionStatus(handle, taskId, status, oldStatus) {
+      return await this.update(handle, taskId, { processedAt: new Date(), status }, oldStatus)
     },
     parse(taskDefinition, payload) {
       const schema = taskDefinition.getSchema()

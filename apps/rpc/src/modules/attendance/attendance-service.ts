@@ -10,9 +10,15 @@ import type {
   AttendanceWrite,
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
+import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { addHours, differenceInMinutes, isAfter, isBefore, isFuture } from "date-fns"
+import { configuration } from "../../configuration"
+import { EventNotFoundError } from "../event/event-error"
+import type { EventService } from "../event/event-service"
+import type { PaymentProductsService } from "../payment/payment-products-service"
 import {
   type AttemptReserveAttendeeTaskDefinition,
+  type ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
   type MergePoolsTaskDefinition,
   tasks,
@@ -61,13 +67,19 @@ export interface AttendanceService {
     handle: DBHandle,
     payload: InferTaskData<AttemptReserveAttendeeTaskDefinition>
   ): Promise<void>
+  handleChargePaymentTask(
+    handle: DBHandle,
+    payload: InferTaskData<ChargeAttendancePaymentsTaskDefinition>
+  ): Promise<void>
 }
 
 export function getAttendanceService(
   attendanceRepository: AttendanceRepository,
   attendeeRepository: AttendeeRepository,
   attendeeService: AttendeeService,
-  taskSchedulingService: TaskSchedulingService
+  taskSchedulingService: TaskSchedulingService,
+  paymentProductsService: PaymentProductsService,
+  eventService: EventService
 ): AttendanceService {
   async function validateSelections(
     handle: DBHandle,
@@ -101,9 +113,15 @@ export function getAttendanceService(
     const attendees = await attendeeService.getByAttendancePoolId(handle, newPool.id) // These are in order of reserveTime
     const unreservedAttendees = attendees.filter((attendee) => !attendee.reserved)
     const toAttemptReserve = unreservedAttendees.slice(0, capacityDifference)
+    const attendance = await attendanceRepository.getById(handle, newPool.attendanceId)
+    if (!attendance) {
+      throw new AttendanceNotFound(newPool.attendanceId)
+    }
 
     for (const attendee of toAttemptReserve) {
-      const result = await attendeeService.attemptReserve(handle, attendee, newPool, { bypassCriteria: false })
+      const result = await attendeeService.attemptReserve(handle, attendee, newPool, attendance, {
+        bypassCriteria: false,
+      })
       // reserveTime and pool capacity are the only metrics we use to reserve. If one fail the next will also fail
       if (!result) {
         break
@@ -121,6 +139,9 @@ export function getAttendanceService(
   }
   return {
     async create(handle, data: AttendanceWrite) {
+      if (data.attendancePrice) {
+        throw new Error("Can only set attendance price after creating")
+      }
       validateRegisterTime(data.registerStart, data.registerEnd)
       return await attendanceRepository.create(handle, data)
     },
@@ -163,7 +184,41 @@ export function getAttendanceService(
         await validateSelections(handle, attendanceId, attendance.selections, data.selections)
       }
 
-      return await attendanceRepository.update(handle, attendanceId, data)
+      const newAttendance = await attendanceRepository.update(handle, attendanceId, data)
+
+      if (newAttendance.attendancePrice) {
+        const event = await eventService.getByAttendance(handle, attendanceId)
+        if (event === null) {
+          throw new EventNotFoundError(`(attendanceId): ${attendanceId}`)
+        }
+
+        const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
+        const metadata = {
+          group: event.hostingGroups.map((group) => group.slug).join(", "),
+        }
+        const groupsText = ogJoin(event.hostingGroups.map((group) => group.name ?? group.slug))
+        const description = event.hostingGroups ? `Arrangert av ${groupsText}` : undefined
+        const imageUrl = event.imageUrl
+        const price = newAttendance.attendancePrice
+        const name = event.title
+
+        await paymentProductsService.createOrUpdate(attendanceId, {
+          description,
+          imageUrl,
+          metadata,
+          name,
+          price,
+          url,
+        })
+        await taskSchedulingService.scheduleAt(
+          handle,
+          "CHARGE_ATTENDANCE_PAYMENTS",
+          { attendanceId },
+          new TZDate(newAttendance.deregisterDeadline)
+        )
+      }
+
+      return newAttendance
     },
     async mergeAttendancePools(handle, attendanceId, newMergePoolData, mergeTime = new Date()) {
       if (!mergeTime || !isFuture(mergeTime)) {
@@ -264,7 +319,24 @@ export function getAttendanceService(
       if (!pool) {
         throw new AttendancePoolNotFoundError(attendee.attendancePoolId)
       }
-      await attendeeService.attemptReserve(handle, attendee, pool, { bypassCriteria: false })
+      await attendeeService.attemptReserve(handle, attendee, pool, attendance, { bypassCriteria: false })
+    },
+    async handleChargePaymentTask(handle, { attendanceId }) {
+      console.log(`Charging attendees of attendance with id ${attendanceId}`)
+      const attendance = await attendanceRepository.getById(handle, attendanceId)
+      if (!attendance) {
+        throw new AttendanceNotFound(attendanceId)
+      }
+      if (attendance.deregisterDeadline > getCurrentUTC()) {
+        console.log(`Not charging ${attendanceId} because task is too early`)
+        return
+      }
+      const attendees = await attendeeRepository.getByAttendanceId(handle, attendanceId)
+
+      for (const attendee of attendees) {
+        console.log(`Charging attendee ${attendee.id}`)
+        await attendeeService.chargeAttendee(handle, attendee.id)
+      }
     },
   }
 }

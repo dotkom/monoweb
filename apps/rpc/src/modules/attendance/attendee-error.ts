@@ -27,3 +27,13 @@ export class AttendeeNotFoundError extends ApplicationError {
     )
   }
 }
+export class AttendeeHasNotPaidError extends ApplicationError {
+  constructor(userId: string) {
+    super(PROBLEM_DETAILS.NotFound, `Attendee with user id '${userId}' has not paid and cannot be refunded`)
+  }
+}
+export class AttendeeAlreadyPaidError extends ApplicationError {
+  constructor(userId: string) {
+    super(PROBLEM_DETAILS.NotFound, `Attendee with user id '${userId}' has not paid and cannot be refunded`)
+  }
+}

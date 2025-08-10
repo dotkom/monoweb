@@ -76,6 +76,18 @@ export const attendanceRouter = t.router({
       )
     ),
 
+  refundAttendee: staffProcedure
+    .input(
+      z.object({
+        attendeeId: AttendeeSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input: { attendeeId }, ctx }) => {
+      return ctx.executeTransaction(async (handle) =>
+        ctx.attendeeService.refundAttendee(handle, attendeeId, ctx.principal.subject)
+      )
+    }),
+
   deregisterForEvent: authenticatedProcedure
     .input(
       z.object({
@@ -84,7 +96,7 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.attendeeService.deregisterForEvent(handle, ctx.principal.subject, input.attendanceId)
+        ctx.attendeeService.tryDeregisterForEvent(handle, ctx.principal.subject, input.attendanceId)
       )
     }),
 
@@ -98,7 +110,7 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.attendeeService.adminDeregisterForEvent(handle, input.attendeeId, {
+        ctx.attendeeService.deregisterForEvent(handle, input.attendeeId, {
           reserveNextAttendee: input.reserveNextAttendee,
           bypassCriteriaOnReserveNextAttendee: input.bypassCriteriaOnReserveNextAttendee,
         })

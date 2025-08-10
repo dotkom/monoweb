@@ -22,6 +22,7 @@ export interface EventRepository {
    */
   delete(handle: DBHandle, id: EventId): Promise<Event>
   findById(handle: DBHandle, id: string, options?: { includeDeleted?: boolean }): Promise<Event | null>
+  findByAttendanceId(handle: DBHandle, id: string): Promise<Event | null>
   /**
    * Find events based on a set of search criteria.
    *
@@ -147,6 +148,35 @@ export function getEventRepository(): EventRepository {
     async findById(handle, id, { includeDeleted = false } = {}) {
       const event = await handle.event.findUnique({
         where: { id, status: includeDeleted ? undefined : { not: "DELETED" } },
+        include: {
+          companies: {
+            include: {
+              company: true,
+            },
+          },
+          hostingGroups: {
+            include: {
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      if (event === null) {
+        return null
+      }
+      return parseOrReport(EventSchema, {
+        ...event,
+        companies: event?.companies.map((c) => c.company) ?? [],
+        hostingGroups: event?.hostingGroups.map((g) => g.group) ?? [],
+      })
+    },
+    async findByAttendanceId(handle, attendanceId) {
+      const event = await handle.event.findFirst({
+        where: { attendanceId, status: { not: "DELETED" } },
         include: {
           companies: {
             include: {

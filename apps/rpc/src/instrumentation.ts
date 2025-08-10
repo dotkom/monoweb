@@ -2,10 +2,10 @@ import { getLogger, getResource, startOpenTelemetry } from "@dotkomonline/logger
 import * as Sentry from "@sentry/node"
 
 const logger = getLogger("monoweb-rpc/instrumentation")
-const resource = getResource("monoweb-rpc")
-startOpenTelemetry(resource)
 
 if (process.env.SENTRY_DSN !== undefined) {
+  const resource = getResource("monoweb-rpc")
+  startOpenTelemetry(resource)
   logger.info("Initializing Sentry...")
   Sentry.init({
     dsn: process.env.SENTRY_DSN,

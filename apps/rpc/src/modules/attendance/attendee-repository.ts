@@ -1,3 +1,4 @@
+import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type AttendanceId,
@@ -12,6 +13,7 @@ import {
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { parseOrReport } from "../../invariant"
+import type { Payment } from "../payment/payment-service"
 import { AttendeeWriteError } from "./attendee-error"
 
 type UnparsedAttendeeWithoutUser = Omit<AttendeeWithoutUser, "selections"> & {
@@ -22,6 +24,7 @@ export interface AttendeeRepository {
   create(handle: DBHandle, data: AttendeeWrite): Promise<AttendeeWithoutUser>
   delete(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   getById(handle: DBHandle, attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
+  getByPayment(handle: DBHandle, attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
   update(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<AttendeeWithoutUser>
   getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<AttendeeWithoutUser[]>
   getByAttendancePoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser[]>
@@ -32,7 +35,12 @@ export interface AttendeeRepository {
   getByUserId(handle: DBHandle, userId: UserId, attendanceId: AttendanceId): Promise<AttendeeWithoutUser | null>
   poolHasAttendees(handle: DBHandle, poolId: AttendancePoolId): Promise<boolean>
   attendanceHasAttendees(handle: DBHandle, attendanceId: AttendanceId): Promise<boolean>
-  reserveAttendee(handle: DBHandle, attendeeId: AttendeeId): Promise<boolean>
+  reserveAttendee(
+    handle: DBHandle,
+    attendeeId: AttendeeId,
+    payment: Payment | null,
+    paymentDeadline: TZDate | null
+  ): Promise<boolean>
   moveFromMultiplePoolsToPool(
     handle: DBHandle,
     fromPoolIds: AttendancePoolId[],
@@ -63,6 +71,13 @@ export function getAttendeeRepository(): AttendeeRepository {
     },
     async getById(handle, attendeeId) {
       const attendee = await handle.attendee.findUnique({ where: { id: attendeeId } })
+      if (!attendee) {
+        return null
+      }
+      return parse(attendee)
+    },
+    async getByPayment(handle, paymentId) {
+      const attendee = await handle.attendee.findFirst({ where: { paymentId } })
       if (!attendee) {
         return null
       }
@@ -112,13 +127,16 @@ export function getAttendeeRepository(): AttendeeRepository {
       const numberOfAttendees = await handle.attendee.count({ where: { attendanceId } })
       return numberOfAttendees > 0
     },
-    async reserveAttendee(handle, attendeeId) {
+    async reserveAttendee(handle, attendeeId, payment, paymentDeadline) {
       const attendee = await handle.attendee.update({
         where: {
           id: attendeeId,
         },
         data: {
           reserved: true,
+          paymentDeadline,
+          paymentLink: payment?.url,
+          paymentId: payment?.id,
         },
       })
       return attendee.reserved
