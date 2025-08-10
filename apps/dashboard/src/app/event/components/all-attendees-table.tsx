@@ -47,7 +47,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         cell: (info) => info.getValue(),
         sortingFn: "alphanumeric",
       }),
-      columnHelper.accessor("attended", {
+      columnHelper.accessor("attendedAt", {
         header: "Møtt",
         filterFn: arrayOrEqualsFilter<Attendee>(),
         cell: (info) => {
@@ -55,9 +55,9 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           return (
             <Checkbox
               onChange={(event) => {
-                updateAttendanceMut.mutate({ id: row.id, attended: event.currentTarget.checked })
+                updateAttendanceMut.mutate({ id: row.id })
               }}
-              checked={info.getValue()}
+              checked={info.getValue() !== null}
             />
           )
         },

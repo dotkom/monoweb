@@ -1,6 +1,5 @@
 "use client"
 
-import { useGetAttendeeStatusesQuery } from "@/app/arrangementer/components/queries"
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { AttendanceId, Event } from "@dotkomonline/types"
@@ -23,19 +22,11 @@ interface EventListProps {
 }
 
 export const EventList: FC<EventListProps> = (props: EventListProps) => {
-  if (props.events.length === 0) {
-    return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
-  }
-
   const lastFuture = props.events.findLastIndex((event) => !isPast(event.end))
   const attendanceIds = props.events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
   const futureEvents = props.events.slice(0, lastFuture + 1)
   const pastEvents = props.events.slice(lastFuture + 1)
-
   const session = useSession()
-
-  const attendanceStatusesQuery = useGetAttendeeStatusesQuery({ userId: session?.sub, attendanceIds })
-  const attendanceStatuses = attendanceStatusesQuery.data ?? null
 
   const futureEventItems = futureEvents.map((eventDetail) => mapEventDetailToItem(attendanceStatuses, eventDetail))
   const pastEventItems = pastEvents.map((eventDetail) => mapEventDetailToItem(attendanceStatuses, eventDetail))
@@ -52,6 +43,10 @@ export const EventList: FC<EventListProps> = (props: EventListProps) => {
     if (loaderRef.current) observer.observe(loaderRef.current)
     return () => observer.disconnect()
   }, [props.fetchNextPage])
+
+  if (props.events.length === 0) {
+    return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
+  }
 
   return (
     <section className="w-full flex flex-col gap-2">

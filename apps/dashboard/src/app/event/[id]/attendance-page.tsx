@@ -29,7 +29,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
     },
     label: "Opprett",
     onSubmit: (values) => {
-      mutation.mutate({ eventId, values: { ...values, attendancePrice: null } })
+      mutation.mutate({ eventId, values: { ...values } })
     },
   })
 
@@ -64,7 +64,6 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
 
   const PoolsForm = usePoolsForm({
     attendanceId: attendance.id,
-    pools: attendance.pools,
   })
 
   return (
@@ -78,7 +77,7 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
       <Divider my={32} />
       <Box>
         <Title order={3}>Påmeldingsgrupper</Title>
-        <PoolBox pools={attendance.pools || []} attendanceId={attendance.id} />
+        <PoolBox attendance={attendance} />
         <PoolsForm />
       </Box>
     </Box>

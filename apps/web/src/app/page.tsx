@@ -28,13 +28,6 @@ export default async function App() {
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
 
-  const attendanceStatuses = user
-    ? await server.attendance.getAttendeeStatuses.query({
-        userId: user.id,
-        attendanceIds,
-      })
-    : null
-
   const cookies = await getCookies()
   const constructionNoticeHidden = cookies.get("hide-construction-notice")?.value === "1"
 

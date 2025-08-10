@@ -95,13 +95,6 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as string[]
   const userId = session?.sub
 
-  const attendeeStatuses = userId
-    ? await server.attendance.getAttendeeStatuses.query({
-        attendanceIds,
-        userId,
-      })
-    : null
-
   const cal = getCalendarArray(year, month, events)
   const eventTypeGuideItems = getEventTypeGuide(events)
 

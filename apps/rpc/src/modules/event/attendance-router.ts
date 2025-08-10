@@ -65,8 +65,54 @@ export const attendanceRouter = t.router({
         return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, input.userId, {
           ignoreRegistrationWindow: true,
           immediateReservation: true,
+          immediatePayment: false,
         })
       })
+    }),
+
+  updateAttendancePayment: staffProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+        price: z.number().int(),
+      })
+    ).mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const attendance = await ctx.attendanceService.getAttendanceById(handle, input.id)
+        if (attendance === undefined) {
+          throw new TRPCError({ code: "NOT_FOUND" })
+        }
+        return ctx.attendanceService.updateAttendancePayment(handle, input.id, input.price)
+      })
+    }),
+
+  getSelectionsResults: staffProcedure
+    .input(
+      z.object({
+        attendanceId: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) =>{
+        const attendance = await ctx.attendanceService.getAttendanceById(handle, input. attendanceId)
+        const allSelectionResponses = attendance.attendees.flatMap((attendee) => attendee.selections)
+
+        return attendance.selections.map((selection) => {
+          const selectionResponses = allSelectionResponses.filter((response) => response.selectionId === selection.id)
+
+          return {
+            id: selection.id,
+            name: selection.name,
+            totalCount: selectionResponses.length,
+            options: selection.options.map((option) => ({
+              id: option.id,
+              name: option.name,
+              count: selectionResponses.filter((response) => response.optionId === option.id).length,
+            })),
+          }
+        })
+        }
+      )
     }),
 
   registerForEvent: authenticatedProcedure
@@ -80,6 +126,7 @@ export const attendanceRouter = t.router({
         return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, ctx.principal.subject, {
           ignoreRegistrationWindow: false,
           immediateReservation: false,
+          immediatePayment: true,
         })
       })
     ),

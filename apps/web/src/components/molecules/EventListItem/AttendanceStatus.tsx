@@ -2,19 +2,12 @@
 
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
 import { useTRPC } from "@/utils/trpc/client"
-import type { Attendance, AttendanceId } from "@dotkomonline/types"
+import { type AttendanceId, getAttendanceCapacity, getReservedAttendeeCount } from "@dotkomonline/types"
 import { Icon, Text, cn } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
-
-const getAttendeeCountAndCapacity = (attendance: Attendance): [number, number] => {
-  return attendance.pools.reduce(
-    ([attendeeCount, capacity], pool) => [attendeeCount + pool.numAttendees, capacity + pool.capacity],
-    [0, 0]
-  )
-}
 
 interface EventListItemAttendanceStatusProps {
   attendanceId: AttendanceId | null
@@ -39,8 +32,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const attendanceStatus = getAttendanceStatus(attendance)
   const isReserved = attendeeStatus === "RESERVED"
   const isUnreserved = attendeeStatus === "UNRESERVED"
-
-  const [numberOfAttendees, capacity] = getAttendeeCountAndCapacity(attendance)
+  const numberOfAttendees = getReservedAttendeeCount(attendance)
+  const capacity = getAttendanceCapacity(attendance)
 
   const justAttendanceClosed = attendanceStatus === "Closed" && !isReserved && !isUnreserved && !eventEndInPast
   const inPast = attendanceStatus === "Closed" || eventEndInPast

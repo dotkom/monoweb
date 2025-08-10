@@ -5,7 +5,7 @@ import { server } from "@/utils/trpc/server"
 import {
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
-  getActiveMembership,
+  findActiveMembership,
   getMembershipGrade,
   getMembershipTypeName,
   getSpecializationName,
@@ -159,7 +159,7 @@ export default async function ProfilePage({
     })),
   ]
 
-  const activeMembership = getActiveMembership(user)
+  const activeMembership = findActiveMembership(user)
   const grade = activeMembership ? getMembershipGrade(activeMembership) : null
 
   return (

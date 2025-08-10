@@ -30,8 +30,6 @@ export const ManualDeleteUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
     deregisterAttendee(
       {
         attendeeId,
-        reserveNextAttendee,
-        bypassCriteriaOnReserveNextAttendee,
       },
       {
         onSuccess: () => {

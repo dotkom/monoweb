@@ -18,11 +18,13 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
   const onClose = () => context.closeModal(id)
   const onSubmit = (values: PoolFormSchema) => {
     createPool({
-      capacity: values.capacity,
+      id: attendanceId,
+
+    input: { capacity: values.capacity,
       yearCriteria: values.yearCriteria,
-      attendanceId: attendanceId,
       title: values.title,
       mergeDelayHours: null,
+    }
     })
 
     context.closeModal(id)

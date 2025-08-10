@@ -28,21 +28,6 @@ export const AttendanceSelectionResponseSchema = z.object({
 export type AttendeeSelectionResponsesSchema = z.infer<typeof AttendeeSelectionResponsesSchema>
 export const AttendeeSelectionResponsesSchema = z.array(AttendanceSelectionResponseSchema)
 
-export type AttendanceSelectionResults = z.infer<typeof AttendanceSelectionResultSchema>
-export const AttendanceSelectionResultSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  /** The number of attendees who have answered this selection. */
-  count: z.number(),
-  options: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      count: z.number(),
-    })
-  ),
-})
-
 export type AttendeeId = Attendee["id"]
 export type Attendee = z.infer<typeof AttendeeSchema>
 /**
@@ -111,3 +96,15 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   deregisterDeadline: true,
   selections: true,
 })
+
+export function getReservedAttendeeCount(attendance: Attendance): number {
+  return attendance.attendees.reduce((total, attendee) => total + (attendee.reserved ? 1 : 0), 0)
+}
+
+export function getUnreservedAttendeeCount(attendance: Attendance): number {
+  return attendance.attendees.reduce((total, attendee) => total + (attendee.reserved ? 0 : 1), 0)
+}
+
+export function getAttendanceCapacity(attendance: Attendance): number {
+  return attendance.pools.reduce((total, pool) => total + pool.capacity, 0)
+}
