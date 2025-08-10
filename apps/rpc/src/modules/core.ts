@@ -7,13 +7,11 @@ import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
 import { getArticleTagRepository } from "./article/article-tag-repository"
-import { getAttendanceRepository } from "./attendance/attendance-repository"
-import { getAttendanceService } from "./attendance/attendance-service"
-import { getAttendeeRepository } from "./attendance/attendee-repository"
-import { getAttendeeService } from "./attendance/attendee-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
+import { getAttendanceRepository } from "./event/attendance-repository"
+import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
 import { getEventService } from "./event/event-service"
 import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-answer-repository"
@@ -91,7 +89,6 @@ export async function createServiceLayer(
   const companyRepository = getCompanyRepository()
   const userRepository = getUserRepository()
   const attendanceRepository = getAttendanceRepository()
-  const attendeeRepository = getAttendeeRepository()
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
@@ -122,22 +119,16 @@ export async function createServiceLayer(
   const paymentService = getPaymentService(clients.stripe)
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
-  const attendeeService = getAttendeeService(
-    attendeeRepository,
-    attendanceRepository,
-    userService,
-    taskSchedulingService,
-    personalMarkService,
-    paymentService
-  )
   const eventService = getEventService(eventRepository)
   const attendanceService = getAttendanceService(
     attendanceRepository,
-    attendeeRepository,
-    attendeeService,
     taskSchedulingService,
+    userService,
+    personalMarkService,
+    paymentService,
     paymentProductsService,
-    eventService
+    eventService,
+    configuration
   )
   const companyService = getCompanyService(companyRepository)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
@@ -145,7 +136,7 @@ export async function createServiceLayer(
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
-  const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService, attendeeService)
+  const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
   const authorizationService = getAuthorizationService()
 
   return {
@@ -160,15 +151,12 @@ export async function createServiceLayer(
     articleService,
     attendanceService,
     attendanceRepository,
-    paymentService,
-    paymentProductsService,
-    paymentWebhookService,
-    attendeeService,
     taskService,
     taskExecutor,
     feedbackFormService,
     feedbackFormAnswerService,
     authorizationService,
+    paymentWebhookService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only

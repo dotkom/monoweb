@@ -5,7 +5,7 @@ import type { FC } from "react"
 import { AllAttendeesTable } from "../components/all-attendees-table"
 import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
 import { QrCodeScanner } from "../components/qr-code-scanner"
-import { useAttendanceGetQuery, useEventAttendeesGetQuery } from "../queries"
+import { useAttendanceGetQuery } from "../queries"
 import { useEventContext } from "./provider"
 
 export const AttendeesPage: FC = () => {
@@ -23,7 +23,7 @@ interface Props {
 }
 
 const Page: FC<Props> = ({ attendance }) => {
-  const { attendees } = useEventAttendeesGetQuery(attendance.id)
+  const attendees = attendance.attendees.filter((attendee) => attendee.user.email !== null)
   return (
     <Stack gap="xl">
       <Stack gap="xs">
@@ -37,7 +37,7 @@ const Page: FC<Props> = ({ attendance }) => {
               userId: values.id,
             })
           }}
-          excludeUserIds={attendees.map((attendee) => attendee.userId)}
+          excludeUserIds={attendance.attendees.map((attendee) => attendee.userId)}
         />
       </Stack>
 

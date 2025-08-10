@@ -11,7 +11,6 @@ import { CreatePoolModal } from "./event/components/create-pool-modal"
 import { UpdateAttendanceSelectionsModal } from "./event/components/edit-event-selections-modal"
 import { EditPoolModal } from "./event/components/edit-pool-modal"
 import { AlreadyAttendedModal } from "./event/components/error-attendance-registered-modal"
-import { MergePoolsModal } from "./event/components/merge-pools-modal"
 import { CreateGroupMemberModal } from "./group/modals/create-group-member-modal"
 import { CreateGroupModal } from "./group/modals/create-group-modal"
 import { CreateGroupRoleModal } from "./group/modals/create-group-role-modal"
@@ -29,7 +28,6 @@ const modals = {
   "event/attendance/attendee/delete": ManualDeleteUserAttendModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
-  "event/attendance/pool/merge": MergePoolsModal,
   "jobListing/create": CreateJobListingModal,
   "offline/create": CreateOfflineModal,
   "attendance/selections/create": CreateAttendanceSelectionsModal,

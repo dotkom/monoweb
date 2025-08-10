@@ -28,13 +28,6 @@ export default async function App() {
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
 
-  const attendanceStatuses = user
-    ? await server.attendance.getAttendeeStatuses.query({
-        userId: user.id,
-        attendanceIds,
-      })
-    : null
-
   const cookies = await getCookies()
   const constructionNoticeHidden = cookies.get("hide-construction-notice")?.value === "1"
 
@@ -50,8 +43,8 @@ export default async function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {events.map((event) => {
-            const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
-            return <EventCard key={event.id} event={event} attendeeStatus={attendeeStatus} />
+            // const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
+            return <EventCard key={event.id} event={event} attendeeStatus={null} />
           })}
 
           <Tilt className="grow">

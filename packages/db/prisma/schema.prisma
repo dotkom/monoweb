@@ -77,12 +77,12 @@ model User {
   notificationPermissionsId String?                  @unique
   notificationPermissions   NotificationPermissions?
 
-  attendee                  Attendee[]
-  personalMark              PersonalMark[]
-  groupMemberships          GroupMembership[]
-  memberships               Membership[]
-  givenMarks                PersonalMark[] @relation("GivenBy")
-  attendeesRefunded         Attendee[] @relation(name: "RefundedBy")
+  attendee          Attendee[]
+  personalMark      PersonalMark[]
+  groupMemberships  GroupMembership[]
+  memberships       Membership[]
+  givenMarks        PersonalMark[]    @relation("GivenBy")
+  attendeesRefunded Attendee[]        @relation(name: "RefundedBy")
 
   @@map("ow_user")
 }
@@ -107,10 +107,10 @@ model Company {
 }
 
 enum GroupType {
-  COMMITTEE       @map("COMMITTEE")
-  NODE_COMMITTEE  @map("NODE_COMMITTEE")
-  ASSOCIATED      @map("ASSOCIATED")
-  INTEREST_GROUP  @map("INTEREST_GROUP")
+  COMMITTEE      @map("COMMITTEE")
+  NODE_COMMITTEE @map("NODE_COMMITTEE")
+  ASSOCIATED     @map("ASSOCIATED")
+  INTEREST_GROUP @map("INTEREST_GROUP")
 
   @@map("group_type")
 }
@@ -213,7 +213,7 @@ model Attendance {
   createdAt          DateTime @default(now()) @db.Timestamptz(3)
   updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
-  attendancePrice    Int?
+  attendancePrice Int?
 
   pools     AttendancePool[]
   attendees Attendee[]
@@ -244,27 +244,27 @@ model Attendee {
   attendanceId          String
   user                  User                @relation(fields: [userId], references: [id])
   userId                String
+  /// To preserve the user's grade at the time of registration
   userGrade             Int?
   attendancePool        AttendancePool      @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId      String
   feedbackFormAnswer    FeedbackFormAnswer?
   /// Which options the user has selected from the Attendance selections
   selections            Json                @default("[]")
-  /// To preserve the user's grade at the time of registration
-  attended              Boolean             @default(false)
   reserved              Boolean
   earliestReservationAt DateTime            @db.Timestamptz(3)
+  attendedAt            DateTime?           @db.Timestamptz(3)
   createdAt             DateTime            @default(now()) @db.Timestamptz(3)
   updatedAt             DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
 
-  paymentDeadline       DateTime?
-  paymentLink           String?
-  paymentId             String?
-  paymentReservedAt     DateTime?
-  paymentChargedAt      DateTime?
-  paymentRefundedAt     DateTime?
-  paymentRefundedById   String?
-  paymentRefundedBy     User?                @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
+  paymentDeadline     DateTime?
+  paymentLink         String?
+  paymentId           String?
+  paymentReservedAt   DateTime?
+  paymentChargedAt    DateTime?
+  paymentRefundedAt   DateTime?
+  paymentRefundedById String?
+  paymentRefundedBy   User?     @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
@@ -289,8 +289,8 @@ model Event {
   createdAt       DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
-  companies      EventCompany[]
-  hostingGroups  EventHostingGroup[]
+  companies     EventCompany[]
+  hostingGroups EventHostingGroup[]
 
   @@map("event")
 }
@@ -312,7 +312,7 @@ enum MarkType {
 }
 
 model Mark {
-  id       String  @id @default(uuid())
+  id       String   @id @default(uuid())
   title    String
   details  String?
   /// Duration in days
@@ -325,7 +325,7 @@ model Mark {
 
   users PersonalMark[]
 
-  group Group @relation(fields: [groupSlug], references: [slug])
+  group     Group  @relation(fields: [groupSlug], references: [slug])
   groupSlug String
 
   @@map("mark")
@@ -337,7 +337,7 @@ model PersonalMark {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  givenBy User @relation("GivenBy", fields: [givenById], references: [id])
+  givenBy   User   @relation("GivenBy", fields: [givenById], references: [id])
   givenById String
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
@@ -486,12 +486,11 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  ATTEMPT_RESERVE_ATTENDEE    @map("ATTEMPT_RESERVE_ATTENDEE")
-  MERGE_POOLS                 @map("MERGE_POOLS")
-  VERIFY_PAYMENT              @map("VERIFY_PAYMENT")
-  CHARGE_ATTENDANCE_PAYMENTS  @map("CHARGE_ATTENDANCE_PAYMENTS")
+  RESERVE_ATTENDEE       @map("RESERVE_ATTENDEE")
+  MERGE_ATTENDANCE_POOLS @map("MERGE_ATTENDANCE_POOLS")
+  VERIFY_PAYMENT             @map("VERIFY_PAYMENT")
+  CHARGE_ATTENDANCE_PAYMENTS @map("CHARGE_ATTENDANCE_PAYMENTS")
 
-  // The table is called job_name for legacy reasons.
   @@map("task_type")
 }
 
@@ -502,7 +501,6 @@ enum TaskStatus {
   FAILED    @map("FAILED")
   CANCELED  @map("CANCELED")
 
-  // The table is called job_status for legacy reasons.
   @@map("task_status")
 }
 

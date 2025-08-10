@@ -1,10 +1,4 @@
-import {
-  AttendancePoolWriteSchema,
-  AttendanceSchema,
-  AttendeeSchema,
-  type TaskType,
-  UserSchema,
-} from "@dotkomonline/types"
+import { AttendancePoolWriteSchema, AttendanceSchema, AttendeeSchema, type TaskType } from "@dotkomonline/types"
 import { z } from "zod"
 import { TaskDefinitionNotFoundError } from "./task-error"
 
@@ -22,27 +16,35 @@ export function createTaskDefinition<const TData, const TType extends TaskType>(
   return definition
 }
 
-export type AttemptReserveAttendeeTaskDefinition = typeof tasks.ATTEMPT_RESERVE_ATTENDEE
-export type MergePoolsTaskDefinition = typeof tasks.MERGE_POOLS
+export type ReserveAttendeeTaskDefinition = typeof tasks.RESERVE_ATTENDEE
+export type MergeAttendancePoolsTaskDefinition = typeof tasks.MERGE_ATTENDANCE_POOLS
 export type VerifyPaymentTaskDefinition = typeof tasks.VERIFY_PAYMENT
 export type ChargeAttendancePaymentsTaskDefinition = typeof tasks.CHARGE_ATTENDANCE_PAYMENTS
-export type AnyTaskDefinition = AttemptReserveAttendeeTaskDefinition | MergePoolsTaskDefinition
+export type AnyTaskDefinition =
+  | ReserveAttendeeTaskDefinition
+  | MergeAttendancePoolsTaskDefinition
+  | VerifyPaymentTaskDefinition
+  | ChargeAttendancePaymentsTaskDefinition
 
 export const tasks = {
-  ATTEMPT_RESERVE_ATTENDEE: createTaskDefinition({
-    type: "ATTEMPT_RESERVE_ATTENDEE",
+  RESERVE_ATTENDEE: createTaskDefinition({
+    type: "RESERVE_ATTENDEE",
     getSchema: () =>
       z.object({
-        userId: UserSchema.shape.id,
+        attendeeId: AttendeeSchema.shape.id,
         attendanceId: AttendanceSchema.shape.id,
       }),
   }),
-  MERGE_POOLS: createTaskDefinition({
-    type: "MERGE_POOLS",
+  MERGE_ATTENDANCE_POOLS: createTaskDefinition({
+    type: "MERGE_ATTENDANCE_POOLS",
     getSchema: () =>
       z.object({
         attendanceId: AttendanceSchema.shape.id,
-        newMergePoolData: AttendancePoolWriteSchema.partial(),
+        // NOTE: The user of this value should turn it into a TZDate.
+        previousPoolMergeTime: z.coerce.date(),
+        data: AttendancePoolWriteSchema.pick({
+          title: true,
+        }),
       }),
   }),
   VERIFY_PAYMENT: createTaskDefinition({

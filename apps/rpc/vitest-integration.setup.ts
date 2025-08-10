@@ -5,17 +5,17 @@ import { faker } from "@faker-js/faker"
 import type { ManagementClient } from "auth0"
 import type Stripe from "stripe"
 import { afterAll, beforeEach } from "vitest"
-import { mockDeep } from "vitest-mock-extended"
+import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
 import type { Configuration } from "./src/configuration"
 import { createServiceLayer } from "./src/modules/core"
 
 faker.seed(69)
 
-export async function createServiceLayerForTesting() {
-  const s3Client = mockDeep<S3Client>()
-  const auth0Client = mockDeep<ManagementClient>()
-  const stripe = mockDeep<Stripe>()
-  const configuration = mockDeep<Configuration>({
+async function createServiceLayerForTesting() {
+  s3Client = mockDeep<S3Client>()
+  auth0Client = mockDeep<ManagementClient>()
+  stripe = mockDeep<Stripe>()
+  configuration = mockDeep<Configuration>({
     AWS_S3_BUCKET: "no.online.ntnu.mock-bucket",
     AWS_REGION: "eu-north-1",
     ADMIN_USERS: "",
@@ -28,12 +28,15 @@ export async function createServiceLayerForTesting() {
       s3Client,
       auth0Client,
       stripe,
-      // We are not testing the S3 functionality here, so we can use a non-existing bucket name.
     },
     configuration
   )
 }
 
+export let configuration: DeepMockProxy<Configuration>
+export let stripe: DeepMockProxy<Stripe>
+export let s3Client: DeepMockProxy<S3Client>
+export let auth0Client: DeepMockProxy<ManagementClient>
 export let dbClient: DBClient
 export let core: Awaited<ReturnType<typeof createServiceLayerForTesting>>
 

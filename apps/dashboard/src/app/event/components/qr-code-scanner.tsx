@@ -22,7 +22,6 @@ export const QrCodeScanner: FC = () => {
       const attendeeId = result.getText()
       registerAttendance.mutate({
         id: attendeeId,
-        attended: true,
       })
     },
     paused: !scannerOpen,

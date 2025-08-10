@@ -2,13 +2,12 @@ import { clearInterval, setInterval } from "node:timers"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
-import type { AttendanceService } from "../attendance/attendance-service"
-import type { AttendeeService } from "../attendance/attendee-service"
+import type { AttendanceService } from "../event/attendance-service"
 import {
-  type AttemptReserveAttendeeTaskDefinition,
   type ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
-  type MergePoolsTaskDefinition,
+  type MergeAttendancePoolsTaskDefinition,
+  type ReserveAttendeeTaskDefinition,
   type VerifyPaymentTaskDefinition,
   getTaskDefinition,
   tasks,
@@ -33,8 +32,7 @@ export interface TaskExecutor {
 export function getLocalTaskExecutor(
   taskService: TaskService,
   taskDiscoveryService: TaskDiscoveryService,
-  attendanceService: AttendanceService,
-  attendeeService: AttendeeService
+  attendanceService: AttendanceService
 ): TaskExecutor {
   const logger = getLogger("task-executor")
   let intervalId: ReturnType<typeof setInterval> | null = null
@@ -81,23 +79,23 @@ export function getLocalTaskExecutor(
           const definition = getTaskDefinition(task.type)
           const payload = taskService.parse(definition, task.payload)
           switch (task.type) {
-            case tasks.ATTEMPT_RESERVE_ATTENDEE.type:
-              return await attendanceService.handleAttemptReserveAttendeeTask(
+            case tasks.RESERVE_ATTENDEE.type:
+              return await attendanceService.executeReserveAttendeeTask(
                 handle,
-                payload as InferTaskData<AttemptReserveAttendeeTaskDefinition>
+                payload as InferTaskData<ReserveAttendeeTaskDefinition>
               )
-            case tasks.MERGE_POOLS.type:
-              return await attendanceService.handleMergePoolsTask(
+            case tasks.MERGE_ATTENDANCE_POOLS.type:
+              return await attendanceService.executeMergeEventPoolsTask(
                 handle,
-                payload as InferTaskData<MergePoolsTaskDefinition>
+                payload as InferTaskData<MergeAttendancePoolsTaskDefinition>
               )
             case tasks.VERIFY_PAYMENT.type:
-              return await attendeeService.handleVerifyPaymentTask(
+              return await attendanceService.executeVerifyPaymentTask(
                 handle,
                 payload as InferTaskData<VerifyPaymentTaskDefinition>
               )
             case tasks.CHARGE_ATTENDANCE_PAYMENTS.type:
-              return await attendanceService.handleChargePaymentTask(
+              return await attendanceService.executeChargeAttendancePaymentsTask(
                 handle,
                 payload as InferTaskData<ChargeAttendancePaymentsTaskDefinition>
               )

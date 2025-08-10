@@ -1,4 +1,4 @@
-import type { AttendancePool } from "@dotkomonline/types"
+import type { Attendance, AttendancePool } from "@dotkomonline/types"
 import {
   Collapsible,
   CollapsibleContent,
@@ -12,11 +12,12 @@ import {
 } from "@dotkomonline/ui"
 
 interface NonAttendablePoolsBoxProps {
+  attendance: Attendance
   pools: AttendancePool[]
   hasAttendablePool: boolean
 }
 
-export const NonAttendablePoolsBox = ({ pools, hasAttendablePool }: NonAttendablePoolsBoxProps) => {
+export const NonAttendablePoolsBox = ({ attendance, pools, hasAttendablePool }: NonAttendablePoolsBoxProps) => {
   return (
     <Collapsible defaultOpen={!hasAttendablePool} className="w-full flex flex-col gap-1">
       <CollapsibleTrigger className="w-full flex items-center gap-2 py-1 font-medium hover:font-semibold [&[data-state=open]>iconify-icon]:rotate-90">
@@ -24,7 +25,11 @@ export const NonAttendablePoolsBox = ({ pools, hasAttendablePool }: NonAttendabl
         <Icon icon="tabler:chevron-right" className="transition-transform text-base -mt-[1px]" />
       </CollapsibleTrigger>
       <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-        <div className="flex flex-col gap-2 text-sm mb-1">{pools.map(AttendanceBoxPoolSmall)}</div>
+        <div className="flex flex-col gap-2 text-sm mb-1">
+          {pools.map((pool) => (
+            <AttendanceBoxPoolSmall key={pool.id} pool={pool} attendance={attendance} />
+          ))}
+        </div>
       </CollapsibleContent>
     </Collapsible>
   )
@@ -52,7 +57,16 @@ const DelayPill = ({ mergeDelayHours }: { mergeDelayHours: number | null }) => {
   )
 }
 
-const AttendanceBoxPoolSmall = (pool: AttendancePool) => {
+interface AttendanceBoxPoolSmallProps {
+  pool: AttendancePool
+  attendance: Attendance
+}
+
+const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProps) => {
+  const poolUnreservedAttendees = attendance.attendees.filter(
+    (a) => a.attendancePoolId === pool.id && !a.reserved
+  ).length
+  const poolReservedAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved).length
   return (
     <div
       className="flex flex-row justify-between items-center p-2 bg-gray-50 border border-gray-50 dark:bg-transparent dark:border-stone-800 rounded-lg"
@@ -66,11 +80,11 @@ const AttendanceBoxPoolSmall = (pool: AttendancePool) => {
 
       <div className="flex flex-row gap-2 items-center">
         <Text>
-          {pool.numAttendees}
+          {poolReservedAttendees}
           {pool.capacity > 0 && `/${pool.capacity}`}
         </Text>
 
-        {pool.numUnreservedAttendees > 0 && <Text className="text-gray-900">+{pool.numUnreservedAttendees} i kø</Text>}
+        {poolUnreservedAttendees > 0 && <Text className="text-gray-900">+{poolUnreservedAttendees} i kø</Text>}
       </div>
     </div>
   )

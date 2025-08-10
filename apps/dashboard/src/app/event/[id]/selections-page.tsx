@@ -1,6 +1,6 @@
 import { useAttendanceGetQuery } from "@/app/event/queries"
 import { useTRPC } from "@/lib/trpc"
-import type { Attendance, AttendanceSelectionResults } from "@dotkomonline/types"
+import type { Attendance } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
 import { useQuery } from "@tanstack/react-query"
@@ -8,11 +8,7 @@ import type { FC } from "react"
 import { useAttendanceForm } from "../components/attendance-form"
 import { useCreateAttendanceSelectionsModal } from "../components/create-event-selections-modal"
 import { useEditSelectionsModal } from "../components/edit-event-selections-modal"
-import {
-  useAddAttendanceMutation,
-  useRemoveSelectionResponsesMutation,
-  useUpdateAttendanceMutation,
-} from "../mutations"
+import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
 import { useEventContext } from "./provider"
 
 export const SelectionsPage: FC = () => {
@@ -37,7 +33,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       selections: [],
     },
     onSubmit: (values) => {
-      mutation.mutate({ eventId, values: { ...values, attendancePrice: null } })
+      mutation.mutate({ eventId, values })
     },
   })
 
@@ -62,7 +58,6 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
   })
 
   const updateAttendance = useUpdateAttendanceMutation()
-  const removeSelectionResponses = useRemoveSelectionResponsesMutation()
 
   const { data: results, isLoading: resultsIsLoading } = useQuery({
     ...trpc.attendance.getSelectionsResults.queryOptions({
@@ -73,9 +68,6 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
 
   const onDelete = (selectionId: string) => {
     const newOptions = attendance.selections?.filter((selection) => selection.id !== selectionId)
-
-    removeSelectionResponses.mutate({ selectionId })
-
     updateAttendance.mutate({
       id: attendance.id,
       attendance: {
@@ -89,7 +81,31 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
   ) : results === null ? (
     <div>Ingen valg</div>
   ) : (
-    <AttendanceSelectionsTable results={results} />
+    <div>
+      {results.map((result) => (
+        <div key={result.id}>
+          <h2>
+            {result.name} - ({result.totalCount}) svar
+          </h2>
+          <Table striped>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Valg</Table.Th>
+                <Table.Th w={100}>Antall</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {result.options.map((option) => (
+                <Table.Tr key={option.id}>
+                  <Table.Td>{option.name}</Table.Td>
+                  <Table.Td>{option.count}</Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </div>
+      ))}
+    </div>
   )
 
   return (
@@ -126,39 +142,5 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
         {selectionsResults}
       </Box>
     </Box>
-  )
-}
-
-interface AttendanceSelectionsTableProps {
-  results: AttendanceSelectionResults[]
-}
-
-function AttendanceSelectionsTable({ results }: AttendanceSelectionsTableProps) {
-  return (
-    <div>
-      {results.map((result, index) => (
-        <div key={result.id}>
-          <h2>
-            {result.name} - ({result.totalCount}) svar
-          </h2>
-          <Table striped>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Valg</Table.Th>
-                <Table.Th w={100}>Antall</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {result.options.map((option) => (
-                <Table.Tr key={option.id}>
-                  <Table.Td>{option.name}</Table.Td>
-                  <Table.Td>{option.count}</Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-        </div>
-      ))}
-    </div>
   )
 }

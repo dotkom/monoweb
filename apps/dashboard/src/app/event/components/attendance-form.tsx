@@ -4,7 +4,7 @@ import { AttendanceWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 
 // Define the schema without the omitted fields
-const AttendanceFormSchema = AttendanceWriteSchema.omit({ attendancePrice: true }).superRefine((val, ctx) => {
+const AttendanceFormSchema = AttendanceWriteSchema.superRefine((val, ctx) => {
   if (val.registerStart > val.registerEnd) {
     const message = "Påmeldingsstart må være før påmeldingsslutt"
     const code = "custom"

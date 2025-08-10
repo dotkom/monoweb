@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { getEventSlug, getEventUrl } from "@/utils/getEventUrl"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Attendee, Company, Group, GroupType, Punishment } from "@dotkomonline/types"
+import type { Attendance, Company, Group, GroupType, Punishment } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import Image from "next/image"
@@ -57,13 +57,9 @@ const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eve
   }
 
   let attendance: Attendance | null = null
-  let attendees: Attendee[] = []
   let punishment: Punishment | null = null
   if (event.attendanceId) {
     attendance = await server.event.attendance.getAttendance.query({ id: event.attendanceId })
-    attendees = await server.attendance.getAttendees.query({
-      attendanceId: event.attendanceId,
-    })
     if (user) {
       punishment = await server.personalMark.getExpiryDateForUser.query({ userId: user.id })
     }
@@ -90,12 +86,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eve
           <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
 
           {attendance !== null && (
-            <AttendanceCard
-              initialAttendance={attendance}
-              initialAttendees={attendees}
-              initialPunishment={punishment}
-              user={user}
-            />
+            <AttendanceCard initialAttendance={attendance} initialPunishment={punishment} user={user} />
           )}
 
           <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />

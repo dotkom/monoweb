@@ -27,7 +27,6 @@ export const ManualCreateUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
 
   const onSubmit = (userId: string, attendancePoolId: string) => {
     createAttendee({
-      attendancePoolId: attendancePoolId,
       attendanceId: attendanceId,
       userId: userId,
     })

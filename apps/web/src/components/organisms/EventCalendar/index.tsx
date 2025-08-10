@@ -95,13 +95,6 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as string[]
   const userId = session?.sub
 
-  const attendeeStatuses = userId
-    ? await server.attendance.getAttendeeStatuses.query({
-        attendanceIds,
-        userId,
-      })
-    : null
-
   const cal = getCalendarArray(year, month, events)
   const eventTypeGuideItems = getEventTypeGuide(events)
 
@@ -207,13 +200,13 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
                 {row.map(({ eventDisplayProps, ...event }) => {
-                  const attendeeStatus = attendeeStatuses?.get(event.attendanceId ?? "") || null
+                  // const attendeeStatus = attendeeStatuses?.get(event.attendanceId ?? "") || null
 
                   return (
                     <EventCalendarItem
                       key={event.id}
                       event={event}
-                      attendeeStatus={attendeeStatus}
+                      attendeeStatus={null}
                       className={cn(
                         getColStartClass(eventDisplayProps.startCol + 2),
                         getColSpanClass(eventDisplayProps.span),

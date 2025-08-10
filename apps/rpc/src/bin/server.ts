@@ -95,7 +95,7 @@ server.post("/webhook/stripe", async (req, res) => {
   })
   const { data: payload, success } = checkoutSessionCompletedSchema.safeParse(req.body)
   if (success) {
-    await serviceLayer.attendeeService.handleOnPaymentTask(serviceLayer.prisma, payload.data.object.id)
+    await serviceLayer.attendanceService.completeAttendeePayment(serviceLayer.prisma, payload.data.object.id)
   }
 
   res.status(204)

@@ -183,7 +183,6 @@ export const useAdminForEventMutation = () => {
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
         await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendees.queryKey() })
       },
       onError: (err) => {
         notification.fail({
@@ -216,7 +215,6 @@ export const useRegisterForEventMutation = () => {
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
         await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendees.queryKey() })
       },
       onError: (err) => {
         notification.fail({
@@ -249,7 +247,6 @@ export const useDeregisterForEventMutation = () => {
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
         await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendees.queryKey() })
       },
       onError: (err) => {
         notification.fail({
@@ -276,11 +273,10 @@ export const useUpdateEventAttendanceMutation = () => {
       onSuccess: async (data) => {
         notification.complete({
           title: "Oppmøte oppdatert",
-          message: `Oppmøte er ${data.attended ? "registrert" : "fjernet"}. `,
+          message: "Oppmøte er registrert",
         })
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendees.queryKey() })
       },
       onError: (err) => {
         notification.fail({
@@ -312,6 +308,27 @@ export const useAddAttendanceMutation = () => {
   )
 }
 
+export const useUpdateAttendancePaymentMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.event.attendance.updateAttendancePayment.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
+        await queryClient.invalidateQueries({ queryKey: trpc.attendance.getAttendance.queryFilter() })
+      },
+    })
+  )
+}
+
 export const useUpdateAttendanceMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -328,27 +345,6 @@ export const useUpdateAttendanceMutation = () => {
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
         await queryClient.invalidateQueries({ queryKey: trpc.attendance.getAttendance.queryFilter() })
-      },
-    })
-  )
-}
-
-export const useMergeAttendanceMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
-  return useMutation(
-    trpc.event.attendance.mergeAttendancePools.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )
@@ -425,30 +421,6 @@ export const useDeleteFeedbackFormMutation = () => {
         await queryClient.invalidateQueries({
           queryKey: trpc.event.feedback.findFormByEventId.queryKey(),
         })
-      },
-    })
-  )
-}
-
-export const useRemoveSelectionResponsesMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "delete",
-  })
-
-  return useMutation(
-    trpc.attendance.removeSelectionResponses.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async (attendanceId) => {
-        complete()
-
-        if (attendanceId) {
-          await queryClient.invalidateQueries(
-            trpc.attendance.getSelectionResponseResults.queryOptions({ attendanceId })
-          )
-        }
       },
     })
   )

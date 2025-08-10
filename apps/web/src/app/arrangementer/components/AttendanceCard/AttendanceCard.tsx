@@ -8,11 +8,11 @@ import {
   type Attendee,
   type Punishment,
   type User,
-  canUserAttendPool,
-  getActiveMembership,
+  findActiveMembership,
+  getMembershipGrade,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
-import { useQueries, useQuery } from "@tanstack/react-query"
+import { useQueries } from "@tanstack/react-query"
 import { differenceInSeconds } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -49,31 +49,13 @@ const getQueuePosition = (
 
 interface AttendanceCardProps {
   initialAttendance: Attendance
-  initialAttendees: Attendee[]
   initialPunishment: Punishment | null
   user?: User
 }
 
-export const AttendanceCard = ({
-  user,
-  initialAttendance,
-  initialAttendees,
-  initialPunishment,
-}: AttendanceCardProps) => {
+export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: AttendanceCardProps) => {
   const trpc = useTRPC()
-
   const [closeToEvent, setCloseToEvent] = useState(false)
-
-  const { data: attendees, isLoading: attendeesLoading } = useQuery(
-    trpc.attendance.getAttendees.queryOptions(
-      {
-        attendanceId: initialAttendance.id,
-      },
-      { initialData: initialAttendees, enabled: user !== undefined, refetchInterval: closeToEvent ? 1000 : 60000 }
-    )
-  )
-  const attendee = user && attendees?.find((attendee) => attendee.userId === user.id)
-
   const [{ data: attendance, isLoading: attendanceLoading }, { data: punishment, isLoading: punishmentLoading }] =
     useQueries({
       queries: [
@@ -94,6 +76,8 @@ export const AttendanceCard = ({
         ),
       ],
     })
+
+  const attendee = user && initialAttendance.attendees?.find((attendee) => attendee.userId === user.id)
 
   useEffect(() => {
     // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
@@ -139,25 +123,19 @@ export const AttendanceCard = ({
 
   const attendanceStatus = getAttendanceStatus(attendance)
 
-  const registerForAttendance = async () =>
-    attendablePool && registerMutation.mutate({ attendanceId: attendance.id, attendancePoolId: attendablePool.id })
+  const registerForAttendance = async () => attendablePool && registerMutation.mutate({ attendanceId: attendance.id })
 
   const deregisterForAttendance = () =>
     attendablePool && attendee && deregisterMutation.mutate({ attendanceId: attendance.id })
 
-  const isLoading =
-    attendanceLoading ||
-    attendeesLoading ||
-    punishmentLoading ||
-    deregisterMutation.isPending ||
-    registerMutation.isPending
+  const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
 
   const isLoggedIn = Boolean(user)
   const isAttending = Boolean(attendee)
-  const hasMembership = user !== undefined && getActiveMembership(user) !== null
+  const hasMembership = user !== undefined && findActiveMembership(user) !== null
   const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
 
-  const queuePosition = getQueuePosition(attendee, attendees, attendablePool)
+  const queuePosition = getQueuePosition(attendee, attendance.attendees, attendablePool)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   return (
@@ -171,8 +149,9 @@ export const AttendanceCard = ({
       {punishment && hasPunishment && !isAttending && <PunishmentBox punishment={punishment} />}
 
       <MainPoolCard
-        pool={attendablePool}
-        attendee={attendee}
+        attendance={attendance}
+        pool={attendablePool ?? null}
+        attendee={attendee ?? null}
         queuePosition={queuePosition}
         isLoggedIn={isLoggedIn}
         hasMembership={hasMembership}
@@ -195,7 +174,11 @@ export const AttendanceCard = ({
       )}
 
       {nonAttendablePools.length > 0 && (
-        <NonAttendablePoolsBox pools={nonAttendablePools} hasAttendablePool={Boolean(attendablePool)} />
+        <NonAttendablePoolsBox
+          attendance={attendance}
+          pools={nonAttendablePools}
+          hasAttendablePool={Boolean(attendablePool)}
+        />
       )}
 
       {attendee && isAttendingAndReserved ? (
@@ -203,7 +186,7 @@ export const AttendanceCard = ({
           <ViewAttendeesButton
             attendeeListOpen={attendeeListOpen}
             setAttendeeListOpen={setAttendeeListOpen}
-            attendees={attendees}
+            attendees={attendance.attendees}
             isLoggedIn={isLoggedIn}
             userId={user.id}
           />
@@ -213,7 +196,7 @@ export const AttendanceCard = ({
         <ViewAttendeesButton
           attendeeListOpen={attendeeListOpen}
           setAttendeeListOpen={setAttendeeListOpen}
-          attendees={attendees}
+          attendees={attendance.attendees}
           isLoggedIn={isLoggedIn}
           userId={user?.id}
         />
@@ -288,4 +271,23 @@ export const AttendanceCardSkeleton = () => {
       {button}
     </section>
   )
+}
+
+// TODO: Deduplicate this and simply send the value back in the router response.
+function canUserAttendPool(pool: AttendancePool, user: User) {
+  const membership = findActiveMembership(user)
+  if (membership === null) {
+    return false
+  }
+
+  const grade = getMembershipGrade(membership)
+  if (grade === null) {
+    return false
+  }
+
+  if (pool.yearCriteria.length === 0) {
+    return true
+  }
+
+  return pool.yearCriteria.includes(grade)
 }

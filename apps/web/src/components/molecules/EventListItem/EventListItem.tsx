@@ -4,7 +4,6 @@ import { Title, cn } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
 import Link from "next/link"
 import type { FC } from "react"
-import { AttendanceStatus } from "./AttendanceStatus"
 import { DateAndTime } from "./DateAndTime"
 import { Thumbnail } from "./Thumbnail"
 
@@ -40,7 +39,7 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendeeStatus }:
           <div className="flex flex-col gap-2">
             <DateAndTime start={event.start} end={event.end} />
 
-            <AttendanceStatus attendanceId={event.attendanceId} attendeeStatus={attendeeStatus} eventEndInPast={past} />
+            {/*<AttendanceStatus attendanceId={event.attendanceId} attendeeStatus={attendeeStatus} eventEndInPast={past} />*/}
           </div>
         </div>
       </Link>
