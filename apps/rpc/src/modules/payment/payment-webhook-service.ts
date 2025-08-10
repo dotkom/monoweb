@@ -1,10 +1,14 @@
 import { logger } from "@sentry/node"
 import type Stripe from "stripe"
 
+interface PaymentWebhookService {
+  registerWebhook: (webhookUrl: string, identifier: string) => Promise<void>
+}
+
 // In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`
-export function getPaymentWebhookService(stripe: Stripe) {
+export function getPaymentWebhookService(stripe: Stripe): PaymentWebhookService {
   return {
-    registerWebhook: async (webhookUrl: string, identifier: string) => {
+    async registerWebhook(webhookUrl: string, identifier: string) {
       logger.info(`Setting up webhook at url: ${webhookUrl}`)
       const endpoints = await stripe.webhookEndpoints.list({})
 

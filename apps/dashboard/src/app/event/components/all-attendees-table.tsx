@@ -76,7 +76,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             isPast(attendance.deregisterDeadline) ? attendee.paymentChargedAt : attendee.paymentReservedAt
           )
 
-          return <Checkbox checked={hasPaid} />
+          return <Checkbox readOnly checked={hasPaid} />
         },
       }),
       columnHelper.accessor(
