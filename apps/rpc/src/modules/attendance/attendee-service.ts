@@ -377,7 +377,7 @@ export function getAttendeeService(
         isPast(attendance.deregisterDeadline) ? "CHARGE" : "RESERVE"
       )
 
-      taskSchedulingService.scheduleAt(
+      await taskSchedulingService.scheduleAt(
         handle,
         tasks.VERIFY_PAYMENT.type,
         {
