@@ -25,6 +25,7 @@ export interface AttendanceRepository {
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   findAttendanceByAttendeePaymentId(handle: DBHandle, attendeePaymentId: string): Promise<Attendance | null>
   updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
+  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number): Promise<Attendance>
 
   createAttendee(
     handle: DBHandle,
@@ -189,6 +190,20 @@ export function getAttendanceRepository(): AttendanceRepository {
           attendancePoolId: next,
         },
       })
+    },
+    async updateAttendancePaymentPrice(handle, attendanceId, price) {
+      const row = await handle.attendance.update({
+        where: { id: attendanceId },
+        data: {
+          attendancePrice: price,
+        },
+        select: {
+          id: true,
+        },
+      })
+      const attendance = await this.findAttendanceById(handle, row.id)
+      invariant(attendance !== null, "Updated attendance should not be null")
+      return attendance
     },
     async createAttendee(handle, attendanceId, attendancePoolId, userId, data) {
       const attendee = await handle.attendee.create({

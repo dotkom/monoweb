@@ -467,6 +467,7 @@ export function getAttendanceService(
         price,
         url,
       })
+      await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, price)
       await taskSchedulingService.scheduleAt(
         handle,
         tasks.CHARGE_ATTENDANCE_PAYMENTS,
