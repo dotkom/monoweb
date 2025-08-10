@@ -9,7 +9,7 @@ export async function dumpOW4Data(url: string) {
 
   while (true) {
     const response = await fetch(getUrl(page))
-    const data = await response.json()
+    const data: any = await response.json()
     page++
     result.push(...data.results)
 
