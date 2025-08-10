@@ -173,7 +173,7 @@ export const button = cva(
         color: "blue",
         variant: "solid",
         className: [
-          "bg-blue-400 hover:bg-blue-300 disabled:hover:bg-blue-400",
+          "bg-blue-200 hover:bg-blue-100 disabled:hover:bg-blue-200",
           "dark:bg-blue-800 dark:hover:bg-blue-700 dark:disabled:hover:bg-blue-800",
         ].join(" "),
       },
@@ -189,7 +189,7 @@ export const button = cva(
         color: "blue",
         variant: "text",
         className: [
-          "hover:bg-blue-200 disabled:hover:bg-inherit",
+          "hover:bg-blue-100 disabled:hover:bg-inherit",
           "dark:hover:bg-blue-900 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
@@ -198,7 +198,7 @@ export const button = cva(
         color: "red",
         variant: "solid",
         className: [
-          "bg-red-400 hover:bg-red-300 disabled:hover:bg-red-400",
+          "bg-red-200 hover:bg-red-100 disabled:hover:bg-red-200",
           "dark:bg-red-800 dark:hover:bg-red-700 dark:disabled:hover:bg-red-800",
         ].join(" "),
       },
@@ -214,7 +214,7 @@ export const button = cva(
         color: "red",
         variant: "text",
         className: [
-          "hover:bg-red-200 disabled:hover:bg-inherit",
+          "hover:bg-red-100 disabled:hover:bg-inherit",
           "dark:hover:bg-red-900 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
