@@ -273,7 +273,7 @@ export const useUpdateEventAttendanceMutation = () => {
       onSuccess: async (data) => {
         notification.complete({
           title: "Oppmøte oppdatert",
-          message: `Oppmøte er registrert`,
+          message: "Oppmøte er registrert",
         })
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
