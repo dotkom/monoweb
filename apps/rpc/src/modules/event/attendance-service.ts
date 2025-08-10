@@ -9,9 +9,11 @@ import {
   type AttendancePoolWrite,
   type AttendanceSelection,
   type AttendanceWrite,
+  AttendanceWriteSchema,
   type Attendee,
   type AttendeeId,
   type AttendeeWrite,
+  AttendeeWriteSchema,
   type UserId,
   findActiveMembership,
   getMembershipGrade,
@@ -204,11 +206,12 @@ export function getAttendanceService(
     },
     async updateAttendanceById(handle, attendanceId, data) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
-      const input = {
+      const input = AttendanceWriteSchema.parse({
         ...attendance,
         ...data,
-      } satisfies AttendanceWrite
+      } satisfies AttendanceWrite)
       validateAttendanceWrite(input)
+
       // If there are any selections in the existing attendance that are not in the input, we remove them and all the
       // responses to them.
       if (data.selections !== undefined) {
@@ -399,7 +402,7 @@ export function getAttendanceService(
     },
     async deregisterAttendee(handle, attendeeId, options) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
-      if (isPast(attendance.registerEnd) && !options.ignoreDeregistrationWindow) {
+      if (isPast(attendance.deregisterDeadline) && !options.ignoreDeregistrationWindow) {
         throw new AttendanceValidationError(
           `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) after registration end`
         )
@@ -413,28 +416,35 @@ export function getAttendanceService(
         await paymentService.cancel(attendee.paymentId)
       }
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
-      const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
-      invariant(pool !== undefined)
-      // We are now looking for a replacement for the attendee that just deregistered. The criteria that we need to
-      // match are:
-      //
-      // 1. The attendee must be in the same pool as the deregistered attendee.
-      // 2. The attendee must not yet be reserved
-      // 3. The attendee must have a reservation time in the future
-      const firstUnreservedAdjacentAttendee = attendance.attendees
-        .filter((a) => a.attendancePoolId === pool.id)
-        .filter((a) => !a.reserved)
-        .filter((a) => isPast(a.earliestReservationAt))
-        .toSorted((a, b) => compareDesc(a.earliestReservationAt, b.earliestReservationAt))
-        .at(0)
-      if (firstUnreservedAdjacentAttendee === undefined) {
-        return
-      }
+      // If the attendee was reserved, we find a replacement for them in the pool.
+      if (attendee.reserved) {
+        const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+        invariant(pool !== undefined)
+        // We are now looking for a replacement for the attendee that just deregistered. The criteria that we need to
+        // match are:
+        //
+        // 1. The attendee must be in the same pool as the deregistered attendee.
+        // 2. The attendee must not yet be reserved
+        // 3. The attendee must have a reservation time in the future
+        const firstUnreservedAdjacentAttendee = attendance.attendees
+          .filter((a) => a.attendancePoolId === pool.id)
+          .filter((a) => !a.reserved)
+          .filter((a) => isPast(a.earliestReservationAt))
+          .toSorted((a, b) => compareDesc(a.earliestReservationAt, b.earliestReservationAt))
+          .at(0)
+        if (firstUnreservedAdjacentAttendee === undefined) {
+          return
+        }
 
-      await attendanceRepository.updateAttendeeById(handle, firstUnreservedAdjacentAttendee.id, {
-        ...firstUnreservedAdjacentAttendee,
-        reserved: true,
-      })
+        await attendanceRepository.updateAttendeeById(
+          handle,
+          firstUnreservedAdjacentAttendee.id,
+          AttendeeWriteSchema.parse({
+            ...firstUnreservedAdjacentAttendee,
+            reserved: true,
+          })
+        )
+      }
     },
     async updateAttendancePayment(handle, attendanceId, price) {
       const event = await eventService.getByAttendance(handle, attendanceId)
@@ -654,10 +664,14 @@ export function getAttendanceService(
         return
       }
 
-      await attendanceRepository.updateAttendeeById(handle, attendeeId, {
-        ...attendee,
-        attendedAt: getCurrentUTC(),
-      })
+      await attendanceRepository.updateAttendeeById(
+        handle,
+        attendeeId,
+        AttendeeWriteSchema.parse({
+          ...attendee,
+          attendedAt: getCurrentUTC(),
+        })
+      )
     },
     async scheduleMergeEventPoolsTask(handle, attendanceId, data, mergeTime) {
       if (mergeTime === undefined) {
