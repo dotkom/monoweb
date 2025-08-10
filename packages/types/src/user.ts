@@ -38,7 +38,7 @@ export const PROFILE_SLUG_REGEX = /^[a-z0-9-]+$/
 export const UserWriteSchema = z.object({
   profileSlug: z
     .string()
-    .min(3, "Brukernavnet må være minst 3 tegn lang")
+    .min(2, "Brukernavnet må være minst 2 tegn lang")
     .max(64, "Brukernavnet kan ikke være lengre enn 64 tegn")
     .regex(PROFILE_SLUG_REGEX, "Brukernavnet kan bare inneholde små bokstaver, tall og bindestrek")
     .refine((value) => slugify(value) === value, {
@@ -46,7 +46,7 @@ export const UserWriteSchema = z.object({
     }),
   name: z
     .string()
-    .min(3, "Du må skrive inn et navn")
+    .min(2, "Du må skrive inn et navn")
     .max(128, "Navnet kan ikke være lengre enn 128 tegn")
     .regex(NAME_REGEX, "Du kan bare bruke bokstaver, bindestrek, apostrof og mellomrom i navnet")
     .nullable(),
