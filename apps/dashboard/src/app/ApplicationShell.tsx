@@ -82,7 +82,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             <Title order={2}>Monoweb Admin</Title>
           </Flex>
 
-          <Button component="a" variant="outline" href="/api/auth/logout">
+          <Button component="a" variant="outline" href="/api/auth/logout" visibleFrom="xs">
             Logg ut
           </Button>
         </Group>
@@ -111,6 +111,9 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             ))}
           </NavLink>
         ))}
+        <Button component="a" variant="outline" href="/api/auth/logout" hiddenFrom="xs" mt="lg">
+          Logg ut
+        </Button>
       </AppShellNavbar>
       <AppShellMain>{children}</AppShellMain>
     </AppShell>
