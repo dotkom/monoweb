@@ -16,7 +16,6 @@ function createShortLivedCookie(service: OAuth2Service, cookies: ReadonlyRequest
     httpOnly: true,
     sameSite: "lax",
     maxAge: 300,
-    domain: getHostname(service.getHost()),
     secure: service.isClientOnHttps(),
   })
 }
@@ -119,7 +118,6 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
           httpOnly: true,
           sameSite: "lax",
           maxAge: defaultSessionLengthSeconds,
-          domain: getHostname(service.getHost()),
           secure: service.isClientOnHttps(),
         })
 
@@ -144,7 +142,6 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
         httpOnly: true,
         sameSite: "lax",
         expires: new Date(0),
-        domain: getHostname(service.getHost()),
         secure: service.isClientOnHttps(),
       })
       return NextResponse.redirect(logoutUrl)
