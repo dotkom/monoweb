@@ -9,7 +9,7 @@ import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
 import { ConstructionNotice } from "./construction-notice"
-import { Hero, type HeroProps } from "./fadderuke-notice"
+import { FadderukeNotice } from "./fadderuke-notice"
 
 export default async function App() {
   const eventResult = await server.event.all.query({
@@ -38,16 +38,12 @@ export default async function App() {
   const cookies = await getCookies()
   const constructionNoticeHidden = cookies.get("hide-construction-notice")?.value === "1"
 
-  const heroData: HeroProps = {
-    background: "bg-[url(/bakgrunnsBilde.jpg)]",
-    banner: "./online-logo-darkmode.svg",
-  }
-
   return (
     <section className="flex flex-col gap-16 w-full">
-      {!constructionNoticeHidden && <ConstructionNotice />}
-
-      <Hero {...heroData} />
+      <div className="flex flex-col gap-4">
+        {!constructionNoticeHidden && <ConstructionNotice />}
+        <FadderukeNotice />
+      </div>
 
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
