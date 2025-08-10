@@ -18,7 +18,7 @@ export type Payment =
     }
   | {
       status: "RESERVED" | "PAID"
-      url: string
+      url: string | null
       id: string
       paymentIntentId: string
     }
@@ -67,10 +67,6 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       const paymentIntentId = session.payment_intent.id
       const url = session.url
 
-      if (url === null) {
-        throw new PaymentUnexpectedStateError(paymentId, "missing URL")
-      }
-
       return {
         status,
         url,
@@ -80,7 +76,16 @@ export function getPaymentService(stripe: Stripe): PaymentService {
     },
     async create(productId, chargeMode = "RESERVE") {
       const product = await stripe.products.retrieve(productId)
+      if (!product.default_price) {
+        throw new PaymentUnexpectedStateError(
+          `(productId: ${productId})`,
+          "Payment product does not have a default price"
+        )
+      }
+      const defaultPrice = typeof product.default_price === "string" ? product.default_price : product.default_price.id
+
       const session = await stripe.checkout.sessions.create({
+        line_items: [{ quantity: 1, price: defaultPrice }],
         success_url: product.url ?? undefined,
         cancel_url: product.url ?? undefined,
         mode: "payment",

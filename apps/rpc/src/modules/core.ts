@@ -43,6 +43,7 @@ import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repo
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getPaymentProductsService } from "./payment/payment-products-service"
+import { getPaymentWebhookService } from "./payment/payment-webhook-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -120,6 +121,7 @@ export async function createServiceLayer(
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
   const paymentService = getPaymentService(clients.stripe)
   const paymentProductsService = getPaymentProductsService(clients.stripe)
+  const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const attendeeService = getAttendeeService(
     attendeeRepository,
     attendanceRepository,
@@ -151,7 +153,6 @@ export async function createServiceLayer(
     eventService,
     groupService,
     companyService,
-    paymentService,
     markService,
     personalMarkService,
     jobListingService,
@@ -159,6 +160,9 @@ export async function createServiceLayer(
     articleService,
     attendanceService,
     attendanceRepository,
+    paymentService,
+    paymentProductsService,
+    paymentWebhookService,
     attendeeService,
     taskService,
     taskExecutor,

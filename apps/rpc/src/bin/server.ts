@@ -82,6 +82,7 @@ server.get("/health", (_, res) => {
 })
 
 server.post("/webhook/stripe", async (req, res) => {
+  console.log(req.body)
   const checkoutSessionCompletedSchema = z.object({
     type: z.literal("checkout.session.completed"),
     data: z.object({
@@ -94,7 +95,6 @@ server.post("/webhook/stripe", async (req, res) => {
   })
   const { data: payload, success } = checkoutSessionCompletedSchema.safeParse(req.body)
   if (success) {
-    console.log("gangam style:", payload.data.object)
     await serviceLayer.attendeeService.handleOnPaymentTask(serviceLayer.prisma, payload.data.object.id)
   }
 
@@ -103,4 +103,12 @@ server.post("/webhook/stripe", async (req, res) => {
 
 await identifyCallerIAMIdentity()
 await server.listen({ port: 4444, host: "0.0.0.0" })
+
+// In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`
+if (configuration.STRIPE_WEBHOOK_IDENTIFIER !== "dev") {
+  await serviceLayer.paymentWebhookService.registerWebhook(
+    `${configuration.HOST}/webhook/stripe`,
+    configuration.STRIPE_WEBHOOK_IDENTIFIER
+  )
+}
 logger.info("Started RPC server on http://0.0.0.0:4444")

@@ -391,13 +391,25 @@ export function getAttendeeService(
     async handleVerifyPaymentTask(handle, { attendeeId }) {
       const attendee = await attendeeRepository.getById(handle, attendeeId)
 
-      if (attendee === null || attendee.paymentReservedAt) {
+      if (attendee === null || attendee.paymentId === null || attendee.paymentReservedAt) {
         return
       }
-      await this.deregisterForEvent(handle, attendeeId, {
-        bypassCriteriaOnReserveNextAttendee: false,
-        reserveNextAttendee: true,
-      })
+
+      const payment = await paymentService.getById(attendee.paymentId)
+
+      if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
+        await this.deregisterForEvent(handle, attendeeId, {
+          bypassCriteriaOnReserveNextAttendee: false,
+          reserveNextAttendee: true,
+        })
+      } else {
+        await attendeeRepository.update(handle, attendee.id, {
+          paymentReservedAt: getCurrentUTC(),
+          paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
+          paymentDeadline: null,
+          paymentLink: null,
+        })
+      }
     },
     async handleOnPaymentTask(handle, paymentId) {
       const attendee = await attendeeRepository.getByPayment(handle, paymentId)

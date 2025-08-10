@@ -14,6 +14,12 @@ export const configuration = defineConfiguration({
     stg: "https://staging.online.ntnu.no",
     dev: "http://localhost:3000",
   }),
+  STRIPE_WEBHOOK_IDENTIFIER: config(process.env.STRIPE_WEBHOOK_IDENTIFIER, {
+    prd: "prd",
+    stg: "stg",
+    dev: "dev",
+  }),
+  HOST: config(process.env.HOST, "http://localhost:4444"),
   ADMIN_USERS: config(process.env.ADMIN_USERS),
 
   AWS_REGION: config(process.env.AWS_REGION, "eu-north-1"),
