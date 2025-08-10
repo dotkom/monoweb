@@ -65,7 +65,7 @@ export const CompanySplash: FC = () => {
           <div className="flex flex-row gap-2 items-center">
             <Icon icon="tabler:briefcase-filled" className="text-lg" />
 
-            <Text>Er du fra en bedrift og ønsker å vise interesse?</Text>
+            <Text>Er du fra en bedrift og ønsker samarbeid?</Text>
           </div>
 
           <Button

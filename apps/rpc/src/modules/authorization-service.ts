@@ -41,7 +41,7 @@ export function getAuthorizationService(): AuthorizationService {
     max: 1000,
     // We are tolerant with up to five minutes of cache staleness here as the system rarely ever has changes to the user
     // affiliations, and there is minimal risk of abuse of the system.
-    ttl: minutesToMilliseconds(5),
+    ttl: minutesToMilliseconds(1),
   })
   return {
     async getAffiliations(handle, userId) {

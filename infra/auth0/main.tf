@@ -110,11 +110,7 @@ resource "auth0_resource_server" "online" {
   verification_location                           = null
 }
 
-# TODO: feide-log-in
 resource "auth0_connection" "feide" {
-  # Currently only enable in staging:
-  count = terraform.workspace == "prd" ? 0 : 1
-
   display_name         = "FEIDE"
   is_domain_connection = false
   metadata             = {}
@@ -384,10 +380,7 @@ resource "auth0_connection_clients" "username_password_authentication" {
 }
 
 resource "auth0_connection_clients" "feide" {
-
-  # Currently only enable in staging:
-  count         = terraform.workspace == "prd" ? 0 : 1
-  connection_id = auth0_connection.feide[0].id
+  connection_id = auth0_connection.feide.id
 
   enabled_clients = [
     auth0_client.onlineweb_frontend.client_id,
@@ -839,8 +832,6 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
 }
 
 resource "auth0_client" "feide_account_linker" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
   name     = "Feide Account Linker"
   app_type = "non_interactive"
 
@@ -858,16 +849,12 @@ resource "auth0_client" "feide_account_linker" {
 }
 
 resource "auth0_client_credentials" "feide_account_linker" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
-  client_id             = auth0_client.feide_account_linker[0].client_id
+  client_id             = auth0_client.feide_account_linker.client_id
   authentication_method = "client_secret_post"
 }
 
 resource "auth0_client_grant" "m2m_grant" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
-  client_id = auth0_client.feide_account_linker[0].client_id
+  client_id = auth0_client.feide_account_linker.client_id
   audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
 
   scopes = [
@@ -877,8 +864,6 @@ resource "auth0_client_grant" "m2m_grant" {
 }
 
 resource "auth0_action" "feide_account_linking" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
   name    = "Feide Account Linking"
   runtime = "node18"
   code    = file("js/actions/linkFeideAccounts.js")
@@ -896,7 +881,7 @@ resource "auth0_action" "feide_account_linking" {
 
   secrets {
     name  = "FEIDE_CONNECTION_ID"
-    value = auth0_connection.feide[0].id
+    value = auth0_connection.feide.id
   }
 
   secrets {
@@ -906,12 +891,12 @@ resource "auth0_action" "feide_account_linking" {
 
   secrets {
     name  = "CLIENT_ID"
-    value = auth0_client.feide_account_linker[0].client_id
+    value = auth0_client.feide_account_linker.client_id
   }
 
   secrets {
     name  = "CLIENT_SECRET"
-    value = auth0_client_credentials.feide_account_linker[0].client_secret
+    value = auth0_client_credentials.feide_account_linker.client_secret
   }
 
   secrets {
@@ -921,8 +906,6 @@ resource "auth0_action" "feide_account_linking" {
 }
 
 resource "auth0_action" "update_membership" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
   name    = "Membership Update"
   runtime = "node18"
   code    = file("js/actions/updateMembership.js")
@@ -935,7 +918,7 @@ resource "auth0_action" "update_membership" {
 
   secrets {
     name  = "FEIDE_CONNECTION_ID"
-    value = auth0_connection.feide[0].id
+    value = auth0_connection.feide.id
   }
 
   secrets {
@@ -945,12 +928,10 @@ resource "auth0_action" "update_membership" {
 }
 
 resource "auth0_trigger_actions" "login_flow" {
-  count = terraform.workspace == "prd" ? 0 : 1
-
   trigger = "post-login"
 
   actions {
-    id           = auth0_action.feide_account_linking[0].id
-    display_name = auth0_action.feide_account_linking[0].name
+    id           = auth0_action.feide_account_linking.id
+    display_name = auth0_action.feide_account_linking.name
   }
 }

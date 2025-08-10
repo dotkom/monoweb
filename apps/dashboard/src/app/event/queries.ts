@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc"
 import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
+import { useMemo } from "react"
 
 interface UseEventAllQueryProps {
   filter: EventFilterQuery
@@ -15,7 +16,7 @@ export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
     ...trpc.event.all.queryOptions({ filter, ...page }),
   })
 
-  return { events: data?.items ?? [], ...query }
+  return { events: useMemo(() => data?.items ?? [], [data]), ...query }
 }
 
 export const useEventDetailsGetQuery = (id: EventId) => {

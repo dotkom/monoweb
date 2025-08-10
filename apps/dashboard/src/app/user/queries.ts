@@ -3,6 +3,7 @@ import type { AttendanceId, UserFilterQuery } from "@dotkomonline/types"
 
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
+import { useMemo } from "react"
 
 export const useUserQuery = (id: AttendanceId) => {
   const trpc = useTRPC()
@@ -23,7 +24,7 @@ export const useUserAllQuery = ({ filter, page }: UseUserAllQueryProps) => {
       ...page,
     })
   )
-  return { users: data?.items ?? [], isLoading }
+  return { users: useMemo(() => data?.items ?? [], [data]), isLoading }
 }
 
 export const useUserAllInfiniteQuery = ({ filter, page }: UseUserAllQueryProps) => {
