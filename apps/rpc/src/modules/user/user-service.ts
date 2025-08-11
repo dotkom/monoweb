@@ -374,15 +374,15 @@ function estimateStudyGrade(studyPlanCourses: StudyplanCourse[], coursesTaken: N
   }
 
   // Find the key with highest value - JS has ZERO nice utility functions :(
-  let highestCredits = 0;
-  let highestGrade = 0;
+  let highestCredits = 0
+  let highestGrade = 0
   for (const [grade, credits] of Object.entries(totalGradeIndications)) {
     if (credits > highestCredits) {
-      highestCredits = credits;
-      highestGrade = parseInt(grade);
+      highestCredits = credits
+      highestGrade = Number.parseInt(grade)
     }
   }
-  return highestGrade;
+  return highestGrade
 }
 
 function getSpecializationFromCode(code: string): MembershipSpecialization {
