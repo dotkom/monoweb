@@ -57,6 +57,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
+        attendancePoolId: AttendancePoolSchema.shape.id,
         userId: UserSchema.shape.id,
       })
     )
@@ -66,6 +67,7 @@ export const attendanceRouter = t.router({
           ignoreRegistrationWindow: true,
           immediateReservation: true,
           immediatePayment: false,
+          forceAttendancePoolId: input.attendancePoolId,
         })
       })
     }),
@@ -127,6 +129,7 @@ export const attendanceRouter = t.router({
           ignoreRegistrationWindow: false,
           immediateReservation: false,
           immediatePayment: true,
+          forceAttendancePoolId: null,
         })
       })
     ),
@@ -171,7 +174,7 @@ export const attendanceRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceByAttendeeId(handle, input.attendeeId)
-        const attendee = attendance.attendees.find((attendee) => attendee.user.id === ctx.principal.subject)
+        const attendee = attendance.attendees.find((attendee) => attendee.user.id === input.attendeeId)
         if (attendee === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }

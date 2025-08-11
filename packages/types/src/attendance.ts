@@ -1,6 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { UserSchema } from "./user"
+import { type User, UserSchema, findActiveMembership, getMembershipGrade } from "./user"
 
 // TODO: Where on earth does this come from?
 export type AttendanceStatus = "NotOpened" | "Open" | "Closed"
@@ -107,4 +107,22 @@ export function getUnreservedAttendeeCount(attendance: Attendance): number {
 
 export function getAttendanceCapacity(attendance: Attendance): number {
   return attendance.pools.reduce((total, pool) => total + pool.capacity, 0)
+}
+
+export function canUserAttendPool(pool: AttendancePool, user: User) {
+  const membership = findActiveMembership(user)
+  if (membership === null) {
+    return false
+  }
+
+  const grade = getMembershipGrade(membership)
+  if (grade === null) {
+    return false
+  }
+
+  if (pool.yearCriteria.length === 0) {
+    return true
+  }
+
+  return pool.yearCriteria.includes(grade)
 }

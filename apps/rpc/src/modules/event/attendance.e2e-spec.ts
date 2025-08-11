@@ -184,6 +184,7 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -200,6 +201,7 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -228,6 +230,7 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -261,6 +264,7 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
       })
     ).rejects.toThrow(AttendanceValidationError)
 
@@ -269,6 +273,7 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: true,
+      forceAttendancePoolId: null,
     })
     expect(registration.userId).toEqual(user.id)
   })
@@ -295,6 +300,7 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
 
     // Attempt to register the same user again for the same attendance
@@ -303,6 +309,7 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: true,
+        forceAttendancePoolId: null,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -342,6 +349,7 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
@@ -370,6 +378,7 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
@@ -397,6 +406,7 @@ describe("attendance integration tests", async () => {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
     expect(attendee.reserved).toBe(true)
   })
@@ -418,6 +428,7 @@ describe("attendance integration tests", async () => {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
 
     await core.attendanceService.updateAttendanceById(dbClient, attendance.id, {
@@ -434,6 +445,47 @@ describe("attendance integration tests", async () => {
         ignoreDeregistrationWindow: true,
       })
     ).resolves.toBeUndefined()
+  })
+
+  it("should always allow registering a user through admin despite not having an applicable pool", async () => {
+    const subject = randomUUID()
+    auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    // We create an attendance pool that the user cannot attend, because they are not a 5th year student
+    const pool = await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        mergeDelayHours: 24,
+        yearCriteria: [5],
+      })
+    )
+    const userWithoutMembership = await core.userService.register(dbClient, subject)
+    const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+    expect(findActiveMembership(user)).not.toBeNull()
+
+    // If the user themselves attempt to register, it should fail because there is no applicable pool
+    await expect(
+      core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+        immediateReservation: false,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
+      })
+    ).rejects.toThrow(AttendanceValidationError)
+
+    // But if an admin registers the user with an forceAttendancePoolId, it should succeed
+    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+      immediateReservation: true,
+      immediatePayment: false,
+      ignoreRegistrationWindow: false,
+      forceAttendancePoolId: pool.id, // Force the user into the pool
+    })
+
+    expect(attendee.userId).toEqual(user.id)
+    expect(attendee.earliestReservationAt).toSatisfy(isFuture)
+    expect(attendee.reserved).toBe(true)
   })
 
   it("should try to attend the next user in line after deregistering", async () => {
@@ -458,15 +510,22 @@ describe("attendance integration tests", async () => {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
     const betaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, beta.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
 
     expect(alphaAttendee.reserved).toBe(true)
-    expect(betaAttendee.reserved).toBe(false)
+    expect(betaAttendee.reserved).toBe(true)
+
+    // Manually kick beta attendee out of the pool, so that they are unreserved.
+    await core.attendanceService.updateAttendeeById(dbClient, betaAttendee.id, {
+      reserved: false,
+    })
 
     await expect(
       core.attendanceService.deregisterAttendee(dbClient, alphaAttendee.id, {
@@ -501,14 +560,24 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
     const betaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, beta.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
-    expect(alphaAttendee.reserved).toBe(false)
-    expect(betaAttendee.reserved).toBe(false)
+    expect(alphaAttendee.reserved).toBe(true)
+    expect(betaAttendee.reserved).toBe(true)
+
+    // Manually kick both of them to the waitlist to simulate that they are not reserved.
+    await core.attendanceService.updateAttendeeById(dbClient, alphaAttendee.id, {
+      reserved: false,
+    })
+    await core.attendanceService.updateAttendeeById(dbClient, betaAttendee.id, {
+      reserved: false,
+    })
 
     await expect(
       core.attendanceService.deregisterAttendee(dbClient, alphaAttendee.id, {
@@ -541,6 +610,7 @@ describe("attendance integration tests", async () => {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
     })
     expect(attendee.reserved).toBe(true)
 

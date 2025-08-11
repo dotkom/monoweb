@@ -2,7 +2,7 @@
 #
 # This does not account for splash/kvittering as these are deployed directly to prod on push
 
-name: Manual Release
+name: Production Release
 on:
   workflow_dispatch:
     inputs:
@@ -236,4 +236,4 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "GitHub Action build result: ${{ job.status }}"
+                  text: "*GitHub Action release started av:* ${{ github.triggering_actor }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}.\n Status: ${{ job.status }}"

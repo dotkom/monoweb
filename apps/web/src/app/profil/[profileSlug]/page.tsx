@@ -6,6 +6,7 @@ import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
+  type Membership,
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   findActiveMembership,
@@ -39,11 +40,11 @@ import {
   roundToNearestMinutes,
 } from "date-fns"
 import Link from "next/link"
-import { notFound, useParams } from "next/navigation"
+import { notFound, useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 
-const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
-  `/api/auth/authorize?connection=FEIDE&redirectAfter=/profil/${profileSlug}` as const
+const AUTHORIZE_WITH_FEIDE =
+  "/api/auth/authorize?connection=FEIDE&redirectAfter=%2Fprofil%3FreturnedFromFeide%3Dtrue" as const
 
 const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
@@ -137,11 +138,42 @@ function MarkDisplay({
   )
 }
 
+
+const MembershipDisplay = ({
+  activeMembership,
+  grade,
+}: { activeMembership: Membership | null; grade: number | null }) => {
+  if (activeMembership) {
+    return (
+      <>
+        <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
+        <div className="flex flex-col gap-1">
+          <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
+          {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
+          <Text>{grade}. klasse</Text>
+          <Text className="text-xs text-gray-500 dark:text-stone-500">
+            Medlemskapet varer fra {formatDate(activeMembership.start, "MMM yyyy")} til{" "}
+            {formatDate(activeMembership.end, "MMM yyyy")}
+          </Text>
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <Icon icon="tabler:notes-off" className="text-2xl text-gray-500 dark:text-stone-500" />
+      <Text className="text-xl">Ingen medlemskap</Text>
+    </>
+  )
+}
+
 export default function ProfilePage() {
   const now = roundToNearestMinutes(getCurrentUtc(), { roundingMethod: "floor" })
 
   const { profileSlug: rawProfileSlug } = useParams<{ profileSlug: string }>()
   const profileSlug = decodeURIComponent(rawProfileSlug)
+  const returnedFromFeide = useSearchParams().get("returnedFromFeide")
 
   console.log(rawProfileSlug)
   console.log(profileSlug)
@@ -290,27 +322,7 @@ export default function ProfilePage() {
             <Title>Medlemskap</Title>
 
             <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-900 rounded-xl w-fit">
-              {activeMembership ? (
-                <>
-                  <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
-                  <div className="flex flex-col gap-1">
-                    <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
-                    {activeMembership.specialization && (
-                      <Text>{getSpecializationName(activeMembership.specialization)}</Text>
-                    )}
-                    <Text>{grade}. klasse</Text>
-                    <Text className="text-xs text-gray-500 dark:text-stone-500">
-                      Medlemskapet varer fra {formatDate(activeMembership.start, "MMM yyyy")} til{" "}
-                      {formatDate(activeMembership.end, "MMM yyyy")}
-                    </Text>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Icon icon="tabler:notes-off" className="text-2xl text-gray-500 dark:text-stone-500" />
-                  <Text className="text-xl">Ingen medlemskap</Text>
-                </>
-              )}
+              <MembershipDisplay activeMembership={activeMembership} grade={grade} />
             </div>
 
             {!activeMembership ? (
@@ -319,16 +331,32 @@ export default function ProfilePage() {
                   color={activeMembership ? "light" : "brand"}
                   variant={activeMembership ? "outline" : "solid"}
                   element="a"
-                  href={AUTHORIZE_WITH_FEIDE(profileSlug)}
+                  href={AUTHORIZE_WITH_FEIDE}
                   className="h-fit w-fit"
                 >
                   Registrer medlemskap
                 </Button>
 
-                <Text className="text-gray-500 dark:text-stone-500 text-sm">
-                  For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med
-                  Hovedstyret.
-                </Text>
+                {returnedFromFeide ? (
+                  <div className="flex items-center dark:bg-red-900 bg-red-500 p-8 text-white rounded-lg justify-between gap-4">
+                    <Icon icon="tabler:alert-hexagon" width={48} />
+                    <Text>
+                      Vi kunne ikke bekrefte ditt medlemsskap automatisk. Dersom dette er feil ta kontakt med{" "}
+                      <Link className="underline" href="mailto:hs@online.ntnu.no">
+                        Hovedstyret
+                      </Link>
+                      .
+                    </Text>
+                  </div>
+                ) : (
+                  <Text className="text-gray-500 dark:text-stone-500 text-sm">
+                    For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med{" "}
+                    <Link className="underline" href="mailto:hs@online.ntnu.no">
+                      Hovedstyret
+                    </Link>
+                    .
+                  </Text>
+                )}
               </>
             ) : (
               <Text className="text-gray-500 dark:text-stone-500 text-sm">
