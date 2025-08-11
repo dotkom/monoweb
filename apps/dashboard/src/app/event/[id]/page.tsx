@@ -1,8 +1,19 @@
 "use client"
 
-import { Icon } from "@iconify/react"
 import { Button, Group, Modal, Stack, Tabs, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
+import {
+  IconArrowLeft,
+  IconBuildingWarehouse,
+  IconCalendarEvent,
+  IconCancel,
+  IconCreditCard,
+  IconForms,
+  IconListDetails,
+  IconSelector,
+  IconTrash,
+  IconUser,
+} from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 import { useDeleteEventMutation } from "../mutations"
 import { AttendancePage } from "./attendance-page"
@@ -16,43 +27,43 @@ import { SelectionsPage } from "./selections-page"
 
 const SIDEBAR_LINKS = [
   {
-    icon: "tabler:list-details",
+    icon: IconListDetails,
     label: "Info",
     slug: "info",
     component: EventEditCard,
   },
   {
-    icon: "tabler:building-warehouse",
+    icon: IconBuildingWarehouse,
     label: "Bedrifter",
     slug: "event",
     component: EventCompaniesPage,
   },
   {
-    icon: "tabler:forms",
+    icon: IconForms,
     label: "Tilbakemeldingsskjema",
     slug: "feedback-form",
     component: FeedbackPage,
   },
   {
-    icon: "tabler:calendar-event",
+    icon: IconCalendarEvent,
     label: "Påmelding",
     slug: "attendance",
     component: AttendancePage,
   },
   {
-    icon: "tabler:user",
+    icon: IconUser,
     label: "Påmeldte",
     slug: "attendees",
     component: AttendeesPage,
   },
   {
-    icon: "tabler:calendar-event",
+    icon: IconSelector,
     label: "Valg",
     slug: "selections",
     component: SelectionsPage,
   },
   {
-    icon: "tabler:credit-card",
+    icon: IconCreditCard,
     label: "Betaling",
     slug: "payment",
     component: PaymentPage,
@@ -69,7 +80,7 @@ export default function EventDetailsPage() {
   return (
     <Stack>
       <Group>
-        <Button bg="gray" onClick={() => router.back()} leftSection={<Icon icon="tabler:arrow-left" />}>
+        <Button bg="gray" onClick={() => router.back()} leftSection={<IconArrowLeft height={14} width={14} />}>
           Tilbake
         </Button>
 
@@ -81,17 +92,17 @@ export default function EventDetailsPage() {
                 deleteEvent.mutate({ id: event.id })
                 router.back()
               }}
-              leftSection={<Icon icon="tabler:trash" />}
+              leftSection={<IconTrash height={14} width={14} />}
             >
               Ja, slett
             </Button>
-            <Button bg="gray" onClick={close} leftSection={<Icon icon="tabler:cancel" />}>
+            <Button bg="gray" onClick={close} leftSection={<IconCancel height={14} width={14} />}>
               Nei
             </Button>
           </Group>
         </Modal>
 
-        <Button bg="red" onClick={open} leftSection={<Icon icon="tabler:trash" />}>
+        <Button bg="red" onClick={open} leftSection={<IconTrash height={14} width={14} />}>
           Slett
         </Button>
       </Group>
@@ -102,8 +113,8 @@ export default function EventDetailsPage() {
 
       <Tabs defaultValue={SIDEBAR_LINKS[0].slug} keepMounted={false}>
         <Tabs.List>
-          {SIDEBAR_LINKS.map(({ label, icon, slug }) => (
-            <Tabs.Tab key={slug} value={slug} leftSection={<Icon icon={icon} width={14} height={14} />}>
+          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
+            <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
               {label}
             </Tabs.Tab>
           ))}

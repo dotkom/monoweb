@@ -1,5 +1,5 @@
-import { Icon } from "@iconify/react"
 import { Box, Button, type ButtonProps, Combobox, type ComboboxProps, useCombobox } from "@mantine/core"
+import { IconChevronDown } from "@tabler/icons-react"
 import type { FC } from "react"
 
 interface ActionSelectProps extends ComboboxProps {
@@ -41,7 +41,7 @@ export const ActionSelect: FC<ActionSelectProps> = ({ data, onChange, buttonProp
             }}
           >
             <Box mr="md">{label}</Box>
-            <Icon icon="tabler:chevron-down" />
+            <IconChevronDown />
           </Box>
         </Button>
       </Combobox.Target>

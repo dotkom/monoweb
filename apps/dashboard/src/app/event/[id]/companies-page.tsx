@@ -3,8 +3,8 @@ import { GenericTable } from "@/components/GenericTable"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { type Company, CompanySchema, EventSchema } from "@dotkomonline/types"
-import { Icon } from "@iconify/react"
 import { Box, Button, Group, Image, Text, Title } from "@mantine/core"
+import { IconTrash, IconUserCircle } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { type FC, useMemo } from "react"
 import { z } from "zod"
@@ -32,7 +32,7 @@ export const EventCompaniesPage: FC = () => {
             </Group>
           ) : (
             <Group>
-              <Icon width={40} height={40} icon="tabler:user-circle" />
+              <IconUserCircle width={40} height={40} />
               {name}
             </Group>
           )
@@ -44,7 +44,7 @@ export const EventCompaniesPage: FC = () => {
         cell: (info) => (
           <Button
             variant="outline"
-            leftSection={<Icon icon="tabler:trash" />}
+            leftSection={<IconTrash height={14} width={14} />}
             onClick={() =>
               updateEventMutation.mutate({
                 id: event.id,

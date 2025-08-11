@@ -1,14 +1,14 @@
 "use client"
 
-import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 import { JobListingEditCard } from "./edit-card"
 import { useJobListingDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
   {
-    icon: "tabler:building-warehouse",
+    icon: IconBuildingWarehouse,
     label: "Info",
     slug: "info",
     component: JobListingEditCard,
@@ -27,8 +27,8 @@ export default function JobListingDetailsPage() {
 
       <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>
         <Tabs.List>
-          {SIDEBAR_LINKS.map(({ label, icon, slug }) => (
-            <Tabs.Tab key={slug} value={slug} leftSection={<Icon icon={icon} width={14} height={14} />}>
+          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
+            <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
               {label}
             </Tabs.Tab>
           ))}

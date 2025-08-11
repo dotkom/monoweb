@@ -1,8 +1,8 @@
 "use client"
 
 import { GenericTable } from "@/components/GenericTable"
-import { Icon } from "@iconify/react"
 import { Box, Button, ButtonGroup, Skeleton, Stack } from "@mantine/core"
+import { IconCaretLeft, IconCaretRight } from "@tabler/icons-react"
 import { useCreateJobListingModal } from "./modals/create-job-listing-modal"
 import { useJobListingAllQuery } from "./queries/use-job-listing-all-query"
 import { useJobListingTable } from "./use-job-listing-table"
@@ -21,10 +21,10 @@ export default function JobListingPage() {
         <GenericTable table={table} />
         <ButtonGroup ml="auto">
           <Button variant="subtle">
-            <Icon icon="tabler:caret-left" />
+            <IconCaretLeft />
           </Button>
           <Button variant="subtle">
-            <Icon icon="tabler:caret-right" />
+            <IconCaretRight />
           </Button>
         </ButtonGroup>
       </Stack>

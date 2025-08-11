@@ -1,8 +1,8 @@
 import { useAttendanceGetQuery } from "@/app/event/queries"
 import { useTRPC } from "@/lib/trpc"
 import type { Attendance } from "@dotkomonline/types"
-import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
+import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import type { FC } from "react"
 import { useAttendanceForm } from "../components/attendance-form"
@@ -117,10 +117,10 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
           {attendance.selections?.map((selection) => (
             <Paper key={selection.id} withBorder p={"md"} mt={"md"}>
               <ActionIcon variant="outline" onClick={() => openEdit(selection)} mr="md">
-                <Icon icon="tabler:edit" />
+                <IconEdit />
               </ActionIcon>
               <ActionIcon variant="outline" onClick={() => onDelete(selection.id)} color="red">
-                <Icon icon="tabler:trash" />
+                <IconTrash />
               </ActionIcon>
               <h3>{selection.name}</h3>
               {selection.options.map((option) => (

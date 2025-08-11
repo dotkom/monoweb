@@ -1,6 +1,5 @@
 "use client"
 
-import { Icon } from "@iconify/react"
 import {
   AppShell,
   AppShellHeader,
@@ -15,6 +14,16 @@ import {
   useMantineColorScheme,
 } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
+import {
+  IconBriefcase,
+  IconCampfire,
+  IconExclamationMark,
+  IconMoneybag,
+  IconPhoto,
+  IconSkull,
+  IconUsersGroup,
+  IconWheelchair,
+} from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { type FC, type PropsWithChildren, useEffect } from "react"
@@ -22,42 +31,42 @@ import { type FC, type PropsWithChildren, useEffect } from "react"
 const navigations = [
   {
     label: "Arrangementer",
-    icon: "tabler:wheelchair",
+    icon: IconWheelchair,
     href: "/event",
   },
   {
     label: "Prikker & Suspensjoner",
-    icon: "tabler:exclamation-mark",
+    icon: IconExclamationMark,
     href: "/punishment",
   },
   {
     label: "Bedrifter",
-    icon: "tabler:moneybag",
+    icon: IconMoneybag,
     href: "/company",
   },
   {
     label: "Utlysninger",
-    icon: "tabler:briefcase",
+    icon: IconBriefcase,
     href: "/job-listing",
   },
   {
     label: "Grupper",
-    icon: "tabler:campfire",
+    icon: IconCampfire,
     href: "/group",
   },
   {
     label: "Artikler",
-    icon: "tabler:photo",
-    href: "/artikler",
+    icon: IconPhoto,
+    href: "/article",
   },
   {
     label: "Offline",
-    icon: "tabler:skull",
+    icon: IconSkull,
     href: "/offline",
   },
   {
     label: "Brukere",
-    icon: "tabler:users-group",
+    icon: IconUsersGroup,
     href: "/user",
   },
 ] as const
@@ -112,7 +121,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             href={navigation.href}
             active={pathname.startsWith(navigation.href)}
             variant="subtle"
-            leftSection={<Icon icon={navigation.icon} />}
+            leftSection={<navigation.icon width={18} height={18} />}
           />
         ))}
         <Button component="a" variant="outline" href="/api/auth/logout" hiddenFrom="xs" mt="lg">

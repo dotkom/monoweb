@@ -1,6 +1,6 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
-import { Icon } from "@iconify/react"
 import { ActionIcon, Checkbox } from "@mantine/core"
+import { IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { isPast } from "date-fns"
 import { useMemo } from "react"
@@ -122,7 +122,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
               })
             }}
           >
-            <Icon icon="tabler:x" />
+            <IconX />
           </ActionIcon>
         ),
       }),

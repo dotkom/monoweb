@@ -1,7 +1,7 @@
 "use client"
 
-import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { IconBuildingWarehouse, IconCalendarEvent } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 import { CompanyEventsPage } from "./company-page"
 import { CompanyEditCard } from "./edit-card"
@@ -9,13 +9,13 @@ import { useCompanyDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
   {
-    icon: "tabler:building-warehouse",
+    icon: IconBuildingWarehouse,
     label: "Info",
     slug: "info",
     component: CompanyEditCard,
   },
   {
-    icon: "tabler:building-warehouse",
+    icon: IconCalendarEvent,
     label: "Arrangementer",
     slug: "event",
     component: CompanyEventsPage,
@@ -34,8 +34,8 @@ export default function CompanyDetailsPage() {
 
       <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>
         <Tabs.List>
-          {SIDEBAR_LINKS.map(({ label, icon, slug }) => (
-            <Tabs.Tab key={slug} value={slug} leftSection={<Icon icon={icon} width={14} height={14} />}>
+          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
+            <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
               {label}
             </Tabs.Tab>
           ))}

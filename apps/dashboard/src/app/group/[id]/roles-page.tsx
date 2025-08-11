@@ -1,7 +1,7 @@
 import { GenericTable } from "@/components/GenericTable"
 import { type GroupRole, getGroupRoleTypeName } from "@dotkomonline/types"
-import { Icon } from "@iconify/react/dist/iconify.js"
 import { Box, Button, Stack, Title } from "@mantine/core"
+import { IconEdit } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { type FC, useMemo } from "react"
 import { useCreateGroupRoleModal } from "../modals/create-group-role-modal"
@@ -29,11 +29,7 @@ export const GroupRolesPage: FC = () => {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
-          <Button
-            variant="outline"
-            leftSection={<Icon icon="tabler:edit" />}
-            onClick={() => openUpdate({ role: info.getValue() })}
-          >
+          <Button variant="outline" leftSection={<IconEdit />} onClick={() => openUpdate({ role: info.getValue() })}>
             Rediger
           </Button>
         ),

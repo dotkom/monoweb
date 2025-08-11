@@ -1,6 +1,6 @@
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
-import { Icon } from "@iconify/react"
 import { Button } from "@mantine/core"
+import { IconTrash } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 import type { FC } from "react"
 import { useDeleteGroupMutation, useUpdateGroupMutation } from "../mutations"
@@ -36,7 +36,7 @@ export const GroupEditCard: FC = () => {
     <div>
       <FormComponent />
       <Button variant="outline" color="red" mt="sm" onClick={open}>
-        <Icon icon="tabler:trash" />
+        <IconTrash />
       </Button>
     </div>
   )

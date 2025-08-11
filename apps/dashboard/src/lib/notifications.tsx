@@ -1,6 +1,6 @@
 import type { AppRouter } from "@dotkomonline/rpc"
-import { Icon } from "@iconify/react"
 import { notifications } from "@mantine/notifications"
+import { IconCheck, IconLoader2, IconMoodSadDizzy } from "@tabler/icons-react"
 import type { TRPCClientErrorLike } from "@trpc/client"
 import type { ReactNode } from "react"
 import { useState } from "react"
@@ -40,21 +40,21 @@ const createNotificationMethod =
 const notificationConfigs: Record<string, NotificationConfig> = {
   fail: {
     color: "red",
-    icon: <Icon icon="tabler:mood-sad-dizzy" />,
+    icon: <IconMoodSadDizzy />,
     autoClose: false, // Never auto close failed notifications
   },
   success: {
     color: "green",
-    icon: <Icon icon="tabler:check" />,
+    icon: <IconCheck />,
   },
   loading: {
     color: "blue",
-    icon: <Icon icon="tabler:loader-2" />,
+    icon: <IconLoader2 />,
     loading: true,
   },
   complete: {
     color: "green",
-    icon: <Icon icon="tabler:check" />,
+    icon: <IconCheck />,
     loading: false,
   },
 }
