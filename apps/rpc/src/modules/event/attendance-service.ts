@@ -131,6 +131,7 @@ export interface AttendanceService {
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
 
   updateAttendancePaymentProduct(handle: DBHandle, attendance: Attendance): Promise<void>
+  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<void>
   deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
   executeChargeAttendancePaymentsTask(
     handle: DBHandle,
@@ -480,9 +481,6 @@ export function getAttendanceService(
       await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
     },
     async updateAttendancePaymentPrice(handle, attendanceId, price) {
-      const event = await eventService.getByAttendance(handle, attendanceId)
-      const attendance = await this.getAttendanceById(handle, attendanceId)
-
       if (price === null) {
         await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, null)
       } else {
