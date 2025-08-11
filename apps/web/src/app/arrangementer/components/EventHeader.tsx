@@ -1,6 +1,8 @@
+import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import Image from "next/image"
+import Link from "next/link"
 import type { FC } from "react"
 
 interface Props {
@@ -11,6 +13,8 @@ interface Props {
 export const EventHeader: FC<Props> = ({ event, isStaff }) => {
   const imageUrlLight = event.imageUrl || "/placeholder.svg"
   const imageUrlDark = event.imageUrl || "/placeholder.svg"
+
+  const dashboardUrl = new URL(`/event/${event.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
   return (
     <section className="flex flex-col gap-8">
@@ -40,7 +44,14 @@ export const EventHeader: FC<Props> = ({ event, isStaff }) => {
           {event.title}
         </Title>
         {isStaff && (
-          <Button variant="text" className="w-fit p-1.5 bg-gray-100 dark:bg-stone-900 gap-1.5">
+          <Button
+            element={Link}
+            href={dashboardUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="text"
+            className="w-fit p-1.5 bg-gray-100 dark:bg-stone-900 gap-1.5"
+          >
             <Icon icon="tabler:edit" className="text-lg md:text-2xl" />
             <Text className="md:hidden">Gå til dashboard</Text>
           </Button>
