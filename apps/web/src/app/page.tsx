@@ -19,6 +19,7 @@ export default async function App() {
         max: null,
         min: getCurrentUtc(),
       },
+      excludingOrganizingGroup: ["velkom"],
       orderBy: "asc",
     },
   })

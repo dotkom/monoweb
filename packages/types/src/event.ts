@@ -47,6 +47,7 @@ export const EventFilterQuerySchema = z
     bySearchTerm: buildSearchFilter(),
     byOrganizingCompany: buildAnyOfFilter(CompanySchema.shape.id),
     byOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
+    excludingOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
     orderBy: createSortOrder(),
   })
   .partial()
