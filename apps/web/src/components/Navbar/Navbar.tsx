@@ -110,7 +110,7 @@ export const Navbar: FC = () => {
     <header className="flex flex-row items-center w-full max-w-screen-xl mt-8 p-3 rounded-2xl bg-blue-50 dark:bg-stone-900">
       <MobileNavigation links={links} />
 
-      <Link href={env.NEXT_PUBLIC_HOME_URL} className="hidden lg:ml-2 lg:block">
+      <Link href={env.NEXT_PUBLIC_HOME_URL} className="hidden lg:ml-2 md:block">
         <OnlineIcon className="h-8 w-8" />
       </Link>
 
