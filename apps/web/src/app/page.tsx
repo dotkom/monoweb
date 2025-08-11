@@ -13,7 +13,7 @@ import { FadderukeNotice } from "./fadderuke-notice"
 
 export default async function App() {
   const eventResult = await server.event.all.query({
-    take: 3,
+    take: 5,
     filter: {
       byEndDate: {
         max: null,
@@ -42,7 +42,7 @@ export default async function App() {
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {events.map((event) => {
             // const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
             return <EventCard key={event.id} event={event} attendeeStatus={null} />
