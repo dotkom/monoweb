@@ -21,6 +21,8 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
+    "@fontsource/inter": "^5.2.6",
+    "@fontsource/inter-tight": "^5.2.6",
     "@hello-pangea/dnd": "^18.0.1",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^4.0.0",
