@@ -17,7 +17,7 @@ export const GroupPage = async ({ params, groupType }: CommitteePageProps) => {
 
   const showMembers = groupType !== "ASSOCIATED"
 
-  const [session, group, events, members] = await Promise.all([
+  const [session, group, futureEvents, members] = await Promise.all([
     auth.getServerSession(),
     server.group.getByType.query({ groupId: slug, type: groupType }),
     server.event.all.query({
@@ -177,7 +177,7 @@ export const GroupPage = async ({ params, groupType }: CommitteePageProps) => {
 
       <div className="flex flex-col gap-4">
         <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
-        <EventList events={events.items} />
+        <EventList futureEvents={futureEvents.items} pastEvents={[]} />
       </div>
     </div>
   )

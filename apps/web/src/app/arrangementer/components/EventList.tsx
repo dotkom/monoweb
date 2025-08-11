@@ -5,7 +5,7 @@ import { useSession } from "@dotkomonline/oauth2/react"
 import type { AttendanceEvent } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { differenceInDays, isFuture, isPast } from "date-fns"
+import { differenceInDays, isFuture } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 
 interface EventListProps {
@@ -66,31 +66,41 @@ export const EventList: FC<EventListProps> = ({
       {yourEvents.length > 0 && (
         <>
           <Divider text="Dine arrangementer" />
-          {yourEvents.map((event) => (<EventListItem event={event} userId={session?.sub ?? null} key={event.id} />))}
+          {yourEvents.map((event) => (
+            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          ))}
         </>
       )}
       {openEvents.length > 0 && (
         <>
           <Divider text="Åpne arrangementer" />
-          {openEvents.map((event) => (<EventListItem event={event} userId={session?.sub ?? null} key={event.id} />))}
+          {openEvents.map((event) => (
+            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          ))}
         </>
       )}
       {openingSoonEvents.length > 0 && (
         <>
-          <Divider text="Kommende arrangementer" />
-          {openingSoonEvents.map((event) => (<EventListItem event={event} userId={session?.sub ?? null} key={event.id} />))}
+          <Divider text="Åpner snart" />
+          {openingSoonEvents.map((event) => (
+            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          ))}
         </>
       )}
       {otherFutureEvents.length > 0 && (
         <>
-          <Divider text="Arrangementer" />
-          {otherFutureEvents.map((event) => (<EventListItem event={event} userId={session?.sub ?? null} key={event.id} />))}
+          <Divider text="Kommende arrangementer" />
+          {otherFutureEvents.map((event) => (
+            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          ))}
         </>
       )}
       {pastEvents.length > 0 && (
         <>
           <Divider text="Tidligere arrangementer" />
-          {pastEvents.map((event) => (<EventListItem event={event} userId={session?.sub ?? null} key={event.id} />))}
+          {pastEvents.map((event) => (
+            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          ))}
         </>
       )}
       <div ref={loaderRef} />
