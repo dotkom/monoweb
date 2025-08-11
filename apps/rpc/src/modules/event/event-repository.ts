@@ -118,6 +118,15 @@ export function getEventRepository(): EventRepository {
                 },
               ],
             },
+            {
+              hostingGroups: query.excludingOrganizingGroup
+                ? {
+                    none: {
+                      groupId: { in: query.excludingOrganizingGroup },
+                    },
+                  }
+                : undefined,
+            },
           ],
         },
         include: {
