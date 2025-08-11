@@ -210,3 +210,30 @@ jobs:
           deploy: true
           environment: prd
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+
+  notify:
+    name: Notify users about release
+    runs-on: ubuntu-24.04
+    needs:
+      - build-brevduen
+      - build-dashboard
+      - build-invoicification
+      - build-kvittering-backend
+      - build-kvittering-frontend
+      - build-rif
+      - build-rpc
+      - build-splash
+      - build-web
+    steps:
+      - name: Submit message to \#prod-ops-feed in Slack
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "*GitHub Action release started av:* ${{ github.triggering_actor }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "GitHub Action build result: ${{ job.status }"
