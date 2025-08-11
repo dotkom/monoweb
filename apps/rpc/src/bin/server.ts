@@ -77,12 +77,6 @@ server.register(fastifyTRPCPlugin, {
   trpcOptions: {
     router: appRouter,
     createContext: createFastifyContext,
-    onError: ({ path, input, error }) => {
-      captureException(error)
-      // logger.error(`Error in tRPC handler on path '${path}': %o`, error)
-      logger.error(`${path}: ${JSON.stringify(input)}`)
-      console.error(error)
-    },
   } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
 })
 

@@ -1,6 +1,7 @@
 import { getLogger } from "@dotkomonline/logger"
 import type { UserId } from "@dotkomonline/types"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
+import { captureException } from "@sentry/node"
 import { TRPCError, initTRPC } from "@trpc/server"
 import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import superjson from "superjson"
@@ -117,6 +118,7 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
         traceId,
         result.error
       )
+      captureException(result.error)
       span.recordException(result.error)
       span.setStatus({ code: SpanStatusCode.ERROR })
 
