@@ -10,7 +10,6 @@ import {
   type User,
   canUserAttendPool,
   findActiveMembership,
-  getMembershipGrade,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { useQueries } from "@tanstack/react-query"

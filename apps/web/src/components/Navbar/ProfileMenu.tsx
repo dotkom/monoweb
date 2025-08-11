@@ -101,10 +101,27 @@ export const ProfileMenu: FC = () => {
           size="sm"
           color="brand"
           className="text-sm font-semibold px-3 py-2"
-          href="/api/auth/authorize"
+          href="/api/auth/authorize?connection=FEIDE"
         >
           Logg inn
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center">
+            <Icon icon="tabler:dots" className="rotate-90" width={28} height={28} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <Button
+              element="a"
+              variant="solid"
+              size="sm"
+              color="white"
+              className="text-sm font-semibold px-3 py-2"
+              href="/api/auth/authorize?connection=FEIDE"
+            >
+              Logg inn uten feide
+            </Button>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     )
   }
