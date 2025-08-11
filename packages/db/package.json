@@ -31,7 +31,7 @@
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
     "@prisma/client": "^6.8.2",
-    "@testcontainers/postgresql": "^10.28.0",
+    "@testcontainers/postgresql": "^11.5.1",
     "date-fns": "^4.1.0",
     "pg": "^8.16.0",
     "zod": "^3.25.47",
