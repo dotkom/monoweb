@@ -97,7 +97,7 @@ export function getMembershipGrade(membership: Membership): 1 | 2 | 3 | 4 | 5 | 
     case "MASTER_STUDENT": {
       // Take the difference, and add one because if `startYear == currentYear` they are in their first year
       const delta = differenceInYears(getAcademicStart(getCurrentUtc()), getAcademicStart(membership.start)) + 1
-      return Math.max(0, Math.min(5, delta)) as 1 | 2 | 3 | 4 | 5
+      return Math.max(1, Math.min(5, delta)) as 1 | 2 | 3 | 4 | 5
     }
     case "OTHER":
       return null
