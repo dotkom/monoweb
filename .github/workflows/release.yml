@@ -2,7 +2,7 @@
 #
 # This does not account for splash/kvittering as these are deployed directly to prod on push
 
-name: Manual Release
+name: Production release
 on:
   workflow_dispatch:
     inputs:
