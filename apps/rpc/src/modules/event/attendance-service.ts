@@ -83,6 +83,7 @@ export interface AttendanceService {
   findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   getAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance>
+  getAttendancesByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Attendance[]>
   getAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance>
   getAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance>
   updateAttendanceById(
@@ -202,6 +203,9 @@ export function getAttendanceService(
         throw new AttendanceNotFound(`Attendance for Attendee(ID=${attendeeId}) not found`)
       }
       return attendance
+    },
+    async getAttendancesByIds(handle, attendanceIds) {
+      return await attendanceRepository.findAttendancesByIds(handle, attendanceIds)
     },
     async updateAttendanceById(handle, attendanceId, data) {
       const attendance = await this.getAttendanceById(handle, attendanceId)

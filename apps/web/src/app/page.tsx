@@ -1,7 +1,6 @@
-import { auth } from "@/auth"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { server } from "@/utils/trpc/server"
-import type { AttendanceId, Event } from "@dotkomonline/types"
+import type { AttendanceEvent } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { getCurrentUtc, slugify } from "@dotkomonline/utils"
 import { formatDate, isPast } from "date-fns"
@@ -24,10 +23,6 @@ export default async function App() {
     },
   })
   const events = eventResult.items
-  const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
-
-  const session = await auth.getServerSession()
-  const user = session ? await server.user.getMe.query() : undefined
 
   const cookies = await getCookies()
   const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
@@ -65,7 +60,7 @@ export default async function App() {
 }
 
 interface ComingEventProps {
-  event: Event
+  event: AttendanceEvent
   attendeeStatus: "RESERVED" | "UNRESERVED" | null
 }
 
@@ -93,9 +88,9 @@ const EventCard: FC<ComingEventProps> = ({ event, attendeeStatus }) => {
             <Text className="text-sm">{formatDate(event.start, "dd.MM")}</Text>
           </div>
 
-          {event.attendanceId && (
+          {event.attendance && (
             <AttendanceStatus
-              attendanceId={event.attendanceId}
+              attendance={event.attendance}
               attendeeStatus={attendeeStatus}
               eventEndInPast={isPast(event.start)}
             />

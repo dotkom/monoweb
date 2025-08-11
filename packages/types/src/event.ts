@@ -1,5 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
+import { AttendanceSchema } from "./attendance"
 import { CompanySchema } from "./company"
 import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
 import { GroupSchema } from "./group"
@@ -51,3 +52,8 @@ export const EventFilterQuerySchema = z
     orderBy: createSortOrder(),
   })
   .partial()
+
+export const AttendanceEventSchema = EventSchema.extend({
+  attendance: AttendanceSchema.nullable(),
+})
+export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
