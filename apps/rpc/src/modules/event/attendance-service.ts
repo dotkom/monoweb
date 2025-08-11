@@ -756,8 +756,8 @@ function validateAttendancePoolWrite(data: AttendancePoolWrite) {
   if (data.mergeDelayHours !== null && (data.mergeDelayHours < 0 || data.mergeDelayHours > 48)) {
     throw new AttendanceValidationError("Merge delay for pool must be between 0 and 48 hours")
   }
-  if (data.capacity <= 0) {
-    throw new AttendanceValidationError("Capacity for pool must be greater than 0")
+  if (data.capacity < 0) {
+    throw new AttendanceValidationError("Capacity for pool must be zero or positive")
   }
   if (data.yearCriteria.some((v) => v < 1 || v > 5)) {
     throw new AttendanceValidationError("Year criteria must be between 1 and 5")
