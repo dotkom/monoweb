@@ -1,13 +1,14 @@
 import type { Event } from "@dotkomonline/types"
-import { Tilt, Title } from "@dotkomonline/ui"
+import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 
 interface Props {
   event: Event
+  isStaff: boolean
 }
 
-export const EventHeader: FC<Props> = ({ event }) => {
+export const EventHeader: FC<Props> = ({ event, isStaff }) => {
   const imageUrlLight = event.imageUrl || "/placeholder.svg"
   const imageUrlDark = event.imageUrl || "/placeholder.svg"
 
@@ -34,9 +35,17 @@ export const EventHeader: FC<Props> = ({ event }) => {
         />
       </Tilt>
 
-      <Title element="h1" size="xl" className="text-4xl">
-        {event.title}
-      </Title>
+      <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:items-center">
+        <Title element="h1" size="xl" title={event.title} className="text-3xl sm:text-4xl sm:line-clamp-3">
+          {event.title}
+        </Title>
+        {isStaff && (
+          <Button variant="text" className="w-fit p-1.5 bg-gray-100 dark:bg-stone-900 gap-1.5">
+            <Icon icon="tabler:edit" className="text-lg md:text-2xl" />
+            <Text className="md:hidden">Gå til dashboard</Text>
+          </Button>
+        )}
+      </div>
     </section>
   )
 }
