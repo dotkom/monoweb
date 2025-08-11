@@ -1,10 +1,7 @@
-import { createCheckboxInput } from "@/components/forms/CheckboxInput"
-import { useFormBuilder } from "@/components/forms/Form"
-import { notifyFail } from "@/lib/notifications"
 import type { AttendeeId } from "@dotkomonline/types"
+import { Button } from "@mantine/core"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
-import { z } from "zod"
 import { useDeregisterForEventMutation } from "../mutations"
 
 interface ModalProps {
@@ -14,19 +11,14 @@ interface ModalProps {
   onSuccess?: () => void
 }
 
-const FormSchema = z.object({
-  shouldReserveNextAttendee: z.boolean(),
-  bypassCriteriaOnReserveNextAttendee: z.boolean(),
-})
-
 export const ManualDeleteUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
   context,
   id,
-  innerProps: { attendeeId, poolName, onSuccess },
+  innerProps: { attendeeId, onSuccess },
 }) => {
   const { mutate: deregisterAttendee } = useDeregisterForEventMutation()
 
-  const onSubmit = (attendeeId: string, reserveNextAttendee: boolean, bypassCriteriaOnReserveNextAttendee: boolean) => {
+  const onSubmit = (attendeeId: string) => {
     deregisterAttendee(
       {
         attendeeId,
@@ -41,35 +33,7 @@ export const ManualDeleteUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
     context.closeModal(id)
   }
 
-  const Form = useFormBuilder({
-    schema: FormSchema,
-    fields: {
-      shouldReserveNextAttendee: createCheckboxInput({
-        label: "Påmeld neste bruker i venteliste",
-        defaultChecked: true,
-        description: `Påmeld neste bruker som oppfyller kriteriene for påmelding i ${poolName}.`,
-      }),
-      bypassCriteriaOnReserveNextAttendee: createCheckboxInput({
-        label: "Ignorer kriterier for påmelding av neste bruker",
-        defaultChecked: false,
-        description:
-          "Hvis sant, neste bruker vil bli påmeldt selv om de ikke oppfyller kriteriene for påmelding. Bruk dette om påmeldingsfristen er utløpt men du vil påmelde neste bruker.",
-      }),
-    },
-    label: "Meld av bruker",
-    onSubmit: (values) => {
-      try {
-        onSubmit(attendeeId, values.shouldReserveNextAttendee, values.bypassCriteriaOnReserveNextAttendee)
-      } catch (e) {
-        notifyFail({
-          title: "Oops!",
-          message: (e as Error).message,
-        })
-      }
-    },
-  })
-
-  return <Form />
+  return <Button onClick={() => onSubmit(attendeeId)}>Meld av bruker</Button>
 }
 
 export const openDeleteManualUserAttendModal = ({ attendeeId, attendeeName, poolName, onSuccess }: ModalProps) =>
