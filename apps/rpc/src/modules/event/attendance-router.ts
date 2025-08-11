@@ -39,7 +39,7 @@ export const attendanceRouter = t.router({
         if (pool === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
-        ctx.attendanceService.updateAttendancePool(handle, input.id, { ...pool, ...input.input })
+        await ctx.attendanceService.updateAttendancePool(handle, input.id, { ...pool, ...input.input })
       })
     }),
 
