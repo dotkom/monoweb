@@ -57,6 +57,15 @@ type EventRegistrationOptions = {
    * Should the payment be scheduled with an immediate deadline? If not, a 24 hour window is given.
    */
   immediatePayment: boolean
+  /**
+   * Should the user be forced into a specific pool?
+   *
+   * If this field is set, the logic for determining which pool to register the user for is ignored, and the year
+   * constraints for the pool are ignored.
+   *
+   * NOTE: This flag should PROBABLY only be used if you are calling registerAttendee as a system administrator.
+   */
+  forceAttendancePoolId: AttendancePoolId | null
 }
 
 type EventDeregistrationOptions = {
@@ -298,11 +307,28 @@ export function getAttendanceService(
         )
       }
 
-      // Determining the pool to register the user for is done by finding the current year assumed for the user's active
-      // membership.
-      const applicablePool = user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
+      let applicablePool: AttendancePool | null = null
+      // Attempting to override the attendance pool selection with the administrator flag only requires us to check that
+      // the required pool exists.
+      if (options.forceAttendancePoolId !== null) {
+        logger.info(
+          "Bypassing attendance pool requirements for Attendance(ID=%s) with AttendancePool(ID=%s) for User(Id=%s)",
+          attendance.id,
+          options.forceAttendancePoolId,
+          userId
+        )
+        const pool = attendance.pools.find((p) => p.id === options.forceAttendancePoolId)
+        if (pool === undefined) {
+          throw new AttendanceValidationError(
+            `Cannot register user for Attendance(ID=${attendanceId}) as the specified pool does not exist`
+          )
+        }
+        applicablePool = pool
+      } else {
+        applicablePool = attendance.pools.find((pool) => canUserAttendPool(pool, user)) ?? null
+      }
 
-      if (applicablePool === undefined) {
+      if (applicablePool === null) {
         logger.warn(
           "User(ID=%s) attempted to register for Attendance(ID=%s) but no applicable pool was found",
           userId,
@@ -360,11 +386,10 @@ export function getAttendanceService(
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       invariant(attendee !== undefined)
-      // If the user is not suspended, we can update the attendee.
-      const input = {
+      const input = AttendeeWriteSchema.parse({
         ...attendee,
         ...data,
-      } satisfies AttendeeWrite
+      } satisfies AttendeeWrite)
       validateAttendeeWrite(input)
       return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
     },
