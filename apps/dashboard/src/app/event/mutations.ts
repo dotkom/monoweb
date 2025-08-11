@@ -323,7 +323,7 @@ export const useUpdateAttendancePaymentMutation = () => {
         complete()
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
-        await queryClient.invalidateQueries({ queryKey: trpc.attendance.getAttendance.queryFilter() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryFilter() })
       },
     })
   )
@@ -344,7 +344,51 @@ export const useUpdateAttendanceMutation = () => {
         complete()
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
-        await queryClient.invalidateQueries({ queryKey: trpc.attendance.getAttendance.queryFilter() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryFilter() })
+      },
+    })
+  )
+}
+
+export const useRefundAttendeeMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.event.attendance.cancelAttendeePayment.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey({}) })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+      },
+    })
+  )
+}
+
+export const useCreateAttendeePaymentAttendeeMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.event.attendance.startAttendeePayment.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
+
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )

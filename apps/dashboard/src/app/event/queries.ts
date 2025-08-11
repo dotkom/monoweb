@@ -26,7 +26,7 @@ export const useEventDetailsGetQuery = (id: EventId) => {
 
 export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
   const trpc = useTRPC()
-  const { data, isLoading } = useQuery(
+  const { data: attendees, isLoading } = useQuery(
     trpc.event.attendance.getAttendance.queryOptions(
       {
         id,
@@ -36,7 +36,7 @@ export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
       }
     )
   )
-  return { data, isLoading }
+  return { data: attendees, isLoading }
 }
 
 export const useEventFeedbackFormGetQuery = (eventId: EventId) => {

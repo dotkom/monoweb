@@ -16,7 +16,9 @@ export const useDeregisterMutation = () => {
         }
 
         await Promise.all([
-          await queryClient.invalidateQueries(trpc.attendance.getAttendance.queryOptions({ id: input.attendanceId })),
+          await queryClient.invalidateQueries(
+            trpc.event.attendance.getAttendance.queryOptions({ id: input.attendanceId })
+          ),
         ])
       },
     })
@@ -35,7 +37,7 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput = {}
     trpc.event.attendance.registerForEvent.mutationOptions({
       onSuccess: async (data) => {
         await Promise.all([
-          queryClient.invalidateQueries(trpc.attendance.getAttendance.queryOptions({ id: data.attendanceId })),
+          queryClient.invalidateQueries(trpc.event.attendance.getAttendance.queryOptions({ id: data.attendanceId })),
         ])
 
         onSuccess?.()
@@ -48,5 +50,5 @@ export const useSetSelectionsOptionsMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
-  return useMutation(trpc.attendance.updateSelectionResponses.mutationOptions({}))
+  return useMutation(trpc.event.attendance.updateSelectionResponses.mutationOptions({}))
 }

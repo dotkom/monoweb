@@ -7,7 +7,9 @@ import {
   AttendeeSelectionResponsesSchema,
   UserSchema,
 } from "@dotkomonline/types"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { TRPCError } from "@trpc/server"
+import { addDays } from "date-fns"
 import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
@@ -76,7 +78,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
-        price: z.number().int(),
+        price: z.number().int().nullable(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -85,7 +87,7 @@ export const attendanceRouter = t.router({
         if (attendance === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
-        return ctx.attendanceService.updateAttendancePayment(handle, input.id, input.price)
+        return ctx.attendanceService.updateAttendancePaymentProduct(handle, input.id, input.price)
       })
     }),
 
@@ -134,7 +136,7 @@ export const attendanceRouter = t.router({
       })
     ),
 
-  refundAttendee: staffProcedure
+  cancelAttendeePayment: staffProcedure
     .input(
       z.object({
         attendeeId: AttendeeSchema.shape.id,
@@ -142,10 +144,20 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input: { attendeeId }, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.createAttendeeRefund(handle, attendeeId, ctx.principal.subject)
+        ctx.attendanceService.cancelAttendeePayment(handle, attendeeId, ctx.principal.subject)
       )
     }),
-
+  startAttendeePayment: staffProcedure
+    .input(
+      z.object({
+        attendeeId: AttendeeSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input: { attendeeId }, ctx }) => {
+      return ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.startAttendeePayment(handle, attendeeId, addDays(getCurrentUTC(), 1))
+      )
+    }),
   deregisterForEvent: authenticatedProcedure
     .input(
       z.object({
