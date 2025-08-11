@@ -97,7 +97,11 @@ server.post("/webhook/stripe", { config: { rawBody: true } }, async (req, res) =
       ? req.headers["stripe-signature"]
       : req.headers["stripe-signature"][0]
 
-  const event = await serviceLayer.paymentWebhookService.constructEvent(req.rawBody, signature)
+  const event = await serviceLayer.paymentWebhookService.constructEvent(
+    req.rawBody,
+    signature,
+    process.env.LOCAL_STRIPE_WEBHOOK_SECRET
+  )
   if (event.type === "checkout.session.completed") {
     await serviceLayer.attendanceService.completeAttendeePayment(serviceLayer.prisma, event.data.object.id)
   }

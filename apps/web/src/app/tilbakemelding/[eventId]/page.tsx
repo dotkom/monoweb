@@ -10,7 +10,7 @@ const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string
   const session = await auth.getServerSession()
   const event = await server.event.get.query(eventId)
   const attendance =
-    event.attendanceId !== null ? await server.attendance.getAttendance.query({ id: event.attendanceId }) : null
+    event.attendanceId !== null ? await server.event.attendance.getAttendance.query({ id: event.attendanceId }) : null
   const feedbackForm = await server.event.feedback.findFormByEventId.query(eventId)
 
   if (!feedbackForm || !feedbackForm.isActive)

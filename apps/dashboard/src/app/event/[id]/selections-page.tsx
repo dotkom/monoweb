@@ -60,7 +60,7 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
   const updateAttendance = useUpdateAttendanceMutation()
 
   const { data: results, isLoading: resultsIsLoading } = useQuery({
-    ...trpc.attendance.getSelectionsResults.queryOptions({
+    ...trpc.event.attendance.getSelectionsResults.queryOptions({
       attendanceId: attendance.id,
     }),
     initialData: [],
