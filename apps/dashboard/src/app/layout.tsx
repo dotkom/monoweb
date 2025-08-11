@@ -1,7 +1,19 @@
-import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core"
+import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps } from "@mantine/core"
 import "@mantine/core/styles.css"
 import "@mantine/dates/styles.css"
 import "@mantine/notifications/styles.css"
+import "@fontsource/inter/300.css"
+import "@fontsource/inter/400.css"
+import "@fontsource/inter/500.css"
+import "@fontsource/inter/600.css"
+import "@fontsource/inter/700.css"
+import "@fontsource/inter/800.css"
+import "@fontsource/inter-tight/300.css"
+import "@fontsource/inter-tight/400.css"
+import "@fontsource/inter-tight/500.css"
+import "@fontsource/inter-tight/600.css"
+import "@fontsource/inter-tight/700.css"
+import "@fontsource/inter-tight/800.css"
 import { Login } from "@/components/views/Login"
 import { auth } from "@/lib/auth"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
@@ -18,6 +30,13 @@ setDateFnsDefaultOptions({ locale: nb })
 
 export const dynamic = "force-dynamic"
 
+const theme = createTheme({
+  fontFamily: "Inter",
+  headings: {
+    fontFamily: "Inter Tight",
+  },
+})
+
 function BaseLayout({ session, children }: PropsWithChildren<{ session: Session | null }>) {
   return (
     <html lang="no" {...mantineHtmlProps}>
@@ -27,7 +46,7 @@ function BaseLayout({ session, children }: PropsWithChildren<{ session: Session 
       <body>
         <SessionProvider session={session}>
           <QueryProvider>
-            <MantineProvider defaultColorScheme="auto">
+            <MantineProvider defaultColorScheme="auto" theme={theme}>
               <Notifications />
               <ModalProvider>{children}</ModalProvider>
             </MantineProvider>
