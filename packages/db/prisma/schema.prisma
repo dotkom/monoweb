@@ -292,6 +292,8 @@ model Event {
   companies     EventCompany[]
   hostingGroups EventHostingGroup[]
 
+  metadataImportId  Int?
+
   @@map("event")
 }
 
