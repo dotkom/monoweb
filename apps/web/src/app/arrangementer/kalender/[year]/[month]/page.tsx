@@ -3,11 +3,18 @@ import { EventCalendar } from "@/components/organisms/EventCalendar"
 import { Title } from "@dotkomonline/ui"
 import { redirect } from "next/navigation"
 
-const EventPage = async ({ params }: { params: Promise<{ year: number; month: number }> }) => {
+const EventPage = async ({ params }: { params: Promise<{ year: string; month: string }> }) => {
   const { year, month } = await params
 
-  if (Number.isNaN(year) || Number.isNaN(month) || month < 1 || month > 12) {
+  if (Number.isNaN(year) || Number.isNaN(month) || Number(month) < 1 || Number(month) > 12) {
     redirect("/arrangementer/kalender") // Redirects to current month if invalid
+  }
+
+  const parsedYear = year.toString() !== "0" ? year.toString().replace(/^0+/, "") : "0"
+  const parsedMonth = month.toString().replace(/^0+/, "").padStart(2, "0")
+
+  if (year !== parsedYear || month !== parsedMonth) {
+    redirect(`/arrangementer/kalender/${parsedYear}/${parsedMonth}`)
   }
 
   return (
@@ -18,7 +25,7 @@ const EventPage = async ({ params }: { params: Promise<{ year: number; month: nu
 
       <div className="flex flex-col">
         <EventsViewToggle active="cal" />
-        <EventCalendar year={year} month={month - 1} />
+        <EventCalendar year={Number(year)} month={Number(month) - 1} />
       </div>
     </div>
   )
