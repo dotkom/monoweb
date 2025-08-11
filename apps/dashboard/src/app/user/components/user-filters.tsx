@@ -1,7 +1,7 @@
 import type { UserFilterQuery } from "@dotkomonline/types"
 import { TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
-import { useEffect } from "react"
+import { type FormEvent, useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 interface Props {
@@ -24,8 +24,12 @@ export const UserFilters = ({ onChange }: Props) => {
     })
   }, [onChange, debouncedData])
 
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+  }
+
   return (
-    <form>
+    <form onSubmit={onSubmit}>
       <TextInput placeholder="Søk etter bruker..." {...form.register("search")} />
     </form>
   )
