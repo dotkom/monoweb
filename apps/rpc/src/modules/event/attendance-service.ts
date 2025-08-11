@@ -349,7 +349,13 @@ export function getAttendanceService(
 
       if (attendance.attendancePrice) {
         const paymentDeadline = options.immediatePayment ? addMinutes(new TZDate(), 15) : addHours(new TZDate(), 24)
-        await this.createAttendeePayment(handle, attendee.id, paymentDeadline)
+        const payment = await this.createAttendeePayment(handle, attendee.id, paymentDeadline)
+
+        await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
+          paymentDeadline,
+          paymentId: payment.id,
+          paymentLink: payment.url,
+        })
       }
 
       // When a user is immediately reserved, there is no reason to schedule a task for them.
