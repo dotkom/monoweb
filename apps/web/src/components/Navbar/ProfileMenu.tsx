@@ -116,7 +116,7 @@ export const ProfileMenu: FC = () => {
               size="sm"
               color="white"
               className="text-sm font-semibold px-3 py-2"
-              href="/api/auth/authorize?connection=FEIDE"
+              href="/api/auth/authorize"
             >
               Logg inn uten feide
             </Button>
