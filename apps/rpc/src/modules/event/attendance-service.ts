@@ -15,6 +15,7 @@ import {
   type AttendeeWrite,
   AttendeeWriteSchema,
   type UserId,
+  canUserAttendPool,
   findActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
@@ -309,15 +310,8 @@ export function getAttendanceService(
 
       // Determining the pool to register the user for is done by finding the current year assumed for the user's active
       // membership.
-      const applicablePool = attendance.pools.find((pool) => {
-        // People with unknown membership are assumed said to not be allowed so that we can actually discover them as
-        // the value represents a bug or unknown state.
-        if (grade === null) {
-          return false
-        }
-        const delta = differenceInYears(getCurrentUTC(), membership.start) + 1
-        return pool.yearCriteria.includes(delta)
-      })
+      const applicablePool = user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
+
       if (applicablePool === undefined) {
         logger.warn(
           "User(ID=%s) attempted to register for Attendance(ID=%s) but no applicable pool was found",
