@@ -17,7 +17,6 @@ import { createContext } from "../trpc"
 const logger = getLogger("rpc")
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
-const adminPrincipals = configuration.ADMIN_USERS.split(",")
 const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
 
 const dependencies = createThirdPartyClients(configuration)

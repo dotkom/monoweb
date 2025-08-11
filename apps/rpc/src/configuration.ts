@@ -20,7 +20,6 @@ export const configuration = defineConfiguration({
     dev: "dev",
   }),
   HOST: config(process.env.HOST, "http://localhost:4444"),
-  ADMIN_USERS: config(process.env.ADMIN_USERS),
 
   AWS_REGION: config(process.env.AWS_REGION, "eu-north-1"),
   /**
