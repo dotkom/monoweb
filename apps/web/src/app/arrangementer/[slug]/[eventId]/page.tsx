@@ -45,7 +45,9 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
 const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eventId: string }> }) => {
   const { slug, eventId } = await params
   const session = await auth.getServerSession()
-  const user = session ? await server.user.getMe.query() : undefined
+  const [user, isStaff] = session
+    ? await Promise.all([await server.user.getMe.query(), await server.user.isStaff.query()])
+    : [undefined, undefined]
   const event = await server.event.find.query(eventId)
 
   if (!event) {
@@ -71,7 +73,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eve
 
   return (
     <div className="flex flex-col gap-8">
-      <EventHeader event={event} />
+      <EventHeader event={event} isStaff={isStaff ?? false} />
       <div className="flex w-full flex-col gap-8 md:flex-row">
         <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
           {organizers.length > 0 ? (
