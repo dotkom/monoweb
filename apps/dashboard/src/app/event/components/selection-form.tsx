@@ -1,7 +1,7 @@
 import { ActionSelect } from "@/components/molecules/ActionSelect/ActionSelect"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Icon } from "@iconify/react"
 import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
+import { IconPlus, IconTrash } from "@tabler/icons-react"
 import type { FC } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
@@ -81,7 +81,7 @@ export const SelectionsForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => 
                     }}
                   />
                   <Button type="button" onClick={() => remove(index)} color="red" ml="sm" variant="light">
-                    <Icon icon="tabler:trash" />
+                    <IconTrash />
                   </Button>
                 </Flex>
                 {errors.alternatives?.[index]?.value && (
@@ -111,7 +111,7 @@ export const SelectionsForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => 
               margin: "5px auto",
             }}
           >
-            <Icon icon="tabler:plus" />
+            <IconPlus />
           </Button>
 
           <Box mt="lg">

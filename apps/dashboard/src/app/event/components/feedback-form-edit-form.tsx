@@ -9,7 +9,6 @@ import {
 } from "@dotkomonline/types"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Icon } from "@iconify/react"
 import {
   ActionIcon,
   Anchor,
@@ -28,6 +27,7 @@ import {
 } from "@mantine/core"
 
 import { env } from "@/lib/env"
+import { IconCheck, IconCopy, IconGripVertical, IconInfoCircle, IconTrash } from "@tabler/icons-react"
 import React, { type FC } from "react"
 import {
   type Control,
@@ -198,7 +198,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
                   color="red"
                   disabled={hasFormAnswers}
                 >
-                  <Icon icon="tabler:trash" />
+                  <IconTrash />
                 </Button>
               </Tooltip>
             </Group>
@@ -216,14 +216,14 @@ const CopyLinkRow = ({ url, label, info }: { url: string; label: string; info: s
       {({ copied, copy }) => (
         <Tooltip label={copied ? "Kopiert" : "Kopier"}>
           <ActionIcon color="gray" variant="subtle" onClick={copy}>
-            {copied ? <Icon icon="tabler:check" /> : <Icon icon="tabler:copy" />}
+            {copied ? <IconCheck /> : <IconCopy />}
           </ActionIcon>
         </Tooltip>
       )}
     </CopyButton>
     <Tooltip label={info}>
       <ActionIcon variant="subtle" color="gray" size="sm">
-        <Icon icon="tabler:info-circle" />
+        <IconInfoCircle />
       </ActionIcon>
     </Tooltip>
   </Group>
@@ -258,7 +258,7 @@ const QuestionCard = React.memo(function QuestionCard({
           <Group wrap="nowrap">
             <Group>
               <div {...provided.dragHandleProps}>
-                <Icon icon="tabler:grip-vertical" cursor={"grab"} />
+                <IconGripVertical cursor="grab" />
               </div>
             </Group>
             <Stack>
@@ -334,7 +334,7 @@ const QuestionCard = React.memo(function QuestionCard({
             <Group gap={4} mb={"auto"} ml={"auto"}>
               <Tooltip disabled={!hasAnswers} label="Dette spørsmålet har blitt besvart og kan ikke slettes">
                 <Button color="red" variant="light" onClick={() => onRemove(index)} disabled={hasAnswers}>
-                  <Icon icon="tabler:trash" />
+                  <IconTrash />
                 </Button>
               </Tooltip>
             </Group>

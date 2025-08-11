@@ -2,7 +2,6 @@
 
 import { GenericTable } from "@/components/GenericTable"
 import type { Event, EventFilterQuery, EventType } from "@dotkomonline/types"
-import { Icon } from "@iconify/react"
 import {
   ActionIcon,
   ActionIconGroup,
@@ -15,6 +14,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core"
+import { IconCaretLeft, IconCaretRight, IconPencil } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import Link from "next/link"
@@ -108,10 +108,10 @@ export default function EventPage() {
             {/* TODO: add pagination */}
             <ActionIconGroup>
               <ActionIcon variant="subtle" c="gray" size="input-sm">
-                <Icon icon="tabler:arrow-left" />
+                <IconCaretLeft />
               </ActionIcon>
               <ActionIcon variant="subtle" c="gray" size="input-sm">
-                <Icon icon="tabler:arrow-right" />
+                <IconCaretRight />
               </ActionIcon>
             </ActionIconGroup>
 
@@ -119,7 +119,7 @@ export default function EventPage() {
           </Group>
 
           <Group>
-            <Button component={Link} href="/event/register" leftSection={<Icon icon="tabler:pencil" />}>
+            <Button component={Link} href="/event/register" leftSection={<IconPencil width={14} height={14} />}>
               Nytt arrangement
             </Button>
           </Group>

@@ -1,7 +1,7 @@
 "use client"
 
-import { Icon } from "@iconify/react"
 import { Box, Button, ButtonGroup, Skeleton, Stack } from "@mantine/core"
+import { IconCaretLeft, IconCaretRight } from "@tabler/icons-react"
 import { AllArticlesTable } from "./all-articles-table"
 import { useCreateArticleModal } from "./modals/create-article"
 import { useArticleAllQuery } from "./queries"
@@ -19,10 +19,10 @@ export default function CompanyPage() {
         <AllArticlesTable articles={articles} />
         <ButtonGroup ml="auto">
           <Button variant="subtle">
-            <Icon icon="tabler:caret-left" />
+            <IconCaretLeft />
           </Button>
           <Button variant="subtle">
-            <Icon icon="tabler:caret-right" />
+            <IconCaretRight />
           </Button>
         </ButtonGroup>
       </Stack>

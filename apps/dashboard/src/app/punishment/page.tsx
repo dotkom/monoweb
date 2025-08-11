@@ -2,8 +2,8 @@
 
 import { GenericTable } from "@/components/GenericTable"
 import type { Mark } from "@dotkomonline/types"
-import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
+import { IconCaretLeft, IconCaretRight } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import Link from "next/link"
@@ -69,10 +69,10 @@ export default function MarkPage() {
         <Group justify="space-between">
           <ButtonGroup>
             <Button variant="subtle">
-              <Icon icon="tabler:caret-left" />
+              <IconCaretLeft />
             </Button>
             <Button variant="subtle">
-              <Icon icon="tabler:caret-right" />
+              <IconCaretRight />
             </Button>
           </ButtonGroup>
         </Group>

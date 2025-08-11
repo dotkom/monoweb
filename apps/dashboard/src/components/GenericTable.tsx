@@ -1,5 +1,5 @@
-import { Icon } from "@iconify/react/dist/iconify.js"
 import { Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core"
+import { IconCaretDownFilled, IconCaretUpDownFilled, IconCaretUpFilled } from "@tabler/icons-react"
 import { type Table as ReactTable, flexRender } from "@tanstack/react-table"
 
 export interface GenericTableProps<T> {
@@ -29,11 +29,11 @@ export function GenericTable<T>({ table, filterable }: GenericTableProps<T>) {
                       {filterable &&
                         header.column.getCanSort() &&
                         (header.column.getIsSorted() === "asc" ? (
-                          <Icon icon="tabler:caret-down-filled" />
+                          <IconCaretDownFilled width={12} height={12} />
                         ) : header.column.getIsSorted() === "desc" ? (
-                          <Icon icon="tabler:caret-up-filled" />
+                          <IconCaretUpFilled width={12} height={12} />
                         ) : (
-                          <Icon icon="tabler:caret-up-down-filled" />
+                          <IconCaretUpDownFilled width={12} height={12} />
                         ))}
                     </span>
                   </TableTh>

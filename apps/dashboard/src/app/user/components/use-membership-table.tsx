@@ -1,8 +1,8 @@
 "use client"
 
 import { type Membership, type UserId, getMembershipTypeName, getSpecializationName } from "@dotkomonline/types"
-import { Icon } from "@iconify/react/dist/iconify.js"
 import { Button } from "@mantine/core"
+import { IconEdit } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import { useMemo } from "react"
@@ -43,11 +43,7 @@ export const useMembershipTable = ({ data, userId }: Props) => {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
-          <Button
-            variant="outline"
-            leftSection={<Icon icon="tabler:edit" />}
-            onClick={() => open({ membership: info.getValue() })}
-          >
+          <Button variant="outline" leftSection={<IconEdit />} onClick={() => open({ membership: info.getValue() })}>
             Oppdater
           </Button>
         ),
