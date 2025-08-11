@@ -15,7 +15,6 @@ export type DBContext = Omit<DBClient, ITXClientDenyList>
 export const createPrisma = (databaseUrl: string): DBClient =>
   new _PrismaClient({
     datasourceUrl: databaseUrl,
-    log: ["warn", "error"],
     transactionOptions: {
       timeout: secondsToMilliseconds(30),
     },
