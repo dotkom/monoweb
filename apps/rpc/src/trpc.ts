@@ -1,6 +1,8 @@
+import { getLogger } from "@dotkomonline/logger"
 import type { UserId } from "@dotkomonline/types"
-import { trace } from "@opentelemetry/api"
+import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { TRPCError, initTRPC } from "@trpc/server"
+import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
 import type { Affiliation, AffiliationSet } from "./modules/authorization-service"
@@ -97,7 +99,33 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
     span.setAttribute("http.request.method_original", type)
     span.setAttribute("http.route", path)
     try {
-      return await next({ ctx })
+      const logger = getLogger("@dotkomonline/rpc/trpc")
+      const result = await next({ ctx })
+      // This is how tRPC middlewares capture results of the procedure call. Infact, the try-finally block above is not
+      // related to error handling at all, but rather to ensure the OpenTelemetry tracing span is ALWAYS ended.
+      if (result.ok) {
+        return result
+      }
+      // This means an error occurred in the procedure call, and we need to report it anonymously to the user, and send
+      // the telemetry off to the OpenTelemetry backend.
+      const traceId = span?.spanContext().traceId ?? "<missing traceId>"
+      logger.error(
+        "tRPC error triggered by Principal(Subject=%s) in Request(Path=%s, Method=%s) traced by Trace(TraceID=%s): %o",
+        ctx?.principal?.subject ?? "<anonymous>",
+        path,
+        type,
+        traceId,
+        result.error
+      )
+      span.recordException(result.error)
+      span.setStatus({ code: SpanStatusCode.ERROR })
+
+      const message = `${result.error.code} occurred in Trace(TraceID=${traceId})`
+      return {
+        marker: result.marker,
+        ok: false,
+        error: new TRPCError({ code: result.error.code, message }),
+      } satisfies MiddlewareResult<unknown>
     } finally {
       span.end()
     }
@@ -115,7 +143,7 @@ export const authenticatedProcedure = procedure.use(({ ctx, next }) => {
   })
 })
 
-export const staffProcedure = t.procedure.use(({ ctx, next }) => {
+export const staffProcedure = procedure.use(({ ctx, next }) => {
   ctx.authorize.requireAffiliation()
   return next({
     ctx: {
