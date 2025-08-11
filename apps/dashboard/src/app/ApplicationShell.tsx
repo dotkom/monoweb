@@ -12,6 +12,7 @@ import {
   Group,
   NavLink,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import Link from "next/link"
@@ -65,6 +66,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
   const pathname = usePathname()
+  const { toggleColorScheme } = useMantineColorScheme()
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: should only trigger on pathname change
   useEffect(() => {
@@ -91,9 +93,14 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             <Title order={2}>Monoweb Admin</Title>
           </Flex>
 
-          <Button component="a" variant="outline" href="/api/auth/logout" visibleFrom="xs">
-            Logg ut
-          </Button>
+          <Flex align="center" gap="sm">
+            <Button onClick={toggleColorScheme} variant="outline" visibleFrom="xs">
+              Bytt fargetema
+            </Button>
+            <Button component="a" variant="outline" href="/api/auth/logout" visibleFrom="xs">
+              Logg ut
+            </Button>
+          </Flex>
         </Group>
       </AppShellHeader>
       <AppShellNavbar p="md">
