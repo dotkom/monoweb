@@ -4,10 +4,11 @@ import { cn } from "../../utils"
 interface ImageCardProps extends React.HTMLAttributes<HTMLDivElement> {
   imagePosition: "left" | "right" | "top"
   image: string
+  alt: string
   children?: React.ReactNode
 }
 export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
-  ({ image, imagePosition, children, ...props }, ref) => {
+  ({ image, imagePosition, alt, children, ...props }, ref) => {
     return (
       <div
         ref={ref}
@@ -20,7 +21,7 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
       >
         <img
           src={image}
-          alt="Image Card"
+          alt={alt}
           className={cn(
             "object-cover max-sm:h-1/3 max-sm:w-full",
             imagePosition === "right" && "sm:hidden",
@@ -32,7 +33,7 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
         {imagePosition === "right" && (
           <img
             src={image}
-            alt="Image Card"
+            alt={alt}
             className={cn(
               "absolute right-0 top-0 h-full w-2/5 object-cover max-sm:hidden [clip-path:polygon(15%_0%,_100%_0%,_100%_100%,_0%_100%)]"
             )}

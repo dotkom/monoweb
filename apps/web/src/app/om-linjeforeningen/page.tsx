@@ -1,3 +1,4 @@
+import { server } from "@/utils/trpc/server"
 import { Divider, ImageCard, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
@@ -15,7 +16,7 @@ export default async function AboutOnlinePage() {
 
 const WhoAreWeCard = () => {
   return (
-    <ImageCard image="/online-logo-o.svg" imagePosition="left" className="bg-blue-100 ">
+    <ImageCard image="/online-logo-o.svg" alt="Online logo" imagePosition="left" className="bg-blue-100 ">
       <div className="flex flex-col items-center justify-center my-8 sm:my-24">
         <Title size={"xxl"} className="pb-1 font-extrabold">
           Hvem er vi?
@@ -30,10 +31,10 @@ const WhoAreWeCard = () => {
   )
 }
 
-const Statstics = () => {
+const Statstics = async () => {
   const memberCount = 600 // This would ideally be fetched from a service
-  const activityCount = 2500 // This would ideally be fetched from a service
-  const committeeCount = 30 // This would ideally be fetched from a service
+  const activityCount = roundToLowestFifty(await server.event.count.query())
+  const committeeCount = 15 // This would ideally be fetched from a service
 
   const StatisticsNumber = ({ number, title }: { number: number; title: string }) => {
     return (
@@ -65,7 +66,7 @@ const Statstics = () => {
 
 const OurGoalsCard = () => {
   return (
-    <ImageCard image="/genfors-banner.jpeg" imagePosition="right" className="bg-yellow-100">
+    <ImageCard image="/genfors-banner.jpeg" alt="Genfors banner" imagePosition="right" className="bg-yellow-100">
       <div className="flex flex-col items-center justify-center my-8 sm:my-24">
         <Title size={"xxl"} className="pb-1 font-extrabold">
           Vårt Mål
@@ -118,4 +119,8 @@ const Structure = () => {
       </div>
     </section>
   )
+}
+
+const roundToLowestFifty = (num: number) => {
+  return Math.floor(num / 50) * 50
 }
