@@ -12,7 +12,7 @@ export default function UserPage() {
   const [filter, setFilter] = useState<UserFilterQuery>({})
   const { users, isLoading: isUsersLoading, fetchNextPage, hasNextPage } = useUserAllInfiniteQuery({ filter })
 
-  const table = useUserTable({ data: users ?? [] })
+  const table = useUserTable({ data: users })
 
   const loaderRef = useRef<HTMLDivElement>(null)
 

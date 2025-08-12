@@ -14,14 +14,12 @@ interface ArticleListProps {
 export const ArticleList: FC<ArticleListProps> = ({ tags }: ArticleListProps) => {
   const queryTag = useSearchParams().get("tag")
   const [filters, setFilters] = useState<ArticleFilterQuery>({ byTags: queryTag ? [queryTag] : [] })
-  const { data, fetchNextPage } = useArticleFilterQuery(filters)
+  const { articles, fetchNextPage } = useArticleFilterQuery(filters)
 
   let tagNames = tags.map((tag) => tag.name)
 
   // Always show the query tag so it can be deselected
   if (queryTag && !tagNames.includes(queryTag)) tagNames = [queryTag, ...tagNames]
-
-  const articles = data?.pages.flatMap((page) => page.items) ?? []
 
   const loaderRef = useRef<HTMLDivElement>(null)
 
