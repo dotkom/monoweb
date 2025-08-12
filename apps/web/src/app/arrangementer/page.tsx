@@ -13,7 +13,9 @@ import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries
 const EventPage = () => {
   const [filter, setFilter] = useState<EventFilterQuery>({})
 
-  const now = roundToNearestMinutes(getCurrentUtc(), { roundingMethod: "floor" })
+  const now = roundToNearestMinutes(getCurrentUtc(), {
+    roundingMethod: "floor",
+  })
   const { events: futureEvents, isLoading } = useEventAllQuery({
     filter: {
       ...filter,
@@ -21,6 +23,8 @@ const EventPage = () => {
         max: null,
         min: now,
       },
+
+      excludingOrganizingGroup: ["velkom"],
       orderBy: "asc",
     },
     page: {
