@@ -38,5 +38,5 @@ export const useUserAllInfiniteQuery = ({ filter, page }: UseUserAllQueryProps) 
     select: (res) => res.pages.flatMap((p) => p.items),
   })
 
-  return { users, ...query }
+  return { users: useMemo(() => users ?? [], [users]), ...query }
 }
