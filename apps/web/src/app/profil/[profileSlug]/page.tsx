@@ -1,7 +1,7 @@
 "use client"
 
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { useEventAllInfiniteQuery } from "@/app/arrangementer/components/queries"
+import { useEventAllByAttendingUserIdInfiniteQuery, useEventAllInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
@@ -173,24 +173,17 @@ export default function ProfilePage() {
 
   const { profileSlug: rawProfileSlug } = useParams<{ profileSlug: string }>()
   const profileSlug = decodeURIComponent(rawProfileSlug)
-  const returnedFromFeide = useSearchParams().get("returnedFromFeide")
-
-  console.log(rawProfileSlug)
-  console.log(profileSlug)
+  const returnedFromFeide = Boolean(useSearchParams().get("returnedFromFeide"))
 
   const trpc = useTRPC()
 
   const session = useSession()
   const { data: user, isLoading: userLoading } = useQuery(trpc.user.findByProfileSlug.queryOptions(profileSlug))
 
-  if (!user) {
-    notFound()
-  }
-
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
   const isLoggedIn = Boolean(session)
-  const isUser = user.id === session?.sub
+  const isUser = user ? user.id === session?.sub : false
 
   const [
     { data: groups, isLoading: groupsLoading },
@@ -198,13 +191,14 @@ export default function ProfilePage() {
     { data: marks, isLoading: marksLoading },
   ] = useQueries({
     queries: [
-      trpc.group.allByMember.queryOptions(user.id),
-      trpc.event.allByAttendingUserId.queryOptions({ id: user.id }, { enabled: isLoggedIn }),
-      trpc.personalMark.getVisibleInformation.queryOptions({ userId: user.id }, { enabled: isLoggedIn }),
+      trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user) }),
+      trpc.event.allByAttendingUserId.queryOptions({ id: user?.id ?? "" }, { enabled: isLoggedIn && Boolean(user) }),
+      trpc.personalMark.getVisibleInformation.queryOptions({ userId: user?.id ?? "" }, { enabled: isLoggedIn && Boolean(user) }),
     ],
   })
 
-  const { events: pastEvents, fetchNextPage } = useEventAllInfiniteQuery({
+  const { events: pastEvents, fetchNextPage } = useEventAllByAttendingUserIdInfiniteQuery({
+    id: user?.id ?? "",
     filter: {
       byEndDate: {
         max: now,
@@ -225,6 +219,10 @@ export default function ProfilePage() {
         : [],
     [groups]
   )
+
+  if (!user) {
+    return 
+  }
 
   const activeMembership = findActiveMembership(user)
   const grade = activeMembership ? getMembershipGrade(activeMembership) : null

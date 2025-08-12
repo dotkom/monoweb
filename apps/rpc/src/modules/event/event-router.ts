@@ -138,7 +138,7 @@ export const eventRouter = t.router({
     ),
 
   allByAttendingUserId: procedure
-    .input(z.object({ id: UserSchema.shape.id }))
+    .input(z.object({ id: UserSchema.shape.id, page: BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).optional() }))
     .output(AttendanceEventSchema.array())
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {

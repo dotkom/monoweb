@@ -1,5 +1,5 @@
 import { useTRPC } from "@/utils/trpc/client"
-import type { EventFilterQuery } from "@dotkomonline/types"
+import type { EventFilterQuery, UserId } from "@dotkomonline/types"
 import { useInfiniteQuery } from "@tanstack/react-query"
 
 import { useQuery } from "@tanstack/react-query"
@@ -7,6 +7,12 @@ import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
 import { useMemo } from "react"
 
 interface UseEventAllQueryProps {
+  filter: EventFilterQuery
+  page?: Pageable
+}
+
+interface UseEventAllByAttendingUserIdQueryProps {
+  id: UserId
   filter: EventFilterQuery
   page?: Pageable
 }
@@ -27,6 +33,25 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
     ...trpc.event.all.infiniteQueryOptions({
       filter,
       ...page,
+    }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  })
+
+  const events = data?.pages.flatMap((page) => page.items) ?? []
+
+  return { events, ...query }
+}
+
+export const useEventAllByAttendingUserIdInfiniteQuery = ({ id, filter, page }: UseEventAllByAttendingUserIdQueryProps) => {
+  const trpc = useTRPC()
+
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.event.allByAttendingUserId.infiniteQueryOptions({
+      id,
+      page: {
+        filter,
+        ...page,
+      }
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
