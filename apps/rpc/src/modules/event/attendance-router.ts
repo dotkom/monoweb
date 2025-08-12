@@ -186,7 +186,7 @@ export const attendanceRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceByAttendeeId(handle, input.attendeeId)
-        const attendee = attendance.attendees.find((attendee) => attendee.user.id === input.attendeeId)
+        const attendee = attendance.attendees.find((attendee) => attendee.id === input.attendeeId)
         if (attendee === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
