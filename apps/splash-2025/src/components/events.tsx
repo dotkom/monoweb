@@ -13,10 +13,10 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { useAutoAnimate } from "@formkit/auto-animate/react"
 import { useQuery } from "@tanstack/react-query"
 import { compareAsc, formatDate, getDate, getYear, isPast, max, min } from "date-fns"
 import { useMemo, useState } from "react"
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 const WEB_URL = import.meta.env.VITE_WEB_URL || "http://localhost:3000"
 const JULY = 6 as const
@@ -40,8 +40,8 @@ function getDateBounds() {
 
 export const Events = () => {
   const [showPastEvents, setShowPastEvents] = useState(false)
-  const [monthRef] = useAutoAnimate({ duration: 150, easing: 'ease-in-out' })
-  const [dayRef] = useAutoAnimate({ duration: 150, easing: 'ease-in-out' })
+  const [monthRef] = useAutoAnimate({ duration: 150, easing: "ease-in-out" })
+  const [dayRef] = useAutoAnimate({ duration: 150, easing: "ease-in-out" })
 
   const byEndDate = useMemo(() => getDateBounds(), [])
 
@@ -121,61 +121,62 @@ export const Events = () => {
           {[...eventsByDate.entries()].map(([month, eventsInMonth]) => {
             const lastEvent = [...eventsInMonth.values()].flat().at(-1)
             const past = lastEvent && isPast(lastEvent.end)
-            
+
             return (
-            <div key={month} className="relative space-y-4">
-              {/* The vertical line */}
-              <div
-                className={cn(
-                  "absolute w-1 rounded-full bg-orange-200",
-                  "top-10 -bottom-10 transform -translate-x-1/2",
-                  // 25 % is to align with event card
-                  // -18px/-26px is to align with the dot
-                  "left-[calc(25%-18px)] md:left-[calc(25%-26px)] "
-                )}
-              />
+              <div key={month} className="relative space-y-4">
+                {/* The vertical line */}
+                <div
+                  className={cn(
+                    "absolute w-1 rounded-full bg-orange-200",
+                    "top-10 -bottom-10 transform -translate-x-1/2",
+                    // 25 % is to align with event card
+                    // -18px/-26px is to align with the dot
+                    "left-[calc(25%-18px)] md:left-[calc(25%-26px)] "
+                  )}
+                />
 
-              <Text
-                className={cn(
-                  "text-2xl font-bold capitalize transition-opacity",
-                  "sm:w-1/4 sm:pr-12 max-sm:relative sm:flex sm:justify-end-safe",
-                  past && "opacity-50"
-                )}
-              >
-                {month}
-              </Text>
+                <Text
+                  className={cn(
+                    "text-2xl font-bold capitalize transition-opacity",
+                    "sm:w-1/4 sm:pr-12 max-sm:relative sm:flex sm:justify-end-safe",
+                    past && "opacity-50"
+                  )}
+                >
+                  {month}
+                </Text>
 
-              <div ref={dayRef} className="space-y-12 text-orange-900">
-                {[...eventsInMonth.entries()].map(([date, events]) => {
-                  const lastEvent = events.at(-1)
-                  const past = lastEvent && isPast(lastEvent.end)
+                <div ref={dayRef} className="space-y-12 text-orange-900">
+                  {[...eventsInMonth.entries()].map(([date, events]) => {
+                    const lastEvent = events.at(-1)
+                    const past = lastEvent && isPast(lastEvent.end)
 
-                  return (
-                    <div
-                      className={cn(
-                        "space-y-8 sm:space-y-4 transition-opacity",
-                        past && "opacity-50 hover:opacity-100"
-                      )}
-                      key={`${month}-${date}`}
-                    >
-                      <Text
+                    return (
+                      <div
                         className={cn(
-                          "text-orange-800/80 uppercase font-bold text-xs",
-                          "max-sm:relative w-fit max-sm:left-1/4 sm:w-1/4 sm:pr-12 sm:text-right mb-3 sm:-mb-0.5"
+                          "space-y-8 sm:space-y-4 transition-opacity",
+                          past && "opacity-50 hover:opacity-100"
                         )}
+                        key={`${month}-${date}`}
                       >
-                        {events[0] ? formatDate(new Date(events[0]?.start), "EEEE dd.") : "Ukjent ukedag"}
-                      </Text>
+                        <Text
+                          className={cn(
+                            "text-orange-800/80 uppercase font-bold text-xs",
+                            "max-sm:relative w-fit max-sm:left-1/4 sm:w-1/4 sm:pr-12 sm:text-right mb-3 sm:-mb-0.5"
+                          )}
+                        >
+                          {events[0] ? formatDate(new Date(events[0]?.start), "EEEE dd.") : "Ukjent ukedag"}
+                        </Text>
 
-                      {events.map((event) => (
-                        <EventListItem event={event} key={event.id} />
-                      ))}
-                    </div>
-                  )
-                })}
+                        {events.map((event) => (
+                          <EventListItem event={event} key={event.id} />
+                        ))}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
-          )})}
+            )
+          })}
         </div>
       </div>
     </div>
