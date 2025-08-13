@@ -141,7 +141,7 @@ export const Events = () => {
 
                 <Text
                   className={cn(
-                    "text-2xl font-bold capitalize transition-opacity",
+                    "text-2xl font-bold capitalize",
                     "sm:w-1/4 sm:pr-12 max-sm:relative sm:flex sm:justify-end-safe",
                     past && "opacity-50"
                   )}
@@ -152,16 +152,10 @@ export const Events = () => {
                 <div ref={dayRef} className="space-y-12 text-orange-900">
                   {[...eventsInMonth.entries()].map(([date, events]) => {
                     const lastEvent = events.at(-1)
-                    const past = lastEvent && isPast(lastEvent.end)
+                    const lastEventInPast = lastEvent ? isPast(lastEvent.end) : false
 
                     return (
-                      <div
-                        className={cn(
-                          "space-y-8 sm:space-y-4 transition-opacity",
-                          past && "opacity-50 hover:opacity-100"
-                        )}
-                        key={`${month}-${date}`}
-                      >
+                      <div key={`${month}-${date}`} className="space-y-8 sm:space-y-4">
                         <Text
                           className={cn(
                             "text-orange-800/80 uppercase font-bold text-xs",
@@ -172,7 +166,7 @@ export const Events = () => {
                         </Text>
 
                         {events.map((event) => (
-                          <EventListItem event={event} key={event.id} />
+                          <EventListItem key={event.id} event={event} lastEventInPast={lastEventInPast} />
                         ))}
                       </div>
                     )
@@ -189,14 +183,18 @@ export const Events = () => {
 
 interface EventListItemProps {
   event: Event
+  lastEventInPast: boolean
 }
 
-const EventListItem = ({ event }: EventListItemProps) => {
+const EventListItem = ({ event, lastEventInPast }: EventListItemProps) => {
   const hasLocationLink = Boolean(event.locationLink)
   const hasLocation = Boolean(hasLocationLink || event.locationTitle || event.locationAddress)
 
   return (
-    <div key={event.id} className="flex flex-row items-center">
+    <div
+      key={event.id}
+      className={cn("flex flex-row items-center transition-opacity", lastEventInPast && "opacity-50 hover:opacity-100")}
+    >
       <div className="w-1/4" />
       <div className="w-3/4">
         <Collapsible className="group">
