@@ -15,14 +15,18 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { useAutoAnimate } from "@formkit/auto-animate/react"
 import { useQuery } from "@tanstack/react-query"
-import { compareAsc, formatDate, getDate, getYear, isPast, max, min } from "date-fns"
+import { compareAsc, formatDate, getDate, getYear, interval, isPast, isWithinInterval } from "date-fns"
 import { useMemo, useState } from "react"
 
 const WEB_URL = import.meta.env.VITE_WEB_URL || "http://localhost:3000"
 const JULY = 6 as const
 const SEPTEMBER = 8 as const
 
-function getDateBounds() {
+export const Events = () => {
+  const [showPastEvents, setShowPastEvents] = useState(false)
+  const [monthRef] = useAutoAnimate({ duration: 150, easing: "ease-in-out" })
+  const [dayRef] = useAutoAnimate({ duration: 150, easing: "ease-in-out" })
+
   const now = getCurrentUTC()
   const currentYear = getYear(now)
 
@@ -30,30 +34,22 @@ function getDateBounds() {
   const july1 = new Date(currentYear, JULY, 1)
   const september30 = new Date(currentYear, SEPTEMBER, 30)
 
-  const clampedNow = min([max([now, july1]), september30])
+  const fadderukeInterval = interval(july1, september30)
+  const queryEnabled = isWithinInterval(now, fadderukeInterval)
 
-  return {
-    max: september30,
-    min: july1,
-  }
-}
-
-export const Events = () => {
-  const [showPastEvents, setShowPastEvents] = useState(false)
-  const [monthRef] = useAutoAnimate({ duration: 150, easing: "ease-in-out" })
-  const [dayRef] = useAutoAnimate({ duration: 150, easing: "ease-in-out" })
-
-  const byEndDate = useMemo(() => getDateBounds(), [])
-
-  const { data, isLoading } = useQuery(
-    trpc.event.all.queryOptions({
+  const { data, isLoading } = useQuery({
+    ...trpc.event.all.queryOptions({
       filter: {
         byOrganizingGroup: ["velkom"],
-        byEndDate,
+        byEndDate: {
+          max: fadderukeInterval.end,
+          min: fadderukeInterval.start,
+        },
       },
       take: 10000,
-    })
-  )
+    }),
+    enabled: queryEnabled,
+  })
 
   const events = useMemo(() => {
     const currentEvents = data?.items ?? []
@@ -64,6 +60,14 @@ export const Events = () => {
 
     return currentEvents.filter((event) => !isPast(event.end))
   }, [data, showPastEvents])
+
+  if (!queryEnabled) {
+    return (
+      <div id="events-title" className="bg-orange-100 min-h-[500px] w-full flex gap-2 justify-center items-center">
+        <Text className="text-2xl">Kom tilbake i fadderukesesong!</Text>
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (
