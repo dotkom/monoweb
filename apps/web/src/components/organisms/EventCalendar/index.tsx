@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import type { Event } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
-import { addYears, getWeek, isThisWeek, subYears } from "date-fns"
+import { getWeek, isThisWeek } from "date-fns"
 import Link from "next/link"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
@@ -53,10 +53,16 @@ function getEventTypeGuide(events: Event[]) {
   const eventTypeConfig = {
     SOCIAL: { color: "bg-green-400 dark:bg-green-400", label: "Sosialt" },
     ACADEMIC: { color: "bg-red-400 dark:bg-red-400", label: "Kurs" },
-    COMPANY: { color: "bg-blue-400 dark:bg-blue-400", label: "Bedriftsarrangement" },
+    COMPANY: {
+      color: "bg-blue-400 dark:bg-blue-400",
+      label: "Bedriftsarrangement",
+    },
     WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
     OTHER: { color: "bg-purple-400 dark:bg-purple-400", label: "Annet" },
-    GENERAL_ASSEMBLY: { color: "bg-purple-400 dark:bg-purple-400", label: "Generalforsamling" },
+    GENERAL_ASSEMBLY: {
+      color: "bg-purple-400 dark:bg-purple-400",
+      label: "Generalforsamling",
+    },
     INTERNAL: { color: "bg-purple-400 dark:bg-purple-400", label: "Internt" },
   }
 
@@ -115,13 +121,14 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const nowDate = new Date()
   nowDate.setHours(0, 0, 0, 0)
 
-  const previousMonthUrlYear = month === 0 ? subYears(year, 1) : year
-  const previousMonthUrlMonth = (month === 0 ? 12 : month).toString().padStart(2, "0")
-  const previousMonthUrl = `/arrangementer/kalender/${previousMonthUrlYear}/${previousMonthUrlMonth}`
+  const prevMonth = (month + 11) % 12
+  const nextMonth = (month + 1) % 12
 
-  const nextMonthUrlYear = month === 11 ? addYears(year, 1) : year
-  const nextMonthUrlMonth = (month === 11 ? 1 : month + 2).toString().padStart(2, "0")
-  const nextMonthUrl = `/arrangementer/kalender/${nextMonthUrlYear}/${nextMonthUrlMonth}`
+  const prevYear = month === 0 ? year - 1 : year
+  const nextYear = month === 11 ? year + 1 : year
+
+  const previousMonthUrl = `/arrangementer/kalender/${prevYear}/${String(prevMonth + 1).padStart(2, "0")}`
+  const nextMonthUrl = `/arrangementer/kalender/${nextYear}/${String(nextMonth + 1).padStart(2, "0")}`
 
   return (
     <div className="mb-10">

@@ -21,6 +21,8 @@ const EventPage = () => {
         max: null,
         min: now,
       },
+
+      excludingOrganizingGroup: ["velkom"],
       orderBy: "asc",
     },
     page: {

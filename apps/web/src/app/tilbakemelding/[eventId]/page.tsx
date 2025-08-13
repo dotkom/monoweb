@@ -2,8 +2,7 @@ import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"
-import { formatDate } from "date-fns"
-import { isAfter } from "date-fns"
+import { formatDate, isAfter } from "date-fns"
 
 const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
   const { eventId } = await params

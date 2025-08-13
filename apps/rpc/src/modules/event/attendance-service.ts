@@ -131,13 +131,15 @@ export interface AttendanceService {
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
 
-  updateAttendancePayment(handle: DBHandle, attendanceId: AttendanceId, price: number): Promise<void>
+  updateAttendancePaymentProduct(handle: DBHandle, attendance: Attendance): Promise<void>
+  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<void>
+  deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
   executeChargeAttendancePaymentsTask(
     handle: DBHandle,
     task: InferTaskData<ChargeAttendancePaymentsTaskDefinition>
   ): Promise<void>
-  createAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, deadline: TZDate): Promise<Payment>
-  createAttendeeRefund(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
+  startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, deadline: TZDate): Promise<Payment>
+  cancelAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
   requestAttendeePayment(handle: DBHandle, attendeeId: AttendeeId): Promise<Payment>
   completeAttendeePayment(handle: DBHandle, paymentId: string): Promise<void>
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
@@ -239,6 +241,8 @@ export function getAttendanceService(
           })
         }
       }
+
+      await this.updateAttendancePaymentProduct(handle, attendance)
       return await attendanceRepository.updateAttendanceById(handle, attendanceId, input)
     },
     async createAttendancePool(handle, attendanceId, data) {
@@ -363,13 +367,7 @@ export function getAttendanceService(
 
       if (attendance.attendancePrice) {
         const paymentDeadline = options.immediatePayment ? addMinutes(new TZDate(), 15) : addHours(new TZDate(), 24)
-        const payment = await this.createAttendeePayment(handle, attendee.id, paymentDeadline)
-
-        await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
-          paymentDeadline,
-          paymentId: payment.id,
-          paymentLink: payment.url,
-        })
+        const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
       }
 
       // When a user is immediately reserved, there is no reason to schedule a task for them.
@@ -469,28 +467,55 @@ export function getAttendanceService(
         )
       }
     },
-    async updateAttendancePayment(handle, attendanceId, price) {
-      const event = await eventService.getByAttendance(handle, attendanceId)
-      const attendance = await this.getAttendanceById(handle, attendanceId)
+    async deleteAttendancePayment(handle, attendance: Attendance) {
+      for (const attendee of attendance.attendees) {
+        if (!attendee.paymentId) {
+          continue
+        }
+
+        const payment = await paymentService.getById(attendee.paymentId)
+
+        if (payment.status === "CANCELLED" || payment.status === "UNPAID") {
+          continue
+        }
+
+        throw new AttendeeAlreadyPaidError(attendee.userId)
+      }
+
+      await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
+    },
+    async updateAttendancePaymentPrice(handle, attendanceId, price) {
+      if (price === null) {
+        await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, null)
+      } else {
+        await paymentProductsService.updatePrice(attendanceId, price)
+      }
+    },
+    async updateAttendancePaymentProduct(handle, attendance) {
+      if (!attendance.attendancePrice) {
+        return
+      }
+      const event = await eventService.getByAttendance(handle, attendance.id)
 
       const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
       const groupsText = ogJoin(event.hostingGroups.map((group) => group.abbreviation))
 
-      await paymentProductsService.createOrUpdate(attendanceId, {
-        description: event.hostingGroups ? `Arrangert av ${groupsText}` : undefined,
+      await paymentProductsService.createOrUpdate(attendance.id, {
+        description:
+          event.hostingGroups.length > 0 ? `Arrangert av ${groupsText}` : "Arrangert av Online linjeforening",
         name: event.title,
         imageUrl: event.imageUrl,
         metadata: {
           group: event.hostingGroups.map((group) => group.slug).join(", "),
         },
-        price,
+        price: attendance.attendancePrice,
         url,
       })
-      await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, price)
+      await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, attendance.attendancePrice)
       await taskSchedulingService.scheduleAt(
         handle,
         tasks.CHARGE_ATTENDANCE_PAYMENTS,
-        { attendanceId },
+        { attendanceId: attendance.id },
         new TZDate(attendance.deregisterDeadline)
       )
     },
@@ -506,16 +531,40 @@ export function getAttendanceService(
         await this.createAttendeePaymentCharge(handle, attendee.id)
       }
     },
-    async createAttendeePayment(handle, attendeeId, deadline): Promise<Payment> {
+    async startAttendeePayment(handle, attendeeId, deadline): Promise<Payment> {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       if (!attendance.attendancePrice) {
         throw new Error("Tried to create a payment for an attendance without a price")
+      }
+
+      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+      if (!attendee) {
+        throw new AttendanceNotFound(attendeeId)
+      }
+
+      if (attendee.paymentId) {
+        const existingPayment = await paymentService.getById(attendee.paymentId)
+
+        if (existingPayment.status !== "CANCELLED") {
+          throw new PaymentUnexpectedStateError(
+            attendee.paymentId,
+            "Tried to create new payment but one is already active"
+          )
+        }
       }
 
       const payment = await paymentService.create(
         attendance.id,
         isPast(attendance.deregisterDeadline) ? "CHARGE" : "RESERVE"
       )
+
+      await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
+        paymentDeadline: deadline,
+        paymentId: payment.id,
+        paymentLink: payment.url,
+        paymentRefundedAt: null,
+        paymentRefundedById: null,
+      })
 
       await taskSchedulingService.scheduleAt(
         handle,
@@ -538,7 +587,8 @@ export function getAttendanceService(
       if (!attendee.paymentId) {
         return
       }
-      if (attendee.paymentChargedAt) {
+      const payment = await paymentService.getById(attendee.paymentId)
+      if (payment.status === "PAID") {
         return
       }
 
@@ -560,21 +610,23 @@ export function getAttendanceService(
         }
       }
     },
-    async createAttendeeRefund(handle, attendeeId, refundedByUserId: UserId) {
+    async cancelAttendeePayment(handle, attendeeId, refundedByUserId: UserId) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
         throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
-      if (!attendee.paymentId || (!attendee.paymentChargedAt && !attendee.paymentReservedAt)) {
+      if (!attendee.paymentId) {
         throw new AttendeeHasNotPaidError(attendee.userId)
       }
 
       const payment = await paymentService.getById(attendee.paymentId)
       if (payment.status === "PAID") {
         await paymentService.refund(attendee.paymentId)
-      } else {
+      } else if (payment.status === "RESERVED" || payment.status === "UNPAID") {
         await paymentService.cancel(attendee.paymentId)
+      } else {
+        throw new AttendeeHasNotPaidError(attendee.paymentId)
       }
       await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
         paymentChargedAt: null,
@@ -632,7 +684,7 @@ export function getAttendanceService(
       }
 
       const paymentDeadline = addHours(getCurrentUTC(), 24)
-      const payment = await this.createAttendeePayment(handle, attendeeId, paymentDeadline)
+      const payment = await this.startAttendeePayment(handle, attendeeId, paymentDeadline)
 
       await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
         paymentChargedAt: null,

@@ -1,5 +1,5 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
-import { ActionIcon, Checkbox } from "@mantine/core"
+import { ActionIcon, Checkbox, type CheckboxProps } from "@mantine/core"
 import { IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { isPast } from "date-fns"
@@ -12,6 +12,9 @@ interface AllAttendeesTableProps {
   attendees: Attendee[]
   attendance: Attendance
 }
+
+const CheckboxXIcon: CheckboxProps["icon"] = ({ indeterminate, ...others }) =>
+  indeterminate ? <IconX {...others} /> : <IconX {...others} />
 
 export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTableProps) => {
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
@@ -63,7 +66,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         },
       }),
       columnHelper.accessor((attendee) => attendee, {
-        header: "Betalt",
+        header: "Betaling",
         filterFn: arrayOrEqualsFilter<Attendee>(),
         cell: (info) => {
           const attendee = info.getValue()
@@ -75,8 +78,11 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           const hasPaid = Boolean(
             isPast(attendance.deregisterDeadline) ? attendee.paymentChargedAt : attendee.paymentReservedAt
           )
-
-          return <Checkbox readOnly checked={hasPaid} />
+          return hasPaid ? (
+            <Checkbox color="green" readOnly checked />
+          ) : (
+            <Checkbox icon={CheckboxXIcon} color="red" checked readOnly />
+          )
         },
       }),
       columnHelper.accessor(

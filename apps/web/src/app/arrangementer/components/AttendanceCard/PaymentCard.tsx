@@ -6,6 +6,10 @@ import { intervalToDuration } from "date-fns"
 import Link from "next/link"
 import { type HTMLProps, type PropsWithChildren, useEffect, useState } from "react"
 
+function zeroPad(n: number, digits = 2) {
+  return n.toString().padStart(digits, "0")
+}
+
 function formatTimeLeft(target: Date) {
   const now = new Date()
   const duration = intervalToDuration({ start: now, end: target })
@@ -24,7 +28,7 @@ function formatTimeLeft(target: Date) {
   }
 
   if (!days) {
-    return `${hours}:${minutes}:${seconds}`
+    return `${hours}:${zeroPad(minutes)}:${zeroPad(seconds)}`
   }
 
   return `${days} dager`
@@ -95,5 +99,13 @@ export const PaymentCard = ({ attendance, attendee }: { attendance: Attendance; 
     )
   }
 
-  return <GenericPaymentCard>...</GenericPaymentCard>
+  if (attendee.paymentRefundedAt) {
+    return (
+      <GenericPaymentCard className="bg-green-200">
+        <p>Betaling refundert</p>
+      </GenericPaymentCard>
+    )
+  }
+
+  return <GenericPaymentCard>Ukjent status</GenericPaymentCard>
 }

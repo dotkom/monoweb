@@ -1,6 +1,13 @@
-import { Box, Button, Group, Input, Title } from "@mantine/core"
-import { type FC, useRef } from "react"
-import { useUpdateAttendancePaymentMutation } from "../mutations"
+import { GenericTable } from "@/components/GenericTable"
+import type { Attendee } from "@dotkomonline/types"
+import { Badge, Box, Button, Group, Input, Stack, Title } from "@mantine/core"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { type FC, useMemo, useRef } from "react"
+import {
+  useCreateAttendeePaymentAttendeeMutation,
+  useRefundAttendeeMutation,
+  useUpdateAttendancePaymentMutation,
+} from "../mutations"
 import { useEventContext } from "./provider"
 
 export const PaymentPage: FC = () => {
@@ -15,9 +22,16 @@ export const PaymentPage: FC = () => {
   }
 
   const updateAttendancePayment = useUpdateAttendancePaymentMutation()
-  const hasPayment = Boolean(attendance.attendancePrice)
+  const reservedAttendees = useMemo(
+    () => attendance?.attendees.filter((attendee) => attendee.reserved) ?? [],
+    [attendance]
+  )
+  const hasPayment = Boolean(attendance?.attendancePrice)
 
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const refundAttendeeMutation = useRefundAttendeeMutation()
+  const createAttendeePaymentMutation = useCreateAttendeePaymentAttendeeMutation()
 
   const createPayment = async () => {
     if (!attendance) {
@@ -33,18 +47,105 @@ export const PaymentPage: FC = () => {
   }
 
   const removePayment = async () => {
-    // TODO: Use separate mutation for removing payment
-    updateAttendancePayment.mutate({ id: attendance.id, price: 0 })
+    updateAttendancePayment.mutate({ id: attendance.id, price: null })
   }
 
+  const columnHelper = createColumnHelper<Attendee>()
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor((attendee) => attendee.user.name, {
+        id: "user",
+        header: "Bruker",
+        cell: (info) => info.getValue(),
+        sortingFn: "alphanumeric",
+      }),
+      columnHelper.accessor((attendee) => attendee, {
+        header: "Betaling",
+        cell: (info) => {
+          const value = info.getValue()
+
+          if (value.paymentChargedAt) {
+            return <Badge color="green">Betalt</Badge>
+          }
+          if (value.paymentReservedAt) {
+            return <Badge color="blue">Betaling reservert</Badge>
+          }
+          if (value.paymentRefundedAt) {
+            return <Badge color="indigo">Betaling refundert</Badge>
+          }
+          if (value.paymentId) {
+            return <Badge color="yellow">Venter på betaling</Badge>
+          }
+
+          return <Badge color="gray">Ingen betaling</Badge>
+        },
+      }),
+      columnHelper.accessor((attendee) => attendee, {
+        header: "Handling",
+        cell: (info) => {
+          const attendee = info.getValue()
+
+          if (attendee.paymentChargedAt) {
+            return (
+              <Button
+                size="xs"
+                color="indigo"
+                onClick={() => refundAttendeeMutation.mutate({ attendeeId: attendee.id })}
+              >
+                Refunder
+              </Button>
+            )
+          }
+          if (attendee.paymentId === null) {
+            return (
+              <Button
+                size="xs"
+                color="orange"
+                onClick={() => createAttendeePaymentMutation.mutate({ attendeeId: attendee.id })}
+              >
+                Ny betaling
+              </Button>
+            )
+          }
+          return (
+            <Button size="xs" color="yellow" onClick={() => refundAttendeeMutation.mutate({ attendeeId: attendee.id })}>
+              Avbryt betaling
+            </Button>
+          )
+        },
+      }),
+    ],
+    [columnHelper, refundAttendeeMutation, createAttendeePaymentMutation]
+  )
+
+  const tableOptions = useMemo(
+    () => ({
+      data: reservedAttendees,
+      getCoreRowModel: getCoreRowModel(),
+      columns,
+    }),
+    [reservedAttendees, columns]
+  )
+
+  const table = useReactTable(tableOptions)
+
   return (
-    <Box>
-      <Title>Betaling for påmelding</Title>
-      <Group>
-        <Input defaultValue={attendance.attendancePrice?.toString()} ref={inputRef} placeholder="Beløp" />
-        <Button onClick={createPayment}>{hasPayment ? "Endre pris" : "Opprett betaling"}</Button>
-        {hasPayment && <Button onClick={removePayment}>Fjern betaling</Button>}
-      </Group>
-    </Box>
+    <Stack gap="lg">
+      <Box>
+        <Title order={2}>Pris for betaling</Title>
+        <Group>
+          <Group>
+            <Input defaultValue={attendance?.attendancePrice?.toString()} ref={inputRef} placeholder="Beløp" />
+          </Group>
+          <Button onClick={createPayment}>{hasPayment ? "Endre pris" : "Opprett betaling"}</Button>
+          {hasPayment && <Button onClick={removePayment}>Fjern betaling</Button>}
+        </Group>
+      </Box>
+
+      <Box>
+        <Title order={2}>Brukere</Title>
+        <GenericTable table={table} />
+      </Box>
+    </Stack>
   )
 }

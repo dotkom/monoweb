@@ -15,8 +15,11 @@ export function RichText({ content, colorLinks, className }: RichTextProps) {
       // biome-ignore lint/security/noDangerouslySetInnerHtml: HTML is sanitized
       dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
       // prose would be nice to use here, but the styles are really ugly
+      // swag we are using prose anyway
       className={cn(
+        "prose dark:prose-invert",
         "[&_a]:underline",
+        "dark:text-white",
         colorLinks && "[&_a]:text-blue-700 dark:[&_a]:text-blue-300",
         "[&_ul]:list-disc [&_ul]:pl-6",
         "[&_ol]:list-decimal [&_ol]:pl-6",

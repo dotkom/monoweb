@@ -26,7 +26,7 @@ export interface AttendanceRepository {
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   findAttendanceByAttendeePaymentId(handle: DBHandle, attendeePaymentId: string): Promise<Attendance | null>
   updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
-  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number): Promise<Attendance>
+  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<Attendance>
 
   createAttendee(
     handle: DBHandle,
