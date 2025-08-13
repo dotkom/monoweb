@@ -8,6 +8,8 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { differenceInDays, isFuture } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 
+const OPENING_SOON_DAYS_THRESHOLD = 3 as const
+
 interface EventListProps {
   futureEventDetails: EventDetail[]
   pastEventDetails: EventDetail[]
@@ -22,27 +24,26 @@ export const EventList: FC<EventListProps> = ({
   const now = getCurrentUTC()
   const session = useSession()
 
-  const [yourEvents, openEvents, openingSoonEvents, otherFutureEvents] = futureEvents.reduce<
-    [EventDetail[], EventDetail[], EventDetail[], EventDetail[]]
-  >(
-    ([yourEvents, openEvents, openingSoonEvents, otherFutureEvents], event) => {
-      if (event.attendance?.attendees.some((attendee) => attendee.user.id === session?.sub)) {
-        yourEvents.push(event)
-      } else if (
-        event.attendance &&
-        !isFuture(event.attendance.registerStart) &&
-        isFuture(event.attendance.registerEnd)
-      ) {
-        openEvents.push(event)
-      } else if (event.attendance?.registerStart && differenceInDays(event.attendance?.registerStart, now) <= 3) {
-        openingSoonEvents.push(event)
-      } else {
-        otherFutureEvents.push(event)
-      }
-      return [yourEvents, openEvents, openingSoonEvents, otherFutureEvents]
-    },
-    [[], [], [], []]
-  )
+  const groupedEvents = Object.groupBy(futureEvents, (event) => {
+    if (event.attendance?.attendees.some((a) => a.user.id === session?.sub)) {
+      return "yourEvents"
+    }
+
+    if (event.attendance && !isFuture(event.attendance.registerStart) && isFuture(event.attendance.registerEnd)) {
+      return "openEvents"
+    }
+
+    if (
+      event.attendance?.registerStart &&
+      differenceInDays(event.attendance.registerStart, now) <= OPENING_SOON_DAYS_THRESHOLD
+    ) {
+      return "openingSoonEvents"
+    }
+
+    return "otherFutureEvents"
+  })
+
+  const { yourEvents = [], openEvents = [], openingSoonEvents = [], otherFutureEvents = [] } = groupedEvents
 
   const loaderRef = useRef<HTMLDivElement>(null)
 
