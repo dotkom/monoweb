@@ -16,19 +16,23 @@ const CompanyPage = async () => {
 
   const company = await server.company.getBySlug.query(slug)
 
-  const { data: futureEvents } = trpc.event.all.queryOptions({ filter: { byOrganizingCompany: [company.id], byEndDate: { max: now, min: null } } })
+  const { data: futureEvents } = trpc.event.all.queryOptions({
+    filter: { byOrganizingCompany: [company.id], byEndDate: { max: now, min: null } },
+  })
 
   const { events: pastEvents, fetchNextPage } = useEventAllInfiniteQuery({
-      filter: {
-        byOrganizingCompany: [company.id],
-        byEndDate: {
-          max: now,
-          min: null,
-        },
+    filter: {
+      byOrganizingCompany: [company.id],
+      byEndDate: {
+        max: now,
+        min: null,
       },
-    })
+    },
+  })
 
-  return <CompanyView company={company} futureEvents={futureEvents} pastEvents={pastEvents} fetchNextPage={fetchNextPage} />
+  return (
+    <CompanyView company={company} futureEvents={futureEvents} pastEvents={pastEvents} fetchNextPage={fetchNextPage} />
+  )
 }
 
 export default CompanyPage

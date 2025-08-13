@@ -1,7 +1,7 @@
 "use client"
 
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { useEventAllByAttendingUserIdInfiniteQuery, useEventAllInfiniteQuery } from "@/app/arrangementer/components/queries"
+import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
@@ -40,7 +40,7 @@ import {
   roundToNearestMinutes,
 } from "date-fns"
 import Link from "next/link"
-import { notFound, useParams, useSearchParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 
 const AUTHORIZE_WITH_FEIDE =
@@ -138,7 +138,6 @@ function MarkDisplay({
   )
 }
 
-
 const MembershipDisplay = ({
   activeMembership,
   grade,
@@ -193,7 +192,10 @@ export default function ProfilePage() {
     queries: [
       trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user) }),
       trpc.event.allByAttendingUserId.queryOptions({ id: user?.id ?? "" }, { enabled: isLoggedIn && Boolean(user) }),
-      trpc.personalMark.getVisibleInformation.queryOptions({ userId: user?.id ?? "" }, { enabled: isLoggedIn && Boolean(user) }),
+      trpc.personalMark.getVisibleInformation.queryOptions(
+        { userId: user?.id ?? "" },
+        { enabled: isLoggedIn && Boolean(user) }
+      ),
     ],
   })
 
@@ -221,7 +223,7 @@ export default function ProfilePage() {
   )
 
   if (!user) {
-    return 
+    return
   }
 
   const activeMembership = findActiveMembership(user)
@@ -418,7 +420,7 @@ export default function ProfilePage() {
 
         {isLoggedIn ? (
           futureEvents !== undefined && pastEvents !== undefined ? (
-            <EventList futureEvents={futureEvents} pastEvents={pastEvents} fetchNextPastEventsPage={fetchNextPage} />
+            <EventList futureEvents={futureEvents.items} pastEvents={pastEvents} fetchNextPastEventsPage={fetchNextPage} />
           ) : (
             <Text>loading..</Text>
           )

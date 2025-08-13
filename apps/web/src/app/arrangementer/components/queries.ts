@@ -42,16 +42,18 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
   return { events, ...query }
 }
 
-export const useEventAllByAttendingUserIdInfiniteQuery = ({ id, filter, page }: UseEventAllByAttendingUserIdQueryProps) => {
+export const useEventAllByAttendingUserIdInfiniteQuery = ({
+  id,
+  filter,
+  page,
+}: UseEventAllByAttendingUserIdQueryProps) => {
   const trpc = useTRPC()
 
   const { data, ...query } = useInfiniteQuery({
     ...trpc.event.allByAttendingUserId.infiniteQueryOptions({
       id,
-      page: {
-        filter,
-        ...page,
-      }
+      filter,
+      ...page,
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })

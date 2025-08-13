@@ -110,12 +110,10 @@ export const eventRouter = t.router({
   all: procedure
     .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).optional())
     .output(
-      z
-        .object({
-          items: AttendanceEventSchema.array(),
-          nextCursor: EventSchema.shape.id.optional(),
-        })
-        .promise()
+      z.object({
+        items: AttendanceEventSchema.array(),
+        nextCursor: EventSchema.shape.id.optional(),
+      })
     )
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
@@ -138,20 +136,31 @@ export const eventRouter = t.router({
     ),
 
   allByAttendingUserId: procedure
-    .input(z.object({ id: UserSchema.shape.id, page: BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).optional() }))
-    .output(AttendanceEventSchema.array())
+    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional(), id: UserSchema.shape.id }))
+    .output(
+      z.object({
+        items: AttendanceEventSchema.array(),
+        nextCursor: EventSchema.shape.id.optional(),
+      })
+    )
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        const events = await ctx.eventService.findEventsByAttendingUserId(handle, input.id)
+        const { id, ...page } = input
+        const events = await ctx.eventService.findEventsByAttendingUserId(handle, id, page)
         const attendances = await ctx.attendanceService.getAttendancesByIds(
           handle,
           events.map((item) => item.attendanceId).filter((id) => id !== null)
         )
 
-        return events.map((event) => ({
+        const eventsWithAttendance = events.map((event) => ({
           ...event,
           attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
         }))
+
+        return {
+          items: eventsWithAttendance,
+          nextCursor: events.at(-1)?.id,
+        }
       })
     ),
 
