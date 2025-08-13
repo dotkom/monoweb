@@ -12,7 +12,7 @@ export default function EventDetailsLayout({
   const { id } = use(params)
   const { data, isLoading } = useEventDetailsGetQuery(id)
 
-  if (data === undefined) {
+  if (data === undefined || isLoading) {
     return <Loader />
   }
 

@@ -2,28 +2,28 @@
 
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { AttendanceEvent } from "@dotkomonline/types"
+import type { EventDetail } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { differenceInDays, isFuture } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 
 interface EventListProps {
-  futureEvents: AttendanceEvent[]
-  pastEvents: AttendanceEvent[]
+  futureEventDetails: EventDetail[]
+  pastEventDetails: EventDetail[]
   fetchNextPastEventsPage?(): void
 }
 
 export const EventList: FC<EventListProps> = ({
-  futureEvents,
-  pastEvents,
+  futureEventDetails: futureEvents,
+  pastEventDetails: pastEvents,
   fetchNextPastEventsPage,
 }: EventListProps) => {
-  const session = useSession()
   const now = getCurrentUTC()
+  const session = useSession()
 
   const [yourEvents, openEvents, openingSoonEvents, otherFutureEvents] = futureEvents.reduce<
-    [AttendanceEvent[], AttendanceEvent[], AttendanceEvent[], AttendanceEvent[]]
+    [EventDetail[], EventDetail[], EventDetail[], EventDetail[]]
   >(
     ([yourEvents, openEvents, openingSoonEvents, otherFutureEvents], event) => {
       if (event.attendance?.attendees.some((attendee) => attendee.user.id === session?.sub)) {
@@ -66,40 +66,40 @@ export const EventList: FC<EventListProps> = ({
       {yourEvents.length > 0 && (
         <>
           <Divider text="Dine arrangementer" />
-          {yourEvents.map((event) => (
-            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          {yourEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
           ))}
         </>
       )}
       {openEvents.length > 0 && (
         <>
           <Divider text="Åpne arrangementer" />
-          {openEvents.map((event) => (
-            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          {openEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
           ))}
         </>
       )}
       {openingSoonEvents.length > 0 && (
         <>
           <Divider text="Åpner snart" />
-          {openingSoonEvents.map((event) => (
-            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          {openingSoonEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
           ))}
         </>
       )}
       {otherFutureEvents.length > 0 && (
         <>
           <Divider text="Kommende arrangementer" />
-          {otherFutureEvents.map((event) => (
-            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          {otherFutureEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
           ))}
         </>
       )}
       {pastEvents.length > 0 && (
         <>
           <Divider text="Tidligere arrangementer" />
-          {pastEvents.map((event) => (
-            <EventListItem event={event} userId={session?.sub ?? null} key={event.id} />
+          {pastEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
           ))}
         </>
       )}

@@ -14,7 +14,7 @@ const EventPage = () => {
   const now = roundToNearestMinutes(getCurrentUtc(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
 
-  const { events: futureEvents, isLoading } = useEventAllQuery({
+  const { eventDetails: futureEventDetails, isLoading } = useEventAllQuery({
     filter: {
       ...filter,
       byEndDate: {
@@ -29,7 +29,7 @@ const EventPage = () => {
     },
   })
 
-  const { events: pastEvents, fetchNextPage } = useEventAllInfiniteQuery({
+  const { eventDetails: pastEventDetails, fetchNextPage } = useEventAllInfiniteQuery({
     filter: {
       ...filter,
       byEndDate: {
@@ -38,8 +38,6 @@ const EventPage = () => {
       },
     },
   })
-
-  const hasPastEvents = pastEvents.length > 0
 
   return (
     <div className="flex flex-col gap-4">
@@ -50,9 +48,11 @@ const EventPage = () => {
       <div className="flex flex-col gap-4">
         <EventsViewToggle active="list" />
         <EventFilters onChange={setFilter} />
-        {hasPastEvents && (
-          <EventList futureEvents={futureEvents} pastEvents={pastEvents} fetchNextPastEventsPage={fetchNextPage} />
-        )}
+        <EventList
+          futureEventDetails={futureEventDetails}
+          pastEventDetails={pastEventDetails}
+          fetchNextPastEventsPage={fetchNextPage}
+        />
         {isLoading && <EventListSkeleton />}
       </div>
     </div>

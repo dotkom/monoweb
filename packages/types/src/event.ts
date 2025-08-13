@@ -53,7 +53,8 @@ export const EventFilterQuerySchema = z
   })
   .partial()
 
-export const AttendanceEventSchema = EventSchema.extend({
+export const EventDetailSchema = z.object({
+  event: EventSchema,
   attendance: AttendanceSchema.nullable(),
 })
-export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
+export type EventDetail = z.infer<typeof EventDetailSchema>

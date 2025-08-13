@@ -12,7 +12,7 @@ import { useCompanyAllQuery } from "../../company/queries"
 import { useEventContext } from "./provider"
 
 export const EventCompaniesPage: FC = () => {
-  const event = useEventContext()
+  const { event, attendance } = useEventContext()
   const updateEventMutation = useUpdateEventMutation()
   const { companies } = useCompanyAllQuery()
 

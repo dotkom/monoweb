@@ -1,4 +1,4 @@
-import { useEventAllInfiniteQuery } from "@/app/arrangementer/components/queries"
+import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
 import { CompanyView } from "@/components/views/CompanyView"
 import { useTRPC } from "@/utils/trpc/client"
 import { server } from "@/utils/trpc/server"
@@ -16,11 +16,11 @@ const CompanyPage = async () => {
 
   const company = await server.company.getBySlug.query(slug)
 
-  const { data: futureEvents } = trpc.event.all.queryOptions({
-    filter: { byOrganizingCompany: [company.id], byEndDate: { max: now, min: null } },
+  const { eventDetails: futureEventDetails } = useEventAllQuery({
+    filter: { byOrganizingCompany: [company.id], byStartDate: { min: now, max: null } },
   })
 
-  const { events: pastEvents, fetchNextPage } = useEventAllInfiniteQuery({
+  const { eventDetails: pastEventDetails, fetchNextPage } = useEventAllInfiniteQuery({
     filter: {
       byOrganizingCompany: [company.id],
       byEndDate: {
@@ -31,7 +31,12 @@ const CompanyPage = async () => {
   })
 
   return (
-    <CompanyView company={company} futureEvents={futureEvents} pastEvents={pastEvents} fetchNextPage={fetchNextPage} />
+    <CompanyView
+      company={company}
+      futureEventDetails={futureEventDetails}
+      pastEventDetails={pastEventDetails}
+      fetchNextPastEventsPage={fetchNextPage}
+    />
   )
 }
 

@@ -8,9 +8,7 @@ import { isAfter } from "date-fns"
 const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
   const { eventId } = await params
   const session = await auth.getServerSession()
-  const event = await server.event.get.query(eventId)
-  const attendance =
-    event.attendanceId !== null ? await server.attendance.getAttendance.query({ id: event.attendanceId }) : null
+  const { event, attendance } = await server.event.get.query(eventId)
   const feedbackForm = await server.event.feedback.findFormByEventId.query(eventId)
 
   if (!feedbackForm || !feedbackForm.isActive)

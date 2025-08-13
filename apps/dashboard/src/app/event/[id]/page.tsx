@@ -71,7 +71,7 @@ const SIDEBAR_LINKS = [
 ]
 
 export default function EventDetailsPage() {
-  const event = useEventContext()
+  const { event, attendance } = useEventContext()
   const router = useRouter()
 
   const deleteEvent = useDeleteEventMutation()

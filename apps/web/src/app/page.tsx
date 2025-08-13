@@ -1,6 +1,7 @@
+import { auth } from "@/auth"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { server } from "@/utils/trpc/server"
-import type { AttendanceEvent } from "@dotkomonline/types"
+import type { Attendance, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { getCurrentUtc, slugify } from "@dotkomonline/utils"
 import { formatDate, isPast } from "date-fns"
@@ -11,18 +12,20 @@ import { ConstructionNotice } from "./construction-notice"
 import { FadderukeNotice } from "./fadderuke-notice"
 
 export default async function App() {
-  const eventResult = await server.event.all.query({
-    take: 5,
-    filter: {
-      byEndDate: {
-        max: null,
-        min: getCurrentUtc(),
+  const [session, { items }] = await Promise.all([
+    auth.getServerSession(),
+    server.event.all.query({
+      take: 5,
+      filter: {
+        byEndDate: {
+          max: null,
+          min: getCurrentUtc(),
+        },
+        excludingOrganizingGroup: ["velkom"],
+        orderBy: "asc",
       },
-      excludingOrganizingGroup: ["velkom"],
-      orderBy: "asc",
-    },
-  })
-  const events = eventResult.items
+    }),
+  ])
 
   const cookies = await getCookies()
   const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
@@ -38,9 +41,11 @@ export default async function App() {
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {events.map((event) => {
-            // const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
-            return <EventCard key={event.id} event={event} attendeeStatus={null} />
+          {items.map(({ event, attendance }) => {
+            const reservedStatus =
+              attendance?.attendees.find((attendee) => attendee.user.id === session?.sub)?.reserved ?? null
+
+            return <EventCard key={event.id} event={event} attendance={attendance} reservedStatus={reservedStatus} />
           })}
 
           <Tilt className="grow">
@@ -60,11 +65,12 @@ export default async function App() {
 }
 
 interface ComingEventProps {
-  event: AttendanceEvent
-  attendeeStatus: "RESERVED" | "UNRESERVED" | null
+  event: Event
+  attendance: Attendance | null
+  reservedStatus: boolean | null
 }
 
-const EventCard: FC<ComingEventProps> = ({ event, attendeeStatus }) => {
+const EventCard: FC<ComingEventProps> = ({ event, attendance, reservedStatus }) => {
   return (
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
@@ -88,10 +94,10 @@ const EventCard: FC<ComingEventProps> = ({ event, attendeeStatus }) => {
             <Text className="text-sm">{formatDate(event.start, "dd.MM")}</Text>
           </div>
 
-          {event.attendance && (
+          {attendance && (
             <AttendanceStatus
-              attendance={event.attendance}
-              attendeeStatus={attendeeStatus}
+              attendance={attendance}
+              reservedStatus={reservedStatus}
               eventEndInPast={isPast(event.start)}
             />
           )}

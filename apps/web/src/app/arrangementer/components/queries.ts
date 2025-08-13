@@ -23,7 +23,9 @@ export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
     ...trpc.event.all.queryOptions({ filter, ...page }),
   })
 
-  return { events: useMemo(() => data?.items ?? [], [data]), ...query }
+  const eventDetails = useMemo(() => data?.items ?? [], [data])
+
+  return { eventDetails, ...query }
 }
 
 export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps) => {
@@ -37,9 +39,9 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
 
-  const events = data?.pages.flatMap((page) => page.items) ?? []
+  const eventDetails = data?.pages.flatMap((page) => page.items) ?? []
 
-  return { events, ...query }
+  return { eventDetails, ...query }
 }
 
 export const useEventAllByAttendingUserIdInfiniteQuery = ({
@@ -58,7 +60,7 @@ export const useEventAllByAttendingUserIdInfiniteQuery = ({
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
 
-  const events = data?.pages.flatMap((page) => page.items) ?? []
+  const eventDetails = data?.pages.flatMap((page) => page.items) ?? []
 
-  return { events, ...query }
+  return { eventDetails, ...query }
 }

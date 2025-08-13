@@ -1,5 +1,5 @@
 import { getEventUrl } from "@/utils/getEventUrl"
-import type { AttendanceEvent } from "@dotkomonline/types"
+import type { Attendance, Event } from "@dotkomonline/types"
 import { Title, cn } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
 import Link from "next/link"
@@ -9,13 +9,14 @@ import { DateAndTime } from "./DateAndTime"
 import { Thumbnail } from "./Thumbnail"
 
 export interface EventListItemProps {
-  event: AttendanceEvent
+  event: Event
+  attendance: Attendance | null
   userId: string | null
 }
 
-export const EventListItem: FC<EventListItemProps> = ({ event, userId }: EventListItemProps) => {
+export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userId }: EventListItemProps) => {
   const { id, title, type, imageUrl: customImageUrl } = event
-  const attendeeStatus = event.attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
   const past = isPast(event.end)
 
@@ -40,8 +41,8 @@ export const EventListItem: FC<EventListItemProps> = ({ event, userId }: EventLi
         <div className="flex flex-col gap-2">
           <DateAndTime start={event.start} end={event.end} />
 
-          {event.attendance && (
-            <AttendanceStatus attendance={event.attendance} attendeeStatus={attendeeStatus} eventEndInPast={past} />
+          {attendance && (
+            <AttendanceStatus attendance={attendance} reservedStatus={reservedStatus} eventEndInPast={past} />
           )}
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { getEventSlug, getEventUrl } from "@/utils/getEventUrl"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Company, Group, GroupType, Punishment } from "@dotkomonline/types"
+import type { Company, Group, GroupType } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import Image from "next/image"
@@ -45,27 +45,24 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
 const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eventId: string }> }) => {
   const { slug, eventId } = await params
   const session = await auth.getServerSession()
-  const [user, isStaff] = session
-    ? await Promise.all([await server.user.getMe.query(), await server.user.isStaff.query()])
-    : [undefined, undefined]
-  const event = await server.event.find.query(eventId)
 
-  if (!event) {
+  const eventDetail = await server.event.find.query(eventId)
+
+  if (!eventDetail) {
     notFound()
   }
+
+  const [user, isStaff] = session
+    ? await Promise.all([await server.user.getMe.query(), await server.user.isStaff.query()])
+    : [null, null]
+
+  const { event, attendance } = eventDetail
 
   if (slug !== getEventSlug(event.title)) {
     permanentRedirect(getEventUrl(eventId, event.title), RedirectType.replace)
   }
 
-  let attendance: Attendance | null = null
-  let punishment: Punishment | null = null
-  if (event.attendanceId) {
-    attendance = await server.event.attendance.getAttendance.query({ id: event.attendanceId })
-    if (user) {
-      punishment = await server.personalMark.getExpiryDateForUser.query({ userId: user.id })
-    }
-  }
+  const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
 
   const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group, group.type))
   const companyList = event.companies.map((company) => mapToImageAndName(company, "COMPANY"))

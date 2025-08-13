@@ -9,18 +9,18 @@ import type { FC } from "react"
 
 interface EventListItemAttendanceStatusProps {
   attendance: Attendance
-  attendeeStatus: boolean | null
+  reservedStatus: boolean | null
   eventEndInPast: boolean
 }
 
 export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   attendance,
-  attendeeStatus,
+  reservedStatus,
   eventEndInPast,
 }) => {
   const attendanceStatus = getAttendanceStatus(attendance)
-  const isReserved = attendeeStatus === true
-  const isUnreserved = attendeeStatus === false
+  const isReserved = reservedStatus === true
+  const isUnreserved = reservedStatus === false
   const numberOfAttendees = getReservedAttendeeCount(attendance)
   const capacity = getAttendanceCapacity(attendance)
 

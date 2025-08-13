@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc"
-import type { Event } from "@dotkomonline/types"
+import type { EventDetail } from "@dotkomonline/types"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger, Icon, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
@@ -33,12 +33,12 @@ export const Events = () => {
   }
 
   const eventsByDate = events
-    .toSorted((a, b) => compareAsc(a.start, b.start))
+    .toSorted((a, b) => compareAsc(a.event.start, b.event.start))
     .reduce((acc, eventDetail) => {
-      const month = formatDate(eventDetail.start, "MMMM")
-      const date = getDate(eventDetail.start)
+      const month = formatDate(eventDetail.event.start, "MMMM")
+      const date = getDate(eventDetail.event.start)
 
-      const eventsInMonth = acc.get(month) || new Map<number, Event[]>()
+      const eventsInMonth = acc.get(month) || new Map<number, EventDetail[]>()
       const eventsInDate = eventsInMonth.get(date) || []
 
       eventsInDate.push(eventDetail)
@@ -46,7 +46,7 @@ export const Events = () => {
       acc.set(month, eventsInMonth)
 
       return acc
-    }, new Map<string, Map<number, Event[]>>())
+    }, new Map<string, Map<number, EventDetail[]>>())
 
   return (
     <div className="bg-orange-100 min-h-[500px] py-20 w-full">
@@ -87,10 +87,10 @@ export const Events = () => {
                         "max-sm:relative w-fit max-sm:left-1/4 sm:w-1/4 sm:pr-12 sm:text-right mb-3 sm:-mb-0.5"
                       )}
                     >
-                      {events[0] ? formatDate(new Date(events[0]?.start), "EEEE dd.") : "Ukjent ukedag"}
+                      {events[0] ? formatDate(new Date(events[0]?.event.start), "EEEE dd.") : "Ukjent ukedag"}
                     </Text>
 
-                    {events.map((event) => {
+                    {events.map(({ event, attendance }) => {
                       const hasLocationLink = Boolean(event.locationLink)
                       const hasLocation = Boolean(hasLocationLink || event.locationTitle || event.locationAddress)
 
