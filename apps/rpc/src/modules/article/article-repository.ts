@@ -92,6 +92,9 @@ export function getArticleRepository(): ArticleRepository {
         },
         include: QUERY_WITH_TAGS,
         ...pageQuery(page),
+        orderBy: {
+          createdAt: "desc",
+        },
       })
 
       return articles.map((article) => mapArticle(article, article.tags))
