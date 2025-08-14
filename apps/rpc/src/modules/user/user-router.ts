@@ -90,7 +90,7 @@ export const userRouter = t.router({
       return ctx.userService.findById(handle, ctx.principal.subject)
     })
   ),
-  update: procedure
+  update: staffProcedure
     .input(
       z.object({
         id: UserSchema.shape.id,

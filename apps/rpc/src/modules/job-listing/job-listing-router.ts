@@ -1,10 +1,10 @@
 import { CompanySchema, JobListingLocationSchema, JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { procedure, t } from "../../trpc"
+import { procedure, staffProcedure, t } from "../../trpc"
 
 export const jobListingRouter = t.router({
-  create: procedure
+  create: staffProcedure
     .input(
       z.object({
         input: JobListingWriteSchema,
@@ -17,7 +17,7 @@ export const jobListingRouter = t.router({
         ctx.jobListingService.create(handle, input.input, input.companyId, input.locationIds)
       )
     ),
-  edit: procedure
+  edit: staffProcedure
     .input(
       z.object({
         id: JobListingSchema.shape.id,
