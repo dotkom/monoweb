@@ -21,7 +21,7 @@ export function RichText({
   content,
   className,
   colorLinks = false,
-  lineClamp = "line-clamp-3",
+  lineClamp,
   readMoreText = "Vis mer...",
   readLessText = "Vis mindre",
   hideToggleButton = false,
@@ -73,10 +73,9 @@ export function RichText({
       // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized
       dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
       className={cn(
-        "prose dark:prose-invert whitespace-pre-line overflow-hidden", // base
-        !open && lineClamp, // clamp when closed
+        "prose dark:prose-invert whitespace-pre-line overflow-hidden",
+        !open && lineClamp,
         "[&_a]:underline",
-        "dark:text-white",
         colorLinks && "[&_a]:text-blue-700 dark:[&_a]:text-blue-300",
         "[&_ul]:list-disc [&_ul]:pl-6",
         "[&_ol]:list-decimal [&_ol]:pl-6",
