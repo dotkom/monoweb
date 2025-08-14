@@ -10,5 +10,5 @@ export function EventDescription({ description }: { description: string }) {
         <RichText colorLinks content={description} />
       </div>
     </>
-  );
+  )
 }
