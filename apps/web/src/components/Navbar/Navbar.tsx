@@ -26,10 +26,11 @@ const links: MenuLink[] = [
     href: "/arrangementer",
     icon: "tabler:calendar-event",
   },
-  /*{
+  {
     title: "Jobbannonser",
     href: "/karriere",
-  },*/
+    icon: "tabler:briefcase",
+  },
   {
     title: "Om oss",
     items: [
