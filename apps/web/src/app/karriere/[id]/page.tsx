@@ -59,7 +59,7 @@ interface ApplicationInfoBoxProps {
 }
 
 const ApplicationInfoBox = ({ jobListing }: ApplicationInfoBoxProps) => {
-  const locationNames = jobListing.locations.map((location) => location.name).join(", ") || "Ingen lokasjon"
+  const locationNames = jobListing.locations.map((location) => location.name).join(", ") || "Ukjent lokasjon"
 
   return (
     <div className="flex flex-col gap-4 p-6 bg-gray-100 dark:bg-stone-800 rounded-2xl">
@@ -107,11 +107,7 @@ const CompanyBox = ({ company }: CompanyBoxProps) => {
           <Title size="xl">{company.name}</Title>
         )}
 
-        <RichText
-          content={company.description ?? "<p>Ingen beskrivelse</p>"}
-          lineClamp="line-clamp-3"
-          hideToggleButton
-        />
+        {company.description && <RichText content={company.description} lineClamp="line-clamp-3" hideToggleButton />}
       </div>
       <Link href={`/bedrifter/${company.slug}`} className="pb-4 px-6 pt-3 rounded-b-2xl bg-gray-200 dark:bg-stone-600">
         <div className="flex flex-row gap-1 items-center mx-auto w-fit">
@@ -152,7 +148,7 @@ const Deadline = ({ jobListing }: DeadlineProps) => {
   }
 
   if (!deadline) {
-    return <Text>Ingen frist</Text>
+    return <Text>Ingen frist oppgitt</Text>
   }
 
   return <Text>Frist {formatDate(deadline, "dd.MM.yyyy")}</Text>
