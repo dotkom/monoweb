@@ -1,6 +1,7 @@
-import type { SortOption } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
+import type { SortOption } from "@/app/karriere/company-filters-container"
 import type { JobListing } from "@dotkomonline/types"
-import type { EmploymentCheckbox } from "./JobListingView"
+import type { EmploymentCheckbox } from "./page"
+
 export function filterJobListings(
   jobListing: JobListing,
   chosenLocation: string,
