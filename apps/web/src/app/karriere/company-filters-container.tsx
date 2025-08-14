@@ -1,5 +1,10 @@
+import type { JobListingEmployment } from "@dotkomonline/types"
 import type { Dispatch, FC, SetStateAction } from "react"
-import type { EmploymentCheckbox } from "./page"
+
+export interface EmploymentCheckbox {
+  name: JobListingEmployment
+  checked: boolean
+}
 
 interface CompanyFiltersContainer {
   chosenLocation: string

@@ -2,19 +2,19 @@
 
 import { filterJobListings, sortDates } from "@/app/karriere/filter-functions"
 import { useTRPC } from "@/utils/trpc/client"
-import type { JobListing, JobListingEmployment } from "@dotkomonline/types"
+import type { JobListing } from "@dotkomonline/types"
 import { Badge, Icon, Text } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 import { type FC, useMemo, useState } from "react"
-import { CompanyFiltersContainer, type SortOption, translationJobTypes } from "./company-filters-container"
-
-export interface EmploymentCheckbox {
-  name: JobListingEmployment
-  checked: boolean
-}
+import {
+  CompanyFiltersContainer,
+  type EmploymentCheckbox,
+  type SortOption,
+  translationJobTypes,
+} from "./company-filters-container"
 
 const getLocations = (jobListings: JobListing[]) => {
   const locations = new Set<string>()
@@ -27,7 +27,7 @@ const getLocations = (jobListings: JobListing[]) => {
   return Array.from(locations)
 }
 
-export const CareerPage = () => {
+const CareerPage = () => {
   const trpc = useTRPC()
   const { data: jobListings, isLoading } = useQuery(trpc.jobListing.all.queryOptions())
 
@@ -107,11 +107,11 @@ function showLocations(locations: string[]) {
   )
 }
 
-export type CompanyAdListItemProps = {
+type CompanyAdListItemProps = {
   jobListing: JobListing
 }
 
-export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAdListItemProps) => {
+const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAdListItemProps) => {
   const color =
     jobListing.employment === "SUMMER_INTERNSHIP" ? "amber" : jobListing.employment === "FULLTIME" ? "red" : "blue"
 
