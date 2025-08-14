@@ -1,18 +1,18 @@
 import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
 import { CompanyView } from "@/components/views/CompanyView"
-import { useTRPC } from "@/utils/trpc/client"
 import { server } from "@/utils/trpc/server"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { roundToNearestMinutes } from "date-fns"
-import { useParams } from "next/navigation"
 
-const CompanyPage = async () => {
+interface CompanyPageProps {
+  params: Promise<{ slug: string }>
+}
+
+const CompanyPage = async ({ params }: CompanyPageProps) => {
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
 
-  const { slug: rawSlug } = useParams<{ slug: string }>()
+  const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
-
-  const trpc = useTRPC()
 
   const company = await server.company.getBySlug.query(slug)
 
