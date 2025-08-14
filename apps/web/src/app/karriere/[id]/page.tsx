@@ -1,5 +1,5 @@
 import { server } from "@/utils/trpc/server"
-import type { JobListing, JobListingEmployment } from "@dotkomonline/types"
+import type { Company, JobListing, JobListingEmployment } from "@dotkomonline/types"
 import { Button, Icon, RichText, Text, Title } from "@dotkomonline/ui"
 import { formatDate } from "date-fns"
 import Link from "next/link"
@@ -47,7 +47,7 @@ const JobListingPage = async ({ params }: JobListingProps) => {
 
           <ApplicationInfoBox jobListing={jobListing} />
 
-          <ApplyButton applicationLink={jobListing.applicationLink} applicationEmail={jobListing.applicationEmail} />
+          <ApplyButton jobListing={jobListing} />
         </div>
       </div>
     </div>
@@ -72,7 +72,7 @@ const ApplicationInfoBox = ({ jobListing }: ApplicationInfoBoxProps) => {
 
       <div className="flex flex-row gap-2 items-center">
         <Icon icon="tabler:clock" width={20} height={20} />
-        <Deadline deadline={jobListing.deadline} deadlineAsap={jobListing.deadlineAsap} />
+        <Deadline jobListing={jobListing} />
       </div>
 
       <div className="flex flex-row gap-2 items-center">
@@ -91,7 +91,11 @@ const ApplicationInfoBox = ({ jobListing }: ApplicationInfoBoxProps) => {
   )
 }
 
-const CompanyBox = ({ company }: { company: JobListing["company"] }) => {
+interface CompanyBoxProps {
+  company: Company
+}
+
+const CompanyBox = ({ company }: CompanyBoxProps) => {
   return (
     <div className="flex flex-col gap-0">
       <div className="flex flex-col gap-2 pt-6 px-6 pb-2 rounded-t-2xl bg-gray-100 dark:bg-stone-800">
@@ -137,11 +141,12 @@ const EmploymentType = ({ employment }: EmploymentTypeProps) => {
 }
 
 interface DeadlineProps {
-  deadline: Date | null
-  deadlineAsap: boolean
+  jobListing: JobListing
 }
 
-const Deadline = ({ deadline, deadlineAsap }: DeadlineProps) => {
+const Deadline = ({ jobListing }: DeadlineProps) => {
+  const { deadline, deadlineAsap } = jobListing
+
   if (deadlineAsap) {
     return <Text>Frist fortløpende</Text>
   }
@@ -154,11 +159,12 @@ const Deadline = ({ deadline, deadlineAsap }: DeadlineProps) => {
 }
 
 interface ApplyButtonProps {
-  applicationLink: string | null
-  applicationEmail: string | null
+  jobListing: JobListing
 }
 
-const ApplyButton = ({ applicationLink, applicationEmail }: ApplyButtonProps) => {
+const ApplyButton = ({ jobListing }: ApplyButtonProps) => {
+  const { applicationLink, applicationEmail } = jobListing
+
   if (applicationLink || applicationEmail) {
     const href = applicationLink || `mailto:${applicationEmail}`
     const text = applicationLink ? "Søk" : "Søk via e-post"
