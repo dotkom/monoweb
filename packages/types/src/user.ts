@@ -1,6 +1,6 @@
 import type { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
-import { getCurrentUtc, slugify } from "@dotkomonline/utils"
+import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { differenceInYears, isAfter, setMonth, startOfMonth } from "date-fns"
 import { z } from "zod"
 import { buildSearchFilter } from "./filters"
@@ -82,13 +82,13 @@ export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
 /** Get the most relevant active membership for a user. */
 export function findActiveMembership(user: User): Membership | null {
-  const now = getCurrentUtc()
+  const now = getCurrentUTC()
   return user.memberships.findLast((membership) => isAfter(membership.end, now)) ?? null
 }
 
 export function getMembershipGrade(membership: Membership): 1 | 2 | 3 | 4 | 5 | null {
   // Take the difference, and add one because if `startYear == currentYear` they are in their first year
-  const delta = differenceInYears(getAcademicStart(getCurrentUtc()), getAcademicStart(membership.start)) + 1
+  const delta = differenceInYears(getAcademicStart(getCurrentUTC()), getAcademicStart(membership.start)) + 1
 
   switch (membership.type) {
     case "KNIGHT":

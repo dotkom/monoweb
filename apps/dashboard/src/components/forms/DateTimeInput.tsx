@@ -1,4 +1,4 @@
-import { getCurrentUtc } from "@dotkomonline/utils"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { ErrorMessage } from "@hookform/error-message"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import { roundToNearestHours } from "date-fns"
@@ -16,7 +16,7 @@ export function createDateTimeInput<F extends FieldValues>({
         render={({ field }) => (
           <DateTimePicker
             {...props}
-            defaultValue={defaultValue ?? roundToNearestHours(getCurrentUtc(), { roundingMethod: "ceil" })}
+            defaultValue={defaultValue ?? roundToNearestHours(getCurrentUTC(), { roundingMethod: "ceil" })}
             value={field.value}
             onChange={field.onChange}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}

@@ -9,7 +9,7 @@ import {
   getMembershipTypeName,
   getSpecializationName,
 } from "@dotkomonline/types"
-import { getCurrentUtc } from "@dotkomonline/utils"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { addYears, isBefore } from "date-fns"
 import type { z } from "zod"
 
@@ -26,8 +26,8 @@ export const MembershipWriteFormSchema = MembershipWriteSchema.superRefine((data
 type MembershipWriteFormSchema = z.infer<typeof MembershipWriteFormSchema>
 
 const DEFAULT_VALUES: Partial<MembershipWriteFormSchema> = {
-  start: getCurrentUtc(),
-  end: addYears(getCurrentUtc(), 1),
+  start: getCurrentUTC(),
+  end: addYears(getCurrentUTC(), 1),
   specialization: null,
 }
 
