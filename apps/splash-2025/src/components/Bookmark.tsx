@@ -5,7 +5,7 @@ const borderColor = "border-x-black"
 
 export const BookMark = () => {
   return (
-    <header className="w-full fixed top-0 text-white p-10 flex justify-center z-50">
+    <header className="fixed top-0 text-white flex justify-center z-50">
       <a href="https://online.ntnu.no" className={cn("absolute top-0 left-5 sm:left-7 md:left-16 lg:left-24 group")}>
         <div
           className={cn("py-6 pt-1 px-2 flex flex-col text-center font-bold", "uppercase font-bold text-sm", bgColor)}

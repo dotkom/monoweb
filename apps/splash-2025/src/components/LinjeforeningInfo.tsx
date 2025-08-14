@@ -48,11 +48,15 @@ export const LinjeforeningInfo = () => {
           Gå til opptakssiden
         </Button>
       </div>
+
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 32" role="img" aria-labelledby="desc" className="block">
         <desc id="desc">A decorative slant</desc>
         {/* #ffedd4 is Tailwind's orange-100 */}
         <path fill="#ffedd4" d="M1440,0.5L0,32L0,32L1440,32Z" />
       </svg>
+
+      {/* Line to hide pixel gap under svg */}
+      <div className="absolute bottom-0 left-0 w-full h-px bg-orange-100 pointer-events-none" />
     </section>
   )
 }
