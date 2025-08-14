@@ -18,7 +18,7 @@ import {
   findActiveMembership,
   getAcademicStart,
 } from "@dotkomonline/types"
-import { getCurrentUtc, slugify } from "@dotkomonline/utils"
+import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import { addYears, differenceInYears, subYears } from "date-fns"
@@ -94,12 +94,12 @@ export function getUserService(
 
     // We determine the newest study plan based on the length, so that we get the newest study plan available
     const studyProgramLength = masterProgramme !== undefined ? 2 : 3
-    const studyStartYear = getAcademicStart(getCurrentUtc()).getUTCFullYear() - studyProgramLength
+    const studyStartYear = getAcademicStart(getCurrentUTC()).getUTCFullYear() - studyProgramLength
     const studyPlanCourses = await ntnuStudyPlanRepository.getStudyPlanCourses(relevantProgramme.code, studyStartYear)
     // We guesstimate which year of study the user is in, based on the courses they have taken and the courses in the
     // study plan.
     const estimatedStudyGrade = estimateStudyGrade(studyPlanCourses, courses)
-    const estimatedStudyStart = subYears(getAcademicStart(getCurrentUtc()), estimatedStudyGrade - 1)
+    const estimatedStudyStart = subYears(getAcademicStart(getCurrentUTC()), estimatedStudyGrade - 1)
     logger.info(
       "Estimated study start date to be %s for a student in grade %d",
       estimatedStudyStart.toUTCString(),
@@ -367,7 +367,7 @@ function estimateStudyGrade(studyPlanCourses: StudyplanCourse[], coursesTaken: N
       continue
     }
 
-    const yearSinceTakenCourse = differenceInYears(getAcademicStart(getCurrentUtc()), getAcademicStart(course.finished))
+    const yearSinceTakenCourse = differenceInYears(getAcademicStart(getCurrentUTC()), getAcademicStart(course.finished))
     const { grade, credits } = courseGradeIndications[course.code]
     const indicatedGrade = grade + yearSinceTakenCourse
     totalGradeIndications[indicatedGrade] = (totalGradeIndications[indicatedGrade] ?? 0) + credits

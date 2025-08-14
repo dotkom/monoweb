@@ -14,7 +14,7 @@ import {
   type UserId,
   getDefaultGroupMemberRoles,
 } from "@dotkomonline/types"
-import { getCurrentUtc, slugify } from "@dotkomonline/utils"
+import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
 import type { UserService } from "../user/user-service"
@@ -176,7 +176,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       const data: GroupMembershipWrite = {
         userId,
         groupId,
-        start: getCurrentUtc(),
+        start: getCurrentUTC(),
         end: null,
       }
 
@@ -193,7 +193,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
           membership.id,
           {
             ...membership,
-            end: getCurrentUtc(),
+            end: getCurrentUTC(),
           },
           new Set(membership.roles.map((role) => role.id))
         )
