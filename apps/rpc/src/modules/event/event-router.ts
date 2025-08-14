@@ -10,7 +10,7 @@ import {
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { BasePaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { feedbackRouter } from "./feedback-router"
 
@@ -135,7 +135,7 @@ export const eventRouter = t.router({
       })
     ),
 
-  allByAttendingUserId: procedure
+  allByAttendingUserId: authenticatedProcedure
     .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional(), id: UserSchema.shape.id }))
     .output(
       z.object({
@@ -164,7 +164,7 @@ export const eventRouter = t.router({
       })
     ),
 
-  addAttendance: procedure
+  addAttendance: staffProcedure
     .input(
       z.object({
         values: AttendanceWriteSchema,
