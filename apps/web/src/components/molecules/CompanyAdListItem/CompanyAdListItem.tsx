@@ -29,8 +29,6 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
     <Link
       href={`/karriere/${jobListing.id}`}
       className="border-gray-200 flex h-56 items-center justify-between rounded-lg border px-6 py-2"
-      target="_blank"
-      rel="noopener noreferrer"
     >
       <div className="flex flex-row items-center gap-8 w-full">
         {jobListing.company.imageUrl && (
