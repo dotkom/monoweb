@@ -63,7 +63,7 @@ const ApplicationInfoBox = ({ jobListing }: { jobListing: JobListing }) => {
   const deadlineElement = getDeadline(jobListing.deadline, jobListing.deadlineAsap)
 
   return (
-    <div className="flex flex-col gap-4 p-6 bg-gray-100 rounded-2xl">
+    <div className="flex flex-col gap-4 p-6 bg-gray-100 dark:bg-stone-800 rounded-2xl">
       <Title size="md">Stillingsinformasjon</Title>
 
       <div className="flex flex-row gap-2 items-center">
@@ -95,9 +95,11 @@ const ApplicationInfoBox = ({ jobListing }: { jobListing: JobListing }) => {
 const CompanyBox = ({ company }: { company: JobListing["company"] }) => {
   return (
     <div className="flex flex-col gap-0">
-      <div className="flex flex-col gap-2 pt-6 px-6 pb-2 rounded-t-2xl bg-gray-100">
+      <div className="flex flex-col gap-2 pt-6 px-6 pb-2 rounded-t-2xl bg-gray-100 dark:bg-stone-800">
         {company.imageUrl ? (
-          <Image src={company.imageUrl} height={96} width={96} alt="Company logo" className="rounded-2xl" />
+          <div className="p-2 bg-white rounded-md w-fit">
+            <img src={company.imageUrl} alt="Company logo" className="h-16 rounded-sm" />
+          </div>
         ) : (
           <Title size="xl">{company.name}</Title>
         )}
@@ -108,7 +110,7 @@ const CompanyBox = ({ company }: { company: JobListing["company"] }) => {
           hideToggleButton
         />
       </div>
-      <Link href={`/bedrifter/${company.slug}`} className="pb-4 px-6 pt-3 rounded-b-2xl bg-gray-200">
+      <Link href={`/bedrifter/${company.slug}`} className="pb-4 px-6 pt-3 rounded-b-2xl bg-gray-200 dark:bg-stone-600">
         <div className="flex flex-row gap-1 items-center mx-auto w-fit">
           <Text>Se bedriften</Text>
           <Icon icon="tabler:arrow-up-right" />
