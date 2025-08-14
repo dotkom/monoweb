@@ -1,8 +1,7 @@
 import { server } from "@/utils/trpc/server"
-import type { JobListing } from "@dotkomonline/types"
+import type { JobListing, JobListingEmployment } from "@dotkomonline/types"
 import { Button, Icon, RichText, Text, Title } from "@dotkomonline/ui"
 import { formatDate } from "date-fns"
-import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
@@ -21,8 +20,6 @@ const JobListingPage = async ({ params }: JobListingProps) => {
   if (!jobListing) {
     return notFound()
   }
-
-  const applyButton = getApplyButton(jobListing)
 
   return (
     <div className="flex flex-col gap-4">
@@ -50,17 +47,19 @@ const JobListingPage = async ({ params }: JobListingProps) => {
 
           <ApplicationInfoBox jobListing={jobListing} />
 
-          {applyButton}
+          <ApplyButton applicationLink={jobListing.applicationLink} applicationEmail={jobListing.applicationEmail} />
         </div>
       </div>
     </div>
   )
 }
 
-const ApplicationInfoBox = ({ jobListing }: { jobListing: JobListing }) => {
-  const employmentType = getEmploymentType(jobListing.employment)
+interface ApplicationInfoBoxProps {
+  jobListing: JobListing
+}
+
+const ApplicationInfoBox = ({ jobListing }: ApplicationInfoBoxProps) => {
   const locationNames = jobListing.locations.map((location) => location.name).join(", ") || "Ingen lokasjon"
-  const deadlineElement = getDeadline(jobListing.deadline, jobListing.deadlineAsap)
 
   return (
     <div className="flex flex-col gap-4 p-6 bg-gray-100 dark:bg-stone-800 rounded-2xl">
@@ -73,7 +72,7 @@ const ApplicationInfoBox = ({ jobListing }: { jobListing: JobListing }) => {
 
       <div className="flex flex-row gap-2 items-center">
         <Icon icon="tabler:clock" width={20} height={20} />
-        {deadlineElement}
+        <Deadline deadline={jobListing.deadline} deadlineAsap={jobListing.deadlineAsap} />
       </div>
 
       <div className="flex flex-row gap-2 items-center">
@@ -86,7 +85,7 @@ const ApplicationInfoBox = ({ jobListing }: { jobListing: JobListing }) => {
 
       <div className="flex flex-row gap-2 items-center">
         <Icon icon="tabler:briefcase" width={20} height={20} />
-        <Text>{employmentType}</Text>
+        <EmploymentType employment={jobListing.employment} />
       </div>
     </div>
   )
@@ -120,20 +119,29 @@ const CompanyBox = ({ company }: { company: JobListing["company"] }) => {
   )
 }
 
-const getEmploymentType = (employment: JobListing["employment"]) => {
+interface EmploymentTypeProps {
+  employment: JobListingEmployment
+}
+
+const EmploymentType = ({ employment }: EmploymentTypeProps) => {
   switch (employment) {
     case "FULLTIME":
-      return "Heltid"
+      return <Text>"Heltid"</Text>
     case "PARTTIME":
-      return "Deltid"
+      return <Text>"Deltid"</Text>
     case "SUMMER_INTERNSHIP":
-      return "Sommerjobb"
+      return <Text>"Sommerjobb"</Text>
     default:
-      return "Ukjent stillingsprosent"
+      return <Text>"Ukjent stillingsprosent"</Text>
   }
 }
 
-const getDeadline = (deadline: Date | null, deadlineAsap: boolean) => {
+interface DeadlineProps {
+  deadline: Date | null
+  deadlineAsap: boolean
+}
+
+const Deadline = ({ deadline, deadlineAsap }: DeadlineProps) => {
   if (deadlineAsap) {
     return <Text>Frist fortløpende</Text>
   }
@@ -145,7 +153,12 @@ const getDeadline = (deadline: Date | null, deadlineAsap: boolean) => {
   return <Text>Frist {formatDate(deadline, "dd.MM.yyyy")}</Text>
 }
 
-const getApplyButton = ({ applicationLink, applicationEmail }: JobListing) => {
+interface ApplyButtonProps {
+  applicationLink: string | null
+  applicationEmail: string | null
+}
+
+const ApplyButton = ({ applicationLink, applicationEmail }: ApplyButtonProps) => {
   if (applicationLink || applicationEmail) {
     const href = applicationLink || `mailto:${applicationEmail}`
     const text = applicationLink ? "Søk" : "Søk via e-post"
