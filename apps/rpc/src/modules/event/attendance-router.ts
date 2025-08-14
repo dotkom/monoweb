@@ -231,7 +231,7 @@ export const attendanceRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.attendanceService.getAttendanceById(handle, input.id))
     ),
 
-  updateAttendance: authenticatedProcedure
+  updateAttendance: staffProcedure
     .input(
       z.object({
         id: AttendanceSchema.shape.id,

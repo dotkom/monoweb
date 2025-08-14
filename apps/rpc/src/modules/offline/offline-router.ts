@@ -1,15 +1,15 @@
 import { OfflineSchema, OfflineWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
-import { procedure, t } from "../../trpc"
+import { procedure, staffProcedure, t } from "../../trpc"
 
 export const offlineRouter = t.router({
-  create: procedure
+  create: staffProcedure
     .input(OfflineWriteSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.offlineService.create(handle, input))
     ),
-  edit: procedure
+  edit: staffProcedure
     .input(
       z.object({
         id: OfflineSchema.shape.id,
@@ -29,7 +29,7 @@ export const offlineRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.offlineService.getById(handle, input))
     ),
-  createPresignedPost: procedure
+  createPresignedPost: staffProcedure
     .input(
       z.object({
         filename: z.string(),

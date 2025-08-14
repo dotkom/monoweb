@@ -9,7 +9,7 @@ import {
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { BasePaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { feedbackRouter } from "./feedback-router"
 
@@ -95,13 +95,13 @@ export const eventRouter = t.router({
       })
     ),
 
-  allByAttendingUserId: procedure
+  allByAttendingUserId: authenticatedProcedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.eventService.findEventByAttendingUserId(handle, input.id))
     ),
 
-  addAttendance: procedure
+  addAttendance: staffProcedure
     .input(
       z.object({
         values: AttendanceWriteSchema,
