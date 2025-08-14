@@ -1,4 +1,4 @@
-import type { SortOption } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
+import type { SortOption } from "@/app/karriere/company-filters-container"
 import type { JobListing } from "@dotkomonline/types"
 import type { EmploymentCheckbox } from "./page"
 

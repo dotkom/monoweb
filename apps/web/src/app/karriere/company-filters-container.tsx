@@ -1,5 +1,5 @@
-import type { EmploymentCheckbox } from "@/components/views/JobListingView/JobListingView"
 import type { Dispatch, FC, SetStateAction } from "react"
+import type { EmploymentCheckbox } from "./page"
 
 interface CompanyFiltersContainer {
   chosenLocation: string

@@ -1,11 +1,6 @@
 "use client"
 
 import { filterJobListings, sortDates } from "@/app/karriere/filter-functions"
-import {
-  CompanyFiltersContainer,
-  type SortOption,
-  translationJobTypes,
-} from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 import { useTRPC } from "@/utils/trpc/client"
 import type { JobListing, JobListingEmployment } from "@dotkomonline/types"
 import { Badge, Icon, Text } from "@dotkomonline/ui"
@@ -14,6 +9,7 @@ import { formatDistanceToNowStrict } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 import { type FC, useMemo, useState } from "react"
+import { CompanyFiltersContainer, type SortOption, translationJobTypes } from "./company-filters-container"
 
 export interface EmploymentCheckbox {
   name: JobListingEmployment
