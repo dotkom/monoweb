@@ -1,9 +1,10 @@
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { AspectRatio, Button, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
+import { IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
 import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
 import { useUpdateEventAttendanceMutation } from "../mutations"
-import { IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
 
 export const QrCodeScanner: FC = () => {
   const registerAttendance = useUpdateEventAttendanceMutation()
@@ -23,6 +24,7 @@ export const QrCodeScanner: FC = () => {
       const attendeeId = result.getText()
       registerAttendance.mutate({
         id: attendeeId,
+        at: getCurrentUTC(),
       })
     },
     paused: !scannerOpen,
@@ -44,7 +46,10 @@ export const QrCodeScanner: FC = () => {
   return (
     <Stack gap="xs">
       <Group>
-        <Button onClick={handleToggle} leftSection={scannerOpen ? <IconQrcodeOff size={20} /> : <IconQrcode size={20} />}>
+        <Button
+          onClick={handleToggle}
+          leftSection={scannerOpen ? <IconQrcodeOff size={20} /> : <IconQrcode size={20} />}
+        >
           {scannerOpen ? "Lukk scanner" : "Scan QR-koder"}
         </Button>
         {scannerOpen && (
@@ -57,7 +62,9 @@ export const QrCodeScanner: FC = () => {
             ) : (
               <>
                 <Loader size="sm" type="dots" color="gray" />
-                <Text size="sm" c="gray">Laster inn...</Text>
+                <Text size="sm" c="gray">
+                  Laster inn...
+                </Text>
               </>
             )}
           </Group>

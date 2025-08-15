@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz"
 import {
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
@@ -87,7 +88,6 @@ export const attendanceRouter = t.router({
         if (attendance === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
-        await ctx.attendanceService.updateAttendancePaymentProduct(handle, attendance)
         return ctx.attendanceService.updateAttendancePaymentPrice(handle, input.id, input.price)
       })
     }),
@@ -201,11 +201,12 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
+        at: z.coerce.date().nullable(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        await ctx.attendanceService.registerAttendance(handle, input.id)
+        await ctx.attendanceService.registerAttendance(handle, input.id, input.at ? new TZDate(input.at) : null)
       })
     }),
 

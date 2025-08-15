@@ -149,7 +149,7 @@ export interface AttendanceService {
    *
    * NOTE: Be careful of the difference between this and {@link registerAttendee}.
    */
-  registerAttendance(handle: DBHandle, attendee: AttendeeId): Promise<void>
+  registerAttendance(handle: DBHandle, attendee: AttendeeId, at: TZDate | null): Promise<void>
   scheduleMergeEventPoolsTask(
     handle: DBHandle,
     attendanceId: AttendanceId,
@@ -276,6 +276,7 @@ export function getAttendanceService(
     async registerAttendee(handle, attendanceId, userId, options) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const user = await userService.getById(handle, userId)
+      const event = await eventService.getByAttendance(handle, attendance.id)
       if (attendance.attendees.some((a) => a.userId === userId)) {
         throw new AttendanceValidationError(
           `User(ID=${userId}) is already registered for Attendance(ID=${attendanceId})`
@@ -479,11 +480,13 @@ export function getAttendanceService(
       await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
     },
     async updateAttendancePaymentPrice(handle, attendanceId, price) {
+      const attendance = await this.getAttendanceById(handle, attendanceId)
       if (price === null) {
         await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, null)
       } else {
         await paymentProductsService.updatePrice(attendanceId, price)
       }
+      await this.updateAttendancePaymentProduct(handle, attendance)
     },
     async updateAttendancePaymentProduct(handle, attendance) {
       if (!attendance.attendancePrice) {
@@ -719,7 +722,7 @@ export function getAttendanceService(
         })
       }
     },
-    async registerAttendance(handle, attendeeId) {
+    async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
@@ -736,7 +739,7 @@ export function getAttendanceService(
         attendeeId,
         AttendeeWriteSchema.parse({
           ...attendee,
-          attendedAt: getCurrentUTC(),
+          attendedAt: at,
         })
       )
     },

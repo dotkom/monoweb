@@ -1,4 +1,5 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { ActionIcon, Checkbox, type CheckboxProps } from "@mantine/core"
 import { IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
@@ -58,7 +59,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           return (
             <Checkbox
               onChange={(event) => {
-                updateAttendanceMut.mutate({ id: row.id })
+                updateAttendanceMut.mutate({ id: row.id, at: event.target.checked ? getCurrentUTC() : null })
               }}
               checked={info.getValue() !== null}
             />
