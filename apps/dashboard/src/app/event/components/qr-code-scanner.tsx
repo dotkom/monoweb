@@ -1,8 +1,9 @@
-import { AspectRatio, Button, Collapse, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
+import { AspectRatio, Button, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
 import { useUpdateEventAttendanceMutation } from "../mutations"
+import { IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
 
 export const QrCodeScanner: FC = () => {
   const registerAttendance = useUpdateEventAttendanceMutation()
@@ -25,45 +26,58 @@ export const QrCodeScanner: FC = () => {
       })
     },
     paused: !scannerOpen,
+    constraints: {
+      video: {
+        facingMode: {
+          // Makes it try rear-facing camera first
+          ideal: "environment",
+        },
+      },
+    },
   })
 
+  const videoElement = ref.current
+  const track = videoElement?.srcObject instanceof MediaStream ? videoElement.srcObject.getVideoTracks()[0] : null
+  const settings = track?.getSettings()
+  const isCameraMirrored = settings?.facingMode === "user"
+
   return (
-    <Stack gap="xs" align="flex-start">
+    <Stack gap="xs">
       <Group>
-        <Button onClick={handleToggle}>{scannerOpen ? "Lukk scanner" : "Åpne scanner"}</Button>
+        <Button onClick={handleToggle} leftSection={scannerOpen ? <IconQrcodeOff size={20} /> : <IconQrcode size={20} />}>
+          {scannerOpen ? "Lukk scanner" : "Scan QR-koder"}
+        </Button>
         {scannerOpen && (
           <Group gap="xs">
             {videoReady ? (
               <>
-                <Loader type="dots" />
-                <Text>Scanner etter QR-koder</Text>
+                <Loader size="sm" type="dots" />
+                <Text size="sm">Scanner...</Text>
               </>
             ) : (
               <>
-                <Loader type="dots" color="gray" />
-                <Text c="gray">Laster inn scanner...</Text>
+                <Loader size="sm" type="dots" color="gray" />
+                <Text size="sm" c="gray">Laster inn...</Text>
               </>
             )}
           </Group>
         )}
       </Group>
-      <Collapse in={scannerOpen}>
-        {!videoReady && <Skeleton height={500} width={500} radius="sm" />}
 
-        <AspectRatio w={500}>
-          <video
-            ref={ref}
-            onCanPlay={() => setVideoReady(true)}
-            muted
-            playsInline
-            style={{
-              display: videoReady ? "block" : "none",
-              transform: "scaleX(-1)",
-              borderRadius: "4px",
-            }}
-          />
-        </AspectRatio>
-      </Collapse>
+      {scannerOpen && !videoReady && <Skeleton height={300} width={300} radius="sm" />}
+      <AspectRatio w={300}>
+        <video
+          ref={ref}
+          muted
+          onCanPlay={() => setVideoReady(true)}
+          playsInline
+          style={{
+            display: videoReady ? "block" : "none",
+            transform: isCameraMirrored ? "scaleX(-1)" : undefined,
+            borderRadius: "4px",
+          }}
+        />
+      </AspectRatio>
     </Stack>
   )
 }

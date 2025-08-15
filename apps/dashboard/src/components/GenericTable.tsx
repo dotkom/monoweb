@@ -9,7 +9,7 @@ export interface GenericTableProps<T> {
 
 export function GenericTable<T>({ table, filterable }: GenericTableProps<T>) {
   return (
-    <Card withBorder>
+    <Card withBorder mah="75dvh">
       <Table.ScrollContainer minWidth={600} type="native">
         <Table>
           <TableThead>
