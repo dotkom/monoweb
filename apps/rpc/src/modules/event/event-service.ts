@@ -7,7 +7,7 @@ import type {
   EventId,
   EventWrite,
   GroupId,
-  UserId
+  UserId,
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
 import { EventNotFoundError } from "./event-error"

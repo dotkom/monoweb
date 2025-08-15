@@ -23,7 +23,7 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
           src={image}
           alt={alt}
           className={cn(
-            "object-cover max-sm:h-1/3 max-sm:w-full",
+            "object-cover max-sm:h-44 max-sm:w-full",
             imagePosition === "right" && "sm:hidden",
             imagePosition === "left" &&
               "sm:absolute sm:left-0 sm:top-0 sm:h-full sm:w-2/5 sm:[clip-path:polygon(0%_0%,_100%_0%,_85%_100%,_0%_100%)]"

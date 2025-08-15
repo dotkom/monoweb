@@ -294,7 +294,7 @@ export function getEventRepository(): EventRepository {
       return event
     },
     async count(handle) {
-        return await handle.event.count()
+      return await handle.event.count()
     },
   }
 }
