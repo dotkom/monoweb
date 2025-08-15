@@ -1,5 +1,6 @@
 "use client"
 
+import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
 import {
   type Attendance,
@@ -12,7 +13,9 @@ import {
   findActiveMembership,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { useQueries, useQueryClient } from "@tanstack/react-query"
+import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -27,9 +30,6 @@ import { RegistrationButton } from "./RegistrationButton"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
-import { useSubscription } from "@trpc/tanstack-react-query"
-import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
-import { getCurrentUTC } from "@dotkomonline/utils"
 
 const getQueuePosition = (
   attendee: Attendee | undefined,

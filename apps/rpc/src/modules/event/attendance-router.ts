@@ -1,3 +1,4 @@
+import { on } from "node:events"
 import {
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
@@ -13,7 +14,6 @@ import { TRPCError } from "@trpc/server"
 import { addDays } from "date-fns"
 import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
-import { on } from "node:events"
 
 export const attendanceRouter = t.router({
   createPool: staffProcedure

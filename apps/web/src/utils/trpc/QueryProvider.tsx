@@ -5,17 +5,17 @@ import { useSession } from "@dotkomonline/oauth2/react"
 import type { AppRouter } from "@dotkomonline/rpc"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
-  createTRPCClient,
   type CreateTRPCClientOptions,
+  createTRPCClient,
   httpBatchLink,
   httpSubscriptionLink,
   loggerLink,
   splitLink,
 } from "@trpc/client"
-import { createContext, type Dispatch, type PropsWithChildren, type SetStateAction, useContext, useState } from "react"
+import { secondsToMilliseconds } from "date-fns"
+import { type Dispatch, type PropsWithChildren, type SetStateAction, createContext, useContext, useState } from "react"
 import superjson from "superjson"
 import { TRPCProvider } from "./client"
-import { secondsToMilliseconds } from "date-fns"
 
 // connecting is default, pending is when it is open, and idle idk
 export type TRPCSSEConnectionState = "connecting" | "pending" | "idle"

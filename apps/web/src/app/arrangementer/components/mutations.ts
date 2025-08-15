@@ -1,5 +1,5 @@
-import { useTRPC } from "@/utils/trpc/client"
 import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
+import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"

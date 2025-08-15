@@ -1,3 +1,4 @@
+import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
 import { createPrisma } from "@dotkomonline/db"
 import { ManagementClient } from "auth0"
@@ -42,7 +43,6 @@ import { getNotificationPermissionsRepository } from "./user/notification-permis
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
-import EventEmitter from "node:events"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 

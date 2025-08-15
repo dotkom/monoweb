@@ -4,11 +4,11 @@ import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { TRPCError, initTRPC } from "@trpc/server"
 import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
+import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
 import type { Affiliation, AffiliationSet } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
-import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */

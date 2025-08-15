@@ -1,3 +1,4 @@
+import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
@@ -47,7 +48,6 @@ import {
 } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { EventService } from "./event-service"
-import type { EventEmitter } from "node:events"
 
 type EventRegistrationOptions = {
   /** Should the user be attended regardless of if registration is closed? */
