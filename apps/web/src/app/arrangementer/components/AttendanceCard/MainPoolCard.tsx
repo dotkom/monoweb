@@ -173,10 +173,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
       }
     >
       <div className="flex grow flex-col gap-2 items-center text-center justify-center">
-        {isWithinInterval(getCurrentUTC(), countdownInterval) ? (
+        {isFuture(countdownInterval.end) && !isAttending ? (
           <>
-            <Text>{pool.capacity > 0 ? `${pool.capacity} plasser åpner` : "Påmelding åpner"}</Text>
-            <Text className="text-3xl font-medium">{countdownText}</Text>
+            <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
+            <Text className="text-4xl font-medium tabular-nums">{countdownText}</Text>
           </>
         ) : (
           <>
