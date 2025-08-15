@@ -27,8 +27,6 @@ export interface GroupRepository {
   getMany(handle: DBHandle, groupIds: GroupId[]): Promise<Group[]>
   getAll(handle: DBHandle): Promise<Group[]>
   getAllByType(handle: DBHandle, type: GroupType): Promise<Group[]>
-  getAllIds(handle: DBHandle): Promise<GroupId[]>
-  getAllIdsByType(handle: DBHandle, type: GroupType): Promise<GroupId[]>
   getMembershipById(handle: DBHandle, id: MembershipId): Promise<GroupMembership | null>
   getMemberships(handle: DBHandle, groupId: GroupId, userId?: UserId): Promise<GroupMembership[]>
   getGroupsByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
@@ -96,19 +94,6 @@ export function getGroupRepository(): GroupRepository {
         include: QUERY_WITH_ROLES,
       })
       return groups.map((group) => parseOrReport(GroupSchema, group))
-    },
-    async getAllIds(handle) {
-      const groups = await handle.group.findMany({
-        select: { slug: true },
-      })
-      return groups.map((group) => group.slug)
-    },
-    async getAllIdsByType(handle, groupType) {
-      const groups = await handle.group.findMany({
-        where: { type: groupType },
-        select: { slug: true },
-      })
-      return groups.map((group) => group.slug)
     },
     async getMembershipById(handle, id) {
       const membership = await handle.groupMembership.findUnique({

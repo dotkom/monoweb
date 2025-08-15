@@ -21,14 +21,6 @@ export const groupRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.groupService.getAllByType(handle, input))
     ),
-  allIds: procedure.query(async ({ ctx }) =>
-    ctx.executeTransaction(async (handle) => ctx.groupService.getAllIds(handle))
-  ),
-  allIdsByType: procedure
-    .input(GroupSchema.shape.type)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.getAllIdsByType(handle, input))
-    ),
   get: procedure
     .input(GroupSchema.shape.slug)
     .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.getById(handle, input))),

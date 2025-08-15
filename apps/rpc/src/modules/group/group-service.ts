@@ -40,8 +40,6 @@ export interface GroupService {
   create(handle: DBHandle, payload: GroupWrite): Promise<Group>
   update(handle: DBHandle, groupId: GroupId, values: Partial<GroupWrite>): Promise<Group>
   delete(handle: DBHandle, groupId: GroupId): Promise<Group>
-  getAllIds(handle: DBHandle): Promise<GroupId[]>
-  getAllIdsByType(handle: DBHandle, groupType: GroupType): Promise<GroupId[]>
   getMembers(handle: DBHandle, groupId: GroupId): Promise<Map<UserId, GroupMember>>
   getMember(handle: DBHandle, groupId: GroupId, userId: UserId): Promise<GroupMember>
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
@@ -116,12 +114,6 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     },
     async delete(handle, groupId) {
       return await groupRepository.delete(handle, groupId)
-    },
-    async getAllIds(handle) {
-      return groupRepository.getAllIds(handle)
-    },
-    async getAllIdsByType(handle, groupType) {
-      return groupRepository.getAllIdsByType(handle, groupType)
     },
     async getMembers(handle, groupId) {
       const memberships = await groupRepository.getMemberships(handle, groupId)
