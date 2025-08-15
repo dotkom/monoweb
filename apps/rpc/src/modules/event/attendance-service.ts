@@ -480,11 +480,13 @@ export function getAttendanceService(
       await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
     },
     async updateAttendancePaymentPrice(handle, attendanceId, price) {
+      const attendance = await this.getAttendanceById(handle, attendanceId)
       if (price === null) {
         await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, null)
       } else {
         await paymentProductsService.updatePrice(attendanceId, price)
       }
+      await this.updateAttendancePaymentProduct(handle, attendance)
     },
     async updateAttendancePaymentProduct(handle, attendance) {
       if (!attendance.attendancePrice) {
