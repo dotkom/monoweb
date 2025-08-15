@@ -3,6 +3,7 @@ import {
   AttendancePoolWriteSchema,
   AttendanceSchema,
   AttendanceWriteSchema,
+  type Attendee,
   AttendeeSchema,
   AttendeeSelectionResponsesSchema,
   UserSchema,
@@ -12,6 +13,7 @@ import { TRPCError } from "@trpc/server"
 import { addDays } from "date-fns"
 import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
+import { on } from "node:events"
 
 export const attendanceRouter = t.router({
   createPool: staffProcedure
@@ -135,6 +137,15 @@ export const attendanceRouter = t.router({
         })
       })
     ),
+
+  onRegisterChange: procedure
+    .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
+    .subscription(async function* ({ ctx, signal }) {
+      for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
+        const attendeeUpdateData = data as { attendee: Attendee; status: "registered" | "deregistered" }
+        yield attendeeUpdateData
+      }
+    }),
 
   cancelAttendeePayment: staffProcedure
     .input(

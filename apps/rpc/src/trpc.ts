@@ -8,6 +8,7 @@ import superjson from "superjson"
 import invariant from "tiny-invariant"
 import type { Affiliation, AffiliationSet } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
+import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */
@@ -79,6 +80,16 @@ export const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape }) {
     return shape
+  },
+  sse: {
+    maxDurationMs: minutesToMilliseconds(20), // 20 minutes
+    ping: {
+      enabled: true,
+      intervalMs: secondsToMilliseconds(3), // 30 seconds
+    },
+    client: {
+      reconnectAfterInactivityMs: secondsToMilliseconds(5), // 5 seconds
+    },
   },
 })
 

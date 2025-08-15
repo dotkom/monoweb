@@ -42,6 +42,7 @@ import { getNotificationPermissionsRepository } from "./user/notification-permis
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
+import EventEmitter from "node:events"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -80,6 +81,8 @@ export async function createServiceLayer(
   clients: ReturnType<typeof createThirdPartyClients>,
   configuration: Configuration
 ) {
+  const eventEmitter = new EventEmitter()
+
   const taskRepository = getTaskRepository()
   const taskService = getTaskService(taskRepository)
   const taskSchedulingService = getLocalTaskSchedulingService(taskRepository, taskService)
@@ -121,6 +124,7 @@ export async function createServiceLayer(
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const eventService = getEventService(eventRepository)
   const attendanceService = getAttendanceService(
+    eventEmitter,
     attendanceRepository,
     taskSchedulingService,
     userService,
@@ -140,6 +144,7 @@ export async function createServiceLayer(
   const authorizationService = getAuthorizationService()
 
   return {
+    eventEmitter,
     userService,
     eventService,
     groupService,

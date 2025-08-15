@@ -1,10 +1,12 @@
 import { useTRPC } from "@/utils/trpc/client"
+import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useSession } from "@dotkomonline/oauth2/react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useDeregisterMutation = () => {
   const trpc = useTRPC()
+  const { trpcSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
   const queryClient = useQueryClient()
   const session = useSession()
 
@@ -15,11 +17,13 @@ export const useDeregisterMutation = () => {
           return
         }
 
-        await Promise.all([
-          await queryClient.invalidateQueries(
-            trpc.event.attendance.getAttendance.queryOptions({ id: input.attendanceId })
-          ),
-        ])
+        if (trpcSSERegisterChangeConnectionState !== "pending") {
+          await Promise.all([
+            await queryClient.invalidateQueries(
+              trpc.event.attendance.getAttendance.queryOptions({ id: input.attendanceId })
+            ),
+          ])
+        }
       },
     })
   )
@@ -32,13 +36,16 @@ interface UseRegisterMutationInput {
 export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput = {}) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const { trpcSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
 
   return useMutation(
     trpc.event.attendance.registerForEvent.mutationOptions({
       onSuccess: async (data) => {
-        await Promise.all([
-          queryClient.invalidateQueries(trpc.event.attendance.getAttendance.queryOptions({ id: data.attendanceId })),
-        ])
+        if (trpcSSERegisterChangeConnectionState !== "pending") {
+          await Promise.all([
+            queryClient.invalidateQueries(trpc.event.attendance.getAttendance.queryOptions({ id: data.attendanceId })),
+          ])
+        }
 
         onSuccess?.()
       },

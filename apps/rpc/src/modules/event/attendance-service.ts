@@ -47,6 +47,7 @@ import {
 } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { EventService } from "./event-service"
+import type { EventEmitter } from "node:events"
 
 type EventRegistrationOptions = {
   /** Should the user be attended regardless of if registration is closed? */
@@ -160,6 +161,7 @@ export interface AttendanceService {
 }
 
 export function getAttendanceService(
+  eventEmitter: EventEmitter,
   attendanceRepository: AttendanceRepository,
   taskSchedulingService: TaskSchedulingService,
   userService: UserService,
@@ -378,6 +380,9 @@ export function getAttendanceService(
           reservationTime
         )
       }
+
+      eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
+
       return attendee
     },
     async updateAttendeeById(handle, attendeeId, data) {
@@ -433,6 +438,8 @@ export function getAttendanceService(
         await paymentService.cancel(attendee.paymentId)
       }
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
+      eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
+
       // If the attendee was reserved, we find a replacement for them in the pool.
       if (attendee.reserved) {
         const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)

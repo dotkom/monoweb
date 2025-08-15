@@ -1,6 +1,8 @@
+import { useCountdown } from "@/utils/utils"
 import type { Attendance, AttendancePool, Attendee, Punishment } from "@dotkomonline/types"
 import { Icon, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { formatDate, formatDistanceToNowStrict, isFuture } from "date-fns"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { formatDate, formatDistanceToNowStrict, interval, isFuture, isWithinInterval, subMinutes } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
@@ -76,7 +78,7 @@ const DelayPill = ({ mergeDelayHours, className }: { mergeDelayHours: number | n
 }
 
 interface MainPoolCardProps {
-  attendance: Attendance | null
+  attendance: Attendance
   pool: AttendancePool | null
   attendee: Attendee | null
   isLoggedIn: boolean
@@ -92,7 +94,6 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   queuePosition,
   isLoggedIn,
   hasMembership,
-  punishment,
 }) => {
   if (!isLoggedIn) {
     return (
@@ -135,6 +136,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const poolHasQueue = poolUnreservedAttendees > 0
   const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
 
+  const countdownText = useCountdown(attendance.registerStart)
+  const countdownInterval = interval(subMinutes(attendance.registerStart, 10), attendance.registerStart)
+
   return (
     <Card
       classNames={{
@@ -170,57 +174,66 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
       }
     >
       <div className="flex grow flex-col gap-2 items-center text-center justify-center">
-        <Text
-          className={cn(
-            "text-3xl px-2 py-1",
-            poolHasQueue && isAttendingAndReserved && "bg-green-200 dark:bg-green-800 rounded-lg"
-          )}
-        >
-          {poolAttendees}
-          {pool.capacity > 0 && `/${pool.capacity}`}
-        </Text>
+        {isWithinInterval(getCurrentUTC(), countdownInterval) ? (
+          <>
+            <Text>{pool.capacity > 0 ? `${pool.capacity} plasser åpner` : "Påmelding åpner"}</Text>
+            <Text className="text-3xl font-medium">{countdownText}</Text>
+          </>
+        ) : (
+          <>
+            <Text
+              className={cn(
+                "text-3xl px-2 py-1",
+                poolHasQueue && isAttendingAndReserved && "bg-green-200 dark:bg-green-800 rounded-lg"
+              )}
+            >
+              {poolAttendees}
+              {pool.capacity > 0 && `/${pool.capacity}`}
+            </Text>
 
-        {poolHasQueue && (
-          <Text
-            className={cn(
-              "text-lg px-2 py-0.5",
-              isAttendingAndNotReserved && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
+            {poolHasQueue && (
+              <Text
+                className={cn(
+                  "text-lg px-2 py-0.5",
+                  isAttendingAndNotReserved && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
+                )}
+              >
+                +{poolUnreservedAttendees} i kø
+              </Text>
             )}
-          >
-            +{poolUnreservedAttendees} i kø
-          </Text>
-        )}
 
-        {!servingPunishment && (
-          <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
-        )}
+            {!servingPunishment && (
+              <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
+            )}
 
-        {servingPunishment && (
-          <TooltipProvider>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <div
-                  className={cn(
-                    "flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg",
-                    isAttendingAndReserved
-                      ? "bg-green-300/25 dark:bg-green-700/25"
-                      : isAttendingAndNotReserved
-                        ? "bg-yellow-300/25 dark:bg-yellow-600/25"
-                        : "bg-gray-300/25 dark:bg-stone-700/25"
-                  )}
-                >
-                  <Icon icon="tabler:clock-hour-2" className="text-base" />
-                  <Text className={cn("text-sm")}>
-                    {formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse
-                  </Text>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="font-normal">
-                Utsettelsen varer til{" "}
-                {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+            {servingPunishment && (
+              <TooltipProvider>
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <div
+                      className={cn(
+                        "flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg",
+                        isAttendingAndReserved
+                          ? "bg-green-300/25 dark:bg-green-700/25"
+                          : isAttendingAndNotReserved
+                            ? "bg-yellow-300/25 dark:bg-yellow-600/25"
+                            : "bg-gray-300/25 dark:bg-stone-700/25"
+                      )}
+                    >
+                      <Icon icon="tabler:clock-hour-2" className="text-base" />
+                      <Text className={cn("text-sm")}>
+                        {formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse
+                      </Text>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="font-normal">
+                    Utsettelsen varer til{" "}
+                    {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </>
         )}
       </div>
     </Card>
