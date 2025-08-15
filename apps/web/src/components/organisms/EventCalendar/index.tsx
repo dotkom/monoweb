@@ -58,12 +58,12 @@ function getEventTypeGuide(events: Event[]) {
       label: "Bedriftsarrangement",
     },
     WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
-    OTHER: { color: "bg-purple-400 dark:bg-purple-400", label: "Annet" },
+    OTHER: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Annet" },
     GENERAL_ASSEMBLY: {
-      color: "bg-purple-400 dark:bg-purple-400",
+      color: "bg-yellow-400 dark:bg-yellow-400",
       label: "Generalforsamling",
     },
-    INTERNAL: { color: "bg-purple-400 dark:bg-purple-400", label: "Internt" },
+    INTERNAL: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Internt" },
   }
 
   const presentTypes = new Set(events.map((event) => event.type))
