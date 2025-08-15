@@ -82,13 +82,13 @@ export const t = initTRPC.context<Context>().create({
     return shape
   },
   sse: {
-    maxDurationMs: minutesToMilliseconds(20), // 20 minutes
+    maxDurationMs: minutesToMilliseconds(20),
     ping: {
       enabled: true,
-      intervalMs: secondsToMilliseconds(3), // 30 seconds
+      intervalMs: secondsToMilliseconds(3),
     },
     client: {
-      reconnectAfterInactivityMs: secondsToMilliseconds(5), // 5 seconds
+      reconnectAfterInactivityMs: secondsToMilliseconds(5),
     },
   },
 })

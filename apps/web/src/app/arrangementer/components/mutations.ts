@@ -17,6 +17,7 @@ export const useDeregisterMutation = () => {
           return
         }
 
+        // Check if the connection is not open (connecting or idle)
         if (trpcSSERegisterChangeConnectionState !== "pending") {
           await Promise.all([
             await queryClient.invalidateQueries(
@@ -41,6 +42,7 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput = {}
   return useMutation(
     trpc.event.attendance.registerForEvent.mutationOptions({
       onSuccess: async (data) => {
+        // Check if the connection is not open (connecting or idle)
         if (trpcSSERegisterChangeConnectionState !== "pending") {
           await Promise.all([
             queryClient.invalidateQueries(trpc.event.attendance.getAttendance.queryOptions({ id: data.attendanceId })),
