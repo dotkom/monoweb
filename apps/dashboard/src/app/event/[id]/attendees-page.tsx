@@ -54,17 +54,16 @@ const Page: FC<Props> = ({ attendance }) => {
           })
         }}
       />
-      <Flex rowGap="xl" columnGap="sm" wrap="wrap">
-        <Stack>
-          <Title order={3}>QR-code</Title>
-          <QrCodeScanner />
-        </Stack>
+      
+      <Stack>
+        <Title order={3}>QR-code</Title>
+        <QrCodeScanner />
+      </Stack>
 
-        <Stack>
-          <Title order={3}>Påmeldte</Title>
-          <AllAttendeesTable attendees={Array(100).fill(attendees).flat()} attendance={attendance} />
-        </Stack>
-      </Flex>
+      <Stack>
+        <Title order={3}>Påmeldte</Title>
+        <AllAttendeesTable attendees={Array(100).fill(attendees).flat()} attendance={attendance} />
+      </Stack>
     </Stack>
   )
 }

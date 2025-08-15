@@ -72,7 +72,7 @@ export const QrCodeScanner: FC = () => {
       </Group>
 
       {scannerOpen && !videoReady && <Skeleton height={300} width={300} radius="sm" />}
-      <AspectRatio w={300}>
+      <AspectRatio w={scannerOpen && videoReady ? 300 : 0}>
         <video
           ref={ref}
           muted
