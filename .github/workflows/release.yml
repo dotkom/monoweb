@@ -231,9 +231,9 @@ jobs:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: "*GitHub Action release started av:* ${{ github.triggering_actor }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            text: "*GitHub Action release started av:* ${{ github.triggering_actor }}"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "*GitHub Action release started av:* ${{ github.triggering_actor }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}.\n Status: ${{ job.status }}"
+                  text: "*GitHub Action release started av:* ${{ github.triggering_actor }}.\n Deployment status: ${{ job.status }}"

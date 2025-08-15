@@ -1,4 +1,5 @@
 import { on } from "node:events"
+import { TZDate } from "@date-fns/tz"
 import {
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
@@ -211,11 +212,12 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
+        at: z.coerce.date().nullable(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        await ctx.attendanceService.registerAttendance(handle, input.id)
+        await ctx.attendanceService.registerAttendance(handle, input.id, input.at ? new TZDate(input.at) : null)
       })
     }),
 
