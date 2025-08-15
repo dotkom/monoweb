@@ -87,6 +87,7 @@ export const attendanceRouter = t.router({
         if (attendance === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
+        await ctx.attendanceService.updateAttendancePaymentProduct(handle, attendance)
         return ctx.attendanceService.updateAttendancePaymentPrice(handle, input.id, input.price)
       })
     }),

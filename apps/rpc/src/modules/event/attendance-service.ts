@@ -237,8 +237,6 @@ export function getAttendanceService(
           })
         }
       }
-
-      await this.updateAttendancePaymentProduct(handle, attendance)
       return await attendanceRepository.updateAttendanceById(handle, attendanceId, input)
     },
     async createAttendancePool(handle, attendanceId, data) {
