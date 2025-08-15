@@ -51,10 +51,10 @@ function getColSpanClass(span: number) {
 
 function getEventTypeGuide(events: Event[]) {
   const eventTypeConfig = {
-    SOCIAL: { color: "bg-green-400 dark:bg-green-400", label: "Sosialt" },
-    ACADEMIC: { color: "bg-red-400 dark:bg-red-400", label: "Kurs" },
+    SOCIAL: { color: "bg-red-400 dark:bg-red-400", label: "Sosialt" },
+    ACADEMIC: { color: "bg-blue-400 dark:bg-blue-400", label: "Kurs" },
     COMPANY: {
-      color: "bg-blue-400 dark:bg-blue-400",
+      color: "bg-green-400 dark:bg-green-400",
       label: "Bedriftsarrangement",
     },
     WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
