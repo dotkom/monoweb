@@ -1,47 +1,103 @@
-import { intervalToDuration } from "date-fns"
+import { addSeconds, differenceInSeconds, intervalToDuration, isPast, secondsToMilliseconds } from "date-fns"
 import { useEffect, useState } from "react"
 
 export function zeroPad(n: number, digits = 2) {
   return n.toString().padStart(digits, "0")
 }
 
-export function formatTimeLeft(target: Date) {
-  const now = new Date()
-  const duration = intervalToDuration({ start: now, end: target })
+const NOW_VALUE = "nå" as const
 
+export function formatTimeLeft(target: Date, now: Date = new Date()) {
+  // This ceils the target date to the nearest full second
+  // If you don't do this the countdown will be up to one second less than it should be unless the target date is without milliseconds
+  // This is because `intervalToDuration` ignores milliseconds
+  const secondsDiff = differenceInSeconds(target, now, { roundingMethod: "ceil" })
+
+  // A negative end will probably break the duration, so we no-op
+  if (secondsDiff <= 0) {
+    return NOW_VALUE
+  }
+
+  const end = addSeconds(now, secondsDiff)
+  const duration = intervalToDuration({ start: now, end })
+
+  const years = duration.years ?? 0
+  const months = duration.months ?? 0
   const days = duration.days ?? 0
   const hours = duration.hours ?? 0
   const minutes = duration.minutes ?? 0
   const seconds = duration.seconds ?? 0
 
-  if (!hours && !days) {
-    return `${zeroPad(minutes)}:${zeroPad(seconds)}`
+  if (years) {
+    return `${years} år`
   }
 
-  if (!days) {
-    return `${hours}:${zeroPad(minutes)}:${zeroPad(seconds)}`
+  if (months) {
+    return `${months} måned${months !== 1 ? "er" : ""}`
   }
 
-  return `${days} dager`
+  if (days) {
+    return `${days} dag${days !== 1 ? "er" : ""}`
+  }
+
+  if (hours) {
+    return `${zeroPad(hours)}:${zeroPad(minutes)}:${zeroPad(seconds)}`
+  }
+
+  return `${zeroPad(minutes)}:${zeroPad(seconds)}`
 }
 
 export function useCountdown(deadline: Date | null) {
-  const [deadlineCountdown, setDeadlineCountdown] = useState<string | null>(null)
+  const initialCountdownValue = deadline && !isPast(deadline) ? formatTimeLeft(deadline) : NOW_VALUE
+  const [countdown, setCountdown] = useState(initialCountdownValue)
 
   useEffect(() => {
-    if (!deadline) {
+    if (!deadline || isPast(deadline)) {
       return
     }
-    setDeadlineCountdown(formatTimeLeft(deadline))
-    const interval = setInterval(() => {
-      setDeadlineCountdown(formatTimeLeft(deadline))
-    }, 1000)
-    return () => clearInterval(interval)
+
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    let intervalId: ReturnType<typeof setInterval> | null = null
+
+    const destroy = () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
+
+    const tickCountdown = (now?: Date) => {
+      const nextCountdown = formatTimeLeft(deadline, now)
+      setCountdown(nextCountdown)
+      if (nextCountdown === NOW_VALUE) {
+        destroy()
+      }
+    }
+
+    const now = new Date()
+    const millisecondOffset = (deadline.getTime() - now.getTime()) % 1000
+    tickCountdown(now)
+
+    // This timeout will align the countdown to the same millisecond as the deadline
+    // Meaning that 00:10 will be exactly 10 seconds before the deadline, to the millisecond
+    timeoutId = setTimeout(() => {
+      tickCountdown()
+
+      intervalId = setInterval(() => {
+        tickCountdown()
+      }, secondsToMilliseconds(1))
+    }, millisecondOffset)
+
+    return () => {
+      destroy()
+    }
   }, [deadline])
 
-  if (deadline && deadline < new Date()) {
-    return "nå"
+  if (deadline && isPast(deadline)) {
+    return NOW_VALUE
   }
 
-  return deadlineCountdown
+  return countdown
 }
