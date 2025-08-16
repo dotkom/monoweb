@@ -186,7 +186,7 @@ export default function ProfilePage() {
 
   const [
     { data: groups, isLoading: groupsLoading },
-    { data: futureEventDetails, isLoading: futureEventDetailsLoading },
+    { data: futureEventWithAttendances, isLoading: futureEventWithAttendancesLoading },
     { data: marks, isLoading: marksLoading },
   ] = useQueries({
     queries: [
@@ -199,7 +199,7 @@ export default function ProfilePage() {
     ],
   })
 
-  const { eventDetails: pastEventDetails, fetchNextPage } = useEventAllByAttendingUserIdInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllByAttendingUserIdInfiniteQuery({
     id: user?.id ?? "",
     filter: {
       byEndDate: {
@@ -419,11 +419,11 @@ export default function ProfilePage() {
         <Title>Arrangementer</Title>
 
         {isLoggedIn ? (
-          futureEventDetails !== undefined && pastEventDetails !== undefined ? (
+          futureEventWithAttendances !== undefined && pastEventWithAttendances !== undefined ? (
             <EventList
-              futureEventDetails={futureEventDetails.items}
-              pastEventDetails={pastEventDetails}
-              fetchNextPastEventsPage={fetchNextPage}
+              futureEventWithAttendances={futureEventWithAttendances.items}
+              pastEventWithAttendances={pastEventWithAttendances}
+              onLoadMore={fetchNextPage}
             />
           ) : (
             <Text>loading..</Text>

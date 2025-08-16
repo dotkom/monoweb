@@ -70,7 +70,7 @@ const SIDEBAR_LINKS = [
   },
 ]
 
-export default function EventDetailsPage() {
+export default function EventWithAttendancesPage() {
   const { event, attendance } = useEventContext()
   const router = useRouter()
 

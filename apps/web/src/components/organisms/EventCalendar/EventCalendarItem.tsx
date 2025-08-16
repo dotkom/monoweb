@@ -1,7 +1,7 @@
 "use client"
 
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import type { Event, EventDetail, EventType } from "@dotkomonline/types"
+import type { Event, EventType, EventWithAttendance } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
@@ -9,7 +9,7 @@ import { slugify } from "@dotkomonline/utils"
 import Link from "next/link"
 
 interface EventCalendarItemProps {
-  eventDetail: EventDetail
+  eventDetail: EventWithAttendance
   reservedStatus: boolean | null
   className?: string
 }

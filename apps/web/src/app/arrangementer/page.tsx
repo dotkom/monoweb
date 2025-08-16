@@ -14,7 +14,7 @@ const EventPage = () => {
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
 
-  const { eventDetails: futureEventDetails, isLoading } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
     filter: {
       ...filter,
       byEndDate: {
@@ -31,7 +31,7 @@ const EventPage = () => {
     },
   })
 
-  const { eventDetails: pastEventDetails, fetchNextPage } = useEventAllInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
     filter: {
       ...filter,
       byEndDate: {
@@ -51,9 +51,9 @@ const EventPage = () => {
         <EventsViewToggle active="list" />
         <EventFilters onChange={setFilter} />
         <EventList
-          futureEventDetails={futureEventDetails}
-          pastEventDetails={pastEventDetails}
-          fetchNextPastEventsPage={fetchNextPage}
+          futureEventWithAttendances={futureEventWithAttendances}
+          pastEventWithAttendances={pastEventWithAttendances}
+          onLoadMore={fetchNextPage}
         />
         {isLoading && <EventListSkeleton />}
       </div>

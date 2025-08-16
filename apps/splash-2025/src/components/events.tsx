@@ -1,5 +1,5 @@
 import { trpc } from "@/lib/trpc"
-import type { EventDetail } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import type { Event } from "@dotkomonline/types"
 import {
   Collapsible,
@@ -93,7 +93,7 @@ export const Events = () => {
       const month = formatDate(eventDetail.event.start, "MMMM")
       const date = getDate(eventDetail.event.start)
 
-      const eventsInMonth = acc.get(month) || new Map<number, EventDetail[]>()
+      const eventsInMonth = acc.get(month) || new Map<number, EventWithAttendance[]>()
       const eventsInDate = eventsInMonth.get(date) || []
 
       eventsInDate.push(eventDetail)
@@ -101,7 +101,7 @@ export const Events = () => {
       acc.set(month, eventsInMonth)
 
       return acc
-    }, new Map<string, Map<number, EventDetail[]>>())
+    }, new Map<string, Map<number, EventWithAttendance[]>>())
 
   return (
     <div className="bg-orange-100 min-h-[500px] py-20 w-full">

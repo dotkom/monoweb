@@ -42,7 +42,7 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
   </Link>
 )
 
-const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eventId: string }> }) => {
+const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: string; eventId: string }> }) => {
   const { slug, eventId } = await params
   const session = await auth.getServerSession()
 
@@ -97,4 +97,4 @@ const EventDetailPage = async ({ params }: { params: Promise<{ slug: string; eve
   )
 }
 
-export default EventDetailPage
+export default EventWithAttendancePage

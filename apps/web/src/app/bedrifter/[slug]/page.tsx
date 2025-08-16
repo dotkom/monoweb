@@ -16,11 +16,11 @@ const CompanyPage = async ({ params }: CompanyPageProps) => {
 
   const company = await server.company.getBySlug.query(slug)
 
-  const { eventDetails: futureEventDetails } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances } = useEventAllQuery({
     filter: { byOrganizingCompany: [company.id], byStartDate: { min: now, max: null } },
   })
 
-  const { eventDetails: pastEventDetails, fetchNextPage } = useEventAllInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
     filter: {
       byOrganizingCompany: [company.id],
       byEndDate: {
@@ -33,9 +33,9 @@ const CompanyPage = async ({ params }: CompanyPageProps) => {
   return (
     <CompanyView
       company={company}
-      futureEventDetails={futureEventDetails}
-      pastEventDetails={pastEventDetails}
-      fetchNextPastEventsPage={fetchNextPage}
+      futureEventWithAttendances={futureEventWithAttendances}
+      pastEventWithAttendances={pastEventWithAttendances}
+      onLoadMore={fetchNextPage}
     />
   )
 }

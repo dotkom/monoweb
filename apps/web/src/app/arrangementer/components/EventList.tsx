@@ -2,7 +2,7 @@
 
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { EventDetail } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { differenceInDays, isFuture } from "date-fns"
@@ -11,15 +11,15 @@ import { type FC, useEffect, useRef } from "react"
 const OPENING_SOON_DAYS_THRESHOLD = 3 as const
 
 interface EventListProps {
-  futureEventDetails: EventDetail[]
-  pastEventDetails: EventDetail[]
-  fetchNextPastEventsPage?(): void
+  futureEventWithAttendances: EventWithAttendance[]
+  pastEventWithAttendances: EventWithAttendance[]
+  onLoadMore?(): void
 }
 
 export const EventList: FC<EventListProps> = ({
-  futureEventDetails: futureEvents,
-  pastEventDetails: pastEvents,
-  fetchNextPastEventsPage,
+  futureEventWithAttendances: futureEvents,
+  pastEventWithAttendances: pastEvents,
+  onLoadMore,
 }: EventListProps) => {
   const now = getCurrentUTC()
   const session = useSession()
@@ -50,13 +50,13 @@ export const EventList: FC<EventListProps> = ({
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        fetchNextPastEventsPage?.()
+        onLoadMore?.()
       }
     })
 
     if (loaderRef.current) observer.observe(loaderRef.current)
     return () => observer.disconnect()
-  }, [fetchNextPastEventsPage])
+  }, [onLoadMore])
 
   if (futureEvents.length === 0 && pastEvents.length === 0) {
     return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>

@@ -32,9 +32,9 @@ import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
 const getQueuePosition = (
-  attendee: Attendee | null | undefined,
-  attendees: Attendee[] | null | undefined,
-  attendablePool: AttendancePool | null | undefined
+  attendee: Attendee | null,
+  attendees: Attendee[] | null,
+  attendablePool: AttendancePool | null
 ) => {
   if (!attendee || !attendees || !attendablePool) {
     return null
@@ -182,7 +182,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
   const hasMembership = user !== null && findActiveMembership(user) !== null
   const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
 
-  const queuePosition = getQueuePosition(attendee, attendance.attendees, attendablePool)
+  const queuePosition = getQueuePosition(attendee, attendance.attendees, attendablePool ?? null)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   if (isBefore(getCurrentUTC(), attendance.registerStart)) {

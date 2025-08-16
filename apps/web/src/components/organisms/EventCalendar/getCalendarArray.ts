@@ -1,7 +1,7 @@
-import type { EventDetail } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import type { CalendarData, EventDisplayProps, Week } from "./types"
 
-export function getCalendarArray(year: number, month: number, events: EventDetail[]): CalendarData {
+export function getCalendarArray(year: number, month: number, events: EventWithAttendance[]): CalendarData {
   const firstDayOfMonth = new Date(year, month, 1)
   const lastDayOfMonth = new Date(year, month + 1, 0)
 

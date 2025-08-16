@@ -1,7 +1,7 @@
 "use client"
 
 import { GenericTable } from "@/components/GenericTable"
-import type { EventDetail, EventFilterQuery, EventType } from "@dotkomonline/types"
+import type { EventFilterQuery, EventType, EventWithAttendance } from "@dotkomonline/types"
 import {
   ActionIcon,
   ActionIconGroup,
@@ -47,7 +47,7 @@ const mapEventTypeToLabel = (eventType: EventType) => {
 const capitalizeFirstLetter = (string: string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`
 
 export default function EventPage() {
-  const columnHelper = createColumnHelper<EventDetail>()
+  const columnHelper = createColumnHelper<EventWithAttendance>()
   const columns = useMemo(
     () => [
       columnHelper.accessor(({ event }) => event, {
