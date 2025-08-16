@@ -330,7 +330,7 @@ export function getAttendanceService(
         }
         applicablePool = pool
       } else {
-        applicablePool = attendance.pools.find((pool) => canUserAttendPool(pool, user)) ?? null
+        applicablePool = attendance.pools.find((pool) => canUserAttendPool(user, pool)) ?? null
       }
 
       if (applicablePool === null) {

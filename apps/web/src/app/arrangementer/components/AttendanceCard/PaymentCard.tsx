@@ -2,7 +2,7 @@
 
 import { useCountdown } from "@/utils/use-countdown"
 import type { Attendance, Attendee } from "@dotkomonline/types"
-import { Icon, cn } from "@dotkomonline/ui"
+import { Icon, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 import type { HTMLProps, PropsWithChildren } from "react"
 
@@ -21,21 +21,26 @@ const GenericPaymentCard = ({ children, disabled, className }: PropsWithChildren
   </div>
 )
 
-export const PaymentCard = ({ attendance, attendee }: { attendance: Attendance; attendee?: Attendee }) => {
+interface PaymentCardProps {
+  attendance: Attendance
+  attendee: Attendee | null
+}
+
+export const PaymentCard = ({ attendance, attendee }: PaymentCardProps) => {
   const countdownText = useCountdown(attendee?.paymentDeadline ?? null)
 
   if (!attendance.attendancePrice) {
     return null
   }
 
-  if (attendee === undefined || !attendee.reserved) {
+  if (!attendee?.reserved) {
     return <GenericPaymentCard disabled>Pris: {attendance.attendancePrice} kr</GenericPaymentCard>
   }
 
   if (attendee.paymentReservedAt || attendee.paymentChargedAt) {
     return (
       <GenericPaymentCard disabled className="bg-green-200">
-        {attendance.attendancePrice}kr betalt
+        {attendance.attendancePrice} kr betalt
       </GenericPaymentCard>
     )
   }
@@ -44,7 +49,7 @@ export const PaymentCard = ({ attendance, attendee }: { attendance: Attendance; 
     return (
       <Link href={attendee.paymentLink}>
         <GenericPaymentCard className="bg-amber-300">
-          <p>Betal innen {countdownText}</p>
+          <Text>Betal innen {countdownText}</Text>
         </GenericPaymentCard>
       </Link>
     )
@@ -53,10 +58,10 @@ export const PaymentCard = ({ attendance, attendee }: { attendance: Attendance; 
   if (attendee.paymentRefundedAt) {
     return (
       <GenericPaymentCard className="bg-green-200">
-        <p>Betaling refundert</p>
+        <Text>Betaling refundert</Text>
       </GenericPaymentCard>
     )
   }
 
-  return <GenericPaymentCard>Ukjent status</GenericPaymentCard>
+  return <GenericPaymentCard>Ukjent betalingsstatus</GenericPaymentCard>
 }

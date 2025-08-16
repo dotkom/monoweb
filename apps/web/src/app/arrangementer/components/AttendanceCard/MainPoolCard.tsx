@@ -1,30 +1,38 @@
 import { useCountdown } from "@/utils/use-countdown"
-import type { Attendance, AttendancePool, Attendee, Punishment } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type Attendee,
+  type User,
+  findActiveMembership,
+  getAttendablePool,
+  getAttendee,
+  getAttendeeQueuePosition,
+  getReservedAttendeeCount,
+  getUnreservedAttendeeCount,
+} from "@dotkomonline/types"
 import { Icon, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { formatDate, formatDistanceToNowStrict, interval, isFuture, subMinutes } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
 
-const getAttendanceStatusText = (
-  isAttendingAndReserved: boolean,
-  isAttendingAndNotReserved: boolean,
-  queuePosition: number | null
-) => {
-  if (isAttendingAndReserved) {
+const getAttendanceStatusText = (attendance: Attendance, attendee: Attendee | null) => {
+  if (!attendee) {
+    return "Du er ikke påmeldt"
+  }
+
+  if (attendee.reserved === true) {
     return "Du er påmeldt"
   }
 
-  if (isAttendingAndNotReserved) {
-    // Should never happen, but just in case
-    if (!queuePosition) {
-      return "Du er i køen"
-    }
+  const queuePosition = getAttendeeQueuePosition(attendance, attendee.user)
 
-    return `Du er ${queuePosition}. i køen`
+  // Should never happen, but just in case
+  if (!queuePosition) {
+    return "Du er i køen"
   }
 
-  return "Du er ikke påmeldt"
+  return `Du er ${queuePosition}. i køen`
 }
 
 interface CardProps {
@@ -78,23 +86,11 @@ const DelayPill = ({ mergeDelayHours, className }: { mergeDelayHours: number | n
 
 interface MainPoolCardProps {
   attendance: Attendance
-  pool: AttendancePool | null
-  attendee: Attendee | null
-  isLoggedIn: boolean
-  queuePosition: number | null
-  hasMembership: boolean
-  punishment: Punishment | null
+  user: User | null
 }
 
-export const MainPoolCard: FC<MainPoolCardProps> = ({
-  attendance,
-  pool,
-  attendee,
-  queuePosition,
-  isLoggedIn,
-  hasMembership,
-}) => {
-  if (!isLoggedIn) {
+export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user }) => {
+  if (!user) {
     return (
       <Card>
         <Text>Du er ikke innlogget</Text>
@@ -102,9 +98,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     )
   }
 
-  const isAttending = Boolean(attendee)
+  const membership = findActiveMembership(user)
+  const attendee = getAttendee(attendance, user)
 
-  if (!hasMembership && !isAttending) {
+  if (!membership && !attendee) {
     return (
       <Card>
         <Text>Du har ikke registert medlemskap</Text>
@@ -119,6 +116,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     )
   }
 
+  const pool = getAttendablePool(attendance, user)
+
   if (!pool) {
     return (
       <Card>
@@ -127,28 +126,26 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     )
   }
 
-  const isAttendingAndReserved = isAttending && queuePosition === null
-  const isAttendingAndNotReserved = isAttending && queuePosition !== null
-  const poolUnreservedAttendees =
-    attendance?.attendees?.filter((a) => a.attendancePoolId === pool.id && !a.reserved)?.length ?? 0
-  const poolAttendees = attendance?.attendees?.filter((a) => a.attendancePoolId === pool.id && a.reserved)?.length ?? 0
-  const poolHasQueue = poolUnreservedAttendees > 0
+  const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance, pool.id)
+  const reservedAttendeeCount = getReservedAttendeeCount(attendance, pool.id)
+  const hasWaitlist = unreservedAttendeeCount > 0
+
   const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
 
   const countdownText = useCountdown(attendance.registerStart)
-  const countdownInterval = interval(subMinutes(attendance.registerStart, 10), attendance.registerStart)
+  const countdownInterval = interval(subMinutes(attendance.registerStart, 15), attendance.registerStart)
 
   return (
     <Card
       classNames={{
-        outer: isAttendingAndReserved
+        outer: attendee?.reserved
           ? "bg-green-100 dark:bg-green-900"
-          : isAttendingAndNotReserved
+          : attendee?.reserved === false
             ? "bg-yellow-100 dark:bg-yellow-800"
             : undefined,
-        title: isAttendingAndReserved
+        title: attendee?.reserved
           ? "bg-green-200 dark:bg-green-800"
-          : isAttendingAndNotReserved
+          : attendee?.reserved === false
             ? "bg-yellow-200 dark:bg-yellow-700"
             : undefined,
       }}
@@ -161,9 +158,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             <DelayPill
               mergeDelayHours={pool.mergeDelayHours}
               className={cn(
-                isAttendingAndReserved
+                attendee?.reserved
                   ? "bg-green-300/50 dark:bg-green-700/50"
-                  : isAttendingAndNotReserved
+                  : attendee?.reserved === false
                     ? "bg-yellow-300/50 dark:bg-yellow-600/50"
                     : undefined
               )}
@@ -173,7 +170,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
       }
     >
       <div className="flex grow flex-col gap-2 items-center text-center justify-center">
-        {isFuture(countdownInterval.end) && !isAttending ? (
+        {isFuture(countdownInterval.end) && !attendee ? (
           <>
             <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
             <Text className="text-4xl font-medium tabular-nums">{countdownText}</Text>
@@ -183,27 +180,26 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             <Text
               className={cn(
                 "text-3xl px-2 py-1",
-                poolHasQueue && isAttendingAndReserved && "bg-green-200 dark:bg-green-800 rounded-lg"
+                hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
               )}
             >
-              {poolAttendees}
+              {reservedAttendeeCount}
+              {/* Don't show capacity for merge pools (capacity = 0) */}
               {pool.capacity > 0 && `/${pool.capacity}`}
             </Text>
 
-            {poolHasQueue && (
+            {hasWaitlist && (
               <Text
                 className={cn(
                   "text-lg px-2 py-0.5",
-                  isAttendingAndNotReserved && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
+                  attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
                 )}
               >
-                +{poolUnreservedAttendees} i kø
+                +{unreservedAttendeeCount} i kø
               </Text>
             )}
 
-            {!servingPunishment && (
-              <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
-            )}
+            {!servingPunishment && <Text>{getAttendanceStatusText(attendance, attendee)}</Text>}
 
             {servingPunishment && (
               <TooltipProvider>
@@ -212,9 +208,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
                     <div
                       className={cn(
                         "flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg",
-                        isAttendingAndReserved
+                        attendee.reserved === true
                           ? "bg-green-300/25 dark:bg-green-700/25"
-                          : isAttendingAndNotReserved
+                          : attendee.reserved === false
                             ? "bg-yellow-300/25 dark:bg-yellow-600/25"
                             : "bg-gray-300/25 dark:bg-stone-700/25"
                       )}
