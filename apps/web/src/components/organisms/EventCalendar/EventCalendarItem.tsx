@@ -44,7 +44,7 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
       badgeBg: "bg-green-200 dark:bg-green-900",
       badgeText: "text-green-800 dark:text-green-300",
     },
-    displayName: "Bedriftsarrangement",
+    displayName: "Sosialt",
   },
   GENERAL_ASSEMBLY: {
     colors: {
@@ -119,7 +119,7 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
       badgeBg: "bg-red-200 dark:bg-red-900",
       badgeText: "text-red-800 dark:text-red-300",
     },
-    displayName: "Sosialt",
+    displayName: "Bedriftsarrangement",
   },
   ACADEMIC: {
     colors: {
