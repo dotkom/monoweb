@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "type": "module",
+  "private": true,
   "exports": {
     ".": {
       "import": "./src/index.ts",
@@ -50,6 +51,9 @@
       "optional": true
     },
     "@types/react-dom": {
+      "optional": true
+    },
+    "next": {
       "optional": true
     }
   },

@@ -3,15 +3,29 @@
 .vscode
 .next
 .turbo
-.react-email
 .git
 
 .dockerignore
 .env*
 
+# Dependencies and build outputs
 node_modules
+apps/**/node_modules
+apps/**/.next
+apps/**/.turbo
+apps/**/dist
+apps/**/build
+apps/**/coverage
+
+packages/**/node_modules
+packages/**/dist
+packages/**/build
+packages/**/coverage
+
+# React Email specific build outputs
+packages/email/.react-email
+
+# Code not related to the build
 infra
-out
-build
-dist
-coverage
+docs
+
