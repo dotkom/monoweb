@@ -13,7 +13,7 @@ interface UseEventAllQueryProps {
 export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
   const trpc = useTRPC()
   const { data, ...query } = useQuery({
-    ...trpc.event.all.queryOptions({ filter, ...page }),
+    ...trpc.event.all.queryOptions({ filter: { ...filter, includeStatuses: ["DRAFT"] }, ...page }),
   })
 
   return { events: useMemo(() => data?.items ?? [], [data]), ...query }
