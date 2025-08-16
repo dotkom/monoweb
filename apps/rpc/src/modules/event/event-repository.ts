@@ -84,9 +84,9 @@ export function getEventRepository(): EventRepository {
         where: {
           AND: [
             {
-              status: query.includeStatuses?.length
+              status: query.includeStatus?.length
                 ? {
-                    in: ["PUBLIC", ...query.includeStatuses],
+                    in: ["PUBLIC", ...query.includeStatus],
                   }
                 : "PUBLIC",
               start: {
