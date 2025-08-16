@@ -322,8 +322,8 @@ export const useUpdateAttendancePaymentMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryFilter() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )
@@ -343,8 +343,8 @@ export const useUpdateAttendanceMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryFilter() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )

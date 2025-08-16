@@ -3,7 +3,7 @@ import { AttendanceStatus } from "@/components/molecules/EventListItem/Attendanc
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
-import { getCurrentUtc, slugify } from "@dotkomonline/utils"
+import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { formatDate, isPast } from "date-fns"
 import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
@@ -19,7 +19,7 @@ export default async function App() {
       filter: {
         byEndDate: {
           max: null,
-          min: getCurrentUtc(),
+          min: getCurrentUTC(),
         },
         excludingOrganizingGroup: ["velkom"],
         orderBy: "asc",

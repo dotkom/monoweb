@@ -3,7 +3,7 @@
 import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
 import type { EventFilterQuery } from "@dotkomonline/types"
 import { Title } from "@dotkomonline/ui"
-import { getCurrentUtc } from "@dotkomonline/utils"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { roundToNearestMinutes } from "date-fns"
 import { useState } from "react"
 import { EventFilters } from "./components/EventFilters"
@@ -11,7 +11,7 @@ import { EventList, EventListSkeleton } from "./components/EventList"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
 const EventPage = () => {
-  const now = roundToNearestMinutes(getCurrentUtc(), { roundingMethod: "floor" })
+  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
 
   const { eventDetails: futureEventDetails, isLoading } = useEventAllQuery({

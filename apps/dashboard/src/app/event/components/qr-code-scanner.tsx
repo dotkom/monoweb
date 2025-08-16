@@ -1,3 +1,4 @@
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { AspectRatio, Button, Collapse, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { type FC, useState } from "react"
@@ -22,6 +23,7 @@ export const QrCodeScanner: FC = () => {
       const attendeeId = result.getText()
       registerAttendance.mutate({
         id: attendeeId,
+        at: getCurrentUTC(),
       })
     },
     paused: !scannerOpen,

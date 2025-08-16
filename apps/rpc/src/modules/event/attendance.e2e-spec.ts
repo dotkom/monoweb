@@ -614,10 +614,14 @@ describe("attendance integration tests", async () => {
     })
     expect(attendee.reserved).toBe(true)
 
-    await expect(core.attendanceService.registerAttendance(dbClient, attendee.id)).resolves.toBeUndefined()
+    await expect(
+      core.attendanceService.registerAttendance(dbClient, attendee.id, getCurrentUTC())
+    ).resolves.toBeUndefined()
   })
 
   it("should fail if you attempt to register physical attendance for a non-registered user", async () => {
-    await expect(core.attendanceService.registerAttendance(dbClient, randomUUID())).rejects.toThrow(AttendanceNotFound)
+    await expect(core.attendanceService.registerAttendance(dbClient, randomUUID(), getCurrentUTC())).rejects.toThrow(
+      AttendanceNotFound
+    )
   })
 })

@@ -27,7 +27,7 @@ jobs:
     name: Verify build requirements
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
       - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
@@ -57,7 +57,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -75,7 +75,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -93,7 +93,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -111,7 +111,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -129,7 +129,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -147,7 +147,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -165,7 +165,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -183,7 +183,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -200,7 +200,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -226,14 +226,14 @@ jobs:
       - build-web
     steps:
       - name: Submit message to \#prod-ops-feed in Slack
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: "*GitHub Action release started av:* ${{ github.triggering_actor }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            text: "*GitHub Action release started av:* ${{ github.triggering_actor }}"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "*GitHub Action release started av:* ${{ github.triggering_actor }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}.\n Status: ${{ job.status }}"
+                  text: "*GitHub Action release started av:* ${{ github.triggering_actor }}.\n Deployment status: ${{ job.status }}"

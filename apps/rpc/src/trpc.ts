@@ -4,6 +4,7 @@ import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { TRPCError, initTRPC } from "@trpc/server"
 import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
+import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
 import type { Affiliation, AffiliationSet } from "./modules/authorization-service"
@@ -79,6 +80,16 @@ export const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape }) {
     return shape
+  },
+  sse: {
+    maxDurationMs: minutesToMilliseconds(20),
+    ping: {
+      enabled: true,
+      intervalMs: secondsToMilliseconds(3),
+    },
+    client: {
+      reconnectAfterInactivityMs: secondsToMilliseconds(5),
+    },
   },
 })
 
