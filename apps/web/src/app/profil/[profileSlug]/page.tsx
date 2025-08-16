@@ -30,7 +30,7 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { getCurrentUtc, getPunishmentExpiryDate } from "@dotkomonline/utils"
+import { getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { useQueries, useQuery } from "@tanstack/react-query"
 import {
   differenceInMilliseconds,
@@ -168,7 +168,7 @@ const MembershipDisplay = ({
 }
 
 export default function ProfilePage() {
-  const now = roundToNearestMinutes(getCurrentUtc(), { roundingMethod: "floor" })
+  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
 
   const { profileSlug: rawProfileSlug } = useParams<{ profileSlug: string }>()
   const profileSlug = decodeURIComponent(rawProfileSlug)
