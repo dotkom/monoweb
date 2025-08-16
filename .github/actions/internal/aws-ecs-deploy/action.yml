@@ -36,7 +36,7 @@ runs:
         role-to-assume: ${{ inputs.aws-iam-role }}
     - name: Render new task definition revision
       id: render-task-definition
-      uses: aws-actions/amazon-ecs-render-task-definition@64aefa8f68c9083d24d230e3099d046d5964bcba # v1
+      uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce # v1
       with:
         container-name: ${{ inputs.container-name }}
         task-definition-arn: ${{ inputs.aws-task-definition-arn }}
