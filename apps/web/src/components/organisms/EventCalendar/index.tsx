@@ -52,18 +52,18 @@ function getColSpanClass(span: number) {
 function getEventTypeGuide(events: Event[]) {
   const eventTypeConfig = {
     SOCIAL: { color: "bg-green-400 dark:bg-green-400", label: "Sosialt" },
-    ACADEMIC: { color: "bg-red-400 dark:bg-red-400", label: "Kurs" },
+    ACADEMIC: { color: "bg-blue-400 dark:bg-blue-400", label: "Kurs" },
     COMPANY: {
-      color: "bg-blue-400 dark:bg-blue-400",
+      color: "bg-red-400 dark:bg-red-400",
       label: "Bedriftsarrangement",
     },
     WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
-    OTHER: { color: "bg-purple-400 dark:bg-purple-400", label: "Annet" },
+    OTHER: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Annet" },
     GENERAL_ASSEMBLY: {
-      color: "bg-purple-400 dark:bg-purple-400",
+      color: "bg-yellow-400 dark:bg-yellow-400",
       label: "Generalforsamling",
     },
-    INTERNAL: { color: "bg-purple-400 dark:bg-purple-400", label: "Internt" },
+    INTERNAL: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Internt" },
   }
 
   const presentTypes = new Set(events.map((event) => event.type))
