@@ -7,7 +7,7 @@ export default async function NodeCommitteePage() {
   const nodeCommittees = await server.group.allByType.query("NODE_COMMITTEE")
 
   return (
-    <div>
+    <div className="flex flex-col gap-8">
       <div className="border-gray-600 border-b">
         <div className="flex flex-col pb-5">
           <Title element="h1" className="text-3xl">
@@ -32,9 +32,8 @@ export default async function NodeCommitteePage() {
           </Text>
         </div>
       </div>
-      <div className="mt-8">
-        <GroupList groups={nodeCommittees} />
-      </div>
+
+      <GroupList groups={nodeCommittees} />
     </div>
   )
 }
