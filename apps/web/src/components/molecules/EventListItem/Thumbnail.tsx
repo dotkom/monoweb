@@ -22,11 +22,11 @@ const EVENTS = {
   },
   COMPANY: {
     label: "Bedpres",
-    backgroundColor: "green",
+    backgroundColor: "red",
   },
   SOCIAL: {
     label: "Sosialt",
-    backgroundColor: "red",
+    backgroundColor: "green",
   },
   WELCOME: {
     label: "Fadderuke",

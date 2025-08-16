@@ -31,7 +31,7 @@ interface EventTypeConfig {
 }
 
 const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
-  COMPANY: {
+  SOCIAL: {
     colors: {
       itemBg: "bg-green-100 dark:bg-green-950",
       itemBgGradientFade: "to-green-100 dark:to-green-950",
@@ -106,7 +106,7 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
     },
     displayName: "Annet",
   },
-  SOCIAL: {
+  COMPANY: {
     colors: {
       itemBg: "bg-red-100 dark:bg-red-950",
       itemBgGradientFade: "to-red-100 dark:to-red-950",
