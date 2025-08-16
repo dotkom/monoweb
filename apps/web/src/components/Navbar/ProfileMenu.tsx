@@ -33,7 +33,7 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { type FC, Fragment, type PropsWithChildren, useState } from "react"
 
 const THEME_OPTIONS = [
@@ -56,12 +56,14 @@ const THEME_OPTIONS = [
 
 export const ProfileMenu: FC = () => {
   const session = useSession()
+  const pathname = usePathname()
   const trpc = useTRPC()
 
   const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
 
   if (session === null) {
     const { setTheme, theme } = useTheme()
+    const returnAfter = encodeURIComponent(pathname)
 
     return (
       <div className="flex flex-row gap-4">
@@ -101,7 +103,7 @@ export const ProfileMenu: FC = () => {
           size="sm"
           color="brand"
           className="text-sm font-semibold px-3 py-2"
-          href="/api/auth/authorize?connection=FEIDE"
+          href={`/api/auth/authorize?connection=FEIDE&redirectAfter=${returnAfter}`}
         >
           Logg inn
         </Button>
@@ -116,7 +118,7 @@ export const ProfileMenu: FC = () => {
               size="sm"
               color="white"
               className="text-sm font-semibold px-3 py-2"
-              href="/api/auth/authorize"
+              href={`/api/auth/authorize?redirectAfter=${returnAfter}`}
             >
               Logg inn uten feide
             </Button>
