@@ -166,14 +166,14 @@ importers:
         specifier: ^2.11.7
         version: 2.24.2
       '@trpc/client':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3)
       '@trpc/server':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(typescript@5.8.3)
       '@trpc/tanstack-react-query':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.4.4(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -551,8 +551,8 @@ importers:
         specifier: ^9.24.0
         version: 9.34.0
       '@trpc/server':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(typescript@5.8.3)
       auth0:
         specifier: ^4.23.1
         version: 4.28.0
@@ -589,6 +589,9 @@ importers:
       tiny-invariant:
         specifier: ^1.3.3
         version: 1.3.3
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
       zod:
         specifier: ^3.25.47
         version: 3.25.76
@@ -611,6 +614,9 @@ importers:
       '@types/node':
         specifier: 22.17.2
         version: 22.17.2
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
       '@vitest/coverage-v8':
         specifier: 3.1.4
         version: 3.1.4(vitest@3.1.4)
@@ -660,11 +666,11 @@ importers:
         specifier: ^5.67.2
         version: 5.84.2(react@19.1.1)
       '@trpc/client':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3)
       '@trpc/tanstack-react-query':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.4.4(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -782,10 +788,10 @@ importers:
         version: 9.35.0(@opentelemetry/context-async-hooks@2.0.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.0.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.202.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.0.1(@opentelemetry/api@1.9.0))(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(webpack@5.99.9)
       '@splinetool/react-spline':
         specifier: ^4.0.0
-        version: 4.1.0(@splinetool/runtime@1.10.48)(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 4.1.0(@splinetool/runtime@1.10.44)(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@splinetool/runtime':
         specifier: ^1.9.98
-        version: 1.10.48
+        version: 1.10.44
       '@tailwindcss/typography':
         specifier: ^0.5.10
         version: 0.5.16(tailwindcss@4.1.11)
@@ -793,14 +799,14 @@ importers:
         specifier: ^5.79.0
         version: 5.84.2(react@19.1.1)
       '@trpc/client':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3)
       '@trpc/next':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/react-query@11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.4.4(typescript@5.8.3))(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
       '@trpc/tanstack-react-query':
-        specifier: 11.0.0-rc.828
-        version: 11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
+        specifier: 11.4.4
+        version: 11.4.4(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.4.4(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
       axios:
         specifier: 1.11.0
         version: 1.11.0
@@ -2577,9 +2583,6 @@ packages:
   '@jridgewell/gen-mapping@0.3.12':
     resolution: {integrity: sha512-OuLGC46TjB5BbN1dH8JULVVZY4WTdkF7tV9Ys6wLL1rubZnCMstOhNHueU5bLCrnRuDhKPDM4g6sw4Bel5Gzqg==}
 
-  '@jridgewell/gen-mapping@0.3.13':
-    resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
-
   '@jridgewell/gen-mapping@0.3.8':
     resolution: {integrity: sha512-imAbBGkb+ebQyxKgzv5Hu2nmROxoDOXHh80evxdoXNOrvAnVx7zimzc1Oo5h9RlfV4vPXaE2iM5pOFbvOCClWA==}
     engines: {node: '>=6.0.0'}
@@ -2592,23 +2595,17 @@ packages:
     resolution: {integrity: sha512-R8gLRTZeyp03ymzP/6Lil/28tGeGEzhx1q2k703KGWRAI1VdvPIXdG70VJc2pAMw3NA6JKL5hhFu1sJX0Mnn/A==}
     engines: {node: '>=6.0.0'}
 
-  '@jridgewell/source-map@0.3.11':
-    resolution: {integrity: sha512-ZMp1V8ZFcPG5dIWnQLr3NSI1MiCU7UETdS/A0G8V/XWHvJv3ZsFqutJn1Y5RPmAPX6F3BiE397OqveU/9NCuIA==}
+  '@jridgewell/source-map@0.3.10':
+    resolution: {integrity: sha512-0pPkgz9dY+bijgistcTTJ5mR+ocqRXLuhXHYdzoMmmoJ2C9S46RCm2GMUbatPEUK9Yjy26IrAy8D/M00lLkv+Q==}
 
   '@jridgewell/sourcemap-codec@1.5.0':
     resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
-
-  '@jridgewell/sourcemap-codec@1.5.5':
-    resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
   '@jridgewell/trace-mapping@0.3.29':
     resolution: {integrity: sha512-uw6guiW/gcAGPDhLmd77/6lW8QLeiV5RUTsAX46Db6oLhGaVj4lhnPwb184s1bkc8kdVg/+h988dro8GRDpmYQ==}
-
-  '@jridgewell/trace-mapping@0.3.30':
-    resolution: {integrity: sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q==}
 
   '@js-sdsl/ordered-map@4.4.2':
     resolution: {integrity: sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==}
@@ -4670,8 +4667,8 @@ packages:
       next:
         optional: true
 
-  '@splinetool/runtime@1.10.48':
-    resolution: {integrity: sha512-bPMnJhX7G8vGjJEvoMQY0e98/h3wU5XtQl+Xs5DAPYNVXh4/wyADg/V4e+Yi4E7zGDhQZIprX9wX/x7N2/Wznw==}
+  '@splinetool/runtime@1.10.44':
+    resolution: {integrity: sha512-iBGno1IbnMaXyRBZIeVoBGwoc6oJxRXwVmTIvu2whbZSs+nhRvVXD1cWjYBm6GepbjZHBqL7pgXWlNIXELCuMw==}
 
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
@@ -5022,20 +5019,20 @@ packages:
   '@tiptap/starter-kit@2.24.2':
     resolution: {integrity: sha512-GuXopmtJ8YS0q9vSa3xpuz3LeV3ls8PeAVKHUxQKnngKb2AthqXxcYIs0BS7s47HLLiWb4C6gYVpqqcJzf+xsQ==}
 
-  '@trpc/client@11.0.0-rc.828':
-    resolution: {integrity: sha512-pV2bELnPqH7S2R1wBH6OB7lOi61ELt8CEcvHuxVM2YhL4hP408tzKT0YvNBo4GVqc8So/1ncpXJyRJQG0o6rsQ==}
+  '@trpc/client@11.4.4':
+    resolution: {integrity: sha512-86OZl+Y+Xlt9ITGlhCMImERcsWCOrVzpNuzg3XBlsDSmSs9NGsghKjeCpJQlE36XaG3aze+o9pRukiYYvBqxgQ==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.828+322552736
+      '@trpc/server': 11.4.4
       typescript: '>=5.7.2'
 
-  '@trpc/next@11.0.0-rc.828':
-    resolution: {integrity: sha512-Pyzyh0YM2DgYJHGI09oAinLF8ViRtUhAdcWVMr55sxGn1LPce0QD70K1WjvPRP2jvlRMaNRvD4nrqQ+c1hnBbA==}
+  '@trpc/next@11.4.4':
+    resolution: {integrity: sha512-BTmMHv7whqSf6oE7qAKPCHWNZY9kqEi0inWW690bbs8FJ12A7S5nwIAbzyILfA0S5IJfMFTPJ/ueX2lCMYK67A==}
     peerDependencies:
       '@tanstack/react-query': ^5.59.15
-      '@trpc/client': 11.0.0-rc.828+322552736
-      '@trpc/react-query': 11.0.0-rc.828+322552736
-      '@trpc/server': 11.0.0-rc.828+322552736
-      next: 15.2.1
+      '@trpc/client': 11.4.4
+      '@trpc/react-query': 11.4.4
+      '@trpc/server': 11.4.4
+      next: '*'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
       typescript: '>=5.7.2'
@@ -5045,27 +5042,17 @@ packages:
       '@trpc/react-query':
         optional: true
 
-  '@trpc/react-query@11.0.0-rc.828':
-    resolution: {integrity: sha512-oir4OikvCEqbheswHZhKrXSz1hKvFcDFlc/NZ9zShMlosJtO585az0XRrGuwFvjVShP5YCRvzFb4shiJjw5PXA==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.67.1
-      '@trpc/client': 11.0.0-rc.828+322552736
-      '@trpc/server': 11.0.0-rc.828+322552736
-      react: '>=18.2.0'
-      react-dom: '>=18.2.0'
-      typescript: '>=5.7.2'
-
-  '@trpc/server@11.0.0-rc.828':
-    resolution: {integrity: sha512-+dvcIcE5QPy52cz4rqwfUqk+WQDYAH3Xri+u2t0NdzIoo78fnL14if8oSZXAPU1bCmWGyR1k/0m5rSQ7AZaKlQ==}
+  '@trpc/server@11.4.4':
+    resolution: {integrity: sha512-VkJb2xnb4rCynuwlCvgPBh5aM+Dco6fBBIo6lWAdJJRYVwtyE5bxNZBgUvRRz/cFSEAy0vmzLxF7aABDJfK5Rg==}
     peerDependencies:
       typescript: '>=5.7.2'
 
-  '@trpc/tanstack-react-query@11.0.0-rc.828':
-    resolution: {integrity: sha512-YjStWg8EJ1eFW3rev/bkmxVGBKGQeZZwE/MWtBNS8AaDP7FurbNuq2RFp/4wz0a3Ver30e32segd7VxqbdkQNA==}
+  '@trpc/tanstack-react-query@11.4.4':
+    resolution: {integrity: sha512-Rf7jhPfwAHqmQdQlxTiMolNRon85bPEsBNa5JGpjSvhrTmiaFu5UEhEwHDF2myL7IRYxuYHLc4H0bQ+19qjdHQ==}
     peerDependencies:
-      '@tanstack/react-query': ^5.67.1
-      '@trpc/client': 11.0.0-rc.828+322552736
-      '@trpc/server': 11.0.0-rc.828+322552736
+      '@tanstack/react-query': ^5.80.3
+      '@trpc/client': 11.4.4
+      '@trpc/server': 11.4.4
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
       typescript: '>=5.7.2'
@@ -5250,6 +5237,9 @@ packages:
 
   '@types/uuid@9.0.8':
     resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@ungap/structured-clone@1.2.1':
     resolution: {integrity: sha512-fEzPV3hSkSMltkw152tJKNARhOupqbH96MZWyRjNaYZOMIzbrTeQDG+MTc6Mr2pgzFQzFxAfmhGDNP5QK++2ZA==}
@@ -5689,9 +5679,6 @@ packages:
 
   caniuse-lite@1.0.30001733:
     resolution: {integrity: sha512-e4QKw/O2Kavj2VQTKZWrwzkt3IxOmIlU6ajRb6LP64LHpBo1J67k2Hi4Vu/TgJWsNtynurfS0uK3MaUTCPfu5Q==}
-
-  caniuse-lite@1.0.30001735:
-    resolution: {integrity: sha512-EV/laoX7Wq2J9TQlyIXRxTJqIw4sxfXS4OYgudGxBYRuTv0q7AM6yMEpU/Vo1I94thg9U6EZ2NfZx9GJq83u7w==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -6150,8 +6137,8 @@ packages:
   electron-to-chromium@1.5.187:
     resolution: {integrity: sha512-cl5Jc9I0KGUoOoSbxvTywTa40uspGJt/BDBoDLoxJRSBpWh4FFXBsjNRHfQrONsV/OoEjDfHUmZQa2d6Ze4YgA==}
 
-  electron-to-chromium@1.5.203:
-    resolution: {integrity: sha512-uz4i0vLhfm6dLZWbz/iH88KNDV+ivj5+2SA+utpgjKaj9Q0iDLuwk6Idhe9BTxciHudyx6IvTvijhkPvFGUQ0g==}
+  electron-to-chromium@1.5.199:
+    resolution: {integrity: sha512-3gl0S7zQd88kCAZRO/DnxtBKuhMO4h0EaQIN3YgZfV6+pW+5+bf2AdQeHNESCoaQqo/gjGVYEf2YM4O5HJQqpQ==}
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -9058,6 +9045,18 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@8.18.3:
+    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xml-name-validator@5.0.0:
     resolution: {integrity: sha512-EvGK8EJ3DhaHfbRlETOWAS5pO9MZITeauHKJyb8wyajUfQUenkIg2MvLDTZ4T/TgIcm3HU0TFBgWWboAZ30UHg==}
     engines: {node: '>=18'}
@@ -10712,11 +10711,6 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
       '@jridgewell/trace-mapping': 0.3.29
 
-  '@jridgewell/gen-mapping@0.3.13':
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
-      '@jridgewell/trace-mapping': 0.3.30
-
   '@jridgewell/gen-mapping@0.3.8':
     dependencies:
       '@jridgewell/set-array': 1.2.1
@@ -10727,14 +10721,12 @@ snapshots:
 
   '@jridgewell/set-array@1.2.1': {}
 
-  '@jridgewell/source-map@0.3.11':
+  '@jridgewell/source-map@0.3.10':
     dependencies:
-      '@jridgewell/gen-mapping': 0.3.13
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/gen-mapping': 0.3.12
+      '@jridgewell/trace-mapping': 0.3.29
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
-
-  '@jridgewell/sourcemap-codec@1.5.5': {}
 
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
@@ -10745,11 +10737,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
-
-  '@jridgewell/trace-mapping@0.3.30':
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@js-sdsl/ordered-map@4.4.2': {}
 
@@ -13128,9 +13115,9 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.10.48)(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.10.44)(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
-      '@splinetool/runtime': 1.10.48
+      '@splinetool/runtime': 1.10.44
       blurhash: 2.0.5
       lodash.debounce: 4.0.8
       react: 19.1.1
@@ -13140,7 +13127,7 @@ snapshots:
     optionalDependencies:
       next: 15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
 
-  '@splinetool/runtime@1.10.48':
+  '@splinetool/runtime@1.10.44':
     dependencies:
       on-change: 4.0.2
       semver-compare: 1.0.0
@@ -13479,42 +13466,31 @@ snapshots:
       '@tiptap/extension-text-style': 2.24.2(@tiptap/core@2.24.2(@tiptap/pm@2.24.2))
       '@tiptap/pm': 2.24.2
 
-  '@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3)':
+  '@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.828(typescript@5.8.3)
+      '@trpc/server': 11.4.4(typescript@5.8.3)
       typescript: 5.8.3
 
-  '@trpc/next@11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/react-query@11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)':
+  '@trpc/next@11.4.4(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.4.4(typescript@5.8.3))(next@15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)':
     dependencies:
-      '@trpc/client': 11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3)
-      '@trpc/server': 11.0.0-rc.828(typescript@5.8.3)
+      '@trpc/client': 11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3)
+      '@trpc/server': 11.4.4(typescript@5.8.3)
       next: 15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       typescript: 5.8.3
     optionalDependencies:
       '@tanstack/react-query': 5.84.2(react@19.1.1)
-      '@trpc/react-query': 11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)
 
-  '@trpc/react-query@11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)':
-    dependencies:
-      '@tanstack/react-query': 5.84.2(react@19.1.1)
-      '@trpc/client': 11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3)
-      '@trpc/server': 11.0.0-rc.828(typescript@5.8.3)
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
-      typescript: 5.8.3
-    optional: true
-
-  '@trpc/server@11.0.0-rc.828(typescript@5.8.3)':
+  '@trpc/server@11.4.4(typescript@5.8.3)':
     dependencies:
       typescript: 5.8.3
 
-  '@trpc/tanstack-react-query@11.0.0-rc.828(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)':
+  '@trpc/tanstack-react-query@11.4.4(@tanstack/react-query@5.84.2(react@19.1.1))(@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.4.4(typescript@5.8.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3)':
     dependencies:
       '@tanstack/react-query': 5.84.2(react@19.1.1)
-      '@trpc/client': 11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.3))(typescript@5.8.3)
-      '@trpc/server': 11.0.0-rc.828(typescript@5.8.3)
+      '@trpc/client': 11.4.4(@trpc/server@11.4.4(typescript@5.8.3))(typescript@5.8.3)
+      '@trpc/server': 11.4.4(typescript@5.8.3)
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       typescript: 5.8.3
@@ -13719,6 +13695,10 @@ snapshots:
   '@types/use-sync-external-store@0.0.6': {}
 
   '@types/uuid@9.0.8': {}
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 22.17.2
 
   '@ungap/structured-clone@1.2.1': {}
 
@@ -14147,8 +14127,8 @@ snapshots:
 
   browserslist@4.25.2:
     dependencies:
-      caniuse-lite: 1.0.30001735
-      electron-to-chromium: 1.5.203
+      caniuse-lite: 1.0.30001733
+      electron-to-chromium: 1.5.199
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.2)
 
@@ -14215,8 +14195,6 @@ snapshots:
   caniuse-lite@1.0.30001703: {}
 
   caniuse-lite@1.0.30001733: {}
-
-  caniuse-lite@1.0.30001735: {}
 
   ccount@2.0.1: {}
 
@@ -14629,7 +14607,7 @@ snapshots:
 
   electron-to-chromium@1.5.187: {}
 
-  electron-to-chromium@1.5.203: {}
+  electron-to-chromium@1.5.199: {}
 
   emoji-regex@10.4.0: {}
 
@@ -16372,7 +16350,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.1)
+      styled-jsx: 5.1.6(react@19.1.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.4.6
       '@next/swc-darwin-x64': 15.4.6
@@ -17616,6 +17594,11 @@ snapshots:
       client-only: 0.0.1
       react: 19.1.0
 
+  styled-jsx@5.1.6(react@19.1.1):
+    dependencies:
+      client-only: 0.0.1
+      react: 19.1.1
+
   sugarss@5.0.0(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
@@ -17696,7 +17679,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.14(webpack@5.99.9):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.29
       jest-worker: 27.5.1
       schema-utils: 4.3.2
       serialize-javascript: 6.0.2
@@ -17705,7 +17688,7 @@ snapshots:
 
   terser@5.43.1:
     dependencies:
-      '@jridgewell/source-map': 0.3.11
+      '@jridgewell/source-map': 0.3.10
       acorn: 8.15.0
       commander: 2.20.3
       source-map-support: 0.5.21
@@ -18277,6 +18260,8 @@ snapshots:
   ws@8.17.1: {}
 
   ws@8.18.2: {}
+
+  ws@8.18.3: {}
 
   xml-name-validator@5.0.0: {}
 

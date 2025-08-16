@@ -1,5 +1,6 @@
 "use client"
 
+import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
 import {
   type Attendance,
@@ -12,8 +13,10 @@ import {
   findActiveMembership,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
-import { useQueries } from "@tanstack/react-query"
-import { differenceInSeconds } from "date-fns"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { useQueries, useQueryClient } from "@tanstack/react-query"
+import { useSubscription } from "@trpc/tanstack-react-query"
+import { differenceInSeconds, isBefore } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -55,7 +58,10 @@ interface AttendanceCardProps {
 
 export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: AttendanceCardProps) => {
   const trpc = useTRPC()
+  const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
+  const queryClient = useQueryClient()
   const [closeToEvent, setCloseToEvent] = useState(false)
+  const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
   const [{ data: attendance, isLoading: attendanceLoading }, { data: punishment, isLoading: punishmentLoading }] =
     useQueries({
       queries: [
@@ -76,6 +82,49 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
         ),
       ],
     })
+
+  useEffect(() => {
+    setAttendanceStatus(getAttendanceStatus(attendance))
+  }, [attendance])
+
+  useSubscription(
+    trpc.event.attendance.onRegisterChange.subscriptionOptions(
+      {
+        attendanceId: attendance?.id ?? "",
+      },
+      {
+        onConnectionStateChange: (state) => {
+          setTRPCSSERegisterChangeConnectionState(state.state)
+        },
+        onData: (attendeeUpdateData) => {
+          // If the attendee is not the current user, we can update the state
+          queryClient.setQueryData(
+            trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
+            (oldData) => {
+              if (!oldData) return oldData
+
+              if (attendeeUpdateData.status === "deregistered") {
+                return {
+                  ...oldData,
+                  attendees: oldData.attendees.filter((a) => a.userId !== attendeeUpdateData.attendee.userId),
+                }
+              }
+
+              if (oldData.attendees.some((a) => a.userId === attendeeUpdateData.attendee.userId)) {
+                console.warn("Attendee already exists in the list, not updating state.")
+                return oldData
+              }
+
+              return {
+                ...oldData,
+                attendees: [...oldData.attendees, attendeeUpdateData.attendee],
+              }
+            }
+          )
+        },
+      }
+    )
+  )
 
   const attendee = user && attendance.attendees?.find((attendee) => attendee.userId === user.id)
 
@@ -121,8 +170,6 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
-  const attendanceStatus = getAttendanceStatus(attendance)
-
   const registerForAttendance = async () => attendablePool && registerMutation.mutate({ attendanceId: attendance.id })
 
   const deregisterForAttendance = () =>
@@ -137,6 +184,12 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
 
   const queuePosition = getQueuePosition(attendee, attendance.attendees, attendablePool)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
+
+  if (isBefore(getCurrentUTC(), attendance.registerStart)) {
+    setTimeout(() => {
+      setAttendanceStatus("Open")
+    }, attendance.registerStart.getTime() - new Date().getTime())
+  }
 
   return (
     <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-900 sm:dark:bg-stone-900 sm:p-4 sm:rounded-xl">

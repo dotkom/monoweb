@@ -1,3 +1,4 @@
+import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
@@ -160,6 +161,7 @@ export interface AttendanceService {
 }
 
 export function getAttendanceService(
+  eventEmitter: EventEmitter,
   attendanceRepository: AttendanceRepository,
   taskSchedulingService: TaskSchedulingService,
   userService: UserService,
@@ -377,6 +379,9 @@ export function getAttendanceService(
           reservationTime
         )
       }
+
+      eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
+
       return attendee
     },
     async updateAttendeeById(handle, attendeeId, data) {
@@ -432,6 +437,8 @@ export function getAttendanceService(
         await paymentService.cancel(attendee.paymentId)
       }
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
+      eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
+
       // If the attendee was reserved, we find a replacement for them in the pool.
       if (attendee.reserved) {
         const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
