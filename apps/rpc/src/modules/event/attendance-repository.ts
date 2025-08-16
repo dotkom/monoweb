@@ -21,6 +21,7 @@ import { parseOrReport } from "../../invariant"
 export interface AttendanceRepository {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
   findAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
+  findAttendancesByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Attendance[]>
   findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   findAttendanceByAttendeePaymentId(handle: DBHandle, attendeePaymentId: string): Promise<Attendance | null>
@@ -90,6 +91,28 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
       return parseOrReport(AttendanceSchema.nullable(), attendance)
+    },
+    async findAttendancesByIds(handle, attendanceIds) {
+      const attendances = await handle.attendance.findMany({
+        where: {
+          id: {
+            in: attendanceIds,
+          },
+        },
+        include: {
+          pools: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      return attendances.map((attendance) => parseOrReport(AttendanceSchema, attendance))
     },
     async findAttendanceByPoolId(handle, attendancePoolId) {
       const attendance = await handle.attendance.findFirst({

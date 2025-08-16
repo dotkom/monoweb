@@ -2,17 +2,17 @@
 
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use } from "react"
-import { useEventDetailsGetQuery } from "../queries"
+import { useEventWithAttendancesGetQuery } from "../queries"
 import { EventContext } from "./provider"
 
-export default function EventDetailsLayout({
+export default function EventWithAttendancesLayout({
   children,
   params,
 }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
   const { id } = use(params)
-  const { data, isLoading } = useEventDetailsGetQuery(id)
+  const { data, isLoading } = useEventWithAttendancesGetQuery(id)
 
-  if (data === undefined) {
+  if (data === undefined || isLoading) {
     return <Loader />
   }
 

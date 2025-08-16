@@ -1,7 +1,7 @@
-import type { Event } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import type { CalendarData, EventDisplayProps, Week } from "./types"
 
-export function getCalendarArray(year: number, month: number, events: Event[]): CalendarData {
+export function getCalendarArray(year: number, month: number, events: EventWithAttendance[]): CalendarData {
   const firstDayOfMonth = new Date(year, month, 1)
   const lastDayOfMonth = new Date(year, month + 1, 0)
 
@@ -34,14 +34,14 @@ export function getCalendarArray(year: number, month: number, events: Event[]): 
   for (let i = 0; i < days.length; i += 7) {
     const week: Week = {
       dates: days.slice(i, i + 7),
-      events: [],
+      eventDetails: [],
     }
 
     const completedEvents: string[] = []
     const slotMatrix: (number | null)[][] = []
 
     for (const [dayIndex, day] of week.dates.entries()) {
-      for (const event of events) {
+      for (const { event, attendance } of events) {
         if (!completedEvents.includes(event.id)) {
           const dayEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 23, 59, 59)
 
@@ -69,7 +69,7 @@ export function getCalendarArray(year: number, month: number, events: Event[]): 
             while (!placed) {
               if (row >= slotMatrix.length) {
                 slotMatrix.push(Array(7).fill(null))
-                week.events.push([])
+                week.eventDetails.push([])
               }
 
               let canPlaceEvent = true
@@ -87,7 +87,7 @@ export function getCalendarArray(year: number, month: number, events: Event[]): 
                 for (let i = eventDisplayProps.startCol; i < eventDisplayProps.startCol + eventDisplayProps.span; i++) {
                   slotMatrix[row][i] = 1
                 }
-                week.events[row].push({ ...event, eventDisplayProps })
+                week.eventDetails[row].push({ event, attendance, eventDisplayProps })
                 completedEvents.push(event.id)
                 placed = true
               } else {

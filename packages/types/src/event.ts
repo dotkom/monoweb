@@ -1,5 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
+import { AttendanceSchema } from "./attendance"
 import { CompanySchema } from "./company"
 import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
 import { GroupSchema } from "./group"
@@ -52,3 +53,9 @@ export const EventFilterQuerySchema = z
     byStatus: buildAnyOfFilter(EventStatusSchema).default(["PUBLIC"]),
   })
   .partial()
+
+export const EventWithAttendanceSchema = z.object({
+  event: EventSchema,
+  attendance: AttendanceSchema.nullable(),
+})
+export type EventWithAttendance = z.infer<typeof EventWithAttendanceSchema>

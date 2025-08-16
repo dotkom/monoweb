@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import type { Event } from "@dotkomonline/types"
 import {
   Collapsible,
@@ -58,7 +59,7 @@ export const Events = () => {
       return currentEvents
     }
 
-    return currentEvents.filter((event) => !isPast(event.end))
+    return currentEvents.filter(({ event }) => !isPast(event.end))
   }, [data, showPastEvents])
 
   if (!queryEnabled) {
@@ -87,12 +88,12 @@ export const Events = () => {
   }
 
   const eventsByDate = events
-    .toSorted((a, b) => compareAsc(a.start, b.start))
+    .toSorted((a, b) => compareAsc(a.event.start, b.event.start))
     .reduce((acc, eventDetail) => {
-      const month = formatDate(eventDetail.start, "MMMM")
-      const date = getDate(eventDetail.start)
+      const month = formatDate(eventDetail.event.start, "MMMM")
+      const date = getDate(eventDetail.event.start)
 
-      const eventsInMonth = acc.get(month) || new Map<number, Event[]>()
+      const eventsInMonth = acc.get(month) || new Map<number, EventWithAttendance[]>()
       const eventsInDate = eventsInMonth.get(date) || []
 
       eventsInDate.push(eventDetail)
@@ -100,7 +101,7 @@ export const Events = () => {
       acc.set(month, eventsInMonth)
 
       return acc
-    }, new Map<string, Map<number, Event[]>>())
+    }, new Map<string, Map<number, EventWithAttendance[]>>())
 
   return (
     <div className="bg-orange-100 min-h-[500px] py-20 w-full">
@@ -123,7 +124,7 @@ export const Events = () => {
 
         <div ref={monthRef} className="space-y-18">
           {[...eventsByDate.entries()].map(([month, eventsInMonth]) => {
-            const lastEvent = [...eventsInMonth.values()].flat().at(-1)
+            const lastEvent = [...eventsInMonth.values()].flat().at(-1)?.event
             const past = lastEvent && isPast(lastEvent.end)
 
             return (
@@ -150,8 +151,8 @@ export const Events = () => {
                 </Text>
 
                 <div ref={dayRef} className="space-y-12 text-orange-900">
-                  {[...eventsInMonth.entries()].map(([date, events]) => {
-                    const lastEvent = events.at(-1)
+                  {[...eventsInMonth.entries()].map(([date, eventDetails]) => {
+                    const lastEvent = eventDetails.at(-1)?.event
                     const lastEventInPast = lastEvent ? isPast(lastEvent.end) : false
 
                     return (
@@ -162,10 +163,12 @@ export const Events = () => {
                             "max-sm:relative w-fit max-sm:left-1/4 sm:w-1/4 sm:pr-12 sm:text-right mb-3 sm:-mb-0.5"
                           )}
                         >
-                          {events[0] ? formatDate(new Date(events[0]?.start), "EEEE dd.") : "Ukjent ukedag"}
+                          {eventDetails[0]
+                            ? formatDate(new Date(eventDetails[0]?.event.start), "EEEE dd.")
+                            : "Ukjent ukedag"}
                         </Text>
 
-                        {events.map((event) => (
+                        {eventDetails.map(({ event, attendance }) => (
                           <EventListItem key={event.id} event={event} lastEventInPast={lastEventInPast} />
                         ))}
                       </div>

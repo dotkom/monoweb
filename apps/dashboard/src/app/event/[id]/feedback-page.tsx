@@ -7,7 +7,7 @@ import { useEventFeedbackFormGetQuery } from "../queries"
 import { useEventContext } from "./provider"
 
 export const FeedbackPage: FC = () => {
-  const event = useEventContext()
+  const { event, attendance } = useEventContext()
   const feedbackFormQuery = useEventFeedbackFormGetQuery(event.id)
   const createMutation = useCreateFeedbackFormMutation()
   const updateMutation = useUpdateFeedbackFormMutation()

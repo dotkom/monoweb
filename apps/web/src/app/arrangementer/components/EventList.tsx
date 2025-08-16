@@ -2,67 +2,122 @@
 
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { Event } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
-import { isPast } from "date-fns"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { differenceInDays, isFuture } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 
-const mapEventDetailToItem = (event: Event) => {
-  // const attendeeStatus = attendanceStatuses?.get(event.attendanceId ?? "") ?? null
-  //
-  return <EventListItem event={event} attendeeStatus={null} key={event.id} />
-}
+const OPENING_SOON_DAYS_THRESHOLD = 3 as const
 
 interface EventListProps {
-  events: Event[]
-  fetchNextPage?(): void
+  futureEventWithAttendances: EventWithAttendance[]
+  pastEventWithAttendances: EventWithAttendance[]
+  onLoadMore?(): void
 }
 
-export const EventList: FC<EventListProps> = (props: EventListProps) => {
-  const lastFuture = props.events.findLastIndex((event) => !isPast(event.end))
-  const futureEvents = props.events.slice(0, lastFuture + 1)
-  const pastEvents = props.events.slice(lastFuture + 1)
+export const EventList: FC<EventListProps> = ({
+  futureEventWithAttendances: futureEvents,
+  pastEventWithAttendances: pastEvents,
+  onLoadMore,
+}: EventListProps) => {
+  const now = getCurrentUTC()
   const session = useSession()
 
-  const futureEventItems = futureEvents.map((eventDetail) => mapEventDetailToItem(eventDetail))
-  const pastEventItems = pastEvents.map((eventDetail) => mapEventDetailToItem(eventDetail))
+  const groupedEvents = Object.groupBy(futureEvents, (event) => {
+    if (event.attendance?.attendees.some((a) => a.user.id === session?.sub)) {
+      return "yourEvents"
+    }
+
+    if (event.attendance && !isFuture(event.attendance.registerStart) && isFuture(event.attendance.registerEnd)) {
+      return "openEvents"
+    }
+
+    if (
+      event.attendance?.registerStart &&
+      differenceInDays(event.attendance.registerStart, now) <= OPENING_SOON_DAYS_THRESHOLD
+    ) {
+      return "openingSoonEvents"
+    }
+
+    return "otherFutureEvents"
+  })
+
+  const { yourEvents = [], openEvents = [], openingSoonEvents = [], otherFutureEvents = [] } = groupedEvents
 
   const loaderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        props.fetchNextPage?.()
+        onLoadMore?.()
       }
     })
 
     if (loaderRef.current) observer.observe(loaderRef.current)
     return () => observer.disconnect()
-  }, [props.fetchNextPage])
+  }, [onLoadMore])
 
-  if (props.events.length === 0) {
+  if (futureEvents.length === 0 && pastEvents.length === 0) {
     return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
   }
 
   return (
     <section className="w-full flex flex-col gap-2">
-      {futureEventItems}
-
-      {futureEventItems.length > 0 && pastEventItems.length > 0 && (
-        <div className="w-full flex flex-row items-center gap-2 sm:-my-1">
-          <span className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
-          <Text className="text-gray-400 dark:text-stone-700 text-xs uppercase tracking-widest font-medium select-none">
-            Tidligere arrangementer
-          </Text>
-          <span className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
-        </div>
+      {yourEvents.length > 0 && (
+        <>
+          <Divider text="Dine arrangementer" />
+          {yourEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+          ))}
+        </>
       )}
-
-      {pastEventItems.length > 0 && pastEventItems}
+      {openEvents.length > 0 && (
+        <>
+          <Divider text="Åpne arrangementer" />
+          {openEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+          ))}
+        </>
+      )}
+      {openingSoonEvents.length > 0 && (
+        <>
+          <Divider text="Åpner snart" />
+          {openingSoonEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+          ))}
+        </>
+      )}
+      {otherFutureEvents.length > 0 && (
+        <>
+          <Divider text="Kommende arrangementer" />
+          {otherFutureEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+          ))}
+        </>
+      )}
+      {pastEvents.length > 0 && (
+        <>
+          <Divider text="Tidligere arrangementer" />
+          {pastEvents.map(({ event, attendance }) => (
+            <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+          ))}
+        </>
+      )}
       <div ref={loaderRef} />
     </section>
   )
 }
+
+const Divider = ({ text }: { text: string }) => (
+  <div className="w-full flex flex-row items-center gap-2 sm:-my-1">
+    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
+    <Text className="text-gray-400 dark:text-stone-700 text-xs uppercase tracking-widest font-medium select-none">
+      {text}
+    </Text>
+    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
+  </div>
+)
 
 export const EventListSkeleton = () => {
   return (

@@ -8,21 +8,18 @@ import {
   useRefundAttendeeMutation,
   useUpdateAttendancePaymentMutation,
 } from "../mutations"
-import { useAttendanceGetQuery } from "../queries"
 import { useEventContext } from "./provider"
 
 export const PaymentPage: FC = () => {
-  const { attendanceId } = useEventContext()
+  const { attendance } = useEventContext()
 
-  if (!attendanceId) {
+  if (!attendance) {
     return (
       <Box>
         <Title>Lag en påmelding for å opprette betaling</Title>
       </Box>
     )
   }
-
-  const { data: attendance } = useAttendanceGetQuery(attendanceId)
 
   const updateAttendancePayment = useUpdateAttendancePaymentMutation()
   const reservedAttendees = useMemo(
@@ -37,7 +34,7 @@ export const PaymentPage: FC = () => {
   const createAttendeePaymentMutation = useCreateAttendeePaymentAttendeeMutation()
 
   const createPayment = async () => {
-    if (!attendanceId) {
+    if (!attendance) {
       throw new Error("Tried to create payment without an attendance")
     }
 
@@ -46,11 +43,11 @@ export const PaymentPage: FC = () => {
       return
     }
 
-    updateAttendancePayment.mutate({ id: attendanceId, price: newPrice })
+    updateAttendancePayment.mutate({ id: attendance.id, price: newPrice })
   }
 
   const removePayment = async () => {
-    updateAttendancePayment.mutate({ id: attendanceId, price: null })
+    updateAttendancePayment.mutate({ id: attendance.id, price: null })
   }
 
   const columnHelper = createColumnHelper<Attendee>()

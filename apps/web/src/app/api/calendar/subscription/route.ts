@@ -24,11 +24,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     if (sub === undefined) {
       throw new Error("subject was not present in signed token")
     }
-    const events = await server.event.allByAttendingUserId.query({
+    const { items: eventDetails } = await server.event.allByAttendingUserId.query({
       id: sub,
     })
     const calendar = ical({ name: "Online Linjeforening Arrangementer", prodId: "online.ntnu.no" })
-    for (const event of events) {
+    for (const { event } of eventDetails) {
       calendar.createEvent(createCalendarEvent(event))
     }
     return new NextResponse(calendar.toString(), {

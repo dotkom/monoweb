@@ -1,4 +1,3 @@
-import { useAttendanceGetQuery } from "@/app/event/queries"
 import { useTRPC } from "@/lib/trpc"
 import type { Attendance } from "@dotkomonline/types"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
@@ -12,13 +11,12 @@ import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutati
 import { useEventContext } from "./provider"
 
 export const SelectionsPage: FC = () => {
-  const event = useEventContext()
-  const attendance = useAttendanceGetQuery(event.attendanceId as string, event.attendanceId !== null)
-  if (event.attendanceId === null || attendance.isLoading || attendance.data === undefined) {
+  const { event, attendance } = useEventContext()
+  if (!attendance) {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <SelectionsPageDetail attendance={attendance.data} />
+  return <SelectionsPageDetail attendance={attendance} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
