@@ -127,6 +127,7 @@ export const useQueryGenericMutationNotification = ({ method }: Props) => {
         message: `Feilmelding: ${error.message}`,
         id,
         method: "update",
+        autoClose: false,
       }),
   }
 }
