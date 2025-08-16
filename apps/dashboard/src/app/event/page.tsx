@@ -99,7 +99,7 @@ export default function EventPage() {
         header: () => "Type",
         cell: (info) => mapEventTypeToLabel(info.getValue()),
       }),
-      columnHelper.accessor("status", {
+      columnHelper.accessor("event.status", {
         header: () => "Status",
         cell: (info) => mapEventStatusToLabel(info.getValue()),
       }),
