@@ -1,4 +1,4 @@
-import { useCountdown } from "@/utils/utils"
+import { useCountdown } from "@/utils/use-countdown"
 import type { Attendance, AttendancePool, Attendee, Punishment } from "@dotkomonline/types"
 import { Icon, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { formatDate, formatDistanceToNowStrict, interval, isFuture, subMinutes } from "date-fns"

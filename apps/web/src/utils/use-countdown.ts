@@ -1,7 +1,7 @@
 import { addSeconds, differenceInSeconds, intervalToDuration, isPast, secondsToMilliseconds } from "date-fns"
 import { useEffect, useState } from "react"
 
-export function zeroPad(n: number, digits = 2) {
+function zeroPad(n: number, digits = 2) {
   return n.toString().padStart(digits, "0")
 }
 
