@@ -131,7 +131,7 @@ export interface AttendanceService {
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
 
-  updateAttendancePaymentProduct(handle: DBHandle, attendance: Attendance): Promise<void>
+  updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<void>
   deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
   executeChargeAttendancePaymentsTask(
@@ -487,15 +487,19 @@ export function getAttendanceService(
       await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
     },
     async updateAttendancePaymentPrice(handle, attendanceId, price) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
-      if (price === null) {
+      if (price !== null && price < 0) {
+        throw new AttendanceValidationError(`Tried to set negative price (${price}) for Attendance(ID=${attendanceId})`)
+      }
+
+      if (price === null || price === 0) {
         await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, null)
       } else {
         await paymentProductsService.updatePrice(attendanceId, price)
       }
-      await this.updateAttendancePaymentProduct(handle, attendance)
+      await this.updateAttendancePaymentProduct(handle, attendanceId)
     },
-    async updateAttendancePaymentProduct(handle, attendance) {
+    async updateAttendancePaymentProduct(handle, attendanceId) {
+      const attendance = await this.getAttendanceById(handle, attendanceId)
       if (!attendance.attendancePrice) {
         return
       }
