@@ -494,13 +494,13 @@ export function getAttendanceService(
       if (price !== null && price < 0) {
         throw new AttendanceValidationError(`Tried to set negative price (${price}) for Attendance(ID=${attendanceId})`)
       }
+      await this.updateAttendancePaymentProduct(handle, attendanceId)
 
       if (price === null || price === 0) {
         await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, null)
       } else {
         await paymentProductsService.updatePrice(attendanceId, price)
       }
-      await this.updateAttendancePaymentProduct(handle, attendanceId)
     },
     async updateAttendancePaymentProduct(handle, attendanceId) {
       const attendance = await this.getAttendanceById(handle, attendanceId)

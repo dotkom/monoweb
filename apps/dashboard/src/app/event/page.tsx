@@ -1,7 +1,8 @@
 "use client"
 
 import { GenericTable } from "@/components/GenericTable"
-import type { EventFilterQuery, EventType, EventWithAttendance } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventFilterQuery, EventStatus, EventType } from "@dotkomonline/types"
 import {
   ActionIcon,
   ActionIconGroup,
@@ -39,6 +40,19 @@ const mapEventTypeToLabel = (eventType: EventType) => {
       return "Sosialt"
     case "WELCOME":
       return "Fadderuke"
+    default:
+      return "Ukjent"
+  }
+}
+
+const mapEventStatusToLabel = (status: EventStatus) => {
+  switch (status) {
+    case "PUBLIC":
+      return "Publisert"
+    case "DRAFT":
+      return "Utkast"
+    case "DELETED":
+      return "Slettet"
     default:
       return "Ukjent"
   }
@@ -84,6 +98,10 @@ export default function EventPage() {
       columnHelper.accessor("event.type", {
         header: () => "Type",
         cell: (info) => mapEventTypeToLabel(info.getValue()),
+      }),
+      columnHelper.accessor("status", {
+        header: () => "Status",
+        cell: (info) => mapEventStatusToLabel(info.getValue()),
       }),
     ],
     [columnHelper]

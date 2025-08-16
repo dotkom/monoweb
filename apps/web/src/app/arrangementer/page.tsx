@@ -17,6 +17,7 @@ const EventPage = () => {
   const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
     filter: {
       ...filter,
+
       byEndDate: {
         max: null,
         min: now,
@@ -34,10 +35,14 @@ const EventPage = () => {
   const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
     filter: {
       ...filter,
+
       byEndDate: {
         max: now,
         min: null,
       },
+
+      excludingOrganizingGroup: ["velkom"],
+      orderBy: "desc",
     },
   })
 
