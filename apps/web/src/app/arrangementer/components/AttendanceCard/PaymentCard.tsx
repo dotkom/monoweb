@@ -3,9 +3,8 @@
 import { useCountdown } from "@/utils/use-countdown"
 import type { Attendance, Attendee } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
-import { intervalToDuration } from "date-fns"
 import Link from "next/link"
-import { type HTMLProps, type PropsWithChildren, useEffect, useState } from "react"
+import type { HTMLProps, PropsWithChildren } from "react"
 
 const GenericPaymentCard = ({ children, disabled, className }: PropsWithChildren<HTMLProps<HTMLDivElement>>) => (
   <div
