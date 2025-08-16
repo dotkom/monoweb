@@ -84,7 +84,11 @@ export function getEventRepository(): EventRepository {
         where: {
           AND: [
             {
-              status: { not: "DELETED" },
+              status: query.byStatus?.length
+                ? {
+                    in: query.byStatus,
+                  }
+                : "PUBLIC",
               start: {
                 gte: query.byStartDate?.min ?? undefined,
                 lte: query.byStartDate?.max ?? undefined,
