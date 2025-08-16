@@ -51,6 +51,9 @@
     },
     "@types/react-dom": {
       "optional": true
+    },
+    "next": {
+      "optional": true
     }
   },
   "devDependencies": {
