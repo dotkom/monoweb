@@ -47,15 +47,15 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           "flex flex-row gap-1 items-center",
           attendanceStatus === "NotOpened" && "text-gray-500 dark:text-stone-500",
           (justAttendanceClosed || isReserved || isUnreserved) && "px-1 py-0.5 rounded-md",
-          justAttendanceClosed && ["bg-gray-100 dark:bg-stone-800", "text-gray-700 dark:text-stone-300"],
-          isReserved &&
-            (inPast
-              ? ["bg-green-50 dark:bg-green-950/50", "text-green-500/50 dark:text-green-800"]
-              : ["bg-green-100 dark:bg-green-950", "text-green-700 dark:text-green-300"]),
-          isUnreserved &&
-            (inPast
-              ? ["bg-yellow-50 dark:bg-yellow-950/50", "text-yellow-500/50 dark:text-yellow-800"]
-              : ["bg-yellow-100 dark:bg-yellow-950", "text-yellow-700 dark:text-yellow-300"])
+          justAttendanceClosed && "bg-gray-100 dark:bg-stone-800 text-gray-700 dark:text-stone-300",
+          isReserved && [
+            "text-green-700 dark:text-green-300",
+            !inPast ? "bg-green-100 dark:bg-green-950" : "bg-gray-100 dark:bg-stone-800",
+          ],
+          isUnreserved && [
+            "text-yellow-700 dark:text-yellow-300",
+            !inPast ? "bg-yellow-100 dark:bg-yellow-950" : "bg-gray-100 dark:bg-stone-800",
+          ]
         )}
       >
         <Text className="text-xs md:text-sm">
@@ -63,7 +63,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           {hasCapacity && `/${capacity}`}
         </Text>
 
-        {justAttendanceClosed ? (
+        {attendanceStatus === "Closed" ? (
           <Icon icon="tabler:lock" className="text-sm" />
         ) : isReserved ? (
           <Icon icon="tabler:check" className="text-sm" />
