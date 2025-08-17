@@ -19,7 +19,7 @@ export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
   return { events: useMemo(() => data?.items ?? [], [data]), ...query }
 }
 
-export const useEventDetailsGetQuery = (id: EventId) => {
+export const useEventWithAttendancesGetQuery = (id: EventId) => {
   const trpc = useTRPC()
   return useQuery(trpc.event.get.queryOptions(id))
 }

@@ -21,14 +21,14 @@ const GenericPaymentCard = ({ children, disabled, className }: PropsWithChildren
   </div>
 )
 
-export const PaymentCard = ({ attendance, attendee }: { attendance: Attendance; attendee?: Attendee }) => {
+export const PaymentCard = ({ attendance, attendee }: { attendance: Attendance; attendee: Attendee | null }) => {
   const countdownText = useCountdown(attendee?.paymentDeadline ?? null)
 
   if (!attendance.attendancePrice) {
     return null
   }
 
-  if (attendee === undefined || !attendee.reserved) {
+  if (!attendee?.reserved) {
     return <GenericPaymentCard disabled>Pris: {attendance.attendancePrice} kr</GenericPaymentCard>
   }
 

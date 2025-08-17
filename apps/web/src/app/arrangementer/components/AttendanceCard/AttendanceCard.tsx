@@ -32,9 +32,9 @@ import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
 const getQueuePosition = (
-  attendee: Attendee | undefined,
-  attendees: Attendee[] | undefined,
-  attendablePool: AttendancePool | undefined
+  attendee: Attendee | null,
+  attendees: Attendee[] | null,
+  attendablePool: AttendancePool | null
 ) => {
   if (!attendee || !attendees || !attendablePool) {
     return null
@@ -53,7 +53,7 @@ const getQueuePosition = (
 interface AttendanceCardProps {
   initialAttendance: Attendance
   initialPunishment: Punishment | null
-  user?: User
+  user: User | null
 }
 
 export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: AttendanceCardProps) => {
@@ -126,7 +126,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
     )
   )
 
-  const attendee = user && attendance.attendees?.find((attendee) => attendee.userId === user.id)
+  const attendee = user && (attendance.attendees?.find((attendee) => attendee.userId === user.id) ?? null)
 
   useEffect(() => {
     // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
@@ -179,10 +179,10 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
 
   const isLoggedIn = Boolean(user)
   const isAttending = Boolean(attendee)
-  const hasMembership = user !== undefined && findActiveMembership(user) !== null
+  const hasMembership = user !== null && findActiveMembership(user) !== null
   const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
 
-  const queuePosition = getQueuePosition(attendee, attendance.attendees, attendablePool)
+  const queuePosition = getQueuePosition(attendee, attendance.attendees, attendablePool ?? null)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   if (isBefore(getCurrentUTC(), attendance.registerStart)) {

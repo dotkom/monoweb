@@ -5,7 +5,7 @@ import { useUpdateEventMutation } from "../mutations"
 import { useEventContext } from "./provider"
 
 export const EventEditCard: FC = () => {
-  const event = useEventContext()
+  const { event, attendance } = useEventContext()
   const edit = useUpdateEventMutation()
   const { groups } = useGroupAllQuery()
 

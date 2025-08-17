@@ -1,5 +1,5 @@
 import { GenericTable } from "@/components/GenericTable"
-import type { Event } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import { Anchor, Box, Text, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -11,10 +11,10 @@ export const CompanyEventsPage: FC = () => {
   const { company } = useCompanyDetailsContext()
   const { events } = useCompanyEventsAllQuery(company.id)
 
-  const columnHelper = createColumnHelper<Event>()
+  const columnHelper = createColumnHelper<EventWithAttendance>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((eventCompany) => eventCompany, {
+      columnHelper.accessor(({ event }) => event, {
         id: "companyEvent",
         header: () => "Navn",
         cell: (info) => (
@@ -26,7 +26,7 @@ export const CompanyEventsPage: FC = () => {
     ],
     [columnHelper]
   )
-  const table = useReactTable<Event>({
+  const table = useReactTable<EventWithAttendance>({
     data: events,
     columns,
     getCoreRowModel: getCoreRowModel(),
