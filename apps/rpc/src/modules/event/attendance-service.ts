@@ -490,12 +490,18 @@ export function getAttendanceService(
       if (price !== null && price < 0) {
         throw new AttendanceValidationError(`Tried to set negative price (${price}) for Attendance(ID=${attendanceId})`)
       }
-      await this.updateAttendancePaymentProduct(handle, attendanceId)
+      const attendance = await this.getAttendanceById(handle, attendanceId)
+      const isExistingProduct = attendance.attendancePrice !== null
 
-      if (price === null || price === 0) {
-        await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, null)
+      await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, price)
+      // If we have set a price in the past, we just update it, otherwise we need to make a new Stripe product.
+      if (isExistingProduct) {
+        // TODO: Is this switch really needed? Maybe it should delete the product if the price is null?
+        if (price !== null) {
+          await paymentProductsService.updatePrice(attendanceId, price)
+        }
       } else {
-        await paymentProductsService.updatePrice(attendanceId, price)
+        await this.updateAttendancePaymentProduct(handle, attendanceId)
       }
     },
     async updateAttendancePaymentProduct(handle, attendanceId) {
@@ -519,7 +525,6 @@ export function getAttendanceService(
         price: attendance.attendancePrice,
         url,
       })
-      await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, attendance.attendancePrice)
       await taskSchedulingService.scheduleAt(
         handle,
         tasks.CHARGE_ATTENDANCE_PAYMENTS,
