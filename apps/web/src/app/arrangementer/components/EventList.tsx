@@ -5,7 +5,7 @@ import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { differenceInDays, isFuture } from "date-fns"
+import { interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 
 const OPENING_SOON_DAYS_THRESHOLD = 3 as const
@@ -25,18 +25,30 @@ export const EventList: FC<EventListProps> = ({
   const session = useSession()
 
   const groupedEvents = Object.groupBy(futureEvents, (event) => {
-    if (event.attendance?.attendees.some((a) => a.user.id === session?.sub)) {
+    if (!event.attendance) {
+      return "otherFutureEvents"
+    }
+
+    if (event.attendance.attendees.some((a) => a.user.id === session?.sub)) {
       return "yourEvents"
     }
 
-    if (event.attendance && !isFuture(event.attendance.registerStart) && isFuture(event.attendance.registerEnd)) {
+    if (event.attendance.registerStart >= event.attendance.registerEnd) {
+      return "otherFutureEvents"
+    }
+
+    const eventOpenInterval = interval(event.attendance.registerStart, event.attendance.registerEnd)
+    // Intervals are inclusive, so we subtract 1 millisecond to make it exclusive
+    const openingSoonInterval = interval(
+      subDays(event.attendance.registerStart, OPENING_SOON_DAYS_THRESHOLD),
+      subMilliseconds(event.attendance.registerStart, 1)
+    )
+
+    if (isWithinInterval(now, eventOpenInterval)) {
       return "openEvents"
     }
 
-    if (
-      event.attendance?.registerStart &&
-      differenceInDays(event.attendance.registerStart, now) <= OPENING_SOON_DAYS_THRESHOLD
-    ) {
+    if (isWithinInterval(now, openingSoonInterval)) {
       return "openingSoonEvents"
     }
 

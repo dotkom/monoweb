@@ -55,11 +55,13 @@ const EventPage = () => {
       <div className="flex flex-col gap-4">
         <EventsViewToggle active="list" />
         <EventFilters onChange={setFilter} />
-        <EventList
-          futureEventWithAttendances={futureEventWithAttendances}
-          pastEventWithAttendances={pastEventWithAttendances}
-          onLoadMore={fetchNextPage}
-        />
+        {!isLoading && (
+          <EventList
+            futureEventWithAttendances={futureEventWithAttendances}
+            pastEventWithAttendances={pastEventWithAttendances}
+            onLoadMore={fetchNextPage}
+          />
+        )}
         {isLoading && <EventListSkeleton />}
       </div>
     </div>
