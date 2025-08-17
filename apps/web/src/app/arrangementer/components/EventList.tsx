@@ -29,7 +29,7 @@ export const EventList: FC<EventListProps> = ({
       return "otherFutureEvents"
     }
 
-    if (event.attendance?.attendees.some((a) => a.user.id === session?.sub)) {
+    if (event.attendance.attendees.some((a) => a.user.id === session?.sub)) {
       return "yourEvents"
     }
 
