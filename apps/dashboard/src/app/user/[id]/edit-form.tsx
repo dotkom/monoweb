@@ -1,4 +1,5 @@
 import { useFormBuilder } from "@/components/forms/Form"
+import { createImageInput } from "@/components/forms/ImageInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { type UserWrite, UserWriteSchema } from "@dotkomonline/types"
@@ -16,9 +17,17 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
     defaultValues,
     label,
     fields: {
+      profileSlug: createTextInput({
+        label: "Brukernavn",
+        placeholder: "Ola",
+      }),
       name: createTextInput({
         label: "Navn",
         placeholder: "Ola Nordmann",
+      }),
+      email: createTextInput({
+        label: "E-post",
+        placeholder: "ola.nordmann@gmail.com",
       }),
       phone: createTextInput({
         label: "Telefon",
@@ -33,9 +42,16 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
           { label: "Ikke oppgitt", value: "Ikke oppgitt" },
         ],
       }),
+      biography: createTextInput({
+        label: "Biografi",
+        placeholder: "Skriv noe om brukeren...",
+      }),
       dietaryRestrictions: createTextInput({
         label: "Allergier",
         placeholder: "Melk, nøtter, gluten",
+      }),
+      imageUrl: createImageInput({
+        label: "Profilbilde",
       }),
     },
   })
