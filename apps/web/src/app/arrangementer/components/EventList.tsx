@@ -8,7 +8,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 
-const OPENING_SOON_DAYS_THRESHOLD = 3 as const
+const OPENING_SOON_DAYS_THRESHOLD = 7 as const
 
 interface EventListProps {
   futureEventWithAttendances: EventWithAttendance[]
