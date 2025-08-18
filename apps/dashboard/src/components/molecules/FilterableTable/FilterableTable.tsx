@@ -40,7 +40,7 @@ export function FilterableTable<T>({ tableOptions, filters }: FilterableTablePro
 
   return (
     <Card p={0}>
-      <Group mb="md">
+      <Group mb="xs" gap="xs">
         <TextInput placeholder="Søk..." value={globalFilter} onChange={(e) => setGlobalFilter(e.currentTarget.value)} />
         <MultiSelect
           placeholder="Velg filter"
