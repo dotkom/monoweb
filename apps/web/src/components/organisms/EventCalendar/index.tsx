@@ -52,18 +52,18 @@ function getColSpanClass(span: number) {
 function getEventTypeGuide(events: Event[]) {
   const eventTypeConfig = {
     SOCIAL: { color: "bg-green-400 dark:bg-green-400", label: "Sosialt" },
-    ACADEMIC: { color: "bg-red-400 dark:bg-red-400", label: "Kurs" },
+    ACADEMIC: { color: "bg-blue-400 dark:bg-blue-400", label: "Kurs" },
     COMPANY: {
-      color: "bg-blue-400 dark:bg-blue-400",
+      color: "bg-red-400 dark:bg-red-400",
       label: "Bedriftsarrangement",
     },
     WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
-    OTHER: { color: "bg-purple-400 dark:bg-purple-400", label: "Annet" },
+    OTHER: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Annet" },
     GENERAL_ASSEMBLY: {
-      color: "bg-purple-400 dark:bg-purple-400",
+      color: "bg-yellow-400 dark:bg-yellow-400",
       label: "Generalforsamling",
     },
-    INTERNAL: { color: "bg-purple-400 dark:bg-purple-400", label: "Internt" },
+    INTERNAL: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Internt" },
   }
 
   const presentTypes = new Set(events.map((event) => event.type))
@@ -83,7 +83,7 @@ interface CalendarProps {
 }
 
 export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
-  const [session, eventResult] = await Promise.all([
+  const [session, eventDetailsResult] = await Promise.all([
     auth.getServerSession(),
     server.event.all.query({
       filter: {
@@ -96,13 +96,11 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
     }),
   ])
 
-  const events = eventResult.items ?? []
-
-  const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as string[]
+  const eventDetails = eventDetailsResult.items ?? []
   const userId = session?.sub
 
-  const cal = getCalendarArray(year, month, events)
-  const eventTypeGuideItems = getEventTypeGuide(events)
+  const cal = getCalendarArray(year, month, eventDetails)
+  const eventTypeGuideItems = getEventTypeGuide(eventDetails.map(({ event }) => event))
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
   const months = [
@@ -208,20 +206,21 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           </div>
 
           <div className="relative pt-10 pb-1">
-            {week.events.map((row, rowIndex) => (
+            {week.eventDetails.map((row, rowIndex) => (
               <div
                 className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
                 key={`week-${getWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
-                {row.map(({ eventDisplayProps, ...event }) => {
-                  // const attendeeStatus = attendeeStatuses?.get(event.attendanceId ?? "") || null
+                {row.map(({ event, attendance, eventDisplayProps }) => {
+                  const reservedStatus =
+                    attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
                   return (
                     <EventCalendarItem
                       key={event.id}
-                      event={event}
-                      attendeeStatus={null}
+                      eventDetail={{ event, attendance }}
+                      reservedStatus={reservedStatus}
                       className={cn(
                         getColStartClass(eventDisplayProps.startCol + 2),
                         getColSpanClass(eventDisplayProps.span),

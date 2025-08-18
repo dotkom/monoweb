@@ -1,7 +1,10 @@
+"use client"
+
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { auth } from "@/auth"
+import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { server } from "@/utils/trpc/server"
+import { useTRPC } from "@/utils/trpc/client"
+import { useSession } from "@dotkomonline/oauth2/react"
 import {
   type Membership,
   type VisiblePersonalMarkDetails,
@@ -27,10 +30,17 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { getPunishmentExpiryDate } from "@dotkomonline/utils"
-import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
+import { getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
+import { useQueries, useQuery } from "@tanstack/react-query"
+import {
+  differenceInMilliseconds,
+  formatDate,
+  formatDistanceToNowStrict,
+  isPast,
+  roundToNearestMinutes,
+} from "date-fns"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 
 const AUTHORIZE_WITH_FEIDE =
@@ -157,40 +167,64 @@ const MembershipDisplay = ({
   )
 }
 
-export default async function ProfilePage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ profileSlug: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}) {
-  const { profileSlug: rawProfileSlug } = await params
+export default function ProfilePage() {
+  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
+
+  const { profileSlug: rawProfileSlug } = useParams<{ profileSlug: string }>()
   const profileSlug = decodeURIComponent(rawProfileSlug)
-  const returnedFromFeide = Boolean((await searchParams).returnedFromFeide)
+  const returnedFromFeide = Boolean(useSearchParams().get("returnedFromFeide"))
 
-  const [user, session] = await Promise.all([server.user.findByProfileSlug.query(profileSlug), auth.getServerSession()])
+  const trpc = useTRPC()
 
-  if (!user) {
-    notFound()
-  }
+  const session = useSession()
+  const { data: user, isLoading: userLoading } = useQuery(trpc.user.findByProfileSlug.queryOptions(profileSlug))
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
   const isLoggedIn = Boolean(session)
-  const isUser = user.id === session?.sub
+  const isUser = user ? user.id === session?.sub : false
 
-  const [groups, events, marks] = await Promise.all([
-    server.group.allByMember.query(user.id),
-    isLoggedIn ? server.event.allByAttendingUserId.query({ id: user.id }) : Promise.resolve([]),
-    isUser ? server.personalMark.getVisibleInformation.query({ userId: user.id }) : Promise.resolve([]),
-  ])
+  const [
+    { data: groups, isLoading: groupsLoading },
+    { data: futureEventWithAttendances, isLoading: futureEventWithAttendancesLoading },
+    { data: marks, isLoading: marksLoading },
+  ] = useQueries({
+    queries: [
+      trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user) }),
+      trpc.event.allByAttendingUserId.queryOptions({ id: user?.id ?? "" }, { enabled: isLoggedIn && Boolean(user) }),
+      trpc.personalMark.getVisibleInformation.queryOptions(
+        { userId: user?.id ?? "" },
+        { enabled: isLoggedIn && Boolean(user) }
+      ),
+    ],
+  })
 
-  const allGroups = [
-    ...groups.map((group) => ({
-      ...group,
-      pageUrl: createGroupPageUrl(group),
-    })),
-  ]
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllByAttendingUserIdInfiniteQuery({
+    id: user?.id ?? "",
+    filter: {
+      byEndDate: {
+        max: now,
+        min: null,
+      },
+    },
+  })
+
+  const allGroups = useMemo(
+    () =>
+      groups
+        ? [
+            ...groups.map((group) => ({
+              ...group,
+              pageUrl: createGroupPageUrl(group),
+            })),
+          ]
+        : [],
+    [groups]
+  )
+
+  if (!user) {
+    return
+  }
 
   const activeMembership = findActiveMembership(user)
   const grade = activeMembership ? getMembershipGrade(activeMembership) : null
@@ -339,7 +373,7 @@ export default async function ProfilePage({
             )}
           </div>
 
-          {marks.length > 0 && (
+          {marks && marks.length > 0 && (
             <div className="flex flex-col gap-3">
               <Title>Prikker og suspensjoner</Title>
               <div className="flex flex-col gap-2">
@@ -385,7 +419,15 @@ export default async function ProfilePage({
         <Title>Arrangementer</Title>
 
         {isLoggedIn ? (
-          <EventList events={events} />
+          futureEventWithAttendances !== undefined && pastEventWithAttendances !== undefined ? (
+            <EventList
+              futureEventWithAttendances={futureEventWithAttendances.items}
+              pastEventWithAttendances={pastEventWithAttendances}
+              onLoadMore={fetchNextPage}
+            />
+          ) : (
+            <Text>loading..</Text>
+          )
         ) : (
           <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-500">
             <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>

@@ -1,3 +1,4 @@
+import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
@@ -83,6 +84,7 @@ export interface AttendanceService {
   findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   getAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance>
+  getAttendancesByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Attendance[]>
   getAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance>
   getAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance>
   updateAttendanceById(
@@ -130,7 +132,7 @@ export interface AttendanceService {
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
 
-  updateAttendancePaymentProduct(handle: DBHandle, attendance: Attendance): Promise<void>
+  updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<void>
   deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
   executeChargeAttendancePaymentsTask(
@@ -160,6 +162,7 @@ export interface AttendanceService {
 }
 
 export function getAttendanceService(
+  eventEmitter: EventEmitter,
   attendanceRepository: AttendanceRepository,
   taskSchedulingService: TaskSchedulingService,
   userService: UserService,
@@ -204,6 +207,9 @@ export function getAttendanceService(
         throw new AttendanceNotFound(`Attendance for Attendee(ID=${attendeeId}) not found`)
       }
       return attendance
+    },
+    async getAttendancesByIds(handle, attendanceIds) {
+      return await attendanceRepository.findAttendancesByIds(handle, attendanceIds)
     },
     async updateAttendanceById(handle, attendanceId, data) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
@@ -377,6 +383,9 @@ export function getAttendanceService(
           reservationTime
         )
       }
+
+      eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
+
       return attendee
     },
     async updateAttendeeById(handle, attendeeId, data) {
@@ -432,6 +441,8 @@ export function getAttendanceService(
         await paymentService.cancel(attendee.paymentId)
       }
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
+      eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
+
       // If the attendee was reserved, we find a replacement for them in the pool.
       if (attendee.reserved) {
         const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
@@ -480,15 +491,25 @@ export function getAttendanceService(
       await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
     },
     async updateAttendancePaymentPrice(handle, attendanceId, price) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
-      if (price === null) {
-        await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, null)
-      } else {
-        await paymentProductsService.updatePrice(attendanceId, price)
+      if (price !== null && price < 0) {
+        throw new AttendanceValidationError(`Tried to set negative price (${price}) for Attendance(ID=${attendanceId})`)
       }
-      await this.updateAttendancePaymentProduct(handle, attendance)
+      const attendance = await this.getAttendanceById(handle, attendanceId)
+      const isExistingProduct = attendance.attendancePrice !== null
+
+      await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, price)
+      // If we have set a price in the past, we just update it, otherwise we need to make a new Stripe product.
+      if (isExistingProduct) {
+        // TODO: Is this switch really needed? Maybe it should delete the product if the price is null?
+        if (price !== null) {
+          await paymentProductsService.updatePrice(attendanceId, price)
+        }
+      } else {
+        await this.updateAttendancePaymentProduct(handle, attendanceId)
+      }
     },
-    async updateAttendancePaymentProduct(handle, attendance) {
+    async updateAttendancePaymentProduct(handle, attendanceId) {
+      const attendance = await this.getAttendanceById(handle, attendanceId)
       if (!attendance.attendancePrice) {
         return
       }
@@ -508,7 +529,6 @@ export function getAttendanceService(
         price: attendance.attendancePrice,
         url,
       })
-      await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, attendance.attendancePrice)
       await taskSchedulingService.scheduleAt(
         handle,
         tasks.CHARGE_ATTENDANCE_PAYMENTS,

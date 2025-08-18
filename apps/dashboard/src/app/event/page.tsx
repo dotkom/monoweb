@@ -1,7 +1,8 @@
 "use client"
 
 import { GenericTable } from "@/components/GenericTable"
-import type { Event, EventFilterQuery, EventType } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventFilterQuery, EventStatus, EventType } from "@dotkomonline/types"
 import {
   ActionIcon,
   ActionIconGroup,
@@ -44,13 +45,26 @@ const mapEventTypeToLabel = (eventType: EventType) => {
   }
 }
 
+const mapEventStatusToLabel = (status: EventStatus) => {
+  switch (status) {
+    case "PUBLIC":
+      return "Publisert"
+    case "DRAFT":
+      return "Utkast"
+    case "DELETED":
+      return "Slettet"
+    default:
+      return "Ukjent"
+  }
+}
+
 const capitalizeFirstLetter = (string: string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`
 
 export default function EventPage() {
-  const columnHelper = createColumnHelper<Event>()
+  const columnHelper = createColumnHelper<EventWithAttendance>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((event) => event, {
+      columnHelper.accessor(({ event }) => event, {
         id: "title",
         header: () => "Arrangementnavn",
         cell: (info) => (
@@ -59,7 +73,7 @@ export default function EventPage() {
           </Anchor>
         ),
       }),
-      columnHelper.accessor("start", {
+      columnHelper.accessor("event.start", {
         header: () => "Startdato",
         cell: (info) => {
           const longDate = formatDate(info.getValue(), "eeee dd. MMMM yyyy HH:mm")
@@ -74,16 +88,20 @@ export default function EventPage() {
           )
         },
       }),
-      columnHelper.accessor((event) => event, {
+      columnHelper.accessor(({ event }) => event, {
         id: "organizers",
         header: () => "Arrangører",
         cell: (info) => (
           <EventHostingGroupList groups={info.getValue().hostingGroups} companies={info.getValue().companies} />
         ),
       }),
-      columnHelper.accessor("type", {
+      columnHelper.accessor("event.type", {
         header: () => "Type",
         cell: (info) => mapEventTypeToLabel(info.getValue()),
+      }),
+      columnHelper.accessor("event.status", {
+        header: () => "Status",
+        cell: (info) => mapEventStatusToLabel(info.getValue()),
       }),
     ],
     [columnHelper]

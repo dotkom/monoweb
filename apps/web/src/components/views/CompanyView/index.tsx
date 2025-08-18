@@ -1,17 +1,24 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
-import type { Company, Event } from "@dotkomonline/types"
+import type { Company, EventWithAttendance } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 
 interface CompanyViewProps {
   company: Company
-  events: Event[]
+  futureEventWithAttendances: EventWithAttendance[]
+  pastEventWithAttendances: EventWithAttendance[]
+  onLoadMore?: () => void
 }
 
-export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
-  const { name, description, phone, email, website, location, imageUrl } = props.company
+export const CompanyView: FC<CompanyViewProps> = ({
+  company,
+  futureEventWithAttendances,
+  pastEventWithAttendances,
+  onLoadMore,
+}) => {
+  const { name, description, phone, email, website, location, imageUrl } = company
 
   const icons = [
     { icon: "material-symbols:location-on", text: location, href: null },
@@ -52,7 +59,11 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-2">
         <Title element="h2">Arrangementer</Title>
-        <EventList events={props.events} />
+        <EventList
+          futureEventWithAttendances={futureEventWithAttendances}
+          pastEventWithAttendances={pastEventWithAttendances}
+          onLoadMore={onLoadMore}
+        />
       </div>
     </EntryDetailLayout>
   )

@@ -2,15 +2,12 @@ import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { Text, Title } from "@dotkomonline/ui"
-import { formatDate } from "date-fns"
-import { isAfter } from "date-fns"
+import { formatDate, isAfter } from "date-fns"
 
 const EventFeedbackPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
   const { eventId } = await params
   const session = await auth.getServerSession()
-  const event = await server.event.get.query(eventId)
-  const attendance =
-    event.attendanceId !== null ? await server.event.attendance.getAttendance.query({ id: event.attendanceId }) : null
+  const { event, attendance } = await server.event.get.query(eventId)
   const feedbackForm = await server.event.feedback.findFormByEventId.query(eventId)
 
   if (!feedbackForm || !feedbackForm.isActive)

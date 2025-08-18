@@ -1,5 +1,6 @@
 "use client"
 
+import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
 import {
   type Attendance,
@@ -12,8 +13,10 @@ import {
   findActiveMembership,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
-import { useQueries } from "@tanstack/react-query"
-import { differenceInSeconds } from "date-fns"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { useQueries, useQueryClient } from "@tanstack/react-query"
+import { useSubscription } from "@trpc/tanstack-react-query"
+import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -29,9 +32,9 @@ import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
 const getQueuePosition = (
-  attendee: Attendee | undefined,
-  attendees: Attendee[] | undefined,
-  attendablePool: AttendancePool | undefined
+  attendee: Attendee | null,
+  attendees: Attendee[] | null,
+  attendablePool: AttendancePool | null
 ) => {
   if (!attendee || !attendees || !attendablePool) {
     return null
@@ -50,12 +53,15 @@ const getQueuePosition = (
 interface AttendanceCardProps {
   initialAttendance: Attendance
   initialPunishment: Punishment | null
-  user?: User
+  user: User | null
 }
 
 export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: AttendanceCardProps) => {
   const trpc = useTRPC()
+  const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
+  const queryClient = useQueryClient()
   const [closeToEvent, setCloseToEvent] = useState(false)
+  const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
   const [{ data: attendance, isLoading: attendanceLoading }, { data: punishment, isLoading: punishmentLoading }] =
     useQueries({
       queries: [
@@ -63,7 +69,11 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
           {
             id: initialAttendance.id,
           },
-          { initialData: initialAttendance, enabled: user !== undefined, refetchInterval: closeToEvent ? 1000 : 60000 }
+          {
+            initialData: initialAttendance,
+            enabled: Boolean(user),
+            refetchInterval: closeToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
+          }
         ),
         trpc.personalMark.getExpiryDateForUser.queryOptions(
           {
@@ -71,13 +81,56 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
           },
           {
             initialData: initialPunishment,
-            enabled: user !== undefined,
+            enabled: Boolean(user),
           }
         ),
       ],
     })
 
-  const attendee = user && attendance.attendees?.find((attendee) => attendee.userId === user.id)
+  useEffect(() => {
+    setAttendanceStatus(getAttendanceStatus(attendance))
+  }, [attendance])
+
+  useSubscription(
+    trpc.event.attendance.onRegisterChange.subscriptionOptions(
+      {
+        attendanceId: attendance?.id ?? "",
+      },
+      {
+        onConnectionStateChange: (state) => {
+          setTRPCSSERegisterChangeConnectionState(state.state)
+        },
+        onData: (attendeeUpdateData) => {
+          // If the attendee is not the current user, we can update the state
+          queryClient.setQueryData(
+            trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
+            (oldData) => {
+              if (!oldData) return oldData
+
+              if (attendeeUpdateData.status === "deregistered") {
+                return {
+                  ...oldData,
+                  attendees: oldData.attendees.filter((a) => a.userId !== attendeeUpdateData.attendee.userId),
+                }
+              }
+
+              if (oldData.attendees.some((a) => a.userId === attendeeUpdateData.attendee.userId)) {
+                console.warn("Attendee already exists in the list, not updating state.")
+                return oldData
+              }
+
+              return {
+                ...oldData,
+                attendees: [...oldData.attendees, attendeeUpdateData.attendee],
+              }
+            }
+          )
+        },
+      }
+    )
+  )
+
+  const attendee = user && (attendance.attendees?.find((attendee) => attendee.userId === user.id) ?? null)
 
   useEffect(() => {
     // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
@@ -121,8 +174,6 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
-  const attendanceStatus = getAttendanceStatus(attendance)
-
   const registerForAttendance = async () => attendablePool && registerMutation.mutate({ attendanceId: attendance.id })
 
   const deregisterForAttendance = () =>
@@ -132,11 +183,17 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
 
   const isLoggedIn = Boolean(user)
   const isAttending = Boolean(attendee)
-  const hasMembership = user !== undefined && findActiveMembership(user) !== null
+  const hasMembership = user !== null && findActiveMembership(user) !== null
   const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
 
-  const queuePosition = getQueuePosition(attendee, attendance.attendees, attendablePool)
+  const queuePosition = getQueuePosition(attendee, attendance.attendees, attendablePool ?? null)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
+
+  if (isBefore(getCurrentUTC(), attendance.registerStart)) {
+    setTimeout(() => {
+      setAttendanceStatus("Open")
+    }, attendance.registerStart.getTime() - new Date().getTime())
+  }
 
   return (
     <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-900 sm:dark:bg-stone-900 sm:p-4 sm:rounded-xl">

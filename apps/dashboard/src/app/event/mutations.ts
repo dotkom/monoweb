@@ -19,12 +19,12 @@ export const useCreateEventMutation = () => {
       onSuccess: async (data) => {
         notification.complete({
           title: "Arrangement opprettet",
-          message: `Arrangementet "${data.title}" har blitt opprettet.`,
+          message: `Arrangementet "${data.event.title}" har blitt opprettet.`,
         })
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.all.queryKey() })
 
-        router.replace(`/event/${data.id}`)
+        router.replace(`/event/${data.event.id}`)
       },
       onError: (err) => {
         notification.fail({
@@ -52,10 +52,10 @@ export const useUpdateEventMutation = () => {
       onSuccess: async (data) => {
         notification.complete({
           title: "Arrangement oppdatert",
-          message: `Arrangementet "${data.title}" har blitt oppdatert.`,
+          message: `Arrangementet "${data.event.title}" har blitt oppdatert.`,
         })
 
-        await queryClient.invalidateQueries(trpc.event.get.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.event.get.queryOptions(data.event.id))
       },
       onError: (err) => {
         notification.fail({
@@ -322,8 +322,8 @@ export const useUpdateAttendancePaymentMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryFilter() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )
@@ -343,8 +343,8 @@ export const useUpdateAttendanceMutation = () => {
       onSuccess: async () => {
         complete()
 
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryFilter() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryFilter() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )

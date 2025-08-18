@@ -1,9 +1,11 @@
+import { on } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import {
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
   AttendanceSchema,
   AttendanceWriteSchema,
+  type Attendee,
   AttendeeSchema,
   AttendeeSelectionResponsesSchema,
   UserSchema,
@@ -136,6 +138,15 @@ export const attendanceRouter = t.router({
         })
       })
     ),
+
+  onRegisterChange: procedure
+    .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
+    .subscription(async function* ({ ctx, signal }) {
+      for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
+        const attendeeUpdateData = data as { attendee: Attendee; status: "registered" | "deregistered" }
+        yield attendeeUpdateData
+      }
+    }),
 
   cancelAttendeePayment: staffProcedure
     .input(
