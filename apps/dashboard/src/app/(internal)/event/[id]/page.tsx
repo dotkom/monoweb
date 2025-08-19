@@ -83,7 +83,7 @@ export default function EventWithAttendancesPage() {
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
-    router.push(`/event/${event.id}?${params.toString()}`)
+    router.replace(`/event/${event.id}?${params.toString()}`)
   }
 
   return (
