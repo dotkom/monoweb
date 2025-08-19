@@ -120,6 +120,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         header: () => "Meld av",
         cell: (info) => (
           <ActionIcon
+            size="sm"
             color="red"
             onClick={() => {
               openDeleteManualUserAttendModal({
@@ -129,7 +130,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
               })
             }}
           >
-            <IconX />
+            <IconX size={16} />
           </ActionIcon>
         ),
       }),

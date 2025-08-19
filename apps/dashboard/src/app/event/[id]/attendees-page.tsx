@@ -31,25 +31,9 @@ const Page: FC<Props> = ({ event, attendance }) => {
 
   return (
     <Stack gap="xl">
-      <Stack gap="xs">
-        <Title mb={10} order={3}>
-          Meld på bruker
-        </Title>
-        <UserSearch
-          onSubmit={(values) => {
-            openManualCreateUserAttendModal({
-              attendanceId: attendance.id,
-              userId: values.id,
-            })
-          }}
-          excludeUserIds={attendance.attendees.map((attendee) => attendee.userId)}
-        />
-      </Stack>
-
       <Stack>
-        <Title my={10} order={3}>
-          Alle påmeldte
-        </Title>
+        <Title order={3}>Alle påmeldte</Title>
+
         <Stack>
           <Group>
             <Button
@@ -97,14 +81,26 @@ const Page: FC<Props> = ({ event, attendance }) => {
           )}
         </Stack>
 
-        <AllAttendeesTable attendees={attendees} attendance={attendance} />
+        <UserSearch
+          placeholder="Meld på bruker"
+          excludeUserIds={attendance.attendees.map((attendee) => attendee.userId)}
+          onSubmit={(values) => {
+            openManualCreateUserAttendModal({
+              attendanceId: attendance.id,
+              userId: values.id,
+            })
+          }}
+        />
       </Stack>
 
       <Stack>
-        <Title my={10} order={3}>
-          Registrer oppmøte med QR-kode
-        </Title>
+        <Title order={3}>Oppmøteregistrering</Title>
         <QrCodeScanner />
+      </Stack>
+
+      <Stack>
+        <Title order={3}>Påmeldte</Title>
+        <AllAttendeesTable attendees={attendees} attendance={attendance} />
       </Stack>
     </Stack>
   )
