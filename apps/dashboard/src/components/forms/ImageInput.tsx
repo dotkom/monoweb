@@ -1,7 +1,8 @@
 import { FileInput, type FileInputProps, Image } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
 
-import { useS3UploadFile } from "@/app/offline/use-s3-upload-file"
+// TODO: This hook should be provided to the component. Not everything belongs to offlines
+import { useS3UploadFile } from "@/app/(internal)/offline/use-s3-upload-file"
 import type { InputProducerResult } from "./types"
 
 export function createImageInput<F extends FieldValues>({

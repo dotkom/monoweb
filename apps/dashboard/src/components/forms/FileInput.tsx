@@ -1,7 +1,7 @@
 import { FileInput, type FileInputProps } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
 
-import { useS3UploadFile } from "@/app/offline/use-s3-upload-file"
+import { useS3UploadFile } from "@/app/(internal)/offline/use-s3-upload-file"
 import type { InputProducerResult } from "./types"
 
 export function createFileInput<F extends FieldValues>({

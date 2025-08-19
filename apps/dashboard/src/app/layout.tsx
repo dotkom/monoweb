@@ -14,10 +14,8 @@ import "@fontsource/inter-tight/500.css"
 import "@fontsource/inter-tight/600.css"
 import "@fontsource/inter-tight/700.css"
 import "@fontsource/inter-tight/800.css"
-import { Login } from "@/components/views/Login"
 import { auth } from "@/lib/auth"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
-import type { Session } from "@dotkomonline/oauth2/session"
 import { Notifications } from "@mantine/notifications"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -37,7 +35,8 @@ const theme = createTheme({
   },
 })
 
-function BaseLayout({ session, children }: PropsWithChildren<{ session: Session | null }>) {
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const session = await auth.getServerSession()
   return (
     <html lang="no" {...mantineHtmlProps}>
       <head>
@@ -48,29 +47,13 @@ function BaseLayout({ session, children }: PropsWithChildren<{ session: Session 
           <QueryProvider>
             <MantineProvider defaultColorScheme="auto" theme={theme}>
               <Notifications />
-              <ModalProvider>{children}</ModalProvider>
+              <ModalProvider>
+                <ApplicationShell>{children}</ApplicationShell>
+              </ModalProvider>
             </MantineProvider>
           </QueryProvider>
         </SessionProvider>
       </body>
     </html>
-  )
-}
-
-export default async function RootLayout({ children }: PropsWithChildren) {
-  const session = await auth.getServerSession()
-
-  if (session === null) {
-    return (
-      <BaseLayout session={session}>
-        <Login />
-      </BaseLayout>
-    )
-  }
-
-  return (
-    <BaseLayout session={session}>
-      <ApplicationShell>{children}</ApplicationShell>
-    </BaseLayout>
   )
 }
