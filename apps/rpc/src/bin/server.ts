@@ -67,7 +67,7 @@ server.setErrorHandler((error) => {
 server.register(fastifyCors, {
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "X-Requested-With", "X-CSRF-Token", "Origin"],
   credentials: true,
 })
 
