@@ -749,8 +749,7 @@ export function getAttendanceService(
         throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      // It is likely an error if the attendee is already marked as attended
-      if (attendee.attendedAt !== null) {
+      if (attendee.attendedAt !== null && at !== null) {
         return
       }
 
