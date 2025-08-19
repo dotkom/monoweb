@@ -14,7 +14,7 @@ import {
   IconTrash,
   IconUser,
 } from "@tabler/icons-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useDeleteEventMutation } from "../mutations"
 import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
@@ -35,37 +35,37 @@ const SIDEBAR_LINKS = [
   {
     icon: IconBuildingWarehouse,
     label: "Bedrifter",
-    slug: "event",
+    slug: "bedrifter",
     component: EventCompaniesPage,
   },
   {
     icon: IconForms,
     label: "Tilbakemeldingsskjema",
-    slug: "feedback-form",
+    slug: "tilbakemeldingsskjema",
     component: FeedbackPage,
   },
   {
     icon: IconCalendarEvent,
     label: "Påmelding",
-    slug: "attendance",
+    slug: "pamelding",
     component: AttendancePage,
   },
   {
     icon: IconUser,
     label: "Påmeldte",
-    slug: "attendees",
+    slug: "pameldte",
     component: AttendeesPage,
   },
   {
     icon: IconSelector,
     label: "Valg",
-    slug: "selections",
+    slug: "valg",
     component: SelectionsPage,
   },
   {
     icon: IconCreditCard,
     label: "Betaling",
-    slug: "payment",
+    slug: "betaling",
     component: PaymentPage,
   },
 ]
@@ -76,6 +76,15 @@ export default function EventWithAttendancesPage() {
 
   const deleteEvent = useDeleteEventMutation()
   const [opened, { open, close }] = useDisclosure(false)
+
+  const searchParams = useSearchParams()
+  const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
+
+  const handleTabChange = (value: string | null) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
+    router.push(`/event/${event.id}?${params.toString()}`)
+  }
 
   return (
     <Stack>
@@ -111,7 +120,7 @@ export default function EventWithAttendancesPage() {
         <Title>{event.title}</Title>
       </Group>
 
-      <Tabs defaultValue={SIDEBAR_LINKS[0].slug} keepMounted={false}>
+      <Tabs defaultValue={currentTab} onChange={handleTabChange} keepMounted={false}>
         <Tabs.List>
           {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
             <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
