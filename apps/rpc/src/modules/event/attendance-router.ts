@@ -238,11 +238,10 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
-      }),
+      })
     )
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.attendanceService.getAttendanceById(handle, input.id)
-      )
+      ctx.executeTransaction(async (handle) => ctx.attendanceService.getAttendanceById(handle, input.id))
     ),
 
   updateAttendance: staffProcedure

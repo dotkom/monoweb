@@ -1,11 +1,4 @@
-import type {
-  Attendance,
-  AttendanceId,
-  AttendeeId,
-  EventFilterQuery,
-  EventId,
-  FeedbackFormId,
-} from "@dotkomonline/types"
+import type { AttendanceId, EventFilterQuery, EventId, FeedbackFormId } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc-client"
