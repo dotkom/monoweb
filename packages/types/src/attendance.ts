@@ -1,4 +1,5 @@
 import { schemas } from "@dotkomonline/db/schemas"
+import { compareAsc } from "date-fns"
 import { z } from "zod"
 import { type User, UserSchema, findActiveMembership, getMembershipGrade } from "./user"
 
@@ -97,11 +98,19 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   selections: true,
 })
 
-export function getReservedAttendeeCount(attendance: Attendance): number {
+export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
+  if (poolId) {
+    return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.reserved).length
+  }
+
   return attendance.attendees.reduce((total, attendee) => total + (attendee.reserved ? 1 : 0), 0)
 }
 
-export function getUnreservedAttendeeCount(attendance: Attendance): number {
+export function getUnreservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
+  if (poolId) {
+    return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && !attendee.reserved).length
+  }
+
   return attendance.attendees.reduce((total, attendee) => total + (attendee.reserved ? 0 : 1), 0)
 }
 
@@ -109,7 +118,7 @@ export function getAttendanceCapacity(attendance: Attendance): number {
   return attendance.pools.reduce((total, pool) => total + pool.capacity, 0)
 }
 
-export function canUserAttendPool(pool: AttendancePool, user: User) {
+export function canUserAttendPool(user: User, pool: AttendancePool) {
   const membership = findActiveMembership(user)
   if (membership === null) {
     return false
@@ -125,4 +134,63 @@ export function canUserAttendPool(pool: AttendancePool, user: User) {
   }
 
   return pool.yearCriteria.includes(grade)
+}
+
+export const getAttendee = (attendance: Attendance, user: User | null) => {
+  if (!user) {
+    return null
+  }
+
+  return attendance.attendees?.find((attendee) => attendee.userId === user.id) ?? null
+}
+
+export const getAttendablePool = (attendance: Attendance, user: User | null) => {
+  if (!user) {
+    return null
+  }
+
+  const attendee = getAttendee(attendance, user)
+
+  if (attendee) {
+    return attendance.pools.find((pool) => pool.id === attendee.attendancePoolId) ?? null
+  }
+
+  return attendance.pools.find((pool) => canUserAttendPool(user, pool)) ?? null
+}
+
+export const getNonAttendablePools = (attendance: Attendance, user: User | null) => {
+  const attendablePool = getAttendablePool(attendance, user)
+
+  return attendance.pools
+    .filter((pool) => pool.id !== attendablePool?.id)
+    .sort((a, b) => {
+      // Highest capacity first and highest merge delay last
+      if (a.mergeDelayHours && b.mergeDelayHours && a.mergeDelayHours !== b.mergeDelayHours) {
+        return a.mergeDelayHours - b.mergeDelayHours
+      }
+
+      return b.capacity - a.capacity
+    })
+}
+
+export const getAttendeeQueuePosition = (attendance: Attendance, user: User | null) => {
+  const attendee = getAttendee(attendance, user)
+  const pool = getAttendablePool(attendance, user)
+
+  if (!attendee || !pool) {
+    return null
+  }
+
+  const unreservedAttendees = attendance.attendees
+    .filter((attendee) => attendee.attendancePoolId === pool.id && !attendee.reserved)
+    .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
+
+  const index = unreservedAttendees.indexOf(attendee)
+
+  if (index === -1) {
+    return null
+  }
+
+  // Queue position is 1-indexed but arrays are 0-indexed, so we add 1
+  return index + 1
 }

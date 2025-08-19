@@ -1,6 +1,16 @@
-import type { Attendance, AttendancePool, AttendanceStatus, Attendee, Punishment } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type AttendanceStatus,
+  type Punishment,
+  type User,
+  findActiveMembership,
+  getAttendablePool,
+  getAttendee,
+  getReservedAttendeeCount,
+} from "@dotkomonline/types"
 import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import type { FC } from "react"
+import { getAttendanceStatus } from "../attendanceStatus"
 
 const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean, hasPunishment: boolean) => {
   if (disabled) return "bg-gray-200 dark:bg-stone-800 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-800"
@@ -33,34 +43,38 @@ const getDisabledText = (
   return null
 }
 
+/*
+  registerForAttendance={registerForAttendance}
+  unregisterForAttendance={deregisterForAttendance}
+  attendance={attendance}
+  punishment={punishment}
+  isLoading={isLoading}
+*/
+
 interface Props {
-  attendance: Attendance
-  attendee: Attendee | undefined | null
   registerForAttendance: () => void
   unregisterForAttendance: () => void
-  pool: AttendancePool | undefined | null
+  attendance: Attendance
+  punishment: Punishment | null
+  user: User | null
   isLoading: boolean
-  isLoggedIn: boolean
-  hasMembership?: boolean
-  status: AttendanceStatus
-  punishment?: Punishment | null
 }
 
 export const RegistrationButton: FC<Props> = ({
-  attendee,
-  attendance,
   registerForAttendance,
   unregisterForAttendance,
-  pool,
-  isLoading,
-  isLoggedIn,
-  hasMembership,
-  status,
+  attendance,
   punishment,
+  user,
+  isLoading,
 }) => {
+  const attendee = getAttendee(attendance, user)
+  const pool = getAttendablePool(attendance, user)
+  const attendanceStatus = getAttendanceStatus(attendance)
+  const hasMembership = user !== null && Boolean(findActiveMembership(user))
+
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
-  const poolReservedAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool?.id && a.reserved).length
-  const isPoolFull = pool ? poolReservedAttendees >= pool.capacity : false
+  const isPoolFull = pool ? getReservedAttendeeCount(attendance, pool?.id) >= pool.capacity : false
   const isSuspended = punishment?.suspended ?? false
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
 
@@ -68,12 +82,12 @@ export const RegistrationButton: FC<Props> = ({
   const buttonIcon = null
 
   const disabledText = getDisabledText(
-    status,
+    attendanceStatus,
     Boolean(attendee),
     Boolean(pool),
     Boolean(attendee?.paymentChargedAt),
     isPastDeregisterDeadline,
-    isLoggedIn,
+    Boolean(user),
     hasMembership,
     isSuspended
   )

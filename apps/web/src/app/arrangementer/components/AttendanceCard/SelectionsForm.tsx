@@ -1,4 +1,4 @@
-import type { AttendanceSelection, AttendanceSelectionResponse } from "@dotkomonline/types"
+import type { Attendance, AttendanceSelectionResponse, Attendee } from "@dotkomonline/types"
 import {
   Select,
   SelectContent,
@@ -13,20 +13,20 @@ import {
 import { useEffect } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 
-interface FormValues {
+interface SelectionsFormValues {
   attendeeOptions: AttendanceSelectionResponse[]
 }
 
-interface FormProps {
-  selections: AttendanceSelection[]
-  attendeeSelections: AttendanceSelectionResponse[]
+interface SelectionsFormProps {
+  attendance: Attendance
+  attendee: Attendee
   onSubmit: (selections: AttendanceSelectionResponse[]) => void
   disabled?: boolean
 }
 
-export function SelectionsForm({ selections, onSubmit, attendeeSelections, disabled }: FormProps) {
-  const prefilledSelections = selections.map(({ id: selectionId, name: selectionName }) => {
-    const savedResponse = attendeeSelections.find((selection) => selection.selectionId === selectionId)
+export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: SelectionsFormProps) {
+  const prefilledSelections = attendance.selections.map(({ id: selectionId, name: selectionName }) => {
+    const savedResponse = attendee.selections.find((selection) => selection.selectionId === selectionId)
     const optionId = savedResponse?.optionId ?? ""
     const optionName = savedResponse?.optionName ?? ""
 
@@ -38,13 +38,14 @@ export function SelectionsForm({ selections, onSubmit, attendeeSelections, disab
     trigger,
     getValues,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<SelectionsFormValues>({
     defaultValues: { attendeeOptions: prefilledSelections },
     mode: "onChange",
     reValidateMode: "onChange",
   })
 
   // This validates the default values without the user having to interact with the form
+  // Makes empty things red immediately
   useEffect(() => {
     trigger()
   }, [trigger])
@@ -83,7 +84,7 @@ export function SelectionsForm({ selections, onSubmit, attendeeSelections, disab
                   )}
                 >
                   <SelectValue
-                    placeholder={selections[index].name}
+                    placeholder={attendance.selections[index].name}
                     className={cn(
                       "placeholder:text-gray-700 transition-all",
                       hasError(index) && "text-red-600 dark:text-red-400"
@@ -93,11 +94,10 @@ export function SelectionsForm({ selections, onSubmit, attendeeSelections, disab
                 <SelectGroup>
                   <SelectContent>
                     <SelectLabel className="text-gray-800 dark:text-stone-400 text-xs">
-                      {" "}
-                      {selections[index].name}
+                      {attendance.selections[index].name}
                     </SelectLabel>
 
-                    {selections[index].options.map(({ id, name }) => (
+                    {attendance.selections[index].options.map(({ id, name }) => (
                       <SelectItem key={id} value={id}>
                         {name}
                       </SelectItem>
