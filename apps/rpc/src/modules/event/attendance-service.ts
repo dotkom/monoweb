@@ -750,7 +750,7 @@ export function getAttendanceService(
       }
 
       // It is likely an error if the attendee is already marked as attended
-      if (attendee.attendedAt !== null) {
+      if (attendee.attendedAt !== null && at !== null) {
         return
       }
 
