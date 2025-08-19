@@ -26,6 +26,7 @@ export const JobListingSchema = schemas.JobListingSchema.omit({
 export const JobListingWriteSchema = JobListingSchema.omit({
   id: true,
   createdAt: true,
+  updatedAt: true,
   company: true,
   locations: true,
 })
