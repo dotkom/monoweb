@@ -95,7 +95,7 @@ const Page: FC<Props> = ({ event, attendance }) => {
 
       <Stack>
         <Title order={3}>Oppmøteregistrering</Title>
-        <QrCodeScanner />
+        <QrCodeScanner attendance={attendance} />
       </Stack>
 
       <Stack>
