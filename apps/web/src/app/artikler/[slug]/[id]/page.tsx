@@ -25,8 +25,8 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
       <Byline author={article.author} createdAt={article.createdAt} updatedAt={article.updatedAt} />
 
       <section>
-        <RichText colorLinks content={article.excerpt} className="mt-4 font-medium max-w-none" />
-        <RichText colorLinks content={article.content} className="mt-8 max-w-none" />
+        <RichText content={article.excerpt} className="mt-4 font-medium max-w-none" />
+        <RichText content={article.content} className="mt-8 max-w-none" />
       </section>
 
       <div className="block md:hidden mt-8">

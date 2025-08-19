@@ -8,7 +8,6 @@ import { cn } from "../../utils"
 
 interface RichTextProps {
   content: string
-  colorLinks?: boolean
   className?: string
   lineClamp?: `line-clamp-${number}`
   readMoreText?: string
@@ -20,7 +19,6 @@ interface RichTextProps {
 export function RichText({
   content,
   className,
-  colorLinks = false,
   lineClamp,
   readMoreText = "Vis mer...",
   readLessText = "Vis mindre",
@@ -66,21 +64,24 @@ export function RichText({
     setOpen(!open)
   }
 
+  const sanitizedContent = DOMPurify.sanitize(content)
+
   const richText = (
     <Text
       element="div"
       ref={contentRef}
       // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized
-      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+      dangerouslySetInnerHTML={{ __html: sanitizedContent }}
       className={cn(
-        "prose dark:prose-invert whitespace-pre-line overflow-hidden",
+        "prose dark:prose-invert overflow-hidden",
         !open && lineClamp,
-        "[&_a]:underline",
-        colorLinks && "[&_a]:text-blue-700 dark:[&_a]:text-blue-300",
-        "[&_ul]:list-disc [&_ul]:pl-6",
-        "[&_ol]:list-decimal [&_ol]:pl-6",
-        "[&_li]:my-1",
-        "[&_code]:px-1 [&_code]:py-0.5 [&_code]:bg-black/10 [&_code]:dark:bg-white/10 [&_code]:rounded-md",
+        "prose-a:text-blue-600 dark:prose-a:text-blue-300",
+        "[&_ul>li::marker]:text-black dark:[&_ul>li::marker]:text-white",
+        "[&_ol>li::marker]:text-black dark:[&_ol>li::marker]:text-white",
+        "prose-code:px-1 prose-code:py-0.5 prose-code:bg-black/10 prose-code:dark:bg-white/10 prose-code:rounded-md",
+        "[&_li>p]:my-0",
+        // Selects empty <p> tags and gives them a height to give space to empty newlines
+        "[&_p:empty]:m-0 [&_p:empty]:before:content-[''] [&_p:empty]:before:block [&_p:empty]:before:h-3",
         className
       )}
     />
