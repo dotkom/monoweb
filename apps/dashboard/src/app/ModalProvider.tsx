@@ -21,6 +21,7 @@ import { CreateMembershipModal } from "@/app/(internal)/user/components/create-m
 import { EditMembershipModal } from "@/app/(internal)/user/components/edit-membership-modal"
 import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
+import { QRCodeScannedModal } from "./(internal)/event/components/qr-code-scanned-modal"
 import { CreateGroupMemberModal } from "./(internal)/group/modals/create-group-member-modal"
 
 const modals = {
@@ -44,6 +45,7 @@ const modals = {
   "punishment/suspension/create": CreateSuspensionModal,
   "user/membership/create": CreateMembershipModal,
   "user/membership/update": EditMembershipModal,
+  "event/attendance/attendee/qr-code-scanned": QRCodeScannedModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

@@ -1,13 +1,14 @@
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { AspectRatio, Button, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
 import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
+import z from "zod"
 import { useUpdateEventAttendanceMutation } from "../mutations"
+import { openQRCodeScannedModal } from "./qr-code-scanned-modal"
+import { useAttendanceGetByAttendeeIdQuery } from "../queries"
 
 export const QrCodeScanner: FC = () => {
-  const registerAttendance = useUpdateEventAttendanceMutation()
   const [scannerOpen, { toggle: toggleScanner }] = useDisclosure(false)
   const [videoReady, setVideoReady] = useState(false)
 
@@ -21,11 +22,15 @@ export const QrCodeScanner: FC = () => {
 
   const { ref } = useZxing({
     onDecodeResult: (result) => {
-      const attendeeId = result.getText()
-      registerAttendance.mutate({
-        id: attendeeId,
-        at: getCurrentUTC(),
-      })
+      const id = z.string().uuid().safeParse(result.getText())
+
+      if (!id.success) {
+        return
+      }
+
+      const { data: attendance, isLoading } = useAttendanceGetByAttendeeIdQuery(id.data)
+
+      openQRCodeScannedModal({ attendance, isLoading, attendeeId: id.data })
     },
     paused: !scannerOpen,
     constraints: {
