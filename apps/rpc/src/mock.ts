@@ -40,6 +40,5 @@ export const getJobListingMock = (defaults: Partial<JobListingWrite> = {}): JobL
   applicationLink: "https://example.com",
   applicationEmail: "hello@example.com",
   deadlineAsap: false,
-  updatedAt: new Date(),
   ...defaults,
 })
