@@ -7,6 +7,7 @@ import { getEventHostingGroupFixtures } from "./fixtures/event-hosting-group"
 import { getGroupFixtures, getGroupRoleFixtures } from "./fixtures/group"
 import { getJobListingFixtures, getJobListingLocationFixtures } from "./fixtures/job-listing"
 import { getMarkFixtures } from "./fixtures/mark"
+import { getMembershipFixtures } from "./fixtures/membership"
 import { getOfflineFixtures } from "./fixtures/offline"
 import { getUserFixtures } from "./fixtures/user"
 
@@ -25,6 +26,8 @@ const db = createPrisma(process.env.DATABASE_URL)
 
 const userInput = getUserFixtures()
 await db.user.createManyAndReturn({ data: userInput })
+const membershipInput = getMembershipFixtures(userInput.map((u) => u.id))
+await db.membership.createManyAndReturn({ data: membershipInput })
 
 const companyInput = getCompanyFixtures()
 const companies = await db.company.createManyAndReturn({ data: companyInput })
