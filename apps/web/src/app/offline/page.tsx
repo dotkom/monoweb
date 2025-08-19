@@ -4,7 +4,7 @@ import type { Offline } from "@dotkomonline/types"
 import { Text, Title } from "@dotkomonline/ui"
 
 const OfflinePage = async () => {
-  const offlines = await server.offline.all.query()
+  const offlines = await server.offline.all.query({ take: 1000 })
   const offlinesByYear = groupOfflinesByYear(offlines)
 
   return (
