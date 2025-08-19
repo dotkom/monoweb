@@ -1,6 +1,6 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { ActionIcon, Center, Checkbox, type CheckboxProps } from "@mantine/core"
+import { ActionIcon, Checkbox, type CheckboxProps } from "@mantine/core"
 import { IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { isPast } from "date-fns"
@@ -57,14 +57,12 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         cell: (info) => {
           const row = info.row.original
           return (
-            <Center>
-              <Checkbox
-                onChange={(event) => {
-                  updateAttendanceMut.mutate({ id: row.id, at: event.target.checked ? getCurrentUTC() : null })
-                }}
-                checked={info.getValue() !== null}
-              />
-            </Center>
+            <Checkbox
+              onChange={(event) => {
+                updateAttendanceMut.mutate({ id: row.id, at: event.target.checked ? getCurrentUTC() : null })
+              }}
+              checked={info.getValue() !== null}
+            />
           )
         },
       }),
@@ -121,21 +119,19 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         enableSorting: false,
         header: () => "Meld av",
         cell: (info) => (
-          <Center>
-            <ActionIcon
-              size="sm"
-              color="red"
-              onClick={() => {
-                openDeleteManualUserAttendModal({
-                  attendeeId: info.getValue().id,
-                  attendeeName: info.getValue().user.name || "bruker",
-                  poolName: pools[info.getValue().attendancePoolId]?.title ?? "gruppen",
-                })
-              }}
-            >
-              <IconX size={16} />
-            </ActionIcon>
-          </Center>
+          <ActionIcon
+            size="sm"
+            color="red"
+            onClick={() => {
+              openDeleteManualUserAttendModal({
+                attendeeId: info.getValue().id,
+                attendeeName: info.getValue().user.name || "bruker",
+                poolName: pools[info.getValue().attendancePoolId]?.title ?? "gruppen",
+              })
+            }}
+          >
+            <IconX size={16} />
+          </ActionIcon>
         ),
       }),
     ],

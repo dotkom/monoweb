@@ -62,7 +62,7 @@ const Page: FC<Props> = ({ attendance }) => {
 
       <Stack>
         <Title order={3}>Påmeldte</Title>
-        <AllAttendeesTable attendees={Array(100).fill(attendees).flat()} attendance={attendance} />
+        <AllAttendeesTable attendees={attendees} attendance={attendance} />
       </Stack>
     </Stack>
   )

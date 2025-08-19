@@ -19,6 +19,7 @@ export function GenericTable<T>({ table, filterable }: GenericTableProps<T>) {
                   <TableTh
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
+                    bg="inherit"
                     style={{
                       cursor: filterable && header.column.getCanSort() ? "pointer" : undefined,
                       userSelect: filterable && header.column.getCanSort() ? "none" : undefined,
