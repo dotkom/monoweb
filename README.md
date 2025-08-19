@@ -1,8 +1,8 @@
 # Monoweb 
 
 
-Monoweb is the next-generation web application for Online. This monorepo contains all the source code for the
-applications that power the Onlineweb experience.
+Monoweb is the web application for Online, the informatics student organization at NTNU, found at https://online.ntnu.no. This monorepo contains all the source code for the
+applications that power the OnlineWeb experience.
 
 ## Local Development
 
