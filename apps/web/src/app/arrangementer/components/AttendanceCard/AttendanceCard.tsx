@@ -13,7 +13,7 @@ import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { useQueries, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
-import { differenceInSeconds, isBefore } from "date-fns"
+import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -51,7 +51,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
         {
           initialData: initialAttendance,
           enabled: Boolean(user),
-          refetchInterval: closeToEvent ? 1000 : 60000,
+          refetchInterval: closeToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
         }
       ),
       trpc.personalMark.getExpiryDateForUser.queryOptions(

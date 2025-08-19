@@ -122,7 +122,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
               <Text className="text-xs">Sjekker tilgjengelighet...</Text>
             </div>
           )}
-          {!errors.profileSlug && Boolean(fetchedUser) && (
+          {!errors.profileSlug && fetchedUser?.id !== user.id && (
             <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
               <Icon icon="tabler:x" className="text-sm" />
               <Text className="text-xs">Brukernavnet er opptatt</Text>

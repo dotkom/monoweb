@@ -11,7 +11,7 @@ import {
   getUnreservedAttendeeCount,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { formatDate, formatDistanceToNowStrict, interval, isFuture, subMinutes } from "date-fns"
+import { formatDate, formatDistanceToNowStrict, interval, isFuture, isWithinInterval, subMinutes } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
@@ -132,6 +132,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user }) => {
 
   const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
 
+  const now = new Date()
   const countdownText = useCountdown(attendance.registerStart)
   const countdownInterval = interval(subMinutes(attendance.registerStart, 15), attendance.registerStart)
 
@@ -170,7 +171,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user }) => {
       }
     >
       <div className="flex grow flex-col gap-2 items-center text-center justify-center">
-        {isFuture(countdownInterval.end) && !attendee ? (
+        {isWithinInterval(now, countdownInterval) && !attendee ? (
           <>
             <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
             <Text className="text-4xl font-medium tabular-nums">{countdownText}</Text>

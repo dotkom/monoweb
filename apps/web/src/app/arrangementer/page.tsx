@@ -11,12 +11,10 @@ import { EventList, EventListSkeleton } from "./components/EventList"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
 const EventPage = () => {
+  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
 
-  const now = roundToNearestMinutes(getCurrentUTC(), {
-    roundingMethod: "floor",
-  })
-  const { events: futureEvents, isLoading } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
     filter: {
       ...filter,
 
@@ -34,7 +32,7 @@ const EventPage = () => {
     },
   })
 
-  const { events: pastEvents, fetchNextPage } = useEventAllInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
     filter: {
       ...filter,
 
@@ -48,9 +46,6 @@ const EventPage = () => {
     },
   })
 
-  const allEvents = [...futureEvents, ...pastEvents]
-  const hasEvents = allEvents.length > 0
-
   return (
     <div className="flex flex-col gap-4">
       <Title element="h1" size="xl">
@@ -60,7 +55,13 @@ const EventPage = () => {
       <div className="flex flex-col gap-4">
         <EventsViewToggle active="list" />
         <EventFilters onChange={setFilter} />
-        {hasEvents && <EventList events={allEvents} fetchNextPage={fetchNextPage} />}
+        {!isLoading && (
+          <EventList
+            futureEventWithAttendances={futureEventWithAttendances}
+            pastEventWithAttendances={pastEventWithAttendances}
+            onLoadMore={fetchNextPage}
+          />
+        )}
         {isLoading && <EventListSkeleton />}
       </div>
     </div>

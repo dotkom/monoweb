@@ -21,7 +21,7 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
-import { addYears, differenceInYears, subYears } from "date-fns"
+import { addYears, differenceInYears, isSameDay, subYears } from "date-fns"
 import type { Pageable } from "../../query"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
 import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
@@ -234,7 +234,10 @@ export function getUserService(
                 studentInformation.courses
               )
               // We can only replace memberships if there is a new applicable one for the user
-              if (shouldReplaceMembership(activeMembership, applicableMembership) && applicableMembership !== null) {
+              if (
+                shouldReplaceMembership(user.memberships, activeMembership, applicableMembership) &&
+                applicableMembership !== null
+              ) {
                 logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
                 await userRepository.createMembership(handle, user.id, applicableMembership)
               }
@@ -320,8 +323,16 @@ export function getUserService(
   }
 }
 
-function shouldReplaceMembership(previous: Membership | null, next: MembershipWrite | null) {
+function shouldReplaceMembership(
+  allMemberships: Membership[],
+  previous: Membership | null,
+  next: MembershipWrite | null
+) {
   if (next === null) {
+    return false
+  }
+  // Avoid creating duplicate memberships
+  if (allMemberships.some((m) => areMembershipsEqual(m, next))) {
     return false
   }
   if (previous === null) {
@@ -331,6 +342,12 @@ function shouldReplaceMembership(previous: Membership | null, next: MembershipWr
     return true
   }
   return previous.type === "SOCIAL_MEMBER"
+}
+
+function areMembershipsEqual(a: Membership, b: MembershipWrite) {
+  return (
+    isSameDay(a.start, b.start) && isSameDay(a.end, b.end) && a.specialization === b.specialization && a.type === b.type
+  )
 }
 
 /**

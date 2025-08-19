@@ -9,9 +9,9 @@ export interface GenericTableProps<T> {
 
 export function GenericTable<T>({ table, filterable }: GenericTableProps<T>) {
   return (
-    <Card withBorder>
-      <Table.ScrollContainer minWidth={600} type="native">
-        <Table>
+    <Card withBorder p="xs">
+      <Table.ScrollContainer minWidth={600} maxHeight={400} type="native">
+        <Table striped stickyHeader>
           <TableThead>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableTr key={headerGroup.id}>
@@ -22,6 +22,7 @@ export function GenericTable<T>({ table, filterable }: GenericTableProps<T>) {
                     style={{
                       cursor: filterable && header.column.getCanSort() ? "pointer" : undefined,
                       userSelect: filterable && header.column.getCanSort() ? "none" : undefined,
+                      backgroundColor: "var(--mantine-color-default)",
                     }}
                   >
                     <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
