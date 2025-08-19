@@ -76,8 +76,8 @@ export function RichText({
         "prose dark:prose-invert overflow-hidden",
         !open && lineClamp,
         "prose-a:text-blue-600 dark:prose-a:text-blue-300",
-        "[&_ul>li::marker]:text-blue-500 dark:[&_ul>li::marker]:text-blue-300",
-        "[&_ol>li::marker]:text-green-500 dark:[&_ol>li::marker]:text-green-300",
+        "[&_ul>li::marker]:text-black dark:[&_ul>li::marker]:text-white",
+        "[&_ol>li::marker]:text-black dark:[&_ol>li::marker]:text-white",
         "prose-code:px-1 prose-code:py-0.5 prose-code:bg-black/10 prose-code:dark:bg-white/10 prose-code:rounded-md",
         "[&_li>p]:my-0",
         // Selects empty <p> tags and gives them a height to give space to empty newlines
