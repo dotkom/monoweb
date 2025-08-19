@@ -1,4 +1,11 @@
-import type { AttendanceId, AttendeeId, EventFilterQuery, EventId, FeedbackFormId } from "@dotkomonline/types"
+import type {
+  Attendance,
+  AttendanceId,
+  AttendeeId,
+  EventFilterQuery,
+  EventId,
+  FeedbackFormId,
+} from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc-client"
@@ -39,7 +46,10 @@ export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
   return { data: attendees, isLoading }
 }
 
-export const useAttendanceGetByAttendeeIdQuery = (attendeeId: AttendeeId, enabled?: boolean) => {
+export const useAttendanceGetByAttendeeIdQuery = (
+  attendeeId: AttendeeId,
+  enabled?: boolean
+): { data: Attendance | undefined; isLoading: boolean } => {
   const trpc = useTRPC()
   const { data, isLoading } = useQuery(
     trpc.event.attendance.getAttendance.queryOptions(

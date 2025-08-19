@@ -27,6 +27,7 @@ import { CreateGroupMemberModal } from "./(internal)/group/modals/create-group-m
 const modals = {
   "event/attendance/attendee/create": ManualCreateUserAttendModal,
   "event/attendance/attendee/delete": ManualDeleteUserAttendModal,
+  "event/attendance/attendee/qr-code-scanned": QRCodeScannedModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
   "jobListing/create": CreateJobListingModal,
@@ -45,7 +46,6 @@ const modals = {
   "punishment/suspension/create": CreateSuspensionModal,
   "user/membership/create": CreateMembershipModal,
   "user/membership/update": EditMembershipModal,
-  "event/attendance/attendee/qr-code-scanned": QRCodeScannedModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (
