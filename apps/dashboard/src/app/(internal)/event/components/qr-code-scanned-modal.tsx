@@ -4,7 +4,9 @@ import {
   type AttendeeId,
   type User,
   findActiveMembership,
+  getAttendeeQueuePosition,
   getMembershipGrade,
+  getUnreservedAttendeeCount,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { Button, Group, Image, Stack, Text, Title } from "@mantine/core"
@@ -29,6 +31,9 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
 
   const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
   const pool = attendee && attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+
+  const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance)
+  const spotInQueue = attendee ? getAttendeeQueuePosition(attendance, attendee.user) : null
 
   if (!attendee) {
     return (
@@ -102,7 +107,9 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
           ) : (
             <>
               <IconAlertTriangle color="var(--mantine-color-red-6)" size={20} />
-              <Text>Venteliste</Text>
+              <Text>
+                {spotInQueue}. plass i kø ({unreservedAttendeeCount} totalt i kø)
+              </Text>
             </>
           )}
         </Group>
