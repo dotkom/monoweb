@@ -27,9 +27,7 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
     onDecodeResult: (result) => {
       const id = z.string().uuid().safeParse(result.getText())
 
-      if (!id.success) {
-        openQRCodeScannedModal({ attendance, attendeeId: "LOL" })
-      } else {
+      if (id.success) {
         openQRCodeScannedModal({ attendance, attendeeId: id.data })
       }
     },
