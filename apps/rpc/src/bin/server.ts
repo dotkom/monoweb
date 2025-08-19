@@ -66,7 +66,7 @@ server.setErrorHandler((error) => {
 })
 server.register(fastifyCors, {
   origin: allowedOrigins,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 })
