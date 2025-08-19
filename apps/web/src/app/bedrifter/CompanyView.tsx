@@ -1,23 +1,20 @@
+"use client"
+
 import { EventList } from "@/app/arrangementer/components/EventList"
+import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
-import type { Company, EventWithAttendance } from "@dotkomonline/types"
+import type { Company } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { roundToNearestMinutes } from "date-fns"
 import Image from "next/image"
 import type { FC } from "react"
 
 interface CompanyViewProps {
   company: Company
-  futureEventWithAttendances: EventWithAttendance[]
-  pastEventWithAttendances: EventWithAttendance[]
-  onLoadMore?: () => void
 }
 
-export const CompanyView: FC<CompanyViewProps> = ({
-  company,
-  futureEventWithAttendances,
-  pastEventWithAttendances,
-  onLoadMore,
-}) => {
+export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
   const { name, description, phone, email, website, location, imageUrl } = company
 
   const icons = [
@@ -26,6 +23,22 @@ export const CompanyView: FC<CompanyViewProps> = ({
     { icon: "material-symbols:mail", text: email, href: `mailto:${email}` },
     { icon: "material-symbols:phone-enabled", text: phone, href: `tel:${phone}` },
   ]
+
+  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
+
+  const { eventDetails: futureEventWithAttendances } = useEventAllQuery({
+    filter: { byOrganizingCompany: [company.id], byStartDate: { min: now, max: null } },
+  })
+
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
+    filter: {
+      byOrganizingCompany: [company.id],
+      byEndDate: {
+        max: now,
+        min: null,
+      },
+    },
+  })
 
   return (
     <EntryDetailLayout title={name} color={"BLUE"}>
@@ -56,13 +69,12 @@ export const CompanyView: FC<CompanyViewProps> = ({
         </div>
         <Text>{description}</Text>
       </div>
-      {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-2">
         <Title element="h2">Arrangementer</Title>
         <EventList
           futureEventWithAttendances={futureEventWithAttendances}
           pastEventWithAttendances={pastEventWithAttendances}
-          onLoadMore={onLoadMore}
+          onLoadMore={fetchNextPage}
         />
       </div>
     </EntryDetailLayout>

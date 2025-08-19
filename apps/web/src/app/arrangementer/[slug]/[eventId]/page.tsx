@@ -17,7 +17,7 @@ type OrganizerType = GroupType | "COMPANY"
 const organizerTypeToLink: Record<OrganizerType, string> = {
   COMMITTEE: "/komiteer",
   INTEREST_GROUP: "/interessegrupper",
-  COMPANY: "/karriere",
+  COMPANY: "/bedrifter",
   NODE_COMMITTEE: "/nodekomiteer",
   ASSOCIATED: "/andre-grupper",
 }
