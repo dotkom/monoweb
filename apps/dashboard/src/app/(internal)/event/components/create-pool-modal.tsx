@@ -24,7 +24,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
         capacity: values.capacity,
         yearCriteria: values.yearCriteria,
         title: values.title,
-        mergeDelayHours: null,
+        mergeDelayHours: values.mergeDelayHours,
       },
     })
 
@@ -40,6 +40,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
         yearCriteria: [],
         capacity: 0,
         title: "",
+        mergeDelayHours: null,
       }}
       onClose={onClose}
       mode="create"

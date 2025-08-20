@@ -46,6 +46,7 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
                 capacity: pool.capacity,
                 title: pool.title,
                 yearCriteria: pool.yearCriteria,
+                mergeDelayHours: pool.mergeDelayHours,
               },
               poolId: pool.id,
             })}

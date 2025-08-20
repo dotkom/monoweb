@@ -20,6 +20,16 @@ export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
   capacity: z.number(),
   title: z.string().min(1),
+  mergeDelayHours: z.preprocess((val) => {
+    if (typeof val === "number") {
+      const num = Number(val)
+      if (num === 0) {
+        return null
+      }
+      return num
+    }
+    return null
+  }, z.number().int().min(0).max(48, "Utsettelse må være mellom 0 og 48 timer.").nullable()),
 })
 export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
@@ -47,6 +57,11 @@ export const usePoolForm = (props: PoolFormProps) => {
       capacity: createNumberInput({
         label: "Kapasitet",
         min: props.minCapacity ?? 0,
+      }),
+      mergeDelayHours: createNumberInput({
+        label: "Utsettelse i timer",
+        placeholder: "Ingen utsettelse",
+        min: 0,
       }),
     },
     label: props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe",
