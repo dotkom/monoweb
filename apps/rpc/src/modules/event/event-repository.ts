@@ -55,6 +55,7 @@ export interface EventRepository {
   deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
+  count(handle: DBHandle): Promise<number>
 }
 
 export function getEventRepository(): EventRepository {
@@ -295,6 +296,9 @@ export function getEventRepository(): EventRepository {
       const event = await this.findById(handle, row.id)
       invariant(event !== null, "Event should exist within same transaction after updating attendance")
       return event
+    },
+    async count(handle) {
+      return await handle.event.count()
     },
   }
 }

@@ -179,4 +179,9 @@ export const eventRouter = t.router({
         return { event, attendance }
       })
     }),
+  count: procedure.query(async ({ ctx }) => {
+    return ctx.executeTransaction(async (handle) => {
+      return await ctx.eventService.count(handle)
+    })
+  }),
 })

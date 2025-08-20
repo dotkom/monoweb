@@ -37,6 +37,7 @@ export interface EventService {
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
   getByAttendance(handle: DBHandle, attendanceId: AttendanceId): Promise<Event>
+  count(handle: DBHandle): Promise<number>
 }
 
 export function getEventService(eventRepository: EventRepository): EventService {
@@ -90,6 +91,9 @@ export function getEventService(eventRepository: EventRepository): EventService 
     async updateEventAttendance(handle, eventId, attendanceId) {
       const event = await this.getEventById(handle, eventId)
       return await eventRepository.updateEventAttendance(handle, event.id, attendanceId)
+    },
+    async count(handle) {
+      return await eventRepository.count(handle)
     },
   }
 }
