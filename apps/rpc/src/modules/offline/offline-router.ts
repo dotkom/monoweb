@@ -4,12 +4,12 @@ import { PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const offlineRouter = t.router({
-  create: staffProcedure
+  create: staffProcedure()
     .input(OfflineWriteSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.offlineService.create(handle, input))
     ),
-  edit: staffProcedure
+  edit: staffProcedure()
     .input(
       z.object({
         id: OfflineSchema.shape.id,
@@ -29,7 +29,7 @@ export const offlineRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.offlineService.getById(handle, input))
     ),
-  createPresignedPost: staffProcedure
+  createPresignedPost: staffProcedure()
     .input(
       z.object({
         filename: z.string(),

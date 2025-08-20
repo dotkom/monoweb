@@ -47,7 +47,7 @@ export const eventRouter = t.router({
       })
     ),
 
-  create: staffProcedure
+  create: staffProcedure()
     .input(
       z.object({
         event: EventWriteSchema,
@@ -69,7 +69,7 @@ export const eventRouter = t.router({
       })
     }),
 
-  edit: staffProcedure
+  edit: staffProcedure()
     .input(
       z.object({
         id: EventSchema.shape.id,
@@ -95,7 +95,7 @@ export const eventRouter = t.router({
       })
     }),
 
-  delete: staffProcedure
+  delete: staffProcedure()
     .input(
       z.object({
         id: EventSchema.shape.id,
@@ -164,7 +164,7 @@ export const eventRouter = t.router({
       })
     ),
 
-  addAttendance: staffProcedure
+  addAttendance: staffProcedure()
     .input(
       z.object({
         values: AttendanceWriteSchema,
@@ -180,7 +180,7 @@ export const eventRouter = t.router({
       })
     }),
 
-  updateParentEvent: staffProcedure
+  updateParentEvent: staffProcedure()
     .input(
       z.object({
         eventId: EventSchema.shape.id,

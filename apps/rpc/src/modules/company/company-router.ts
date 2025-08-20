@@ -4,11 +4,13 @@ import { PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const companyRouter = t.router({
-  create: staffProcedure.input(CompanyWriteSchema).mutation(async ({ input, ctx }) => {
-    return ctx.executeTransaction(async (handle) => ctx.companyService.createCompany(handle, input))
-  }),
+  create: staffProcedure()
+    .input(CompanyWriteSchema)
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => ctx.companyService.createCompany(handle, input))
+    }),
 
-  edit: staffProcedure
+  edit: staffProcedure()
     .input(
       z.object({
         id: CompanySchema.shape.id,

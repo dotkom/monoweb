@@ -8,6 +8,7 @@ import {
 import { z } from "zod"
 import { BasePaginateInputSchema } from "../../query"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
+import { AffiliationSchema } from "../authorization-service"
 
 export const userRouter = t.router({
   all: procedure
@@ -48,12 +49,12 @@ export const userRouter = t.router({
       return await ctx.userService.createAvatarUploadURL(handle, ctx.principal.subject)
     })
   ),
-  register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
+  register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) => 
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.register(handle, input)
     })
   ),
-  createMembership: staffProcedure
+  createMembership: staffProcedure("dotkom", "hs")
     .input(
       z.object({
         userId: UserSchema.shape.id,
@@ -65,7 +66,7 @@ export const userRouter = t.router({
         return ctx.userService.createMembership(handle, input.userId, input.data)
       })
     ),
-  updateMembership: staffProcedure
+  updateMembership: staffProcedure("dotkom", "hs")
     .input(
       z.object({
         membershipId: MembershipSchema.shape.id,
@@ -90,24 +91,28 @@ export const userRouter = t.router({
       return ctx.userService.findById(handle, ctx.principal.subject)
     })
   ),
-  update: staffProcedure
+  update: authenticatedProcedure
     .input(
       z.object({
         id: UserSchema.shape.id,
         input: UserWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input: changes, ctx }) =>
+    .mutation(async ({ input: changes, ctx }) => {
+      ctx.authorize.requireMeOrAffiliation(changes.id, ["dotkom", "hs"])
       ctx.executeTransaction(async (handle) => {
         return ctx.userService.update(handle, changes.id, changes.input)
       })
-    ),
-  isStaff: authenticatedProcedure.query(async ({ ctx }) => {
-    try {
-      ctx.authorize.requireAffiliation()
-      return true
-    } catch {
-      return false
     }
-  }),
+    ),
+  isStaff: authenticatedProcedure
+    .input(AffiliationSchema.array().default([]))
+    .query(async ({ ctx, input }) => {
+      try {
+        ctx.authorize.requireAffiliation(...input)
+        return true
+      } catch {
+        return false
+      }
+    }),
 })

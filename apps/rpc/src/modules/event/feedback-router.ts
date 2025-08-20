@@ -13,7 +13,7 @@ import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
 export const feedbackRouter = t.router({
-  createForm: staffProcedure
+  createForm: staffProcedure()
     .input(
       z.object({
         feedbackForm: FeedbackFormWriteSchema,
@@ -26,7 +26,7 @@ export const feedbackRouter = t.router({
       )
     }),
 
-  updateForm: staffProcedure
+  updateForm: staffProcedure()
     .input(
       z.object({
         id: FeedbackFormIdSchema,
@@ -39,7 +39,7 @@ export const feedbackRouter = t.router({
         ctx.feedbackFormService.update(handle, input.id, input.feedbackForm, input.questions)
       )
     ),
-  deleteForm: staffProcedure
+  deleteForm: staffProcedure()
     .input(FeedbackFormIdSchema)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.delete(handle, input))
@@ -64,7 +64,7 @@ export const feedbackRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getPublicForm(handle, input))
     ),
-  getPublicResultsToken: staffProcedure
+  getPublicResultsToken: staffProcedure()
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getPublicResultsToken(handle, input))
@@ -81,7 +81,7 @@ export const feedbackRouter = t.router({
         ctx.feedbackFormAnswerService.create(handle, input.formAnswer, input.questionAnswers)
       )
     ),
-  findAnswerByAttendee: staffProcedure
+  findAnswerByAttendee: staffProcedure()
     .input(
       z.object({
         formId: FeedbackFormIdSchema,
@@ -93,7 +93,7 @@ export const feedbackRouter = t.router({
         ctx.feedbackFormAnswerService.findAnswerByAttendee(handle, input.formId, input.attendeeId)
       )
     ),
-  getAllAnswers: staffProcedure
+  getAllAnswers: staffProcedure()
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getAllAnswers(handle, input))
@@ -103,7 +103,7 @@ export const feedbackRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getPublicAnswers(handle, input))
     ),
-  deleteQuestionAnswer: staffProcedure
+  deleteQuestionAnswer: staffProcedure()
     .input(FeedbackQuestionAnswerSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input))

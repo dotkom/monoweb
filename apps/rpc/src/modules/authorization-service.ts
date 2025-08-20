@@ -2,29 +2,30 @@ import type { DBHandle } from "@dotkomonline/db"
 import type { GroupId, UserId } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import { LRUCache } from "lru-cache"
+import z from "zod"
 
 export type AffiliationSet = Set<GroupId>
 
-export const Affiliation = {
-  APPKOM: "appkom",
-  ARRKOM: "arrkom",
-  BACKLOG: "backlog",
-  BANKOM: "bankom",
-  BEDKOM: "bedkom",
-  DEBUG: "debug",
-  DOTKOM: "dotkom",
-  FAGKOM: "fagkom",
-  FEMINIT: "feminit",
-  HS: "hs",
-  KOMITELEDERE: "komiteledere",
-  ONLINE_IL: "onlineil",
-  FOND: "fond",
-  PROKOM: "prokom",
-  EKSKOM: "ekskom",
-  ITEX: "ekskom",
-  JUBKOM: "jubkom",
-} as const
-export type Affiliation = (typeof Affiliation)[keyof typeof Affiliation]
+export const AffiliationSchema = z.enum([
+  "appkom",
+  "arrkom",
+  "backlog",
+  "bankom",
+  "bedkom",
+  "debug",
+  "dotkom",
+  "fagkom",
+  "feminit",
+  "hs",
+  "komiteledere",
+  "online-il",
+  "fond",
+  "prokom",
+  "ekskom",
+  "ekskom",
+  "jubkom",
+])
+export type Affiliation = z.infer<typeof AffiliationSchema>
 
 export interface AuthorizationService {
   /**

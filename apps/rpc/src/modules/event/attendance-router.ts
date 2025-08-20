@@ -17,7 +17,7 @@ import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
-  createPool: staffProcedure
+  createPool: staffProcedure()
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
@@ -30,7 +30,7 @@ export const attendanceRouter = t.router({
       )
     }),
 
-  updatePool: staffProcedure
+  updatePool: staffProcedure()
     .input(
       z.object({
         id: AttendancePoolSchema.shape.id,
@@ -48,7 +48,7 @@ export const attendanceRouter = t.router({
       })
     }),
 
-  deletePool: staffProcedure
+  deletePool: staffProcedure()
     .input(
       z.object({
         id: AttendancePoolSchema.shape.id,
@@ -58,7 +58,7 @@ export const attendanceRouter = t.router({
       return ctx.executeTransaction(async (handle) => ctx.attendanceService.deleteAttendancePool(handle, input.id))
     }),
 
-  adminRegisterForEvent: staffProcedure
+  adminRegisterForEvent: staffProcedure()
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
@@ -77,7 +77,7 @@ export const attendanceRouter = t.router({
       })
     }),
 
-  updateAttendancePayment: staffProcedure
+  updateAttendancePayment: staffProcedure()
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
@@ -94,7 +94,7 @@ export const attendanceRouter = t.router({
       })
     }),
 
-  getSelectionsResults: staffProcedure
+  getSelectionsResults: staffProcedure()
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
@@ -148,7 +148,7 @@ export const attendanceRouter = t.router({
       }
     }),
 
-  cancelAttendeePayment: staffProcedure
+  cancelAttendeePayment: staffProcedure()
     .input(
       z.object({
         attendeeId: AttendeeSchema.shape.id,
@@ -159,7 +159,7 @@ export const attendanceRouter = t.router({
         ctx.attendanceService.cancelAttendeePayment(handle, attendeeId, ctx.principal.subject)
       )
     }),
-  startAttendeePayment: staffProcedure
+  startAttendeePayment: staffProcedure()
     .input(
       z.object({
         attendeeId: AttendeeSchema.shape.id,
@@ -189,7 +189,7 @@ export const attendanceRouter = t.router({
       })
     }),
 
-  adminDeregisterForEvent: staffProcedure
+  adminDeregisterForEvent: staffProcedure()
     .input(
       z.object({
         attendeeId: AttendeeSchema.shape.id,
@@ -208,7 +208,7 @@ export const attendanceRouter = t.router({
       })
     }),
 
-  registerAttendance: staffProcedure
+  registerAttendance: staffProcedure()
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
@@ -244,7 +244,7 @@ export const attendanceRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.attendanceService.getAttendanceById(handle, input.id))
     ),
 
-  updateAttendance: staffProcedure
+  updateAttendance: staffProcedure()
     .input(
       z.object({
         id: AttendanceSchema.shape.id,

@@ -4,7 +4,7 @@ import { PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const jobListingRouter = t.router({
-  create: staffProcedure
+  create: staffProcedure()
     .input(
       z.object({
         input: JobListingWriteSchema,
@@ -17,7 +17,7 @@ export const jobListingRouter = t.router({
         ctx.jobListingService.create(handle, input.input, input.companyId, input.locationIds)
       )
     ),
-  edit: staffProcedure
+  edit: staffProcedure()
     .input(
       z.object({
         id: JobListingSchema.shape.id,

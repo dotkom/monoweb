@@ -36,6 +36,14 @@ export const createContext = async (principal: Principal | null, context: Servic
         require(principal !== null)
       },
       /**
+       * Require that the user is signed in and that the provided user id is the user's id.
+       */
+      requireMe(userId: UserId) {
+        this.requireSignIn()
+        invariant(principal !== null)
+        require(principal.subject === userId)
+      },
+      /**
        * Require that the user is a member of at least one of the provided groups.
        *
        * If the provided list is empty, we assume permission for any group affiliation is sufficient.
@@ -47,14 +55,6 @@ export const createContext = async (principal: Principal | null, context: Servic
         for (const affiliation of affiliations) {
           require(principal.affiliations.has(affiliation))
         }
-      },
-      /**
-       * Require that the user is signed in and that the provided user id is the user's id.
-       */
-      requireMe(userId: UserId) {
-        this.requireSignIn()
-        invariant(principal !== null)
-        require(principal.subject === userId)
       },
       /**
        * Requires either `requireMe` or `requireAffiliation` to be true.
@@ -145,24 +145,26 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
   })
 })
 
-export const authenticatedProcedure = procedure.use(({ ctx, next }) => {
-  ctx.authorize.requireSignIn()
-  return next({
-    ctx: {
-      ...ctx,
-      // biome-ignore lint/style/noNonNullAssertion: the above assertion ensures ctx.principal is not null
-      principal: ctx.principal!,
-    },
+export const authenticatedProcedure =
+  procedure.use(({ ctx, next }) => {
+    ctx.authorize.requireSignIn()
+    return next({
+      ctx: {
+        ...ctx,
+        // biome-ignore lint/style/noNonNullAssertion: the above assertion ensures ctx.principal is not null
+        principal: ctx.principal!,
+      },
+    })
   })
-})
 
-export const staffProcedure = procedure.use(({ ctx, next }) => {
-  ctx.authorize.requireAffiliation()
-  return next({
-    ctx: {
-      ...ctx,
-      // biome-ignore lint/style/noNonNullAssertion: the above assertion ensures ctx.principal is not null
-      principal: ctx.principal!,
-    },
+export const staffProcedure = (...affiliations: Affiliation[]) =>
+  procedure.use(({ ctx, next }) => {
+    ctx.authorize.requireAffiliation(...affiliations)
+    return next({
+      ctx: {
+        ...ctx,
+        // biome-ignore lint/style/noNonNullAssertion: the above assertion ensures ctx.principal is not null
+        principal: ctx.principal!,
+      },
+    })
   })
-})

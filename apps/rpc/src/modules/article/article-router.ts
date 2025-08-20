@@ -4,7 +4,7 @@ import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const articleRouter = t.router({
-  create: staffProcedure
+  create: staffProcedure()
     .input(
       z.object({
         article: ArticleWriteSchema,
@@ -22,7 +22,7 @@ export const articleRouter = t.router({
       })
     }),
 
-  edit: staffProcedure
+  edit: staffProcedure()
     .input(
       z.object({
         id: ArticleSchema.shape.id,
@@ -81,7 +81,7 @@ export const articleRouter = t.router({
     ctx.executeTransaction(async (handle) => ctx.articleService.findTagsOrderedByPopularity(handle))
   ),
 
-  addTag: staffProcedure
+  addTag: staffProcedure()
     .input(
       z.object({
         id: ArticleSchema.shape.id,
@@ -92,7 +92,7 @@ export const articleRouter = t.router({
       return ctx.executeTransaction(async (handle) => ctx.articleService.addTag(handle, input.id, input.tag))
     }),
 
-  removeTag: staffProcedure
+  removeTag: staffProcedure()
     .input(
       z.object({
         id: ArticleSchema.shape.id,
