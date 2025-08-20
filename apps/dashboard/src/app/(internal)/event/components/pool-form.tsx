@@ -29,7 +29,7 @@ export const PoolFormSchema = z.object({
       return num
     }
     return null
-  }, z.number().min(0).max(48, "Utsettelse må være mellom 0 og 48 timer.").nullable()),
+  }, z.number().int().min(0).max(48, "Utsettelse må være mellom 0 og 48 timer.").nullable()),
 })
 export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
