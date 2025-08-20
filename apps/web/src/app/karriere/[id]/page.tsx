@@ -38,8 +38,9 @@ const JobListingPage = async ({ params }: JobListingProps) => {
       </Title>
 
       <div className="flex flex-row gap-8 justify-between">
-        <div className="w-2/3">
+        <div className="w-2/3 flex flex-col gap-8">
           <RichText content={jobListing.description} />
+          <RichText content={jobListing.about} />
         </div>
 
         <div className="flex flex-col gap-4 w-1/3">
