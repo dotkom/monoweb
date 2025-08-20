@@ -5,18 +5,21 @@ import { deliverNotificationEmail } from "../../email"
 // biome-ignore lint/style/noDefaultExport: this has to be migrated to app router
 export default async function Route(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
-    return res.status(405)
+    res.status(405).end()
+    return
   }
   const json = JSON.parse(req.body)
   const parseResult = formSchema.safeParse(json)
   if (!parseResult.success) {
-    return res.status(400)
+    res.status(400).end()
+    return
   }
   const body = parseResult.data
   const response = await deliverNotificationEmail(body)
   if (!response.ok) {
     console.error(response.status)
-    return res.status(response.status).send(await response.text())
+    res.status(response.status).send(await response.text())
+    return
   }
   res.status(200).send("OK")
 }
