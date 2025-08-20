@@ -179,4 +179,22 @@ export const eventRouter = t.router({
         return { event, attendance }
       })
     }),
+
+  updateParentEvent: staffProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+        parentEventId: EventSchema.shape.id.nullable(),
+      })
+    )
+    .output(EventWithAttendanceSchema)
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const updatedEvent = await ctx.eventService.updateEventParent(handle, input.eventId, input.parentEventId)
+        const attendance = updatedEvent.attendanceId
+          ? await ctx.attendanceService.findAttendanceById(handle, updatedEvent.attendanceId)
+          : null
+        return { event: updatedEvent, attendance }
+      })
+    }),
 })

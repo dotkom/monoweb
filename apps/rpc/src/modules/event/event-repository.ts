@@ -55,6 +55,7 @@ export interface EventRepository {
   deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
+  updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
 }
 
 export function getEventRepository(): EventRepository {
@@ -294,6 +295,15 @@ export function getEventRepository(): EventRepository {
       })
       const event = await this.findById(handle, row.id)
       invariant(event !== null, "Event should exist within same transaction after updating attendance")
+      return event
+    },
+    async updateEventParent(handle, eventId, parentEventId) {
+      const row = await handle.event.update({
+        where: { id: eventId },
+        data: { parentId: parentEventId },
+      })
+      const event = await this.findById(handle, row.id)
+      invariant(event !== null, "Event should exist within same transaction after updating parent")
       return event
     },
   }
