@@ -34,7 +34,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       <Link
                         href={"href" in link ? link.href : "#"}
                         className={cn(
-                          "font-body flex items-center gap-3 p-4 bg-gray-50 rounded-xl",
+                          "font-body flex items-center gap-3 p-4 bg-gray-50 dark:bg-stone-700 rounded-xl",
                           "text-lg font-semibold",
                           "href" in link && "font-medium"
                         )}
