@@ -282,7 +282,6 @@ export function getAttendanceService(
     async registerAttendee(handle, attendanceId, userId, options) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const user = await userService.getById(handle, userId)
-      const event = await eventService.getByAttendance(handle, attendance.id)
       if (attendance.attendees.some((a) => a.userId === userId)) {
         throw new AttendanceValidationError(
           `User(ID=${userId}) is already registered for Attendance(ID=${attendanceId})`

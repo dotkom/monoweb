@@ -13,6 +13,7 @@ import { getNotificationPermissionsRepository } from "../user/notification-permi
 import { getPrivacyPermissionsRepository } from "../user/privacy-permissions-repository"
 import { getUserRepository } from "../user/user-repository"
 import { getUserService } from "../user/user-service"
+import { EventRelationshipError } from "./event-error"
 import { getEventRepository } from "./event-repository"
 import { getEventService } from "./event-service"
 
@@ -138,5 +139,35 @@ describe("event integration tests", () => {
       })
       expect(events).toHaveLength(1)
     }
+  })
+
+  it("should prevent assigning itself as a parent event", async () => {
+    const event = await eventService.createEvent(dbClient, getMockEvent())
+    await expect(eventService.updateEventParent(dbClient, event.id, event.id)).rejects.toThrow(EventRelationshipError)
+  })
+
+  it("should prevent cyclic event relationships", async () => {
+    const event1 = await eventService.createEvent(dbClient, getMockEvent())
+    const event2 = await eventService.createEvent(dbClient, getMockEvent())
+
+    // It is legal to set event1 as a parent of event2
+    await expect(eventService.updateEventParent(dbClient, event2.id, event1.id)).resolves.toBeDefined()
+
+    // But it should now be illegal to set event2 as a parent of event1
+    await expect(eventService.updateEventParent(dbClient, event1.id, event2.id)).rejects.toThrow(EventRelationshipError)
+  })
+
+  it("should ban nesting more than one level deep", async () => {
+    const event1 = await eventService.createEvent(dbClient, getMockEvent())
+    const event2 = await eventService.createEvent(dbClient, getMockEvent())
+    const event3 = await eventService.createEvent(dbClient, getMockEvent())
+
+    // It is legal to set event1 as a parent of event2
+    await expect(eventService.updateEventParent(dbClient, event2.id, event1.id)).resolves.toBeDefined()
+
+    // It is not legal to set event2 as a parent of event3, as event2 already has a parent
+    await expect(eventService.updateEventParent(dbClient, event3.id, event2.id)).rejects.toThrowError(
+      EventRelationshipError
+    )
   })
 })

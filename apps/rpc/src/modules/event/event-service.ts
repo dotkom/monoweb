@@ -10,7 +10,7 @@ import type {
   UserId,
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
-import { EventNotFoundError } from "./event-error"
+import { EventNotFoundError, EventRelationshipError } from "./event-error"
 import type { EventRepository } from "./event-repository"
 
 export interface EventService {
@@ -27,6 +27,7 @@ export interface EventService {
     companies: Set<CompanyId>
   ): Promise<Event>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
+  updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
   findEvents(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<Event[]>
   findEventsByAttendingUserId(handle: DBHandle, userId: UserId, page?: Pageable): Promise<Event[]>
   findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
@@ -66,7 +67,7 @@ export function getEventService(eventRepository: EventRepository): EventService 
     async getByAttendance(handle, attendanceId) {
       const event = await eventRepository.findByAttendanceId(handle, attendanceId)
       if (event === null) {
-        throw new EventNotFoundError(`(attendanceId: ${attendanceId})`)
+        throw new EventNotFoundError(`Event(AttendanceId=${attendanceId}) not found.`)
       }
       return event
     },
@@ -90,6 +91,25 @@ export function getEventService(eventRepository: EventRepository): EventService 
     async updateEventAttendance(handle, eventId, attendanceId) {
       const event = await this.getEventById(handle, eventId)
       return await eventRepository.updateEventAttendance(handle, event.id, attendanceId)
+    },
+    async updateEventParent(handle, eventId, parentEventId) {
+      if (parentEventId === eventId) {
+        throw new EventRelationshipError(`Event(ID=${eventId}) cannot be assigned itself as a parent.`)
+      }
+      const event = await this.getEventById(handle, eventId)
+      if (parentEventId === null) {
+        return await eventRepository.updateEventParent(handle, event.id, null)
+      }
+      const parentEvent = await this.getEventById(handle, parentEventId)
+      // NOTE: This check ensures two things:
+      // 1. that we do not create circular references
+      // 2. that the max-height of the event tree is 2 (aka, only one level of nesting)
+      if (parentEvent.parentId !== null) {
+        throw new EventRelationshipError(
+          `Event(ID=${event.id}) cannot be assigned parent, as parent Event(ID=${parentEvent.id}) already has a parent.`
+        )
+      }
+      return await eventRepository.updateEventParent(handle, event.id, parentEvent.id)
     },
   }
 }
