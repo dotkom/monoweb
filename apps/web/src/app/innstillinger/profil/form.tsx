@@ -52,7 +52,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     control,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit,
   } = useForm<UserWrite>({
     defaultValues,
@@ -267,11 +267,11 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-row items-center gap-2">
-          <Button type="submit" className="w-fit" disabled={isUserFetching || Boolean(fetchedUser)}>
+          <Button type="submit" className="w-fit" disabled={isUserFetching || Boolean(fetchedUser) || !isDirty}>
             Oppdater
           </Button>
 
-          <Button type="button" onClick={() => reset(user)} variant="outline" className="w-fit">
+          <Button type="button" disabled={!isDirty} onClick={() => reset(user)} variant="outline" className="w-fit">
             Tilbakestill
           </Button>
         </div>
