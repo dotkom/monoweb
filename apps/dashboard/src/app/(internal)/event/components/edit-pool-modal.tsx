@@ -29,6 +29,7 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({
         capacity: values.capacity,
         title: values.title,
         yearCriteria: values.yearCriteria,
+        mergeDelayHours: values.mergeDelayHours,
       },
       id: poolId,
     })
@@ -41,6 +42,7 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({
         yearCriteria: defaultValues.yearCriteria,
         capacity: defaultValues.capacity,
         title: defaultValues.title,
+        mergeDelayHours: defaultValues.mergeDelayHours,
       }}
       onClose={onClose}
       onSubmit={onSubmit}

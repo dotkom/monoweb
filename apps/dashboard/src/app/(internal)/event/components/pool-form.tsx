@@ -16,10 +16,19 @@ export interface PoolFormProps {
   minCapacity?: number
 }
 
+const delayHoursErrorMessage = "Utsettelse må være enten tom eller under 48 timer."
+
 export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
   capacity: z.number(),
   title: z.string().min(1),
+  mergeDelayHours: z.preprocess((val) => {
+    if (typeof val === "number") {
+      const num = Number(val)
+      return Number.isNaN(num) ? null : num
+    }
+    return null
+  }, z.number().min(1, delayHoursErrorMessage).max(48, delayHoursErrorMessage).nullable()),
 })
 export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
@@ -47,6 +56,11 @@ export const usePoolForm = (props: PoolFormProps) => {
       capacity: createNumberInput({
         label: "Kapasitet",
         min: props.minCapacity ?? 0,
+      }),
+      mergeDelayHours: createNumberInput({
+        label: "Utsettelse i timer",
+        placeholder: "Ingen utsettelse",
+        min: 0,
       }),
     },
     label: props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe",
