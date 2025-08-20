@@ -91,6 +91,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           min: new Date(year, month, 1),
           max: new Date(year, month + 1, 0),
         },
+        excludingOrganizingGroup: ["velkom"],
       },
       take: 100,
     }),
