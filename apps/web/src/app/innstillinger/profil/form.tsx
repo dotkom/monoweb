@@ -267,7 +267,11 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-row items-center gap-2">
-          <Button type="submit" className="w-fit" disabled={isUserFetching || Boolean(fetchedUser) || !isDirty}>
+          <Button
+            type="submit"
+            className="w-fit"
+            disabled={isUserFetching || Boolean(fetchedUser && fetchedUser.id !== user.id) || !isDirty}
+          >
             Oppdater
           </Button>
 
