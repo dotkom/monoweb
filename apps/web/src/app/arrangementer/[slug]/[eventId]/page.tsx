@@ -4,6 +4,7 @@ import { server } from "@/utils/trpc/server"
 import type { Attendance, Company, Event, Group, GroupType, Punishment, User } from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text } from "@dotkomonline/ui"
 import clsx from "clsx"
+import { isPast } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 import { RedirectType, notFound, permanentRedirect } from "next/navigation"
@@ -12,7 +13,6 @@ import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
 import { EventList } from "../../components/EventList"
 import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBox"
-import { isPast } from "date-fns"
 
 type OrganizerType = GroupType | "COMPANY"
 
@@ -55,7 +55,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
   }
 
   const { event, attendance } = eventDetail
-  
+
   if (slug !== getEventSlug(event.title)) {
     permanentRedirect(getEventUrl(eventId, event.title), RedirectType.replace)
   }
@@ -65,7 +65,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
     session ? server.user.getMe.query() : null,
     session ? server.user.isStaff.query() : null,
   ])
-  
+
   const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
 
   const futureChildEvents = childEvents.filter(({ event }) => !isPast(event.end))
@@ -88,7 +88,11 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
 
           <TabsContent value="child-events" className="p-0 border-none mt-4">
             <div>
-              <EventList futureEventWithAttendances={futureChildEvents} pastEventWithAttendances={pastChildEvents} alwaysShowChildEvents />
+              <EventList
+                futureEventWithAttendances={futureChildEvents}
+                pastEventWithAttendances={pastChildEvents}
+                alwaysShowChildEvents
+              />
             </div>
           </TabsContent>
         </Tabs>
