@@ -14,17 +14,30 @@ interface EventListProps {
   futureEventWithAttendances: EventWithAttendance[]
   pastEventWithAttendances: EventWithAttendance[]
   onLoadMore?(): void
+  alwaysShowChildEvents?: boolean
 }
 
 export const EventList: FC<EventListProps> = ({
   futureEventWithAttendances: futureEvents,
   pastEventWithAttendances: pastEvents,
   onLoadMore,
+  alwaysShowChildEvents,
 }: EventListProps) => {
   const now = getCurrentUTC()
   const session = useSession()
 
-  const groupedEvents = Object.groupBy(futureEvents, (event) => {
+  const filteredFutureEvents = alwaysShowChildEvents
+    ? futureEvents
+    : futureEvents.filter((e) => {
+        if (!e.event.parentId) {
+          return true
+        }
+
+        const event = futureEvents.find((ev) => ev.event.id === e.event.parentId)
+        return event?.attendance?.attendees.some((a) => a.user.id === session?.sub) ?? false
+      })
+
+  const groupedEvents = Object.groupBy(filteredFutureEvents, (event) => {
     if (!event.attendance) {
       return "otherFutureEvents"
     }

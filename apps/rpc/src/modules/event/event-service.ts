@@ -30,6 +30,7 @@ export interface EventService {
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
   findEvents(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<Event[]>
   findEventsByAttendingUserId(handle: DBHandle, userId: UserId, page?: Pageable): Promise<Event[]>
+  findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
   findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
   /**
    * Get an event by its id
@@ -53,6 +54,9 @@ export function getEventService(eventRepository: EventRepository): EventService 
     },
     async findEvents(handle, query, page) {
       return await eventRepository.findMany(handle, query, page ?? { take: 20 })
+    },
+    async findByParentEventId(handle, parentEventId) {
+      return await eventRepository.findByParentEventId(handle, parentEventId)
     },
     async findEventById(handle, eventId) {
       return await eventRepository.findById(handle, eventId)
