@@ -34,7 +34,13 @@ export const EventList: FC<EventListProps> = ({
         }
 
         const event = futureEvents.find((ev) => ev.event.id === e.event.parentId)
-        return event?.attendance?.attendees.some((a) => a.user.id === session?.sub) ?? false
+
+        // This is so the event doesn't disappear if the parent event or attendance was deleted
+        if (!event?.attendance) {
+          return true
+        }
+
+        return event.attendance.attendees.some((a) => a.user.id === session?.sub && a.reserved)
       })
 
   const groupedEvents = Object.groupBy(filteredFutureEvents, (event) => {
