@@ -17,6 +17,7 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text"],
     },
+    fileParallelism: false,
     setupFiles: ["./vitest-integration.setup.ts"],
   },
 })
