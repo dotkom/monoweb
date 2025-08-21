@@ -133,6 +133,17 @@ export function getEventRepository(): EventRepository {
                   }
                 : undefined,
             },
+            {
+              feedbackForm: query.byHasFeedbackForm
+                ? {
+                    isNot: null,
+                  }
+                : query.byHasFeedbackForm === false
+                  ? {
+                      is: null,
+                    }
+                  : undefined,
+            },
           ],
         },
         include: {

@@ -429,6 +429,26 @@ export const useCreateFeedbackFormMutation = () => {
   )
 }
 
+export const useCreateFeedbackFormCopyMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "create",
+  })
+
+  return useMutation(
+    trpc.event.feedback.createFormCopy.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (data) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.event.feedback.findFormByEventId.queryOptions(data.eventId))
+      },
+    })
+  )
+}
+
 export const useUpdateFeedbackFormMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()

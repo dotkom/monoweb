@@ -1,16 +1,25 @@
-import type { FeedbackFormId, FeedbackFormWrite, FeedbackQuestionWrite } from "@dotkomonline/types"
-import { Box, Button, Title } from "@mantine/core"
+import type { EventId, FeedbackFormId, FeedbackFormWrite, FeedbackQuestionWrite } from "@dotkomonline/types"
+import { Box, Button, Group, Select, Stack, Title } from "@mantine/core"
 import type { FC } from "react"
 import { FeedbackFormEditForm } from "../components/feedback-form-edit-form"
-import { useCreateFeedbackFormMutation, useUpdateFeedbackFormMutation } from "../mutations"
-import { useEventFeedbackFormGetQuery } from "../queries"
+import {
+  useCreateFeedbackFormCopyMutation,
+  useCreateFeedbackFormMutation,
+  useUpdateFeedbackFormMutation,
+} from "../mutations"
+import { useEventAllQuery, useEventFeedbackFormGetQuery } from "../queries"
 import { useEventContext } from "./provider"
 
 export const FeedbackPage: FC = () => {
-  const { event, attendance } = useEventContext()
+  const { event } = useEventContext()
   const feedbackFormQuery = useEventFeedbackFormGetQuery(event.id)
   const createMutation = useCreateFeedbackFormMutation()
+  const createCopyMutation = useCreateFeedbackFormCopyMutation()
   const updateMutation = useUpdateFeedbackFormMutation()
+  const { events: eventsWithFeedbackForms } = useEventAllQuery({
+    page: { take: 999 },
+    filter: { byHasFeedbackForm: true },
+  })
 
   const onSubmit = (id: FeedbackFormId, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]) => {
     updateMutation.mutate({
@@ -27,6 +36,13 @@ export const FeedbackPage: FC = () => {
         isActive: false,
       },
       questions: [],
+    })
+  }
+
+  const createFeedbackFormCopy = (eventIdToCopyFrom: EventId) => {
+    createCopyMutation.mutate({
+      eventId: event.id,
+      eventIdToCopyFrom: eventIdToCopyFrom,
     })
   }
 
@@ -53,7 +69,24 @@ export const FeedbackPage: FC = () => {
             eventId={event.id}
           />
         ) : (
-          <Button onClick={createEmptyFeedbackForm}>Opprett</Button>
+          <Stack>
+            <Title order={4}>Opprett blankt tilbakemeldingsskjema</Title>
+            <Group>
+              <Button onClick={createEmptyFeedbackForm}>Opprett</Button>
+            </Group>
+            <Title order={4}>Opprett kopi av tilbakemeldingsskjema fra annet arrangement</Title>
+            <Group>
+              <Select
+                searchable={true}
+                onChange={(data) => data && createFeedbackFormCopy(data)}
+                placeholder="Velg et arrangement..."
+                data={eventsWithFeedbackForms.map((event) => ({
+                  label: event.event.title,
+                  value: event.event.id,
+                }))}
+              />
+            </Group>
+          </Stack>
         ))}
     </Box>
   )

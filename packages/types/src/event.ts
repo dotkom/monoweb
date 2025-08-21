@@ -51,6 +51,7 @@ export const EventFilterQuerySchema = z
     excludingOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
     orderBy: createSortOrder(),
     byStatus: buildAnyOfFilter(EventStatusSchema).default(["PUBLIC"]),
+    byHasFeedbackForm: z.boolean(),
   })
   .partial()
 
