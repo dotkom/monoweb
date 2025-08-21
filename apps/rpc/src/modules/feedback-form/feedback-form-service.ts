@@ -12,6 +12,7 @@ import type { FeedbackFormRepository } from "./feedback-form-repository"
 
 export interface FeedbackFormService {
   create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>
+  createCopyFromEvent(handle: DBHandle, eventId: EventId, eventIdToCopyFrom: EventId): Promise<FeedbackForm>
   update(
     handle: DBHandle,
     id: FeedbackFormId,
@@ -29,6 +30,17 @@ export interface FeedbackFormService {
 export function getFeedbackFormService(formRepository: FeedbackFormRepository): FeedbackFormService {
   return {
     async create(handle, feedbackForm, questions) {
+      return await formRepository.create(handle, feedbackForm, questions)
+    },
+    async createCopyFromEvent(handle, eventId, eventIdToCopyFrom) {
+      const formToCopy = await this.getByEventId(handle, eventIdToCopyFrom)
+
+      const feedbackForm: FeedbackFormWrite = {
+        eventId,
+        isActive: false,
+      }
+      const questions = formToCopy.questions
+
       return await formRepository.create(handle, feedbackForm, questions)
     },
     async update(handle, id, feedbackForm, questions) {

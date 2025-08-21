@@ -26,6 +26,19 @@ export const feedbackRouter = t.router({
       )
     }),
 
+  createFormCopy: staffProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+        eventIdToCopyFrom: EventSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) =>
+        ctx.feedbackFormService.createCopyFromEvent(handle, input.eventId, input.eventIdToCopyFrom)
+      )
+    }),
+
   updateForm: staffProcedure
     .input(
       z.object({
