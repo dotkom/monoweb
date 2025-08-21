@@ -59,3 +59,24 @@ export const EventWithAttendanceSchema = z.object({
   attendance: AttendanceSchema.nullable(),
 })
 export type EventWithAttendance = z.infer<typeof EventWithAttendanceSchema>
+
+export const mapEventTypeToLabel = (eventType: EventType) => {
+  switch (eventType) {
+    case "ACADEMIC":
+      return "Kurs"
+    case "GENERAL_ASSEMBLY":
+      return "Generalforsamling"
+    case "INTERNAL":
+      return "Intern"
+    case "OTHER":
+      return "Annet"
+    case "COMPANY":
+      return "Bedpres"
+    case "SOCIAL":
+      return "Sosialt"
+    case "WELCOME":
+      return "Fadderuke"
+    default:
+      return "Ukjent"
+  }
+}
