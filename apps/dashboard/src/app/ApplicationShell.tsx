@@ -20,6 +20,7 @@ import {
   IconExclamationMark,
   IconMoneybag,
   IconPhoto,
+  IconPhotoShare,
   IconSkull,
   IconUsersGroup,
   IconWheelchair,
@@ -69,7 +70,18 @@ const navigations = [
     icon: IconUsersGroup,
     href: "/user",
   },
-] as const
+  {
+    label: "Plakatbestilling",
+    icon: IconPhotoShare,
+    href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
+    openInNewTab: true,
+  },
+] satisfies {
+  label: string
+  icon: FC
+  href: string
+  openInNewTab?: boolean
+}[]
 
 export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
@@ -122,6 +134,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             active={pathname.startsWith(navigation.href)}
             variant="subtle"
             leftSection={<navigation.icon width={18} height={18} />}
+            {...(navigation.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           />
         ))}
         <Button component="a" variant="outline" href="/api/auth/logout" hiddenFrom="xs" mt="lg">
