@@ -448,6 +448,7 @@ export const useUpdateFeedbackFormMutation = () => {
     })
   )
 }
+
 export const useDeleteFeedbackFormMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -465,6 +466,27 @@ export const useDeleteFeedbackFormMutation = () => {
         await queryClient.invalidateQueries({
           queryKey: trpc.event.feedback.findFormByEventId.queryKey(),
         })
+      },
+    })
+  )
+}
+
+export const useUpdateAttendeeReservedMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.event.attendance.adminUpdateAtteendeeReserved.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
       },
     })
   )
