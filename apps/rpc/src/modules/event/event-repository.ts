@@ -50,6 +50,7 @@ export interface EventRepository {
    */
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
   findByAttendingUserId(handle: DBHandle, userId: UserId, page: Pageable): Promise<Event[]>
+  findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
   addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   addEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
@@ -133,6 +134,37 @@ export function getEventRepository(): EventRepository {
                 : undefined,
             },
           ],
+        },
+        include: {
+          companies: {
+            include: {
+              company: true,
+            },
+          },
+          hostingGroups: {
+            include: {
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      return events.map((event) =>
+        parseOrReport(EventSchema, {
+          ...event,
+          companies: event.companies.map((c) => c.company),
+          hostingGroups: event.hostingGroups.map((g) => g.group),
+        })
+      )
+    },
+    async findByParentEventId(handle, parentEventId) {
+      const events = await handle.event.findMany({
+        where: {
+          parentId: parentEventId,
+          status: "PUBLIC",
         },
         include: {
           companies: {

@@ -1,8 +1,8 @@
 import { auth } from "@/auth"
 import { getEventSlug, getEventUrl } from "@/utils/getEventUrl"
 import { server } from "@/utils/trpc/server"
-import type { Company, Group, GroupType } from "@dotkomonline/types"
-import { Text } from "@dotkomonline/ui"
+import type { Attendance, Company, Event, Group, GroupType, Punishment, User } from "@dotkomonline/types"
+import { Tabs, TabsContent, TabsList, TabsTrigger, Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import Image from "next/image"
 import Link from "next/link"
@@ -10,7 +10,9 @@ import { RedirectType, notFound, permanentRedirect } from "next/navigation"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
 import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
+import { EventList } from "../../components/EventList"
 import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBox"
+import { isPast } from "date-fns"
 
 type OrganizerType = GroupType | "COMPANY"
 
@@ -52,46 +54,85 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
     notFound()
   }
 
-  const [user, isStaff] = session
-    ? await Promise.all([await server.user.getMe.query(), await server.user.isStaff.query()])
-    : [null, null]
-
   const { event, attendance } = eventDetail
-
+  
   if (slug !== getEventSlug(event.title)) {
     permanentRedirect(getEventUrl(eventId, event.title), RedirectType.replace)
   }
 
+  const [childEvents, user, isStaff] = await Promise.all([
+    server.event.findChildEvents.query({ eventId }),
+    session ? server.user.getMe.query() : null,
+    session ? server.user.isStaff.query() : null,
+  ])
+  
   const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
 
+  const futureChildEvents = childEvents.filter(({ event }) => !isPast(event.end))
+  const pastChildEvents = childEvents.filter(({ event }) => isPast(event.end))
+
+  return (
+    <div className="flex flex-col gap-8">
+      <EventHeader event={event} isStaff={isStaff ?? false} />
+
+      {childEvents.length > 0 ? (
+        <Tabs defaultValue="description">
+          <TabsList>
+            <TabsTrigger value="description">Arrangement</TabsTrigger>
+            <TabsTrigger value="child-events">Underarrangementer</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="description" className="p-0 border-none mt-4">
+            <EventContent event={event} attendance={attendance} punishment={punishment} user={user} />
+          </TabsContent>
+
+          <TabsContent value="child-events" className="p-0 border-none mt-4">
+            <div>
+              <EventList futureEventWithAttendances={futureChildEvents} pastEventWithAttendances={pastChildEvents} alwaysShowChildEvents />
+            </div>
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <EventContent event={event} attendance={attendance} punishment={punishment} user={user} />
+      )}
+    </div>
+  )
+}
+
+interface EventContentProps {
+  event: Event
+  attendance: Attendance | null
+  punishment: Punishment | null
+  user: User | null
+}
+
+const EventContent = ({ event, attendance, punishment, user }: EventContentProps) => {
   const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group, group.type))
   const companyList = event.companies.map((company) => mapToImageAndName(company, "COMPANY"))
   const organizers = [...companyList, ...hostingGroups]
 
   return (
-    <div className="flex flex-col gap-8">
-      <EventHeader event={event} isStaff={isStaff ?? false} />
-      <div className="flex w-full flex-col gap-8 md:flex-row">
-        <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
-          {organizers.length > 0 ? (
-            <div className="flex flex-row gap-2">{organizers}</div>
-          ) : (
-            <Text className="text-gray-900">Ingen arrangører</Text>
-          )}
-          {event.description && <EventDescription description={event.description} />}
-        </div>
+    <div className="flex w-full flex-col gap-8 md:flex-row">
+      <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
+        {organizers.length > 0 ? (
+          <div className="flex flex-row gap-2">{organizers}</div>
+        ) : (
+          <Text className="text-gray-900">Ingen arrangører</Text>
+        )}
 
-        <div className="flex flex-1 flex-col gap-8 sm:gap-4">
-          <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
+        {event.description && <EventDescription description={event.description} />}
+      </div>
 
-          {attendance !== null && (
-            <AttendanceCard initialAttendance={attendance} initialPunishment={punishment} user={user} />
-          )}
+      <div className="flex flex-1 flex-col gap-8 sm:gap-4">
+        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
 
-          <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
+        {attendance !== null && (
+          <AttendanceCard initialAttendance={attendance} initialPunishment={punishment} user={user} />
+        )}
 
-          <TimeLocationBox event={event} />
-        </div>
+        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
+
+        <TimeLocationBox event={event} />
       </div>
     </div>
   )

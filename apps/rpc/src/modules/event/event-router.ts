@@ -197,4 +197,52 @@ export const eventRouter = t.router({
         return { event: updatedEvent, attendance }
       })
     }),
+
+  findParentEvent: procedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .output(EventWithAttendanceSchema.nullable())
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const event = await ctx.eventService.findEventById(handle, input.eventId)
+
+        if (!event) {
+          return null
+        }
+
+        const attendance = event?.attendanceId
+          ? await ctx.attendanceService.findAttendanceById(handle, event.attendanceId)
+          : null
+
+        return { event, attendance }
+      })
+    }),
+
+  findChildEvents: procedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .output(EventWithAttendanceSchema.array())
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const events = await ctx.eventService.findByParentEventId(handle, input.eventId)
+
+        const attendances = await ctx.attendanceService.getAttendancesByIds(
+          handle,
+          events.map((item) => item.attendanceId).filter((id) => id !== null)
+        )
+
+        const eventsWithAttendance = events.map((event) => ({
+          event,
+          attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
+        }))
+
+        return eventsWithAttendance
+      })
+    }),
 })
