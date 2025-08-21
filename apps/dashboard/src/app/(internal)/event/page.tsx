@@ -1,8 +1,12 @@
 "use client"
 
 import { GenericTable } from "@/components/GenericTable"
-import type { EventWithAttendance } from "@dotkomonline/types"
-import type { EventFilterQuery, EventStatus, EventType } from "@dotkomonline/types"
+import {
+  type EventFilterQuery,
+  type EventStatus,
+  type EventWithAttendance,
+  mapEventTypeToLabel,
+} from "@dotkomonline/types"
 import {
   ActionIcon,
   ActionIconGroup,
@@ -23,27 +27,6 @@ import { useMemo, useState } from "react"
 import { EventFilters } from "./components/event-filters"
 import { EventHostingGroupList } from "./components/event-hosting-group-list"
 import { useEventAllQuery } from "./queries"
-
-const mapEventTypeToLabel = (eventType: EventType) => {
-  switch (eventType) {
-    case "ACADEMIC":
-      return "Kurs"
-    case "GENERAL_ASSEMBLY":
-      return "Generalforsamling"
-    case "INTERNAL":
-      return "Intern"
-    case "OTHER":
-      return "Annet"
-    case "COMPANY":
-      return "Bedpres"
-    case "SOCIAL":
-      return "Sosialt"
-    case "WELCOME":
-      return "Fadderuke"
-    default:
-      return "Ukjent"
-  }
-}
 
 const mapEventStatusToLabel = (status: EventStatus) => {
   switch (status) {

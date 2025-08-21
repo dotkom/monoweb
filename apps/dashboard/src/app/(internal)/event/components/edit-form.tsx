@@ -5,19 +5,14 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { EventSchema, type EventStatus, type EventType, type Group } from "@dotkomonline/types"
+import { EventSchema, type EventStatus, EventTypeSchema, type Group, mapEventTypeToLabel } from "@dotkomonline/types"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
-const EVENT_FORM_DATA_TYPE = [
-  { value: "SOCIAL", label: "Sosialt" },
-  { value: "COMPANY", label: "Bedpres" },
-  { value: "ACADEMIC", label: "Kurs" },
-  { value: "GENERAL_ASSEMBLY", label: "Generalforsamling" },
-  { value: "INTERNAL", label: "Internt" },
-  { value: "OTHER", label: "Annet" },
-  { value: "WELCOME", label: "Fadderuke" },
-] as const satisfies { value: EventType; label: string }[]
+const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.Values).map((type) => ({
+  value: type,
+  label: mapEventTypeToLabel(type),
+}))
 
 const EVENT_FORM_DATA_STATUS = [
   { value: "DRAFT", label: "Utkast" },
