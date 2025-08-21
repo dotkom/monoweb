@@ -121,6 +121,8 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
 
   const resultsPageUrl = new URL(`tilbakemelding/${eventId}/svar/`, env.NEXT_PUBLIC_WEB_URL)
   const publicResultsPageUrl = new URL(`${publicResultsTokenQuery.data}`, resultsPageUrl)
+  const previewPageUrl = new URL(`tilbakemelding/${eventId}`, env.NEXT_PUBLIC_WEB_URL)
+  previewPageUrl.searchParams.append("preview", "true")
 
   return (
     <Stack>
@@ -138,6 +140,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
             info="Viser kun svar markert med 'Vis til bedrift'. Tilgjengelig for alle med lenken"
           />
         )}
+        <Anchor href={previewPageUrl.toString()}>Se forhåndsvisning</Anchor>
       </Stack>
 
       <Divider />
@@ -209,7 +212,7 @@ const CopyLinkRow = ({ url, label, info }: { url: string; label: string; info: s
     <CopyButton value={url}>
       {({ copied, copy }) => (
         <Tooltip label={copied ? "Kopiert" : "Kopier"}>
-          <ActionIcon color="gray" variant="subtle" onClick={copy}>
+          <ActionIcon color="gray" variant="subtle" onClick={copy} size="sm">
             {copied ? <IconCheck /> : <IconCopy />}
           </ActionIcon>
         </Tooltip>

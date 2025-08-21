@@ -27,10 +27,11 @@ interface FormValues {
 
 interface FormProps {
   feedbackForm: FeedbackForm
-  attendee: Attendee
+  attendee?: Attendee
+  preview: boolean
 }
 
-export function EventFeedbackForm({ feedbackForm, attendee }: FormProps) {
+export function EventFeedbackForm({ feedbackForm, attendee, preview }: FormProps) {
   const [submitted, setSubmitted] = useState(false)
 
   const feedbackAnswerCreateMutation = useCreateFeedbackAnswerMutation({ onSuccess: () => setSubmitted(true) })
@@ -61,6 +62,10 @@ export function EventFeedbackForm({ feedbackForm, attendee }: FormProps) {
   }
 
   const onSubmit = (values: FormValues) => {
+    if (!attendee || preview) {
+      throw new Error("Can't submit in preview mode")
+    }
+
     const answers = values.answers.map((answer) => {
       return {
         questionId: answer.questionId,
@@ -100,7 +105,7 @@ export function EventFeedbackForm({ feedbackForm, attendee }: FormProps) {
           />
         )
       })}
-      <Button type="submit" color="brand">
+      <Button type="submit" color="brand" disabled={preview}>
         Send inn
       </Button>
     </form>
