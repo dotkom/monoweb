@@ -78,7 +78,7 @@ const navigations = [
   },
 ] satisfies {
   label: string
-  icon: React.FC
+  icon: FC
   href: string
   openInNewTab?: boolean
 }[]
