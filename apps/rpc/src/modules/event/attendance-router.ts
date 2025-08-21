@@ -208,6 +208,19 @@ export const attendanceRouter = t.router({
       })
     }),
 
+  adminUpdateAtteendeeReserved: staffProcedure
+    .input(
+      z.object({
+        attendeeId: AttendeeSchema.shape.id,
+        reserved: AttendeeSchema.shape.reserved,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        await ctx.attendanceService.updateAttendeeById(handle, input.attendeeId, { reserved: input.reserved })
+      })
+    }),
+
   registerAttendance: staffProcedure
     .input(
       z.object({

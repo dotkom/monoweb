@@ -1,12 +1,12 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { ActionIcon, Checkbox, type CheckboxProps } from "@mantine/core"
+import { ActionIcon, Button, Checkbox, type CheckboxProps } from "@mantine/core"
 import { IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { isPast } from "date-fns"
 import { useMemo } from "react"
 import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
-import { useUpdateEventAttendanceMutation } from "../mutations"
+import { useUpdateAttendeeReservedMutation, useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
 
 interface AllAttendeesTableProps {
@@ -19,6 +19,7 @@ const CheckboxXIcon: CheckboxProps["icon"] = ({ indeterminate, ...others }) =>
 
 export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTableProps) => {
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
+  const updateAttendeeReservedMut = useUpdateAttendeeReservedMutation()
 
   const pools = useMemo(() => {
     return (attendance?.pools ?? []).reduce<Record<string, AttendancePool>>((acc, pool) => {
@@ -134,8 +135,36 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           </ActionIcon>
         ),
       }),
+      columnHelper.accessor((attendee) => attendee, {
+        id: "waitlistActions",
+        enableSorting: false,
+        header: () => "Endre status",
+        cell: (info) =>
+          info.getValue().reserved ? (
+            <Button
+              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: false })}
+            >
+              Flytt til venteliste
+            </Button>
+          ) : (
+            <Button
+              color="yellow"
+              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: true })}
+            >
+              Flytt av venteliste
+            </Button>
+          ),
+      }),
     ],
-    [columnHelper, updateAttendanceMut, pools, waitlists, attendance.deregisterDeadline, attendance.attendancePrice]
+    [
+      columnHelper,
+      updateAttendanceMut,
+      pools,
+      waitlists,
+      attendance.deregisterDeadline,
+      attendance.attendancePrice,
+      updateAttendeeReservedMut,
+    ]
   )
 
   const tableOptions = useMemo(
