@@ -141,9 +141,14 @@ export const attendanceRouter = t.router({
 
   onRegisterChange: procedure
     .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
-    .subscription(async function* ({ ctx, signal }) {
+    .subscription(async function* ({ input, ctx, signal }) {
       for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
         const attendeeUpdateData = data as { attendee: Attendee; status: "registered" | "deregistered" }
+
+        if (attendeeUpdateData.attendee.attendanceId !== input.attendanceId) {
+          continue
+        }
+
         yield attendeeUpdateData
       }
     }),
