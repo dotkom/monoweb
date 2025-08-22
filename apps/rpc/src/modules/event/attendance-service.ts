@@ -603,6 +603,7 @@ export function getAttendanceService(
 
       const payment = await paymentService.create(
         attendance.id,
+        attendee.user,
         isPast(attendance.deregisterDeadline) ? "CHARGE" : "RESERVE"
       )
 

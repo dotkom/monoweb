@@ -73,6 +73,7 @@ export const attendanceRouter = t.router({
           immediateReservation: true,
           immediatePayment: false,
           forceAttendancePoolId: input.attendancePoolId,
+          ignoreRegisteredToParent: true,
         })
       })
     }),
@@ -135,15 +136,21 @@ export const attendanceRouter = t.router({
           immediateReservation: false,
           immediatePayment: true,
           forceAttendancePoolId: null,
+          ignoreRegisteredToParent: false,
         })
       })
     ),
 
   onRegisterChange: procedure
     .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
-    .subscription(async function* ({ ctx, signal }) {
+    .subscription(async function* ({ input, ctx, signal }) {
       for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
         const attendeeUpdateData = data as { attendee: Attendee; status: "registered" | "deregistered" }
+
+        if (attendeeUpdateData.attendee.attendanceId !== input.attendanceId) {
+          continue
+        }
+
         yield attendeeUpdateData
       }
     }),
@@ -205,6 +212,19 @@ export const attendanceRouter = t.router({
         return await ctx.attendanceService.deregisterAttendee(handle, attendee.id, {
           ignoreDeregistrationWindow: true,
         })
+      })
+    }),
+
+  adminUpdateAtteendeeReserved: staffProcedure
+    .input(
+      z.object({
+        attendeeId: AttendeeSchema.shape.id,
+        reserved: AttendeeSchema.shape.reserved,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        await ctx.attendanceService.updateAttendeeById(handle, input.attendeeId, { reserved: input.reserved })
       })
     }),
 
