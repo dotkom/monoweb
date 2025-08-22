@@ -30,32 +30,50 @@ const getDisabledText = (
   isLoggedIn: boolean,
   hasMembership: boolean,
   isSuspended: boolean,
-  isNotRegisteredToParentEvent: boolean,
-  isNotReservedToParentEvent: boolean
+  notRegisteredToParentEvent: boolean,
+  notReservedToParentEvent: boolean
 ) => {
-  if (!isLoggedIn) return "Du må være innlogget for å melde deg på"
-  if (!hasMembership) return "Du må ha registrert medlemskap for å melde deg på"
-  if (status === "NotOpened") return "Påmeldinger har ikke åpnet"
-  if (hasBeenCharged) return "Betaling er utført. Kontakt komite for refusjon"
-  if (status === "Closed" && !attendee) return "Påmeldingen er stengt"
-  if (!pool && !attendee) return "Du har ingen påmeldingsgruppe"
-  if (isPastDeregisterDeadline && attendee) return "Avmeldingsfristen har utløpt"
-  if (isSuspended) return "Du er suspendert fra Online"
-  if (isNotRegisteredToParentEvent && attendee) return "Du er ikke registrert på foreldrearrangementet"
-  if (isNotReservedToParentEvent && !isNotRegisteredToParentEvent) return "Du er i kø på foreldrearrangementet"
+  if (!isLoggedIn) {
+    return "Du må være innlogget for å melde deg på"
+  }
+
+  if (attendee) {
+    if (isPastDeregisterDeadline) {
+      return "Avmeldingsfristen har utløpt"
+    }
+    if (hasBeenCharged) {
+      return "Betaling er utført. Kontakt arrangør for refusjon"
+    }
+
+    return null
+  }
+
+  if (isSuspended) {
+    return "Du er suspendert fra Online"
+  }
+  if (!hasMembership) {
+    return "Du må ha registrert medlemskap for å melde deg på"
+  }
+  if (status === "NotOpened") {
+    return "Påmeldinger har ikke åpnet"
+  }
+  if (status === "Closed") {
+    return "Påmeldingen er stengt"
+  }
+  if (!pool) {
+    return "Du har ingen påmeldingsgruppe"
+  }
+
+  if (notRegisteredToParentEvent) {
+    return "Du er ikke påmeldt foreldrearrangementet"
+  } else if (notReservedToParentEvent) {
+    return "Du er i kø på foreldrearrangementet"
+  }
 
   return null
 }
 
-/*
-  registerForAttendance={registerForAttendance}
-  unregisterForAttendance={deregisterForAttendance}
-  attendance={attendance}
-  punishment={punishment}
-  isLoading={isLoading}
-*/
-
-interface Props {
+interface RegistrationButtonProps {
   registerForAttendance: () => void
   unregisterForAttendance: () => void
   attendance: Attendance
@@ -65,7 +83,7 @@ interface Props {
   isLoading: boolean
 }
 
-export const RegistrationButton: FC<Props> = ({
+export const RegistrationButton: FC<RegistrationButtonProps> = ({
   registerForAttendance,
   unregisterForAttendance,
   attendance,
@@ -85,8 +103,8 @@ export const RegistrationButton: FC<Props> = ({
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
 
   const parentAttendanceAttendee = parentAttendance && getAttendee(parentAttendance, user)
-  const isNotRegisteredToParentEvent = parentAttendance ? !parentAttendanceAttendee : false
-  const isNotReservedToParentEvent = parentAttendance ? !parentAttendanceAttendee?.reserved : false
+  const notRegisteredToParentEvent = parentAttendance ? !parentAttendanceAttendee : false
+  const notReservedToParentEvent = parentAttendance ? !parentAttendanceAttendee?.reserved : false
 
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
@@ -100,8 +118,8 @@ export const RegistrationButton: FC<Props> = ({
     Boolean(user),
     hasMembership,
     isSuspended,
-    isNotRegisteredToParentEvent,
-    isNotReservedToParentEvent
+    notRegisteredToParentEvent,
+    notReservedToParentEvent
   )
   const disabled = Boolean(disabledText)
 

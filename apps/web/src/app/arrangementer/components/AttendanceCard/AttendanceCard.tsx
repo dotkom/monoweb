@@ -5,6 +5,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import {
   type Attendance,
   type AttendanceSelectionResponse,
+  type Event,
   type Punishment,
   type User,
   getAttendee,

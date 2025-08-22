@@ -151,7 +151,13 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
         <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
 
         {attendance !== null && (
-          <AttendanceCard initialAttendance={attendance} initialPunishment={punishment} user={user} />
+          <AttendanceCard
+            initialAttendance={attendance}
+            initialPunishment={punishment}
+            parentEvent={parentEvent}
+            parentAttendance={parentAttendance}
+            user={user}
+          />
         )}
 
         <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />

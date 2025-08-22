@@ -207,7 +207,13 @@ export const eventRouter = t.router({
     .output(EventWithAttendanceSchema.nullable())
     .query(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        const event = await ctx.eventService.findEventById(handle, input.eventId)
+        const childEvent = await ctx.eventService.findEventById(handle, input.eventId)
+
+        if (!childEvent?.parentId) {
+          return null
+        }
+
+        const event = await ctx.eventService.findEventById(handle, childEvent.parentId)
 
         if (!event) {
           return null
