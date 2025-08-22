@@ -36,7 +36,13 @@ interface AttendanceCardProps {
   parentAttendance: Attendance | null
 }
 
-export const AttendanceCard = ({ user, initialAttendance, initialPunishment, parentEvent, parentAttendance }: AttendanceCardProps) => {
+export const AttendanceCard = ({
+  user,
+  initialAttendance,
+  initialPunishment,
+  parentEvent,
+  parentAttendance,
+}: AttendanceCardProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
