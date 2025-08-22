@@ -73,6 +73,7 @@ export const attendanceRouter = t.router({
           immediateReservation: true,
           immediatePayment: false,
           forceAttendancePoolId: input.attendancePoolId,
+          ignoreRegisteredToParent: true,
         })
       })
     }),
@@ -135,6 +136,7 @@ export const attendanceRouter = t.router({
           immediateReservation: false,
           immediatePayment: true,
           forceAttendancePoolId: null,
+          ignoreRegisteredToParent: false,
         })
       })
     ),
