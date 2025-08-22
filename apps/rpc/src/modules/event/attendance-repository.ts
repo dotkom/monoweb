@@ -13,6 +13,7 @@ import {
   type AttendeePaymentWrite,
   AttendeeSchema,
   type AttendeeWrite,
+  type EventId,
   type UserId,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
@@ -25,6 +26,7 @@ export interface AttendanceRepository {
   findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   findAttendanceByAttendeePaymentId(handle: DBHandle, attendeePaymentId: string): Promise<Attendance | null>
+  findAttendanceByEventId(handle: DBHandle, eventId: EventId): Promise<Attendance | null>
   updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<Attendance>
 
@@ -168,6 +170,30 @@ export function getAttendanceRepository(): AttendanceRepository {
           attendees: {
             some: {
               paymentId: attendeePaymentId,
+            },
+          },
+        },
+        include: {
+          pools: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      return parseOrReport(AttendanceSchema.nullable(), attendance)
+    },
+    async findAttendanceByEventId(handle, eventId) {
+      const attendance = await handle.attendance.findFirst({
+        where: {
+          events: {
+            some: {
+              attendanceId: eventId,
             },
           },
         },

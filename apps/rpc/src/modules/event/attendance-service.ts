@@ -50,8 +50,10 @@ import type { AttendanceRepository } from "./attendance-repository"
 import type { EventService } from "./event-service"
 
 type EventRegistrationOptions = {
-  /** Should the user be attended regardless of if registration is closed? */
+  /** Should the user be registered regardless of if registration is closed? */
   ignoreRegistrationWindow: boolean
+  /** Should the user be registered to the event regardless of if they are registered to the parent event? */
+  ignoreRegisteredToParent: boolean
   /** Should the user be immediately reserved? */
   immediateReservation: boolean
   /**
@@ -281,6 +283,7 @@ export function getAttendanceService(
     },
     async registerAttendee(handle, attendanceId, userId, options) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
+      const event = await eventService.getByAttendance(handle, attendance.id)
       const user = await userService.getById(handle, userId)
       if (attendance.attendees.some((a) => a.userId === userId)) {
         throw new AttendanceValidationError(
@@ -298,6 +301,35 @@ export function getAttendanceService(
         throw new AttendanceValidationError(
           `Cannot register user(ID=${userId}) for Attendance(ID=${attendanceId}) after registration end`
         )
+      }
+
+      if (event.parentId) {
+        if (options.ignoreRegisteredToParent) {
+          logger.info(
+            "Bypassing registered to parent event requirements for Attendance(ID=%s) with parent Event(ID=%s) for User(Id=%s)",
+            attendance.id,
+            event.parentId,
+            userId
+          )
+        } else {
+          const parentAttendance = await attendanceRepository.findAttendanceByEventId(handle, event.parentId)
+
+          // Check only if parent attendance exists
+          if (parentAttendance) {
+            const attendee = parentAttendance.attendees.find((a) => a.userId === userId)
+
+            if (!attendee) {
+              throw new AttendanceValidationError(
+                `User(ID=${userId}) must be registered for parent Attendance(ID=${parentAttendance.id}) before registering for Attendance(ID=${attendanceId})`
+              )
+            }
+            if (!attendee.reserved) {
+              throw new AttendanceValidationError(
+                `User(ID=${userId}) must be reserved in parent Attendance(ID=${parentAttendance.id}) before registering for Attendance(ID=${attendanceId})`
+              )
+            }
+          }
+        }
       }
 
       // Ensure the user has an active membership, and determine their effective grade

@@ -187,6 +187,7 @@ describe("attendance integration tests", async () => {
         immediatePayment: false,
         ignoreRegistrationWindow: false,
         forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -206,6 +207,7 @@ describe("attendance integration tests", async () => {
         immediatePayment: false,
         ignoreRegistrationWindow: false,
         forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -237,6 +239,7 @@ describe("attendance integration tests", async () => {
         immediatePayment: false,
         ignoreRegistrationWindow: false,
         forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -273,6 +276,7 @@ describe("attendance integration tests", async () => {
         immediatePayment: false,
         ignoreRegistrationWindow: false,
         forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
 
@@ -282,6 +286,7 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: true,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(registration.userId).toEqual(user.id)
   })
@@ -311,6 +316,7 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
 
     // Attempt to register the same user again for the same attendance
@@ -320,6 +326,7 @@ describe("attendance integration tests", async () => {
         immediatePayment: false,
         ignoreRegistrationWindow: true,
         forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -362,6 +369,7 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
@@ -393,6 +401,7 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
@@ -423,6 +432,7 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(attendee.reserved).toBe(true)
   })
@@ -447,6 +457,7 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
 
     await core.attendanceService.updateAttendanceById(dbClient, attendance.id, {
@@ -492,6 +503,7 @@ describe("attendance integration tests", async () => {
         immediatePayment: false,
         ignoreRegistrationWindow: false,
         forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
 
@@ -501,6 +513,7 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: pool.id, // Force the user into the pool
+      ignoreRegisteredToParent: false,
     })
 
     expect(attendee.userId).toEqual(user.id)
@@ -533,12 +546,14 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     const betaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, beta.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
 
     expect(alphaAttendee.reserved).toBe(true)
@@ -585,12 +600,14 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     const betaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, beta.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(alphaAttendee.reserved).toBe(true)
     expect(betaAttendee.reserved).toBe(true)
@@ -637,6 +654,7 @@ describe("attendance integration tests", async () => {
       immediatePayment: false,
       ignoreRegistrationWindow: false,
       forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(attendee.reserved).toBe(true)
 
