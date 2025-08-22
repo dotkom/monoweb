@@ -20,8 +20,11 @@ export interface TaskRepository {
   getById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
   getAll(handle: DBHandle): Promise<Task[]>
   getPendingTasks(handle: DBHandle, type: TaskType): Promise<Task[]>
+
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
+  findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
+  findChargeAttendancePaymentsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
 }
 
 export function getTaskRepository(): TaskRepository {
@@ -103,6 +106,30 @@ export function getTaskRepository(): TaskRepository {
           payload: {
             path: ["eventId"],
             equals: eventId,
+          },
+        },
+      })
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+    async findVerifyPaymentTask(handle, attendeeId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.VERIFY_PAYMENT.type,
+          payload: {
+            path: ["attendeeId"],
+            equals: attendeeId,
+          },
+        },
+      })
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+    async findChargeAttendancePaymentsTask(handle, attendanceId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.CHARGE_ATTENDANCE_PAYMENTS.type,
+          payload: {
+            path: ["attendanceId"],
+            equals: attendanceId,
           },
         },
       })

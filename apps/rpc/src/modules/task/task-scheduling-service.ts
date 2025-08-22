@@ -20,8 +20,15 @@ export interface TaskSchedulingService {
     data: InferTaskData<TTaskDef>,
     executeAt: TZDate
   ): Promise<TaskId>
+  /**
+   * Cancel a pending task.
+   */
+  cancel(handle: DBHandle, id: TaskId): Promise<void>
+
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
+  findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
+  findChargeAttendancePaymentsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
 }
 
 export function getLocalTaskSchedulingService(
@@ -41,11 +48,25 @@ export function getLocalTaskSchedulingService(
       })
       return scheduledTask.id
     },
+    async cancel(handle, id) {
+      logger.info("Cancelling task with id: %s", id)
+      const task = await taskRepository.getById(handle, id)
+      if (task?.status !== "PENDING") {
+        return
+      }
+      await taskRepository.update(handle, task.id, { status: "CANCELED" }, task.status)
+    },
     async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
       return taskRepository.findReserveAttendeeTask(handle, attendeeId, attendanceId)
     },
     async findMergeEventPoolsTask(handle, eventId) {
       return taskRepository.findMergeEventPoolsTask(handle, eventId)
+    },
+    async findVerifyPaymentTask(handle, attendeeId) {
+      return await taskRepository.findVerifyPaymentTask(handle, attendeeId)
+    },
+    async findChargeAttendancePaymentsTask(handle, attendanceId) {
+      return await taskRepository.findChargeAttendancePaymentsTask(handle, attendanceId)
     },
   }
 }
@@ -58,12 +79,23 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
     async scheduleAt(_, kind, data) {
       throw new NotImplementedError("EventBridgeSchedulingService#schedule")
     },
+    async cancel(_, id) {
+      throw new NotImplementedError("EventBridgeSchedulingService#cancel")
+    },
     async findReserveAttendeeTask(_, attendeeId, attendanceId) {
       logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
       return null
     },
     async findMergeEventPoolsTask(_, eventId) {
       logger.warn("findMergeEventPoolsTask is not implemented in EventBridgeSchedulingService")
+      return null
+    },
+    async findVerifyPaymentTask(_, attendeeId) {
+      logger.warn("findVerifyPaymentTask is not implemented in EventBridgeSchedulingService")
+      return null
+    },
+    async findChargeAttendancePaymentsTask(_, attendanceId) {
+      logger.warn("findChargeAttendancePaymentsTask is not implemented in EventBridgeSchedulingService")
       return null
     },
   }

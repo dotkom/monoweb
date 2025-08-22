@@ -520,6 +520,11 @@ export function getAttendanceService(
       }
 
       await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
+
+      const task = await taskSchedulingService.findChargeAttendancePaymentsTask(handle, attendance.id)
+      if (task) {
+        await taskSchedulingService.cancel(handle, task.id)
+      }
     },
     async updateAttendancePaymentPrice(handle, attendanceId, price) {
       if (price !== null && price < 0) {
@@ -686,6 +691,11 @@ export function getAttendanceService(
         paymentRefundedAt: getCurrentUTC(),
         paymentRefundedById: refundedByUserId,
       })
+
+      const task = await taskSchedulingService.findVerifyPaymentTask(handle, attendeeId)
+      if (task) {
+        await taskSchedulingService.cancel(handle, task.id)
+      }
     },
     async completeAttendeePayment(handle, paymentId) {
       const attendance = await attendanceRepository.findAttendanceByAttendeePaymentId(handle, paymentId)
@@ -744,6 +754,8 @@ export function getAttendanceService(
         paymentRefundedAt: null,
         paymentRefundedById: null,
       })
+
+      await taskSchedulingService.scheduleAt(handle, tasks.VERIFY_PAYMENT, { attendeeId }, paymentDeadline)
 
       return payment
     },
