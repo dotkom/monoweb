@@ -70,4 +70,33 @@ export const getAttendanceFixtures = () =>
       deregisterDeadline: setMinutes(setHours(addDays(now, 5), 23), 59),
       selections: [],
     },
+    // ITEX
+    {
+      registerStart: setHours(subDays(now, 3), 12),
+      registerEnd: setHours(addDays(now, 5), 16),
+      deregisterDeadline: setMinutes(setHours(addDays(now, 4), 23), 59),
+      selections: [],
+    },
+    // (ITEX) Kveldsarrangement med Twoday
+    {
+      registerStart: setHours(subDays(now, 1), 12),
+      registerEnd: setHours(addDays(now, 6), 16),
+      deregisterDeadline: setMinutes(setHours(addDays(now, 5), 23), 59),
+      selections: [
+        {
+          id: "0",
+          name: "Hva vil du ha til mat?",
+          options: [
+            {
+              id: "0",
+              name: "Pizza",
+            },
+            {
+              id: "1",
+              name: "Sushi",
+            },
+          ],
+        },
+      ],
+    },
   ] as const satisfies Prisma.AttendanceCreateManyInput[]

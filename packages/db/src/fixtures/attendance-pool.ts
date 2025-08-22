@@ -64,4 +64,18 @@ export const getPoolFixtures = (attendance_ids: string[]) =>
       capacity: 40,
       yearCriteria: [3, 5],
     },
+    {
+      // ITEX
+      attendanceId: attendance_ids[4],
+      title: "Alle",
+      capacity: 100,
+      yearCriteria: [1, 2, 3, 4, 5],
+    },
+    {
+      // (ITEX) Kveldsarrangement med Twoday
+      attendanceId: attendance_ids[5],
+      title: "Alle",
+      capacity: 25,
+      yearCriteria: [1, 2, 3, 4, 5],
+    },
   ] as const satisfies Prisma.AttendancePoolCreateManyInput[]

@@ -193,7 +193,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         where: {
           events: {
             some: {
-              attendanceId: eventId,
+              id: eventId,
             },
           },
         },
