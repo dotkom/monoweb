@@ -8,6 +8,7 @@ import { formatDate, isPast } from "date-fns"
 import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
+import { CommitteeApplicationsNotice } from "./committee-applications-notice"
 import { ConstructionNotice } from "./construction-notice"
 import { FadderukeNotice } from "./fadderuke-notice"
 
@@ -34,6 +35,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
         {constructionNoticeShown && <ConstructionNotice />}
+        <CommitteeApplicationsNotice />
         <FadderukeNotice />
       </div>
 
