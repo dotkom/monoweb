@@ -1,3 +1,4 @@
+import type { User } from "@dotkomonline/types"
 import type Stripe from "stripe"
 import invariant from "tiny-invariant"
 import {
@@ -27,7 +28,7 @@ export type Payment =
 type PaymentId = string
 
 export interface PaymentService {
-  create(productId: PaymentId, chargeMode?: ChargeMode): Promise<Payment>
+  create(productId: PaymentId, user: User, chargeMode?: ChargeMode): Promise<Payment>
   cancel(paymentId: PaymentId): Promise<void>
   refund(paymentId: PaymentId): Promise<void>
   charge(paymentId: PaymentId): Promise<void>
@@ -77,7 +78,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         paymentIntentId: paymentIntent.id,
       }
     },
-    async create(productId, chargeMode = "RESERVE") {
+    async create(productId, user, chargeMode = "RESERVE") {
       const product = await stripe.products.retrieve(productId)
       if (!product.default_price) {
         throw new PaymentUnexpectedStateError(
@@ -93,7 +94,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         cancel_url: product.url ?? undefined,
         mode: "payment",
         ...(chargeMode === "CHARGE" ? {} : { payment_intent_data: { capture_method: "manual" } }),
-        customer_email: "jotjernshaugen@gmail.com",
+        customer_email: user.email || "dotkom+stripe-no-customer-email@online.ntnu.no",
       })
 
       return {
