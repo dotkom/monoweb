@@ -60,22 +60,26 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
     permanentRedirect(getEventUrl(eventId, event.title), RedirectType.replace)
   }
 
-  const [childEvents, user, isStaff] = await Promise.all([
-    server.event.findChildEvents.query({ eventId }),
+  const [user, isStaff, childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
     session ? server.user.getMe.query() : null,
     session ? server.user.isStaff.query() : null,
+    server.event.findChildEvents.query({ eventId }),
+    server.event.findParentEvent.query({ eventId }),
   ])
 
   const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
 
-  const futureChildEvents = childEvents.filter(({ event }) => !isPast(event.end))
-  const pastChildEvents = childEvents.filter(({ event }) => isPast(event.end))
+  const parentEvent = parentEventWithAttendance?.event ?? null
+  const parentAttendance = parentEventWithAttendance?.attendance ?? null
+
+  const futureChildEventWithAttendances = childEventWithAttendance.filter(({ event }) => !isPast(event.end))
+  const pastChildEventsWithAttendances = childEventWithAttendance.filter(({ event }) => isPast(event.end))
 
   return (
     <div className="flex flex-col gap-8">
       <EventHeader event={event} isStaff={isStaff ?? false} />
 
-      {childEvents.length > 0 ? (
+      {childEventWithAttendance.length > 0 ? (
         <Tabs defaultValue="description">
           <TabsList>
             <TabsTrigger value="description">Arrangement</TabsTrigger>
@@ -83,21 +87,35 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
           </TabsList>
 
           <TabsContent value="description" className="p-0 border-none mt-4">
-            <EventContent event={event} attendance={attendance} punishment={punishment} user={user} />
+            <EventContent
+              event={event}
+              parentEvent={parentEvent}
+              attendance={attendance}
+              parentAttendance={parentAttendance}
+              punishment={punishment}
+              user={user}
+            />
           </TabsContent>
 
           <TabsContent value="child-events" className="p-0 border-none mt-4">
             <div>
               <EventList
-                futureEventWithAttendances={futureChildEvents}
-                pastEventWithAttendances={pastChildEvents}
+                futureEventWithAttendances={futureChildEventWithAttendances}
+                pastEventWithAttendances={pastChildEventsWithAttendances}
                 alwaysShowChildEvents
               />
             </div>
           </TabsContent>
         </Tabs>
       ) : (
-        <EventContent event={event} attendance={attendance} punishment={punishment} user={user} />
+        <EventContent
+          event={event}
+          attendance={attendance}
+          parentEvent={parentEvent}
+          parentAttendance={parentAttendance}
+          punishment={punishment}
+          user={user}
+        />
       )}
     </div>
   )
@@ -106,11 +124,13 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
 interface EventContentProps {
   event: Event
   attendance: Attendance | null
+  parentEvent: Event | null
+  parentAttendance: Attendance | null
   punishment: Punishment | null
   user: User | null
 }
 
-const EventContent = ({ event, attendance, punishment, user }: EventContentProps) => {
+const EventContent = ({ event, attendance, parentEvent, parentAttendance, punishment, user }: EventContentProps) => {
   const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group, group.type))
   const companyList = event.companies.map((company) => mapToImageAndName(company, "COMPANY"))
   const organizers = [...companyList, ...hostingGroups]

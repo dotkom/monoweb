@@ -28,8 +28,10 @@ const getDisabledText = (
   hasBeenCharged: boolean,
   isPastDeregisterDeadline: boolean,
   isLoggedIn: boolean,
-  hasMembership?: boolean,
-  isSuspended?: boolean
+  hasMembership: boolean,
+  isSuspended: boolean,
+  isNotRegisteredToParentEvent: boolean,
+  isNotReservedToParentEvent: boolean
 ) => {
   if (!isLoggedIn) return "Du må være innlogget for å melde deg på"
   if (!hasMembership) return "Du må ha registrert medlemskap for å melde deg på"
@@ -39,6 +41,8 @@ const getDisabledText = (
   if (!pool && !attendee) return "Du har ingen påmeldingsgruppe"
   if (isPastDeregisterDeadline && attendee) return "Avmeldingsfristen har utløpt"
   if (isSuspended) return "Du er suspendert fra Online"
+  if (isNotRegisteredToParentEvent && attendee) return "Du er ikke registrert på foreldrearrangementet"
+  if (isNotReservedToParentEvent && !isNotRegisteredToParentEvent) return "Du er i kø på foreldrearrangementet"
 
   return null
 }
@@ -55,6 +59,7 @@ interface Props {
   registerForAttendance: () => void
   unregisterForAttendance: () => void
   attendance: Attendance
+  parentAttendance: Attendance | null
   punishment: Punishment | null
   user: User | null
   isLoading: boolean
@@ -64,6 +69,7 @@ export const RegistrationButton: FC<Props> = ({
   registerForAttendance,
   unregisterForAttendance,
   attendance,
+  parentAttendance,
   punishment,
   user,
   isLoading,
@@ -78,6 +84,10 @@ export const RegistrationButton: FC<Props> = ({
   const isSuspended = punishment?.suspended ?? false
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
 
+  const parentAttendanceAttendee = parentAttendance && getAttendee(parentAttendance, user)
+  const isNotRegisteredToParentEvent = parentAttendance ? !parentAttendanceAttendee : false
+  const isNotReservedToParentEvent = parentAttendance ? !parentAttendanceAttendee?.reserved : false
+
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
 
@@ -89,7 +99,9 @@ export const RegistrationButton: FC<Props> = ({
     isPastDeregisterDeadline,
     Boolean(user),
     hasMembership,
-    isSuspended
+    isSuspended,
+    isNotRegisteredToParentEvent,
+    isNotReservedToParentEvent
   )
   const disabled = Boolean(disabledText)
 

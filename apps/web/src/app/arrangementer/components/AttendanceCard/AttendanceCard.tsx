@@ -32,9 +32,11 @@ interface AttendanceCardProps {
   initialAttendance: Attendance
   initialPunishment: Punishment | null
   user: User | null
+  parentEvent: Event | null
+  parentAttendance: Attendance | null
 }
 
-export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: AttendanceCardProps) => {
+export const AttendanceCard = ({ user, initialAttendance, initialPunishment, parentEvent, parentAttendance }: AttendanceCardProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
@@ -205,6 +207,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialPunishment }: A
         registerForAttendance={registerForAttendance}
         unregisterForAttendance={deregisterForAttendance}
         attendance={attendance}
+        parentAttendance={parentAttendance}
         punishment={punishment}
         user={user}
         isLoading={isLoading}
