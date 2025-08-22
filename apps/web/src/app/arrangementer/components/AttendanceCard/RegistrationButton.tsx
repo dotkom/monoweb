@@ -63,10 +63,10 @@ const getDisabledText = (
   if (!pool) {
     return "Du har ingen påmeldingsgruppe"
   }
-
   if (notRegisteredToParentEvent) {
     return "Du er ikke påmeldt foreldrearrangementet"
-  } else if (notReservedToParentEvent) {
+  }
+  if (notReservedToParentEvent && !notRegisteredToParentEvent) {
     return "Du er i kø på foreldrearrangementet"
   }
 
