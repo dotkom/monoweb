@@ -3,6 +3,7 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
@@ -223,7 +224,7 @@ export default function ProfilePage() {
   )
 
   if (!user) {
-    return
+    return <SkeletonProfilePage />
   }
 
   const activeMembership = findActiveMembership(user)
@@ -426,13 +427,45 @@ export default function ProfilePage() {
               onLoadMore={fetchNextPage}
             />
           ) : (
-            <Text>loading..</Text>
+            <div className="flex flex-col gap-1">
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+            </div>
           )
         ) : (
           <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-500">
             <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>
           </div>
         )}
+      </div>
+    </div>
+  )
+}
+
+const SkeletonProfilePage = () => {
+  return (
+    <div className="flex flex-row gap-6">
+      <div className="w-16 h-16 md:w-32 md:h-32 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+
+      <div className="flex flex-col gap-3 grow">
+        <div className="h-8 w-64 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+
+        <div className="flex flex-col text-sm gap-1 md:flex-row md:items-center md:gap-2">
+          <div className="w-32 h-5 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+          <Icon
+            icon="tabler:point-filled"
+            className="text-gray-300 dark:text-stone-700 hidden md:block animate-pulse"
+          />
+          <div className="w-36 h-5 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+        </div>
+
+        <div className="flex flex-col gap-2 mt-2">
+          <div className="w-72 max-w-[70%] h-6 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+          <div className="w-48 max-w-[50%] h-6 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+        </div>
       </div>
     </div>
   )

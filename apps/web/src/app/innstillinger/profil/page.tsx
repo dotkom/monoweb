@@ -1,11 +1,11 @@
 "use client"
 import { useTRPC } from "@/utils/trpc/client"
 import type { UserWrite } from "@dotkomonline/types"
-import { Button, Icon, Text, Title } from "@dotkomonline/ui"
+import { Button, Icon, Title } from "@dotkomonline/ui"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ProfileForm } from "./form"
+import { ProfileForm, SkeletonProfileForm } from "./form"
 
 const EditProfilePage = () => {
   const trpc = useTRPC()
@@ -27,11 +27,17 @@ const EditProfilePage = () => {
   )
 
   if (userIsLoading) {
-    // TODO: Add skeleton loading
     return (
-      <div className="flex w-fit items-center gap-2">
-        <Icon icon="tabler:loader" className="animate-spin text-lg" />
-        <Text>Laster</Text>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-row justify-between">
+          <Title element="h1" size="xl">
+            Rediger profil
+          </Title>
+
+          <div className="w-24 h-9 rounded-md bg-gray-300 dark:bg-stone-700 animate-pulse" />
+        </div>
+
+        <SkeletonProfileForm />
       </div>
     )
   }
