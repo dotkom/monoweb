@@ -3,6 +3,7 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
@@ -42,6 +43,7 @@ import {
 import Link from "next/link"
 import { useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
+import SkeletonProfilePage from "./loading"
 
 const AUTHORIZE_WITH_FEIDE =
   "/api/auth/authorize?connection=FEIDE&redirectAfter=%2Fprofil%3FreturnedFromFeide%3Dtrue" as const
@@ -223,7 +225,7 @@ export default function ProfilePage() {
   )
 
   if (!user) {
-    return
+    return <SkeletonProfilePage />
   }
 
   const activeMembership = findActiveMembership(user)
@@ -426,7 +428,13 @@ export default function ProfilePage() {
               onLoadMore={fetchNextPage}
             />
           ) : (
-            <Text>loading..</Text>
+            <div className="flex flex-col gap-1">
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+            </div>
           )
         ) : (
           <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-500">
