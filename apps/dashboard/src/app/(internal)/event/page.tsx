@@ -22,12 +22,12 @@ import {
 import { IconCaretLeft, IconCaretRight, IconPencil } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
+import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import { EventFilters } from "./components/event-filters"
 import { EventHostingGroupList } from "./components/event-hosting-group-list"
 import { useEventAllQuery } from "./queries"
-import { nb } from "date-fns/locale"
 
 const mapEventStatusToLabel = (status: EventStatus) => {
   switch (status) {
@@ -60,8 +60,8 @@ export default function EventPage() {
       columnHelper.accessor("event.start", {
         header: () => "Startdato",
         cell: (info) => {
-          const longDate = formatDate(info.getValue(), "eeee dd. MMMM yyyy HH:mm", {locale: nb})
-          const shortDate = formatDate(info.getValue(), "dd. MMM yyyy", {locale: nb})
+          const longDate = formatDate(info.getValue(), "eeee dd. MMMM yyyy HH:mm", { locale: nb })
+          const shortDate = formatDate(info.getValue(), "dd. MMM yyyy", { locale: nb })
 
           return (
             <Tooltip label={capitalizeFirstLetter(longDate)}>
