@@ -403,6 +403,14 @@ export function getAttendanceService(
         attendee.paymentDeadline = paymentDeadline
         attendee.paymentId = payment.id
         attendee.paymentLink = payment.url
+        logger.info(
+          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
+          attendee.id,
+          attendee.user.id,
+          paymentDeadline.toUTCString(),
+          event.id,
+          payment.url
+        )
       }
 
       // When a user is immediately reserved, there is no reason to schedule a task for them.
@@ -419,6 +427,14 @@ export function getAttendanceService(
       }
 
       eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
+      logger.info(
+        "Attendee(ID=%s,UserID=%s) named %s has attended Event(ID=%s) named %s",
+        attendee.id,
+        attendee.user.id,
+        attendee.user.name || "<missing name>",
+        event.id,
+        event.title
+      )
 
       return attendee
     },
@@ -475,7 +491,17 @@ export function getAttendanceService(
         await paymentService.cancel(attendee.paymentId)
       }
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
+      const event = await eventService.getByAttendance(handle, attendance.id)
+
       eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
+      logger.info(
+        "Attendee(ID=%s,UserID=%s) named %s has attended Event(ID=%s) named %s",
+        attendee.id,
+        attendee.user.id,
+        attendee.user.name || "<missing name>",
+        event.id,
+        event.title
+      )
 
       // If the attendee was reserved, we find a replacement for them in the pool.
       if (attendee.reserved) {
@@ -504,6 +530,15 @@ export function getAttendanceService(
             ...firstUnreservedAdjacentAttendee,
             reserved: true,
           })
+        )
+        logger.info(
+          "Attendee(ID=%s,UserID=%s) named %s has been reserved for Event(ID=%s) named %s because User(ID=%s) was deregistered",
+          firstUnreservedAdjacentAttendee.id,
+          firstUnreservedAdjacentAttendee.user.id,
+          firstUnreservedAdjacentAttendee.user.name,
+          event.id,
+          event.title,
+          attendee.id
         )
       }
     },
@@ -576,8 +611,8 @@ export function getAttendanceService(
       )
     },
     async executeChargeAttendancePaymentsTask(handle, { attendanceId }) {
-      logger.info(`Charging attendees of attendance with id ${attendanceId}`)
       const attendance = await this.getAttendanceById(handle, attendanceId)
+      logger.info("Executing Stripe charge for attendees of Attendance(ID=%s)", attendanceId)
       if (attendance.deregisterDeadline > getCurrentUTC()) {
         logger.warn(`Not charging ${attendanceId} because task is too early`)
         return
