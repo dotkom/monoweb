@@ -44,7 +44,7 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent
-        className="flex flex-col gap-4 items-center w-full p-6 bg-gray-100 dark:bg-stone-800 max-w-2xl rounded-lg"
+        className="flex flex-col gap-4 items-center w-full p-6 bg-gray-100 dark:bg-stone-800 sm:max-w-2xl rounded-lg"
         onOutsideClick={() => setOpen(false)}
       >
         <div className="flex flex-row w-full items-center justify-between">
