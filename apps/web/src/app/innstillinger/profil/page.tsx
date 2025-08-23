@@ -23,14 +23,13 @@ const EditProfilePage = () => {
           queryClient.invalidateQueries(trpc.user.findMe.queryOptions()),
         ])
       },
-      onError: (err) => console.error("update failed:", err),
     })
   )
 
   if (userIsLoading) {
     // TODO: Add skeleton loading
     return (
-      <div className="flex w-fit items-center justify-center gap-2">
+      <div className="flex w-fit items-center gap-2">
         <Icon icon="tabler:loader" className="animate-spin text-lg" />
         <Text>Laster</Text>
       </div>
