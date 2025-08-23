@@ -47,7 +47,7 @@ export const AlertDialogContent: FC<AlertDialogContentProps> = ({ className, ref
       <AlertDialogPrimitive.Content
         ref={ref}
         className={cn(
-          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 bg-gray-200 fixed z-50 grid w-full max-w-lg scale-100 gap-4 p-6 opacity-100 sm:rounded-lg md:w-full",
+          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 bg-gray-200 fixed z-50 grid w-full max-w-[95%] sm:max-w-lg scale-100 gap-4 p-6 opacity-100 rounded-lg md:w-full",
           className
         )}
         {...props}
