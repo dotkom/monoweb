@@ -6,7 +6,7 @@ type StripedProps = PropsWithChildren<{
   colorB: string
   animated?: boolean
   stripeWidth?: number
-  speed?: string
+  speed?: `${number}s` | `${number}.${number}s`
   className?: string
 }>
 
