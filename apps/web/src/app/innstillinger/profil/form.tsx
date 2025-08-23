@@ -52,7 +52,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     control,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit,
   } = useForm<UserWrite>({
     defaultValues,
@@ -66,9 +66,11 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
   const trpc = useTRPC()
 
+  const isProfileSlugChanged = Boolean(debouncedSlug && debouncedSlug !== user.profileSlug)
+
   const { data: fetchedUser, isFetching: isUserFetching } = useQuery(
     trpc.user.findByProfileSlug.queryOptions(debouncedSlug, {
-      enabled: Boolean(debouncedSlug && debouncedSlug !== user.profileSlug),
+      enabled: isProfileSlugChanged,
     })
   )
 
@@ -116,24 +118,28 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
               {errors.profileSlug?.message ?? "En feil oppstod"}
             </Text>
           )}
-          {!errors.profileSlug && isUserFetching && (
-            <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
-              <Icon icon="tabler:loader" className="animate-spin text-sm" />
-              <Text className="text-xs">Sjekker tilgjengelighet...</Text>
-            </div>
-          )}
-          {!errors.profileSlug && fetchedUser?.id !== user.id && (
-            <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
-              <Icon icon="tabler:x" className="text-sm" />
-              <Text className="text-xs">Brukernavnet er opptatt</Text>
-            </div>
-          )}
-          {!errors.profileSlug && fetchedUser === null && (
-            <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
-              <Icon icon="tabler:check" className="text-sm" />
-              <Text className="text-xs">Brukernavnet er ledig</Text>
-            </div>
-          )}
+          {!errors.profileSlug &&
+            ((isUserFetching && (
+              <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
+                <Icon icon="tabler:loader" className="animate-spin text-sm" />
+                <Text className="text-xs">Sjekker tilgjengelighet...</Text>
+              </div>
+            )) || (
+              <>
+                {fetchedUser !== null && isProfileSlugChanged && (
+                  <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                    <Icon icon="tabler:x" className="text-sm" />
+                    <Text className="text-xs">Brukernavnet er opptatt</Text>
+                  </div>
+                )}
+                {fetchedUser === null && (
+                  <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
+                    <Icon icon="tabler:check" className="text-sm" />
+                    <Text className="text-xs">Brukernavnet er ledig</Text>
+                  </div>
+                )}
+              </>
+            ))}
         </div>
 
         <div className="w-full flex flex-col gap-1">
@@ -261,11 +267,15 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-row items-center gap-2">
-          <Button type="submit" className="w-fit" disabled={isUserFetching || Boolean(fetchedUser)}>
+          <Button
+            type="submit"
+            className="w-fit"
+            disabled={isUserFetching || Boolean(fetchedUser && fetchedUser.id !== user.id) || !isDirty}
+          >
             Oppdater
           </Button>
 
-          <Button type="button" onClick={() => reset(user)} variant="outline" className="w-fit">
+          <Button type="button" disabled={!isDirty} onClick={() => reset(user)} variant="outline" className="w-fit">
             Tilbakestill
           </Button>
         </div>
