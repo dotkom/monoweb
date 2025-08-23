@@ -81,7 +81,7 @@ export const ViewAttendeesButton = ({
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
       <AlertDialogContent
-        className="flex flex-col gap-4 w-full p-0 bg-white dark:bg-stone-900 drop-shadow-lg max-w-2xl rounded-lg"
+        className="flex flex-col gap-4 w-full p-0 bg-white dark:bg-stone-900 drop-shadow-lg sm:max-w-2xl rounded-lg"
         onOutsideClick={() => setAttendeeListOpen(false)}
       >
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
