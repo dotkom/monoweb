@@ -167,6 +167,7 @@ const linkGroups: LinkDetail[][] = [
       icon: "tabler:adjustments",
       label: "Dashboard",
       href: env.NEXT_PUBLIC_DASHBOARD_URL,
+      openInNewTab: true,
       adminOnly: true,
     },
   ],
