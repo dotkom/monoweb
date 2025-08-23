@@ -1,11 +1,13 @@
 "use client"
+
 import { useTRPC } from "@/utils/trpc/client"
 import type { UserWrite } from "@dotkomonline/types"
 import { Button, Icon, Title } from "@dotkomonline/ui"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ProfileForm, SkeletonProfileForm } from "./form"
+import { ProfileForm } from "./form"
+import SkeletonProfileForm from "./loading"
 
 const EditProfilePage = () => {
   const trpc = useTRPC()

@@ -43,6 +43,7 @@ import {
 import Link from "next/link"
 import { useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
+import SkeletonProfilePage from "./loading"
 
 const AUTHORIZE_WITH_FEIDE =
   "/api/auth/authorize?connection=FEIDE&redirectAfter=%2Fprofil%3FreturnedFromFeide%3Dtrue" as const
@@ -440,32 +441,6 @@ export default function ProfilePage() {
             <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>
           </div>
         )}
-      </div>
-    </div>
-  )
-}
-
-const SkeletonProfilePage = () => {
-  return (
-    <div className="flex flex-row gap-6">
-      <div className="w-16 h-16 md:w-32 md:h-32 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
-
-      <div className="flex flex-col gap-3 grow">
-        <div className="h-8 w-64 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
-
-        <div className="flex flex-col text-sm gap-1 md:flex-row md:items-center md:gap-2">
-          <div className="w-32 h-5 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
-          <Icon
-            icon="tabler:point-filled"
-            className="text-gray-300 dark:text-stone-700 hidden md:block animate-pulse"
-          />
-          <div className="w-36 h-5 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
-        </div>
-
-        <div className="flex flex-col gap-2 mt-2">
-          <div className="w-72 max-w-[70%] h-6 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
-          <div className="w-48 max-w-[50%] h-6 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
-        </div>
       </div>
     </div>
   )
