@@ -17,7 +17,7 @@ export type EventHostingGroupListProps = {
 export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, companies }) => {
   // Nobody is set as organizer yet
   if (groups.length === 0 && companies.length === 0) {
-    return <Text c="dark">Ingen arrangører</Text>
+    return <Text c="dark" size="sm">Ingen arrangører</Text>
   }
 
   return (

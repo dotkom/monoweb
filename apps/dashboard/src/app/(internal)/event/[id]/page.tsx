@@ -89,7 +89,7 @@ export default function EventWithAttendancesPage() {
   return (
     <Stack>
       <Group>
-        <Button bg="gray" onClick={() => router.back()} leftSection={<IconArrowLeft height={14} width={14} />}>
+        <Button bg="gray" onClick={() => router.push("/event")} leftSection={<IconArrowLeft height={14} width={14} />}>
           Tilbake
         </Button>
 
