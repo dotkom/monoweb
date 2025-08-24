@@ -1,6 +1,6 @@
 import { UserSearch } from "@/app/(internal)/user/components/user-search"
 import type { Attendance, Event } from "@dotkomonline/types"
-import { Anchor, Button, Group, List, ListItem, Stack, Text, Title } from "@mantine/core"
+import { Anchor, Button, Group, List, ListItem, Space, Stack, Text, Title } from "@mantine/core"
 import type { FC } from "react"
 import { AllAttendeesTable } from "../components/all-attendees-table"
 import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
@@ -102,6 +102,8 @@ const Page: FC<Props> = ({ event, attendance }) => {
         <Title order={3}>Påmeldte</Title>
         <AllAttendeesTable attendees={attendees} attendance={attendance} />
       </Stack>
+
+      <Space h="xl" />
     </Stack>
   )
 }
