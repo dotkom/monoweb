@@ -8,7 +8,6 @@ import { formatDate, isPast } from "date-fns"
 import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
-import { CommitteeApplicationsNotice } from "./committee-applications-notice"
 import { ConstructionNotice } from "./construction-notice"
 import { FadderukeNotice } from "./fadderuke-notice"
 
