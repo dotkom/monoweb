@@ -1,7 +1,7 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { ActionIcon, Button, Checkbox, type CheckboxProps } from "@mantine/core"
-import { IconX } from "@tabler/icons-react"
+import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { isPast } from "date-fns"
 import { useMemo } from "react"
@@ -116,6 +116,31 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         sortingFn: "alphanumeric",
       }),
       columnHelper.accessor((attendee) => attendee, {
+        id: "waitlistActions",
+        enableSorting: false,
+        header: () => "Endre køstatus",
+        cell: (info) =>
+          info.getValue().reserved ? (
+            <Button
+              variant="subtle"
+              size="compact-sm"
+              leftSection={<IconArrowDown size={14} />}
+              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: false })}
+            >
+              Send til kø
+            </Button>
+          ) : (
+            <Button
+              variant="subtle"
+              size="compact-sm"
+              leftSection={<IconArrowUp size={14} />}
+              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: true })}
+            >
+              Påmeld
+            </Button>
+          ),
+      }),
+      columnHelper.accessor((attendee) => attendee, {
         id: "deregister",
         enableSorting: false,
         header: () => "Meld av",
@@ -134,26 +159,6 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             <IconX size={16} />
           </ActionIcon>
         ),
-      }),
-      columnHelper.accessor((attendee) => attendee, {
-        id: "waitlistActions",
-        enableSorting: false,
-        header: () => "Endre status",
-        cell: (info) =>
-          info.getValue().reserved ? (
-            <Button
-              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: false })}
-            >
-              Flytt til venteliste
-            </Button>
-          ) : (
-            <Button
-              color="yellow"
-              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: true })}
-            >
-              Flytt av venteliste
-            </Button>
-          ),
       }),
     ],
     [
