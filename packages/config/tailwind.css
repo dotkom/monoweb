@@ -29,7 +29,7 @@
 
 @utility stripes-mask {
   --width: 12px; /* Stripe width */
-  --period: calc(var(--width) * 2); /* One of both stripes */
+  --period: calc(var(--width) * 2); /* One period = one of stripe A and B */
 
   will-change: mask-position, -webkit-mask-position;
 
@@ -52,7 +52,7 @@
 @keyframes move-stripes-x {
   to {
     /* 1.41421356 = sqrt(2) */
-    /* This is to make the stripes move exactly one full period horizontal while they are diagonal */
+    /* This is to make the stripes move the correct horizontal distance, since they are diagonal */
     mask-position: calc(var(--period) * 1.41421356) 0;
     -webkit-mask-position: calc(var(--period) * 1.41421356) 0;
   }
