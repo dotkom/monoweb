@@ -89,6 +89,9 @@ export function getAttendanceRepository(): AttendanceRepository {
                 },
               },
             },
+            orderBy: {
+              earliestReservationAt: "asc",
+            },
           },
         },
       })
@@ -110,6 +113,9 @@ export function getAttendanceRepository(): AttendanceRepository {
                   memberships: true,
                 },
               },
+            },
+            orderBy: {
+              earliestReservationAt: "asc",
             },
           },
         },
@@ -135,6 +141,9 @@ export function getAttendanceRepository(): AttendanceRepository {
                 },
               },
             },
+            orderBy: {
+              earliestReservationAt: "asc",
+            },
           },
         },
       })
@@ -158,6 +167,9 @@ export function getAttendanceRepository(): AttendanceRepository {
                   memberships: true,
                 },
               },
+            },
+            orderBy: {
+              earliestReservationAt: "asc",
             },
           },
         },
@@ -183,6 +195,9 @@ export function getAttendanceRepository(): AttendanceRepository {
                 },
               },
             },
+            orderBy: {
+              earliestReservationAt: "asc",
+            },
           },
         },
       })
@@ -206,6 +221,9 @@ export function getAttendanceRepository(): AttendanceRepository {
                   memberships: true,
                 },
               },
+            },
+            orderBy: {
+              earliestReservationAt: "asc",
             },
           },
         },
