@@ -35,7 +35,6 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
         {constructionNoticeShown && <ConstructionNotice />}
-        <CommitteeApplicationsNotice />
         <FadderukeNotice />
       </div>
 
