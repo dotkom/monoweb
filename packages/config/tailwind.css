@@ -31,19 +31,18 @@
   --width: 12px; /* Stripe width */
   --period: calc(var(--width) * 2); /* One of both stripes */
 
+  will-change: mask-position, -webkit-mask-position;
+
   mask-image: repeating-linear-gradient(
     45deg,
     #000 0 var(--width),
     transparent var(--width) var(--period)
   );
-
   -webkit-mask-image: repeating-linear-gradient(
     45deg,
     #000 0 var(--width),
     transparent var(--width) var(--period)
   );
-
-  will-change: mask-position, -webkit-mask-position;
 }
 
 @utility animate-stripes {
@@ -56,5 +55,14 @@
     /* This is to make the stripes move exactly one full period horizontal while they are diagonal */
     mask-position: calc(var(--period) * 1.41421356) 0;
     -webkit-mask-position: calc(var(--period) * 1.41421356) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-stripes {
+    animation: none !important;
+  }
+  .stripes-mask {
+    will-change: auto;
   }
 }
