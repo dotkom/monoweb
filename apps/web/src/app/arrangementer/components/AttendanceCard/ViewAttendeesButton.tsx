@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
+import { compareAsc } from "date-fns"
 import Link from "next/link"
 
 const getMinWidth = (maxNumberOfAttendees: number) => {
@@ -48,8 +49,11 @@ export const ViewAttendeesButton = ({
   attendance,
   user,
 }: ViewAttendeesButtonProps) => {
-  const reservedAttendees = attendance.attendees.filter((attendee) => attendee.reserved)
-  const waitlistAttendees = attendance.attendees.filter((attendee) => !attendee.reserved)
+  const allAttendees = attendance.attendees.toSorted((a, b) =>
+    compareAsc(a.earliestReservationAt, b.earliestReservationAt)
+  )
+  const reservedAttendees = allAttendees.filter((attendee) => attendee.reserved)
+  const waitlistAttendees = allAttendees.filter((attendee) => !attendee.reserved)
 
   const maxAttendees = Math.max(reservedAttendees.length, waitlistAttendees.length)
 
