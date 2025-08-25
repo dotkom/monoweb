@@ -140,7 +140,7 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
     <div className="flex w-full flex-col gap-8 md:flex-row">
       <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
         {parentEvent && (
-          <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-stone-800 dark:bg-stone-900 dark:hover:bg-stone-800">
+          <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-900">
             <Title element="h4" size="sm" className="text-base">
               Arrangementet er en del av
             </Title>
