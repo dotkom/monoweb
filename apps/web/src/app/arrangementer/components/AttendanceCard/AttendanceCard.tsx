@@ -172,7 +172,7 @@ export const AttendanceCard = ({
   }
 
   return (
-    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-900 sm:dark:bg-stone-900 sm:p-4 sm:rounded-xl">
+    <section className="flex flex-col gap-4 min-h-[6rem] sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-900 sm:dark:bg-stone-900">
       <Title element="h2" size="lg">
         Påmelding
       </Title>
