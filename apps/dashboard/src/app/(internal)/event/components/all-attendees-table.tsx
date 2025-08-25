@@ -151,6 +151,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
       }),
       columnHelper.accessor("selections", {
         id: "selections",
+        enableSorting: false,
         header: () => "Valg",
         cell: (info) => {
           const selections = info.getValue()
@@ -164,6 +165,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
       }),
       columnHelper.accessor("user.dietaryRestrictions", {
         id: "dietaryRestrictions",
+        enableSorting: false,
         header: () => "Matpreferanser",
         cell: (info) => info.getValue() || "-",
       }),
