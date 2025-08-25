@@ -1,19 +1,27 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
+import { useSession } from "@dotkomonline/oauth2/react"
 import type { UserWrite } from "@dotkomonline/types"
 import { Button, Icon, Title } from "@dotkomonline/ui"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { redirect, usePathname } from "next/navigation"
 import { ProfileForm } from "./form"
 import SkeletonProfileForm from "./loading"
 
 const EditProfilePage = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const session = useSession()
+  const pathname = usePathname()
 
-  const { data: user, isLoading: userIsLoading } = useQuery(trpc.user.findMe.queryOptions())
+  if (!session) {
+    redirect(createAuthorizeUrl({ redirectAfter: pathname }))
+  }
+
+  const { data: user, isLoading: userIsLoading } = useQuery(trpc.user.getMe.queryOptions())
 
   const userEdit = useMutation(
     trpc.user.update.mutationOptions({
@@ -28,7 +36,7 @@ const EditProfilePage = () => {
     })
   )
 
-  if (userIsLoading) {
+  if (userIsLoading || user === undefined) {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-row justify-between">
@@ -42,10 +50,6 @@ const EditProfilePage = () => {
         <SkeletonProfileForm />
       </div>
     )
-  }
-
-  if (!user) {
-    notFound()
   }
 
   const onSubmit = (data: UserWrite) => {
