@@ -1,6 +1,7 @@
 import type { EventFilterQuery } from "@dotkomonline/types"
-import { TextInput } from "@mantine/core"
+import { ActionIcon, Group, TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
+import { IconX } from "@tabler/icons-react"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
@@ -18,8 +19,19 @@ export const EventFilters = ({ onChange }: Props) => {
   }, [onChange, debouncedData])
 
   return (
-    <form>
-      <TextInput placeholder="Søk etter arrangementer..." {...form.register("bySearchTerm")} />
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+      }}
+    >
+      <Group gap={4}>
+        <TextInput placeholder="Søk etter arrangementer..." {...form.register("bySearchTerm")} />
+        {Boolean(data.bySearchTerm) && (
+          <ActionIcon size="input-sm" variant="subtle" color="gray" type="reset" onClick={() => form.reset()}>
+            <IconX size={16} />
+          </ActionIcon>
+        )}
+      </Group>
     </form>
   )
 }
