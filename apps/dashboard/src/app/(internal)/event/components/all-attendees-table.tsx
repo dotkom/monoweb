@@ -1,6 +1,6 @@
-import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Attendee, AttendeeSelectionResponse } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { ActionIcon, Button, Checkbox, Group, Text } from "@mantine/core"
+import { ActionIcon, Anchor, Button, Checkbox, Group, Text } from "@mantine/core"
 import { IconArrowDown, IconArrowUp } from "@tabler/icons-react"
 import { IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
@@ -9,6 +9,26 @@ import { useMemo } from "react"
 import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateAttendeeReservedMutation, useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
+
+const Selections = ({
+  attendance,
+  attendeeSelections,
+}: { attendance: Attendance; attendeeSelections: AttendeeSelectionResponse[] }) => {
+  const getName = (selectionId: string, optionId: string) =>
+    attendance.selections
+      .find((selection) => selection.id === selectionId)
+      ?.options.find((option) => option.id === optionId)?.name || "Ukjent"
+
+  return (
+    <div className="flex flex-col-1 gap-0">
+      {attendeeSelections.map(({ selectionId, optionId }) => (
+        <Text key={`${selectionId}-${optionId}`} size="sm">
+          {getName(selectionId, optionId)}
+        </Text>
+      ))}
+    </div>
+  )
+}
 
 interface AllAttendeesTableProps {
   attendees: Attendee[]
@@ -44,10 +64,17 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((attendee) => attendee.user.name, {
+      columnHelper.accessor((attendee) => attendee.user, {
         id: "user",
         header: "Bruker",
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const user = info.getValue()
+          return (
+            <Anchor size="sm" href={`/user/${user.id}`}>
+              {user.name}
+            </Anchor>
+          )
+        },
         sortingFn: "alphanumeric",
       }),
       columnHelper.accessor("attendedAt", {
@@ -122,6 +149,24 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         header: () => "Påmeldingsgruppe",
         sortingFn: "alphanumeric",
       }),
+      columnHelper.accessor("selections", {
+        id: "selections",
+        header: () => "Valg",
+        cell: (info) => {
+          const selections = info.getValue()
+
+          if (!selections.length) {
+            return "-"
+          }
+
+          return <Selections attendance={attendance} attendeeSelections={info.getValue()} />
+        },
+      }),
+      columnHelper.accessor("user.dietaryRestrictions", {
+        id: "dietaryRestrictions",
+        header: () => "Matpreferanser",
+        cell: (info) => info.getValue() || "-",
+      }),
       columnHelper.accessor((attendee) => attendee, {
         id: "waitlistActions",
         enableSorting: false,
@@ -168,15 +213,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         ),
       }),
     ],
-    [
-      columnHelper,
-      updateAttendanceMut,
-      pools,
-      waitlists,
-      attendance.deregisterDeadline,
-      attendance.attendancePrice,
-      updateAttendeeReservedMut,
-    ]
+    [columnHelper, updateAttendanceMut, pools, waitlists, updateAttendeeReservedMut, attendance]
   )
 
   const tableOptions = useMemo(
