@@ -7,19 +7,8 @@ import {
   type EventWithAttendance,
   mapEventTypeToLabel,
 } from "@dotkomonline/types"
-import {
-  ActionIcon,
-  ActionIconGroup,
-  Anchor,
-  Button,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
-  Tooltip,
-} from "@mantine/core"
-import { IconCaretLeft, IconCaretRight, IconPencil } from "@tabler/icons-react"
+import { Anchor, Button, Group, Skeleton, Stack, Text, Title, Tooltip } from "@mantine/core"
+import { IconPencil } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -101,34 +90,22 @@ export default function EventPage() {
   })
 
   return (
-    <Skeleton visible={isEventsLoading}>
-      <Stack>
-        <Title order={1}>Arrangementer</Title>
+    <Stack>
+      <Title order={1}>Arrangementer</Title>
 
-        <Group justify="space-between">
-          <Group>
-            {/* TODO: add pagination */}
-            <ActionIconGroup>
-              <ActionIcon variant="subtle" c="gray" size="input-sm">
-                <IconCaretLeft />
-              </ActionIcon>
-              <ActionIcon variant="subtle" c="gray" size="input-sm">
-                <IconCaretRight />
-              </ActionIcon>
-            </ActionIconGroup>
+      <Group justify="space-between">
+        <EventFilters onChange={setFilter} />
 
-            <EventFilters onChange={setFilter} />
-          </Group>
-
-          <Group>
-            <Button component={Link} href="/event/register" leftSection={<IconPencil width={14} height={14} />}>
-              Nytt arrangement
-            </Button>
-          </Group>
+        <Group>
+          <Button component={Link} href="/event/register" leftSection={<IconPencil width={14} height={14} />}>
+            Nytt arrangement
+          </Button>
         </Group>
+      </Group>
 
+      <Skeleton visible={isEventsLoading}>
         <GenericTable table={table} />
-      </Stack>
-    </Skeleton>
+      </Skeleton>
+    </Stack>
   )
 }
