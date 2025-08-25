@@ -64,14 +64,14 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((attendee) => attendee.user, {
+      columnHelper.accessor((attendee) => attendee.user.name, {
         id: "user",
         header: "Bruker",
         cell: (info) => {
-          const user = info.getValue()
+          const user = info.row.original.user
           return (
             <Anchor size="sm" href={`/user/${user.id}`}>
-              {user.name}
+              {user.name || user.id}
             </Anchor>
           )
         },
