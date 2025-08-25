@@ -10,10 +10,12 @@ import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/F
 import { useUpdateAttendeeReservedMutation, useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
 
-const Selections = ({
-  attendance,
-  attendeeSelections,
-}: { attendance: Attendance; attendeeSelections: AttendeeSelectionResponse[] }) => {
+interface RenderSelectionsProps {
+  attendance: Attendance
+  attendeeSelections: AttendeeSelectionResponse[]
+}
+
+const RenderSelections = ({ attendance, attendeeSelections }: RenderSelectionsProps) => {
   const getName = (selectionId: string, optionId: string) =>
     attendance.selections
       .find((selection) => selection.id === selectionId)
@@ -160,7 +162,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             return "-"
           }
 
-          return <Selections attendance={attendance} attendeeSelections={info.getValue()} />
+          return <RenderSelections attendance={attendance} attendeeSelections={info.getValue()} />
         },
       }),
       columnHelper.accessor("user.dietaryRestrictions", {
