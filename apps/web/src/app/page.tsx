@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Event } from "@dotkomonline/types"
@@ -9,7 +10,6 @@ import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
 import { ConstructionNotice } from "./construction-notice"
-import { FadderukeNotice } from "./fadderuke-notice"
 
 export default async function App() {
   const [session, { items }] = await Promise.all([
@@ -34,7 +34,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
         {constructionNoticeShown && <ConstructionNotice />}
-        <FadderukeNotice />
+        <CompanySplash />
       </div>
 
       <div className="flex flex-col gap-4">
