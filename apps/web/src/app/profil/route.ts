@@ -8,7 +8,11 @@ export async function GET(req: NextRequest) {
   const session = await auth.getServerSession()
 
   if (!session) {
-    redirect(createAuthorizeUrl({ redirectAfter: "/profil" }))
+    const params = new URLSearchParams(req.nextUrl.search)
+    if (!params.has("redirectAfter")) {
+      params.set("redirectAfter", "/profil")
+    }
+    redirect(createAuthorizeUrl(params))
   }
 
   const user = await server.user.getMe.query()

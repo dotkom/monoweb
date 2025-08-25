@@ -41,7 +41,7 @@ import {
   roundToNearestMinutes,
 } from "date-fns"
 import Link from "next/link"
-import { redirect, useParams, usePathname, useSearchParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 import SkeletonProfilePage from "./loading"
 
@@ -175,7 +175,6 @@ export default function ProfilePage() {
 
   const trpc = useTRPC()
   const session = useSession()
-  const pathname = usePathname()
 
   const { data: user, isLoading: userLoading } = useQuery(trpc.user.findByProfileSlug.queryOptions(profileSlug))
 
@@ -208,10 +207,6 @@ export default function ProfilePage() {
       },
     },
   })
-
-  if (!session) {
-    redirect(createAuthorizeUrl({ redirectAfter: pathname }))
-  }
 
   const allGroups = useMemo(
     () =>

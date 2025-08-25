@@ -5,10 +5,8 @@
  * const pathname = usePathname()
  * const url = createAuthorizeUrl({ connection: "FEIDE", redirectAfter: pathname })
  */
-export const createAuthorizeUrl = (searchParams: { [name: string]: string }) => {
+export const createAuthorizeUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
   const url = new URL("/api/auth/authorize", window.location.origin)
-  for (const [name, value] of Object.entries(searchParams)) {
-    url.searchParams.set(name, value)
-  }
+  url.search = new URLSearchParams(...parameters).toString()
   return url.toString()
 }
