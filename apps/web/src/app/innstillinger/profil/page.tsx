@@ -4,6 +4,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { UserWrite } from "@dotkomonline/types"
 import { Button, Icon, Title } from "@dotkomonline/ui"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { redirect, usePathname } from "next/navigation"
@@ -17,7 +18,7 @@ const EditProfilePage = () => {
   const pathname = usePathname()
 
   if (!session) {
-    redirect(`/api/auth/authorize?connection=FEIDE&redirectAfter=${encodeURIComponent(pathname)}`)
+    redirect(createAuthorizeUrl({ redirectAfter: pathname }))
   }
 
   const { data: user, isLoading: userIsLoading } = useQuery(trpc.user.getMe.queryOptions())
@@ -35,7 +36,7 @@ const EditProfilePage = () => {
     })
   )
 
-  if (userIsLoading) {
+  if (userIsLoading || user === undefined) {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-row justify-between">

@@ -31,7 +31,7 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
+import { createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { useQueries, useQuery } from "@tanstack/react-query"
 import {
   differenceInMilliseconds,
@@ -41,12 +41,9 @@ import {
   roundToNearestMinutes,
 } from "date-fns"
 import Link from "next/link"
-import { useParams, useSearchParams } from "next/navigation"
+import { redirect, useParams, usePathname, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 import SkeletonProfilePage from "./loading"
-
-const AUTHORIZE_WITH_FEIDE =
-  "/api/auth/authorize?connection=FEIDE&redirectAfter=%2Fprofil%3FreturnedFromFeide%3Dtrue" as const
 
 const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
@@ -177,8 +174,9 @@ export default function ProfilePage() {
   const returnedFromFeide = Boolean(useSearchParams().get("returnedFromFeide"))
 
   const trpc = useTRPC()
-
   const session = useSession()
+  const pathname = usePathname()
+
   const { data: user, isLoading: userLoading } = useQuery(trpc.user.findByProfileSlug.queryOptions(profileSlug))
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
@@ -210,6 +208,10 @@ export default function ProfilePage() {
       },
     },
   })
+
+  if (!session) {
+    redirect(createAuthorizeUrl({ redirectAfter: pathname }))
+  }
 
   const allGroups = useMemo(
     () =>
@@ -333,7 +335,11 @@ export default function ProfilePage() {
                   color={activeMembership ? "light" : "brand"}
                   variant={activeMembership ? "outline" : "solid"}
                   element="a"
-                  href={AUTHORIZE_WITH_FEIDE}
+                  href={createAuthorizeUrl({
+                    connection: "FEIDE",
+                    redirectAfter: "/profil",
+                    returnedFromFeide: "true",
+                  })}
                   className="h-fit w-fit"
                 >
                   Registrer medlemskap
