@@ -2,7 +2,7 @@ import type { Attendance } from "@dotkomonline/types"
 import { AspectRatio, Button, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
-import { type FC, useState } from "react"
+import { type FC, useRef, useState } from "react"
 import { useZxing } from "react-zxing"
 import z from "zod"
 import { openQRCodeScannedModal } from "./qr-code-scanned-modal"
@@ -14,6 +14,7 @@ interface QrCodeScannerProps {
 export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
   const [scannerOpen, { toggle: toggleScanner }] = useDisclosure(false)
   const [videoReady, setVideoReady] = useState(false)
+  const paused = useRef(false)
 
   const handleToggle = () => {
     toggleScanner()
@@ -25,13 +26,26 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
 
   const { ref } = useZxing({
     onDecodeResult: (result) => {
+      if (paused.current) {
+        return
+      }
+
       const id = z.string().uuid().safeParse(result.getText())
 
       if (id.success) {
-        openQRCodeScannedModal({ attendance, attendeeId: id.data })
+        paused.current = true
+
+        openQRCodeScannedModal({
+          attendance,
+          attendeeId: id.data,
+          onClose: () => {
+            paused.current = false
+          },
+        })
       }
     },
-    paused: !scannerOpen,
+    paused: !scannerOpen || paused.current,
+    timeBetweenDecodingAttempts: 150,
     constraints: {
       video: {
         facingMode: {
@@ -75,8 +89,8 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
         )}
       </Group>
 
-      {scannerOpen && !videoReady && <Skeleton height={300} width={300} radius="sm" />}
-      <AspectRatio w={scannerOpen && videoReady ? 300 : 0}>
+      {scannerOpen && !videoReady && <Skeleton height={450} width={450} radius="sm" />}
+      <AspectRatio w={scannerOpen && videoReady ? 450 : 0}>
         <video
           ref={ref}
           muted
