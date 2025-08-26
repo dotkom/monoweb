@@ -1,8 +1,8 @@
 import type { Attendance } from "@dotkomonline/types"
-import { AspectRatio, Button, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
+import { ActionIcon, AspectRatio, Button, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
-import { type FC, useRef, useState } from "react"
+import { IconFlipVertical, IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
+import { type FC, useEffect, useRef, useState } from "react"
 import { useZxing } from "react-zxing"
 import z from "zod"
 import { openQRCodeScannedModal } from "./qr-code-scanned-modal"
@@ -12,6 +12,7 @@ interface QrCodeScannerProps {
 }
 
 export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
+  const [shouldMirror, { open: setMirrorTrue, toggle: toggleMirror }] = useDisclosure(false)
   const [scannerOpen, { toggle: toggleScanner }] = useDisclosure(false)
   const [videoReady, setVideoReady] = useState(false)
   const paused = useRef(false)
@@ -56,10 +57,14 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
     },
   })
 
-  const videoElement = ref.current
-  const track = videoElement?.srcObject instanceof MediaStream ? videoElement.srcObject.getVideoTracks()[0] : null
-  const settings = track?.getSettings()
-  const isCameraMirrored = settings?.facingMode === "user"
+  useEffect(() => {
+    const videoElement = ref.current
+    const track = videoElement?.srcObject instanceof MediaStream ? videoElement.srcObject.getVideoTracks()[0] : null
+    const settings = track?.getSettings()
+    if (settings?.facingMode === "user") {
+      setMirrorTrue()
+    }
+  }, [ref, setMirrorTrue])
 
   return (
     <Stack gap="xs">
@@ -90,7 +95,7 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
       </Group>
 
       {scannerOpen && !videoReady && <Skeleton height={450} width={450} radius="sm" />}
-      <AspectRatio w={scannerOpen && videoReady ? 450 : 0}>
+      <AspectRatio w={scannerOpen && videoReady ? 450 : 0} style={{ position: "relative" }}>
         <video
           ref={ref}
           muted
@@ -99,10 +104,26 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
           autoPlay
           style={{
             display: videoReady ? "block" : "none",
-            transform: isCameraMirrored ? "scaleX(-1)" : undefined,
+            transform: shouldMirror ? "scaleX(-1)" : undefined,
             borderRadius: "4px",
           }}
         />
+
+        <ActionIcon
+          size="input-xs"
+          bg="rgba(0,0,0,0.25)"
+          variant="transparent"
+          w="fit-content"
+          onClick={toggleMirror}
+          style={{
+            display: videoReady ? "block" : "none",
+            position: "absolute",
+            top: 12,
+            right: 12,
+          }}
+        >
+          <IconFlipVertical color="white" size={48} />
+        </ActionIcon>
       </AspectRatio>
     </Stack>
   )
