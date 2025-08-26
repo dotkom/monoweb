@@ -30,6 +30,7 @@ import {
   Text,
   cn,
 } from "@dotkomonline/ui"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
@@ -63,7 +64,6 @@ export const ProfileMenu: FC = () => {
 
   if (session === null) {
     const { setTheme, theme } = useTheme()
-    const returnAfter = encodeURIComponent(pathname)
 
     return (
       <div className="flex flex-row gap-4">
@@ -103,7 +103,7 @@ export const ProfileMenu: FC = () => {
           size="sm"
           color="brand"
           className="text-sm font-semibold px-3 py-2"
-          href={`/api/auth/authorize?connection=FEIDE&redirectAfter=${returnAfter}`}
+          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: pathname })}
         >
           Logg inn
         </Button>
@@ -118,7 +118,7 @@ export const ProfileMenu: FC = () => {
               size="sm"
               color="white"
               className="text-sm font-semibold px-3 py-2"
-              href={`/api/auth/authorize?redirectAfter=${returnAfter}`}
+              href={createAuthorizeUrl({ redirectAfter: pathname })}
             >
               Logg inn uten feide
             </Button>
