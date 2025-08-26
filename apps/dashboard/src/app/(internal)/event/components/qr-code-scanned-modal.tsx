@@ -29,6 +29,7 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
   id,
   innerProps: { attendance, attendeeId },
 }) => {
+  const isMobile = useMediaQuery("(max-width: 48em)") || false
   const registerAttendance = useUpdateEventAttendanceMutation()
 
   const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
@@ -55,7 +56,7 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
   if (!pool) {
     return (
       <Stack>
-        <UserBox user={attendee.user} />
+        <UserBox user={attendee.user} isMobile={isMobile} />
         <Group gap={6}>
           <IconX color="var(--mantine-color-red-6)" size={28} />
           <Title order={4}>Gruppe mangler</Title>
@@ -71,7 +72,7 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
   if (attendee.attendedAt) {
     return (
       <Stack>
-        <UserBox user={attendee.user} />
+        <UserBox user={attendee.user} isMobile={isMobile} />
         <Group gap={6}>
           <IconX color="var(--mantine-color-red-6)" size={28} />
           <Title order={4}>Allerede registrert</Title>
@@ -90,15 +91,19 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
     )
   }
 
-  const handleClick = () => {
+  const handleYes = () => {
     registerAttendance.mutate({ id: attendeeId, at: getCurrentUTC() })
 
     context.closeModal(id)
   }
 
+  const handleNo = () => {
+    context.closeModal(id)
+  }
+
   return (
     <Stack>
-      <UserBox user={attendee.user} />
+      <UserBox user={attendee.user} isMobile={isMobile} />
       <Stack gap={4}>
         <Group gap={6}>
           {attendee.reserved ? (
@@ -141,10 +146,10 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
       <Stack>
         <Text>Er du sikker på at du vil registrere oppmøte?</Text>
         <Group>
-          <Button color="blue" onClick={handleClick}>
+          <Button color="blue" onClick={handleYes} style={{ flexGrow: isMobile ? 1 : 0 }}>
             Ja
           </Button>
-          <Button color="gray" onClick={() => context.closeModal(id)}>
+          <Button color="gray" onClick={handleNo} style={{ flexGrow: isMobile ? 1 : 0 }}>
             Nei
           </Button>
         </Group>
@@ -155,10 +160,10 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
 
 interface UserBoxProps {
   user: User
+  isMobile: boolean
 }
 
-const UserBox = ({ user }: UserBoxProps) => {
-  const isMobile = useMediaQuery("(max-width: 48em)")
+const UserBox = ({ user, isMobile }: UserBoxProps) => {
   const isLightMode = useMantineColorScheme().colorScheme === "light"
 
   const membership = findActiveMembership(user)
