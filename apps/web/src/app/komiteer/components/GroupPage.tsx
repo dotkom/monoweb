@@ -3,7 +3,7 @@ import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupRole, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
-import { getCurrentUtc } from "@dotkomonline/utils"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
 
@@ -17,7 +17,7 @@ export const GroupPage = async ({ params, groupType }: CommitteePageProps) => {
 
   const showMembers = groupType !== "ASSOCIATED"
 
-  const [session, group, events, members] = await Promise.all([
+  const [session, group, futureEventWithAttendances, members] = await Promise.all([
     auth.getServerSession(),
     server.group.getByType.query({ groupId: slug, type: groupType }),
     server.event.all.query({
@@ -25,7 +25,7 @@ export const GroupPage = async ({ params, groupType }: CommitteePageProps) => {
         byOrganizingGroup: [slug],
         byEndDate: {
           max: null,
-          min: getCurrentUtc(),
+          min: getCurrentUTC(),
         },
         orderBy: "asc",
       },
@@ -177,7 +177,7 @@ export const GroupPage = async ({ params, groupType }: CommitteePageProps) => {
 
       <div className="flex flex-col gap-4">
         <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
-        <EventList events={events.items} />
+        <EventList futureEventWithAttendances={futureEventWithAttendances.items} pastEventWithAttendances={[]} />
       </div>
     </div>
   )

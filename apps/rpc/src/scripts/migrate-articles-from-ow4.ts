@@ -70,5 +70,5 @@ for (const article of articles) {
     },
   })
 
-  articleService.setTags(prisma, row.id, article.tags)
+  await articleService.setTags(prisma, row.id, article.tags)
 }

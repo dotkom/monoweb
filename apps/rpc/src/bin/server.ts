@@ -17,7 +17,6 @@ import { createContext } from "../trpc"
 const logger = getLogger("rpc")
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
-const adminPrincipals = configuration.ADMIN_USERS.split(",")
 const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
 
 const dependencies = createThirdPartyClients(configuration)
@@ -67,8 +66,8 @@ server.setErrorHandler((error) => {
 })
 server.register(fastifyCors, {
   origin: allowedOrigins,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "X-Requested-With", "X-CSRF-Token", "Origin"],
   credentials: true,
 })
 
@@ -77,12 +76,6 @@ server.register(fastifyTRPCPlugin, {
   trpcOptions: {
     router: appRouter,
     createContext: createFastifyContext,
-    onError: ({ path, input, error }) => {
-      captureException(error)
-      // logger.error(`Error in tRPC handler on path '${path}': %o`, error)
-      logger.error(`${path}: ${JSON.stringify(input)}`)
-      console.error(error)
-    },
   } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
 })
 
@@ -104,7 +97,11 @@ server.post("/webhook/stripe", { config: { rawBody: true } }, async (req, res) =
       ? req.headers["stripe-signature"]
       : req.headers["stripe-signature"][0]
 
-  const event = await serviceLayer.paymentWebhookService.constructEvent(req.rawBody, signature)
+  const event = await serviceLayer.paymentWebhookService.constructEvent(
+    req.rawBody,
+    signature,
+    process.env.LOCAL_STRIPE_WEBHOOK_SECRET
+  )
   if (event.type === "checkout.session.completed") {
     await serviceLayer.attendanceService.completeAttendeePayment(serviceLayer.prisma, event.data.object.id)
   }

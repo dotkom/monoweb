@@ -15,8 +15,8 @@ import type { Metadata } from "next"
 setDateFnsDefaultOptions({ locale: nb })
 
 export const metadata: Metadata = {
-  title: "Onlineweb 5",
-  description: "Linjeforeningen Onlines nettsider",
+  title: "Linjeforeningen Online",
+  description: "Online er linjeforeningen for informatikkstudenter ved NTNU i Trondheim.",
   icons: {
     icon: [
       {

@@ -58,7 +58,8 @@ export const CompanySplash: FC = () => {
         </Title>
 
         <Text className="md:text-lg max-w-xl">
-          Her burde det stå en kort tekst om linjeforeningen og hva vi gjør. Helst ikke mer enn to setninger
+          Linjeforeningens oppgave er å forbedre studiemiljøet ved å fremme sosialt samvær, faglig kompetanse og kontakt
+          med næringslivet.
         </Text>
 
         <div className="flex flex-col flex-wrap md:flex-row gap-1 md:items-center">

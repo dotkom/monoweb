@@ -26,6 +26,6 @@ export class AttendeeHasNotPaidError extends ApplicationError {
 }
 export class AttendeeAlreadyPaidError extends ApplicationError {
   constructor(userId: string) {
-    super(PROBLEM_DETAILS.NotFound, `Attendee with user id '${userId}' has not paid and cannot be refunded`)
+    super(PROBLEM_DETAILS.NotFound, `Attendee with user id '${userId}' has already paid, please refund them first`)
   }
 }

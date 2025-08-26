@@ -13,6 +13,7 @@ import {
   type AttendeePaymentWrite,
   AttendeeSchema,
   type AttendeeWrite,
+  type EventId,
   type UserId,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
@@ -21,11 +22,13 @@ import { parseOrReport } from "../../invariant"
 export interface AttendanceRepository {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
   findAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
+  findAttendancesByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Attendance[]>
   findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   findAttendanceByAttendeePaymentId(handle: DBHandle, attendeePaymentId: string): Promise<Attendance | null>
+  findAttendanceByEventId(handle: DBHandle, eventId: EventId): Promise<Attendance | null>
   updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
-  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number): Promise<Attendance>
+  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<Attendance>
 
   createAttendee(
     handle: DBHandle,
@@ -86,10 +89,38 @@ export function getAttendanceRepository(): AttendanceRepository {
                 },
               },
             },
+            orderBy: {
+              earliestReservationAt: "asc",
+            },
           },
         },
       })
       return parseOrReport(AttendanceSchema.nullable(), attendance)
+    },
+    async findAttendancesByIds(handle, attendanceIds) {
+      const attendances = await handle.attendance.findMany({
+        where: {
+          id: {
+            in: attendanceIds,
+          },
+        },
+        include: {
+          pools: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+            orderBy: {
+              earliestReservationAt: "asc",
+            },
+          },
+        },
+      })
+      return attendances.map((attendance) => parseOrReport(AttendanceSchema, attendance))
     },
     async findAttendanceByPoolId(handle, attendancePoolId) {
       const attendance = await handle.attendance.findFirst({
@@ -109,6 +140,9 @@ export function getAttendanceRepository(): AttendanceRepository {
                   memberships: true,
                 },
               },
+            },
+            orderBy: {
+              earliestReservationAt: "asc",
             },
           },
         },
@@ -134,6 +168,9 @@ export function getAttendanceRepository(): AttendanceRepository {
                 },
               },
             },
+            orderBy: {
+              earliestReservationAt: "asc",
+            },
           },
         },
       })
@@ -157,6 +194,36 @@ export function getAttendanceRepository(): AttendanceRepository {
                   memberships: true,
                 },
               },
+            },
+            orderBy: {
+              earliestReservationAt: "asc",
+            },
+          },
+        },
+      })
+      return parseOrReport(AttendanceSchema.nullable(), attendance)
+    },
+    async findAttendanceByEventId(handle, eventId) {
+      const attendance = await handle.attendance.findFirst({
+        where: {
+          events: {
+            some: {
+              id: eventId,
+            },
+          },
+        },
+        include: {
+          pools: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+            orderBy: {
+              earliestReservationAt: "asc",
             },
           },
         },

@@ -1,8 +1,13 @@
+"use client"
+
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { auth } from "@/auth"
+import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { server } from "@/utils/trpc/server"
+import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { useTRPC } from "@/utils/trpc/client"
+import { useSession } from "@dotkomonline/oauth2/react"
 import {
+  type Membership,
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   findActiveMembership,
@@ -26,14 +31,19 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { getPunishmentExpiryDate } from "@dotkomonline/utils"
-import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
+import { createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
+import { useQueries, useQuery } from "@tanstack/react-query"
+import {
+  differenceInMilliseconds,
+  formatDate,
+  formatDistanceToNowStrict,
+  isPast,
+  roundToNearestMinutes,
+} from "date-fns"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
-
-const AUTHORIZE_WITH_FEIDE = (profileSlug: string) =>
-  `/api/auth/authorize?connection=FEIDE&redirectAfter=/profil/${profileSlug}` as const
+import SkeletonProfilePage from "./loading"
 
 const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
@@ -127,37 +137,93 @@ function MarkDisplay({
   )
 }
 
-export default async function ProfilePage({
-  params,
-}: {
-  params: Promise<{ profileSlug: string }>
-}) {
-  const { profileSlug: rawProfileSlug } = await params
-  const profileSlug = decodeURIComponent(rawProfileSlug)
-
-  const [user, session] = await Promise.all([server.user.findByProfileSlug.query(profileSlug), auth.getServerSession()])
-
-  if (!user) {
-    notFound()
+const MembershipDisplay = ({
+  activeMembership,
+  grade,
+}: { activeMembership: Membership | null; grade: number | null }) => {
+  if (activeMembership) {
+    return (
+      <>
+        <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
+        <div className="flex flex-col gap-1">
+          <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
+          {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
+          <Text>{grade}. klasse</Text>
+          <Text className="text-xs text-gray-500 dark:text-stone-500">
+            Medlemskapet varer fra {formatDate(activeMembership.start, "MMM yyyy")} til{" "}
+            {formatDate(activeMembership.end, "MMM yyyy")}
+          </Text>
+        </div>
+      </>
+    )
   }
+
+  return (
+    <>
+      <Icon icon="tabler:notes-off" className="text-2xl text-gray-500 dark:text-stone-500" />
+      <Text className="text-xl">Ingen medlemskap</Text>
+    </>
+  )
+}
+
+export default function ProfilePage() {
+  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
+
+  const { profileSlug: rawProfileSlug } = useParams<{ profileSlug: string }>()
+  const profileSlug = decodeURIComponent(rawProfileSlug)
+  const returnedFromFeide = Boolean(useSearchParams().get("returnedFromFeide"))
+
+  const trpc = useTRPC()
+  const session = useSession()
+
+  const { data: user, isLoading: userLoading } = useQuery(trpc.user.findByProfileSlug.queryOptions(profileSlug))
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
   const isLoggedIn = Boolean(session)
-  const isUser = user.id === session?.sub
+  const isUser = user ? user.id === session?.sub : false
 
-  const [groups, events, marks] = await Promise.all([
-    server.group.allByMember.query(user.id),
-    isLoggedIn ? server.event.allByAttendingUserId.query({ id: user.id }) : Promise.resolve([]),
-    isUser ? server.personalMark.getVisibleInformation.query({ userId: user.id }) : Promise.resolve([]),
-  ])
+  const [
+    { data: groups, isLoading: groupsLoading },
+    { data: futureEventWithAttendances, isLoading: futureEventWithAttendancesLoading },
+    { data: marks, isLoading: marksLoading },
+  ] = useQueries({
+    queries: [
+      trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user) }),
+      trpc.event.allByAttendingUserId.queryOptions({ id: user?.id ?? "" }, { enabled: isLoggedIn && Boolean(user) }),
+      trpc.personalMark.getVisibleInformation.queryOptions(
+        { userId: user?.id ?? "" },
+        { enabled: isLoggedIn && Boolean(user) }
+      ),
+    ],
+  })
 
-  const allGroups = [
-    ...groups.map((group) => ({
-      ...group,
-      pageUrl: createGroupPageUrl(group),
-    })),
-  ]
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllByAttendingUserIdInfiniteQuery({
+    id: user?.id ?? "",
+    filter: {
+      byEndDate: {
+        max: now,
+        min: null,
+      },
+    },
+  })
+
+  const allGroups = useMemo(
+    () =>
+      groups
+        ? [
+            ...groups.map((group) => ({
+              ...group,
+              pageUrl: createGroupPageUrl(group),
+            })),
+          ]
+        : [],
+    [groups]
+  )
+
+  if (!user) {
+    return <SkeletonProfilePage />
+  }
 
   const activeMembership = findActiveMembership(user)
   const grade = activeMembership ? getMembershipGrade(activeMembership) : null
@@ -255,27 +321,7 @@ export default async function ProfilePage({
             <Title>Medlemskap</Title>
 
             <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-900 rounded-xl w-fit">
-              {activeMembership ? (
-                <>
-                  <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
-                  <div className="flex flex-col gap-1">
-                    <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
-                    {activeMembership.specialization && (
-                      <Text>{getSpecializationName(activeMembership.specialization)}</Text>
-                    )}
-                    <Text>{grade}. klasse</Text>
-                    <Text className="text-xs text-gray-500 dark:text-stone-500">
-                      Medlemskapet varer fra {formatDate(activeMembership.start, "MMM yyyy")} til{" "}
-                      {formatDate(activeMembership.end, "MMM yyyy")}
-                    </Text>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Icon icon="tabler:notes-off" className="text-2xl text-gray-500 dark:text-stone-500" />
-                  <Text className="text-xl">Ingen medlemskap</Text>
-                </>
-              )}
+              <MembershipDisplay activeMembership={activeMembership} grade={grade} />
             </div>
 
             {!activeMembership ? (
@@ -284,16 +330,36 @@ export default async function ProfilePage({
                   color={activeMembership ? "light" : "brand"}
                   variant={activeMembership ? "outline" : "solid"}
                   element="a"
-                  href={AUTHORIZE_WITH_FEIDE(profileSlug)}
+                  href={createAuthorizeUrl({
+                    connection: "FEIDE",
+                    redirectAfter: "/profil",
+                    returnedFromFeide: "true",
+                  })}
                   className="h-fit w-fit"
                 >
                   Registrer medlemskap
                 </Button>
 
-                <Text className="text-gray-500 dark:text-stone-500 text-sm">
-                  For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med
-                  Hovedstyret.
-                </Text>
+                {returnedFromFeide ? (
+                  <div className="flex items-center dark:bg-red-900 bg-red-500 p-8 text-white rounded-lg justify-between gap-4">
+                    <Icon icon="tabler:alert-hexagon" width={48} />
+                    <Text>
+                      Vi kunne ikke bekrefte ditt medlemsskap automatisk. Dersom dette er feil ta kontakt med{" "}
+                      <Link className="underline" href="mailto:hs@online.ntnu.no">
+                        Hovedstyret
+                      </Link>
+                      .
+                    </Text>
+                  </div>
+                ) : (
+                  <Text className="text-gray-500 dark:text-stone-500 text-sm">
+                    For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med{" "}
+                    <Link className="underline" href="mailto:hs@online.ntnu.no">
+                      Hovedstyret
+                    </Link>
+                    .
+                  </Text>
+                )}
               </>
             ) : (
               <Text className="text-gray-500 dark:text-stone-500 text-sm">
@@ -310,7 +376,7 @@ export default async function ProfilePage({
             )}
           </div>
 
-          {marks.length > 0 && (
+          {marks && marks.length > 0 && (
             <div className="flex flex-col gap-3">
               <Title>Prikker og suspensjoner</Title>
               <div className="flex flex-col gap-2">
@@ -356,7 +422,21 @@ export default async function ProfilePage({
         <Title>Arrangementer</Title>
 
         {isLoggedIn ? (
-          <EventList events={events} />
+          futureEventWithAttendances !== undefined && pastEventWithAttendances !== undefined ? (
+            <EventList
+              futureEventWithAttendances={futureEventWithAttendances.items}
+              pastEventWithAttendances={pastEventWithAttendances}
+              onLoadMore={fetchNextPage}
+            />
+          ) : (
+            <div className="flex flex-col gap-1">
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+              <EventListItemSkeleton />
+            </div>
+          )
         ) : (
           <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-500">
             <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>

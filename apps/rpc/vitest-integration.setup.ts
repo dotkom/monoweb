@@ -18,7 +18,6 @@ async function createServiceLayerForTesting() {
   configuration = mockDeep<Configuration>({
     AWS_S3_BUCKET: "no.online.ntnu.mock-bucket",
     AWS_REGION: "eu-north-1",
-    ADMIN_USERS: "",
     ALLOWED_ORIGINS: "",
   })
 

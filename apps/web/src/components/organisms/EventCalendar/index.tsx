@@ -52,12 +52,18 @@ function getColSpanClass(span: number) {
 function getEventTypeGuide(events: Event[]) {
   const eventTypeConfig = {
     SOCIAL: { color: "bg-green-400 dark:bg-green-400", label: "Sosialt" },
-    ACADEMIC: { color: "bg-red-400 dark:bg-red-400", label: "Kurs" },
-    COMPANY: { color: "bg-blue-400 dark:bg-blue-400", label: "Bedriftsarrangement" },
+    ACADEMIC: { color: "bg-blue-400 dark:bg-blue-400", label: "Kurs" },
+    COMPANY: {
+      color: "bg-red-400 dark:bg-red-400",
+      label: "Bedriftsarrangement",
+    },
     WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
-    OTHER: { color: "bg-purple-400 dark:bg-purple-400", label: "Annet" },
-    GENERAL_ASSEMBLY: { color: "bg-purple-400 dark:bg-purple-400", label: "Generalforsamling" },
-    INTERNAL: { color: "bg-purple-400 dark:bg-purple-400", label: "Internt" },
+    OTHER: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Annet" },
+    GENERAL_ASSEMBLY: {
+      color: "bg-yellow-400 dark:bg-yellow-400",
+      label: "Generalforsamling",
+    },
+    INTERNAL: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Internt" },
   }
 
   const presentTypes = new Set(events.map((event) => event.type))
@@ -77,7 +83,7 @@ interface CalendarProps {
 }
 
 export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
-  const [session, eventResult] = await Promise.all([
+  const [session, eventDetailsResult] = await Promise.all([
     auth.getServerSession(),
     server.event.all.query({
       filter: {
@@ -85,18 +91,17 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           min: new Date(year, month, 1),
           max: new Date(year, month + 1, 0),
         },
+        excludingOrganizingGroup: ["velkom"],
       },
       take: 100,
     }),
   ])
 
-  const events = eventResult.items ?? []
-
-  const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as string[]
+  const eventDetails = eventDetailsResult.items ?? []
   const userId = session?.sub
 
-  const cal = getCalendarArray(year, month, events)
-  const eventTypeGuideItems = getEventTypeGuide(events)
+  const cal = getCalendarArray(year, month, eventDetails)
+  const eventTypeGuideItems = getEventTypeGuide(eventDetails.map(({ event }) => event))
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
   const months = [
@@ -117,6 +122,15 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const nowDate = new Date()
   nowDate.setHours(0, 0, 0, 0)
 
+  const prevMonth = (month + 11) % 12
+  const nextMonth = (month + 1) % 12
+
+  const prevYear = month === 0 ? year - 1 : year
+  const nextYear = month === 11 ? year + 1 : year
+
+  const previousMonthUrl = `/arrangementer/kalender/${prevYear}/${String(prevMonth + 1).padStart(2, "0")}`
+  const nextMonthUrl = `/arrangementer/kalender/${nextYear}/${String(nextMonth + 1).padStart(2, "0")}`
+
   return (
     <div className="mb-10">
       <div className="flex flex-col sm:flex-row justify-between items-center">
@@ -127,13 +141,13 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           <div className="flex gap-2 sm:gap-0">
             <Link
               className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-800 flex p-3 sm:p-2 duration-200"
-              href={`/arrangementer/kalender/${month === 0 ? year - 1 : year}/${month === 0 ? 12 : month}`}
+              href={previousMonthUrl}
             >
               <Icon icon="tabler:chevron-left" width={24} height={24} />
             </Link>
             <Link
               className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-800 flex p-3 sm:p-2 duration-200"
-              href={`/arrangementer/kalender/${month === 11 ? year + 1 : year}/${month === 11 ? 1 : month + 2}`}
+              href={nextMonthUrl}
             >
               <Icon icon="tabler:chevron-right" width={24} height={24} />
             </Link>
@@ -193,20 +207,21 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           </div>
 
           <div className="relative pt-10 pb-1">
-            {week.events.map((row, rowIndex) => (
+            {week.eventDetails.map((row, rowIndex) => (
               <div
                 className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
                 key={`week-${getWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
-                {row.map(({ eventDisplayProps, ...event }) => {
-                  // const attendeeStatus = attendeeStatuses?.get(event.attendanceId ?? "") || null
+                {row.map(({ event, attendance, eventDisplayProps }) => {
+                  const reservedStatus =
+                    attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
                   return (
                     <EventCalendarItem
                       key={event.id}
-                      event={event}
-                      attendeeStatus={null}
+                      eventDetail={{ event, attendance }}
+                      reservedStatus={reservedStatus}
                       className={cn(
                         getColStartClass(eventDisplayProps.startCol + 2),
                         getColSpanClass(eventDisplayProps.span),

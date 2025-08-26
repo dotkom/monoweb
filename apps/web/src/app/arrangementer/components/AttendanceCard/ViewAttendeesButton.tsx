@@ -1,4 +1,4 @@
-import type { Attendee, User } from "@dotkomonline/types"
+import type { Attendance, Attendee, User } from "@dotkomonline/types"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
+import { compareAsc } from "date-fns"
 import Link from "next/link"
 
 const getMinWidth = (maxNumberOfAttendees: number) => {
@@ -38,37 +39,36 @@ const getMinWidth = (maxNumberOfAttendees: number) => {
 interface ViewAttendeesButtonProps {
   attendeeListOpen: boolean
   setAttendeeListOpen: (open: boolean) => void
-  attendees: Attendee[]
-  isLoggedIn: boolean
-  userId: User["id"] | undefined
+  attendance: Attendance
+  user: User | null
 }
 
 export const ViewAttendeesButton = ({
   attendeeListOpen,
   setAttendeeListOpen,
-  attendees,
-  isLoggedIn,
-  userId,
+  attendance,
+  user,
 }: ViewAttendeesButtonProps) => {
-  const reservedAttendees = attendees.filter((attendee) => attendee.reserved)
-  const waitlistAttendees = attendees.filter((attendee) => !attendee.reserved)
+  const allAttendees = attendance.attendees.toSorted((a, b) =>
+    compareAsc(a.earliestReservationAt, b.earliestReservationAt)
+  )
+  const reservedAttendees = allAttendees.filter((attendee) => attendee.reserved)
+  const waitlistAttendees = allAttendees.filter((attendee) => !attendee.reserved)
 
   const maxAttendees = Math.max(reservedAttendees.length, waitlistAttendees.length)
-
-  const hasWaitlist = waitlistAttendees.length > 0
 
   const button = (
     <Button
       color="light"
       className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
       icon={<Icon className="text-lg" icon="tabler:users" />}
-      disabled={!isLoggedIn}
+      disabled={!user}
     >
       Vis påmeldte
     </Button>
   )
 
-  if (!isLoggedIn) {
+  if (!user) {
     return (
       <TooltipProvider delayDuration={100}>
         <Tooltip>
@@ -85,7 +85,7 @@ export const ViewAttendeesButton = ({
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
       <AlertDialogContent
-        className="flex flex-col gap-4 w-full p-0 bg-white dark:bg-stone-900 drop-shadow-lg max-w-2xl rounded-lg"
+        className="flex flex-col gap-4 w-full p-0 bg-white dark:bg-stone-900 drop-shadow-lg sm:max-w-2xl rounded-lg"
         onOutsideClick={() => setAttendeeListOpen(false)}
       >
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
@@ -105,15 +105,15 @@ export const ViewAttendeesButton = ({
               Påmeldte
             </Title>
 
-            <AttendeeList attendees={reservedAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
+            <AttendeeList attendees={reservedAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
           </div>
 
-          {hasWaitlist && (
+          {waitlistAttendees.length > 0 && (
             <div className="flex flex-col gap-2 mt-6">
               <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-800 rounded-md sticky top-0 z-10">
                 Venteliste
               </Title>
-              <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
+              <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
             </div>
           )}
         </div>
@@ -124,11 +124,11 @@ export const ViewAttendeesButton = ({
 
 interface AttendeeListProps {
   attendees: Attendee[]
+  user: User
   maxNumberOfAttendees: number
-  userId: User["id"] | undefined
 }
 
-const AttendeeList = ({ attendees, maxNumberOfAttendees, userId }: AttendeeListProps) => {
+const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListProps) => {
   if (!attendees.length) {
     return <Text className="text-gray-900 text-sm mx-2">Ingen påmeldte</Text>
   }
@@ -137,7 +137,7 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId }: AttendeeListP
     const minWidth = getMinWidth(maxNumberOfAttendees)
 
     const isVerified = attendee.user.flags.includes("VANITY_VERIFIED")
-    const isUser = attendee.userId === userId
+    const isUser = attendee.userId === user.id
 
     return (
       <div key={attendee.id} className="flex flex-row gap-1 items-center group">

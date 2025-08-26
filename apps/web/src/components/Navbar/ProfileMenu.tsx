@@ -30,10 +30,11 @@ import {
   Text,
   cn,
 } from "@dotkomonline/ui"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { type FC, Fragment, type PropsWithChildren, useState } from "react"
 
 const THEME_OPTIONS = [
@@ -56,6 +57,7 @@ const THEME_OPTIONS = [
 
 export const ProfileMenu: FC = () => {
   const session = useSession()
+  const pathname = usePathname()
   const trpc = useTRPC()
 
   const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
@@ -101,10 +103,27 @@ export const ProfileMenu: FC = () => {
           size="sm"
           color="brand"
           className="text-sm font-semibold px-3 py-2"
-          href="/api/auth/authorize"
+          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: pathname })}
         >
           Logg inn
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center">
+            <Icon icon="tabler:dots" className="rotate-90" width={28} height={28} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <Button
+              element="a"
+              variant="solid"
+              size="sm"
+              color="white"
+              className="text-sm font-semibold px-3 py-2"
+              href={createAuthorizeUrl({ redirectAfter: pathname })}
+            >
+              Logg inn uten feide
+            </Button>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     )
   }
@@ -148,6 +167,7 @@ const linkGroups: LinkDetail[][] = [
       icon: "tabler:adjustments",
       label: "Dashboard",
       href: env.NEXT_PUBLIC_DASHBOARD_URL,
+      openInNewTab: true,
       adminOnly: true,
     },
   ],

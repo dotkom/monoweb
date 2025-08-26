@@ -39,8 +39,8 @@ export function FilterableTable<T>({ tableOptions, filters }: FilterableTablePro
   })
 
   return (
-    <Card>
-      <Group mb="md">
+    <Card p={0} bg="inherit">
+      <Group mb="xs" gap="xs">
         <TextInput placeholder="Søk..." value={globalFilter} onChange={(e) => setGlobalFilter(e.currentTarget.value)} />
         <MultiSelect
           placeholder="Velg filter"

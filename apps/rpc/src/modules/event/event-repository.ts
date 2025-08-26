@@ -50,11 +50,13 @@ export interface EventRepository {
    */
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
   findByAttendingUserId(handle: DBHandle, userId: UserId, page: Pageable): Promise<Event[]>
+  findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
   addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   addEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
+  updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
 }
 
 export function getEventRepository(): EventRepository {
@@ -84,7 +86,11 @@ export function getEventRepository(): EventRepository {
         where: {
           AND: [
             {
-              status: { not: "DELETED" },
+              status: query.byStatus?.length
+                ? {
+                    in: query.byStatus,
+                  }
+                : "PUBLIC",
               start: {
                 gte: query.byStartDate?.min ?? undefined,
                 lte: query.byStartDate?.max ?? undefined,
@@ -118,7 +124,58 @@ export function getEventRepository(): EventRepository {
                 },
               ],
             },
+            {
+              hostingGroups: query.excludingOrganizingGroup
+                ? {
+                    none: {
+                      groupId: { in: query.excludingOrganizingGroup },
+                    },
+                  }
+                : undefined,
+            },
+            {
+              feedbackForm: query.byHasFeedbackForm
+                ? {
+                    isNot: null,
+                  }
+                : query.byHasFeedbackForm === false
+                  ? {
+                      is: null,
+                    }
+                  : undefined,
+            },
           ],
+        },
+        include: {
+          companies: {
+            include: {
+              company: true,
+            },
+          },
+          hostingGroups: {
+            include: {
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      return events.map((event) =>
+        parseOrReport(EventSchema, {
+          ...event,
+          companies: event.companies.map((c) => c.company),
+          hostingGroups: event.hostingGroups.map((g) => g.group),
+        })
+      )
+    },
+    async findByParentEventId(handle, parentEventId) {
+      const events = await handle.event.findMany({
+        where: {
+          parentId: parentEventId,
+          status: "PUBLIC",
         },
         include: {
           companies: {
@@ -281,6 +338,15 @@ export function getEventRepository(): EventRepository {
       })
       const event = await this.findById(handle, row.id)
       invariant(event !== null, "Event should exist within same transaction after updating attendance")
+      return event
+    },
+    async updateEventParent(handle, eventId, parentEventId) {
+      const row = await handle.event.update({
+        where: { id: eventId },
+        data: { parentId: parentEventId },
+      })
+      const event = await this.findById(handle, row.id)
+      invariant(event !== null, "Event should exist within same transaction after updating parent")
       return event
     },
   }

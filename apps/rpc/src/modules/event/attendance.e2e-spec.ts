@@ -12,7 +12,7 @@ import { addDays, addHours, addMinutes, isFuture, subHours } from "date-fns"
 import { describe, expect, it } from "vitest"
 import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
 import { AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
-import { getMockGroup } from "./event.e2e-spec"
+import { getMockEvent, getMockGroup } from "./event.e2e-spec"
 
 function getMockAttendance(input: Partial<AttendanceWrite> = {}): AttendanceWrite {
   return {
@@ -175,7 +175,9 @@ describe("attendance integration tests", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     const userWithoutMembership = await core.userService.register(dbClient, subject)
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
     expect(findActiveMembership(user)).not.toBeNull()
@@ -184,6 +186,8 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -192,7 +196,9 @@ describe("attendance integration tests", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     const user = await core.userService.register(dbClient, subject)
     expect(findActiveMembership(user)).toBeNull()
     await expect(
@@ -200,6 +206,8 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -208,7 +216,9 @@ describe("attendance integration tests", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
     const group = await core.groupService.create(dbClient, getMockGroup({ abbreviation: "Bedkom" }))
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // Create a user and suspend them by giving them more than 6 marks.
     const user = await core.userService.register(dbClient, subject)
     const mark = await core.markService.createMark(dbClient, {
@@ -228,6 +238,8 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -236,6 +248,7 @@ describe("attendance integration tests", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(
       dbClient,
       getMockAttendance({
@@ -243,6 +256,7 @@ describe("attendance integration tests", async () => {
         registerEnd: addDays(getCurrentUTC(), 2), // Registration ends in two days
       })
     )
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // The membership for the test user is registered to be a first year student
     await core.attendanceService.createAttendancePool(
       dbClient,
@@ -261,6 +275,8 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
 
@@ -269,6 +285,8 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: true,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(registration.userId).toEqual(user.id)
   })
@@ -277,7 +295,9 @@ describe("attendance integration tests", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // The membership for the test user is registered to be a first year student
     await core.attendanceService.createAttendancePool(
       dbClient,
@@ -295,6 +315,8 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
 
     // Attempt to register the same user again for the same attendance
@@ -303,6 +325,8 @@ describe("attendance integration tests", async () => {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: true,
+        forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
       })
     ).rejects.toThrow(AttendanceValidationError)
   })
@@ -311,7 +335,9 @@ describe("attendance integration tests", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // The membership for the test user is registered to be a first year student
     await core.attendanceService.createAttendancePool(
       dbClient,
@@ -342,6 +368,8 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
@@ -352,7 +380,9 @@ describe("attendance integration tests", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // The membership for the test user is registered to be a first year student
     await core.attendanceService.createAttendancePool(
       dbClient,
@@ -370,6 +400,8 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
@@ -380,7 +412,9 @@ describe("attendance integration tests", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // The membership for the test user is registered to be a first year student
     await core.attendanceService.createAttendancePool(
       dbClient,
@@ -397,6 +431,8 @@ describe("attendance integration tests", async () => {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(attendee.reserved).toBe(true)
   })
@@ -404,7 +440,9 @@ describe("attendance integration tests", async () => {
   it("should not deregister an attendee past the deadline", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     await core.attendanceService.createAttendancePool(
       dbClient,
       attendance.id,
@@ -418,6 +456,8 @@ describe("attendance integration tests", async () => {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
 
     await core.attendanceService.updateAttendanceById(dbClient, attendance.id, {
@@ -436,6 +476,51 @@ describe("attendance integration tests", async () => {
     ).resolves.toBeUndefined()
   })
 
+  it("should always allow registering a user through admin despite not having an applicable pool", async () => {
+    const subject = randomUUID()
+    auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+    // We create an attendance pool that the user cannot attend, because they are not a 5th year student
+    const pool = await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        mergeDelayHours: 24,
+        yearCriteria: [5],
+      })
+    )
+    const userWithoutMembership = await core.userService.register(dbClient, subject)
+    const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+    expect(findActiveMembership(user)).not.toBeNull()
+
+    // If the user themselves attempt to register, it should fail because there is no applicable pool
+    await expect(
+      core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+        immediateReservation: false,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        forceAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
+      })
+    ).rejects.toThrow(AttendanceValidationError)
+
+    // But if an admin registers the user with an forceAttendancePoolId, it should succeed
+    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+      immediateReservation: true,
+      immediatePayment: false,
+      ignoreRegistrationWindow: false,
+      forceAttendancePoolId: pool.id, // Force the user into the pool
+      ignoreRegisteredToParent: false,
+    })
+
+    expect(attendee.userId).toEqual(user.id)
+    expect(attendee.earliestReservationAt).toSatisfy(isFuture)
+    expect(attendee.reserved).toBe(true)
+  })
+
   it("should try to attend the next user in line after deregistering", async () => {
     const alphaSubject = randomUUID()
     const betaSubject = randomUUID()
@@ -444,7 +529,9 @@ describe("attendance integration tests", async () => {
     const betaWOM = await core.userService.register(dbClient, betaSubject)
     const alpha = await core.userService.createMembership(dbClient, alphaWOM.id, getMockMembership())
     const beta = await core.userService.createMembership(dbClient, betaWOM.id, getMockMembership())
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     await core.attendanceService.createAttendancePool(
       dbClient,
       attendance.id,
@@ -458,15 +545,24 @@ describe("attendance integration tests", async () => {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     const betaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, beta.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
 
     expect(alphaAttendee.reserved).toBe(true)
-    expect(betaAttendee.reserved).toBe(false)
+    expect(betaAttendee.reserved).toBe(true)
+
+    // Manually kick beta attendee out of the pool, so that they are unreserved.
+    await core.attendanceService.updateAttendeeById(dbClient, betaAttendee.id, {
+      reserved: false,
+    })
 
     await expect(
       core.attendanceService.deregisterAttendee(dbClient, alphaAttendee.id, {
@@ -488,7 +584,9 @@ describe("attendance integration tests", async () => {
     const betaWOM = await core.userService.register(dbClient, betaSubject)
     const alpha = await core.userService.createMembership(dbClient, alphaWOM.id, getMockMembership())
     const beta = await core.userService.createMembership(dbClient, betaWOM.id, getMockMembership())
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     await core.attendanceService.createAttendancePool(
       dbClient,
       attendance.id,
@@ -501,14 +599,26 @@ describe("attendance integration tests", async () => {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     const betaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, beta.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
-    expect(alphaAttendee.reserved).toBe(false)
-    expect(betaAttendee.reserved).toBe(false)
+    expect(alphaAttendee.reserved).toBe(true)
+    expect(betaAttendee.reserved).toBe(true)
+
+    // Manually kick both of them to the waitlist to simulate that they are not reserved.
+    await core.attendanceService.updateAttendeeById(dbClient, alphaAttendee.id, {
+      reserved: false,
+    })
+    await core.attendanceService.updateAttendeeById(dbClient, betaAttendee.id, {
+      reserved: false,
+    })
 
     await expect(
       core.attendanceService.deregisterAttendee(dbClient, alphaAttendee.id, {
@@ -525,7 +635,9 @@ describe("attendance integration tests", async () => {
   it("should register the physical attendance of a user for an event", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     await core.attendanceService.createAttendancePool(
       dbClient,
       attendance.id,
@@ -541,13 +653,19 @@ describe("attendance integration tests", async () => {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
     })
     expect(attendee.reserved).toBe(true)
 
-    await expect(core.attendanceService.registerAttendance(dbClient, attendee.id)).resolves.toBeUndefined()
+    await expect(
+      core.attendanceService.registerAttendance(dbClient, attendee.id, getCurrentUTC())
+    ).resolves.toBeUndefined()
   })
 
   it("should fail if you attempt to register physical attendance for a non-registered user", async () => {
-    await expect(core.attendanceService.registerAttendance(dbClient, randomUUID())).rejects.toThrow(AttendanceNotFound)
+    await expect(core.attendanceService.registerAttendance(dbClient, randomUUID(), getCurrentUTC())).rejects.toThrow(
+      AttendanceNotFound
+    )
   })
 })

@@ -23,6 +23,7 @@ const priceDataEqual = (price_1: LoosePriceData, price_2: LoosePriceData) =>
 
 export interface PaymentProductsService {
   createOrUpdate(productId: string, data: PaymentProductWrite): Promise<void>
+  updatePrice(productId: string, price: number): Promise<void>
 }
 
 export function getPaymentProductsService(stripe: Stripe): PaymentProductsService {
@@ -81,6 +82,10 @@ export function getPaymentProductsService(stripe: Stripe): PaymentProductsServic
       } else {
         await stripe.products.create({ ...payload, id: productId, default_price_data: priceData })
       }
+    },
+    updatePrice: async (productId, price) => {
+      const product = await stripe.products.retrieve(productId)
+      await updatePrice(product, getPriceData(price))
     },
   }
 }

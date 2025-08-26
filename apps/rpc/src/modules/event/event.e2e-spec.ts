@@ -1,20 +1,8 @@
-import type { S3Client } from "@aws-sdk/client-s3"
 import type { EventWrite, GroupWrite } from "@dotkomonline/types"
 import { faker } from "@faker-js/faker"
-import type { ManagementClient } from "auth0"
 import { describe, expect, it } from "vitest"
-import { mockDeep } from "vitest-mock-extended"
-import { dbClient } from "../../../vitest-integration.setup"
-import { getFeideGroupsRepository } from "../feide/feide-groups-repository"
-import { getGroupRepository } from "../group/group-repository"
-import { getGroupService } from "../group/group-service"
-import { getNTNUStudyplanRepository } from "../ntnu-study-plan/ntnu-study-plan-repository"
-import { getNotificationPermissionsRepository } from "../user/notification-permissions-repository"
-import { getPrivacyPermissionsRepository } from "../user/privacy-permissions-repository"
-import { getUserRepository } from "../user/user-repository"
-import { getUserService } from "../user/user-service"
-import { getEventRepository } from "./event-repository"
-import { getEventService } from "./event-service"
+import { core, dbClient } from "../../../vitest-integration.setup"
+import { EventRelationshipError } from "./event-error"
 
 // biome-ignore lint/suspicious/noExportsInTest: used in another spec
 export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
@@ -51,31 +39,9 @@ export function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
 }
 
 describe("event integration tests", () => {
-  const managementClient = mockDeep<ManagementClient>()
-  const s3Client = mockDeep<S3Client>()
-  const userRepository = getUserRepository()
-  const notificationPermissionsRepository = getNotificationPermissionsRepository()
-  const privacyPermissionsRepository = getPrivacyPermissionsRepository()
-  const feideGroupsRepository = getFeideGroupsRepository()
-  const ntnuStudyPlanRepository = getNTNUStudyplanRepository()
-  const userService = getUserService(
-    userRepository,
-    privacyPermissionsRepository,
-    notificationPermissionsRepository,
-    feideGroupsRepository,
-    ntnuStudyPlanRepository,
-    managementClient,
-    s3Client,
-    "fake-aws-bucket"
-  )
-  const groupRepository = getGroupRepository()
-  const groupService = getGroupService(groupRepository, userService)
-  const eventRepository = getEventRepository()
-  const eventService = getEventService(eventRepository)
-
   it("should create a new event", async () => {
     const mock = getMockEvent()
-    const event = await eventService.createEvent(dbClient, mock)
+    const event = await core.eventService.createEvent(dbClient, mock)
     expect(event.title).toBe(mock.title)
     expect(event.companies).toHaveLength(0)
     expect(event.hostingGroups).toHaveLength(0)
@@ -83,16 +49,21 @@ describe("event integration tests", () => {
   })
 
   it("should update event organizers by diffing organizers", async () => {
-    const event = await eventService.createEvent(dbClient, getMockEvent())
-    const group = await groupService.create(dbClient, getMockGroup())
-    const updated = await eventService.updateEventOrganizers(dbClient, event.id, new Set([group.slug]), new Set())
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const group = await core.groupService.create(dbClient, getMockGroup())
+    const updated = await core.eventService.updateEventOrganizers(dbClient, event.id, new Set([group.slug]), new Set())
     expect(updated.hostingGroups).toHaveLength(1)
     // Updating with new ones and removing some
-    const group2 = await groupService.create(
+    const group2 = await core.groupService.create(
       dbClient,
       getMockGroup({ abbreviation: "fagkom", name: "Fag- og kurskomiteen" })
     )
-    const updated2 = await eventService.updateEventOrganizers(dbClient, updated.id, new Set([group2.slug]), new Set())
+    const updated2 = await core.eventService.updateEventOrganizers(
+      dbClient,
+      updated.id,
+      new Set([group2.slug]),
+      new Set()
+    )
     expect(updated2.hostingGroups).toHaveLength(1)
     expect(updated2.hostingGroups).not.toContainEqual(
       expect.objectContaining({
@@ -102,12 +73,17 @@ describe("event integration tests", () => {
   })
 
   it("should find events by various filter criteria", async () => {
-    const eventObject = await eventService.createEvent(dbClient, getMockEvent())
-    const group = await groupService.create(dbClient, getMockGroup())
-    const event = await eventService.updateEventOrganizers(dbClient, eventObject.id, new Set([group.slug]), new Set())
+    const eventObject = await core.eventService.createEvent(dbClient, getMockEvent())
+    const group = await core.groupService.create(dbClient, getMockGroup())
+    const event = await core.eventService.updateEventOrganizers(
+      dbClient,
+      eventObject.id,
+      new Set([group.slug]),
+      new Set()
+    )
     // It finds events by a search term
     {
-      const events = await eventService.findEvents(dbClient, {
+      const events = await core.eventService.findEvents(dbClient, {
         bySearchTerm: event.title.substring(0, 5),
         byId: [],
         byStartDate: { min: null, max: null },
@@ -118,7 +94,7 @@ describe("event integration tests", () => {
     }
     // It finds events by an organizing group
     {
-      const events = await eventService.findEvents(dbClient, {
+      const events = await core.eventService.findEvents(dbClient, {
         bySearchTerm: null,
         byId: [],
         byStartDate: { min: null, max: null },
@@ -129,7 +105,7 @@ describe("event integration tests", () => {
     }
     // It finds events by a specific id
     {
-      const events = await eventService.findEvents(dbClient, {
+      const events = await core.eventService.findEvents(dbClient, {
         bySearchTerm: null,
         byId: [event.id],
         byStartDate: { min: null, max: null },
@@ -138,5 +114,39 @@ describe("event integration tests", () => {
       })
       expect(events).toHaveLength(1)
     }
+  })
+
+  it("should prevent assigning itself as a parent event", async () => {
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    await expect(core.eventService.updateEventParent(dbClient, event.id, event.id)).rejects.toThrow(
+      EventRelationshipError
+    )
+  })
+
+  it("should prevent cyclic event relationships", async () => {
+    const event1 = await core.eventService.createEvent(dbClient, getMockEvent())
+    const event2 = await core.eventService.createEvent(dbClient, getMockEvent())
+
+    // It is legal to set event1 as a parent of event2
+    await expect(core.eventService.updateEventParent(dbClient, event2.id, event1.id)).resolves.toBeDefined()
+
+    // But it should now be illegal to set event2 as a parent of event1
+    await expect(core.eventService.updateEventParent(dbClient, event1.id, event2.id)).rejects.toThrow(
+      EventRelationshipError
+    )
+  })
+
+  it("should ban nesting more than one level deep", async () => {
+    const event1 = await core.eventService.createEvent(dbClient, getMockEvent())
+    const event2 = await core.eventService.createEvent(dbClient, getMockEvent())
+    const event3 = await core.eventService.createEvent(dbClient, getMockEvent())
+
+    // It is legal to set event1 as a parent of event2
+    await expect(core.eventService.updateEventParent(dbClient, event2.id, event1.id)).resolves.toBeDefined()
+
+    // It is not legal to set event2 as a parent of event3, as event2 already has a parent
+    await expect(core.eventService.updateEventParent(dbClient, event3.id, event2.id)).rejects.toThrowError(
+      EventRelationshipError
+    )
   })
 })

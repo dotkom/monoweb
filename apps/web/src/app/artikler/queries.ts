@@ -2,6 +2,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import type { ArticleFilterQuery } from "@dotkomonline/types"
 
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useMemo } from "react"
 
 export const useArticleAllQuery = () => {
   const trpc = useTRPC()
@@ -16,7 +17,8 @@ export const useArticleFilterQuery = (filters: ArticleFilterQuery) => {
       filters,
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    select: (res) => res.pages.flatMap((p) => p.items),
   })
 
-  return { data, ...query }
+  return { articles: useMemo(() => data ?? [], [data]), ...query }
 }

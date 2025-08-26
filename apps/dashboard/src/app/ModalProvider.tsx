@@ -1,31 +1,33 @@
 "use client"
 
-import { ManualCreateUserAttendModal } from "@/app/event/components/manual-create-user-attend-modal"
-import { ManualDeleteUserAttendModal } from "@/app/event/components/manual-delete-user-attend-modal"
+import { CreateArticleModal } from "@/app/(internal)/article/modals/create-article"
+import { AttendanceRegisteredModal } from "@/app/(internal)/event/components/attendance-registered-modal"
+import { CreateAttendanceSelectionsModal } from "@/app/(internal)/event/components/create-event-selections-modal"
+import { CreatePoolModal } from "@/app/(internal)/event/components/create-pool-modal"
+import { UpdateAttendanceSelectionsModal } from "@/app/(internal)/event/components/edit-event-selections-modal"
+import { EditPoolModal } from "@/app/(internal)/event/components/edit-pool-modal"
+import { AlreadyAttendedModal } from "@/app/(internal)/event/components/error-attendance-registered-modal"
+import { ManualCreateUserAttendModal } from "@/app/(internal)/event/components/manual-create-user-attend-modal"
+import { ManualDeleteUserAttendModal } from "@/app/(internal)/event/components/manual-delete-user-attend-modal"
+import { CreateGroupModal } from "@/app/(internal)/group/modals/create-group-modal"
+import { CreateGroupRoleModal } from "@/app/(internal)/group/modals/create-group-role-modal"
+import { EditGroupMembershipModal } from "@/app/(internal)/group/modals/edit-group-membership-modal"
+import { EditGroupRoleModal } from "@/app/(internal)/group/modals/edit-group-role-modal"
+import { CreateJobListingModal } from "@/app/(internal)/job-listing/modals/create-job-listing-modal"
+import { CreateOfflineModal } from "@/app/(internal)/offline/modals/create-offline-modal"
+import { CreateMarkModal } from "@/app/(internal)/punishment/modals/create-mark-modal"
+import { CreateSuspensionModal } from "@/app/(internal)/punishment/modals/create-suspension-modal"
+import { CreateMembershipModal } from "@/app/(internal)/user/components/create-membership-modal"
+import { EditMembershipModal } from "@/app/(internal)/user/components/edit-membership-modal"
 import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
-import { CreateArticleModal } from "./article/modals/create-article"
-import { AttendanceRegisteredModal } from "./event/components/attendance-registered-modal"
-import { CreateAttendanceSelectionsModal } from "./event/components/create-event-selections-modal"
-import { CreatePoolModal } from "./event/components/create-pool-modal"
-import { UpdateAttendanceSelectionsModal } from "./event/components/edit-event-selections-modal"
-import { EditPoolModal } from "./event/components/edit-pool-modal"
-import { AlreadyAttendedModal } from "./event/components/error-attendance-registered-modal"
-import { CreateGroupMemberModal } from "./group/modals/create-group-member-modal"
-import { CreateGroupModal } from "./group/modals/create-group-modal"
-import { CreateGroupRoleModal } from "./group/modals/create-group-role-modal"
-import { EditGroupMembershipModal } from "./group/modals/edit-group-membership-modal"
-import { EditGroupRoleModal } from "./group/modals/edit-group-role-modal"
-import { CreateJobListingModal } from "./job-listing/modals/create-job-listing-modal"
-import { CreateOfflineModal } from "./offline/modals/create-offline-modal"
-import { CreateMarkModal } from "./punishment/modals/create-mark-modal"
-import { CreateSuspensionModal } from "./punishment/modals/create-suspension-modal"
-import { CreateMembershipModal } from "./user/components/create-membership-modal"
-import { EditMembershipModal } from "./user/components/edit-membership-modal"
+import { QRCodeScannedModal } from "./(internal)/event/components/qr-code-scanned-modal"
+import { CreateGroupMemberModal } from "./(internal)/group/modals/create-group-member-modal"
 
 const modals = {
   "event/attendance/attendee/create": ManualCreateUserAttendModal,
   "event/attendance/attendee/delete": ManualDeleteUserAttendModal,
+  "event/attendance/attendee/qr-code-scanned": QRCodeScannedModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
   "jobListing/create": CreateJobListingModal,

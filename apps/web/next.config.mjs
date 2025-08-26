@@ -8,6 +8,15 @@ const config = {
   images: {
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/wiki/:path*",
+        destination: "https://wiki.online.ntnu.no/:path*",
+        permanent: true,
+      },
+    ]
+  },
 }
 
 export default withSentryConfig(config, {

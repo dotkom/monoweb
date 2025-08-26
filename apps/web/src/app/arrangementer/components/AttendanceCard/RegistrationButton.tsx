@@ -1,6 +1,16 @@
-import type { Attendance, AttendancePool, AttendanceStatus, Attendee, Punishment } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type AttendanceStatus,
+  type Punishment,
+  type User,
+  findActiveMembership,
+  getAttendablePool,
+  getAttendee,
+  getReservedAttendeeCount,
+} from "@dotkomonline/types"
 import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import type { FC } from "react"
+import { getAttendanceStatus } from "../attendanceStatus"
 
 const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean, hasPunishment: boolean) => {
   if (disabled) return "bg-gray-200 dark:bg-stone-800 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-800"
@@ -18,64 +28,98 @@ const getDisabledText = (
   hasBeenCharged: boolean,
   isPastDeregisterDeadline: boolean,
   isLoggedIn: boolean,
-  hasMembership?: boolean,
-  isSuspended?: boolean
+  hasMembership: boolean,
+  isSuspended: boolean,
+  notRegisteredToParentEvent: boolean,
+  notReservedToParentEvent: boolean
 ) => {
-  if (!isLoggedIn) return "Du må være innlogget for å melde deg på"
-  if (!hasMembership) return "Du må ha registrert medlemskap for å melde deg på"
-  if (status === "NotOpened") return "Påmeldinger har ikke åpnet"
-  if (hasBeenCharged) return "Betaling er utført. Kontakt komite for refusjon"
-  if (status === "Closed" && !attendee) return "Påmeldingen er stengt"
-  if (!pool && !attendee) return "Du har ingen påmeldingsgruppe"
-  if (isPastDeregisterDeadline && attendee) return "Avmeldingsfristen har utløpt"
-  if (isSuspended) return "Du er suspendert fra Online"
+  if (!isLoggedIn) {
+    return "Du må være innlogget for å melde deg på"
+  }
+
+  if (attendee) {
+    if (isPastDeregisterDeadline) {
+      return "Avmeldingsfristen har utløpt"
+    }
+    if (hasBeenCharged) {
+      return "Betaling er utført. Kontakt arrangør for refusjon"
+    }
+
+    return null
+  }
+
+  if (isSuspended) {
+    return "Du er suspendert fra Online"
+  }
+  if (!hasMembership) {
+    return "Du må ha registrert medlemskap for å melde deg på"
+  }
+  if (status === "NotOpened") {
+    return "Påmeldinger har ikke åpnet"
+  }
+  if (status === "Closed") {
+    return "Påmeldingen er stengt"
+  }
+  if (!pool) {
+    return "Du har ingen påmeldingsgruppe"
+  }
+  if (notRegisteredToParentEvent) {
+    return "Du er ikke påmeldt foreldrearrangementet"
+  }
+  if (notReservedToParentEvent && !notRegisteredToParentEvent) {
+    return "Du er i kø på foreldrearrangementet"
+  }
 
   return null
 }
 
-interface Props {
-  attendance: Attendance
-  attendee: Attendee | undefined | null
+interface RegistrationButtonProps {
   registerForAttendance: () => void
   unregisterForAttendance: () => void
-  pool: AttendancePool | undefined | null
+  attendance: Attendance
+  parentAttendance: Attendance | null
+  punishment: Punishment | null
+  user: User | null
   isLoading: boolean
-  isLoggedIn: boolean
-  hasMembership?: boolean
-  status: AttendanceStatus
-  punishment?: Punishment | null
 }
 
-export const RegistrationButton: FC<Props> = ({
-  attendee,
-  attendance,
+export const RegistrationButton: FC<RegistrationButtonProps> = ({
   registerForAttendance,
   unregisterForAttendance,
-  pool,
-  isLoading,
-  isLoggedIn,
-  hasMembership,
-  status,
+  attendance,
+  parentAttendance,
   punishment,
+  user,
+  isLoading,
 }) => {
+  const attendee = getAttendee(attendance, user)
+  const pool = getAttendablePool(attendance, user)
+  const attendanceStatus = getAttendanceStatus(attendance)
+  const hasMembership = user !== null && Boolean(findActiveMembership(user))
+
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
-  const poolReservedAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool?.id && a.reserved).length
-  const isPoolFull = pool ? poolReservedAttendees >= pool.capacity : false
+  const isPoolFull = pool ? getReservedAttendeeCount(attendance, pool?.id) >= pool.capacity : false
   const isSuspended = punishment?.suspended ?? false
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
+
+  const parentAttendanceAttendee = parentAttendance && getAttendee(parentAttendance, user)
+  const notRegisteredToParentEvent = parentAttendance ? !parentAttendanceAttendee : false
+  const notReservedToParentEvent = parentAttendance ? !parentAttendanceAttendee?.reserved : false
 
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
 
   const disabledText = getDisabledText(
-    status,
+    attendanceStatus,
     Boolean(attendee),
     Boolean(pool),
     Boolean(attendee?.paymentChargedAt),
     isPastDeregisterDeadline,
-    isLoggedIn,
+    Boolean(user),
     hasMembership,
-    isSuspended
+    isSuspended,
+    notRegisteredToParentEvent,
+    notReservedToParentEvent
   )
   const disabled = Boolean(disabledText)
 

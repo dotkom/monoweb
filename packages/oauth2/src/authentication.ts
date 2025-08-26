@@ -143,7 +143,6 @@ export class OAuth2Service {
     url.searchParams.set("response_mode", "query")
     url.searchParams.set("scope", getScopeSet(...scopes))
     url.searchParams.set("state", state)
-    url.searchParams.set("connection", "FEIDE")
     // For some reason, the Auth0 OAuth2 documentation doesn't mention these
     // parameters in the table, but they are standard OAuth2 parameters.
     url.searchParams.set("code_challenge", challenge)

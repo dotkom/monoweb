@@ -289,8 +289,14 @@ model Event {
   createdAt       DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
+  parentId        String?
+  parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
+  children Event[] @relation("children")
+
   companies     EventCompany[]
   hostingGroups EventHostingGroup[]
+
+  metadataImportId Int?
 
   @@map("event")
 }
@@ -486,8 +492,8 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  RESERVE_ATTENDEE       @map("RESERVE_ATTENDEE")
-  MERGE_ATTENDANCE_POOLS @map("MERGE_ATTENDANCE_POOLS")
+  RESERVE_ATTENDEE           @map("RESERVE_ATTENDEE")
+  MERGE_ATTENDANCE_POOLS     @map("MERGE_ATTENDANCE_POOLS")
   VERIFY_PAYMENT             @map("VERIFY_PAYMENT")
   CHARGE_ATTENDANCE_PAYMENTS @map("CHARGE_ATTENDANCE_PAYMENTS")
 

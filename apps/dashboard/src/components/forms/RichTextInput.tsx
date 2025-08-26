@@ -1,6 +1,5 @@
 "use client"
 
-import { Icon } from "@iconify/react"
 import { Divider, Input } from "@mantine/core"
 import { RichTextEditor, type RichTextEditorProps, useRichTextEditorContext } from "@mantine/tiptap"
 import Link from "@tiptap/extension-link"
@@ -11,6 +10,7 @@ import { Controller, type FieldValues } from "react-hook-form"
 import type { InputProducerResult } from "./types"
 import "@mantine/tiptap/styles.css"
 import { ErrorMessage } from "@hookform/error-message"
+import { IconCornerRightDownDouble } from "@tabler/icons-react"
 
 export function createRichTextInput<F extends FieldValues>({
   onChange,
@@ -93,7 +93,7 @@ function HardBreakControl() {
       aria-label="Insert line break"
       title="Line break"
     >
-      <Icon icon="tabler:corner-right-down-double" width={18} height={18} />
+      <IconCornerRightDownDouble width={18} height={18} />
     </RichTextEditor.Control>
   )
 }

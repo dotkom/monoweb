@@ -1,5 +1,5 @@
 import { useTRPC } from "@/utils/trpc/client"
-import type { EventFilterQuery } from "@dotkomonline/types"
+import type { EventFilterQuery, UserId } from "@dotkomonline/types"
 import { useInfiniteQuery } from "@tanstack/react-query"
 
 import { useQuery } from "@tanstack/react-query"
@@ -11,13 +11,21 @@ interface UseEventAllQueryProps {
   page?: Pageable
 }
 
+interface UseEventAllByAttendingUserIdQueryProps {
+  id: UserId
+  filter: EventFilterQuery
+  page?: Pageable
+}
+
 export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
   const trpc = useTRPC()
   const { data, ...query } = useQuery({
     ...trpc.event.all.queryOptions({ filter, ...page }),
   })
 
-  return { events: useMemo(() => data?.items ?? [], [data]), ...query }
+  const eventDetails = useMemo(() => data?.items ?? [], [data])
+
+  return { eventDetails, ...query }
 }
 
 export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps) => {
@@ -31,7 +39,28 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
 
-  const events = data?.pages.flatMap((page) => page.items) ?? []
+  const eventDetails = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data])
 
-  return { events, ...query }
+  return { eventDetails, ...query }
+}
+
+export const useEventAllByAttendingUserIdInfiniteQuery = ({
+  id,
+  filter,
+  page,
+}: UseEventAllByAttendingUserIdQueryProps) => {
+  const trpc = useTRPC()
+
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.event.allByAttendingUserId.infiniteQueryOptions({
+      id,
+      filter,
+      ...page,
+    }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  })
+
+  const eventDetails = data?.pages.flatMap((page) => page.items) ?? []
+
+  return { eventDetails, ...query }
 }

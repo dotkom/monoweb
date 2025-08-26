@@ -1,13 +1,18 @@
+import { on } from "node:events"
+import { TZDate } from "@date-fns/tz"
 import {
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
   AttendanceSchema,
   AttendanceWriteSchema,
+  type Attendee,
   AttendeeSchema,
-  AttendeeSelectionResponsesSchema,
+  AttendeeSelectionResponseSchema,
   UserSchema,
 } from "@dotkomonline/types"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { TRPCError } from "@trpc/server"
+import { addDays } from "date-fns"
 import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
@@ -39,7 +44,7 @@ export const attendanceRouter = t.router({
         if (pool === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
-        ctx.attendanceService.updateAttendancePool(handle, input.id, { ...pool, ...input.input })
+        await ctx.attendanceService.updateAttendancePool(handle, input.id, { ...pool, ...input.input })
       })
     }),
 
@@ -57,6 +62,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
+        attendancePoolId: AttendancePoolSchema.shape.id,
         userId: UserSchema.shape.id,
       })
     )
@@ -66,6 +72,8 @@ export const attendanceRouter = t.router({
           ignoreRegistrationWindow: true,
           immediateReservation: true,
           immediatePayment: false,
+          forceAttendancePoolId: input.attendancePoolId,
+          ignoreRegisteredToParent: true,
         })
       })
     }),
@@ -74,7 +82,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
-        price: z.number().int(),
+        price: z.number().int().nullable(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -83,7 +91,7 @@ export const attendanceRouter = t.router({
         if (attendance === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
-        return ctx.attendanceService.updateAttendancePayment(handle, input.id, input.price)
+        return ctx.attendanceService.updateAttendancePaymentPrice(handle, input.id, input.price)
       })
     }),
 
@@ -127,11 +135,27 @@ export const attendanceRouter = t.router({
           ignoreRegistrationWindow: false,
           immediateReservation: false,
           immediatePayment: true,
+          forceAttendancePoolId: null,
+          ignoreRegisteredToParent: false,
         })
       })
     ),
 
-  refundAttendee: staffProcedure
+  onRegisterChange: procedure
+    .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
+    .subscription(async function* ({ input, ctx, signal }) {
+      for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
+        const attendeeUpdateData = data as { attendee: Attendee; status: "registered" | "deregistered" }
+
+        if (attendeeUpdateData.attendee.attendanceId !== input.attendanceId) {
+          continue
+        }
+
+        yield attendeeUpdateData
+      }
+    }),
+
+  cancelAttendeePayment: staffProcedure
     .input(
       z.object({
         attendeeId: AttendeeSchema.shape.id,
@@ -139,10 +163,20 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input: { attendeeId }, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.createAttendeeRefund(handle, attendeeId, ctx.principal.subject)
+        ctx.attendanceService.cancelAttendeePayment(handle, attendeeId, ctx.principal.subject)
       )
     }),
-
+  startAttendeePayment: staffProcedure
+    .input(
+      z.object({
+        attendeeId: AttendeeSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input: { attendeeId }, ctx }) => {
+      return ctx.executeTransaction(async (handle) =>
+        ctx.attendanceService.startAttendeePayment(handle, attendeeId, addDays(getCurrentUTC(), 1))
+      )
+    }),
   deregisterForEvent: authenticatedProcedure
     .input(
       z.object({
@@ -171,7 +205,7 @@ export const attendanceRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceByAttendeeId(handle, input.attendeeId)
-        const attendee = attendance.attendees.find((attendee) => attendee.user.id === ctx.principal.subject)
+        const attendee = attendance.attendees.find((attendee) => attendee.id === input.attendeeId)
         if (attendee === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
@@ -181,15 +215,29 @@ export const attendanceRouter = t.router({
       })
     }),
 
-  registerAttendance: staffProcedure
+  adminUpdateAtteendeeReserved: staffProcedure
     .input(
       z.object({
-        id: AttendeeSchema.shape.id,
+        attendeeId: AttendeeSchema.shape.id,
+        reserved: AttendeeSchema.shape.reserved,
       })
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        await ctx.attendanceService.registerAttendance(handle, input.id)
+        await ctx.attendanceService.updateAttendeeById(handle, input.attendeeId, { reserved: input.reserved })
+      })
+    }),
+
+  registerAttendance: staffProcedure
+    .input(
+      z.object({
+        id: AttendeeSchema.shape.id,
+        at: z.coerce.date().nullable(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        await ctx.attendanceService.registerAttendance(handle, input.id, input.at ? new TZDate(input.at) : null)
       })
     }),
 
@@ -197,7 +245,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendeeId: AttendeeSchema.shape.id,
-        options: AttendeeSelectionResponsesSchema,
+        options: AttendeeSelectionResponseSchema.array(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -216,7 +264,7 @@ export const attendanceRouter = t.router({
       ctx.executeTransaction(async (handle) => ctx.attendanceService.getAttendanceById(handle, input.id))
     ),
 
-  updateAttendance: authenticatedProcedure
+  updateAttendance: staffProcedure
     .input(
       z.object({
         id: AttendanceSchema.shape.id,

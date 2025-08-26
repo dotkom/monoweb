@@ -1,15 +1,17 @@
-import { CompanyView } from "@/components/views/CompanyView"
 import { server } from "@/utils/trpc/server"
+import { CompanyView } from "../CompanyView"
 
-const CompanyPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params
+interface CompanyPageProps {
+  params: Promise<{ slug: string }>
+}
+
+const CompanyPage = async ({ params }: CompanyPageProps) => {
+  const { slug: rawSlug } = await params
+  const slug = decodeURIComponent(rawSlug)
+
   const company = await server.company.getBySlug.query(slug)
-  const attendanceEvents = await server.event.all.query({
-    filter: {
-      byOrganizingCompany: [company.id],
-    },
-  })
-  return <CompanyView company={company} events={attendanceEvents.items} />
+
+  return <CompanyView company={company} />
 }
 
 export default CompanyPage

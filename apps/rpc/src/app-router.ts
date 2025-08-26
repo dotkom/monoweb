@@ -1,6 +1,5 @@
 import { articleRouter } from "./modules/article/article-router"
 import { companyRouter } from "./modules/company/company-router"
-import { attendanceRouter } from "./modules/event/attendance-router"
 import { eventRouter } from "./modules/event/event-router"
 import { groupRouter } from "./modules/group/group-router"
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
@@ -13,7 +12,6 @@ import { t } from "./trpc"
 export const appRouter = t.router({
   group: groupRouter,
   event: eventRouter,
-  attendance: attendanceRouter,
   user: userRouter,
   company: companyRouter,
   mark: markRouter,

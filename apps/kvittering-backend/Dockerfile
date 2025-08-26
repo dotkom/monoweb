@@ -1,5 +1,5 @@
 # See https://github.com/astral-sh/uv-docker-example/blob/main/Dockerfile
-FROM ghcr.io/astral-sh/uv:debian@sha256:6e8e95dcdcb64d0d7aa0f7cce9d18f16d5aa925dcfc435a1fa078d58ef3bf837
+FROM ghcr.io/astral-sh/uv:debian@sha256:00e6df6b8c046a1b447c5fb166d067e7efa29a60843db5faf2ea5907cacedc5c
 
 WORKDIR /app
 

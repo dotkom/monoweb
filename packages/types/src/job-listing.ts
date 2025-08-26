@@ -26,10 +26,12 @@ export const JobListingSchema = schemas.JobListingSchema.omit({
 export const JobListingWriteSchema = JobListingSchema.omit({
   id: true,
   createdAt: true,
+  updatedAt: true,
   company: true,
   locations: true,
 })
 
 export type JobListing = z.infer<typeof JobListingSchema>
 export type JobListingId = JobListing["id"]
+export type JobListingEmployment = JobListing["employment"]
 export type JobListingWrite = z.infer<typeof JobListingWriteSchema>

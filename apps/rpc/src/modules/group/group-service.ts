@@ -14,7 +14,7 @@ import {
   type UserId,
   getDefaultGroupMemberRoles,
 } from "@dotkomonline/types"
-import { getCurrentUtc, slugify } from "@dotkomonline/utils"
+import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
 import type { UserService } from "../user/user-service"
@@ -40,8 +40,6 @@ export interface GroupService {
   create(handle: DBHandle, payload: GroupWrite): Promise<Group>
   update(handle: DBHandle, groupId: GroupId, values: Partial<GroupWrite>): Promise<Group>
   delete(handle: DBHandle, groupId: GroupId): Promise<Group>
-  getAllIds(handle: DBHandle): Promise<GroupId[]>
-  getAllIdsByType(handle: DBHandle, groupType: GroupType): Promise<GroupId[]>
   getMembers(handle: DBHandle, groupId: GroupId): Promise<Map<UserId, GroupMember>>
   getMember(handle: DBHandle, groupId: GroupId, userId: UserId): Promise<GroupMember>
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
@@ -117,12 +115,6 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     async delete(handle, groupId) {
       return await groupRepository.delete(handle, groupId)
     },
-    async getAllIds(handle) {
-      return groupRepository.getAllIds(handle)
-    },
-    async getAllIdsByType(handle, groupType) {
-      return groupRepository.getAllIdsByType(handle, groupType)
-    },
     async getMembers(handle, groupId) {
       const memberships = await groupRepository.getMemberships(handle, groupId)
 
@@ -176,7 +168,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       const data: GroupMembershipWrite = {
         userId,
         groupId,
-        start: getCurrentUtc(),
+        start: getCurrentUTC(),
         end: null,
       }
 
@@ -193,7 +185,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
           membership.id,
           {
             ...membership,
-            end: getCurrentUtc(),
+            end: getCurrentUTC(),
           },
           new Set(membership.roles.map((role) => role.id))
         )

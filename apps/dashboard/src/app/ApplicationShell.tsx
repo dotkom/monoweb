@@ -1,6 +1,5 @@
 "use client"
 
-import { Icon } from "@iconify/react"
 import {
   AppShell,
   AppShellHeader,
@@ -12,57 +11,90 @@ import {
   Group,
   NavLink,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
+import {
+  IconBriefcase,
+  IconCampfire,
+  IconExclamationMark,
+  IconMoneybag,
+  IconPhoto,
+  IconPhotoShare,
+  IconSkull,
+  IconUsersGroup,
+  IconWheelchair,
+} from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import type { FC, PropsWithChildren } from "react"
+import { type FC, type PropsWithChildren, useEffect } from "react"
 
 const navigations = [
   {
     label: "Arrangementer",
-    icon: "tabler:wheelchair",
-    children: [
-      { label: "Arrangementer", href: "/event" },
-      { label: "Prikker & Suspensjoner", href: "/punishment" },
-      { label: "Betaling", href: "/payment" },
-    ],
+    icon: IconWheelchair,
+    href: "/event",
+  },
+  {
+    label: "Prikker & Suspensjoner",
+    icon: IconExclamationMark,
+    href: "/punishment",
   },
   {
     label: "Bedrifter",
-    icon: "tabler:moneybag",
-    children: [
-      { label: "Bedrifter", href: "/company" },
-      { label: "Utlysninger", href: "/job-listing" },
-    ],
+    icon: IconMoneybag,
+    href: "/company",
+  },
+  {
+    label: "Utlysninger",
+    icon: IconBriefcase,
+    href: "/job-listing",
   },
   {
     label: "Grupper",
-    icon: "tabler:campfire",
-    children: [
-      { label: "Grupper", href: "/group" },
-      { label: "Komitesøknader", href: "/committee-application" },
-    ],
+    icon: IconCampfire,
+    href: "/group",
   },
   {
-    label: "Media",
-    icon: "tabler:photo",
-    children: [
-      { label: "Artikler", href: "/article" },
-      { label: "Offline", href: "/offline" },
-    ],
+    label: "Artikler",
+    icon: IconPhoto,
+    href: "/article",
+  },
+  {
+    label: "Offline",
+    icon: IconSkull,
+    href: "/offline",
   },
   {
     label: "Brukere",
-    icon: "tabler:users-group",
-    children: [{ label: "Brukere", href: "/user" }],
+    icon: IconUsersGroup,
+    href: "/user",
   },
-] as const
+  {
+    label: "Plakatbestilling",
+    icon: IconPhotoShare,
+    href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
+    openInNewTab: true,
+  },
+] satisfies {
+  label: string
+  icon: FC
+  href: string
+  openInNewTab?: boolean
+}[]
 
 export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
   const pathname = usePathname()
+  const { toggleColorScheme } = useMantineColorScheme()
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: should only trigger on pathname change
+  useEffect(() => {
+    if (mobileOpened) {
+      toggleMobile()
+    }
+  }, [pathname])
 
   return (
     <AppShell
@@ -82,34 +114,28 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             <Title order={2}>Monoweb Admin</Title>
           </Flex>
 
-          <Button component="a" variant="outline" href="/api/auth/logout" visibleFrom="xs">
-            Logg ut
-          </Button>
+          <Flex align="center" gap="sm">
+            <Button onClick={toggleColorScheme} variant="outline" visibleFrom="xs">
+              Bytt fargetema
+            </Button>
+            <Button component="a" variant="outline" href="/api/auth/logout" visibleFrom="xs">
+              Logg ut
+            </Button>
+          </Flex>
         </Group>
       </AppShellHeader>
       <AppShellNavbar p="md">
         {navigations.map((navigation) => (
           <NavLink
+            component={Link}
             key={navigation.label}
             label={navigation.label}
-            leftSection={<Icon icon={navigation.icon} />}
-            childrenOffset={28}
-            defaultOpened
-          >
-            {navigation.children.map((child) => (
-              <NavLink
-                component={Link}
-                key={child.label}
-                label={child.label}
-                href={child.href}
-                active={pathname.startsWith(child.href)}
-                variant="subtle"
-                onNavigate={() => {
-                  mobileOpened && toggleMobile()
-                }}
-              />
-            ))}
-          </NavLink>
+            href={navigation.href}
+            active={pathname.startsWith(navigation.href)}
+            variant="subtle"
+            leftSection={<navigation.icon width={18} height={18} />}
+            {...(navigation.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          />
         ))}
         <Button component="a" variant="outline" href="/api/auth/logout" hiddenFrom="xs" mt="lg">
           Logg ut

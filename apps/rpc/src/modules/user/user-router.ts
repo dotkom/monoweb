@@ -90,18 +90,19 @@ export const userRouter = t.router({
       return ctx.userService.findById(handle, ctx.principal.subject)
     })
   ),
-  update: procedure
+  update: authenticatedProcedure
     .input(
       z.object({
         id: UserSchema.shape.id,
         input: UserWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input: changes, ctx }) =>
-      ctx.executeTransaction(async (handle) => {
-        return ctx.userService.update(handle, changes.id, changes.input)
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireMeOrAffiliation(input.id, ["dotkom", "hs"])
+      return ctx.executeTransaction(async (handle) => {
+        return ctx.userService.update(handle, input.id, input.input)
       })
-    ),
+    }),
   isStaff: authenticatedProcedure.query(async ({ ctx }) => {
     try {
       ctx.authorize.requireAffiliation()

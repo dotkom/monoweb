@@ -1,11 +1,21 @@
-import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core"
+import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps } from "@mantine/core"
 import "@mantine/core/styles.css"
 import "@mantine/dates/styles.css"
 import "@mantine/notifications/styles.css"
-import { Login } from "@/components/views/Login"
+import "@fontsource/inter/300.css"
+import "@fontsource/inter/400.css"
+import "@fontsource/inter/500.css"
+import "@fontsource/inter/600.css"
+import "@fontsource/inter/700.css"
+import "@fontsource/inter/800.css"
+import "@fontsource/inter-tight/300.css"
+import "@fontsource/inter-tight/400.css"
+import "@fontsource/inter-tight/500.css"
+import "@fontsource/inter-tight/600.css"
+import "@fontsource/inter-tight/700.css"
+import "@fontsource/inter-tight/800.css"
 import { auth } from "@/lib/auth"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
-import type { Session } from "@dotkomonline/oauth2/session"
 import { Notifications } from "@mantine/notifications"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -18,7 +28,15 @@ setDateFnsDefaultOptions({ locale: nb })
 
 export const dynamic = "force-dynamic"
 
-function BaseLayout({ session, children }: PropsWithChildren<{ session: Session | null }>) {
+const theme = createTheme({
+  fontFamily: "Inter",
+  headings: {
+    fontFamily: "Inter Tight",
+  },
+})
+
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const session = await auth.getServerSession()
   return (
     <html lang="no" {...mantineHtmlProps}>
       <head>
@@ -27,31 +45,15 @@ function BaseLayout({ session, children }: PropsWithChildren<{ session: Session 
       <body>
         <SessionProvider session={session}>
           <QueryProvider>
-            <MantineProvider defaultColorScheme="auto">
+            <MantineProvider defaultColorScheme="auto" theme={theme}>
               <Notifications />
-              <ModalProvider>{children}</ModalProvider>
+              <ModalProvider>
+                <ApplicationShell>{children}</ApplicationShell>
+              </ModalProvider>
             </MantineProvider>
           </QueryProvider>
         </SessionProvider>
       </body>
     </html>
-  )
-}
-
-export default async function RootLayout({ children }: PropsWithChildren) {
-  const session = await auth.getServerSession()
-
-  if (session === null) {
-    return (
-      <BaseLayout session={session}>
-        <Login />
-      </BaseLayout>
-    )
-  }
-
-  return (
-    <BaseLayout session={session}>
-      <ApplicationShell>{children}</ApplicationShell>
-    </BaseLayout>
   )
 }

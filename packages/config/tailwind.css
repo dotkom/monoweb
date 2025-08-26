@@ -26,3 +26,43 @@
     transform: translateX(100%);
   }
 }
+
+@utility stripes-mask {
+  --width: 12px; /* Stripe width */
+  --period: calc(var(--width) * 2); /* One period = one of stripe A and B */
+
+  will-change: mask-position, -webkit-mask-position;
+
+  mask-image: repeating-linear-gradient(
+    45deg,
+    #000 0 var(--width),
+    transparent var(--width) var(--period)
+  );
+  -webkit-mask-image: repeating-linear-gradient(
+    45deg,
+    #000 0 var(--width),
+    transparent var(--width) var(--period)
+  );
+}
+
+@utility animate-stripes {
+  animation: move-stripes-x var(--speed, 1.2s) linear infinite;
+}
+
+@keyframes move-stripes-x {
+  to {
+    /* 1.41421356 = sqrt(2) */
+    /* This is to make the stripes move the correct horizontal distance, since they are diagonal */
+    mask-position: calc(var(--period) * 1.41421356) 0;
+    -webkit-mask-position: calc(var(--period) * 1.41421356) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-stripes {
+    animation: none !important;
+  }
+  .stripes-mask {
+    will-change: auto;
+  }
+}

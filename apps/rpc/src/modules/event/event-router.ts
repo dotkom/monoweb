@@ -3,13 +3,14 @@ import {
   CompanySchema,
   EventFilterQuerySchema,
   EventSchema,
+  EventWithAttendanceSchema,
   EventWriteSchema,
   GroupSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { BasePaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { feedbackRouter } from "./feedback-router"
 
@@ -19,14 +20,31 @@ export const eventRouter = t.router({
 
   get: procedure
     .input(EventSchema.shape.id)
+    .output(EventWithAttendanceSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.eventService.getEventById(handle, input))
+      ctx.executeTransaction(async (handle) => {
+        const event = await ctx.eventService.getEventById(handle, input)
+        const attendance = event.attendanceId
+          ? await ctx.attendanceService.findAttendanceById(handle, event.attendanceId)
+          : null
+        return { event, attendance }
+      })
     ),
 
   find: procedure
     .input(EventSchema.shape.id)
+    .output(EventWithAttendanceSchema.nullable())
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.eventService.findEventById(handle, input))
+      ctx.executeTransaction(async (handle) => {
+        const event = await ctx.eventService.findEventById(handle, input)
+        if (!event) {
+          return null
+        }
+        const attendance = event.attendanceId
+          ? await ctx.attendanceService.findAttendanceById(handle, event.attendanceId)
+          : null
+        return { event, attendance }
+      })
     ),
 
   create: staffProcedure
@@ -37,15 +55,17 @@ export const eventRouter = t.router({
         companies: z.array(CompanySchema.shape.id),
       })
     )
+    .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        const event = await ctx.eventService.createEvent(handle, input.event)
-        return await ctx.eventService.updateEventOrganizers(
+        const eventWithoutOrganizers = await ctx.eventService.createEvent(handle, input.event)
+        const event = await ctx.eventService.updateEventOrganizers(
           handle,
-          event.id,
+          eventWithoutOrganizers.id,
           new Set(input.groupIds),
           new Set(input.companies)
         )
+        return { event, attendance: null }
       })
     }),
 
@@ -58,15 +78,20 @@ export const eventRouter = t.router({
         companies: z.array(CompanySchema.shape.id),
       })
     )
+    .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        const event = await ctx.eventService.updateEvent(handle, input.id, input.event)
-        return await ctx.eventService.updateEventOrganizers(
+        const updatedEventWithoutOrganizers = await ctx.eventService.updateEvent(handle, input.id, input.event)
+        const updatedEvent = await ctx.eventService.updateEventOrganizers(
           handle,
-          event.id,
+          updatedEventWithoutOrganizers.id,
           new Set(input.groupIds),
           new Set(input.companies)
         )
+        const attendance = updatedEventWithoutOrganizers.attendanceId
+          ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)
+          : null
+        return { event: updatedEvent, attendance }
       })
     }),
 
@@ -84,34 +109,146 @@ export const eventRouter = t.router({
 
   all: procedure
     .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).optional())
+    .output(
+      z.object({
+        items: EventWithAttendanceSchema.array(),
+        nextCursor: EventSchema.shape.id.optional(),
+      })
+    )
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        const items = await ctx.eventService.findEvents(handle, { ...input?.filter }, input)
+        const events = await ctx.eventService.findEvents(handle, { ...input?.filter }, input)
+        const attendances = await ctx.attendanceService.getAttendancesByIds(
+          handle,
+          events.map((item) => item.attendanceId).filter((id) => id !== null)
+        )
+
+        const eventsWithAttendance = events.map((event) => ({
+          event,
+          attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
+        }))
 
         return {
-          items,
-          nextCursor: items.at(-1)?.id,
+          items: eventsWithAttendance,
+          nextCursor: events.at(-1)?.id,
         }
       })
     ),
 
-  allByAttendingUserId: procedure
-    .input(z.object({ id: UserSchema.shape.id }))
+  allByAttendingUserId: authenticatedProcedure
+    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional(), id: UserSchema.shape.id }))
+    .output(
+      z.object({
+        items: EventWithAttendanceSchema.array(),
+        nextCursor: EventSchema.shape.id.optional(),
+      })
+    )
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.eventService.findEventByAttendingUserId(handle, input.id))
+      ctx.executeTransaction(async (handle) => {
+        const { id, ...page } = input
+        const events = await ctx.eventService.findEventsByAttendingUserId(handle, id, page)
+        const attendances = await ctx.attendanceService.getAttendancesByIds(
+          handle,
+          events.map((item) => item.attendanceId).filter((id) => id !== null)
+        )
+
+        const eventsWithAttendance = events.map((event) => ({
+          event,
+          attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
+        }))
+
+        return {
+          items: eventsWithAttendance,
+          nextCursor: events.at(-1)?.id,
+        }
+      })
     ),
 
-  addAttendance: procedure
+  addAttendance: staffProcedure
     .input(
       z.object({
         values: AttendanceWriteSchema,
         eventId: EventSchema.shape.id,
       })
     )
+    .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.createAttendance(handle, input.values)
-        return ctx.eventService.updateEventAttendance(handle, input.eventId, attendance.id)
+        const event = await ctx.eventService.updateEventAttendance(handle, input.eventId, attendance.id)
+        return { event, attendance }
+      })
+    }),
+
+  updateParentEvent: staffProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+        parentEventId: EventSchema.shape.id.nullable(),
+      })
+    )
+    .output(EventWithAttendanceSchema)
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const updatedEvent = await ctx.eventService.updateEventParent(handle, input.eventId, input.parentEventId)
+        const attendance = updatedEvent.attendanceId
+          ? await ctx.attendanceService.findAttendanceById(handle, updatedEvent.attendanceId)
+          : null
+        return { event: updatedEvent, attendance }
+      })
+    }),
+
+  findParentEvent: procedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .output(EventWithAttendanceSchema.nullable())
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const childEvent = await ctx.eventService.findEventById(handle, input.eventId)
+
+        if (!childEvent?.parentId) {
+          return null
+        }
+
+        const event = await ctx.eventService.findEventById(handle, childEvent.parentId)
+
+        if (!event) {
+          return null
+        }
+
+        const attendance = event?.attendanceId
+          ? await ctx.attendanceService.findAttendanceById(handle, event.attendanceId)
+          : null
+
+        return { event, attendance }
+      })
+    }),
+
+  findChildEvents: procedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .output(EventWithAttendanceSchema.array())
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const events = await ctx.eventService.findByParentEventId(handle, input.eventId)
+
+        const attendances = await ctx.attendanceService.getAttendancesByIds(
+          handle,
+          events.map((item) => item.attendanceId).filter((id) => id !== null)
+        )
+
+        const eventsWithAttendance = events.map((event) => ({
+          event,
+          attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
+        }))
+
+        return eventsWithAttendance
       })
     }),
 })
