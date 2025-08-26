@@ -9,7 +9,7 @@ import {
   getUnreservedAttendeeCount,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { Button, Flex, Group, Image, Stack, Text, Title, useMantineColorScheme } from "@mantine/core"
+import { Button, Flex, Group, Image, Stack, Text, Title, useComputedColorScheme } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import { IconAlertTriangle, IconCheck, IconX } from "@tabler/icons-react"
@@ -164,7 +164,7 @@ interface UserBoxProps {
 }
 
 const UserBox = ({ user, isMobile }: UserBoxProps) => {
-  const isLightMode = useMantineColorScheme().colorScheme === "light"
+  const isLightMode = useComputedColorScheme() === "light"
 
   const membership = findActiveMembership(user)
   const grade = membership ? getMembershipGrade(membership) : null
