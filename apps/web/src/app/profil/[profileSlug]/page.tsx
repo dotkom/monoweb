@@ -211,7 +211,7 @@ export default function ProfilePage() {
         min: null,
       },
     },
-    enabled: isLoggedIn && Boolean(user),
+    enabled: isLoggedIn && Boolean(user?.id),
   })
 
   const allGroups = useMemo(
