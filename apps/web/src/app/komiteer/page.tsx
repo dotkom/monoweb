@@ -4,20 +4,11 @@ import { Button, Icon, Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } f
 import Link from "next/link"
 
 const CommitteePage = async () => {
-  const [allCommittees, allNodeCommittees, allAssociatedGroups] = await Promise.all([
+  const [committees, nodeCommittees, associatedGroups] = await Promise.all([
     server.group.allByType.query("COMMITTEE"),
     server.group.allByType.query("NODE_COMMITTEE"),
     server.group.allByType.query("ASSOCIATED"),
   ])
-
-  const activeCommittees = allCommittees.filter((committee) => !committee.deactivatedAt)
-  const inactiveCommittees = allCommittees.filter((committee) => committee.deactivatedAt)
-
-  const activeNodeCommittees = allNodeCommittees.filter((committee) => !committee.deactivatedAt)
-  const inactiveNodeCommittees = allNodeCommittees.filter((committee) => committee.deactivatedAt)
-
-  const activeAssociatedGroups = allAssociatedGroups.filter((group) => !group.deactivatedAt)
-  const inactiveAssociatedGroups = allAssociatedGroups.filter((group) => group.deactivatedAt)
 
   return (
     <div className="flex flex-col gap-8 min-h-[70dvh]">
@@ -52,9 +43,7 @@ const CommitteePage = async () => {
             className="flex flex-row gap-2 items-center grow h-full text-sm sm:text-lg md:text-xl"
           >
             Komiteer
-            <span className="hidden md:block text-base text-gray-500 dark:text-stone-500">
-              ({activeCommittees.length})
-            </span>
+            <span className="hidden md:block text-base text-gray-500 dark:text-stone-500">({committees.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="nodecommittee"
@@ -62,7 +51,7 @@ const CommitteePage = async () => {
           >
             Nodekomiteer
             <span className="hidden md:block text-base text-gray-500 dark:text-stone-500">
-              ({activeNodeCommittees.length})
+              ({nodeCommittees.length})
             </span>
           </TabsTrigger>
           <TabsTrigger
@@ -71,48 +60,21 @@ const CommitteePage = async () => {
           >
             Assosierte grupper
             <span className="hidden md:block text-base text-gray-500 dark:text-stone-500">
-              ({activeAssociatedGroups.length})
+              ({associatedGroups.length})
             </span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="committee">
-          <GroupList groups={activeCommittees} />
-          {inactiveCommittees.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <Title element="h2" size="lg">
-                Inaktive
-              </Title>
-
-              <GroupList groups={inactiveCommittees} />
-            </div>
-          )}
+          <GroupList groups={committees} />
         </TabsContent>
 
         <TabsContent value="nodecommittee">
-          <GroupList groups={activeNodeCommittees} />
-          {inactiveNodeCommittees.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <Title element="h2" size="lg">
-                Inaktive
-              </Title>
-
-              <GroupList groups={inactiveNodeCommittees} />
-            </div>
-          )}
+          <GroupList groups={nodeCommittees} />
         </TabsContent>
 
         <TabsContent value="associated">
-          <GroupList groups={activeAssociatedGroups} />
-          {inactiveAssociatedGroups.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <Title element="h2" size="lg">
-                Inaktive
-              </Title>
-
-              <GroupList groups={inactiveAssociatedGroups} />
-            </div>
-          )}
+          <GroupList groups={associatedGroups} />
         </TabsContent>
       </Tabs>
     </div>
