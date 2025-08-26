@@ -4,27 +4,45 @@ import type { FC } from "react"
 
 export type OnlineIconProps = Omit<ImageProps, "src" | "alt"> & {
   size?: number
+  variant?: "auto" | "dark" | "light"
 }
 
-export const OnlineIcon: FC<OnlineIconProps> = ({ className, size = 32, ...props }) => (
-  <>
+export const OnlineIcon: FC<OnlineIconProps> = ({ className, size = 32, variant = "auto", ...props }) => {
+  const light = (
     <Image
       src="/online-logo-o.svg"
       alt="Logo Online Linjeforening NTNU Trondheim"
       width={size}
       height={size}
       priority
-      className={cn("object-contain dark:hidden", className)}
+      className={cn("object-contain", variant !== "light" && "dark:hidden", className)}
       {...props}
     />
+  )
+
+  const dark = (
     <Image
       src="/online-logo-o-darkmode.svg"
       alt="Logo Online Linjeforening NTNU Trondheim Darkmode"
       width={size}
       height={size}
       priority
-      className={cn("object-contain hidden dark:block", className)}
+      className={cn("object-contain", variant !== "dark" && "hidden dark:block", className)}
       {...props}
     />
-  </>
-)
+  )
+
+  if (variant === "dark") {
+    return dark
+  }
+  if (variant === "light") {
+    return light
+  }
+
+  return (
+    <>
+      {light}
+      {dark}
+    </>
+  )
+}
