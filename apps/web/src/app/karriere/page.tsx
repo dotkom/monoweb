@@ -57,7 +57,7 @@ const CareerPage = () => {
   }, [jobListings, chosenLocation, chosenEmployments, searchName, chosenSort])
 
   return (
-    <div>
+    <div className="min-h-[70dvh]">
       <div className="border-gray-600 left-0 z-0 w-full border-b">
         <div className="flex flex-row gap-96">
           <div className="flex flex-col gap-2">

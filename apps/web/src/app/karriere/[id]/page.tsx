@@ -37,12 +37,18 @@ const JobListingPage = async ({ params }: JobListingProps) => {
         {jobListing.title}
       </Title>
 
-      <div className="flex flex-row gap-8 justify-between">
-        <div className="w-2/3">
-          <RichText content={jobListing.about} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:gap-8 sm:justify-between">
+        <div className="sm:w-2/3">
+          <RichText
+            content={jobListing.about}
+            lineClamp="line-clamp-10"
+            className="sm:hidden"
+            toggleButtonClassName="sm:hidden"
+          />
+          <RichText content={jobListing.about} className="max-sm:hidden" />
         </div>
 
-        <div className="flex flex-col gap-4 w-1/3">
+        <div className="flex flex-col gap-4 sm:w-1/3">
           <CompanyBox company={jobListing.company} />
 
           <ApplicationInfoBox jobListing={jobListing} />
