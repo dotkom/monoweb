@@ -197,5 +197,6 @@ export const openQRCodeScannedModal = ({ attendance, attendeeId, onClose }: Moda
     modal: "event/attendance/attendee/qr-code-scanned",
     title: "QR-kode skannet",
     innerProps: { attendance, attendeeId },
+    centered: true,
     onClose,
   })
