@@ -9,7 +9,8 @@ import {
   getUnreservedAttendeeCount,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { Button, Group, Image, Stack, Text, Title } from "@mantine/core"
+import { Button, Flex, Group, Image, Stack, Text, Title, useMantineColorScheme } from "@mantine/core"
+import { useMediaQuery } from "@mantine/hooks"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import { IconAlertTriangle, IconCheck, IconX } from "@tabler/icons-react"
 import { formatDate, formatDistanceToNow } from "date-fns"
@@ -20,6 +21,7 @@ import { useUpdateEventAttendanceMutation } from "../mutations"
 interface ModalProps {
   attendance: Attendance
   attendeeId: AttendeeId
+  onClose?: () => void
 }
 
 export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
@@ -156,29 +158,39 @@ interface UserBoxProps {
 }
 
 const UserBox = ({ user }: UserBoxProps) => {
+  const isMobile = useMediaQuery("(max-width: 48em)")
+  const isLightMode = useMantineColorScheme().colorScheme === "light"
+
   const membership = findActiveMembership(user)
   const grade = membership ? getMembershipGrade(membership) : null
 
   return (
-    <Group p="sm" bg="gray.1" style={{ borderRadius: 16 }} align="flex-start">
-      <Stack>
-        <Group align="flex-start" wrap="nowrap">
-          <Image src={user.imageUrl} alt={user.name ?? user.profileSlug} radius="md" w={100} h={100} />
-          <Stack gap={2}>
-            <Title order={4}>{user.name}</Title>
-            <Text size="sm">Klasse: {grade}</Text>
-            <Text size="sm">Kjønn: {user.gender || "Ikke oppgitt"}</Text>
-            <Text size="sm">Kostholdsrestriksjoner: {user.dietaryRestrictions || "Ingen"}</Text>
-          </Stack>
-        </Group>
-      </Stack>
-    </Group>
+    <Stack>
+      <Flex
+        direction={isMobile ? "column" : "row"}
+        gap="md"
+        p="sm"
+        bg={isLightMode ? "gray.1" : "dark.5"}
+        style={{ borderRadius: 16 }}
+        align="flex-start"
+        wrap="nowrap"
+      >
+        <Image src={user.imageUrl} alt={user.name ?? user.profileSlug} radius="md" w={100} h={100} />
+        <Stack gap={2}>
+          <Title order={4}>{user.name}</Title>
+          <Text size="sm">Klasse: {grade}</Text>
+          <Text size="sm">Kjønn: {user.gender || "Ikke oppgitt"}</Text>
+          <Text size="sm">Kostholdsrestriksjoner: {user.dietaryRestrictions || "Ingen"}</Text>
+        </Stack>
+      </Flex>
+    </Stack>
   )
 }
 
-export const openQRCodeScannedModal = ({ attendance, attendeeId }: ModalProps) =>
+export const openQRCodeScannedModal = ({ attendance, attendeeId, onClose }: ModalProps) =>
   modals.openContextModal({
     modal: "event/attendance/attendee/qr-code-scanned",
     title: "QR-kode skannet",
     innerProps: { attendance, attendeeId },
+    onClose,
   })
