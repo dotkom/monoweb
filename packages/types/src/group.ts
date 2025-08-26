@@ -69,11 +69,9 @@ export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
 export const createGroupPageUrl = (group: Group) => {
   switch (group.type) {
     case "COMMITTEE":
-      return `/komiteer/${group.slug}`
     case "NODE_COMMITTEE":
-      return `/nodekomiteer/${group.slug}`
     case "ASSOCIATED":
-      return `/andre-grupper/${group.slug}`
+      return `/komiteer/${group.slug}`
     case "INTEREST_GROUP":
       return `/interessegrupper/${group.slug}`
     default:
@@ -88,7 +86,7 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
     case "NODE_COMMITTEE":
       return "Nodekomité"
     case "ASSOCIATED":
-      return "Annen gruppe"
+      return "Assosiert gruppe"
     case "INTEREST_GROUP":
       return "Interessegruppe"
     default:
