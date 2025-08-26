@@ -2,7 +2,7 @@ import type { Attendance } from "@dotkomonline/types"
 import { ActionIcon, AspectRatio, Button, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { IconFlipVertical, IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
-import { type FC, useEffect, useRef, useState } from "react"
+import { type FC, useRef, useState } from "react"
 import { useZxing } from "react-zxing"
 import z from "zod"
 import { openQRCodeScannedModal } from "./qr-code-scanned-modal"
@@ -12,7 +12,6 @@ interface QrCodeScannerProps {
 }
 
 export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
-  const [shouldMirror, { open: setMirrorTrue, toggle: toggleMirror }] = useDisclosure(false)
   const [scannerOpen, { toggle: toggleScanner }] = useDisclosure(false)
   const [videoReady, setVideoReady] = useState(false)
   const paused = useRef(false)
@@ -57,14 +56,10 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
     },
   })
 
-  useEffect(() => {
-    const videoElement = ref.current
-    const track = videoElement?.srcObject instanceof MediaStream ? videoElement.srcObject.getVideoTracks()[0] : null
-    const settings = track?.getSettings()
-    if (settings?.facingMode === "user") {
-      setMirrorTrue()
-    }
-  }, [ref, setMirrorTrue])
+  const videoElement = ref.current
+  const track = videoElement?.srcObject instanceof MediaStream ? videoElement.srcObject.getVideoTracks()[0] : null
+  const settings = track?.getSettings()
+  const [mirror, { toggle: toggleMirror }] = useDisclosure(settings?.facingMode === "user")
 
   return (
     <Stack gap="xs">
@@ -104,7 +99,7 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
           autoPlay
           style={{
             display: videoReady ? "block" : "none",
-            transform: shouldMirror ? "scaleX(-1)" : undefined,
+            transform: mirror ? "scaleX(-1)" : undefined,
             borderRadius: "4px",
           }}
         />
