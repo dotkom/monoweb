@@ -34,7 +34,13 @@ const CommitteePage = async () => {
 
       <div className="flex flex-row gap-0.5 items-center">
         <Text className="text-lg">Er du medlem av en interessegruppe?</Text>
-        <Button variant="text" element={Link} href="/interessegrupper" iconRight={<Icon icon="tabler:arrow-up-right" />} className="text-lg">
+        <Button
+          variant="text"
+          element={Link}
+          href="/interessegrupper"
+          iconRight={<Icon icon="tabler:arrow-up-right" />}
+          className="text-lg"
+        >
           Se alle interessegrupper her
         </Button>
       </div>
