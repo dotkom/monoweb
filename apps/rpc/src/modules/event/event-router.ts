@@ -108,7 +108,7 @@ export const eventRouter = t.router({
     }),
 
   all: procedure
-    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).optional())
+    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).default({}))
     .output(
       z.object({
         items: EventWithAttendanceSchema.array(),
@@ -117,7 +117,8 @@ export const eventRouter = t.router({
     )
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        const events = await ctx.eventService.findEvents(handle, { ...input?.filter }, input)
+        const { filter, ...page } = input
+        const events = await ctx.eventService.findEvents(handle, { ...filter }, page)
         const attendances = await ctx.attendanceService.getAttendancesByIds(
           handle,
           events.map((item) => item.attendanceId).filter((id) => id !== null)
@@ -146,7 +147,7 @@ export const eventRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
         const { id, filter, ...page } = input
-        const events = await ctx.eventService.findEventsByAttendingUserId(handle, id, { ...input?.filter }, page)
+        const events = await ctx.eventService.findEventsByAttendingUserId(handle, id, { ...filter }, page)
         const attendances = await ctx.attendanceService.getAttendancesByIds(
           handle,
           events.map((item) => item.attendanceId).filter((id) => id !== null)
