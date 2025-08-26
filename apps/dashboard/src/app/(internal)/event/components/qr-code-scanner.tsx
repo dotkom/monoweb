@@ -89,37 +89,39 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
         )}
       </Group>
 
-      {scannerOpen && !videoReady && <Skeleton height={450} width={450} radius="sm" />}
-      <AspectRatio w={scannerOpen && videoReady ? 450 : 0} style={{ position: "relative" }}>
-        <video
-          ref={ref}
-          muted
-          onCanPlay={() => setVideoReady(true)}
-          playsInline
-          autoPlay
-          style={{
-            display: videoReady ? "block" : "none",
-            transform: mirror ? "scaleX(-1)" : undefined,
-            borderRadius: "4px",
-          }}
-        />
+      <div style={{ width: "fit-content", position: "relative" }}>
+        {scannerOpen && !videoReady && <Skeleton height={450} width={450} radius="sm" />}
+        <AspectRatio w={scannerOpen && videoReady ? 450 : 0}>
+          <video
+            ref={ref}
+            muted
+            onCanPlay={() => setVideoReady(true)}
+            playsInline
+            autoPlay
+            style={{
+              display: videoReady && scannerOpen ? "block" : "none",
+              transform: mirror ? "scaleX(-1)" : undefined,
+              borderRadius: "4px",
+            }}
+          />
 
-        <ActionIcon
-          size="input-xs"
-          bg="rgba(0,0,0,0.25)"
-          variant="transparent"
-          w="fit-content"
-          onClick={toggleMirror}
-          style={{
-            display: videoReady ? "block" : "none",
-            position: "absolute",
-            top: 12,
-            right: 12,
-          }}
-        >
-          <IconFlipVertical color="white" size={48} />
-        </ActionIcon>
-      </AspectRatio>
+          <ActionIcon
+            size="input-xs"
+            bg="rgba(0,0,0,0.25)"
+            variant="transparent"
+            w="fit-content"
+            onClick={toggleMirror}
+            style={{
+              display: scannerOpen && videoReady ? "block" : "none",
+              position: "absolute",
+              top: 12,
+              right: 12,
+            }}
+          >
+            <IconFlipVertical color="white" size={48} />
+          </ActionIcon>
+        </AspectRatio>
+      </div>
     </Stack>
   )
 }
