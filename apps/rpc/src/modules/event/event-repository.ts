@@ -49,7 +49,7 @@ export interface EventRepository {
    * as such this query should be performant enough with good indexing.
    */
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
-  findByAttendingUserId(handle: DBHandle, userId: UserId, page: Pageable): Promise<Event[]>
+  findByAttendingUserId(handle: DBHandle, userId: UserId, query: EventFilterQuery, page: Pageable): Promise<Event[]>
   findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
   addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   addEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
@@ -260,8 +260,8 @@ export function getEventRepository(): EventRepository {
         hostingGroups: event?.hostingGroups.map((g) => g.group) ?? [],
       })
     },
-    async findByAttendingUserId(handle, userId, page) {
-      const events = await handle.attendee.findMany({
+    async findByAttendingUserId(handle, userId, query, page) {
+      const attendees = await handle.attendee.findMany({
         where: {
           userId,
         },
@@ -277,18 +277,15 @@ export function getEventRepository(): EventRepository {
           },
         },
       })
-      if (events.length === 0) {
+      if (attendees.length === 0) {
         return []
       }
-      const ids = events.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
+      const eventIds = attendees.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
       return this.findMany(
         handle,
         {
-          byId: ids,
-          byStartDate: { min: null, max: null },
-          bySearchTerm: null,
-          byOrganizingCompany: [],
-          byOrganizingGroup: [],
+          ...query,
+          byId: eventIds.concat(...(query.byId ?? [])),
         },
         page
       )

@@ -145,8 +145,8 @@ export const eventRouter = t.router({
     )
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        const { id, ...page } = input
-        const events = await ctx.eventService.findEventsByAttendingUserId(handle, id, page)
+        const { id, filter, ...page } = input
+        const events = await ctx.eventService.findEventsByAttendingUserId(handle, id, { ...input?.filter }, page)
         const attendances = await ctx.attendanceService.getAttendancesByIds(
           handle,
           events.map((item) => item.attendanceId).filter((id) => id !== null)

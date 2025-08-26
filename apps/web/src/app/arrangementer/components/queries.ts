@@ -9,18 +9,21 @@ import { useMemo } from "react"
 interface UseEventAllQueryProps {
   filter: EventFilterQuery
   page?: Pageable
+  enabled?: boolean
 }
 
 interface UseEventAllByAttendingUserIdQueryProps {
   id: UserId
   filter: EventFilterQuery
   page?: Pageable
+  enabled?: boolean
 }
 
-export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
+export const useEventAllQuery = ({ filter, page, enabled }: UseEventAllQueryProps) => {
   const trpc = useTRPC()
   const { data, ...query } = useQuery({
     ...trpc.event.all.queryOptions({ filter, ...page }),
+    enabled,
   })
 
   const eventDetails = useMemo(() => data?.items ?? [], [data])
@@ -28,7 +31,7 @@ export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
   return { eventDetails, ...query }
 }
 
-export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps) => {
+export const useEventAllInfiniteQuery = ({ filter, page, enabled }: UseEventAllQueryProps) => {
   const trpc = useTRPC()
 
   const { data, ...query } = useInfiniteQuery({
@@ -37,6 +40,7 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
       ...page,
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    enabled,
   })
 
   const eventDetails = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data])
@@ -48,6 +52,7 @@ export const useEventAllByAttendingUserIdInfiniteQuery = ({
   id,
   filter,
   page,
+  enabled,
 }: UseEventAllByAttendingUserIdQueryProps) => {
   const trpc = useTRPC()
 
@@ -58,6 +63,7 @@ export const useEventAllByAttendingUserIdInfiniteQuery = ({
       ...page,
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    enabled,
   })
 
   const eventDetails = data?.pages.flatMap((page) => page.items) ?? []
