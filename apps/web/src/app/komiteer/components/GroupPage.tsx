@@ -1,7 +1,7 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import { type GroupMember, type GroupRole, type GroupType, type UserId, getGroupTypeName } from "@dotkomonline/types"
+import { type GroupMember, type GroupRole, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { compareDesc } from "date-fns"
@@ -9,17 +9,14 @@ import Link from "next/link"
 
 interface CommitteePageProps {
   params: Promise<{ slug: string }>
-  groupType: GroupType
 }
 
-export const GroupPage = async ({ params, groupType }: CommitteePageProps) => {
+export const GroupPage = async ({ params }: CommitteePageProps) => {
   const { slug } = await params
 
-  const showMembers = groupType !== "ASSOCIATED"
-
-  const [session, group, futureEventWithAttendances, members] = await Promise.all([
+  const [session, group, futureEventWithAttendances] = await Promise.all([
     auth.getServerSession(),
-    server.group.getByType.query({ groupId: slug, type: groupType }),
+    server.group.get.query(slug),
     server.event.all.query({
       filter: {
         byOrganizingGroup: [slug],
@@ -30,10 +27,13 @@ export const GroupPage = async ({ params, groupType }: CommitteePageProps) => {
         orderBy: "asc",
       },
     }),
-    // We do not show members for ASSOCIATED types because they often have members outside of Online
-    // meaning the member list would be incomplete.
-    showMembers ? server.group.getMembers.query(slug) : Promise.resolve(new Map<UserId, GroupMember>()),
   ])
+
+  const showMembers = group.type !== "ASSOCIATED"
+
+  // We do not show members for ASSOCIATED types because they often have members outside of Online
+  // meaning the member list would be incomplete.
+  const members = showMembers ? await server.group.getMembers.query(slug) : new Map<UserId, GroupMember>()
 
   const hasContactInfo = group.email || group.contactUrl
 
