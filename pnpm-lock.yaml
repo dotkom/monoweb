@@ -21,58 +21,6 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  apps/brevduen:
-    dependencies:
-      '@aws-sdk/client-ses':
-        specifier: ^3.821.0
-        version: 3.873.0
-      '@dotkomonline/emails':
-        specifier: workspace:*
-        version: link:../../packages/emails
-      '@dotkomonline/environment':
-        specifier: workspace:*
-        version: link:../../packages/environment
-      '@dotkomonline/logger':
-        specifier: workspace:*
-        version: link:../../packages/logger
-      '@sentry/node':
-        specifier: ^9.24.0
-        version: 9.34.0
-      fastify:
-        specifier: ^5.3.3
-        version: 5.5.0
-      import-in-the-middle:
-        specifier: ^1.14.2
-        version: 1.14.2
-      require-in-the-middle:
-        specifier: ^7.5.2
-        version: 7.5.2
-      zod:
-        specifier: ^3.25.47
-        version: 3.25.76
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 1.9.4
-        version: 1.9.4
-      '@dotkomonline/config':
-        specifier: workspace:*
-        version: link:../../packages/config
-      '@types/node':
-        specifier: 22.17.2
-        version: 22.17.2
-      dotenv-cli:
-        specifier: 8.0.0
-        version: 8.0.0
-      tslib:
-        specifier: 2.8.1
-        version: 2.8.1
-      tsx:
-        specifier: 4.20.4
-        version: 4.20.4
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
-
   apps/dashboard:
     dependencies:
       '@aws-sdk/client-s3':
