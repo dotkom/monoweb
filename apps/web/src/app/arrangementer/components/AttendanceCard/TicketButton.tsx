@@ -22,15 +22,6 @@ interface TicketButtonProps {
 export const TicketButton = ({ attendee }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
 
-  const imageSettings = attendee.user.imageUrl
-    ? {
-        src: attendee.user.imageUrl,
-        excavate: true,
-        height: 64,
-        width: 64,
-      }
-    : undefined
-
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
@@ -64,7 +55,6 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
               size={300}
               value={attendee.id}
               level="Q"
-              imageSettings={imageSettings}
               title="QR-kode for registrering"
               style={{ width: "100%", height: "100%" }}
             />
