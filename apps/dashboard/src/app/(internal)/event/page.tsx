@@ -16,7 +16,7 @@ import Link from "next/link"
 import { useMemo, useState } from "react"
 import { EventFilters } from "./components/event-filters"
 import { EventHostingGroupList } from "./components/event-hosting-group-list"
-import { useEventAllQuery } from "./queries"
+import { useEventAllInfiniteQuery } from "./queries"
 
 const mapEventStatusToLabel = (status: EventStatus) => {
   switch (status) {
@@ -81,7 +81,7 @@ export default function EventPage() {
   )
 
   const [filter, setFilter] = useState<EventFilterQuery>({})
-  const { events, isLoading: isEventsLoading } = useEventAllQuery({ filter })
+  const { events, isLoading: isEventsLoading, fetchNextPage } = useEventAllInfiniteQuery({ filter })
 
   const table = useReactTable({
     data: events,
@@ -104,7 +104,7 @@ export default function EventPage() {
       </Group>
 
       <Skeleton visible={isEventsLoading}>
-        <GenericTable table={table} />
+        <GenericTable table={table} onLoadMore={fetchNextPage} />
       </Skeleton>
     </Stack>
   )

@@ -1,13 +1,24 @@
 import { Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core"
+import { useInViewport } from "@mantine/hooks"
 import { IconCaretDownFilled, IconCaretUpDownFilled, IconCaretUpFilled } from "@tabler/icons-react"
 import { type Table as ReactTable, flexRender } from "@tanstack/react-table"
+import { useEffect } from "react"
 
 export interface GenericTableProps<T> {
   readonly table: ReactTable<T>
   filterable?: boolean
+  onLoadMore?(): void
 }
 
-export function GenericTable<T>({ table, filterable }: GenericTableProps<T>) {
+export function GenericTable<T>({ table, filterable, onLoadMore }: GenericTableProps<T>) {
+  const { ref, inViewport } = useInViewport()
+
+  useEffect(() => {
+    if (inViewport) {
+      onLoadMore?.()
+    }
+  }, [inViewport, onLoadMore])
+
   return (
     <Card withBorder p="xs">
       <Table.ScrollContainer minWidth={600} maxHeight={400} type="native">
@@ -59,6 +70,7 @@ export function GenericTable<T>({ table, filterable }: GenericTableProps<T>) {
             ))}
           </TableTbody>
         </Table>
+        <div ref={ref} style={{ height: 1 }} />
       </Table.ScrollContainer>
     </Card>
   )
