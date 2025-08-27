@@ -437,7 +437,44 @@ describe("attendance integration tests", async () => {
     expect(attendee.reserved).toBe(true)
   })
 
-  it("should not deregister an attendee past the deadline", async () => {
+  it("should deregister an unreserved attendee before the deadline", async () => {
+    const subject = randomUUID()
+    auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+    await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        yearCriteria: [1],
+      })
+    )
+    const userWithoutMembership = await core.userService.register(dbClient, subject)
+    const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+      immediateReservation: false,
+      immediatePayment: false,
+      ignoreRegistrationWindow: false,
+      forceAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
+    })
+
+    await core.attendanceService.updateAttendeeById(dbClient, attendee.id, {
+      reserved: false,
+    })
+
+    await core.attendanceService.updateAttendanceById(dbClient, attendance.id, {
+      deregisterDeadline: subHours(getCurrentUTC(), 1), // Set the deadline to one hour ago
+    })
+    await expect(
+      core.attendanceService.deregisterAttendee(dbClient, attendee.id, {
+        ignoreDeregistrationWindow: false,
+      })
+    ).resolves.toBeUndefined()
+  })
+
+  it("should not deregister a reserved attendee past the deadline", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
     const event = await core.eventService.createEvent(dbClient, getMockEvent())

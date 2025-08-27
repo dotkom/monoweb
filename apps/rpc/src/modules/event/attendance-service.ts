@@ -477,16 +477,18 @@ export function getAttendanceService(
     },
     async deregisterAttendee(handle, attendeeId, options) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
-      if (isPast(attendance.deregisterDeadline) && !options.ignoreDeregistrationWindow) {
+      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+      if (attendee === undefined) {
+        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+      }
+
+      // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.reserved`
+      if (attendee.reserved && isPast(attendance.deregisterDeadline) && !options.ignoreDeregistrationWindow) {
         throw new AttendanceValidationError(
           `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) after registration end`
         )
       }
 
-      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
-      if (attendee === undefined) {
-        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
-      }
       if (attendee.paymentId !== null) {
         await paymentService.cancel(attendee.paymentId)
       }
