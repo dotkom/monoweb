@@ -5,5 +5,5 @@ interface CommitteePageProps {
 }
 
 export default function Page({ params }: CommitteePageProps) {
-  return <GroupPage groupType="COMMITTEE" params={params} />
+  return <GroupPage params={params} />
 }
