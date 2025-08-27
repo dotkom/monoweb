@@ -33,15 +33,9 @@ import {
 } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { useQueries, useQuery } from "@tanstack/react-query"
-import {
-  differenceInMilliseconds,
-  formatDate,
-  formatDistanceToNowStrict,
-  isPast,
-  roundToNearestMinutes,
-} from "date-fns"
+import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import Link from "next/link"
-import { useParams, useSearchParams } from "next/navigation"
+import { notFound, useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 import SkeletonProfilePage from "./loading"
 
@@ -167,7 +161,7 @@ const MembershipDisplay = ({
 }
 
 export default function ProfilePage() {
-  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
+  const now = useMemo(() => getCurrentUTC(), [])
 
   const { profileSlug: rawProfileSlug } = useParams<{ profileSlug: string }>()
   const profileSlug = decodeURIComponent(rawProfileSlug)
@@ -189,11 +183,22 @@ export default function ProfilePage() {
     { data: marks, isLoading: marksLoading },
   ] = useQueries({
     queries: [
-      trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user) }),
-      trpc.event.allByAttendingUserId.queryOptions({ id: user?.id ?? "" }, { enabled: isLoggedIn && Boolean(user) }),
+      trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
+      trpc.event.allByAttendingUserId.queryOptions(
+        {
+          id: user?.id ?? "",
+          filter: {
+            byEndDate: {
+              min: now,
+              max: null,
+            },
+          },
+        },
+        { enabled: isLoggedIn && Boolean(user?.id) }
+      ),
       trpc.personalMark.getVisibleInformation.queryOptions(
         { userId: user?.id ?? "" },
-        { enabled: isLoggedIn && Boolean(user) }
+        { enabled: isLoggedIn && Boolean(user?.id) }
       ),
     ],
   })
@@ -206,6 +211,7 @@ export default function ProfilePage() {
         min: null,
       },
     },
+    enabled: isLoggedIn && Boolean(user?.id),
   })
 
   const allGroups = useMemo(
@@ -221,8 +227,12 @@ export default function ProfilePage() {
     [groups]
   )
 
-  if (!user) {
+  if (user === undefined) {
     return <SkeletonProfilePage />
+  }
+
+  if (user === null) {
+    notFound()
   }
 
   const activeMembership = findActiveMembership(user)
