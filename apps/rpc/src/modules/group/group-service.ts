@@ -124,6 +124,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
 
       const members = new Map<UserId, GroupMember>()
 
+      // TODO: N+1 Query
       const usersPromises = memberships.map((member) => userService.getById(handle, member.userId))
       const users = await Promise.all(usersPromises)
 
