@@ -32,6 +32,10 @@ export const NonAttendablePoolsBox = ({ attendance, user }: NonAttendablePoolsBo
   const hasAttendablePool = getAttendablePool(attendance, user) !== null
   const nonAttendablePools = getNonAttendablePools(attendance, user)
 
+  if (!nonAttendablePools.length) {
+    return null
+  }
+
   return (
     <Collapsible defaultOpen={!hasAttendablePool} className="w-full flex flex-col gap-1">
       <CollapsibleTrigger className="w-full flex items-center gap-2 py-1 font-medium hover:font-semibold [&[data-state=open]>iconify-icon]:rotate-90">
