@@ -1,7 +1,7 @@
 import { Body, Column, Container, Head, Heading, Html, Preview, Row, Text } from "@react-email/components"
 import { Tailwind } from "@react-email/tailwind"
 import { z } from "zod"
-import { type TemplateProps, createTemplate } from "../template"
+import { type TemplateProps, createTemplate } from "../template.tsx"
 
 const Props = z.object({
   username: z.string().nonempty(),

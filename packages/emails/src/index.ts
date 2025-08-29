@@ -1,5 +1,5 @@
-export { createTemplate, InvalidTemplateArguments } from "./template"
-export type { Template, TemplateProps } from "./template"
+export { createTemplate, InvalidTemplateArguments } from "./template.tsx"
+export type { Template, TemplateProps } from "./template.tsx"
 export { Template as HelloWorldTemplate } from "./emails/hello-world.tsx"
 export { Template as InterestFormForBedkomTemplate } from "./emails/interest-form-for-bedkom.tsx"
 export { Template as InterestFormForCompanyTemplate } from "./emails/interest-form-for-company.tsx"
