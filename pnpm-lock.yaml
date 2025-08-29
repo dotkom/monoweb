@@ -553,6 +553,9 @@ importers:
       '@trpc/server':
         specifier: 11.4.4
         version: 11.4.4(typescript@5.8.3)
+      amaro:
+        specifier: ^1.1.1
+        version: 1.1.1
       auth0:
         specifier: ^4.23.1
         version: 4.28.0
@@ -5433,6 +5436,10 @@ packages:
 
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
+
+  amaro@1.1.1:
+    resolution: {integrity: sha512-0+T4jGuJcCLqq/tyAXZHspTn1cCt2G8wLY0gjO/03uRf/q6B/HzsFJSYo83ge9eVGz0yaQ2uUCw/KS6mrjpTIA==}
+    engines: {node: '>=22'}
 
   ansi-align@3.0.1:
     resolution: {integrity: sha512-IOfwwBF5iczOjp/WeY4YxyjqAFMQoZufdQWDd19SEExbVLNXqvpzSJ/M7Za4/sCPmQ0+GRquoA7bGcINcxew6w==}
@@ -13952,6 +13959,8 @@ snapshots:
       fast-uri: 3.0.6
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
+
+  amaro@1.1.1: {}
 
   ansi-align@3.0.1:
     dependencies:
