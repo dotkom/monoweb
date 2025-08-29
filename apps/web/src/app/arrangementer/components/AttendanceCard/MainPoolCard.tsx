@@ -87,14 +87,22 @@ const DelayPill = ({ mergeDelayHours, className }: { mergeDelayHours: number | n
 interface MainPoolCardProps {
   attendance: Attendance
   user: User | null
+  authorizeUrl: string
 }
 
-export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user }) => {
+export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authorizeUrl }) => {
   if (!user) {
     return (
-      <Card>
-        <Text>Du er ikke innlogget</Text>
-      </Card>
+      <Link href={authorizeUrl}>
+        <Card>
+          <Text>Du er ikke innlogget</Text>
+
+          <div className="flex flex-row gap-1 items-center">
+            <Text>Logg inn</Text>
+            <Icon icon="tabler:arrow-up-right" className="text-base" />
+          </div>
+        </Card>
+      </Link>
     )
   }
 
