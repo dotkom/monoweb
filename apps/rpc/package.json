@@ -27,11 +27,13 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.821.0",
     "@aws-sdk/client-scheduler": "^3.844.0",
+    "@aws-sdk/client-ses": "^3.821.0",
     "@aws-sdk/client-sqs": "^3.844.0",
     "@aws-sdk/client-sts": "^3.821.0",
     "@aws-sdk/s3-presigned-post": "^3.821.0",
     "@date-fns/tz": "^1.2.0",
     "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/emails": "workspace:*",
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/oauth2": "workspace:*",
