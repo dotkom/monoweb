@@ -36,6 +36,8 @@ export function EventFeedbackForm({ feedbackForm, attendee, preview }: FormProps
 
   const feedbackAnswerCreateMutation = useCreateFeedbackAnswerMutation({ onSuccess: () => setSubmitted(true) })
 
+  const sortedQuestions = feedbackForm.questions.toSorted((a, b) => a.order - b.order)
+
   const {
     control,
     handleSubmit,
@@ -44,7 +46,7 @@ export function EventFeedbackForm({ feedbackForm, attendee, preview }: FormProps
     mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues: {
-      answers: feedbackForm.questions.map((q) => ({
+      answers: sortedQuestions.map((q) => ({
         questionId: q.id,
         value: null,
         selectedOptions: [],
@@ -82,8 +84,6 @@ export function EventFeedbackForm({ feedbackForm, attendee, preview }: FormProps
       questionAnswers: answers,
     })
   }
-
-  const sortedQuestions = feedbackForm.questions.sort((a, b) => a.order - b.order)
 
   if (submitted) {
     return <Text>Tilbakemelding registrert</Text>
