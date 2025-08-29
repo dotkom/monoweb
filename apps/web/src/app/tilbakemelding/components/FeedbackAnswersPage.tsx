@@ -13,14 +13,18 @@ export const FeedbackAnswersPage = async ({ eventId, publicResultsToken }: Props
     ? await server.event.feedback.getPublicForm.query(publicResultsToken)
     : await server.event.feedback.getFormByEventid.query(eventId)
 
+  const answers = publicResultsToken
+    ? await server.event.feedback.getPublicAnswers.query(publicResultsToken)
+    : await server.event.feedback.getAllAnswers.query(feedbackForm.id)
+
   return (
     <FeedbackResults
       questions={feedbackForm.questions}
+      answers={answers}
       attendees={attendance?.attendees ?? []}
       event={event}
       pools={attendance?.pools ?? []}
       publicResultsToken={publicResultsToken}
-      feedbackFormId={feedbackForm.id}
     />
   )
 }

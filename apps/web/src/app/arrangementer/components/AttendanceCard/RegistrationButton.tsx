@@ -1,6 +1,7 @@
 import {
   type Attendance,
   type AttendanceStatus,
+  type Attendee,
   type Punishment,
   type User,
   findActiveMembership,
@@ -23,22 +24,22 @@ const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolea
 
 const getDisabledText = (
   status: AttendanceStatus,
-  attendee: boolean,
+  attendee: Attendee | null,
   pool: boolean,
   hasBeenCharged: boolean,
   isPastDeregisterDeadline: boolean,
   isLoggedIn: boolean,
   hasMembership: boolean,
   isSuspended: boolean,
-  notRegisteredToParentEvent: boolean,
-  notReservedToParentEvent: boolean
+  registeredToParentEvent: boolean | null,
+  reservedToParentEvent: boolean | null
 ) => {
   if (!isLoggedIn) {
     return "Du må være innlogget for å melde deg på"
   }
 
   if (attendee) {
-    if (isPastDeregisterDeadline) {
+    if (isPastDeregisterDeadline && attendee.reserved) {
       return "Avmeldingsfristen har utløpt"
     }
     if (hasBeenCharged) {
@@ -63,10 +64,10 @@ const getDisabledText = (
   if (!pool) {
     return "Du har ingen påmeldingsgruppe"
   }
-  if (notRegisteredToParentEvent) {
+  if (registeredToParentEvent === false) {
     return "Du er ikke påmeldt foreldrearrangementet"
   }
-  if (notReservedToParentEvent && !notRegisteredToParentEvent) {
+  if (reservedToParentEvent === false && registeredToParentEvent === true) {
     return "Du er i kø på foreldrearrangementet"
   }
 
@@ -103,23 +104,23 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
 
   const parentAttendanceAttendee = parentAttendance && getAttendee(parentAttendance, user)
-  const notRegisteredToParentEvent = parentAttendance ? !parentAttendanceAttendee : false
-  const notReservedToParentEvent = parentAttendance ? !parentAttendanceAttendee?.reserved : false
+  const registeredToParentEvent = parentAttendance ? Boolean(parentAttendanceAttendee) : null
+  const reservedToParentEvent = parentAttendance && parentAttendanceAttendee ? parentAttendanceAttendee.reserved : null
 
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
 
   const disabledText = getDisabledText(
     attendanceStatus,
-    Boolean(attendee),
+    attendee,
     Boolean(pool),
     Boolean(attendee?.paymentChargedAt),
     isPastDeregisterDeadline,
     Boolean(user),
     hasMembership,
     isSuspended,
-    notRegisteredToParentEvent,
-    notReservedToParentEvent
+    registeredToParentEvent,
+    reservedToParentEvent
   )
   const disabled = Boolean(disabledText)
 
