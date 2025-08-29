@@ -5,6 +5,7 @@ import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/c
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   type Membership,
@@ -169,6 +170,7 @@ export default function ProfilePage() {
 
   const trpc = useTRPC()
   const session = useSession()
+  const fullPathname = useFullPathname()
 
   const { data: user, isLoading: userLoading } = useQuery(trpc.user.findByProfileSlug.queryOptions(profileSlug))
 
@@ -342,7 +344,7 @@ export default function ProfilePage() {
                   element="a"
                   href={createAuthorizeUrl({
                     connection: "FEIDE",
-                    redirectAfter: "/profil",
+                    redirectAfter: fullPathname,
                     returnedFromFeide: "true",
                   })}
                   className="h-fit w-fit"

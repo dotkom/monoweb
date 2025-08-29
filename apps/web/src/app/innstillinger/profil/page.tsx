@@ -1,13 +1,14 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { UserWrite } from "@dotkomonline/types"
 import { Button, Icon, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
-import { redirect, usePathname } from "next/navigation"
+import { redirect } from "next/navigation"
 import { ProfileForm } from "./form"
 import SkeletonProfileForm from "./loading"
 
@@ -15,10 +16,10 @@ const EditProfilePage = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const session = useSession()
-  const pathname = usePathname()
+  const fullPathname = useFullPathname()
 
   if (!session) {
-    redirect(createAuthorizeUrl({ redirectAfter: pathname }))
+    redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
   }
 
   const { data: user, isLoading: userIsLoading } = useQuery(trpc.user.getMe.queryOptions())
