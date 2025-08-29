@@ -1,7 +1,4 @@
 setup:
-  - project: monoweb-brevduen
-    config: dev_personal
-    path: apps/brevduen
   - project: monoweb-dashboard
     config: dev_personal
     path: apps/dashboard

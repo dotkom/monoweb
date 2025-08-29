@@ -54,24 +54,6 @@ jobs:
       - run: pnpm type-check
         name: Run TypeScript type checker
 
-  build-brevduen:
-    name: brevduen
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-brevduen
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
   build-dashboard:
     name: dashboard
     runs-on: ubuntu-24.04-arm

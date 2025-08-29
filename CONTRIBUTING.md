@@ -49,7 +49,7 @@ In Next.js, this is done by adding `transpilePackages` in the `next.config.mjs` 
 to bundle everything into a single file.
 
 Examples of both can be found in the different applications in the `apps/` directory. For example, `apps/web` uses
-Next.js, and `apps/brevduen` uses TSup.
+Next.js.
 </details>
 
 ## Tools
@@ -108,7 +108,6 @@ The following applications run on the following ports:
 - `/apps/dashboard`: 3002
 - `/apps/rif`: 3003
 - `/apps/invoicing`: 3004
-- `/apps/brevduen`: AWS Lambda only
 - `/packages/ui`: 61000 (ladle)
 
 ## Testing

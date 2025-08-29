@@ -3,9 +3,6 @@
   "globalEnv": [
     "S3_BUCKET_MONOWEB",
     "NODE_ENV",
-    "OAUTH_CLIENT_ID",
-    "OAUTH_CLIENT_SECRET",
-    "OAUTH_ISSUER",
     "AUTH_SECRET",
     "AUTH_TRUST_HOST",
     "AUTH_URL",
