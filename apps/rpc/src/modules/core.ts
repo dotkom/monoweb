@@ -1,6 +1,5 @@
 import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
-import { SESClient } from "@aws-sdk/client-ses"
 import { createPrisma } from "@dotkomonline/db"
 import { ManagementClient } from "auth0"
 import Stripe from "stripe"
@@ -47,10 +46,15 @@ import { getUserService } from "./user/user-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
+export type StripeAccount = {
+  stripe: Stripe
+  publicKey: string
+  webhookSecret: string
+}
+
 /** Build API clients for third-party services like S3, Auth0, and Stripe. */
 export function createThirdPartyClients(configuration: Configuration) {
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
-  const sesClient = new SESClient({ region: configuration.AWS_REGION })
   const auth0Client = new ManagementClient({
     domain: configuration.AUTH0_MGMT_TENANT,
     clientId: configuration.AUTH0_CLIENT_ID,
@@ -60,7 +64,7 @@ export function createThirdPartyClients(configuration: Configuration) {
     apiVersion: "2025-07-30.basil",
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
-  return { s3Client, sesClient, auth0Client, stripe, prisma }
+  return { s3Client, auth0Client, stripe, prisma }
 }
 
 /**

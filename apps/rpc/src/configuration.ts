@@ -33,5 +33,4 @@ export const configuration = defineConfiguration({
   DATABASE_URL: config(process.env.DATABASE_URL),
 
   STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
-  EMAIL_API_TOKEN: config(process.env.EMAIL_API_TOKEN),
 })

@@ -11,7 +11,6 @@ import rawBody from "fastify-raw-body"
 import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
 import { configuration } from "../configuration"
-import { registerEmailRoutes } from "../http-routes/email"
 import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
 import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
@@ -84,7 +83,6 @@ server.register(fastifyTRPCPlugin, {
 
 registerObservabilityProbeRoutes(server)
 registerStripeWebhookRoutes(server, serviceLayer)
-registerEmailRoutes(server, dependencies.sesClient)
 
 await identifyCallerIAMIdentity()
 await server.listen({ port: 4444, host: "0.0.0.0" })
