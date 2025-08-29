@@ -1,8 +1,7 @@
 {
   "extends": "../../packages/config/tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "allowImportingTsExtensions": true
+    "jsx": "react-jsx"
   },
   "include": ["src"]
 }

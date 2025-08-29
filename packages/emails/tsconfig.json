@@ -7,8 +7,7 @@
     "incremental": true,
     "outDir": "dist",
     "noEmit": false,
-    "declaration": true,
-    "allowImportingTsExtensions": true
+    "declaration": true
   },
   "include": ["./**/*.ts", "./**/*.tsx"]
 }
