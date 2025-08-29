@@ -8,6 +8,7 @@
     "jsx": "preserve",
     "incremental": true,
     "strictNullChecks": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "allowImportingTsExtensions": true
   }
 }
