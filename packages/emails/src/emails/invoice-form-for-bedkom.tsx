@@ -1,7 +1,7 @@
 import { Body, Column, Container, Head, Heading, Html, Preview, Row, Section, Text } from "@react-email/components"
 import { Tailwind } from "@react-email/tailwind"
 import { z } from "zod"
-import { type TemplateProps, createTemplate } from "../template.js"
+import { type TemplateProps, createTemplate } from "../template"
 
 export const InvoiceRelation = {
   COMPANY_PRESENTATION: "Bedriftspresentasjon",
