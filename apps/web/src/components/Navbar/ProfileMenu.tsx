@@ -31,7 +31,7 @@ import {
   Text,
   cn,
 } from "@dotkomonline/ui"
-import { createAuthorizeUrl, createUnauthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
@@ -254,7 +254,7 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
 
         <DropdownMenuItem className="w-full flex flex-row gap-2 items-center cursor-pointer">
           <Link
-            href={createUnauthorizeUrl({ redirectAfter: fullPathname })}
+            href={createLogoutUrl({ redirectAfter: fullPathname })}
             className="w-full flex flex-row gap-2 items-center"
           >
             <Icon icon="tabler:logout" className="text-sm" />

@@ -17,13 +17,13 @@ export const createAuthorizeUrl = (...parameters: ConstructorParameters<typeof U
 }
 
 /**
- * Creates an unauthorize (logout) URL with the given search parameters.
+ * Creates a logout URL with the given search parameters.
  *
  * @example
  * const fullPathname = useFullPathname()
- * const url = createUnauthorizeUrl({ redirectAfter: fullPathname })
+ * const url = createLogoutUrl({ redirectAfter: fullPathname })
  */
-export const createUnauthorizeUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
+export const createLogoutUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
   const searchParams = new URLSearchParams(...parameters).toString()
   if (!searchParams) {
     return UNAUTHORIZE_ENDPOINT
@@ -48,13 +48,13 @@ export const createAbsoluteAuthorizeUrl = (
 }
 
 /**
- * Creates an authorize URL with the given search parameters.
+ * Creates a logout URL with the given search parameters.
  *
  * @example
  * const fullPathname = useFullPathname()
- * const url = createAbsoluteUnauthorizeUrl(window.location.origin, { redirectAfter: fullPathname })
+ * const url = createAbsoluteLogoutUrl(window.location.origin, { redirectAfter: fullPathname })
  */
-export const createAbsoluteUnauthorizeUrl = (
+export const createAbsoluteLogoutUrl = (
   origin: string,
   ...parameters: ConstructorParameters<typeof URLSearchParams>
 ) => {
