@@ -184,10 +184,7 @@ export const AttendanceCard = ({
 
       {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
 
-      <div className="flex flex-col gap-2">
-        <MainPoolCard attendance={attendance} user={user} authorizeUrl={authorizeUrl} />
-        <PaymentCard attendance={attendance} user={user} />
-      </div>
+      <MainPoolCard attendance={attendance} user={user} authorizeUrl={authorizeUrl} />
 
       {attendee?.reserved && attendance.selections.length > 0 && (
         <div className="flex flex-col gap-2">
