@@ -2,6 +2,7 @@
 
 import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   Avatar,
@@ -30,11 +31,10 @@ import {
   Text,
   cn,
 } from "@dotkomonline/ui"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
 import { type FC, Fragment, type PropsWithChildren, useState } from "react"
 
 const THEME_OPTIONS = [
@@ -57,7 +57,7 @@ const THEME_OPTIONS = [
 
 export const ProfileMenu: FC = () => {
   const session = useSession()
-  const pathname = usePathname()
+  const fullPathname = useFullPathname()
   const trpc = useTRPC()
 
   const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
@@ -103,7 +103,7 @@ export const ProfileMenu: FC = () => {
           size="sm"
           color="brand"
           className="text-sm font-semibold px-3 py-2"
-          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: pathname })}
+          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
         >
           Logg inn
         </Button>
@@ -118,7 +118,7 @@ export const ProfileMenu: FC = () => {
               size="sm"
               color="white"
               className="text-sm font-semibold px-3 py-2"
-              href={createAuthorizeUrl({ redirectAfter: pathname })}
+              href={createAuthorizeUrl({ redirectAfter: fullPathname })}
             >
               Logg inn uten feide
             </Button>
@@ -197,8 +197,8 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false)
 
   const session = useSession()
-  const router = useRouter()
   const trpc = useTRPC()
+  const fullPathname = useFullPathname()
 
   const { data: isStaff } = useQuery(trpc.user.isStaff.queryOptions(undefined, { enabled: Boolean(session) }))
 
@@ -252,15 +252,14 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem
-          className="w-full flex flex-row gap-2 items-center cursor-pointer"
-          onClick={() => {
-            setOpen(false)
-            router.push("/api/auth/logout")
-          }}
-        >
-          <Icon icon="tabler:logout" className="text-sm" />
-          <Text element="span">Logg ut</Text>
+        <DropdownMenuItem className="w-full flex flex-row gap-2 items-center cursor-pointer">
+          <Link
+            href={createLogoutUrl({ redirectAfter: fullPathname })}
+            className="w-full flex flex-row gap-2 items-center"
+          >
+            <Icon icon="tabler:logout" className="text-sm" />
+            <Text element="span">Logg ut</Text>
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
