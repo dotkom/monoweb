@@ -2,6 +2,7 @@
 
 import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import {
   type Attendance,
   type AttendanceSelectionResponse,
@@ -11,7 +12,7 @@ import {
   getAttendee,
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { useQueries, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
@@ -42,12 +43,14 @@ export const AttendanceCard = ({
   user,
   initialAttendance,
   initialPunishment,
-  parentEvent,
   parentAttendance,
 }: AttendanceCardProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
+
+  const fullPathname = useFullPathname()
+  const authorizeUrl = createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })
 
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
@@ -181,7 +184,7 @@ export const AttendanceCard = ({
 
       {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
 
-      <MainPoolCard attendance={attendance} user={user} />
+      <MainPoolCard attendance={attendance} user={user} authorizeUrl={authorizeUrl} />
 
       {attendee?.reserved && attendance.selections.length > 0 && (
         <div className="flex flex-col gap-2">
