@@ -140,6 +140,8 @@ export const AttendanceCard = ({
     // }, [attendance, attendee])
   }, [attendee])
 
+  const [attendeeListOpen, setAttendeeListOpen] = useState(false)
+
   const registerMutation = useRegisterMutation()
   const deregisterMutation = useDeregisterMutation()
   const selectionsMutation = useSetSelectionsOptionsMutation()
@@ -154,8 +156,6 @@ export const AttendanceCard = ({
       options: selections,
     })
   }
-
-  const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const registerForAttendance = () => {
     registerMutation.mutate({ attendanceId: attendance.id })
@@ -184,7 +184,10 @@ export const AttendanceCard = ({
 
       {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
 
-      <MainPoolCard attendance={attendance} user={user} authorizeUrl={authorizeUrl} />
+      <div className="flex flex-col gap-1">
+        <MainPoolCard attendance={attendance} user={user} authorizeUrl={authorizeUrl} />
+        <PaymentCard attendance={attendance} attendee={attendee} />
+      </div>
 
       {attendee?.reserved && attendance.selections.length > 0 && (
         <div className="flex flex-col gap-2">
@@ -223,8 +226,6 @@ export const AttendanceCard = ({
         user={user}
         isLoading={isLoading}
       />
-
-      <PaymentCard attendance={attendance} attendee={attendee} />
 
       <div className="flex flex-row flex-wrap gap-4 text-gray-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
         <div className="flex flex-row gap-1 items-center cursor-pointer">
