@@ -91,6 +91,9 @@ interface MainPoolCardProps {
 }
 
 export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authorizeUrl }) => {
+  const attendee = getAttendee(attendance, user)
+  const paymentCountdown = useCountdown(attendee?.paymentDeadline ?? null)
+
   if (!user) {
     return (
       <Link href={authorizeUrl}>
@@ -107,7 +110,6 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   }
 
   const membership = findActiveMembership(user)
-  const attendee = getAttendee(attendance, user)
 
   if (!membership && !attendee) {
     return (
@@ -179,6 +181,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
       }
     >
       <div className="flex grow flex-col gap-2 items-center text-center justify-center">
+        <Text suppressHydrationWarning>{paymentCountdown}</Text>
         {isWithinInterval(now, countdownInterval) && !attendee ? (
           <>
             <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
