@@ -1,17 +1,35 @@
 "use client"
-import type { Attendance, Attendee } from "@dotkomonline/types"
+import { type Attendance, type User, getAttendee } from "@dotkomonline/types"
 import { Icon, Stripes, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 
 interface PaymentCardProps {
   attendance: Attendance
-  attendee: Attendee | null
+  user: User | null
 }
 
-export const PaymentCard = ({ attendance, attendee }: PaymentCardProps) => {
+export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
   if (!attendance.attendancePrice) {
     return null
   }
+
+  if (!user) {
+    return (
+      <div
+        className={cn(
+          "rounded-lg h-fit min-h-[4rem] flex items-center justify-center",
+          "bg-gray-100 cursor-not-allowed"
+        )}
+      >
+        <div className="flex flex-row items-center justify-center gap-2 font-medium">
+          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <Text>{attendance.attendancePrice} kr</Text>
+        </div>
+      </div>
+    )
+  }
+
+  const attendee = getAttendee(attendance, user)
 
   if (!attendee?.reserved) {
     return (
