@@ -13,7 +13,7 @@ interface SplineInstance {
   getVariable?: (name: string) => boolean | number | string
 }
 
-export const CompanySplash: FC = () => {
+export const OnlineHero: FC = () => {
   const { theme, setTheme } = useTheme()
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -90,7 +90,7 @@ export const CompanySplash: FC = () => {
         </div>
       </div>
 
-      <div className="lg:ml-[-2rem] relative w-full">
+      <div className="lg:-ml-8 relative w-full">
         {isLoading && (
           <div className="absolute bg-gray-100 dark:bg-stone-900 rounded-xl animate-pulse w-[80%] h-[80%] inset-0 m-auto" />
         )}
