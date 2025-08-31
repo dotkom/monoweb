@@ -22,7 +22,7 @@ import {
 } from "@dotkomonline/types"
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { captureException } from "@sentry/node"
-import { addHours, compareDesc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
+import { addHours, addMinutes, compareDesc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
@@ -782,7 +782,7 @@ export function getAttendanceService(
         }
       }
 
-      const paymentDeadline = addHours(getCurrentUTC(), 24)
+      const paymentDeadline = addMinutes(getCurrentUTC(), 15)
       const payment = await this.startAttendeePayment(handle, attendeeId, paymentDeadline)
 
       await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
