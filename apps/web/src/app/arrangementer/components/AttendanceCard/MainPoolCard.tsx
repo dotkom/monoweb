@@ -10,7 +10,17 @@ import {
   getReservedAttendeeCount,
   getUnreservedAttendeeCount,
 } from "@dotkomonline/types"
-import { Icon, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import {
+  Icon,
+  Stripes,
+  Text,
+  Title,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  cn,
+} from "@dotkomonline/ui"
 import { formatDate, formatDistanceToNowStrict, interval, isFuture, isWithinInterval, subMinutes } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
@@ -145,10 +155,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
           </Text>
         )}
 
-        {!servingPunishment && <div className="flex flex-col gap-1">
-                <Text>{getAttendanceStatus(attendance, attendee)}</Text>
-                <Text>{getPaymentStatus(attendance, attendee)}</Text>
-              </div>}
+        {!servingPunishment && (
+          <div className="flex flex-col gap-1">
+            <Text>{getAttendanceStatus(attendance, attendee)}</Text>
+            <Text>{getPaymentStatus(attendance, attendee)}</Text>
+          </div>
+        )}
 
         {servingPunishment && (
           <TooltipProvider>
@@ -212,7 +224,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
       {isCountdown ? (
         <div className="flex flex-col min-h-[10rem] gap-4 p-3 rounded-md items-center w-full">
-          <div className="flex flex-row gap-2 items-center justify-center">
+          <div className="flex flex-row gap-2 items-center justify-center w-full">
             <div className="flex flex-row gap-0.5 items-center">
               <Text
                 className={cn(
@@ -240,10 +252,11 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
             <div className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
 
             {!servingPunishment && (
-              <div className="flex flex-col gap-0.5 mx-1">
-                <Text>{getAttendanceStatus(attendance, attendee)}</Text>
-                <Text>{getPaymentStatus(attendance, attendee)}</Text>
-              </div>
+              <>
+                <Text className="mx-1">{getAttendanceStatus(attendance, attendee)}</Text>
+                <div className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+                <Text className="mx-1">{getPaymentStatus(attendance, attendee)}</Text>
+              </>
             )}
 
             {servingPunishment && (
@@ -282,11 +295,29 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
           {isWithinPaymentCountdown &&
             !attendee?.paymentReservedAt &&
             !attendee?.paymentChargedAt &&
-            !attendee?.paymentRefundedAt && (
-              <div className="flex flex-col gap-1 items-center">
-                <Text className="text-lg font-medium">Du må betale innen</Text>
-                <Text className="text-4xl font-medium tabular-nums">{paymentCountdownText}</Text>
-              </div>
+            !!attendee?.paymentLink && (
+              <Link
+                href={attendee.paymentLink}
+                className="group relative cursor-pointer flex flex-row gap-3 min-h-[8rem] items-center bg-yellow-600 rounded-lg pr-3 w-full"
+              >
+                <Stripes
+                  colorA="bg-amber-200"
+                  colorB="bg-amber-300"
+                  stripeWidth={16}
+                  speed="1.5s"
+                  animated
+                  className="rounded-l-lg px-5 py-4 w-full h-full"
+                >
+                  <div className="flex flex-col gap-1 items-center justify-center h-full">
+                    <Text className="text-lg font-medium">Du må betale innen</Text>
+                    <Text className="text-4xl font-medium tabular-nums" suppressHydrationWarning>
+                      {paymentCountdownText}
+                    </Text>
+                  </div>
+                </Stripes>
+                <div className="absolute top-0 left-0 inset-0 bg-gradient-to-t from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent pointer-events-none transition-colors" />
+                <Icon icon="tabler:arrow-up-right" height={24} width={24} className="text-white" />
+              </Link>
             )}
         </div>
       ) : (
@@ -324,9 +355,7 @@ const getPaymentStatus = (attendance: Attendance, attendee: Attendee | null) => 
   )
 
   if (!attendee || !hasPaid) {
-    return (
-        `${attendance.attendancePrice} kr`
-    )
+    return `${attendance.attendancePrice} kr`
   }
 
   if (attendee.paymentReservedAt || attendee.paymentChargedAt) {

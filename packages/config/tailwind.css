@@ -51,10 +51,9 @@
 
 @keyframes move-stripes-x {
   to {
-    /* 1.41421356 = sqrt(2) */
     /* This is to make the stripes move the correct horizontal distance, since they are diagonal */
-    mask-position: calc(var(--period) * 1.41421356) 0;
-    -webkit-mask-position: calc(var(--period) * 1.41421356) 0;
+    mask-position: calc(var(--period) * sqrt(2)) 0;
+    -webkit-mask-position: calc(var(--period) * sqrt(2)) 0;
   }
 }
 

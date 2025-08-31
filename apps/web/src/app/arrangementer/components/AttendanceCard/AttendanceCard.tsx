@@ -23,7 +23,6 @@ import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMuta
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
-import { PaymentCard } from "./PaymentCard"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton } from "./RegistrationButton"
