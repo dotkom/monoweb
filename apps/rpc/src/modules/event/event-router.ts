@@ -17,7 +17,6 @@ import { feedbackRouter } from "./feedback-router"
 export const eventRouter = t.router({
   attendance: attendanceRouter,
   feedback: feedbackRouter,
-
   get: procedure
     .input(EventSchema.shape.id)
     .output(EventWithAttendanceSchema)
@@ -81,13 +80,23 @@ export const eventRouter = t.router({
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
+        const existing = await ctx.eventService.getEventById(handle, input.id)
         const updatedEventWithoutOrganizers = await ctx.eventService.updateEvent(handle, input.id, input.event)
         const updatedEvent = await ctx.eventService.updateEventOrganizers(
           handle,
           updatedEventWithoutOrganizers.id,
           new Set(input.groupIds),
-          new Set(input.companies)
+          new Set(input.companies),
         )
+        // AuditLog
+        const user = await ctx.userService.getById(handle, ctx.principal.subject)
+        ctx.auditLogService.logAction(handle, {
+          userId: ctx.principal.subject,
+          entityId: input.id,
+          entityType: "event",
+          action: "update",
+          metadata: { username: user.name },
+        })
         const attendance = updatedEventWithoutOrganizers.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)
           : null

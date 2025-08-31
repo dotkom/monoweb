@@ -11,6 +11,8 @@ import { getArticleTagRepository } from "./article/article-tag-repository"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
+import { getAuditLogRepository } from "./audit-log/audit-log-repository"
+import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
@@ -97,6 +99,7 @@ export async function createServiceLayer(
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
   const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const offlineRepository = getOfflineRepository()
+  const auditLogRepository = getAuditLogRepository()
   const articleRepository = getArticleRepository()
   const articleTagRepository = getArticleTagRepository()
   const articleTagLinkRepository = getArticleTagLinkRepository()
@@ -122,6 +125,7 @@ export async function createServiceLayer(
   const paymentService = getPaymentService(clients.stripe)
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
+  const auditLogService = getAuditLogService(auditLogRepository)
   const eventService = getEventService(eventRepository)
   const attendanceService = getAttendanceService(
     eventEmitter,
@@ -142,6 +146,7 @@ export async function createServiceLayer(
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
   const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
   const authorizationService = getAuthorizationService()
+  
 
   return {
     eventEmitter,
@@ -154,6 +159,7 @@ export async function createServiceLayer(
     jobListingService,
     offlineService,
     articleService,
+    auditLogService,
     attendanceService,
     attendanceRepository,
     taskService,
