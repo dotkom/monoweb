@@ -10,9 +10,10 @@ import { Logo } from "./Logo"
 
 interface SplineInstance {
   setVariable?: (name: string, value: boolean | number | string) => void
+  getVariable?: (name: string) => boolean | number | string
 }
 
-export const CompanySplash: FC = () => {
+export const OnlineHero: FC = () => {
   const { theme, setTheme } = useTheme()
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -44,11 +45,19 @@ export const CompanySplash: FC = () => {
   const lightSwitch = () => {
     const currentTheme = themeState.current
     setTheme(currentTheme === "dark" ? "light" : "dark")
+
+    if (splineRef.current?.getVariable) {
+      const numberValue = splineRef.current.getVariable("lightSwitchCounter") as number
+
+      if (numberValue > 1 && numberValue % 69 === 0) {
+        alert("Ey yo, det holder nå")
+      }
+    }
   }
 
   return (
-    <div className="flex flex-col lg:justify-stretch gap-4 items-center lg:flex-row">
-      <div className="flex flex-col gap-8 w-full max-w-[600px] mx-auto lg:mx-0">
+    <div className="flex flex-col lg:justify-stretch md:pt-10 lg:pt-0 gap-4 lg:gap-8 items-center lg:flex-row">
+      <div className="flex flex-col gap-8 w-full max-w-[600px] mx-auto lg:mx-0 lg:order-2">
         <span aria-hidden="true" className="w-full max-w-[300px]">
           <Logo />
         </span>
@@ -81,7 +90,7 @@ export const CompanySplash: FC = () => {
         </div>
       </div>
 
-      <div className="relative w-full">
+      <div className="lg:-ml-8 relative w-full">
         {isLoading && (
           <div className="absolute bg-gray-100 dark:bg-stone-900 rounded-xl animate-pulse w-[80%] h-[80%] inset-0 m-auto" />
         )}
@@ -92,7 +101,7 @@ export const CompanySplash: FC = () => {
           )}
         >
           <Spline
-            scene="https://prod.spline.design/VwzWzojgCJ6CErSI/scene.splinecode"
+            scene="https://prod.spline.design/sYnNo1UN8U-oQvg0/scene.splinecode"
             onLoad={onSplineLoad}
             onSplineMouseDown={lightSwitch}
           />

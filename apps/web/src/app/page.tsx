@@ -1,6 +1,6 @@
 import { auth } from "@/auth"
-import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
+import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
@@ -34,7 +34,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
         {constructionNoticeShown && <ConstructionNotice />}
-        <CompanySplash />
+        <OnlineHero />
       </div>
 
       <div className="flex flex-col gap-4">
