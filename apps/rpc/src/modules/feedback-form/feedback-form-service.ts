@@ -8,7 +8,7 @@ import type {
   FeedbackPublicResultsToken,
   FeedbackQuestionWrite,
 } from "@dotkomonline/types"
-import { addWeeks } from "date-fns"
+import { addWeeks, isEqual } from "date-fns"
 import type { EventService } from "../event/event-service"
 import { tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
@@ -80,7 +80,7 @@ export function getFeedbackFormService(
       const previousRow = await this.getById(handle, id)
       const task = await taskSchedulingService.findVerifyFeedbackAnsweredTask(handle, id)
 
-      if (task?.status === "COMPLETED" && previousRow.answerDeadline !== feedbackForm.answerDeadline) {
+      if (task?.status === "COMPLETED" && !isEqual(previousRow.answerDeadline, feedbackForm.answerDeadline)) {
         throw new Error("Can't change answer deadline of a feedback form that has already given out marks")
       }
 
@@ -89,11 +89,11 @@ export function getFeedbackFormService(
       // Inactive feedback forms should not cause marks for missing answers
       const desiredAt = row.isActive ? row.answerDeadline : null
 
-      if (task && (!desiredAt || task.scheduledAt !== desiredAt)) {
+      if (task && (!desiredAt || !isEqual(task.scheduledAt, desiredAt))) {
         await taskSchedulingService.cancel(handle, task.id)
       }
 
-      if (desiredAt) {
+      if (desiredAt && task?.status !== "COMPLETED") {
         await taskSchedulingService.scheduleAt(
           handle,
           tasks.VERIFY_FEEDBACK_ANSWERED,
