@@ -3,6 +3,7 @@ import {
   type AttendanceId,
   type AttendeeId,
   type EventId,
+  type FeedbackFormId,
   type Task,
   type TaskId,
   TaskSchema,
@@ -25,7 +26,7 @@ export interface TaskRepository {
   findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendancePaymentsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
-  findVerifyFeedbackAnsweredTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
+  findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
 }
 
 export function getTaskRepository(): TaskRepository {

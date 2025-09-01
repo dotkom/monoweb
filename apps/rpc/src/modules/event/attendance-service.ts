@@ -1,4 +1,3 @@
-import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
@@ -24,6 +23,7 @@ import {
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { captureException } from "@sentry/node"
 import { addHours, compareDesc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
+import type { EventEmitter } from "node:events"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
@@ -841,19 +841,24 @@ export function getAttendanceService(
     async executeVerifyFeedbackAnsweredTask(handle, { feedbackFormId }) {
       const feedbackForm = await feedbackFormService.getById(handle, feedbackFormId)
 
+      if (!isPast(feedbackForm.answerDeadline)) {
+        throw new Error("executeVerifyFeedbackAnsweredTask tried to run before answerDeadline on feedback form passed")
+      }
+
       const attendance = await attendanceRepository.findAttendanceByEventId(handle, feedbackForm.eventId)
-      const event = await eventService.getEventById(handle, feedbackForm.eventId)
       const attendees = attendance?.attendees ?? []
 
       if (attendees.length === 0) {
         return
       }
 
-      const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
+      const event = await eventService.getEventById(handle, feedbackForm.eventId)
 
-      if (!isPast(feedbackForm.answerDeadline)) {
-        throw new Error("executeVerifyFeedbackAnsweredTask tried to run before answerDeadline on feedback form passed")
+      if (!isPast(event.end)) {
+        throw new Error("executeVerifyFeedbackAnsweredTask tried to run before end on event passed")
       }
+
+      const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
 
       const attendeesWithoutAnswers = attendees.filter(
         (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
@@ -873,9 +878,11 @@ export function getAttendanceService(
         event.hostingGroups.map((group) => group.slug)
       )
 
-      for (const attendee of attendeesWithoutAnswers) {
-        await personalMarkService.addToUser(handle, attendee.user.id, mark.id)
-      }
+      const personalMarkPromises = attendeesWithoutAnswers.map(async (attendee) =>
+        personalMarkService.addToUser(handle, attendee.user.id, mark.id)
+      )
+
+      await Promise.all([...personalMarkPromises])
     },
     async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)

@@ -552,7 +552,7 @@ model FeedbackForm {
   publicResultsToken String   @unique @default(uuid())
   createdAt          DateTime @default(now()) @db.Timestamptz(3)
   updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-  answerDeadline     DateTime @db.Timestamptz(3)//TODO: Dont think this should be nullable, need to fix that for existing forms in db in the created migration file
+  answerDeadline     DateTime @db.Timestamptz(3)
 
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
