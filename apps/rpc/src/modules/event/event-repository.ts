@@ -26,7 +26,7 @@ export interface EventRepository {
   /**
    * Find events based on a set of search criteria.
    *
-   * You can query events by their IDs (for multiple events), start date range, search term, and the companies or groups organizing the event.
+   * You can query events by their IDs (for multiple events), start date range, search term, event type, and the companies or groups organizing the event.
    *
    * The following describes the filters in a "predicate logic" style:
    *
@@ -37,6 +37,7 @@ export interface EventRepository {
    *   start >= byStartDate.min,
    *   start <= byStartDate.max,
    *   title CONTAINS bySearchTerm,
+   *   type IN byEventType,
    *   OR(
    *     companies.companyId IN byOrganizingCompany,
    *     hostingGroups.groupId IN byOrganizingGroup
