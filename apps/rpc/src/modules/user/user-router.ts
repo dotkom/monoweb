@@ -103,7 +103,7 @@ export const userRouter = t.router({
         return ctx.userService.update(handle, input.id, input.input)
       })
     }),
-  isStaff: authenticatedProcedure.query(async ({ ctx }) => {
+  isStaff: procedure.query(async ({ ctx }) => {
     try {
       ctx.authorize.requireAffiliation()
       return true

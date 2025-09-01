@@ -12,20 +12,20 @@ import type { FC } from "react"
 import { ConstructionNotice } from "./construction-notice"
 
 export default async function App() {
-  const [session, { items }] = await Promise.all([
-    auth.getServerSession(),
-    server.event.all.query({
-      take: 5,
-      filter: {
-        byEndDate: {
-          max: null,
-          min: getCurrentUTC(),
-        },
-        excludingOrganizingGroup: ["velkom"],
-        orderBy: "asc",
+  const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
+
+  const { items } = await server.event.all.query({
+    take: 5,
+    filter: {
+      byEndDate: {
+        max: null,
+        min: getCurrentUTC(),
       },
-    }),
-  ])
+      excludingOrganizingGroup: ["velkom"],
+      excludingType: !isStaff ? ["INTERNAL"] : undefined,
+      orderBy: "asc",
+    },
+  })
 
   const cookies = await getCookies()
   const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"

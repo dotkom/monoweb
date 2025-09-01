@@ -33,7 +33,7 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
-import { useQueries, useQuery } from "@tanstack/react-query"
+import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import Link from "next/link"
 import { notFound, useParams, useSearchParams } from "next/navigation"
@@ -172,7 +172,12 @@ export default function ProfilePage() {
   const session = useSession()
   const fullPathname = useFullPathname()
 
-  const { data: user, isLoading: userLoading } = useQuery(trpc.user.findByProfileSlug.queryOptions(profileSlug))
+  const [userResult, isStaffResult] = useQueries({
+    queries: [trpc.user.findByProfileSlug.queryOptions(profileSlug), trpc.user.isStaff.queryOptions()],
+  })
+
+  const { data: user, isLoading: userLoading } = userResult
+  const { data: isStaff = false } = isStaffResult
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
@@ -194,6 +199,7 @@ export default function ProfilePage() {
               min: now,
               max: null,
             },
+            excludingType: !isStaff ? ["INTERNAL"] : undefined,
           },
         },
         { enabled: isLoggedIn && Boolean(user?.id) }
@@ -212,6 +218,7 @@ export default function ProfilePage() {
         max: now,
         min: null,
       },
+      excludingType: !isStaff ? ["INTERNAL"] : undefined,
     },
     enabled: isLoggedIn && Boolean(user?.id),
   })
@@ -229,7 +236,7 @@ export default function ProfilePage() {
     [groups]
   )
 
-  if (user === undefined) {
+  if (user === undefined || userLoading) {
     return <SkeletonProfilePage />
   }
 

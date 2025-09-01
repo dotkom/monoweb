@@ -106,7 +106,18 @@ export function getEventRepository(): EventRepository {
                       mode: "insensitive",
                     }
                   : undefined,
-              id: query.byId && query.byId.length > 0 ? { in: query.byId } : undefined,
+              id:
+                query.byId && query.byId.length > 0
+                  ? {
+                      in: query.byId,
+                    }
+                  : undefined,
+              type:
+                query.byType && query.byType.length > 0
+                  ? {
+                      in: query.byType,
+                    }
+                  : undefined,
             },
             {
               OR: [
@@ -125,13 +136,20 @@ export function getEventRepository(): EventRepository {
               ],
             },
             {
-              hostingGroups: query.excludingOrganizingGroup
-                ? {
-                    none: {
-                      groupId: { in: query.excludingOrganizingGroup },
-                    },
-                  }
-                : undefined,
+              hostingGroups:
+                query.excludingOrganizingGroup && query.excludingOrganizingGroup.length > 0
+                  ? {
+                      none: {
+                        groupId: { in: query.excludingOrganizingGroup },
+                      },
+                    }
+                  : undefined,
+              type:
+                query.excludingType && query.excludingType.length > 0
+                  ? {
+                      notIn: query.excludingType,
+                    }
+                  : undefined,
             },
             {
               feedbackForm: query.byHasFeedbackForm
