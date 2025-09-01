@@ -52,9 +52,7 @@ export default function MarkEditCard() {
     columnHelper.accessor((personalMark) => personalMark.user, {
       id: "userName",
       header: () => "Bruker",
-      cell: (info) => (
-        <Link href={`/user/${info.getValue().id}`}>{info.getValue().name}</Link>
-      ),
+      cell: (info) => <Link href={`/user/${info.getValue().id}`}>{info.getValue().name}</Link>,
     }),
     columnHelper.accessor((personalMark) => formatDate(personalMark.personalMark.createdAt, "dd.MM.yyyy"), {
       id: "createdAt",

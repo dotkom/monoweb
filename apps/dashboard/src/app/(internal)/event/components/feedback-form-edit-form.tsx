@@ -51,18 +51,20 @@ const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map(
   label: type,
 }))
 
-const FormValuesSchema = z.object({
-  feedbackForm: FeedbackFormWriteSchema,
-  questions: FeedbackQuestionWriteSchema.array(),
-}).superRefine((val, ctx) => {
-  if (isPast(val.feedbackForm.answerDeadline)) {
-    const message = "Svarfrist må være frem i tid"
-    const code = "custom"
-    ctx.addIssue({ message, code, path: ["feedbackForm.answerDeadline"] })
-  }
+const FormValuesSchema = z
+  .object({
+    feedbackForm: FeedbackFormWriteSchema,
+    questions: FeedbackQuestionWriteSchema.array(),
+  })
+  .superRefine((val, ctx) => {
+    if (isPast(val.feedbackForm.answerDeadline)) {
+      const message = "Svarfrist må være frem i tid"
+      const code = "custom"
+      ctx.addIssue({ message, code, path: ["feedbackForm.answerDeadline"] })
+    }
 
-  return true
-})
+    return true
+  })
 
 export type FormValues = z.infer<typeof FormValuesSchema>
 

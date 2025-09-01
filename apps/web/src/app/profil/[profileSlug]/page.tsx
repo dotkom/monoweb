@@ -124,7 +124,8 @@ function MarkDisplay({
           </div>
 
           <Text className={cn("text-xs text-gray-500 dark:text-stone-500")}>
-            Gitt {formatDate(personalMark.createdAt, "dd. MMM yyyy")} av {mark.groups.map(group => group.abbreviation).join(", ")}
+            Gitt {formatDate(personalMark.createdAt, "dd. MMM yyyy")} av{" "}
+            {mark.groups.map((group) => group.abbreviation).join(", ")}
           </Text>
         </div>
       </div>
