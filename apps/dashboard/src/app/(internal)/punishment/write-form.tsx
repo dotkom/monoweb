@@ -1,8 +1,10 @@
 import { useFormBuilder } from "@/components/forms/Form"
+import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createNumberInput } from "@/components/forms/NumberInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { useTRPC } from "@/lib/trpc-client"
+import { DEFAULT_MARK_DURATION, GroupSchema } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 import z from "zod"
 
@@ -27,7 +29,7 @@ const MarkFormSchema = z.object({
     z.number().min(1).max(6, "Vekt må være mellom 1 og 6")
   ),
   duration: z.number().min(1),
-  groupSlug: z.string(),
+  groupIds: z.array(GroupSchema.shape.slug),
 })
 
 type MarkForm = z.infer<typeof MarkFormSchema>
@@ -37,7 +39,7 @@ const MARK_FORM_DEFAULT_VALUES: Partial<MarkForm> = {
   details: "",
   // @ts-expect-error: The default should be a string, but is typed as a number
   weight: "3",
-  duration: 14,
+  duration: DEFAULT_MARK_DURATION,
 }
 
 export const useMarkWriteForm = ({
@@ -84,8 +86,8 @@ export const useMarkWriteForm = ({
           { value: "6", label: "Suspensjon" },
         ],
       }),
-      groupSlug: createSelectInput({
-        label: "Ansvarlig gruppe",
+      groupIds: createMultipleSelectInput({
+        label: "Ansvarlige grupper",
         withAsterisk: true,
         data: (groups ?? []).map((group) => ({
           value: group.slug,

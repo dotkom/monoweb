@@ -27,6 +27,7 @@ import {
 } from "@mantine/core"
 
 import { env } from "@/lib/env"
+import { DateTimePicker } from "@mantine/dates"
 import { IconCheck, IconCopy, IconGripVertical, IconInfoCircle, IconTrash } from "@tabler/icons-react"
 import React, { type FC } from "react"
 import {
@@ -158,6 +159,11 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
                   onChange={(e) => field.onChange(e.currentTarget.checked)}
                 />
               )}
+            />
+            <Controller
+              name={"feedbackForm.answerDeadline"}
+              control={form.control}
+              render={({ field }) => <DateTimePicker value={field.value} onChange={field.onChange} label="Svarfrist" />}
             />
             <Group mt={16}>
               <Button onClick={addQuestion}>Legg til spørsmål</Button>

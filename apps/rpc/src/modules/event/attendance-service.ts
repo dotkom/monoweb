@@ -15,6 +15,7 @@ import {
   type AttendeeId,
   type AttendeeWrite,
   AttendeeWriteSchema,
+  DEFAULT_MARK_DURATION,
   type UserId,
   canUserAttendPool,
   findActiveMembership,
@@ -25,6 +26,9 @@ import { captureException } from "@sentry/node"
 import { addHours, compareDesc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
+import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
+import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
+import type { MarkService } from "../mark/mark-service"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
 import type { PaymentProductsService } from "../payment/payment-products-service"
@@ -34,6 +38,7 @@ import {
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
+  type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyPaymentTaskDefinition,
   tasks,
 } from "../task/task-definition"
@@ -147,6 +152,10 @@ export interface AttendanceService {
   completeAttendeePayment(handle: DBHandle, paymentId: string): Promise<void>
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   executeVerifyPaymentTask(handle: DBHandle, task: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
+  executeVerifyFeedbackAnsweredTask(
+    handle: DBHandle,
+    task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
+  ): Promise<void>
 
   /**
    * Register that an attendee has physically attended an event.
@@ -168,10 +177,13 @@ export function getAttendanceService(
   attendanceRepository: AttendanceRepository,
   taskSchedulingService: TaskSchedulingService,
   userService: UserService,
+  markService: MarkService,
   personalMarkService: PersonalMarkService,
   paymentService: PaymentService,
   paymentProductsService: PaymentProductsService,
   eventService: EventService,
+  feedbackFormService: FeedbackFormService,
+  feedbackAnswerService: FeedbackFormAnswerService,
   configuration: Configuration
 ): AttendanceService {
   const logger = getLogger("attendance-service")
@@ -824,6 +836,45 @@ export function getAttendanceService(
           paymentDeadline: null,
           paymentLink: null,
         })
+      }
+    },
+    async executeVerifyFeedbackAnsweredTask(handle, { feedbackFormId }) {
+      const feedbackForm = await feedbackFormService.getById(handle, feedbackFormId)
+
+      const attendance = await attendanceRepository.findAttendanceByEventId(handle, feedbackForm.eventId)
+      const event = await eventService.getEventById(handle, feedbackForm.eventId)
+      const attendees = attendance?.attendees ?? []
+
+      if (attendees.length === 0) {
+        return
+      }
+
+      const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
+
+      if (!isPast(feedbackForm.answerDeadline)) {
+        throw new Error("executeVerifyFeedbackAnsweredTask tried to run before answerDeadline on feedback form passed")
+      }
+
+      const attendeesWithoutAnswers = attendees.filter(
+        (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
+      )
+
+      if (attendeesWithoutAnswers.length === 0) return
+
+      const mark = await markService.createMark(
+        handle,
+        {
+          title: `Manglende tilbakemelding på ${event.title}`,
+          duration: DEFAULT_MARK_DURATION,
+          type: "MISSING_FEEDBACK",
+          weight: 2,
+          details: null,
+        },
+        event.hostingGroups.map((group) => group.slug)
+      )
+
+      for (const attendee of attendeesWithoutAnswers) {
+        await personalMarkService.addToUser(handle, attendee.user.id, mark.id)
       }
     },
     async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {

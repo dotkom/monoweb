@@ -11,14 +11,16 @@ export const CreateMarkModal: FC<ContextModalProps> = ({ context, id }) => {
 
   const FormComponent = useMarkWriteForm({
     label: "Gi prikk",
-    onSubmit: async ({ title, details, duration, weight, groupSlug }) => {
+    onSubmit: async ({ title, details, duration, weight, groupIds }) => {
       create.mutate({
-        title,
-        details,
-        weight,
-        type: "MANUAL",
-        groupSlug,
-        duration,
+        data: {
+          title,
+          details,
+          weight,
+          type: "MANUAL",
+          duration,
+        },
+        groupIds,
       })
       close()
     },

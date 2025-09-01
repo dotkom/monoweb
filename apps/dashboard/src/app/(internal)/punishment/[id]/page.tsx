@@ -31,9 +31,9 @@ export default function MarkEditCard() {
   const FormComponent = useMarkWriteForm({
     label: "Oppdater prikk",
     onSubmit: (data) => {
-      edit.mutate({ ...data, id: mark.id, type: "MANUAL" })
+      edit.mutate({ changes: { ...data, id: mark.id, type: "MANUAL" }, groupIds: data.groupIds })
     },
-    defaultValues: { ...mark },
+    defaultValues: { ...mark, groupIds: mark.groups.map((group) => group.slug) },
   })
 
   const removeMark = useMutation(

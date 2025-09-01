@@ -2,7 +2,7 @@ import type { SchedulerClient } from "@aws-sdk/client-scheduler"
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { AttendanceId, AttendeeId, EventId, Task, TaskId } from "@dotkomonline/types"
+import type { AttendanceId, AttendeeId, EventId, FeedbackFormId, Task, TaskId } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { NotImplementedError } from "../../error"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
@@ -29,6 +29,7 @@ export interface TaskSchedulingService {
   findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendancePaymentsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
 }
 
 export function getLocalTaskSchedulingService(
@@ -68,6 +69,9 @@ export function getLocalTaskSchedulingService(
     async findChargeAttendancePaymentsTask(handle, attendanceId) {
       return await taskRepository.findChargeAttendancePaymentsTask(handle, attendanceId)
     },
+    async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
+      return await taskRepository.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
+    },
   }
 }
 
@@ -96,6 +100,10 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
     },
     async findChargeAttendancePaymentsTask(_, attendanceId) {
       logger.warn("findChargeAttendancePaymentsTask is not implemented in EventBridgeSchedulingService")
+      return null
+    },
+    async findVerifyFeedbackAnsweredTask(_, feedbackFormId) {
+      logger.warn("findVerifyFeedbackAnsweredTask is not implemented in EventBridgeSchedulingService")
       return null
     },
   }

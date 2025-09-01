@@ -17,12 +17,12 @@ describe("MarkService", () => {
       duration: 20,
       updatedAt: new Date(),
       weight: 3,
-      groupSlug: "bedkom",
       type: "MANUAL" as const,
+      groups: [],
     }
     const id = randomUUID()
     vi.spyOn(markRepository, "create").mockResolvedValueOnce({ id, ...mark })
-    await expect(markService.createMark(db, mark)).resolves.toEqual({ id, ...mark })
+    await expect(markService.createMark(db, mark, [])).resolves.toEqual({ id, ...mark })
     expect(markRepository.create).toHaveBeenCalledWith(db, mark)
   })
 

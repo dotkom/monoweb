@@ -1,7 +1,8 @@
-import type { DBHandle, Mark, PersonalMark } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db"
 import {
+  type Mark,
   type MarkId,
-  MarkSchema,
+  type PersonalMark,
   type PersonalMarkDetails,
   PersonalMarkDetailsSchema,
   PersonalMarkSchema,
@@ -9,13 +10,14 @@ import {
 } from "@dotkomonline/types"
 import z from "zod"
 import { parseOrReport } from "../../invariant"
+import { mapMark } from "./mark-repository"
 
 export interface PersonalMarkRepository {
   getByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
   getAllByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
   getDetailsByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
   getAllMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
-  addToUserId(handle: DBHandle, userId: UserId, markId: MarkId, givenByid: UserId): Promise<PersonalMark>
+  addToUserId(handle: DBHandle, userId: UserId, markId: MarkId, givenByid?: UserId): Promise<PersonalMark>
   removeFromUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
   getByUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark | null>
   countUsersByMarkId(handle: DBHandle, markId: MarkId): Promise<number>
@@ -32,9 +34,23 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
     async getAllMarksByUserId(handle, userId) {
       const personalMarks = await handle.personalMark.findMany({
         where: { userId },
-        select: { mark: true },
+        include: {
+          mark: {
+            include: {
+              groups: {
+                include: {
+                  group: {
+                    include: {
+                      roles: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       })
-      return personalMarks.map((personalMark) => parseOrReport(MarkSchema, personalMark.mark))
+      return personalMarks.map((personalMark) => mapMark(personalMark.mark, personalMark.mark.groups))
     },
     async getDetailsByMarkId(handle, markId) {
       const personalMarks = await handle.personalMark.findMany({
@@ -60,9 +76,13 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
           },
           mark: {
             select: {
-              group: {
+              groups: {
                 include: {
-                  roles: true,
+                  group: {
+                    include: {
+                      roles: true,
+                    },
+                  },
                 },
               },
             },
@@ -72,11 +92,11 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
 
       return parseOrReport(
         z.array(PersonalMarkDetailsSchema),
-        personalMarks.map(({ user, mark: { group: givenByGroup }, givenBy, ...personalMark }) => ({
+        personalMarks.map(({ user, mark: { groups: givenByGroups }, givenBy, ...personalMark }) => ({
           personalMark,
           user,
           givenBy,
-          givenByGroup,
+          givenByGroups: givenByGroups.map((group) => group.group),
         }))
       )
     },

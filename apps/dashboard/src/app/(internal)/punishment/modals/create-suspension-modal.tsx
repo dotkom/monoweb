@@ -14,9 +14,12 @@ export const CreateSuspensionModal: FC<ContextModalProps> = ({ context, id }) =>
     label: "Gi suspensjon",
     onSubmit: async (mark) => {
       create.mutate({
-        ...mark,
-        weight: 6,
-        type: "MANUAL",
+        data: {
+          ...mark,
+          weight: 6,
+          type: "MANUAL",
+        },
+        groupIds: mark.groupIds,
       })
       close()
     },

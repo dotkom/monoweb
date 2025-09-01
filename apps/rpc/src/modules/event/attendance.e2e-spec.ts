@@ -221,14 +221,17 @@ describe("attendance integration tests", async () => {
     await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // Create a user and suspend them by giving them more than 6 marks.
     const user = await core.userService.register(dbClient, subject)
-    const mark = await core.markService.createMark(dbClient, {
-      type: "MANUAL",
-      title: "Du har fått suspensjon",
-      details: null,
-      duration: 14,
-      weight: 999,
-      groupSlug: group.slug,
-    })
+    const mark = await core.markService.createMark(
+      dbClient,
+      {
+        type: "MANUAL",
+        title: "Du har fått suspensjon",
+        details: null,
+        duration: 14,
+        weight: 999,
+      },
+      [group.slug]
+    )
     await core.personalMarkService.addToUser(dbClient, user.id, mark.id, user.id)
     const punishment = await core.personalMarkService.findPunishmentByUserId(dbClient, user.id)
     expect(punishment).toEqual(expect.objectContaining({ suspended: true }))
@@ -352,14 +355,17 @@ describe("attendance integration tests", async () => {
 
     // Create a mark that gives the user a reservation time
     const group = await core.groupService.create(dbClient, getMockGroup({ abbreviation: "Bedkom" }))
-    const mark = await core.markService.createMark(dbClient, {
-      type: "MANUAL",
-      title: "Du har fått en reservasjonstid",
-      details: null,
-      duration: 14,
-      weight: 1,
-      groupSlug: group.slug,
-    })
+    const mark = await core.markService.createMark(
+      dbClient,
+      {
+        type: "MANUAL",
+        title: "Du har fått en reservasjonstid",
+        details: null,
+        duration: 14,
+        weight: 1,
+      },
+      [group.slug]
+    )
     await core.personalMarkService.addToUser(dbClient, user.id, mark.id, user.id)
     const punishment = await core.personalMarkService.findPunishmentByUserId(dbClient, user.id)
     expect(punishment).toEqual(expect.objectContaining({ delay: 1, suspended: false }))
