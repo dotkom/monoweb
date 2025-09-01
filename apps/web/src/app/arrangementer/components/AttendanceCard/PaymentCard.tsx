@@ -1,67 +1,81 @@
 "use client"
-
-import { useCountdown } from "@/utils/use-countdown"
-import type { Attendance, Attendee } from "@dotkomonline/types"
-import { Icon, Text, cn } from "@dotkomonline/ui"
+import { type Attendance, type User, getAttendee } from "@dotkomonline/types"
+import { Icon, Stripes, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link"
-import type { HTMLProps, PropsWithChildren } from "react"
-
-const GenericPaymentCard = ({ children, disabled, className }: PropsWithChildren<HTMLProps<HTMLDivElement>>) => (
-  <div
-    className={cn(
-      "rounded-lg h-fit min-h-[4rem] font-medium flex items-center justify-center gap-1 bg-amber-100",
-      {
-        "cursor-not-allowed": disabled,
-      },
-      className
-    )}
-  >
-    <Icon className="text-lg bold" icon="tabler:credit-card" />
-    <div className="flex flex-col items-center">{children}</div>
-  </div>
-)
 
 interface PaymentCardProps {
   attendance: Attendance
-  attendee: Attendee | null
+  user: User | null
 }
 
-export const PaymentCard = ({ attendance, attendee }: PaymentCardProps) => {
-  const countdownText = useCountdown(attendee?.paymentDeadline ?? null)
-
+export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
   if (!attendance.attendancePrice) {
     return null
   }
 
-  if (!attendee?.reserved) {
-    return <GenericPaymentCard disabled>Pris: {attendance.attendancePrice} kr</GenericPaymentCard>
+  const attendee = getAttendee(attendance, user)
+
+  if (!user || !attendee?.reserved) {
+    return (
+      <div
+        className={cn(
+          "rounded-lg h-fit min-h-[4rem] flex items-center justify-center",
+          "bg-gray-100 cursor-not-allowed"
+        )}
+      >
+        <div className="flex flex-row items-center justify-center gap-2 font-medium">
+          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <Text>{attendance.attendancePrice} kr</Text>
+        </div>
+      </div>
+    )
   }
 
   if (attendee.paymentReservedAt || attendee.paymentChargedAt) {
     return (
-      <GenericPaymentCard disabled className="bg-green-200">
-        {attendance.attendancePrice} kr betalt
-      </GenericPaymentCard>
+      <div
+        className={cn(
+          "rounded-lg h-fit min-h-[4rem] flex items-center justify-center",
+          "bg-gray-200 cursor-not-allowed"
+        )}
+      >
+        <div className="flex flex-row items-center justify-center gap-1 font-medium">
+          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <Text>{attendance.attendancePrice} kr betalt</Text>
+        </div>
+      </div>
     )
   }
 
   if (attendee.paymentDeadline && attendee.paymentLink) {
     return (
-      <Link href={attendee.paymentLink}>
-        <GenericPaymentCard className="bg-amber-300">
-          <Text>Betal innen {countdownText}</Text>
-        </GenericPaymentCard>
+      <Link
+        href={attendee.paymentLink}
+        className="rounded-lg h-fit min-h-[4rem] flex items-center justify-center bg-yellow-200"
+      >
+        <div className="flex flex-row items-center justify-center gap-1 font-medium">
+          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <Text>Betal</Text>
+        </div>
       </Link>
     )
   }
 
   if (attendee.paymentRefundedAt) {
     return (
-      <GenericPaymentCard className="bg-green-200">
-        <Text>Betaling refundert</Text>
-      </GenericPaymentCard>
+      <Stripes
+        colorA={"bg-gray-200"}
+        colorB={"bg-green-200"}
+        animated
+        className={cn("rounded-lg h-fit min-h-[4rem] flex items-center justify-center")}
+      >
+        <div className="flex flex-row items-center justify-center gap-1 font-medium">
+          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <Text>Betal</Text>
+        </div>
+      </Stripes>
     )
   }
 
-  return <GenericPaymentCard>Ukjent betalingsstatus</GenericPaymentCard>
+  return null
 }
