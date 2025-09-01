@@ -839,6 +839,12 @@ export function getAttendanceService(
       }
     },
     async executeVerifyFeedbackAnsweredTask(handle, { feedbackFormId }) {
+      const previousTask = await taskSchedulingService.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
+
+      if (previousTask?.status === "COMPLETED") {
+        throw new Error("executeVerifyFeedbackAnsweredTask tried to run after already having completed")
+      }
+
       const feedbackForm = await feedbackFormService.getById(handle, feedbackFormId)
 
       if (!isPast(feedbackForm.answerDeadline)) {
