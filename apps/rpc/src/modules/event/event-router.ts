@@ -13,6 +13,7 @@ import { BasePaginateInputSchema } from "../../query"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { feedbackRouter } from "./feedback-router"
+import { JsonValue } from "@prisma/client/runtime/library"
 
 export const eventRouter = t.router({
   attendance: attendanceRouter,
@@ -95,7 +96,19 @@ export const eventRouter = t.router({
           entityId: input.id,
           entityType: "event",
           action: "update",
-          metadata: { username: user.name },
+          metadata: {
+            
+            user: {
+              username: user.name,
+              email: user.email,
+            },
+
+            changes: {
+              before: existing,
+              after: updatedEvent,
+            } 
+            
+          } as unknown as JsonValue,
         })
         const attendance = updatedEventWithoutOrganizers.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)

@@ -183,6 +183,9 @@ importers:
       import-in-the-middle:
         specifier: ^1.14.2
         version: 1.14.2
+      json-diff-ts:
+        specifier: ^4.8.2
+        version: 4.8.2
       next:
         specifier: ^15.3.5
         version: 15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -6867,6 +6870,9 @@ packages:
 
   json-bigint@1.0.0:
     resolution: {integrity: sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==}
+
+  json-diff-ts@4.8.2:
+    resolution: {integrity: sha512-7LgOTnfK5XnBs0o0AtHTkry5QGZT7cSlAgu5GtiomUeoHqOavAUDcONNm/bCe4Lapt0AHnaidD5iSE+ItvxKkA==}
 
   json-parse-even-better-errors@2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
@@ -15526,6 +15532,8 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
 
+  json-diff-ts@4.8.2: {}
+
   json-parse-even-better-errors@2.3.1: {}
 
   json-schema-ref-resolver@2.0.1:
@@ -16362,7 +16370,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.1)
+      styled-jsx: 5.1.6(react@19.1.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.4.6
       '@next/swc-darwin-x64': 15.4.6
@@ -17592,6 +17600,11 @@ snapshots:
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
+
+  styled-jsx@5.1.6(react@19.1.1):
+    dependencies:
+      client-only: 0.0.1
+      react: 19.1.1
 
   sugarss@5.0.0(postcss@8.5.6):
     dependencies:

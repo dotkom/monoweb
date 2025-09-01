@@ -11,7 +11,7 @@ export const auditLogRouter = t.router({
   getById: staffProcedure.input(AuditLogSchema.shape.id)
     .query(async ({ input, ctx }) =>
     {
-      ctx.authorize.requireAffiliation("dotkom","hs")
+      ctx.authorize.requireAffiliation("dotkom")
       return ctx.executeTransaction(async (handle) => ctx.auditLogService.getAuditLogById(handle, input))
     }
     )
@@ -19,7 +19,7 @@ export const auditLogRouter = t.router({
   getByUserId: staffProcedure.input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
     {
-      ctx.authorize.requireAffiliation("dotkom","hs")
+      ctx.authorize.requireAffiliation("dotkom")
       return ctx.executeTransaction(async (handle) => ctx.auditLogService.getAuditLogsByUserId(handle, ctx.principal.subject, input))
     }
     ),
