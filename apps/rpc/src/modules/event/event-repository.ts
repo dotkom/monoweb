@@ -144,7 +144,7 @@ export function getEventRepository(): EventRepository {
                   }
                 : undefined,
               type: {
-                notIn: query.excludingType ? query.excludingType : ["INTERNAL"],
+                notIn: query.excludingType ?? ["INTERNAL"],
               },
             },
             {
