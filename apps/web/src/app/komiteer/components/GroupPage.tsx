@@ -26,7 +26,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           max: null,
           min: getCurrentUTC(),
         },
-        excludingType: !isStaff ? ["INTERNAL"] : undefined,
+        excludingType: isStaff ? [] : undefined,
         orderBy: "asc",
       },
     }),

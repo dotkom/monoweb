@@ -29,7 +29,7 @@ const EventPage = () => {
       },
 
       excludingOrganizingGroup: ["velkom"],
-      excludingType: !isStaff ? ["INTERNAL"] : undefined,
+      excludingType: isStaff ? [] : undefined,
       orderBy: "asc",
     },
     page: {
@@ -48,7 +48,7 @@ const EventPage = () => {
       },
 
       excludingOrganizingGroup: ["velkom"],
-      excludingType: !isStaff ? ["INTERNAL"] : undefined,
+      excludingType: isStaff ? [] : undefined,
       orderBy: "desc",
     },
   })

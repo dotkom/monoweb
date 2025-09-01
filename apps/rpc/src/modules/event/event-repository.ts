@@ -136,20 +136,16 @@ export function getEventRepository(): EventRepository {
               ],
             },
             {
-              hostingGroups:
-                query.excludingOrganizingGroup && query.excludingOrganizingGroup.length > 0
-                  ? {
-                      none: {
-                        groupId: { in: query.excludingOrganizingGroup },
-                      },
-                    }
-                  : undefined,
-              type:
-                query.excludingType && query.excludingType.length > 0
-                  ? {
-                      notIn: query.excludingType,
-                    }
-                  : undefined,
+              hostingGroups: query.excludingOrganizingGroup
+                ? {
+                    none: {
+                      groupId: { in: query.excludingOrganizingGroup },
+                    },
+                  }
+                : undefined,
+              type: {
+                notIn: query.excludingType ? query.excludingType : ["INTERNAL"],
+              },
             },
             {
               feedbackForm: query.byHasFeedbackForm

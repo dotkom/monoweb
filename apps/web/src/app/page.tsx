@@ -22,7 +22,7 @@ export default async function App() {
         min: getCurrentUTC(),
       },
       excludingOrganizingGroup: ["velkom"],
-      excludingType: !isStaff ? ["INTERNAL"] : undefined,
+      excludingType: isStaff ? [] : undefined,
       orderBy: "asc",
     },
   })

@@ -199,7 +199,7 @@ export default function ProfilePage() {
               min: now,
               max: null,
             },
-            excludingType: !isStaff ? ["INTERNAL"] : undefined,
+            excludingType: isStaff ? [] : undefined,
           },
         },
         { enabled: isLoggedIn && Boolean(user?.id) }
@@ -218,7 +218,7 @@ export default function ProfilePage() {
         max: now,
         min: null,
       },
-      excludingType: !isStaff ? ["INTERNAL"] : undefined,
+      excludingType: isStaff ? [] : undefined,
     },
     enabled: isLoggedIn && Boolean(user?.id),
   })
