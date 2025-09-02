@@ -13,7 +13,6 @@ import { BasePaginateInputSchema } from "../../query"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { feedbackRouter } from "./feedback-router"
-import { JsonValue } from "@prisma/client/runtime/library"
 
 export const eventRouter = t.router({
   attendance: attendanceRouter,
@@ -58,6 +57,8 @@ export const eventRouter = t.router({
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
+        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`;
+
         const eventWithoutOrganizers = await ctx.eventService.createEvent(handle, input.event)
         const event = await ctx.eventService.updateEventOrganizers(
           handle,
@@ -81,7 +82,7 @@ export const eventRouter = t.router({
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        const existing = await ctx.eventService.getEventById(handle, input.id)
+        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`;
         const updatedEventWithoutOrganizers = await ctx.eventService.updateEvent(handle, input.id, input.event)
         const updatedEvent = await ctx.eventService.updateEventOrganizers(
           handle,
@@ -89,27 +90,6 @@ export const eventRouter = t.router({
           new Set(input.groupIds),
           new Set(input.companies),
         )
-        // AuditLog
-        const user = await ctx.userService.getById(handle, ctx.principal.subject)
-        ctx.auditLogService.logAction(handle, {
-          userId: ctx.principal.subject,
-          entityId: input.id,
-          entityType: "event",
-          action: "update",
-          metadata: {
-            
-            user: {
-              username: user.name,
-              email: user.email,
-            },
-
-            changes: {
-              before: existing,
-              after: updatedEvent,
-            } 
-            
-          } as unknown as JsonValue,
-        })
         const attendance = updatedEventWithoutOrganizers.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)
           : null
@@ -124,7 +104,10 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      
       return ctx.executeTransaction(async (handle) => {
+        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`;
+
         return await ctx.eventService.deleteEvent(handle, input.id)
       })
     }),

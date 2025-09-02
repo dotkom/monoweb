@@ -84,7 +84,6 @@ model User {
   givenMarks        PersonalMark[]    @relation("GivenBy")
   attendeesRefunded Attendee[]        @relation(name: "RefundedBy")
   auditLogs         AuditLog[]
-
   @@map("ow_user")
 }
 
@@ -618,14 +617,14 @@ model FeedbackFormAnswer {
 }
 model AuditLog {
   id          String   @id @default(uuid())
-  metadata    Json     @default("{}")
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  user        User?     @relation(fields: [userId], references: [id])
-  userId      String?
 
-  action      String
-  entityType  String
-  entityId    String
+  tableName   String
+  rowId       String?
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  operation   String
+  rowData     Json
 
   @@map("audit_log")
 }

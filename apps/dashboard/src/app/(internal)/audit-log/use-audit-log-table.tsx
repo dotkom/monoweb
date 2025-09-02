@@ -14,17 +14,15 @@ export const useAuditLogTable = ({ data }: Props) => {
   const columns = useMemo(
     () => [
 
-      columnHelper.accessor("metadata", {
+      columnHelper.accessor("user", {
         header: () => "Bruker",
 
         cell: (info) => {
 
-        const metadata = info.getValue() as Record<string, any> | null;
-        const username = metadata?.username ?? "System"
-
+        
         return (
         <Anchor component={Link} size="sm" href={`/user/${info.row.original.userId}`}>
-          {username}
+          {info.getValue()?.name ?? "System"}
         </Anchor>
 
         )
@@ -36,12 +34,12 @@ export const useAuditLogTable = ({ data }: Props) => {
         cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy HH:mm"),
       }),
 
-      columnHelper.accessor("action", {
+      columnHelper.accessor("operation", {
         header: () => "Handling",
         cell: (info) => info.getValue()
       }),
 
-      columnHelper.accessor("entityType", {
+      columnHelper.accessor("tableName", {
         header: () => "Type",
         cell: (info) => info.getValue(),
       }),

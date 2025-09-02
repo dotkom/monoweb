@@ -45,6 +45,7 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
       serviceLayer
     )
   }
+  
   return createContext(null, serviceLayer)
 }
 
