@@ -24,7 +24,7 @@ export const EventEditCard: FC = () => {
         event,
         groupIds: hostingGroupIds,
         companies: data.companies.map((company) => company.id),
-        parentId: event.parentId
+        parentId: event.parentId,
       })
     },
     defaultValues,

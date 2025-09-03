@@ -13,7 +13,7 @@ export default function Page() {
         groupIds: hostingGroupIds,
         companies: [],
         event,
-        parentId: event.parentId
+        parentId: event.parentId,
       })
     },
   })

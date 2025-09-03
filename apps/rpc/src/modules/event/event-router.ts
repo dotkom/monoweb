@@ -92,7 +92,7 @@ export const eventRouter = t.router({
           new Set(input.companies)
         )
         await ctx.eventService.updateEventParent(handle, updatedEvent.id, input.parentId ?? null)
-        
+
         const attendance = updatedEventWithoutOrganizers.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)
           : null
