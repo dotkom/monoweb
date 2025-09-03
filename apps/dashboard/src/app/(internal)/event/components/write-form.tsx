@@ -1,12 +1,19 @@
 import { useGroupAllQuery } from "@/app/(internal)/group/queries"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
+import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type EventStatus, EventTypeSchema, EventWriteSchema, mapEventTypeToLabel } from "@dotkomonline/types"
+import {
+  EventSchema,
+  type EventStatus,
+  EventTypeSchema,
+  EventWriteSchema,
+  mapEventTypeToLabel,
+} from "@dotkomonline/types"
 import { addHours, roundToNearestHours } from "date-fns"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
@@ -23,6 +30,7 @@ const EVENT_FORM_DATA_STATUS = [
 
 const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
+  parentId: EventSchema.shape.id.nullable(),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
   for (const issue of issues) {
@@ -48,6 +56,7 @@ const DEFAULT_VALUES = {
   locationLink: null,
   imageUrl: null,
   hostingGroupIds: [],
+  parentId: null,
 } as const satisfies FormValidationResult
 
 interface UseEventWriteFormProps {
@@ -119,6 +128,11 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         placeholder: "Velg type",
         data: EVENT_FORM_DATA_TYPE,
         withAsterisk: true,
+      }),
+      parentId: createEventSelectInput({
+        label: "Forelderarrangement",
+        placeholder: "Søk etter arrangement...",
+        clearable: true,
       }),
     },
   })

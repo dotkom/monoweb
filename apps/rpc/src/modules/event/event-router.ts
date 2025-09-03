@@ -53,6 +53,7 @@ export const eventRouter = t.router({
         event: EventWriteSchema,
         groupIds: z.array(GroupSchema.shape.slug),
         companies: z.array(CompanySchema.shape.id),
+        parentId: EventSchema.shape.parentId.optional(),
       })
     )
     .output(EventWithAttendanceSchema)
@@ -65,6 +66,7 @@ export const eventRouter = t.router({
           new Set(input.groupIds),
           new Set(input.companies)
         )
+        await ctx.eventService.updateEventParent(handle, event.id, input.parentId ?? null)
         return { event, attendance: null }
       })
     }),
@@ -76,6 +78,7 @@ export const eventRouter = t.router({
         event: EventWriteSchema,
         groupIds: z.array(GroupSchema.shape.slug),
         companies: z.array(CompanySchema.shape.id),
+        parentId: EventSchema.shape.parentId.optional(),
       })
     )
     .output(EventWithAttendanceSchema)
@@ -88,6 +91,8 @@ export const eventRouter = t.router({
           new Set(input.groupIds),
           new Set(input.companies)
         )
+        await ctx.eventService.updateEventParent(handle, updatedEvent.id, input.parentId ?? null)
+        
         const attendance = updatedEventWithoutOrganizers.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)
           : null
