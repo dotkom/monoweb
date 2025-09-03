@@ -35,6 +35,7 @@ import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { type FC, Fragment, type PropsWithChildren, useState } from "react"
 
 const THEME_OPTIONS = [
@@ -197,6 +198,7 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false)
 
   const session = useSession()
+  const router = useRouter()
   const trpc = useTRPC()
   const fullPathname = useFullPathname()
 
@@ -252,14 +254,15 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="w-full flex flex-row gap-2 items-center cursor-pointer">
-          <Link
-            href={createLogoutUrl({ redirectAfter: fullPathname })}
-            className="w-full flex flex-row gap-2 items-center"
-          >
-            <Icon icon="tabler:logout" className="text-sm" />
-            <Text element="span">Logg ut</Text>
-          </Link>
+        <DropdownMenuItem
+          className="w-full flex flex-row gap-2 items-center cursor-pointer"
+          onClick={() => {
+            const logoutUrl = createLogoutUrl({ redirectAfter: fullPathname })
+            router.push(logoutUrl)
+          }}
+        >
+          <Icon icon="tabler:logout" className="text-sm" />
+          <Text element="span">Logg ut</Text>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
