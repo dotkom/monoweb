@@ -67,6 +67,8 @@ model User {
   dietaryRestrictions String?
   ntnuUsername        String?
   flags               String[]
+  /// Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
+  workspaceUserId     String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
@@ -289,7 +291,7 @@ model Event {
   createdAt       DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
-  parentId        String?
+  parentId String?
   parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
   children Event[] @relation("children")
 
