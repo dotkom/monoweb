@@ -2,7 +2,16 @@ import { auth } from "@/auth"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { getEventSlug, getEventUrl } from "@/utils/getEventUrl"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Company, Event, Group, GroupType, Punishment, User } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type Company,
+  type Event,
+  type Group,
+  type GroupType,
+  type Punishment,
+  type User,
+  createGroupPageUrl,
+} from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import clsx from "clsx"
 import { isPast } from "date-fns"
@@ -17,17 +26,17 @@ import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBo
 
 type OrganizerType = GroupType | "COMPANY"
 
-const organizerTypeToLink: Record<OrganizerType, string> = {
-  COMMITTEE: "/komiteer",
-  INTEREST_GROUP: "/interessegrupper",
-  COMPANY: "/bedrifter",
-  NODE_COMMITTEE: "/nodekomiteer",
-  ASSOCIATED: "/andre-grupper",
+const createOrganizerPageUrl = (item: Group | Company) => {
+  if ("type" in item) {
+    return createGroupPageUrl(item)
+  }
+
+  return `/bedrifter/${item.slug}`
 }
 
 const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
   <Link
-    href={`${organizerTypeToLink[type]}/${item.slug}`}
+    href={createOrganizerPageUrl(item)}
     key={item.name}
     className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-800 dark:hover:bg-stone-900"
   >
