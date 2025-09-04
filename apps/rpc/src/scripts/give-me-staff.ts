@@ -2,6 +2,10 @@ import type { Prisma } from "@prisma/client"
 import { configuration } from "src/configuration"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 
+if (!process.env.DATABASE_URL?.includes("localhost")) {
+  throw new Error("Tried to give staff on a non-local database")
+}
+
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma
