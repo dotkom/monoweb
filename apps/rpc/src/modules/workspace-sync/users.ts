@@ -1,7 +1,7 @@
 import type { User } from "@dotkomonline/types"
 import type { admin_directory_v1 } from "googleapis"
 import { getDirectory } from "./client"
-import { getTemporaryPassword, getCommitteeEmail, getKey } from "./helpers"
+import { getCommitteeEmail, getKey, getTemporaryPassword } from "./helpers"
 
 const createRecoveryCodes = async (user: User): Promise<string[] | null> => {
   const directory = getDirectory()
@@ -26,7 +26,7 @@ const createRecoveryCodes = async (user: User): Promise<string[] | null> => {
 
 export async function createWorkspaceUser(
   user: User
-): Promise<{ user: admin_directory_v1.Schema$User; recoveryCodes: string[] | null, password: string } | null> {
+): Promise<{ user: admin_directory_v1.Schema$User; recoveryCodes: string[] | null; password: string } | null> {
   if (user.workspaceUserId) {
     throw new Error("User already has a workspace user ID")
   }
@@ -84,7 +84,9 @@ export async function createWorkspaceUser(
   }
 }
 
-export const resetWorkspaceUserPassword = async (user: User): Promise<{ user: admin_directory_v1.Schema$User; recoveryCodes: string[] | null, password: string } | null> => {
+export const resetWorkspaceUserPassword = async (
+  user: User
+): Promise<{ user: admin_directory_v1.Schema$User; recoveryCodes: string[] | null; password: string } | null> => {
   const directory = getDirectory()
 
   if (!directory) {
@@ -106,6 +108,7 @@ export const resetWorkspaceUserPassword = async (user: User): Promise<{ user: ad
   let recoveryCodes: string[] | null = null
 
   if (is2faEnforced && !is2faEnabled) {
+    await directory.verificationCodes.invalidate({ userKey: getKey(user) })
     recoveryCodes = await createRecoveryCodes(user)
   }
 
@@ -114,4 +117,26 @@ export const resetWorkspaceUserPassword = async (user: User): Promise<{ user: ad
     recoveryCodes,
     password,
   }
+}
+
+export const getWorkspaceUser = async (
+  userResolvable: User | admin_directory_v1.Schema$User
+): Promise<admin_directory_v1.Schema$User | null> => {
+  const directory = getDirectory()
+
+  if (!directory) {
+    return null
+  }
+
+  const userKey = "profileSlug" in userResolvable ? getKey(userResolvable) : userResolvable.id
+
+  if (!userKey) {
+    throw new Error("Workspace user does not have 'id'")
+  }
+
+  const response = await directory.users.get({
+    userKey,
+  })
+
+  return response.data ?? null
 }

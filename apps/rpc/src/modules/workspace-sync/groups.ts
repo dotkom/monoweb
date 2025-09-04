@@ -43,7 +43,10 @@ export async function removeUserFromGroup(groupName: string, userEmail: string):
   }
 
   return await directory.members
-    .delete({ groupKey: getKey(groupName), memberKey: getKey(userEmail) })
+    .delete({
+      groupKey: getKey(groupName),
+      memberKey: getKey(userEmail),
+    })
     .then(() => true)
     .catch(() => false)
 }

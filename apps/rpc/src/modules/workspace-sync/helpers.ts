@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto"
 import type { Group, User } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
+import type { admin_directory_v1 } from "googleapis"
 
 const DEFAULT_DOMAIN = process.env.WORKSPACE_SYNC_DOMAIN ?? "online.ntnu.no"
 const TEMPORARY_PASSWORD_LENGTH = 8
@@ -9,13 +10,24 @@ export function isSyncEnabled() {
   return process.env.WORKSPACE_SYNC_ENABLED === "true"
 }
 
-const getLocal = (localResolvable: User | Group | string): string => {
+const getLocal = (localResolvable: admin_directory_v1.Schema$User | User | Group | string): string => {
   if (typeof localResolvable === "string") {
     return localResolvable
   }
-  
-  if ("type" in localResolvable) {
-    return  localResolvable.slug
+
+  const isWorkspaceUser = "primaryEmail" in localResolvable
+  const isGroup = "type" in localResolvable
+
+  if (isWorkspaceUser) {
+    if (!localResolvable.primaryEmail) {
+      throw new Error("Workspace user email is required")
+    }
+
+    return localResolvable.primaryEmail
+  }
+
+  if (isGroup) {
+    return localResolvable.slug
   }
 
   if (localResolvable.workspaceUserId) {
@@ -35,7 +47,10 @@ const getLocal = (localResolvable: User | Group | string): string => {
  * getKey("user@online.ntnu.no") // "user@online.ntnu.no"
  * getKey("user", "custom.domain") // "user@custom.domain"
  */
-export function getKey(localResolvable: User | Group | string, domain = DEFAULT_DOMAIN) {
+export function getKey(
+  localResolvable: admin_directory_v1.Schema$User | User | Group | string,
+  domain = DEFAULT_DOMAIN
+) {
   const local = getLocal(localResolvable)
 
   if (local.includes("@")) {
