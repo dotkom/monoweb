@@ -32,7 +32,7 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
-import { useQuery } from "@tanstack/react-query"
+import { skipToken, useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -62,6 +62,9 @@ export const ProfileMenu: FC = () => {
   const trpc = useTRPC()
 
   const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
+  const { data: feedbackFormsMissingAnswer } = useQuery(
+    trpc.event.feedback.findManyByUserNotAnswered.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
+  )
 
   if (session === null) {
     const { setTheme, theme } = useTheme()
@@ -130,7 +133,7 @@ export const ProfileMenu: FC = () => {
   }
 
   return (
-    <button type="button">
+    <button type="button" className="relative">
       <AvatarDropdown>
         <Avatar>
           <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
@@ -139,6 +142,9 @@ export const ProfileMenu: FC = () => {
           </AvatarFallback>
         </Avatar>
       </AvatarDropdown>
+      {feedbackFormsMissingAnswer && feedbackFormsMissingAnswer.length > 0 && (
+        <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-600 animate-bounce" />
+      )}
     </button>
   )
 }

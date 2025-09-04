@@ -7,6 +7,7 @@ import {
   type FeedbackFormWrite,
   type FeedbackPublicResultsToken,
   type FeedbackQuestionWrite,
+  type UserId,
 } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
 
@@ -26,6 +27,7 @@ export interface FeedbackFormRepository {
     publicResultsToken: FeedbackPublicResultsToken
   ): Promise<FeedbackForm | null>
   getPublicResultsToken(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackPublicResultsToken | null>
+  findManyByUserNotAnswered(handle: DBHandle, userId: UserId): Promise<FeedbackForm[]>
 }
 
 export function getFeedbackFormRepository(): FeedbackFormRepository {
@@ -161,6 +163,43 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
       })
 
       return result?.publicResultsToken ?? null
+    },
+    async findManyByUserNotAnswered(handle, userId) {
+      const rows = await handle.feedbackForm.findMany({
+        where: {
+          AND: [
+            {
+              isActive: true,
+            },
+            {
+              event: {
+                attendance: {
+                  attendees: {
+                    some: {
+                      userId,
+                    },
+                  },
+                },
+                end: {
+                  lt: new Date(),
+                },
+              },
+            },
+            {
+              answers: {
+                none: {
+                  attendee: {
+                    userId,
+                  },
+                },
+              },
+            },
+          ],
+        },
+        include: QUERY_WITH_QUESTIONS,
+      })
+
+      return parseOrReport(FeedbackFormSchema.array(), rows)
     },
   }
 }
