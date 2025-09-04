@@ -43,9 +43,9 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
   return { events: useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]), ...query }
 }
 
-export const useEventWithAttendancesGetQuery = (id: EventId) => {
+export const useEventWithAttendancesGetQuery = (id: EventId, enabled?: boolean) => {
   const trpc = useTRPC()
-  return useQuery(trpc.event.get.queryOptions(id))
+  return useQuery(trpc.event.get.queryOptions(id, { enabled }))
 }
 
 export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
