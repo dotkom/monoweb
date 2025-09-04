@@ -11,6 +11,7 @@ import {
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
+  type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyPaymentTaskDefinition,
   getTaskDefinition,
   tasks,
@@ -105,6 +106,11 @@ export function getLocalTaskExecutor(
                 return await attendanceService.executeChargeAttendancePaymentsTask(
                   handle,
                   payload as InferTaskData<ChargeAttendancePaymentsTaskDefinition>
+                )
+              case tasks.VERIFY_FEEDBACK_ANSWERED.type:
+                return await attendanceService.executeVerifyFeedbackAnsweredTask(
+                  handle,
+                  payload as InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
                 )
             }
             // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We

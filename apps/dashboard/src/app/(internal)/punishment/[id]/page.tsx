@@ -31,9 +31,9 @@ export default function MarkEditCard() {
   const FormComponent = useMarkWriteForm({
     label: "Oppdater prikk",
     onSubmit: (data) => {
-      edit.mutate({ ...data, id: mark.id, type: "MANUAL" })
+      edit.mutate({ changes: { ...data, id: mark.id, type: "MANUAL" }, groupIds: data.groupIds })
     },
-    defaultValues: { ...mark },
+    defaultValues: { ...mark, groupIds: mark.groups.map((group) => group.slug) },
   })
 
   const removeMark = useMutation(
@@ -52,9 +52,7 @@ export default function MarkEditCard() {
     columnHelper.accessor((personalMark) => personalMark.user, {
       id: "userName",
       header: () => "Bruker",
-      cell: (info) => (
-        <Link href={`/apps/dashboard/src/app/(internal)/user/${info.getValue().id}`}>{info.getValue().name}</Link>
-      ),
+      cell: (info) => <Link href={`/user/${info.getValue().id}`}>{info.getValue().name}</Link>,
     }),
     columnHelper.accessor((personalMark) => formatDate(personalMark.personalMark.createdAt, "dd.MM.yyyy"), {
       id: "createdAt",

@@ -3,6 +3,7 @@ import {
   type AttendanceId,
   type AttendeeId,
   type EventId,
+  type FeedbackFormId,
   type Task,
   type TaskId,
   TaskSchema,
@@ -25,6 +26,7 @@ export interface TaskRepository {
   findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendancePaymentsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
 }
 
 export function getTaskRepository(): TaskRepository {
@@ -76,7 +78,7 @@ export function getTaskRepository(): TaskRepository {
         },
       })
       return tasks.map((task) => parseOrReport(TaskSchema, task))
-    },
+    }, //TODO: replace the find methods with getall
     async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
       const task = await handle.task.findFirst({
         where: {
@@ -96,6 +98,9 @@ export function getTaskRepository(): TaskRepository {
             },
           ],
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       })
       return parseOrReport(TaskSchema.nullable(), task)
     },
@@ -107,6 +112,9 @@ export function getTaskRepository(): TaskRepository {
             path: ["eventId"],
             equals: eventId,
           },
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       })
       return parseOrReport(TaskSchema.nullable(), task)
@@ -120,6 +128,9 @@ export function getTaskRepository(): TaskRepository {
             equals: attendeeId,
           },
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       })
       return parseOrReport(TaskSchema.nullable(), task)
     },
@@ -131,6 +142,24 @@ export function getTaskRepository(): TaskRepository {
             path: ["attendanceId"],
             equals: attendanceId,
           },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+    async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.VERIFY_FEEDBACK_ANSWERED.type,
+          payload: {
+            path: ["feedbackFormId"],
+            equals: feedbackFormId,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       })
       return parseOrReport(TaskSchema.nullable(), task)

@@ -123,23 +123,26 @@ export async function createServiceLayer(
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const eventService = getEventService(eventRepository)
+  const feedbackFormService = getFeedbackFormService(feedbackFormRepository, taskSchedulingService, eventService)
+  const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
+  const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
   const attendanceService = getAttendanceService(
     eventEmitter,
     attendanceRepository,
     taskSchedulingService,
     userService,
+    markService,
     personalMarkService,
     paymentService,
     paymentProductsService,
     eventService,
+    feedbackFormService,
+    feedbackFormAnswerService,
     configuration
   )
   const companyService = getCompanyService(companyRepository)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
-  const feedbackFormService = getFeedbackFormService(feedbackFormRepository)
-  const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
-  const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
   const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
   const authorizationService = getAuthorizationService()
 

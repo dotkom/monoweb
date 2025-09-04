@@ -1,4 +1,10 @@
-import { AttendancePoolWriteSchema, AttendanceSchema, AttendeeSchema, type TaskType } from "@dotkomonline/types"
+import {
+  AttendancePoolWriteSchema,
+  AttendanceSchema,
+  AttendeeSchema,
+  FeedbackFormSchema,
+  type TaskType,
+} from "@dotkomonline/types"
 import { z } from "zod"
 import { TaskDefinitionNotFoundError } from "./task-error"
 
@@ -20,11 +26,13 @@ export type ReserveAttendeeTaskDefinition = typeof tasks.RESERVE_ATTENDEE
 export type MergeAttendancePoolsTaskDefinition = typeof tasks.MERGE_ATTENDANCE_POOLS
 export type VerifyPaymentTaskDefinition = typeof tasks.VERIFY_PAYMENT
 export type ChargeAttendancePaymentsTaskDefinition = typeof tasks.CHARGE_ATTENDANCE_PAYMENTS
+export type VerifyFeedbackAnsweredTaskDefinition = typeof tasks.VERIFY_FEEDBACK_ANSWERED
 export type AnyTaskDefinition =
   | ReserveAttendeeTaskDefinition
   | MergeAttendancePoolsTaskDefinition
   | VerifyPaymentTaskDefinition
   | ChargeAttendancePaymentsTaskDefinition
+  | VerifyFeedbackAnsweredTaskDefinition
 
 export const tasks = {
   RESERVE_ATTENDEE: createTaskDefinition({
@@ -59,6 +67,13 @@ export const tasks = {
     getSchema: () =>
       z.object({
         attendanceId: z.string(),
+      }),
+  }),
+  VERIFY_FEEDBACK_ANSWERED: createTaskDefinition({
+    type: "VERIFY_FEEDBACK_ANSWERED",
+    getSchema: () =>
+      z.object({
+        feedbackFormId: FeedbackFormSchema.shape.id,
       }),
   }),
 }

@@ -130,7 +130,7 @@ model Group {
   events      EventHostingGroup[]
   type        GroupType
   memberships GroupMembership[]
-  marks       Mark[]
+  marks       MarkGroup[]
   roles       GroupRole[]
 
   @@map("group")
@@ -315,6 +315,7 @@ enum MarkType {
   MANUAL
   LATE_ATTENDANCE
   MISSED_ATTENDANCE
+  MISSING_FEEDBACK
 }
 
 model Mark {
@@ -329,12 +330,20 @@ model Mark {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
-  users PersonalMark[]
-
-  group     Group  @relation(fields: [groupSlug], references: [slug])
-  groupSlug String
+  users     PersonalMark[]
+  groups    MarkGroup[]
 
   @@map("mark")
+}
+
+model MarkGroup {
+  markId  String
+  groupId String
+  mark    Mark   @relation(fields: [markId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [slug])
+
+  @@id([markId, groupId])
+  @@map("mark_group")
 }
 
 model PersonalMark {
@@ -343,8 +352,8 @@ model PersonalMark {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  givenBy   User   @relation("GivenBy", fields: [givenById], references: [id])
-  givenById String
+  givenBy   User?   @relation("GivenBy", fields: [givenById], references: [id])
+  givenById String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
 
@@ -496,6 +505,7 @@ enum TaskType {
   MERGE_ATTENDANCE_POOLS     @map("MERGE_ATTENDANCE_POOLS")
   VERIFY_PAYMENT             @map("VERIFY_PAYMENT")
   CHARGE_ATTENDANCE_PAYMENTS @map("CHARGE_ATTENDANCE_PAYMENTS")
+  VERIFY_FEEDBACK_ANSWERED   @map("VERIFY_FEEDBACK_ANSWERED")
 
   @@map("task_type")
 }
@@ -542,6 +552,7 @@ model FeedbackForm {
   publicResultsToken String   @unique @default(uuid())
   createdAt          DateTime @default(now()) @db.Timestamptz(3)
   updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  answerDeadline     DateTime @db.Timestamptz(3)
 
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
