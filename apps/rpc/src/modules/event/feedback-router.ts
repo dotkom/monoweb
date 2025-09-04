@@ -8,7 +8,6 @@ import {
   FeedbackQuestionAnswerSchema,
   FeedbackQuestionAnswerWriteSchema,
   FeedbackQuestionWriteSchema,
-  UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
@@ -121,10 +120,5 @@ export const feedbackRouter = t.router({
     .input(FeedbackQuestionAnswerSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input))
-    ),
-  findManyByUserNotAnswered: authenticatedProcedure
-    .input(UserSchema.shape.id)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.findManyByUserNotAnswered(handle, input))
     ),
 })

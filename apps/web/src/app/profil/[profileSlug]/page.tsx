@@ -190,7 +190,7 @@ export default function ProfilePage() {
     { data: groups, isLoading: groupsLoading },
     { data: futureEventWithAttendances, isLoading: futureEventWithAttendancesLoading },
     { data: marks, isLoading: marksLoading },
-    { data: feedbackFormsMissingAnswer },
+    { data: eventsMissingFeedback },
   ] = useQueries({
     queries: [
       trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
@@ -211,7 +211,7 @@ export default function ProfilePage() {
         { userId: user?.id ?? "" },
         { enabled: isLoggedIn && Boolean(user?.id) }
       ),
-      trpc.event.feedback.findManyByUserNotAnswered.queryOptions(user?.id ?? "", { enabled: isUser }),
+      trpc.event.findByUserNotGivenFeedback.queryOptions(user?.id ?? "", { enabled: isUser }),
     ],
   })
 
@@ -412,31 +412,23 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {feedbackFormsMissingAnswer && feedbackFormsMissingAnswer.length > 0 && (
+      {eventsMissingFeedback && eventsMissingFeedback.length > 0 && (
         <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-800 md:rounded-xl">
           <Title>Manglende tilbakemelding</Title>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {feedbackFormsMissingAnswer.map((feedbackForm) => {
-              const event = pastEventWithAttendances.find((e) => e.event.id === feedbackForm.eventId)
-
+            {eventsMissingFeedback.map((event) => {
               return (
                 <Link
-                  key={feedbackForm.id}
-                  href={`/tilbakemelding/${feedbackForm.eventId}`}
+                  key={event.id}
+                  href={`/tilbakemelding/${event.id}`}
                   className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
                 >
                   <div className="flex flex-col gap-0.5">
-                    <Text className="text-lg">{event?.event.title ?? "Ukjent arrangement"}</Text>
+                    <Text className="text-lg">{event.title}</Text>
                     <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
-                      {event ? (
-                        <>
-                          Gi tilbakemelding på {event?.event.title} som du deltok på{" "}
-                          {formatDate(event?.event.start, "dd. MMM yyyy", { locale: nb })}
-                        </>
-                      ) : (
-                        <>Gi tilbakemelding</>
-                      )}
+                      Gi tilbakemelding på {event.title} som du deltok på{" "}
+                      {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
                     </Text>
                   </div>
                 </Link>

@@ -7,7 +7,6 @@ import type {
   FeedbackFormWrite,
   FeedbackPublicResultsToken,
   FeedbackQuestionWrite,
-  UserId,
 } from "@dotkomonline/types"
 import { addWeeks, isEqual } from "date-fns"
 import type { EventService } from "../event/event-service"
@@ -31,7 +30,6 @@ export interface FeedbackFormService {
   getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm>
   getPublicForm(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackForm>
   getPublicResultsToken(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackPublicResultsToken>
-  findManyByUserNotAnswered(handle: DBHandle, userId: UserId): Promise<FeedbackForm[]>
 }
 
 export function getFeedbackFormService(
@@ -152,9 +150,6 @@ export function getFeedbackFormService(
       }
 
       return token
-    },
-    async findManyByUserNotAnswered(handle, userId) {
-      return await formRepository.findManyByUserNotAnswered(handle, userId)
     },
   }
 }
