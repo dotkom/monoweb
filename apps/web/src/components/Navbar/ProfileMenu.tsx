@@ -260,9 +260,9 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
             const logoutUrl = createLogoutUrl({ redirectAfter: fullPathname })
             router.push(logoutUrl)
           }}
-          >
-            <Icon icon="tabler:logout" className="text-sm" />
-            <Text element="span">Logg ut</Text>
+        >
+          <Icon icon="tabler:logout" className="text-sm" />
+          <Text element="span">Logg ut</Text>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

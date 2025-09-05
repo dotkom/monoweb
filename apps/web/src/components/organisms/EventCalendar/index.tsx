@@ -86,15 +86,15 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
 
   const eventDetailsResult = await server.event.all.query({
-      filter: {
-        byStartDate: {
-          min: new Date(year, month, 1),
-          max: new Date(year, month + 1, 0),
-        },
-        excludingOrganizingGroup: ["velkom"],
-      excludingType: isStaff ? [] : undefined,
+    filter: {
+      byStartDate: {
+        min: new Date(year, month, 1),
+        max: new Date(year, month + 1, 0),
       },
-      take: 100,
+      excludingOrganizingGroup: ["velkom"],
+      excludingType: isStaff ? [] : undefined,
+    },
+    take: 100,
   })
 
   const eventDetails = eventDetailsResult.items ?? []
