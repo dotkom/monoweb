@@ -49,20 +49,20 @@ const links: MenuLink[] = [
       {
         title: "Om Linjeforeningen Online",
         href: "/om-linjeforeningen",
-        icon: "tabler:info-circle",
+        icon: "tabler:bolt",
         description: "Informasjon om linjeforeningen Online.",
       },
-    ],
-  },
-  {
-    title: "For studenter",
-    items: [
       {
         title: "Wiki",
         href: "https://wiki.online.ntnu.no/",
         icon: "tabler:books",
         description: "Onlines Wiki, brukt av hele Trondheim",
       },
+    ],
+  },
+  {
+    title: "For studenter",
+    items: [
       {
         title: "Offline",
         href: "/offline",
@@ -110,16 +110,17 @@ const links: MenuLink[] = [
 
 export const Navbar: FC = () => {
   return (
-    <header className="flex flex-row items-center w-full max-w-screen-xl mt-8 p-3 rounded-2xl bg-blue-50 dark:bg-stone-800">
-      <MobileNavigation links={links} />
-
-      <Link href={env.NEXT_PUBLIC_HOME_URL} className="hidden lg:ml-2 md:block">
-        <OnlineIcon className="h-8 w-8" />
+    <header className="sticky bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl border border-blue-100 dark:border-stone-700/30 shadow-sm top-4 z-50 flex flex-row justify-between items-center w-full max-w-screen-xl mt-8 p-3 rounded-full">
+      <Link href={env.NEXT_PUBLIC_HOME_URL}>
+        <OnlineIcon className="h-10 w-10" />
       </Link>
 
       <MainNavigation links={links} />
 
-      <ProfileMenu />
+      <div className="ml-auto flex items-center gap-4">
+        <ProfileMenu />
+        <MobileNavigation links={links} />
+      </div>
     </header>
   )
 }
