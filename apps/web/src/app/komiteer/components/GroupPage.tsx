@@ -40,31 +40,30 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
   const hasContactInfo = group.email || group.contactUrl
 
-  const activeMembers: Map<UserId, GroupMember> = new Map(
-    [...members.entries()]
-      .filter(([, member]) => member.groupMemberships.some((membership) => membership.end === null))
-      .toSorted(([, a], [, b]) => {
-        const aRoles = getLatestActiveMembership(a)?.roles ?? []
-        const bRoles = getLatestActiveMembership(b)?.roles ?? []
+  const activeMembers = [...members.values()]
+    .filter((member) => getLatestActiveMembership(member) !== undefined)
+    .toSorted((leftMember, rightMember) => {
+      const left = getLatestActiveMembership(leftMember)
+      const right = getLatestActiveMembership(rightMember)
+      // Sanity check
+      if (left === undefined || right === undefined) {
+        return 0
+      }
+      const leftPriority = Math.max(...left.roles.map((role) => getRolePriority(role)))
+      const rightPriority = Math.max(...right.roles.map((role) => getRolePriority(role)))
 
-        const aPriority = Math.max(...aRoles.map((role) => getRolePriority(role)))
-        const bPriority = Math.max(...bRoles.map((role) => getRolePriority(role)))
+      if (leftPriority !== rightPriority) {
+        return rightPriority - leftPriority
+      }
 
-        if (aPriority !== bPriority) {
-          return bPriority - aPriority
-        }
-
-        return compareDesc(a.createdAt, b.createdAt)
-      })
-  )
-
-  const leader = activeMembers
-    .values()
-    .find((member) =>
-      member.groupMemberships.some(
-        (membership) => membership.end === null && membership.roles.some((role) => role.type === "LEADER")
-      )
-    )
+      return compareDesc(left.start, right.start)
+    })
+  const leader = [...members.values()]
+    .filter((member) => getLatestActiveMembership(member) !== undefined)
+    .find((user) => {
+      const membership = getLatestActiveMembership(user)
+      return membership?.roles.some((r) => r.type === "LEADER")
+    })
 
   const name = group.name ?? group.abbreviation
 
@@ -162,15 +161,17 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
             {members.size > 0 && (
-              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.size})</Text>
+              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.length})</Text>
             )}
           </div>
 
-          {activeMembers.size ? (
+          {activeMembers.length ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {Array.from(activeMembers.entries()).map(([id, member]) => (
-                <GroupMemberEntry key={id} userId={session?.sub} member={member} />
-              ))}
+              {Array.from(
+                activeMembers.map((member) => (
+                  <GroupMemberEntry key={member.id} userId={session?.sub} member={member} />
+                ))
+              )}
             </div>
           ) : (
             <Text className="text-gray-500 dark:text-stone-400">Ingen aktive medlemmer</Text>
