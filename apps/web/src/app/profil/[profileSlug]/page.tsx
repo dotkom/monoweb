@@ -296,7 +296,9 @@ export default function ProfilePage() {
               <TooltipProvider>
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger>
-                    <Text>{capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt))} i Online</Text>
+                    <Text>
+                      {capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt, { locale: nb }))} i Online
+                    </Text>
                   </TooltipTrigger>
                   <TooltipContent>
                     <Text className="text-xs text-gray-500 dark:text-stone-400">
