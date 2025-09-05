@@ -15,30 +15,30 @@ const getLocal = (localResolvable: admin_directory_v1.Schema$User | User | Group
     return localResolvable
   }
 
-  const isWorkspaceUser = "primaryEmail" in localResolvable
+  const isUser = "profileSlug" in localResolvable
   const isGroup = "type" in localResolvable
 
-  if (isWorkspaceUser) {
-    if (!localResolvable.primaryEmail) {
-      throw new Error("Workspace user email is required")
+  if (isUser) {
+    if (localResolvable.workspaceUserId) {
+      return localResolvable.workspaceUserId
     }
 
-    return localResolvable.primaryEmail
+    if (!localResolvable.name) {
+      throw new Error("User name is required")
+    }
+
+    return localResolvable.name
   }
 
   if (isGroup) {
     return localResolvable.slug
   }
 
-  if (localResolvable.workspaceUserId) {
-    return localResolvable.workspaceUserId
+  if (!localResolvable.primaryEmail) {
+    throw new Error("Workspace user email is required")
   }
 
-  if (!localResolvable.name) {
-    throw new Error("User name is required")
-  }
-
-  return localResolvable.name
+  return localResolvable.primaryEmail
 }
 
 /**
@@ -72,4 +72,30 @@ export const getCommitteeEmail = (fullName: string) => {
   const sanitizedName = slugify(fullName.replaceAll(/\s+/g, "."))
 
   return getKey(sanitizedName)
+}
+
+export const intersectOnWorkspaceUserId = (
+  users: User[],
+  workspaceUsers: admin_directory_v1.Schema$Member[]
+): { user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }[] => {
+  const intersection = new Map<
+    string,
+    { user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }
+  >()
+
+  for (const workspaceMember of workspaceUsers) {
+    if (workspaceMember.id) {
+      intersection.set(workspaceMember.id, { user: null, workspaceMember })
+    }
+  }
+
+  for (const user of users) {
+    if (user.workspaceUserId) {
+      const entry = intersection.get(user.workspaceUserId)
+
+      intersection.set(user.workspaceUserId, { user, workspaceMember: entry?.workspaceMember ?? null })
+    }
+  }
+
+  return [...intersection.values()]
 }

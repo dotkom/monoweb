@@ -25,6 +25,9 @@ enum MembershipType {
   SOCIAL_MEMBER    @map("SOCIAL_MEMBER")
   OTHER            @map("OTHER")
 
+  /// For syncing with Workspace email lists. Removed from member lists
+  MAIL_AUDITOR     @map("MAIL_AUDITOR")
+
   @@map("membership_type")
 }
 
@@ -68,7 +71,7 @@ model User {
   ntnuUsername        String?
   flags               String[]
   /// Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
-  workspaceUserId     String?
+  workspaceUserId     String?  @unique
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
