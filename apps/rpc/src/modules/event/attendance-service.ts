@@ -23,7 +23,7 @@ import {
 } from "@dotkomonline/types"
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { captureException } from "@sentry/node"
-import { addHours, addMinutes, compareDesc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
+import { addHours, addMinutes, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
@@ -509,7 +509,7 @@ export function getAttendanceService(
 
       eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
       logger.info(
-        "Attendee(ID=%s,UserID=%s) named %s has unattended Event(ID=%s) named %s",
+        "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s",
         attendee.id,
         attendee.user.id,
         attendee.user.name || "<missing name>",
@@ -524,14 +524,14 @@ export function getAttendanceService(
         // We are now looking for a replacement for the attendee that just deregistered. The criteria that we need to
         // match are:
         //
-        // 1. The attendee must be in the same pool as the deregistered attendee.
-        // 2. The attendee must not yet be reserved
-        // 3. The attendee must have a reservation time in the future
+        // 1. The attendee must be in the same pool as the deregistered attendee
+        // 2. The attendee must not already be reserved
+        // 3. The attendee must have a reservation time not in the future
         const firstUnreservedAdjacentAttendee = attendance.attendees
           .filter((a) => a.attendancePoolId === pool.id)
           .filter((a) => !a.reserved)
-          .filter((a) => isPast(a.earliestReservationAt))
-          .toSorted((a, b) => compareDesc(a.earliestReservationAt, b.earliestReservationAt))
+          .filter((a) => !isFuture(a.earliestReservationAt))
+          .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
           .at(0)
         if (firstUnreservedAdjacentAttendee === undefined) {
           return
@@ -549,7 +549,7 @@ export function getAttendanceService(
           "Attendee(ID=%s,UserID=%s) named %s has been reserved for Event(ID=%s) named %s because User(ID=%s) was deregistered",
           firstUnreservedAdjacentAttendee.id,
           firstUnreservedAdjacentAttendee.user.id,
-          firstUnreservedAdjacentAttendee.user.name,
+          firstUnreservedAdjacentAttendee.user.name || "<missing name>",
           event.id,
           event.title,
           attendee.id
@@ -858,6 +858,8 @@ export function getAttendanceService(
         return
       }
 
+      const attendedAttendees = attendees.filter((attendee) => Boolean(attendee.attendedAt))
+
       const event = await eventService.getEventById(handle, feedbackForm.eventId)
 
       if (!isPast(event.end)) {
@@ -866,7 +868,7 @@ export function getAttendanceService(
 
       const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
 
-      const attendeesWithoutAnswers = attendees.filter(
+      const attendeesWithoutAnswers = attendedAttendees.filter(
         (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
       )
 

@@ -19,7 +19,8 @@ import {
   Icon,
 } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
-import { useQuery } from "@tanstack/react-query"
+import { skipToken, useQuery } from "@tanstack/react-query"
+import { useTheme } from "next-themes"
 import Link from "next/link"
 import { type FC, Fragment, type PropsWithChildren, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
@@ -29,6 +30,9 @@ export const ProfileMenu: FC = () => {
   const fullPathname = useFullPathname()
   const trpc = useTRPC()
   const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
+  const { data: eventsMissingFeedback } = useQuery(
+    trpc.event.findUnansweredByUser.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
+  )
 
   if (session === null) {
     return (

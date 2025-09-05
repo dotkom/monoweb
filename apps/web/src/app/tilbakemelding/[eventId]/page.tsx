@@ -3,7 +3,7 @@ import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import type { Attendee, Event, FeedbackForm } from "@dotkomonline/types"
 import { Text, Title } from "@dotkomonline/ui"
-import { formatDate, isAfter } from "date-fns"
+import { formatDate, isAfter, isPast } from "date-fns"
 
 const EventFeedbackPage = async ({
   params,
@@ -34,7 +34,7 @@ const EventFeedbackPage = async ({
 
   const attendee = user && attendance?.attendees?.find((attendee) => attendee.userId === user.id)
 
-  if (!attendee) {
+  if (!attendee || !attendee.attendedAt) {
     return <Text>Du kan ikke svare på dette skjemaet.</Text>
   }
 
@@ -43,6 +43,10 @@ const EventFeedbackPage = async ({
     attendeeId: attendee.id,
   })
   if (previousAnswer) return <Text>Du har allerede svart på dette skjemaet.</Text>
+
+  if (isPast(feedbackForm.answerDeadline)) {
+    return <Text>Fristen for å gi tilbakemelding har utløpt.</Text>
+  }
 
   if (isAfter(event.end, Date.now())) {
     return (

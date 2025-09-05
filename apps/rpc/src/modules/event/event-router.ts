@@ -257,4 +257,11 @@ export const eventRouter = t.router({
         return eventsWithAttendance
       })
     }),
+
+  findUnansweredByUser: authenticatedProcedure
+    .input(UserSchema.shape.id)
+    .output(EventSchema.array())
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => await ctx.eventService.findUnansweredByUser(handle, input))
+    ),
 })
