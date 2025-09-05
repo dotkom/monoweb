@@ -35,20 +35,20 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
       className={cn(
         "flex flex-row items-center gap-2",
         (eventEndInPast || attendanceStatus === "NotOpened") &&
-          "text-gray-600 dark:text-stone-700 group-hover:text-gray-800 dark:group-hover:text-stone-500"
+          "text-gray-600 dark:text-stone-300 group-hover:text-gray-800 dark:group-hover:text-stone-400"
       )}
     >
       <Icon
         icon="tabler:users"
-        className={cn("text-sm md:text-base", !eventEndInPast && "text-gray-800 dark:text-stone-500")}
+        className={cn("text-sm md:text-base", !eventEndInPast && "text-gray-800 dark:text-stone-400")}
       />
 
       <div className="flex flex-row gap-1">
         <div
           className={cn(
             "flex flex-row gap-1 items-center",
-            attendanceStatus === "NotOpened" && "text-gray-500 dark:text-stone-500",
-            (isReserved || isUnreserved) && "px-1 py-0-5 rounded-md bg-gray-100 dark:bg-stone-800",
+            attendanceStatus === "NotOpened" && "text-gray-500 dark:text-stone-400",
+            (isReserved || isUnreserved) && "px-1 py-0-5 rounded-md bg-gray-100 dark:bg-stone-700",
             isReserved && [
               "text-green-800 dark:text-green-200",
               !eventEndInPast && (showLock ? "bg-green-100 dark:bg-green-950" : "bg-green-200 dark:bg-green-900"),
@@ -76,7 +76,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <div
-                  className={cn("px-1 rounded-md", "bg-gray-100 dark:bg-stone-800 text-gray-700 dark:text-stone-300")}
+                  className={cn("px-1 rounded-md", "bg-gray-100 dark:bg-stone-700 text-gray-700 dark:text-stone-200")}
                 >
                   <Icon icon="tabler:lock" className="text-sm" />
                 </div>
@@ -90,7 +90,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
       </div>
 
       {attendanceStatus === "NotOpened" && (
-        <Text className="hidden md:block text-sm text-black dark:text-stone-400">
+        <Text className="hidden md:block text-sm text-black dark:text-stone-300">
           Åpner {formatDistanceToNowStrict(attendance.registerStart, { addSuffix: true, locale: nb })}
         </Text>
       )}

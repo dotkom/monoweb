@@ -15,7 +15,7 @@ export const ArticleListItem: FC<ArticleListItemProps> = ({ article, orientation
   <Link
     href={`/artikler/${article.slug}/${article.id}`}
     className={clsx(
-      "flex flex-1 rounded-lg overflow-hidden shadow-md duration-200 transition-transform hover:-translate-y-1 hover:shadow-lg dark:bg-stone-900",
+      "flex flex-1 rounded-lg overflow-hidden shadow-md duration-200 transition-transform hover:-translate-y-1 hover:shadow-lg dark:bg-stone-800",
       orientation === "horizontal" ? "sm:flex-row flex-col" : "flex-col max-w-md"
     )}
   >

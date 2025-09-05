@@ -19,7 +19,7 @@ export const SelectTrigger = ({ className, children, ref, ...props }: SelectTrig
     className={cn(
       "font-body flex h-10 w-full items-center justify-between rounded-md border text-left",
       "border-gray-200 px-3 py-2 text-sm ring-offset-background",
-      "dark:border-stone-800 dark:bg-stone-900",
+      "dark:border-stone-700 dark:bg-stone-800",
       "focus:outline-hidden focus:ring-2",
       "focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
       "[&>span]:line-clamp-1",
@@ -67,7 +67,7 @@ export const SelectContent = ({ className, children, position = "popper", ref, .
       className={cn(
         "font-body relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem]",
         "overflow-y-auto overflow-x-hidden rounded-md border border-gray-200 bg-white text-black",
-        "dark:border-stone-800 dark:bg-stone-900 dark:text-white",
+        "dark:border-stone-700 dark:bg-stone-800 dark:text-white",
         "shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95",
         "data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2",
@@ -100,7 +100,7 @@ type SelectLabelProps = React.ComponentPropsWithRef<typeof SelectPrimitive.Label
 export const SelectLabel = ({ className, ref, ...props }: SelectLabelProps) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn("font-body py-1.5 pl-8 pr-2 text-xs font-medium text-gray-500 dark:text-stone-500", className)}
+    className={cn("font-body py-1.5 pl-8 pr-2 text-xs font-medium text-gray-500 dark:text-stone-400", className)}
     {...props}
   />
 )
@@ -112,7 +112,7 @@ export const SelectItem = ({ className, children, ref, ...props }: SelectItemPro
     ref={ref}
     className={cn(
       "font-body relative flex w-full cursor-default select-none items-center",
-      "rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden focus:bg-gray-100 dark:focus:bg-stone-800",
+      "rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden focus:bg-gray-100 dark:focus:bg-stone-700",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
@@ -133,7 +133,7 @@ type SelectSeparatorProps = React.ComponentPropsWithRef<typeof SelectPrimitive.S
 export const SelectSeparator = ({ className, ref, ...props }: SelectSeparatorProps) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-gray-400 dark:bg-stone-700", className)}
+    className={cn("-mx-1 my-1 h-px bg-gray-400 dark:bg-stone-600", className)}
     {...props}
   />
 )

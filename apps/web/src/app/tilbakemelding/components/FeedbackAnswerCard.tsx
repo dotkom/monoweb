@@ -172,7 +172,7 @@ const TextTable = ({ answers, canDelete, onDelete }: TextTableProps) => {
       {filteredAnswers.map((answer) => (
         <div
           key={answer.id}
-          className="flex flex-row justify-between items-start dark:bg-transparent p-3 rounded shadow-sm border border-gray-300 dark:border-stone-400"
+          className="flex flex-row justify-between items-start dark:bg-transparent p-3 rounded shadow-sm border border-gray-300 dark:border-stone-300"
         >
           <Text size="sm" className="break-words">
             {answer.value}
@@ -198,7 +198,7 @@ const ChartTooltip = ({ payload, active }: ChartTooltipProps) => {
   const { name, value } = payload[0].payload
 
   return (
-    <div className="bg-white dark:bg-stone-600 py-1 px-2 rounded shadow flex flex-row gap-4">
+    <div className="bg-white dark:bg-stone-500 py-1 px-2 rounded shadow flex flex-row gap-4">
       <Text size="sm">{name}</Text>
       <Text className="font-semibold" size="sm">
         {value}

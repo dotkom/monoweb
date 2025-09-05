@@ -40,7 +40,7 @@ const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
               <NavigationMenuLink asChild key={`${link.title}-${item.title}`}>
                 <Link
                   href={item.href}
-                  className="group hover:bg-gray-100 dark:hover:bg-stone-700 block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-hidden transition-colors"
+                  className="group hover:bg-gray-100 dark:hover:bg-stone-600 block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-hidden transition-colors"
                 >
                   <Text className="text-gray-900 dark:text-stone-100 group-hover:text-black dark:group-hover:text-white text-sm font-bold leading-none">
                     {item.title}

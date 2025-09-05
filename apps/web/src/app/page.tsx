@@ -74,7 +74,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, reservedStatus }) 
   return (
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
-      className="flex flex-col w-full gap-2 p-2 -m-2 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-800"
+      className="flex flex-col w-full gap-2 p-2 -m-2 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-700"
     >
       <Tilt>
         <img
@@ -90,7 +90,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, reservedStatus }) 
 
         <div className="flex flex-row gap-4 items-center">
           <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-500" />
+            <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-400" />
             <Text className="text-sm">{formatDate(event.start, "dd.MM")}</Text>
           </div>
 

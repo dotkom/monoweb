@@ -45,7 +45,7 @@ const EditProfilePage = () => {
             Rediger profil
           </Title>
 
-          <div className="w-24 h-9 rounded-md bg-gray-300 dark:bg-stone-700 animate-pulse" />
+          <div className="w-24 h-9 rounded-md bg-gray-300 dark:bg-stone-600 animate-pulse" />
         </div>
 
         <SkeletonProfileForm />

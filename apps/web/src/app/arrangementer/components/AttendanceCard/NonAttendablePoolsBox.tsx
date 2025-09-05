@@ -65,7 +65,7 @@ const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProp
 
   return (
     <div
-      className="flex flex-row justify-between items-center p-2 bg-gray-50 border border-gray-50 dark:bg-transparent dark:border-stone-800 rounded-lg"
+      className="flex flex-row justify-between items-center p-2 bg-gray-50 border border-gray-50 dark:bg-transparent dark:border-stone-700 rounded-lg"
       key={pool.id}
     >
       <div className="flex flex-row gap-2 items-center">
@@ -95,7 +95,7 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
     <TooltipProvider>
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-gray-200 dark:bg-stone-700 text-gray-900 dark:text-stone-100">
+          <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-gray-200 dark:bg-stone-600 text-gray-900 dark:text-stone-50">
             <Icon icon="tabler:clock" className="text-sm" />
             <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
           </div>

@@ -96,7 +96,7 @@ export function RichText({
         asChild
         onClick={handleToggle}
         className={cn(
-          "mt-2 transition-colors text-gray-500 dark:text-stone-500 hover:text-black dark:hover:text-white [font-size:inherit]",
+          "mt-2 transition-colors text-gray-500 dark:text-stone-400 hover:text-black dark:hover:text-white [font-size:inherit]",
           toggleButtonClassName
         )}
       >

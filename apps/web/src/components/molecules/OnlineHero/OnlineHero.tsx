@@ -101,7 +101,7 @@ export const OnlineHero: FC = () => {
           )}
         >
           <Spline
-            scene="https://prod.spline.design/sYnNo1UN8U-oQvg0/scene.splinecode"
+            scene="https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
             onLoad={onSplineLoad}
             onSplineMouseDown={lightSwitch}
           />

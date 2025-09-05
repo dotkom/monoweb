@@ -20,11 +20,11 @@ export default async function Page() {
 
 const HeroSection: FC = () => {
   return (
-    <section className="bg-amber-100 w-full rounded-lg">
+    <section className="bg-amber-100 text-black w-full rounded-lg">
       <div className="mx-auto flex max-w-[768px] flex-col text-center items-center p-4 pb-9">
         <Title element="h1" className="mb-8 mt-5 !text-4xl/relaxed lg:!text-5xl/tight">
           Er din bedrift på jakt etter skarpe <br />
-          <span className="relative after:content-[''] after:bg-amber-600 after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
+          <span className="relative after:content-[''] after:bg-amber-600  after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
             IT&ndash;studenter?
           </span>
         </Title>
