@@ -120,7 +120,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
           )}
           {!errors.profileSlug &&
             ((isUserFetching && (
-              <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
+              <div className="flex items-center gap-1 text-slate-500 dark:text-stone-400">
                 <Icon icon="tabler:loader" className="animate-spin text-sm" />
                 <Text className="text-xs">Sjekker tilgjengelighet...</Text>
               </div>
@@ -133,7 +133,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                   </div>
                 )}
                 {fetchedUser === null && (
-                  <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
+                  <div className="flex items-center gap-1 text-slate-500 dark:text-stone-400">
                     <Icon icon="tabler:check" className="text-sm" />
                     <Text className="text-xs">Brukernavnet er ledig</Text>
                   </div>
@@ -174,7 +174,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                   type="file"
                   onChange={(event) => onFileChange(event, onChange)}
                   placeholder="https://example.com/image.jpg"
-                  className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-500 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   disabled
                 />
                 <TextInput value={value ?? ""} onChange={onChange} placeholder="https://..." />
@@ -188,7 +188,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 <img
                   src={value}
                   alt="Profilbilde"
-                  className="mt-2 min-w-24 w-96 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-700"
+                  className="mt-2 min-w-24 w-96 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-600"
                 />
               )}
             </div>

@@ -1,11 +1,9 @@
 "use client"
 
 import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
-import { useTRPC } from "@/utils/trpc/client"
 import type { EventFilterQuery } from "@dotkomonline/types"
 import { Title } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useState } from "react"
 import { EventFilters } from "./components/EventFilters"
@@ -15,9 +13,6 @@ import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries
 const EventPage = () => {
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
-
-  const trpc = useTRPC()
-  const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
 
   const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
     filter: {
@@ -29,7 +24,6 @@ const EventPage = () => {
       },
 
       excludingOrganizingGroup: ["velkom"],
-      excludingType: isStaff ? [] : undefined,
       orderBy: "asc",
     },
     page: {
@@ -48,7 +42,6 @@ const EventPage = () => {
       },
 
       excludingOrganizingGroup: ["velkom"],
-      excludingType: isStaff ? [] : undefined,
       orderBy: "desc",
     },
   })

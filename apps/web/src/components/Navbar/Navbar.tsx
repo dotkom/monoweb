@@ -110,7 +110,7 @@ const links: MenuLink[] = [
 
 export const Navbar: FC = () => {
   return (
-    <header className="flex flex-row items-center w-full max-w-screen-xl mt-8 p-3 rounded-2xl bg-blue-50 dark:bg-stone-900">
+    <header className="flex flex-row items-center w-full max-w-screen-xl mt-8 p-3 rounded-2xl bg-blue-50 dark:bg-stone-800">
       <MobileNavigation links={links} />
 
       <Link href={env.NEXT_PUBLIC_HOME_URL} className="hidden lg:ml-2 md:block">

@@ -73,7 +73,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
         <Avatar className="w-24 h-24 md:w-32 md:h-32">
           <AvatarImage src={group.imageUrl ?? undefined} alt={name} />
-          <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+          <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
             <Icon className="text-5xl md:text-6xl" icon="tabler:users" />
           </AvatarFallback>
         </Avatar>
@@ -85,17 +85,17 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 {group.abbreviation}
               </Title>
 
-              <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-500">
+              <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-400">
                 {getGroupTypeName(group.type)}
               </Badge>
             </div>
 
-            <Text className="text-gray-500 dark:text-stone-500">{name}</Text>
+            <Text className="text-gray-500 dark:text-stone-400">{name}</Text>
           </div>
 
           <Text>{group.about || group.description || "Ingen beskrivelse"}</Text>
 
-          <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-500">
+          <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-400">
             <Text>Kontakt:</Text>
 
             {group.email && (
@@ -106,7 +106,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 className={cn(
                   "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
                   "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                  "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                  "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                 )}
               >
                 <Icon icon="tabler:mail" className="text-base" />
@@ -123,7 +123,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 className={cn(
                   "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
                   "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                  "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                  "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                 )}
               >
                 <Icon icon="tabler:world" className="text-base" />
@@ -139,19 +139,19 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                   className={cn(
                     "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
                     "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                    "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                    "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                   )}
                 >
                   <Avatar className="h-5 w-5">
                     <AvatarImage src={leader.imageUrl ?? undefined} />
-                    <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+                    <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
                       <Icon className="text-xs" icon="tabler:user" />
                     </AvatarFallback>
                   </Avatar>
                   <Text>{leader.name}</Text>
                 </Link>
               ) : (
-                <Text className="text-gray-500 dark:text-stone-500">Ingen kontaktinformasjon</Text>
+                <Text className="text-gray-500 dark:text-stone-400">Ingen kontaktinformasjon</Text>
               ))}
           </div>
         </div>
@@ -162,7 +162,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
             {members.size > 0 && (
-              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-500">({activeMembers.size})</Text>
+              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.size})</Text>
             )}
           </div>
 
@@ -173,7 +173,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
               ))}
             </div>
           ) : (
-            <Text className="text-gray-500 dark:text-stone-500">Ingen aktive medlemmer</Text>
+            <Text className="text-gray-500 dark:text-stone-400">Ingen aktive medlemmer</Text>
           )}
         </div>
       )}
@@ -210,7 +210,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       href={`/profil/${member.profileSlug}`}
       className={cn(
         "flex flex-row items-center gap-3 p-2 rounded-lg transition-colors",
-        !isVerified && !isUser && "bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800",
+        !isVerified && !isUser && "bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700",
         isUser && !isVerified && "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900",
         isVerified && [
           "bg-gradient-to-r",
@@ -221,7 +221,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
     >
       <Avatar className="w-10 h-10 md:w-12 md:h-12">
         <AvatarImage src={member.imageUrl ?? undefined} />
-        <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+        <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
           <Icon className="text-xl" icon="tabler:user" />
         </AvatarFallback>
       </Avatar>

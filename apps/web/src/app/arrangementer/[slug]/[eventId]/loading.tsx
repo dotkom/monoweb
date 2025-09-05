@@ -5,7 +5,7 @@ import { SkeletonEventHeader } from "../../components/EventHeader"
 export default () => {
   const skeletonText = (min: number, max: number, height?: string) => (
     <div
-      className={cn("h-4 bg-gray-300 dark:bg-stone-700 rounded-full animate-pulse", height)}
+      className={cn("h-4 bg-gray-300 dark:bg-stone-600 rounded-full animate-pulse", height)}
       style={{ width: `${Math.random() * (max - min) + min}%` }}
     />
   )
@@ -20,7 +20,7 @@ export default () => {
     </div>
   )
 
-  const organizer = <div className="h-12 w-32 bg-gray-300 dark:bg-stone-700 rounded-md animate-pulse" />
+  const organizer = <div className="h-12 w-32 bg-gray-300 dark:bg-stone-600 rounded-md animate-pulse" />
 
   return (
     <div className="flex flex-col gap-8">

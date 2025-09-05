@@ -25,7 +25,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
           {open ? <Icon height={32} icon="tabler:x" /> : <Icon height={32} icon="tabler:menu-2" />}
         </Popover.Trigger>
         <Popover.Portal>
-          <Popover.Content className="w-screen max-h-screen overflow-y-auto overscroll-contain bg-white dark:bg-stone-800 animate-in fade-in-20 p-4 mt-4">
+          <Popover.Content className="w-screen max-h-screen overflow-y-auto overscroll-contain bg-white dark:bg-stone-700 animate-in fade-in-20 p-4 mt-4">
             <nav className="flex flex-col gap-4 pt-4 pb-64">
               {linksWithHome.map((link) =>
                 ("items" in link ? link.items : [link]).map((link) => (
@@ -34,7 +34,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       <Link
                         href={"href" in link ? link.href : "#"}
                         className={cn(
-                          "font-body flex items-center gap-3 p-4 bg-gray-50 dark:bg-stone-700 rounded-xl",
+                          "font-body flex items-center gap-3 p-4 bg-gray-50 dark:bg-stone-600 rounded-xl",
                           "text-lg font-semibold",
                           "href" in link && "font-medium"
                         )}

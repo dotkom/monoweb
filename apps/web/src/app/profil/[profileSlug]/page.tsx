@@ -49,7 +49,7 @@ const renderUserInfo = (label: string, value: string | number | null) => {
     return (
       <div className="flex flex-row gap-1 items-center">
         <Text>{label}:</Text>
-        <Text className="text-gray-500 dark:text-stone-500">Ingen informasjon</Text>
+        <Text className="text-gray-500 dark:text-stone-400">Ingen informasjon</Text>
       </div>
     )
   }
@@ -80,8 +80,8 @@ function MarkDisplay({
   return (
     <div
       className={cn(
-        "p-3 border rounded-md flex flex-row gap-3 justify-between w-full border-gray-200 dark:border-stone-800",
-        hasExpired && "text-gray-500 dark:text-stone-500"
+        "p-3 border rounded-md flex flex-row gap-3 justify-between w-full border-gray-200 dark:border-stone-700",
+        hasExpired && "text-gray-500 dark:text-stone-400"
       )}
     >
       <div className="flex gap-3 items-center h-fit w-full">
@@ -100,7 +100,7 @@ function MarkDisplay({
                     {mark.weight} prikk{mark.weight !== 1 ? "er" : ""}
                   </Text>
 
-                  <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-500" />
+                  <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-400" />
 
                   <TooltipProvider>
                     <Tooltip delayDuration={100}>
@@ -110,7 +110,7 @@ function MarkDisplay({
                         <Text>Utløper om {formatDistanceToNowStrict(expires)}</Text>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <Text className="text-xs text-gray-500 dark:text-stone-500">
+                        <Text className="text-xs text-gray-500 dark:text-stone-400">
                           Utløper {formatDate(expires, "dd. MMMM yyyy HH:mm")}
                         </Text>
                       </TooltipContent>
@@ -123,7 +123,7 @@ function MarkDisplay({
             <Text className="text-sm">{mark.details}</Text>
           </div>
 
-          <Text className={cn("text-xs text-gray-500 dark:text-stone-500")}>
+          <Text className={cn("text-xs text-gray-500 dark:text-stone-400")}>
             Gitt {formatDate(personalMark.createdAt, "dd. MMM yyyy")} av{" "}
             {mark.groups.map((group) => group.abbreviation).join(", ")}
           </Text>
@@ -140,12 +140,12 @@ const MembershipDisplay = ({
   if (activeMembership) {
     return (
       <>
-        <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-500" />
+        <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-400" />
         <div className="flex flex-col gap-1">
           <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
           {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
           <Text>{grade}. klasse</Text>
-          <Text className="text-xs text-gray-500 dark:text-stone-500">
+          <Text className="text-xs text-gray-500 dark:text-stone-400">
             Medlemskapet varer fra {formatDate(activeMembership.start, "MMM yyyy")} til{" "}
             {formatDate(activeMembership.end, "MMM yyyy")}
           </Text>
@@ -156,7 +156,7 @@ const MembershipDisplay = ({
 
   return (
     <>
-      <Icon icon="tabler:notes-off" className="text-2xl text-gray-500 dark:text-stone-500" />
+      <Icon icon="tabler:notes-off" className="text-2xl text-gray-500 dark:text-stone-400" />
       <Text className="text-xl">Ingen medlemskap</Text>
     </>
   )
@@ -253,7 +253,7 @@ export default function ProfilePage() {
       <div className="flex flex-row gap-4">
         <Avatar className="w-16 h-16 md:w-32 md:h-32">
           <AvatarImage src={user.imageUrl ?? undefined} />
-          <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+          <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
             <Icon className="text-6xl" icon="tabler:user" />
           </AvatarFallback>
         </Avatar>
@@ -284,10 +284,10 @@ export default function ProfilePage() {
                 {grade && ")"}
               </Text>
             ) : (
-              <Text className="text-gray-500 dark:text-stone-500">Ingen klasseinformasjon</Text>
+              <Text className="text-gray-500 dark:text-stone-400">Ingen klasseinformasjon</Text>
             )}
 
-            <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-500 hidden md:block" />
+            <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-400 hidden md:block" />
 
             {user.createdAt && (
               <TooltipProvider>
@@ -296,7 +296,7 @@ export default function ProfilePage() {
                     <Text>{capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt))} i Online</Text>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <Text className="text-xs text-gray-500 dark:text-stone-500">
+                    <Text className="text-xs text-gray-500 dark:text-stone-400">
                       Registrert {formatDate(user.createdAt, "dd. MMMM yyyy HH:mm")}
                     </Text>
                   </TooltipContent>
@@ -307,7 +307,7 @@ export default function ProfilePage() {
 
           <div className="flex flex-row items-center gap-2 text-sm">
             {isCompiled && (
-              <div className="flex flex-row items-center w-fit gap-2 p-1.5 bg-gray-100 dark:bg-stone-800 rounded-md">
+              <div className="flex flex-row items-center w-fit gap-2 p-1.5 bg-gray-100 dark:bg-stone-700 rounded-md">
                 <OnlineIcon height={16} width={16} />
                 <Text>Kompilert</Text>
               </div>
@@ -317,13 +317,13 @@ export default function ProfilePage() {
           {user.biography ? (
             <ReadMore>{user.biography}</ReadMore>
           ) : (
-            <Text className="text-gray-500 dark:text-stone-500">Ingen biografi</Text>
+            <Text className="text-gray-500 dark:text-stone-400">Ingen biografi</Text>
           )}
         </div>
       </div>
 
       {isUser && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border border-gray-200 dark:border-stone-800 rounded-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border border-gray-200 dark:border-stone-700 rounded-xl">
           <div className="flex flex-col gap-3">
             <Title>Din bruker</Title>
             <div className="flex flex-row gap-8">
@@ -340,7 +340,7 @@ export default function ProfilePage() {
           <div className="flex flex-col gap-3">
             <Title>Medlemskap</Title>
 
-            <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-900 rounded-xl w-fit">
+            <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-fit">
               <MembershipDisplay activeMembership={activeMembership} grade={grade} />
             </div>
 
@@ -372,7 +372,7 @@ export default function ProfilePage() {
                     </Text>
                   </div>
                 ) : (
-                  <Text className="text-gray-500 dark:text-stone-500 text-sm">
+                  <Text className="text-gray-500 dark:text-stone-400 text-sm">
                     For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med{" "}
                     <Link className="underline" href="mailto:hs@online.ntnu.no">
                       Hovedstyret
@@ -382,13 +382,13 @@ export default function ProfilePage() {
                 )}
               </>
             ) : (
-              <Text className="text-gray-500 dark:text-stone-500 text-sm">
+              <Text className="text-gray-500 dark:text-stone-400 text-sm">
                 Ved feil angitt informasjon, ta kontakt med{" "}
                 <Button
                   element={Link}
                   href="/komiteer/hs"
                   variant="text"
-                  className="-ml-0.5 text-sm text-gray-500 dark:text-stone-500"
+                  className="-ml-0.5 text-sm text-gray-500 dark:text-stone-400"
                 >
                   Hovedstyret
                 </Button>
@@ -410,7 +410,7 @@ export default function ProfilePage() {
       )}
 
       {allGroups.length > 0 && (
-        <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-800 md:rounded-xl">
+        <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-700 md:rounded-xl">
           <Title>Grupper</Title>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -418,11 +418,11 @@ export default function ProfilePage() {
               <Link
                 key={group.slug}
                 href={group.pageUrl}
-                className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
+                className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
               >
                 <Avatar className="w-14 h-14">
                   <AvatarImage src={group.imageUrl ?? undefined} />
-                  <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
+                  <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
                     <Icon className="text-3xl" icon="tabler:photo" />
                   </AvatarFallback>
                 </Avatar>
@@ -438,7 +438,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-800 md:rounded-xl">
+      <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-700 md:rounded-xl">
         <Title>Arrangementer</Title>
 
         {isLoggedIn ? (
@@ -458,7 +458,7 @@ export default function ProfilePage() {
             </div>
           )
         ) : (
-          <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-500">
+          <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-400">
             <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>
           </div>
         )}

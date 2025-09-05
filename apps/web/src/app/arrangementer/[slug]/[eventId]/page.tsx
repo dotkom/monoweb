@@ -2,16 +2,7 @@ import { auth } from "@/auth"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { getEventSlug, getEventUrl } from "@/utils/getEventUrl"
 import { server } from "@/utils/trpc/server"
-import {
-  type Attendance,
-  type Company,
-  type Event,
-  type Group,
-  type GroupType,
-  type Punishment,
-  type User,
-  createGroupPageUrl,
-} from "@dotkomonline/types"
+import type { Attendance, Company, Event, Group, GroupType, Punishment, User } from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import clsx from "clsx"
 import { isPast } from "date-fns"
@@ -26,19 +17,19 @@ import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBo
 
 type OrganizerType = GroupType | "COMPANY"
 
-const createOrganizerPageUrl = (item: Group | Company) => {
-  if ("type" in item) {
-    return createGroupPageUrl(item)
-  }
-
-  return `/bedrifter/${item.slug}`
+const organizerTypeToLink: Record<OrganizerType, string> = {
+  COMMITTEE: "/komiteer",
+  INTEREST_GROUP: "/interessegrupper",
+  COMPANY: "/bedrifter",
+  NODE_COMMITTEE: "/nodekomiteer",
+  ASSOCIATED: "/andre-grupper",
 }
 
 const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
   <Link
-    href={createOrganizerPageUrl(item)}
+    href={`${organizerTypeToLink[type]}/${item.slug}`}
     key={item.name}
-    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-800 dark:hover:bg-stone-900"
+    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-800"
   >
     {item.imageUrl && (
       <Image
@@ -149,7 +140,7 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
     <div className="flex w-full flex-col gap-8 md:flex-row">
       <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
         {parentEvent && (
-          <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-900">
+          <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-800">
             <Title element="h4" size="sm" className="text-base">
               Arrangementet er en del av
             </Title>

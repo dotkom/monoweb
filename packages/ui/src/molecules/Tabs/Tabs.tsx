@@ -15,7 +15,7 @@ export const TabsList = React.forwardRef<
     className={cn(
       "border inline-flex items-center gap-1 justify-center rounded-lg p-1.5",
       "bg-gray-50 border-gray-100",
-      "dark:bg-stone-900 dark:border-stone-800",
+      "dark:bg-stone-800 dark:border-stone-700",
       className
     )}
     {...props}
@@ -32,7 +32,7 @@ export const TabsTrigger = React.forwardRef<
       "font-body rdx-state-active:shadow-xs inline-flex min-w-24 min-h-9 items-center justify-center rounded-sm px-2.5 py-1.5",
       "text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50",
       "text-gray-700 hover:bg-gray-100 hover:text-black rdx-state-active:bg-gray-200 rdx-state-active:text-black",
-      "dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-white dark:rdx-state-active:bg-stone-700 dark:rdx-state-active:text-white",
+      "dark:text-stone-300 dark:hover:bg-stone-700 dark:hover:text-white dark:rdx-state-active:bg-stone-600 dark:rdx-state-active:text-white",
       className
     )}
     {...props}

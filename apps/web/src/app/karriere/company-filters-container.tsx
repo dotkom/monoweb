@@ -39,7 +39,7 @@ export const translationJobTypes = {
 }
 
 export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
-  <div className="border-gray-200 dark:border-stone-800 h-fit xl:w-72 rounded-lg border shadow-b-sm dark:bg-stone-900 flex flex-col p-4 gap-4">
+  <div className="border-gray-200 dark:border-stone-700 h-fit xl:w-72 rounded-lg border shadow-b-sm dark:bg-stone-800 flex flex-col p-4 gap-4">
     <p className="font-semibold">Søk</p>
 
     <TextInput

@@ -86,15 +86,15 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
 
   const eventDetailsResult = await server.event.all.query({
-    filter: {
-      byStartDate: {
-        min: new Date(year, month, 1),
-        max: new Date(year, month + 1, 0),
-      },
-      excludingOrganizingGroup: ["velkom"],
+      filter: {
+        byStartDate: {
+          min: new Date(year, month, 1),
+          max: new Date(year, month + 1, 0),
+        },
+        excludingOrganizingGroup: ["velkom"],
       excludingType: isStaff ? [] : undefined,
-    },
-    take: 100,
+      },
+      take: 100,
   })
 
   const eventDetails = eventDetailsResult.items ?? []
@@ -140,13 +140,13 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           </h2>
           <div className="flex gap-2 sm:gap-0">
             <Link
-              className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-800 flex p-3 sm:p-2 duration-200"
+              className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 flex p-3 sm:p-2 duration-200"
               href={previousMonthUrl}
             >
               <Icon icon="tabler:chevron-left" width={24} height={24} />
             </Link>
             <Link
-              className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-800 flex p-3 sm:p-2 duration-200"
+              className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 flex p-3 sm:p-2 duration-200"
               href={nextMonthUrl}
             >
               <Icon icon="tabler:chevron-right" width={24} height={24} />
@@ -155,7 +155,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
         </div>
       </div>
       <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
-        <div className="hidden sm:block w-6 pr-2 text-gray-600 dark:text-stone-400 text-xs leading-5">Uke</div>
+        <div className="hidden sm:block w-6 pr-2 text-gray-600 dark:text-stone-300 text-xs leading-5">Uke</div>
         {weekdays.map((day) => (
           <div
             key={day}
@@ -163,7 +163,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
               ${
                 (nowDate.getDay() === 0 ? 6 : nowDate.getDay() - 1) === weekdays.indexOf(day)
                   ? "font-semibold text-sm"
-                  : "text-gray-600 dark:text-stone-400 text-xs"
+                  : "text-gray-600 dark:text-stone-300 text-xs"
               }`}
           >
             <span className="sm:hidden">{day[0]}</span>
@@ -177,7 +177,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
             <div
               className={cn(
                 "hidden sm:flex w-6 pr-2 items-center justify-center",
-                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-600 dark:text-stone-400 text-xs"
+                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-600 dark:text-stone-300 text-xs"
               )}
             >
               {getWeek(week.dates[1])}
@@ -194,7 +194,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
                 <span
                   className={cn(
                     "text-sm w-7 h-7 leading-7 text-center",
-                    "text-gray-600 dark:text-stone-400",
+                    "text-gray-600 dark:text-stone-300",
                     new Date(day).getTime() === nowDate.getTime()
                       ? "font-semibold rounded-full bg-red-600 text-white dark:text-white"
                       : ""

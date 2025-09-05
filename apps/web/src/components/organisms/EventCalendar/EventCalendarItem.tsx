@@ -139,12 +139,12 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
 }
 
 const DEFAULT_STYLES = {
-  itemBg: "bg-gray-100 dark:bg-stone-900",
-  itemBgGradientFade: "to-gray-100 dark:to-stone-900",
-  itemText: "text-gray-500 dark:text-stone-400",
-  cardBg: "bg-gray-100 dark:bg-stone-800 border-gray-200 dark:border-stone-700",
+  itemBg: "bg-gray-100 dark:bg-stone-800",
+  itemBgGradientFade: "to-gray-100 dark:to-stone-800",
+  itemText: "text-gray-500 dark:text-stone-300",
+  cardBg: "bg-gray-100 dark:bg-stone-700 border-gray-200 dark:border-stone-600",
   cardText: "text-gray-900 dark:text-gray-100",
-  cardBorderHover: "hover:border-gray-400 dark:hover:border-stone-600",
+  cardBorderHover: "hover:border-gray-400 dark:hover:border-stone-500",
 }
 
 interface EventTheme {

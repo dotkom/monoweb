@@ -30,7 +30,7 @@ const getLocations = (jobListings: JobListing[]) => {
 
 const CareerPage = () => {
   const trpc = useTRPC()
-  const { data: jobListings, isLoading } = useQuery(trpc.jobListing.active.queryOptions())
+  const { data: jobListings, isLoading } = useQuery(trpc.jobListing.all.queryOptions())
 
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
   const [searchName, setSearchName] = useState<string>("")

@@ -22,7 +22,7 @@ export const RadioGroupItem = React.forwardRef<
     className={cn(
       "h-4 w-4 rounded-full border focus:outline-hidden focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50",
       "text:fill-gray-200 border-gray-400 text-black hover:border-gray-300 focus:ring-gray-800",
-      "dark:border-stone-800 dark:bg-stone-900 dark:text-white dark:hover:border-stone-700 dark:focus:ring-white",
+      "dark:border-stone-700 dark:bg-stone-800 dark:text-white dark:hover:border-stone-600 dark:focus:ring-white",
       className
     )}
     {...props}

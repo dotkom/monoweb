@@ -50,7 +50,7 @@ export const EventHeader: FC<Props> = ({ event, isStaff }) => {
             target="_blank"
             rel="noopener noreferrer"
             variant="text"
-            className="w-fit p-1.5 bg-gray-100 dark:bg-stone-900 gap-1.5"
+            className="w-fit p-1.5 bg-gray-100 dark:bg-stone-800 gap-1.5"
           >
             <Icon icon="tabler:edit" className="text-lg md:text-2xl" />
             <Text className="md:hidden">Gå til dashboard</Text>
@@ -63,7 +63,7 @@ export const EventHeader: FC<Props> = ({ event, isStaff }) => {
 
 export const SkeletonEventHeader = () => (
   <div className="flex flex-col gap-8">
-    <div className="w-full rounded-xl aspect-[16/9] md:aspect-[24/9] bg-gray-300 dark:bg-stone-700 animate-pulse" />
-    <div className="w-1/2 h-10 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+    <div className="w-full rounded-xl aspect-[16/9] md:aspect-[24/9] bg-gray-300 dark:bg-stone-600 animate-pulse" />
+    <div className="w-1/2 h-10 rounded-full bg-gray-300 dark:bg-stone-600 animate-pulse" />
   </div>
 )
