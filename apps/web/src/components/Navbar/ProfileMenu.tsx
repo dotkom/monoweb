@@ -85,7 +85,7 @@ export const ProfileMenu: FC = () => {
       <button
         type="button"
         aria-label="Åpne profilmeny"
-        className="rounded-full transition-all duration-200 focus:outline-none"
+        className="relative rounded-full transition-all duration-200 focus:outline-none"
       >
         <Avatar className="h-10 w-10">
           <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
@@ -93,6 +93,9 @@ export const ProfileMenu: FC = () => {
             <Icon className="text-lg" icon="tabler:user" />
           </AvatarFallback>
         </Avatar>
+        {eventsMissingFeedback && eventsMissingFeedback.length > 0 && (
+          <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500 animate-bounce" />
+        )}
       </button>
     </AvatarDropdown>
   )
