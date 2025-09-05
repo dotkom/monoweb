@@ -14,25 +14,32 @@ interface SplineInstance {
 }
 
 export const OnlineHero: FC = () => {
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [mounted, setMounted] = useState<boolean>(false)
 
-  const themeState = useRef<string | undefined>(theme)
+  const themeState = useRef<string | undefined>(resolvedTheme)
   const splineRef = useRef<SplineInstance | null>(null)
 
   useEffect(() => {
-    themeState.current = theme
+    setMounted(true)
+  }, [])
 
-    if (splineRef.current?.setVariable) {
-      updateSplineDarkMode(theme === "dark")
+  useEffect(() => {
+    themeState.current = resolvedTheme
+
+    if (splineRef.current?.setVariable && mounted) {
+      updateSplineDarkMode(resolvedTheme === "dark")
     }
-  }, [theme])
+  }, [resolvedTheme, mounted])
 
   const onSplineLoad = (spline: SplineInstance) => {
     splineRef.current = spline
     // Initialize Spline with current theme
-    updateSplineDarkMode(theme === "dark")
+    if (mounted) {
+      updateSplineDarkMode(resolvedTheme === "dark")
+    }
     setIsLoading(false)
   }
 
@@ -43,12 +50,16 @@ export const OnlineHero: FC = () => {
   }
 
   const lightSwitch = () => {
+    if (!mounted) return
+
     const currentTheme = themeState.current
     setTheme(currentTheme === "dark" ? "light" : "dark")
 
     if (splineRef.current?.getVariable) {
       const numberValue = splineRef.current.getVariable("lightSwitchCounter") as number
 
+      // Potential for an easteregg if you spam the lightswitch
+      // For now just an alert
       if (numberValue > 1 && numberValue % 69 === 0) {
         alert("Ey yo, det holder nå")
       }
@@ -74,7 +85,6 @@ export const OnlineHero: FC = () => {
         <div className="flex flex-col flex-wrap md:flex-row gap-1 md:items-center">
           <div className="flex flex-row gap-2 items-center">
             <Icon icon="tabler:briefcase-filled" className="text-lg" />
-
             <Text>Er du fra en bedrift og ønsker samarbeid?</Text>
           </div>
 
@@ -91,20 +101,25 @@ export const OnlineHero: FC = () => {
       </div>
 
       <div className="lg:-ml-8 relative w-full">
-        {isLoading && (
-          <div className="absolute bg-gray-100 dark:bg-stone-900 rounded-xl animate-pulse w-[80%] h-[80%] inset-0 m-auto" />
-        )}
-        <div
-          className={cn(
-            "inset-0 max-w-[600px] aspect-[10/9] mx-auto lg:mx-0 duration-700 transition-opacity",
-            isLoading ? "opacity-0" : "opacity-100"
+        <div className="relative inset-0 max-w-[600px] aspect-[10/9] mx-auto lg:mx-0">
+          {(!mounted || isLoading) && (
+            <div className="absolute inset-0 bg-gray-100 dark:bg-stone-800 rounded-xl animate-pulse w-[80%] h-[80%] m-auto" />
           )}
-        >
-          <Spline
-            scene="https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
-            onLoad={onSplineLoad}
-            onSplineMouseDown={lightSwitch}
-          />
+
+          {mounted && (
+            <div
+              className={cn(
+                "absolute inset-0 duration-700 transition-opacity",
+                isLoading ? "opacity-0" : "opacity-100"
+              )}
+            >
+              <Spline
+                scene="https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
+                onLoad={onSplineLoad}
+                onSplineMouseDown={lightSwitch}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
