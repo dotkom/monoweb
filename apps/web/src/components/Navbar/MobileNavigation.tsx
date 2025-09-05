@@ -33,8 +33,25 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
       const originalStyle = window.getComputedStyle(document.body).overflow
       document.body.style.overflow = "hidden"
 
+      const mediaQuery = window.matchMedia("(min-width: 768px)")
+
+      const handleMediaChange = (e: MediaQueryListEvent) => {
+        if (e.matches) {
+          document.body.style.overflow = originalStyle
+          setOpen(false)
+        }
+      }
+
+      mediaQuery.addEventListener("change", handleMediaChange)
+
+      if (mediaQuery.matches) {
+        document.body.style.overflow = originalStyle
+        setOpen(false)
+      }
+
       return () => {
         document.body.style.overflow = originalStyle
+        mediaQuery.removeEventListener("change", handleMediaChange)
       }
     }
   }, [open])
