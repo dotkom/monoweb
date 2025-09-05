@@ -858,6 +858,8 @@ export function getAttendanceService(
         return
       }
 
+      const attendedAttendees = attendees.filter((attendee) => Boolean(attendee.attendedAt))
+
       const event = await eventService.getEventById(handle, feedbackForm.eventId)
 
       if (!isPast(event.end)) {
@@ -866,7 +868,7 @@ export function getAttendanceService(
 
       const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
 
-      const attendeesWithoutAnswers = attendees.filter(
+      const attendeesWithoutAnswers = attendedAttendees.filter(
         (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
       )
 

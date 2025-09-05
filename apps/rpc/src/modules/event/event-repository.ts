@@ -383,6 +383,9 @@ export function getEventRepository(): EventRepository {
                 attendees: {
                   some: {
                     userId,
+                    attendedAt: {
+                      not: null,
+                    },
                   },
                 },
               },
