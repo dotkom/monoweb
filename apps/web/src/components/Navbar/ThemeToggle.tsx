@@ -5,14 +5,9 @@ import { useTheme } from "next-themes"
 interface ThemeToggleProps {
   size?: "sm" | "lg"
   className?: string
-  classNameSlider?: string
 }
 
-export const ThemeToggle = ({
-  size = "sm",
-  className = "bg-blue-100 dark:bg-stone-700",
-  classNameSlider = "bg-white dark:bg-stone-800",
-}: ThemeToggleProps) => {
+export const ThemeToggle = ({ size = "sm", className }: ThemeToggleProps) => {
   const { setTheme, theme } = useTheme()
 
   const THEME_OPTIONS = [
@@ -49,11 +44,10 @@ export const ThemeToggle = ({
   const currentSize = sizeClasses[size]
 
   return (
-    <div className={cn(className, "relative h-fit flex gap-1 items-center rounded-lg p-1")}>
+    <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
       <div
         className={cn(
-          "absolute top-1 bottom-1 h-8 rounded-md shadow-sm transition-transform duration-200 ease-out",
-          classNameSlider,
+          "absolute top-1 bottom-1 h-8 rounded-md shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700",
           currentSize.container
         )}
         style={{

@@ -56,7 +56,7 @@ export const ProfileMenu: FC = () => {
               sideOffset={16}
             >
               <div className="gap-2 flex">
-                <ThemeToggle size="sm" className="" classNameSlider="bg-white dark:bg-stone-600" />
+                <ThemeToggle size="sm" />
 
                 <div className="h-10 w-1 bg-gray-300 dark:bg-stone-600" />
 
@@ -248,7 +248,7 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
             <Icon icon={"tabler:palette"} width={16} height={16} className="text-gray-600 dark:text-stone-300" />
             <span className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</span>
           </div>
-          <ThemeToggle size="sm" className="" classNameSlider="bg-white dark:bg-stone-600" />
+          <ThemeToggle size="sm" />
         </div>
 
         <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />

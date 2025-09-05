@@ -81,7 +81,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       <div className="py-6">
                         <div className="mb-4 mx-2 border-t border-gray-400 dark:border-stone-700" />
                         <div className="flex items-center justify-between">
-                          <ThemeToggle size="lg" className=" " classNameSlider="bg-white dark:bg-stone-700" />
+                          <ThemeToggle size="lg" />
                           <Popover.Close asChild>
                             <Button
                               element={Link}
