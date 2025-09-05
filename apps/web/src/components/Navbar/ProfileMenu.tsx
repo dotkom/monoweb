@@ -261,6 +261,7 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
 
         <DropdownMenuItem className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer">
           <Link
+            prefetch={false}
             href={createLogoutUrl({ redirectAfter: fullPathname })}
             className="flex items-center w-full gap-3 text-sm"
           >
