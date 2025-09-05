@@ -58,7 +58,7 @@ export interface EventRepository {
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
-  findByUserNotGivenFeedback(handle: DBHandle, userId: UserId): Promise<Event[]>
+  findUnansweredByUser(handle: DBHandle, userId: UserId): Promise<Event[]>
 }
 
 export function getEventRepository(): EventRepository {
@@ -362,7 +362,7 @@ export function getEventRepository(): EventRepository {
       invariant(event !== null, "Event should exist within same transaction after updating parent")
       return event
     },
-    async findByUserNotGivenFeedback(handle, userId) {
+    async findUnansweredByUser(handle, userId) {
       const events = await handle.event.findMany({
         where: {
           AND: [

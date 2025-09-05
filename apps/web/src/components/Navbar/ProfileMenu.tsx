@@ -63,7 +63,7 @@ export const ProfileMenu: FC = () => {
 
   const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
   const { data: eventsMissingFeedback } = useQuery(
-    trpc.event.findByUserNotGivenFeedback.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
+    trpc.event.findUnansweredByUser.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
   )
 
   if (session === null) {
@@ -133,7 +133,7 @@ export const ProfileMenu: FC = () => {
   }
 
   return (
-    <button type="button" className="relative">
+    <button type="button" className="relative cursor-default">
       <AvatarDropdown>
         <Avatar>
           <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
@@ -216,7 +216,9 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild className="cursor-pointer">
+        {children}
+      </DropdownMenuTrigger>
       <DropdownMenuContent className="w-60">
         {filteredLinkGroups.map((group, i, { length }) => {
           const notLast = i !== length - 1

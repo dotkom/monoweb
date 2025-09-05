@@ -211,7 +211,7 @@ export default function ProfilePage() {
         { userId: user?.id ?? "" },
         { enabled: isLoggedIn && Boolean(user?.id) }
       ),
-      trpc.event.findByUserNotGivenFeedback.queryOptions(user?.id ?? "", { enabled: isUser }),
+      trpc.event.findUnansweredByUser.queryOptions(user?.id ?? "", { enabled: isUser }),
     ],
   })
 

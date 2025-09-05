@@ -258,10 +258,10 @@ export const eventRouter = t.router({
       })
     }),
 
-  findByUserNotGivenFeedback: authenticatedProcedure
+  findUnansweredByUser: authenticatedProcedure
     .input(UserSchema.shape.id)
     .output(EventSchema.array())
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => await ctx.eventService.findByUserNotGivenFeedback(handle, input))
+      ctx.executeTransaction(async (handle) => await ctx.eventService.findUnansweredByUser(handle, input))
     ),
 })
