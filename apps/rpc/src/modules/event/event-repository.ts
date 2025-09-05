@@ -58,6 +58,7 @@ export interface EventRepository {
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
+  findUnansweredByUser(handle: DBHandle, userId: UserId): Promise<Event[]>
 }
 
 export function getEventRepository(): EventRepository {
@@ -360,6 +361,62 @@ export function getEventRepository(): EventRepository {
       const event = await this.findById(handle, row.id)
       invariant(event !== null, "Event should exist within same transaction after updating parent")
       return event
+    },
+    async findUnansweredByUser(handle, userId) {
+      const events = await handle.event.findMany({
+        where: {
+          AND: [
+            {
+              feedbackForm: {
+                isActive: true,
+                answers: {
+                  none: {
+                    attendee: {
+                      userId,
+                    },
+                  },
+                },
+              },
+            },
+            {
+              attendance: {
+                attendees: {
+                  some: {
+                    userId,
+                  },
+                },
+              },
+              end: {
+                lt: new Date(),
+              },
+            },
+          ],
+        },
+        include: {
+          companies: {
+            include: {
+              company: true,
+            },
+          },
+          hostingGroups: {
+            include: {
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      return events.map((event) =>
+        parseOrReport(EventSchema, {
+          ...event,
+          companies: event.companies.map((c) => c.company),
+          hostingGroups: event.hostingGroups.map((g) => g.group),
+        })
+      )
     },
   }
 }

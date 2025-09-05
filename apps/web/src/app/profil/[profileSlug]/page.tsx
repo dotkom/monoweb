@@ -35,6 +35,7 @@ import {
 import { createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
+import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { notFound, useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
@@ -189,6 +190,7 @@ export default function ProfilePage() {
     { data: groups, isLoading: groupsLoading },
     { data: futureEventWithAttendances, isLoading: futureEventWithAttendancesLoading },
     { data: marks, isLoading: marksLoading },
+    { data: eventsMissingFeedback },
   ] = useQueries({
     queries: [
       trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
@@ -209,6 +211,7 @@ export default function ProfilePage() {
         { userId: user?.id ?? "" },
         { enabled: isLoggedIn && Boolean(user?.id) }
       ),
+      trpc.event.findUnansweredByUser.queryOptions(user?.id ?? "", { enabled: isUser }),
     ],
   })
 
@@ -406,6 +409,32 @@ export default function ProfilePage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {eventsMissingFeedback && eventsMissingFeedback.length > 0 && (
+        <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-800 md:rounded-xl">
+          <Title>Manglende tilbakemelding</Title>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {eventsMissingFeedback.map((event) => {
+              return (
+                <Link
+                  key={event.id}
+                  href={`/tilbakemelding/${event.id}`}
+                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
+                >
+                  <div className="flex flex-col gap-0.5">
+                    <Text className="text-lg">{event.title}</Text>
+                    <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
+                      Gi tilbakemelding på {event.title} som du deltok på{" "}
+                      {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
+                    </Text>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
         </div>
       )}
 
