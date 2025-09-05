@@ -1,5 +1,8 @@
-import { auth } from "@/auth"
-import { server } from "@/utils/trpc/server"
+"use client"
+
+import { useEventAllQuery } from "@/app/arrangementer/components/queries"
+import { TZDate } from "@date-fns/tz"
+import { useSession } from "@dotkomonline/oauth2/react"
 import type { Event } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
@@ -82,22 +85,26 @@ interface CalendarProps {
   month: number
 }
 
-export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
-  const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
+export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
+  const session = useSession()
 
-  const eventDetailsResult = await server.event.all.query({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
     filter: {
       byStartDate: {
-        min: new Date(year, month, 1),
-        max: new Date(year, month + 1, 0),
+        min: new TZDate(year, month, 1),
+        max: new TZDate(year, month + 1, 0),
       },
+
       excludingOrganizingGroup: ["velkom"],
-      excludingType: isStaff ? [] : undefined,
+      orderBy: "asc",
     },
-    take: 100,
+    page: {
+      // There should never be a lot of future events, so we fetch them all here to support different client-side groupings
+      take: 1000,
+    },
   })
 
-  const eventDetails = eventDetailsResult.items ?? []
+  const eventDetails = futureEventWithAttendances
   const userId = session?.sub
 
   const cal = getCalendarArray(year, month, eventDetails)
@@ -132,9 +139,9 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const nextMonthUrl = `/arrangementer/kalender/${nextYear}/${String(nextMonth + 1).padStart(2, "0")}`
 
   return (
-    <div className="mb-10">
+    <div className="mb-10 sm:mt-[-2.5rem]">
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <div className="w-full flex items-center gap-4 justify-between sm:justify-end pb-4">
+        <div className="w-full flex items-center gap-4 justify-between sm:justify-end sm:pb-4">
           <h2 className="text-xl">
             {months[month]} {year}
           </h2>
@@ -155,7 +162,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
         </div>
       </div>
       <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
-        <div className="hidden sm:block w-6 pr-2 text-gray-600 dark:text-stone-300 text-xs leading-5">Uke</div>
+        <div className="hidden sm:block w-6 pr-2 text-gray-600 dark:text-stone-400 text-xs leading-5">Uke</div>
         {weekdays.map((day) => (
           <div
             key={day}
@@ -163,7 +170,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
               ${
                 (nowDate.getDay() === 0 ? 6 : nowDate.getDay() - 1) === weekdays.indexOf(day)
                   ? "font-semibold text-sm"
-                  : "text-gray-600 dark:text-stone-300 text-xs"
+                  : "text-gray-600 dark:text-stone-400 text-xs"
               }`}
           >
             <span className="sm:hidden">{day[0]}</span>
@@ -177,7 +184,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
             <div
               className={cn(
                 "hidden sm:flex w-6 pr-2 items-center justify-center",
-                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-600 dark:text-stone-300 text-xs"
+                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-600 dark:text-stone-400 text-xs"
               )}
             >
               {getWeek(week.dates[1])}
@@ -186,7 +193,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
               <div
                 key={new Date(day).toISOString()}
                 className={cn(
-                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-300 dark:border-stone-700 border-t-[1px] ",
+                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-300 dark:border-stone-600 border-t-[1px] ",
                   week.dates.indexOf(day) % 7 === 0 ? "pl-1 sm:p-l-[5px]" : "pl-1 sm:border-l-[1px]",
                   weekIndex > 0 ? "" : "sm:border-t-0"
                 )}
@@ -194,7 +201,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
                 <span
                   className={cn(
                     "text-sm w-7 h-7 leading-7 text-center",
-                    "text-gray-600 dark:text-stone-300",
+                    "text-gray-600 dark:text-stone-400",
                     new Date(day).getTime() === nowDate.getTime()
                       ? "font-semibold rounded-full bg-red-600 text-white dark:text-white"
                       : ""
