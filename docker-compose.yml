@@ -11,7 +11,7 @@ services:
       - "4010:5432"
   jaeger:
     container_name: ow_jaeger
-    image: jaegertracing/all-in-one:latest@sha256:144b7028db6045b28b50c4728dd3bea14fa76ab024b64afeccec51c8cb1edd63
+    image: jaegertracing/all-in-one:latest@sha256:fe884668a2bf8d586b6fb7697d48a6a19a02f9e78a1eddf09c5b0f08c27d63b9
     ports:
       - '4317:4317'
       - '4318:4318'
