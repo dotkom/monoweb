@@ -2,11 +2,12 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Group, User } from "@dotkomonline/types"
 import type { admin_directory_v1 } from "googleapis"
+import { configuration } from "src/configuration"
 import invariant from "tiny-invariant"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 import { getDirectory } from "./client"
-import { getCommitteeEmail, getKey, getTemporaryPassword, intersectOnWorkspaceUserId } from "./helpers"
+import { getCommitteeEmail, getKey, getTemporaryPassword, joinOnWorkspaceUserId } from "./helpers"
 
 // This is needed for static type inference, otherwise the TypeScript compiler will explode
 // and complain about circular references
@@ -19,6 +20,8 @@ type MinimalListReturn<Key extends string, Value> = {
 }
 
 export interface WorkspaceSyncService {
+  isSyncEnabled(): boolean
+
   // User
   createWorkspaceUser(
     handle: DBHandle,
@@ -60,10 +63,6 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
   const createRecoveryCodes = async (user: User): Promise<string[] | null> => {
     const directory = getDirectory()
 
-    if (!directory) {
-      return null
-    }
-
     await directory.verificationCodes.generate({
       userKey: getKey(user),
     })
@@ -79,16 +78,16 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
   }
 
   return {
+    isSyncEnabled() {
+      return configuration.WORKSPACE_SYNC_ENABLED === "true"
+    },
+
     async createWorkspaceUser(handle, user) {
       if (user.workspaceUserId) {
         throw new Error("User already has a workspace user ID")
       }
 
       const directory = getDirectory()
-
-      if (!directory) {
-        return null
-      }
 
       if (!user.name) {
         throw new Error("User name is required")
@@ -147,10 +146,6 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
     async resetWorkspaceUserPassword(handle, user) {
       const directory = getDirectory()
 
-      if (!directory) {
-        return null
-      }
-
       const password = getTemporaryPassword()
 
       const response = await directory.users.update({
@@ -182,10 +177,6 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
     async findWorkspaceUser(handle, user) {
       const directory = getDirectory()
 
-      if (!directory) {
-        return null
-      }
-
       const response = await directory.users.get({
         userKey: getKey(user),
       })
@@ -207,10 +198,6 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
     async insertUserIntoWorkspaceGroup(handle, group, user) {
       const directory = getDirectory()
 
-      if (!directory) {
-        return null
-      }
-
       const res = await directory.members.insert({
         groupKey: getKey(group),
         requestBody: {
@@ -227,10 +214,6 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
     async removeUserFromWorkspaceGroup(handle, group, user) {
       const directory = getDirectory()
 
-      if (!directory) {
-        return false
-      }
-
       return await directory.members
         .delete({
           groupKey: getKey(group),
@@ -240,12 +223,29 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
         .catch(() => false)
     },
 
-    async getMembersForGroup(handle, group) {
+    async findWorkspaceGroup(handle, group) {
       const directory = getDirectory()
 
-      if (!directory) {
-        return []
+      const response = await directory.groups.get({
+        groupKey: getKey(group),
+      })
+
+      if (response.status === 404) {
+        return null
       }
+
+      if (response.status !== 200) {
+        logger.warn("Failed to fetch group from workspace")
+        throw new Error()
+      }
+
+      invariant(response.data, "Expected response data to be defined")
+
+      return response.data
+    },
+
+    async getMembersForGroup(handle, group) {
+      const directory = getDirectory()
 
       const workspaceMembers: { user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }[] = []
 
@@ -261,7 +261,7 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
         const workspaceMembersIds = response.data.members.map((member) => member.id).filter(Boolean) as string[]
         const users = await userService.findByWorkspaceUserIds(handle, workspaceMembersIds)
 
-        workspaceMembers.push(...intersectOnWorkspaceUserId(users, response.data.members))
+        workspaceMembers.push(...joinOnWorkspaceUserId(users, response.data.members))
 
         pageToken = response.data.nextPageToken ?? undefined
       } while (pageToken !== undefined)
@@ -271,10 +271,6 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
 
     async getWorkspaceGroupsForWorkspaceUser(handle, user) {
       const directory = getDirectory()
-
-      if (!directory) {
-        return []
-      }
 
       const groups: { group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[] = []
 

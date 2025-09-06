@@ -1,6 +1,8 @@
 import { type admin_directory_v1, google } from "googleapis"
 import z from "zod"
+import { configuration } from "../../configuration"
 import { isSyncEnabled } from "./helpers"
+import { MalformedWorkspaceSyncServiceAccountError, SyncNotEnabledError } from "./workspace-sync-error"
 
 const SCOPES = [
   "https://www.googleapis.com/auth/admin.directory.group",
@@ -23,36 +25,24 @@ const serviceAccountJsonSchema = z.object({
   type: z.literal("service_account"),
 })
 
-const getJWT = () => {
-  if (!process.env.WORKSPACE_SYNC_SERVICE_ACCOUNT) {
-    return null
+export function getDirectory(): admin_directory_v1.Admin {
+  if (!isSyncEnabled()) {
+    throw new SyncNotEnabledError()
   }
 
-  const serviceAccountJson = JSON.parse(process.env.WORKSPACE_SYNC_SERVICE_ACCOUNT)
+  const serviceAccountJson = JSON.parse(configuration.WORKSPACE_SYNC_SERVICE_ACCOUNT)
   const result = serviceAccountJsonSchema.safeParse(serviceAccountJson)
 
   if (!result.success) {
-    return null
+    throw new MalformedWorkspaceSyncServiceAccountError(result.error.message)
   }
 
-  return new google.auth.JWT({
+  const auth = new google.auth.JWT({
     email: result.data.client_email,
     key: result.data.private_key,
     scopes: SCOPES,
-    subject: process.env.WORKSPACE_SYNC_SERVICE_ACCOUNT_EMAIL,
+    subject: configuration.WORKSPACE_SYNC_SERVICE_ACCOUNT_EMAIL,
   })
-}
-
-export function getDirectory(): admin_directory_v1.Admin | null {
-  if (!isSyncEnabled()) {
-    return null
-  }
-
-  const auth = getJWT()
-
-  if (!auth) {
-    return null
-  }
 
   return google.admin({ version: "directory_v1", auth })
 }

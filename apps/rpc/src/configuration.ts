@@ -33,4 +33,8 @@ export const configuration = defineConfiguration({
   DATABASE_URL: config(process.env.DATABASE_URL),
 
   STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
+
+  WORKSPACE_SYNC_SERVICE_ACCOUNT: config(process.env.WORKSPACE_SYNC_SERVICE_ACCOUNT),
+  WORKSPACE_SYNC_SERVICE_ACCOUNT_EMAIL: config(process.env.WORKSPACE_SYNC_SERVICE_ACCOUNT_EMAIL),
+  WORKSPACE_SYNC_ENABLED: config(process.env.WORKSPACE_SYNC_ENABLED, "false"),
 })
