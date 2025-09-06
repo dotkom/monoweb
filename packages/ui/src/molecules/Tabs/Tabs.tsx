@@ -14,7 +14,7 @@ export const TabsList = React.forwardRef<
     ref={ref}
     className={cn(
       "border inline-flex items-center gap-1 justify-center rounded-lg p-1.5",
-      "bg-gray-50 border-gray-100",
+      "bg-white border-gray-200",
       "dark:bg-stone-800 dark:border-stone-700",
       className
     )}

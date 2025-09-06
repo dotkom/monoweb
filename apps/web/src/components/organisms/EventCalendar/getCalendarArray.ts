@@ -1,4 +1,5 @@
 import type { EventWithAttendance } from "@dotkomonline/types"
+import { compareAsc } from "date-fns"
 import type { CalendarData, EventDisplayProps, Week } from "./types"
 
 export function getCalendarArray(year: number, month: number, events: EventWithAttendance[]): CalendarData {
@@ -8,6 +9,8 @@ export function getCalendarArray(year: number, month: number, events: EventWithA
   const firstWeekday = firstDayOfMonth.getDay() || 7
   const lastWeekDay = lastDayOfMonth.getDay() || 7
   const prevMonthLastDay = new Date(year, month, 0).getDate()
+
+  const sortedEvents = [...events].sort((a, b) => compareAsc(a.event.start, b.event.start))
 
   const cal: CalendarData = { weeks: [], year, month }
   const days: Date[] = []
@@ -41,7 +44,7 @@ export function getCalendarArray(year: number, month: number, events: EventWithA
     const slotMatrix: (number | null)[][] = []
 
     for (const [dayIndex, day] of week.dates.entries()) {
-      for (const { event, attendance } of events) {
+      for (const { event, attendance } of sortedEvents) {
         if (!completedEvents.includes(event.id)) {
           const dayEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 23, 59, 59)
 
