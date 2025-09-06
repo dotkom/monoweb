@@ -46,7 +46,7 @@ export const createContext = async (principal: Principal | null, context: Servic
         require(principal.affiliations.size > 0)
         for (const affiliation of affiliations) {
           if (principal.affiliations.has(affiliation)) {
-            break
+            return
           }
         }
         require(false)
