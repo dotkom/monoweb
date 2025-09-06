@@ -35,7 +35,9 @@ export const PHONE_REGEX = /^[0-9+-\s]*$/
 export const PROFILE_SLUG_REGEX = /^[a-z0-9-]+$/
 
 // These max and min values are arbitrary
-export const UserWriteSchema = z.object({
+export const UserWriteSchema = UserSchema.pick({
+  workspaceUserId: true,
+}).extend({
   profileSlug: z
     .string()
     .min(2, "Brukernavnet må være minst 2 tegn lang")
