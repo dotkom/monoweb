@@ -139,9 +139,9 @@ model Group {
 model GroupMembership {
   id        String    @id @default(uuid())
   groupId   String
-  group     Group     @relation(fields: [groupId], references: [slug])
+  group     Group     @relation(fields: [groupId], references: [slug], onDelete: Cascade)
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   start     DateTime  @db.Timestamptz(3)
   end       DateTime? @db.Timestamptz(3)
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
@@ -154,9 +154,9 @@ model GroupMembership {
 
 model GroupMembershipRole {
   membershipId String
-  membership   GroupMembership @relation(fields: [membershipId], references: [id])
+  membership   GroupMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
   roleId       String
-  role         GroupRole       @relation(fields: [roleId], references: [id])
+  role         GroupRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@id([membershipId, roleId])
   @@map("group_membership_role")
@@ -173,7 +173,7 @@ enum GroupRoleType {
 model GroupRole {
   id      String        @id @default(uuid())
   groupId String
-  group   Group         @relation(fields: [groupId], references: [slug])
+  group   Group         @relation(fields: [groupId], references: [slug], onDelete: Cascade)
   name    String
   type    GroupRoleType @default(COSMETIC)
 
@@ -289,7 +289,7 @@ model Event {
   createdAt       DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
-  parentId        String?
+  parentId String?
   parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
   children Event[] @relation("children")
 
@@ -330,8 +330,8 @@ model Mark {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
-  users     PersonalMark[]
-  groups    MarkGroup[]
+  users  PersonalMark[]
+  groups MarkGroup[]
 
   @@map("mark")
 }
