@@ -13,13 +13,14 @@ export const useCreateFeedbackAnswerMutation = ({ onSuccess }: useCreateFeedback
     trpc.event.feedback.createAnswer.mutationOptions({
       onSuccess: async (data) => {
         await queryClient.invalidateQueries(
-          trpc.event.feedback.findAnswerByAttendee.queryOptions({
+          trpc.event.feedback.findOwnAnswerByAttendee.queryOptions({
             formId: data.feedbackFormId,
             attendeeId: data.attendeeId,
           })
         )
         await queryClient.invalidateQueries(trpc.event.feedback.getAllAnswers.queryOptions(data.feedbackFormId))
         await queryClient.invalidateQueries({ queryKey: trpc.event.feedback.getPublicAnswers.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.findUnansweredByUser.queryKey() })
 
         onSuccess?.()
       },
