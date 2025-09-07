@@ -26,7 +26,7 @@ enum MembershipType {
   OTHER            @map("OTHER")
 
   /// For syncing with Workspace email lists. Removed from member lists
-  MAIL_AUDITOR     @map("MAIL_AUDITOR")
+  MAIL_AUDITOR @map("MAIL_AUDITOR")
 
   @@map("membership_type")
 }
@@ -121,16 +121,17 @@ enum GroupType {
 }
 
 model Group {
-  slug          String    @id @unique
-  abbreviation  String
-  name          String?
-  description   String?
-  about         String
-  imageUrl      String?
-  email         String?
-  contactUrl    String?
-  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
-  deactivatedAt DateTime?
+  slug             String    @id @unique
+  abbreviation     String
+  name             String?
+  description      String?
+  about            String
+  imageUrl         String?
+  email            String?
+  contactUrl       String?
+  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
+  deactivatedAt    DateTime?
+  workspaceGroupId String?   @unique
 
   events      EventHostingGroup[]
   type        GroupType

@@ -44,6 +44,7 @@ export interface WorkspaceSyncService {
   findWorkspaceUser(handle: DBHandle, user: User): Promise<admin_directory_v1.Schema$User | null>
 
   // Groups
+  createWorkspaceGroup(handle: DBHandle, group: Group): Promise<admin_directory_v1.Schema$Group>
   findWorkspaceGroup(handle: DBHandle, group: Group): Promise<admin_directory_v1.Schema$Group | null>
   insertUserIntoWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<admin_directory_v1.Schema$Member>
   removeUserFromWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<boolean>
@@ -221,6 +222,14 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
         })
         .then(() => true)
         .catch(() => false)
+    },
+
+    async createWorkspaceGroup(handle, group) {
+      if (group.workspaceGroupId) {
+        throw new Error("Group already has a workspace group ID")
+      }
+
+      // TODO
     },
 
     async findWorkspaceGroup(handle, group) {
