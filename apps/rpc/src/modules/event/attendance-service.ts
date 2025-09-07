@@ -135,6 +135,7 @@ export interface AttendanceService {
     user: UserId,
     options: EventRegistrationOptions
   ): Promise<Attendee>
+  getAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee>
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
@@ -447,6 +448,14 @@ export function getAttendanceService(
         event.id,
         event.title
       )
+
+      return attendee
+    },
+    async getAttendeeById(handle, attendeeId) {
+      const attendee = await attendanceRepository.findAttendeeById(handle, attendeeId)
+      if (!attendee) {
+        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found`)
+      }
 
       return attendee
     },
