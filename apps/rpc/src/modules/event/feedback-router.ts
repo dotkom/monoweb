@@ -9,6 +9,7 @@ import {
   FeedbackQuestionAnswerWriteSchema,
   FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
+import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
@@ -105,6 +106,23 @@ export const feedbackRouter = t.router({
       ctx.executeTransaction(async (handle) =>
         ctx.feedbackFormAnswerService.findAnswerByAttendee(handle, input.formId, input.attendeeId)
       )
+    ),
+  findOwnAnswerByAttendee: authenticatedProcedure
+    .input(
+      z.object({
+        formId: FeedbackFormIdSchema,
+        attendeeId: AttendeeSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        const attendee = await ctx.attendanceRepository.findAttendeeById(handle, input.attendeeId)
+        if (attendee?.userId !== ctx.principal.subject) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" })
+        }
+
+        return ctx.feedbackFormAnswerService.findAnswerByAttendee(handle, input.formId, input.attendeeId)
+      })
     ),
   getAllAnswers: staffProcedure
     .input(FeedbackFormIdSchema)

@@ -38,7 +38,7 @@ const EventFeedbackPage = async ({
     return <Text>Du kan ikke svare på dette skjemaet.</Text>
   }
 
-  const previousAnswer = await server.event.feedback.findAnswerByAttendee.query({
+  const previousAnswer = await server.event.feedback.findOwnAnswerByAttendee.query({
     formId: feedbackForm.id,
     attendeeId: attendee.id,
   })
