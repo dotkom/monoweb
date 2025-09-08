@@ -1,7 +1,7 @@
 "use client"
 
 import { env } from "@/lib/env"
-import { createAbsoluteEventUrl } from "@dotkomonline/utils"
+import { createAbsoluteEventPageUrl } from "@dotkomonline/utils"
 import { Button, Group, Modal, Stack, Tabs, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import {
@@ -106,7 +106,7 @@ export default function EventWithAttendancesPage() {
             variant="light"
             rightSection={<IconArrowUpRight height={14} width={14} />}
             component="a"
-            href={createAbsoluteEventUrl(env.NEXT_PUBLIC_WEB_URL, event.id, event.title)}
+            href={createAbsoluteEventPageUrl(env.NEXT_PUBLIC_WEB_URL, event.id, event.title)}
             target="_blank"
             rel="noopener noreferrer"
           >
