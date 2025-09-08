@@ -174,7 +174,7 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input: { attendeeId }, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.startAttendeePayment(handle, attendeeId, addDays(getCurrentUTC(), 1))
+        ctx.attendanceService.startAttendeePayment(handle, attendeeId, addDays(getCurrentUTC(), 4.5))
       )
     }),
   deregisterForEvent: authenticatedProcedure
