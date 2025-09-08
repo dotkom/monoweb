@@ -72,7 +72,7 @@ const EventPage = () => {
     params.set("view", "cal")
     params.set("y", newYear.toString())
     params.set("m", (newMonth + 1).toString()) // Convert to 1-based month
-    router.push(`/arrangementer?${params.toString()}`)
+    router.replace(`/arrangementer?${params.toString()}`)
   }
 
   return (
