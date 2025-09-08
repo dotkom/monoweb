@@ -18,15 +18,6 @@ export default async function InterestGroupPage() {
           alle mulige slags interesser. Har du og en kompis eller to en sær/stilig/fantastisk interesse? Opprett en
           interessegruppe!
         </Text>
-        <Button
-          variant="text"
-          element={Link}
-          href="https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper/"
-          iconRight={<Icon icon="tabler:arrow-up-right" />}
-          className="w-fit"
-        >
-          Mer informasjon om hvordan dette gjøres finnes her
-        </Button>
       </div>
 
       <div className="flex flex-row gap-4">
