@@ -1,6 +1,6 @@
-import { getEventUrl } from "@/utils/getEventUrl"
 import type { Attendance, Event } from "@dotkomonline/types"
 import { Title, cn } from "@dotkomonline/ui"
+import { createEventUrl } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import Link from "next/link"
 import type { FC } from "react"
@@ -22,7 +22,7 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
 
   return (
     <Link
-      href={getEventUrl(id, title)}
+      href={createEventUrl(id, title)}
       className={cn(
         "group flex flex-row gap-3 w-full rounded-xl p-2 -mx-2 last:-mb-2",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
