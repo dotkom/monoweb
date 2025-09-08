@@ -10,9 +10,7 @@ import {
   AttendeeSelectionResponseSchema,
   UserSchema,
 } from "@dotkomonline/types"
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { TRPCError } from "@trpc/server"
-import { addDays } from "date-fns"
 import { z } from "zod"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
@@ -174,7 +172,9 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input: { attendeeId }, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.attendanceService.startAttendeePayment(handle, attendeeId, addDays(getCurrentUTC(), 4.5))
+        // This is hard-coded for immatrikuleringsball 2025. Revert this line to getCurrentUtc + 24 hours in the future.
+        // NOTE: TZDate (and JS Date) are zero-indexed on the month, hence 8 instead of 9
+        ctx.attendanceService.startAttendeePayment(handle, attendeeId, new TZDate(2025, 8, 13, 18, 0, 0, "UTC"))
       )
     }),
   deregisterForEvent: authenticatedProcedure
