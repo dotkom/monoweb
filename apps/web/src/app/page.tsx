@@ -1,11 +1,10 @@
 import { auth } from "@/auth"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
-import { getEventUrl } from "@/utils/getEventUrl"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
-import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { createEventPageUrl, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { formatDate, isFuture, isPast } from "date-fns"
 import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
@@ -55,7 +54,7 @@ export default async function App() {
         {/* TODO: DELETE THIS */}
         {immball?.event && (
           <Link
-            href={getEventUrl(immball.event.id, immball.event.title)}
+            href={createEventPageUrl(immball.event.id, immball.event.title)}
             className="w-full p-6 text-white bg-red-500 rounded-2xl"
           >
             <div className="flex flex-col gap-0.5 w-fit">

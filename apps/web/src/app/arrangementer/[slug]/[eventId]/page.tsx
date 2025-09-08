@@ -1,6 +1,5 @@
 import { auth } from "@/auth"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
-import { getEventSlug, getEventUrl } from "@/utils/getEventUrl"
 import { server } from "@/utils/trpc/server"
 import {
   type Attendance,
@@ -13,6 +12,7 @@ import {
   createGroupPageUrl,
 } from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { createEventPageUrl, createEventSlug } from "@dotkomonline/utils"
 import clsx from "clsx"
 import { isPast } from "date-fns"
 import Image from "next/image"
@@ -66,8 +66,8 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
 
   const { event, attendance } = eventDetail
 
-  if (slug !== getEventSlug(event.title)) {
-    permanentRedirect(getEventUrl(eventId, event.title), RedirectType.replace)
+  if (slug !== createEventSlug(event.title)) {
+    permanentRedirect(createEventPageUrl(eventId, event.title), RedirectType.replace)
   }
 
   const [user, isStaff, childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
