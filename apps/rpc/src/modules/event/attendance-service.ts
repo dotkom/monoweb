@@ -822,6 +822,7 @@ export function getAttendanceService(
     },
     async executeVerifyPaymentTask(handle, { attendeeId }) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      const event = await eventService.getByAttendance(handle, attendance.id)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
         throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
@@ -833,7 +834,30 @@ export function getAttendanceService(
 
       const payment = await paymentService.getById(attendee.paymentId)
 
-      if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
+      // Based on whether the deadline has passed, we either kick them off the event, or suspend them indefinitely
+      if (payment.status === "UNPAID" && isPast(attendance.deregisterDeadline)) {
+        await markService.createMark(
+          handle,
+          {
+            details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
+            // We do not have a method for indefinite duration yet.
+            duration: 100_000,
+            title: "Suspensjon for mangelende betaling",
+            type: "MISSING_PAYMENT",
+            // Immediate suspension
+            weight: 6,
+            userIds: [attendee.userId],
+          },
+          event.hostingGroups.map((g) => g.slug)
+        )
+        logger.info(
+          "Suspended User(ID=％s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
+          attendee.userId,
+          event.id,
+          event.title,
+          attendance.deregisterDeadline
+        )
+      } else if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
         await this.deregisterAttendee(handle, attendeeId, {
           // TODO: Maybe this should be false?
           ignoreDeregistrationWindow: true,
