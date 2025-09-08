@@ -1,9 +1,12 @@
 "use client"
 
+import { env } from "@/lib/env"
+import { createAbsoluteEventPageUrl } from "@dotkomonline/utils"
 import { Button, Group, Modal, Stack, Tabs, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import {
   IconArrowLeft,
+  IconArrowUpRight,
   IconBuildingWarehouse,
   IconCalendarEvent,
   IconCancel,
@@ -88,32 +91,50 @@ export default function EventWithAttendancesPage() {
 
   return (
     <Stack>
-      <Group>
-        <Button bg="gray" onClick={() => router.push("/event")} leftSection={<IconArrowLeft height={14} width={14} />}>
-          Tilbake
-        </Button>
+      <Group align="center">
+        <Group>
+          <Button
+            variant="light"
+            onClick={() => router.push("/event")}
+            leftSection={<IconArrowLeft height={14} width={14} />}
+          >
+            Tilbake
+          </Button>
+          <Button
+            variant="light"
+            rightSection={<IconArrowUpRight height={14} width={14} />}
+            component="a"
+            href={createAbsoluteEventPageUrl(env.NEXT_PUBLIC_WEB_URL, event.id, event.title)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Se arrangementet
+          </Button>
+        </Group>
 
-        <Modal opened={opened} onClose={close} title={`Er du sikker på at du vil slette ${event.title}?`} centered>
-          <Group>
-            <Button
-              bg="red"
-              onClick={() => {
-                deleteEvent.mutate({ id: event.id })
-                router.back()
-              }}
-              leftSection={<IconTrash height={14} width={14} />}
-            >
-              Ja, slett
-            </Button>
-            <Button bg="gray" onClick={close} leftSection={<IconCancel height={14} width={14} />}>
-              Nei
-            </Button>
-          </Group>
-        </Modal>
+        <Group>
+          <Modal opened={opened} onClose={close} title={`Er du sikker på at du vil slette ${event.title}?`} centered>
+            <Group>
+              <Button
+                color="red"
+                onClick={() => {
+                  deleteEvent.mutate({ id: event.id })
+                  router.back()
+                }}
+                leftSection={<IconTrash height={14} width={14} />}
+              >
+                Ja, slett
+              </Button>
+              <Button color="gray" onClick={close} leftSection={<IconCancel height={14} width={14} />}>
+                Nei
+              </Button>
+            </Group>
+          </Modal>
 
-        <Button bg="red" onClick={open} leftSection={<IconTrash height={14} width={14} />}>
-          Slett
-        </Button>
+          <Button color="red" variant="light" onClick={open} leftSection={<IconTrash height={14} width={14} />}>
+            Slett
+          </Button>
+        </Group>
       </Group>
 
       <Group>
