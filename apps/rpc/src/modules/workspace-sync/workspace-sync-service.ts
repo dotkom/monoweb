@@ -2,22 +2,13 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Group, User } from "@dotkomonline/types"
 import type { admin_directory_v1 } from "googleapis"
+import type { GaxiosResponseWithHTTP2 } from 'googleapis-common';
 import { configuration } from "src/configuration"
 import invariant from "tiny-invariant"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 import { getDirectory } from "./client"
 import { getCommitteeEmail, getKey, getTemporaryPassword, joinOnWorkspaceUserId } from "./helpers"
-
-// This is needed for static type inference, otherwise the TypeScript compiler will explode
-// and complain about circular references
-type MinimalListReturn<Key extends string, Value> = {
-  data: {
-    nextPageToken?: string | null
-  } & {
-    [Prop in Key]?: Value[]
-  }
-}
 
 export interface WorkspaceSyncService {
   isSyncEnabled(): boolean
@@ -44,7 +35,7 @@ export interface WorkspaceSyncService {
   findWorkspaceUser(handle: DBHandle, user: User): Promise<admin_directory_v1.Schema$User | null>
 
   // Groups
-  createWorkspaceGroup(handle: DBHandle, group: Group): Promise<admin_directory_v1.Schema$Group>
+  createWorkspaceGroup(handle: DBHandle, group: Group): Promise<{ group: Group, workspaceGroup: admin_directory_v1.Schema$Group }>
   findWorkspaceGroup(handle: DBHandle, group: Group): Promise<admin_directory_v1.Schema$Group | null>
   insertUserIntoWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<admin_directory_v1.Schema$Member>
   removeUserFromWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<boolean>
@@ -68,7 +59,7 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
       userKey: getKey(user),
     })
     const response = await directory.verificationCodes.list({
-      userKey: getKey(user),
+      userKey: user.workspaceUserId ?? getKey(user),
     })
 
     if (!response.data.items) {
@@ -229,14 +220,33 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
         throw new Error("Group already has a workspace group ID")
       }
 
-      // TODO
+      const directory = getDirectory()
+
+      const { data } = await directory.groups.insert({
+        requestBody: {
+          email: getKey(group),
+          name: group.name || group.slug,
+        }
+      })
+
+      let updatedGroup = group
+
+      if (!data.id) {
+        logger.error("Failed to create group in workspace: No ID returned")
+      } else {
+        updatedGroup = await groupService.update(handle, group.slug, {
+          workspaceGroupId: data.id
+        })
+      }
+
+      return { group: updatedGroup, workspaceGroup: data}
     },
 
     async findWorkspaceGroup(handle, group) {
       const directory = getDirectory()
 
       const response = await directory.groups.get({
-        groupKey: getKey(group),
+        groupKey: group.workspaceGroupId ?? getKey(group),
       })
 
       if (response.status === 404) {
@@ -260,8 +270,8 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
 
       let pageToken: string | undefined = undefined
       do {
-        const response: MinimalListReturn<"members", admin_directory_v1.Schema$Member> = await directory.members.list({
-          groupKey: getKey(group),
+        const response: GaxiosResponse<admin_directory_v1.Schema$Members> = await directory.members.list({
+          groupKey: group.workspaceGroupId ?? getKey(group),
           pageToken: pageToken,
         })
         invariant(response.data, "Expected response data to be defined")

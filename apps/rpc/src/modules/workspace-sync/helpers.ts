@@ -11,45 +11,33 @@ export function isSyncEnabled() {
   return process.env.WORKSPACE_SYNC_ENABLED === "true"
 }
 
-const getLocal = (localResolvable: admin_directory_v1.Schema$User | User | Group | string): string => {
+const getLocal = (localResolvable: User | Group | string): string => {
   if (typeof localResolvable === "string") {
     return localResolvable
   }
 
-  const isUser = "profileSlug" in localResolvable
   const isGroup = "type" in localResolvable
-
-  if (isUser) {
-    if (localResolvable.workspaceUserId) {
-      return localResolvable.workspaceUserId
-    }
-
-    if (!localResolvable.name) {
-      throw new Error("User name is required")
-    }
-
-    return localResolvable.name
-  }
-
+  
   if (isGroup) {
     return localResolvable.slug
   }
 
-  if (!localResolvable.primaryEmail) {
-    throw new Error("Workspace user email is required")
+  // It is a user
+  if (!localResolvable.name) {
+    throw new Error("User name is required")
   }
 
-  return localResolvable.primaryEmail
+  return localResolvable.name
 }
 
 /**
  * @example
- * getKey("user") // "user@online.ntnu.no"
- * getKey("user@online.ntnu.no") // "user@online.ntnu.no"
- * getKey("user", "custom.domain") // "user@custom.domain"
+ * getEmail("user") // "user@online.ntnu.no"
+ * getEmail("user@online.ntnu.no") // "user@online.ntnu.no"
+ * getEmail("user", "custom.domain") // "user@custom.domain"
  */
-export function getKey(
-  localResolvable: admin_directory_v1.Schema$User | User | Group | string,
+export function getEmail(
+  localResolvable: User | Group | string,
   domain = DEFAULT_DOMAIN
 ) {
   const local = getLocal(localResolvable)
@@ -59,6 +47,34 @@ export function getKey(
   }
 
   return `${local}@${domain}`
+}
+
+/**
+ * Get a key for a user or a group.
+ * A key is used to identify something in Google Workspace. It can be the objects id or an email (primary or alias).
+ * 
+ * @example
+ * getKey(user) // <Workspace id>
+ * getKey(userWithoutWorkspaceId) // "full.name@online.ntnu.no"
+ * getKey("Full Name") // "full.name@online.ntnu.no"
+ * getKey("full.name@online.ntnu.no") // "full.name@online.ntnu.no"
+ * getKey("string", "custom.domain") // "string@custom.domain"
+ */
+export const getKey = (
+  localResolvable: User | Group | string,
+  domain = DEFAULT_DOMAIN
+) => {
+  if (typeof localResolvable === "object") {
+    if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
+      return localResolvable.workspaceUserId
+    }
+    
+    if ("workspaceGroupId" in localResolvable && localResolvable.workspaceGroupId) {
+      return localResolvable.workspaceGroupId
+    }
+  }
+
+  return getEmail(localResolvable, domain)
 }
 
 export const getTemporaryPassword = () => {
