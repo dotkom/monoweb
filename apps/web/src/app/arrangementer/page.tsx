@@ -60,10 +60,10 @@ const EventPage = () => {
     const params = new URLSearchParams(searchParams.toString())
 
     if (newView === "list") {
-      router.push("/arrangementer")
+      router.replace("/arrangementer")
     } else {
       params.set("view", newView)
-      router.push(`/arrangementer?${params.toString()}`)
+      router.replace(`/arrangementer?${params.toString()}`)
     }
   }
 
