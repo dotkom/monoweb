@@ -1338,9 +1338,6 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../config
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../types
       typescript:
         specifier: 5.8.3
         version: 5.8.3
