@@ -801,7 +801,7 @@ export function getAttendanceService(
 
       // Based on whether the deadline has passed, we either kick them off the event, or suspend them indefinitely
       if (payment.status === "UNPAID" && isPast(attendance.deregisterDeadline)) {
-        await markService.createMark(
+        const mark = await markService.createMark(
           handle,
           {
             details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
@@ -811,10 +811,10 @@ export function getAttendanceService(
             type: "MISSING_PAYMENT",
             // Immediate suspension
             weight: 6,
-            userIds: [attendee.userId],
           },
           event.hostingGroups.map((g) => g.slug)
         )
+        await personalMarkService.addToUser(handle, attendee.userId, mark.id)
         logger.info(
           "Suspended User(ID=％s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
           attendee.userId,
