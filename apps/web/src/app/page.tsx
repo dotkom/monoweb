@@ -31,10 +31,7 @@ export default async function App() {
   // DELETE THIS
   const immballEvents = await server.event.all.query({
     filter: {
-      byId: [
-        "c03b4238-c83f-44d7-b56e-f013724e7252",
-        "4964f685-ea8a-4280-89fa-f43338757b15",
-      ],
+      byId: ["c03b4238-c83f-44d7-b56e-f013724e7252", "4964f685-ea8a-4280-89fa-f43338757b15"],
     },
   })
   const immball = immballEvents.items.find(({ event, attendance }) =>
