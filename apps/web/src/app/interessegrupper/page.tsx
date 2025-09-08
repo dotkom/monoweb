@@ -21,7 +21,7 @@ export default async function InterestGroupPage() {
         <Button
           variant="text"
           element={Link}
-          href={"https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper/"}
+          href="https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper/"
           iconRight={<Icon icon="tabler:arrow-up-right" />}
           className="w-fit"
         >
@@ -33,17 +33,15 @@ export default async function InterestGroupPage() {
         <Button
           color="brand"
           element={Link}
-          href={"https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"}
+          href="https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"
           icon={<Icon icon="tabler:users-plus" className="text-lg" />}
         >
-          Opprett interessegruppe
+          Opprett eller overta interessegruppe
         </Button>
 
         <Button
           element={Link}
-          href={
-            "https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
-          }
+          href="https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
           icon={<Icon icon="tabler:coins" className="text-lg" />}
         >
           Søk om støtte
