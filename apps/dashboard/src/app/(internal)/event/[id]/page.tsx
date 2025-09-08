@@ -94,7 +94,6 @@ export default function EventWithAttendancesPage() {
       <Group align="center">
         <Group>
           <Button
-            color="gray"
             variant="light"
             onClick={() => router.push("/event")}
             leftSection={<IconArrowLeft height={14} width={14} />}
@@ -102,7 +101,6 @@ export default function EventWithAttendancesPage() {
             Tilbake
           </Button>
           <Button
-            color="gray"
             variant="light"
             rightSection={<IconArrowUpRight height={14} width={14} />}
             component="a"
