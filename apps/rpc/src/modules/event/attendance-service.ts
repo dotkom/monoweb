@@ -23,7 +23,7 @@ import {
 } from "@dotkomonline/types"
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { captureException } from "@sentry/node"
-import { addHours, addMinutes, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
+import { addHours, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
@@ -149,7 +149,6 @@ export interface AttendanceService {
   ): Promise<void>
   startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, deadline: TZDate): Promise<Payment>
   cancelAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
-  requestAttendeePayment(handle: DBHandle, attendeeId: AttendeeId): Promise<Payment>
   completeAttendeePayment(handle: DBHandle, paymentId: string): Promise<void>
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   executeVerifyPaymentTask(handle: DBHandle, task: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
@@ -785,40 +784,6 @@ export function getAttendanceService(
         paymentDeadline: null,
         paymentLink: null,
       })
-    },
-    async requestAttendeePayment(handle, attendeeId) {
-      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
-      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
-      if (attendee === undefined) {
-        throw new AttendanceNotFound(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
-      }
-
-      if (attendee.paymentId) {
-        const payment = await paymentService.getById(attendee.paymentId)
-        if (payment.status === "PAID" || payment.status === "RESERVED") {
-          throw new AttendeeAlreadyPaidError(attendee.userId)
-        }
-        if (payment.status === "UNPAID" && payment.url) {
-          return payment
-        }
-      }
-
-      const paymentDeadline = addMinutes(getCurrentUTC(), 15)
-      const payment = await this.startAttendeePayment(handle, attendeeId, paymentDeadline)
-
-      await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
-        paymentChargedAt: null,
-        paymentId: payment.id,
-        paymentDeadline,
-        paymentLink: payment.url,
-        paymentReservedAt: null,
-        paymentRefundedAt: null,
-        paymentRefundedById: null,
-      })
-
-      await taskSchedulingService.scheduleAt(handle, tasks.VERIFY_PAYMENT, { attendeeId }, paymentDeadline)
-
-      return payment
     },
     async executeVerifyPaymentTask(handle, { attendeeId }) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
