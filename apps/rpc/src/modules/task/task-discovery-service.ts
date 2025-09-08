@@ -25,7 +25,7 @@ export function getLocalTaskDiscoveryService(client: DBClient, taskService: Task
         this.discover(tasks.RESERVE_ATTENDEE.type),
         this.discover(tasks.MERGE_ATTENDANCE_POOLS.type),
         this.discover(tasks.VERIFY_PAYMENT.type),
-        this.discover(tasks.CHARGE_ATTENDANCE_PAYMENTS.type),
+        this.discover(tasks.CHARGE_ATTENDEE.type),
         this.discover(tasks.VERIFY_FEEDBACK_ANSWERED.type),
       ])
       return discoveredTasks.flat()
