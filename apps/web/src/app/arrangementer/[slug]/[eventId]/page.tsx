@@ -12,7 +12,7 @@ import {
   createGroupPageUrl,
 } from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
-import { createEventSlug, createEventUrl } from "@dotkomonline/utils"
+import { createEventPageUrl, createEventSlug } from "@dotkomonline/utils"
 import clsx from "clsx"
 import { isPast } from "date-fns"
 import Image from "next/image"
@@ -67,7 +67,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
   const { event, attendance } = eventDetail
 
   if (slug !== createEventSlug(event.title)) {
-    permanentRedirect(createEventUrl(eventId, event.title), RedirectType.replace)
+    permanentRedirect(createEventPageUrl(eventId, event.title), RedirectType.replace)
   }
 
   const [user, isStaff, childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
