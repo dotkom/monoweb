@@ -2,10 +2,12 @@ import { clearInterval, setInterval } from "node:timers"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { secondsToMilliseconds } from "date-fns"
 import type { AttendanceService } from "../event/attendance-service"
+import type { RecurringTaskService } from "./recurring-task-service"
 import {
   type ChargeAttendancePaymentsTaskDefinition,
   type InferTaskData,
@@ -18,6 +20,7 @@ import {
 } from "./task-definition"
 import type { TaskDiscoveryService } from "./task-discovery-service"
 import { InvalidTaskKind } from "./task-error"
+import type { TaskSchedulingService } from "./task-scheduling-service"
 import type { TaskService } from "./task-service"
 
 const INTERVAL = secondsToMilliseconds(1)
@@ -35,7 +38,9 @@ export interface TaskExecutor {
 
 export function getLocalTaskExecutor(
   taskService: TaskService,
+  recurringTaskService: RecurringTaskService,
   taskDiscoveryService: TaskDiscoveryService,
+  taskSchedulingService: TaskSchedulingService,
   attendanceService: AttendanceService
 ): TaskExecutor {
   const logger = getLogger("task-executor")
@@ -52,6 +57,15 @@ export function getLocalTaskExecutor(
       // hog system resources at startup. This should allow us to run the tasks in a more controlled manner and keep the
       // system resources more stable.
       intervalId = setInterval(async () => {
+        logger.debug("TaskExecutor discovering and scheduling recurring tasks")
+        const recurringTasks = await taskDiscoveryService.discoverRecurringTasks()
+        const now = getCurrentUTC()
+        for (const recurringTask of recurringTasks) {
+          const type = getTaskDefinition(recurringTask.type)
+          await taskSchedulingService.scheduleAt(client, type, recurringTask.payload, now, recurringTask.id)
+          await recurringTaskService.scheduleNextRun(client, recurringTask.id, now)
+        }
+
         logger.debug("TaskExecutor performing discovery and execution of all pending tasks")
         const tasks = await taskDiscoveryService.discoverAll()
         for (const task of tasks) {
