@@ -29,7 +29,6 @@ export const GroupMemberEditCard: FC = () => {
     cancelText: "Avbryt",
     onConfirm: () => {
       endMembership.mutate({ groupId: group.slug, userId: groupMember.id })
-      close()
     },
   })
 
@@ -42,7 +41,6 @@ export const GroupMemberEditCard: FC = () => {
         groupId: group.slug,
         roleIds: data.roleIds,
       })
-      close()
     },
   })
 
