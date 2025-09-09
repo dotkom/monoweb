@@ -26,9 +26,10 @@ export type Group = z.infer<typeof GroupSchema>
 export type GroupType = z.infer<typeof GroupTypeSchema>
 
 export const GroupWriteSchema = GroupSchema.omit({
-  slug: true,
   createdAt: true,
   roles: true,
+}).partial({
+  slug: true,
 })
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
