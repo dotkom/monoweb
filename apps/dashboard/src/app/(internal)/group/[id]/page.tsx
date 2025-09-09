@@ -43,7 +43,7 @@ export default function GroupDetailsPage() {
   }
 
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{group.name}</Title>

@@ -1,15 +1,18 @@
 "use client"
 
 import {
+  Anchor,
   AppShell,
   AppShellHeader,
   AppShellMain,
   AppShellNavbar,
+  Breadcrumbs,
   Burger,
   Button,
   Flex,
   Group,
   NavLink,
+  Space,
   Title,
   useMantineColorScheme,
 } from "@mantine/core"
@@ -111,7 +114,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
           <Flex align="center" gap="sm">
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-            <Title order={2}>Monoweb Admin</Title>
+            <Title order={2}>OnlineWeb dashboard</Title>
           </Flex>
 
           <Flex align="center" gap="sm">
@@ -134,6 +137,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             active={pathname.startsWith(navigation.href)}
             variant="subtle"
             leftSection={<navigation.icon width={18} height={18} />}
+            style={{ borderRadius: "var(--mantine-radius-md)" }}
             {...(navigation.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           />
         ))}
@@ -141,7 +145,26 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
           Logg ut
         </Button>
       </AppShellNavbar>
-      <AppShellMain>{children}</AppShellMain>
+      <AppShellMain>
+        <Breadcrumbs>
+          <Anchor href="/" size="sm" key="0-home">
+            hjem
+          </Anchor>
+          {pathname
+            .slice(1)
+            .split("/")
+            .map((part, index, parts) => {
+              const href = `/${parts.slice(0, index + 1).join("/")}`
+              return (
+                <Anchor href={href} size="sm" key={`${index + 1}-${part}`}>
+                  {part || "-"}
+                </Anchor>
+              )
+            })}
+        </Breadcrumbs>
+        <Space h="xl" />
+        {children}
+      </AppShellMain>
     </AppShell>
   )
 }

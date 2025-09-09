@@ -31,7 +31,7 @@ export default function GroupMemberDetailsPage() {
   }
 
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>Oppdater medlemskap</Title>

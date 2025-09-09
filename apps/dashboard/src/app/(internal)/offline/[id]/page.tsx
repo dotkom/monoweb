@@ -29,7 +29,7 @@ export default function OfflineDetailsPage() {
   }
 
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{offline.title}</Title>

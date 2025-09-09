@@ -36,7 +36,7 @@ export default function CompanyDetailsPage() {
   }
 
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{company.name}</Title>
