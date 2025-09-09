@@ -1,10 +1,11 @@
 import { GenericTable } from "@/components/GenericTable"
-import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import type { GroupMembership } from "@dotkomonline/types"
-import { Box, Button, Divider, Stack, Title } from "@mantine/core"
+import { Divider, Group, Image, Space, Stack, Text, Title } from "@mantine/core"
+import { formatDate, formatDistanceToNowStrict } from "date-fns"
+import { nb } from "date-fns/locale"
 import type { FC } from "react"
 import { useGroupMemberForm } from "../../group-member-form"
-import { useEndGroupMembershipMutation, useStartGroupMembershipMutation } from "../../mutations"
+import { useStartGroupMembershipMutation } from "../../mutations"
 import { useGroupDetailsContext } from "../provider"
 import { useGroupMemberDetailsContext } from "./provider"
 import { useGroupMembershipTable } from "./use-group-membership-table"
@@ -15,27 +16,14 @@ const getCurrentMembershipRoles = (memberships: GroupMembership[] | undefined) =
 
 export const GroupMemberEditCard: FC = () => {
   const { groupMember } = useGroupMemberDetailsContext()
-  const { group } = useGroupDetailsContext()
 
   const startMembership = useStartGroupMembershipMutation()
-  const endMembership = useEndGroupMembershipMutation()
 
   const table = useGroupMembershipTable({ groupMember })
-
-  const open = useConfirmDeleteModal({
-    title: "Avslutt medlemskap",
-    text: `Er du sikker på at du vil avslutte medlemskapet for ${groupMember?.name}?`,
-    confirmText: "Avslutt medlemskap",
-    cancelText: "Avbryt",
-    onConfirm: () => {
-      endMembership.mutate({ groupId: group.slug, userId: groupMember.id })
-      close()
-    },
-  })
+  const { group } = useGroupDetailsContext()
 
   const FormComponent = useGroupMemberForm({
     groupId: group.slug,
-    defaultValues: { roleIds: getCurrentMembershipRoles(groupMember.groupMemberships).map((role) => role.id) },
     onSubmit: (data) => {
       startMembership.mutate({
         userId: groupMember.id,
@@ -46,18 +34,53 @@ export const GroupMemberEditCard: FC = () => {
     },
   })
 
+  const activeMemberships = groupMember.groupMemberships
+          .filter((membership) => membership.end === null)
+
   return (
     <Stack>
-      <Title order={3}>Oppdater medlemskap i {group.abbreviation}</Title>
+      <Group gap={6}>
+        {group.imageUrl && (
+          <Image
+            src={group.imageUrl}
+            alt={group.name ?? "Gruppens logo"}
+            height={24}
+            width={24}
+            style={{ borderRadius: "var(--mantine-radius-sm)" }}
+          />
+        )}
+        <Text>{group.name || "Ukjent bruker"}</Text>
+      </Group>
+          <Group gap={6}>
+            {groupMember.imageUrl && (
+              <Image
+                src={groupMember.imageUrl}
+                alt={groupMember.name ?? "Profilbilde"}
+                height={24}
+                width={24}
+                style={{ borderRadius: "var(--mantine-radius-sm)" }}
+              />
+            )}
+            <Text>{groupMember.name || "Ukjent bruker"}</Text>
+          </Group>
+      <Divider />
+
+        {
+          activeMemberships.length ? activeMemberships.map((membership) => (
+            <Stack key={membership.id} gap={0}>
+              <Title order={2}>{membership.roles.map((role) => role.name).join(", ")}</Title>
+              <Text>
+                {formatDistanceToNowStrict(membership.start, { locale: nb })} (siden{" "}
+                {formatDate(membership.start, "dd. MMMM yyyy", { locale: nb })})
+              </Text>
+            </Stack>
+          )) : <Text size="xl">Ikke aktivt medlem</Text>}
+      <Divider />
       <FormComponent />
-      <Box>
-        <Button variant="outline" color="red" onClick={open}>
-          Avslutt medlemskap
-        </Button>
-      </Box>
       <Divider />
       <Title order={3}>Historikk</Title>
       <GenericTable table={table} />
+      <Space h="xl" />
     </Stack>
   )
 }

@@ -3,8 +3,8 @@
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { IconListDetails } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
+import { useGroupDetailsContext } from "../provider"
 import { GroupMemberEditCard } from "./edit-card"
-import { useGroupMemberDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
   {
@@ -17,13 +17,13 @@ const SIDEBAR_LINKS = [
 
 export default function GroupMemberDetailsPage() {
   const router = useRouter()
-  const { groupMember } = useGroupMemberDetailsContext()
+  const { group } = useGroupDetailsContext()
 
   return (
     <Box p="md">
       <Group>
         <CloseButton onClick={() => router.back()} />
-        <Title>{groupMember.name}</Title>
+        <Title>Oppdater medlemskap</Title>
       </Group>
 
       <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>
