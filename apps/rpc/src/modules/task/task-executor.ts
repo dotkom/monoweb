@@ -7,7 +7,7 @@ import { captureException } from "@sentry/node"
 import { secondsToMilliseconds } from "date-fns"
 import type { AttendanceService } from "../event/attendance-service"
 import {
-  type ChargeAttendancePaymentsTaskDefinition,
+  type ChargeAttendeeTaskDefinition,
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
@@ -102,10 +102,10 @@ export function getLocalTaskExecutor(
                   handle,
                   payload as InferTaskData<VerifyPaymentTaskDefinition>
                 )
-              case tasks.CHARGE_ATTENDANCE_PAYMENTS.type:
-                return await attendanceService.executeChargeAttendancePaymentsTask(
+              case tasks.CHARGE_ATTENDEE.type:
+                return await attendanceService.executeChargeAttendeeTask(
                   handle,
-                  payload as InferTaskData<ChargeAttendancePaymentsTaskDefinition>
+                  payload as InferTaskData<ChargeAttendeeTaskDefinition>
                 )
               case tasks.VERIFY_FEEDBACK_ANSWERED.type:
                 return await attendanceService.executeVerifyFeedbackAnsweredTask(
