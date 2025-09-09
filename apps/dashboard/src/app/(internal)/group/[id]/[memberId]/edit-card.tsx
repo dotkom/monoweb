@@ -1,6 +1,19 @@
 import { GenericTable } from "@/components/GenericTable"
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
-import { Button, Divider, Group, Image, Space, Stack, Text, Title, useComputedColorScheme } from "@mantine/core"
+import {
+  Button,
+  Divider,
+  Group,
+  Image,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
+  Space,
+  Stack,
+  Text,
+  Title,
+  useComputedColorScheme,
+} from "@mantine/core"
 import { differenceInHours, formatDate, formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
@@ -75,27 +88,39 @@ export const GroupMemberEditCard: FC = () => {
         </Group>
       </Stack>
 
-      <Divider />
+      <Group>
+        <Popover position="bottom-start">
+          <PopoverTarget>
+            <Button variant="light" size="sm">
+              Hvordan virker medlemskap og roller?
+            </Button>
+          </PopoverTarget>
+          <PopoverDropdown>
+            <Stack gap="xs">
+              <Text>
+                Vi lagrer ett medlemskap per sett med roller. Det betyr at ett medlem gjerne har flere medlemskaper,
+                hvor hvert medlemskap kan ha flere roller.
+              </Text>
+              <Text>
+                Dersom et medlem endrer roller, skal man avslutte nåværende medlemskap og opprette et nytt medlemskap
+                med de nye rollene.
+              </Text>
+              <Text>
+                Eksempel: Du starter som medlem, så blir du Vinstraffansvarlig, og senere blir du tillitsvalgt i tillegg
+                til Vinstraffansvarlig, og til slutt er du bare medlem igjen.
+                <br />
+                Rollene dine ser sånn her ut: Medlem → Vinstraffansvarlig → Vinstraffansvarlig og tillitsvalgt → medlem
+              </Text>
+              <Text>
+                Dersom noen har en rolle (f.eks. Vinstraffansvarlig), er det ikke nødvendig å føre opp "Medlem" (eller
+                en ekvivalent generisk medlemsrolle).
+              </Text>
+            </Stack>
+          </PopoverDropdown>
+        </Popover>
+      </Group>
 
-      <Stack gap="xs">
-        <Text size="sm" c="gray">
-          Vi lagrer ett medlemskap per sett med roller. Det betyr at ett medlem gjerne har flere medlemskaper, hvor
-          hvert medlemskap kan ha flere roller.
-        </Text>
-        <Text size="sm" c="gray">
-          Dersom et medlem endrer roller, avslutt nåværende medlemskap og opprett et nytt medlemskap med de nye rollene.
-        </Text>
-        <Text size="sm" c="gray">
-          Eksempel: Du starter som medlem, så blir du Vinstraffansvarlig, og senere blir du tillitsvalgt i tillegg til
-          Vinstraffansvarlig, og til slutt er du bare medlem igjen.
-          <br />
-          Rollene dine ser sånn her ut: Medlem → Vinstraffansvarlig → Vinstraffansvarlig og tillitsvalgt → medlem
-        </Text>
-        <Text size="sm" c="gray">
-          Dersom noen har en rolle (f.eks. Vinstraffansvarlig), er det ikke nødvendig å føre opp "Medlem" (eller en
-          ekvivalent generisk medlemsrolle).
-        </Text>
-      </Stack>
+      <Divider />
 
       {activeMemberships.length ? (
         <Stack gap="xs">
@@ -104,7 +129,7 @@ export const GroupMemberEditCard: FC = () => {
             gap="xs"
             p="md"
             bg={isDarkMode ? "gray.8" : "gray.0"}
-            style={{ borderRadius: "var(--mantine-radius-md)" }}
+            style={{ borderRadius: "var(--mantine-radius-lg)" }}
           >
             {activeMemberships.map((membership) => (
               <Stack key={membership.id} gap={4}>
