@@ -29,7 +29,7 @@ export default function JobListingDetailsPage() {
   }
 
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{jobListing.title}</Title>

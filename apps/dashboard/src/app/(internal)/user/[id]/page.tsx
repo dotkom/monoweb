@@ -36,7 +36,7 @@ export default function UserDetailsPage() {
   }
 
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{user.name}</Title>

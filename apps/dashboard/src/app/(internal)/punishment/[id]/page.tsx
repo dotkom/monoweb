@@ -84,7 +84,7 @@ export default function MarkEditCard() {
   })
 
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{mark.title}</Title>

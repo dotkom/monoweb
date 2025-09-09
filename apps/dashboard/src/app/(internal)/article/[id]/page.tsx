@@ -29,7 +29,7 @@ export default function ArticleDetailsPage() {
   }
 
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{article.title}</Title>
