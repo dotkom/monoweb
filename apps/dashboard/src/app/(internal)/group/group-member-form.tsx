@@ -19,13 +19,7 @@ interface Props {
   disabled?: boolean
 }
 
-export const useGroupMemberForm = ({
-  onSubmit,
-  label = "Lagre",
-  defaultValues,
-  groupId,
-  disabled,
-}: Props) => {
+export const useGroupMemberForm = ({ onSubmit, label = "Lagre", defaultValues, groupId, disabled }: Props) => {
   const { data: group } = useGroupGetQuery(groupId)
 
   return useFormBuilder({

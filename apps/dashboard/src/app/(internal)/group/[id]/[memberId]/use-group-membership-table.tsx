@@ -1,14 +1,10 @@
 "use client"
-
-import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import type { GroupMember, GroupMembership } from "@dotkomonline/types"
-import { Button, Text, Tooltip } from "@mantine/core"
+import { Button, Tooltip } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import { useMemo } from "react"
 import { useEditGroupMembershipModal } from "../../modals/edit-group-membership-modal"
-import { useEndGroupMembershipMutation } from "../../mutations"
-import { useGroupDetailsContext } from "../provider"
 
 interface Props {
   groupMember: GroupMember
@@ -17,18 +13,6 @@ interface Props {
 export const useGroupMembershipTable = ({ groupMember }: Props) => {
   const columnHelper = createColumnHelper<GroupMembership>()
   const openGroupEditModal = useEditGroupMembershipModal()
-  const endMembership = useEndGroupMembershipMutation()
-  const { group } = useGroupDetailsContext()
-
-  const openEndMembershipModal = useConfirmDeleteModal({
-    title: "Avslutt medlemskap",
-    text: `Er du sikker på at du vil avslutte medlemskapet for ${groupMember?.name}?`,
-    confirmText: "Avslutt medlemskap",
-    cancelText: "Avbryt",
-    onConfirm: () => {
-      endMembership.mutate({ groupId: group.slug, userId: groupMember.id })
-    },
-  })
 
   const columns = useMemo(
     () => [
@@ -61,7 +45,8 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
           const membership = info.getValue()
           const isActive = membership.end === null
 
-          const button = <Button
+          const button = (
+            <Button
               size="sm"
               variant="subtle"
               disabled={isActive}
@@ -69,6 +54,7 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
             >
               Rediger
             </Button>
+          )
 
           if (isActive) {
             return <Tooltip label="Du må avslutte medlemskapet før du kan redigere det">{button}</Tooltip>
@@ -78,7 +64,7 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
         },
       }),
     ],
-    [columnHelper, openGroupEditModal, openEndMembershipModal]
+    [columnHelper, openGroupEditModal]
   )
 
   return useReactTable({

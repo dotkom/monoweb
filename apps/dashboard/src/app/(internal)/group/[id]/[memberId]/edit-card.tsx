@@ -1,4 +1,5 @@
 import { GenericTable } from "@/components/GenericTable"
+import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import { Button, Divider, Group, Image, Space, Stack, Text, Title, useComputedColorScheme } from "@mantine/core"
 import { differenceInHours, formatDate, formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -8,7 +9,6 @@ import { useEndGroupMembershipMutation, useStartGroupMembershipMutation } from "
 import { useGroupDetailsContext } from "../provider"
 import { useGroupMemberDetailsContext } from "./provider"
 import { useGroupMembershipTable } from "./use-group-membership-table"
-import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 
 export const GroupMemberEditCard: FC = () => {
   const isDarkMode = useComputedColorScheme() === "dark"
@@ -36,14 +36,14 @@ export const GroupMemberEditCard: FC = () => {
   })
 
   const openEndMembershipModal = useConfirmDeleteModal({
-      title: "Avslutt medlemskap",
-      text: `Er du sikker på at du vil avslutte medlemskapet for ${groupMember?.name}?`,
-      confirmText: "Avslutt medlemskap",
-      cancelText: "Avbryt",
-      onConfirm: () => {
-        endMembership.mutate({ groupId: group.slug, userId: groupMember.id })
-      },
-    })
+    title: "Avslutt medlemskap",
+    text: `Er du sikker på at du vil avslutte medlemskapet for ${groupMember?.name}?`,
+    confirmText: "Avslutt medlemskap",
+    cancelText: "Avbryt",
+    onConfirm: () => {
+      endMembership.mutate({ groupId: group.slug, userId: groupMember.id })
+    },
+  })
 
   return (
     <Stack>
@@ -78,33 +78,45 @@ export const GroupMemberEditCard: FC = () => {
 
       <Divider />
 
-       <Stack gap={4}>
-        <Text size="sm" c="gray">Vi lagrer ett medlemskap per rolle. Det betyr at ett medlem gjerne har flere medlemskaper.</Text>
-        <Text size="sm" c="gray">Dersom et medlem endrer rolle, avslutt nåværende medlemskap og opprett et nytt medlemskap med de nye rollene.</Text>
-        <Text size="sm" c="gray">Dersom noen har en rolle (f.eks. Vinstraffansvarlig), er det ikke nødvendig å føre opp "Medlem" (eller en ekvivalent generisk medlemsrolle).</Text>
+      <Stack gap={4}>
+        <Text size="sm" c="gray">
+          Vi lagrer ett medlemskap per rolle. Det betyr at ett medlem gjerne har flere medlemskaper.
+        </Text>
+        <Text size="sm" c="gray">
+          Dersom et medlem endrer rolle, avslutt nåværende medlemskap og opprett et nytt medlemskap med de nye rollene.
+        </Text>
+        <Text size="sm" c="gray">
+          Dersom noen har en rolle (f.eks. Vinstraffansvarlig), er det ikke nødvendig å føre opp "Medlem" (eller en
+          ekvivalent generisk medlemsrolle).
+        </Text>
       </Stack>
 
       {activeMemberships.length ? (
         <Stack gap="xs">
           <Text>Aktivt medlemskap:</Text>
-        <Stack gap="xs" p="md" bg={isDarkMode? "gray.8" : "gray.0"} style={{ borderRadius: "var(--mantine-radius-md)" }}>
-          {activeMemberships.map((membership) => (
-            <Stack key={membership.id} gap={4}>
-              <Title order={3}>{membership.roles.map((role) => role.name).join(", ")}</Title>
-              <Text>
-                {differenceInHours(new Date(), membership.start, { roundingMethod: "floor" }) < 1
-                  ? "Under én time"
-                  : formatDistanceToNowStrict(membership.start, { locale: nb })}{" "}
-                (siden {formatDate(membership.start, "dd. MMMM yyyy", { locale: nb })})
-              </Text>
-            </Stack>
-          ))}
-          <Group>
-            <Button color="red" variant="light" size="sm" onClick={() => openEndMembershipModal()}>
-              Avslutt medlemskapet
-            </Button>
-          </Group>
-        </Stack>
+          <Stack
+            gap="xs"
+            p="md"
+            bg={isDarkMode ? "gray.8" : "gray.0"}
+            style={{ borderRadius: "var(--mantine-radius-md)" }}
+          >
+            {activeMemberships.map((membership) => (
+              <Stack key={membership.id} gap={4}>
+                <Title order={3}>{membership.roles.map((role) => role.name).join(", ")}</Title>
+                <Text>
+                  {differenceInHours(new Date(), membership.start, { roundingMethod: "floor" }) < 1
+                    ? "Under én time"
+                    : formatDistanceToNowStrict(membership.start, { locale: nb })}{" "}
+                  (siden {formatDate(membership.start, "dd. MMMM yyyy", { locale: nb })})
+                </Text>
+              </Stack>
+            ))}
+            <Group>
+              <Button color="red" variant="light" size="sm" onClick={() => openEndMembershipModal()}>
+                Avslutt medlemskapet
+              </Button>
+            </Group>
+          </Stack>
           <Divider />
         </Stack>
       ) : (
