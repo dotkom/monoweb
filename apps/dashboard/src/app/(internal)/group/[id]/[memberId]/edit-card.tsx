@@ -77,7 +77,7 @@ export const GroupMemberEditCard: FC = () => {
 
       <Divider />
 
-      <Stack gap={4}>
+      <Stack gap="xs">
         <Text size="sm" c="gray">
           Vi lagrer ett medlemskap per sett med roller. Det betyr at ett medlem gjerne har flere medlemskaper, hvor
           hvert medlemskap kan ha flere roller.
@@ -86,7 +86,8 @@ export const GroupMemberEditCard: FC = () => {
           Dersom et medlem endrer roller, avslutt nåværende medlemskap og opprett et nytt medlemskap med de nye rollene.
         </Text>
         <Text size="sm" c="gray">
-          Eksempel: Medlem → Vinstraffansvarlig → Vinstraffansvarlig og tillitsvalgt → medlem
+          Eksempel: Du starter som medlem, så blir du Vinstraffansvarlig, og senere blir du tillitsvalgt i tillegg til Vinstraffansvarlig, og til slutt er du bare medlem igjen.<br />
+          Rollene dine ser sånn her ut: Medlem → Vinstraffansvarlig → Vinstraffansvarlig og tillitsvalgt → medlem
         </Text>
         <Text size="sm" c="gray">
           Dersom noen har en rolle (f.eks. Vinstraffansvarlig), er det ikke nødvendig å føre opp "Medlem" (eller en
