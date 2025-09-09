@@ -24,7 +24,6 @@ export const GroupMemberEditCard: FC = () => {
 
   const FormComponent = useGroupMemberForm({
     label: activeMemberships.length ? "Avslutt nåværende og lag nytt medlemskap" : "Legg til medlemskap",
-    description: 'Ikke velg "Medlem" og en annen rolle samtidig',
     groupId: group.slug,
     onSubmit: (data) => {
       startMembership.mutate({
@@ -80,10 +79,14 @@ export const GroupMemberEditCard: FC = () => {
 
       <Stack gap={4}>
         <Text size="sm" c="gray">
-          Vi lagrer ett medlemskap per rolle. Det betyr at ett medlem gjerne har flere medlemskaper.
+          Vi lagrer ett medlemskap per sett med roller. Det betyr at ett medlem gjerne har flere medlemskaper, hvor
+          hvert medlemskap kan ha flere roller.
         </Text>
         <Text size="sm" c="gray">
-          Dersom et medlem endrer rolle, avslutt nåværende medlemskap og opprett et nytt medlemskap med de nye rollene.
+          Dersom et medlem endrer roller, avslutt nåværende medlemskap og opprett et nytt medlemskap med de nye rollene.
+        </Text>
+        <Text size="sm" c="gray">
+          Eksempel: Medlem → Vinstraffansvarlig → Vinstraffansvarlig og tillitsvalgt → medlem
         </Text>
         <Text size="sm" c="gray">
           Dersom noen har en rolle (f.eks. Vinstraffansvarlig), er det ikke nødvendig å føre opp "Medlem" (eller en
