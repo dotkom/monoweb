@@ -166,6 +166,9 @@ export const ProfileMenu: FC = () => {
     )
   }
 
+  const showFeedbackFormPing = eventsMissingFeedback && eventsMissingFeedback.length > 0
+  const showPing = showFeedbackFormPing
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
@@ -180,11 +183,7 @@ export const ProfileMenu: FC = () => {
               <Icon className="text-lg" icon="tabler:user" />
             </AvatarFallback>
           </Avatar>
-          {
-            /*eventsMissingFeedback && eventsMissingFeedback.length > 0*/ true && !open && (
-              <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />
-            )
-          }
+          {showPing && !open && <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -227,11 +226,9 @@ export const ProfileMenu: FC = () => {
                         <div className="flex items-center justify-between w-full">
                           <div className="flex flex-row gap-2 items-center">
                             <Text className="font-medium text-gray-900 dark:text-white">{link.label}</Text>
-                            {
-                              /*eventsMissingFeedback && eventsMissingFeedback.length > 0*/ true &&
-                                open &&
-                                isProfile && <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                            }
+                            {showFeedbackFormPing && open && isProfile && (
+                              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                            )}
                           </div>
                           {link.adminOnly && (
                             <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
