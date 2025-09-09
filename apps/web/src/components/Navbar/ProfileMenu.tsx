@@ -17,89 +17,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Icon,
+  Text,
 } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
-import { skipToken, useQuery } from "@tanstack/react-query"
+import { skipToken, useQueries, useQuery } from "@tanstack/react-query"
 import Link from "next/link"
-import { type FC, Fragment, type PropsWithChildren, useState } from "react"
+import { type FC, Fragment, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
-
-export const ProfileMenu: FC = () => {
-  const session = useSession()
-  const fullPathname = useFullPathname()
-  const trpc = useTRPC()
-  const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
-  const { data: eventsMissingFeedback } = useQuery(
-    trpc.event.findUnansweredByUser.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
-  )
-
-  if (session === null) {
-    return (
-      <div className="flex flex-row gap-2">
-        <Button
-          element={Link}
-          variant="solid"
-          size="sm"
-          color="brand"
-          className="text-sm font-semibold px-3 py-2"
-          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
-          icon={<Icon className="md:hidden lg:flex mr-2 text-xl" icon="tabler:login-2" />}
-        >
-          Logg inn
-        </Button>
-
-        <div className="hidden md:block">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
-              <Icon icon="tabler:dots" className="rotate-90" width={24} height={24} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="-mr-3 px-4 py-3 rounded-3xl mt-2 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700/30 shadow-sm rounded-lg"
-              sideOffset={16}
-            >
-              <div className="gap-2 flex">
-                <ThemeToggle size="sm" />
-
-                <div className="h-10 w-1 bg-gray-300 dark:bg-stone-600" />
-
-                <Button
-                  element={Link}
-                  variant="solid"
-                  size="md"
-                  className="w-full font-semibold justify-start px-3 h-10 bg-transparent dark:bg-transparent hover:bg-blue-100 dark:hover:bg-stone-700 transition-none"
-                  href={createAuthorizeUrl({ redirectAfter: fullPathname })}
-                >
-                  Logg inn uten Feide
-                </Button>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <AvatarDropdown>
-      <button
-        type="button"
-        aria-label="Åpne profilmeny"
-        className="relative rounded-full transition-all duration-200 focus:outline-none"
-      >
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
-          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-sm font-medium">
-            <Icon className="text-lg" icon="tabler:user" />
-          </AvatarFallback>
-        </Avatar>
-        {eventsMissingFeedback && eventsMissingFeedback.length > 0 && (
-          <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500 animate-bounce" />
-        )}
-      </button>
-    </AvatarDropdown>
-  )
-}
 
 interface LinkDetail {
   label: string
@@ -167,15 +91,26 @@ const linkGroups: LinkGroup[] = [
   },
 ]
 
-export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
+export const ProfileMenu: FC = () => {
   const [open, setOpen] = useState(false)
 
   const session = useSession()
-  const trpc = useTRPC()
   const fullPathname = useFullPathname()
+  const trpc = useTRPC()
 
-  const { data: user } = useQuery(trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }))
-  const { data: isStaff } = useQuery(trpc.user.isStaff.queryOptions(undefined, { enabled: Boolean(session) }))
+  const [userResponse, isStaffResponse] = useQueries({
+    queries: [
+      trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }),
+      trpc.user.isStaff.queryOptions(undefined, { enabled: Boolean(session) }),
+    ],
+  })
+
+  const user = userResponse.data
+  const isStaff = isStaffResponse.data ?? false
+
+  const { data: eventsMissingFeedback } = useQuery(
+    trpc.event.findUnansweredByUser.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
+  )
 
   const filteredLinkGroups = linkGroups
     .map((group) => ({
@@ -184,9 +119,74 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
     }))
     .filter((group) => group.links.length > 0)
 
+  if (session === null) {
+    return (
+      <div className="flex flex-row gap-2">
+        <Button
+          element={Link}
+          variant="solid"
+          size="sm"
+          color="brand"
+          className="text-sm font-semibold px-3 py-2"
+          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
+          icon={<Icon className="md:hidden lg:flex mr-2 text-xl" icon="tabler:login-2" />}
+        >
+          Logg inn
+        </Button>
+
+        <div className="hidden md:block">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
+              <Icon icon="tabler:dots" className="rotate-90" width={24} height={24} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="-mr-3 px-4 py-3 rounded-3xl mt-2 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700/30 shadow-sm"
+              sideOffset={16}
+            >
+              <div className="gap-2 flex">
+                <ThemeToggle size="sm" />
+
+                <div className="h-10 w-1 bg-gray-300 dark:bg-stone-600" />
+
+                <Button
+                  element={Link}
+                  variant="solid"
+                  size="md"
+                  className="w-full font-semibold justify-start px-3 h-10 bg-transparent dark:bg-transparent hover:bg-blue-100 dark:hover:bg-stone-700 transition-none"
+                  href={createAuthorizeUrl({ redirectAfter: fullPathname })}
+                >
+                  Logg inn uten Feide
+                </Button>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Åpne profilmeny"
+          className="relative rounded-full transition-all duration-200 focus:outline-none"
+        >
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
+            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-sm font-medium">
+              <Icon className="text-lg" icon="tabler:user" />
+            </AvatarFallback>
+          </Avatar>
+          {
+            /*eventsMissingFeedback && eventsMissingFeedback.length > 0*/ true && !open && (
+              <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />
+            )
+          }
+        </button>
+      </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
         className="w-72 -mr-16 md:-mr-3 mt-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700/30 shadow-sm"
@@ -194,8 +194,10 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
       >
         <DropdownMenuLabel className="font-normal p-3 mb-2">
           <div className="flex flex-col min-w-0 flex-1">
-            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{user?.name || "Bruker"}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{user?.email || ""}</p>
+            <Text className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              {user?.name || "Bruker"}
+            </Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 truncate">{user?.email || ""}</Text>
           </div>
         </DropdownMenuLabel>
 
@@ -205,42 +207,51 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
           return (
             <Fragment key={group.id}>
               <DropdownMenuGroup className="space-y-1">
-                {group.links.map((link) => (
-                  <DropdownMenuItem
-                    asChild
-                    onClick={() => setOpen(false)}
-                    key={link.label}
-                    className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
-                  >
-                    <Link
-                      className="flex items-center gap-3 text-sm"
-                      href={link.href ?? "#"}
-                      target={link.openInNewTab ? "_blank" : undefined}
-                      rel="noreferrer"
+                {group.links.map((link) => {
+                  const isProfile = link.href === "/profil"
+
+                  return (
+                    <DropdownMenuItem
+                      asChild
+                      onClick={() => setOpen(false)}
+                      key={link.label}
+                      className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
                     >
-                      <Icon icon={link.icon} width={16} height={16} className="text-gray-600 dark:text-stone-300" />
-                      {link.adminOnly ? (
+                      <Link
+                        className="flex items-center gap-3 text-sm"
+                        href={link.href ?? "#"}
+                        target={link.openInNewTab ? "_blank" : undefined}
+                        rel="noreferrer"
+                      >
+                        <Icon icon={link.icon} width={16} height={16} className="text-gray-600 dark:text-stone-300" />
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-white">{link.label}</span>
-                          <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
-                            <Icon
-                              icon="tabler:lock"
-                              width={12}
-                              height={12}
-                              className="text-amber-700 dark:text-amber-300"
-                            />
-                            <span className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</span>
+                          <div className="flex flex-row gap-2 items-center">
+                            <Text className="font-medium text-gray-900 dark:text-white">{link.label}</Text>
+                            {
+                              /*eventsMissingFeedback && eventsMissingFeedback.length > 0*/ true &&
+                                open &&
+                                isProfile && <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-bounce" />
+                            }
                           </div>
+                          {link.adminOnly && (
+                            <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
+                              <Icon
+                                icon="tabler:lock"
+                                width={12}
+                                height={12}
+                                className="text-amber-700 dark:text-amber-300"
+                              />
+                              <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
+                            </div>
+                          )}
                         </div>
-                      ) : (
-                        <span className="font-medium text-gray-900 dark:text-white">{link.label}</span>
-                      )}
-                      {link.openInNewTab && (
-                        <Icon icon="tabler:arrow-up-right" width={16} height={16} className="text-gray-400 ml-auto" />
-                      )}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
+                        {link.openInNewTab && (
+                          <Icon icon="tabler:arrow-up-right" width={16} height={16} className="text-gray-400 ml-auto" />
+                        )}
+                      </Link>
+                    </DropdownMenuItem>
+                  )
+                })}
               </DropdownMenuGroup>
               {notLast && <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />}
             </Fragment>
@@ -252,7 +263,7 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
         <div className="flex items-center justify-between px-3">
           <div className="flex gap-3 items-center">
             <Icon icon={"tabler:palette"} width={16} height={16} className="text-gray-600 dark:text-stone-300" />
-            <span className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</span>
+            <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
           </div>
           <ThemeToggle size="sm" />
         </div>
@@ -266,7 +277,7 @@ export const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
             className="flex items-center w-full gap-3 text-sm"
           >
             <Icon icon="tabler:logout-2" width={16} height={16} className="text-red-500" />
-            <span className="font-medium text-red-500">Logg ut</span>
+            <Text className="font-medium text-red-500">Logg ut</Text>
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
