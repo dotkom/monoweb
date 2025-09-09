@@ -92,6 +92,10 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     },
     async create(handle, payload) {
       let id = slugify(payload.abbreviation)
+      const inputSlug = payload.slug?.trim()
+      if (inputSlug && inputSlug.length > 1) {
+        id = slugify(inputSlug)
+      }
 
       // We try to find an available slug. This should hopefully never run more than once, but maybe some future idiot
       // is trying to break the authorization system by creating a group with a name that is already taken.
@@ -110,7 +114,10 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       return await this.getById(handle, id)
     },
     async update(handle, groupId, values) {
-      return groupRepository.update(handle, groupId, values)
+      const inputSlug = values.slug?.trim()
+      const slug = inputSlug && inputSlug.length > 1 ? slugify(inputSlug) : undefined
+
+      return groupRepository.update(handle, groupId, { ...values, slug })
     },
     async delete(handle, groupId) {
       return await groupRepository.delete(handle, groupId)

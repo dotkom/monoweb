@@ -23,7 +23,7 @@ import {
 } from "@dotkomonline/types"
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { captureException } from "@sentry/node"
-import { addHours, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast } from "date-fns"
+import { addDays, addHours, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast, min } from "date-fns"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
@@ -34,7 +34,7 @@ import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../paym
 import type { PaymentProductsService } from "../payment/payment-products-service"
 import type { Payment, PaymentService } from "../payment/payment-service"
 import {
-  type ChargeAttendancePaymentsTaskDefinition,
+  type ChargeAttendeeTaskDefinition,
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
@@ -143,10 +143,7 @@ export interface AttendanceService {
   updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<void>
   deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
-  executeChargeAttendancePaymentsTask(
-    handle: DBHandle,
-    task: InferTaskData<ChargeAttendancePaymentsTaskDefinition>
-  ): Promise<void>
+  executeChargeAttendeeTask(handle: DBHandle, task: InferTaskData<ChargeAttendeeTaskDefinition>): Promise<void>
   startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, deadline: TZDate): Promise<Payment>
   cancelAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
   completeAttendeePayment(handle: DBHandle, paymentId: string): Promise<void>
@@ -579,11 +576,30 @@ export function getAttendanceService(
         throw new AttendeeAlreadyPaidError(attendee.userId)
       }
 
-      await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
-
-      const task = await taskSchedulingService.findChargeAttendancePaymentsTask(handle, attendance.id)
-      if (task) {
-        await taskSchedulingService.cancel(handle, task.id)
+      const updatedAttendance = await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
+      // TODO: N+1 Query
+      const promises = updatedAttendance.attendees.map(async (attendee) => {
+        return await taskSchedulingService.findChargeAttendeeTask(handle, attendee.id)
+      })
+      const tasks = await Promise.all(promises)
+      const errors: Error[] = []
+      for (const task of tasks) {
+        if (task === null) {
+          continue
+        }
+        // Run them in a try-catch block and optionally build an AggregateError to prevent one failed cancel to stop
+        // all other tasks from being cancelled.
+        try {
+          await taskSchedulingService.cancel(handle, task.id)
+        } catch (e) {
+          logger.error("Received error when attempting to cancel task: %o", e)
+          if (e instanceof Error) {
+            errors.push(e)
+          }
+        }
+      }
+      if (errors.length !== 0) {
+        throw new AggregateError(errors, "Failed to cancel one or more tasks")
       }
     },
     async updateAttendancePaymentPrice(handle, attendanceId, price) {
@@ -625,24 +641,22 @@ export function getAttendanceService(
         price: attendance.attendancePrice,
         url,
       })
-      await taskSchedulingService.scheduleAt(
-        handle,
-        tasks.CHARGE_ATTENDANCE_PAYMENTS,
-        { attendanceId: attendance.id },
-        new TZDate(attendance.deregisterDeadline)
-      )
     },
-    async executeChargeAttendancePaymentsTask(handle, { attendanceId }) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
-      logger.info("Executing Stripe charge for attendees of Attendance(ID=%s)", attendanceId)
+    async executeChargeAttendeeTask(handle, { attendeeId }) {
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
+      if (!attendee) {
+        throw new AttendanceNotFound(attendeeId)
+      }
+      logger.info("Executing Stripe charge for Attendee(ID=%s) of Attendance(ID=%s)", attendee.id, attendance.id)
       if (attendance.deregisterDeadline > getCurrentUTC()) {
-        logger.warn(`Not charging ${attendanceId} because task is too early`)
+        logger.error(
+          "Cancelling charge of Attendee(ID=%s) as task is scheduled too early. This is likely a bug",
+          attendee.id
+        )
         return
       }
-      for (const attendee of attendance.attendees) {
-        logger.info(`Charging attendee ${attendee.id}`)
-        await this.createAttendeePaymentCharge(handle, attendee.id)
-      }
+      await this.createAttendeePaymentCharge(handle, attendee.id)
     },
     async startAttendeePayment(handle, attendeeId, deadline): Promise<Payment> {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
@@ -666,20 +680,15 @@ export function getAttendanceService(
         }
       }
 
+      const isImmediatePayment = isPast(attendance.deregisterDeadline)
       const payment = await paymentService.create(
         attendance.id,
         attendee.user,
-        isPast(attendance.deregisterDeadline) ? "CHARGE" : "RESERVE"
+        isImmediatePayment ? "CHARGE" : "RESERVE"
       )
 
-      await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
-        paymentDeadline: deadline,
-        paymentId: payment.id,
-        paymentLink: payment.url,
-        paymentRefundedAt: null,
-        paymentRefundedById: null,
-      })
-
+      // This task has to be scheduled regardless, as the user still has the `deadline` time to make the payment
+      // regardless of whether its a charge or a reservation.
       await taskSchedulingService.scheduleAt(
         handle,
         tasks.VERIFY_PAYMENT,
@@ -688,6 +697,32 @@ export function getAttendanceService(
         },
         deadline
       )
+      // We attempt to put a "hold" on the user's credit card for as long as possible. From experience, Visa and
+      // MasterCard allow a hold to be kept on an account for 7 days. To allow for leeway and clock tolerance, we set
+      // the limit to 5 days.
+      //
+      // If the deadline for the event is earlier than those 5 days, we use that, as its no longer allowed to be
+      // deregistered from a paid event after the deregistration deadline without consequences imposed by the
+      // organizing committee.
+      const maximalChargeTime = min([addDays(getCurrentUTC(), 5), new TZDate(attendance.deregisterDeadline)])
+
+      if (!isImmediatePayment) {
+        await taskSchedulingService.scheduleAt(
+          handle,
+          tasks.CHARGE_ATTENDEE,
+          { attendeeId: attendee.id },
+          new TZDate(maximalChargeTime)
+        )
+      }
+
+      await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
+        paymentDeadline: deadline,
+        paymentId: payment.id,
+        paymentLink: payment.url,
+        paymentRefundedAt: null,
+        paymentRefundedById: null,
+        paymentChargeDeadline: isImmediatePayment ? null : maximalChargeTime,
+      })
 
       return payment
     },
