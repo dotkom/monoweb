@@ -70,13 +70,13 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
     permanentRedirect(createEventPageUrl(eventId, event.title), RedirectType.replace)
   }
 
-  const [user, isStaff, childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
+  const [user, childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
     session ? server.user.getMe.query() : null,
-    session ? server.user.isStaff.query() : null,
     server.event.findChildEvents.query({ eventId }),
     server.event.findParentEvent.query({ eventId }),
   ])
 
+  const isOrganizer = user ? await server.event.isOrganizer.query({ eventId }) : null
   const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
 
   const parentEvent = parentEventWithAttendance?.event ?? null
@@ -87,7 +87,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
 
   return (
     <div className="flex flex-col gap-8">
-      <EventHeader event={event} isStaff={isStaff ?? false} />
+      <EventHeader event={event} showDashboardLink={isOrganizer ?? false} />
 
       {childEventWithAttendance.length > 0 ? (
         <Tabs defaultValue="description">
