@@ -86,7 +86,9 @@ export const GroupMemberEditCard: FC = () => {
           Dersom et medlem endrer roller, avslutt nåværende medlemskap og opprett et nytt medlemskap med de nye rollene.
         </Text>
         <Text size="sm" c="gray">
-          Eksempel: Du starter som medlem, så blir du Vinstraffansvarlig, og senere blir du tillitsvalgt i tillegg til Vinstraffansvarlig, og til slutt er du bare medlem igjen.<br />
+          Eksempel: Du starter som medlem, så blir du Vinstraffansvarlig, og senere blir du tillitsvalgt i tillegg til
+          Vinstraffansvarlig, og til slutt er du bare medlem igjen.
+          <br />
           Rollene dine ser sånn her ut: Medlem → Vinstraffansvarlig → Vinstraffansvarlig og tillitsvalgt → medlem
         </Text>
         <Text size="sm" c="gray">
