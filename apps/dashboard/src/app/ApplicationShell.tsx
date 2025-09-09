@@ -137,7 +137,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             active={pathname.startsWith(navigation.href)}
             variant="subtle"
             leftSection={<navigation.icon width={18} height={18} />}
-            style={{ borderRadius: 8 }}
+            style={{ borderRadius: "var(--mantine-radius-md)" }}
             {...(navigation.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           />
         ))}
