@@ -34,7 +34,7 @@ export default function GroupMemberDetailsPage() {
     <Box p="md">
       <Group>
         <CloseButton onClick={() => router.back()} />
-        <Title>{groupMember.name}</Title>
+        <Title>Oppdater medlemskap</Title>
       </Group>
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange}>

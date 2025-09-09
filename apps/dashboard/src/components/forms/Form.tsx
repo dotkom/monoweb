@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Flex } from "@mantine/core"
-import type { FC } from "react"
 import { type DefaultValues, type UseFormReturn, useForm } from "react-hook-form"
 import type { z } from "zod"
 import type { InputProducerResult } from "./types"
@@ -17,6 +16,7 @@ interface FormBuilderOptions<T extends z.ZodRawShape> {
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
   onSubmit(data: z.infer<z.ZodObject<T>>, form: UseFormReturn<z.infer<z.ZodObject<T>>>): void
+  disabled?: boolean
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({
@@ -25,7 +25,8 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   defaultValues,
   label,
   onSubmit,
-}: FormBuilderOptions<T>): FC {
+  disabled,
+}: FormBuilderOptions<T>) {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(schema),
     mode: "onBlur",
@@ -61,7 +62,9 @@ export function useFormBuilder<T extends z.ZodRawShape>({
         <Flex direction="column" gap="md">
           {components}
           <div>
-            <Button type="submit">{label}</Button>
+            <Button type="submit" disabled={disabled}>
+              {label}
+            </Button>
           </div>
         </Flex>
       </form>
