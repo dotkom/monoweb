@@ -14,13 +14,9 @@ export const MarkWriteSchema = MarkSchema.partial({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).omit({
+  groups: true,
 })
-  .extend({
-    userIds: z.array(z.string()).optional(),
-  })
-  .omit({
-    groups: true,
-  })
 
 export type MarkWrite = z.infer<typeof MarkWriteSchema>
 

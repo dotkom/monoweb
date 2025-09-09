@@ -27,7 +27,6 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
     cancelText: "Avbryt",
     onConfirm: () => {
       endMembership.mutate({ groupId: group.slug, userId: groupMember.id })
-      close()
     },
   })
 
@@ -83,7 +82,7 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
         },
       }),
     ],
-    [columnHelper, openGroupEditModal]
+    [columnHelper, openGroupEditModal, openEndMembershipModal]
   )
 
   return useReactTable({

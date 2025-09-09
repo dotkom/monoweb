@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Flex } from "@mantine/core"
-import type { FC } from "react"
 import { type DefaultValues, type UseFormReturn, useForm } from "react-hook-form"
 import type { z } from "zod"
 import type { InputProducerResult } from "./types"
@@ -25,7 +24,6 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   defaultValues,
   label,
   onSubmit,
-  
 }: FormBuilderOptions<T>) {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(schema),

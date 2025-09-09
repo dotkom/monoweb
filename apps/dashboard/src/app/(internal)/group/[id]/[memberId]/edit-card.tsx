@@ -30,12 +30,10 @@ export const GroupMemberEditCard: FC = () => {
         groupId: group.slug,
         roleIds: data.roleIds,
       })
-      close()
     },
   })
 
-  const activeMemberships = groupMember.groupMemberships
-          .filter((membership) => membership.end === null)
+  const activeMemberships = groupMember.groupMemberships.filter((membership) => membership.end === null)
 
   return (
     <Stack>
@@ -51,30 +49,33 @@ export const GroupMemberEditCard: FC = () => {
         )}
         <Text>{group.name || "Ukjent bruker"}</Text>
       </Group>
-          <Group gap={6}>
-            {groupMember.imageUrl && (
-              <Image
-                src={groupMember.imageUrl}
-                alt={groupMember.name ?? "Profilbilde"}
-                height={24}
-                width={24}
-                style={{ borderRadius: "var(--mantine-radius-sm)" }}
-              />
-            )}
-            <Text>{groupMember.name || "Ukjent bruker"}</Text>
-          </Group>
+      <Group gap={6}>
+        {groupMember.imageUrl && (
+          <Image
+            src={groupMember.imageUrl}
+            alt={groupMember.name ?? "Profilbilde"}
+            height={24}
+            width={24}
+            style={{ borderRadius: "var(--mantine-radius-sm)" }}
+          />
+        )}
+        <Text>{groupMember.name || "Ukjent bruker"}</Text>
+      </Group>
       <Divider />
 
-        {
-          activeMemberships.length ? activeMemberships.map((membership) => (
-            <Stack key={membership.id} gap={0}>
-              <Title order={2}>{membership.roles.map((role) => role.name).join(", ")}</Title>
-              <Text>
-                {formatDistanceToNowStrict(membership.start, { locale: nb })} (siden{" "}
-                {formatDate(membership.start, "dd. MMMM yyyy", { locale: nb })})
-              </Text>
-            </Stack>
-          )) : <Text size="xl">Ikke aktivt medlem</Text>}
+      {activeMemberships.length ? (
+        activeMemberships.map((membership) => (
+          <Stack key={membership.id} gap={0}>
+            <Title order={2}>{membership.roles.map((role) => role.name).join(", ")}</Title>
+            <Text>
+              {formatDistanceToNowStrict(membership.start, { locale: nb })} (siden{" "}
+              {formatDate(membership.start, "dd. MMMM yyyy", { locale: nb })})
+            </Text>
+          </Stack>
+        ))
+      ) : (
+        <Text size="xl">Ikke aktivt medlem</Text>
+      )}
       <Divider />
       <FormComponent />
       <Divider />
