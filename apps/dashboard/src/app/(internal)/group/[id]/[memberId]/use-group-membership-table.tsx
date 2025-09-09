@@ -2,7 +2,7 @@
 
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import type { GroupMember, GroupMembership } from "@dotkomonline/types"
-import { Button } from "@mantine/core"
+import { Button, Text, Tooltip } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import { useMemo } from "react"
@@ -61,16 +61,7 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
           const membership = info.getValue()
           const isActive = membership.end === null
 
-          if (isActive) {
-            return (
-              <Button color="red" variant="light" size="sm" onClick={() => openEndMembershipModal()}>
-                Avslutt
-              </Button>
-            )
-          }
-
-          return (
-            <Button
+          const button = <Button
               size="sm"
               variant="subtle"
               disabled={isActive}
@@ -78,7 +69,12 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
             >
               Rediger
             </Button>
-          )
+
+          if (isActive) {
+            return <Tooltip label="Du må avslutte medlemskapet før du kan redigere det">{button}</Tooltip>
+          }
+
+          return button
         },
       }),
     ],

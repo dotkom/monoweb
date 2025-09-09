@@ -16,6 +16,7 @@ interface FormBuilderOptions<T extends z.ZodRawShape> {
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
   onSubmit(data: z.infer<z.ZodObject<T>>, form: UseFormReturn<z.infer<z.ZodObject<T>>>): void
+  disabled?: boolean
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({
@@ -24,6 +25,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   defaultValues,
   label,
   onSubmit,
+  disabled,
 }: FormBuilderOptions<T>) {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(schema),
@@ -60,7 +62,9 @@ export function useFormBuilder<T extends z.ZodRawShape>({
         <Flex direction="column" gap="md">
           {components}
           <div>
-            <Button type="submit">{label}</Button>
+            <Button type="submit" disabled={disabled}>
+              {label}
+            </Button>
           </div>
         </Flex>
       </form>
