@@ -230,7 +230,7 @@ export const ProfileMenu: FC = () => {
                             {
                               /*eventsMissingFeedback && eventsMissingFeedback.length > 0*/ true &&
                                 open &&
-                                isProfile && <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-bounce" />
+                                isProfile && <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
                             }
                           </div>
                           {link.adminOnly && (
