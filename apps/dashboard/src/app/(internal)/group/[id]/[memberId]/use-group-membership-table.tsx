@@ -57,7 +57,11 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
           )
 
           if (isActive) {
-            return <Tooltip label="Du må avslutte medlemskapet før du kan redigere det">{button}</Tooltip>
+            return (
+              <Tooltip label="Du kan ikke redigere aktivt medlemskap. Om du ønsker å endre roller, avslutt og lag nytt medlemskap.">
+                {button}
+              </Tooltip>
+            )
           }
 
           return button
