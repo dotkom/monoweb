@@ -2,7 +2,7 @@
 
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { IconBuildingWarehouse, IconCircles } from "@tabler/icons-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { UserEditCard } from "./edit-card"
 import { MembershipPage } from "./membership-page"
 import { useUserDetailsContext } from "./provider"
@@ -17,7 +17,7 @@ const SIDEBAR_LINKS = [
   {
     icon: IconCircles,
     label: "Medlemskap",
-    slug: "Membership",
+    slug: "medlemskap",
     component: MembershipPage,
   },
 ] as const
@@ -25,6 +25,16 @@ const SIDEBAR_LINKS = [
 export default function UserDetailsPage() {
   const { user } = useUserDetailsContext()
   const router = useRouter()
+
+  const searchParams = useSearchParams()
+  const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
+
+  const handleTabChange = (value: string | null) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
+    router.replace(`/user/${user.id}?${params.toString()}`)
+  }
+
   return (
     <Box p="md">
       <Group>
@@ -32,7 +42,7 @@ export default function UserDetailsPage() {
         <Title>{user.name}</Title>
       </Group>
 
-      <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>
+      <Tabs defaultValue={currentTab} onChange={handleTabChange}>
         <Tabs.List>
           {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
             <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
