@@ -56,6 +56,8 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
 
 const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: string; eventId: string }> }) => {
   const { slug, eventId } = await params
+  const decodedSlug = decodeURIComponent(slug)
+
   const session = await auth.getServerSession()
 
   const eventDetail = await server.event.find.query(eventId)
@@ -66,7 +68,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
 
   const { event, attendance } = eventDetail
 
-  if (slug !== createEventSlug(event.title)) {
+  if (decodedSlug !== createEventSlug(event.title)) {
     permanentRedirect(createEventPageUrl(eventId, event.title), RedirectType.replace)
   }
 
