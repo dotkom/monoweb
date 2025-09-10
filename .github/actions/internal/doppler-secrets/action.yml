@@ -38,14 +38,12 @@ runs:
       shell: bash
       run: |
         # Define variables to exclude and variables to not mask
-        excluded_vars='["OTEL_EXPORTER_OTLP_ENDPOINT", "OTEL_EXPORTER_OTLP_HEADERS", "OTEL_EXPORTER_OTLP_PROTOCOL"]'
         no_mask_vars='["DOPPLER_PROJECT", "DOPPLER_CONFIG", "DOPPLER_ENVIRONMENT"]'
         
         # Export secrets with masking (excluding OTEL vars and not masking Doppler config vars)
         doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
-        jq -r --argjson excluded "$excluded_vars" --argjson no_mask "$no_mask_vars" '
+        jq -r --argjson no_mask "$no_mask_vars" '
         to_entries |
-        map(select(.key as $k | $excluded | index($k) | not)) |
         map(
         if (.key as $k | $no_mask | index($k))
         then "echo \(.key)=\(.value.computed) >> $GITHUB_ENV"
@@ -54,13 +52,15 @@ runs:
         ) |
         .[]' | \
         bash
+
+        # We do not want the GitHub Actions runner to send OTEL signals to our endpoints.
+        echo "OTEL_SDK_DISABLED=true" >> $GITHUB_ENV
     
         # Export to GitHub output (excluding OTEL vars)
         echo "SECRETS<<EOF" >> $GITHUB_OUTPUT
         doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
-        jq -r --argjson excluded "$excluded_vars" '
+        jq -r '
         to_entries |
-        map(select(.key as $k | $excluded | index($k) | not)) |
         map("\(.key)=\(.value.computed)") |
         .[]' >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
