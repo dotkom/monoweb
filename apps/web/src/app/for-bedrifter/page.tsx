@@ -4,7 +4,7 @@ import { OfflineIcon } from "@/components/icons/OfflineIcon"
 import { UtlysningIcon } from "@/components/icons/UtlysningIcon"
 import { Button, Circle, Text, Title } from "@dotkomonline/ui"
 import { type FC, Fragment } from "react"
-import "./index.css"
+import "./dash-animation.css"
 
 export default async function Page() {
   return (
@@ -124,7 +124,7 @@ const ProcessSection: FC = () => {
                   d="M1 32L14.2545 25.4507C40.8415 12.3136 54.1349 5.74505 68.0752 3.24369C79.9121 1.11974 92.0351 1.14832 103.862 3.32806C117.79 5.89513 131.053 12.5263 157.577 25.7886L170 32"
                   stroke="#153E75"
                   strokeWidth="2"
-                  strokeDasharray="6 6"
+                  strokeDasharray="6 6" // dash length
                   strokeDashoffset="0"
                   className={index % 2 === 0 ? "animate-dash-backward" : "animate-dash-forward"}
                 />
