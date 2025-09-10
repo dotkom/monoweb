@@ -4,8 +4,7 @@ import { OfflineIcon } from "@/components/icons/OfflineIcon"
 import { UtlysningIcon } from "@/components/icons/UtlysningIcon"
 import { Button, Circle, Text, Title } from "@dotkomonline/ui"
 import { type FC, Fragment } from "react"
-import './index.css';
-
+import "./index.css"
 
 export default async function Page() {
   return (
@@ -128,7 +127,7 @@ const ProcessSection: FC = () => {
                   strokeDasharray="6 6"
                   strokeDashoffset="0"
                   className={index % 2 === 0 ? "animate-dash-backward" : "animate-dash-forward"}
-                  />
+                />
               </svg>
             )}
           </Fragment>
