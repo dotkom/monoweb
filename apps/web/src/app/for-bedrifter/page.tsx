@@ -4,6 +4,8 @@ import { OfflineIcon } from "@/components/icons/OfflineIcon"
 import { UtlysningIcon } from "@/components/icons/UtlysningIcon"
 import { Button, Circle, Text, Title } from "@dotkomonline/ui"
 import { type FC, Fragment } from "react"
+import './index.css';
+
 
 export default async function Page() {
   return (
@@ -97,7 +99,7 @@ const ProductSection: FC = () => {
 }
 
 const ProcessSection: FC = () => {
-  const steps = ["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]
+  const steps = ["Kartlegging", "Intern Planlegging", "Tilbud", "Samarbeid"]
   return (
     <section className="bg-blue-200 w-full py-10 rounded-lg ">
       <div className="mx-auto flex flex-col items-center md:flex-wrap md:flex-row md:items-stretch justify-evenly max-w-[1024px] px-16 py-4 lg:flex-nowrap ">
@@ -107,7 +109,7 @@ const ProcessSection: FC = () => {
               <Circle size={700 / 15} color="bg-brand-lighter">
                 <span className="text-black font-bold text-background">{index + 1}</span>
               </Circle>
-              <span className="text-brand-lighter text-center text-xl font-semibold mt-9 md:mt-14">{step}</span>
+              <span className="text-black text-center text-xl font-semibold mt-9 md:mt-14">{step}</span>
             </div>
             {index !== steps.length - 1 && (
               <svg
@@ -124,7 +126,9 @@ const ProcessSection: FC = () => {
                   stroke="#153E75"
                   strokeWidth="2"
                   strokeDasharray="6 6"
-                />
+                  strokeDashoffset="0"
+                  className={index % 2 === 0 ? "animate-dash-backward" : "animate-dash-forward"}
+                  />
               </svg>
             )}
           </Fragment>
