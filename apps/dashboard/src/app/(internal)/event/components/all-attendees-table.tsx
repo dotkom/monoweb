@@ -1,12 +1,28 @@
 import type { Attendance, AttendancePool, Attendee, AttendeeSelectionResponse } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { ActionIcon, Anchor, Button, Checkbox, Group, Text } from "@mantine/core"
-import { IconArrowDown, IconArrowUp } from "@tabler/icons-react"
-import { IconX } from "@tabler/icons-react"
+import {
+  ActionIcon,
+  Anchor,
+  Badge,
+  Button,
+  Checkbox,
+  Group,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
+  Stack,
+  Text,
+} from "@mantine/core"
+import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
-import { isPast } from "date-fns"
+import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isPast } from "date-fns"
+import { nb } from "date-fns/locale"
 import { useMemo } from "react"
-import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
+import {
+  FilterableTable,
+  arrayOrEqualsFilter,
+  dateSort,
+} from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateAttendeeReservedMutation, useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
 
@@ -66,6 +82,45 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
+      columnHelper.accessor("earliestReservationAt", {
+        header: "Påmeldingstid",
+        sortingFn: dateSort(),
+        sortDescFirst: false,
+        enableSorting: true,
+        enableMultiSort: false,
+        cell: (info) => {
+          const earliestReservationAt = info.getValue()
+          const createdAt = info.row.original.createdAt
+          return (
+            <Popover>
+              <PopoverTarget>
+                <Button variant="transparent" p={0}>
+                  <Stack gap={0} align="flex-start">
+                    <Text size="sm">
+                      {formatDistanceStrict(earliestReservationAt, attendance.registerStart, { locale: nb })} ep.
+                    </Text>
+                    <Text size="xs">({formatDistanceToNowStrict(earliestReservationAt, { locale: nb })} siden)</Text>
+                  </Stack>
+                </Button>
+              </PopoverTarget>
+              <PopoverDropdown>
+                <Stack>
+                  <Stack gap={0}>
+                    <Text size="sm">Utregnet påmeldingstidspunkt (inkl. prikker og utsettelser):</Text>
+                    <Text size="lg">
+                      {formatDate(earliestReservationAt, "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O", { locale: nb })}
+                    </Text>
+                  </Stack>
+                  <Text size="sm">
+                    Faktisk påmeldingstidspunkt:{" "}
+                    {formatDate(createdAt, "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O", { locale: nb })}
+                  </Text>
+                </Stack>
+              </PopoverDropdown>
+            </Popover>
+          )
+        },
+      }),
       columnHelper.accessor((attendee) => attendee.user.name, {
         id: "user",
         header: "Bruker",
@@ -81,16 +136,24 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
       }),
       columnHelper.accessor("attendedAt", {
         header: "Møtt",
-        filterFn: arrayOrEqualsFilter<Attendee>(),
+        sortingFn: dateSort(),
+        sortDescFirst: false,
+        enableSorting: true,
+        enableMultiSort: false,
         cell: (info) => {
           const row = info.row.original
+          const date = info.getValue()
           return (
-            <Checkbox
-              onChange={(event) => {
-                updateAttendanceMut.mutate({ id: row.id, at: event.target.checked ? getCurrentUTC() : null })
-              }}
-              checked={info.getValue() !== null}
-            />
+            <Stack gap={0}>
+              <Checkbox
+                onChange={(event) => {
+                  updateAttendanceMut.mutate({ id: row.id, at: event.target.checked ? getCurrentUTC() : null })
+                }}
+                checked={date !== null}
+              />
+              <Text style={{ fontSize: "10px" }}>{date !== null ? formatDate(date, "dd.MM.yyyy") : "Ikke møtt"}</Text>
+              {date !== null && <Text style={{ fontSize: "10px" }}>{formatDate(date, "'kl.' HH:mm")}</Text>}
+            </Stack>
           )
         },
       }),
@@ -123,29 +186,40 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           )
         },
       }),
-      columnHelper.accessor(
-        (attendee) => {
-          const spot = waitlists[attendee.attendancePoolId]?.[attendee.id]
-          return spot ?? "-"
+      columnHelper.accessor((attendee) => waitlists[attendee.attendancePoolId]?.[attendee.id] ?? null, {
+        id: "waitlistSpot",
+        header: () => "Venteliste",
+        cell: (info) => {
+          const attendee = info.row.original
+          const queuePosition = info.getValue() as number | null
+
+          const ArrowIcon = queuePosition ? IconArrowUp : IconArrowDown
+
+          return (
+            <Stack gap={4}>
+              <Badge color={queuePosition ? "red" : "gray"} variant={queuePosition ? "filled" : "outline"}>
+                {queuePosition ? `Plass ${queuePosition}` : "Nei"}
+              </Badge>
+              <Button
+                variant="subtle"
+                size="compact-xs"
+                p={2}
+                onClick={() =>
+                  updateAttendeeReservedMut.mutate({ attendeeId: attendee.id, reserved: queuePosition !== null })
+                }
+                leftSection={<ArrowIcon size={12} />}
+                styles={{
+                  section: { marginRight: "3px" },
+                  root: { height: "fit-content", width: "fit-content" },
+                  inner: { justifyContent: "flex-start" },
+                }}
+              >
+                <Text size="xs">{queuePosition ? "Påmeld" : "Til kø"}</Text>
+              </Button>
+            </Stack>
+          )
         },
-        {
-          id: "waitlistSpot",
-          header: () => "Venteliste",
-          cell: (info) => info.getValue(),
-          filterFn: (row, columnId, filterValue) => {
-            const value = row.getValue(columnId)
-            const isEmpty = value === "-"
-
-            const values = Array.isArray(filterValue) ? filterValue : [filterValue]
-
-            if (values.includes(true) && values.includes(false)) return true
-            if (values.includes(true)) return !isEmpty
-            if (values.includes(false)) return isEmpty
-
-            return false
-          },
-        }
-      ),
+      }),
       columnHelper.accessor((attendee) => pools[attendee.attendancePoolId]?.title ?? "", {
         id: "pool",
         header: () => "Påmeldingsgruppe",
@@ -170,31 +244,6 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         enableSorting: false,
         header: () => "Matpreferanser",
         cell: (info) => info.getValue() || "-",
-      }),
-      columnHelper.accessor((attendee) => attendee, {
-        id: "waitlistActions",
-        enableSorting: false,
-        header: () => "Endre køstatus",
-        cell: (info) =>
-          info.getValue().reserved ? (
-            <Button
-              variant="subtle"
-              size="compact-sm"
-              leftSection={<IconArrowDown size={14} />}
-              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: false })}
-            >
-              Send til kø
-            </Button>
-          ) : (
-            <Button
-              variant="subtle"
-              size="compact-sm"
-              leftSection={<IconArrowUp size={14} />}
-              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: true })}
-            >
-              Påmeld
-            </Button>
-          ),
       }),
       columnHelper.accessor((attendee) => attendee, {
         id: "deregister",
