@@ -1,7 +1,6 @@
 import { createLabelledCheckboxGroupInput } from "@/components/forms/CheckboxGroup"
 import { createNumberInput } from "@/components/forms/NumberInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import type { InputProducerResult } from "@/components/forms/types"
 import { notifyFail } from "@/lib/notifications"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ActionIcon, Box, Button, Flex } from "@mantine/core"
@@ -74,14 +73,14 @@ export const usePoolForm = (props: PoolFormProps) => {
       [
         {
           name: "yearCriteria",
-          component: createLabelledCheckboxGroupInput({
+          component: createLabelledCheckboxGroupInput<PoolForm>({
             disabledOptions: props.disabledYears,
             entries: yearEntries,
           }),
         },
         {
           name: "title",
-          component: createTextInput({
+          component: createTextInput<PoolForm>({
             label: "Tittel",
             withAsterisk: true,
             rightSection: (
@@ -101,20 +100,20 @@ export const usePoolForm = (props: PoolFormProps) => {
         },
         {
           name: "capacity",
-          component: createNumberInput({
+          component: createNumberInput<PoolForm>({
             label: "Kapasitet",
             min: props.minCapacity ?? 0,
           }),
         },
         {
           name: "mergeDelayHours",
-          component: createNumberInput({
+          component: createNumberInput<PoolForm>({
             label: "Utsettelse i timer",
             placeholder: "Ingen utsettelse",
             min: 0,
           }),
         },
-      ] satisfies { name: keyof PoolForm; component: InputProducerResult<PoolForm> }[],
+      ] as const,
     [defaultTitle, generatedTitle, props.disabledYears, form.resetField, form.setValue, props.minCapacity]
   )
 
