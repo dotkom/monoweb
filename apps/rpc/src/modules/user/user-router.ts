@@ -45,7 +45,9 @@ export const userRouter = t.router({
    */
   createAvatarUploadURL: authenticatedProcedure.mutation(async ({ ctx }) =>
     ctx.executeTransaction(async (handle) => {
+      await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
       return await ctx.userService.createAvatarUploadURL(handle, ctx.principal.subject)
+
     })
   ),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
@@ -62,6 +64,7 @@ export const userRouter = t.router({
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
+        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
         return ctx.userService.createMembership(handle, input.userId, input.data)
       })
     ),
@@ -74,6 +77,7 @@ export const userRouter = t.router({
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
+        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
         return ctx.userService.updateMembership(handle, input.membershipId, input.data)
       })
     ),
@@ -99,6 +103,7 @@ export const userRouter = t.router({
     )
     .mutation(async ({ input: changes, ctx }) =>
       ctx.executeTransaction(async (handle) => {
+        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
         return ctx.userService.update(handle, changes.id, changes.input)
       })
     ),

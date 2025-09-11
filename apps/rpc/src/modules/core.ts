@@ -8,11 +8,11 @@ import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
 import { getArticleTagRepository } from "./article/article-tag-repository"
+import { getAuditLogRepository } from "./audit-log/audit-log-repository"
+import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
-import { getAuditLogRepository } from "./audit-log/audit-log-repository"
-import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
@@ -146,7 +146,6 @@ export async function createServiceLayer(
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
   const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
   const authorizationService = getAuthorizationService()
-  
 
   return {
     eventEmitter,

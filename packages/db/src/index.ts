@@ -1,5 +1,5 @@
 import { createRequire } from "node:module"
-import { Prisma, PrismaClient } from "@prisma/client"
+import type { Prisma, PrismaClient } from "@prisma/client"
 import type { DefaultArgs, ITXClientDenyList } from "@prisma/client/runtime/library"
 import { secondsToMilliseconds } from "date-fns"
 

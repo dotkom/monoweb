@@ -10,10 +10,10 @@ export const AuditLogDetailsContext = createContext<{
 
 export const useAuditLogDetailsQuery = () => {
   const ctx = useContext(AuditLogDetailsContext)
-  
+
   if (ctx === null) {
     throw new Error("useAuditLogDetailsPage called without Provider in tree")
   }
-  
+
   return ctx
 }

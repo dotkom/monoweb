@@ -1,76 +1,106 @@
 "use client"
 
-import { Accordion, Stack, Title, useMantineColorScheme, useMantineTheme, virtualColor } from "@mantine/core"
-import { useAuditLogDetailsQuery } from "./provider"
+import { Accordion, Anchor, Stack, Tabs, Text, Title, useMantineColorScheme, useMantineTheme } from "@mantine/core"
 import { formatDate } from "date-fns"
-import { StringDiff, DiffMethod } from "react-string-diff"
-
+import { DiffMethod, StringDiff } from "react-string-diff"
+import { useAuditLogDetailsQuery } from "./provider"
+import Link from "next/link"
 
 export default function AuditLogDetailsPage() {
-  
   // Theme stuff for coloring the diff
-  const theme = useMantineTheme();
-  const {colorScheme} = useMantineColorScheme();
-  const isDark = colorScheme === 'dark';
+  const theme = useMantineTheme()
+  const { colorScheme } = useMantineColorScheme()
+  const isDark = colorScheme === "dark"
 
-  const diffStyles =  {
-    added: { backgroundColor: isDark ? theme.colors.green[9] : theme.colors.green[5] , textDecoration: 'none' },
-    removed: {backgroundColor: isDark ? theme.colors.red[9] : theme.colors.red[5], textDecoration: 'line-through' },
-    default: { backgroundColor: 'transparent', textDecoration: 'none' },
+  const diffStyles = {
+    added: { backgroundColor: isDark ? theme.colors.green[9] : theme.colors.green[5], textDecoration: "none" },
+    removed: { backgroundColor: isDark ? theme.colors.red[9] : theme.colors.red[5], textDecoration: "line-through" },
+    default: { backgroundColor: "transparent", textDecoration: "none" },
   }
-  
+
+  // need to map table names in the database to correct next js routes
+  const tableNameMap  = {
+    event: "event",
+    ow_user: "user",
+    job_listing: "job-listing",
+  }
+
+  const getTableNamePath = (tableName: string) => {
+    return tableNameMap[tableName as keyof typeof tableNameMap] || tableName
+  }
+
   // Fetches specific audit
   const { auditLog } = useAuditLogDetailsQuery()
-  
-  const entries = auditLog.rowData && Object.entries(auditLog.rowData).map(([field, change], index) => {
 
-    if (field === "updatedAt") return null
+  const changed_fields =
+    auditLog.rowData &&
+    Object.entries(auditLog.rowData).map(([field, change], index) => {
+      if (field === "updatedAt") return null
 
-    return (
-
-      <pre key={index}>
-            <Accordion.Item key={field} value={field}>
+      return (
+          <Accordion.Item key={field} value={field}>
             <Accordion.Control>
               <strong>{field === "new" ? "Data lagt til" : field}</strong>
-
             </Accordion.Control>
-              <Accordion.Panel>
-                
-                <div style={{ whiteSpace: 'pre-wrap', }}>
-                  {change.old ?
+            <Accordion.Panel>
+              <div style={{ whiteSpace: "pre-wrap" }}>
+                {change.old ? (
                   <StringDiff // This component shows the string-difference
-                  oldValue={change.old} 
-                  newValue={change.new} 
-                  method={DiffMethod.Words} 
-                  key={colorScheme} 
-                  styles={diffStyles}
+                    oldValue={change.old}
+                    newValue={change.new}
+                    method={DiffMethod.Words}
+                    key={colorScheme}
+                    styles={diffStyles}
                   />
-                  :
+                ) : (
                   Object.entries(change).map(([key, value]) => (
-                    <div key={key}><strong>{key}:</strong> {String(value)}</div>
+                    <div key={key}>
+                      <strong>{key}:</strong> {String(value)}
+                    </div>
                   ))
-                  }
-                </div>
-
-              </Accordion.Panel>
-            </Accordion.Item>
-      </pre>
-    )
-    }
-    )
+                )}
+              </div>
+            </Accordion.Panel>
+          </Accordion.Item>
+      )
+    })
   if (!auditLog.rowData) return null
   return (
+    <Stack>
 
-      <Stack>
+      <Title order={2}>
+        Hendelse
+      </Title>
 
-          <Title order={2}>Hendelse utført av {auditLog.user?.name}</Title>
+      <Text size="sm">
+        Utført av {auditLog.user?.name ? auditLog.user.name : "System"} 
+       </Text>
+       <Text size="sm" c="dimmed">
+       {formatDate(new Date(auditLog.createdAt), "dd.MM.yyyy HH:mm")}
+        </Text>
+      <Text size="sm" mt="md">
+        Gå til endret {auditLog.tableName} {" "}
+        <Anchor component={Link} href={`/${getTableNamePath(auditLog.tableName)}/${auditLog.rowId}`}>
+          her
+        </Anchor>
+      </Text>
 
-          <Title order={4}>{formatDate(new Date(auditLog.createdAt),"dd.MM.yyyy HH:mm")}</Title>
+      <Tabs defaultValue={"details"}>
+        <Tabs.List>
+          <Tabs.Tab value="details">Endringer</Tabs.Tab>
+          <Tabs.Tab value="JSON">JSON</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel mt="md" value="details">
+          <Accordion defaultValue="Logs">{changed_fields}</Accordion>
+        </Tabs.Panel>
+        <Tabs.Panel mt="md" value="JSON">
+          <Accordion defaultValue="Logs">
+            <pre>{JSON.stringify(auditLog.rowData, null, 2)}</pre>
+          </Accordion>
+        </Tabs.Panel>
+    
 
-                <Accordion defaultValue="Logs">
-                  {entries}
-                </Accordion>
-
-      </Stack>
+      </Tabs>
+    </Stack>
   )
 }

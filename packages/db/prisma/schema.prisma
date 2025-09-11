@@ -626,5 +626,8 @@ model AuditLog {
   operation   String
   rowData     Json
 
+  // Adds transaction context
+  transactionId String?
+
   @@map("audit_log")
 }

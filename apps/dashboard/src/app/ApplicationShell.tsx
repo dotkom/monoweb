@@ -17,6 +17,7 @@ import { useDisclosure } from "@mantine/hooks"
 import {
   IconBriefcase,
   IconCampfire,
+  IconClipboardList,
   IconExclamationMark,
   IconMoneybag,
   IconPhoto,
@@ -24,7 +25,6 @@ import {
   IconSkull,
   IconUsersGroup,
   IconWheelchair,
-  IconClipboardList,
 } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"

@@ -7,6 +7,7 @@ CREATE TABLE "audit_log" (
     "userId" TEXT,
     "operation" TEXT NOT NULL,
     "rowData" JSONB NOT NULL,
+    "transactionId" TEXT,
 
     CONSTRAINT "audit_log_pkey" PRIMARY KEY ("id")
 );

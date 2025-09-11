@@ -1,17 +1,26 @@
 "use client"
-import { Skeleton, Stack, Title } from "@mantine/core";
-import { useAuditLogAllQuery } from "./queries";
-import { GenericTable } from "@/components/GenericTable";
-import { useAuditLogTable } from "./use-audit-log-table";
+import { GenericTable } from "@/components/GenericTable"
+
+import { Skeleton, Stack, Title } from "@mantine/core"
+import { useAuditLogSearchQuery } from "./queries"
+import { useState } from "react"
+import { AuditLogFilterQuery } from "@dotkomonline/types"
+import { AuditLogFilters } from "./components/audit-log-filters"
+import { AllAuditLogsTable } from "./use-audit-log-table"
 
 export default function AuditLogDetailsPage() {
-  const { auditLogs, isLoading: isAuditLogsLoading } = useAuditLogAllQuery()
-  const table = useAuditLogTable( { data: auditLogs });
-  
-  return <Skeleton visible={isAuditLogsLoading}>
-    <Stack>
-      <Title>Hendelseslogg</Title>
-      <GenericTable table={table} />
-    </Stack>
-  </Skeleton>
+
+  const [filter, setFilter] = useState<AuditLogFilterQuery>({})
+  const { auditLogs, isLoading: isAuditLogsLoading } = useAuditLogSearchQuery({ filter }) 
+
+  return (
+    <Skeleton visible={isAuditLogsLoading}>
+      <Stack>
+        <Title>Hendelseslogg</Title>
+        <AuditLogFilters onChange={setFilter} />
+        <AllAuditLogsTable audit_logs={auditLogs?.items || []} ></AllAuditLogsTable>
+      </Stack>
+    </Skeleton>
+  )
 }
+
