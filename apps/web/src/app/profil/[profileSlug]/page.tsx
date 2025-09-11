@@ -345,6 +345,19 @@ export default function ProfilePage() {
           <div className="flex flex-col gap-3">
             <Title>Medlemskap</Title>
 
+            {returnedFromFeide && (
+              <div className="flex items-center dark:bg-red-900 bg-red-600 p-6 text-white rounded-xl gap-4">
+                <Icon icon="tabler:alert-triangle" width={36} />
+                <Text>
+                  Vi kunne ikke bekrefte ditt medlemsskap automatisk. Dersom dette er feil ta kontakt med{" "}
+                  <Link className="underline" href="/komiteer/hs">
+                    Hovedstyret
+                  </Link>
+                  .
+                </Text>
+              </div>
+            )}
+
             <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-fit">
               <MembershipDisplay activeMembership={activeMembership} grade={grade} />
             </div>
@@ -365,21 +378,10 @@ export default function ProfilePage() {
                   Registrer medlemskap
                 </Button>
 
-                {returnedFromFeide ? (
-                  <div className="flex items-center dark:bg-red-900 bg-red-500 p-8 text-white rounded-lg justify-between gap-4">
-                    <Icon icon="tabler:alert-hexagon" width={48} />
-                    <Text>
-                      Vi kunne ikke bekrefte ditt medlemsskap automatisk. Dersom dette er feil ta kontakt med{" "}
-                      <Link className="underline" href="mailto:hs@online.ntnu.no">
-                        Hovedstyret
-                      </Link>
-                      .
-                    </Text>
-                  </div>
-                ) : (
-                  <Text className="text-gray-500 dark:text-stone-400 text-sm">
+                {!returnedFromFeide && (
+                  <Text className="text-sm text-gray-500 dark:text-stone-500">
                     For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med{" "}
-                    <Link className="underline" href="mailto:hs@online.ntnu.no">
+                    <Link className="underline" href="/komiteer/hs">
                       Hovedstyret
                     </Link>
                     .
@@ -387,16 +389,12 @@ export default function ProfilePage() {
                 )}
               </>
             ) : (
-              <Text className="text-gray-500 dark:text-stone-400 text-sm">
+              <Text className="text-sm text-gray-500 dark:text-stone-500">
                 Ved feil angitt informasjon, ta kontakt med{" "}
-                <Button
-                  element={Link}
-                  href="/komiteer/hs"
-                  variant="text"
-                  className="-ml-0.5 text-sm text-gray-500 dark:text-stone-400"
-                >
+                <Link className="underline" href="/komiteer/hs">
                   Hovedstyret
-                </Button>
+                </Link>
+                .
               </Text>
             )}
           </div>
