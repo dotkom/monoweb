@@ -16,7 +16,7 @@ export const AttendancePoolsSection: FC<{ pools: AttendancePool[] }> = ({ pools 
             <Table.Td>Grupper med reserverte plasser</Table.Td>
             <Table.Td>
               {formatPoolYearCriterias(
-                pools.filter(({ capacity }) => capacity !== 0).map(({ yearCriteria }) => yearCriteria)
+                pools.filter(({ capacity }) => capacity !== 0).flatMap(({ yearCriteria }) => yearCriteria)
               )}
             </Table.Td>
           </Table.Tr>
