@@ -1,6 +1,6 @@
 "use client"
 
-import { Anchor, Box, Group, Loader, Text } from "@mantine/core"
+import { Anchor, Box, Group, Loader, Stack, Text } from "@mantine/core"
 import { IconAlertTriangleFilled } from "@tabler/icons-react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { type PropsWithChildren, use } from "react"
@@ -30,17 +30,23 @@ export default function EventWithAttendancesLayout({
   return (
     <EventContext.Provider value={data}>
       {hasAttendance && !hasPools && (
-        <Box p="md" style={{ borderRadius: "var(--mantine-radius-md)" }} bg="red.7" mb="lg">
+        <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="red.7" mb="lg">
           <Anchor href={href} underline="never">
-            <Group gap="xs">
+            <Group p="md" gap="xs">
               <IconAlertTriangleFilled color="white" size={24} />
-              <Text c="white" size="lg">
-                Påmeldingen har ingen påmeldingsgrupper
-              </Text>
+              <Stack gap={0}>
+                <Text c="white" size="lg">
+                  Påmeldingen har ingen påmeldingsgrupper
+                </Text>
+                <Text c="white" size="sm">
+                  Trykk her for å gå til påmelding
+                </Text>
+              </Stack>
             </Group>
           </Anchor>
         </Box>
       )}
+
       {children}
     </EventContext.Provider>
   )
