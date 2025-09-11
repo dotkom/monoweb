@@ -59,7 +59,8 @@ export const UserWriteSchema = z.object({
   phone: z
     .string()
     .regex(PHONE_REGEX, "Ugyldig telefonnummer")
-    .max(32, "Telefonnummeret kan ikke være lengre enn 32 tegn"),
+    .max(32, "Telefonnummeret kan ikke være lengre enn 32 tegn")
+    .nullable(),
   imageUrl: z.string().url("Ugyldig URL").max(500, "Bildelenken kan ikke være lengre enn 500 tegn").nullable(),
   biography: z.string().max(2000, "Biografien kan ikke være lengre enn 2000 tegn").nullable(),
   gender: z.string().nullable(),
