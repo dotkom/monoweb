@@ -4,7 +4,7 @@ FROM base AS builder
 WORKDIR /app
 
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
 COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
@@ -13,7 +13,7 @@ RUN turbo prune @dotkomonline/rpc --docker
 FROM base AS installer
 WORKDIR /app
 
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/full .
 RUN pnpm install --ignore-scripts
 RUN pnpm generate
