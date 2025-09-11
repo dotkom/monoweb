@@ -3,7 +3,7 @@ import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useCreatePoolMutation } from "../mutations"
 import { useAttendanceGetQuery } from "../queries"
-import { PoolForm, type PoolFormSchema } from "./pool-form"
+import { PoolForm } from "./pool-form"
 
 interface CreatePoolModalProps {
   attendanceId: AttendanceId
@@ -16,7 +16,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
   const { mutate: createPool } = useCreatePoolMutation()
   const { data: attendance } = useAttendanceGetQuery(attendanceId)
   const onClose = () => context.closeModal(id)
-  const onSubmit = (values: PoolFormSchema) => {
+  const onSubmit = (values: PoolForm) => {
     createPool({
       id: attendanceId,
 
