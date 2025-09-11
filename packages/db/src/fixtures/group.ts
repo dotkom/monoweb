@@ -325,17 +325,17 @@ export const getGroupRoleFixtures = (groupInput: Prisma.GroupCreateInput) =>
     {
       groupId: groupInput.slug,
       name: "Nestleder",
-      type: "COSMETIC",
+      type: "DEPUTY_LEADER",
     },
     {
       groupId: groupInput.slug,
       name: "Tillitsvalgt",
-      type: "COSMETIC",
+      type: "TRUSTEE",
     },
     {
       groupId: groupInput.slug,
       name: "Økonomiansvarlig",
-      type: "COSMETIC",
+      type: "TREASURER",
     },
     {
       groupId: groupInput.slug,
