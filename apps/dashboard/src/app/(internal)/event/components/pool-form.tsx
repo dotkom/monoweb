@@ -62,12 +62,12 @@ export const usePoolForm = (props: PoolFormProps) => {
 
   const yearCriteria = form.watch("yearCriteria")
 
-  const generatedTitle = useMemo(() => createDefaultPoolName(yearCriteria ?? []), [yearCriteria])
+  const generatedTitle = createDefaultPoolName(yearCriteria ?? [])
   const defaultTitle = form.formState.defaultValues?.title
 
   const titleIsDirty =
     Boolean(form.formState.dirtyFields.title) ||
-    (form.getValues("title") === defaultTitle && defaultTitle !== generatedTitle)
+    (form.getValues("title") === defaultTitle && defaultTitle !== generatedTitle && defaultTitle !== "")
 
   const fields = useMemo(
     () =>
