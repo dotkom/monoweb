@@ -2,9 +2,10 @@
 
 import { env } from "@/lib/env"
 import { createAbsoluteEventPageUrl } from "@dotkomonline/utils"
-import { Button, Group, Modal, Stack, Tabs, Title } from "@mantine/core"
+import { Box, Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import {
+  IconAlertTriangleFilled,
   IconArrowLeft,
   IconArrowUpRight,
   IconBuildingWarehouse,
@@ -83,6 +84,9 @@ export default function EventWithAttendancesPage() {
   const searchParams = useSearchParams()
   const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
 
+  const hasAttendance = Boolean(attendance)
+  const hasPools = Boolean(attendance?.pools && attendance.pools.length > 0)
+
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
@@ -91,6 +95,17 @@ export default function EventWithAttendancesPage() {
 
   return (
     <Stack>
+      {hasAttendance && !hasPools && (
+        <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="red.7" mb="lg">
+          <Group p="md" gap="xs">
+            <IconAlertTriangleFilled color="white" size={24} />
+            <Text c="white" size="lg">
+              Påmeldingen har ingen påmeldingsgrupper
+            </Text>
+          </Group>
+        </Box>
+      )}
+
       <Group align="center">
         <Group>
           <Button
