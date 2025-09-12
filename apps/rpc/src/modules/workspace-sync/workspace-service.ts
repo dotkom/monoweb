@@ -317,7 +317,7 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
         groupMember: GroupMember | null
         workspaceMember: admin_directory_v1.Schema$Member | null
       }[] = []
-      
+
       let pageToken: string | undefined = undefined
 
       do {

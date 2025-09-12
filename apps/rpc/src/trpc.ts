@@ -7,7 +7,7 @@ import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
-import { isAffiliation, type Affiliation, type AffiliationSet } from "./modules/authorization-service"
+import { type Affiliation, type AffiliationSet, isAffiliation } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
 
 export type Principal = {

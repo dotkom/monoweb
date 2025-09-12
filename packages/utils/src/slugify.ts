@@ -6,6 +6,6 @@ export function slugify(text: string, replacement = "-") {
     lower: true,
     strict: true,
     trim: true,
-    replacement
+    replacement,
   })
 }
