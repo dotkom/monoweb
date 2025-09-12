@@ -27,7 +27,8 @@ import Link from "next/link"
 import { type FC, Fragment, useEffect, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
 
-const debugContactLink = "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
+const DEBUG_CONTACT_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
 
 const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefined) => {
   if (theme === "system") {
