@@ -2,7 +2,7 @@ import { type admin_directory_v1, google } from "googleapis"
 import z from "zod"
 import { configuration } from "../../configuration"
 import { isSyncEnabled } from "./helpers"
-import { MalformedWorkspaceSyncServiceAccountError, SyncNotEnabledError } from "./workspace-sync-error"
+import { MalformedWorkspaceSyncServiceAccountError, SyncNotEnabledError } from "./workspace-error"
 
 const SCOPES = [
   "https://www.googleapis.com/auth/admin.directory.group",
