@@ -19,14 +19,31 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       end: addHours(tomorrow, 8),
       status: "PUBLIC",
       type: "SOCIAL",
-      description: "Dette er et kurs i å lage fixtures",
+      description: stripIndents(`
+        <p>Dette kurset gir deg en grundig innføring i hvordan man lager og bruker fixtures i utviklingsprosjekter. Du vil få praktisk erfaring gjennom øvelser, og vi legger vekt på å forstå både hvorfor og hvordan fixtures brukes i moderne programmering og testing.</p>
+        <p>Kursdagen består av både forelesning og praktiske oppgaver. Vi starter med en introduksjon til konseptet, der vi ser på hva fixtures er, hvilke problemer de løser, og hvordan de kan bidra til mer robust og gjenbrukbar kode. Deretter går vi over til konkrete eksempler og øvelser der deltakerne får implementere egne løsninger.</p>
+        <p>I løpet av kurset vil du blant annet lære:</p>
+        <ul>
+          <li>Hva fixtures er og hvorfor de er nyttige i testing og utvikling</li>
+          <li>Hvordan sette opp enkle og mer avanserte fixtures</li>
+          <li>Vanlige feil og fallgruver å unngå</li>
+          <li>Beste praksis for struktur og vedlikehold</li>
+        </ul>
+        <p>Kurset passer for både studenter og utviklere som ønsker å styrke ferdighetene sine innen testdrevet utvikling og programvarekvalitet. Det kreves ingen forkunnskaper utover grunnleggende erfaring med koding og prosjektarbeid.</p>
+        <h2>Praktisk informasjon</h2>
+        <p>Kurset holdes i <strong>Hovedbygget</strong> på NTNU, adresse 
+        <a href="https://maps.app.goo.gl/hSEicfQFamY7r9oX8" target="_blank">Høgskoleringen 1, 7034 Trondheim</a>. Oppmøte er senest kl. 12:00, og programmet varer frem til ca. 16:00. Det vil bli pauser underveis, og enkel servering blir ordnet.</p>
+        <blockquote>
+          <p><strong>OBS!</strong> Husk å ta med egen PC med nødvendig utviklingsmiljø installert (f.eks. Python eller Node.js, avhengig av dine preferanser). Du får beskjed på forhånd om hvilke biblioteker og verktøy du bør ha klart.</p>
+        </blockquote>
+        <h2>Sosial del</h2>
+        <p>Etter kurset blir det en uformell samling for de som ønsker, med mulighet for å diskutere videre, dele erfaringer og bygge nettverk. Dette er en fin anledning til å bli kjent med andre som er interessert i programvareutvikling og testing.</p>
+      `),
       subtitle: "Kurs i fixtures",
-      imageUrl:
-        "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
+      imageUrl: "https://e0.365dm.com/23/06/1600x900/skysports-arsenal-fixtures_6186945.jpg",
       locationAddress: "Høgskoleringen 1, 7034 Trondheim",
       locationTitle: "Hovedbygget",
-      locationLink:
-        "https://www.google.com/maps/place/Hovedbygningen+(NTNU)/@63.4194658,10.3995042,17z/data=!3m1!4b1!4m6!3m5!1s0x466d3195b7c6960b:0xf8307e00da9b2556!8m2!3d63.4194658!4d10.4020791!16s%2Fg%2F11dflf4b45?entry=ttu",
+      locationLink: "https://maps.app.goo.gl/hSEicfQFamY7r9oX8",
     },
     {
       attendanceId: attendanceIds[1],
@@ -39,29 +56,19 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       type: "SOCIAL",
       description: stripIndents(`
         <p>Her kommer påmeldingen til å gå fort, så sett alarmen klar og vær rask!:)</p>
-
         <p>I billettprisen er reise både fra og til, losji og skipass for 2 dager inkludert. Hyttene ligger i hele Fjällbyområdet. Informasjon om området finnes på: https://www.skistar.com/sv/vara-skidorter/are/vinter-i-are/boendekartor/</p>
-
         <p>Det er flere linjeforeninger som skal være der samtidig som oss, så det vil være mye moro opplegg under selve turen<33</p>
-
         <p>Det vil bli felles avreise fra Gløshaugen den 11. januar.</p>
-
         <p>Eventuelle spørsmål angående arrangementet sendes til: arrkom@online.ntnu.no</p>
-
         <p>Registration will go fast here, so set the alarm and be quick!:)</p>
-
         <p>The ticket price includes travel both from and to, accommodation and a skip pass for 2 days. The cabins are located throughout the Fjällby area. Information about the area can be found at: https://www.skistar.com/sv/vara-skidorter/are/vinter-i-are/boendekartor/</p>
-
         <p>There are several student unions that will be there at the same time as us, so there will be a lot of fun planned during the trip itself<33</p>
-
         <p>There will be a joint departure from Gløshaugen on January 11.</p>
-
         <p>Any selections regarding the event should be sent to: arrkom@online.ntnu.no</p>
       `),
       subtitle:
         "Tidspunktet for Åreturen 2025 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!! Datoene for ÅREts tur blir 11. - 14. januar! 🏂🏂",
-      imageUrl:
-        "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
+      imageUrl: "https://aresweden.com/app/uploads/2019/12/NiclasVestefjell_4000px_.jpg",
       locationTitle: "Åre",
       locationAddress: "Åre, Sverige",
       locationLink: "https://maps.app.goo.gl/8dA2NN9YWDp7XyuV6",
@@ -76,11 +83,49 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       status: "PUBLIC",
       type: "SOCIAL",
       description: stripIndents(`
-        <p>Årets sommerfest med mat, drikke og musikk.</p>
-        <p>Ta med godt humør og dansesko!</p>
+        <p>Bli med på <strong>Sommerfest 2025</strong> på takterrassen! Vi rigger til for en kveld med god stemning, enkel servering, og musikk. Dette er et sosialt arrangement – kom for å slappe av, møte folk og nyte sommeren.</p>
+        <h2>Program</h2>
+        <ul>
+          <li><strong>16:00</strong> - Dørene åpner. Registrering og velkomstdrink.</li>
+          <li><strong>17:00</strong> - Grillen tennes. Mat serveres fortløpende.</li>
+          <li><strong>18:30</strong> - DJ setter i gang dansbare låter.</li>
+          <li><strong>21:30</strong> - Siste servering.</li>
+          <li><strong>22:00</strong> - Avslutning og rydding.</li>
+        </ul>
+        <h2>Servering</h2>
+        <p>Det blir enkel <em>grillmeny</em> (kjøtt, fisk og vegetar), salater og brød. Vi tilbyr alkoholfri drikke og et begrenset utvalg øl/vin. Har du allergier eller behov vi må ta hensyn til, <strong>si ifra ved påmelding</strong>.</p>
+        <h2>Praktisk info</h2>
+        <ul>
+          <li><strong>Sted:</strong> Takterrassen (<em>A4, Realfagbygget</em>).</li>
+          <li><strong>Tid:</strong> 16:00-22:00.</li>
+          <li><strong>Kle deg etter vær:</strong> Utearrangement. Ta med jakke - kvelden kan bli kjølig.</li>
+          <li><strong>Aldersgrense:</strong> 18+ for alkoholservering. Ta med legitimasjon.</li>
+        </ul>
+        <h2>Hva du bør ta med</h2>
+        <ul>
+          <li>Godt humør og <strong>dansesko</strong>.</li>
+          <li>Eventuell egen piknikpledd/lette klær.</li>
+          <li>Gyldig legitimasjon.</li>
+        </ul>
+        <h2>Regler (for å slippe mas senere)</h2>
+        <ul>
+          <li>Ikke ta med medbrakt alkohol.</li>
+          <li>Respekter vakter og naboer - dette er et tak, ikke en nattklubb.</li>
+          <li>Rydd etter deg. Søppel i søppelkassene, takk.</li>
+        </ul>
+        <h2>Tilgjengelighet</h2>
+        <p>Adkomst via heis. Gi beskjed ved behov for tilrettelegging, så fikser vi det uten styr.</p>
+        <h2>Dårlig vær?</h2>
+        <p>Ved regn flyttes arrangementet inn i reserverte lokaler i Realfagbygget. Beskjed sendes på e-post/sms samme dag.</p>
+        <h2>Finn frem</h2>
+        <p>Oppmøte ved <strong>A4, Realfagbygget</strong>. Spør i resepsjonen hvis du roter deg bort. Takterrassen er skiltet fra A4-inngangen.</p>
+        <blockquote>
+          <p><strong>OBS:</strong> Meld deg av i tide hvis du ikke kan komme - plasser og mat kastes ikke bort.</p>
+        </blockquote>
+        <p>Spørsmål? Ta kontakt med arrangørene. Vi sees på taket.</p>
       `),
       subtitle: "Feir sommeren med oss på takterrassen!",
-      imageUrl: null,
+      imageUrl: "https://c8.alamy.com/comp/2JMRWDA/sommerfest-balloons-confetti-2JMRWDA.jpg",
       locationTitle: "Takterrassen",
       locationAddress: "A4, Realfagbygget",
     },
@@ -94,14 +139,45 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       status: "PUBLIC",
       type: "ACADEMIC",
       description: stripIndents(`
-        <p>Lær å smake og kombinere vin fra forskjellige regioner.</p>
-        <p>Profesjonell sommelier guider oss gjennom smaksprøver.</p>
+        <p><strong>Vinkurs 🍷</strong> er en unik mulighet til å lære mer om vin på en strukturert, men uformell måte. Kurset gir deg en innføring i smaksmetoder, druesorter og hvordan vinens karakter formes av klima, jordsmonn og produksjonsmetoder. Vi fokuserer også på hvordan vin kan kombineres med mat for å løfte begge deler.</p>
+        <h2>Program</h2>
+        <ul>
+          <li><strong>16:00</strong> - Velkomst og introduksjon til vinsmaking</li>
+          <li><strong>16:30</strong> - Grunnleggende smaketeknikker</li>
+          <li><strong>17:30</strong> - Smaksrunde: hvite viner fra ulike regioner</li>
+          <li><strong>18:30</strong> - Pause med lett servering</li>
+          <li><strong>19:00</strong> - Smaksrunde: røde viner og matparinger</li>
+          <li><strong>21:00</strong> - Spørsmål, diskusjon og oppsummering</li>
+          <li><strong>22:00</strong> - Avslutning</li>
+        </ul>
+        <h2>Hva du lærer</h2>
+        <ul>
+          <li>Hvordan identifisere aroma, smak og struktur i vin</li>
+          <li>Forskjeller mellom klassiske vinregioner</li>
+          <li>Hva som skiller druesorter fra hverandre</li>
+          <li>Hvordan velge vin som passer til ulike typer mat</li>
+        </ul>
+        <h2>Instruktør</h2>
+        <p>Kvelden ledes av en <strong>profesjonell sommelier</strong> med lang erfaring fra vinbransjen. Du får både faglig innsikt og praktiske tips som kan brukes i hverdagen.</p>
+        <h2>Praktisk informasjon</h2>
+        <ul>
+          <li><strong>Sted:</strong> Smakslab, Studentersamfundet, Erling Skakkes gate 7, Trondheim (<a href="https://maps.app.goo.gl/2fhoN4riGaY7s4yA7" target="_blank">se kart</a>)</li>
+          <li><strong>Tid:</strong> 16:00-22:00</li>
+          <li><strong>Aldersgrense:</strong> 18 år (gyldig legitimasjon kreves)</li>
+          <li><strong>Språk:</strong> Norsk</li>
+        </ul>
+        <blockquote>
+          <p><strong>OBS:</strong> Det er begrenset med plasser, så meld deg på tidlig. Påmeldingen er bindende. Dersom du ikke kan komme, gi beskjed slik at plassen kan gå videre til andre.</p>
+        </blockquote>
+        <h2>Tips</h2>
+        <p>Unngå sterk parfyme eller tyggegummi under kurset - det forstyrrer både deg selv og andre i smaksopplevelsen. Ta med notatbok hvis du vil huske detaljer fra smaksrundene.</p>
+        <p>Dette er en kveld for både nybegynnere og de som allerede har interesse for vin. Ingen forkunnskaper kreves - bare nysgjerrighet og åpent sinn.</p>
       `),
       subtitle: "Bli bedre kjent med vinens verden",
-      imageUrl: null,
+      imageUrl: "https://wine-fun.contents.ne.jp/wp-content/uploads/sites/2/2022/06/eye_1009-1024x538.jpg",
       locationTitle: "Smakslab",
       locationAddress: "Studentersamfundet, Erling Skakkes gate 7, Trondheim",
-      locationLink: "https://maps.google.com/?q=Studentersamfundet",
+      locationLink: "https://maps.app.goo.gl/2fhoN4riGaY7s4yA7",
     },
     {
       attendanceId: null,
@@ -113,11 +189,30 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       status: "PUBLIC",
       type: "SOCIAL",
       description: stripIndents(`
-        <p>Vi går gjennom programmet for ekskursjonen til Ås.</p>
-        <p>Spørsmål besvares av reiselederne.</p>
+        <p><strong>Infomøte om ekskursjonen</strong> er et obligatorisk møte for alle som skal delta på turen til Ås. Her får du en detaljert gjennomgang av programmet, transport, overnatting og praktiske ting du må vite før avreise.</p>
+        <h2>Innhold</h2>
+        <ul>
+          <li>Presentasjon av <strong>programmet dag for dag</strong></li>
+          <li>Gjennomgang av <strong>transport og reisetider</strong></li>
+          <li>Informasjon om <strong>overnatting</strong> og måltider</li>
+          <li>Hva du bør <strong>pakke og forberede</strong></li>
+          <li>Praktiske regler og forventninger under turen</li>
+        </ul>
+        <h2>Spørsmål og svar</h2>
+        <p>Reiselederne vil være til stede for å svare på spørsmål. Dette er en god anledning til å få klarhet i ting du lurer på - enten det gjelder logistikk, spesielle behov eller hvordan dagene blir lagt opp.</p>
+        <h2>Praktisk informasjon</h2>
+        <ul>
+          <li><strong>Sted:</strong> Tihlde-rommet, A4-112, Realfagbygget (<a href="https://link.mazemap.com/PIAEEJsD" target="_blank">se kart</a>)</li>
+          <li><strong>Tid:</strong> 12:00-13:00</li>
+          <li><strong>Varighet:</strong> ca. 1 time</li>
+        </ul>
+        <blockquote>
+          <p><strong>OBS:</strong> Hvis du ikke kan delta, er du selv ansvarlig for å skaffe deg informasjonen fra en medstudent eller reiseleder. Viktig praktisk info deles kun her.</p>
+        </blockquote>
+        <p>Dette møtet sikrer at alle er best mulig forberedt før ekskursjonen. Ta med notatbok hvis du vil ha en oversiktlig sjekkliste i etterkant.</p>
       `),
       subtitle: "Alt du trenger å vite før turen",
-      imageUrl: null,
+      imageUrl: "https://www.987thepeak.com/wp-content/uploads/2021/08/pexels-photo-1710482.jpeg",
       locationTitle: "Tihlde-rommet",
       locationAddress: "A4-112, Realfagbygget",
       locationLink: "https://link.mazemap.com/PIAEEJsD",
@@ -167,7 +262,7 @@ export const getEventFixtures = (attendanceIds: string[]) =>
         <p>Påmelding er bindende etter avmeldingsfristen og det plikt til å møte på alt.</p>
       `),
       subtitle: "Årets IT-ekskursjon!",
-      imageUrl: null,
+      imageUrl: "https://www.oslomet.no/var/oslomet/storage/images/6/4/2/7/127246-8-eng-GB/oslo-by-2400x1200px.jpg",
       locationTitle: "Oslo",
       locationAddress: null,
       locationLink: null,
@@ -217,7 +312,7 @@ export const getEventFixtures = (attendanceIds: string[]) =>
         </p>
       `),
       subtitle: "Kveldsarrangement med Twoday er alltid gøy",
-      imageUrl: null,
+      imageUrl: "https://www.twoday.lt/hubfs/LT%20-%20twoday%20Lithuania/LT%20-%20Meta/Meta-min.png",
       locationTitle: "Twodays kontorer",
       locationAddress: "Karenslyst allé 57, Oslo",
       locationLink: null,
