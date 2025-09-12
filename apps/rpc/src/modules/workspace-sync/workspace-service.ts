@@ -10,7 +10,7 @@ import type { UserService } from "../user/user-service"
 import { getDirectory } from "./client"
 import { getCommitteeEmail, getKey, getTemporaryPassword, joinOnWorkspaceUserId } from "./helpers"
 
-export interface WorkspaceSyncService {
+export interface WorkspaceService {
   isSyncEnabled(): boolean
 
   // User
@@ -52,7 +52,7 @@ export interface WorkspaceSyncService {
   ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[]>
 }
 
-export function getWorkspaceSyncService(userService: UserService, groupService: GroupService): WorkspaceSyncService {
+export function getWorkspaceService(userService: UserService, groupService: GroupService): WorkspaceService {
   const logger = getLogger("workspace-sync-service")
 
   const createRecoveryCodes = async (user: User): Promise<string[] | null> => {
