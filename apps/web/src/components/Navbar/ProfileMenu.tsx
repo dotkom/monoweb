@@ -82,7 +82,7 @@ const ContactDebugDropdown: FC = () => (
           <Button
             element={Link}
             variant="unstyled"
-            href={debugContactLink}
+            href={DEBUG_CONTACT_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 hover:bg-blue-200 dark:hover:bg-stone-600 transition-colors"
