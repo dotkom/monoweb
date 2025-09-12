@@ -3,13 +3,9 @@ import type { Group, User } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "googleapis"
 import invariant from "tiny-invariant"
+import { configuration } from "src/configuration"
 
-const DEFAULT_DOMAIN = process.env.WORKSPACE_SYNC_DOMAIN ?? "online.ntnu.no"
 const TEMPORARY_PASSWORD_LENGTH = 8
-
-export function isSyncEnabled() {
-  return process.env.WORKSPACE_SYNC_ENABLED === "true"
-}
 
 const getLocal = (localResolvable: User | Group | string): string => {
   if (typeof localResolvable === "string") {
@@ -36,7 +32,7 @@ const getLocal = (localResolvable: User | Group | string): string => {
  * getEmail("user@online.ntnu.no") // "user@online.ntnu.no"
  * getEmail("user", "custom.domain") // "user@custom.domain"
  */
-export function getEmail(localResolvable: User | Group | string, domain = DEFAULT_DOMAIN) {
+export function getEmail(localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN) {
   const local = getLocal(localResolvable)
 
   if (local.includes("@")) {
@@ -57,7 +53,7 @@ export function getEmail(localResolvable: User | Group | string, domain = DEFAUL
  * getKey("full.name@online.ntnu.no") // "full.name@online.ntnu.no"
  * getKey("string", "custom.domain") // "string@custom.domain"
  */
-export const getKey = (localResolvable: User | Group | string, domain = DEFAULT_DOMAIN) => {
+export const getKey = (localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN) => {
   if (typeof localResolvable === "object") {
     if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
       return localResolvable.workspaceUserId

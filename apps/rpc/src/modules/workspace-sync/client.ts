@@ -1,7 +1,6 @@
 import { type admin_directory_v1, google } from "googleapis"
 import z from "zod"
 import { configuration } from "../../configuration"
-import { isSyncEnabled } from "./helpers"
 import { MalformedWorkspaceSyncServiceAccountError, SyncNotEnabledError } from "./workspace-error"
 
 const SCOPES = [
@@ -26,11 +25,11 @@ const serviceAccountJsonSchema = z.object({
 })
 
 export function getDirectory(): admin_directory_v1.Admin {
-  if (!isSyncEnabled()) {
+  if (configuration.WORKSPACE_ENABLED !== "true") {
     throw new SyncNotEnabledError()
   }
 
-  const serviceAccountJson = JSON.parse(configuration.WORKSPACE_SYNC_SERVICE_ACCOUNT)
+  const serviceAccountJson = JSON.parse(configuration.WORKSPACE_SERVICE_ACCOUNT)
   const result = serviceAccountJsonSchema.safeParse(serviceAccountJson)
 
   if (!result.success) {
@@ -41,7 +40,7 @@ export function getDirectory(): admin_directory_v1.Admin {
     email: result.data.client_email,
     key: result.data.private_key,
     scopes: SCOPES,
-    subject: configuration.WORKSPACE_SYNC_SERVICE_ACCOUNT_EMAIL,
+    subject: configuration.WORKSPACE_SERVICE_ACCOUNT_EMAIL,
   })
 
   return google.admin({ version: "directory_v1", auth })
