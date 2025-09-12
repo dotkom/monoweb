@@ -71,7 +71,7 @@ const ContactDebugDropdown: FC = () => (
           <Icon icon="tabler:message-report" width={24} height={24} />
           <Title className="font-semibold text-gray-900 dark:text-white">Opplevd noe ugreit?</Title>
         </div>
-        <p className="text-sm px-1 text-gray-700 dark:text-stone-200 leading-relaxed">
+        <p className="text-sm px-1 text-gray-700 dark:text-stone-200">
           Her kan du ta kontakt med Debug. De har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten
           innsyn fra ledelsen i Online.
         </p>
