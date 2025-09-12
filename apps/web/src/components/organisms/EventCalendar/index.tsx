@@ -4,10 +4,9 @@ import { useEventAllQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { Event } from "@dotkomonline/types"
-import { cn } from "@dotkomonline/ui"
+import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
-import { CalendarSkeleton } from "./CalendarSkeleton"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { getCalendarArray } from "./getCalendarArray"
 
@@ -105,10 +104,6 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const eventDetails = futureEventWithAttendances
   const userId = session?.sub
 
-  if (isLoading) {
-    return <CalendarSkeleton />
-  }
-
   const cal = getCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails.map(({ event }) => event))
 
@@ -118,7 +113,12 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   nowDate.setHours(0, 0, 0, 0)
 
   return (
-    <div>
+    <div className="relative">
+      {isLoading && (
+        <div className="z-50 absolute flex justify-center w-full h-full">
+          <Icon className="animate-spin absolute top-40" icon="tabler:loader-2" width={40} height={40} />
+        </div>
+      )}
       <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
         <div className="hidden sm:block w-6 pr-2 text-gray-600 dark:text-stone-400 text-xs leading-5">Uke</div>
         {weekdays.map((day) => (
