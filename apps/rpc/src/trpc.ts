@@ -7,7 +7,7 @@ import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
-import type { Affiliation, AffiliationSet } from "./modules/authorization-service"
+import { isAffiliation, type Affiliation, type AffiliationSet } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
 
 export type Principal = {
@@ -45,7 +45,7 @@ export const createContext = async (principal: Principal | null, context: Servic
         invariant(principal !== null)
         require(principal.affiliations.size > 0)
         for (const affiliation of affiliations) {
-          if (principal.affiliations.has(affiliation)) {
+          if (isAffiliation(affiliation) && principal.affiliations.has(affiliation)) {
             return
           }
         }

@@ -64,6 +64,7 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
     await directory.verificationCodes.generate({
       userKey: getKey(user),
     })
+
     const response = await directory.verificationCodes.list({
       userKey: user.workspaceUserId ?? getKey(user),
     })
@@ -116,6 +117,7 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
           changePasswordAtNextLogin: true,
         },
       })
+
       invariant(response.data, "Expected response data to be defined")
       invariant(response.data.id, "Expected response data to have ID")
 
@@ -125,6 +127,7 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
 
       const is2faEnforced = response.data.isEnforcedIn2Sv ?? false
       const is2faEnabled = response.data.isEnrolledIn2Sv ?? false
+
       let recoveryCodes: string[] | null = null
 
       if (is2faEnforced && !is2faEnabled) {
@@ -198,10 +201,12 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
           changePasswordAtNextLogin: true,
         },
       })
+
       invariant(response.data, "Expected response data to be defined")
 
       const is2faEnforced = response.data.isEnforcedIn2Sv ?? false
       const is2faEnabled = response.data.isEnrolledIn2Sv ?? false
+
       let recoveryCodes: string[] | null = null
 
       if (is2faEnforced && !is2faEnabled) {
@@ -312,13 +317,15 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
         groupMember: GroupMember | null
         workspaceMember: admin_directory_v1.Schema$Member | null
       }[] = []
-
+      
       let pageToken: string | undefined = undefined
+
       do {
         const response: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$Members> = await directory.members.list({
           groupKey: group.workspaceGroupId ?? getKey(group),
           pageToken: pageToken,
         })
+
         invariant(response.data, "Expected response data to be defined")
         invariant(response.data.members, "Expected response data to be defined")
 
@@ -338,8 +345,8 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       const user = await userService.getById(handle, userId)
 
       const groups: { group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[] = []
-
       let pageToken: string | undefined = undefined
+
       do {
         const { data }: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$Groups> = await directory.groups.list({
           userKey: getKey(user),

@@ -106,11 +106,8 @@ export const workspaceRouter = t.router({
     )
     .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
     .query(async ({ input, ctx }) => {
-      const affiliations: Affiliation[] = ["dotkom", "hs"]
-      if (isAffiliation(input.groupSlug)) {
-        affiliations.push(input.groupSlug)
-      }
-      ctx.authorize.requireAffiliation(...affiliations)
+      // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
+      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
         return await ctx.workspaceService.findWorkspaceGroup(handle, input.groupSlug)
@@ -126,11 +123,8 @@ export const workspaceRouter = t.router({
     )
     .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
     .mutation(async ({ input, ctx }) => {
-      const affiliations: Affiliation[] = ["dotkom", "hs"]
-      if (isAffiliation(input.groupSlug)) {
-        affiliations.push(input.groupSlug)
-      }
-      ctx.authorize.requireAffiliation(...affiliations)
+      // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
+      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
         return await ctx.workspaceService.addUserIntoWorkspaceGroup(handle, input.groupSlug, input.userId)
@@ -172,11 +166,8 @@ export const workspaceRouter = t.router({
         .array()
     )
     .query(async ({ input, ctx }) => {
-      const affiliations: Affiliation[] = ["dotkom", "hs"]
-      if (isAffiliation(input.groupSlug)) {
-        affiliations.push(input.groupSlug)
-      }
-      ctx.authorize.requireAffiliation(...affiliations)
+      // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
+      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
         return await ctx.workspaceService.getMembersForGroup(handle, input.groupSlug)
