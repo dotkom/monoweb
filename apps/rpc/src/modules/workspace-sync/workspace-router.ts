@@ -87,7 +87,7 @@ export const workspaceRouter = t.router({
       })
     )
     .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
-    .mutation(async ({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       const affiliations: Affiliation[] = ["dotkom", "hs"]
       if (isAffiliation(input.groupSlug)) {
         affiliations.push(input.groupSlug)
@@ -153,7 +153,7 @@ export const workspaceRouter = t.router({
         })
         .array()
     )
-    .mutation(async ({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       const affiliations: Affiliation[] = ["dotkom", "hs"]
       if (isAffiliation(input.groupSlug)) {
         affiliations.push(input.groupSlug)
@@ -179,7 +179,7 @@ export const workspaceRouter = t.router({
         })
         .array()
     )
-    .mutation(async ({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
