@@ -25,9 +25,6 @@ enum MembershipType {
   SOCIAL_MEMBER    @map("SOCIAL_MEMBER")
   OTHER            @map("OTHER")
 
-  /// For syncing with Workspace email lists. Removed from member lists
-  MAIL_AUDITOR @map("MAIL_AUDITOR")
-
   @@map("membership_type")
 }
 
