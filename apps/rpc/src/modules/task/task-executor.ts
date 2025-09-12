@@ -58,10 +58,15 @@ export function getLocalTaskExecutor(
       // system resources more stable.
       intervalId = setInterval(async () => {
         logger.debug("TaskExecutor discovering and scheduling recurring tasks")
+
         const recurringTasks = await taskDiscoveryService.discoverRecurringTasks()
         const now = getCurrentUTC()
+
         for (const recurringTask of recurringTasks) {
           const type = getTaskDefinition(recurringTask.type)
+
+          logger.debug(`TaskExecutor scheduling task ${type} from recurring task ${recurringTask.id}`)
+
           await taskSchedulingService.scheduleAt(client, type, recurringTask.payload, now, recurringTask.id)
           await recurringTaskService.scheduleNextRun(client, recurringTask.id, now)
         }
