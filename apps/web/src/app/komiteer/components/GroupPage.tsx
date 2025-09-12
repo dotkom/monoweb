@@ -253,9 +253,9 @@ function getRolePriority(role: GroupRole) {
       return 5
     case "TREASURER":
       return 4
-    case "PUNISHER":
-      return 3
     case "TRUSTEE":
+      return 3
+    case "PUNISHER":
       return 2
     case "COSMETIC":
       return 1
