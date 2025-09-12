@@ -27,6 +27,8 @@ import Link from "next/link"
 import { type FC, Fragment, useEffect, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
 
+const debugContactLink = "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
+
 const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefined) => {
   if (theme === "system") {
     return resolvedTheme === "dark" ? "tabler:moon" : "tabler:sun"
@@ -71,32 +73,31 @@ const ContactDebugDropdown: FC = () => (
           <Icon icon="tabler:message-report" width={24} height={24} />
           <Title className="font-semibold text-gray-900 dark:text-white">Opplevd noe ugreit?</Title>
         </div>
-        <p className="text-sm px-1 text-gray-700 dark:text-stone-200">
+        <Text className="text-sm px-1 text-gray-700 dark:text-stone-200">
           Her kan du ta kontakt med Debug. De har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten
           innsyn fra ledelsen i Online.
-        </p>
+        </Text>
         <div className="flex flex-col gap-2">
           <Button
             element={Link}
             variant="unstyled"
-            href="https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
+            href={debugContactLink}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 hover:bg-blue-200 dark:hover:bg-stone-600 transition-colors"
           >
-            <Text className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</Text>
+            <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
             <Icon icon="tabler:arrow-up-right" width={16} height={16} />
           </Button>
           <Button
             element={Link}
             variant="text"
-            href="https://wiki.online.ntnu.no/historie/debug/"
+            href="/komiteer/debug"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center w-fit gap-1"
+            className="w-fit text-gray-600 dark:text-stone-300"
           >
-            <Text className="text-sm">Les mer om Debug</Text>
-            <Icon icon="tabler:arrow-up-right" width={16} height={16} />
+            <span className="text-sm">Les mer om Debug</span>
           </Button>
         </div>
       </div>
@@ -267,7 +268,7 @@ export const AvatarDropdown: FC = () => {
               <Icon className="text-lg" icon="tabler:user" />
             </AvatarFallback>
           </Avatar>
-          {showFeedbackFormPing && !open && <Text className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
+          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -311,7 +312,7 @@ export const AvatarDropdown: FC = () => {
                           <div className="flex flex-row gap-2 items-center">
                             <Text className="font-medium text-gray-900 dark:text-white">{link.label}</Text>
                             {showFeedbackFormPing && open && isProfile && (
-                              <Text className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
                             )}
                           </div>
                           {link.adminOnly && (
