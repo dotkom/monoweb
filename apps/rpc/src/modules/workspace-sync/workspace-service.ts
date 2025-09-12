@@ -1,9 +1,8 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Group, User } from "@dotkomonline/types"
+import type { Group, GroupId, User, UserId } from "@dotkomonline/types"
 import type { admin_directory_v1 } from "googleapis"
 import type { GaxiosResponseWithHTTP2 } from "googleapis-common"
-import { configuration } from "src/configuration"
 import invariant from "tiny-invariant"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
@@ -11,12 +10,10 @@ import { getDirectory } from "./client"
 import { getCommitteeEmail, getKey, getTemporaryPassword, joinOnWorkspaceUserId } from "./helpers"
 
 export interface WorkspaceService {
-  isSyncEnabled(): boolean
-
   // User
   createWorkspaceUser(
     handle: DBHandle,
-    user: User
+    userId: UserId
   ): Promise<{
     user: User
     workspaceUser: admin_directory_v1.Schema$User
@@ -25,30 +22,34 @@ export interface WorkspaceService {
   }>
   resetWorkspaceUserPassword(
     handle: DBHandle,
-    user: User
+    userId: UserId
   ): Promise<{
     user: User
     workspaceUser: admin_directory_v1.Schema$User
     recoveryCodes: string[] | null
     password: string
   }>
-  findWorkspaceUser(handle: DBHandle, user: User): Promise<admin_directory_v1.Schema$User | null>
+  findWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User | null>
 
   // Groups
   createWorkspaceGroup(
     handle: DBHandle,
-    group: Group
+    groupSlug: GroupId
   ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }>
-  findWorkspaceGroup(handle: DBHandle, group: Group): Promise<admin_directory_v1.Schema$Group | null>
-  addUserIntoWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<admin_directory_v1.Schema$Member>
-  removeUserFromWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<boolean>
+  findWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<admin_directory_v1.Schema$Group | null>
+  addUserIntoWorkspaceGroup(
+    handle: DBHandle,
+    groupSlug: GroupId,
+    userId: UserId
+  ): Promise<admin_directory_v1.Schema$Member>
+  removeUserFromWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<boolean>
   getMembersForGroup(
     handle: DBHandle,
-    group: Group
+    groupSlug: GroupId
   ): Promise<{ user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }[]>
   getWorkspaceGroupsForWorkspaceUser(
     handle: DBHandle,
-    user: User
+    userId: UserId
   ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[]>
 }
 
@@ -73,16 +74,14 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
   }
 
   return {
-    isSyncEnabled() {
-      return configuration.WORKSPACE_SYNC_ENABLED === "true"
-    },
+    async createWorkspaceUser(handle, userId) {
+      const directory = getDirectory()
 
-    async createWorkspaceUser(handle, user) {
+      const user = await userService.getById(handle, userId)
+
       if (user.workspaceUserId) {
         throw new Error("User already has a workspace user ID")
       }
-
-      const directory = getDirectory()
 
       if (!user.name) {
         throw new Error("User name is required")
@@ -138,9 +137,10 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       }
     },
 
-    async resetWorkspaceUserPassword(handle, user) {
+    async resetWorkspaceUserPassword(handle, userId) {
       const directory = getDirectory()
 
+      const user = await userService.getById(handle, userId)
       const password = getTemporaryPassword()
 
       const response = await directory.users.update({
@@ -169,8 +169,10 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       }
     },
 
-    async findWorkspaceUser(handle, user) {
+    async findWorkspaceUser(handle, userId) {
       const directory = getDirectory()
+
+      const user = await userService.getById(handle, userId)
 
       const response = await directory.users.get({
         userKey: getKey(user),
@@ -190,8 +192,11 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       return response.data
     },
 
-    async addUserIntoWorkspaceGroup(handle, group, user) {
+    async addUserIntoWorkspaceGroup(handle, groupSlug, userId) {
       const directory = getDirectory()
+
+      const group = await groupService.getById(handle, groupSlug)
+      const user = await userService.getById(handle, userId)
 
       const res = await directory.members.insert({
         groupKey: getKey(group),
@@ -206,8 +211,11 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       return res.data
     },
 
-    async removeUserFromWorkspaceGroup(handle, group, user) {
+    async removeUserFromWorkspaceGroup(handle, groupId, userId) {
       const directory = getDirectory()
+
+      const group = await groupService.getById(handle, groupId)
+      const user = await userService.getById(handle, userId)
 
       return await directory.members
         .delete({
@@ -218,7 +226,9 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
         .catch(() => false)
     },
 
-    async createWorkspaceGroup(handle, group) {
+    async createWorkspaceGroup(handle, groupId) {
+      const group = await groupService.getById(handle, groupId)
+
       if (group.workspaceGroupId) {
         throw new Error("Group already has a workspace group ID")
       }
@@ -245,8 +255,10 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       return { group: updatedGroup, workspaceGroup: data }
     },
 
-    async findWorkspaceGroup(handle, group) {
+    async findWorkspaceGroup(handle, groupId) {
       const directory = getDirectory()
+
+      const group = await groupService.getById(handle, groupId)
 
       const response = await directory.groups.get({
         groupKey: group.workspaceGroupId ?? getKey(group),
@@ -266,8 +278,10 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       return response.data
     },
 
-    async getMembersForGroup(handle, group) {
+    async getMembersForGroup(handle, groupId) {
       const directory = getDirectory()
+
+      const group = await groupService.getById(handle, groupId)
 
       const workspaceMembers: { user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }[] = []
 
@@ -291,8 +305,10 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       return workspaceMembers
     },
 
-    async getWorkspaceGroupsForWorkspaceUser(handle, user) {
+    async getWorkspaceGroupsForWorkspaceUser(handle, userId) {
       const directory = getDirectory()
+
+      const user = await userService.getById(handle, userId)
 
       const groups: { group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[] = []
 

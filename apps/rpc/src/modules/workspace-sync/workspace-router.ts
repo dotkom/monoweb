@@ -19,9 +19,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
-        const user = await ctx.userService.getById(handle, input.userId)
-
-        return await ctx.workspaceService.createWorkspaceUser(handle, user)
+        return await ctx.workspaceService.createWorkspaceUser(handle, input.userId)
       })
     }),
 
@@ -36,9 +34,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
-        const user = await ctx.userService.getById(handle, input.userId)
-
-        return await ctx.workspaceService.findWorkspaceUser(handle, user)
+        return await ctx.workspaceService.findWorkspaceUser(handle, input.userId)
       })
     }),
 
@@ -60,9 +56,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
-        const user = await ctx.userService.getById(handle, input.userId)
-
-        return await ctx.workspaceService.resetWorkspaceUserPassword(handle, user)
+        return await ctx.workspaceService.resetWorkspaceUserPassword(handle, input.userId)
       })
     }),
 
@@ -82,9 +76,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireAffiliation("dotkom", "hs")
 
       return ctx.executeTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.groupSlug)
-
-        return await ctx.workspaceService.createWorkspaceGroup(handle, group)
+        return await ctx.workspaceService.createWorkspaceGroup(handle, input.groupSlug)
       })
     }),
 
@@ -103,9 +95,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireAffiliation(...affiliations)
 
       return ctx.executeTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.groupSlug)
-
-        return await ctx.workspaceService.findWorkspaceGroup(handle, group)
+        return await ctx.workspaceService.findWorkspaceGroup(handle, input.groupSlug)
       })
     }),
 
@@ -125,10 +115,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireAffiliation(...affiliations)
 
       return ctx.executeTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.groupSlug)
-        const user = await ctx.userService.getById(handle, input.userId)
-
-        return await ctx.workspaceService.addUserIntoWorkspaceGroup(handle, group, user)
+        return await ctx.workspaceService.addUserIntoWorkspaceGroup(handle, input.groupSlug, input.userId)
       })
     }),
 
@@ -148,10 +135,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireAffiliation(...affiliations)
 
       return ctx.executeTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.groupSlug)
-        const user = await ctx.userService.getById(handle, input.userId)
-
-        return await ctx.workspaceService.removeUserFromWorkspaceGroup(handle, group, user)
+        return await ctx.workspaceService.removeUserFromWorkspaceGroup(handle, input.groupSlug, input.userId)
       })
     }),
 
@@ -177,9 +161,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireAffiliation(...affiliations)
 
       return ctx.executeTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.groupSlug)
-
-        return await ctx.workspaceService.getMembersForGroup(handle, group)
+        return await ctx.workspaceService.getMembersForGroup(handle, input.groupSlug)
       })
     }),
 
@@ -201,9 +183,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
-        const user = await ctx.userService.getById(handle, input.userId)
-
-        return await ctx.workspaceService.getWorkspaceGroupsForWorkspaceUser(handle, user)
+        return await ctx.workspaceService.getWorkspaceGroupsForWorkspaceUser(handle, input.userId)
       })
     }),
 })
