@@ -3,11 +3,10 @@ import { cn } from "@dotkomonline/ui"
 import { useTheme } from "next-themes"
 
 interface ThemeToggleProps {
-  size?: "sm" | "lg"
   className?: string
 }
 
-export const ThemeToggle = ({ size = "sm", className }: ThemeToggleProps) => {
+export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const { setTheme, theme } = useTheme()
 
   const THEME_OPTIONS = [
@@ -28,30 +27,12 @@ export const ThemeToggle = ({ size = "sm", className }: ThemeToggleProps) => {
     },
   ] as const
 
-  const sizeClasses = {
-    sm: {
-      container: "w-8 h-8",
-      iconSize: 20,
-      translateX: 36,
-    },
-    lg: {
-      container: "w-10 h-10",
-      iconSize: 24,
-      translateX: 44,
-    },
-  }
-
-  const currentSize = sizeClasses[size]
-
   return (
     <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
       <div
-        className={cn(
-          "absolute top-1 bottom-1 h-8 rounded-md shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700",
-          currentSize.container
-        )}
+        className="absolute top-1 bottom-1 h-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700 w-8 h-8"
         style={{
-          transform: `translateX(${THEME_OPTIONS.findIndex((option) => option.theme === theme) * currentSize.translateX}px)`,
+          transform: `translateX(${THEME_OPTIONS.findIndex((option) => option.theme === theme) * 2.25}rem)`,
         }}
       />
 
@@ -60,16 +41,13 @@ export const ThemeToggle = ({ size = "sm", className }: ThemeToggleProps) => {
           type="button"
           key={item.theme}
           onClick={() => setTheme(item.theme)}
-          className={cn(
-            "relative flex items-center justify-center rounded-md transition-colors",
-            currentSize.container
-          )}
+          className="relative flex items-center justify-center rounded-md transition-colors w-8 h-8"
           title={item.label}
         >
           <Icon
             icon={item.icon}
-            width={currentSize.iconSize}
-            height={currentSize.iconSize}
+            width={20}
+            height={20}
             className="transition-colors duration-200 text-black dark:text-stone-100"
           />
         </button>

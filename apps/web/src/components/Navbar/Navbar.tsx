@@ -47,7 +47,7 @@ const links: MenuLink[] = [
         description: "Er du medlem av en interessegruppe? Sjekk de ut her!",
       },
       {
-        title: "Om Linjeforeningen Online",
+        title: "Om Linjeforeningen",
         href: "/om-linjeforeningen",
         icon: "tabler:bolt",
         description: "Informasjon om linjeforeningen Online.",
@@ -117,7 +117,7 @@ export const Navbar: FC = () => {
 
       <MainNavigation links={links} />
 
-      <div className="ml-auto flex items-center gap-4">
+      <div className="ml-auto flex items-center">
         <ProfileMenu />
         <MobileNavigation links={links} />
       </div>
