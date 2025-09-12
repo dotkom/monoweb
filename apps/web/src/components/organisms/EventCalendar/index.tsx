@@ -105,9 +105,9 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const eventDetails = futureEventWithAttendances
   const userId = session?.sub
 
-  // if (!isLoading) {
+  if (isLoading) {
     return <CalendarSkeleton />
-  // }
+  }
 
   const cal = getCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails.map(({ event }) => event))

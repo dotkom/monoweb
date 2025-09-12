@@ -5,7 +5,7 @@ export const CalendarSkeleton = () => {
 
   return (
     <div className="relative">
-			<Icon
+      <Icon
         className="animate-spin absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
         icon="tabler:loader-2"
         width={40}
