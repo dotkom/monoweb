@@ -17,7 +17,7 @@ export const Textarea: FC<TextareaProps> = ({ className, error, message, label, 
         <Text
           element="label"
           htmlFor={props.id}
-          className={cn("text-black dark:text-white", props.disabled && "text-gray-500 dark:text-stone-500")}
+          className={cn("text-black dark:text-white", props.disabled && "text-gray-500 dark:text-stone-400")}
         >
           {label}
         </Text>
@@ -26,8 +26,8 @@ export const Textarea: FC<TextareaProps> = ({ className, error, message, label, 
         className={cn(
           "font-body flex min-h-10 h-15 w-full",
           "px-3 py-2 rounded-md text-sm",
-          "border border-gray-200 dark:border-stone-800 dark:bg-stone-900",
-          "placeholder:text-gray-500 dark:placeholder:text-stone-500",
+          "border border-gray-200 dark:border-stone-700 dark:bg-stone-800",
+          "placeholder:text-gray-500 dark:placeholder:text-stone-400",
           "focus:riled:cursor-not-allowed focus:outline-hidden focus:ring-2",
           "disabled:opacity-50",
           className

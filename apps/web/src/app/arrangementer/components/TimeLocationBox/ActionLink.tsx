@@ -13,7 +13,7 @@ export const ActionLink = ({ href, label }: Props) => (
       <TooltipTrigger>
         <Link
           className={clsx(
-            "border border-gray-200 hover:bg-gray-100 dark:border-stone-800 dark:hover:bg-stone-800 p-1.5 rounded-lg flex items-center"
+            "border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-700 p-1.5 rounded-lg flex items-center"
           )}
           href={href}
           target="_blank"

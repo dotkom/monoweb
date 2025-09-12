@@ -1,4 +1,5 @@
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
+import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
@@ -107,6 +108,12 @@ export const useEventEditForm = ({
         placeholder: "Velg type",
         data: EVENT_FORM_DATA_TYPE,
         withAsterisk: true,
+      }),
+      parentId: createEventSelectInput({
+        label: "Forelderarrangement",
+        placeholder: "Søk etter arrangement...",
+        clearable: true,
+        excludeEventIds: defaultValues?.id ? [defaultValues.id] : [],
       }),
     },
   })

@@ -8,7 +8,6 @@ export default function Page() {
   const FormComponent = useCompanyWriteForm({
     onSubmit: (data) => {
       create.mutate(data)
-      close()
     },
   })
   return <FormComponent />

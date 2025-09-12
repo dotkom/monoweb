@@ -43,14 +43,14 @@ const CommitteePage = async () => {
             className="flex flex-row gap-2 items-center grow h-full text-sm sm:text-lg md:text-xl"
           >
             Komiteer
-            <span className="hidden md:block text-base text-gray-500 dark:text-stone-500">({committees.length})</span>
+            <span className="hidden md:block text-base text-gray-500 dark:text-stone-400">({committees.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="nodecommittee"
             className="flex flex-row gap-2 items-center grow h-full text-sm sm:text-lg md:text-xl"
           >
             Nodekomiteer
-            <span className="hidden md:block text-base text-gray-500 dark:text-stone-500">
+            <span className="hidden md:block text-base text-gray-500 dark:text-stone-400">
               ({nodeCommittees.length})
             </span>
           </TabsTrigger>
@@ -59,7 +59,7 @@ const CommitteePage = async () => {
             className="flex flex-row gap-2 items-center grow h-full text-sm sm:text-lg md:text-xl"
           >
             Assosierte grupper
-            <span className="hidden md:block text-base text-gray-500 dark:text-stone-500">
+            <span className="hidden md:block text-base text-gray-500 dark:text-stone-400">
               ({associatedGroups.length})
             </span>
           </TabsTrigger>

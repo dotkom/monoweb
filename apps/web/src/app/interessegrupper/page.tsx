@@ -18,32 +18,21 @@ export default async function InterestGroupPage() {
           alle mulige slags interesser. Har du og en kompis eller to en sær/stilig/fantastisk interesse? Opprett en
           interessegruppe!
         </Text>
-        <Button
-          variant="text"
-          element={Link}
-          href={"https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper/"}
-          iconRight={<Icon icon="tabler:arrow-up-right" />}
-          className="w-fit"
-        >
-          Mer informasjon om hvordan dette gjøres finnes her
-        </Button>
       </div>
 
       <div className="flex flex-row gap-4">
         <Button
           color="brand"
           element={Link}
-          href={"https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"}
+          href="https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"
           icon={<Icon icon="tabler:users-plus" className="text-lg" />}
         >
-          Opprett interessegruppe
+          Opprett eller overta interessegruppe
         </Button>
 
         <Button
           element={Link}
-          href={
-            "https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
-          }
+          href="https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
           icon={<Icon icon="tabler:coins" className="text-lg" />}
         >
           Søk om støtte

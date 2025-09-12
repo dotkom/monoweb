@@ -14,7 +14,7 @@ import type { FC } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
 
 const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean, hasPunishment: boolean) => {
-  if (disabled) return "bg-gray-200 dark:bg-stone-800 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-800"
+  if (disabled) return "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"
   if (attendee) return "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
   if (isPoolFull || hasPunishment)
     return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
@@ -130,7 +130,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     <div
       className={cn(
         "flex flex-row gap-2 items-center",
-        disabled ? "text-gray-800 dark:text-stone-400" : "text-black dark:text-white"
+        disabled ? "text-gray-800 dark:text-stone-300" : "text-black dark:text-white"
       )}
     >
       <Icon className="text-lg" icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`} />

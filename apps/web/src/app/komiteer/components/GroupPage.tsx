@@ -40,31 +40,30 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
   const hasContactInfo = group.email || group.contactUrl
 
-  const activeMembers: Map<UserId, GroupMember> = new Map(
-    [...members.entries()]
-      .filter(([, member]) => member.groupMemberships.some((membership) => membership.end === null))
-      .toSorted(([, a], [, b]) => {
-        const aRoles = getLatestActiveMembership(a)?.roles ?? []
-        const bRoles = getLatestActiveMembership(b)?.roles ?? []
+  const activeMembers = [...members.values()]
+    .filter((member) => getLatestActiveMembership(member) !== undefined)
+    .toSorted((leftMember, rightMember) => {
+      const left = getLatestActiveMembership(leftMember)
+      const right = getLatestActiveMembership(rightMember)
+      // Sanity check
+      if (left === undefined || right === undefined) {
+        return 0
+      }
+      const leftPriority = Math.max(...left.roles.map((role) => getRolePriority(role)))
+      const rightPriority = Math.max(...right.roles.map((role) => getRolePriority(role)))
 
-        const aPriority = Math.max(...aRoles.map((role) => getRolePriority(role)))
-        const bPriority = Math.max(...bRoles.map((role) => getRolePriority(role)))
+      if (leftPriority !== rightPriority) {
+        return rightPriority - leftPriority
+      }
 
-        if (aPriority !== bPriority) {
-          return bPriority - aPriority
-        }
-
-        return compareDesc(a.createdAt, b.createdAt)
-      })
-  )
-
-  const leader = activeMembers
-    .values()
-    .find((member) =>
-      member.groupMemberships.some(
-        (membership) => membership.end === null && membership.roles.some((role) => role.type === "LEADER")
-      )
-    )
+      return compareDesc(left.start, right.start)
+    })
+  const leader = [...members.values()]
+    .filter((member) => getLatestActiveMembership(member) !== undefined)
+    .find((user) => {
+      const membership = getLatestActiveMembership(user)
+      return membership?.roles.some((r) => r.type === "LEADER")
+    })
 
   const name = group.name ?? group.abbreviation
 
@@ -73,7 +72,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
         <Avatar className="w-24 h-24 md:w-32 md:h-32">
           <AvatarImage src={group.imageUrl ?? undefined} alt={name} />
-          <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+          <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
             <Icon className="text-5xl md:text-6xl" icon="tabler:users" />
           </AvatarFallback>
         </Avatar>
@@ -85,17 +84,17 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 {group.abbreviation}
               </Title>
 
-              <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-500">
+              <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-400">
                 {getGroupTypeName(group.type)}
               </Badge>
             </div>
 
-            <Text className="text-gray-500 dark:text-stone-500">{name}</Text>
+            <Text className="text-gray-500 dark:text-stone-400">{name}</Text>
           </div>
 
           <Text>{group.about || group.description || "Ingen beskrivelse"}</Text>
 
-          <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-500">
+          <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-400">
             <Text>Kontakt:</Text>
 
             {group.email && (
@@ -106,7 +105,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 className={cn(
                   "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
                   "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                  "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                  "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                 )}
               >
                 <Icon icon="tabler:mail" className="text-base" />
@@ -123,7 +122,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 className={cn(
                   "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
                   "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                  "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                  "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                 )}
               >
                 <Icon icon="tabler:world" className="text-base" />
@@ -139,19 +138,19 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                   className={cn(
                     "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
                     "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                    "dark:bg-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-300"
+                    "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                   )}
                 >
                   <Avatar className="h-5 w-5">
                     <AvatarImage src={leader.imageUrl ?? undefined} />
-                    <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+                    <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
                       <Icon className="text-xs" icon="tabler:user" />
                     </AvatarFallback>
                   </Avatar>
                   <Text>{leader.name}</Text>
                 </Link>
               ) : (
-                <Text className="text-gray-500 dark:text-stone-500">Ingen kontaktinformasjon</Text>
+                <Text className="text-gray-500 dark:text-stone-400">Ingen kontaktinformasjon</Text>
               ))}
           </div>
         </div>
@@ -162,18 +161,20 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
             {members.size > 0 && (
-              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-500">({activeMembers.size})</Text>
+              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.length})</Text>
             )}
           </div>
 
-          {activeMembers.size ? (
+          {activeMembers.length ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {Array.from(activeMembers.entries()).map(([id, member]) => (
-                <GroupMemberEntry key={id} userId={session?.sub} member={member} />
-              ))}
+              {Array.from(
+                activeMembers.map((member) => (
+                  <GroupMemberEntry key={member.id} userId={session?.sub} member={member} />
+                ))
+              )}
             </div>
           ) : (
-            <Text className="text-gray-500 dark:text-stone-500">Ingen aktive medlemmer</Text>
+            <Text className="text-gray-500 dark:text-stone-400">Ingen aktive medlemmer</Text>
           )}
         </div>
       )}
@@ -210,7 +211,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       href={`/profil/${member.profileSlug}`}
       className={cn(
         "flex flex-row items-center gap-3 p-2 rounded-lg transition-colors",
-        !isVerified && !isUser && "bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800",
+        !isVerified && !isUser && "bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700",
         isUser && !isVerified && "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900",
         isVerified && [
           "bg-gradient-to-r",
@@ -221,7 +222,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
     >
       <Avatar className="w-10 h-10 md:w-12 md:h-12">
         <AvatarImage src={member.imageUrl ?? undefined} />
-        <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+        <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
           <Icon className="text-xl" icon="tabler:user" />
         </AvatarFallback>
       </Avatar>
@@ -247,6 +248,12 @@ function getLatestActiveMembership(member: GroupMember) {
 function getRolePriority(role: GroupRole) {
   switch (role.type) {
     case "LEADER":
+      return 6
+    case "DEPUTY_LEADER":
+      return 5
+    case "TREASURER":
+      return 4
+    case "TRUSTEE":
       return 3
     case "PUNISHER":
       return 2

@@ -25,7 +25,7 @@ export const PaymentExplanationDialog = () => {
             <span className="flex flex-row gap-2 items-center">
               <Icon
                 icon="material-symbols:info-outline-rounded"
-                className="text-3xl text-blue-500 dark:text-stone-400"
+                className="text-3xl text-blue-500 dark:text-stone-300"
               />
               <Text className="text-xl">Betalingsinformasjon</Text>
             </span>

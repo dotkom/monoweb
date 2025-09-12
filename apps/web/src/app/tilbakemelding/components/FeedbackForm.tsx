@@ -236,7 +236,7 @@ const SelectQuestion = ({ question, index, control }: QuestionProps) => (
           onValueChange={(id) => onChange([question.options.find((o) => o.id === id)])}
           required={question.required}
         >
-          <SelectTrigger className="w-full transition-all bg-gray-50 dark:bg-stone-600" id={question.id}>
+          <SelectTrigger className="w-full transition-all bg-gray-50 dark:bg-stone-500" id={question.id}>
             <SelectValue placeholder="Velg et alternativ" className="transition-all" />
           </SelectTrigger>
           <SelectContent>
@@ -273,9 +273,9 @@ const RatingQuestion = ({ question, index, control }: QuestionProps) => (
               key={`${question.id}.${n}`}
               htmlFor={`${question.id}.${n}`}
               className={clsx(
-                "items-center justify-center w-10 h-10 hover:bg-gray-200 dark:hover:bg-stone-400 active:bg-gray-300 dark:active:bg-stone-500 rounded-full border border-gray-600 dark:border-stone-400 cursor-pointer",
+                "items-center justify-center w-10 h-10 hover:bg-gray-200 dark:hover:bg-stone-300 active:bg-gray-300 dark:active:bg-stone-400 rounded-full border border-gray-600 dark:border-stone-300 cursor-pointer",
                 Number(value) === n &&
-                  "bg-brand text-white hover:bg-gray-400 dark:hover:bg-stone-400 active:bg-gray-500 dark:active:bg-stone-500"
+                  "bg-brand text-white hover:bg-gray-400 dark:hover:bg-stone-300 active:bg-gray-500 dark:active:bg-stone-400"
               )}
             >
               <RadioGroupItem

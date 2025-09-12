@@ -1,0 +1,19 @@
+/* Forward animation */
+@keyframes dash-forward {
+  to {
+    stroke-dashoffset: -12; /* same as your dash length */
+  }
+}
+.animate-dash-forward {
+  animation: dash-forward 1s linear infinite;
+}
+
+/* Backward animation */
+@keyframes dash-backward {
+  to {
+    stroke-dashoffset: 12; /* opposite direction */
+  }
+}
+.animate-dash-backward {
+  animation: dash-backward 1s linear infinite;
+}

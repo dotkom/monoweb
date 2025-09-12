@@ -12,9 +12,8 @@
   "patch": {
     "automerge": true
   },
-  "schedule": [
-    "* * * * 6"
-  ],
+  "schedule": ["* * * * 6"],
+  "minimumReleaseAge": "14 days",
   "packageRules": [
     {
       "groupName": "next",
@@ -27,9 +26,7 @@
     },
     {
       "enabled": false,
-      "matchPackageNames": [
-        "/^@dotkomonline//"
-      ]
+      "matchPackageNames": ["/^@dotkomonline//"]
     }
   ]
 }

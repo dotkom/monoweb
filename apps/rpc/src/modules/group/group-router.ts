@@ -10,11 +10,10 @@ import { z } from "zod"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const groupRouter = t.router({
-  create: procedure
-    .input(GroupWriteSchema)
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.create(handle, input))
-    ),
+  create: staffProcedure.input(GroupWriteSchema).mutation(async ({ input, ctx }) => {
+    ctx.authorize.requireAffiliation("dotkom", "backlog", "hs")
+    return ctx.executeTransaction(async (handle) => ctx.groupService.create(handle, input))
+  }),
   all: procedure.query(async ({ ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.getAll(handle))),
   allByType: procedure
     .input(GroupSchema.shape.type)
@@ -36,14 +35,14 @@ export const groupRouter = t.router({
         values: GroupWriteSchema,
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.update(handle, input.id, input.values))
-    ),
-  delete: staffProcedure
-    .input(GroupSchema.shape.slug)
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.delete(handle, input))
-    ),
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireAffiliation("dotkom", "backlog", "hs")
+      return ctx.executeTransaction(async (handle) => ctx.groupService.update(handle, input.id, input.values))
+    }),
+  delete: staffProcedure.input(GroupSchema.shape.slug).mutation(async ({ input, ctx }) => {
+    ctx.authorize.requireAffiliation("dotkom", "backlog", "hs")
+    return ctx.executeTransaction(async (handle) => ctx.groupService.delete(handle, input))
+  }),
   getMembers: procedure
     .input(GroupSchema.shape.slug)
     .query(async ({ input, ctx }) =>

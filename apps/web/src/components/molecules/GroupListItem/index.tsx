@@ -19,10 +19,10 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
         "hidden sm:flex",
         "group relative flex-col gap-3 border h-full p-6 rounded-lg transition-all",
         "bg-gray-50 hover:bg-gray-100 border-gray-100",
-        "dark:bg-stone-900 dark:hover:bg-stone-800 dark:border-stone-800",
+        "dark:bg-stone-800 dark:hover:bg-stone-700 dark:border-stone-700",
         inactive && [
           "bg-transparent hover:bg-gray-50 text-gray-500 hover:text-black",
-          "dark:bg-transparent dark:hover:bg-stone-900 dark:text-stone-500 dark:hover:text-white",
+          "dark:bg-transparent dark:hover:bg-stone-800 dark:text-stone-400 dark:hover:text-white",
         ]
       )}
     >
@@ -36,7 +36,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
       <Badge
         color="slate"
         variant="light"
-        className="absolute top-3 right-3 bg-gray-100 text-gray-500 dark:text-stone-500"
+        className="absolute top-3 right-3 bg-gray-100 text-gray-500 dark:text-stone-400"
       >
         {getGroupTypeName(group.type)}
       </Badge>
@@ -78,8 +78,8 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
       className={cn(
         "flex sm:hidden",
         "group relative items-center gap-5 p-5 rounded-lg transition-colors",
-        "dark:bg-stone-900",
-        "bg-gray-50 hover:bg-gray-100 dark:hover:bg-stone-800"
+        "dark:bg-stone-800",
+        "bg-gray-50 hover:bg-gray-100 dark:hover:bg-stone-700"
       )}
     >
       {group.imageUrl ? (

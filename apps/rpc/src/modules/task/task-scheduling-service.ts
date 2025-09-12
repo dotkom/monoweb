@@ -2,7 +2,7 @@ import type { SchedulerClient } from "@aws-sdk/client-scheduler"
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { AttendanceId, AttendeeId, EventId, Task, TaskId } from "@dotkomonline/types"
+import type { AttendanceId, AttendeeId, EventId, FeedbackFormId, Task, TaskId } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { NotImplementedError } from "../../error"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
@@ -28,7 +28,8 @@ export interface TaskSchedulingService {
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
-  findChargeAttendancePaymentsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
+  findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
 }
 
 export function getLocalTaskSchedulingService(
@@ -65,8 +66,11 @@ export function getLocalTaskSchedulingService(
     async findVerifyPaymentTask(handle, attendeeId) {
       return await taskRepository.findVerifyPaymentTask(handle, attendeeId)
     },
-    async findChargeAttendancePaymentsTask(handle, attendanceId) {
-      return await taskRepository.findChargeAttendancePaymentsTask(handle, attendanceId)
+    async findChargeAttendeeTask(handle, attendeeId) {
+      return await taskRepository.findChargeAttendeeTask(handle, attendeeId)
+    },
+    async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
+      return await taskRepository.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
     },
   }
 }
@@ -94,8 +98,12 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
       logger.warn("findVerifyPaymentTask is not implemented in EventBridgeSchedulingService")
       return null
     },
-    async findChargeAttendancePaymentsTask(_, attendanceId) {
+    async findChargeAttendeeTask(_, attendeeId) {
       logger.warn("findChargeAttendancePaymentsTask is not implemented in EventBridgeSchedulingService")
+      return null
+    },
+    async findVerifyFeedbackAnsweredTask(_, feedbackFormId) {
+      logger.warn("findVerifyFeedbackAnsweredTask is not implemented in EventBridgeSchedulingService")
       return null
     },
   }

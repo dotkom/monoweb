@@ -37,9 +37,13 @@ const columns = [
     header: () => "Varighet",
     cell: (info) => `${info.getValue()} dager`,
   }),
-  columnHelper.accessor("groupSlug", {
-    header: () => "Gruppe",
-    cell: (info) => info.getValue(),
+  columnHelper.accessor("groups", {
+    header: () => "Grupper",
+    cell: (info) =>
+      info
+        .getValue()
+        .map((group) => group.slug)
+        .join(" "),
   }),
 ]
 

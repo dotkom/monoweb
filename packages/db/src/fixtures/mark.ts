@@ -9,7 +9,6 @@ export const getMarkFixtures: () => Prisma.MarkCreateManyInput[] = () => [
     details: "a",
     duration: 20,
     weight: 3,
-    groupSlug: "bedkom",
   },
   {
     updatedAt: new Date("2023-01-25 20:05:31.034217+00"),
@@ -19,6 +18,5 @@ export const getMarkFixtures: () => Prisma.MarkCreateManyInput[] = () => [
     details: "a",
     duration: 20,
     weight: 3,
-    groupSlug: "bedkom",
   },
 ]

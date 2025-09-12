@@ -8,7 +8,7 @@ import type {
   UserId,
   VisiblePersonalMarkDetails,
 } from "@dotkomonline/types"
-import { getPunishmentExpiryDate, unique } from "@dotkomonline/utils"
+import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import type { GroupService } from "../group/group-service"
 import type { MarkService } from "./mark-service"
@@ -20,7 +20,7 @@ export interface PersonalMarkService {
   findPersonalMarkDetails(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
   findMarksByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
   findPersonalMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
-  addToUser(handle: DBHandle, userId: UserId, markId: MarkId, givenById: UserId): Promise<PersonalMark>
+  addToUser(handle: DBHandle, userId: UserId, markId: MarkId, givenById?: UserId): Promise<PersonalMark>
   /**
    * Remove a personal mark from a user
    *
@@ -60,19 +60,16 @@ export function getPersonalMarkService(
         handle,
         personalMarks.map(({ markId }) => markId)
       )
-      const groups = await groupService.getMany(handle, unique(marks.map((m) => m.groupSlug)))
 
       return personalMarks.map(({ givenById: _, ...personalMark }): VisiblePersonalMarkDetails => {
         const mark = marks.find((mark) => mark.id === personalMark.markId)
-        const givenByGroup = groups.find((group) => group.slug === mark?.groupSlug)
 
-        if (!mark || !givenByGroup) {
-          throw new PersonalMarkNotFoundError("Failed to find group and mark for personalMark")
+        if (!mark) {
+          throw new PersonalMarkNotFoundError("Failed to find mark for personalMark")
         }
 
         return {
           mark,
-          givenByGroup,
           personalMark,
         }
       })

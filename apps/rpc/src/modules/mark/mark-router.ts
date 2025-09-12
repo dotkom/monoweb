@@ -1,20 +1,32 @@
-import { MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
+import { GroupSchema, MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
+import z from "zod"
 import { PaginateInputSchema } from "../../query"
-import { staffProcedure, t } from "../../trpc"
-import { procedure } from "../../trpc"
+import { procedure, staffProcedure, t } from "../../trpc"
 import { personalMarkRouter } from "./personal-mark-router"
 
 export const markRouter = t.router({
   personal: personalMarkRouter,
   create: staffProcedure
-    .input(MarkWriteSchema)
+    .input(
+      z.object({
+        data: MarkWriteSchema,
+        groupIds: GroupSchema.shape.slug.array(),
+      })
+    )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.markService.createMark(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.markService.createMark(handle, input.data, input.groupIds))
     ),
   edit: staffProcedure
-    .input(MarkWriteSchema.required({ id: true }))
-    .mutation(async ({ input: changes, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.markService.updateMark(handle, changes.id, changes))
+    .input(
+      z.object({
+        changes: MarkWriteSchema.required({ id: true }),
+        groupIds: GroupSchema.shape.slug.array(),
+      })
+    )
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) =>
+        ctx.markService.updateMark(handle, input.changes.id, input.changes, input.groupIds)
+      )
     ),
   all: procedure
     .input(PaginateInputSchema)
