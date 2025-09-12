@@ -61,10 +61,11 @@ export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
   [
     { groupId, type: "LEADER", name: "Leder" },
     { groupId, type: "PUNISHER", name: "Vinstraffansvarlig" },
-    { groupId, type: "COSMETIC", name: "Nestleder" },
-    { groupId, type: "COSMETIC", name: "Tillitsvalgt" },
-    { groupId, type: "COSMETIC", name: "Økonomiansvarlig" },
+    { groupId, type: "DEPUTY_LEADER", name: "Nestleder" },
+    { groupId, type: "TRUSTEE", name: "Tillitsvalgt" },
+    { groupId, type: "TREASURER", name: "Økonomiansvarlig" },
     { groupId, type: "COSMETIC", name: "Medlem" },
+    { groupId, type: "EMAIL_ONLY", name: "Epost-bruker" },
   ] as const satisfies GroupRoleWrite[]
 
 export const createGroupPageUrl = (group: Group) => {
@@ -103,6 +104,14 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
       return "Vinstraffansvarlig"
     case "COSMETIC":
       return "Kosmetisk"
+    case "DEPUTY_LEADER":
+      return "Nestleder"
+    case "TRUSTEE":
+      return "Tillitsvalgt"
+    case "TREASURER":
+      return "Økonomiansvarlig"
+    case "EMAIL_ONLY":
+      return "Epost-bruker"
     default:
       return "Ukjent type"
   }

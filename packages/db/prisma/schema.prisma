@@ -163,9 +163,13 @@ model GroupMembershipRole {
 }
 
 enum GroupRoleType {
-  LEADER   @map("LEADER")
-  PUNISHER @map("PUNISHER")
-  COSMETIC @map("COSMETIC")
+  LEADER        @map("LEADER")
+  PUNISHER      @map("PUNISHER")
+  TREASURER     @map("TREASURER")
+  COSMETIC      @map("COSMETIC")
+  DEPUTY_LEADER @map("DEPUTY_LEADER")
+  TRUSTEE       @map("TRUSTEE")
+  EMAIL_ONLY    @map("EMAIL_ONLY")
 
   @@map("group_role_type")
 }
