@@ -17,7 +17,7 @@ const getLocal = (localResolvable: User | Group | string): string => {
   }
 
   const isGroup = "type" in localResolvable
-  
+
   if (isGroup) {
     return localResolvable.slug
   }
@@ -36,10 +36,7 @@ const getLocal = (localResolvable: User | Group | string): string => {
  * getEmail("user@online.ntnu.no") // "user@online.ntnu.no"
  * getEmail("user", "custom.domain") // "user@custom.domain"
  */
-export function getEmail(
-  localResolvable: User | Group | string,
-  domain = DEFAULT_DOMAIN
-) {
+export function getEmail(localResolvable: User | Group | string, domain = DEFAULT_DOMAIN) {
   const local = getLocal(localResolvable)
 
   if (local.includes("@")) {
@@ -52,7 +49,7 @@ export function getEmail(
 /**
  * Get a key for a user or a group.
  * A key is used to identify something in Google Workspace. It can be the objects id or an email (primary or alias).
- * 
+ *
  * @example
  * getKey(user) // <Workspace id>
  * getKey(userWithoutWorkspaceId) // "full.name@online.ntnu.no"
@@ -60,15 +57,12 @@ export function getEmail(
  * getKey("full.name@online.ntnu.no") // "full.name@online.ntnu.no"
  * getKey("string", "custom.domain") // "string@custom.domain"
  */
-export const getKey = (
-  localResolvable: User | Group | string,
-  domain = DEFAULT_DOMAIN
-) => {
+export const getKey = (localResolvable: User | Group | string, domain = DEFAULT_DOMAIN) => {
   if (typeof localResolvable === "object") {
     if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
       return localResolvable.workspaceUserId
     }
-    
+
     if ("workspaceGroupId" in localResolvable && localResolvable.workspaceGroupId) {
       return localResolvable.workspaceGroupId
     }

@@ -2,7 +2,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Group, User } from "@dotkomonline/types"
 import type { admin_directory_v1 } from "googleapis"
-import type { GaxiosResponseWithHTTP2 } from 'googleapis-common';
+import type { GaxiosResponseWithHTTP2 } from "googleapis-common"
 import { configuration } from "src/configuration"
 import invariant from "tiny-invariant"
 import type { GroupService } from "../group/group-service"
@@ -35,11 +35,14 @@ export interface WorkspaceSyncService {
   findWorkspaceUser(handle: DBHandle, user: User): Promise<admin_directory_v1.Schema$User | null>
 
   // Groups
-  createWorkspaceGroup(handle: DBHandle, group: Group): Promise<{ group: Group, workspaceGroup: admin_directory_v1.Schema$Group }>
+  createWorkspaceGroup(
+    handle: DBHandle,
+    group: Group
+  ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }>
   findWorkspaceGroup(handle: DBHandle, group: Group): Promise<admin_directory_v1.Schema$Group | null>
   addUserIntoWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<admin_directory_v1.Schema$Member>
   removeUserFromWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<boolean>
-    getMembersForGroup(
+  getMembersForGroup(
     handle: DBHandle,
     group: Group
   ): Promise<{ user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }[]>
@@ -226,7 +229,7 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
         requestBody: {
           email: getKey(group),
           name: group.name || group.slug,
-        }
+        },
       })
 
       let updatedGroup = group
@@ -235,11 +238,11 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
         logger.error("Failed to create group in workspace: No ID returned")
       } else {
         updatedGroup = await groupService.update(handle, group.slug, {
-          workspaceGroupId: data.id
+          workspaceGroupId: data.id,
         })
       }
 
-      return { group: updatedGroup, workspaceGroup: data}
+      return { group: updatedGroup, workspaceGroup: data }
     },
 
     async findWorkspaceGroup(handle, group) {
@@ -270,7 +273,7 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
 
       let pageToken: string | undefined = undefined
       do {
-        const response: GaxiosResponse<admin_directory_v1.Schema$Members> = await directory.members.list({
+        const response: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$Members> = await directory.members.list({
           groupKey: group.workspaceGroupId ?? getKey(group),
           pageToken: pageToken,
         })
@@ -295,7 +298,7 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
 
       let pageToken: string | undefined = undefined
       do {
-        const { data }: MinimalListReturn<"groups", admin_directory_v1.Schema$Group> = await directory.groups.list({
+        const { data }: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$Groups> = await directory.groups.list({
           userKey: getKey(user),
           pageToken,
         })
