@@ -7,19 +7,15 @@ import invariant from "tiny-invariant"
 
 const TEMPORARY_PASSWORD_LENGTH = 8
 
-const sanitizeLocal = (local: string) => {
-  return slugify(local.replaceAll(/\s+/g, "."))
-}
-
 const getLocal = (localResolvable: User | Group | string): string => {
   if (typeof localResolvable === "string") {
-    return sanitizeLocal(localResolvable)
+    return slugify(localResolvable, ".")
   }
 
   const isGroup = "type" in localResolvable
 
   if (isGroup) {
-    return sanitizeLocal(localResolvable.slug)
+    return slugify(localResolvable.slug, ".")
   }
 
   // It is a user
@@ -27,7 +23,7 @@ const getLocal = (localResolvable: User | Group | string): string => {
     throw new Error("User name is required")
   }
 
-  return sanitizeLocal(localResolvable.name)
+  return slugify(localResolvable.name, ".")
 }
 
 /**
@@ -80,7 +76,7 @@ export const getCommitteeEmail = (fullName: string) => {
     throw new Error("Invalid full name")
   }
 
-  return getKey(sanitizeLocal(fullName))
+  return getKey(slugify(fullName, "."))
 }
 
 type UserAndWorkspaceMember = {
