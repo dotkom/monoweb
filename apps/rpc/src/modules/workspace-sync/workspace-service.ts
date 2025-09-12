@@ -58,7 +58,7 @@ export interface WorkspaceService {
 export function getWorkspaceService(userService: UserService, groupService: GroupService): WorkspaceService {
   const logger = getLogger("workspace-sync-service")
 
-  const createRecoveryCodes = async (user: User): Promise<string[] | null> => {
+  async function createRecoveryCodes(user: User): Promise<string[] | null> {
     const directory = getDirectory()
 
     await directory.verificationCodes.generate({
