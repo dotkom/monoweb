@@ -1,4 +1,37 @@
-import { Icon } from "@dotkomonline/ui"
+import { Icon, cn } from "@dotkomonline/ui"
+
+interface CalendarCellProps {
+  isFirst?: boolean
+  isLast?: boolean
+}
+
+const CalendarCell = ({ isFirst = false, isLast = false }: CalendarCellProps) => {
+  return <div className={cn("border-gray-300 dark:border-stone-600", isLast && "sm:border-l-[1px]")} />
+}
+
+interface CalendarRowProps {
+  isFirst?: boolean
+}
+
+const CalendarRow = ({ isFirst = false }: CalendarRowProps) => {
+  return (
+    <div
+      className={cn(
+        "grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 w-full h-full min-h-24 sm:min-h-28 border-t-[1px] border-gray-300 dark:border-stone-600",
+        isFirst && "sm:border-t-0"
+      )}
+    >
+      <div className="hidden sm:flex w-6 pr-2 items-center justify-center text-gray-600 dark:text-stone-400 text-xs" />
+      <CalendarCell />
+      <CalendarCell isLast />
+      <CalendarCell isLast />
+      <CalendarCell isLast />
+      <CalendarCell isLast />
+      <CalendarCell isLast />
+      <CalendarCell isLast />
+    </div>
+  )
+}
 
 export const CalendarSkeleton = () => {
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
@@ -23,46 +56,10 @@ export const CalendarSkeleton = () => {
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 w-full h-full min-h-24 sm:min-h-28">
-        <div className="hidden sm:flex w-6 pr-2 items-center justify-center text-gray-600 dark:text-stone-400 text-xs" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-t-0" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-t-0 sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-t-0 sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-t-0 sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-t-0 sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-t-0 sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-t-0 sm:border-l-[1px] p-1 pt-10" />
-      </div>
-      <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 w-full h-full min-h-24 sm:min-h-28">
-        <div className="hidden sm:flex w-6 pr-2 items-center justify-center text-gray-600 dark:text-stone-400 text-xs" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-      </div>
-      <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 w-full h-full min-h-24 sm:min-h-28">
-        <div className="hidden sm:flex w-6 pr-2 items-center justify-center text-gray-600 dark:text-stone-400 text-xs" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-      </div>
-      <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 w-full h-full min-h-24 sm:min-h-28">
-        <div className="hidden sm:flex w-6 pr-2 items-center justify-center text-gray-600 dark:text-stone-400 text-xs" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-        <div className="border-gray-300 dark:border-stone-600 border-t-[1px] sm:border-l-[1px]" />
-      </div>
+      <CalendarRow isFirst />
+      <CalendarRow />
+      <CalendarRow />
+      <CalendarRow />
     </div>
   )
 }
