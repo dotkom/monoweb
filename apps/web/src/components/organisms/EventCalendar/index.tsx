@@ -7,6 +7,7 @@ import type { Event } from "@dotkomonline/types"
 import { cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
+import { CalendarSkeleton } from "./CalendarSkeleton"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { getCalendarArray } from "./getCalendarArray"
 
@@ -103,6 +104,10 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
 
   const eventDetails = futureEventWithAttendances
   const userId = session?.sub
+
+  // if (!isLoading) {
+    return <CalendarSkeleton />
+  // }
 
   const cal = getCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails.map(({ event }) => event))
