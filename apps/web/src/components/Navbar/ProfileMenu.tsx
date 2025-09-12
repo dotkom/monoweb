@@ -18,12 +18,142 @@ import {
   DropdownMenuTrigger,
   Icon,
   Text,
+  Title,
 } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
 import { skipToken, useQueries, useQuery } from "@tanstack/react-query"
+import { useTheme } from "next-themes"
 import Link from "next/link"
-import { type FC, Fragment, useState } from "react"
+import { type FC, Fragment, useEffect, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
+
+const DEBUG_CONTACT_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
+
+const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefined) => {
+  if (theme === "system") {
+    return resolvedTheme === "dark" ? "tabler:moon" : "tabler:sun"
+  }
+  return theme === "dark" ? "tabler:moon" : "tabler:sun"
+}
+
+const ThemeDropdown: FC = () => {
+  const { theme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
+        <Icon icon={mounted ? getThemeIcon(theme, resolvedTheme) : "tabler:sun"} width={22} height={22} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="-mr-2 lg:-mr-3 p-1 rounded-2xl bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+        sideOffset={24}
+      >
+        <ThemeToggle />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+const ContactDebugDropdown: FC = () => (
+  <DropdownMenu>
+    <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
+      <Icon icon="tabler:message-report" width={24} height={24} />
+    </DropdownMenuTrigger>
+    <DropdownMenuContent
+      align="end"
+      className="w-80 rounded-3xl ml-4 p-6 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+      sideOffset={24}
+    >
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <Icon icon="tabler:message-report" width={24} height={24} />
+          <Title className="font-semibold text-gray-900 dark:text-white">Opplevd noe ugreit?</Title>
+        </div>
+        <Text className="text-sm px-1 text-gray-700 dark:text-stone-200">
+          Her kan du ta kontakt med Debug. De har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten
+          innsyn fra ledelsen i Online.
+        </Text>
+        <div className="flex flex-col gap-2">
+          <Button
+            element={Link}
+            variant="unstyled"
+            href={DEBUG_CONTACT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 hover:bg-blue-200 dark:hover:bg-stone-600 transition-colors"
+          >
+            <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
+            <Icon icon="tabler:arrow-up-right" width={16} height={16} />
+          </Button>
+          <Button
+            element={Link}
+            variant="text"
+            href="/komiteer/debug"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit text-gray-600 dark:text-stone-300"
+          >
+            <span className="text-sm">Les mer om Debug</span>
+          </Button>
+        </div>
+      </div>
+    </DropdownMenuContent>
+  </DropdownMenu>
+)
+
+const LoginAlternativesDropdown: FC = () => {
+  const fullPathname = useFullPathname()
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex items-center justify-center w-6 h-10">
+        <Icon icon="tabler:dots-vertical" className="" width={22} height={22} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="rounded-2xl p-2 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+        sideOffset={24}
+      >
+        <Link
+          className="flex items-center font-semibold text-sm px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors"
+          href={createAuthorizeUrl({ redirectAfter: fullPathname })}
+        >
+          Logg inn uten Feide
+        </Link>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+const UnauthenticatedActions: FC = () => {
+  const fullPathname = useFullPathname()
+  return (
+    <div className="flex items-center">
+      <div className="flex mr-2">
+        <Button
+          element={Link}
+          variant="solid"
+          color="brand"
+          className="text-sm font-semibold px-3 py-2"
+          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
+          icon={<Icon className="mr-2 text-xl" icon="tabler:login-2" />}
+        >
+          Logg inn
+        </Button>
+        <div className="hidden lg:block">
+          <LoginAlternativesDropdown />
+        </div>
+      </div>
+      <ContactDebugDropdown />
+      <ThemeDropdown />
+    </div>
+  )
+}
 
 interface LinkDetail {
   label: string
@@ -76,12 +206,6 @@ const linkGroups: LinkGroup[] = [
         openInNewTab: true,
       },
       {
-        icon: "tabler:spy",
-        label: "Opplevd noe ugreit?",
-        href: "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform",
-        openInNewTab: true,
-      },
-      {
         icon: "tabler:bug",
         label: "Rapporter en feil",
         href: "mailto:dotkom@online.ntnu.no",
@@ -92,8 +216,18 @@ const linkGroups: LinkGroup[] = [
 ]
 
 export const ProfileMenu: FC = () => {
-  const [open, setOpen] = useState(false)
+  const session = useSession()
+  if (session === null) return <UnauthenticatedActions />
+  return (
+    <div className="flex gap-2 mr-2 lg:mr-0">
+      <ContactDebugDropdown />
+      <AvatarDropdown />
+    </div>
+  )
+}
 
+export const AvatarDropdown: FC = () => {
+  const [open, setOpen] = useState(false)
   const session = useSession()
   const fullPathname = useFullPathname()
   const trpc = useTRPC()
@@ -119,55 +253,7 @@ export const ProfileMenu: FC = () => {
     }))
     .filter((group) => group.links.length > 0)
 
-  if (session === null) {
-    return (
-      <div className="flex flex-row gap-2">
-        <Button
-          element={Link}
-          variant="solid"
-          size="sm"
-          color="brand"
-          className="text-sm font-semibold px-3 py-2"
-          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
-          icon={<Icon className="md:hidden lg:flex mr-2 text-xl" icon="tabler:login-2" />}
-        >
-          Logg inn
-        </Button>
-
-        <div className="hidden md:block">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
-              <Icon icon="tabler:dots" className="rotate-90" width={24} height={24} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="-mr-3 px-4 py-3 rounded-3xl mt-2 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700/30 shadow-sm"
-              sideOffset={16}
-            >
-              <div className="gap-2 flex">
-                <ThemeToggle size="sm" />
-
-                <div className="h-10 w-1 bg-gray-300 dark:bg-stone-600" />
-
-                <Button
-                  element={Link}
-                  variant="solid"
-                  size="md"
-                  className="w-full font-semibold justify-start px-3 h-10 bg-transparent dark:bg-transparent hover:bg-blue-100 dark:hover:bg-stone-700 transition-none"
-                  href={createAuthorizeUrl({ redirectAfter: fullPathname })}
-                >
-                  Logg inn uten Feide
-                </Button>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-    )
-  }
-
   const showFeedbackFormPing = eventsMissingFeedback && eventsMissingFeedback.length > 0
-  const showPing = showFeedbackFormPing
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -183,13 +269,13 @@ export const ProfileMenu: FC = () => {
               <Icon className="text-lg" icon="tabler:user" />
             </AvatarFallback>
           </Avatar>
-          {showPing && !open && <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
+          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-72 -mr-16 md:-mr-3 mt-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700/30 shadow-sm"
-        sideOffset={8}
+        className="w-72 -mr-16 lg:-mr-4 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+        sideOffset={24}
       >
         <DropdownMenuLabel className="font-normal p-3 mb-2">
           <div className="flex flex-col min-w-0 flex-1">
@@ -259,15 +345,15 @@ export const ProfileMenu: FC = () => {
 
         <div className="flex items-center justify-between px-3">
           <div className="flex gap-3 items-center">
-            <Icon icon={"tabler:palette"} width={16} height={16} className="text-gray-600 dark:text-stone-300" />
+            <Icon icon="tabler:palette" width={16} height={16} className="text-gray-600 dark:text-stone-300" />
             <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
           </div>
-          <ThemeToggle size="sm" />
+          <ThemeToggle />
         </div>
 
         <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />
 
-        <DropdownMenuItem className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer">
+        <DropdownMenuItem className="rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors cursor-pointer">
           <Link
             prefetch={false}
             href={createLogoutUrl({ redirectAfter: fullPathname })}
