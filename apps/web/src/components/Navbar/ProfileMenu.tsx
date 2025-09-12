@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
   Icon,
   Text,
+  Title,
 } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
 import { skipToken, useQueries, useQuery } from "@tanstack/react-query"
@@ -68,7 +69,7 @@ const ContactDebugDropdown: FC = () => (
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <Icon icon="tabler:message-report" width={24} height={24} />
-          <h3 className="font-semibold text-gray-900 dark:text-white">Opplevd noe ugreit?</h3>
+          <Title className="font-semibold text-gray-900 dark:text-white">Opplevd noe ugreit?</Title>
         </div>
         <p className="text-sm px-1 text-gray-700 dark:text-stone-200 leading-relaxed">
           Her kan du ta kontakt med Debug. De har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten
@@ -83,7 +84,7 @@ const ContactDebugDropdown: FC = () => (
             rel="noopener noreferrer"
             className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 hover:bg-blue-200 dark:hover:bg-stone-600 transition-colors"
           >
-            <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
+            <Text className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</Text>
             <Icon icon="tabler:arrow-up-right" width={16} height={16} />
           </Button>
           <Button
@@ -94,7 +95,7 @@ const ContactDebugDropdown: FC = () => (
             rel="noopener noreferrer"
             className="flex items-center w-fit gap-1"
           >
-            <span className="text-sm">Les mer om Debug</span>
+            <Text className="text-sm">Les mer om Debug</Text>
             <Icon icon="tabler:arrow-up-right" width={16} height={16} />
           </Button>
         </div>
@@ -266,7 +267,7 @@ export const AvatarDropdown: FC = () => {
               <Icon className="text-lg" icon="tabler:user" />
             </AvatarFallback>
           </Avatar>
-          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
+          {showFeedbackFormPing && !open && <Text className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -310,7 +311,7 @@ export const AvatarDropdown: FC = () => {
                           <div className="flex flex-row gap-2 items-center">
                             <Text className="font-medium text-gray-900 dark:text-white">{link.label}</Text>
                             {showFeedbackFormPing && open && isProfile && (
-                              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                              <Text className="w-2.5 h-2.5 rounded-full bg-red-500" />
                             )}
                           </div>
                           {link.adminOnly && (
