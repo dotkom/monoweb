@@ -35,7 +35,7 @@ export const configuration = defineConfiguration({
   STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
 
   WORKSPACE_SERVICE_ACCOUNT: config(process.env.WORKSPACE_SERVICE_ACCOUNT),
-  WORKSPACE_SERVICE_ACCOUNT_EMAIL: config(process.env.WORKSPACE_SERVICE_ACCOUNT_EMAIL),
+  WORKSPACE_USER_ACCOUNT_EMAIL: config(process.env.WORKSPACE_USER_ACCOUNT_EMAIL),
   WORKSPACE_DOMAIN: config(process.env.WORKSPACE_DOMAIN, "online.ntnu.no"),
   WORKSPACE_ENABLED: config(process.env.WORKSPACE_ENABLED, "false"),
 })

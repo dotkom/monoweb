@@ -2,8 +2,8 @@ import { randomBytes } from "node:crypto"
 import type { Group, User } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "googleapis"
-import invariant from "tiny-invariant"
 import { configuration } from "src/configuration"
+import invariant from "tiny-invariant"
 
 const TEMPORARY_PASSWORD_LENGTH = 8
 

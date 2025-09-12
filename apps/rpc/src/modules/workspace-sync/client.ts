@@ -40,7 +40,7 @@ export function getDirectory(): admin_directory_v1.Admin {
     email: result.data.client_email,
     key: result.data.private_key,
     scopes: SCOPES,
-    subject: configuration.WORKSPACE_SERVICE_ACCOUNT_EMAIL,
+    subject: configuration.WORKSPACE_USER_ACCOUNT_EMAIL,
   })
 
   return google.admin({ version: "directory_v1", auth })
