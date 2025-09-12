@@ -37,9 +37,9 @@ export interface WorkspaceSyncService {
   // Groups
   createWorkspaceGroup(handle: DBHandle, group: Group): Promise<{ group: Group, workspaceGroup: admin_directory_v1.Schema$Group }>
   findWorkspaceGroup(handle: DBHandle, group: Group): Promise<admin_directory_v1.Schema$Group | null>
-  insertUserIntoWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<admin_directory_v1.Schema$Member>
+  addUserIntoWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<admin_directory_v1.Schema$Member>
   removeUserFromWorkspaceGroup(handle: DBHandle, group: Group, user: User): Promise<boolean>
-  getMembersForGroup(
+    getMembersForGroup(
     handle: DBHandle,
     group: Group
   ): Promise<{ user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }[]>
@@ -187,7 +187,7 @@ export function getWorkspaceSyncService(userService: UserService, groupService: 
       return response.data
     },
 
-    async insertUserIntoWorkspaceGroup(handle, group, user) {
+    async addUserIntoWorkspaceGroup(handle, group, user) {
       const directory = getDirectory()
 
       const res = await directory.members.insert({
