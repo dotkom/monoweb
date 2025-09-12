@@ -10,13 +10,20 @@ import {
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
 import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { isFuture } from "date-fns"
 import type { FC } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
 
-const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean, hasPunishment: boolean) => {
+const getButtonColor = (
+  disabled: boolean,
+  attendee: boolean,
+  isPoolFull: boolean,
+  hasPunishment: boolean,
+  hasMergeDelay: boolean
+) => {
   if (disabled) return "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"
   if (attendee) return "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
-  if (isPoolFull || hasPunishment)
+  if (isPoolFull || hasPunishment || hasMergeDelay)
     return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
 
   return "bg-green-300 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800"
@@ -98,10 +105,13 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const attendanceStatus = getAttendanceStatus(attendance)
   const hasMembership = user !== null && Boolean(findActiveMembership(user))
 
-  const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
-  const isPoolFull = pool ? getReservedAttendeeCount(attendance, pool?.id) >= pool.capacity : false
+  const isPastDeregisterDeadline = !isFuture(attendance.deregisterDeadline)
+  const hasMergeDelay = pool?.mergeDelayHours ? pool.mergeDelayHours > 0 : false
   const isSuspended = punishment?.suspended ?? false
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
+  const isPoolFull = pool
+    ? pool.capacity !== 0 && getReservedAttendeeCount(attendance, pool?.id) >= pool.capacity
+    : false
 
   const parentAttendanceAttendee = parentAttendance && getAttendee(parentAttendance, user)
   const registeredToParentEvent = parentAttendance ? Boolean(parentAttendanceAttendee) : null
@@ -145,7 +155,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
       icon={buttonIcon}
       className={cn(
         "rounded-lg h-fit min-h-[4rem] flex-col gap-1",
-        getButtonColor(disabled, Boolean(attendee), isPoolFull, hasPunishment)
+        getButtonColor(disabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
       )}
     >
       {buttonContent}
