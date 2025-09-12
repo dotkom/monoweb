@@ -1,4 +1,4 @@
-import { GroupSchema, UserSchema } from "@dotkomonline/types"
+import { GroupMemberSchema, GroupSchema, UserSchema } from "@dotkomonline/types"
 import type { admin_directory_v1 } from "googleapis"
 import z from "zod"
 import { staffProcedure, t } from "../../trpc"
@@ -35,6 +35,24 @@ export const workspaceRouter = t.router({
 
       return ctx.executeTransaction(async (handle) => {
         return await ctx.workspaceService.findWorkspaceUser(handle, input.userId)
+      })
+    }),
+
+  linkUser: staffProcedure
+    .input(
+      z.object({
+        userId: UserSchema.shape.id,
+      })
+    )
+    .output(UserSchema)
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+
+      return ctx.executeTransaction(async (handle) => {
+        const user = await ctx.userService.getById(handle, input.userId)
+        const workspaceUser = await ctx.workspaceService.getWorkspaceUser(handle, input.userId)
+
+        return await ctx.userService.update(handle, user.id, { workspaceUserId: workspaceUser.id })
       })
     }),
 
@@ -119,7 +137,7 @@ export const workspaceRouter = t.router({
       })
     }),
 
-  removeUserfromGroup: staffProcedure
+  removeUserFromGroup: staffProcedure
     .input(
       z.object({
         groupSlug: GroupSchema.shape.slug,
@@ -148,7 +166,7 @@ export const workspaceRouter = t.router({
     .output(
       z
         .object({
-          user: UserSchema.nullable(),
+          groupMember: GroupMemberSchema.nullable(),
           workspaceMember: z.custom<admin_directory_v1.Schema$Member>().nullable(),
         })
         .array()

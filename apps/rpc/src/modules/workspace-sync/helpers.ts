@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto"
-import type { Group, User } from "@dotkomonline/types"
+import type { Group, GroupMember, User } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "googleapis"
 import { configuration } from "src/configuration"
@@ -7,15 +7,19 @@ import invariant from "tiny-invariant"
 
 const TEMPORARY_PASSWORD_LENGTH = 8
 
+const sanitizeLocal = (local: string) => {
+  return slugify(local.replaceAll(/\s+/g, "."))
+}
+
 const getLocal = (localResolvable: User | Group | string): string => {
   if (typeof localResolvable === "string") {
-    return localResolvable
+    return sanitizeLocal(localResolvable)
   }
 
   const isGroup = "type" in localResolvable
 
   if (isGroup) {
-    return localResolvable.slug
+    return sanitizeLocal(localResolvable.slug)
   }
 
   // It is a user
@@ -23,7 +27,7 @@ const getLocal = (localResolvable: User | Group | string): string => {
     throw new Error("User name is required")
   }
 
-  return localResolvable.name
+  return sanitizeLocal(localResolvable.name)
 }
 
 /**
@@ -76,15 +80,16 @@ export const getCommitteeEmail = (fullName: string) => {
     throw new Error("Invalid full name")
   }
 
-  const sanitizedName = slugify(fullName.replaceAll(/\s+/g, "."))
-
-  return getKey(sanitizedName)
+  return getKey(sanitizeLocal(fullName))
 }
 
-type UserAndWorkspaceMember = { user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }
+type UserAndWorkspaceMember = {
+  groupMember: GroupMember | null
+  workspaceMember: admin_directory_v1.Schema$Member | null
+}
 
 export const joinOnWorkspaceUserId = (
-  users: User[],
+  groupMembers: GroupMember[],
   workspaceUsers: admin_directory_v1.Schema$Member[]
 ): UserAndWorkspaceMember[] => {
   const rightJoin: UserAndWorkspaceMember[] = []
@@ -98,24 +103,24 @@ export const joinOnWorkspaceUserId = (
       throw new Error(`Duplicate workspace member ID found: ${workspaceMember.id}`)
     }
 
-    leftJoin.set(workspaceMember.id, { user: null, workspaceMember })
+    leftJoin.set(workspaceMember.id, { groupMember: null, workspaceMember })
   }
 
-  for (const user of users) {
-    let entry = user.workspaceUserId ? leftJoin.get(user.workspaceUserId) : null
-    entry ??= { user: null, workspaceMember: null }
+  for (const groupMember of groupMembers) {
+    let entry = groupMember.workspaceUserId ? leftJoin.get(groupMember.workspaceUserId) : null
+    entry ??= { groupMember: null, workspaceMember: null }
 
     // Duplicate in the argument, since workspaceUserId is unique in the database.
-    if (entry.user) {
-      throw new Error(`Duplicate workspace user ID found: ${user.workspaceUserId}`)
+    if (entry.groupMember) {
+      throw new Error(`Duplicate workspace user ID found: ${groupMember.workspaceUserId}`)
     }
 
-    if (!entry.workspaceMember || !user.workspaceUserId) {
-      rightJoin.push({ user, workspaceMember: null })
+    if (!entry.workspaceMember || !groupMember.workspaceUserId) {
+      rightJoin.push({ groupMember, workspaceMember: null })
       continue
     }
 
-    leftJoin.set(user.workspaceUserId, { user, workspaceMember: entry.workspaceMember })
+    leftJoin.set(groupMember.workspaceUserId, { groupMember, workspaceMember: entry.workspaceMember })
   }
 
   return [...leftJoin.values()].concat(rightJoin)

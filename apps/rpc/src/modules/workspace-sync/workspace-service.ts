@@ -1,13 +1,14 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Group, GroupId, User, UserId } from "@dotkomonline/types"
+import type { Group, GroupId, GroupMember, User, UserId } from "@dotkomonline/types"
 import type { admin_directory_v1 } from "googleapis"
 import type { GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 import { getDirectory } from "./client"
-import { getCommitteeEmail, getKey, getTemporaryPassword, joinOnWorkspaceUserId } from "./helpers"
+import { getCommitteeEmail, getEmail, getKey, getTemporaryPassword, joinOnWorkspaceUserId } from "./helpers"
+import { WorkspaceUserNotFoundError } from "./workspace-error"
 
 export interface WorkspaceService {
   // User
@@ -29,6 +30,7 @@ export interface WorkspaceService {
     recoveryCodes: string[] | null
     password: string
   }>
+  getWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User>
   findWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User | null>
 
   // Groups
@@ -46,7 +48,7 @@ export interface WorkspaceService {
   getMembersForGroup(
     handle: DBHandle,
     groupSlug: GroupId
-  ): Promise<{ user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }[]>
+  ): Promise<{ groupMember: GroupMember | null; workspaceMember: admin_directory_v1.Schema$Member | null }[]>
   getWorkspaceGroupsForWorkspaceUser(
     handle: DBHandle,
     userId: UserId
@@ -137,6 +139,52 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       }
     },
 
+    async getWorkspaceUser(handle, userId) {
+      const directory = getDirectory()
+
+      const user = await userService.getById(handle, userId)
+
+      const response = await directory.users.get({
+        userKey: getKey(user),
+      })
+
+      if (response.status === 404) {
+        throw new WorkspaceUserNotFoundError(getKey(user))
+      }
+
+      if (response.status !== 200) {
+        logger.warn("Failed to fetch user from workspace")
+        throw new Error()
+      }
+
+      invariant(response.data, "Expected response data to be defined")
+
+      return response.data
+    },
+
+    async findWorkspaceUser(handle, userId) {
+      const directory = getDirectory()
+
+      const user = await userService.getById(handle, userId)
+
+      const response = await directory.users.get({
+        userKey: getKey(user),
+      })
+
+      if (response.status === 404) {
+        return null
+      }
+
+      if (response.status !== 200) {
+        logger.warn("Failed to fetch user from workspace")
+        throw new Error()
+      }
+
+      invariant(response.data, "Expected response data to be defined")
+
+      return response.data
+    },
+
     async resetWorkspaceUserPassword(handle, userId) {
       const directory = getDirectory()
 
@@ -169,29 +217,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       }
     },
 
-    async findWorkspaceUser(handle, userId) {
-      const directory = getDirectory()
-
-      const user = await userService.getById(handle, userId)
-
-      const response = await directory.users.get({
-        userKey: getKey(user),
-      })
-
-      if (response.status === 404) {
-        return null
-      }
-
-      if (response.status !== 200) {
-        logger.warn("Failed to fetch user from workspace")
-        throw new Error()
-      }
-
-      invariant(response.data, "Expected response data to be defined")
-
-      return response.data
-    },
-
     async addUserIntoWorkspaceGroup(handle, groupSlug, userId) {
       const directory = getDirectory()
 
@@ -201,7 +226,7 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       const res = await directory.members.insert({
         groupKey: getKey(group),
         requestBody: {
-          email: getKey(user),
+          email: getEmail(user),
           role: "MEMBER",
         },
       })
@@ -237,7 +262,7 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
 
       const { data } = await directory.groups.insert({
         requestBody: {
-          email: getKey(group),
+          email: getEmail(group),
           name: group.name || group.slug,
         },
       })
@@ -283,7 +308,10 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
 
       const group = await groupService.getById(handle, groupId)
 
-      const workspaceMembers: { user: User | null; workspaceMember: admin_directory_v1.Schema$Member | null }[] = []
+      const workspaceMembers: {
+        groupMember: GroupMember | null
+        workspaceMember: admin_directory_v1.Schema$Member | null
+      }[] = []
 
       let pageToken: string | undefined = undefined
       do {
@@ -294,10 +322,9 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
         invariant(response.data, "Expected response data to be defined")
         invariant(response.data.members, "Expected response data to be defined")
 
-        const workspaceMembersIds = response.data.members.map((member) => member.id).filter(Boolean) as string[]
-        const users = await userService.findByWorkspaceUserIds(handle, workspaceMembersIds)
+        const users = await groupService.getMembers(handle, group.slug)
 
-        workspaceMembers.push(...joinOnWorkspaceUserId(users, response.data.members))
+        workspaceMembers.push(...joinOnWorkspaceUserId([...users.values()], response.data.members))
 
         pageToken = response.data.nextPageToken ?? undefined
       } while (pageToken !== undefined)
