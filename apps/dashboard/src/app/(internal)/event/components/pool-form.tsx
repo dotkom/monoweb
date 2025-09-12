@@ -3,7 +3,7 @@ import { createNumberInput } from "@/components/forms/NumberInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { notifyFail } from "@/lib/notifications"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ActionIcon, Box, Button, Flex } from "@mantine/core"
+import { ActionIcon, Box, Button, Flex, Stack } from "@mantine/core"
 import { IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
@@ -82,7 +82,7 @@ export const usePoolForm = (props: PoolFormProps) => {
           name: "title",
           component: createTextInput<PoolForm>({
             label: "Tittel",
-            withAsterisk: true,
+            required: true,
             rightSection: (
               <ActionIcon
                 size="input-xs"
@@ -102,13 +102,32 @@ export const usePoolForm = (props: PoolFormProps) => {
           name: "capacity",
           component: createNumberInput<PoolForm>({
             label: "Kapasitet",
+            description: (
+              <Stack gap="xs">
+                <span>
+                  Antall som kan melde seg på før de automatisk settes i kø. Du kan ha flere påmeldte enn kapasitet.
+                </span>
+                <span>Sett til 0 for ubegrenset kapasitet.</span>
+              </Stack>
+            ),
             min: props.minCapacity ?? 0,
+            required: true,
           }),
         },
         {
           name: "mergeDelayHours",
           component: createNumberInput<PoolForm>({
             label: "Utsettelse i timer",
+            description: (
+              <Stack gap="xs">
+                <span>Hvor mange timer brukere i gruppen skal stå i kø før de blir påmeldt.</span>
+                <span>
+                  Påmeldingsgruppen vil slå seg sammen med andre påmeldingsgrupper etter utsettelsestiden har gått ut.
+                  Dette gir andre muligheten til å melde seg på før den som meldte seg på får en plass.
+                </span>
+                <span>Kapasiteten bør være 0 dersom gruppen har utsettelse.</span>
+              </Stack>
+            ),
             placeholder: "Ingen utsettelse",
             min: 0,
           }),
