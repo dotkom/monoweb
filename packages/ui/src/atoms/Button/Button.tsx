@@ -91,7 +91,7 @@ export const button = cva(
         className: [
           // Not using `enabled:` to make it easier to override
           "bg-gray-200 hover:bg-gray-100 disabled:hover:bg-gray-200",
-          "dark:bg-stone-800 dark:hover:bg-stone-700 dark:disabled:hover:bg-stone-800",
+          "dark:bg-stone-700 dark:hover:bg-stone-600 dark:disabled:hover:bg-stone-700",
         ].join(" "),
       },
       {
@@ -99,7 +99,7 @@ export const button = cva(
         variant: "outline",
         className: [
           "border-gray-300 hover:bg-gray-200 disabled:hover:bg-inherit",
-          "dark:border-stone-700 dark:hover:bg-stone-800 dark:disabled:hover:bg-inherit",
+          "dark:border-stone-600 dark:hover:bg-stone-700 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
       {
@@ -107,7 +107,7 @@ export const button = cva(
         variant: "text",
         className: [
           "hover:bg-gray-200 disabled:hover:bg-inherit",
-          "dark:hover:bg-stone-800 dark:disabled:hover:bg-inherit",
+          "dark:hover:bg-stone-700 dark:disabled:hover:bg-inherit",
         ].join(" "),
       },
 
@@ -125,7 +125,7 @@ export const button = cva(
         variant: "outline",
         className: [
           "border-gray-400 hover:border-gray-800 hover:bg-gray-800 disabled:hover:border-gray-400 disabled:hover:bg-inherit",
-          "dark:border-stone-600 dark:hover:border-stone-300 dark:hover:bg-stone-300 dark:disabled:hover:border-stone-600 dark:disabled:hover:bg-inherit",
+          "dark:border-stone-500 dark:hover:border-stone-200 dark:hover:bg-stone-200 dark:disabled:hover:border-stone-500 dark:disabled:hover:bg-inherit",
           "hover:text-white disabled:hover:text-inherit",
           "dark:hover:text-black dark:disabled:hover:text-inherit",
         ].join(" "),
@@ -135,7 +135,7 @@ export const button = cva(
         variant: "text",
         className: [
           "hover:bg-gray-800 disabled:hover:bg-inherit",
-          "dark:hover:bg-stone-300 dark:disabled:hover:bg-inherit",
+          "dark:hover:bg-stone-200 dark:disabled:hover:bg-inherit",
           "hover:text-white disabled:hover:text-inherit",
           "dark:hover:text-black dark:disabled:hover:text-inherit",
         ].join(" "),

@@ -1,3 +1,5 @@
+import slugify from "slugify"
+
 const AUTHORIZE_ENDPOINT = "/api/auth/authorize"
 const UNAUTHORIZE_ENDPOINT = "/api/auth/logout"
 
@@ -61,4 +63,24 @@ export const createAbsoluteLogoutUrl = (
   const url = new URL(UNAUTHORIZE_ENDPOINT, origin)
   url.search = new URLSearchParams(...parameters).toString()
   return url.toString()
+}
+
+export const createEventSlug = (eventTitle: string): string => {
+  return slugify(eventTitle)
+}
+
+export const createEventPageUrl = (eventId: string, eventTitle?: string): `/arrangementer/${string}/${string}` => {
+  const slug = eventTitle ? createEventSlug(eventTitle) : "arrangement"
+
+  return `/arrangementer/${slug}/${eventId}`
+}
+
+export const createAbsoluteEventPageUrl = (
+  origin: string,
+  eventId: string,
+  eventTitle?: string
+): `${string}/arrangementer/${string}/${string}` => {
+  const slug = eventTitle ? createEventSlug(eventTitle) : "arrangement"
+
+  return `${origin}/arrangementer/${slug}/${eventId}`
 }

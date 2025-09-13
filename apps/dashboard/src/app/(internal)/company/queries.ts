@@ -15,6 +15,7 @@ export const useCompanyEventsAllQuery = (id: CompanyId) => {
     ...trpc.event.all.queryOptions({
       filter: {
         byOrganizingCompany: [id],
+        excludingType: [],
       },
     }),
   })

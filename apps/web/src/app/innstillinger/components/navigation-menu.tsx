@@ -19,7 +19,7 @@ export const settingsNavigationItems = [
 export const ProfileNavigationMenu = () => {
   return (
     <section className="flex flex-col min-w-40 w-1/6 h-full gap-3 max-md:hidden">
-      <Title element="h1" className="text-base font-semibold text-gray-500 dark:text-stone-500">
+      <Title element="h1" className="text-base font-semibold text-gray-500 dark:text-stone-400">
         Innstillinger
       </Title>
       <div className="flex flex-col gap-2">

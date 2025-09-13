@@ -21,13 +21,16 @@ import {
   Select,
   Stack,
   TagsInput,
+  Text,
   TextInput,
   Title,
   Tooltip,
 } from "@mantine/core"
 
 import { env } from "@/lib/env"
+import { DateTimePicker } from "@mantine/dates"
 import { IconCheck, IconCopy, IconGripVertical, IconInfoCircle, IconTrash } from "@tabler/icons-react"
+import { isPast } from "date-fns"
 import React, { type FC } from "react"
 import {
   type Control,
@@ -48,10 +51,20 @@ const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map(
   label: type,
 }))
 
-const FormValuesSchema = z.object({
-  feedbackForm: FeedbackFormWriteSchema,
-  questions: FeedbackQuestionWriteSchema.array(),
-})
+const FormValuesSchema = z
+  .object({
+    feedbackForm: FeedbackFormWriteSchema,
+    questions: FeedbackQuestionWriteSchema.array(),
+  })
+  .superRefine((val, ctx) => {
+    if (isPast(val.feedbackForm.answerDeadline)) {
+      const message = "Svarfrist må være frem i tid"
+      const code = "custom"
+      ctx.addIssue({ message, code, path: ["feedbackForm.answerDeadline"] })
+    }
+
+    return true
+  })
 
 export type FormValues = z.infer<typeof FormValuesSchema>
 
@@ -159,6 +172,17 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
                 />
               )}
             />
+            <Controller
+              name={"feedbackForm.answerDeadline"}
+              control={form.control}
+              render={({ field }) => <DateTimePicker value={field.value} onChange={field.onChange} label="Svarfrist" />}
+            />
+            {form.formState.errors.feedbackForm?.answerDeadline?.message && (
+              <Text size="sm" c="red">
+                {form.formState.errors.feedbackForm?.answerDeadline?.message}
+              </Text>
+            )}
+
             <Group mt={16}>
               <Button onClick={addQuestion}>Legg til spørsmål</Button>
             </Group>

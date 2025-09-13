@@ -1,0 +1,57 @@
+import { Icon } from "@dotkomonline/ui"
+import { cn } from "@dotkomonline/ui"
+import { useTheme } from "next-themes"
+
+interface ThemeToggleProps {
+  className?: string
+}
+
+export const ThemeToggle = ({ className }: ThemeToggleProps) => {
+  const { setTheme, theme } = useTheme()
+
+  const THEME_OPTIONS = [
+    {
+      theme: "light",
+      label: "Lyst tema",
+      icon: "tabler:sun",
+    },
+    {
+      theme: "dark",
+      label: "Mørkt tema",
+      icon: "tabler:moon",
+    },
+    {
+      theme: "system",
+      label: "Systempreferanse",
+      icon: "tabler:device-desktop",
+    },
+  ] as const
+
+  return (
+    <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
+      <div
+        className="absolute top-1 bottom-1 h-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700 w-8 h-8"
+        style={{
+          transform: `translateX(${THEME_OPTIONS.findIndex((option) => option.theme === theme) * 2.25}rem)`,
+        }}
+      />
+
+      {THEME_OPTIONS.map((item) => (
+        <button
+          type="button"
+          key={item.theme}
+          onClick={() => setTheme(item.theme)}
+          className="relative flex items-center justify-center rounded-md transition-colors w-8 h-8"
+          title={item.label}
+        >
+          <Icon
+            icon={item.icon}
+            width={20}
+            height={20}
+            className="transition-colors duration-200 text-black dark:text-stone-100"
+          />
+        </button>
+      ))}
+    </div>
+  )
+}

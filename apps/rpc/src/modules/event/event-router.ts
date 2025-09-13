@@ -53,6 +53,7 @@ export const eventRouter = t.router({
         event: EventWriteSchema,
         groupIds: z.array(GroupSchema.shape.slug),
         companies: z.array(CompanySchema.shape.id),
+        parentId: EventSchema.shape.parentId.optional(),
       })
     )
     .output(EventWithAttendanceSchema)
@@ -65,6 +66,7 @@ export const eventRouter = t.router({
           new Set(input.groupIds),
           new Set(input.companies)
         )
+        await ctx.eventService.updateEventParent(handle, event.id, input.parentId ?? null)
         return { event, attendance: null }
       })
     }),
@@ -76,6 +78,7 @@ export const eventRouter = t.router({
         event: EventWriteSchema,
         groupIds: z.array(GroupSchema.shape.slug),
         companies: z.array(CompanySchema.shape.id),
+        parentId: EventSchema.shape.parentId.optional(),
       })
     )
     .output(EventWithAttendanceSchema)
@@ -88,6 +91,8 @@ export const eventRouter = t.router({
           new Set(input.groupIds),
           new Set(input.companies)
         )
+        await ctx.eventService.updateEventParent(handle, updatedEvent.id, input.parentId ?? null)
+
         const attendance = updatedEventWithoutOrganizers.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)
           : null
@@ -250,6 +255,29 @@ export const eventRouter = t.router({
         }))
 
         return eventsWithAttendance
+      })
+    }),
+
+  findUnansweredByUser: authenticatedProcedure
+    .input(UserSchema.shape.id)
+    .output(EventSchema.array())
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => await ctx.eventService.findUnansweredByUser(handle, input))
+    ),
+
+  isOrganizer: authenticatedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .output(z.boolean())
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const event = await ctx.eventService.getEventById(handle, input.eventId)
+        const groups = await ctx.groupService.getAllByMember(handle, ctx.principal.subject)
+
+        return groups.some((group) => event.hostingGroups.some((organizer) => organizer.slug === group.slug))
       })
     }),
 })

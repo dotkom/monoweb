@@ -3,7 +3,9 @@ import { z } from "zod"
 import { GroupSchema } from "./group"
 import { PublicUserSchema } from "./user"
 
-export const MarkSchema = schemas.MarkSchema.extend({})
+export const MarkSchema = schemas.MarkSchema.extend({
+  groups: z.array(GroupSchema),
+})
 
 export type MarkId = Mark["id"]
 export type Mark = z.infer<typeof MarkSchema>
@@ -12,8 +14,8 @@ export const MarkWriteSchema = MarkSchema.partial({
   id: true,
   createdAt: true,
   updatedAt: true,
-}).extend({
-  userIds: z.array(z.string()).optional(),
+}).omit({
+  groups: true,
 })
 
 export type MarkWrite = z.infer<typeof MarkWriteSchema>
@@ -28,7 +30,6 @@ export const CreatePersonalMarkSchema = PersonalMarkSchema.pick({
 // User should not see which user gave the mark
 export const VisiblePersonalMarkDetailsSchema = z.object({
   mark: MarkSchema,
-  givenByGroup: GroupSchema,
   personalMark: PersonalMarkSchema.omit({
     givenById: true,
   }),
@@ -36,9 +37,9 @@ export const VisiblePersonalMarkDetailsSchema = z.object({
 
 export const PersonalMarkDetailsSchema = z.object({
   personalMark: PersonalMarkSchema,
-  givenByGroup: GroupSchema,
+  givenByGroups: GroupSchema.array(),
   user: PublicUserSchema,
-  givenBy: PublicUserSchema,
+  givenBy: PublicUserSchema.nullable(),
 })
 
 export const PunishmentSchema = z.object({
@@ -54,3 +55,5 @@ export type VisiblePersonalMarkDetails = z.infer<typeof VisiblePersonalMarkDetai
 export type PersonalMark = z.infer<typeof PersonalMarkSchema>
 
 export type Punishment = z.infer<typeof PunishmentSchema>
+
+export const DEFAULT_MARK_DURATION = 14 as const

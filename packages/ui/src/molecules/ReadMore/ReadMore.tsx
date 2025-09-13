@@ -80,7 +80,7 @@ export const ReadMore = ({
         asChild
         onClick={handleToggle}
         className={cn(
-          "mt-2 transition-color dark:transition-color text-gray-600 dark:text-stone-400 hover:text-black dark:hover:text-white",
+          "mt-2 transition-color dark:transition-color text-gray-600 dark:text-stone-300 hover:text-black dark:hover:text-white",
           buttonClassName
         )}
       >

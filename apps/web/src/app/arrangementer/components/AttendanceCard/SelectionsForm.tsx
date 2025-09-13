@@ -93,7 +93,7 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
                 </SelectTrigger>
                 <SelectGroup>
                   <SelectContent>
-                    <SelectLabel className="text-gray-800 dark:text-stone-400 text-xs">
+                    <SelectLabel className="text-gray-800 dark:text-stone-300 text-xs">
                       {attendance.selections[index].name}
                     </SelectLabel>
 

@@ -9,6 +9,7 @@ import { Box, Button, Card, Flex, Group, Space, Text, Title } from "@mantine/cor
 import type { FC } from "react"
 import { useDeletePoolMutation } from "../mutations"
 import { openEditPoolModal } from "./edit-pool-modal"
+import { formatPoolYearCriterias } from "./utils"
 
 interface NormalPoolBoxProps {
   pool: AttendancePool
@@ -32,7 +33,7 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
           </Text>
           {unreservedAttendeeCount > 0 && <Text>{unreservedAttendeeCount} på venteliste</Text>}
           <Space h="xs" />
-          <Text size="sm">Årstrinn: {pool.yearCriteria.join(", ")}</Text>
+          <Text size="sm">Årstrinn: {formatPoolYearCriterias(pool.yearCriteria)}</Text>
           <Text size="sm">
             Utsettelse:{" "}
             {pool.mergeDelayHours && pool.mergeDelayHours > 0 ? `${pool.mergeDelayHours} timer` : "Ingen utsettelse"}

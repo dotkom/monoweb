@@ -1,9 +1,11 @@
-import { auth } from "@/auth"
-import { server } from "@/utils/trpc/server"
+"use client"
+
+import { useEventAllQuery } from "@/app/arrangementer/components/queries"
+import { TZDate } from "@date-fns/tz"
+import { useSession } from "@dotkomonline/oauth2/react"
 import type { Event } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
-import Link from "next/link"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { getCalendarArray } from "./getCalendarArray"
@@ -82,78 +84,41 @@ interface CalendarProps {
   month: number
 }
 
-export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
-  const [session, eventDetailsResult] = await Promise.all([
-    auth.getServerSession(),
-    server.event.all.query({
-      filter: {
-        byStartDate: {
-          min: new Date(year, month, 1),
-          max: new Date(year, month + 1, 0),
-        },
-        excludingOrganizingGroup: ["velkom"],
-      },
-      take: 100,
-    }),
-  ])
+export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
+  const session = useSession()
 
-  const eventDetails = eventDetailsResult.items ?? []
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
+    filter: {
+      byStartDate: {
+        min: new TZDate(year, month, 1),
+        max: new TZDate(year, month + 1, 0),
+      },
+      excludingOrganizingGroup: ["velkom"],
+      orderBy: "asc",
+    },
+    page: {
+      take: 1000,
+    },
+  })
+
+  const eventDetails = futureEventWithAttendances
   const userId = session?.sub
 
   const cal = getCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails.map(({ event }) => event))
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
-  const months = [
-    "Januar",
-    "Februar",
-    "Mars",
-    "April",
-    "Mai",
-    "Juni",
-    "Juli",
-    "August",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ]
 
   const nowDate = new Date()
   nowDate.setHours(0, 0, 0, 0)
 
-  const prevMonth = (month + 11) % 12
-  const nextMonth = (month + 1) % 12
-
-  const prevYear = month === 0 ? year - 1 : year
-  const nextYear = month === 11 ? year + 1 : year
-
-  const previousMonthUrl = `/arrangementer/kalender/${prevYear}/${String(prevMonth + 1).padStart(2, "0")}`
-  const nextMonthUrl = `/arrangementer/kalender/${nextYear}/${String(nextMonth + 1).padStart(2, "0")}`
-
   return (
-    <div className="mb-10">
-      <div className="flex flex-col sm:flex-row justify-between items-center">
-        <div className="w-full flex items-center gap-4 justify-between sm:justify-end pb-4">
-          <h2 className="text-xl">
-            {months[month]} {year}
-          </h2>
-          <div className="flex gap-2 sm:gap-0">
-            <Link
-              className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-800 flex p-3 sm:p-2 duration-200"
-              href={previousMonthUrl}
-            >
-              <Icon icon="tabler:chevron-left" width={24} height={24} />
-            </Link>
-            <Link
-              className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-800 flex p-3 sm:p-2 duration-200"
-              href={nextMonthUrl}
-            >
-              <Icon icon="tabler:chevron-right" width={24} height={24} />
-            </Link>
-          </div>
+    <div className="relative">
+      {isLoading && (
+        <div className="z-50 absolute flex justify-center w-full h-full">
+          <Icon className="animate-spin absolute top-40" icon="tabler:loader-2" width={40} height={40} />
         </div>
-      </div>
+      )}
       <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
         <div className="hidden sm:block w-6 pr-2 text-gray-600 dark:text-stone-400 text-xs leading-5">Uke</div>
         {weekdays.map((day) => (
@@ -171,6 +136,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           </div>
         ))}
       </div>
+
       {cal.weeks.map((week, weekIndex) => (
         <div className="relative min-h-24 sm:min-h-28" key={`week-${getWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
           <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 absolute w-full h-full">
@@ -186,7 +152,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
               <div
                 key={new Date(day).toISOString()}
                 className={cn(
-                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-300 dark:border-stone-700 border-t-[1px] ",
+                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-300 dark:border-stone-600 border-t-[1px] ",
                   week.dates.indexOf(day) % 7 === 0 ? "pl-1 sm:p-l-[5px]" : "pl-1 sm:border-l-[1px]",
                   weekIndex > 0 ? "" : "sm:border-t-0"
                 )}
@@ -236,6 +202,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
           </div>
         </div>
       ))}
+
       {eventTypeGuideItems.length > 0 && (
         <div className="flex gap-y-2 gap-x-4 text-sm p-2 sm:pl-6 flex-wrap">
           {eventTypeGuideItems.map(({ type, color, label }) => (

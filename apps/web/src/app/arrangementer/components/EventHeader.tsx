@@ -7,10 +7,10 @@ import type { FC } from "react"
 
 interface Props {
   event: Event
-  isStaff: boolean
+  showDashboardLink: boolean
 }
 
-export const EventHeader: FC<Props> = ({ event, isStaff }) => {
+export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
   const imageUrlLight = event.imageUrl || "/placeholder.svg"
   const imageUrlDark = event.imageUrl || "/placeholder.svg"
 
@@ -43,17 +43,18 @@ export const EventHeader: FC<Props> = ({ event, isStaff }) => {
         <Title element="h1" size="xl" title={event.title} className="text-3xl sm:text-4xl sm:line-clamp-3">
           {event.title}
         </Title>
-        {isStaff && (
+        {showDashboardLink && (
           <Button
             element={Link}
             href={dashboardUrl}
             target="_blank"
             rel="noopener noreferrer"
-            variant="text"
-            className="w-fit p-1.5 bg-gray-100 dark:bg-stone-900 gap-1.5"
+            variant="unstyled"
+            className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 gap-1.5"
+            title="Rediger arrangement"
           >
             <Icon icon="tabler:edit" className="text-lg md:text-2xl" />
-            <Text className="md:hidden">Gå til dashboard</Text>
+            <Text className="md:hidden">Dashboard</Text>
           </Button>
         )}
       </div>
@@ -63,7 +64,7 @@ export const EventHeader: FC<Props> = ({ event, isStaff }) => {
 
 export const SkeletonEventHeader = () => (
   <div className="flex flex-col gap-8">
-    <div className="w-full rounded-xl aspect-[16/9] md:aspect-[24/9] bg-gray-300 dark:bg-stone-700 animate-pulse" />
-    <div className="w-1/2 h-10 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse" />
+    <div className="w-full rounded-xl aspect-[16/9] md:aspect-[24/9] bg-gray-300 dark:bg-stone-600 animate-pulse" />
+    <div className="w-1/2 h-10 rounded-full bg-gray-300 dark:bg-stone-600 animate-pulse" />
   </div>
 )

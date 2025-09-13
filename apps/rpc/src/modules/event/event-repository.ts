@@ -26,7 +26,7 @@ export interface EventRepository {
   /**
    * Find events based on a set of search criteria.
    *
-   * You can query events by their IDs (for multiple events), start date range, search term, and the companies or groups organizing the event.
+   * You can query events by their IDs (for multiple events), start date range, search term, event type, and the companies or groups organizing the event.
    *
    * The following describes the filters in a "predicate logic" style:
    *
@@ -37,6 +37,7 @@ export interface EventRepository {
    *   start >= byStartDate.min,
    *   start <= byStartDate.max,
    *   title CONTAINS bySearchTerm,
+   *   type IN byEventType,
    *   OR(
    *     companies.companyId IN byOrganizingCompany,
    *     hostingGroups.groupId IN byOrganizingGroup
@@ -57,6 +58,7 @@ export interface EventRepository {
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
+  findUnansweredByUser(handle: DBHandle, userId: UserId): Promise<Event[]>
 }
 
 export function getEventRepository(): EventRepository {
@@ -106,7 +108,18 @@ export function getEventRepository(): EventRepository {
                       mode: "insensitive",
                     }
                   : undefined,
-              id: query.byId && query.byId.length > 0 ? { in: query.byId } : undefined,
+              id:
+                query.byId && query.byId.length > 0
+                  ? {
+                      in: query.byId,
+                    }
+                  : undefined,
+              type:
+                query.byType && query.byType.length > 0
+                  ? {
+                      in: query.byType,
+                    }
+                  : undefined,
             },
             {
               OR: [
@@ -132,6 +145,9 @@ export function getEventRepository(): EventRepository {
                     },
                   }
                 : undefined,
+              type: {
+                notIn: query.excludingType ?? ["INTERNAL"],
+              },
             },
             {
               feedbackForm: query.byHasFeedbackForm
@@ -345,6 +361,65 @@ export function getEventRepository(): EventRepository {
       const event = await this.findById(handle, row.id)
       invariant(event !== null, "Event should exist within same transaction after updating parent")
       return event
+    },
+    async findUnansweredByUser(handle, userId) {
+      const events = await handle.event.findMany({
+        where: {
+          AND: [
+            {
+              feedbackForm: {
+                isActive: true,
+                answers: {
+                  none: {
+                    attendee: {
+                      userId,
+                    },
+                  },
+                },
+              },
+            },
+            {
+              attendance: {
+                attendees: {
+                  some: {
+                    userId,
+                    attendedAt: {
+                      not: null,
+                    },
+                  },
+                },
+              },
+              end: {
+                lt: new Date(),
+              },
+            },
+          ],
+        },
+        include: {
+          companies: {
+            include: {
+              company: true,
+            },
+          },
+          hostingGroups: {
+            include: {
+              group: {
+                include: {
+                  roles: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      return events.map((event) =>
+        parseOrReport(EventSchema, {
+          ...event,
+          companies: event.companies.map((c) => c.company),
+          hostingGroups: event.hostingGroups.map((g) => g.group),
+        })
+      )
     },
   }
 }

@@ -15,9 +15,10 @@ interface Props {
   defaultValues?: Partial<FormResult>
   label?: string
   groupId: GroupId
+  disabled?: boolean
 }
 
-export const useGroupMemberForm = ({ onSubmit, label = "Lagre", defaultValues, groupId }: Props) => {
+export const useGroupMemberForm = ({ onSubmit, label = "Lagre", defaultValues, groupId, disabled }: Props) => {
   const { data: group } = useGroupGetQuery(groupId)
 
   return useFormBuilder({
@@ -25,8 +26,10 @@ export const useGroupMemberForm = ({ onSubmit, label = "Lagre", defaultValues, g
     defaultValues,
     onSubmit,
     label,
+    disabled,
     fields: {
       roleIds: createMultipleSelectInput({
+        description: 'Du trenger ikke velge "Medlem" dersom du velger en annen rolle',
         label: "Roller",
         required: true,
         placeholder: "Velg roller",

@@ -85,7 +85,7 @@ export const ViewAttendeesButton = ({
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
       <AlertDialogContent
-        className="flex flex-col gap-4 w-full p-0 bg-white dark:bg-stone-900 drop-shadow-lg sm:max-w-2xl rounded-lg"
+        className="flex flex-col gap-4 w-full p-0 bg-white dark:bg-stone-800 drop-shadow-lg sm:max-w-2xl rounded-lg"
         onOutsideClick={() => setAttendeeListOpen(false)}
       >
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
@@ -101,7 +101,7 @@ export const ViewAttendeesButton = ({
 
         <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg min-h-[25dvh] max-h-[75dvh] overflow-y-auto">
           <div className="flex flex-col gap-2">
-            <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-800 rounded-md sticky top-0 z-10">
+            <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-700 rounded-md sticky top-0 z-10">
               Påmeldte
             </Title>
 
@@ -110,7 +110,7 @@ export const ViewAttendeesButton = ({
 
           {waitlistAttendees.length > 0 && (
             <div className="flex flex-col gap-2 mt-6">
-              <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-800 rounded-md sticky top-0 z-10">
+              <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-700 rounded-md sticky top-0 z-10">
                 Venteliste
               </Title>
               <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
@@ -143,7 +143,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
       <div key={attendee.id} className="flex flex-row gap-1 items-center group">
         <Text
           className={cn(
-            "text-gray-400 group-hover:text-black dark:text-stone-600 dark:group-hover:text-stone-300 text-right text-sm font-mono transition-colors",
+            "text-gray-400 group-hover:text-black dark:text-stone-300 dark:group-hover:text-stone-300 text-right text-sm font-mono transition-colors",
             minWidth
           )}
         >
@@ -154,7 +154,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
           href={`/profil/${attendee.user.profileSlug}`}
           className={cn(
             "flex items-center gap-4 p-1.5 rounded-lg w-full transition-colors",
-            !isVerified && !isUser && "hover:bg-gray-100 dark:hover:bg-stone-800",
+            !isVerified && !isUser && "hover:bg-gray-100 dark:hover:bg-stone-700",
             isUser && !isVerified && "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900",
             isVerified && [
               "bg-gradient-to-r",
@@ -178,7 +178,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
                   ? "bg-yellow-500 dark:bg-yellow-700"
                   : isUser
                     ? "bg-blue-500 dark:bg-sky-800"
-                    : "bg-gray-500 dark:bg-stone-600"
+                    : "bg-gray-500 dark:bg-stone-500"
               }
             >
               <Icon className="text-lg" icon="tabler:user" />
@@ -204,7 +204,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
                   ? "dark:text-black"
                   : isUser
                     ? "text-black dark:text-white"
-                    : "text-gray-900 dark:text-stone-400"
+                    : "text-gray-900 dark:text-stone-300"
               )}
             >
               {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}

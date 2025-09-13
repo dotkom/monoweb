@@ -23,7 +23,7 @@ export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon 
       size="lg"
       className={cn(
         "justify-start px-3 -ml-3 py-2 rounded-md gap-2",
-        isCurrent ? "bg-gray-50 dark:bg-stone-900 font-semibold" : "text-gray-700 dark:text-stone-300"
+        isCurrent ? "bg-gray-50 dark:bg-stone-800 font-semibold" : "text-gray-700 dark:text-stone-200"
       )}
     >
       {title}

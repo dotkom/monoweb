@@ -174,7 +174,7 @@ export const AttendanceCard = ({
   }
 
   return (
-    <section className="flex flex-col gap-4 min-h-[6rem] sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-900 sm:dark:bg-stone-900">
+    <section className="flex flex-col gap-4 min-h-[6rem] sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">
       <Title element="h2" size="lg">
         Påmelding
       </Title>
@@ -242,7 +242,7 @@ export const AttendanceCard = ({
 
 export const AttendanceCardSkeleton = () => {
   const skeletonText = (heightAndWidth: string) => (
-    <div className={cn("h-4 bg-gray-300 dark:bg-stone-700 rounded-full animate-pulse", heightAndWidth)} />
+    <div className={cn("h-4 bg-gray-300 dark:bg-stone-600 rounded-full animate-pulse", heightAndWidth)} />
   )
 
   const dateInfo = () => (
@@ -253,18 +253,18 @@ export const AttendanceCardSkeleton = () => {
   )
 
   const title = skeletonText("w-[50%] h-8")
-  const card = <div className="min-h-[12rem] rounded-lg bg-gray-300 dark:bg-stone-700 animate-pulse" />
-  const button = <div className="min-h-[4rem] rounded-lg bg-gray-300 dark:bg-stone-700 animate-pulse" />
+  const card = <div className="min-h-[12rem] rounded-lg bg-gray-300 dark:bg-stone-600 animate-pulse" />
+  const button = <div className="min-h-[4rem] rounded-lg bg-gray-300 dark:bg-stone-600 animate-pulse" />
 
   return (
-    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-900 sm:dark:bg-stone-900 sm:p-4 sm:rounded-xl">
+    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800 sm:p-4 sm:rounded-xl">
       {title}
 
       <div className="flex flex-row gap-2 items-center">
         {dateInfo()}
-        <span className="grow h-0.5 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse invisible sm:visible" />
+        <span className="grow h-0.5 rounded-full bg-gray-300 dark:bg-stone-600 animate-pulse invisible sm:visible" />
         {dateInfo()}
-        <span className="grow h-0.5 rounded-full bg-gray-300 dark:bg-stone-700 animate-pulse invisible sm:visible" />
+        <span className="grow h-0.5 rounded-full bg-gray-300 dark:bg-stone-600 animate-pulse invisible sm:visible" />
         {dateInfo()}
       </div>
 

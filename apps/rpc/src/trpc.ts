@@ -45,8 +45,12 @@ export const createContext = async (principal: Principal | null, context: Servic
         invariant(principal !== null)
         require(principal.affiliations.size > 0)
         for (const affiliation of affiliations) {
-          require(principal.affiliations.has(affiliation))
+          if (principal.affiliations.has(affiliation)) {
+            return
+          }
         }
+        // This is fine if no affiliations were required
+        require(affiliations.length === 0)
       },
       /**
        * Require that the user is signed in and that the provided user id is the user's id.
