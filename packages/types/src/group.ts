@@ -1,7 +1,7 @@
 import type { z } from "zod"
 
 import { schemas } from "@dotkomonline/db/schemas"
-import { UserSchema } from "./user"
+import { UserSchema } from "./user.ts"
 
 export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
 export type GroupRole = z.infer<typeof GroupRoleSchema>

@@ -1,6 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { CompanySchema } from "./company"
+import { CompanySchema } from "./company.ts"
 
 export const JobListingLocationSchema = schemas.JobListingLocationSchema.extend({})
 export const JobListingLocationWriteSchema = JobListingLocationSchema.omit({

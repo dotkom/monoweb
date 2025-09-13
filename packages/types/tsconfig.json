@@ -4,7 +4,8 @@
     "outDir": "dist",
     "declaration": true,
     "types": ["node"],
-    "lib": ["es2023", "esnext"]
+    "lib": ["es2023", "esnext"],
+    "allowImportingTsExtensions": true
   },
   "include": ["./**/*.ts", "./**/*.tsx"]
 }

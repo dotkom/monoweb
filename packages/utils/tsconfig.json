@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "declaration": true,
-    "lib": ["ESNext", "DOM"]
+    "lib": ["ESNext", "DOM"],
+    "allowImportingTsExtensions": true
   },
   "include": ["./**/*.ts", "./**/*.tsx"]
 }
+s
