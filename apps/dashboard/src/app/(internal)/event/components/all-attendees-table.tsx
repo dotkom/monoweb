@@ -107,14 +107,19 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             <Popover>
               <PopoverTarget>
                 <Button variant="transparent" p={0}>
-                  {isBefore(earliestReservationAt, attendance.registerStart) ? (
-                    <Text size="sm">Forhåndspåmeldt</Text>
-                  ) : (
-                    <Stack gap={0} align="flex-start">
-                      <Text size="sm">{capitalize(afterRegisterStart)} ep.</Text>
-                      <Text size="xs">({capitalize(relativeAfterRegisterStart)} siden)</Text>
-                    </Stack>
-                  )}
+                  <Stack gap={0} align="flex-start">
+                    {isBefore(earliestReservationAt, attendance.registerStart) ? (
+                      <>
+                        <Text size="sm">Forhåndspåmeldt</Text>
+                        <Text size="xs">{capitalize(afterRegisterStart)} fp.</Text>
+                      </>
+                    ) : (
+                      <>
+                        <Text size="sm">{capitalize(afterRegisterStart)} ep.</Text>
+                        <Text size="xs">({capitalize(relativeAfterRegisterStart)} siden)</Text>
+                      </>
+                    )}
+                  </Stack>
                 </Button>
               </PopoverTarget>
               <PopoverDropdown>
