@@ -3,9 +3,9 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
-import type { Pageable } from "../../query"
-import { OfflineNotFoundError } from "./offline-error"
-import type { OfflineRepository } from "./offline-repository"
+import type { Pageable } from "../../query.ts"
+import { OfflineNotFoundError } from "./offline-error.ts"
+import type { OfflineRepository } from "./offline-repository.ts"
 
 export interface OfflineService {
   /**

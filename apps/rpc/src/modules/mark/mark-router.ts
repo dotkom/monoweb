@@ -1,8 +1,8 @@
 import { GroupSchema, MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
 import z from "zod"
-import { PaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
-import { personalMarkRouter } from "./personal-mark-router"
+import { PaginateInputSchema } from "../../query.ts"
+import { procedure, staffProcedure, t } from "../../trpc.ts"
+import { personalMarkRouter } from "./personal-mark-router.ts"
 
 export const markRouter = t.router({
   personal: personalMarkRouter,

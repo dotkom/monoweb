@@ -10,7 +10,7 @@ import {
   FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc.ts"
 
 export const feedbackRouter = t.router({
   createForm: staffProcedure

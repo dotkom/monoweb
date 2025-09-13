@@ -1,7 +1,7 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
-import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { parseOrReport } from "../../invariant.ts"
+import { type Pageable, pageQuery } from "../../query.ts"
 
 export interface OfflineRepository {
   getById(handle: DBHandle, offlineId: OfflineId): Promise<Offline | null>

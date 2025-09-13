@@ -1,6 +1,6 @@
 import { TZDate } from "@date-fns/tz"
 import { type Interval, addDays, addYears, differenceInDays, getYear, interval, isWithinInterval } from "date-fns"
-import { getCurrentUTC } from "./utc"
+import { getCurrentUTC } from "./utc.ts"
 
 const JANUARY = 0 as const
 const JUNE = 5 as const

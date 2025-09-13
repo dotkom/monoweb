@@ -1,9 +1,9 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { AttendanceSchema } from "./attendance"
-import { CompanySchema } from "./company"
-import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
-import { GroupSchema } from "./group"
+import { AttendanceSchema } from "./attendance.ts"
+import { CompanySchema } from "./company.ts"
+import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters.ts"
+import { GroupSchema } from "./group.ts"
 
 /**
  * @packageDocumentation

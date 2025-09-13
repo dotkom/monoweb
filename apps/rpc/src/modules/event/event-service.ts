@@ -9,9 +9,9 @@ import type {
   GroupId,
   UserId,
 } from "@dotkomonline/types"
-import type { Pageable } from "../../query"
-import { EventNotFoundError, EventRelationshipError } from "./event-error"
-import type { EventRepository } from "./event-repository"
+import type { Pageable } from "../../query.ts"
+import { EventNotFoundError, EventRelationshipError } from "./event-error.ts"
+import type { EventRepository } from "./event-repository.ts"
 
 export interface EventService {
   createEvent(handle: DBHandle, eventCreate: EventWrite): Promise<Event>

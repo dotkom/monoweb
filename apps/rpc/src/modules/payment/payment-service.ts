@@ -6,7 +6,7 @@ import {
   PaymentNotChargedError,
   PaymentNotReadyToChargeError,
   PaymentUnexpectedStateError,
-} from "./payment-error"
+} from "./payment-error.ts"
 
 type PaymentStatus = "UNPAID" | "CANCELLED" | "RESERVED" | "PAID" | "REFUNDED"
 type ChargeMode = "RESERVE" | "CHARGE"

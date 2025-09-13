@@ -2,9 +2,9 @@ import type { SQSClient } from "@aws-sdk/client-sqs"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task, TaskType } from "@dotkomonline/types"
-import { NotImplementedError } from "../../error"
-import { tasks } from "./task-definition"
-import type { TaskService } from "./task-service"
+import { NotImplementedError } from "../../error.ts"
+import { tasks } from "./task-definition.ts"
+import type { TaskService } from "./task-service.ts"
 
 export interface TaskDiscoveryService {
   discover(kind: TaskType): Promise<Task[]>

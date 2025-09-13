@@ -3,7 +3,7 @@ import { schemas } from "@dotkomonline/db/schemas"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { differenceInYears, isAfter, setMonth, startOfMonth } from "date-fns"
 import { z } from "zod"
-import { buildSearchFilter } from "./filters"
+import { buildSearchFilter } from "./filters.ts"
 
 export const MembershipSpecializationSchema = schemas.MembershipSpecializationSchema
 export type MembershipSpecialization = z.infer<typeof MembershipSpecializationSchema>

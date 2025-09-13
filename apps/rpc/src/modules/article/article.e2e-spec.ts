@@ -2,12 +2,12 @@ import * as crypto from "node:crypto"
 import type { ArticleWrite } from "@dotkomonline/types"
 import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
-import { dbClient } from "../../../vitest-integration.setup"
-import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
-import { getArticleRepository } from "./article-repository"
-import { getArticleService } from "./article-service"
-import { getArticleTagLinkRepository } from "./article-tag-link-repository"
-import { getArticleTagRepository } from "./article-tag-repository"
+import { dbClient } from "../../../vitest-integration.setup.ts"
+import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error.ts"
+import { getArticleRepository } from "./article-repository.ts"
+import { getArticleService } from "./article-service.ts"
+import { getArticleTagLinkRepository } from "./article-tag-link-repository.ts"
+import { getArticleTagRepository } from "./article-tag-repository.ts"
 
 function getMockArticle(input: Partial<ArticleWrite> = {}): ArticleWrite {
   return {

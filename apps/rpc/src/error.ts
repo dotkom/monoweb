@@ -1,4 +1,4 @@
-import { PROBLEM_DETAILS } from "./http-problem-details"
+import { PROBLEM_DETAILS } from "./http-problem-details.ts"
 
 /**
  * Represents a problem details type.

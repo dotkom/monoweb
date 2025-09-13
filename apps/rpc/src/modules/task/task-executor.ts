@@ -5,7 +5,7 @@ import type { Task } from "@dotkomonline/types"
 import { trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { secondsToMilliseconds } from "date-fns"
-import type { AttendanceService } from "../event/attendance-service"
+import type { AttendanceService } from "../event/attendance-service.ts"
 import {
   type ChargeAttendeeTaskDefinition,
   type InferTaskData,
@@ -15,10 +15,10 @@ import {
   type VerifyPaymentTaskDefinition,
   getTaskDefinition,
   tasks,
-} from "./task-definition"
-import type { TaskDiscoveryService } from "./task-discovery-service"
-import { InvalidTaskKind } from "./task-error"
-import type { TaskService } from "./task-service"
+} from "./task-definition.ts"
+import type { TaskDiscoveryService } from "./task-discovery-service.ts"
+import { InvalidTaskKind } from "./task-error.ts"
+import type { TaskService } from "./task-service.ts"
 
 const INTERVAL = secondsToMilliseconds(1)
 

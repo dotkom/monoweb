@@ -11,8 +11,8 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
-import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { parseOrReport } from "../../invariant.ts"
+import { type Pageable, pageQuery } from "../../query.ts"
 
 export interface EventRepository {
   create(handle: DBHandle, data: EventWrite): Promise<Event>

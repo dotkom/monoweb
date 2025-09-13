@@ -10,9 +10,9 @@ import { faker } from "@faker-js/faker"
 import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
 import { addDays, addHours, addMinutes, isFuture, subHours } from "date-fns"
 import { describe, expect, it } from "vitest"
-import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
-import { AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
-import { getMockEvent, getMockGroup } from "./event.e2e-spec"
+import { auth0Client, core, dbClient } from "../../../vitest-integration.setup.ts"
+import { AttendanceNotFound, AttendanceValidationError } from "./attendance-error.ts"
+import { getMockEvent, getMockGroup } from "./event.e2e-spec.ts"
 
 function getMockAttendance(input: Partial<AttendanceWrite> = {}): AttendanceWrite {
   return {

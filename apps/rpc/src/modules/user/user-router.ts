@@ -6,8 +6,8 @@ import {
   UserWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { BasePaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
+import { BasePaginateInputSchema } from "../../query.ts"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc.ts"
 
 export const userRouter = t.router({
   all: procedure

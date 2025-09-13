@@ -1,5 +1,5 @@
-import { ApplicationError } from "../../error"
-import { PROBLEM_DETAILS } from "../../http-problem-details"
+import { ApplicationError } from "../../error.ts"
+import { PROBLEM_DETAILS } from "../../http-problem-details.ts"
 
 export class PersonalMarkNotFoundError extends ApplicationError {
   constructor(id: string) {

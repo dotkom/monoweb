@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { type ArticleId, type ArticleTag, type ArticleTagName, ArticleTagSchema } from "@dotkomonline/types"
-import { parseOrReport } from "../../invariant"
+import { parseOrReport } from "../../invariant.ts"
 
 export interface ArticleTagRepository {
   getAll(handle: DBHandle): Promise<ArticleTag[]>

@@ -5,7 +5,7 @@ import {
   type PrivacyPermissionsWrite,
   type UserId,
 } from "@dotkomonline/types"
-import { parseOrReport } from "../../invariant"
+import { parseOrReport } from "../../invariant.ts"
 
 export interface PrivacyPermissionsRepository {
   getByUserId(handle: DBHandle, userId: UserId): Promise<PrivacyPermissions | null>

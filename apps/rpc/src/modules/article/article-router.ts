@@ -1,7 +1,7 @@
 import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { BasePaginateInputSchema, PaginateInputSchema } from "../../query.ts"
+import { procedure, staffProcedure, t } from "../../trpc.ts"
 
 export const articleRouter = t.router({
   create: staffProcedure
