@@ -23,7 +23,6 @@ import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMuta
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
-import { PaymentCard } from "./PaymentCard"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton } from "./RegistrationButton"
@@ -140,6 +139,8 @@ export const AttendanceCard = ({
     // }, [attendance, attendee])
   }, [attendee])
 
+  const [attendeeListOpen, setAttendeeListOpen] = useState(false)
+
   const registerMutation = useRegisterMutation()
   const deregisterMutation = useDeregisterMutation()
   const selectionsMutation = useSetSelectionsOptionsMutation()
@@ -154,8 +155,6 @@ export const AttendanceCard = ({
       options: selections,
     })
   }
-
-  const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const registerForAttendance = () => {
     registerMutation.mutate({ attendanceId: attendance.id })
@@ -224,9 +223,7 @@ export const AttendanceCard = ({
         isLoading={isLoading}
       />
 
-      <PaymentCard attendance={attendance} attendee={attendee} />
-
-      <div className="flex flex-row flex-wrap gap-4 text-gray-800 hover:text-black dark:text-stone-300 dark:hover:text-stone-100 transition-colors">
+      <div className="flex flex-row flex-wrap gap-4 text-gray-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
         <div className="flex flex-row gap-1 items-center cursor-pointer">
           <Icon icon="tabler:book-2" className="text-lg" />
           <Text className="text-sm">Arrangementregler</Text>
