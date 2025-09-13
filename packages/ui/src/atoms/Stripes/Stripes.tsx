@@ -14,8 +14,8 @@ export const Stripes = ({
   colorA,
   colorB,
   animated,
-  stripeWidth = 12,
-  speed = "1.2s",
+  stripeWidth = 24,
+  speed = "2.0s",
   className,
   children,
 }: StripedProps) => {

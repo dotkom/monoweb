@@ -131,7 +131,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
 
   const mainPoolCardContent = (
-    <div className="flex flex-col min-h-[10rem] gap-2 p-3 rounded-md items-center text-center justify-center w-full">
+    <div className="flex flex-col min-h-[10rem] gap-2 p-3 rounded-lg items-center text-center justify-center w-full">
       <div className="flex grow flex-col gap-4 items-center text-center justify-center">
         <Text
           className={cn(
@@ -223,7 +223,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
       </div>
 
       {isCountdown ? (
-        <div className="flex flex-col min-h-[10rem] gap-4 p-3 rounded-md items-center w-full">
+        <div className="flex flex-col min-h-[10rem] gap-4 p-3 rounded-lg items-center w-full">
           <div className="flex flex-row gap-2 items-center justify-center w-full">
             <div className="flex flex-row gap-0.5 items-center">
               <Text
@@ -296,27 +296,31 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
             !attendee?.paymentReservedAt &&
             !attendee?.paymentChargedAt &&
             !!attendee?.paymentLink && (
-              <Link
-                href={attendee.paymentLink}
-                className="group relative cursor-pointer flex flex-row gap-3 min-h-[8rem] items-center bg-yellow-600 rounded-lg pr-3 w-full"
-              >
+              <Link href={attendee.paymentLink} className="group relative cursor-pointer items-center w-full">
                 <Stripes
                   colorA="bg-amber-200"
                   colorB="bg-amber-300"
-                  stripeWidth={16}
-                  speed="1.5s"
+                  stripeWidth={24}
+                  speed="2.0s"
                   animated
-                  className="rounded-l-lg px-5 py-4 w-full h-full"
+                  className="flex items-center h-[10rem] px-5 py-4 rounded-md"
                 >
-                  <div className="flex flex-col gap-1 items-center justify-center h-full">
-                    <Text className="text-lg font-medium">Du må betale innen</Text>
-                    <Text className="text-4xl font-medium tabular-nums" suppressHydrationWarning>
-                      {paymentCountdownText}
-                    </Text>
+                  <div className="relative flex flex-row justify-between items-center w-full">
+                    <div className="flex flex-col gap-1 items-center justify-center w-full">
+                      <Text className="text-lg font-medium">Du må betale innen</Text>
+                      <Text suppressHydrationWarning className="text-4xl font-medium tabular-nums">
+                        {paymentCountdownText}
+                      </Text>
+                    </div>
+                    <Icon
+                      icon="tabler:arrow-up-right"
+                      height={32}
+                      width={32}
+                      className="[@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0"
+                    />
                   </div>
                 </Stripes>
-                <div className="absolute top-0 left-0 inset-0 bg-gradient-to-t from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent pointer-events-none transition-colors" />
-                <Icon icon="tabler:arrow-up-right" height={24} width={24} className="text-white" />
+                <span className="absolute top-0 left-0 inset-0 bg-gradient-to-t from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent pointer-events-none transition-colors" />
               </Link>
             )}
         </div>
@@ -358,12 +362,16 @@ const getPaymentStatus = (attendance: Attendance, attendee: Attendee | null) => 
         (attendee.paymentRefundedAt && !attendee.paymentDeadline))
   )
 
-  if (!attendee || !hasPaid) {
+  if (!attendee) {
     return `${attendance.attendancePrice} kr`
   }
 
+  if (!hasPaid) {
+    return `${attendance.attendancePrice} kr ubetalt`
+  }
+
   if (attendee.paymentReservedAt) {
-    return `Du blir trukket ${attendance.attendancePrice} kr`
+    return `Du har reservert ${attendance.attendancePrice} kr`
   }
 
   if (attendee.paymentChargedAt) {
