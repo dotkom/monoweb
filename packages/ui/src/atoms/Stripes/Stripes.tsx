@@ -27,7 +27,13 @@ export const Stripes = ({
       {/* Striped overlay */}
       <div
         aria-hidden="true"
-        className={cn("absolute inset-0 stripes-mask", colorB, animated && "animate-stripes")}
+        className={cn(
+          // the width is 130% and translated -15% to hide weird edge artifacts when animating
+          // overflow is hidden on the parent so this is not an issue
+          "absolute inset-0 stripes-mask w-[130%] transform -translate-x-[15%]",
+          colorB,
+          animated && "animate-stripes"
+        )}
         style={
           {
             "--width": `${stripeWidth}px`,
