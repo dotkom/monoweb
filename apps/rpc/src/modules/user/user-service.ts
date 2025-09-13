@@ -43,6 +43,7 @@ export interface UserService {
    */
   findById(handle: DBHandle, userId: UserId): Promise<User | null>
   findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
+  findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findUsers(handle: DBHandle, query: UserFilterQuery, page?: Pageable): Promise<User[]>
   getById(handle: DBHandle, id: UserId): Promise<User>
   getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User>
@@ -166,6 +167,9 @@ export function getUserService(
     async findByProfileSlug(handle, profileSlug) {
       return await userRepository.findByProfileSlug(handle, profileSlug)
     },
+    async findByWorkspaceUserIds(handle, workspaceUserIds) {
+      return await userRepository.findByWorkspaceUserIds(handle, workspaceUserIds)
+    },
     async findUsers(handle, query, page) {
       return await userRepository.findMany(handle, query, page ?? { take: 20 })
     },
@@ -208,6 +212,7 @@ export function getUserService(
           dietaryRestrictions: response.data.app_metadata?.allergies || null,
           // Gender is a standard OIDC claim, so we fallback to it if the app_metadata does not contain it.
           gender: response.data.app_metadata?.gender || response.data.gender || null,
+          workspaceUserId: null,
         }
         user = await userRepository.update(handle, userId, profile)
       } else {

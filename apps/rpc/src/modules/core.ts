@@ -43,6 +43,7 @@ import { getNotificationPermissionsRepository } from "./user/notification-permis
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
+import { getWorkspaceService } from "./workspace-sync/workspace-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -143,6 +144,8 @@ export async function createServiceLayer(
   const companyService = getCompanyService(companyRepository)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
+  const workspaceService = getWorkspaceService(userService, groupService)
+
   const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
   const authorizationService = getAuthorizationService()
 
@@ -165,6 +168,7 @@ export async function createServiceLayer(
     feedbackFormAnswerService,
     authorizationService,
     paymentWebhookService,
+    workspaceService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only

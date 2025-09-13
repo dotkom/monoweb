@@ -16,6 +16,8 @@ export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     email: faker.internet.email(),
     imageUrl: faker.image.url(),
     deactivatedAt: null,
+    workspaceGroupId: null,
+    slug: "dotkom",
     ...input,
   }
 }
