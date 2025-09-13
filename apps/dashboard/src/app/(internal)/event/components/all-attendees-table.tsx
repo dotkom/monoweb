@@ -15,7 +15,7 @@ import {
 } from "@mantine/core"
 import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
-import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isPast } from "date-fns"
+import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
 import { useMemo } from "react"
 import {
@@ -25,6 +25,8 @@ import {
 } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateAttendeeReservedMutation, useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 interface RenderSelectionsProps {
   attendance: Attendance
@@ -95,12 +97,21 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             <Popover>
               <PopoverTarget>
                 <Button variant="transparent" p={0}>
-                  <Stack gap={0} align="flex-start">
-                    <Text size="sm">
-                      {formatDistanceStrict(earliestReservationAt, attendance.registerStart, { locale: nb })} ep.
-                    </Text>
-                    <Text size="xs">({formatDistanceToNowStrict(earliestReservationAt, { locale: nb })} siden)</Text>
-                  </Stack>
+                  {isBefore(earliestReservationAt, attendance.registerStart) ? (
+                    <Text size="sm">Forhåndspåmeldt</Text>
+                  ) : (
+                    <Stack gap={0} align="flex-start">
+                      <Text size="sm">
+                        {capitalize(
+                          formatDistanceStrict(earliestReservationAt, attendance.registerStart, { locale: nb })
+                        )}{" "}
+                        ep.
+                      </Text>
+                      <Text size="xs">
+                        ({capitalize(formatDistanceToNowStrict(earliestReservationAt, { locale: nb }))} siden)
+                      </Text>
+                    </Stack>
+                  )}
                 </Button>
               </PopoverTarget>
               <PopoverDropdown>
@@ -108,7 +119,9 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
                   <Stack gap={0}>
                     <Text size="sm">Utregnet påmeldingstidspunkt (inkl. prikker og utsettelser):</Text>
                     <Text size="lg">
-                      {formatDate(earliestReservationAt, "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O", { locale: nb })}
+                      {capitalize(
+                        formatDate(earliestReservationAt, "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O", { locale: nb })
+                      )}
                     </Text>
                   </Stack>
                   <Text size="sm">
