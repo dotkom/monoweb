@@ -93,6 +93,16 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         cell: (info) => {
           const earliestReservationAt = info.getValue()
           const createdAt = info.row.original.createdAt
+
+          const afterRegisterStart = formatDistanceStrict(earliestReservationAt, attendance.registerStart, {
+            locale: nb,
+          })
+          const relativeAfterRegisterStart = formatDistanceToNowStrict(earliestReservationAt, { locale: nb })
+
+          const fullLocale = "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O"
+          const fullEarliestReservationAt = formatDate(earliestReservationAt, fullLocale, { locale: nb })
+          const fullCreatedAt = formatDate(createdAt, fullLocale, { locale: nb })
+
           return (
             <Popover>
               <PopoverTarget>
@@ -101,15 +111,8 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
                     <Text size="sm">Forhåndspåmeldt</Text>
                   ) : (
                     <Stack gap={0} align="flex-start">
-                      <Text size="sm">
-                        {capitalize(
-                          formatDistanceStrict(earliestReservationAt, attendance.registerStart, { locale: nb })
-                        )}{" "}
-                        ep.
-                      </Text>
-                      <Text size="xs">
-                        ({capitalize(formatDistanceToNowStrict(earliestReservationAt, { locale: nb }))} siden)
-                      </Text>
+                      <Text size="sm">{capitalize(afterRegisterStart)} ep.</Text>
+                      <Text size="xs">({capitalize(relativeAfterRegisterStart)} siden)</Text>
                     </Stack>
                   )}
                 </Button>
@@ -118,16 +121,9 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
                 <Stack>
                   <Stack gap={0}>
                     <Text size="sm">Utregnet påmeldingstidspunkt (inkl. prikker og utsettelser):</Text>
-                    <Text size="lg">
-                      {capitalize(
-                        formatDate(earliestReservationAt, "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O", { locale: nb })
-                      )}
-                    </Text>
+                    <Text size="lg">{capitalize(fullEarliestReservationAt)}</Text>
                   </Stack>
-                  <Text size="sm">
-                    Faktisk påmeldingstidspunkt:{" "}
-                    {formatDate(createdAt, "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O", { locale: nb })}
-                  </Text>
+                  <Text size="sm">Faktisk påmeldingstidspunkt: {fullCreatedAt}</Text>
                 </Stack>
               </PopoverDropdown>
             </Popover>
