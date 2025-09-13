@@ -2,7 +2,15 @@ import type { SchedulerClient } from "@aws-sdk/client-scheduler"
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { AttendanceId, AttendeeId, EventId, FeedbackFormId, Task, TaskId } from "@dotkomonline/types"
+import type {
+  AttendanceId,
+  AttendeeId,
+  EventId,
+  FeedbackFormId,
+  RecurringTaskId,
+  Task,
+  TaskId,
+} from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { NotImplementedError } from "../../error"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
@@ -18,7 +26,8 @@ export interface TaskSchedulingService {
     handle: DBHandle,
     kind: TTaskDef,
     data: InferTaskData<TTaskDef>,
-    executeAt: TZDate
+    executeAt: TZDate,
+    recurringTaskId?: RecurringTaskId
   ): Promise<TaskId>
   /**
    * Cancel a pending task.
@@ -38,7 +47,7 @@ export function getLocalTaskSchedulingService(
 ): TaskSchedulingService {
   const logger = getLogger("task-scheduling-service/local-backend")
   return {
-    async scheduleAt(handle, task, data, executeAt) {
+    async scheduleAt(handle, task, data, executeAt, recurringTaskId) {
       logger.info("Scheduling task of TaskKind=%s with data: %o", task, data)
       const payload = taskService.parse(task, data) as JsonValue
       const scheduledTask = await taskRepository.create(handle, task.type, {
@@ -46,6 +55,7 @@ export function getLocalTaskSchedulingService(
         processedAt: null,
         scheduledAt: executeAt,
         status: "PENDING",
+        recurringTaskId: recurringTaskId ?? null,
       })
       return scheduledTask.id
     },

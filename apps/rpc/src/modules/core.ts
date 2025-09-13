@@ -34,6 +34,8 @@ import { getOfflineService } from "./offline/offline-service"
 import { getPaymentProductsService } from "./payment/payment-products-service"
 import { getPaymentService } from "./payment/payment-service"
 import { getPaymentWebhookService } from "./payment/payment-webhook-service"
+import { getRecurringTaskRepository } from "./task/recurring-task-repository"
+import { getRecurringTaskService } from "./task/recurring-task-service"
 import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
 import { getLocalTaskExecutor } from "./task/task-executor"
 import { getTaskRepository } from "./task/task-repository"
@@ -85,6 +87,8 @@ export async function createServiceLayer(
 
   const taskRepository = getTaskRepository()
   const taskService = getTaskService(taskRepository)
+  const recurringTaskRepository = getRecurringTaskRepository()
+  const recurringTaskService = getRecurringTaskService(recurringTaskRepository)
   const taskSchedulingService = getLocalTaskSchedulingService(taskRepository, taskService)
   const eventRepository = getEventRepository()
   const groupRepository = getGroupRepository()
@@ -125,7 +129,7 @@ export async function createServiceLayer(
   const eventService = getEventService(eventRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository, taskSchedulingService, eventService)
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
-  const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService)
+  const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
     eventEmitter,
     attendanceRepository,
@@ -143,7 +147,13 @@ export async function createServiceLayer(
   const companyService = getCompanyService(companyRepository)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
-  const taskExecutor = getLocalTaskExecutor(taskService, taskDiscoveryService, attendanceService)
+  const taskExecutor = getLocalTaskExecutor(
+    taskService,
+    recurringTaskService,
+    taskDiscoveryService,
+    taskSchedulingService,
+    attendanceService
+  )
   const authorizationService = getAuthorizationService()
 
   return {
@@ -165,6 +175,7 @@ export async function createServiceLayer(
     feedbackFormAnswerService,
     authorizationService,
     paymentWebhookService,
+    recurringTaskService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only

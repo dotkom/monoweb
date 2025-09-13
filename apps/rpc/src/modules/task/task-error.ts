@@ -26,3 +26,15 @@ export class TaskDefinitionNotFoundError extends IllegalStateError {
     super(`Task definition for TaskKind=${kind} not found`)
   }
 }
+
+export class InvalidCronExpressionError extends IllegalStateError {
+  constructor(expression: string) {
+    super(`Cron expression ${expression} is invalid`)
+  }
+}
+
+export class RecurringTaskNotFoundError extends ApplicationError {
+  constructor(id: string) {
+    super(PROBLEM_DETAILS.NotFound, `RecurringTask with id ${id} not found`)
+  }
+}
