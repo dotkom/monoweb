@@ -347,6 +347,10 @@ const getAttendanceStatus = (attendance: Attendance, attendee: Attendee | null) 
 }
 
 const getPaymentStatus = (attendance: Attendance, attendee: Attendee | null) => {
+  if (!attendance.attendancePrice) {
+    return null
+  }
+
   const hasPaid = Boolean(
     attendee &&
       (attendee?.paymentChargedAt ||
@@ -358,7 +362,11 @@ const getPaymentStatus = (attendance: Attendance, attendee: Attendee | null) => 
     return `${attendance.attendancePrice} kr`
   }
 
-  if (attendee.paymentReservedAt || attendee.paymentChargedAt) {
+  if (attendee.paymentReservedAt) {
+    return `Du blir trukket ${attendance.attendancePrice} kr`
+  }
+
+  if (attendee.paymentChargedAt) {
     return `Du har betalt ${attendance.attendancePrice} kr`
   }
 
