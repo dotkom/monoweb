@@ -20,7 +20,7 @@ export const Stripes = ({
   children,
 }: StripedProps) => {
   return (
-    <div className={cn("group relative overflow-hidden", className)}>
+    <div className={cn("group relative overflow-hidden w-full h-full", className)}>
       {/* Base color */}
       <div aria-hidden="true" className={cn("absolute inset-0", colorA)} />
 
@@ -28,9 +28,10 @@ export const Stripes = ({
       <div
         aria-hidden="true"
         className={cn(
-          // the width is 130% and translated -15% to hide weird edge artifacts when animating
-          // overflow is hidden on the parent so this is not an issue
-          "absolute inset-0 stripes-mask w-[130%] transform -translate-x-[15%]",
+          // This width and transform black magic is to stop weird artifacts at the edges (specifically the left edge)
+          // The parent has overflow-hidden so a 150% width is fine
+          // -translate-x-1/3 makes it right-aligned, hiding the left edge artifacts outside (right-0 didn't work)
+          "absolute inset-0 stripes-mask w-[150%] transform -translate-x-1/3",
           colorB,
           animated && "animate-stripes"
         )}
@@ -41,7 +42,7 @@ export const Stripes = ({
           } as CSSProperties
         }
       />
-      <div className="relative z-1">{children}</div>
+      <div className="relative z-1 w-full">{children}</div>
     </div>
   )
 }
