@@ -17,9 +17,9 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
-import type { UserService } from "../user/user-service"
-import { GroupMembershipNotFoundError, GroupMembershipOverlap, GroupNotFoundError } from "./group-error"
-import type { GroupRepository } from "./group-repository"
+import type { UserService } from "../user/user-service.ts"
+import { GroupMembershipNotFoundError, GroupMembershipOverlap, GroupNotFoundError } from "./group-error.ts"
+import type { GroupRepository } from "./group-repository.ts"
 
 export interface GroupService {
   /**

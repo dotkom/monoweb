@@ -1,10 +1,10 @@
 // import { randomUUID } from "node:crypto"
 // import type { Mark } from "@dotkomonline/types"
 // import { PrismaClient } from "@prisma/client"
-// import { getMarkRepository } from "../mark-repository"
-// import { getMarkService } from "../mark-service"
-// import { getPersonalMarkRepository } from "../personal-mark-repository"
-// import { getPersonalMarkService } from "../personal-mark-service"
+// import { getMarkRepository } from "../mark-repository.ts"
+// import { getMarkService } from "../mark-service.ts"
+// import { getPersonalMarkRepository } from "../personal-mark-repository.ts"
+// import { getPersonalMarkService } from "../personal-mark-service.ts"
 //
 // describe("PersonalMarkDateCalculation", () => {
 //   const db = vi.mocked(PrismaClient.prototype, true)

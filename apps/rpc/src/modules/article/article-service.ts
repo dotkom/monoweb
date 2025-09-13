@@ -9,11 +9,11 @@ import type {
   ArticleWrite,
 } from "@dotkomonline/types"
 import { compareAsc, compareDesc } from "date-fns"
-import type { Pageable } from "../../query"
-import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
-import type { ArticleRepository } from "./article-repository"
-import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
-import type { ArticleTagRepository } from "./article-tag-repository"
+import type { Pageable } from "../../query.ts"
+import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error.ts"
+import type { ArticleRepository } from "./article-repository.ts"
+import type { ArticleTagLinkRepository } from "./article-tag-link-repository.ts"
+import type { ArticleTagRepository } from "./article-tag-repository.ts"
 
 export interface ArticleService {
   create(handle: DBHandle, input: ArticleWrite): Promise<Article>

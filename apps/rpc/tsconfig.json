@@ -3,11 +3,13 @@
   "include": ["./**/*.ts", "./**/*.tsx"],
   "exclude": [],
   "compilerOptions": {
+    "moduleResolution": "node",
     "lib": ["esnext", "dom", "dom.iterable"],
     "baseUrl": ".",
     "jsx": "preserve",
     "incremental": true,
     "strictNullChecks": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "allowImportingTsExtensions": true
   }
 }

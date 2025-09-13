@@ -10,10 +10,10 @@ import type {
 } from "@dotkomonline/types"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
-import type { GroupService } from "../group/group-service"
-import type { MarkService } from "./mark-service"
-import { PersonalMarkNotFoundError } from "./personal-mark-error"
-import type { PersonalMarkRepository } from "./personal-mark-repository"
+import type { GroupService } from "../group/group-service.ts"
+import type { MarkService } from "./mark-service.ts"
+import { PersonalMarkNotFoundError } from "./personal-mark-error.ts"
+import type { PersonalMarkRepository } from "./personal-mark-repository.ts"
 
 export interface PersonalMarkService {
   findPersonalMarksByMark(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>

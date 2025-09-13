@@ -1,7 +1,7 @@
 import type { TaskId, TaskType } from "@dotkomonline/types"
 import type { z } from "zod"
-import { ApplicationError, IllegalStateError } from "../../error"
-import { PROBLEM_DETAILS } from "../../http-problem-details"
+import { ApplicationError, IllegalStateError } from "../../error.ts"
+import { PROBLEM_DETAILS } from "../../http-problem-details.ts"
 
 export class InvalidTaskKind extends IllegalStateError {
   constructor(taskKind: TaskType, taskId: TaskId) {

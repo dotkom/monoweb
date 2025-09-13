@@ -8,9 +8,9 @@ import type {
   FeedbackQuestionAnswer,
   FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
-import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
-import { FeedbackFormNotFoundError } from "./feedback-form-errors"
-import type { FeedbackFormService } from "./feedback-form-service"
+import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository.ts"
+import { FeedbackFormNotFoundError } from "./feedback-form-errors.ts"
+import type { FeedbackFormService } from "./feedback-form-service.ts"
 
 export interface FeedbackFormAnswerService {
   create(

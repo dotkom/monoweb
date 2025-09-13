@@ -9,10 +9,10 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { BasePaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
-import { attendanceRouter } from "./attendance-router"
-import { feedbackRouter } from "./feedback-router"
+import { BasePaginateInputSchema } from "../../query.ts"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc.ts"
+import { attendanceRouter } from "./attendance-router.ts"
+import { feedbackRouter } from "./feedback-router.ts"
 
 export const eventRouter = t.router({
   attendance: attendanceRouter,

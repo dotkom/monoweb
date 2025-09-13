@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto"
 import { PrismaClient } from "@prisma/client"
-import { MarkNotFoundError } from "../mark-error"
-import { getMarkRepository } from "../mark-repository"
-import { getMarkService } from "../mark-service"
+import { MarkNotFoundError } from "../mark-error.ts"
+import { getMarkRepository } from "../mark-repository.ts"
+import { getMarkService } from "../mark-service.ts"
 
 describe("MarkService", () => {
   const db = vi.mocked(PrismaClient.prototype, true)

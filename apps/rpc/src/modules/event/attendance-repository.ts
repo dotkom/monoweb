@@ -17,7 +17,7 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
-import { parseOrReport } from "../../invariant"
+import { parseOrReport } from "../../invariant.ts"
 
 export interface AttendanceRepository {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>

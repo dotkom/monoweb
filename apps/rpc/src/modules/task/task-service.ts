@@ -2,10 +2,10 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task, TaskId, TaskStatus, TaskType, TaskWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import { IllegalStateError } from "../../error"
-import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
-import { TaskDataValidationError, TaskNotFound } from "./task-error"
-import type { TaskRepository } from "./task-repository"
+import { IllegalStateError } from "../../error.ts"
+import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition.ts"
+import { TaskDataValidationError, TaskNotFound } from "./task-error.ts"
+import type { TaskRepository } from "./task-repository.ts"
 
 export type TaskService = {
   getById(handle: DBHandle, taskId: TaskId): Promise<Task | null>

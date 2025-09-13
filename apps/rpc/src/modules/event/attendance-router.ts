@@ -14,7 +14,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { TRPCError } from "@trpc/server"
 import { addDays } from "date-fns"
 import { z } from "zod"
-import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc.ts"
 
 export const attendanceRouter = t.router({
   createPool: staffProcedure

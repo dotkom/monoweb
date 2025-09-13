@@ -9,11 +9,11 @@ import type {
   FeedbackQuestionWrite,
 } from "@dotkomonline/types"
 import { addWeeks, isEqual } from "date-fns"
-import type { EventService } from "../event/event-service"
-import { tasks } from "../task/task-definition"
-import type { TaskSchedulingService } from "../task/task-scheduling-service"
-import { FeedbackFormNotFoundError } from "./feedback-form-errors"
-import type { FeedbackFormRepository } from "./feedback-form-repository"
+import type { EventService } from "../event/event-service.ts"
+import { tasks } from "../task/task-definition.ts"
+import type { TaskSchedulingService } from "../task/task-scheduling-service.ts"
+import { FeedbackFormNotFoundError } from "./feedback-form-errors.ts"
+import type { FeedbackFormRepository } from "./feedback-form-repository.ts"
 
 export interface FeedbackFormService {
   create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>

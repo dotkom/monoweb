@@ -10,7 +10,7 @@ import {
   type FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
 import { Prisma } from "@prisma/client"
-import { parseOrReport } from "../../invariant"
+import { parseOrReport } from "../../invariant.ts"
 
 export interface FeedbackFormAnswerRepository {
   create(

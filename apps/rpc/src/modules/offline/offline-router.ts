@@ -1,7 +1,7 @@
 import { OfflineSchema, OfflineWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { PaginateInputSchema } from "../../query.ts"
+import { procedure, staffProcedure, t } from "../../trpc.ts"
 
 export const offlineRouter = t.router({
   create: staffProcedure

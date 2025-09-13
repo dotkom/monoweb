@@ -10,9 +10,9 @@ import { getPrivacyPermissionsRepository } from "src/modules/user/privacy-permis
 import { getUserRepository } from "src/modules/user/user-repository"
 import { getUserService } from "src/modules/user/user-service"
 import { mockDeep } from "vitest-mock-extended"
-import { GroupNotFoundError } from "../group-error"
-import { getGroupRepository } from "../group-repository"
-import { getGroupService } from "../group-service"
+import { GroupNotFoundError } from "../group-error.ts"
+import { getGroupRepository } from "../group-repository.ts"
+import { getGroupService } from "../group-service.ts"
 
 describe("GroupService", () => {
   const db = vi.mocked(PrismaClient.prototype)

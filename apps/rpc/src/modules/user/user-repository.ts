@@ -11,8 +11,8 @@ import {
   type UserWrite,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
-import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { parseOrReport } from "../../invariant.ts"
+import { type Pageable, pageQuery } from "../../query.ts"
 
 /**
  * UserRepository is an interface for interacting with the user database.

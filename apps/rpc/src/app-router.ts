@@ -1,13 +1,13 @@
-import { articleRouter } from "./modules/article/article-router"
-import { companyRouter } from "./modules/company/company-router"
-import { eventRouter } from "./modules/event/event-router"
-import { groupRouter } from "./modules/group/group-router"
-import { jobListingRouter } from "./modules/job-listing/job-listing-router"
-import { markRouter } from "./modules/mark/mark-router"
-import { personalMarkRouter } from "./modules/mark/personal-mark-router"
-import { offlineRouter } from "./modules/offline/offline-router"
-import { userRouter } from "./modules/user/user-router"
-import { t } from "./trpc"
+import { articleRouter } from "./modules/article/article-router.ts"
+import { companyRouter } from "./modules/company/company-router.ts"
+import { eventRouter } from "./modules/event/event-router.ts"
+import { groupRouter } from "./modules/group/group-router.ts"
+import { jobListingRouter } from "./modules/job-listing/job-listing-router.ts"
+import { markRouter } from "./modules/mark/mark-router.ts"
+import { personalMarkRouter } from "./modules/mark/personal-mark-router.ts"
+import { offlineRouter } from "./modules/offline/offline-router.ts"
+import { userRouter } from "./modules/user/user-router.ts"
+import { t } from "./trpc.ts"
 
 export const appRouter = t.router({
   group: groupRouter,

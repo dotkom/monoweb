@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify"
-import type { ServiceLayer } from "../modules/core"
+import type { ServiceLayer } from "../modules/core.ts"
 
 export function registerStripeWebhookRoutes(server: FastifyInstance, serviceLayer: ServiceLayer) {
   server.post("/webhook/stripe", { config: { rawBody: true } }, async (req, res) => {

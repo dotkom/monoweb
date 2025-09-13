@@ -4,10 +4,10 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { AttendanceId, AttendeeId, EventId, FeedbackFormId, Task, TaskId } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import { NotImplementedError } from "../../error"
-import type { InferTaskData, TaskDefinition } from "./task-definition"
-import type { TaskRepository } from "./task-repository"
-import type { TaskService } from "./task-service"
+import { NotImplementedError } from "../../error.ts"
+import type { InferTaskData, TaskDefinition } from "./task-definition.ts"
+import type { TaskRepository } from "./task-repository.ts"
+import type { TaskService } from "./task-service.ts"
 
 export interface TaskSchedulingService {
   /**

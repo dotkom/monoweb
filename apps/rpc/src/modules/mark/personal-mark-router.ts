@@ -1,7 +1,7 @@
 import { CreatePersonalMarkSchema, PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "../../query"
-import { authenticatedProcedure, staffProcedure, t } from "../../trpc"
+import { PaginateInputSchema } from "../../query.ts"
+import { authenticatedProcedure, staffProcedure, t } from "../../trpc.ts"
 
 export const personalMarkRouter = t.router({
   getByUser: authenticatedProcedure.input(z.object({ userId: UserSchema.shape.id })).query(async ({ input, ctx }) => {

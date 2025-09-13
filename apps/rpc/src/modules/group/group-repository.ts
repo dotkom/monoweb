@@ -17,7 +17,7 @@ import {
 } from "@dotkomonline/types"
 import type { GroupType } from "@prisma/client"
 import z from "zod"
-import { parseOrReport } from "../../invariant"
+import { parseOrReport } from "../../invariant.ts"
 
 export interface GroupRepository {
   create(handle: DBHandle, groupId: GroupId, data: GroupWrite): Promise<Group>

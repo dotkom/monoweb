@@ -25,14 +25,14 @@ import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import { captureException } from "@sentry/node"
 import { addDays, addHours, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast, min } from "date-fns"
 import invariant from "tiny-invariant"
-import type { Configuration } from "../../configuration"
-import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
-import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
-import type { MarkService } from "../mark/mark-service"
-import type { PersonalMarkService } from "../mark/personal-mark-service"
-import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error"
-import type { PaymentProductsService } from "../payment/payment-products-service"
-import type { Payment, PaymentService } from "../payment/payment-service"
+import type { Configuration } from "../../configuration.ts"
+import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service.ts"
+import type { FeedbackFormService } from "../feedback-form/feedback-form-service.ts"
+import type { MarkService } from "../mark/mark-service.ts"
+import type { PersonalMarkService } from "../mark/personal-mark-service.ts"
+import { PaymentAlreadyChargedError, PaymentUnexpectedStateError } from "../payment/payment-error.ts"
+import type { PaymentProductsService } from "../payment/payment-products-service.ts"
+import type { Payment, PaymentService } from "../payment/payment-service.ts"
 import {
   type ChargeAttendeeTaskDefinition,
   type InferTaskData,
@@ -41,18 +41,18 @@ import {
   type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyPaymentTaskDefinition,
   tasks,
-} from "../task/task-definition"
-import type { TaskSchedulingService } from "../task/task-scheduling-service"
-import type { UserService } from "../user/user-service"
+} from "../task/task-definition.ts"
+import type { TaskSchedulingService } from "../task/task-scheduling-service.ts"
+import type { UserService } from "../user/user-service.ts"
 import {
   AttendanceDeletionError,
   AttendanceNotFound,
   AttendanceValidationError,
   AttendeeAlreadyPaidError,
   AttendeeHasNotPaidError,
-} from "./attendance-error"
-import type { AttendanceRepository } from "./attendance-repository"
-import type { EventService } from "./event-service"
+} from "./attendance-error.ts"
+import type { AttendanceRepository } from "./attendance-repository.ts"
+import type { EventService } from "./event-service.ts"
 
 type EventRegistrationOptions = {
   /** Should the user be registered regardless of if registration is closed? */

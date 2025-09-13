@@ -7,7 +7,7 @@ import {
   GroupWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { procedure, staffProcedure, t } from "../../trpc.ts"
 
 export const groupRouter = t.router({
   create: staffProcedure.input(GroupWriteSchema).mutation(async ({ input, ctx }) => {

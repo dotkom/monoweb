@@ -5,7 +5,7 @@ import { Command } from "commander"
 import { marked } from "marked"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 import z from "zod"
-import { configuration } from "../configuration"
+import { configuration } from "../configuration.ts"
 import {
   AttendanceEventSchema,
   type EventAttendee,
@@ -15,8 +15,8 @@ import {
   GradeRuleSchema,
   type RuleBundle,
   RuleBundleSchema,
-} from "./migrate-events-schemas"
-import { dumpOW4Data } from "./migrate-from-ow4"
+} from "./migrate-events-schemas.ts"
+import { dumpOW4Data } from "./migrate-from-ow4.ts"
 
 async function getRuleBundles() {
   const ruleBundles = new Map<number, RuleBundle>()
