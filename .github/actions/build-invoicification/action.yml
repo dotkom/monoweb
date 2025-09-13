@@ -45,3 +45,4 @@ runs:
         service-name: monoweb-${{ inputs.environment }}-invoicification
         container-name: monoweb-${{ inputs.environment }}-invoicification
         image: ${{ steps.build.outputs.image }}
+        environment-variables: ${{ steps.acquire-secrets.outputs.secrets }}
