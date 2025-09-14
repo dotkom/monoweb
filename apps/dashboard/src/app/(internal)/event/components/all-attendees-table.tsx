@@ -1,4 +1,10 @@
-import type { Attendance, AttendancePool, Attendee, AttendeeSelectionResponse } from "@dotkomonline/types"
+import type {
+  Attendance,
+  AttendancePool,
+  Attendee,
+  AttendeeSelectionResponse,
+  FeedbackFormAnswer,
+} from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   ActionIcon,
@@ -53,9 +59,10 @@ const RenderSelections = ({ attendance, attendeeSelections }: RenderSelectionsPr
 interface AllAttendeesTableProps {
   attendees: Attendee[]
   attendance: Attendance
+  feedbackAnswers?: FeedbackFormAnswer[]
 }
 
-export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTableProps) => {
+export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: AllAttendeesTableProps) => {
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
   const updateAttendeeReservedMut = useUpdateAttendeeReservedMutation()
 
@@ -200,6 +207,26 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           )
         },
       }),
+      columnHelper.accessor((attendee) => attendee, {
+        header: "Tilbakemelding",
+        filterFn: arrayOrEqualsFilter<Attendee>(),
+        cell: (info) => {
+          if (!feedbackAnswers) {
+            return <Text size="10px">Ingen tilbakemeldingsskjema</Text>
+          }
+
+          const attendee = info.getValue()
+          const feedback = feedbackAnswers?.find((answer) => answer.attendeeId === attendee.id)
+          const date = feedback?.createdAt
+          return (
+            <Stack gap={0}>
+              <Checkbox readOnly checked={Boolean(feedback)} />
+              <Text size="10px">{date !== undefined ? formatDate(date, "dd.MM.yyyy") : "Ikke gitt"}</Text>
+              {date !== undefined && <Text size="10px">{formatDate(date, "'kl.' HH:mm")}</Text>}
+            </Stack>
+          )
+        },
+      }),
       columnHelper.accessor((attendee) => waitlists[attendee.attendancePoolId]?.[attendee.id] ?? null, {
         id: "waitlistSpot",
         header: () => "Venteliste",
@@ -280,7 +307,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         ),
       }),
     ],
-    [columnHelper, updateAttendanceMut, pools, waitlists, updateAttendeeReservedMut, attendance]
+    [columnHelper, updateAttendanceMut, pools, waitlists, updateAttendeeReservedMut, attendance, feedbackAnswers]
   )
 
   const tableOptions = useMemo(
