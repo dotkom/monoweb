@@ -9,7 +9,11 @@ import invariant from "tiny-invariant"
 import { configuration } from "vitest-integration.setup"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
-import { WorkspaceDirectoryNotAvailableError, WorkspaceNotEnabledError, WorkspaceUserNotFoundError } from "./workspace-error"
+import {
+  WorkspaceDirectoryNotAvailableError,
+  WorkspaceNotEnabledError,
+  WorkspaceUserNotFoundError,
+} from "./workspace-error"
 
 const TEMPORARY_PASSWORD_LENGTH = 8
 
