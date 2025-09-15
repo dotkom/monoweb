@@ -24,7 +24,8 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
     <Link
       href={createEventPageUrl(id, title)}
       className={cn(
-        "group flex flex-row gap-3 w-full rounded-xl p-2 -mx-2 last:-mb-2",
+        // [calc(100%+1rem)] is to offset the -mx-2
+        "group flex flex-row gap-3 w-[calc(100%+1rem)] rounded-xl p-2 -mx-2 last:-mb-2",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
         past && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300"
       )}

@@ -1,4 +1,10 @@
-import type { Attendance, AttendancePool, Attendee, AttendeeSelectionResponse } from "@dotkomonline/types"
+import type {
+  Attendance,
+  AttendancePool,
+  Attendee,
+  AttendeeSelectionResponse,
+  FeedbackFormAnswer,
+} from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   ActionIcon,
@@ -15,7 +21,7 @@ import {
 } from "@mantine/core"
 import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
-import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isPast } from "date-fns"
+import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
 import { useMemo } from "react"
 import {
@@ -25,6 +31,8 @@ import {
 } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateAttendeeReservedMutation, useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 interface RenderSelectionsProps {
   attendance: Attendance
@@ -51,9 +59,10 @@ const RenderSelections = ({ attendance, attendeeSelections }: RenderSelectionsPr
 interface AllAttendeesTableProps {
   attendees: Attendee[]
   attendance: Attendance
+  feedbackAnswers?: FeedbackFormAnswer[]
 }
 
-export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTableProps) => {
+export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: AllAttendeesTableProps) => {
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
   const updateAttendeeReservedMut = useUpdateAttendeeReservedMutation()
 
@@ -91,15 +100,32 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         cell: (info) => {
           const earliestReservationAt = info.getValue()
           const createdAt = info.row.original.createdAt
+
+          const afterRegisterStart = formatDistanceStrict(earliestReservationAt, attendance.registerStart, {
+            locale: nb,
+          })
+          const relativeAfterRegisterStart = formatDistanceToNowStrict(earliestReservationAt, { locale: nb })
+
+          const fullLocale = "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O"
+          const fullEarliestReservationAt = formatDate(earliestReservationAt, fullLocale, { locale: nb })
+          const fullCreatedAt = formatDate(createdAt, fullLocale, { locale: nb })
+
           return (
             <Popover>
               <PopoverTarget>
                 <Button variant="transparent" p={0}>
                   <Stack gap={0} align="flex-start">
-                    <Text size="sm">
-                      {formatDistanceStrict(earliestReservationAt, attendance.registerStart, { locale: nb })} ep.
-                    </Text>
-                    <Text size="xs">({formatDistanceToNowStrict(earliestReservationAt, { locale: nb })} siden)</Text>
+                    {isBefore(earliestReservationAt, attendance.registerStart) ? (
+                      <>
+                        <Text size="sm">Forhåndspåmeldt</Text>
+                        <Text size="xs">{capitalize(afterRegisterStart)} fp.</Text>
+                      </>
+                    ) : (
+                      <>
+                        <Text size="sm">{capitalize(afterRegisterStart)} ep.</Text>
+                        <Text size="xs">({capitalize(relativeAfterRegisterStart)} siden)</Text>
+                      </>
+                    )}
                   </Stack>
                 </Button>
               </PopoverTarget>
@@ -107,14 +133,9 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
                 <Stack>
                   <Stack gap={0}>
                     <Text size="sm">Utregnet påmeldingstidspunkt (inkl. prikker og utsettelser):</Text>
-                    <Text size="lg">
-                      {formatDate(earliestReservationAt, "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O", { locale: nb })}
-                    </Text>
+                    <Text size="lg">{capitalize(fullEarliestReservationAt)}</Text>
                   </Stack>
-                  <Text size="sm">
-                    Faktisk påmeldingstidspunkt:{" "}
-                    {formatDate(createdAt, "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O", { locale: nb })}
-                  </Text>
+                  <Text size="sm">Faktisk påmeldingstidspunkt: {fullCreatedAt}</Text>
                 </Stack>
               </PopoverDropdown>
             </Popover>
@@ -183,6 +204,26 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             </Group>
           ) : (
             <Checkbox icon={({ className }) => <IconX className={className} />} color="red" checked readOnly />
+          )
+        },
+      }),
+      columnHelper.accessor((attendee) => attendee, {
+        header: "Tilbakemelding",
+        filterFn: arrayOrEqualsFilter<Attendee>(),
+        cell: (info) => {
+          if (!feedbackAnswers) {
+            return <Text size="10px">Ingen tilbakemeldingsskjema</Text>
+          }
+
+          const attendee = info.getValue()
+          const feedback = feedbackAnswers?.find((answer) => answer.attendeeId === attendee.id)
+          const date = feedback?.createdAt
+          return (
+            <Stack gap={0}>
+              <Checkbox readOnly checked={Boolean(feedback)} />
+              <Text size="10px">{date !== undefined ? formatDate(date, "dd.MM.yyyy") : "Ikke gitt"}</Text>
+              {date !== undefined && <Text size="10px">{formatDate(date, "'kl.' HH:mm")}</Text>}
+            </Stack>
           )
         },
       }),
@@ -266,7 +307,7 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
         ),
       }),
     ],
-    [columnHelper, updateAttendanceMut, pools, waitlists, updateAttendeeReservedMut, attendance]
+    [columnHelper, updateAttendanceMut, pools, waitlists, updateAttendeeReservedMut, attendance, feedbackAnswers]
   )
 
   const tableOptions = useMemo(
