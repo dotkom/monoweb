@@ -158,7 +158,7 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
         if (result.error.cause instanceof ApplicationError) {
           error = new TRPCError({
             code: getTRPCErrorCode(result.error.cause),
-            message: result.error.cause.message,
+            message: `${result.error.cause.message} (TraceID=${traceId})`,
             cause: result.error.cause,
           })
         }
