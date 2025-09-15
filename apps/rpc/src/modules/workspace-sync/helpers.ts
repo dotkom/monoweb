@@ -6,16 +6,21 @@ import invariant from "tiny-invariant"
 import { configuration } from "../../configuration"
 
 const TEMPORARY_PASSWORD_LENGTH = 8
+const SLUGIFY_OPTIONS = {
+  replacement: ".",
+  strict: false,
+  remove: /[^a-zA-Z0-9-]/g,
+}
 
 const getLocal = (localResolvable: User | Group | string): string => {
   if (typeof localResolvable === "string") {
-    return slugify(localResolvable, ".")
+    return slugify(localResolvable, SLUGIFY_OPTIONS)
   }
 
   const isGroup = "type" in localResolvable
 
   if (isGroup) {
-    return slugify(localResolvable.slug, ".")
+    return slugify(localResolvable.slug, SLUGIFY_OPTIONS)
   }
 
   // It is a user
@@ -23,7 +28,7 @@ const getLocal = (localResolvable: User | Group | string): string => {
     throw new Error("User name is required")
   }
 
-  return slugify(localResolvable.name, ".")
+  return slugify(localResolvable.name, SLUGIFY_OPTIONS)
 }
 
 /**
