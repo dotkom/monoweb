@@ -1,7 +1,7 @@
 // biome-ignore lint/style/useNodejsImportProtocol: Cannot import with node path on vercel
 import { spawn } from "child_process"
 import { PostgreSqlContainer } from "@testcontainers/postgresql"
-import { createPrisma } from "..ts"
+import { createPrisma } from "./index.ts"
 
 const SCHEMA_FILE_PATH = `${import.meta.dirname}/../prisma/schema.prisma`
 const PRISMA_BIN_PATH = `${import.meta.dirname}/../node_modules/.bin/prisma`

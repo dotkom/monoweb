@@ -96,7 +96,7 @@ importers:
         version: file:packages/oauth2(@opentelemetry/api@1.9.0)(@types/react-dom@19.1.7(@types/react@19.1.11))(@types/react@19.1.11)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@dotkomonline/types':
         specifier: workspace:*
-        version: file:packages/types(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
+        version: file:packages/types(@opentelemetry/api@1.9.0)(typescript@5.8.3)
       '@dotkomonline/ui':
         specifier: workspace:*
         version: file:packages/ui(@types/react-dom@19.1.7(@types/react@19.1.11))(@types/react@19.1.11)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))
@@ -538,7 +538,7 @@ importers:
         version: file:packages/oauth2(@opentelemetry/api@1.9.0)(@types/react-dom@19.1.7(@types/react@19.1.11))(@types/react@19.1.11)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@dotkomonline/types':
         specifier: workspace:*
-        version: file:packages/types(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
+        version: file:packages/types(@opentelemetry/api@1.9.0)(typescript@5.8.3)
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -653,7 +653,7 @@ importers:
     dependencies:
       '@dotkomonline/types':
         specifier: workspace:*
-        version: file:packages/types(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
+        version: file:packages/types(@opentelemetry/api@1.9.0)(typescript@5.8.3)
       '@dotkomonline/ui':
         specifier: workspace:*
         version: file:packages/ui(@types/react-dom@19.1.7(@types/react@19.1.11))(@types/react@19.1.11)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))
@@ -762,7 +762,7 @@ importers:
         version: file:packages/oauth2(@opentelemetry/api@1.9.0)(@types/react-dom@19.1.7(@types/react@19.1.11))(@types/react@19.1.11)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@dotkomonline/types':
         specifier: workspace:*
-        version: file:packages/types(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
+        version: file:packages/types(@opentelemetry/api@1.9.0)(typescript@5.8.3)
       '@dotkomonline/ui':
         specifier: workspace:*
         version: file:packages/ui(@types/react-dom@19.1.7(@types/react@19.1.11))(@types/react@19.1.11)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))
@@ -980,6 +980,9 @@ importers:
       pg:
         specifier: ^8.16.0
         version: 8.16.3
+      prisma:
+        specifier: 6.8.2
+        version: 6.8.2(typescript@5.8.3)
       zod:
         specifier: ^3.25.47
         version: 3.25.76
@@ -1005,9 +1008,6 @@ importers:
       common-tags:
         specifier: 1.8.2
         version: 1.8.2
-      prisma:
-        specifier: 6.8.2
-        version: 6.8.2(typescript@5.8.3)
       tsx:
         specifier: 4.20.5
         version: 4.20.5
@@ -1185,7 +1185,7 @@ importers:
         version: 1.4.1
       '@dotkomonline/db':
         specifier: workspace:*
-        version: file:packages/db(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
+        version: file:packages/db(@opentelemetry/api@1.9.0)(typescript@5.8.3)
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../utils
@@ -10357,20 +10357,20 @@ snapshots:
 
   '@date-fns/tz@1.4.1': {}
 
-  '@dotkomonline/db@file:packages/db(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)':
+  '@dotkomonline/db@file:packages/db(@opentelemetry/api@1.9.0)(typescript@5.8.3)':
     dependencies:
       '@dotkomonline/logger': file:packages/logger(@opentelemetry/api@1.9.0)
       '@prisma/client': 6.8.2(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
       '@testcontainers/postgresql': 11.5.1
       date-fns: 4.1.0
       pg: 8.16.3
+      prisma: 6.8.2(typescript@5.8.3)
       zod: 3.25.76
       zod-prisma-types: 3.2.4(@prisma/client@6.8.2(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3))(prisma@6.8.2(typescript@5.8.3))
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - bare-buffer
       - pg-native
-      - prisma
       - supports-color
       - typescript
 
@@ -10424,11 +10424,11 @@ snapshots:
       '@aws-sdk/client-sts': 3.873.0
       '@aws-sdk/s3-presigned-post': 3.873.0
       '@date-fns/tz': 1.4.1
-      '@dotkomonline/db': file:packages/db(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
+      '@dotkomonline/db': file:packages/db(@opentelemetry/api@1.9.0)(typescript@5.8.3)
       '@dotkomonline/environment': file:packages/environment
       '@dotkomonline/logger': file:packages/logger(@opentelemetry/api@1.9.0)
       '@dotkomonline/oauth2': file:packages/oauth2(@opentelemetry/api@1.9.0)(@types/react-dom@19.1.7(@types/react@19.1.11))(@types/react@19.1.11)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@dotkomonline/types': file:packages/types(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
+      '@dotkomonline/types': file:packages/types(@opentelemetry/api@1.9.0)(typescript@5.8.3)
       '@dotkomonline/utils': file:packages/utils
       '@fastify/cors': 11.1.0
       '@opentelemetry/api': 1.9.0
@@ -10466,10 +10466,10 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@dotkomonline/types@file:packages/types(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)':
+  '@dotkomonline/types@file:packages/types(@opentelemetry/api@1.9.0)(typescript@5.8.3)':
     dependencies:
       '@date-fns/tz': 1.4.1
-      '@dotkomonline/db': file:packages/db(@opentelemetry/api@1.9.0)(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
+      '@dotkomonline/db': file:packages/db(@opentelemetry/api@1.9.0)(typescript@5.8.3)
       '@dotkomonline/utils': file:packages/utils
       date-fns: 4.1.0
       zod: 3.25.76
@@ -10477,7 +10477,6 @@ snapshots:
       - '@opentelemetry/api'
       - bare-buffer
       - pg-native
-      - prisma
       - supports-color
       - typescript
 

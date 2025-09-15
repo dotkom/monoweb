@@ -12,7 +12,7 @@ RUN pnpm install --ignore-scripts
 RUN pnpm generate
 
 # Install for production
-RUN pnpm deploy --prod --no-optional --ignore-scripts -F @dotkomonline/rpc /opt/rpc
+RUN pnpm deploy --prod --no-optional -F @dotkomonline/rpc /opt/rpc
 
 FROM base AS runner
 WORKDIR /opt/rpc
@@ -32,4 +32,4 @@ USER rpc
 
 COPY --from=installer --chown=rpc:nodejs --chmod=755 /opt/rpc .
 
-CMD node --loader ./runtime.mjs --import="amaro/strip" --experimental-strip-types --enable-source-maps ./src/bin/server.ts
+CMD node --import="amaro/strip" --experimental-strip-types --enable-source-maps ./src/bin/server.ts
