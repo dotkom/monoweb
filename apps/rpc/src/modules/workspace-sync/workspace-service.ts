@@ -4,7 +4,7 @@ import { getLogger } from "@dotkomonline/logger"
 import type { Group, GroupId, GroupMember, User, UserId } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "googleapis"
-import type { GaxiosResponseWithHTTP2 } from "googleapis-common"
+import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
 import { configuration } from "../../configuration"
 import type { GroupService } from "../group/group-service"
@@ -170,17 +170,25 @@ export function getWorkspaceService(
       let workspaceUser: admin_directory_v1.Schema$User | null = null
 
       for (const key of keys) {
-        const response = await directory.users.get({
-          userKey: key,
-        })
+        let response: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$User> | null
 
-        if (response.status === 404) {
-          continue
+        try {
+          response = await directory.users.get({ userKey: key })
+        } catch (error) {
+          if (!(error instanceof GaxiosError)) {
+            throw error
+          }
+
+          if (error.response?.status === 404) {
+            return null
+          }
+
+          logger.error("Failed to fetch WorkspaceUser(Key=%s) from workspace with message: %s", key, error.message)
+          throw error
         }
 
-        if (response.status !== 200) {
-          logger.warn("Failed to fetch user from workspace")
-          throw new Error()
+        if (!response) {
+          continue
         }
 
         workspaceUser = response.data
@@ -245,8 +253,6 @@ export function getWorkspaceService(
         },
       })
 
-      invariant(res.data, "Expected response data to be defined")
-
       return res.data
     },
 
@@ -306,8 +312,6 @@ export function getWorkspaceService(
         throw new Error()
       }
 
-      invariant(response.data, "Expected response data to be defined")
-
       return response.data
     },
 
@@ -327,7 +331,6 @@ export function getWorkspaceService(
           pageToken: pageToken,
         })
 
-        invariant(response.data, "Expected response data to be defined")
         invariant(response.data.members, "Expected response data to be defined")
 
         const users = await groupService.getMembers(handle, group.slug)
