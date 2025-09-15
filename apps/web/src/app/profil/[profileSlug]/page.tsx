@@ -458,7 +458,7 @@ export default function ProfilePage() {
                 <div className="flex flex-col gap-0.5">
                   <Text className="text-lg">{group.name}</Text>
                   <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
-                    {group.description || group.about}
+                    {group.description}
                   </Text>
                 </div>
               </Link>

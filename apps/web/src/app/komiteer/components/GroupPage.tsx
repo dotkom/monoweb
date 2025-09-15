@@ -92,7 +92,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
             <Text className="text-gray-500 dark:text-stone-400">{name}</Text>
           </div>
 
-          <Text>{group.about || group.description || "Ingen beskrivelse"}</Text>
+          <Text>{group.description || "Ingen beskrivelse"}</Text>
 
           <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-400">
             <Text>Kontakt:</Text>

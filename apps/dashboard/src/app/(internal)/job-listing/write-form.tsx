@@ -58,13 +58,7 @@ export const useJobListingWriteForm = ({
         searchable: true,
         withAsterisk: true,
       }),
-      description: createTextareaInput({
-        label: "Ingress",
-        placeholder: "Kort introduksjon om stillingen...",
-        required: true,
-        rows: 4,
-      }),
-      about: createRichTextInput({
+      description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
       }),
