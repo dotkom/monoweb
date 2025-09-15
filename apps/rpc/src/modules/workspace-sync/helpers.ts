@@ -9,7 +9,7 @@ const TEMPORARY_PASSWORD_LENGTH = 8
 const SLUGIFY_OPTIONS = {
   replacement: ".",
   strict: false,
-  remove: /[^a-zA-Z0-9-]/g,
+  remove: /[^a-zA-Z0-9-\s]/g,
 }
 
 const getLocal = (localResolvable: User | Group | string): string => {
