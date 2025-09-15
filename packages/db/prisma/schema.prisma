@@ -530,16 +530,33 @@ enum TaskStatus {
 }
 
 model Task {
-  id          String     @id @default(uuid())
-  type        TaskType
-  status      TaskStatus @default(PENDING)
-  payload     Json       @default("{}")
-  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
-  scheduledAt DateTime   @db.Timestamptz(3)
-  processedAt DateTime?  @db.Timestamptz(3)
+  id              String          @id @default(uuid())
+  type            TaskType
+  status          TaskStatus      @default(PENDING)
+  payload         Json            @default("{}")
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  scheduledAt     DateTime        @db.Timestamptz(3)
+  processedAt     DateTime?       @db.Timestamptz(3)
+  recurringTask   RecurringTask?  @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
+  recurringTaskId String?
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("task")
+}
+
+model RecurringTask {
+  id          String     @id @default(uuid())
+  type        TaskType
+  payload     Json       @default("{}")
+  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
+  schedule    String
+  lastRunAt   DateTime?  @db.Timestamptz(3)
+  nextRunAt   DateTime   @db.Timestamptz(3)
+
+  tasks       Task[]
+
+  @@index([nextRunAt])
+  @@map("recurring_task")
 }
 
 enum FeedbackQuestionType {

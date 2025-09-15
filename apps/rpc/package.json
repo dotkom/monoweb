@@ -43,6 +43,7 @@
     "@trpc/server": "11.4.4",
     "auth0": "^4.23.1",
     "commander": "^14.0.0",
+    "cron-parser": "^5.3.1",
     "date-fns": "^4.1.0",
     "fastify": "^5.3.3",
     "fastify-raw-body": "^5.0.0",

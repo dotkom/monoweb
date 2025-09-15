@@ -559,6 +559,9 @@ importers:
       commander:
         specifier: ^14.0.0
         version: 14.0.0
+      cron-parser:
+        specifier: ^5.3.1
+        version: 5.3.1
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -833,7 +836,7 @@ importers:
         version: 4.1.0
       ical-generator:
         specifier: ^8.1.1
-        version: 8.1.1(@types/node@22.18.0)(dayjs@1.11.13)
+        version: 8.1.1(@types/node@22.18.0)(dayjs@1.11.13)(luxon@3.7.2)
       import-in-the-middle:
         specifier: ^1.14.2
         version: 1.14.2
@@ -5949,6 +5952,10 @@ packages:
   crelt@1.0.6:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
 
+  cron-parser@5.3.1:
+    resolution: {integrity: sha512-Mu5Jk1b4cUfY8u34+thI9TZxvQiuhaMBS2Ag84rOSoHlU33xtIPkXwr6lWuw3XPmxSxq317B+hl0o4J+LdhwNg==}
+    engines: {node: '>=18'}
+
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -7135,6 +7142,10 @@ packages:
     resolution: {integrity: sha512-w3hD8/SQB7+lzU2r4VdFyzzOzKnUjTZIF/MQJGSSvni7Llewni4vuViRppfRAa2guOsY5k4jZyxw/i9DQHv+dw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  luxon@3.7.2:
+    resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
+    engines: {node: '>=12'}
 
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
@@ -14506,6 +14517,10 @@ snapshots:
 
   crelt@1.0.6: {}
 
+  cron-parser@5.3.1:
+    dependencies:
+      luxon: 3.7.2
+
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -15489,12 +15504,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ical-generator@8.1.1(@types/node@22.18.0)(dayjs@1.11.13):
+  ical-generator@8.1.1(@types/node@22.18.0)(dayjs@1.11.13)(luxon@3.7.2):
     dependencies:
       uuid-random: 1.3.2
     optionalDependencies:
       '@types/node': 22.18.0
       dayjs: 1.11.13
+      luxon: 3.7.2
 
   iconify-icon@2.3.0:
     dependencies:
@@ -15874,6 +15890,8 @@ snapshots:
   lucide-react@0.542.0(react@19.1.1):
     dependencies:
       react: 19.1.1
+
+  luxon@3.7.2: {}
 
   magic-string@0.30.17:
     dependencies:
