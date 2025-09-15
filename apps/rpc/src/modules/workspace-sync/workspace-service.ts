@@ -6,7 +6,7 @@ import { slugify } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "googleapis"
 import type { GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
-import { configuration } from "vitest-integration.setup"
+import { configuration } from "../../configuration"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 import {
