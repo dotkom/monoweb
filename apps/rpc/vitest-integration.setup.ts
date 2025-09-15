@@ -27,7 +27,7 @@ async function createServiceLayerForTesting() {
       s3Client,
       auth0Client,
       stripe,
-      workspaceDirectory: null
+      workspaceDirectory: null,
     },
     configuration
   )
