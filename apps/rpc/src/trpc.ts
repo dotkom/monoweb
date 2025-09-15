@@ -106,9 +106,12 @@ export const router = t.router
  * server call.
  */
 export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
-  return await trace
-    .getTracer("@dotkomonline/rpc/trpc-request")
-    .startActiveSpan(`tRPC ${type} ${path}`, async (span) => {
+  return await trace.getTracer("@dotkomonline/rpc/trpc-request").startActiveSpan(
+    `tRPC ${type} ${path}`,
+    {
+      root: true,
+    },
+    async (span) => {
       // See https://opentelemetry.io/docs/specs/semconv/registry/attributes/rpc/ and https://opentelemetry.io/docs/specs/semconv/registry/attributes/http/
       // for the meaning of these attributes.
       span.setAttribute("rpc.service", "@dotkomonline/rpc")
@@ -116,6 +119,7 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
       span.setAttribute("http.request.method", "_OTHER")
       span.setAttribute("http.request.method_original", type)
       span.setAttribute("http.route", path)
+
       try {
         const logger = getLogger("@dotkomonline/rpc/trpc")
         const result = await next({ ctx })
@@ -148,7 +152,8 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
       } finally {
         span.end()
       }
-    })
+    }
+  )
 })
 
 export const authenticatedProcedure = procedure.use(({ ctx, next }) => {
