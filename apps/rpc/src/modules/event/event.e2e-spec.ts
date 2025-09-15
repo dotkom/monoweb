@@ -14,7 +14,6 @@ export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     contactUrl: faker.internet.url(),
     email: faker.internet.email(),
     imageUrl: faker.image.url(),
-    shortDescription: null,
     deactivatedAt: null,
     ...input,
   }
@@ -33,7 +32,6 @@ export function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
     locationTitle: faker.location.city(),
     locationAddress: faker.location.streetAddress(),
     locationLink: null,
-    shortDescription: null,
     ...input,
   }
 }

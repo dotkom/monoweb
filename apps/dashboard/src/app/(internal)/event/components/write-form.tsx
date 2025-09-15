@@ -50,7 +50,6 @@ const DEFAULT_VALUES = {
 
   title: "",
   description: "",
-  shortDescription: null,
   locationTitle: null,
   locationAddress: null,
   locationLink: null,
