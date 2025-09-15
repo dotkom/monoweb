@@ -9,8 +9,7 @@ import invariant from "tiny-invariant"
 import { configuration } from "vitest-integration.setup"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
-import { getDirectory } from "./client"
-import { WorkspaceUserNotFoundError } from "./workspace-error"
+import { WorkspaceDirectoryNotAvailableError, WorkspaceNotEnabledError, WorkspaceUserNotFoundError } from "./workspace-error"
 
 const TEMPORARY_PASSWORD_LENGTH = 8
 
@@ -65,12 +64,22 @@ export interface WorkspaceService {
   ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[]>
 }
 
-export function getWorkspaceService(userService: UserService, groupService: GroupService): WorkspaceService {
+export function getWorkspaceService(
+  directory: admin_directory_v1.Admin | null,
+  userService: UserService,
+  groupService: GroupService
+): WorkspaceService {
+  if (!configuration.WORKSPACE_ENABLED) {
+    throw new WorkspaceNotEnabledError()
+  }
+
+  if (!directory) {
+    throw new WorkspaceDirectoryNotAvailableError()
+  }
+
   const logger = getLogger("workspace-sync-service")
 
-  async function createRecoveryCodes(user: User): Promise<string[] | null> {
-    const directory = getDirectory()
-
+  const createRecoveryCodes = async (user: User): Promise<string[] | null> => {
     await directory.verificationCodes.generate({
       userKey: getKey(user),
     })
@@ -88,8 +97,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
 
   return {
     async createWorkspaceUser(handle, userId) {
-      const directory = getDirectory()
-
       const user = await userService.getById(handle, userId)
 
       if (user.workspaceUserId) {
@@ -153,8 +160,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
     },
 
     async findWorkspaceUser(handle, userId) {
-      const directory = getDirectory()
-
       const user = await userService.getById(handle, userId)
       const keys = getKeys(user)
 
@@ -193,8 +198,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
     },
 
     async resetWorkspaceUserPassword(handle, userId) {
-      const directory = getDirectory()
-
       const user = await userService.getById(handle, userId)
       const password = getTemporaryPassword()
 
@@ -227,8 +230,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
     },
 
     async addUserIntoWorkspaceGroup(handle, groupSlug, userId) {
-      const directory = getDirectory()
-
       const group = await groupService.getById(handle, groupSlug)
       const user = await userService.getById(handle, userId)
 
@@ -246,8 +247,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
     },
 
     async removeUserFromWorkspaceGroup(handle, groupId, userId) {
-      const directory = getDirectory()
-
       const group = await groupService.getById(handle, groupId)
       const user = await userService.getById(handle, userId)
 
@@ -266,8 +265,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       if (group.workspaceGroupId) {
         throw new Error("Group already has a workspace group ID")
       }
-
-      const directory = getDirectory()
 
       const { data } = await directory.groups.insert({
         requestBody: {
@@ -290,8 +287,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
     },
 
     async findWorkspaceGroup(handle, groupId) {
-      const directory = getDirectory()
-
       const group = await groupService.getById(handle, groupId)
 
       const response = await directory.groups.get({
@@ -313,8 +308,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
     },
 
     async getMembersForGroup(handle, groupId) {
-      const directory = getDirectory()
-
       const group = await groupService.getById(handle, groupId)
 
       const workspaceMembers: {
@@ -344,8 +337,6 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
     },
 
     async getWorkspaceGroupsForWorkspaceUser(handle, userId) {
-      const directory = getDirectory()
-
       const user = await userService.getById(handle, userId)
 
       const groups: { group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[] = []
