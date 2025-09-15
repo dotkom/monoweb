@@ -180,7 +180,7 @@ export function getWorkspaceService(
           }
 
           if (error.response?.status === 404) {
-            return null
+            continue
           }
 
           logger.error("Failed to fetch WorkspaceUser(Key=%s) from workspace with message: %s", key, error.message)
