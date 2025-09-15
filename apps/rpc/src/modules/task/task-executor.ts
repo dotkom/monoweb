@@ -5,6 +5,7 @@ import type { Task } from "@dotkomonline/types"
 import { trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { secondsToMilliseconds } from "date-fns"
+import { IllegalStateError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
 import {
   type ChargeAttendeeTaskDefinition,
@@ -17,7 +18,6 @@ import {
   tasks,
 } from "./task-definition"
 import type { TaskDiscoveryService } from "./task-discovery-service"
-import { InvalidTaskKind } from "./task-error"
 import type { TaskService } from "./task-service"
 
 const INTERVAL = secondsToMilliseconds(1)
@@ -115,7 +115,9 @@ export function getLocalTaskExecutor(
             }
             // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
             // still keep this block here to prevent subtle bugs or missed cases in the future.
-            throw new InvalidTaskKind(task.type, task.id)
+            throw new IllegalStateError(
+              `Unreachable code reached in TaskExecutor for Task(ID=${task.id}) for unhandled TaskType ${task.type}`
+            )
           })
         } catch (error: unknown) {
           isError = true

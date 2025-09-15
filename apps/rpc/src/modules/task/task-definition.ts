@@ -6,7 +6,7 @@ import {
   type TaskType,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { TaskDefinitionNotFoundError } from "./task-error"
+import { NotFoundError } from "../../error"
 
 export interface TaskDefinition<TData, TType extends TaskType> {
   getSchema(): z.ZodSchema<TData>
@@ -81,7 +81,7 @@ export const tasks = {
 export function getTaskDefinition<TType extends TaskType>(type: TType): TaskDefinition<unknown, TType> {
   const task = Object.values(tasks).find((task) => task.type === type)
   if (task === undefined) {
-    throw new TaskDefinitionNotFoundError(type)
+    throw new NotFoundError(`TaskDefinition(Type=${type}) not found`)
   }
   return task as TaskDefinition<unknown, TType>
 }

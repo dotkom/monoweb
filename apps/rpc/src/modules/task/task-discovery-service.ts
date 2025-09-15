@@ -2,7 +2,7 @@ import type { SQSClient } from "@aws-sdk/client-sqs"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task, TaskType } from "@dotkomonline/types"
-import { NotImplementedError } from "../../error"
+import { UnimplementedError } from "../../error"
 import { tasks } from "./task-definition"
 import type { TaskService } from "./task-service"
 
@@ -54,11 +54,11 @@ export function getSQSTaskDiscoveryService(client: SQSClient): TaskDiscoveryServ
   return {
     async discoverAll() {
       logger.warn("discoverAll is not implemented for SQS TaskDiscoveryService")
-      throw new NotImplementedError("SQSTaskDiscovery#discoverAll")
+      throw new UnimplementedError("SQSTaskDiscovery#discoverAll")
     },
     async discover(kind) {
       logger.warn("discover is not implemented for SQS TaskDiscoveryService")
-      throw new NotImplementedError("SQSTaskDiscovery#discover")
+      throw new UnimplementedError("SQSTaskDiscovery#discover")
     },
   }
 }

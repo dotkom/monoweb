@@ -6,6 +6,7 @@ import { type admin_directory_v1, google } from "googleapis"
 import Stripe from "stripe"
 import z from "zod"
 import { type Configuration, configuration } from "../configuration"
+import { IllegalStateError } from "../error"
 import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
@@ -45,7 +46,6 @@ import { getNotificationPermissionsRepository } from "./user/notification-permis
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
-import { MalformedWorkspaceServiceAccountError, WorkspaceNotEnabledError } from "./workspace-sync/workspace-error"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
@@ -77,14 +77,14 @@ export function getDirectory(): admin_directory_v1.Admin {
     configuration.WORKSPACE_SERVICE_ACCOUNT === null ||
     configuration.WORKSPACE_USER_ACCOUNT_EMAIL === null
   ) {
-    throw new WorkspaceNotEnabledError()
+    throw new IllegalStateError("Google Workspace integration is not enabled or missing configuration variables")
   }
 
   const serviceAccountJson = JSON.parse(configuration.WORKSPACE_SERVICE_ACCOUNT)
   const result = workspaceServiceAccountJsonSchema.safeParse(serviceAccountJson)
 
   if (!result.success) {
-    throw new MalformedWorkspaceServiceAccountError(result.error.message)
+    throw new IllegalStateError(`Google Workspace service account is malformed: ${result.error.message}`)
   }
 
   const auth = new google.auth.JWT({

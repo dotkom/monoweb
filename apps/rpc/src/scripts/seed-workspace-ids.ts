@@ -1,6 +1,6 @@
 import { configuration } from "src/configuration"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
-import { WorkspaceDirectoryNotAvailableError } from "src/modules/workspace-sync/workspace-error"
+import { IllegalStateError } from "../error"
 
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
@@ -15,7 +15,7 @@ const relevantGroups = groups.filter(
 
 const workspaceService = serviceLayer.workspaceService
 if (!workspaceService) {
-  throw new WorkspaceDirectoryNotAvailableError()
+  throw new IllegalStateError("Workspace service is not configured")
 }
 
 console.log("Syncing groups")

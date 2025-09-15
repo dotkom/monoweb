@@ -2,9 +2,8 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task, TaskId, TaskStatus, TaskType, TaskWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import { IllegalStateError } from "../../error"
+import { IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
-import { TaskDataValidationError, TaskNotFound } from "./task-error"
 import type { TaskRepository } from "./task-repository"
 
 export type TaskService = {
@@ -13,7 +12,7 @@ export type TaskService = {
   /**
    * Updates a task
    *
-   * @throws {TaskNotFound} if the task with the given `taskId` does not exist
+   * @throws {NotFoundError} if the task with the given `taskId` does not exist
    */
   update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState: TaskStatus): Promise<Task>
   setTaskExecutionStatus(handle: DBHandle, taskId: TaskId, status: TaskStatus, oldStatus: TaskStatus): Promise<Task>
@@ -21,7 +20,7 @@ export type TaskService = {
   /**
    * Parse and validate the payload for a given task, given its specification.
    *
-   * @throws {TaskDataValidationError} If the payload does not match the expected schema for the task kind
+   * @throws {InvalidArgumentError} If the payload does not match the expected schema for the task kind
    */
   // biome-ignore lint/suspicious/noExplicitAny: these are used in inference position
   parse<const TTaskDef extends TaskDefinition<any, any>>(
@@ -42,7 +41,7 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
     async update(handle, taskId, data, oldState) {
       const requestedTask = await taskRepository.getById(handle, taskId)
       if (!requestedTask) {
-        throw new TaskNotFound(taskId)
+        throw new NotFoundError(`Task(ID=${taskId}) not found`)
       }
       // If the caller wants to update the task data, we must validate it against the task kind.
       let newPayload = requestedTask.payload
@@ -76,7 +75,9 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
       const result = schema.safeParse(payload)
       if (!result.success) {
         logger.error("Failed to parse task payload for TaskKind=%s: %o", taskDefinition.type, result.error)
-        throw new TaskDataValidationError(taskDefinition.type, result.error)
+        // NOTE: We deliberately DO NOT include the actual parsing error in the thrown error, as it may contain private
+        // or sensitive information depending on the task kind.
+        throw new InvalidArgumentError(`Invalid payload for task of type ${taskDefinition.type}`)
       }
       return result.data
     },

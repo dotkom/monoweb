@@ -2,8 +2,8 @@ import type { Company } from "@dotkomonline/types"
 import { addDays } from "date-fns"
 import { beforeEach, describe, expect, it } from "vitest"
 import { core, dbClient } from "../../../vitest-integration.setup"
+import { InvalidArgumentError } from "../../error"
 import { getCompanyMock, getJobListingMock } from "../../mock"
-import { InvalidEndDateError } from "./job-listing-error"
 
 describe.skip("job-listings", async () => {
   let company: Company
@@ -32,7 +32,7 @@ describe.skip("job-listings", async () => {
         company.id,
         []
       )
-    ).rejects.toThrow(InvalidEndDateError)
+    ).rejects.toThrow(InvalidArgumentError)
   })
 
   it("should be able to update locations by diffing", async () => {

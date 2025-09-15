@@ -7,13 +7,9 @@ import type { admin_directory_v1 } from "googleapis"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
 import { configuration } from "../../configuration"
+import { IllegalStateError, NotFoundError } from "../../error"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
-import {
-  WorkspaceDirectoryNotAvailableError,
-  WorkspaceNotEnabledError,
-  WorkspaceUserNotFoundError,
-} from "./workspace-error"
 
 const TEMPORARY_PASSWORD_LENGTH = 8
 
@@ -74,11 +70,10 @@ export function getWorkspaceService(
   groupService: GroupService
 ): WorkspaceService {
   if (!configuration.WORKSPACE_ENABLED) {
-    throw new WorkspaceNotEnabledError()
+    throw new IllegalStateError("Google Workspace integration is not enabled")
   }
-
   if (!directory) {
-    throw new WorkspaceDirectoryNotAvailableError()
+    throw new IllegalStateError("Google Workspace directory could not be initialized")
   }
 
   const logger = getLogger("workspace-sync-service")
@@ -203,7 +198,7 @@ export function getWorkspaceService(
       const workspaceUser = await this.findWorkspaceUser(handle, userId)
 
       if (!workspaceUser) {
-        throw new WorkspaceUserNotFoundError(`UserID(${userId})`)
+        throw new NotFoundError(`Workspace User for UserID(${userId}) not found`)
       }
 
       return workspaceUser

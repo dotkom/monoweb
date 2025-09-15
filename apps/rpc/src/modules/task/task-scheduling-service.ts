@@ -4,7 +4,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { AttendanceId, AttendeeId, EventId, FeedbackFormId, Task, TaskId } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import { NotImplementedError } from "../../error"
+import { UnimplementedError } from "../../error"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 import type { TaskService } from "./task-service"
@@ -81,10 +81,10 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
     // NOTE: The handle here is completely unused, but because the local backend needs to schedule within the caller
     // transaction, this one also needs to take a handle. Unfortunate but necessary.
     async scheduleAt(_, kind, data) {
-      throw new NotImplementedError("EventBridgeSchedulingService#schedule")
+      throw new UnimplementedError("EventBridgeSchedulingService#schedule")
     },
     async cancel(_, id) {
-      throw new NotImplementedError("EventBridgeSchedulingService#cancel")
+      throw new UnimplementedError("EventBridgeSchedulingService#cancel")
     },
     async findReserveAttendeeTask(_, attendeeId, attendanceId) {
       logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
