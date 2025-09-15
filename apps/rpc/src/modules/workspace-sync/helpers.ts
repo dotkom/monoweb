@@ -32,7 +32,7 @@ const getLocal = (localResolvable: User | Group | string): string => {
  * getEmail("user@online.ntnu.no") // "user@online.ntnu.no"
  * getEmail("user", "custom.domain") // "user@custom.domain"
  */
-export function getEmail(localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN) {
+export function getEmail(localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN): string {
   const local = getLocal(localResolvable)
 
   if (local.includes("@")) {
@@ -53,7 +53,7 @@ export function getEmail(localResolvable: User | Group | string, domain = config
  * getKey("full.name@online.ntnu.no") // "full.name@online.ntnu.no"
  * getKey("string", "custom.domain") // "string@custom.domain"
  */
-export const getKey = (localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN) => {
+export const getKey = (localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN): string => {
   if (typeof localResolvable === "object") {
     if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
       return localResolvable.workspaceUserId
@@ -65,6 +65,29 @@ export const getKey = (localResolvable: User | Group | string, domain = configur
   }
 
   return getEmail(localResolvable, domain)
+}
+
+export const getKeys = (localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN): string[] => {
+  const keys = new Set<string>()
+
+  const baseKey = getKey(localResolvable, domain)
+
+  // In older versions of OnlineWeb, all dashes (-) were removed from the email local part.
+  // We add this to the set of keys to attempt to find an account created by the older version.
+  keys.add(baseKey)
+  keys.add(baseKey.replace("-", ""))
+
+  const names = getLocal(localResolvable).split(".").filter(Boolean)
+
+  // In older version of OnlineWeb, it was less common to have your full name on your profile.
+  // A lot of older accounts were generated with only first name and last name, so we attempt to
+  // find those accounts as well.
+  if (names.length > 2) {
+    keys.add(getEmail(`${names[0]} ${names.at(-1)}`, domain))
+    keys.add(getEmail(`${names[0]} ${names.at(-1)}`.replace("-", ""), domain))
+  }
+
+  return [...keys]
 }
 
 export const getTemporaryPassword = () => {

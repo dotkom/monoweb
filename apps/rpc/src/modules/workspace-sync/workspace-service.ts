@@ -7,7 +7,7 @@ import invariant from "tiny-invariant"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 import { getDirectory } from "./client"
-import { getCommitteeEmail, getEmail, getKey, getTemporaryPassword, joinOnWorkspaceUserId } from "./helpers"
+import { getCommitteeEmail, getEmail, getKey, getKeys, getTemporaryPassword, joinOnWorkspaceUserId } from "./helpers"
 import { WorkspaceUserNotFoundError } from "./workspace-error"
 
 export interface WorkspaceService {
@@ -30,8 +30,8 @@ export interface WorkspaceService {
     recoveryCodes: string[] | null
     password: string
   }>
-  getWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User>
   findWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User | null>
+  getWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User>
 
   // Groups
   createWorkspaceGroup(
@@ -142,50 +142,44 @@ export function getWorkspaceService(userService: UserService, groupService: Grou
       }
     },
 
-    async getWorkspaceUser(handle, userId) {
-      const directory = getDirectory()
-
-      const user = await userService.getById(handle, userId)
-
-      const response = await directory.users.get({
-        userKey: getKey(user),
-      })
-
-      if (response.status === 404) {
-        throw new WorkspaceUserNotFoundError(getKey(user))
-      }
-
-      if (response.status !== 200) {
-        logger.warn("Failed to fetch user from workspace")
-        throw new Error()
-      }
-
-      invariant(response.data, "Expected response data to be defined")
-
-      return response.data
-    },
-
     async findWorkspaceUser(handle, userId) {
       const directory = getDirectory()
 
       const user = await userService.getById(handle, userId)
+      const keys = getKeys(user)
 
-      const response = await directory.users.get({
-        userKey: getKey(user),
-      })
+      let workspaceUser: admin_directory_v1.Schema$User | null = null
 
-      if (response.status === 404) {
-        return null
+      for (const key of keys) {
+        const response = await directory.users.get({
+          userKey: key,
+        })
+
+        if (response.status === 404) {
+          continue
+        }
+
+        if (response.status !== 200) {
+          logger.warn("Failed to fetch user from workspace")
+          throw new Error()
+        }
+
+        workspaceUser = response.data
+
+        break
       }
 
-      if (response.status !== 200) {
-        logger.warn("Failed to fetch user from workspace")
-        throw new Error()
+      return workspaceUser
+    },
+
+    async getWorkspaceUser(handle, userId) {
+      const workspaceUser = await this.findWorkspaceUser(handle, userId)
+
+      if (!workspaceUser) {
+        throw new WorkspaceUserNotFoundError(`UserID(${userId})`)
       }
 
-      invariant(response.data, "Expected response data to be defined")
-
-      return response.data
+      return workspaceUser
     },
 
     async resetWorkspaceUserPassword(handle, userId) {
