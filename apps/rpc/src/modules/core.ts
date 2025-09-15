@@ -72,7 +72,11 @@ const workspaceServiceAccountJsonSchema = z.object({
 })
 
 export function getDirectory(): admin_directory_v1.Admin {
-  if (!configuration.WORKSPACE_ENABLED) {
+  if (
+    !configuration.WORKSPACE_ENABLED ||
+    configuration.WORKSPACE_SERVICE_ACCOUNT === null ||
+    configuration.WORKSPACE_USER_ACCOUNT_EMAIL === null
+  ) {
     throw new WorkspaceNotEnabledError()
   }
 
