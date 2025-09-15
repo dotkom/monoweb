@@ -3,8 +3,8 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
+import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
-import { OfflineNotFoundError } from "./offline-error"
 import type { OfflineRepository } from "./offline-repository"
 
 export interface OfflineService {
@@ -28,7 +28,9 @@ export function getOfflineService(
   return {
     async getById(handle, id) {
       const offline = await offlineRepository.getById(handle, id)
-      if (!offline) throw new OfflineNotFoundError(id)
+      if (!offline) {
+        throw new NotFoundError(`Offline(ID=${id}) not found`)
+      }
       return offline
     },
     async getAll(handle, page) {

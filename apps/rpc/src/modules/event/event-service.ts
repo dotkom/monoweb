@@ -9,8 +9,8 @@ import type {
   GroupId,
   UserId,
 } from "@dotkomonline/types"
+import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
-import { EventNotFoundError, EventRelationshipError } from "./event-error"
 import type { EventRepository } from "./event-repository"
 
 export interface EventService {
@@ -41,7 +41,7 @@ export interface EventService {
   /**
    * Get an event by its id
    *
-   * @throws {EventNotFoundError} if the event does not exist
+   * @throws {NotFoundError} if the event does not exist
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
   getByAttendance(handle: DBHandle, attendanceId: AttendanceId): Promise<Event>
@@ -73,14 +73,14 @@ export function getEventService(eventRepository: EventRepository): EventService 
     async getEventById(handle, eventId) {
       const event = await eventRepository.findById(handle, eventId)
       if (!event) {
-        throw new EventNotFoundError(eventId)
+        throw new NotFoundError(`Event(ID=${eventId}) not found`)
       }
       return event
     },
     async getByAttendance(handle, attendanceId) {
       const event = await eventRepository.findByAttendanceId(handle, attendanceId)
       if (event === null) {
-        throw new EventNotFoundError(`Event(AttendanceId=${attendanceId}) not found.`)
+        throw new NotFoundError(`Event(AttendanceId=${attendanceId}) not found`)
       }
       return event
     },
@@ -107,7 +107,7 @@ export function getEventService(eventRepository: EventRepository): EventService 
     },
     async updateEventParent(handle, eventId, parentEventId) {
       if (parentEventId === eventId) {
-        throw new EventRelationshipError(`Event(ID=${eventId}) cannot be assigned itself as a parent.`)
+        throw new FailedPreconditionError(`Event(ID=${eventId}) cannot be assigned itself as a parent.`)
       }
       const event = await this.getEventById(handle, eventId)
       if (parentEventId === null) {
@@ -118,7 +118,7 @@ export function getEventService(eventRepository: EventRepository): EventService 
       // 1. that we do not create circular references
       // 2. that the max-height of the event tree is 2 (aka, only one level of nesting)
       if (parentEvent.parentId !== null) {
-        throw new EventRelationshipError(
+        throw new FailedPreconditionError(
           `Event(ID=${event.id}) cannot be assigned parent, as parent Event(ID=${parentEvent.id}) already has a parent.`
         )
       }

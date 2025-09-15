@@ -10,9 +10,9 @@ import type {
 } from "@dotkomonline/types"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
+import { NotFoundError } from "../../error"
 import type { GroupService } from "../group/group-service"
 import type { MarkService } from "./mark-service"
-import { PersonalMarkNotFoundError } from "./personal-mark-error"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
@@ -24,7 +24,7 @@ export interface PersonalMarkService {
   /**
    * Remove a personal mark from a user
    *
-   * @throws {PersonalMarkNotFoundError} if the personal mark does not exist
+   * @throws {NotFoundError} if the personal mark does not exist
    */
   removeFromUser(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
   listVisibleInformationForUser(handle: DBHandle, userId: UserId): Promise<VisiblePersonalMarkDetails[]>
@@ -65,7 +65,7 @@ export function getPersonalMarkService(
         const mark = marks.find((mark) => mark.id === personalMark.markId)
 
         if (!mark) {
-          throw new PersonalMarkNotFoundError("Failed to find mark for personalMark")
+          throw new NotFoundError(`Mark(ID=${personalMark.markId}) not found`)
         }
 
         return {
@@ -77,7 +77,7 @@ export function getPersonalMarkService(
     async removeFromUser(handle, userId, markId) {
       const personalMark = await personalMarkRepository.removeFromUserId(handle, userId, markId)
       if (!personalMark) {
-        throw new PersonalMarkNotFoundError(markId)
+        throw new NotFoundError(`PersonalMark(UserID=${userId}, MarkID=${markId}) not found`)
       }
       return personalMark
     },

@@ -9,10 +9,10 @@ import type {
   FeedbackQuestionWrite,
 } from "@dotkomonline/types"
 import { addWeeks, isEqual } from "date-fns"
+import { NotFoundError } from "../../error"
 import type { EventService } from "../event/event-service"
 import { tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
-import { FeedbackFormNotFoundError } from "./feedback-form-errors"
 import type { FeedbackFormRepository } from "./feedback-form-repository"
 
 export interface FeedbackFormService {
@@ -113,7 +113,7 @@ export function getFeedbackFormService(
     async getById(handle, id) {
       const feedbackForm = await formRepository.getById(handle, id)
       if (!feedbackForm) {
-        throw new FeedbackFormNotFoundError()
+        throw new NotFoundError(`FeedbackForm(ID=${id}) not found`)
       }
 
       return feedbackForm
@@ -124,7 +124,7 @@ export function getFeedbackFormService(
     async getByEventId(handle, eventId) {
       const feedbackForm = await formRepository.getByEventId(handle, eventId)
       if (!feedbackForm) {
-        throw new FeedbackFormNotFoundError()
+        throw new NotFoundError(`FeedbackForm(EventID=${eventId}) not found`)
       }
 
       return feedbackForm
@@ -132,7 +132,7 @@ export function getFeedbackFormService(
     async getPublicForm(handle, publicResultsToken) {
       const feedbackForm = await formRepository.getByPublicResultsToken(handle, publicResultsToken)
       if (!feedbackForm) {
-        throw new FeedbackFormNotFoundError()
+        throw new NotFoundError(`FeedbackForm(PublicResultsToken=${publicResultsToken}) not found`)
       }
 
       const { questions, ...form } = feedbackForm
@@ -146,7 +146,7 @@ export function getFeedbackFormService(
     async getPublicResultsToken(handle, id) {
       const token = await formRepository.getPublicResultsToken(handle, id)
       if (!token) {
-        throw new FeedbackFormNotFoundError()
+        throw new NotFoundError(`FeedbackForm(ID=${id}) not found`)
       }
 
       return token

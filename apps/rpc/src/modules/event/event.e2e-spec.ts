@@ -2,7 +2,7 @@ import type { EventWrite, GroupWrite } from "@dotkomonline/types"
 import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
 import { core, dbClient } from "../../../vitest-integration.setup"
-import { EventRelationshipError } from "./event-error"
+import { FailedPreconditionError } from "../../error"
 
 // biome-ignore lint/suspicious/noExportsInTest: used in another spec
 export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
@@ -119,7 +119,7 @@ describe("event integration tests", () => {
   it("should prevent assigning itself as a parent event", async () => {
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
     await expect(core.eventService.updateEventParent(dbClient, event.id, event.id)).rejects.toThrow(
-      EventRelationshipError
+      FailedPreconditionError
     )
   })
 
@@ -132,7 +132,7 @@ describe("event integration tests", () => {
 
     // But it should now be illegal to set event2 as a parent of event1
     await expect(core.eventService.updateEventParent(dbClient, event1.id, event2.id)).rejects.toThrow(
-      EventRelationshipError
+      FailedPreconditionError
     )
   })
 
@@ -146,7 +146,7 @@ describe("event integration tests", () => {
 
     // It is not legal to set event2 as a parent of event3, as event2 already has a parent
     await expect(core.eventService.updateEventParent(dbClient, event3.id, event2.id)).rejects.toThrowError(
-      EventRelationshipError
+      FailedPreconditionError
     )
   })
 })
