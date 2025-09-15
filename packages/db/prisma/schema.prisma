@@ -121,8 +121,8 @@ model Group {
   slug             String    @id @unique
   abbreviation     String
   name             String?
-  description      String?
-  about            String
+  shortDescription String?
+  description      String
   imageUrl         String?
   email            String?
   contactUrl       String?
@@ -279,23 +279,23 @@ model Attendee {
 }
 
 model Event {
-  id              String        @id @default(uuid())
-  title           String
-  start           DateTime      @db.Timestamptz(3)
-  end             DateTime      @db.Timestamptz(3)
-  status          EventStatus
-  description     String
-  subtitle        String?
-  imageUrl        String?
-  locationTitle   String?
-  locationAddress String?
-  locationLink    String?
-  attendance      Attendance?   @relation(fields: [attendanceId], references: [id])
-  attendanceId    String?
-  type            EventType
-  feedbackForm    FeedbackForm?
-  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
+  id               String        @id @default(uuid())
+  title            String
+  start            DateTime      @db.Timestamptz(3)
+  end              DateTime      @db.Timestamptz(3)
+  status           EventStatus
+  description      String
+  shortDescription String?
+  imageUrl         String?
+  locationTitle    String?
+  locationAddress  String?
+  locationLink     String?
+  attendance       Attendance?   @relation(fields: [attendanceId], references: [id])
+  attendanceId     String?
+  type             EventType
+  feedbackForm     FeedbackForm?
+  createdAt        DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
   parentId String?
   parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
@@ -429,7 +429,7 @@ model JobListing {
   company          Company        @relation(fields: [companyId], references: [id])
   title            String
   description      String
-  about            String
+  shortDescription String?
   start            DateTime       @db.Timestamptz(3)
   end              DateTime       @db.Timestamptz(3)
   featured         Boolean
@@ -510,11 +510,11 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  RESERVE_ATTENDEE           @map("RESERVE_ATTENDEE")
-  CHARGE_ATTENDEE            @map("CHARGE_ATTENDEE")
-  MERGE_ATTENDANCE_POOLS     @map("MERGE_ATTENDANCE_POOLS")
-  VERIFY_PAYMENT             @map("VERIFY_PAYMENT")
-  VERIFY_FEEDBACK_ANSWERED   @map("VERIFY_FEEDBACK_ANSWERED")
+  RESERVE_ATTENDEE         @map("RESERVE_ATTENDEE")
+  CHARGE_ATTENDEE          @map("CHARGE_ATTENDEE")
+  MERGE_ATTENDANCE_POOLS   @map("MERGE_ATTENDANCE_POOLS")
+  VERIFY_PAYMENT           @map("VERIFY_PAYMENT")
+  VERIFY_FEEDBACK_ANSWERED @map("VERIFY_FEEDBACK_ANSWERED")
 
   @@map("task_type")
 }

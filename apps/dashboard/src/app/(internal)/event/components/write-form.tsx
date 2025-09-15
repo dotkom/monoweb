@@ -49,7 +49,6 @@ const DEFAULT_VALUES = {
   type: "SOCIAL",
 
   title: "",
-  subtitle: null,
   description: "",
   locationTitle: null,
   locationAddress: null,
@@ -75,10 +74,6 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Arrangementnavn",
         placeholder: "Silent Disco",
         withAsterisk: true,
-      }),
-      subtitle: createTextInput({
-        label: "Ledetekst",
-        placeholder: "En uforglemmelig kveld med musikk og dans!",
       }),
       description: createRichTextInput({
         label: "Beskrivelse",

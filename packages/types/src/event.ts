@@ -32,7 +32,6 @@ export const EventWriteSchema = EventSchema.pick({
   start: true,
   end: true,
   description: true,
-  subtitle: true,
   imageUrl: true,
   locationTitle: true,
   locationAddress: true,

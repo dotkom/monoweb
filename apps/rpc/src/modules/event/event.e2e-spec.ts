@@ -10,8 +10,7 @@ export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     type: "COMMITTEE",
     abbreviation: "Dotkom",
     name: "Drift- og utviklingskomiteen",
-    description: faker.lorem.sentences(1),
-    about: faker.lorem.paragraphs(3),
+    description: faker.lorem.paragraphs(3),
     contactUrl: faker.internet.url(),
     email: faker.internet.email(),
     imageUrl: faker.image.url(),
@@ -31,11 +30,10 @@ export function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
     start: faker.date.future(),
     end: faker.date.future(),
     description: faker.lorem.paragraphs(3),
-    subtitle: faker.lorem.lines(1),
     imageUrl: faker.image.url(),
     locationTitle: faker.location.city(),
-    locationLink: null,
     locationAddress: faker.location.streetAddress(),
+    locationLink: null,
     ...input,
   }
 }

@@ -75,16 +75,9 @@ export const useGroupWriteForm = ({
         withAsterisk: true,
         required: true,
       }),
-      about: createTextareaInput({
-        label: "Om gruppen",
-        withAsterisk: true,
-        required: true,
-        rows: 5,
-      }),
       description: createTextareaInput({
         label: "Beskrivelse",
-        withAsterisk: false,
-        required: false,
+        required: true,
         rows: 5,
       }),
       email: createTextInput({

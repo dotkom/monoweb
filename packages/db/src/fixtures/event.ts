@@ -39,7 +39,6 @@ export const getEventFixtures = (attendanceIds: string[]) =>
         <h2>Sosial del</h2>
         <p>Etter kurset blir det en uformell samling for de som ønsker, med mulighet for å diskutere videre, dele erfaringer og bygge nettverk. Dette er en fin anledning til å bli kjent med andre som er interessert i programvareutvikling og testing.</p>
       `),
-      subtitle: "Kurs i fixtures",
       imageUrl: "https://e0.365dm.com/23/06/1600x900/skysports-arsenal-fixtures_6186945.jpg",
       locationAddress: "Høgskoleringen 1, 7034 Trondheim",
       locationTitle: "Hovedbygget",
@@ -66,8 +65,6 @@ export const getEventFixtures = (attendanceIds: string[]) =>
         <p>There will be a joint departure from Gløshaugen on January 11.</p>
         <p>Any selections regarding the event should be sent to: arrkom@online.ntnu.no</p>
       `),
-      subtitle:
-        "Tidspunktet for Åreturen 2025 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!! Datoene for ÅREts tur blir 11. - 14. januar! 🏂🏂",
       imageUrl: "https://aresweden.com/app/uploads/2019/12/NiclasVestefjell_4000px_.jpg",
       locationTitle: "Åre",
       locationAddress: "Åre, Sverige",
@@ -124,7 +121,6 @@ export const getEventFixtures = (attendanceIds: string[]) =>
         </blockquote>
         <p>Spørsmål? Ta kontakt med arrangørene. Vi sees på taket.</p>
       `),
-      subtitle: "Feir sommeren med oss på takterrassen!",
       imageUrl: "https://c8.alamy.com/comp/2JMRWDA/sommerfest-balloons-confetti-2JMRWDA.jpg",
       locationTitle: "Takterrassen",
       locationAddress: "A4, Realfagbygget",
@@ -173,7 +169,6 @@ export const getEventFixtures = (attendanceIds: string[]) =>
         <p>Unngå sterk parfyme eller tyggegummi under kurset - det forstyrrer både deg selv og andre i smaksopplevelsen. Ta med notatbok hvis du vil huske detaljer fra smaksrundene.</p>
         <p>Dette er en kveld for både nybegynnere og de som allerede har interesse for vin. Ingen forkunnskaper kreves - bare nysgjerrighet og åpent sinn.</p>
       `),
-      subtitle: "Bli bedre kjent med vinens verden",
       imageUrl: "https://wine-fun.contents.ne.jp/wp-content/uploads/sites/2/2022/06/eye_1009-1024x538.jpg",
       locationTitle: "Smakslab",
       locationAddress: "Studentersamfundet, Erling Skakkes gate 7, Trondheim",
@@ -211,7 +206,6 @@ export const getEventFixtures = (attendanceIds: string[]) =>
         </blockquote>
         <p>Dette møtet sikrer at alle er best mulig forberedt før ekskursjonen. Ta med notatbok hvis du vil ha en oversiktlig sjekkliste i etterkant.</p>
       `),
-      subtitle: "Alt du trenger å vite før turen",
       imageUrl: "https://www.987thepeak.com/wp-content/uploads/2021/08/pexels-photo-1710482.jpeg",
       locationTitle: "Tihlde-rommet",
       locationAddress: "A4-112, Realfagbygget",
@@ -261,7 +255,6 @@ export const getEventFixtures = (attendanceIds: string[]) =>
         Send oss en mail på <a href="mailto:bedkom@online.ntnu.no">bedkom@online.ntnu.no</a> om noe skulle være uklart.</p>
         <p>Påmelding er bindende etter avmeldingsfristen og det plikt til å møte på alt.</p>
       `),
-      subtitle: "Årets IT-ekskursjon!",
       imageUrl: "https://www.oslomet.no/var/oslomet/storage/images/6/4/2/7/127246-8-eng-GB/oslo-by-2400x1200px.jpg",
       locationTitle: "Oslo",
       locationAddress: null,
@@ -311,7 +304,6 @@ export const getEventFixtures = (attendanceIds: string[]) =>
           prosjektene i Norge innenfor Analytics og Business Intelligence (BI).
         </p>
       `),
-      subtitle: "Kveldsarrangement med Twoday er alltid gøy",
       imageUrl: "https://www.twoday.lt/hubfs/LT%20-%20twoday%20Lithuania/LT%20-%20Meta/Meta-min.png",
       locationTitle: "Twodays kontorer",
       locationAddress: "Karenslyst allé 57, Oslo",
