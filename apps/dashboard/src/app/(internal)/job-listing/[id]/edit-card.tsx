@@ -22,7 +22,6 @@ export const JobListingEditCard: FC = () => {
       companyId: jobListing.company.id,
       description: jobListing.description,
       end: jobListing.end,
-      about: jobListing.about,
       start: jobListing.start,
       title: jobListing.title,
       applicationLink: jobListing.applicationLink,

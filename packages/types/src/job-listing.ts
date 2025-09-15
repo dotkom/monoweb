@@ -29,6 +29,7 @@ export const JobListingWriteSchema = JobListingSchema.omit({
   updatedAt: true,
   company: true,
   locations: true,
+  shortDescription: true,
 })
 
 export type JobListing = z.infer<typeof JobListingSchema>

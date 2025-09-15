@@ -55,10 +55,6 @@ export const useEventEditForm = ({
         placeholder: "Silent Disco",
         withAsterisk: true,
       }),
-      subtitle: createTextInput({
-        label: "Ledetekst",
-        placeholder: "En uforglemmelig kveld med musikk og dans!",
-      }),
       description: createRichTextInput({
         label: "Beskrivelse",
         required: true,

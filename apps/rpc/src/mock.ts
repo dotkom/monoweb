@@ -28,8 +28,6 @@ export const getCompanyMock = (defaults: Partial<CompanyWrite> = {}): CompanyWri
 export const getJobListingMock = (defaults: Partial<JobListingWrite> = {}): JobListingWrite => ({
   title: "Core Developer",
   description:
-    "As a Core Developer, you will design, implement, and optimize core functionalities of Vespa, ensuring top-notch performance and reliability.",
-  about:
     "You will work on challenging search and recommendation use cases, collaborating with a cross-functional team of engineers and developer advocates.",
   start: addWeeks(addYears(new Date(), 1), 2),
   end: addWeeks(addYears(new Date(), 1), 4),
