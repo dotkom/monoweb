@@ -1,4 +1,4 @@
-import "../instrumentation"
+import "../instrumentation.ts"
 
 import { getLogger } from "@dotkomonline/logger"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
@@ -8,13 +8,13 @@ import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/a
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import fastify from "fastify"
 import rawBody from "fastify-raw-body"
-import { type AppRouter, appRouter } from "../app-router"
-import { identifyCallerIAMIdentity } from "../aws"
-import { configuration } from "../configuration"
-import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
-import { registerStripeWebhookRoutes } from "../http-routes/stripe"
-import { createServiceLayer, createThirdPartyClients } from "../modules/core"
-import { createContext } from "../trpc"
+import { type AppRouter, appRouter } from "../app-router.ts"
+import { identifyCallerIAMIdentity } from "../aws.ts"
+import { configuration } from "../configuration.ts"
+import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe.ts"
+import { registerStripeWebhookRoutes } from "../http-routes/stripe.ts"
+import { createServiceLayer, createThirdPartyClients } from "../modules/core.ts"
+import { createContext } from "../trpc.ts"
 
 const logger = getLogger("rpc")
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")

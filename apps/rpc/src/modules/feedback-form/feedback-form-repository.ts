@@ -8,7 +8,7 @@ import {
   type FeedbackPublicResultsToken,
   type FeedbackQuestionWrite,
 } from "@dotkomonline/types"
-import { parseOrReport } from "../../invariant"
+import { parseOrReport } from "../../invariant.ts"
 
 export interface FeedbackFormRepository {
   create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>

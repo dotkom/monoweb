@@ -6,8 +6,8 @@ import type { ManagementClient } from "auth0"
 import type Stripe from "stripe"
 import { afterAll, beforeEach } from "vitest"
 import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
-import type { Configuration } from "./src/configuration"
-import { createServiceLayer } from "./src/modules/core"
+import type { Configuration } from "./src/configuration.ts"
+import { createServiceLayer } from "./src/modules/core.ts"
 
 faker.seed(69)
 

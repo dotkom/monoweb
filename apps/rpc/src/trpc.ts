@@ -7,8 +7,8 @@ import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
-import type { Affiliation, AffiliationSet } from "./modules/authorization-service"
-import type { ServiceLayer } from "./modules/core"
+import type { Affiliation, AffiliationSet } from "./modules/authorization-service.ts"
+import type { ServiceLayer } from "./modules/core.ts"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */

@@ -75,8 +75,8 @@ import type { DBClient, Prisma } from "@dotkomonline/db"
 import { type GroupId, type GroupRoleWrite, getDefaultGroupMemberRoles } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import z from "zod"
-import { configuration } from "../configuration"
-import { createServiceLayer, createThirdPartyClients } from "../modules/core"
+import { configuration } from "../configuration.ts"
+import { createServiceLayer, createThirdPartyClients } from "../modules/core.ts"
 
 type OW4GroupMembership = z.infer<typeof OW4GroupMembershipSchema>
 const OW4GroupMembershipSchema = z.object({

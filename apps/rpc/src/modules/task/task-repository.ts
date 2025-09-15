@@ -11,8 +11,8 @@ import {
   type TaskWrite,
 } from "@dotkomonline/types"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
-import { parseOrReport } from "../../invariant"
-import { tasks } from "./task-definition"
+import { parseOrReport } from "../../invariant.ts"
+import { tasks } from "./task-definition.ts"
 
 export interface TaskRepository {
   create(handle: DBHandle, type: TaskType, data: TaskWrite): Promise<Task>

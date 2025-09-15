@@ -8,10 +8,10 @@ import type {
   JobListingWrite,
 } from "@dotkomonline/types"
 import { isAfter } from "date-fns"
-import { assert } from "../../error"
-import type { Pageable } from "../../query"
-import { InvalidEndDateError, JobListingNotFoundError } from "./job-listing-error"
-import type { JobListingRepository } from "./job-listing-repository"
+import { assert } from "../../error.ts"
+import type { Pageable } from "../../query.ts"
+import { InvalidEndDateError, JobListingNotFoundError } from "./job-listing-error.ts"
+import type { JobListingRepository } from "./job-listing-repository.ts"
 
 export interface JobListingService {
   getById(handle: DBHandle, id: JobListingId): Promise<JobListing>

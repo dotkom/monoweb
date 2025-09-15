@@ -9,8 +9,8 @@
       "types": "./src/index.ts"
     },
     "./schemas": {
-      "import": "./src/schemas.ts",
-      "types": "./src/schemas.ts"
+      "import": "./src/schemas-reexport.ts",
+      "types": "./src/schemas-reexport.ts"
     },
     "./test-harness": {
       "import": "./src/test-harness.ts",

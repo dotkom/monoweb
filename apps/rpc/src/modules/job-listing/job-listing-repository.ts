@@ -9,8 +9,8 @@ import {
   JobListingSchema,
   type JobListingWrite,
 } from "@dotkomonline/types"
-import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { parseOrReport } from "../../invariant.ts"
+import { type Pageable, pageQuery } from "../../query.ts"
 
 export interface JobListingRepository {
   getById(handle: DBHandle, jobListingId: JobListingId): Promise<JobListing | null>

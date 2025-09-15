@@ -1,8 +1,8 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
-import type { Pageable } from "../../query"
-import { CompanyNotFoundError } from "./company-error"
-import type { CompanyRepository } from "./company-repository"
+import type { Pageable } from "../../query.ts"
+import { CompanyNotFoundError } from "./company-error.ts"
+import type { CompanyRepository } from "./company-repository.ts"
 
 export interface CompanyService {
   /**

@@ -1,7 +1,7 @@
 import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts"
 import { getLogger } from "@dotkomonline/logger"
 import { trace } from "@opentelemetry/api"
-import { configuration } from "./configuration"
+import { configuration } from "./configuration.ts"
 
 const logger = getLogger("rpc/aws")
 

@@ -1,5 +1,5 @@
 import { expect, it } from "vitest"
-import { slugify } from "../slugify"
+import { slugify } from "../slugify.ts"
 
 it("Adequately slugifies some event titles", () => {
   expect(slugify("17. mai frokost")).toMatchInlineSnapshot(`"17-mai-frokost"`)

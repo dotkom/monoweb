@@ -10,8 +10,8 @@ import {
   ArticleTagSchema,
   type ArticleWrite,
 } from "@dotkomonline/types"
-import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { parseOrReport } from "../../invariant.ts"
+import { type Pageable, pageQuery } from "../../query.ts"
 
 export interface ArticleRepository {
   create(handle: DBHandle, input: ArticleWrite): Promise<Article>

@@ -5,7 +5,7 @@ import {
   type NotificationPermissionsWrite,
   type UserId,
 } from "@dotkomonline/types"
-import { parseOrReport } from "../../invariant"
+import { parseOrReport } from "../../invariant.ts"
 
 export interface NotificationPermissionsRepository {
   getByUserId(handle: DBHandle, id: UserId): Promise<NotificationPermissions | null>

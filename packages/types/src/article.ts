@@ -1,6 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { buildAnyOfFilter, buildSearchFilter } from "./filters"
+import { buildAnyOfFilter, buildSearchFilter } from "./filters.ts"
 
 export const ArticleTagSchema = schemas.ArticleTagSchema.extend({})
 

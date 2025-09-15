@@ -1,28 +1,21 @@
 FROM node:22-alpine@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5fe231d63de5b AS base
 
-FROM base AS builder
-WORKDIR /app
-
-RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
-COPY apps ./apps
-COPY packages ./packages
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-RUN turbo prune @dotkomonline/rpc --docker
-
 FROM base AS installer
 WORKDIR /app
 
-RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
-COPY --from=builder /app/out/full .
+COPY apps ./apps
+COPY packages ./packages
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+
+RUN npm install -g pnpm@10.15.1 --ignore-scripts
 RUN pnpm install --ignore-scripts
 RUN pnpm generate
 
 # Install for production
-RUN pnpm install --prod --ignore-scripts
+RUN pnpm deploy --prod --no-optional --ignore-scripts -F @dotkomonline/rpc /opt/rpc
 
 FROM base AS runner
-WORKDIR /app
+WORKDIR /opt/rpc
 
 RUN apk add --no-cache curl
 
@@ -37,7 +30,6 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 rpc
 USER rpc
 
-COPY --from=installer --chown=rpc:nodejs --chmod=755 /app .
-COPY --from=builder --chown=rpc:nodejs --chmod=755 /app/out/full .
+COPY --from=installer --chown=rpc:nodejs --chmod=755 /opt/rpc .
 
-CMD node --loader ./apps/rpc/runtime.mjs --experimental-strip-types ./apps/rpc/src/bin/server.ts
+CMD node --loader ./runtime.mjs --import="amaro/strip" --experimental-strip-types --enable-source-maps ./src/bin/server.ts

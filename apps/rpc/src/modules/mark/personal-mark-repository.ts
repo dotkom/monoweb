@@ -9,8 +9,8 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import z from "zod"
-import { parseOrReport } from "../../invariant"
-import { mapMark } from "./mark-repository"
+import { parseOrReport } from "../../invariant.ts"
+import { mapMark } from "./mark-repository.ts"
 
 export interface PersonalMarkRepository {
   getByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>

@@ -1,7 +1,7 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { GroupSchema } from "./group"
-import { PublicUserSchema } from "./user"
+import { GroupSchema } from "./group.ts"
+import { PublicUserSchema } from "./user.ts"
 
 export const MarkSchema = schemas.MarkSchema.extend({
   groups: z.array(GroupSchema),

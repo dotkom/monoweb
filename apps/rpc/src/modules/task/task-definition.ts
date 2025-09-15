@@ -6,7 +6,7 @@ import {
   type TaskType,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { TaskDefinitionNotFoundError } from "./task-error"
+import { TaskDefinitionNotFoundError } from "./task-error.ts"
 
 export interface TaskDefinition<TData, TType extends TaskType> {
   getSchema(): z.ZodSchema<TData>

@@ -4,7 +4,7 @@ import { marked } from "marked"
 import { configuration } from "src/configuration"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 import z from "zod"
-import { DEFAULT_IMAGE_URL, dumpOW4Data } from "./migrate-from-ow4"
+import { DEFAULT_IMAGE_URL, dumpOW4Data } from "./migrate-from-ow4.ts"
 
 const createUniqueSlug = async (prisma: DBClient, slug: string) => {
   let uniqueSlug = slug

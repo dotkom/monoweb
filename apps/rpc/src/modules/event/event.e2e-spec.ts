@@ -1,8 +1,8 @@
 import type { EventWrite, GroupWrite } from "@dotkomonline/types"
 import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
-import { core, dbClient } from "../../../vitest-integration.setup"
-import { EventRelationshipError } from "./event-error"
+import { core, dbClient } from "../../../vitest-integration.setup.ts"
+import { EventRelationshipError } from "./event-error.ts"
 
 // biome-ignore lint/suspicious/noExportsInTest: used in another spec
 export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {

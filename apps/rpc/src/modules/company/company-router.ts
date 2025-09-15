@@ -1,7 +1,7 @@
 import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { PaginateInputSchema } from "../../query.ts"
+import { procedure, staffProcedure, t } from "../../trpc.ts"
 
 export const companyRouter = t.router({
   create: staffProcedure.input(CompanyWriteSchema).mutation(async ({ input, ctx }) => {
