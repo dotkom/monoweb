@@ -1,8 +1,9 @@
 import { GroupMemberSchema, GroupSchema, UserSchema } from "@dotkomonline/types"
 import type { admin_directory_v1 } from "googleapis"
+import invariant from "tiny-invariant"
 import z from "zod"
 import { staffProcedure, t } from "../../trpc"
-import { type Affiliation, isAffiliation } from "../authorization-service"
+import type { Affiliation } from "../authorization-service"
 
 export const workspaceRouter = t.router({
   createUser: staffProcedure
@@ -16,10 +17,13 @@ export const workspaceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.createWorkspaceUser(handle, input.userId)
+        return await workspaceService.createWorkspaceUser(handle, input.userId)
       })
     }),
 
@@ -31,10 +35,13 @@ export const workspaceRouter = t.router({
     )
     .output(z.custom<admin_directory_v1.Schema$User>().nullable())
     .query(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.findWorkspaceUser(handle, input.userId)
+        return await workspaceService.findWorkspaceUser(handle, input.userId)
       })
     }),
 
@@ -46,11 +53,14 @@ export const workspaceRouter = t.router({
     )
     .output(UserSchema)
     .mutation(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
         const user = await ctx.userService.getById(handle, input.userId)
-        const workspaceUser = await ctx.workspaceService.getWorkspaceUser(handle, input.userId)
+        const workspaceUser = await workspaceService.getWorkspaceUser(handle, input.userId)
 
         return await ctx.userService.update(handle, user.id, { workspaceUserId: workspaceUser.id })
       })
@@ -71,10 +81,13 @@ export const workspaceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.resetWorkspaceUserPassword(handle, input.userId)
+        return await workspaceService.resetWorkspaceUserPassword(handle, input.userId)
       })
     }),
 
@@ -91,10 +104,13 @@ export const workspaceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       ctx.authorize.requireAffiliation("dotkom", "hs")
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.createWorkspaceGroup(handle, input.groupSlug)
+        return await workspaceService.createWorkspaceGroup(handle, input.groupSlug)
       })
     }),
 
@@ -106,11 +122,14 @@ export const workspaceRouter = t.router({
     )
     .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
     .query(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
       ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.findWorkspaceGroup(handle, input.groupSlug)
+        return await workspaceService.findWorkspaceGroup(handle, input.groupSlug)
       })
     }),
 
@@ -123,11 +142,14 @@ export const workspaceRouter = t.router({
     )
     .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
     .mutation(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
       ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.addUserIntoWorkspaceGroup(handle, input.groupSlug, input.userId)
+        return await workspaceService.addUserIntoWorkspaceGroup(handle, input.groupSlug, input.userId)
       })
     }),
 
@@ -140,14 +162,13 @@ export const workspaceRouter = t.router({
     )
     .output(z.boolean())
     .mutation(async ({ input, ctx }) => {
-      const affiliations: Affiliation[] = ["dotkom", "hs"]
-      if (isAffiliation(input.groupSlug)) {
-        affiliations.push(input.groupSlug)
-      }
-      ctx.authorize.requireAffiliation(...affiliations)
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
+      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.removeUserFromWorkspaceGroup(handle, input.groupSlug, input.userId)
+        return await workspaceService.removeUserFromWorkspaceGroup(handle, input.groupSlug, input.userId)
       })
     }),
 
@@ -166,11 +187,14 @@ export const workspaceRouter = t.router({
         .array()
     )
     .query(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
       ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.getMembersForGroup(handle, input.groupSlug)
+        return await workspaceService.getMembersForGroup(handle, input.groupSlug)
       })
     }),
 
@@ -189,10 +213,13 @@ export const workspaceRouter = t.router({
         .array()
     )
     .query(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
       ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.workspaceService.getWorkspaceGroupsForWorkspaceUser(handle, input.userId)
+        return await workspaceService.getWorkspaceGroupsForWorkspaceUser(handle, input.userId)
       })
     }),
 })
