@@ -2,7 +2,7 @@ import { clearInterval, setInterval } from "node:timers"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
-import { trace } from "@opentelemetry/api"
+import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { secondsToMilliseconds } from "date-fns"
 import { IllegalStateError } from "../../error"
@@ -76,7 +76,7 @@ export function getLocalTaskExecutor(
       // as running regardless of whether the child transaction commits or rollbacks.
       logger.info("Running task", task.type, "with arguments", task.payload)
       await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
-      return await tracer.startActiveSpan(`TaskExecutor ${task.type}`, async (span) => {
+      return await tracer.startActiveSpan(`TaskExecutor ${task.type}`, { root: true }, async (span) => {
         span.setAttribute("rpc.service", "@dotkomonline/rpc")
         span.setAttribute("rpc.system", "trpc")
         try {
@@ -126,6 +126,7 @@ export function getLocalTaskExecutor(
           logger.error("Job with ID=%s failed with error: %o", task.id, error)
 
           if (error instanceof Error) {
+            span.setStatus({ code: SpanStatusCode.ERROR })
             span.recordException(error)
             captureException(error)
           }
@@ -137,6 +138,8 @@ export function getLocalTaskExecutor(
           if (!isError) {
             await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED", "RUNNING")
             logger.info("Job with ID=%s completed successfully", task.id)
+          } else {
+            span.setStatus({ code: SpanStatusCode.OK })
           }
           span.end()
         }
