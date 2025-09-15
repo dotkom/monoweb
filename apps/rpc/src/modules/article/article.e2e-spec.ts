@@ -3,7 +3,7 @@ import type { ArticleWrite } from "@dotkomonline/types"
 import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
 import { dbClient } from "../../../vitest-integration.setup"
-import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
+import { AlreadyExistsError, NotFoundError } from "../../error"
 import { getArticleRepository } from "./article-repository"
 import { getArticleService } from "./article-service"
 import { getArticleTagLinkRepository } from "./article-tag-link-repository"
@@ -36,12 +36,12 @@ describe("article integration tests", () => {
     expect(article.title).toBe(mock.title)
     // It should not allow creating an article with the same slug
     const duplicate = getMockArticle({ slug: mock.slug })
-    await expect(articleService.create(dbClient, duplicate)).rejects.toThrow(ArticleWithSlugAlreadyExistsError)
+    await expect(articleService.create(dbClient, duplicate)).rejects.toThrow(AlreadyExistsError)
   })
 
   it("should update an existing article if the slug is not used", async () => {
     // An unknown article cannot be updated
-    await expect(articleService.update(dbClient, crypto.randomUUID(), {})).rejects.toThrow(ArticleNotFoundError)
+    await expect(articleService.update(dbClient, crypto.randomUUID(), {})).rejects.toThrow(NotFoundError)
     const mock = getMockArticle()
     const article = await articleService.create(dbClient, mock)
     // It should be all good to change this to a new slug
@@ -51,9 +51,7 @@ describe("article integration tests", () => {
     expect(updated.slug).toBe(newSlug)
     // But it should not be possible to update a new article to that slug
     const beta = await articleService.create(dbClient, getMockArticle())
-    await expect(articleService.update(dbClient, beta.id, { slug: newSlug })).rejects.toThrow(
-      ArticleWithSlugAlreadyExistsError
-    )
+    await expect(articleService.update(dbClient, beta.id, { slug: newSlug })).rejects.toThrow(AlreadyExistsError)
   })
 
   it("should find an article by several criteria", async () => {
@@ -86,9 +84,9 @@ describe("article integration tests", () => {
   it("should throw an error when trying to modifying tags of a non-existing article", async () => {
     const nonExistingArticleId = crypto.randomUUID()
     const tag = faker.lorem.word()
-    await expect(articleService.addTag(dbClient, nonExistingArticleId, tag)).rejects.toThrow(ArticleNotFoundError)
-    await expect(articleService.removeTag(dbClient, nonExistingArticleId, tag)).rejects.toThrow(ArticleNotFoundError)
-    await expect(articleService.setTags(dbClient, nonExistingArticleId, [tag])).rejects.toThrow(ArticleNotFoundError)
+    await expect(articleService.addTag(dbClient, nonExistingArticleId, tag)).rejects.toThrow(NotFoundError)
+    await expect(articleService.removeTag(dbClient, nonExistingArticleId, tag)).rejects.toThrow(NotFoundError)
+    await expect(articleService.setTags(dbClient, nonExistingArticleId, [tag])).rejects.toThrow(NotFoundError)
   })
 
   it("should be able to find a featured article", async () => {

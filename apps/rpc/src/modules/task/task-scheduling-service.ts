@@ -12,7 +12,7 @@ import type {
   TaskId,
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import { NotImplementedError } from "../../error"
+import { UnimplementedError } from "../../error"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 import type { TaskService } from "./task-service"
@@ -37,7 +37,7 @@ export interface TaskSchedulingService {
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
-  findChargeAttendancePaymentsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
 }
 
@@ -76,8 +76,8 @@ export function getLocalTaskSchedulingService(
     async findVerifyPaymentTask(handle, attendeeId) {
       return await taskRepository.findVerifyPaymentTask(handle, attendeeId)
     },
-    async findChargeAttendancePaymentsTask(handle, attendanceId) {
-      return await taskRepository.findChargeAttendancePaymentsTask(handle, attendanceId)
+    async findChargeAttendeeTask(handle, attendeeId) {
+      return await taskRepository.findChargeAttendeeTask(handle, attendeeId)
     },
     async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
       return await taskRepository.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
@@ -91,10 +91,10 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
     // NOTE: The handle here is completely unused, but because the local backend needs to schedule within the caller
     // transaction, this one also needs to take a handle. Unfortunate but necessary.
     async scheduleAt(_, kind, data) {
-      throw new NotImplementedError("EventBridgeSchedulingService#schedule")
+      throw new UnimplementedError("EventBridgeSchedulingService#schedule")
     },
     async cancel(_, id) {
-      throw new NotImplementedError("EventBridgeSchedulingService#cancel")
+      throw new UnimplementedError("EventBridgeSchedulingService#cancel")
     },
     async findReserveAttendeeTask(_, attendeeId, attendanceId) {
       logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
@@ -108,7 +108,7 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
       logger.warn("findVerifyPaymentTask is not implemented in EventBridgeSchedulingService")
       return null
     },
-    async findChargeAttendancePaymentsTask(_, attendanceId) {
+    async findChargeAttendeeTask(_, attendeeId) {
       logger.warn("findChargeAttendancePaymentsTask is not implemented in EventBridgeSchedulingService")
       return null
     },

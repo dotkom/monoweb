@@ -1,5 +1,4 @@
 "use client"
-
 import type { GroupMember, GroupMembership } from "@dotkomonline/types"
 import { Button, Tooltip } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -13,7 +12,7 @@ interface Props {
 
 export const useGroupMembershipTable = ({ groupMember }: Props) => {
   const columnHelper = createColumnHelper<GroupMembership>()
-  const open = useEditGroupMembershipModal()
+  const openGroupEditModal = useEditGroupMembershipModal()
 
   const columns = useMemo(
     () => [
@@ -47,16 +46,29 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
           const isActive = membership.end === null
 
           const button = (
-            <Button size="sm" disabled={isActive} onClick={() => open({ groupMembership: info.getValue() })}>
+            <Button
+              size="sm"
+              variant="subtle"
+              disabled={isActive}
+              onClick={() => openGroupEditModal({ groupMembership: info.getValue() })}
+            >
               Rediger
             </Button>
           )
 
-          return isActive ? <Tooltip label="Kan ikke redigere nåværende medlemskap">{button}</Tooltip> : button
+          if (isActive) {
+            return (
+              <Tooltip label="Du kan ikke redigere aktivt medlemskap. Om du ønsker å endre roller, avslutt og lag nytt medlemskap.">
+                {button}
+              </Tooltip>
+            )
+          }
+
+          return button
         },
       }),
     ],
-    [columnHelper, open]
+    [columnHelper, openGroupEditModal]
   )
 
   return useReactTable({

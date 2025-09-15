@@ -156,6 +156,9 @@ async function getAuth0User(
       phone: response.data.app_metadata?.phone || null,
       dietaryRestrictions: response.data.app_metadata?.allergies || null,
       gender: response.data.app_metadata?.gender || response.data.gender || null,
+      // This would be very difficult to migrate, as ow4 stores only email local (before @), and we need id
+      // We would need to fetch every single user and try to match them by their names and hope for the best
+      workspaceUserId: null,
     }
 
     return user

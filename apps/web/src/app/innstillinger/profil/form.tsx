@@ -28,7 +28,7 @@ import { useDebounce } from "use-debounce"
 
 interface FormProps {
   user: User
-  onSubmit: (data: UserWrite) => void
+  onSubmit: (data: Omit<UserWrite, "workspaceUserId">) => void
   isSaving?: boolean
   saveSuccess?: boolean
   saveError?: string | null
@@ -36,7 +36,7 @@ interface FormProps {
 }
 
 export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, resetSaveState }: FormProps) {
-  const defaultValues = {
+  const defaultValues: Omit<UserWrite, "workspaceUserId"> = {
     profileSlug: user.profileSlug,
     name: user.name ?? null,
     email: user.email ?? null,
@@ -54,11 +54,11 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     setError,
     formState: { errors, isDirty },
     handleSubmit,
-  } = useForm<UserWrite>({
+  } = useForm<Omit<UserWrite, "workspaceUserId">>({
     defaultValues,
     mode: "onTouched",
     reValidateMode: "onBlur",
-    resolver: zodResolver(UserWriteSchema),
+    resolver: zodResolver(UserWriteSchema.omit({ workspaceUserId: true })),
   })
 
   const profileSlug = useWatch({ control, name: "profileSlug" })
@@ -172,10 +172,10 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 <input
                   id="pfp"
                   type="file"
+                  accept="image/*"
                   onChange={(event) => onFileChange(event, onChange)}
                   placeholder="https://example.com/image.jpg"
                   className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled
                 />
                 <TextInput value={value ?? ""} onChange={onChange} placeholder="https://..." />
               </div>

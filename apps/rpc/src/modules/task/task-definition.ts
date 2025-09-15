@@ -6,7 +6,7 @@ import {
   type TaskType,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { TaskDefinitionNotFoundError } from "./task-error"
+import { NotFoundError } from "../../error"
 
 export interface TaskDefinition<TData, TType extends TaskType> {
   getSchema(): z.ZodSchema<TData>
@@ -25,13 +25,13 @@ export function createTaskDefinition<const TData, const TType extends TaskType>(
 export type ReserveAttendeeTaskDefinition = typeof tasks.RESERVE_ATTENDEE
 export type MergeAttendancePoolsTaskDefinition = typeof tasks.MERGE_ATTENDANCE_POOLS
 export type VerifyPaymentTaskDefinition = typeof tasks.VERIFY_PAYMENT
-export type ChargeAttendancePaymentsTaskDefinition = typeof tasks.CHARGE_ATTENDANCE_PAYMENTS
+export type ChargeAttendeeTaskDefinition = typeof tasks.CHARGE_ATTENDEE
 export type VerifyFeedbackAnsweredTaskDefinition = typeof tasks.VERIFY_FEEDBACK_ANSWERED
 export type AnyTaskDefinition =
   | ReserveAttendeeTaskDefinition
   | MergeAttendancePoolsTaskDefinition
   | VerifyPaymentTaskDefinition
-  | ChargeAttendancePaymentsTaskDefinition
+  | ChargeAttendeeTaskDefinition
   | VerifyFeedbackAnsweredTaskDefinition
 
 export const tasks = {
@@ -62,11 +62,11 @@ export const tasks = {
         attendeeId: AttendeeSchema.shape.id,
       }),
   }),
-  CHARGE_ATTENDANCE_PAYMENTS: createTaskDefinition({
-    type: "CHARGE_ATTENDANCE_PAYMENTS",
+  CHARGE_ATTENDEE: createTaskDefinition({
+    type: "CHARGE_ATTENDEE",
     getSchema: () =>
       z.object({
-        attendanceId: z.string(),
+        attendeeId: AttendeeSchema.shape.id,
       }),
   }),
   VERIFY_FEEDBACK_ANSWERED: createTaskDefinition({
@@ -81,7 +81,7 @@ export const tasks = {
 export function getTaskDefinition<TType extends TaskType>(type: TType): TaskDefinition<unknown, TType> {
   const task = Object.values(tasks).find((task) => task.type === type)
   if (task === undefined) {
-    throw new TaskDefinitionNotFoundError(type)
+    throw new NotFoundError(`TaskDefinition(Type=${type}) not found`)
   }
   return task as TaskDefinition<unknown, TType>
 }

@@ -56,6 +56,7 @@ export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
   paymentChargedAt: true,
   paymentId: true,
   paymentDeadline: true,
+  paymentChargeDeadline: true,
   paymentLink: true,
   paymentReservedAt: true,
   paymentRefundedAt: true,

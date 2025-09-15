@@ -8,9 +8,8 @@ import type {
   JobListingWrite,
 } from "@dotkomonline/types"
 import { isAfter } from "date-fns"
-import { assert } from "../../error"
+import { assert, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
-import { InvalidEndDateError, JobListingNotFoundError } from "./job-listing-error"
 import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {
@@ -38,7 +37,7 @@ export function getJobListingService(jobListingRepository: JobListingRepository)
     async getById(handle, id) {
       const jobListing = await jobListingRepository.getById(handle, id)
       if (jobListing === null) {
-        throw new JobListingNotFoundError(id)
+        throw new NotFoundError(`JobListing(ID=${id}) not found`)
       }
       return jobListing
     },
@@ -65,11 +64,11 @@ export function getJobListingService(jobListingRepository: JobListingRepository)
 /**
  * Validate a write model for inconsistencies
  *
- * @throws {InvalidEndDateError} if the end date is before the start date
+ * @throws {InvalidArgumentError} if the end date is before the start date
  */
 function validateJobListingWrite(input: Partial<JobListingWrite>) {
   assert(
     input.start && input.end && isAfter(input.end, input.start),
-    new InvalidEndDateError("end date cannot be before start date")
+    new InvalidArgumentError("End date cannot be before start date")
   )
 }

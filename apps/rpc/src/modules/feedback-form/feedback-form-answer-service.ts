@@ -8,8 +8,8 @@ import type {
   FeedbackQuestionAnswer,
   FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
+import { NotFoundError } from "../../error"
 import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
-import { FeedbackFormNotFoundError } from "./feedback-form-errors"
 import type { FeedbackFormService } from "./feedback-form-service"
 
 export interface FeedbackFormAnswerService {
@@ -48,7 +48,7 @@ export function getFeedbackFormAnswerService(
       const form = await formService.getPublicForm(handle, publicResultsToken)
 
       if (!form) {
-        throw new FeedbackFormNotFoundError()
+        throw new NotFoundError(`FeedbackForm(PublicResultsToken=${publicResultsToken}) not found`)
       }
 
       const publicQuestionIds = form.questions.map((q) => q.id)

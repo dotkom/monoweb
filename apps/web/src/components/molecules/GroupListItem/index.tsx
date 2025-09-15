@@ -69,7 +69,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
         <Title className="text-3xl break-words">{group.abbreviation}</Title>
       </div>
 
-      <Text className="text-left line-clamp-4">{group.about}</Text>
+      <Text className="text-left line-clamp-4">{group.description}</Text>
     </div>
   )
 
@@ -96,7 +96,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
 
       <div className="flex flex-col">
         <Title className="text-xl">{group.abbreviation}</Title>
-        <Text className="line-clamp-2 break-words">{group.about}</Text>
+        <Text className="line-clamp-2 break-words">{group.description}</Text>
       </div>
     </div>
   )

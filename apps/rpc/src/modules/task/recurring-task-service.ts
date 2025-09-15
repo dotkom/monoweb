@@ -2,8 +2,8 @@ import type { DBHandle } from "@dotkomonline/db"
 import type { RecurringTask, RecurringTaskId, RecurringTaskWrite } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { CronExpressionParser } from "cron-parser"
+import { InvalidArgumentError, NotFoundError } from "../../error"
 import type { RecurringTaskRepository } from "./recurring-task-repository"
-import { InvalidCronExpressionError, RecurringTaskNotFoundError } from "./task-error"
 
 export type RecurringTaskService = {
   create(handle: DBHandle, data: RecurringTaskWrite, nextRunAt?: Date): Promise<RecurringTask>
@@ -24,7 +24,7 @@ export function getRecurringTaskService(recurringTaskRepository: RecurringTaskRe
   return {
     async create(handle, data, nextRunAt) {
       if (!validateCron(data.schedule)) {
-        throw new InvalidCronExpressionError(data.schedule)
+        throw new InvalidArgumentError(`Cron expression (${data.schedule}) is invalid`)
       }
 
       const computedNextRunAt = nextRunAt ?? createNextRunAt(data.schedule)
@@ -33,7 +33,7 @@ export function getRecurringTaskService(recurringTaskRepository: RecurringTaskRe
     },
     async update(handle, recurringTaskId, data, nextRunAt) {
       if (data.schedule && !validateCron(data.schedule)) {
-        throw new InvalidCronExpressionError(data.schedule)
+        throw new InvalidArgumentError(`Cron expression (${data.schedule}) is invalid`)
       }
 
       return await recurringTaskRepository.update(handle, recurringTaskId, data, nextRunAt)
@@ -44,7 +44,7 @@ export function getRecurringTaskService(recurringTaskRepository: RecurringTaskRe
     async getById(handle, recurringTaskId) {
       const recurringTask = await recurringTaskRepository.getById(handle, recurringTaskId)
       if (!recurringTask) {
-        throw new RecurringTaskNotFoundError(recurringTaskId)
+        throw new NotFoundError(`RecurringTask(ID=${recurringTaskId}) not found`)
       }
 
       return recurringTask

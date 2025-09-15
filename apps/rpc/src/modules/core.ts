@@ -1,9 +1,12 @@
-import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
 import { createPrisma } from "@dotkomonline/db"
 import { ManagementClient } from "auth0"
+import { type admin_directory_v1, google } from "googleapis"
+import EventEmitter from "node:events"
 import Stripe from "stripe"
-import type { Configuration } from "../configuration"
+import z from "zod"
+import { type Configuration, configuration } from "../configuration"
+import { IllegalStateError } from "../error"
 import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
@@ -45,13 +48,55 @@ import { getNotificationPermissionsRepository } from "./user/notification-permis
 import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
+import { getWorkspaceService } from "./workspace-sync/workspace-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
-export type StripeAccount = {
-  stripe: Stripe
-  publicKey: string
-  webhookSecret: string
+const WORKSPACE_SERVICE_ACCOUNT_SCOPES = [
+  "https://www.googleapis.com/auth/admin.directory.group",
+  "https://www.googleapis.com/auth/admin.directory.group.member",
+  "https://www.googleapis.com/auth/admin.directory.user",
+  "https://www.googleapis.com/auth/admin.directory.user.alias",
+  "https://www.googleapis.com/auth/admin.directory.user.security",
+]
+
+const workspaceServiceAccountJsonSchema = z.object({
+  auth_provider_x509_cert_url: z.string().url(),
+  auth_uri: z.string().url(),
+  client_email: z.string().email(),
+  client_id: z.string().min(1),
+  client_x509_cert_url: z.string().url(),
+  private_key: z.string().min(1),
+  private_key_id: z.string().min(1),
+  project_id: z.string().min(1),
+  token_uri: z.string().url(),
+  type: z.literal("service_account"),
+})
+
+export function getDirectory(): admin_directory_v1.Admin {
+  if (
+    !configuration.WORKSPACE_ENABLED ||
+    configuration.WORKSPACE_SERVICE_ACCOUNT === null ||
+    configuration.WORKSPACE_USER_ACCOUNT_EMAIL === null
+  ) {
+    throw new IllegalStateError("Google Workspace integration is not enabled or missing configuration variables")
+  }
+
+  const serviceAccountJson = JSON.parse(configuration.WORKSPACE_SERVICE_ACCOUNT)
+  const result = workspaceServiceAccountJsonSchema.safeParse(serviceAccountJson)
+
+  if (!result.success) {
+    throw new IllegalStateError(`Google Workspace service account is malformed: ${result.error.message}`)
+  }
+
+  const auth = new google.auth.JWT({
+    email: result.data.client_email,
+    key: result.data.private_key,
+    scopes: WORKSPACE_SERVICE_ACCOUNT_SCOPES,
+    subject: configuration.WORKSPACE_USER_ACCOUNT_EMAIL,
+  })
+
+  return google.admin({ version: "directory_v1", auth })
 }
 
 /** Build API clients for third-party services like S3, Auth0, and Stripe. */
@@ -66,7 +111,8 @@ export function createThirdPartyClients(configuration: Configuration) {
     apiVersion: "2025-07-30.basil",
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
-  return { s3Client, auth0Client, stripe, prisma }
+  const workspaceDirectory = configuration.WORKSPACE_ENABLED ? getDirectory() : null
+  return { s3Client, auth0Client, stripe, prisma, workspaceDirectory }
 }
 
 /**
@@ -154,6 +200,11 @@ export async function createServiceLayer(
     taskSchedulingService,
     attendanceService
   )
+
+  const workspaceService = configuration.WORKSPACE_ENABLED
+    ? getWorkspaceService(clients.workspaceDirectory, userService, groupService)
+    : null
+
   const authorizationService = getAuthorizationService()
 
   return {
@@ -176,6 +227,7 @@ export async function createServiceLayer(
     authorizationService,
     paymentWebhookService,
     recurringTaskService,
+    workspaceService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only

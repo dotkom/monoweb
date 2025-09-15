@@ -264,4 +264,20 @@ export const eventRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => await ctx.eventService.findUnansweredByUser(handle, input))
     ),
+
+  isOrganizer: authenticatedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .output(z.boolean())
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const event = await ctx.eventService.getEventById(handle, input.eventId)
+        const groups = await ctx.groupService.getAllByMember(handle, ctx.principal.subject)
+
+        return groups.some((group) => event.hostingGroups.some((organizer) => organizer.slug === group.slug))
+      })
+    }),
 })

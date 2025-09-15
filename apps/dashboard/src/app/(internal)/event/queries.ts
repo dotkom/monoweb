@@ -1,5 +1,5 @@
 import type { AttendanceId, EventFilterQuery, EventId, FeedbackFormId } from "@dotkomonline/types"
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc-client"
 import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
@@ -73,7 +73,7 @@ export const useEventFeedbackPublicResultsTokenGetQuery = (formId: FeedbackFormI
   return useQuery(trpc.event.feedback.getPublicResultsToken.queryOptions(formId))
 }
 
-export const useFeedbackAnswersGetQuery = (formId: FeedbackFormId) => {
+export const useFeedbackAnswersGetQuery = (formId: FeedbackFormId | SkipToken) => {
   const trpc = useTRPC()
   return useQuery(trpc.event.feedback.getAllAnswers.queryOptions(formId))
 }

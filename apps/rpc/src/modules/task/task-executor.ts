@@ -1,15 +1,16 @@
-import { clearInterval, setInterval } from "node:timers"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { trace } from "@opentelemetry/api"
+import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { secondsToMilliseconds } from "date-fns"
+import { clearInterval, setInterval } from "node:timers"
+import { IllegalStateError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
 import {
-  type ChargeAttendancePaymentsTaskDefinition,
+  type ChargeAttendeeTaskDefinition,
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
@@ -19,7 +20,6 @@ import {
   tasks,
 } from "./task-definition"
 import type { TaskDiscoveryService } from "./task-discovery-service"
-import { InvalidTaskKind } from "./task-error"
 import type { TaskSchedulingService } from "./task-scheduling-service"
 import type { TaskService } from "./task-service"
 
@@ -95,7 +95,7 @@ export function getLocalTaskExecutor(
       // as running regardless of whether the child transaction commits or rollbacks.
       logger.info("Running task", task.type, "with arguments", task.payload)
       await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
-      return await tracer.startActiveSpan(`TaskExecutor ${task.type}`, async (span) => {
+      return await tracer.startActiveSpan(`TaskExecutor ${task.type}`, { root: true }, async (span) => {
         span.setAttribute("rpc.service", "@dotkomonline/rpc")
         span.setAttribute("rpc.system", "trpc")
         try {
@@ -121,10 +121,10 @@ export function getLocalTaskExecutor(
                   handle,
                   payload as InferTaskData<VerifyPaymentTaskDefinition>
                 )
-              case tasks.CHARGE_ATTENDANCE_PAYMENTS.type:
-                return await attendanceService.executeChargeAttendancePaymentsTask(
+              case tasks.CHARGE_ATTENDEE.type:
+                return await attendanceService.executeChargeAttendeeTask(
                   handle,
-                  payload as InferTaskData<ChargeAttendancePaymentsTaskDefinition>
+                  payload as InferTaskData<ChargeAttendeeTaskDefinition>
                 )
               case tasks.VERIFY_FEEDBACK_ANSWERED.type:
                 return await attendanceService.executeVerifyFeedbackAnsweredTask(
@@ -134,7 +134,9 @@ export function getLocalTaskExecutor(
             }
             // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
             // still keep this block here to prevent subtle bugs or missed cases in the future.
-            throw new InvalidTaskKind(task.type, task.id)
+            throw new IllegalStateError(
+              `Unreachable code reached in TaskExecutor for Task(ID=${task.id}) for unhandled TaskType ${task.type}`
+            )
           })
         } catch (error: unknown) {
           isError = true
@@ -143,6 +145,7 @@ export function getLocalTaskExecutor(
           logger.error("Job with ID=%s failed with error: %o", task.id, error)
 
           if (error instanceof Error) {
+            span.setStatus({ code: SpanStatusCode.ERROR })
             span.recordException(error)
             captureException(error)
           }
@@ -154,6 +157,8 @@ export function getLocalTaskExecutor(
           if (!isError) {
             await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED", "RUNNING")
             logger.info("Job with ID=%s completed successfully", task.id)
+          } else {
+            span.setStatus({ code: SpanStatusCode.OK })
           }
           span.end()
         }

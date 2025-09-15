@@ -2,7 +2,7 @@ import type { SQSClient } from "@aws-sdk/client-sqs"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { RecurringTask, Task, TaskType } from "@dotkomonline/types"
-import { NotImplementedError } from "../../error"
+import { UnimplementedError } from "../../error"
 import type { RecurringTaskService } from "./recurring-task-service"
 import { tasks } from "./task-definition"
 import type { TaskService } from "./task-service"
@@ -31,7 +31,7 @@ export function getLocalTaskDiscoveryService(
         this.discover(tasks.RESERVE_ATTENDEE.type),
         this.discover(tasks.MERGE_ATTENDANCE_POOLS.type),
         this.discover(tasks.VERIFY_PAYMENT.type),
-        this.discover(tasks.CHARGE_ATTENDANCE_PAYMENTS.type),
+        this.discover(tasks.CHARGE_ATTENDEE.type),
         this.discover(tasks.VERIFY_FEEDBACK_ANSWERED.type),
       ])
       return discoveredTasks.flat()
@@ -63,15 +63,15 @@ export function getSQSTaskDiscoveryService(client: SQSClient): TaskDiscoveryServ
   return {
     async discoverAll() {
       logger.warn("discoverAll is not implemented for SQS TaskDiscoveryService")
-      throw new NotImplementedError("SQSTaskDiscovery#discoverAll")
+      throw new UnimplementedError("SQSTaskDiscovery#discoverAll")
     },
     async discover(kind) {
       logger.warn("discover is not implemented for SQS TaskDiscoveryService")
-      throw new NotImplementedError("SQSTaskDiscovery#discover")
+      throw new UnimplementedError("SQSTaskDiscovery#discover")
     },
     async discoverRecurringTasks() {
       logger.warn("discoverRecurringTasks is not implemented for SQS TaskDiscoveryService")
-      throw new NotImplementedError("SQSTaskDiscovery#discover")
+      throw new UnimplementedError("SQSTaskDiscovery#discover")
     },
   }
 }

@@ -41,11 +41,11 @@
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
     "@types/common-tags": "1.8.4",
-    "@types/node": "22.17.2",
+    "@types/node": "22.18.0",
     "@types/pg": "8.15.5",
     "common-tags": "1.8.2",
     "prisma": "6.8.2",
-    "tsx": "4.20.4",
-    "typescript": "5.8.3"
+    "tsx": "4.20.5",
+    "typescript": "5.9.2"
   }
 }

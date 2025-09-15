@@ -1,12 +1,7 @@
 import type { User } from "@dotkomonline/types"
 import type Stripe from "stripe"
 import invariant from "tiny-invariant"
-import {
-  PaymentAlreadyChargedError,
-  PaymentNotChargedError,
-  PaymentNotReadyToChargeError,
-  PaymentUnexpectedStateError,
-} from "./payment-error"
+import { FailedPreconditionError, IllegalStateError, ResourceExhaustedError } from "../../error"
 
 type PaymentStatus = "UNPAID" | "CANCELLED" | "RESERVED" | "PAID" | "REFUNDED"
 type ChargeMode = "RESERVE" | "CHARGE"
@@ -81,10 +76,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
     async create(productId, user, chargeMode = "RESERVE") {
       const product = await stripe.products.retrieve(productId)
       if (!product.default_price) {
-        throw new PaymentUnexpectedStateError(
-          `(productId: ${productId})`,
-          "Payment product does not have a default price"
-        )
+        throw new IllegalStateError(`Product of Payment(ProductID: ${productId}) does not have a default price`)
       }
       const defaultPrice = typeof product.default_price === "string" ? product.default_price : product.default_price.id
 
@@ -108,7 +100,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       const payment = await this.getById(paymentId)
 
       if (payment.status === "PAID") {
-        throw new PaymentAlreadyChargedError(paymentId)
+        throw new ResourceExhaustedError(`Payment(ID=${paymentId}) has already been paid and cannot be cancelled`)
       }
 
       if (payment.status === "CANCELLED") {
@@ -125,9 +117,9 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       switch (payment.status) {
         case "UNPAID":
         case "CANCELLED":
-          throw new PaymentNotReadyToChargeError(paymentId)
+          throw new FailedPreconditionError(`Payment(ID=${paymentId}) is not ready to be charged`)
         case "PAID":
-          throw new PaymentAlreadyChargedError(paymentId)
+          throw new ResourceExhaustedError(`Payment(ID=${paymentId}) has already been paid`)
         case "RESERVED":
           await stripe.paymentIntents.capture(payment.paymentIntentId)
           break
@@ -139,7 +131,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       const payment = await this.getById(paymentId)
 
       if (payment.status !== "PAID") {
-        throw new PaymentNotChargedError(paymentId)
+        throw new FailedPreconditionError(`Payment(ID=${paymentId}) is not paid and cannot be refunded`)
       }
 
       await stripe.refunds.create({
