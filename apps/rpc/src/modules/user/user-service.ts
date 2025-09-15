@@ -304,17 +304,12 @@ export function getUserService(
       const user = await this.getById(handle, userId)
       // There should be no reason for an image to be much larger than 500KB
       const maxSizeKB = 500
-      const key = `/avatar/${user.id}`
+      const key = `avatar/${user.id}`
       logger.info(`Creating AWS S3 Presigned URL for User(ID=%s) at S3 address s3://${bucket}/${key}`, user.id)
       return await createPresignedPost(client, {
         Bucket: bucket,
         Key: key,
-        Conditions: [
-          ["content-length-range", 0, maxSizeKB * 1024],
-          ["eq", "$Content-Type", "image/jpeg"],
-          ["eq", "$Content-Type", "image/png"],
-          ["eq", "$Content-Type", "image/webp"],
-        ],
+        Conditions: [["content-length-range", 0, maxSizeKB * 1024]],
       })
     },
     async findFeideAccessTokenByUserId(userId) {

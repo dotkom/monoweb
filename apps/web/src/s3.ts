@@ -8,12 +8,16 @@ import { useTRPC } from "./utils/trpc/client"
  * example of how this function is expected to be used.
  */
 async function uploadFileToS3PresignedUrl(file: File, fields: Record<string, string>, url: string): Promise<string> {
+  if (!file.type?.startsWith("image/")) {
+    throw new Error("File is not an image")
+  }
+
   try {
     const formData = new FormData()
-    formData.append("file", file)
     for (const [key, value] of Object.entries(fields)) {
       formData.append(key, value)
     }
+    formData.append("file", file)
 
     const response = await fetch(url, {
       method: "POST",
@@ -26,6 +30,7 @@ async function uploadFileToS3PresignedUrl(file: File, fields: Record<string, str
       throw new Error("File upload failed: No location header")
     }
 
+    console.log("File uploaded to:", location)
     return location
   } catch (e) {
     throw new Error(`File upload failed: ${e}`)
@@ -42,6 +47,7 @@ export const useCreateAvatarUploadURL = () => {
   const trpc = useTRPC()
   const presignedPostMut = useMutation(trpc.user.createAvatarUploadURL.mutationOptions())
   return async (file: File) => {
+    console.log("Creating presigned URL for avatar upload...")
     const presignedPost = await presignedPostMut.mutateAsync()
     return await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
   }
