@@ -30,7 +30,6 @@ async function uploadFileToS3PresignedUrl(file: File, fields: Record<string, str
       throw new Error("File upload failed: No location header")
     }
 
-    console.log("File uploaded to:", location)
     return location
   } catch (e) {
     throw new Error(`File upload failed: ${e}`)
@@ -47,7 +46,6 @@ export const useCreateAvatarUploadURL = () => {
   const trpc = useTRPC()
   const presignedPostMut = useMutation(trpc.user.createAvatarUploadURL.mutationOptions())
   return async (file: File) => {
-    console.log("Creating presigned URL for avatar upload...")
     const presignedPost = await presignedPostMut.mutateAsync()
     return await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
   }
