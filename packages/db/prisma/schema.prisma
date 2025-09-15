@@ -426,7 +426,7 @@ model JobListing {
   company          Company        @relation(fields: [companyId], references: [id])
   title            String
   description      String
-  shortDescription String
+  shortDescription String?
   start            DateTime       @db.Timestamptz(3)
   end              DateTime       @db.Timestamptz(3)
   featured         Boolean
