@@ -104,7 +104,7 @@ export const getCommitteeEmail = (fullName: string) => {
     throw new Error("Invalid full name")
   }
 
-  return getKey(slugify(fullName, "."))
+  return getKey(slugify(fullName, SLUGIFY_OPTIONS))
 }
 
 type UserAndWorkspaceMember = {
