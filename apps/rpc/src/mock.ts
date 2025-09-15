@@ -10,6 +10,7 @@ export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
   phone: null,
   biography: null,
   profileSlug: "test-test",
+  workspaceUserId: null,
   ...defaults,
 })
 
