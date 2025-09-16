@@ -1120,6 +1120,9 @@ importers:
       '@opentelemetry/winston-transport':
         specifier: ^0.14.0
         version: 0.14.1
+      '@prisma/instrumentation':
+        specifier: ^6.16.1
+        version: 6.16.1(@opentelemetry/api@1.9.0)
       winston:
         specifier: ^3.17.0
         version: 3.17.0
@@ -3387,6 +3390,11 @@ packages:
 
   '@prisma/instrumentation@6.10.1':
     resolution: {integrity: sha512-JC8qzgEDuFKjuBsqrZvXHINUb12psnE6Qy3q5p2MBhalC1KW1MBBUwuonx6iS5TCfCdtNslHft8uc2r+EdLWWg==}
+    peerDependencies:
+      '@opentelemetry/api': ^1.8
+
+  '@prisma/instrumentation@6.16.1':
+    resolution: {integrity: sha512-i33goTX/J50L1qR16zOUPBy+8pxmekq4VqGrudGwyL9dfMk+4K+Y5rNSeXPDWhyBKenX1+x4zUQS5OBmOqcBow==}
     peerDependencies:
       '@opentelemetry/api': ^1.8
 
@@ -11727,6 +11735,13 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@prisma/instrumentation@6.16.1(@opentelemetry/api@1.9.0)':
+    dependencies:
+      '@opentelemetry/api': 1.9.0
+      '@opentelemetry/instrumentation': 0.203.0(@opentelemetry/api@1.9.0)
     transitivePeerDependencies:
       - supports-color
 
