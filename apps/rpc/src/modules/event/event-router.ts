@@ -56,11 +56,8 @@ export const eventRouter = t.router({
     )
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => {
+      return ctx.executeTransactionWithAudit(async (handle) => {
         
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
-        await handle.$executeRaw`SELECT set_config('app.transaction_id', ${crypto.randomUUID()}, TRUE)`
-
         const eventWithoutOrganizers = await ctx.eventService.createEvent(handle, input.event)
         const event = await ctx.eventService.updateEventOrganizers(
           handle,
@@ -69,7 +66,7 @@ export const eventRouter = t.router({
           new Set(input.companies)
         )
         return { event, attendance: null }
-      })
+      }, ctx.principal?.subject || null)
     }),
 
   edit: staffProcedure
@@ -83,9 +80,7 @@ export const eventRouter = t.router({
     )
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => {
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
-        await handle.$executeRaw`SELECT set_config('app.transaction_id', ${crypto.randomUUID()}, TRUE)`
+      return ctx.executeTransactionWithAudit(async (handle) => {
         const updatedEventWithoutOrganizers = await ctx.eventService.updateEvent(handle, input.id, input.event)
         const updatedEvent = await ctx.eventService.updateEventOrganizers(
           handle,
@@ -97,7 +92,7 @@ export const eventRouter = t.router({
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)
           : null
         return { event: updatedEvent, attendance }
-      })
+      }, ctx.principal?.subject || null)
     }),
 
   delete: staffProcedure
@@ -108,11 +103,6 @@ export const eventRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
-        await handle.$executeRaw`SELECT set_config('app.transaction_id', ${crypto.randomUUID()}, TRUE)`
-
-
         return await ctx.eventService.deleteEvent(handle, input.id)
       })
     }),
@@ -184,7 +174,6 @@ export const eventRouter = t.router({
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
         const attendance = await ctx.attendanceService.createAttendance(handle, input.values)
         const event = await ctx.eventService.updateEventAttendance(handle, input.eventId, attendance.id)
         return { event, attendance }
@@ -200,14 +189,14 @@ export const eventRouter = t.router({
     )
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => {
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
+      return ctx.executeTransactionWithAudit(async (handle) => {
+        
         const updatedEvent = await ctx.eventService.updateEventParent(handle, input.eventId, input.parentEventId)
         const attendance = updatedEvent.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEvent.attendanceId)
           : null
         return { event: updatedEvent, attendance }
-      })
+      }, ctx.principal?.subject || null)
     }),
 
   findParentEvent: procedure

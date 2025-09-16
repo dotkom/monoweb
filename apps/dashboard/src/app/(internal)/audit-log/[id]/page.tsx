@@ -23,6 +23,7 @@ export default function AuditLogDetailsPage() {
     event: "event",
     ow_user: "user",
     job_listing: "job-listing",
+    mark: "punishment"
   }
 
   const getTableNamePath = (tableName: string) => {
@@ -35,8 +36,6 @@ export default function AuditLogDetailsPage() {
   const changed_fields =
     auditLog.rowData &&
     Object.entries(auditLog.rowData).map(([field, change], index) => {
-      if (field === "updatedAt") return null
-
       return (
           <Accordion.Item key={field} value={field}>
             <Accordion.Control>
@@ -48,7 +47,7 @@ export default function AuditLogDetailsPage() {
                   <StringDiff // This component shows the string-difference
                     oldValue={change.old}
                     newValue={change.new}
-                    method={DiffMethod.Words}
+                    method={DiffMethod.Lines}
                     key={colorScheme}
                     styles={diffStyles}
                   />
@@ -85,10 +84,10 @@ export default function AuditLogDetailsPage() {
         </Anchor>
       </Text>
 
-      <Tabs defaultValue={"details"}>
+      <Tabs defaultValue={"JSON"}>
         <Tabs.List>
-          <Tabs.Tab value="details">Endringer</Tabs.Tab>
           <Tabs.Tab value="JSON">JSON</Tabs.Tab>
+          <Tabs.Tab value="details">Endringer</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel mt="md" value="details">
           <Accordion defaultValue="Logs">{changed_fields}</Accordion>

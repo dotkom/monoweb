@@ -81,8 +81,22 @@ export function createThirdPartyClients(configuration: Configuration) {
  */
 export async function createServiceLayer(
   clients: ReturnType<typeof createThirdPartyClients>,
-  configuration: Configuration
+  configuration: Configuration,
 ) {
+
+  async function executeTransactionWithAudit<T>(fn: (tx: typeof clients.prisma) => Promise<T>,userId: string | null): Promise<T> {
+    return clients.prisma.$transaction(async (tx) => {
+      if (userId){
+        await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`;
+        await tx.$executeRaw`SELECT set_config('app.current_transaction_id', ${crypto.randomUUID()}, TRUE)`;
+      } else {
+        await tx.$executeRaw`SELECT set_config('app.current_user_id', NULL, TRUE)`;
+        await tx.$executeRaw`SELECT set_config('app.current_transaction_id', ${crypto.randomUUID()}, TRUE)`;
+      }
+      return fn(tx as typeof clients.prisma);
+    });
+  }
+  
   const eventEmitter = new EventEmitter()
 
   const taskRepository = getTaskRepository()
@@ -168,6 +182,7 @@ export async function createServiceLayer(
     authorizationService,
     paymentWebhookService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
+    executeTransactionWithAudit,
     startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only
     prisma: clients.prisma,
