@@ -226,33 +226,35 @@ export function getUserService(
       if (accessToken !== null) {
         // We spawn a separate OpenTelemetry span for the entire membership operation so that its easier to trace and
         // track the call stack and timings of the operation.
-        await trace.getTracer("@dotkomonline/rpc/user-service").startActiveSpan("refreshMembership", async (span) => {
-          // According to Semantic Conventions (https://opentelemetry.io/docs/specs/semconv/registry/attributes/user/)
-          // we should set the user.id attribute on the span to the user's ID. It makes it easier to trace them across
-          // logs as well.
-          span.setAttribute("user.id", user.id)
-          try {
-            const studentInformation = await feideGroupsRepository.getStudentInformation(accessToken)
-            if (studentInformation !== null) {
-              const activeMembership = findActiveMembership(user)
-              const applicableMembership = await findApplicableMembership(
-                studentInformation.studyProgrammes,
-                studentInformation.studySpecializations,
-                studentInformation.courses
-              )
-              // We can only replace memberships if there is a new applicable one for the user
-              if (
-                shouldReplaceMembership(user.memberships, activeMembership, applicableMembership) &&
-                applicableMembership !== null
-              ) {
-                logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
-                await userRepository.createMembership(handle, user.id, applicableMembership)
+        await trace
+          .getTracer("@dotkomonline/rpc/user-service")
+          .startActiveSpan("UserService#refreshMembership", async (span) => {
+            // According to Semantic Conventions (https://opentelemetry.io/docs/specs/semconv/registry/attributes/user/)
+            // we should set the user.id attribute on the span to the user's ID. It makes it easier to trace them across
+            // logs as well.
+            span.setAttribute("user.id", user.id)
+            try {
+              const studentInformation = await feideGroupsRepository.getStudentInformation(accessToken)
+              if (studentInformation !== null) {
+                const activeMembership = findActiveMembership(user)
+                const applicableMembership = await findApplicableMembership(
+                  studentInformation.studyProgrammes,
+                  studentInformation.studySpecializations,
+                  studentInformation.courses
+                )
+                // We can only replace memberships if there is a new applicable one for the user
+                if (
+                  shouldReplaceMembership(user.memberships, activeMembership, applicableMembership) &&
+                  applicableMembership !== null
+                ) {
+                  logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
+                  await userRepository.createMembership(handle, user.id, applicableMembership)
+                }
               }
+            } finally {
+              span.end()
             }
-          } finally {
-            span.end()
-          }
-        })
+          })
       }
       return user
     },

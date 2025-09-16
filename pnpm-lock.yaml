@@ -511,6 +511,9 @@ importers:
       '@aws-sdk/client-scheduler':
         specifier: ^3.844.0
         version: 3.879.0
+      '@aws-sdk/client-ses':
+        specifier: ^3.879.0
+        version: 3.879.0
       '@aws-sdk/client-sqs':
         specifier: ^3.844.0
         version: 3.879.0
@@ -583,6 +586,9 @@ importers:
       marked:
         specifier: ^16.1.1
         version: 16.2.1
+      mustache:
+        specifier: ^4.2.0
+        version: 4.2.0
       require-in-the-middle:
         specifier: ^7.5.2
         version: 7.5.2
@@ -617,6 +623,9 @@ importers:
       '@testcontainers/postgresql':
         specifier: 11.5.1
         version: 11.5.1
+      '@types/mustache':
+        specifier: ^4.2.6
+        version: 4.2.6
       '@types/node':
         specifier: 22.18.0
         version: 22.18.0
@@ -5226,6 +5235,9 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
+  '@types/mustache@4.2.6':
+    resolution: {integrity: sha512-t+8/QWTAhOFlrF1IVZqKnMRJi84EgkIK5Kh0p2JV4OLywUvCwJPFxbJAl7XAow7DVIHsF+xW9f1MVzg0L6Szjw==}
+
   '@types/mysql@2.15.26':
     resolution: {integrity: sha512-DSLCOXhkvfS5WNNPbfn2KdICAmk8lLc+/PNvnPnF7gOdMZCxopXduqv0OQ13y/yA/zXTSikZZqVgybUxOEg6YQ==}
 
@@ -7444,6 +7456,10 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  mustache@4.2.0:
+    resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
+    hasBin: true
 
   mute-stream@2.0.0:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
@@ -13753,6 +13769,8 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
+  '@types/mustache@4.2.6': {}
+
   '@types/mysql@2.15.26':
     dependencies:
       '@types/node': 22.18.0
@@ -16460,6 +16478,8 @@ snapshots:
       typescript: 5.9.2
     transitivePeerDependencies:
       - '@types/node'
+
+  mustache@4.2.0: {}
 
   mute-stream@2.0.0: {}
 

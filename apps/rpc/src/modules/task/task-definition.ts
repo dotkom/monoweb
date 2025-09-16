@@ -76,7 +76,8 @@ export const tasks = {
         feedbackFormId: FeedbackFormSchema.shape.id,
       }),
   }),
-}
+  // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
+} satisfies Record<TaskType, TaskDefinition<any, any>>
 
 export function getTaskDefinition<TType extends TaskType>(type: TType): TaskDefinition<unknown, TType> {
   const task = Object.values(tasks).find((task) => task.type === type)

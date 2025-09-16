@@ -1,5 +1,6 @@
 import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
+import { SESClient } from "@aws-sdk/client-ses"
 import { createPrisma } from "@dotkomonline/db"
 import { ManagementClient } from "auth0"
 import { type admin_directory_v1, google } from "googleapis"
@@ -14,6 +15,7 @@ import { getArticleTagRepository } from "./article/article-tag-repository"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
+import { getEmailService } from "./email/email-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
@@ -102,6 +104,7 @@ export function getDirectory(): admin_directory_v1.Admin {
 /** Build API clients for third-party services like S3, Auth0, and Stripe. */
 export function createThirdPartyClients(configuration: Configuration) {
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
+  const sesClient = new SESClient({ region: configuration.AWS_REGION })
   const auth0Client = new ManagementClient({
     domain: configuration.AUTH0_MGMT_TENANT,
     clientId: configuration.AUTH0_CLIENT_ID,
@@ -112,7 +115,7 @@ export function createThirdPartyClients(configuration: Configuration) {
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
   const workspaceDirectory = configuration.WORKSPACE_ENABLED ? getDirectory() : null
-  return { s3Client, auth0Client, stripe, prisma, workspaceDirectory }
+  return { s3Client, sesClient, auth0Client, stripe, prisma, workspaceDirectory }
 }
 
 /**
@@ -155,6 +158,7 @@ export async function createServiceLayer(
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
 
+  const emailService = getEmailService(clients.sesClient)
   const userService = getUserService(
     userRepository,
     privacyPermissionsRepository,
@@ -209,6 +213,7 @@ export async function createServiceLayer(
 
   return {
     eventEmitter,
+    emailService,
     userService,
     eventService,
     groupService,
