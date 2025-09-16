@@ -12,6 +12,7 @@ CREATE TYPE "task_type_new" AS ENUM ('RESERVE_ATTENDEE', 'CHARGE_ATTENDEE', 'MER
 DELETE FROM "task" WHERE "type" = 'CHARGE_ATTENDANCE_PAYMENTS';
 
 ALTER TABLE "task" ALTER COLUMN "type" TYPE "task_type_new" USING ("type"::text::"task_type_new");
+ALTER TABLE "recurring_task" ALTER COLUMN "type" TYPE "task_type_new" USING ("type"::text::"task_type_new");
 ALTER TYPE "task_type" RENAME TO "task_type_old";
 ALTER TYPE "task_type_new" RENAME TO "task_type";
 DROP TYPE "task_type_old";
