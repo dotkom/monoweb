@@ -103,25 +103,9 @@ model Company {
   updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   events     EventCompany[]
-  jobListings JobListing[]
-  invoiceAddresses CompanyInvoiceAddress[]
+  JobListing JobListing[]
 
   @@map("company")
-}
-
-model CompanyInvoiceAddress {
-  id         String   @id @default(uuid())
-  companyId  String
-  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  name       String
-  address    String
-  postalCode String
-  city       String
-  country    String
-  createdAt  DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-
-  @@map("company_invoice_address")
 }
 
 enum GroupType {
