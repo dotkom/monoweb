@@ -22,6 +22,7 @@ export class NotFoundError extends ApplicationError {}
 export class AlreadyExistsError extends ApplicationError {}
 export class FailedPreconditionError extends ApplicationError {}
 export class ResourceExhaustedError extends ApplicationError {}
+export class ForbiddenError extends ApplicationError {}
 
 export function assert(condition: unknown, error: Error): asserts condition {
   if (!condition) {
