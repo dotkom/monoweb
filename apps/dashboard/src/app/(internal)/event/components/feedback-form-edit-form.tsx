@@ -218,7 +218,12 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
                 disabled={!hasFormAnswers}
                 label="Skjemaet har mottatt svar og kan ikke slettes. Deaktiver det for å stoppe nye svar"
               >
-                <Button bg="red" onClick={openDeleteFormModal} leftSection={<IconTrash height={14} width={14} />}>
+                <Button
+                  bg="red"
+                  onClick={openDeleteFormModal}
+                  disabled={hasFormAnswers}
+                  leftSection={<IconTrash height={14} width={14} />}
+                >
                   Slett
                 </Button>
               </Tooltip>

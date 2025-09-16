@@ -33,4 +33,9 @@ export const configuration = defineConfiguration({
   DATABASE_URL: config(process.env.DATABASE_URL),
 
   STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
+
+  WORKSPACE_SERVICE_ACCOUNT: config(process.env.WORKSPACE_SERVICE_ACCOUNT, null),
+  WORKSPACE_USER_ACCOUNT_EMAIL: config(process.env.WORKSPACE_USER_ACCOUNT_EMAIL, null),
+  WORKSPACE_DOMAIN: config(process.env.WORKSPACE_DOMAIN, "online.ntnu.no"),
+  WORKSPACE_ENABLED: config(process.env.WORKSPACE_ENABLED, "false") === "true",
 })

@@ -26,6 +26,12 @@ export const Affiliation = {
 } as const
 export type Affiliation = (typeof Affiliation)[keyof typeof Affiliation]
 
+export const isAffiliation = (groupSlug: string): groupSlug is Affiliation => {
+  const affiliations = Object.values(Affiliation) as string[]
+
+  return affiliations.includes(groupSlug)
+}
+
 export interface AuthorizationService {
   /**
    * Find the affiliations of a user.

@@ -89,7 +89,12 @@ const GroupList: FC<GroupListProps> = ({ groups }: GroupListProps) => {
       {groups.map(
         (group) =>
           group.imageUrl && (
-            <Card key={group.slug} imageUrl={group.imageUrl} title={group.abbreviation} description={group.about} />
+            <Card
+              key={group.slug}
+              imageUrl={group.imageUrl}
+              title={group.abbreviation}
+              description={group.description}
+            />
           )
       )}
     </ul>

@@ -67,6 +67,8 @@ model User {
   dietaryRestrictions String?
   ntnuUsername        String?
   flags               String[]
+  /// Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
+  workspaceUserId     String?  @unique
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
@@ -116,16 +118,17 @@ enum GroupType {
 }
 
 model Group {
-  slug          String    @id @unique
-  abbreviation  String
-  name          String?
-  description   String?
-  about         String
-  imageUrl      String?
-  email         String?
-  contactUrl    String?
-  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
-  deactivatedAt DateTime?
+  slug             String    @id @unique
+  abbreviation     String
+  name             String?
+  shortDescription String?
+  description      String
+  imageUrl         String?
+  email            String?
+  contactUrl       String?
+  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
+  deactivatedAt    DateTime?
+  workspaceGroupId String?   @unique
 
   events      EventHostingGroup[]
   type        GroupType
@@ -276,23 +279,23 @@ model Attendee {
 }
 
 model Event {
-  id              String        @id @default(uuid())
-  title           String
-  start           DateTime      @db.Timestamptz(3)
-  end             DateTime      @db.Timestamptz(3)
-  status          EventStatus
-  description     String
-  subtitle        String?
-  imageUrl        String?
-  locationTitle   String?
-  locationAddress String?
-  locationLink    String?
-  attendance      Attendance?   @relation(fields: [attendanceId], references: [id])
-  attendanceId    String?
-  type            EventType
-  feedbackForm    FeedbackForm?
-  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
+  id               String        @id @default(uuid())
+  title            String
+  start            DateTime      @db.Timestamptz(3)
+  end              DateTime      @db.Timestamptz(3)
+  status           EventStatus
+  description      String
+  shortDescription String?
+  imageUrl         String?
+  locationTitle    String?
+  locationAddress  String?
+  locationLink     String?
+  attendance       Attendance?   @relation(fields: [attendanceId], references: [id])
+  attendanceId     String?
+  type             EventType
+  feedbackForm     FeedbackForm?
+  createdAt        DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
   parentId String?
   parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
@@ -426,7 +429,7 @@ model JobListing {
   company          Company        @relation(fields: [companyId], references: [id])
   title            String
   description      String
-  about            String
+  shortDescription String?
   start            DateTime       @db.Timestamptz(3)
   end              DateTime       @db.Timestamptz(3)
   featured         Boolean
@@ -507,11 +510,11 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  RESERVE_ATTENDEE           @map("RESERVE_ATTENDEE")
-  CHARGE_ATTENDEE            @map("CHARGE_ATTENDEE")
-  MERGE_ATTENDANCE_POOLS     @map("MERGE_ATTENDANCE_POOLS")
-  VERIFY_PAYMENT             @map("VERIFY_PAYMENT")
-  VERIFY_FEEDBACK_ANSWERED   @map("VERIFY_FEEDBACK_ANSWERED")
+  RESERVE_ATTENDEE         @map("RESERVE_ATTENDEE")
+  CHARGE_ATTENDEE          @map("CHARGE_ATTENDEE")
+  MERGE_ATTENDANCE_POOLS   @map("MERGE_ATTENDANCE_POOLS")
+  VERIFY_PAYMENT           @map("VERIFY_PAYMENT")
+  VERIFY_FEEDBACK_ANSWERED @map("VERIFY_FEEDBACK_ANSWERED")
 
   @@map("task_type")
 }
@@ -527,16 +530,33 @@ enum TaskStatus {
 }
 
 model Task {
-  id          String     @id @default(uuid())
-  type        TaskType
-  status      TaskStatus @default(PENDING)
-  payload     Json       @default("{}")
-  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
-  scheduledAt DateTime   @db.Timestamptz(3)
-  processedAt DateTime?  @db.Timestamptz(3)
+  id              String          @id @default(uuid())
+  type            TaskType
+  status          TaskStatus      @default(PENDING)
+  payload         Json            @default("{}")
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  scheduledAt     DateTime        @db.Timestamptz(3)
+  processedAt     DateTime?       @db.Timestamptz(3)
+  recurringTask   RecurringTask?  @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
+  recurringTaskId String?
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("task")
+}
+
+model RecurringTask {
+  id          String     @id @default(uuid())
+  type        TaskType
+  payload     Json       @default("{}")
+  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
+  schedule    String
+  lastRunAt   DateTime?  @db.Timestamptz(3)
+  nextRunAt   DateTime   @db.Timestamptz(3)
+
+  tasks       Task[]
+
+  @@index([nextRunAt])
+  @@map("recurring_task")
 }
 
 enum FeedbackQuestionType {

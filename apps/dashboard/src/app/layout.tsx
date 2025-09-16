@@ -19,12 +19,50 @@ import { SessionProvider } from "@dotkomonline/oauth2/react"
 import { Notifications } from "@mantine/notifications"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
+import type { Metadata } from "next"
 import type { PropsWithChildren } from "react"
 import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
 
 setDateFnsDefaultOptions({ locale: nb })
+
+export const metadata: Metadata = {
+  title: "OnlineWeb Dashboard",
+  description: "Administratorsystemet for Linjeforeningen Online",
+  icons: {
+    icon: [
+      {
+        url: "/online-logo-o.svg",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/online-logo-o-darkmode.svg",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    shortcut: [
+      {
+        url: "/online-logo-o.svg",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/online-logo-o-darkmode.svg",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    apple: [
+      {
+        url: "/online-logo-o.svg",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/online-logo-o-darkmode.svg",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+  },
+}
 
 export const dynamic = "force-dynamic"
 

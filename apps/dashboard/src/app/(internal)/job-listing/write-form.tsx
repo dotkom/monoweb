@@ -5,7 +5,6 @@ import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { createTextareaInput } from "@/components/forms/TextareaInput"
 import { CompanySchema, JobListingLocationSchema, JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { addWeeks, addYears, roundToNearestHours } from "date-fns"
@@ -58,13 +57,7 @@ export const useJobListingWriteForm = ({
         searchable: true,
         withAsterisk: true,
       }),
-      description: createTextareaInput({
-        label: "Ingress",
-        placeholder: "Kort introduksjon om stillingen...",
-        required: true,
-        rows: 4,
-      }),
-      about: createRichTextInput({
+      description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
       }),

@@ -7,6 +7,7 @@ import { markRouter } from "./modules/mark/mark-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { offlineRouter } from "./modules/offline/offline-router"
 import { userRouter } from "./modules/user/user-router"
+import { workspaceRouter } from "./modules/workspace-sync/workspace-router"
 import { t } from "./trpc"
 
 export const appRouter = t.router({
@@ -19,6 +20,7 @@ export const appRouter = t.router({
   jobListing: jobListingRouter,
   offline: offlineRouter,
   article: articleRouter,
+  workspace: workspaceRouter,
 })
 
 export type AppRouter = typeof appRouter

@@ -122,6 +122,7 @@ const LoginAlternativesDropdown: FC = () => {
         <Link
           className="flex items-center font-semibold text-sm px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors"
           href={createAuthorizeUrl({ redirectAfter: fullPathname })}
+          prefetch={false}
         >
           Logg inn uten Feide
         </Link>
@@ -141,6 +142,7 @@ const UnauthenticatedActions: FC = () => {
           color="brand"
           className="text-sm font-semibold px-3 py-2"
           href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
+          prefetch={false}
           icon={<Icon className="mr-2 text-xl" icon="tabler:login-2" />}
         >
           Logg inn

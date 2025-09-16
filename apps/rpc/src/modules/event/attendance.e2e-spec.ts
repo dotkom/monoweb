@@ -11,7 +11,7 @@ import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
 import { addDays, addHours, addMinutes, isFuture, subHours } from "date-fns"
 import { describe, expect, it } from "vitest"
 import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
-import { AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
+import { InvalidArgumentError } from "../../error"
 import { getMockEvent, getMockGroup } from "./event.e2e-spec"
 
 function getMockAttendance(input: Partial<AttendanceWrite> = {}): AttendanceWrite {
@@ -102,7 +102,7 @@ describe("attendance integration tests", async () => {
         deregisterDeadline: addHours(getCurrentUTC(), 2),
         selections: [],
       })
-    ).rejects.toThrowError(AttendanceValidationError)
+    ).rejects.toThrowError(InvalidArgumentError)
     await expect(() =>
       core.attendanceService.createAttendance(dbClient, {
         registerStart: getCurrentUTC(),
@@ -111,7 +111,7 @@ describe("attendance integration tests", async () => {
         deregisterDeadline: addHours(getCurrentUTC(), 2),
         selections: [],
       })
-    ).rejects.toThrowError(AttendanceValidationError)
+    ).rejects.toThrowError(InvalidArgumentError)
   })
 
   it("should prevent overlapping year constraints upon creation", async () => {
@@ -126,7 +126,7 @@ describe("attendance integration tests", async () => {
           yearCriteria: [1],
         })
       )
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
   })
 
   it("should prevent overlapping year constraints upon update", async () => {
@@ -147,7 +147,7 @@ describe("attendance integration tests", async () => {
           yearCriteria: [3, 4, 5],
         })
       )
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
   })
 
   it("should allow temporary overlap when updating", async () => {
@@ -189,7 +189,7 @@ describe("attendance integration tests", async () => {
         forceAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
   })
 
   it("should throw an error if the user has no active membership", async () => {
@@ -209,7 +209,7 @@ describe("attendance integration tests", async () => {
         forceAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
   })
 
   it("should throw an error if the user is suspended", async () => {
@@ -244,7 +244,7 @@ describe("attendance integration tests", async () => {
         forceAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
   })
 
   it("should not allow registration outside of the registration window", async () => {
@@ -281,7 +281,7 @@ describe("attendance integration tests", async () => {
         forceAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
 
     // But bypassing the registration window, it should succeed
     const registration = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
@@ -331,7 +331,7 @@ describe("attendance integration tests", async () => {
         forceAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
   })
 
   it("should add a reservation time if the user has a punishment", async () => {
@@ -510,7 +510,7 @@ describe("attendance integration tests", async () => {
       core.attendanceService.deregisterAttendee(dbClient, attendee.id, {
         ignoreDeregistrationWindow: false,
       })
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
     // it should not be possible to deregister past the deadline with ignoreDeregistrationWindow=true
     await expect(
       core.attendanceService.deregisterAttendee(dbClient, attendee.id, {
@@ -548,7 +548,7 @@ describe("attendance integration tests", async () => {
         forceAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(AttendanceValidationError)
+    ).rejects.toThrow(InvalidArgumentError)
 
     // But if an admin registers the user with an forceAttendancePoolId, it should succeed
     const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
@@ -708,7 +708,7 @@ describe("attendance integration tests", async () => {
 
   it("should fail if you attempt to register physical attendance for a non-registered user", async () => {
     await expect(core.attendanceService.registerAttendance(dbClient, randomUUID(), getCurrentUTC())).rejects.toThrow(
-      AttendanceNotFound
+      InvalidArgumentError
     )
   })
 })

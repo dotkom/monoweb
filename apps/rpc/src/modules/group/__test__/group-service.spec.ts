@@ -10,7 +10,7 @@ import { getPrivacyPermissionsRepository } from "src/modules/user/privacy-permis
 import { getUserRepository } from "src/modules/user/user-repository"
 import { getUserService } from "src/modules/user/user-service"
 import { mockDeep } from "vitest-mock-extended"
-import { GroupNotFoundError } from "../group-error"
+import { NotFoundError } from "../../../error"
 import { getGroupRepository } from "../group-repository"
 import { getGroupService } from "../group-service"
 
@@ -44,14 +44,15 @@ describe("GroupService", () => {
       abbreviation: "Dotkom",
       name: "Drifts- og utviklingskomiteen",
       createdAt: new Date(),
-      about: "Dotkom er har ansvaret for å gjøre ting",
-      description: "Dotkom gjør ting",
+      description: "Dotkom er har ansvaret for å gjøre ting",
       email: "dotkom@online.ntnu.no",
       imageUrl: null,
       type: "COMMITTEE",
+      shortDescription: null,
       contactUrl: null,
       deactivatedAt: null,
       roles: [],
+      workspaceGroupId: null,
     }
     const id = randomUUID()
     vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ ...group })
@@ -63,6 +64,6 @@ describe("GroupService", () => {
   it("does not find non-existent committees", async () => {
     const id = randomUUID()
     vi.spyOn(groupRepository, "getById").mockResolvedValueOnce(null)
-    await expect(async () => groupService.getById(db, id)).rejects.toThrowError(GroupNotFoundError)
+    await expect(async () => groupService.getById(db, id)).rejects.toThrowError(NotFoundError)
   })
 })

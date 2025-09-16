@@ -367,12 +367,13 @@ export default function ProfilePage() {
                 <Button
                   color={activeMembership ? "light" : "brand"}
                   variant={activeMembership ? "outline" : "solid"}
-                  element="a"
+                  element={Link}
                   href={createAuthorizeUrl({
                     connection: "FEIDE",
                     redirectAfter: fullPathname,
                     returnedFromFeide: "true",
                   })}
+                  prefetch={false}
                   className="h-fit w-fit"
                 >
                   Registrer medlemskap
@@ -457,9 +458,7 @@ export default function ProfilePage() {
                 </Avatar>
                 <div className="flex flex-col gap-0.5">
                   <Text className="text-lg">{group.name}</Text>
-                  <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
-                    {group.description || group.about}
-                  </Text>
+                  <Text className="text-sm text-wrap overflow-hidden line-clamp-2">{group.description}</Text>
                 </div>
               </Link>
             ))}
