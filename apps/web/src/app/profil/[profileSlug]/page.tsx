@@ -367,12 +367,13 @@ export default function ProfilePage() {
                 <Button
                   color={activeMembership ? "light" : "brand"}
                   variant={activeMembership ? "outline" : "solid"}
-                  element="a"
+                  element={Link}
                   href={createAuthorizeUrl({
                     connection: "FEIDE",
                     redirectAfter: fullPathname,
                     returnedFromFeide: "true",
                   })}
+                  prefetch={false}
                   className="h-fit w-fit"
                 >
                   Registrer medlemskap
