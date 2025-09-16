@@ -26,6 +26,3 @@ setup:
   - project: monoweb-web
     config: dev_personal
     path: packages/ui
-  - project: monoweb-splash-frontend
-    config: dev_personal
-    path: apps/splash-2025
