@@ -24,13 +24,27 @@ export function createEmailTemplate<const TData, const TType extends EmailType>(
   return definition
 }
 
-const templates = path.resolve(import.meta.url, "../../resources/email")
+const templates = path.resolve(new URL("../../../resources/email", import.meta.url).pathname)
 
 export const emails = {
   COMPANY_COLLABORATION_RECEIPT: createEmailTemplate({
     type: "COMPANY_COLLABORATION_RECEIPT",
-    getSchema: () => z.object({}),
-    getTemplate: async () => fsp.readFile(path.join(templates, "company-collaboration-receipt.mustache"), "utf-8"),
+    getSchema: () =>
+      z.object({
+        companyName: z.string().min(1).max(140),
+        contactName: z.string().min(1),
+        contactEmail: z.string().email(),
+        contactTel: z.string(),
+        requestsCompanyPresentation: z.boolean(),
+        requestsCourseEvent: z.boolean(),
+        requestsTwoInOneDeal: z.boolean(),
+        requestsInstagramTakeover: z.boolean(),
+        requestsExcursionParticipation: z.boolean(),
+        requestsCollaborationEvent: z.boolean(),
+        requestsFemalesInTechEvent: z.boolean(),
+        comment: z.string(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "company_collaboration_receipt.mustache"), "utf-8"),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>
