@@ -268,7 +268,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
                 />
               </div>
             </Stripes>
-            <span className="absolute top-0 left-0 inset-0 bg-gradient-to-t from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent pointer-events-none transition-colors" />
+            <span className="absolute top-0 left-0 inset-0 bg-gradient-to-t from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent pointer-events-none transition-colors duration-400" />
           </Link>
         )}
     </div>
@@ -343,25 +343,41 @@ const DelayPill = ({ mergeDelayHours, className }: DelayPillProps) => {
 interface AttendanceStatusProps {
   attendance: Attendance
   attendee: Attendee | null
+  small?: boolean
 }
 
-const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
+const AttendanceStatus = ({ attendance, attendee, small }: AttendanceStatusProps) => {
+  const gap = small ? "gap-1" : "gap-2"
+  const iconSize = small ? 12 : 16
+
   if (!attendee) {
-    return <Text>Du er ikke påmeldt</Text>
+    return <div className={cn("flex flex-row items-center", gap)}>
+        <Icon icon="tabler:user-x" size={iconSize} />
+        <Text>Du er ikke påmeldt</Text>
+      </div>
   }
 
   if (attendee.reserved === true) {
-    return <Text>Du er påmeldt</Text>
+    return <div className={cn("flex flex-row items-center", gap)}>
+        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
+        <Text>Du er påmeldt</Text>
+      </div>
   }
 
   const queuePosition = getAttendeeQueuePosition(attendance, attendee.user)
 
   // Should never happen, but just in case
   if (!queuePosition) {
-    return <Text>Du er i køen</Text>
+    return <div className={cn("flex flex-row items-center", gap)}>
+        <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />
+        <Text>Du er i køen</Text>
+      </div>
   }
 
-  return <Text>Du er {queuePosition}. i køen</Text>
+  return<div className={cn("flex flex-row items-center", gap)}>
+        <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />
+        <Text>Du er {queuePosition}. i køen</Text>
+      </div>
 }
 
 interface PaymentStatusProps {
@@ -375,6 +391,9 @@ const PaymentStatus = ({ attendance, attendee, small }: PaymentStatusProps) => {
     return null
   }
 
+  const gap = small ? "gap-1" : "gap-2"
+  const iconSize = small ? 12 : 16
+
   const hasPaid = Boolean(
     attendee &&
       (attendee?.paymentChargedAt ||
@@ -383,11 +402,12 @@ const PaymentStatus = ({ attendance, attendee, small }: PaymentStatusProps) => {
   )
 
   if (!attendee) {
-    return <Text>{attendance.attendancePrice} kr</Text>
+    return (<div className={cn("flex flex-row items-center", gap)}>
+        <Icon icon="tabler:coins" size={iconSize} />
+        <Text>{attendance.attendancePrice} kr</Text>
+      </div>)
   }
 
-  const gap = small ? "gap-1" : "gap-2"
-  const iconSize = small ? 12 : 16
 
   if (!hasPaid) {
     return (
@@ -401,8 +421,11 @@ const PaymentStatus = ({ attendance, attendee, small }: PaymentStatusProps) => {
   if (attendee.paymentReservedAt) {
     return (
       <div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:check" size={iconSize} />
-        <Text>Du har reservert {attendance.attendancePrice} kr</Text>
+        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
+        <div className="flex flex-col gap-0 items-start">
+          <Text>Du har reservert {attendance.attendancePrice} kr</Text>
+          <Text className="text-xs">Du blir trukket en gang</Text>
+        </div>
       </div>
     )
   }

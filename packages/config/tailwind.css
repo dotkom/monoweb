@@ -28,10 +28,14 @@
 }
 
 @utility stripes-mask {
-  --width: 12px; /* Stripe width */
-  --stripe-cycle: calc(var(--width) * 2); /* One cycle = one of stripe A and B */
+  /* Stripe width */
+  --width: 12px;
+  /* One cycle = one of stripe A and B */
+  --stripe-cycle: calc(var(--width) * 2);
+  /* This is to make the stripes move the correct horizontal distance, since they are diagonal */
   --move-stripes-x-period: calc(var(--stripe-cycle) * sqrt(2));
 
+  /* Tells the browser it will animate */
   will-change: mask-position, -webkit-mask-position;
 
   mask-image: repeating-linear-gradient(
@@ -52,7 +56,6 @@
 
 @keyframes move-stripes-x {
   to {
-    /* This is to make the stripes move the correct horizontal distance, since they are diagonal */
     mask-position: var(--move-stripes-x-period) 0;
     -webkit-mask-position: var(--move-stripes-x-period) 0;
   }
