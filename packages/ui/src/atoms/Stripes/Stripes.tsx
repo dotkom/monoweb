@@ -20,7 +20,7 @@ export const Stripes = ({
   children,
 }: StripedProps) => {
   return (
-    <div className={cn("group relative overflow-hidden w-full h-full", className)}>
+    <div className={cn("relative overflow-hidden w-full h-full", className)}>
       {/* Base color */}
       <div aria-hidden="true" className={cn("absolute inset-0", colorA)} />
 
