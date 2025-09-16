@@ -11,6 +11,7 @@ import {
   AlreadyExistsError,
   ApplicationError,
   FailedPreconditionError,
+  ForbiddenError,
   IllegalStateError,
   InternalServerError,
   InvalidArgumentError,
@@ -30,7 +31,7 @@ export type Principal = {
 export const createContext = async (principal: Principal | null, context: ServiceLayer) => {
   function require(condition: boolean): asserts condition {
     if (!condition) {
-      throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" })
+      throw new ForbiddenError(`Principal(ID=${principal ?? "<anonymous>"}) is not permitted to perform this operation`)
     }
   }
   return {
@@ -163,10 +164,13 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
           })
         }
 
-        // We also emit the error to Sentry, as that is our primary alerting mechanism for production issues.
-        captureException(error)
         span.recordException(error)
         span.setStatus({ code: SpanStatusCode.ERROR })
+
+        // NOTE: We do not bother reporting authorization errors to sentry, as they are a client fault.
+        if (!(error.cause instanceof ForbiddenError)) {
+          captureException(error)
+        }
 
         return {
           marker: result.marker,
@@ -205,6 +209,9 @@ function getTRPCErrorCode(error: ApplicationError): TRPC_ERROR_CODE_KEY {
   }
   if (error instanceof ResourceExhaustedError) {
     return "CONFLICT"
+  }
+  if (error instanceof ForbiddenError) {
+    return "FORBIDDEN"
   }
   // Safely presume everything else is an internal server error
   return "INTERNAL_SERVER_ERROR"

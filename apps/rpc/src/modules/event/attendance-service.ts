@@ -22,7 +22,6 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
-import { captureException } from "@sentry/node"
 import { addDays, addHours, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast, min } from "date-fns"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
@@ -755,8 +754,8 @@ export function getAttendanceService(
             paymentChargedAt: getCurrentUTC(),
           })
         } else {
-          logger.error("Failed to charge attendee", attendee.id, e)
-          captureException(e)
+          logger.error("Failed to charge Attendee(ID=%s): %o", attendee.id, e)
+          throw e
         }
       }
     },
