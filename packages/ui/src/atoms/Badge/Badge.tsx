@@ -7,7 +7,7 @@ import { Text } from "../Typography/Text"
 
 // TODO: Do not abuse CVA like styles does below
 export type BadgeProps = {
-  color: "amber" | "blue" | "green" | "red" | "slate"
+  color: "amber" | "blue" | "green" | "red" | "slate" | "gold"
   variant: "light" | "outline" | "solid"
   className?: string
 }
@@ -31,6 +31,7 @@ const styles = {
       color: {
         red: "bg-red-300 text-red-900 dark:bg-red-900 dark:text-red-200",
         blue: "bg-blue-300 text-blue-900 dark:bg-blue-900 dark:text-blue-200",
+        gold: "bg-amber-400 text-yellow-900 dark:bg-amber-500 dark:text-black-900",
         green: "bg-green-300 text-green-900 dark:bg-green-900 dark:text-green-200",
         amber: "bg-amber-300 text-amber-900 dark:bg-amber-900 dark:text-amber-200",
         slate: "bg-gray-300 text-gray-900 dark:bg-stone-600 dark:text-stone-100",
