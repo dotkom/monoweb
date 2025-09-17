@@ -2,7 +2,7 @@ import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupRole, type UserId, getGroupTypeName } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, Text, Title, cn, RichText } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
@@ -92,7 +92,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
             <Text className="text-gray-500 dark:text-stone-400">{name}</Text>
           </div>
 
-          <Text>{group.description || "Ingen beskrivelse"}</Text>
+          <RichText content={group.description || "Ingen beskrivelse"} />
 
           <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-400">
             <Text>Kontakt:</Text>
