@@ -6,6 +6,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms
 import { Text } from "../../atoms/Typography/Text"
 import { cn } from "../../utils"
 
+const DEFAULT_LINE_HEIGHT = 28
+
 interface RichTextProps {
   content: string
   className?: string
@@ -27,7 +29,7 @@ export function RichText({
 }: RichTextProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
-  const [collapsedMaxHeight, setCollapsedMaxHeight] = useState(0)
+  const [collapsedMaxHeight, setCollapsedMaxHeight] = useState(maxLines ? DEFAULT_LINE_HEIGHT * maxLines : 0)
   const [expandedMaxHeight, setExpandedMaxHeight] = useState(0)
   const [previousContainerHeight, setPreviousContainerHeight] = useState<number | null>(null)
 
@@ -43,7 +45,7 @@ export function RichText({
 
     const computedStyles = getComputedStyle(contentElement)
 
-    const lineHeight = Number.parseFloat(computedStyles.lineHeight || "0") || 24
+    const lineHeight = Number.parseFloat(computedStyles.lineHeight || "0") || DEFAULT_LINE_HEIGHT
     const verticalPadding =
       Number.parseFloat(computedStyles.paddingTop || "0") + Number.parseFloat(computedStyles.paddingBottom || "0")
 
@@ -116,18 +118,13 @@ export function RichText({
         "[&_p:empty]:m-0 [&_p:empty]:before:content-[''] [&_p:empty]:before:block [&_p:empty]:before:h-3",
         className
       )}
-      style={
-        maxLines
-          ? {
-              maxHeight: isExpanded ? expandedMaxHeight || undefined : collapsedMaxHeight || undefined,
-              transition: "max-height 200ms ease",
-              WebkitMaskImage:
-                !isExpanded && isOverflowing ? "linear-gradient(180deg, #000 75%, transparent 100%)" : undefined,
-              maskImage:
-                !isExpanded && isOverflowing ? "linear-gradient(180deg, #000 75%, transparent 100%)" : undefined,
-            }
-          : undefined
-      }
+      style={{
+        maxHeight: isExpanded ? expandedMaxHeight || undefined : collapsedMaxHeight || undefined,
+        transition: "max-height 200ms ease",
+        WebkitMaskImage:
+          !isExpanded && isOverflowing ? "linear-gradient(180deg, #000 75%, transparent 100%)" : undefined,
+        maskImage: !isExpanded && isOverflowing ? "linear-gradient(180deg, #000 75%, transparent 100%)" : undefined,
+      }}
     />
   )
 
