@@ -137,6 +137,7 @@ export interface AttendanceService {
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
+  findChargeAttendeeScheduleDate(handle: DBHandle, attendeeId: AttendeeId): Promise<Date | null>
 
   updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<void>
@@ -406,7 +407,10 @@ export function getAttendanceService(
       })
 
       if (attendance.attendancePrice) {
-        const paymentDeadline = options.immediatePayment ? addHours(new TZDate(), 1) : addHours(new TZDate(), 24)
+        //const paymentDeadline: TZDate = options.immediatePayment ? addSeconds(addMinutes(new TZDate(), 59), 59) : addHours(new TZDate(), 24)
+        const paymentDeadline: TZDate = options.immediatePayment
+          ? addHours(new TZDate(), 1)
+          : addHours(new TZDate(), 24)
         const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
         attendee.paymentDeadline = paymentDeadline
         attendee.paymentId = payment.id
@@ -559,6 +563,14 @@ export function getAttendanceService(
           attendee.id
         )
       }
+    },
+    async findChargeAttendeeScheduleDate(handle, attendeeId) {
+      const attendee = await this.getAttendeeById(handle, attendeeId)
+      const job = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
+      if (!job || !attendee.paymentReservedAt) {
+        return null
+      }
+      return job.scheduledAt
     },
     async deleteAttendancePayment(handle, attendance: Attendance) {
       for (const attendee of attendance.attendees) {

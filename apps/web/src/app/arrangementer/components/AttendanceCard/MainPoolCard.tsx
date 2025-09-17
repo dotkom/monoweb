@@ -21,7 +21,15 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { formatDate, formatDistanceToNowStrict, interval, isFuture, isWithinInterval, subMinutes } from "date-fns"
+import {
+  formatDate,
+  formatDistanceToNowStrict,
+  interval,
+  isFuture,
+  isWithinInterval,
+  roundToNearestMinutes,
+  subMinutes,
+} from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC } from "react"
@@ -30,9 +38,10 @@ interface MainPoolCardProps {
   attendance: Attendance
   user: User | null
   authorizeUrl: string
+  chargeScheduleDate?: Date | null
 }
 
-export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authorizeUrl }) => {
+export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authorizeUrl, chargeScheduleDate }) => {
   const now = new Date()
   const attendee = getAttendee(attendance, user)
 
@@ -132,9 +141,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         )}
 
         {!servingPunishment && (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <AttendanceStatus attendance={attendance} attendee={attendee} />
-            <PaymentStatus attendance={attendance} attendee={attendee} />
+            <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
           </div>
         )}
 
@@ -198,11 +207,16 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         {!servingPunishment && (
           <>
             <div className="mx-1">
-              <AttendanceStatus attendance={attendance} attendee={attendee} />
+              <AttendanceStatus attendance={attendance} attendee={attendee} small />
             </div>
             <div className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
             <div className="mx-1">
-              <PaymentStatus attendance={attendance} attendee={attendee} />
+              <PaymentStatus
+                attendance={attendance}
+                attendee={attendee}
+                chargeScheduleDate={chargeScheduleDate}
+                small
+              />
             </div>
           </>
         )}
@@ -236,7 +250,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
       {isWithinRegisterCountdown && !attendee && (
         <div className="flex flex-col gap-1 items-center">
           <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
-          <Text className="text-4xl font-medium tabular-nums">{registerCountdownText}</Text>
+          <Text className="text-4xl font-medium tabular-nums" suppressHydrationWarning>
+            {registerCountdownText}
+          </Text>
         </div>
       )}
 
@@ -348,51 +364,60 @@ interface AttendanceStatusProps {
 
 const AttendanceStatus = ({ attendance, attendee, small }: AttendanceStatusProps) => {
   const gap = small ? "gap-1" : "gap-2"
-  const iconSize = small ? 12 : 16
+  const iconSize = 16
 
   if (!attendee) {
-    return <div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:user-x" size={iconSize} />
+    return (
+      <div className={cn("flex flex-row items-center", gap)}>
+        {!small && <Icon icon="tabler:user-x" size={iconSize} />}
         <Text>Du er ikke påmeldt</Text>
       </div>
+    )
   }
 
   if (attendee.reserved === true) {
-    return <div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
+    return (
+      <div className={cn("flex flex-row items-center", gap)}>
+        {!small && <Icon icon="tabler:check" size={iconSize} className="text-green-700" />}
         <Text>Du er påmeldt</Text>
       </div>
+    )
   }
 
   const queuePosition = getAttendeeQueuePosition(attendance, attendee.user)
 
   // Should never happen, but just in case
   if (!queuePosition) {
-    return <div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />
+    return (
+      <div className={cn("flex flex-row items-center", gap)}>
+        {!small && <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />}
         <Text>Du er i køen</Text>
       </div>
+    )
   }
 
-  return<div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />
-        <Text>Du er {queuePosition}. i køen</Text>
-      </div>
+  return (
+    <div className={cn("flex flex-row items-center", gap)}>
+      {!small && <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />}
+      <Text>Du er {queuePosition}. i køen</Text>
+    </div>
+  )
 }
 
 interface PaymentStatusProps {
   attendance: Attendance
   attendee: Attendee | null
+  chargeScheduleDate?: Date | null
   small?: boolean
 }
 
-const PaymentStatus = ({ attendance, attendee, small }: PaymentStatusProps) => {
+const PaymentStatus = ({ attendance, attendee, small, chargeScheduleDate }: PaymentStatusProps) => {
   if (!attendance.attendancePrice) {
     return null
   }
 
   const gap = small ? "gap-1" : "gap-2"
-  const iconSize = small ? 12 : 16
+  const iconSize = 16
 
   const hasPaid = Boolean(
     attendee &&
@@ -402,17 +427,18 @@ const PaymentStatus = ({ attendance, attendee, small }: PaymentStatusProps) => {
   )
 
   if (!attendee) {
-    return (<div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:coins" size={iconSize} />
+    return (
+      <div className={cn("flex flex-row items-center", gap)}>
+        {!small && <Icon icon="tabler:coins" size={iconSize} />}
         <Text>{attendance.attendancePrice} kr</Text>
-      </div>)
+      </div>
+    )
   }
-
 
   if (!hasPaid) {
     return (
       <div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:x" size={iconSize} />
+        {!small && <Icon icon="tabler:x" size={iconSize} />}
         <Text>{attendance.attendancePrice} kr ubetalt</Text>
       </div>
     )
@@ -421,10 +447,17 @@ const PaymentStatus = ({ attendance, attendee, small }: PaymentStatusProps) => {
   if (attendee.paymentReservedAt) {
     return (
       <div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
+        {!small && <Icon icon="tabler:check" size={iconSize} className="text-green-700" />}
         <div className="flex flex-col gap-0 items-start">
           <Text>Du har reservert {attendance.attendancePrice} kr</Text>
-          <Text className="text-xs">Du blir trukket en gang</Text>
+          {chargeScheduleDate && (
+            <>
+              <Text className="text-xs">
+                Du blir trukket{" "}
+                {formatDate(roundToNearestMinutes(chargeScheduleDate), "dd. MMM 'kl.' HH:mm", { locale: nb })}.
+              </Text>
+            </>
+          )}
         </div>
       </div>
     )
@@ -433,7 +466,7 @@ const PaymentStatus = ({ attendance, attendee, small }: PaymentStatusProps) => {
   if (attendee.paymentChargedAt) {
     return (
       <div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:check" size={iconSize} />
+        {!small && <Icon icon="tabler:check" size={iconSize} />}
         <Text>Du har betalt {attendance.attendancePrice} kr</Text>
       </div>
     )
@@ -442,7 +475,7 @@ const PaymentStatus = ({ attendance, attendee, small }: PaymentStatusProps) => {
   if (attendee.paymentRefundedAt) {
     return (
       <div className={cn("flex flex-row items-center", gap)}>
-        <Icon icon="tabler:arrow-forward" size={iconSize} />
+        {!small && <Icon icon="tabler:arrow-forward" size={iconSize} />}
         <Text>Du er refundert {attendance.attendancePrice} kr</Text>
       </div>
     )

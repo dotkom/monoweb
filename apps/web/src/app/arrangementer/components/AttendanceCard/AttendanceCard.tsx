@@ -13,7 +13,7 @@ import {
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
-import { useQueries, useQueryClient } from "@tanstack/react-query"
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
@@ -128,6 +128,15 @@ export const AttendanceCard = ({
 
   const attendee = getAttendee(attendance, user)
 
+  const { data: chargeScheduleDate } = useQuery(
+    trpc.event.attendance.findChargeAttendeeScheduleDate.queryOptions(
+      {
+        attendeeId: attendee?.id ?? "",
+      },
+      { enabled: Boolean(attendee?.id) }
+    )
+  )
+
   useEffect(() => {
     // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
     // right before even open (as if we don't have enough already)
@@ -179,11 +188,16 @@ export const AttendanceCard = ({
         Påmelding
       </Title>
 
-      <AttendanceDateInfo attendance={attendance} />
+      <AttendanceDateInfo attendance={attendance} chargeScheduleDate={chargeScheduleDate} />
 
       {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
 
-      <MainPoolCard attendance={attendance} user={user} authorizeUrl={authorizeUrl} />
+      <MainPoolCard
+        attendance={attendance}
+        user={user}
+        authorizeUrl={authorizeUrl}
+        chargeScheduleDate={chargeScheduleDate}
+      />
 
       {attendee?.reserved && attendance.selections.length > 0 && (
         <div className="flex flex-col gap-2">

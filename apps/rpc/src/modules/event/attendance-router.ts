@@ -276,4 +276,21 @@ export const attendanceRouter = t.router({
         ctx.attendanceService.updateAttendanceById(handle, input.id, input.attendance)
       )
     ),
+
+  findChargeAttendeeScheduleDate: authenticatedProcedure
+    .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
+    .output(z.date().nullable())
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const attendee = await ctx.attendanceService.getAttendeeById(handle, input.attendeeId)
+
+        if (!attendee) {
+          return null
+        }
+
+        ctx.authorize.requireMeOrAffiliation(attendee.userId, ["dotkom", "hs"])
+
+        return await ctx.attendanceService.findChargeAttendeeScheduleDate(handle, attendee.id)
+      })
+    }),
 })
