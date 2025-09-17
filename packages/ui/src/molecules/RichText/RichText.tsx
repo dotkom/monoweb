@@ -1,7 +1,7 @@
 "use client"
 
 import DOMPurify from "isomorphic-dompurify"
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms/Collapsible/Collapsible"
 import { Text } from "../../atoms/Typography/Text"
 import { cn } from "../../utils"
@@ -36,25 +36,24 @@ export function RichText({
 
   const measureHeights = () => {
     const contentElement = contentElementRef.current
-    
+
     if (!maxLines || !contentElement) {
       return
     }
 
     const computedStyles = getComputedStyle(contentElement)
 
-    const lineHeight = parseFloat(computedStyles.lineHeight || "0") || 24
+    const lineHeight = Number.parseFloat(computedStyles.lineHeight || "0") || 24
     const verticalPadding =
-      parseFloat(computedStyles.paddingTop || "0") +
-      parseFloat(computedStyles.paddingBottom || "0")
+      Number.parseFloat(computedStyles.paddingTop || "0") + Number.parseFloat(computedStyles.paddingBottom || "0")
 
     const collapsedHeight = Math.ceil(lineHeight * maxLines + verticalPadding)
-    
+
     let expandedHeight = contentElement.scrollHeight
 
     if (contentElement.lastElementChild) {
       const lastChildStyles = getComputedStyle(contentElement.lastElementChild)
-      const lastChildMarginBottom = parseFloat(lastChildStyles.marginBottom || "0")
+      const lastChildMarginBottom = Number.parseFloat(lastChildStyles.marginBottom || "0")
       expandedHeight += lastChildMarginBottom
     }
 
@@ -63,6 +62,7 @@ export function RichText({
     setIsOverflowing(expandedHeight > collapsedHeight + 1)
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: should not have contentElementRef as dependency
   useLayoutEffect(() => {
     measureHeights()
 
@@ -71,10 +71,11 @@ export function RichText({
     if (contentElementRef.current) {
       resizeObserver.observe(contentElementRef.current)
     }
-    
+
     return () => resizeObserver.disconnect()
   }, [content, maxLines])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: should not have containerRef as dependency
   useLayoutEffect(() => {
     if (isExpanded || previousContainerHeight === null || !containerRef.current) {
       return
@@ -82,14 +83,12 @@ export function RichText({
 
     const heightDifference = previousContainerHeight - collapsedMaxHeight
 
-    console.log(heightDifference)
-
     if (heightDifference > 0) {
       window.scrollBy({ top: -heightDifference })
     }
 
     setPreviousContainerHeight(null)
-  }, [isExpanded, previousContainerHeight])
+  }, [isExpanded, previousContainerHeight, setPreviousContainerHeight])
 
   const handleToggleExpandCollapse = () => {
     if (isExpanded && containerRef.current) {
@@ -117,18 +116,18 @@ export function RichText({
         "[&_p:empty]:m-0 [&_p:empty]:before:content-[''] [&_p:empty]:before:block [&_p:empty]:before:h-3",
         className
       )}
-      style={maxLines ? {
-        maxHeight: isExpanded ? expandedMaxHeight || undefined : collapsedMaxHeight || undefined,
-        transition: "max-height 200ms ease",
-        WebkitMaskImage:
-          !isExpanded && isOverflowing
-            ? "linear-gradient(180deg, #000 75%, transparent 100%)"
-            : undefined,
-        maskImage:
-          !isExpanded && isOverflowing
-            ? "linear-gradient(180deg, #000 75%, transparent 100%)"
-            : undefined,
-      } : undefined}
+      style={
+        maxLines
+          ? {
+              maxHeight: isExpanded ? expandedMaxHeight || undefined : collapsedMaxHeight || undefined,
+              transition: "max-height 200ms ease",
+              WebkitMaskImage:
+                !isExpanded && isOverflowing ? "linear-gradient(180deg, #000 75%, transparent 100%)" : undefined,
+              maskImage:
+                !isExpanded && isOverflowing ? "linear-gradient(180deg, #000 75%, transparent 100%)" : undefined,
+            }
+          : undefined
+      }
     />
   )
 
