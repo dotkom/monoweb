@@ -4,7 +4,7 @@ export function EventDescription({ description }: { description: string }) {
   return (
     <>
       <div className="min-md:hidden">
-        <RichText content={description} lineClamp="line-clamp-3" />
+        <RichText content={description} maxLines={3} />
       </div>
       <div className="max-md:hidden">
         <RichText content={description} />
