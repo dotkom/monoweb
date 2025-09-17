@@ -53,11 +53,11 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
 
 export const EventListItemSkeleton: FC = () => {
   return (
-    <div className="flex flex-row gap-2 w-full rounded-lg -mx-2 p-2">
+    <div className="flex flex-row gap-2 w-full rounded-lg py-2 pl-2">
       <div className="aspect-[4/3] h-[6rem] bg-gray-300 dark:bg-stone-600 rounded-lg animate-pulse" />
 
-      <div className="flex flex-col gap-4">
-        <div className="w-64 h-6 bg-gray-300 dark:bg-stone-600 rounded-sm animate-pulse" />
+      <div className="flex flex-col gap-4 w-full">
+        <div className="max-w-64 h-6 bg-gray-300 dark:bg-stone-600 rounded-sm animate-pulse" />
 
         <div className="flex gap-2">
           <div className="w-4 h-4 bg-gray-300 dark:bg-stone-600 rounded-sm animate-pulse" />
