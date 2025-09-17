@@ -93,7 +93,7 @@ interface MainPoolCardProps {
 export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authorizeUrl }) => {
   if (!user) {
     return (
-      <Link href={authorizeUrl}>
+      <Link href={authorizeUrl} prefetch={false}>
         <Card>
           <Text>Du er ikke innlogget</Text>
 

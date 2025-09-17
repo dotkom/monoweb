@@ -2,14 +2,15 @@ import { auth } from "@/auth"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Event } from "@dotkomonline/types"
-import { Icon, RichText, Text, Tilt, Title } from "@dotkomonline/ui"
-import { createEventPageUrl, getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { formatDate, isFuture } from "date-fns"
+import { RichText } from "@dotkomonline/ui"
+import { Icon, Text, Tilt, Title } from "@dotkomonline/ui"
+import { Button } from "@dotkomonline/ui"
+import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { formatDate } from "date-fns"
 import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
 import { ConstructionNotice } from "./construction-notice"
-import { Button } from "@dotkomonline/ui"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
@@ -27,23 +28,6 @@ export default async function App() {
     },
   })
 
-  // DELETE THIS
-  const immballEvents = await server.event.all.query({
-    filter: {
-      byId: ["c03b4238-c83f-44d7-b56e-f013724e7252", "4964f685-ea8a-4280-89fa-f43338757b15"],
-    },
-  })
-  const immball = immballEvents.items.find(({ event, attendance }) =>
-    attendance?.attendees.find((attendee) => {
-      return (
-        attendee.user.id === session?.sub &&
-        !(attendee.paymentChargedAt || attendee.paymentRefundedAt) &&
-        isFuture(event.start)
-      )
-    })
-  )
-  // END DELETE
-
   const cookies = await getCookies()
   const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
 
@@ -51,25 +35,6 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
         {constructionNoticeShown && <ConstructionNotice />}
-        {/* TODO: DELETE THIS */}
-        {immball?.event && (
-          <Link
-            href={createEventPageUrl(immball.event.id, immball.event.title)}
-            className="w-full p-6 text-white bg-red-500 rounded-2xl"
-          >
-            <div className="flex flex-col gap-0.5 w-fit">
-              <Text className="text-lg font-semibold">
-                Du må betale for immball igjen! Klikk her for å gå til arrangmentet.
-              </Text>
-              <Text className="text-sm">
-                Du blir bare trukket én gang, selv om du tidligere har betalt.
-                <br />
-                Kontakt dotkom@online.ntnu.no og arrkom@online.ntnu.no dersom det oppstår problemer.
-              </Text>
-            </div>
-          </Link>
-        )}
-        {/* END DELETE */}
         <OnlineHero />
       </div>
 
@@ -104,13 +69,13 @@ export default async function App() {
               </div>
             </div>
           </Link>
-            {items.slice(1).map(({ event, attendance }) => {
-              const reservedStatus =
-                attendance?.attendees.find((attendee) => attendee.user.id === session?.sub)?.reserved ?? null
+          {items.slice(1).map(({ event, attendance }) => {
+            const reservedStatus =
+              attendance?.attendees.find((attendee) => attendee.user.id === session?.sub)?.reserved ?? null
 
-              return <EventCard key={event.id} event={event} attendance={attendance} reservedStatus={reservedStatus} />
-            })}
-            <Tilt>
+            return <EventCard key={event.id} event={event} attendance={attendance} reservedStatus={reservedStatus} />
+          })}
+          <Tilt>
             <Button
               element={Link}
               href="/arrangementer"

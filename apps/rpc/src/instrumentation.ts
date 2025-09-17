@@ -16,5 +16,6 @@ if (process.env.SENTRY_DSN !== undefined) {
     sendDefaultPii: false,
     debug: false,
     skipOpenTelemetrySetup: true,
+    defaultIntegrations: false,
   })
 }

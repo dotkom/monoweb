@@ -22,6 +22,7 @@ import { type Pageable, pageQuery } from "../../query"
 export interface UserRepository {
   findById(handle: DBHandle, userId: UserId): Promise<User | null>
   findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
+  findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   findMany(handle: DBHandle, query: UserFilterQuery, page: Pageable): Promise<User[]>
   /**
@@ -55,11 +56,18 @@ export function getUserRepository(): UserRepository {
       return parseOrReport(UserSchema.nullable(), user)
     },
     async findByProfileSlug(handle, profileSlug) {
-      const owUser = await handle.user.findUnique({ where: { profileSlug } })
-      if (!owUser) {
+      const user = await handle.user.findUnique({ where: { profileSlug }, include: { memberships: true } })
+      if (!user) {
         return null
       }
-      return this.findById(handle, owUser.id)
+      return parseOrReport(UserSchema.nullable(), user)
+    },
+    async findByWorkspaceUserIds(handle, workspaceUserIds) {
+      const users = await handle.user.findMany({
+        where: { workspaceUserId: { in: workspaceUserIds } },
+        include: { memberships: true },
+      })
+      return users.map((user) => parseOrReport(UserSchema, user))
     },
     async findMany(handle, query, page) {
       const or = [

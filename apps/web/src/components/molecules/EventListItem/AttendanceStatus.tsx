@@ -49,14 +49,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             "flex flex-row gap-1 items-center",
             attendanceStatus === "NotOpened" && "text-gray-500 dark:text-stone-400",
             (isReserved || isUnreserved) && "px-1 py-0-5 rounded-md bg-gray-100 dark:bg-stone-700",
-            isReserved && [
-              "text-green-800 dark:text-green-200",
-              !eventEndInPast && (showLock ? "bg-green-100 dark:bg-green-950" : "bg-green-200 dark:bg-green-900"),
-            ],
-            isUnreserved && [
-              "text-amber-800 dark:text-amber-200",
-              !eventEndInPast && (showLock ? "bg-amber-100 dark:bg-amber-600/25" : "bg-amber-200 dark:bg-amber-600/50"),
-            ]
+            isReserved && "text-green-800 bg-green-100 dark:text-green-200 dark:bg-green-950",
+            isUnreserved && "text-amber-800 bg-amber-100 dark:text-amber-200 dark:bg-amber-600/25"
           )}
         >
           <Text className="text-xs md:text-sm">

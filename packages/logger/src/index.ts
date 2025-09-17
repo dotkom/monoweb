@@ -11,6 +11,7 @@ import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics"
 import { NodeSDK } from "@opentelemetry/sdk-node"
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from "@opentelemetry/semantic-conventions"
 import { OpenTelemetryTransportV3 } from "@opentelemetry/winston-transport"
+import { PrismaInstrumentation } from "@prisma/instrumentation"
 import winston from "winston"
 
 export function getResource(serviceName: string, version = "0.1.0"): Resource {
@@ -38,7 +39,7 @@ export function startOpenTelemetry(resource: Resource) {
     metricReader: new PeriodicExportingMetricReader({ exporter: new OTLPMetricExporter() }),
     traceExporter: new OTLPTraceExporter(),
     logRecordProcessors: [logRecordProcessor],
-    instrumentations: [new WinstonInstrumentation()],
+    instrumentations: [new WinstonInstrumentation(), new PrismaInstrumentation()],
   })
   telemetry.start()
   logs.setGlobalLoggerProvider(loggerProvider)

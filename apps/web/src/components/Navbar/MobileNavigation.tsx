@@ -12,7 +12,6 @@ import type { MenuLink } from "@/components/Navbar/Navbar"
 import { env } from "@/env"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { Hamburger } from "./Hamburger"
-import { ThemeToggle } from "./ThemeToggle"
 
 export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   const [open, setOpen] = useState(false)
@@ -33,7 +32,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
       const originalStyle = window.getComputedStyle(document.body).overflow
       document.body.style.overflow = "hidden"
 
-      const mediaQuery = window.matchMedia("(min-width: 768px)")
+      const mediaQuery = window.matchMedia("(min-width: 64rem)")
 
       const handleMediaChange = (e: MediaQueryListEvent) => {
         if (e.matches) {
@@ -57,7 +56,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   }, [open])
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <Popover.Root onOpenChange={(val) => setOpen(val)}>
         <Popover.Trigger
           className="flex flex-row items-center"
@@ -67,50 +66,49 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
           <Hamburger open={open} />
         </Popover.Trigger>
         <Popover.Portal>
-          <Popover.Content className="z-99 md:hidden w-screen animate-in fade-in-20 p-4">
+          <Popover.Content className="z-99 lg:hidden w-screen animate-in fade-in-20 p-4">
             <nav
               ref={navRef}
-              className="z-99 flex flex-col h-[calc(100dvh-10rem)] bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl border border-blue-100 dark:border-stone-700/30 shadow-sm mt-4 rounded-3xl"
+              className="z-99 max-h-[calc(100dvh-10rem)] bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm mt-4 rounded-3xl"
             >
-              <ScrollArea.Root type="always" className="z-50 h-full overflow-hidden">
-                <ScrollArea.Viewport className="w-full h-full">
+              <ScrollArea.Root type="always" className="z-50 max-h-[inherit] overflow-hidden">
+                <ScrollArea.Viewport className="w-full max-h-[inherit]">
                   <div className="p-4">
-                    {linksWithHome.map((link) =>
-                      ("items" in link ? link.items : [link]).map((link) => (
-                        <Fragment key={link.title}>
-                          <Popover.Close asChild>
-                            <Link
-                              href={"href" in link ? link.href : "#"}
-                              className={cn(
-                                "flex items-center gap-3 p-4 rounded-lg hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors",
-                                "href" in link && ""
-                              )}
-                            >
-                              <Icon className="text-xl" icon={link.icon} />
-                              {link.title}
-                            </Link>
-                          </Popover.Close>
-                        </Fragment>
-                      ))
-                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                      {linksWithHome.map((link) =>
+                        ("items" in link ? link.items : [link]).map((link) => (
+                          <Fragment key={link.title}>
+                            <Popover.Close asChild>
+                              <Link
+                                href={"href" in link ? link.href : "#"}
+                                className={cn(
+                                  "flex items-center gap-3 p-4 rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors",
+                                  "href" in link && ""
+                                )}
+                              >
+                                <Icon className="text-xl" icon={link.icon} />
+                                {link.title}
+                              </Link>
+                            </Popover.Close>
+                          </Fragment>
+                        ))
+                      )}
+                    </div>
 
                     {session === null && (
-                      <div className="py-6">
-                        <div className="mb-4 mx-2 border-t border-gray-400 dark:border-stone-700" />
-                        <div className="flex items-center justify-between">
-                          <ThemeToggle size="lg" />
-                          <Popover.Close asChild>
-                            <Button
-                              element={Link}
-                              variant="solid"
-                              size="md"
-                              className="font-semibold rounded-lg justify-start px-3 h-10 bg-blue-100 hover:bg-blue-200 dark:bg-stone-700 dark:hover:bg-stone-600"
-                              href={createAuthorizeUrl({ redirectAfter: fullPathname })}
-                            >
-                              Logg inn uten Feide
-                            </Button>
-                          </Popover.Close>
-                        </div>
+                      <div className="pt-6 px-2 pb-2">
+                        <div className="mb-4 border-t border-gray-400 dark:border-stone-700" />
+                        <Popover.Close asChild>
+                          <Button
+                            element={Link}
+                            variant="solid"
+                            size="md"
+                            className="font-semibold rounded-lg justify-start px-3 h-10 bg-blue-100 hover:bg-blue-200 dark:bg-stone-700 dark:hover:bg-stone-600"
+                            href={createAuthorizeUrl({ redirectAfter: fullPathname })}
+                          >
+                            Logg inn uten Feide
+                          </Button>
+                        </Popover.Close>
                       </div>
                     )}
                   </div>

@@ -32,7 +32,7 @@ export default function CompanyDetailsPage() {
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
-    router.replace(`/company/${company.id}?${params.toString()}`)
+    router.replace(`/company/${company.slug}?${params.toString()}`)
   }
 
   return (

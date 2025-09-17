@@ -92,7 +92,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
             <Text className="text-gray-500 dark:text-stone-400">{name}</Text>
           </div>
 
-          <Text>{group.about || group.description || "Ingen beskrivelse"}</Text>
+          <Text>{group.description || "Ingen beskrivelse"}</Text>
 
           <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-400">
             <Text>Kontakt:</Text>
@@ -248,6 +248,12 @@ function getLatestActiveMembership(member: GroupMember) {
 function getRolePriority(role: GroupRole) {
   switch (role.type) {
     case "LEADER":
+      return 6
+    case "DEPUTY_LEADER":
+      return 5
+    case "TREASURER":
+      return 4
+    case "TRUSTEE":
       return 3
     case "PUNISHER":
       return 2

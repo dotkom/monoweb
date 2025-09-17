@@ -8,12 +8,16 @@ import { useTRPC } from "./utils/trpc/client"
  * example of how this function is expected to be used.
  */
 async function uploadFileToS3PresignedUrl(file: File, fields: Record<string, string>, url: string): Promise<string> {
+  if (!file.type?.startsWith("image/")) {
+    throw new Error("File is not an image")
+  }
+
   try {
     const formData = new FormData()
-    formData.append("file", file)
     for (const [key, value] of Object.entries(fields)) {
       formData.append(key, value)
     }
+    formData.append("file", file)
 
     const response = await fetch(url, {
       method: "POST",

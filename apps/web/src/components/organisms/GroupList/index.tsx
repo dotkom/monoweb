@@ -7,18 +7,21 @@ interface GroupListProps {
 }
 
 export const GroupList: FC<GroupListProps> = ({ groups }) => {
-  const randomizedGroups = groups
+  const orderedGroups = groups
     // Makes inactive come last
     .toSorted((a, b) => {
-      if (a.deactivatedAt !== null && b.deactivatedAt !== null) {
-        return 0
+      if (a.deactivatedAt !== null) {
+        return 1
       }
-      return a.deactivatedAt !== null ? 1 : a.slug.localeCompare(b.slug)
+      if (b.deactivatedAt !== null) {
+        return -1
+      }
+      return a.slug.localeCompare(b.slug)
     })
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
-      {randomizedGroups.map((group) => (
+      {orderedGroups.map((group) => (
         <GroupListItem key={group.slug} group={group} />
       ))}
     </div>
