@@ -29,7 +29,7 @@ export const EventEditCard: FC = () => {
         id: data.id,
         event,
         groupIds: hostingGroupIds,
-        companies: companyIds,
+        companyIds,
         parentId: event.parentId,
       })
     },

@@ -11,7 +11,7 @@ export default function Page() {
       const { hostingGroupIds, companyIds, ...event } = data
       create.mutate({
         groupIds: hostingGroupIds,
-        companies: companyIds,
+        companyIds,
         event,
         parentId: event.parentId,
       })
