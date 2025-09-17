@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Event } from "@dotkomonline/types"
-import { RichText } from "@dotkomonline/ui"
+import { RichText, cn } from "@dotkomonline/ui"
 import { Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
@@ -15,7 +15,7 @@ import { ConstructionNotice } from "./construction-notice"
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
 
-  const { items } = await server.event.all.query({
+  const { items: events } = await server.event.all.query({
     take: 3,
     filter: {
       byEndDate: {
@@ -27,6 +27,9 @@ export default async function App() {
       orderBy: "asc",
     },
   })
+
+  const featuredEvent = events[0] ?? null
+  const otherEvents = events.slice(1)
 
   const cookies = await getCookies()
   const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
@@ -41,77 +44,106 @@ export default async function App() {
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
-        <div className="flex flex-col md:grid md:grid-cols-3 md:[grid-template-rows:4fr_4fr_2fr] gap-6 w-full">
-          <Link
-            href={`/arrangementer/${slugify(items[0].event.title)}/${items[0].event.id}`}
-            className="col-span-2 row-span-3 flex flex-col w-full gap-5 p-3 border border-gray-200 rounded-3xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-700"
-          >
+        {featuredEvent ? (
+          <div className="flex flex-col md:grid md:[grid-template-columns:35%_35%_30%] md:[grid-template-rows:2fr_2fr_1fr] gap-6 w-full">
+            <BigEventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
+
+            {otherEvents.map(({ event, attendance }) => (
+              <EventCard key={event.id} event={event} attendance={attendance} userId={session?.sub ?? null} />
+            ))}
+
             <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-              <img
-                src={items[0].event.imageUrl ? items[0].event.imageUrl : "/placeholder.svg"}
-                alt={items[0].event.title}
-                className="rounded-xl border border-gray-200 object-cover aspect-[16/9]"
-              />
+              <Button
+                element={Link}
+                href="/arrangementer"
+                className={cn(
+                  "rounded-xl w-full h-full text-brand-800 hover:text-black md:gap-3",
+                  "bg-blue-200 hover:bg-blue-100",
+                  "dark:bg-brand dark:hover:bg-brand/75"
+                )}
+                iconRight={<Icon icon="tabler:arrow-up-right" className="md:text-2xl" />}
+              >
+                <Text className="md:text-xl">Se alle arrangementer</Text>
+              </Button>
             </Tilt>
-            <div className="flex flex-col gap-3">
-              <Title element="p" size="xl" className="text-xl max-md:font-medium md:text-4xl">
-                {items[0].event.title}
-              </Title>
-
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-row gap-2 items-center">
-                  <Icon icon="tabler:calendar-event" className="text-xl text-gray-800 dark:text-stone-400" />
-                  <Text className="text-lg">{formatDate(items[0].event.start, "dd.MM")}</Text>
-                </div>
-                <div className="max-md:hidden">
-                  <RichText content={items[0].event.description} lineClamp="line-clamp-6" hideToggleButton />
-                </div>
-              </div>
-            </div>
-          </Link>
-          {items.slice(1).map(({ event, attendance }) => {
-            const reservedStatus =
-              attendance?.attendees.find((attendee) => attendee.user.id === session?.sub)?.reserved ?? null
-
-            return <EventCard key={event.id} event={event} attendance={attendance} reservedStatus={reservedStatus} />
-          })}
-          <Tilt>
-            <Button
-              element={Link}
-              href="/arrangementer"
-              className="rounded-3xl w-full h-full bg-blue-200 text-brand-800 hover:text-black"
-              iconRight={<Icon icon="tabler:arrow-up-right" />}
-            >
-              <Text>Se alle arrangementer</Text>
-            </Button>
-          </Tilt>
-        </div>
+          </div>
+        ) : (
+          <Text>Ingen kommende arrangementer</Text>
+        )}
       </div>
     </section>
+  )
+}
+
+interface BigEventCardProps {
+  event: Event
+  attendance: Attendance | null
+}
+
+const BigEventCard: FC<BigEventCardProps> = ({ event, attendance }) => {
+  return (
+    <Link
+      href={`/arrangementer/${slugify(event.title)}/${event.id}`}
+      className={cn(
+        "col-span-2 row-span-3 flex flex-col w-full gap-5 p-3 rounded-xl transition-colors border",
+        "border-gray-200 hover:bg-gray-50",
+        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700"
+      )}
+    >
+      <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
+        <img
+          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
+          alt={event.title}
+          className="rounded-xl border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
+        />
+      </Tilt>
+
+      <div className="flex flex-col gap-3">
+        <Title element="p" size="xl" className="text-xl max-md:font-medium md:text-4xl">
+          {event.title}
+        </Title>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-row gap-2 items-center">
+            <Icon icon="tabler:calendar-event" className="text-xl text-gray-500 dark:text-stone-500" />
+            <Text className="text-lg">{formatDate(event.start, "dd.MM")}</Text>
+          </div>
+          <div className="max-md:hidden">
+            <RichText content={event.description} lineClamp="line-clamp-4" hideToggleButton />
+          </div>
+        </div>
+      </div>
+    </Link>
   )
 }
 
 interface ComingEventProps {
   event: Event
   attendance: Attendance | null
-  reservedStatus: boolean | null
+  userId: string | null
 }
 
-const EventCard: FC<ComingEventProps> = ({ event, attendance, reservedStatus }) => {
+const EventCard: FC<ComingEventProps> = ({ event, attendance, userId }) => {
+  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+
   return (
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
-      className="flex flex-col h-full gap-3 p-3 border border-gray-200 rounded-3xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-700"
+      className={cn(
+        "flex flex-col h-full gap-3 p-3 border rounded-xl transition-colors",
+        "border-gray-200 hover:bg-gray-50",
+        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700"
+      )}
     >
-      <Tilt>
+      <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         <img
           src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
           alt={event.title}
-          className="rounded-xl border border-gray-200 object-cover aspect-[16/9] w-[40rem]"
+          className="rounded-xl border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
         />
       </Tilt>
       <div className="flex flex-col gap-2 w-full">
-        <Title element="p" size="md" className="font-normal line-clamp-2">
+        <Title element="p" size="lg" className="font-semibold line-clamp-2">
           {event.title}
         </Title>
 
@@ -123,40 +155,3 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, reservedStatus }) 
     </Link>
   )
 }
-
-// {event.imageUrl ? event.imageUrl : "/placeholder.svg"}
-
-//  <div className="flex flex-col md:flex-row gap-5">
-//             <Link
-//               href={`/arrangementer/${slugify(items[0].event.title)}/${items[0].event.id}`}
-//               className="flex flex-col w-full gap-5 p-5 border border-gray-200 rounded-3xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-700"
-//             >
-//               <Tilt>
-//                 <img
-//                   src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=0.752xw:1.00xh;0.175xw,0&resize=1200:*"
-//                   alt={items[0].event.title}
-//                   className="rounded-xl border border-gray-200 object-cover aspect-[4/3]"
-//                 />
-//               </Tilt>
-//               <div className="flex flex-col gap-3">
-//                 <Title element="p" size="xl" className="font-normal">
-//                   {items[0].event.title}
-//                 </Title>
-
-//                 <div className="flex flex-row gap-4 items-center">
-//                   <div className="flex flex-row gap-2 items-center">
-//                     <Icon icon="tabler:calendar-event" className="text-xl text-gray-800 dark:text-stone-400" />
-//                     <Text className="text-lg">{formatDate(items[0].event.start, "dd.MM")}</Text>
-//                   </div>
-//                 </div>
-//               </div>
-//             </Link>
-//           <div className="grid grid-cols-1 gap-5">
-//             {items.slice(1).map(({ event, attendance }) => {
-//               const reservedStatus =
-//                 attendance?.attendees.find((attendee) => attendee.user.id === session?.sub)?.reserved ?? null
-
-//               return <EventCard key={event.id} event={event} attendance={attendance} reservedStatus={reservedStatus} />
-//             })}
-//           </div>
-//         </div>
