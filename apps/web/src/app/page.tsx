@@ -7,6 +7,7 @@ import { Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { formatDate } from "date-fns"
+import { nb } from "date-fns/locale"
 import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
@@ -46,7 +47,9 @@ export default async function App() {
 
         {featuredEvent ? (
           <div className="flex flex-col md:grid md:[grid-template-columns:35%_35%_30%] md:[grid-template-rows:2fr_2fr_1fr] gap-6 w-full">
-            <BigEventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
+            <div className="col-span-2 row-span-3">
+              <BigEventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
+            </div>
 
             {otherEvents.map(({ event, attendance }) => (
               <EventCard key={event.id} event={event} attendance={attendance} userId={session?.sub ?? null} />
@@ -68,7 +71,7 @@ export default async function App() {
             </Tilt>
           </div>
         ) : (
-          <Text>Ingen kommende arrangementer</Text>
+          <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
         )}
       </div>
     </section>
@@ -85,7 +88,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance }) => {
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
       className={cn(
-        "col-span-2 row-span-3 flex flex-col w-full gap-5 p-3 rounded-xl transition-colors border",
+        "flex flex-col w-full gap-5 p-3 rounded-xl transition-colors border",
         "border-gray-200 hover:bg-gray-50",
         "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700"
       )}
@@ -99,17 +102,17 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance }) => {
       </Tilt>
 
       <div className="flex flex-col gap-3">
-        <Title element="p" size="xl" className="text-xl max-md:font-medium md:text-4xl">
+        <Title element="p" size="xl" className="text-xl line-clamp-1 max-md:font-medium md:text-4xl">
           {event.title}
         </Title>
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-row gap-2 items-center">
             <Icon icon="tabler:calendar-event" className="text-xl text-gray-500 dark:text-stone-500" />
-            <Text className="text-lg">{formatDate(event.start, "dd.MM")}</Text>
+            <Text className="text-lg">{formatDate(event.start, "dd. MMM", { locale: nb })}</Text>
           </div>
           <div className="max-md:hidden">
-            <RichText content={event.description} lineClamp="line-clamp-4" hideToggleButton />
+            <RichText content={event.description} lineClamp="line-clamp-5" hideToggleButton />
           </div>
         </div>
       </div>
@@ -143,13 +146,13 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId }) => {
         />
       </Tilt>
       <div className="flex flex-col gap-2 w-full">
-        <Title element="p" size="lg" className="font-semibold line-clamp-2">
+        <Title element="p" size="lg" title={event.title} className="font-semibold line-clamp-1">
           {event.title}
         </Title>
 
         <div className="flex flex-row gap-2 items-center">
           <Icon icon="tabler:calendar-event" className="text-base text-gray-800 dark:text-stone-400" />
-          <Text className="text-sm">{formatDate(event.start, "dd.MM")}</Text>
+          <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
         </div>
       </div>
     </Link>
