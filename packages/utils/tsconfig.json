@@ -2,7 +2,8 @@
   "extends": "../../packages/config/tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "lib": ["ESNext", "DOM"]
   },
   "include": ["./**/*.ts", "./**/*.tsx"]
 }

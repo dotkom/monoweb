@@ -28,7 +28,7 @@ import { useDebounce } from "use-debounce"
 
 interface FormProps {
   user: User
-  onSubmit: (data: UserWrite) => void
+  onSubmit: (data: Omit<UserWrite, "workspaceUserId">) => void
   isSaving?: boolean
   saveSuccess?: boolean
   saveError?: string | null
@@ -36,7 +36,7 @@ interface FormProps {
 }
 
 export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, resetSaveState }: FormProps) {
-  const defaultValues = {
+  const defaultValues: Omit<UserWrite, "workspaceUserId"> = {
     profileSlug: user.profileSlug,
     name: user.name ?? null,
     email: user.email ?? null,
@@ -52,13 +52,13 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     control,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit,
-  } = useForm<UserWrite>({
+  } = useForm<Omit<UserWrite, "workspaceUserId">>({
     defaultValues,
     mode: "onTouched",
     reValidateMode: "onBlur",
-    resolver: zodResolver(UserWriteSchema),
+    resolver: zodResolver(UserWriteSchema.omit({ workspaceUserId: true })),
   })
 
   const profileSlug = useWatch({ control, name: "profileSlug" })
@@ -66,9 +66,11 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
   const trpc = useTRPC()
 
+  const isProfileSlugChanged = Boolean(debouncedSlug && debouncedSlug !== user.profileSlug)
+
   const { data: fetchedUser, isFetching: isUserFetching } = useQuery(
     trpc.user.findByProfileSlug.queryOptions(debouncedSlug, {
-      enabled: Boolean(debouncedSlug && debouncedSlug !== user.profileSlug),
+      enabled: isProfileSlugChanged,
     })
   )
 
@@ -116,24 +118,28 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
               {errors.profileSlug?.message ?? "En feil oppstod"}
             </Text>
           )}
-          {!errors.profileSlug && isUserFetching && (
-            <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
-              <Icon icon="tabler:loader" className="animate-spin text-sm" />
-              <Text className="text-xs">Sjekker tilgjengelighet...</Text>
-            </div>
-          )}
-          {!errors.profileSlug && fetchedUser?.id !== user.id && (
-            <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
-              <Icon icon="tabler:x" className="text-sm" />
-              <Text className="text-xs">Brukernavnet er opptatt</Text>
-            </div>
-          )}
-          {!errors.profileSlug && fetchedUser === null && (
-            <div className="flex items-center gap-1 text-slate-500 dark:text-stone-500">
-              <Icon icon="tabler:check" className="text-sm" />
-              <Text className="text-xs">Brukernavnet er ledig</Text>
-            </div>
-          )}
+          {!errors.profileSlug &&
+            ((isUserFetching && (
+              <div className="flex items-center gap-1 text-slate-500 dark:text-stone-400">
+                <Icon icon="tabler:loader" className="animate-spin text-sm" />
+                <Text className="text-xs">Sjekker tilgjengelighet...</Text>
+              </div>
+            )) || (
+              <>
+                {fetchedUser !== null && isProfileSlugChanged && (
+                  <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                    <Icon icon="tabler:x" className="text-sm" />
+                    <Text className="text-xs">Brukernavnet er opptatt</Text>
+                  </div>
+                )}
+                {fetchedUser === null && (
+                  <div className="flex items-center gap-1 text-slate-500 dark:text-stone-400">
+                    <Icon icon="tabler:check" className="text-sm" />
+                    <Text className="text-xs">Brukernavnet er ledig</Text>
+                  </div>
+                )}
+              </>
+            ))}
         </div>
 
         <div className="w-full flex flex-col gap-1">
@@ -166,10 +172,10 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 <input
                   id="pfp"
                   type="file"
+                  accept="image/*"
                   onChange={(event) => onFileChange(event, onChange)}
                   placeholder="https://example.com/image.jpg"
-                  className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-500 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled
+                  className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
                 <TextInput value={value ?? ""} onChange={onChange} placeholder="https://..." />
               </div>
@@ -182,7 +188,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 <img
                   src={value}
                   alt="Profilbilde"
-                  className="mt-2 min-w-24 w-96 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-700"
+                  className="mt-2 min-w-24 w-96 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-600"
                 />
               )}
             </div>
@@ -190,7 +196,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
         />
 
         <div className="w-full flex flex-col gap-1">
-          <Textarea label="Biografi" placeholder="Skriv noe om deg selv..." {...register("biography")} />
+          <Textarea label="Biografi" placeholder="Skriv noe om deg selv..." {...register("biography")} rows={10} />
           {errors.biography && (
             <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
               {errors.biography?.message ?? "En feil oppstod"}
@@ -261,11 +267,15 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-row items-center gap-2">
-          <Button type="submit" className="w-fit" disabled={isUserFetching || Boolean(fetchedUser)}>
+          <Button
+            type="submit"
+            className="w-fit"
+            disabled={isUserFetching || Boolean(fetchedUser && fetchedUser.id !== user.id) || !isDirty}
+          >
             Oppdater
           </Button>
 
-          <Button type="button" onClick={() => reset(user)} variant="outline" className="w-fit">
+          <Button type="button" disabled={!isDirty} onClick={() => reset(user)} variant="outline" className="w-fit">
             Tilbakestill
           </Button>
         </div>

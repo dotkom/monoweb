@@ -42,10 +42,10 @@ jobs:
             ${{ runner.os }}-turbo-
       - uses: pnpm/action-setup@v2
         with:
-          version: 9.15.9
+          version: 10.15.1
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 22.18.0
+          node-version: 22.19.0
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
         name: Install dependencies from pnpm lockfile
@@ -90,24 +90,6 @@ jobs:
           environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
-  build-invoicification:
-    name: invoicification
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-invoicification
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
   build-kvittering-backend:
     name: kvittering-backend
     runs-on: ubuntu-24.04
@@ -142,24 +124,6 @@ jobs:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
-  build-rif:
-    name: rif
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-rif
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
   build-rpc:
     name: rpc
     runs-on: ubuntu-24.04-arm
@@ -176,23 +140,6 @@ jobs:
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
-  build-splash:
-    name: splash-2025
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-splash-2025
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-web:

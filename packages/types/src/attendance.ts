@@ -26,8 +26,8 @@ export const AttendanceSelectionResponseSchema = z.object({
   optionName: z.string(),
 })
 
-export type AttendeeSelectionResponsesSchema = z.infer<typeof AttendeeSelectionResponsesSchema>
-export const AttendeeSelectionResponsesSchema = z.array(AttendanceSelectionResponseSchema)
+export type AttendeeSelectionResponse = z.infer<typeof AttendeeSelectionResponseSchema>
+export const AttendeeSelectionResponseSchema = AttendanceSelectionResponseSchema
 
 export type AttendeeId = Attendee["id"]
 export type Attendee = z.infer<typeof AttendeeSchema>
@@ -56,6 +56,7 @@ export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
   paymentChargedAt: true,
   paymentId: true,
   paymentDeadline: true,
+  paymentChargeDeadline: true,
   paymentLink: true,
   paymentReservedAt: true,
   paymentRefundedAt: true,

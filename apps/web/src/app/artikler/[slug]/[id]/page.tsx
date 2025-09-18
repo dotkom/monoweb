@@ -89,7 +89,7 @@ interface BylineProps {
 }
 
 const Byline = ({ author, createdAt, updatedAt }: BylineProps) => (
-  <div className="flex flex-wrap gap-x-4 mt-2 border-b-2 border-gray-500 dark:border-stone-500 pb-2">
+  <div className="flex flex-wrap gap-x-4 mt-2 border-b-2 border-gray-500 dark:border-stone-400 pb-2">
     <BylineItem label="Skrevet av" value={author} className="md:hidden" />
     <BylineItem label="Publisert" value={formatDate(createdAt, "dd.MM.yyyy")} />
     {!isEqual(createdAt, updatedAt) && <BylineItem label="Sist endret" value={formatDate(updatedAt, "dd.MM.yyyy")} />}
@@ -115,7 +115,7 @@ interface AuthorInfoProps {
 
 const AuthorInfo = ({ author }: AuthorInfoProps) => {
   return (
-    <div className="flex flex-col border-l-2 border-gray-900 dark:border-stone-500 pl-4">
+    <div className="flex flex-col border-l-2 border-gray-900 dark:border-stone-400 pl-4">
       <Text className="text-black dark:text-gray-100 font-medium">Skrevet av</Text>
       <Text>{author}</Text>
     </div>
@@ -128,7 +128,7 @@ interface TagListProps {
 
 const TagList = ({ tags }: TagListProps) => {
   return (
-    <section className="md:pl-4 pb-2 gap-2 md:border-l-2 border-gray-900 dark:border-stone-500 flex flex-col">
+    <section className="md:pl-4 pb-2 gap-2 md:border-l-2 border-gray-900 dark:border-stone-400 flex flex-col">
       <Title element="h3" size="md" className="text-black dark:text-gray-100">
         Tags
       </Title>

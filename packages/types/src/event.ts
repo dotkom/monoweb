@@ -32,7 +32,6 @@ export const EventWriteSchema = EventSchema.pick({
   start: true,
   end: true,
   description: true,
-  subtitle: true,
   imageUrl: true,
   locationTitle: true,
   locationAddress: true,
@@ -51,6 +50,8 @@ export const EventFilterQuerySchema = z
     excludingOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
     orderBy: createSortOrder(),
     byStatus: buildAnyOfFilter(EventStatusSchema).default(["PUBLIC"]),
+    byType: buildAnyOfFilter(EventTypeSchema),
+    excludingType: buildAnyOfFilter(EventTypeSchema).default(["INTERNAL"]),
     byHasFeedbackForm: z.boolean(),
   })
   .partial()

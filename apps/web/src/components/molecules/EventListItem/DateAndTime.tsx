@@ -27,14 +27,14 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
     return (
       <div
         className={cn(
-          "flex flex-row gap-2 items-center dark:text-stone-400",
+          "flex flex-row gap-2 items-center dark:text-stone-300",
           "text-xs md:text-sm",
-          past && "text-gray-600 dark:text-stone-700 group-hover:text-gray-800 dark:group-hover:text-stone-500"
+          past && "text-gray-600 dark:text-stone-600 group-hover:text-gray-800 dark:group-hover:text-stone-400"
         )}
       >
         <Icon
           icon="tabler:calendar-event"
-          className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-500")}
+          className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-400")}
         />
 
         {ongoing ? (
@@ -57,14 +57,14 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
   return (
     <div
       className={cn(
-        "flex flex-row gap-2 items-center dark:text-stone-400",
+        "flex flex-row gap-2 items-center dark:text-stone-300",
         "text-xs md:text-sm",
-        past && "text-gray-600 group-hover:text-gray-800 dark:text-stone-700 dark:group-hover:text-stone-500"
+        past && "text-gray-600 group-hover:text-gray-800 dark:text-stone-600 dark:group-hover:text-stone-400"
       )}
     >
       <Icon
         icon="tabler:calendar-event"
-        className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-500")}
+        className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-400")}
       />
 
       <div className="flex flex-col md:flex-row md:gap-1">
@@ -74,7 +74,7 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
 
       <Icon
         icon="tabler:arrow-right"
-        className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-400")}
+        className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-300")}
       />
 
       <div className="flex flex-col md:flex-row md:gap-1">

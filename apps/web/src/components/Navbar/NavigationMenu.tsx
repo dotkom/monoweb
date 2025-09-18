@@ -36,8 +36,8 @@ export const NavigationMenuItem = NavigationMenuPrimitive.Item
 export const navigationMenuTriggerStyle = cn(
   "inline-flex items-center justify-center relative rounded-md text-sm font-semibold transition-colors focus:outline-hidden",
   "disabled:opacity-50 disabled:pointer-events-none",
-  "h-10 py-2 px-4 group hover:text-brand data-[state=open]:text-brand",
-  "dark:text-stone-400 dark:hover:text-white dark:data-[state=open]:text-white"
+  "h-10 py-2 px-2 lg:px-4 group hover:text-brand data-[state=open]:text-brand",
+  "dark:text-stone-300 dark:hover:text-white dark:data-[state=open]:text-white"
 )
 
 export const NavigationMenuTrigger = React.forwardRef<
@@ -66,6 +66,7 @@ export const NavigationMenuContent = React.forwardRef<
       "data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out",
       "data-[motion=to-start]:slide-out-to-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=from-start]:slide-in-from-left-52",
       "data-[motion=from-end]:slide-in-from-right-52 absolute left-0 top-0 w-full md:w-auto",
+      "bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700/30 shadow-sm rounded-3xl",
       className
     )}
     {...props}
@@ -79,12 +80,11 @@ export const NavigationMenuViewport = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
 >(({ className, ...props }, ref) => (
-  <div className={cn("absolute left-0 top-full mt-3 flex justify-center")}>
+  <div className={cn("absolute top-full mt-6 flex justify-center")}>
     <NavigationMenuPrimitive.Viewport
       className={cn(
         "origin-top-center data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:zoom-in-90 data-[state=closed]:zoom-out-95",
         "relative h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden md:w-[var(--radix-navigation-menu-viewport-width)]",
-        "bg-white border border-gray-400 dark:bg-stone-800 dark:border-stone-800 rounded-lg shadow-lg",
         className
       )}
       ref={ref}

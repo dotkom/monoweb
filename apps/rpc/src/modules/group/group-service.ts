@@ -17,15 +17,15 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
+import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { UserService } from "../user/user-service"
-import { GroupMembershipNotFoundError, GroupMembershipOverlap, GroupNotFoundError } from "./group-error"
 import type { GroupRepository } from "./group-repository"
 
 export interface GroupService {
   /**
    * Get a group by its id
    *
-   * @throws {GroupNotFoundError} if the group does not exist
+   * @throws {NotFoundError} if the group does not exist
    */
   getById(handle: DBHandle, groupId: GroupId): Promise<Group>
   getMany(handle: DBHandle, groupIds: GroupId[]): Promise<Group[]>
@@ -34,7 +34,7 @@ export interface GroupService {
   /**
    * Get a group by its id and type
    *
-   * @throws {GroupNotFoundError} if the group does not exist
+   * @throws {NotFoundError} if the group does not exist
    */
   getAllByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   create(handle: DBHandle, payload: GroupWrite): Promise<Group>
@@ -48,7 +48,7 @@ export interface GroupService {
   /**
    * Attempts to update a membership if it doesn't overlap with existing memberships
    *
-   * @throws {GroupMembershipOverlap} if the membership overlaps others
+   * @throws {NotFoundError} if the membership overlaps others
    */
   updateMembership(
     handle: DBHandle,
@@ -64,12 +64,14 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
   return {
     async getById(handle, groupId) {
       const group = await groupRepository.getById(handle, groupId)
-      if (!group) throw new GroupNotFoundError(groupId)
+      if (!group) throw new NotFoundError(`Group(ID=${groupId}) not found`)
       return group
     },
     async getByIdAndType(handle, groupId, groupType) {
       const group = await groupRepository.getById(handle, groupId)
-      if (!group || group.type !== groupType) throw new GroupNotFoundError(groupId)
+      if (!group || group.type !== groupType) {
+        throw new NotFoundError(`Group(ID=${groupId}, Type=${groupType}) not found`)
+      }
       return group
     },
     async getAll(handle) {
@@ -85,13 +87,17 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
         const missingGroupSlugs = groupSlugs.filter(
           (groupSlug) => groups.find((group) => group.slug === groupSlug) === null
         )
-        throw new GroupNotFoundError(`Failed to retrieve many groups, missing: ${missingGroupSlugs.join(", ")}`)
+        throw new NotFoundError(`Group(Slug in [${missingGroupSlugs.join(", ")}]) not found`)
       }
 
       return groups
     },
     async create(handle, payload) {
       let id = slugify(payload.abbreviation)
+      const inputSlug = payload.slug?.trim()
+      if (inputSlug && inputSlug.length > 1) {
+        id = slugify(inputSlug)
+      }
 
       // We try to find an available slug. This should hopefully never run more than once, but maybe some future idiot
       // is trying to break the authorization system by creating a group with a name that is already taken.
@@ -110,7 +116,10 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       return await this.getById(handle, id)
     },
     async update(handle, groupId, values) {
-      return groupRepository.update(handle, groupId, values)
+      const inputSlug = values.slug?.trim()
+      const slug = inputSlug && inputSlug.length > 1 ? slugify(inputSlug) : undefined
+
+      return groupRepository.update(handle, groupId, { ...values, slug })
     },
     async delete(handle, groupId) {
       return await groupRepository.delete(handle, groupId)
@@ -124,6 +133,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
 
       const members = new Map<UserId, GroupMember>()
 
+      // TODO: N+1 Query
       const usersPromises = memberships.map((member) => userService.getById(handle, member.userId))
       const users = await Promise.all(usersPromises)
 
@@ -195,7 +205,9 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     },
     async updateMembership(handle, id, data, roleIds) {
       const currentMembership = await groupRepository.getMembershipById(handle, id)
-      if (!currentMembership) throw new GroupMembershipNotFoundError(id)
+      if (!currentMembership) {
+        throw new NotFoundError(`GroupMembership(ID=${id}) not found`)
+      }
 
       const memberships = await groupRepository.getMemberships(
         handle,
@@ -215,7 +227,7 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
             { inclusive: false }
           )
         ) {
-          throw new GroupMembershipOverlap()
+          throw new FailedPreconditionError(`GroupMembership(ID=${id}) overlaps with existing memberships`)
         }
       }
 

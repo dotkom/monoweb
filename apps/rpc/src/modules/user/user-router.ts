@@ -90,20 +90,21 @@ export const userRouter = t.router({
       return ctx.userService.findById(handle, ctx.principal.subject)
     })
   ),
-  update: staffProcedure
+  update: authenticatedProcedure
     .input(
       z.object({
         id: UserSchema.shape.id,
         input: UserWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input: changes, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) => {
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
-        return ctx.userService.update(handle, changes.id, changes.input)
+
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireMeOrAffiliation(input.id, ["dotkom", "hs"])
+      return ctx.executeTransactionWithAudit(async (handle) => {
+        return ctx.userService.update(handle, input.id, input.input)
       })
-    ),
-  isStaff: authenticatedProcedure.query(async ({ ctx }) => {
+    }),
+  isStaff: procedure.query(async ({ ctx }) => {
     try {
       ctx.authorize.requireAffiliation()
       return true

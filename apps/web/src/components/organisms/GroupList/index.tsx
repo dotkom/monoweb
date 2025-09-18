@@ -6,12 +6,24 @@ interface GroupListProps {
   groups: Group[]
 }
 
-export const GroupList: FC<GroupListProps> = ({ groups }) => (
-  <div className="px-4 py-8 mx-auto max-w-7xl">
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(270px,1fr))] gap-8">
-      {groups.map((group) => (
+export const GroupList: FC<GroupListProps> = ({ groups }) => {
+  const orderedGroups = groups
+    // Makes inactive come last
+    .toSorted((a, b) => {
+      if (a.deactivatedAt !== null) {
+        return 1
+      }
+      if (b.deactivatedAt !== null) {
+        return -1
+      }
+      return a.slug.localeCompare(b.slug)
+    })
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
+      {orderedGroups.map((group) => (
         <GroupListItem key={group.slug} group={group} />
       ))}
     </div>
-  </div>
-)
+  )
+}

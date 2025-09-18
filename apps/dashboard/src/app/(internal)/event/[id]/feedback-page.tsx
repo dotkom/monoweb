@@ -1,5 +1,6 @@
 import type { EventId, FeedbackFormId, FeedbackFormWrite, FeedbackQuestionWrite } from "@dotkomonline/types"
 import { Box, Button, Group, Select, Stack, Title } from "@mantine/core"
+import { addWeeks } from "date-fns"
 import type { FC } from "react"
 import { FeedbackFormEditForm } from "../components/feedback-form-edit-form"
 import {
@@ -34,6 +35,7 @@ export const FeedbackPage: FC = () => {
       feedbackForm: {
         eventId: event.id,
         isActive: false,
+        answerDeadline: addWeeks(event.end, 2),
       },
       questions: [],
     })
@@ -50,6 +52,7 @@ export const FeedbackPage: FC = () => {
     feedbackForm: {
       eventId: event.id,
       isActive: feedbackFormQuery?.data?.isActive ?? false,
+      answerDeadline: feedbackFormQuery?.data?.answerDeadline ?? addWeeks(event.end, 2),
     },
     questions: feedbackFormQuery?.data?.questions ?? [],
   }

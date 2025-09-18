@@ -1,24 +1,25 @@
 import type { Prisma } from "@prisma/client"
+import { roundToNearestHours } from "date-fns"
+
+const now = roundToNearestHours(new Date(), { roundingMethod: "floor" })
 
 export const getMarkFixtures: () => Prisma.MarkCreateManyInput[] = () => [
   {
-    updatedAt: new Date("2023-01-25 19:58:43.138389+00"),
-    title: "a",
-    createdAt: new Date("2023-01-25 19:58:43.138389+00"),
-    type: "MANUAL",
-    details: "a",
-    duration: 20,
+    title: "Kom for sent til Åre 2025",
+    details: "Hvordan går det i det hele tatt an",
+    duration: 14, // days
     weight: 3,
-    groupSlug: "bedkom",
+    type: "LATE_ATTENDANCE",
+    updatedAt: now,
+    createdAt: now,
   },
   {
-    updatedAt: new Date("2023-01-25 20:05:31.034217+00"),
-    title: "a",
-    createdAt: new Date("2023-01-25 20:05:31.034217+00"),
-    type: "MANUAL",
-    details: "a",
-    duration: 20,
+    title: "Slå Debug-leder",
+    details: "Det er ikke lov å slå andre mennesker!",
+    duration: 14, // days
     weight: 3,
-    groupSlug: "bedkom",
+    type: "MANUAL",
+    updatedAt: now,
+    createdAt: now,
   },
 ]

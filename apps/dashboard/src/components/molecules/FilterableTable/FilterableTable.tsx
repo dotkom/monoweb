@@ -1,6 +1,7 @@
 import { Card, Group, MultiSelect, TextInput } from "@mantine/core"
 import {
   type FilterFn,
+  type SortingFn,
   type SortingState,
   type TableOptions,
   getFilteredRowModel,
@@ -76,5 +77,26 @@ export function arrayOrEqualsFilter<T>(): FilterFn<T> {
   return (row, columnId, filterValue) => {
     const value = row.getValue(columnId)
     return Array.isArray(filterValue) ? filterValue.includes(value) : value === filterValue
+  }
+}
+
+export function dateSort<T>(): SortingFn<T> {
+  return (rowA, rowB, columnId) => {
+    const a = Date.parse(rowA.getValue(columnId) ?? "")
+    const b = Date.parse(rowB.getValue(columnId) ?? "")
+
+    if (Number.isNaN(a) && Number.isNaN(b)) {
+      return 0
+    }
+
+    if (Number.isNaN(a)) {
+      return 1
+    }
+
+    if (Number.isNaN(b)) {
+      return -1
+    }
+
+    return a - b
   }
 }

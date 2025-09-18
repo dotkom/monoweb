@@ -5,15 +5,12 @@ import type {
   Attendee,
   Event,
   FeedbackFormAnswer,
-  FeedbackFormId,
   FeedbackPublicResultsToken,
   FeedbackQuestion,
 } from "@dotkomonline/types"
 
 import { Icon, Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
-import { formatDate } from "date-fns"
-import { isSameDay } from "date-fns"
-import { useFeedbackAnswersGetQuery } from "../queries"
+import { formatDate, isSameDay } from "date-fns"
 import { type ChartValue, FeedbackAnswerCard, QuestionPieChart } from "./FeedbackAnswerCard"
 
 const formatPoolYears = (yearCriterias: number[][]): string => {
@@ -23,16 +20,14 @@ const formatPoolYears = (yearCriterias: number[][]): string => {
 
 interface Props {
   questions: FeedbackQuestion[]
+  answers: FeedbackFormAnswer[]
   attendees: Attendee[]
   event: Event
   pools: AttendancePool[]
   publicResultsToken?: FeedbackPublicResultsToken
-  feedbackFormId: FeedbackFormId
 }
 
-export const FeedbackResults = ({ questions, attendees, event, pools, publicResultsToken, feedbackFormId }: Props) => {
-  const answers = useFeedbackAnswersGetQuery(feedbackFormId, publicResultsToken)
-
+export const FeedbackResults = ({ questions, answers, attendees, event, pools, publicResultsToken }: Props) => {
   const sortedQuestions = questions.toSorted((a, b) => a.order - b.order)
 
   const formattedYears = formatPoolYears(pools.map((pool) => pool.yearCriteria))

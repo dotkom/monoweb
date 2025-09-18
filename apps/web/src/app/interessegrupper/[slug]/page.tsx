@@ -5,7 +5,7 @@ interface InterestGroupPageProps {
 }
 
 const InterestGroupPage = ({ params }: InterestGroupPageProps) => {
-  return <GroupPage groupType="INTEREST_GROUP" params={params} />
+  return <GroupPage params={params} />
 }
 
 export default InterestGroupPage

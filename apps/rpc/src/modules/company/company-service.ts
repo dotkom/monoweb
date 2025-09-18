@@ -1,20 +1,20 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
+import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
-import { CompanyNotFoundError } from "./company-error"
 import type { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {
   /**
    * Get a company by its id
    *
-   * @throws {CompanyNotFoundError} if the company does not exist
+   * @throws {NotFoundError} if the company does not exist
    */
   getCompanyById(handle: DBHandle, id: CompanyId): Promise<Company>
   /**
    * Get a company by its slug
    *
-   * @throws {CompanyNotFoundError} if the company does not exist
+   * @throws {NotFoundError} if the company does not exist
    */
   getCompanyBySlug(handle: DBHandle, slug: string): Promise<Company>
   getCompanies(handle: DBHandle, page: Pageable): Promise<Company[]>
@@ -22,7 +22,7 @@ export interface CompanyService {
   /**
    * Update an existing company
    *
-   * @throws {CompanyNotFoundError} if the company does not exist
+   * @throws {NotFoundError} if the company does not exist
    */
   updateCompany(handle: DBHandle, id: CompanyId, payload: CompanyWrite): Promise<Company>
 }
@@ -32,28 +32,25 @@ export function getCompanyService(companyRepository: CompanyRepository): Company
     async getCompanyById(handle, id) {
       const company = await companyRepository.getById(handle, id)
       if (!company) {
-        throw new CompanyNotFoundError(id)
+        throw new NotFoundError(`Company(ID=${id}) not found`)
       }
       return company
     },
     async getCompanyBySlug(handle, slug) {
       const company = await companyRepository.getBySlug(handle, slug)
       if (!company) {
-        throw new CompanyNotFoundError(slug)
+        throw new NotFoundError(`Company(Slug=${slug}) not found`)
       }
       return company
     },
     async getCompanies(handle, page) {
-      const companies = await companyRepository.getAll(handle, page)
-      return companies
+      return await companyRepository.getAll(handle, page)
     },
     async createCompany(handle, payload) {
-      const company = await companyRepository.create(handle, payload)
-      return company
+      return await companyRepository.create(handle, payload)
     },
     async updateCompany(handle, id, payload): Promise<Company> {
-      const company = await companyRepository.update(handle, id, payload)
-      return company
+      return await companyRepository.update(handle, id, payload)
     },
   }
 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="nb">
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta name="x-apple-disable-message-reformatting"/>
+  </head>
+  <body style="background-color: rgb(255, 255, 255);">
+    <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 37.5em">
+      <tbody>
+        <tr style="width: 100%">
+          <h1>Hei Bedkom</h1>
+          <p>{{ companyName }} har meldt interesse til samarbeid via interesseskjemaet. Nedenfor finner du en kopi av skjemaet de sendte inn.</p>
+        </tr>
+
+        <tr style="width: 100%">
+          <h2>Kontaktinformasjon hos bedrift</h2>
+          <ul>
+            <li><strong>Bedriften sitt navn</strong>: {{ companyName }}</li>
+            <li><strong>Kontaktperson hos bedriften</strong>: {{ contactName }}</li>
+            <li><strong>Kontaktperson sin e-post adresse</strong>: {{ contactEmail }}</li>
+            <li><strong>Kontaktperson sitt telefonnummer</strong>: {{ contactTel }}</li>
+          </ul>
+        </tr>
+
+        <tr style="width: 100%">
+          <h2>Meldte interesser</h2>
+          <ul>
+            <li><strong>Bedriftspresentasjon</strong>: {{ requestsCompanyPresentation }}</li>
+            <li><strong>Kurs</strong>: {{ requestsCourseEvent }}</li>
+            <li><strong>Bedriftspresentasjon + Kurs (pakkedeal)</strong>: {{ requestsTwoInOneDeal }}</li>
+            <li><strong>Instagram takeover</strong>: {{ requestsInstagramTakeover }}</li>
+            <li><strong>IT-ekskursjonen</strong>: {{ requestsExcursionParticipation }}</li>
+            <li><strong>Samarbeidsarrangement med andre linjeforeninger</strong>: {{ requestsCollaborationEvent }}</li>
+            <li><strong>Samarbeidsarrangement med FeminIT</strong>: {{ requestsFemalesInTechEvent }}</li>
+          </ul>
+        </tr>
+
+        <tr style="width: 100%">
+          <h2>Annen merknad</h2>
+          <p>{{ comment }}</p>
+        </tr>
+
+        <tr style="width: 100%">
+          <h3 style="text-align: center">Linjeforeningen Online</h3>
+          <p style="text-align: center">Du mottar denne e-posten fordi du er registrert som medlem i Bedriftskomiteen i Online</p>
+          <p style="text-align: center">Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim</p>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -27,8 +27,8 @@ export const DropdownMenuSubTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       "flex cursor-default select-none items-center outline-hidden",
-      "data-[state=open]:bg-gray-200 data-[state=open]:dark:bg-stone-700",
-      "focus:bg-gray-200 focus:dark:bg-stone-700",
+      "data-[state=open]:bg-gray-200 data-[state=open]:dark:bg-stone-600",
+      "focus:bg-gray-200 focus:dark:bg-stone-600",
       "px-3 py-2 rounded-md",
       "text-sm",
       inset && "pl-8",
@@ -51,9 +51,9 @@ export const DropdownMenuSubContent = React.forwardRef<
     ref={ref}
     className={cn(
       "animate-in slide-in-from-left-1 z-50 min-w-[8rem] overflow-hidden",
-      "border border-gray-400 dark:border-stone-700",
+      "border border-gray-400 dark:border-stone-600",
       "rounded-lg p-2",
-      "bg-white dark:bg-stone-800",
+      "bg-white dark:bg-stone-700",
       className
     )}
     {...props}
@@ -75,7 +75,7 @@ export const DropdownMenuContent = React.forwardRef<
         "min-w-[8rem] overflow-hidden",
         "rounded-lg p-2",
         "bg-white border border-gray-400",
-        "dark:border-stone-700 dark:bg-stone-800",
+        "dark:border-stone-600 dark:bg-stone-700",
         className
       )}
       {...props}
@@ -94,11 +94,11 @@ export const DropdownMenuItem = React.forwardRef<
     ref={ref}
     className={cn(
       "outline-hidden data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "flex cursor-default select-none items-center",
+      "flex cursor-pointer select-none items-center",
       "px-3 py-2 rounded-md",
       "text-sm",
       inset && "pl-8",
-      "focus:bg-gray-200 focus:dark:bg-stone-700",
+      "focus:bg-gray-200 focus:dark:bg-stone-600",
       className
     )}
     {...props}
@@ -117,7 +117,7 @@ export const DropdownMenuCheckboxItem = React.forwardRef<
       "flex cursor-default select-none items-center",
       "px-3 py-2 rounded-md",
       "text-sm",
-      "focus:bg-gray-200 focus:dark:bg-stone-700",
+      "focus:bg-gray-200 focus:dark:bg-stone-600",
       className
     )}
     checked={checked}
@@ -144,14 +144,14 @@ export const DropdownMenuRadioItem = React.forwardRef<
       "flex cursor-default select-none items-center",
       "pr-3 pl-4 py-2 rounded-md",
       "text-sm",
-      "focus:bg-gray-200 focus:dark:bg-stone-700",
+      "focus:bg-gray-200 focus:dark:bg-stone-600",
       className
     )}
     {...props}
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator className="grid place-content-center">
-        <Icon icon="tabler:circle-filled" width={6} className="text-gray-800 dark:text-stone-400 rounded-full" />
+        <Icon icon="tabler:circle-filled" width={6} className="text-gray-800 dark:text-stone-300 rounded-full" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -179,7 +179,7 @@ export const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("bg-gray-200 dark:bg-stone-700 mx-2 my-1 h-px", className)}
+    className={cn("bg-gray-200 dark:bg-stone-600 mx-2 my-1 h-px", className)}
     {...props}
   />
 ))

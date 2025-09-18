@@ -9,8 +9,8 @@ import type {
   ArticleWrite,
 } from "@dotkomonline/types"
 import { compareAsc, compareDesc } from "date-fns"
+import { AlreadyExistsError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
-import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
 import type { ArticleTagRepository } from "./article-tag-repository"
@@ -20,7 +20,7 @@ export interface ArticleService {
   /**
    * Update an article by its id
    *
-   * @throws {ArticleNotFoundError} if the article does not exist
+   * @throws {NotFoundError} if the article does not exist
    */
   update(handle: DBHandle, articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
   getAll(handle: DBHandle, page: Pageable): Promise<Article[]>
@@ -37,13 +37,13 @@ export interface ArticleService {
   /**
    * Add a tag to an article
    *
-   * @throws {ArticleNotFoundError} if the article does not exist
+   * @throws {NotFoundError} if the article does not exist
    */
   addTag(handle: DBHandle, articleId: ArticleId, tag: ArticleTagName): Promise<void>
   /**
    * Remove a tag from an article
    *
-   * @throws {ArticleNotFoundError} if the article does not exist
+   * @throws {NotFoundError} if the article does not exist
    */
   removeTag(handle: DBHandle, articleId: ArticleId, tag: ArticleTagName): Promise<void>
   setTags(handle: DBHandle, articleId: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
@@ -58,17 +58,17 @@ export function getArticleService(
   return {
     async create(handle, input) {
       if (await this.getBySlug(handle, input.slug)) {
-        throw new ArticleWithSlugAlreadyExistsError()
+        throw new AlreadyExistsError(`Article(Slug=${input.slug}) already exists`)
       }
       return await articleRepository.create(handle, input)
     },
     async update(handle, articleId, input) {
       const match = await articleRepository.getById(handle, articleId)
       if (match === null) {
-        throw new ArticleNotFoundError(articleId)
+        throw new NotFoundError(`Article(ID=${articleId}) not found`)
       }
       if (input.slug !== match.slug && input.slug && (await this.getBySlug(handle, input.slug))) {
-        throw new ArticleWithSlugAlreadyExistsError()
+        throw new AlreadyExistsError(`Article(Slug=${input.slug}) already exists`)
       }
       return await articleRepository.update(handle, match.id, input)
     },
@@ -130,7 +130,7 @@ export function getArticleService(
     async addTag(handle, articleId, tag) {
       const match = await articleRepository.getById(handle, articleId)
       if (!match) {
-        throw new ArticleNotFoundError(articleId)
+        throw new NotFoundError(`Article(ID=${articleId}) not found`)
       }
       let name = await articleTagRepository.getByName(handle, tag)
       if (name === null) {
@@ -141,7 +141,7 @@ export function getArticleService(
     async removeTag(handle, articleId, tag) {
       const match = await articleRepository.getById(handle, articleId)
       if (!match) {
-        throw new ArticleNotFoundError(articleId)
+        throw new NotFoundError(`Article(ID=${articleId}) not found`)
       }
       await articleTagLinkRepository.remove(handle, articleId, tag)
       const articlesWithTag = await articleRepository.getByTags(handle, [tag])

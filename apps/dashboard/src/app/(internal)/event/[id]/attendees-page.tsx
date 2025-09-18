@@ -1,10 +1,12 @@
 import { UserSearch } from "@/app/(internal)/user/components/user-search"
-import type { Attendance, Event } from "@dotkomonline/types"
-import { Anchor, Button, Group, List, ListItem, Stack, Text, Title } from "@mantine/core"
+import type { Attendance, Event, FeedbackFormAnswer } from "@dotkomonline/types"
+import { Anchor, Button, Group, List, ListItem, Space, Stack, Text, Title } from "@mantine/core"
+import { skipToken } from "@tanstack/react-query"
 import type { FC } from "react"
 import { AllAttendeesTable } from "../components/all-attendees-table"
 import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
 import { QrCodeScanner } from "../components/qr-code-scanner"
+import { useEventFeedbackFormGetQuery, useFeedbackAnswersGetQuery } from "../queries"
 import { useEventContext } from "./provider"
 
 const getMailTo = (eventTitle: string, emails: (string | null)[]) => {
@@ -13,19 +15,23 @@ const getMailTo = (eventTitle: string, emails: (string | null)[]) => {
 
 export const AttendeesPage: FC = () => {
   const { event, attendance } = useEventContext()
+  const { data: feedbackForm } = useEventFeedbackFormGetQuery(event.id)
+  const { data: feedbackAnswers } = useFeedbackAnswersGetQuery(feedbackForm?.id ?? skipToken)
+
   if (!attendance) {
     // TODO: Return something useful here
     return null
   }
-  return <Page event={event} attendance={attendance} />
+  return <Page event={event} attendance={attendance} feedbackAnswers={feedbackAnswers} />
 }
 
 interface Props {
   event: Event
   attendance: Attendance
+  feedbackAnswers?: FeedbackFormAnswer[]
 }
 
-const Page: FC<Props> = ({ event, attendance }) => {
+const Page: FC<Props> = ({ event, attendance, feedbackAnswers }) => {
   const attendees = attendance.attendees.filter((attendee) => attendee.user.email !== null)
   const attendeesWithoutEmail = attendance.attendees.filter((attendee) => !attendee.user.email)
 
@@ -100,8 +106,10 @@ const Page: FC<Props> = ({ event, attendance }) => {
 
       <Stack>
         <Title order={3}>Påmeldte</Title>
-        <AllAttendeesTable attendees={attendees} attendance={attendance} />
+        <AllAttendeesTable attendees={attendees} attendance={attendance} feedbackAnswers={feedbackAnswers} />
       </Stack>
+
+      <Space h="xl" />
     </Stack>
   )
 }

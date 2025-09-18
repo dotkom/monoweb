@@ -8,11 +8,12 @@ export default function Page() {
   const create = useCreateEventMutation()
   const FormComponent = useEventWriteForm({
     onSubmit: (data) => {
-      const { hostingGroupIds, ...event } = data
+      const { hostingGroupIds, companyIds, ...event } = data
       create.mutate({
         groupIds: hostingGroupIds,
-        companies: [],
+        companyIds,
         event,
+        parentId: event.parentId,
       })
     },
   })

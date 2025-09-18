@@ -39,7 +39,7 @@ export function RadialProgress({
     <svg role="img" aria-hidden="true" width={size} height={size} className="transform -rotate-90">
       {/* Background circle */}
       <circle
-        className={cn("text-gray-300 dark:text-stone-700", backgroundCircleClassname)}
+        className={cn("text-gray-300 dark:text-stone-600", backgroundCircleClassname)}
         stroke="currentColor"
         strokeWidth={strokeWidth}
         fill="transparent"

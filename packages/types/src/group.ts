@@ -26,9 +26,11 @@ export type Group = z.infer<typeof GroupSchema>
 export type GroupType = z.infer<typeof GroupTypeSchema>
 
 export const GroupWriteSchema = GroupSchema.omit({
-  slug: true,
   createdAt: true,
   roles: true,
+  shortDescription: true,
+}).partial({
+  slug: true,
 })
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
@@ -60,20 +62,19 @@ export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
   [
     { groupId, type: "LEADER", name: "Leder" },
     { groupId, type: "PUNISHER", name: "Vinstraffansvarlig" },
-    { groupId, type: "COSMETIC", name: "Nestleder" },
-    { groupId, type: "COSMETIC", name: "Tillitsvalgt" },
-    { groupId, type: "COSMETIC", name: "Økonomiansvarlig" },
+    { groupId, type: "DEPUTY_LEADER", name: "Nestleder" },
+    { groupId, type: "TRUSTEE", name: "Tillitsvalgt" },
+    { groupId, type: "TREASURER", name: "Økonomiansvarlig" },
     { groupId, type: "COSMETIC", name: "Medlem" },
+    { groupId, type: "EMAIL_ONLY", name: "Epost-bruker" },
   ] as const satisfies GroupRoleWrite[]
 
 export const createGroupPageUrl = (group: Group) => {
   switch (group.type) {
     case "COMMITTEE":
-      return `/komiteer/${group.slug}`
     case "NODE_COMMITTEE":
-      return `/nodekomiteer/${group.slug}`
     case "ASSOCIATED":
-      return `/andre-grupper/${group.slug}`
+      return `/komiteer/${group.slug}`
     case "INTEREST_GROUP":
       return `/interessegrupper/${group.slug}`
     default:
@@ -88,7 +89,7 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
     case "NODE_COMMITTEE":
       return "Nodekomité"
     case "ASSOCIATED":
-      return "Annen gruppe"
+      return "Assosiert gruppe"
     case "INTEREST_GROUP":
       return "Interessegruppe"
     default:
@@ -103,7 +104,15 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
     case "PUNISHER":
       return "Vinstraffansvarlig"
     case "COSMETIC":
-      return "Komsetisk"
+      return "Kosmetisk"
+    case "DEPUTY_LEADER":
+      return "Nestleder"
+    case "TRUSTEE":
+      return "Tillitsvalgt"
+    case "TREASURER":
+      return "Økonomiansvarlig"
+    case "EMAIL_ONLY":
+      return "Epost-bruker"
     default:
       return "Ukjent type"
   }

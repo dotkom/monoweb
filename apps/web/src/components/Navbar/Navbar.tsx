@@ -35,34 +35,28 @@ const links: MenuLink[] = [
     title: "Om oss",
     items: [
       {
-        title: "Komiteer",
+        title: "Komiteer og grupper",
         href: "/komiteer",
         icon: "tabler:users",
-        description: "På denne siden finner du informasjon om alle de forskjellige komiteene i online.",
-      },
-      {
-        title: "Nodekomiteer",
-        href: "/nodekomiteer",
-        icon: "tabler:users",
-        description: "Oversikt over alle nodekomiteene i Online.",
+        description: "Informasjon om de ulike komiteene og gruppene i Online",
       },
       {
         title: "Interessegrupper",
         href: "/interessegrupper",
         icon: "tabler:users",
-        description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i Online.",
+        description: "Er du medlem av en interessegruppe? Sjekk de ut her!",
       },
       {
-        title: "Grupper tilknyttet Online",
-        icon: "tabler:users",
-        href: "/andre-grupper",
-        description: "På denne siden finner du informasjon om andre grupper tilknyttet Online.",
-      },
-      {
-        title: "Om Linjeforeningen Online",
+        title: "Om Linjeforeningen",
         href: "/om-linjeforeningen",
-        icon: "tabler:info-circle",
-        description: "Informasjon om Linjeforeningen.",
+        icon: "tabler:bolt",
+        description: "Informasjon om linjeforeningen Online.",
+      },
+      {
+        title: "Wiki",
+        href: "https://wiki.online.ntnu.no/",
+        icon: "tabler:books",
+        description: "Onlines Wiki, brukt av hele Trondheim",
       },
     ],
   },
@@ -70,28 +64,22 @@ const links: MenuLink[] = [
     title: "For studenter",
     items: [
       {
-        title: "Wiki",
-        href: "https://wiki.online.ntnu.no/",
-        icon: "tabler:books",
-        description: "Online sin åpne wiki.",
-      },
-      {
         title: "Offline",
         href: "/offline",
         icon: "tabler:news",
-        description: "Online sitt eget tidsskrift.",
+        description: "Onlines egne tidsskrift",
       },
       {
         title: "Artikler",
         href: "/artikler",
         icon: "tabler:article",
-        description: "Artikler skrevet av studenter.",
+        description: "Artikler skrevet for og av studenter",
       },
       {
         title: "Kvitteringskjema",
         href: "https://kvittering.online.ntnu.no/",
         icon: "tabler:receipt",
-        description: "Har du lagt ut noe for linjeforeningen? Få refusjon via kvitteringskjemaet vårt.",
+        description: "Har du lagt ut noe for linjeforeningen? Få refusjon her",
       },
     ],
   },
@@ -108,7 +96,7 @@ const links: MenuLink[] = [
         title: "Fakturaskjema",
         href: "https://faktura.online.ntnu.no/",
         icon: "tabler:receipt",
-        description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt.",
+        description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt",
       },
       {
         title: "Interesseskjema",
@@ -122,16 +110,17 @@ const links: MenuLink[] = [
 
 export const Navbar: FC = () => {
   return (
-    <header className="flex flex-row items-center w-full max-w-screen-xl mt-8 p-3 rounded-2xl bg-blue-50 dark:bg-stone-900">
-      <MobileNavigation links={links} />
-
-      <Link href={env.NEXT_PUBLIC_HOME_URL} className="hidden lg:ml-2 md:block">
-        <OnlineIcon className="h-8 w-8" />
+    <header className="sticky bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl border border-blue-100 dark:border-stone-700/30 shadow-sm top-4 z-50 flex flex-row justify-between items-center w-full max-w-screen-xl mt-8 p-3 rounded-full">
+      <Link href={env.NEXT_PUBLIC_HOME_URL}>
+        <OnlineIcon className="h-10 w-10" />
       </Link>
 
       <MainNavigation links={links} />
 
-      <ProfileMenu />
+      <div className="ml-auto flex items-center">
+        <ProfileMenu />
+        <MobileNavigation links={links} />
+      </div>
     </header>
   )
 }

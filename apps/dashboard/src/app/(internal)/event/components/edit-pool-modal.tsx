@@ -2,12 +2,12 @@ import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useUpdatePoolMutation } from "../mutations"
 import { useAttendanceGetQuery } from "../queries"
-import { PoolForm, type PoolFormSchema } from "./pool-form"
+import { PoolForm } from "./pool-form"
 
 interface EditPoolModalProps {
   poolId: string
   attendanceId: string
-  defaultValues: PoolFormSchema
+  defaultValues: PoolForm
 }
 
 export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({
@@ -22,7 +22,7 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({
     ? [...new Set(attendance.pools.filter((pool) => pool.id !== poolId).flatMap(({ yearCriteria }) => yearCriteria))]
     : []
 
-  const onSubmit = (values: PoolFormSchema) => {
+  const onSubmit = (values: PoolForm) => {
     context.closeModal(id)
     updatePool({
       input: {

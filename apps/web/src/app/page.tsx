@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
+import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Event } from "@dotkomonline/types"
 import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
@@ -8,25 +9,23 @@ import { formatDate, isPast } from "date-fns"
 import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
-import { CommitteeApplicationsNotice } from "./committee-applications-notice"
 import { ConstructionNotice } from "./construction-notice"
-import { FadderukeNotice } from "./fadderuke-notice"
 
 export default async function App() {
-  const [session, { items }] = await Promise.all([
-    auth.getServerSession(),
-    server.event.all.query({
-      take: 5,
-      filter: {
-        byEndDate: {
-          max: null,
-          min: getCurrentUTC(),
-        },
-        excludingOrganizingGroup: ["velkom"],
-        orderBy: "asc",
+  const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
+
+  const { items } = await server.event.all.query({
+    take: 5,
+    filter: {
+      byEndDate: {
+        max: null,
+        min: getCurrentUTC(),
       },
-    }),
-  ])
+      excludingOrganizingGroup: ["velkom"],
+      excludingType: isStaff ? [] : undefined,
+      orderBy: "asc",
+    },
+  })
 
   const cookies = await getCookies()
   const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
@@ -35,8 +34,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
         {constructionNoticeShown && <ConstructionNotice />}
-        <CommitteeApplicationsNotice />
-        <FadderukeNotice />
+        <OnlineHero />
       </div>
 
       <div className="flex flex-col gap-4">
@@ -76,7 +74,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, reservedStatus }) 
   return (
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
-      className="flex flex-col w-full gap-2 p-2 -m-2 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-800"
+      className="flex flex-col w-full gap-2 p-2 -m-2 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-700"
     >
       <Tilt>
         <img
@@ -92,7 +90,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, reservedStatus }) 
 
         <div className="flex flex-row gap-4 items-center">
           <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-500" />
+            <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-400" />
             <Text className="text-sm">{formatDate(event.start, "dd.MM")}</Text>
           </div>
 

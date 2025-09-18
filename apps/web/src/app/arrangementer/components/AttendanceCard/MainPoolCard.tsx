@@ -42,9 +42,9 @@ interface CardProps {
 }
 
 const Card: FC<CardProps> = ({ classNames, children, title }) => {
-  const baseOuterClassName = "flex flex-col w-full bg-gray-100 dark:bg-stone-800 rounded-lg"
+  const baseOuterClassName = "flex flex-col w-full bg-gray-100 dark:bg-stone-700 rounded-lg"
   const baseHeaderClassName =
-    "flex flex-row gap-2 px-3 py-2 bg-gray-200 dark:bg-stone-700/50 rounded-t-lg justify-center text-sm font-bold"
+    "flex flex-row gap-2 px-3 py-2 bg-gray-200 dark:bg-stone-600/50 rounded-t-lg justify-center text-sm font-bold"
   const baseInnerClassName =
     "flex flex-col min-h-[10rem] gap-2 p-3 rounded-md items-center text-center justify-center w-full"
 
@@ -72,7 +72,7 @@ const DelayPill = ({ mergeDelayHours, className }: { mergeDelayHours: number | n
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
           <div
-            className={cn("flex items-center gap-0.5 px-1 rounded-md bg-gray-300/50 dark:bg-stone-700/50", className)}
+            className={cn("flex items-center gap-0.5 px-1 rounded-md bg-gray-300/50 dark:bg-stone-600/50", className)}
           >
             <Icon icon="tabler:clock" className="text-sm" />
             <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
@@ -87,14 +87,22 @@ const DelayPill = ({ mergeDelayHours, className }: { mergeDelayHours: number | n
 interface MainPoolCardProps {
   attendance: Attendance
   user: User | null
+  authorizeUrl: string
 }
 
-export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user }) => {
+export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authorizeUrl }) => {
   if (!user) {
     return (
-      <Card>
-        <Text>Du er ikke innlogget</Text>
-      </Card>
+      <Link href={authorizeUrl} prefetch={false}>
+        <Card>
+          <Text>Du er ikke innlogget</Text>
+
+          <div className="flex flex-row gap-1 items-center">
+            <Text>Logg inn</Text>
+            <Icon icon="tabler:arrow-up-right" className="text-base" />
+          </div>
+        </Card>
+      </Link>
     )
   }
 
@@ -213,7 +221,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user }) => {
                           ? "bg-green-300/25 dark:bg-green-700/25"
                           : attendee.reserved === false
                             ? "bg-yellow-300/25 dark:bg-yellow-600/25"
-                            : "bg-gray-300/25 dark:bg-stone-700/25"
+                            : "bg-gray-300/25 dark:bg-stone-600/25"
                       )}
                     >
                       <Icon icon="tabler:clock-hour-2" className="text-base" />

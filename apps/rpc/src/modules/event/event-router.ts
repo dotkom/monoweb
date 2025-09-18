@@ -51,7 +51,8 @@ export const eventRouter = t.router({
       z.object({
         event: EventWriteSchema,
         groupIds: z.array(GroupSchema.shape.slug),
-        companies: z.array(CompanySchema.shape.id),
+        companyIds: z.array(CompanySchema.shape.id),
+        parentId: EventSchema.shape.parentId.optional(),
       })
     )
     .output(EventWithAttendanceSchema)
@@ -62,8 +63,9 @@ export const eventRouter = t.router({
           handle,
           eventWithoutOrganizers.id,
           new Set(input.groupIds),
-          new Set(input.companies)
+          new Set(input.companyIds)
         )
+        await ctx.eventService.updateEventParent(handle, event.id, input.parentId ?? null)
         return { event, attendance: null }
       })
     }),
@@ -74,7 +76,8 @@ export const eventRouter = t.router({
         id: EventSchema.shape.id,
         event: EventWriteSchema,
         groupIds: z.array(GroupSchema.shape.slug),
-        companies: z.array(CompanySchema.shape.id),
+        companyIds: z.array(CompanySchema.shape.id),
+        parentId: EventSchema.shape.parentId.optional(),
       })
     )
     .output(EventWithAttendanceSchema)
@@ -85,8 +88,10 @@ export const eventRouter = t.router({
           handle,
           updatedEventWithoutOrganizers.id,
           new Set(input.groupIds),
-          new Set(input.companies)
+          new Set(input.companyIds)
         )
+        await ctx.eventService.updateEventParent(handle, updatedEvent.id, input.parentId ?? null)
+
         const attendance = updatedEventWithoutOrganizers.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEventWithoutOrganizers.attendanceId)
           : null
@@ -107,7 +112,7 @@ export const eventRouter = t.router({
     }),
 
   all: procedure
-    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).optional())
+    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).default({}))
     .output(
       z.object({
         items: EventWithAttendanceSchema.array(),
@@ -116,7 +121,8 @@ export const eventRouter = t.router({
     )
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        const events = await ctx.eventService.findEvents(handle, { ...input?.filter }, input)
+        const { filter, ...page } = input
+        const events = await ctx.eventService.findEvents(handle, { ...filter }, page)
         const attendances = await ctx.attendanceService.getAttendancesByIds(
           handle,
           events.map((item) => item.attendanceId).filter((id) => id !== null)
@@ -144,8 +150,8 @@ export const eventRouter = t.router({
     )
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        const { id, ...page } = input
-        const events = await ctx.eventService.findEventsByAttendingUserId(handle, id, page)
+        const { id, filter, ...page } = input
+        const events = await ctx.eventService.findEventsByAttendingUserId(handle, id, { ...filter }, page)
         const attendances = await ctx.attendanceService.getAttendancesByIds(
           handle,
           events.map((item) => item.attendanceId).filter((id) => id !== null)
@@ -248,6 +254,29 @@ export const eventRouter = t.router({
         }))
 
         return eventsWithAttendance
+      })
+    }),
+
+  findUnansweredByUser: authenticatedProcedure
+    .input(UserSchema.shape.id)
+    .output(EventSchema.array())
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => await ctx.eventService.findUnansweredByUser(handle, input))
+    ),
+
+  isOrganizer: authenticatedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .output(z.boolean())
+    .query(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        const event = await ctx.eventService.getEventById(handle, input.eventId)
+        const groups = await ctx.groupService.getAllByMember(handle, ctx.principal.subject)
+
+        return groups.some((group) => event.hostingGroups.some((organizer) => organizer.slug === group.slug))
       })
     }),
 })

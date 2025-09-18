@@ -1,4 +1,4 @@
-FROM node:22-alpine@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5fe231d63de5b AS base
+FROM node:22-alpine@sha256:d2166de198f26e17e5a442f537754dd616ab069c47cc57b889310a717e0abbf9 AS base
 
 # Next.js evaluates a lot of code at build-time for things like SSG and SSR. For this reason, we need some of the
 # runtime variables to be available at build-time.
@@ -29,7 +29,7 @@ WORKDIR /app
 COPY . .
 
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.15.5 --ignore-scripts
+RUN npm install -g pnpm@10.15.1 --ignore-scripts
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 WORKDIR /app/packages/db
@@ -69,7 +69,7 @@ COPY . .
 
 # First, we install the prerequisites to build the Prisma client.
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.15.5 --ignore-scripts
+RUN npm install -g pnpm@10.15.1 --ignore-scripts
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Ensure the Prisma .prisma/client/default directory is generated at the monorepo root.

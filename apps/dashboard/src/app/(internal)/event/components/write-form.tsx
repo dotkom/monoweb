@@ -1,14 +1,22 @@
 import { useGroupAllQuery } from "@/app/(internal)/group/queries"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
+import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type EventStatus, EventTypeSchema, EventWriteSchema, mapEventTypeToLabel } from "@dotkomonline/types"
+import {
+  EventSchema,
+  type EventStatus,
+  EventTypeSchema,
+  EventWriteSchema,
+  mapEventTypeToLabel,
+} from "@dotkomonline/types"
 import { addHours, roundToNearestHours } from "date-fns"
 import { z } from "zod"
+import { useCompanyAllQuery } from "../../company/queries"
 import { validateEventWrite } from "../validation"
 
 const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.Values).map((type) => ({
@@ -23,6 +31,8 @@ const EVENT_FORM_DATA_STATUS = [
 
 const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
+  companyIds: z.array(z.string()),
+  parentId: EventSchema.shape.id.nullable(),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
   for (const issue of issues) {
@@ -41,13 +51,14 @@ const DEFAULT_VALUES = {
   type: "SOCIAL",
 
   title: "",
-  subtitle: null,
   description: "",
   locationTitle: null,
   locationAddress: null,
   locationLink: null,
   imageUrl: null,
   hostingGroupIds: [],
+  companyIds: [],
+  parentId: null,
 } as const satisfies FormValidationResult
 
 interface UseEventWriteFormProps {
@@ -56,6 +67,7 @@ interface UseEventWriteFormProps {
 
 export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
+  const { companies } = useCompanyAllQuery()
   return useFormBuilder({
     schema: FormValidationSchema,
     defaultValues: DEFAULT_VALUES,
@@ -66,10 +78,6 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Arrangementnavn",
         placeholder: "Silent Disco",
         withAsterisk: true,
-      }),
-      subtitle: createTextInput({
-        label: "Ledetekst",
-        placeholder: "En uforglemmelig kveld med musikk og dans!",
       }),
       description: createRichTextInput({
         label: "Beskrivelse",
@@ -108,6 +116,12 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
         searchable: true,
       }),
+      companyIds: createMultipleSelectInput({
+        label: "Bedrifter",
+        placeholder: "Velg bedrifter",
+        data: companies.map((company) => ({ value: company.id, label: company.name })),
+        searchable: true,
+      }),
       status: createSelectInput({
         label: "Status",
         placeholder: "Velg status",
@@ -119,6 +133,11 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         placeholder: "Velg type",
         data: EVENT_FORM_DATA_TYPE,
         withAsterisk: true,
+      }),
+      parentId: createEventSelectInput({
+        label: "Forelderarrangement",
+        placeholder: "Søk etter arrangement...",
+        clearable: true,
       }),
     },
   })

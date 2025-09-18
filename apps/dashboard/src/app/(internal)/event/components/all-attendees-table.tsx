@@ -1,23 +1,68 @@
-import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
+import type {
+  Attendance,
+  AttendancePool,
+  Attendee,
+  AttendeeSelectionResponse,
+  FeedbackFormAnswer,
+} from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { ActionIcon, Button, Checkbox, type CheckboxProps } from "@mantine/core"
-import { IconX } from "@tabler/icons-react"
+import {
+  ActionIcon,
+  Anchor,
+  Badge,
+  Button,
+  Checkbox,
+  Group,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
+  Stack,
+  Text,
+} from "@mantine/core"
+import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
-import { isPast } from "date-fns"
+import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore, isPast } from "date-fns"
+import { nb } from "date-fns/locale"
 import { useMemo } from "react"
-import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
+import {
+  FilterableTable,
+  arrayOrEqualsFilter,
+  dateSort,
+} from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateAttendeeReservedMutation, useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+interface RenderSelectionsProps {
+  attendance: Attendance
+  attendeeSelections: AttendeeSelectionResponse[]
+}
+
+const RenderSelections = ({ attendance, attendeeSelections }: RenderSelectionsProps) => {
+  const getName = (selectionId: string, optionId: string) =>
+    attendance.selections
+      .find((selection) => selection.id === selectionId)
+      ?.options.find((option) => option.id === optionId)?.name || "Ukjent"
+
+  return (
+    <div className="flex flex-col-1 gap-0">
+      {attendeeSelections.map(({ selectionId, optionId }) => (
+        <Text key={`${selectionId}-${optionId}`} size="sm">
+          {getName(selectionId, optionId)}
+        </Text>
+      ))}
+    </div>
+  )
+}
 
 interface AllAttendeesTableProps {
   attendees: Attendee[]
   attendance: Attendance
+  feedbackAnswers?: FeedbackFormAnswer[]
 }
 
-const CheckboxXIcon: CheckboxProps["icon"] = ({ indeterminate, ...others }) =>
-  indeterminate ? <IconX {...others} /> : <IconX {...others} />
-
-export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTableProps) => {
+export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: AllAttendeesTableProps) => {
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
   const updateAttendeeReservedMut = useUpdateAttendeeReservedMutation()
 
@@ -46,24 +91,90 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
+      columnHelper.accessor("earliestReservationAt", {
+        header: "Påmeldingstid",
+        sortingFn: dateSort(),
+        sortDescFirst: false,
+        enableSorting: true,
+        enableMultiSort: false,
+        cell: (info) => {
+          const earliestReservationAt = info.getValue()
+          const createdAt = info.row.original.createdAt
+
+          const afterRegisterStart = formatDistanceStrict(earliestReservationAt, attendance.registerStart, {
+            locale: nb,
+          })
+          const relativeAfterRegisterStart = formatDistanceToNowStrict(earliestReservationAt, { locale: nb })
+
+          const fullLocale = "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O"
+          const fullEarliestReservationAt = formatDate(earliestReservationAt, fullLocale, { locale: nb })
+          const fullCreatedAt = formatDate(createdAt, fullLocale, { locale: nb })
+
+          return (
+            <Popover>
+              <PopoverTarget>
+                <Button variant="transparent" p={0}>
+                  <Stack gap={0} align="flex-start">
+                    {isBefore(earliestReservationAt, attendance.registerStart) ? (
+                      <>
+                        <Text size="sm">Forhåndspåmeldt</Text>
+                        <Text size="xs">{capitalize(afterRegisterStart)} fp.</Text>
+                      </>
+                    ) : (
+                      <>
+                        <Text size="sm">{capitalize(afterRegisterStart)} ep.</Text>
+                        <Text size="xs">({capitalize(relativeAfterRegisterStart)} siden)</Text>
+                      </>
+                    )}
+                  </Stack>
+                </Button>
+              </PopoverTarget>
+              <PopoverDropdown>
+                <Stack>
+                  <Stack gap={0}>
+                    <Text size="sm">Utregnet påmeldingstidspunkt (inkl. prikker og utsettelser):</Text>
+                    <Text size="lg">{capitalize(fullEarliestReservationAt)}</Text>
+                  </Stack>
+                  <Text size="sm">Faktisk påmeldingstidspunkt: {fullCreatedAt}</Text>
+                </Stack>
+              </PopoverDropdown>
+            </Popover>
+          )
+        },
+      }),
       columnHelper.accessor((attendee) => attendee.user.name, {
         id: "user",
         header: "Bruker",
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const user = info.row.original.user
+          return (
+            <Anchor size="sm" href={`/user/${user.id}`}>
+              {user.name || user.id}
+            </Anchor>
+          )
+        },
         sortingFn: "alphanumeric",
       }),
       columnHelper.accessor("attendedAt", {
         header: "Møtt",
-        filterFn: arrayOrEqualsFilter<Attendee>(),
+        sortingFn: dateSort(),
+        sortDescFirst: false,
+        enableSorting: true,
+        enableMultiSort: false,
         cell: (info) => {
           const row = info.row.original
+          const date = info.getValue()
           return (
-            <Checkbox
-              onChange={(event) => {
-                updateAttendanceMut.mutate({ id: row.id, at: event.target.checked ? getCurrentUTC() : null })
-              }}
-              checked={info.getValue() !== null}
-            />
+            <Stack gap={0}>
+              <Checkbox
+                onChange={(event) => {
+                  updateAttendanceMut.mutate({ id: row.id, at: event.target.checked ? getCurrentUTC() : null })
+                }}
+                checked={date !== null}
+              />
+              <Text style={{ fontSize: "10px" }}>{date !== null ? formatDate(date, "dd.MM.yyyy") : "Ikke møtt"}</Text>
+              {date !== null && <Text style={{ fontSize: "10px" }}>{formatDate(date, "'kl.' HH:mm")}</Text>}
+            </Stack>
           )
         },
       }),
@@ -77,43 +188,103 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
             return null
           }
 
+          const wasRefunded = Boolean(attendee.paymentRefundedById)
           const hasPaid = Boolean(
             isPast(attendance.deregisterDeadline) ? attendee.paymentChargedAt : attendee.paymentReservedAt
           )
+
           return hasPaid ? (
             <Checkbox color="green" readOnly checked />
+          ) : wasRefunded ? (
+            <Group gap={4}>
+              <Checkbox color="gray" indeterminate readOnly />
+              <Text size="xs" c="gray">
+                Refundert
+              </Text>
+            </Group>
           ) : (
-            <Checkbox icon={CheckboxXIcon} color="red" checked readOnly />
+            <Checkbox icon={({ className }) => <IconX className={className} />} color="red" checked readOnly />
           )
         },
       }),
-      columnHelper.accessor(
-        (attendee) => {
-          const spot = waitlists[attendee.attendancePoolId]?.[attendee.id]
-          return spot ?? "-"
+      columnHelper.accessor((attendee) => attendee, {
+        header: "Tilbakemelding",
+        filterFn: arrayOrEqualsFilter<Attendee>(),
+        cell: (info) => {
+          if (!feedbackAnswers) {
+            return <Text size="10px">Ingen tilbakemeldingsskjema</Text>
+          }
+
+          const attendee = info.getValue()
+          const feedback = feedbackAnswers?.find((answer) => answer.attendeeId === attendee.id)
+          const date = feedback?.createdAt
+          return (
+            <Stack gap={0}>
+              <Checkbox readOnly checked={Boolean(feedback)} />
+              <Text size="10px">{date !== undefined ? formatDate(date, "dd.MM.yyyy") : "Ikke gitt"}</Text>
+              {date !== undefined && <Text size="10px">{formatDate(date, "'kl.' HH:mm")}</Text>}
+            </Stack>
+          )
         },
-        {
-          id: "waitlistSpot",
-          header: () => "Venteliste",
-          cell: (info) => info.getValue(),
-          filterFn: (row, columnId, filterValue) => {
-            const value = row.getValue(columnId)
-            const isEmpty = value === "-"
+      }),
+      columnHelper.accessor((attendee) => waitlists[attendee.attendancePoolId]?.[attendee.id] ?? null, {
+        id: "waitlistSpot",
+        header: () => "Venteliste",
+        cell: (info) => {
+          const attendee = info.row.original
+          const queuePosition = info.getValue() as number | null
 
-            const values = Array.isArray(filterValue) ? filterValue : [filterValue]
+          const ArrowIcon = queuePosition ? IconArrowUp : IconArrowDown
 
-            if (values.includes(true) && values.includes(false)) return true
-            if (values.includes(true)) return !isEmpty
-            if (values.includes(false)) return isEmpty
-
-            return false
-          },
-        }
-      ),
+          return (
+            <Stack gap={4}>
+              <Badge color={queuePosition ? "red" : "gray"} variant={queuePosition ? "filled" : "outline"}>
+                {queuePosition ? `Plass ${queuePosition}` : "Nei"}
+              </Badge>
+              <Button
+                variant="subtle"
+                size="compact-xs"
+                p={2}
+                onClick={() =>
+                  updateAttendeeReservedMut.mutate({ attendeeId: attendee.id, reserved: queuePosition !== null })
+                }
+                leftSection={<ArrowIcon size={12} />}
+                styles={{
+                  section: { marginRight: "3px" },
+                  root: { height: "fit-content", width: "fit-content" },
+                  inner: { justifyContent: "flex-start" },
+                }}
+              >
+                <Text size="xs">{queuePosition ? "Påmeld" : "Til kø"}</Text>
+              </Button>
+            </Stack>
+          )
+        },
+      }),
       columnHelper.accessor((attendee) => pools[attendee.attendancePoolId]?.title ?? "", {
         id: "pool",
         header: () => "Påmeldingsgruppe",
         sortingFn: "alphanumeric",
+      }),
+      columnHelper.accessor("selections", {
+        id: "selections",
+        enableSorting: false,
+        header: () => "Valg",
+        cell: (info) => {
+          const selections = info.getValue()
+
+          if (!selections.length) {
+            return "-"
+          }
+
+          return <RenderSelections attendance={attendance} attendeeSelections={info.getValue()} />
+        },
+      }),
+      columnHelper.accessor("user.dietaryRestrictions", {
+        id: "dietaryRestrictions",
+        enableSorting: false,
+        header: () => "Matpreferanser",
+        cell: (info) => info.getValue() || "-",
       }),
       columnHelper.accessor((attendee) => attendee, {
         id: "deregister",
@@ -135,36 +306,8 @@ export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTablePr
           </ActionIcon>
         ),
       }),
-      columnHelper.accessor((attendee) => attendee, {
-        id: "waitlistActions",
-        enableSorting: false,
-        header: () => "Endre status",
-        cell: (info) =>
-          info.getValue().reserved ? (
-            <Button
-              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: false })}
-            >
-              Flytt til venteliste
-            </Button>
-          ) : (
-            <Button
-              color="yellow"
-              onClick={() => updateAttendeeReservedMut.mutate({ attendeeId: info.getValue().id, reserved: true })}
-            >
-              Flytt av venteliste
-            </Button>
-          ),
-      }),
     ],
-    [
-      columnHelper,
-      updateAttendanceMut,
-      pools,
-      waitlists,
-      attendance.deregisterDeadline,
-      attendance.attendancePrice,
-      updateAttendeeReservedMut,
-    ]
+    [columnHelper, updateAttendanceMut, pools, waitlists, updateAttendeeReservedMut, attendance, feedbackAnswers]
   )
 
   const tableOptions = useMemo(

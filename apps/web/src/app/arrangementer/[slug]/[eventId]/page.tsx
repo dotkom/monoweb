@@ -1,8 +1,18 @@
 import { auth } from "@/auth"
-import { getEventSlug, getEventUrl } from "@/utils/getEventUrl"
+import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Company, Event, Group, GroupType, Punishment, User } from "@dotkomonline/types"
-import { Tabs, TabsContent, TabsList, TabsTrigger, Text } from "@dotkomonline/ui"
+import {
+  type Attendance,
+  type Company,
+  type Event,
+  type Group,
+  type GroupType,
+  type Punishment,
+  type User,
+  createGroupPageUrl,
+} from "@dotkomonline/types"
+import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { createEventPageUrl, createEventSlug } from "@dotkomonline/utils"
 import clsx from "clsx"
 import { isPast } from "date-fns"
 import Image from "next/image"
@@ -16,19 +26,19 @@ import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBo
 
 type OrganizerType = GroupType | "COMPANY"
 
-const organizerTypeToLink: Record<OrganizerType, string> = {
-  COMMITTEE: "/komiteer",
-  INTEREST_GROUP: "/interessegrupper",
-  COMPANY: "/bedrifter",
-  NODE_COMMITTEE: "/nodekomiteer",
-  ASSOCIATED: "/andre-grupper",
+const createOrganizerPageUrl = (item: Group | Company) => {
+  if ("type" in item) {
+    return createGroupPageUrl(item)
+  }
+
+  return `/bedrifter/${item.slug}`
 }
 
 const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
   <Link
-    href={`${organizerTypeToLink[type]}/${item.slug}`}
+    href={createOrganizerPageUrl(item)}
     key={item.name}
-    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-800 dark:hover:bg-stone-900"
+    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-800"
   >
     {item.imageUrl && (
       <Image
@@ -46,6 +56,8 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
 
 const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: string; eventId: string }> }) => {
   const { slug, eventId } = await params
+  const decodedSlug = decodeURIComponent(slug)
+
   const session = await auth.getServerSession()
 
   const eventDetail = await server.event.find.query(eventId)
@@ -56,17 +68,17 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
 
   const { event, attendance } = eventDetail
 
-  if (slug !== getEventSlug(event.title)) {
-    permanentRedirect(getEventUrl(eventId, event.title), RedirectType.replace)
+  if (decodedSlug !== createEventSlug(event.title)) {
+    permanentRedirect(createEventPageUrl(eventId, event.title), RedirectType.replace)
   }
 
-  const [user, isStaff, childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
+  const [user, childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
     session ? server.user.getMe.query() : null,
-    session ? server.user.isStaff.query() : null,
     server.event.findChildEvents.query({ eventId }),
     server.event.findParentEvent.query({ eventId }),
   ])
 
+  const isOrganizer = user ? await server.event.isOrganizer.query({ eventId }) : null
   const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
 
   const parentEvent = parentEventWithAttendance?.event ?? null
@@ -77,7 +89,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
 
   return (
     <div className="flex flex-col gap-8">
-      <EventHeader event={event} isStaff={isStaff ?? false} />
+      <EventHeader event={event} showDashboardLink={isOrganizer ?? false} />
 
       {childEventWithAttendance.length > 0 ? (
         <Tabs defaultValue="description">
@@ -138,6 +150,15 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
   return (
     <div className="flex w-full flex-col gap-8 md:flex-row">
       <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
+        {parentEvent && (
+          <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-700">
+            <Title element="h4" size="sm" className="text-base">
+              Arrangementet er en del av
+            </Title>
+            <EventListItem event={parentEvent} attendance={parentAttendance} userId={user?.id ?? null} />
+          </div>
+        )}
+
         {organizers.length > 0 ? (
           <div className="flex flex-row gap-2">{organizers}</div>
         ) : (
@@ -148,16 +169,18 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
       </div>
 
       <div className="flex flex-1 flex-col gap-8 sm:gap-4">
-        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
-
         {attendance !== null && (
-          <AttendanceCard
-            initialAttendance={attendance}
-            initialPunishment={punishment}
-            parentEvent={parentEvent}
-            parentAttendance={parentAttendance}
-            user={user}
-          />
+          <>
+            <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
+
+            <AttendanceCard
+              initialAttendance={attendance}
+              initialPunishment={punishment}
+              parentEvent={parentEvent}
+              parentAttendance={parentAttendance}
+              user={user}
+            />
+          </>
         )}
 
         <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />

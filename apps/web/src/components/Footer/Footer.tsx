@@ -7,7 +7,7 @@ export const Footer = () => {
   const stone_600 = "#57534e"
 
   return (
-    <footer className="flex flex-col gap-8 md:gap-12 mt-24 mb-12 text-gray-900 dark:text-stone-500">
+    <footer className="flex flex-col gap-8 md:gap-12 mt-24 mb-12 text-gray-900 dark:text-stone-400">
       <LogoSection />
       <SocialSection fill={gray_500} className="dark:hidden" />
       <SocialSection fill={stone_600} className="hidden md:hidden dark:inline-grid dark:md:flex" />

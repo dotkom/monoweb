@@ -5,7 +5,7 @@ export const CommitteeApplicationsNotice = () => {
   return (
     <Button
       element="a"
-      href="opptak.online.ntnu.no"
+      href="https://opptak.online.ntnu.no"
       className="group flex flex-row justify-between w-full items-center p-5 min-h-24 bg-indigo-200 hover:bg-indigo-100 dark:bg-indigo-500/50 dark:hover:bg-indigo-400/50 rounded-2xl"
     >
       <div className="flex flex-row gap-5 items-center">

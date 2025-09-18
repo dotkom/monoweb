@@ -106,6 +106,21 @@ export const feedbackRouter = t.router({
         ctx.feedbackFormAnswerService.findAnswerByAttendee(handle, input.formId, input.attendeeId)
       )
     ),
+  findOwnAnswerByAttendee: authenticatedProcedure
+    .input(
+      z.object({
+        formId: FeedbackFormIdSchema,
+        attendeeId: AttendeeSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        const attendee = await ctx.attendanceService.getAttendeeById(handle, input.attendeeId)
+        ctx.authorize.requireMe(attendee.userId)
+
+        return ctx.feedbackFormAnswerService.findAnswerByAttendee(handle, input.formId, input.attendeeId)
+      })
+    ),
   getAllAnswers: staffProcedure
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>

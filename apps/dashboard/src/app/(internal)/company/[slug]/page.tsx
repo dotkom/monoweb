@@ -2,7 +2,7 @@
 
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { IconBuildingWarehouse, IconCalendarEvent } from "@tabler/icons-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { CompanyEventsPage } from "./company-page"
 import { CompanyEditCard } from "./edit-card"
 import { useCompanyDetailsContext } from "./provider"
@@ -17,7 +17,7 @@ const SIDEBAR_LINKS = [
   {
     icon: IconCalendarEvent,
     label: "Arrangementer",
-    slug: "event",
+    slug: "arrangementer",
     component: CompanyEventsPage,
   },
 ] as const
@@ -25,14 +25,24 @@ const SIDEBAR_LINKS = [
 export default function CompanyDetailsPage() {
   const { company } = useCompanyDetailsContext()
   const router = useRouter()
+
+  const searchParams = useSearchParams()
+  const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
+
+  const handleTabChange = (value: string | null) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
+    router.replace(`/company/${company.slug}?${params.toString()}`)
+  }
+
   return (
-    <Box p="md">
+    <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{company.name}</Title>
       </Group>
 
-      <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>
+      <Tabs defaultValue={currentTab} onChange={handleTabChange}>
         <Tabs.List>
           {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
             <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>

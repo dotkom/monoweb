@@ -7,7 +7,7 @@ import {
   AttendanceWriteSchema,
   type Attendee,
   AttendeeSchema,
-  AttendeeSelectionResponsesSchema,
+  AttendeeSelectionResponseSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -247,7 +247,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendeeId: AttendeeSchema.shape.id,
-        options: AttendeeSelectionResponsesSchema,
+        options: AttendeeSelectionResponseSchema.array(),
       })
     )
     .mutation(async ({ input, ctx }) => {

@@ -6,6 +6,7 @@ import type { JobListing } from "@dotkomonline/types"
 import { Badge, Icon, Text } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
+import { nb } from "date-fns/locale"
 import Image from "next/image"
 import Link from "next/link"
 import { type FC, useMemo, useState } from "react"
@@ -29,7 +30,7 @@ const getLocations = (jobListings: JobListing[]) => {
 
 const CareerPage = () => {
   const trpc = useTRPC()
-  const { data: jobListings, isLoading } = useQuery(trpc.jobListing.all.queryOptions())
+  const { data: jobListings, isLoading } = useQuery(trpc.jobListing.active.queryOptions())
 
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
   const [searchName, setSearchName] = useState<string>("")
@@ -57,7 +58,7 @@ const CareerPage = () => {
   }, [jobListings, chosenLocation, chosenEmployments, searchName, chosenSort])
 
   return (
-    <div>
+    <div className="min-h-[70dvh]">
       <div className="border-gray-600 left-0 z-0 w-full border-b">
         <div className="flex flex-row gap-96">
           <div className="flex flex-col gap-2">
@@ -135,13 +136,13 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
           <p className="text-gray-700 my-2">{jobListing.company.name}</p>
           <div className="flex flex-row justify-between w-full">
             <div>
-              <div className="flex flex-row gap-1">
+              <div className="flex flex-row gap-1 items-center">
                 <Icon width={16} icon={"tabler:map-pin"} />
                 {showLocations(jobListing.locations.map((location) => location.name))}
               </div>
-              <div className="flex flex-row gap-1">
+              <div className="flex flex-row gap-1 items-center">
                 <Icon width={16} icon={"tabler:clock-hour-3"} />
-                {formatDistanceToNowStrict(jobListing.createdAt)}
+                Lagt ut for {formatDistanceToNowStrict(jobListing.createdAt, { locale: nb, addSuffix: true })}
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">

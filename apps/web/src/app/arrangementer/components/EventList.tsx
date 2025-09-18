@@ -90,7 +90,7 @@ export const EventList: FC<EventListProps> = ({
   }, [onLoadMore])
 
   if (futureEvents.length === 0 && pastEvents.length === 0) {
-    return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
+    return <Text className="text-gray-500 dark:text-stone-400">Det er ingen arrangementer å vise.</Text>
   }
 
   return (
@@ -142,11 +142,11 @@ export const EventList: FC<EventListProps> = ({
 
 const Divider = ({ text }: { text: string }) => (
   <div className="w-full flex flex-row items-center gap-2 sm:-my-1">
-    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
-    <Text className="text-gray-400 dark:text-stone-700 text-xs uppercase tracking-widest font-medium select-none">
+    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-700 rounded-full" />
+    <Text className="text-gray-400 dark:text-stone-600 text-xs uppercase tracking-widest font-medium select-none">
       {text}
     </Text>
-    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-800 rounded-full" />
+    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-700 rounded-full" />
   </div>
 )
 

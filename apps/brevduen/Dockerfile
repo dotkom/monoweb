@@ -1,4 +1,4 @@
-FROM node:22-alpine@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5fe231d63de5b AS base
+FROM node:22-alpine@sha256:d2166de198f26e17e5a442f537754dd616ab069c47cc57b889310a717e0abbf9 AS base
 
 ARG SENTRY_RELEASE
 ARG DOPPLER_ENVIRONMENT
@@ -7,7 +7,7 @@ FROM base AS builder
 WORKDIR /app
 
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
 COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
@@ -16,7 +16,7 @@ RUN turbo prune @dotkomonline/brevduen --docker
 FROM base AS installer
 WORKDIR /app
 
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/full .
 RUN pnpm install --ignore-scripts
 

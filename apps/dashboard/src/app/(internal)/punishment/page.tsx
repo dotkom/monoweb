@@ -2,8 +2,7 @@
 
 import { GenericTable } from "@/components/GenericTable"
 import type { Mark } from "@dotkomonline/types"
-import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
-import { IconCaretLeft, IconCaretRight } from "@tabler/icons-react"
+import { Anchor, Button, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import Link from "next/link"
@@ -38,9 +37,13 @@ const columns = [
     header: () => "Varighet",
     cell: (info) => `${info.getValue()} dager`,
   }),
-  columnHelper.accessor("groupSlug", {
-    header: () => "Gruppe",
-    cell: (info) => info.getValue(),
+  columnHelper.accessor("groups", {
+    header: () => "Grupper",
+    cell: (info) =>
+      info
+        .getValue()
+        .map((group) => group.slug)
+        .join(" "),
   }),
 ]
 
@@ -63,19 +66,7 @@ export default function MarkPage() {
           <Button onClick={openCreateMarkModal}>Gi ny prikk</Button>
           <Button onClick={openCreateSuspensionModal}>Gi ny suspensjon</Button>
         </Group>
-
         <GenericTable table={table} />
-
-        <Group justify="space-between">
-          <ButtonGroup>
-            <Button variant="subtle">
-              <IconCaretLeft />
-            </Button>
-            <Button variant="subtle">
-              <IconCaretRight />
-            </Button>
-          </ButtonGroup>
-        </Group>
       </Stack>
     </Skeleton>
   )

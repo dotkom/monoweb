@@ -1,14 +1,16 @@
 import type { SQSClient } from "@aws-sdk/client-sqs"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task, TaskType } from "@dotkomonline/types"
-import { NotImplementedError } from "../../error"
+import type { RecurringTask, Task, TaskType } from "@dotkomonline/types"
+import { UnimplementedError } from "../../error"
+import type { RecurringTaskService } from "./recurring-task-service"
 import { tasks } from "./task-definition"
 import type { TaskService } from "./task-service"
 
 export interface TaskDiscoveryService {
   discover(kind: TaskType): Promise<Task[]>
   discoverAll(): Promise<Task[]>
+  discoverRecurringTasks(): Promise<RecurringTask[]>
 }
 
 /**
@@ -17,7 +19,11 @@ export interface TaskDiscoveryService {
  * NOTE: This constructor takes the DBClient as an argument (as opposed to a DBHandle) as the task discovery service
  * runs independently of any request or other transaction context.
  */
-export function getLocalTaskDiscoveryService(client: DBClient, taskService: TaskService): TaskDiscoveryService {
+export function getLocalTaskDiscoveryService(
+  client: DBClient,
+  taskService: TaskService,
+  recurringTaskService: RecurringTaskService
+): TaskDiscoveryService {
   const logger = getLogger("task-discovery-service/local-backend")
   return {
     async discoverAll() {
@@ -25,7 +31,8 @@ export function getLocalTaskDiscoveryService(client: DBClient, taskService: Task
         this.discover(tasks.RESERVE_ATTENDEE.type),
         this.discover(tasks.MERGE_ATTENDANCE_POOLS.type),
         this.discover(tasks.VERIFY_PAYMENT.type),
-        this.discover(tasks.CHARGE_ATTENDANCE_PAYMENTS.type),
+        this.discover(tasks.CHARGE_ATTENDEE.type),
+        this.discover(tasks.VERIFY_FEEDBACK_ANSWERED.type),
       ])
       return discoveredTasks.flat()
     },
@@ -41,6 +48,9 @@ export function getLocalTaskDiscoveryService(client: DBClient, taskService: Task
 
       return jobs
     },
+    async discoverRecurringTasks() {
+      return await recurringTaskService.getPending(client)
+    },
   }
 }
 
@@ -53,11 +63,15 @@ export function getSQSTaskDiscoveryService(client: SQSClient): TaskDiscoveryServ
   return {
     async discoverAll() {
       logger.warn("discoverAll is not implemented for SQS TaskDiscoveryService")
-      throw new NotImplementedError("SQSTaskDiscovery#discoverAll")
+      throw new UnimplementedError("SQSTaskDiscovery#discoverAll")
     },
     async discover(kind) {
       logger.warn("discover is not implemented for SQS TaskDiscoveryService")
-      throw new NotImplementedError("SQSTaskDiscovery#discover")
+      throw new UnimplementedError("SQSTaskDiscovery#discover")
+    },
+    async discoverRecurringTasks() {
+      logger.warn("discoverRecurringTasks is not implemented for SQS TaskDiscoveryService")
+      throw new UnimplementedError("SQSTaskDiscovery#discover")
     },
   }
 }

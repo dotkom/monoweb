@@ -11,6 +11,8 @@ import rawBody from "fastify-raw-body"
 import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
 import { configuration } from "../configuration"
+import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
+import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createContext } from "../trpc"
 
@@ -80,33 +82,8 @@ server.register(fastifyTRPCPlugin, {
   } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
 })
 
-server.get("/health", (_, res) => {
-  res.send({ status: "ok" })
-})
-
-server.post("/webhook/stripe", { config: { rawBody: true } }, async (req, res) => {
-  if (!req.headers["stripe-signature"]) {
-    return res.status(401)
-  }
-
-  if (!req.rawBody) {
-    return res.status(400)
-  }
-
-  const signature =
-    typeof req.headers["stripe-signature"] === "string"
-      ? req.headers["stripe-signature"]
-      : req.headers["stripe-signature"][0]
-
-  const event = await serviceLayer.paymentWebhookService.constructEvent(
-    req.rawBody,
-    signature,
-    process.env.LOCAL_STRIPE_WEBHOOK_SECRET
-  )
-  if (event.type === "checkout.session.completed") {
-    await serviceLayer.attendanceService.completeAttendeePayment(serviceLayer.prisma, event.data.object.id)
-  }
-})
+registerObservabilityProbeRoutes(server)
+registerStripeWebhookRoutes(server, serviceLayer)
 
 await identifyCallerIAMIdentity()
 await server.listen({ port: 4444, host: "0.0.0.0" })

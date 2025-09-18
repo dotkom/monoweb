@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 generator zod {
@@ -67,6 +68,8 @@ model User {
   dietaryRestrictions String?
   ntnuUsername        String?
   flags               String[]
+  /// Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
+  workspaceUserId     String?  @unique
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
@@ -116,21 +119,22 @@ enum GroupType {
 }
 
 model Group {
-  slug          String    @id @unique
-  abbreviation  String
-  name          String?
-  description   String?
-  about         String
-  imageUrl      String?
-  email         String?
-  contactUrl    String?
-  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
-  deactivatedAt DateTime?
+  slug             String    @id @unique
+  abbreviation     String
+  name             String?
+  shortDescription String?
+  description      String
+  imageUrl         String?
+  email            String?
+  contactUrl       String?
+  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
+  deactivatedAt    DateTime?
+  workspaceGroupId String?   @unique
 
   events      EventHostingGroup[]
   type        GroupType
   memberships GroupMembership[]
-  marks       Mark[]
+  marks       MarkGroup[]
   roles       GroupRole[]
 
   @@map("group")
@@ -139,9 +143,9 @@ model Group {
 model GroupMembership {
   id        String    @id @default(uuid())
   groupId   String
-  group     Group     @relation(fields: [groupId], references: [slug])
+  group     Group     @relation(fields: [groupId], references: [slug], onDelete: Cascade)
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   start     DateTime  @db.Timestamptz(3)
   end       DateTime? @db.Timestamptz(3)
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
@@ -154,18 +158,22 @@ model GroupMembership {
 
 model GroupMembershipRole {
   membershipId String
-  membership   GroupMembership @relation(fields: [membershipId], references: [id])
+  membership   GroupMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
   roleId       String
-  role         GroupRole       @relation(fields: [roleId], references: [id])
+  role         GroupRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@id([membershipId, roleId])
   @@map("group_membership_role")
 }
 
 enum GroupRoleType {
-  LEADER   @map("LEADER")
-  PUNISHER @map("PUNISHER")
-  COSMETIC @map("COSMETIC")
+  LEADER        @map("LEADER")
+  PUNISHER      @map("PUNISHER")
+  TREASURER     @map("TREASURER")
+  COSMETIC      @map("COSMETIC")
+  DEPUTY_LEADER @map("DEPUTY_LEADER")
+  TRUSTEE       @map("TRUSTEE")
+  EMAIL_ONLY    @map("EMAIL_ONLY")
 
   @@map("group_role_type")
 }
@@ -173,7 +181,7 @@ enum GroupRoleType {
 model GroupRole {
   id      String        @id @default(uuid())
   groupId String
-  group   Group         @relation(fields: [groupId], references: [slug])
+  group   Group         @relation(fields: [groupId], references: [slug], onDelete: Cascade)
   name    String
   type    GroupRoleType @default(COSMETIC)
 
@@ -257,39 +265,40 @@ model Attendee {
   createdAt             DateTime            @default(now()) @db.Timestamptz(3)
   updatedAt             DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
 
-  paymentDeadline     DateTime?
-  paymentLink         String?
-  paymentId           String?
-  paymentReservedAt   DateTime?
-  paymentChargedAt    DateTime?
-  paymentRefundedAt   DateTime?
-  paymentRefundedById String?
-  paymentRefundedBy   User?     @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
+  paymentDeadline       DateTime?
+  paymentLink           String?
+  paymentId             String?
+  paymentReservedAt     DateTime?
+  paymentChargeDeadline DateTime?
+  paymentChargedAt      DateTime?
+  paymentRefundedAt     DateTime?
+  paymentRefundedById   String?
+  paymentRefundedBy     User?     @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
 }
 
 model Event {
-  id              String        @id @default(uuid())
-  title           String
-  start           DateTime      @db.Timestamptz(3)
-  end             DateTime      @db.Timestamptz(3)
-  status          EventStatus
-  description     String
-  subtitle        String?
-  imageUrl        String?
-  locationTitle   String?
-  locationAddress String?
-  locationLink    String?
-  attendance      Attendance?   @relation(fields: [attendanceId], references: [id])
-  attendanceId    String?
-  type            EventType
-  feedbackForm    FeedbackForm?
-  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
+  id               String        @id @default(uuid())
+  title            String
+  start            DateTime      @db.Timestamptz(3)
+  end              DateTime      @db.Timestamptz(3)
+  status           EventStatus
+  description      String
+  shortDescription String?
+  imageUrl         String?
+  locationTitle    String?
+  locationAddress  String?
+  locationLink     String?
+  attendance       Attendance?   @relation(fields: [attendanceId], references: [id])
+  attendanceId     String?
+  type             EventType
+  feedbackForm     FeedbackForm?
+  createdAt        DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
-  parentId        String?
+  parentId String?
   parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
   children Event[] @relation("children")
 
@@ -315,6 +324,8 @@ enum MarkType {
   MANUAL
   LATE_ATTENDANCE
   MISSED_ATTENDANCE
+  MISSING_FEEDBACK
+  MISSING_PAYMENT
 }
 
 model Mark {
@@ -329,12 +340,20 @@ model Mark {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
-  users PersonalMark[]
-
-  group     Group  @relation(fields: [groupSlug], references: [slug])
-  groupSlug String
+  users  PersonalMark[]
+  groups MarkGroup[]
 
   @@map("mark")
+}
+
+model MarkGroup {
+  markId  String
+  groupId String
+  mark    Mark   @relation(fields: [markId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [slug])
+
+  @@id([markId, groupId])
+  @@map("mark_group")
 }
 
 model PersonalMark {
@@ -343,8 +362,8 @@ model PersonalMark {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  givenBy   User   @relation("GivenBy", fields: [givenById], references: [id])
-  givenById String
+  givenBy   User?   @relation("GivenBy", fields: [givenById], references: [id])
+  givenById String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
 
@@ -411,7 +430,7 @@ model JobListing {
   company          Company        @relation(fields: [companyId], references: [id])
   title            String
   description      String
-  about            String
+  shortDescription String?
   start            DateTime       @db.Timestamptz(3)
   end              DateTime       @db.Timestamptz(3)
   featured         Boolean
@@ -492,10 +511,11 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  RESERVE_ATTENDEE           @map("RESERVE_ATTENDEE")
-  MERGE_ATTENDANCE_POOLS     @map("MERGE_ATTENDANCE_POOLS")
-  VERIFY_PAYMENT             @map("VERIFY_PAYMENT")
-  CHARGE_ATTENDANCE_PAYMENTS @map("CHARGE_ATTENDANCE_PAYMENTS")
+  RESERVE_ATTENDEE         @map("RESERVE_ATTENDEE")
+  CHARGE_ATTENDEE          @map("CHARGE_ATTENDEE")
+  MERGE_ATTENDANCE_POOLS   @map("MERGE_ATTENDANCE_POOLS")
+  VERIFY_PAYMENT           @map("VERIFY_PAYMENT")
+  VERIFY_FEEDBACK_ANSWERED @map("VERIFY_FEEDBACK_ANSWERED")
 
   @@map("task_type")
 }
@@ -511,16 +531,33 @@ enum TaskStatus {
 }
 
 model Task {
-  id          String     @id @default(uuid())
-  type        TaskType
-  status      TaskStatus @default(PENDING)
-  payload     Json       @default("{}")
-  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
-  scheduledAt DateTime   @db.Timestamptz(3)
-  processedAt DateTime?  @db.Timestamptz(3)
+  id              String          @id @default(uuid())
+  type            TaskType
+  status          TaskStatus      @default(PENDING)
+  payload         Json            @default("{}")
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  scheduledAt     DateTime        @db.Timestamptz(3)
+  processedAt     DateTime?       @db.Timestamptz(3)
+  recurringTask   RecurringTask?  @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
+  recurringTaskId String?
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("task")
+}
+
+model RecurringTask {
+  id          String     @id @default(uuid())
+  type        TaskType
+  payload     Json       @default("{}")
+  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
+  schedule    String
+  lastRunAt   DateTime?  @db.Timestamptz(3)
+  nextRunAt   DateTime   @db.Timestamptz(3)
+
+  tasks       Task[]
+
+  @@index([nextRunAt])
+  @@map("recurring_task")
 }
 
 enum FeedbackQuestionType {
@@ -542,6 +579,7 @@ model FeedbackForm {
   publicResultsToken String   @unique @default(uuid())
   createdAt          DateTime @default(now()) @db.Timestamptz(3)
   updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  answerDeadline     DateTime @db.Timestamptz(3)
 
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
