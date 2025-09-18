@@ -24,7 +24,7 @@ export const Textarea: FC<TextareaProps> = ({ className, error, message, label, 
       )}
       <textarea
         className={cn(
-          "font-body flex min-h-10 h-15 w-full",
+          "font-body flex min-h-10 w-full",
           "px-3 py-2 rounded-md text-sm",
           "border border-gray-200 dark:border-stone-700 dark:bg-stone-800",
           "placeholder:text-gray-500 dark:placeholder:text-stone-400",
