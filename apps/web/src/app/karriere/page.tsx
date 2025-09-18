@@ -62,8 +62,12 @@ const CareerPage = () => {
       <div className="border-gray-600 left-0 z-0 w-full border-b">
         <div className="flex flex-row gap-96">
           <div className="flex flex-col gap-2">
-            <Title element="h1" className="text-3xl font-bold border-b-0">Karrieremuligheter</Title>
-            <Text className="text-gray-800 dark:text-gray-300">Ser du etter en jobb? Ta en titt på disse karrieremulighetene</Text>
+            <Title element="h1" className="text-3xl font-bold border-b-0">
+              Karrieremuligheter
+            </Title>
+            <Text className="text-gray-800 dark:text-gray-300">
+              Ser du etter en jobb? Ta en titt på disse karrieremulighetene
+            </Text>
           </div>
         </div>
       </div>
@@ -119,22 +123,29 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
   return (
     <Link
       href={`/karriere/${jobListing.id}`}
-      className={`border ${jobListing.featured ? "border-orange-100" : "border-gray-200"} flex h-56 items-center justify-between rounded-lg px-6 py-2 ${jobListing.featured && "bg-orange-50 dark:bg-neutral-800"}`}>
+      className={`border ${jobListing.featured ? "border-orange-100" : "border-gray-200"} flex h-56 items-center justify-between rounded-lg px-6 py-2 ${jobListing.featured && "bg-orange-50 dark:bg-neutral-800"}`}
+    >
       <div className="flex flex-row items-center gap-8 w-full">
         <div className="inline-block bg-white p-2 rounded-lg">
-        {jobListing.company.imageUrl && (
-           <Image
-            src={jobListing.company.imageUrl}
-            width={168}
-            height={96}
-            
-            alt={`${jobListing.company.name}'s job posting`}
-            className="hidden md:block rounded-sm"
-          />
-        )}</div>
+          {jobListing.company.imageUrl && (
+            <Image
+              src={jobListing.company.imageUrl}
+              width={168}
+              height={96}
+              alt={`${jobListing.company.name}'s job posting`}
+              className="hidden md:block rounded-sm"
+            />
+          )}
+        </div>
         <div className="flex flex-col w-full">
-          <Title element="h3" className="text-lg md:text-xl xl:text-2xl">{jobListing.title}</Title>
-          {jobListing.featured && <Badge className="mt-2" color="gold" variant="solid">Fremhevet</Badge>}
+          <Title element="h3" className="text-lg md:text-xl xl:text-2xl">
+            {jobListing.title}
+          </Title>
+          {jobListing.featured && (
+            <Badge className="mt-2" color="gold" variant="solid">
+              Fremhevet
+            </Badge>
+          )}
           <Text className="text-gray-700 dark:text-gray-300 my-2">{jobListing.company.name}</Text>
           <div className="flex flex-row justify-between w-full">
             <div>
@@ -144,7 +155,9 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
               </div>
               <div className="flex flex-row gap-1 items-center">
                 <Icon width={16} icon={"tabler:clock-hour-3"} />
-                <Text>Lagt ut for {formatDistanceToNowStrict(jobListing.createdAt, { locale: nb, addSuffix: true })}</Text>
+                <Text>
+                  Lagt ut for {formatDistanceToNowStrict(jobListing.createdAt, { locale: nb, addSuffix: true })}
+                </Text>
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">
