@@ -48,7 +48,11 @@ export default async function App() {
         {featuredEvent ? (
           <div className="flex flex-col md:grid md:[grid-template-columns:35%_35%_30%] md:[grid-template-rows:2fr_2fr_1fr] gap-6 w-full">
             <div className="col-span-2 row-span-3">
-              <BigEventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} className="max-md:hidden" />
+              <BigEventCard
+                event={featuredEvent?.event}
+                attendance={featuredEvent?.attendance}
+                className="max-md:hidden"
+              />
               <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} className="md:hidden" />
             </div>
 
