@@ -1,9 +1,9 @@
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
+import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { createTextareaInput } from "@/components/forms/TextareaInput"
 import { type GroupId, GroupTypeSchema, type GroupWrite, GroupWriteSchema, getGroupTypeName } from "@dotkomonline/types"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { useMemo } from "react"
@@ -75,10 +75,9 @@ export const useGroupWriteForm = ({
         withAsterisk: true,
         required: true,
       }),
-      description: createTextareaInput({
+      description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
-        rows: 5,
       }),
       email: createTextInput({
         label: "Kontakt-e-post",

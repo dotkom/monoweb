@@ -8,7 +8,6 @@ import {
   IconAlertTriangleFilled,
   IconArrowLeft,
   IconArrowUpRight,
-  IconBuildingWarehouse,
   IconCalendarEvent,
   IconCancel,
   IconCreditCard,
@@ -22,7 +21,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useDeleteEventMutation } from "../mutations"
 import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
-import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { FeedbackPage } from "./feedback-page"
 import { PaymentPage } from "./payment-page"
@@ -35,12 +33,6 @@ const SIDEBAR_LINKS = [
     label: "Info",
     slug: "info",
     component: EventEditCard,
-  },
-  {
-    icon: IconBuildingWarehouse,
-    label: "Bedrifter",
-    slug: "bedrifter",
-    component: EventCompaniesPage,
   },
   {
     icon: IconForms,
