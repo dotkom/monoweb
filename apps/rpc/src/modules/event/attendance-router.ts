@@ -55,7 +55,9 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => ctx.attendanceService.deleteAttendancePool(handle, input.id))
+      return ctx.executeTransactionWithAudit(async (handle) =>
+        ctx.attendanceService.deleteAttendancePool(handle, input.id)
+      )
     }),
 
   adminRegisterForEvent: staffProcedure

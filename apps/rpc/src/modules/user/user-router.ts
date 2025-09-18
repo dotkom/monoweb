@@ -46,7 +46,6 @@ export const userRouter = t.router({
   createAvatarUploadURL: authenticatedProcedure.mutation(async ({ ctx }) =>
     ctx.executeTransactionWithAudit(async (handle) => {
       return await ctx.userService.createAvatarUploadURL(handle, ctx.principal.subject)
-
     })
   ),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>

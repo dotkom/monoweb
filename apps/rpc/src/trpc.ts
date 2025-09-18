@@ -29,7 +29,7 @@ export const createContext = async (principal: Principal | null, context: Servic
     executeTransactionWithAudit<T>(fn: (tx: typeof context.prisma) => Promise<T>): Promise<T> {
       return context.executeTransactionWithAudit(fn, principal?.subject || null)
     },
-    
+
     /** Authorization middlewares that each procedure can use to enforce access control */
     authorize: {
       /** Create a custom precondition */

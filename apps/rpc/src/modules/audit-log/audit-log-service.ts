@@ -6,7 +6,7 @@ import type { AuditLogRepository } from "./audit-log-repository"
 export interface AuditLogService {
   getAuditLogs(handle: DBHandle, page: Pageable): Promise<AuditLog[]>
   findMany(handle: DBHandle, query: AuditLogFilterQuery, page: Pageable): Promise<AuditLog[]>
-  getAuditLogById(handle: DBHandle,  id: string): Promise<AuditLog>
+  getAuditLogById(handle: DBHandle, id: string): Promise<AuditLog>
   getAuditLogsByUserId(handle: DBHandle, userId: string, page: Pageable): Promise<AuditLog[]>
 }
 

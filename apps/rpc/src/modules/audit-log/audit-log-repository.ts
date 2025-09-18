@@ -54,51 +54,46 @@ export function getAuditLogRepository(): AuditLogRepository {
         where: {
           AND: [
             query.bySearchTerm
-            ? 
-            {
-              OR: [
-                {
-                  user:
+              ? {
+                  OR: [
                     {
-                      name: {
-                        contains: query.bySearchTerm,
-                        mode: "insensitive"
-                      }
-                    }
-              },
-                {
-                  user:
+                      user: {
+                        name: {
+                          contains: query.bySearchTerm,
+                          mode: "insensitive",
+                        },
+                      },
+                    },
                     {
-                      email: {
+                      user: {
+                        email: {
+                          contains: query.bySearchTerm,
+                          mode: "insensitive",
+                        },
+                      },
+                    },
+                    {
+                      tableName: {
                         contains: query.bySearchTerm,
-                        mode: "insensitive"
-                      }
-                    }
-              },
-              {
-                tableName:
-                {
-                  contains: query.bySearchTerm,
-                  mode: "insensitive"
+                        mode: "insensitive",
+                      },
+                    },
+                    {
+                      operation: {
+                        contains: query.bySearchTerm,
+                        mode: "insensitive",
+                      },
+                    },
+                    "system".startsWith(query.bySearchTerm.toLowerCase())
+                      ? {
+                          userId: null,
+                        }
+                      : undefined,
+                  ].filter(Boolean) as object[],
                 }
-              },
-              {
-                operation: 
-                   {
-                    contains: query.bySearchTerm,
-                    mode: "insensitive"
-                  }
-              },
-              "system".startsWith(query.bySearchTerm.toLowerCase()) ? {
-                userId: null
-              } : undefined,
-              ].filter(Boolean) as object[],
-          } : {
-            
-          },
-          
-          ]
-        }
+              : {},
+          ],
+        },
       })
 
       return auditLogs

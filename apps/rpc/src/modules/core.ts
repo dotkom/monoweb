@@ -81,20 +81,22 @@ export function createThirdPartyClients(configuration: Configuration) {
  */
 export async function createServiceLayer(
   clients: ReturnType<typeof createThirdPartyClients>,
-  configuration: Configuration,
+  configuration: Configuration
 ) {
-
-  async function executeTransactionWithAudit<T>(fn: (tx: typeof clients.prisma) => Promise<T>,userId: string | null): Promise<T> {
+  async function executeTransactionWithAudit<T>(
+    fn: (tx: typeof clients.prisma) => Promise<T>,
+    userId: string | null
+  ): Promise<T> {
     return clients.prisma.$transaction(async (tx) => {
-      const transactionId = crypto.randomUUID();
+      const transactionId = crypto.randomUUID()
 
-        await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId || null}, TRUE)`;
-        await tx.$executeRaw`SELECT set_config('app.current_transaction_id', ${transactionId}, TRUE)`;
+      await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId || null}, TRUE)`
+      await tx.$executeRaw`SELECT set_config('app.current_transaction_id', ${transactionId}, TRUE)`
 
-      return fn(tx as typeof clients.prisma);
-    });
+      return fn(tx as typeof clients.prisma)
+    })
   }
-  
+
   const eventEmitter = new EventEmitter()
 
   const taskRepository = getTaskRepository()

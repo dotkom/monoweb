@@ -15,9 +15,7 @@ export const jobListingRouter = t.router({
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransactionWithAudit(async (handle) => {
         return ctx.jobListingService.create(handle, input.input, input.companyId, input.locationIds)
-      }
-        
-      )
+      })
     ),
   edit: staffProcedure
     .input(

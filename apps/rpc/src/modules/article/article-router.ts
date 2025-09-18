@@ -100,6 +100,8 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => ctx.articleService.removeTag(handle, input.id, input.tag))
+      return ctx.executeTransactionWithAudit(async (handle) =>
+        ctx.articleService.removeTag(handle, input.id, input.tag)
+      )
     }),
 })

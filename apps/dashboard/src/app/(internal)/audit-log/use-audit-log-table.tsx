@@ -63,10 +63,9 @@ export const AllAuditLogsTable = ({ audit_logs }: Props) => {
       data: audit_logs,
       getCoreRowModel: getCoreRowModel(),
       columns,
-    }), [audit_logs, columns]
+    }),
+    [audit_logs, columns]
   )
 
-  return (
-        <GenericTable table={useReactTable(tableOptions)} />
-  )
+  return <GenericTable table={useReactTable(tableOptions)} />
 }

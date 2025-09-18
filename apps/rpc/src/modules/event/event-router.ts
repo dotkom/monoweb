@@ -57,7 +57,6 @@ export const eventRouter = t.router({
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransactionWithAudit(async (handle) => {
-        
         const eventWithoutOrganizers = await ctx.eventService.createEvent(handle, input.event)
         const event = await ctx.eventService.updateEventOrganizers(
           handle,
@@ -190,7 +189,6 @@ export const eventRouter = t.router({
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransactionWithAudit(async (handle) => {
-        
         const updatedEvent = await ctx.eventService.updateEventParent(handle, input.eventId, input.parentEventId)
         const attendance = updatedEvent.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEvent.attendanceId)

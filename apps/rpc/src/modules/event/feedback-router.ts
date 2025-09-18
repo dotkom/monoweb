@@ -119,6 +119,8 @@ export const feedbackRouter = t.router({
   deleteQuestionAnswer: staffProcedure
     .input(FeedbackQuestionAnswerSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input))
+      ctx.executeTransactionWithAudit(async (handle) =>
+        ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input)
+      )
     ),
 })

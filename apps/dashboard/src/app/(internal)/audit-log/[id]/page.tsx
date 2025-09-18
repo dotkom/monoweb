@@ -2,9 +2,9 @@
 
 import { Accordion, Anchor, Stack, Tabs, Text, Title, useMantineColorScheme, useMantineTheme } from "@mantine/core"
 import { formatDate } from "date-fns"
+import Link from "next/link"
 import { DiffMethod, StringDiff } from "react-string-diff"
 import { useAuditLogDetailsQuery } from "./provider"
-import Link from "next/link"
 
 export default function AuditLogDetailsPage() {
   // Theme stuff for coloring the diff
@@ -19,7 +19,7 @@ export default function AuditLogDetailsPage() {
   }
 
   // need to map table names in the database to correct next js routes
-  const tableNameMap  = {
+  const tableNameMap = {
     event: "event",
     ow_user: "user",
     job_listing: "job-listing",
@@ -41,57 +41,51 @@ export default function AuditLogDetailsPage() {
     auditLog.rowData &&
     Object.entries(auditLog.rowData).map(([field, change], index) => {
       return (
-          <Accordion.Item key={field} value={field}>
-            <Accordion.Control>
-              <strong>{field === "new" ? "Data lagt til" : field}</strong>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <div style={{ whiteSpace: "pre-wrap" }}>
-                {change.old ? (
-                  <StringDiff // This component shows the string-difference
-                    oldValue={change.old}
-                    newValue={change.new}
-                    method={DiffMethod.Lines}
-                    key={colorScheme}
-                    styles={diffStyles}
-                  />
-                ) : (
-                  Object.entries(change).map(([key, value]) => (
-                    <div key={key}>
-                      <strong>{key}:</strong> {String(value)}
-                    </div>
-                  ))
-                )}
-              </div>
-            </Accordion.Panel>
-          </Accordion.Item>
+        <Accordion.Item key={field} value={field}>
+          <Accordion.Control>
+            <strong>{field === "new" ? "Data lagt til" : field}</strong>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <div style={{ whiteSpace: "pre-wrap" }}>
+              {change.old ? (
+                <StringDiff // This component shows the string-difference
+                  oldValue={change.old}
+                  newValue={change.new}
+                  method={DiffMethod.Lines}
+                  key={colorScheme}
+                  styles={diffStyles}
+                />
+              ) : (
+                Object.entries(change).map(([key, value]) => (
+                  <div key={key}>
+                    <strong>{key}:</strong> {String(value)}
+                  </div>
+                ))
+              )}
+            </div>
+          </Accordion.Panel>
+        </Accordion.Item>
       )
     })
   if (!auditLog.rowData) return null
   return (
     <Stack>
+      <Title order={2}>Hendelse</Title>
 
-      <Title order={2}>
-        Hendelse
-      </Title>
-
-      <Text size="sm">
-        Utført av {auditLog.user?.name ? auditLog.user.name : "System"} 
-       </Text>
-       <Text size="sm" c="dimmed">
-       {formatDate(new Date(auditLog.createdAt), "dd.MM.yyyy HH:mm")}
-        </Text>
-      <Text size="sm" mt="md">
-      {tableNameMap.hasOwnProperty(auditLog.tableName) && 
-        <>
-          Gå til endret {auditLog.tableName} {" "}
-          <Anchor component={Link} href={`/${getTableNamePath(auditLog.tableName)}/${auditLog.rowId}`}>
-            her
-          </Anchor> 
-        </>
-      }
-
+      <Text size="sm">Utført av {auditLog.user?.name ? auditLog.user.name : "System"}</Text>
+      <Text size="sm" c="dimmed">
+        {formatDate(new Date(auditLog.createdAt), "dd.MM.yyyy HH:mm")}
       </Text>
+      {auditLog.tableName in tableNameMap && (
+        <Text size="sm" mt="md">
+          <>
+            Gå til endret {auditLog.tableName}{" "}
+            <Anchor component={Link} href={`/${getTableNamePath(auditLog.tableName)}/${auditLog.rowId}`}>
+              her
+            </Anchor>
+          </>
+        </Text>
+      )}
 
       <Tabs defaultValue={"JSON"}>
         <Tabs.List>
@@ -106,8 +100,6 @@ export default function AuditLogDetailsPage() {
             <pre>{JSON.stringify(auditLog.rowData, null, 2)}</pre>
           </Accordion>
         </Tabs.Panel>
-    
-
       </Tabs>
     </Stack>
   )

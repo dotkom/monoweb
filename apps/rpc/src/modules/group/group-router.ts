@@ -80,7 +80,9 @@ export const groupRouter = t.router({
   endMembership: staffProcedure
     .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) => ctx.groupService.endMembership(handle, input.userId, input.groupId))
+      ctx.executeTransactionWithAudit(async (handle) =>
+        ctx.groupService.endMembership(handle, input.userId, input.groupId)
+      )
     ),
   updateMembership: staffProcedure
     .input(
