@@ -1,12 +1,12 @@
-import type { Attendance } from "@dotkomonline/types"
-import { cn, Text } from "@dotkomonline/ui"
-import { formatDate, isPast, isThisYear, min } from "date-fns"
+import type { Attendance, Attendee } from "@dotkomonline/types"
+import { Text, cn } from "@dotkomonline/ui"
+import { formatDate, isEqual, isPast, isThisYear, min } from "date-fns"
 import { nb } from "date-fns/locale"
 import React from "react"
 
-const dateComponent = (label: string, dateStr: string, time: string) => (
-  <div>
-    <Text className="text-base">{label}</Text>
+const dateComponent = (label: string, dateStr: string, time: string, showNotice?: boolean) => (
+  <div className="flex flex-col gap-0">
+    <Text className={cn(showNotice && "px-0.5 bg-yellow-100 rounded-sm")}>{label}</Text>
     <div className="flex flex-row gap-2 dark:text-stone-300 text-base sm:flex-col sm:gap-0 sm:text-sm">
       <Text>{dateStr}</Text>
       <Text>kl. {time}</Text>
@@ -16,13 +16,26 @@ const dateComponent = (label: string, dateStr: string, time: string) => (
 
 interface AttendanceDateInfoProps {
   attendance: Attendance
+  attendee: Attendee | null
   chargeScheduleDate?: Date | null
 }
 
-export const AttendanceDateInfo = ({ attendance, chargeScheduleDate }: AttendanceDateInfoProps) => {
+export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }: AttendanceDateInfoProps) => {
   const { registerStart, registerEnd, deregisterDeadline } = attendance
 
-  const actualDeregisterDeadline = chargeScheduleDate ? min([deregisterDeadline, chargeScheduleDate]) : deregisterDeadline
+  const actualDeregisterDeadline = chargeScheduleDate
+    ? min([deregisterDeadline, chargeScheduleDate])
+    : deregisterDeadline
+
+  const hasPaid = Boolean(
+    attendance.attendancePrice &&
+      attendee &&
+      (attendee.paymentChargedAt ||
+        attendee.paymentReservedAt ||
+        (attendee.paymentRefundedAt && !attendee.paymentDeadline))
+  )
+
+  const showDeregisterDeadlineNotice = hasPaid && !isEqual(actualDeregisterDeadline, deregisterDeadline)
 
   const dateBlocks = [
     {
@@ -48,15 +61,18 @@ export const AttendanceDateInfo = ({ attendance, chargeScheduleDate }: Attendanc
       date: actualDeregisterDeadline,
       element: dateComponent(
         "Avmeldingsfrist",
-        formatDate(actualDeregisterDeadline, isThisYear(actualDeregisterDeadline) ? "dd. MMMM" : "dd.MM.yyyy", { locale: nb }),
+        formatDate(actualDeregisterDeadline, isThisYear(actualDeregisterDeadline) ? "dd. MMMM" : "dd.MM.yyyy", {
+          locale: nb,
+        }),
         formatDate(actualDeregisterDeadline, "HH:mm", { locale: nb }),
+        showDeregisterDeadlineNotice
       ),
     },
   ]
 
   const sortedElements = dateBlocks.toSorted((a, b) => a.date.getTime() - b.date.getTime())
 
-  return (
+  const element = (
     <div className="flex flex-col justify-between space-y-2 sm:flex-row sm:items-center sm:space-x-4">
       {sortedElements.map(({ element, key }, index) => (
         <React.Fragment key={key}>
@@ -66,6 +82,17 @@ export const AttendanceDateInfo = ({ attendance, chargeScheduleDate }: Attendanc
           )}
         </React.Fragment>
       ))}
+    </div>
+  )
+
+  if (!showDeregisterDeadlineNotice) {
+    return element
+  }
+
+  return (
+    <div className="flex flex-col">
+      {element}
+      <Text className="text-xs text-gray-500 dark:text-stone-500">Avmeldingsfrist er endret grunnet betaling.</Text>
     </div>
   )
 }

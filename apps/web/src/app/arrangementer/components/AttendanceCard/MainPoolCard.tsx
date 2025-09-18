@@ -27,7 +27,7 @@ import {
   interval,
   isFuture,
   isWithinInterval,
-  roundToNearestMinutes,
+  roundToNearestHours,
   subMinutes,
 } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -72,11 +72,19 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   if (!user) {
     return (
       <Link href={authorizeUrl} prefetch={false} className={cardClassname}>
-        <Text>Du er ikke innlogget</Text>
+        <div className="flex flex-col gap-2">
+          <Text>Du er ikke innlogget</Text>
 
-        <div className="flex flex-row gap-1 items-center">
-          <Text>Logg inn</Text>
-          <Icon icon="tabler:arrow-up-right" className="text-base" />
+          <div className="flex flex-row gap-1 items-center">
+            <Text>Logg inn</Text>
+            <Icon icon="tabler:arrow-up-right" className="text-base" />
+          </div>
+
+          {attendance.attendancePrice && attendance.attendancePrice > 0 && (
+            <div className="mt-4">
+              <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+            </div>
+          )}
         </div>
       </Link>
     )
@@ -87,13 +95,22 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   if (!membership && !attendee) {
     return (
       <div className={cardClassname}>
-        <Text>Du har ikke registert medlemskap</Text>
-        <div className="flex gap-[0.5ch] text-sm">
-          <Text>Gå til</Text>
-          <Link href="/profil" className="flex items-center text-blue-800 dark:text-blue-400 hover:underline">
-            <Text>profilsiden</Text> <Icon icon="tabler:arrow-up-right" className="text-base" />
-          </Link>
-          <Text>for å registrere deg</Text>
+        <div className="flex flex-col gap-2">
+          <Text>Du har ikke registert medlemskap</Text>
+
+          <div className="flex gap-[0.5ch] text-sm">
+            <Text>Gå til</Text>
+            <Link href="/profil" className="flex items-center text-blue-800 dark:text-blue-400 hover:underline">
+              <Text>profilsiden</Text> <Icon icon="tabler:arrow-up-right" className="text-base" />
+            </Link>
+            <Text>for å registrere deg</Text>
+          </div>
+
+          {attendance.attendancePrice && attendance.attendancePrice > 0 && (
+            <div className="mt-4">
+              <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+            </div>
+          )}
         </div>
       </div>
     )
@@ -176,12 +193,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   )
 
   const countdownContent = (
-    <div className="flex flex-col min-h-[10rem] gap-4 p-3 rounded-lg items-center w-full">
-      <div className="flex flex-row gap-2 items-center justify-center w-full">
+    <div className="flex flex-col min-h-[10rem] gap-4 p-3 rounded-lg items-center">
+      <div className="flex flex-col gap-2 items-center justify-center">
         <div className="flex flex-row gap-0.5 items-center">
           <Text
             className={cn(
-              "text-base px-1",
+              "text-lg font-medium",
               hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
             )}
           >
@@ -192,33 +209,19 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
           {hasWaitlist && (
             <Text
-              className={cn(
-                "text-base px-1",
-                attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
-              )}
+              className={cn("text-base", attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-700 rounded-lg")}
             >
               +{unreservedAttendeeCount} i kø
             </Text>
           )}
         </div>
 
-        <div className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
-
         {!servingPunishment && (
-          <>
-            <div className="mx-1">
-              <AttendanceStatus attendance={attendance} attendee={attendee} small />
-            </div>
-            <div className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
-            <div className="mx-1">
-              <PaymentStatus
-                attendance={attendance}
-                attendee={attendee}
-                chargeScheduleDate={chargeScheduleDate}
-                small
-              />
-            </div>
-          </>
+          <div className="flex flex-col gap-2">
+            <AttendanceStatus attendance={attendance} attendee={attendee} />
+
+            <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+          </div>
         )}
 
         {servingPunishment && (
@@ -359,17 +362,15 @@ const DelayPill = ({ mergeDelayHours, className }: DelayPillProps) => {
 interface AttendanceStatusProps {
   attendance: Attendance
   attendee: Attendee | null
-  small?: boolean
 }
 
-const AttendanceStatus = ({ attendance, attendee, small }: AttendanceStatusProps) => {
-  const gap = small ? "gap-1" : "gap-2"
+const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
   const iconSize = 16
 
   if (!attendee) {
     return (
-      <div className={cn("flex flex-row items-center", gap)}>
-        {!small && <Icon icon="tabler:user-x" size={iconSize} />}
+      <div className="flex flex-row items-center gap-2">
+        <Icon icon="tabler:user-x" size={iconSize} />
         <Text>Du er ikke påmeldt</Text>
       </div>
     )
@@ -377,8 +378,8 @@ const AttendanceStatus = ({ attendance, attendee, small }: AttendanceStatusProps
 
   if (attendee.reserved === true) {
     return (
-      <div className={cn("flex flex-row items-center", gap)}>
-        {!small && <Icon icon="tabler:check" size={iconSize} className="text-green-700" />}
+      <div className="flex flex-row items-center gap-2">
+        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
         <Text>Du er påmeldt</Text>
       </div>
     )
@@ -389,16 +390,16 @@ const AttendanceStatus = ({ attendance, attendee, small }: AttendanceStatusProps
   // Should never happen, but just in case
   if (!queuePosition) {
     return (
-      <div className={cn("flex flex-row items-center", gap)}>
-        {!small && <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />}
+      <div className="flex flex-row items-center gap-2">
+        <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />
         <Text>Du er i køen</Text>
       </div>
     )
   }
 
   return (
-    <div className={cn("flex flex-row items-center", gap)}>
-      {!small && <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />}
+    <div className="flex flex-row items-center gap-2">
+      <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />
       <Text>Du er {queuePosition}. i køen</Text>
     </div>
   )
@@ -408,15 +409,13 @@ interface PaymentStatusProps {
   attendance: Attendance
   attendee: Attendee | null
   chargeScheduleDate?: Date | null
-  small?: boolean
 }
 
-const PaymentStatus = ({ attendance, attendee, small, chargeScheduleDate }: PaymentStatusProps) => {
+const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStatusProps) => {
   if (!attendance.attendancePrice) {
     return null
   }
 
-  const gap = small ? "gap-1" : "gap-2"
   const iconSize = 16
 
   const hasPaid = Boolean(
@@ -428,8 +427,8 @@ const PaymentStatus = ({ attendance, attendee, small, chargeScheduleDate }: Paym
 
   if (!attendee) {
     return (
-      <div className={cn("flex flex-row items-center", gap)}>
-        {!small && <Icon icon="tabler:coins" size={iconSize} />}
+      <div className="flex flex-row items-center gap-2">
+        <Icon icon="tabler:coins" size={iconSize} />
         <Text>{attendance.attendancePrice} kr</Text>
       </div>
     )
@@ -437,45 +436,45 @@ const PaymentStatus = ({ attendance, attendee, small, chargeScheduleDate }: Paym
 
   if (!hasPaid) {
     return (
-      <div className={cn("flex flex-row items-center", gap)}>
-        {!small && <Icon icon="tabler:x" size={iconSize} />}
+      <div className="flex flex-row items-center gap-2">
+        <Icon icon="tabler:x" size={iconSize} className="text-red-700" />
         <Text>{attendance.attendancePrice} kr ubetalt</Text>
-      </div>
-    )
-  }
-
-  if (attendee.paymentReservedAt) {
-    return (
-      <div className={cn("flex flex-row items-center", gap)}>
-        {!small && <Icon icon="tabler:check" size={iconSize} className="text-green-700" />}
-        <div className="flex flex-col gap-0 items-start">
-          <Text>Du har reservert {attendance.attendancePrice} kr</Text>
-          {chargeScheduleDate && (
-            <>
-              <Text className="text-xs">
-                Du blir trukket{" "}
-                {formatDate(roundToNearestMinutes(chargeScheduleDate), "dd. MMM 'kl.' HH:mm", { locale: nb })}.
-              </Text>
-            </>
-          )}
-        </div>
       </div>
     )
   }
 
   if (attendee.paymentChargedAt) {
     return (
-      <div className={cn("flex flex-row items-center", gap)}>
-        {!small && <Icon icon="tabler:check" size={iconSize} />}
+      <div className="flex flex-row items-center gap-2">
+        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
         <Text>Du har betalt {attendance.attendancePrice} kr</Text>
+      </div>
+    )
+  }
+
+  if (attendee.paymentReservedAt) {
+    return (
+      <div className="flex flex-row items-center gap-2">
+        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
+
+        <div className="flex flex-col gap-0 items-start">
+          <Text>Du har reservert {attendance.attendancePrice} kr</Text>
+
+          {chargeScheduleDate && (
+            <Text className="text-xs">
+              Du blir trukket rundt{" "}
+              {formatDate(roundToNearestHours(chargeScheduleDate), "dd. MMM 'kl.' HH", { locale: nb })}
+            </Text>
+          )}
+        </div>
       </div>
     )
   }
 
   if (attendee.paymentRefundedAt) {
     return (
-      <div className={cn("flex flex-row items-center", gap)}>
-        {!small && <Icon icon="tabler:arrow-forward" size={iconSize} />}
+      <div className="flex flex-row items-center gap-2">
+        <Icon icon="tabler:arrow-forward" size={iconSize} />
         <Text>Du er refundert {attendance.attendancePrice} kr</Text>
       </div>
     )

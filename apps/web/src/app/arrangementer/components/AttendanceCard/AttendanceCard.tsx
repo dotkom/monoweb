@@ -188,7 +188,7 @@ export const AttendanceCard = ({
         Påmelding
       </Title>
 
-      <AttendanceDateInfo attendance={attendance} chargeScheduleDate={chargeScheduleDate} />
+      <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
 
       {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
 
