@@ -11,7 +11,6 @@ export type AuditLogId = AuditLog["id"]
 export type AuditLogFilterQuery = z.infer<typeof AuditLogFilterQuerySchema>
 export const AuditLogFilterQuerySchema = z
   .object({
-    byId: buildAnyOfFilter(AuditLogSchema.shape.id),
     bySearchTerm: buildSearchFilter(),
   })
   .partial()
