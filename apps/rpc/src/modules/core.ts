@@ -85,14 +85,13 @@ export async function createServiceLayer(
 ) {
 
   async function executeTransactionWithAudit<T>(fn: (tx: typeof clients.prisma) => Promise<T>,userId: string | null): Promise<T> {
+    console.log("executeTransactionWithAudit userId:", userId);
     return clients.prisma.$transaction(async (tx) => {
-      if (userId){
-        await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`;
-        await tx.$executeRaw`SELECT set_config('app.current_transaction_id', ${crypto.randomUUID()}, TRUE)`;
-      } else {
-        await tx.$executeRaw`SELECT set_config('app.current_user_id', NULL, TRUE)`;
-        await tx.$executeRaw`SELECT set_config('app.current_transaction_id', ${crypto.randomUUID()}, TRUE)`;
-      }
+      const transactionId = crypto.randomUUID();
+
+        await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId || null}, TRUE)`;
+        await tx.$executeRaw`SELECT set_config('app.current_transaction_id', ${transactionId}, TRUE)`;
+
       return fn(tx as typeof clients.prisma);
     });
   }
@@ -181,8 +180,8 @@ export async function createServiceLayer(
     feedbackFormAnswerService,
     authorizationService,
     paymentWebhookService,
-    executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     executeTransactionWithAudit,
+    executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only
     prisma: clients.prisma,

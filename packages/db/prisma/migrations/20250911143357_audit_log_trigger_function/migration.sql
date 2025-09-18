@@ -58,7 +58,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-
 CREATE TRIGGER article_audit
 AFTER INSERT OR UPDATE OR DELETE ON article
 FOR EACH ROW EXECUTE FUNCTION if_modified_func();
@@ -141,7 +140,6 @@ CREATE TRIGGER notification_permissions_audit
 AFTER INSERT OR UPDATE OR DELETE ON notification_permissions
 FOR EACH ROW EXECUTE FUNCTION if_modified_func();
 
-
 CREATE TRIGGER offline_audit
 AFTER INSERT OR UPDATE OR DELETE ON offline
 FOR EACH ROW EXECUTE FUNCTION if_modified_func();
@@ -156,8 +154,4 @@ FOR EACH ROW EXECUTE FUNCTION if_modified_func();
 
 CREATE TRIGGER privacy_permissions_audit
 AFTER INSERT OR UPDATE OR DELETE ON privacy_permissions
-FOR EACH ROW EXECUTE FUNCTION if_modified_func();
-
-CREATE TRIGGER task_audit
-AFTER INSERT OR UPDATE OR DELETE ON task
 FOR EACH ROW EXECUTE FUNCTION if_modified_func();

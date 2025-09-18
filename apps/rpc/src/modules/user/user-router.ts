@@ -44,14 +44,13 @@ export const userRouter = t.router({
    * modify other users' avatar in the future.
    */
   createAvatarUploadURL: authenticatedProcedure.mutation(async ({ ctx }) =>
-    ctx.executeTransaction(async (handle) => {
-      await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
+    ctx.executeTransactionWithAudit(async (handle) => {
       return await ctx.userService.createAvatarUploadURL(handle, ctx.principal.subject)
 
     })
   ),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
-    ctx.executeTransaction(async (handle) => {
+    ctx.executeTransactionWithAudit(async (handle) => {
       return ctx.userService.register(handle, input)
     })
   ),
@@ -63,8 +62,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => {
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
+      ctx.executeTransactionWithAudit(async (handle) => {
         return ctx.userService.createMembership(handle, input.userId, input.data)
       })
     ),
@@ -76,8 +74,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => {
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
+      ctx.executeTransactionWithAudit(async (handle) => {
         return ctx.userService.updateMembership(handle, input.membershipId, input.data)
       })
     ),
@@ -102,7 +99,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input: changes, ctx }) =>
-      ctx.executeTransaction(async (handle) => {
+      ctx.executeTransactionWithAudit(async (handle) => {
         await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
         return ctx.userService.update(handle, changes.id, changes.input)
       })

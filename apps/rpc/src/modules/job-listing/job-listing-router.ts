@@ -13,8 +13,7 @@ export const jobListingRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => {
-        await handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal?.subject}, TRUE)`
+      ctx.executeTransactionWithAudit(async (handle) => {
         return ctx.jobListingService.create(handle, input.input, input.companyId, input.locationIds)
       }
         
@@ -30,7 +29,7 @@ export const jobListingRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
+      ctx.executeTransactionWithAudit(async (handle) =>
         ctx.jobListingService.update(handle, input.id, input.input, input.companyId, input.locationIds)
       )
     ),

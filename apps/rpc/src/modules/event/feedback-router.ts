@@ -21,7 +21,7 @@ export const feedbackRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) =>
+      return ctx.executeTransactionWithAudit(async (handle) =>
         ctx.feedbackFormService.create(handle, input.feedbackForm, input.questions)
       )
     }),
@@ -34,7 +34,7 @@ export const feedbackRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) =>
+      return ctx.executeTransactionWithAudit(async (handle) =>
         ctx.feedbackFormService.createCopyFromEvent(handle, input.eventId, input.eventIdToCopyFrom)
       )
     }),
@@ -48,14 +48,14 @@ export const feedbackRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
+      ctx.executeTransactionWithAudit(async (handle) =>
         ctx.feedbackFormService.update(handle, input.id, input.feedbackForm, input.questions)
       )
     ),
   deleteForm: staffProcedure
     .input(FeedbackFormIdSchema)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormService.delete(handle, input))
+      ctx.executeTransactionWithAudit(async (handle) => ctx.feedbackFormService.delete(handle, input))
     ),
   getFormById: procedure
     .input(FeedbackFormIdSchema)
@@ -90,7 +90,7 @@ export const feedbackRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
+      ctx.executeTransactionWithAudit(async (handle) =>
         ctx.feedbackFormAnswerService.create(handle, input.formAnswer, input.questionAnswers)
       )
     ),
@@ -119,6 +119,6 @@ export const feedbackRouter = t.router({
   deleteQuestionAnswer: staffProcedure
     .input(FeedbackQuestionAnswerSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input))
+      ctx.executeTransactionWithAudit(async (handle) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(handle, input))
     ),
 })

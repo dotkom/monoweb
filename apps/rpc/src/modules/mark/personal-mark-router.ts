@@ -31,7 +31,7 @@ export const personalMarkRouter = t.router({
   addToUser: staffProcedure
     .input(CreatePersonalMarkSchema)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
+      ctx.executeTransactionWithAudit(async (handle) =>
         ctx.personalMarkService.addToUser(handle, input.userId, input.markId, ctx.principal.subject)
       )
     ),
@@ -43,7 +43,7 @@ export const personalMarkRouter = t.router({
   removeFromUser: staffProcedure
     .input(PersonalMarkSchema.pick({ userId: true, markId: true }))
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
+      ctx.executeTransactionWithAudit(async (handle) =>
         ctx.personalMarkService.removeFromUser(handle, input.userId, input.markId)
       )
     ),
