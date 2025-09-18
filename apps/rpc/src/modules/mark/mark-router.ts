@@ -14,7 +14,6 @@ export const markRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-
       ctx.executeTransactionWithAudit(async (handle) => ctx.markService.createMark(handle, input.data, input.groupIds))
     ),
   edit: staffProcedure

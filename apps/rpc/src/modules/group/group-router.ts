@@ -10,7 +10,6 @@ import { z } from "zod"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const groupRouter = t.router({
-  
   create: staffProcedure.input(GroupWriteSchema).mutation(async ({ input, ctx }) => {
     ctx.authorize.requireAffiliation("dotkom", "backlog", "hs")
     return ctx.executeTransactionWithAudit(async (handle) => ctx.groupService.create(handle, input))
