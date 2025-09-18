@@ -120,7 +120,6 @@ export function RichText({
       )}
       style={{
         maxHeight: isExpanded ? expandedMaxHeight || undefined : collapsedMaxHeight || undefined,
-        transition: "max-height 200ms ease",
         WebkitMaskImage:
           !isExpanded && isOverflowing ? "linear-gradient(180deg, #000 75%, transparent 100%)" : undefined,
         maskImage: !isExpanded && isOverflowing ? "linear-gradient(180deg, #000 75%, transparent 100%)" : undefined,
