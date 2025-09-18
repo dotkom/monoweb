@@ -44,6 +44,7 @@ const styles = {
       color: {
         red: "bg-red-200 text-red-900 dark:bg-red-950 dark:text-red-300",
         blue: "bg-blue-200 text-blue-900 dark:bg-blue-950 dark:text-blue-300",
+        gold: "bg-amber-400 text-yellow-900 dark:bg-amber-500 dark:text-black-900",
         green: "bg-green-200 text-green-900 dark:bg-green-950 dark:text-green-300",
         amber: "bg-amber-200 text-amber-900 dark:bg-amber-950 dark:text-amber-300",
         slate: "bg-gray-200 text-gray-900 dark:bg-stone-700 dark:text-stone-200",
@@ -56,6 +57,7 @@ const styles = {
       color: {
         red: "border-red-400/75 dark:border-red-800",
         blue: "border-blue-400/75 dark:border-blue-800",
+        gold: "border-amber-400/75 dark:border-amber-500",
         green: "border-green-400/75 dark:border-green-800",
         amber: "border-amber-400/75 dark:border-amber-800",
         slate: "border-gray-500 dark:border-stone-600",
