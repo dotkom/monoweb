@@ -514,12 +514,13 @@ export function getAttendanceService(
 
       eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
       logger.info(
-        "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s",
+        "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s with options: %o",
         attendee.id,
         attendee.user.id,
         attendee.user.name || "<missing name>",
         event.id,
-        event.title
+        event.title,
+        options
       )
 
       // If the attendee was reserved, we find a replacement for them in the pool.
