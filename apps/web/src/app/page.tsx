@@ -48,7 +48,8 @@ export default async function App() {
         {featuredEvent ? (
           <div className="flex flex-col md:grid md:[grid-template-columns:35%_35%_30%] md:[grid-template-rows:2fr_2fr_1fr] gap-6 w-full">
             <div className="col-span-2 row-span-3">
-              <BigEventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
+              <BigEventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} className="max-md:hidden" />
+              <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} className="md:hidden" />
             </div>
 
             {otherEvents.map(({ event, attendance }) => (
@@ -60,7 +61,7 @@ export default async function App() {
                 element={Link}
                 href="/arrangementer"
                 className={cn(
-                  "rounded-xl w-full h-full text-brand-800 hover:text-black md:gap-3",
+                  "rounded-xl w-full h-full min-h-[6rem] text-brand-800 hover:text-black md:gap-3",
                   "bg-blue-200 hover:bg-blue-100",
                   "dark:bg-brand dark:hover:bg-brand/75"
                 )}
@@ -81,23 +82,25 @@ export default async function App() {
 interface BigEventCardProps {
   event: Event
   attendance: Attendance | null
+  className?: string
 }
 
-const BigEventCard: FC<BigEventCardProps> = ({ event, attendance }) => {
+const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, className }) => {
   return (
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
       className={cn(
-        "flex flex-col w-full gap-5 p-3 rounded-xl transition-colors border",
-        "border-gray-200 hover:bg-gray-50",
-        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700"
+        "flex flex-col w-full gap-5 p-6 rounded-2xl border transition-colors",
+        "border-gray-100 bg-gray-50 hover:bg-transparent",
+        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+        className
       )}
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         <img
           src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
           alt={event.title}
-          className="rounded-xl border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
+          className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
         />
       </Tilt>
 
@@ -124,29 +127,31 @@ interface ComingEventProps {
   event: Event
   attendance: Attendance | null
   userId: string | null
+  className?: string
 }
 
-const EventCard: FC<ComingEventProps> = ({ event, attendance, userId }) => {
+const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className }) => {
   const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
   return (
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
       className={cn(
-        "flex flex-col h-full gap-3 p-3 border rounded-xl transition-colors",
-        "border-gray-200 hover:bg-gray-50",
-        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700"
+        "flex flex-col h-full gap-3 p-3 rounded-2xl border transition-colors",
+        "border-gray-100 bg-gray-50 hover:bg-transparent",
+        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+        className
       )}
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         <img
           src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
           alt={event.title}
-          className="rounded-xl border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
+          className="rounded-lg border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
         />
       </Tilt>
       <div className="flex flex-col gap-2 w-full">
-        <Title element="p" size="lg" title={event.title} className="font-semibold line-clamp-1">
+        <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
           {event.title}
         </Title>
 
