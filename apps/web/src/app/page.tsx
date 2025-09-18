@@ -119,7 +119,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, className }) =
             <Text className="text-lg">{formatDate(event.start, "dd. MMM", { locale: nb })}</Text>
           </div>
           <div className="max-md:hidden">
-            <RichText content={event.description} lineClamp="line-clamp-5" hideToggleButton />
+            <RichText content={event.description} maxLines={5} hideToggleButton />
           </div>
         </div>
       </div>
