@@ -90,7 +90,7 @@ export const EventList: FC<EventListProps> = ({
   }, [onLoadMore])
 
   if (futureEvents.length === 0 && pastEvents.length === 0) {
-    return <Text className="text-gray-500 dark:text-stone-400">Det er ingen arrangementer å vise.</Text>
+    return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
   }
 
   return (
