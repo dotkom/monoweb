@@ -51,9 +51,15 @@ export default async function App() {
               <BigEventCard
                 event={featuredEvent?.event}
                 attendance={featuredEvent?.attendance}
+                userId={session?.sub ?? null}
                 className="max-md:hidden"
               />
-              <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} className="md:hidden" />
+              <EventCard
+                event={featuredEvent?.event}
+                attendance={featuredEvent?.attendance}
+                userId={session?.sub ?? null}
+                className="md:hidden"
+              />
             </div>
 
             {otherEvents.map(({ event, attendance }) => (
@@ -86,10 +92,13 @@ export default async function App() {
 interface BigEventCardProps {
   event: Event
   attendance: Attendance | null
+  userId: string | null
   className?: string
 }
 
-const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, className }) => {
+const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, className }) => {
+  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+
   return (
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
