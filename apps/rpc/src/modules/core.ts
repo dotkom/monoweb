@@ -85,7 +85,6 @@ export async function createServiceLayer(
 ) {
 
   async function executeTransactionWithAudit<T>(fn: (tx: typeof clients.prisma) => Promise<T>,userId: string | null): Promise<T> {
-    console.log("executeTransactionWithAudit userId:", userId);
     return clients.prisma.$transaction(async (tx) => {
       const transactionId = crypto.randomUUID();
 
