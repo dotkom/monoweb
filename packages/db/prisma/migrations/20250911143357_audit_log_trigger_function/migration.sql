@@ -12,7 +12,19 @@ BEGIN
         END;
     EXCEPTION
         WHEN undefined_column THEN
+        BEGIN
+            row_id_value:= CASE
+                WHEN TG_OP = 'DELETE' THEN OLD.slug::text
+                WHEN TG_OP = 'UPDATE' THEN COALESCE(NEW.slug::text, OLD.slug::text)
+                WHEN TG_OP = 'INSERT' THEN NEW.slug::text
+                ELSE NULL
+            END;
+    EXCEPTION
+        WHEN undefined_column THEN
+        BEGIN
             row_id_value := NULL;
+            END;
+        END;
     END;
 
     INSERT INTO audit_log(
@@ -106,6 +118,10 @@ CREATE TRIGGER feedback_question_option_audit
 AFTER INSERT OR UPDATE OR DELETE ON feedback_question_option
 FOR EACH ROW EXECUTE FUNCTION if_modified_func();
 
+
+CREATE TRIGGER group_audit
+AFTER INSERT OR UPDATE OR DELETE ON "group"
+FOR EACH ROW EXECUTE FUNCTION if_modified_func();
 
 CREATE TRIGGER group_membership_audit
 AFTER INSERT OR UPDATE OR DELETE ON group_membership

@@ -23,7 +23,11 @@ export default function AuditLogDetailsPage() {
     event: "event",
     ow_user: "user",
     job_listing: "job-listing",
-    mark: "punishment"
+    mark: "punishment",
+    group: "group",
+    company: "company",
+    offline: "offline",
+    article: "article",
   }
 
   const getTableNamePath = (tableName: string) => {
@@ -78,10 +82,15 @@ export default function AuditLogDetailsPage() {
        {formatDate(new Date(auditLog.createdAt), "dd.MM.yyyy HH:mm")}
         </Text>
       <Text size="sm" mt="md">
-        Gå til endret {auditLog.tableName} {" "}
-        <Anchor component={Link} href={`/${getTableNamePath(auditLog.tableName)}/${auditLog.rowId}`}>
-          her
-        </Anchor>
+      {tableNameMap.hasOwnProperty(auditLog.tableName) && 
+        <>
+          Gå til endret {auditLog.tableName} {" "}
+          <Anchor component={Link} href={`/${getTableNamePath(auditLog.tableName)}/${auditLog.rowId}`}>
+            her
+          </Anchor> 
+        </>
+      }
+
       </Text>
 
       <Tabs defaultValue={"JSON"}>
