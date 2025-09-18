@@ -1,6 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import z from "zod"
-import { buildAnyOfFilter, buildSearchFilter } from "./filters"
+import { buildSearchFilter } from "./filters"
 
 export const AuditLogSchema = schemas.AuditLogSchema.extend({
   user: schemas.UserSchema.nullable(),
