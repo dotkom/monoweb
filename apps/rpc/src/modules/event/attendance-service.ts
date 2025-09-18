@@ -436,12 +436,13 @@ export function getAttendanceService(
 
       eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
       logger.info(
-        "Attendee(ID=%s,UserID=%s) named %s has attended Event(ID=%s) named %s",
+        "Attendee(ID=%s,UserID=%s) named %s has attended Event(ID=%s) named %s with options: %o",
         attendee.id,
         attendee.user.id,
         attendee.user.name || "<missing name>",
         event.id,
-        event.title
+        event.title,
+        options
       )
 
       return attendee
