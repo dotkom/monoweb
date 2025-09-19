@@ -23,6 +23,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 import { z } from "zod"
+import { type EventListViewMode, EventListViewModeSchema } from "./EventList"
 
 const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.Values).map((type) => ({
   value: type,
@@ -34,12 +35,13 @@ const FormSchema = EventFilterQuerySchema.pick({
 }).extend({
   byType: EventSchema.shape.type.or(z.literal("ALL")),
   byOrganizingGroup: GroupSchema.shape.slug,
+  viewMode: EventListViewModeSchema,
 })
 
 type FormValues = z.infer<typeof FormSchema>
 
 interface Props {
-  onChange(filters: EventFilterQuery): void
+  onChange(filters: EventFilterQuery, viewMode: EventListViewMode): void
   groups: Group[]
 }
 
@@ -49,6 +51,7 @@ export const EventFilters = ({ onChange, groups }: Props) => {
       bySearchTerm: "",
       byType: "ALL",
       byOrganizingGroup: "ALL",
+      viewMode: "BY_CATEGORY",
     },
   })
   const data = useWatch({ control: form.control }) as FormValues
@@ -59,11 +62,14 @@ export const EventFilters = ({ onChange, groups }: Props) => {
   }, [debouncedData])
 
   const handleSubmit = (values: FormValues) => {
-    onChange({
-      bySearchTerm: values.bySearchTerm,
-      byType: values.byType !== "ALL" ? [values.byType] : [],
-      byOrganizingGroup: values.byOrganizingGroup !== "ALL" ? [values.byOrganizingGroup] : [],
-    })
+    onChange(
+      {
+        bySearchTerm: values.bySearchTerm,
+        byType: values.byType !== "ALL" ? [values.byType] : [],
+        byOrganizingGroup: values.byOrganizingGroup !== "ALL" ? [values.byOrganizingGroup] : [],
+      },
+      values.viewMode
+    )
   }
 
   return (
@@ -115,6 +121,30 @@ export const EventFilters = ({ onChange, groups }: Props) => {
                   Arrangør
                 </Label>
                 <GroupSelect onChange={onChange} groups={groups} value={value} />
+              </div>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="viewMode"
+            render={({ field: { onChange, value } }) => (
+              <div>
+                <Label htmlFor="viewMode" className="mb-1 text-md">
+                  Sorter
+                </Label>
+                <Select value={value} onValueChange={onChange}>
+                  <SelectTrigger id="viewMode">
+                    <SelectValue />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="BY_CATEGORY">Kategori</SelectItem>
+                      <SelectItem value="BY_DATE">Dato</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
             )}
           />

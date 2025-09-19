@@ -9,9 +9,9 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { EventFilters } from "./components/EventFilters"
-import { EventList, EventListSkeleton } from "./components/EventList"
+import { EventList, EventListSkeleton, type EventListViewMode } from "./components/EventList"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
 const EventPage = () => {
@@ -19,6 +19,7 @@ const EventPage = () => {
   const searchParams = useSearchParams()
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
+  const [viewMode, setViewMode] = useState<EventListViewMode>("BY_CATEGORY")
 
   const view = searchParams.get("view") || "list"
   const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString())
@@ -54,6 +55,7 @@ const EventPage = () => {
       excludingType: isStaff ? [] : undefined,
       orderBy: "desc",
     },
+    page: { take: 1 },
   })
 
   const { data: groups } = useQuery(trpc.group.all.queryOptions())
@@ -108,7 +110,13 @@ const EventPage = () => {
 
         <TabsContent value="list" className="flex flex-col gap-4 md:flex-row">
           <div className="md:w-[30%] w-full scroll">
-            <EventFilters onChange={setFilter} groups={groups ?? []} />
+            <EventFilters
+              onChange={(filter, viewMode) => {
+                setViewMode(viewMode)
+                setFilter(filter)
+              }}
+              groups={useMemo(() => groups ?? [], [groups])}
+            />
           </div>
           <div className="flex flex-col gap-8 md:w-[70%]">
             {!isLoading && (
@@ -116,6 +124,7 @@ const EventPage = () => {
                 futureEventWithAttendances={futureEventWithAttendances}
                 pastEventWithAttendances={pastEventWithAttendances}
                 onLoadMore={fetchNextPage}
+                viewMode={viewMode}
               />
             )}
             {isLoading && <EventListSkeleton />}
