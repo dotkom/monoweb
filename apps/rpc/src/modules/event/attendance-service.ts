@@ -407,9 +407,7 @@ export function getAttendanceService(
       })
 
       if (attendance.attendancePrice) {
-        const paymentDeadline = options.immediatePayment
-          ? addHours(new TZDate(), 1)
-          : addHours(new TZDate(), 24)
+        const paymentDeadline = options.immediatePayment ? addHours(new TZDate(), 1) : addHours(new TZDate(), 24)
         const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
         attendee.paymentDeadline = paymentDeadline
         attendee.paymentId = payment.id
