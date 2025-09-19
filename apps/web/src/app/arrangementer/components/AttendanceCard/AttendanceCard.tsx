@@ -133,7 +133,7 @@ export const AttendanceCard = ({
       {
         attendeeId: attendee?.id ?? "",
       },
-      { enabled: Boolean(attendee?.id) }
+      { enabled: Boolean(attendee?.id) && Boolean(attendance.attendancePrice) }
     )
   )
 
