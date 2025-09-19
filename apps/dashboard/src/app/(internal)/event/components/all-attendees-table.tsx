@@ -1,11 +1,11 @@
-import type {
-  Attendance,
-  AttendancePool,
-  Attendee,
-  AttendeeSelectionResponse,
-  FeedbackFormAnswer,
+import {
+  hasAttendeePaid,
+  type Attendance,
+  type AttendancePool,
+  type Attendee,
+  type AttendeeSelectionResponse,
+  type FeedbackFormAnswer,
 } from "@dotkomonline/types"
-import { hasAttendeePaid } from "@dotkomonline/types/src/attendance"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   ActionIcon,
