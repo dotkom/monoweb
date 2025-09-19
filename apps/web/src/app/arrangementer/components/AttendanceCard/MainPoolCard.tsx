@@ -132,173 +132,6 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
   const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
 
-  const mainPoolCardContent = (
-    <div className="flex flex-col min-h-[10rem] gap-2 p-3 rounded-lg items-center text-center justify-center w-full">
-      <div className="flex grow flex-col gap-4 items-center text-center justify-center">
-        <Text
-          className={cn(
-            "text-3xl px-2 py-1",
-            hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
-          )}
-        >
-          {reservedAttendeeCount}
-          {/* Don't show capacity for merge pools (capacity = 0) */}
-          {pool.capacity > 0 && `/${pool.capacity}`}
-        </Text>
-
-        {hasWaitlist && (
-          <Text
-            className={cn(
-              "text-lg px-2 py-0.5",
-              attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
-            )}
-          >
-            +{unreservedAttendeeCount} i kø
-          </Text>
-        )}
-
-        {!servingPunishment && (
-          <div className="flex flex-col gap-2">
-            <AttendanceStatus attendance={attendance} attendee={attendee} />
-            <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
-          </div>
-        )}
-
-        {servingPunishment && (
-          <TooltipProvider>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <div
-                  className={cn(
-                    "flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg",
-                    attendee.reserved === true && "bg-green-300/25 dark:bg-green-700/25",
-                    attendee.reserved === false && "bg-yellow-300/25 dark:bg-yellow-600/25"
-                  )}
-                >
-                  <Icon icon="tabler:clock-hour-2" className="text-base" />
-                  <Text className={cn("text-sm")}>
-                    {formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse
-                  </Text>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="font-normal">
-                Utsettelsen varer til{" "}
-                {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-    </div>
-  )
-
-  const countdownContent = (
-    <div className="flex flex-col min-h-[10rem] gap-4 p-3 rounded-lg items-center">
-      <div className="flex flex-col gap-2 items-center justify-center">
-        <div className="flex flex-row gap-0.5 items-center">
-          <Text
-            className={cn(
-              "text-lg font-medium",
-              hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
-            )}
-          >
-            {reservedAttendeeCount}
-            {/* Don't show capacity for merge pools (capacity = 0) */}
-            {pool.capacity > 0 && `/${pool.capacity}`}
-          </Text>
-
-          {hasWaitlist && (
-            <Text
-              className={cn("text-base", attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-700 rounded-lg")}
-            >
-              +{unreservedAttendeeCount} i kø
-            </Text>
-          )}
-        </div>
-
-        {!servingPunishment && (
-          <div className="flex flex-col gap-2">
-            <AttendanceStatus attendance={attendance} attendee={attendee} />
-
-            <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
-          </div>
-        )}
-
-        {servingPunishment && (
-          <TooltipProvider>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <div
-                  className={cn(
-                    "flex flex-row gap-1 items-center mt-2 mx-1 px-2 py-0.5 rounded-lg",
-                    attendee.reserved === true && "bg-green-300/25 dark:bg-green-700/25",
-                    attendee.reserved === false && "bg-yellow-300/25 dark:bg-yellow-600/25"
-                  )}
-                >
-                  <Icon icon="tabler:clock-hour-2" className="text-base" />
-                  <Text className={cn("text-sm")}>
-                    {formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse
-                  </Text>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="font-normal">
-                Utsettelsen varer til{" "}
-                {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-
-      {isWithinRegisterCountdown && !attendee && (
-        <div className="flex flex-col gap-1 items-center">
-          <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
-          <Text className="text-4xl font-medium tabular-nums" suppressHydrationWarning>
-            {registerCountdownText}
-          </Text>
-        </div>
-      )}
-
-      {isWithinPaymentCountdown &&
-        !attendee?.paymentReservedAt &&
-        !attendee?.paymentChargedAt &&
-        !!attendee?.paymentLink && (
-          <Link href={attendee.paymentLink} className="group relative cursor-pointer items-center w-full">
-            <Stripes
-              colorA="bg-amber-200 dark:bg-amber-700"
-              colorB="bg-amber-300 dark:bg-amber-800"
-              stripeWidth={24}
-              speed="2.0s"
-              animated
-              className="group flex items-center h-[10rem] px-5 py-4 rounded-md"
-            >
-              <div className="relative flex flex-row justify-between items-center w-full">
-                <div className="flex flex-col gap-1 items-center justify-center w-full">
-                  <Text className="text-lg font-medium">Du må betale innen</Text>
-                  <Text suppressHydrationWarning className="text-4xl font-medium tabular-nums">
-                    {paymentCountdownText}
-                  </Text>
-                </div>
-                <Icon
-                  icon="tabler:arrow-up-right"
-                  height={32}
-                  width={32}
-                  className="[@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0"
-                />
-              </div>
-            </Stripes>
-            <span
-              className={cn(
-                "absolute top-0 left-0 inset-0 rounded-md bg-gradient-to-t pointer-events-none transition-colors duration-400",
-                "from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent",
-                "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent"
-              )}
-            />
-          </Link>
-        )}
-    </div>
-  )
-
   return (
     <div
       className={cn(
@@ -331,7 +164,110 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         )}
       </div>
 
-      {isCountdown ? countdownContent : mainPoolCardContent}
+      <div className="flex flex-col min-h-[10rem] gap-6 p-3 rounded-lg items-center text-center justify-center w-full">
+        <div className="flex grow flex-col gap-4 items-center text-center justify-center">
+          <Text
+            className={cn(
+              "text-3xl px-2 py-1",
+              hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
+            )}
+          >
+            {reservedAttendeeCount}
+            {/* Don't show capacity for merge pools (capacity = 0) */}
+            {pool.capacity > 0 && `/${pool.capacity}`}
+          </Text>
+
+          {hasWaitlist && (
+            <Text
+              className={cn(
+                "text-lg px-2 py-0.5",
+                attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-700 rounded-lg"
+              )}
+            >
+              +{unreservedAttendeeCount} i kø
+            </Text>
+          )}
+
+          {!servingPunishment && (
+            <div className="flex flex-col gap-2">
+              <AttendanceStatus attendance={attendance} attendee={attendee} />
+              <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+            </div>
+          )}
+
+          {servingPunishment && (
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger asChild>
+                  <div
+                    className={cn(
+                      "flex flex-row gap-1 items-center mt-2 px-2 py-0.5 rounded-lg",
+                      attendee.reserved === true && "bg-green-300/25 dark:bg-green-700/25",
+                      attendee.reserved === false && "bg-yellow-300/25 dark:bg-yellow-600/25"
+                    )}
+                  >
+                    <Icon icon="tabler:clock-hour-2" className="text-base" />
+                    <Text className={cn("text-sm")}>
+                      {formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse
+                    </Text>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="font-normal">
+                  Utsettelsen varer til{" "}
+                  {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+
+        {isWithinRegisterCountdown && !attendee && (
+          <div className="flex flex-col gap-1 items-center">
+            <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
+            <Text className="text-4xl font-medium tabular-nums" suppressHydrationWarning>
+              {registerCountdownText}
+            </Text>
+          </div>
+        )}
+
+        {isWithinPaymentCountdown &&
+          !attendee?.paymentReservedAt &&
+          !attendee?.paymentChargedAt &&
+          !!attendee?.paymentLink && (
+            <Link href={attendee.paymentLink} className="group relative cursor-pointer items-center w-full">
+              <Stripes
+                colorA="bg-amber-200 dark:bg-amber-700"
+                colorB="bg-amber-300 dark:bg-amber-800"
+                stripeWidth={24}
+                speed="2.0s"
+                animated
+                className="group flex items-center h-[10rem] px-5 py-4 rounded-md"
+              >
+                <div className="relative flex flex-row justify-between items-center w-full">
+                  <div className="flex flex-col gap-1 items-center justify-center w-full">
+                    <Text className="text-lg font-medium">Du må betale innen</Text>
+                    <Text suppressHydrationWarning className="text-4xl font-medium tabular-nums">
+                      {paymentCountdownText}
+                    </Text>
+                  </div>
+                  <Icon
+                    icon="tabler:arrow-up-right"
+                    height={32}
+                    width={32}
+                    className="[@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0"
+                  />
+                </div>
+              </Stripes>
+              <span
+                className={cn(
+                  "absolute top-0 left-0 inset-0 rounded-md bg-gradient-to-t pointer-events-none transition-colors duration-400",
+                  "from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent",
+                  "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent"
+                )}
+              />
+            </Link>
+          )}
+      </div>
     </div>
   )
 }
