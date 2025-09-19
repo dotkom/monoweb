@@ -1,10 +1,10 @@
 import {
-  hasAttendeePaid,
   type Attendance,
   type AttendancePool,
   type Attendee,
   type AttendeeSelectionResponse,
   type FeedbackFormAnswer,
+  hasAttendeePaid,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
