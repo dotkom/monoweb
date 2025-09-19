@@ -56,6 +56,8 @@ const EventPage = () => {
     },
   })
 
+  const { data: groups } = useQuery(trpc.group.all.queryOptions())
+
   const handleViewChange = (newView: string) => {
     const params = new URLSearchParams(searchParams.toString())
 
@@ -104,16 +106,20 @@ const EventPage = () => {
           )}
         </div>
 
-        <TabsContent value="list" className="flex flex-col gap-4">
-          <EventFilters onChange={setFilter} />
-          {!isLoading && (
-            <EventList
-              futureEventWithAttendances={futureEventWithAttendances}
-              pastEventWithAttendances={pastEventWithAttendances}
-              onLoadMore={fetchNextPage}
-            />
-          )}
-          {isLoading && <EventListSkeleton />}
+        <TabsContent value="list" className="flex flex-col gap-4 md:flex-row">
+          <div className="md:w-[30%] w-full scroll">
+            <EventFilters onChange={setFilter} groups={groups ?? []} />
+          </div>
+          <div className="flex flex-col gap-8 md:w-[70%]">
+            {!isLoading && (
+              <EventList
+                futureEventWithAttendances={futureEventWithAttendances}
+                pastEventWithAttendances={pastEventWithAttendances}
+                onLoadMore={fetchNextPage}
+              />
+            )}
+            {isLoading && <EventListSkeleton />}
+          </div>
         </TabsContent>
 
         <TabsContent value="cal">
