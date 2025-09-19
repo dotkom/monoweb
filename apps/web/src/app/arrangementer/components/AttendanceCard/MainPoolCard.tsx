@@ -287,10 +287,13 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
                 />
               </div>
             </Stripes>
-            <span className={cn("absolute top-0 left-0 inset-0 rounded-md bg-gradient-to-t pointer-events-none transition-colors duration-400",
-              "from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent",
-              "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent",
-            )} />
+            <span
+              className={cn(
+                "absolute top-0 left-0 inset-0 rounded-md bg-gradient-to-t pointer-events-none transition-colors duration-400",
+                "from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent",
+                "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent"
+              )}
+            />
           </Link>
         )}
     </div>
