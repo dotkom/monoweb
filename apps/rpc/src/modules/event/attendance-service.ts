@@ -567,10 +567,17 @@ export function getAttendanceService(
     },
     async findChargeAttendeeScheduleDate(handle, attendeeId) {
       const attendee = await this.getAttendeeById(handle, attendeeId)
-      const job = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
-      if (!job || !attendee.paymentReservedAt) {
+
+      if (!attendee.paymentId) {
         return null
       }
+
+      const job = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
+
+      if (!job) {
+        return null
+      }
+
       return job.scheduledAt
     },
     async deleteAttendancePayment(handle, attendance: Attendance) {
