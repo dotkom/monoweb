@@ -55,7 +55,6 @@ const EventPage = () => {
       excludingType: isStaff ? [] : undefined,
       orderBy: "desc",
     },
-    page: { take: 1 },
   })
 
   const { data: groups } = useQuery(trpc.group.all.queryOptions())
