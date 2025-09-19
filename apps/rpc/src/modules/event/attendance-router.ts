@@ -284,10 +284,6 @@ export const attendanceRouter = t.router({
       return ctx.executeTransaction(async (handle) => {
         const attendee = await ctx.attendanceService.getAttendeeById(handle, input.attendeeId)
 
-        if (!attendee) {
-          return null
-        }
-
         ctx.authorize.requireMeOrAffiliation(attendee.userId, ["dotkom", "hs"])
 
         return await ctx.attendanceService.findChargeAttendeeScheduleDate(handle, attendee.id)
