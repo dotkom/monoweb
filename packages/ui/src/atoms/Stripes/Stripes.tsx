@@ -14,20 +14,27 @@ export const Stripes = ({
   colorA,
   colorB,
   animated,
-  stripeWidth = 12,
-  speed = "1.2s",
+  stripeWidth = 24,
+  speed = "2.0s",
   className,
   children,
 }: StripedProps) => {
   return (
-    <div className={cn("relative overflow-hidden", className)}>
+    <div className={cn("relative overflow-hidden w-full h-full", className)}>
       {/* Base color */}
       <div aria-hidden="true" className={cn("absolute inset-0", colorA)} />
 
       {/* Striped overlay */}
       <div
         aria-hidden="true"
-        className={cn("absolute inset-0 stripes-mask", colorB, animated && "animate-stripes")}
+        className={cn(
+          // This width and transform black magic is to stop weird artifacts at the edges (specifically the left edge)
+          // The parent has overflow-hidden so a 150% width is fine
+          // -translate-x-1/3 makes it right-aligned, hiding the left edge artifacts outside (right-0 didn't work)
+          "absolute inset-0 stripes-mask w-[150%] transform -translate-x-1/3",
+          colorB,
+          animated && "animate-stripes"
+        )}
         style={
           {
             "--width": `${stripeWidth}px`,
@@ -35,7 +42,7 @@ export const Stripes = ({
           } as CSSProperties
         }
       />
-      <div className="relative z-1">{children}</div>
+      <div className="relative z-1 w-full">{children}</div>
     </div>
   )
 }

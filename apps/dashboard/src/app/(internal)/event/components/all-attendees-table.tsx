@@ -1,9 +1,10 @@
-import type {
-  Attendance,
-  AttendancePool,
-  Attendee,
-  AttendeeSelectionResponse,
-  FeedbackFormAnswer,
+import {
+  type Attendance,
+  type AttendancePool,
+  type Attendee,
+  type AttendeeSelectionResponse,
+  type FeedbackFormAnswer,
+  hasAttendeePaid,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
@@ -21,7 +22,7 @@ import {
 } from "@mantine/core"
 import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
-import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore, isPast } from "date-fns"
+import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore } from "date-fns"
 import { nb } from "date-fns/locale"
 import { useMemo } from "react"
 import {
@@ -189,9 +190,7 @@ export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: Al
           }
 
           const wasRefunded = Boolean(attendee.paymentRefundedById)
-          const hasPaid = Boolean(
-            isPast(attendance.deregisterDeadline) ? attendee.paymentChargedAt : attendee.paymentReservedAt
-          )
+          const hasPaid = hasAttendeePaid(attendance, attendee) ?? false
 
           return hasPaid ? (
             <Checkbox color="green" readOnly checked />
