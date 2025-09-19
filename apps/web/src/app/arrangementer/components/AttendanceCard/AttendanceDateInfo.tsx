@@ -6,8 +6,8 @@ import React from "react"
 
 const dateComponent = (label: string, dateStr: string, time: string, showNotice?: boolean) => (
   <div className="flex flex-col gap-0">
-    <Text className={cn(showNotice && "px-0.5 bg-yellow-100 rounded-sm")}>{label}</Text>
-    <div className="flex flex-row gap-2 dark:text-stone-300 text-base sm:flex-col sm:gap-0 sm:text-sm">
+    <Text className={cn("w-fit", showNotice && "px-0.5 rounded-sm bg-yellow-100 dark:bg-yellow-600/25")}>{label}</Text>
+    <div className="flex flex-row gap-2 text-stone-700 dark:text-stone-300 text-base sm:flex-col sm:gap-0 sm:text-sm">
       <Text>{dateStr}</Text>
       <Text>kl. {time}</Text>
     </div>
