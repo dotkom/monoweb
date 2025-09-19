@@ -407,7 +407,6 @@ export function getAttendanceService(
       })
 
       if (attendance.attendancePrice) {
-        //const paymentDeadline: TZDate = options.immediatePayment ? addSeconds(addMinutes(new TZDate(), 59), 59) : addHours(new TZDate(), 24)
         const paymentDeadline: TZDate = options.immediatePayment
           ? addHours(new TZDate(), 1)
           : addHours(new TZDate(), 24)
