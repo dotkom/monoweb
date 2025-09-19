@@ -1,4 +1,4 @@
-import type { Attendance, Attendee } from "@dotkomonline/types"
+import { type Attendance, type Attendee, hasAttendeePaid } from "@dotkomonline/types"
 import { Text, cn } from "@dotkomonline/ui"
 import { formatDate, isEqual, isPast, isThisYear, min } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -27,14 +27,7 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
     ? min([deregisterDeadline, chargeScheduleDate])
     : deregisterDeadline
 
-  const hasPaid = Boolean(
-    attendance.attendancePrice &&
-      attendee &&
-      (attendee.paymentChargedAt ||
-        attendee.paymentReservedAt ||
-        (attendee.paymentRefundedAt && !attendee.paymentDeadline))
-  )
-
+  const hasPaid = hasAttendeePaid(attendance, attendee) ?? false
   const showDeregisterDeadlineNotice = hasPaid && !isEqual(actualDeregisterDeadline, deregisterDeadline)
 
   const dateBlocks = [
