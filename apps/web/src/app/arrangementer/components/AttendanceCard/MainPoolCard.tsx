@@ -390,11 +390,7 @@ const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
         <TooltipTrigger asChild>
           <div className="flex flex-row gap-2 items-center">
             <Icon icon="tabler:clock-hour-2" size={16} />
-
-            <div className="flex flex-col gap-0 items-start">
-              <Text>{formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse</Text>
-              <Text className="text-xs">Du er ikke påmeldt</Text>
-            </div>
+            <Text>{formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse</Text>
           </div>
         </TooltipTrigger>
         <TooltipContent className="font-normal">
