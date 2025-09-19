@@ -57,7 +57,7 @@ export const eventRouter = t.router({
     )
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const eventWithoutOrganizers = await ctx.eventService.createEvent(handle, input.event)
         const event = await ctx.eventService.updateEventOrganizers(
           handle,
@@ -82,7 +82,7 @@ export const eventRouter = t.router({
     )
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const updatedEventWithoutOrganizers = await ctx.eventService.updateEvent(handle, input.id, input.event)
         const updatedEvent = await ctx.eventService.updateEventOrganizers(
           handle,
@@ -106,7 +106,7 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         return await ctx.eventService.deleteEvent(handle, input.id)
       })
     }),
@@ -178,7 +178,7 @@ export const eventRouter = t.router({
     )
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.createAttendance(handle, input.values)
         const event = await ctx.eventService.updateEventAttendance(handle, input.eventId, attendance.id)
         return { event, attendance }
@@ -194,7 +194,7 @@ export const eventRouter = t.router({
     )
     .output(EventWithAttendanceSchema)
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const updatedEvent = await ctx.eventService.updateEventParent(handle, input.eventId, input.parentEventId)
         const attendance = updatedEvent.attendanceId
           ? await ctx.attendanceService.findAttendanceById(handle, updatedEvent.attendanceId)

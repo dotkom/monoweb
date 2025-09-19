@@ -1,7 +1,8 @@
 import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
 import { SESClient } from "@aws-sdk/client-ses"
-import { createPrisma } from "@dotkomonline/db"
+import { type DBHandle, createPrisma } from "@dotkomonline/db"
+import type { UserId } from "@dotkomonline/types"
 import { ManagementClient } from "auth0"
 import { type admin_directory_v1, google } from "googleapis"
 import Stripe from "stripe"
@@ -134,17 +135,11 @@ export async function createServiceLayer(
   clients: ReturnType<typeof createThirdPartyClients>,
   configuration: Configuration
 ) {
-  async function executeTransactionWithAudit<T>(
-    fn: (tx: typeof clients.prisma) => Promise<T>,
-    userId: string | null
-  ): Promise<T> {
+  async function executeAuditedTransaction<T>(fn: (tx: DBHandle) => Promise<T>, userId: UserId | null): Promise<T> {
     return clients.prisma.$transaction(async (tx) => {
-      const transactionId = crypto.randomUUID()
-
       await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId || null}, TRUE)`
-      await tx.$executeRaw`SELECT set_config('app.current_transaction_id', ${transactionId}, TRUE)`
 
-      return fn(tx as typeof clients.prisma)
+      return fn(tx)
     })
   }
 
@@ -250,7 +245,7 @@ export async function createServiceLayer(
     feedbackFormAnswerService,
     authorizationService,
     paymentWebhookService,
-    executeTransactionWithAudit,
+    executeAuditedTransaction,
     recurringTaskService,
     workspaceService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),

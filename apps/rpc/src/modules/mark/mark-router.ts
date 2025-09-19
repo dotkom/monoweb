@@ -14,7 +14,7 @@ export const markRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) => ctx.markService.createMark(handle, input.data, input.groupIds))
+      ctx.executeAuditedTransaction(async (handle) => ctx.markService.createMark(handle, input.data, input.groupIds))
     ),
   edit: staffProcedure
     .input(
@@ -24,7 +24,7 @@ export const markRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) =>
+      ctx.executeAuditedTransaction(async (handle) =>
         ctx.markService.updateMark(handle, input.changes.id, input.changes, input.groupIds)
       )
     ),
@@ -37,6 +37,6 @@ export const markRouter = t.router({
   delete: staffProcedure
     .input(MarkSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) => ctx.markService.deleteMark(handle, input))
+      ctx.executeAuditedTransaction(async (handle) => ctx.markService.deleteMark(handle, input))
     ),
 })

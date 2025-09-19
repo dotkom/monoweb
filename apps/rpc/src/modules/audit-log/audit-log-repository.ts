@@ -8,6 +8,7 @@ export interface AuditLogRepository {
   findMany(handle: DBHandle, query: AuditLogFilterQuery, page: Pageable): Promise<AuditLog[]>
   getByUserId(handle: DBHandle, userId: string, page: Pageable): Promise<AuditLog[]>
 }
+
 export function getAuditLogRepository(): AuditLogRepository {
   return {
     async getById(handle, id) {

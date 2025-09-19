@@ -1,3 +1,4 @@
+import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { UserId } from "@dotkomonline/types"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
@@ -38,8 +39,8 @@ export const createContext = async (principal: Principal | null, context: Servic
     ...context,
     principal,
 
-    executeTransactionWithAudit<T>(fn: (tx: typeof context.prisma) => Promise<T>): Promise<T> {
-      return context.executeTransactionWithAudit(fn, principal?.subject || null)
+    executeAuditedTransaction<T>(fn: (tx: DBHandle) => Promise<T>): Promise<T> {
+      return context.executeAuditedTransaction(fn, principal?.subject || null)
     },
 
     /** Authorization middlewares that each procedure can use to enforce access control */

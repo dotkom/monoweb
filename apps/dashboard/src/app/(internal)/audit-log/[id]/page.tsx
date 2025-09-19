@@ -1,6 +1,6 @@
 "use client"
 
-import { Accordion, Anchor, Stack, Tabs, Text, Title, useMantineColorScheme, useMantineTheme } from "@mantine/core"
+import { Accordion, Anchor, Stack, Tabs, Text, Title, useComputedColorScheme } from "@mantine/core"
 import { formatDate } from "date-fns"
 import Link from "next/link"
 import { DiffMethod, StringDiff } from "react-string-diff"
@@ -8,13 +8,19 @@ import { useAuditLogDetailsQuery } from "./provider"
 
 export default function AuditLogDetailsPage() {
   // Theme stuff for coloring the diff
-  const theme = useMantineTheme()
-  const { colorScheme } = useMantineColorScheme()
-  const isDark = colorScheme === "dark"
+  const isDark = useComputedColorScheme() === "dark"
 
   const diffStyles = {
-    added: { backgroundColor: isDark ? theme.colors.green[9] : theme.colors.green[5], textDecoration: "none" },
-    removed: { backgroundColor: isDark ? theme.colors.red[9] : theme.colors.red[5], textDecoration: "line-through" },
+    added: {
+      backgroundColor: isDark ? "var(--mantine-color-green-9)" : "var(--mantine-color-green-1)",
+      textDecoration: "none",
+      color: isDark ? "var(--mantine-color-green-1)" : "var(--mantine-color-green-9)",
+    },
+    removed: {
+      backgroundColor: isDark ? "var(--mantine-color-red-9)" : "var(--mantine-color-red-1)",
+      textDecoration: "line-through",
+      color: isDark ? "var(--mantine-color-red-1)" : "var(--mantine-color-red-9)",
+    },
     default: { backgroundColor: "transparent", textDecoration: "none" },
   }
 
@@ -52,10 +58,11 @@ export default function AuditLogDetailsPage() {
                   oldValue={change.old}
                   newValue={change.new}
                   method={DiffMethod.Lines}
-                  key={colorScheme}
                   styles={diffStyles}
+                  key={isDark ? "dark" : "light"}
                 />
               ) : (
+                // Prints all values if there is no existing "old" value
                 Object.entries(change).map(([key, value]) => (
                   <div key={key}>
                     <strong>{key}:</strong> {String(value)}

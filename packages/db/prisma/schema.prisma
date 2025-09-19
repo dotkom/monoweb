@@ -659,13 +659,16 @@ model AuditLog {
   tableName   String
   rowId       String?
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  // Optional relation to User, some time operations are performed by the system instead
   user        User?    @relation(fields: [userId], references: [id])
   userId      String?
+
   operation   String
   rowData     Json
 
   // Adds transaction context
-  transactionId String?
+  transactionId BigInt
 
   @@map("audit_log")
 }

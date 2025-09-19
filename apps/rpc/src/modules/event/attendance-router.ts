@@ -25,7 +25,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) =>
+      return ctx.executeAuditedTransaction(async (handle) =>
         ctx.attendanceService.createAttendancePool(handle, input.id, input.input)
       )
     }),
@@ -38,7 +38,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceByPoolId(handle, input.id)
         const pool = attendance.pools.find((pool) => pool.id === input.id)
         if (pool === undefined) {
@@ -55,7 +55,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) =>
+      return ctx.executeAuditedTransaction(async (handle) =>
         ctx.attendanceService.deleteAttendancePool(handle, input.id)
       )
     }),
@@ -69,7 +69,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, input.userId, {
           ignoreRegistrationWindow: true,
           immediateReservation: true,
@@ -88,7 +88,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceById(handle, input.id)
         if (attendance === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
@@ -132,7 +132,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) => {
+      ctx.executeAuditedTransaction(async (handle) => {
         return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, ctx.principal.subject, {
           ignoreRegistrationWindow: false,
           immediateReservation: false,
@@ -164,7 +164,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input: { attendeeId }, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) =>
+      return ctx.executeAuditedTransaction(async (handle) =>
         ctx.attendanceService.cancelAttendeePayment(handle, attendeeId, ctx.principal.subject)
       )
     }),
@@ -175,7 +175,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input: { attendeeId }, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) =>
+      return ctx.executeAuditedTransaction(async (handle) =>
         ctx.attendanceService.startAttendeePayment(handle, attendeeId, addDays(getCurrentUTC(), 1))
       )
     }),
@@ -186,7 +186,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceById(handle, input.attendanceId)
         const attendee = attendance.attendees.find((attendee) => attendee.user.id === ctx.principal.subject)
         if (attendee === undefined) {
@@ -205,7 +205,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceByAttendeeId(handle, input.attendeeId)
         const attendee = attendance.attendees.find((attendee) => attendee.id === input.attendeeId)
         if (attendee === undefined) {
@@ -225,7 +225,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         await ctx.attendanceService.updateAttendeeById(handle, input.attendeeId, { reserved: input.reserved })
       })
     }),
@@ -238,7 +238,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         await ctx.attendanceService.registerAttendance(handle, input.id, input.at ? new TZDate(input.at) : null)
       })
     }),
@@ -251,7 +251,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         await ctx.attendanceService.updateAttendeeById(handle, input.attendeeId, { selections: input.options })
       })
     }),
@@ -274,7 +274,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) =>
+      ctx.executeAuditedTransaction(async (handle) =>
         ctx.attendanceService.updateAttendanceById(handle, input.id, input.attendance)
       )
     ),

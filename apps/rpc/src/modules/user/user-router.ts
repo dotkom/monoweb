@@ -44,12 +44,12 @@ export const userRouter = t.router({
    * modify other users' avatar in the future.
    */
   createAvatarUploadURL: authenticatedProcedure.mutation(async ({ ctx }) =>
-    ctx.executeTransactionWithAudit(async (handle) => {
+    ctx.executeAuditedTransaction(async (handle) => {
       return await ctx.userService.createAvatarUploadURL(handle, ctx.principal.subject)
     })
   ),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
-    ctx.executeTransactionWithAudit(async (handle) => {
+    ctx.executeAuditedTransaction(async (handle) => {
       return ctx.userService.register(handle, input)
     })
   ),
@@ -61,7 +61,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) => {
+      ctx.executeAuditedTransaction(async (handle) => {
         return ctx.userService.createMembership(handle, input.userId, input.data)
       })
     ),
@@ -73,7 +73,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransactionWithAudit(async (handle) => {
+      ctx.executeAuditedTransaction(async (handle) => {
         return ctx.userService.updateMembership(handle, input.membershipId, input.data)
       })
     ),
@@ -100,7 +100,7 @@ export const userRouter = t.router({
 
     .mutation(async ({ input, ctx }) => {
       ctx.authorize.requireMeOrAffiliation(input.id, ["dotkom", "hs"])
-      return ctx.executeTransactionWithAudit(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         return ctx.userService.update(handle, input.id, input.input)
       })
     }),
