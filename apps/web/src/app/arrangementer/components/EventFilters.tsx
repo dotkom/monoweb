@@ -51,7 +51,7 @@ export const EventFilters = ({ onChange, groups }: Props) => {
       bySearchTerm: "",
       byType: "ALL",
       byOrganizingGroup: "ALL",
-      viewMode: "BY_CATEGORY",
+      viewMode: "ATTENDANCE",
     },
   })
   const data = useWatch({ control: form.control }) as FormValues
@@ -140,8 +140,8 @@ export const EventFilters = ({ onChange, groups }: Props) => {
 
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="BY_CATEGORY">Kategori</SelectItem>
-                      <SelectItem value="BY_DATE">Dato</SelectItem>
+                      <SelectItem value="ATTENDANCE">Påmelding</SelectItem>
+                      <SelectItem value="CHRONOLOGICAL">Kronologisk</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>

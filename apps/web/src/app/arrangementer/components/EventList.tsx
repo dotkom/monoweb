@@ -11,7 +11,7 @@ import z from "zod"
 
 const OPENING_SOON_DAYS_THRESHOLD = 7 as const
 
-export const EventListViewModeSchema = z.enum(["BY_CATEGORY", "BY_DATE"])
+export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
 export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
 
 interface EventListProps {
@@ -27,7 +27,7 @@ export const EventList: FC<EventListProps> = ({
   pastEventWithAttendances: pastEvents,
   onLoadMore,
   alwaysShowChildEvents,
-  viewMode = "BY_CATEGORY",
+  viewMode = "ATTENDANCE",
 }: EventListProps) => {
   const now = getCurrentUTC()
   const session = useSession()
@@ -101,16 +101,12 @@ export const EventList: FC<EventListProps> = ({
 
   return (
     <section className="w-full flex flex-col gap-2">
-      {viewMode === "BY_DATE" ? (
+      {viewMode === "CHRONOLOGICAL" ? (
         <>
-          {futureEvents.length > 0 && (
-            <>
-              <Divider text="Kommende arrangementer" />
-              {futureEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
-              ))}
-            </>
-          )}
+          {futureEvents.length > 0 &&
+            futureEvents.map(({ event, attendance }) => (
+              <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+            ))}
           {pastEvents.length > 0 && (
             <>
               <Divider text="Tidligere arrangementer" />

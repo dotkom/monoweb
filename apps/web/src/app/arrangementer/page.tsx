@@ -19,7 +19,7 @@ const EventPage = () => {
   const searchParams = useSearchParams()
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
-  const [viewMode, setViewMode] = useState<EventListViewMode>("BY_CATEGORY")
+  const [viewMode, setViewMode] = useState<EventListViewMode>("ATTENDANCE")
 
   const view = searchParams.get("view") || "list"
   const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString())
