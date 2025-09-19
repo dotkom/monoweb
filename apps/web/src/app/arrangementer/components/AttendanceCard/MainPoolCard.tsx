@@ -66,7 +66,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const cardClassname = cn(
     "flex flex-col w-full min-h-[10rem] gap-2 p-3 rounded-lg",
     "items-center text-center justify-center",
-    "bg-gray-100 dark:bg-stone-800"
+    "bg-gray-100 dark:bg-stone-700"
   )
 
   if (!user) {
@@ -265,8 +265,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         !!attendee?.paymentLink && (
           <Link href={attendee.paymentLink} className="group relative cursor-pointer items-center w-full">
             <Stripes
-              colorA="bg-amber-200"
-              colorB="bg-amber-300"
+              colorA="bg-amber-200 dark:bg-amber-700"
+              colorB="bg-amber-300 dark:bg-amber-800"
               stripeWidth={24}
               speed="2.0s"
               animated
@@ -287,7 +287,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
                 />
               </div>
             </Stripes>
-            <span className="absolute top-0 left-0 inset-0 bg-gradient-to-t from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent pointer-events-none transition-colors duration-400" />
+            <span className={cn("absolute top-0 left-0 inset-0 rounded-md bg-gradient-to-t pointer-events-none transition-colors duration-400",
+              "from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent",
+              "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent",
+            )} />
           </Link>
         )}
     </div>
@@ -297,7 +300,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
     <div
       className={cn(
         "flex flex-col w-full rounded-lg",
-        !attendee && "bg-gray-100 dark:bg-stone-800",
+        !attendee && "bg-gray-100 dark:bg-stone-700/50",
         attendee?.reserved === true && "bg-green-100 dark:bg-green-900",
         attendee?.reserved === false && "bg-yellow-100 dark:bg-yellow-800"
       )}
@@ -305,7 +308,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
       <div
         className={cn(
           "flex flex-row gap- px-3 py-2 rounded-t-lg justify-center text-sm font-bold",
-          !attendee && "bg-gray-200 dark:bg-stone-700/50",
+          !attendee && "bg-gray-200 dark:bg-stone-700",
           attendee?.reserved === true && "bg-green-200 dark:bg-green-800",
           attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-700"
         )}
@@ -379,7 +382,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
   if (attendee.reserved === true) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
+        <Icon icon="tabler:check" size={iconSize} className="text-green-700 dark:text-green-400" />
         <Text>Du er påmeldt</Text>
       </div>
     )
@@ -391,7 +394,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
   if (!queuePosition) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />
+        <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700 dark:text-green-400" />
         <Text>Du er i køen</Text>
       </div>
     )
@@ -399,7 +402,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
 
   return (
     <div className="flex flex-row items-center gap-2">
-      <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700" />
+      <Icon icon="tabler:clock-hour-2" size={iconSize} className="text-green-700 dark:text-green-400" />
       <Text>Du er {queuePosition}. i køen</Text>
     </div>
   )
@@ -437,7 +440,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   if (!hasPaid) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:x" size={iconSize} className="text-red-700" />
+        <Icon icon="tabler:x" size={iconSize} className="text-red-700 dark:text-red-400" />
         <Text>{attendance.attendancePrice} kr ubetalt</Text>
       </div>
     )
@@ -446,7 +449,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   if (attendee.paymentChargedAt) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
+        <Icon icon="tabler:check" size={iconSize} className="text-green-700 dark:text-green-400" />
         <Text>Du har betalt {attendance.attendancePrice} kr</Text>
       </div>
     )
@@ -455,7 +458,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   if (attendee.paymentReservedAt) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:check" size={iconSize} className="text-green-700" />
+        <Icon icon="tabler:check" size={iconSize} className="text-green-700 dark:text-green-400" />
 
         <div className="flex flex-col gap-0 items-start">
           <Text>Du har reservert {attendance.attendancePrice} kr</Text>
