@@ -330,10 +330,13 @@ export function getUserService(
     },
     async createAvatarUploadURL(handle, userId) {
       const user = await this.getById(handle, userId)
-      // There should be no reason for an image to be much larger than 500KB
+      
+      // Arbitrarily set max size. This value is referenced in innstillinger/profil/form.tsx
       const maxSizeKB = 500
       const key = `avatar/${user.id}`
+
       logger.info(`Creating AWS S3 Presigned URL for User(ID=%s) at S3 address s3://${bucket}/${key}`, user.id)
+      
       return await createPresignedPost(client, {
         Bucket: bucket,
         Key: key,
