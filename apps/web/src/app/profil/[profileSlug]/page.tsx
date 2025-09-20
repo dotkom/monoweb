@@ -350,7 +350,7 @@ export default function ProfilePage() {
                 <Icon icon="tabler:alert-triangle" width={36} />
                 <Text>
                   Vi kunne ikke bekrefte ditt medlemsskap automatisk. Dersom dette er feil ta kontakt med{" "}
-                  <Link className="underline" href="/komiteer/hs">
+                  <Link className="underline" href="/grupper/hs">
                     Hovedstyret
                   </Link>
                   .
@@ -382,7 +382,7 @@ export default function ProfilePage() {
                 {!returnedFromFeide && (
                   <Text className="text-sm text-gray-500 dark:text-stone-500">
                     For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med{" "}
-                    <Link className="underline" href="/komiteer/hs">
+                    <Link className="underline" href="/grupper/hs">
                       Hovedstyret
                     </Link>
                     .
@@ -392,7 +392,7 @@ export default function ProfilePage() {
             ) : (
               <Text className="text-sm text-gray-500 dark:text-stone-500">
                 Ved feil angitt informasjon, ta kontakt med{" "}
-                <Link className="underline" href="/komiteer/hs">
+                <Link className="underline" href="/grupper/hs">
                   Hovedstyret
                 </Link>
                 .

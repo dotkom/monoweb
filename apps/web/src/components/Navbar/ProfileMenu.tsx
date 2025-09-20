@@ -95,7 +95,7 @@ const ContactDebugDropdown: FC = () => (
           <Button
             element={Link}
             variant="text"
-            href="/komiteer/debug"
+            href="/grupper/debug"
             target="_blank"
             rel="noopener noreferrer"
             className="w-fit text-gray-600 dark:text-stone-300"
