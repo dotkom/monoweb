@@ -20,6 +20,7 @@ import { useDisclosure } from "@mantine/hooks"
 import {
   IconBriefcase,
   IconCampfire,
+  IconClipboardList,
   IconExclamationMark,
   IconMoneybag,
   IconPhoto,
@@ -78,6 +79,11 @@ const navigations = [
     icon: IconPhotoShare,
     href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
     openInNewTab: true,
+  },
+  {
+    label: "Hendelseslogg",
+    icon: IconClipboardList,
+    href: "/audit-log",
   },
 ] satisfies {
   label: string

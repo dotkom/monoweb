@@ -12,7 +12,7 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const article = await ctx.articleService.create(handle, input.article)
         const tags = await ctx.articleService.setTags(handle, article.id, input.tags)
         return {
@@ -31,7 +31,7 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         const article = await ctx.articleService.update(handle, input.id, input.input)
         const tags = await ctx.articleService.setTags(handle, input.id, input.tags)
         return { ...article, tags }
@@ -89,7 +89,7 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => ctx.articleService.addTag(handle, input.id, input.tag))
+      return ctx.executeAuditedTransaction(async (handle) => ctx.articleService.addTag(handle, input.id, input.tag))
     }),
 
   removeTag: staffProcedure
@@ -100,6 +100,6 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => ctx.articleService.removeTag(handle, input.id, input.tag))
+      return ctx.executeAuditedTransaction(async (handle) => ctx.articleService.removeTag(handle, input.id, input.tag))
     }),
 })
