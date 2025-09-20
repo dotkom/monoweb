@@ -475,6 +475,7 @@ export default function ProfilePage() {
               futureEventWithAttendances={futureEventWithAttendances.items}
               pastEventWithAttendances={pastEventWithAttendances}
               onLoadMore={fetchNextPage}
+              viewMode="CHRONOLOGICAL"
             />
           ) : (
             <div className="flex flex-col gap-1">
