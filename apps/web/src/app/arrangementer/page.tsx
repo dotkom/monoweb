@@ -31,6 +31,7 @@ const EventPage = () => {
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
   const [viewMode, setViewMode] = useState<EventListViewMode>("ATTENDANCE")
+  const [filterOpen, setFilterOpen] = useState(false)
 
   const view = searchParams.get("view") || "list"
   const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString())
@@ -130,9 +131,9 @@ const EventPage = () => {
               />
             </div>
 
-            <Collapsible className="md:hidden">
+            <Collapsible open={filterOpen} onOpenChange={setFilterOpen} className="md:hidden">
               <CollapsibleTrigger asChild>
-                <Button variant="outline">Vis filtre</Button>
+                <Button variant="outline">{filterOpen ? "Skjul filtre" : "Vis filtre"}</Button>
               </CollapsibleTrigger>
 
               <CollapsibleContent className="mt-4 mb-6">
