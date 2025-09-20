@@ -1,8 +1,8 @@
+import * as fsp from "node:fs/promises"
+import * as path from "node:path"
 import { TZDate } from "@date-fns/tz"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
-import * as fsp from "node:fs/promises"
-import * as path from "node:path"
 import { z } from "zod"
 
 export type EmailType =
@@ -100,6 +100,7 @@ export const emails = {
         feedbackLink: z.string().url(),
         eventStart: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM", { locale: nb })),
         feedbackDeadline: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM HH:mm", { locale: nb })),
+        organizerEmail: z.string().email(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "feedback_form_link.mustache"), "utf-8"),
   }),

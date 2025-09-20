@@ -1,3 +1,4 @@
+import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
@@ -15,6 +16,7 @@ import {
   type AttendeeWrite,
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
+  type GroupType,
   type UserId,
   canUserAttendPool,
   findActiveMembership,
@@ -34,7 +36,6 @@ import {
   min,
   startOfYesterday,
 } from "date-fns"
-import type { EventEmitter } from "node:events"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import {
@@ -992,8 +993,14 @@ export function getAttendanceService(
           continue
         }
 
+        const validGroupTypes: GroupType[] = ["COMMITTEE", "NODE_COMMITTEE"]
+
+        const hostingGroupEmail =
+          event.hostingGroups.filter((group) => group.email && validGroupTypes.includes(group.type)).at(0)?.email ??
+          "bedkom@online.ntnu.no"
+
         await emailService.send(
-          "bedkom@online.ntnu.no",
+          hostingGroupEmail,
           [],
           [],
           [],
@@ -1006,6 +1013,7 @@ export function getAttendanceService(
             feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
             eventStart: new TZDate(event.start).toISOString(),
             feedbackDeadline: new TZDate(feedbackForm.answerDeadline).toISOString(),
+            organizerEmail: hostingGroupEmail,
           }
         )
       }
