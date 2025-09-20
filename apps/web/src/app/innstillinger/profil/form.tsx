@@ -99,9 +99,8 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     if (!result) {
       setError("imageUrl", {
         type: "manual",
-        message: "Opplasting av profilbilde feilet",
+        message: "Opplasting av profilbilde feilet. Maksstørrelse er 500 KB.",
       })
-      reset({ imageUrl: user.imageUrl })
       return
     }
 
