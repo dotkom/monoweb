@@ -1,9 +1,9 @@
-import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
 import { SESClient } from "@aws-sdk/client-ses"
 import { createPrisma } from "@dotkomonline/db"
 import { ManagementClient } from "auth0"
 import { type admin_directory_v1, google } from "googleapis"
+import EventEmitter from "node:events"
 import Stripe from "stripe"
 import z from "zod"
 import { type Configuration, configuration } from "../configuration"
@@ -192,7 +192,8 @@ export async function createServiceLayer(
     eventService,
     feedbackFormService,
     feedbackFormAnswerService,
-    configuration
+    configuration,
+    emailService
   )
   const companyService = getCompanyService(companyRepository)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)

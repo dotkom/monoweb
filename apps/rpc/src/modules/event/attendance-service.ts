@@ -1,4 +1,3 @@
-import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
@@ -22,7 +21,20 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
-import { addDays, addHours, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast, min } from "date-fns"
+import {
+  addDays,
+  addHours,
+  compareAsc,
+  differenceInHours,
+  endOfYesterday,
+  isAfter,
+  isBefore,
+  isFuture,
+  isPast,
+  min,
+  startOfYesterday,
+} from "date-fns"
+import type { EventEmitter } from "node:events"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import {
@@ -32,6 +44,8 @@ import {
   NotFoundError,
   ResourceExhaustedError,
 } from "../../error"
+import type { EmailService } from "../email/email-service"
+import { emails } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import type { MarkService } from "../mark/mark-service"
@@ -152,6 +166,7 @@ export interface AttendanceService {
     handle: DBHandle,
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
   ): Promise<void>
+  executeSendFeedbackFormLinkEmails(handle: DBHandle): Promise<void>
 
   /**
    * Register that an attendee has physically attended an event.
@@ -180,7 +195,8 @@ export function getAttendanceService(
   eventService: EventService,
   feedbackFormService: FeedbackFormService,
   feedbackAnswerService: FeedbackFormAnswerService,
-  configuration: Configuration
+  configuration: Configuration,
+  emailService: EmailService
 ): AttendanceService {
   const logger = getLogger("attendance-service")
   return {
@@ -940,6 +956,59 @@ export function getAttendanceService(
       )
 
       await Promise.all([...personalMarkPromises])
+    },
+    async executeSendFeedbackFormLinkEmails(handle) {
+      const eventsEndedYesterday = await eventService.findEvents(handle, {
+        byHasFeedbackForm: true,
+        byEndDate: {
+          min: new TZDate(startOfYesterday()),
+          max: new TZDate(endOfYesterday()),
+        },
+      })
+
+      for (const event of eventsEndedYesterday) {
+        if (!event.attendanceId) {
+          continue
+        }
+
+        const feedbackForm = await feedbackFormService.findByEventId(handle, event.id)
+        if (!feedbackForm || !feedbackForm.isActive) {
+          continue
+        }
+
+        const attendance = await this.getAttendanceById(handle, event.attendanceId)
+
+        const attendees = attendance.attendees
+        const attendedAttendees = attendees.filter((attendee) => Boolean(attendee.attendedAt))
+
+        const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
+
+        const attendeesWithoutAnswers = attendedAttendees.filter(
+          (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
+        )
+        const bcc = attendeesWithoutAnswers.map((a) => a.user.email).filter((email) => email !== null)
+
+        if (bcc.length === 0) {
+          continue
+        }
+
+        await emailService.send(
+          "bedkom@online.ntnu.no",
+          [],
+          [],
+          [],
+          bcc,
+          `Tilbakemelding på ${event.title}`,
+          emails.FEEDBACK_FORM_LINK,
+          {
+            eventName: event.title,
+            eventLink: `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`,
+            feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
+            eventStart: new TZDate(event.start).toISOString(),
+            feedbackDeadline: new TZDate(feedbackForm.answerDeadline).toISOString(),
+          }
+        )
+      }
     },
     async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)

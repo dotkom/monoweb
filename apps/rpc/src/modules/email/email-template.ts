@@ -1,3 +1,6 @@
+import { TZDate } from "@date-fns/tz"
+import { formatDate } from "date-fns"
+import { nb } from "date-fns/locale"
 import * as fsp from "node:fs/promises"
 import * as path from "node:path"
 import { z } from "zod"
@@ -6,6 +9,7 @@ export type EmailType =
   | "COMPANY_COLLABORATION_RECEIPT"
   | "COMPANY_COLLABORATION_NOTIFICATION"
   | "COMPANY_INVOICE_NOTIFICATION"
+  | "FEEDBACK_FORM_LINK"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
   getSchema(): z.ZodSchema<TData>
@@ -21,6 +25,7 @@ export type InferEmailType<TDef> = TDef extends EmailTemplate<infer TData, infer
 export type CompanyCollaborationReceiptEmailTemplate = typeof emails.COMPANY_COLLABORATION_RECEIPT
 export type CompanyCollaborationNotificationEmailTemplate = typeof emails.COMPANY_COLLABORATION_NOTIFICATION
 export type CompanyInvoiceNotificationEmailTemplate = typeof emails.COMPANY_INVOICE_NOTIFICATION
+export type FeedbackFormLinkEmailTemplate = typeof emails.FEEDBACK_FORM_LINK
 export type AnyEmailTemplate = CompanyCollaborationReceiptEmailTemplate
 
 export function createEmailTemplate<const TData, const TType extends EmailType>(
@@ -85,6 +90,18 @@ export const emails = {
         comment: z.string().nullable(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "company_invoice_notification.mustache"), "utf-8"),
+  }),
+  FEEDBACK_FORM_LINK: createEmailTemplate({
+    type: "FEEDBACK_FORM_LINK",
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.string().url(),
+        feedbackLink: z.string().url(),
+        eventStart: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM", { locale: nb })),
+        feedbackDeadline: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM HH:mm", { locale: nb })),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "feedback_form_link.mustache"), "utf-8"),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>
