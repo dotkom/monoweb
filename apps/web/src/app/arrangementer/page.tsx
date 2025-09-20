@@ -4,7 +4,18 @@ import { EventCalendar } from "@/components/organisms/EventCalendar"
 import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
 import { useTRPC } from "@/utils/trpc/client"
 import type { EventFilterQuery } from "@dotkomonline/types"
-import { Icon, Tabs, TabsContent, TabsList, TabsTrigger, Title } from "@dotkomonline/ui"
+import {
+  Button,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Icon,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Title,
+} from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
@@ -20,6 +31,7 @@ const EventPage = () => {
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
   const [viewMode, setViewMode] = useState<EventListViewMode>("ATTENDANCE")
+  const [filterOpen, setFilterOpen] = useState(false)
 
   const view = searchParams.get("view") || "list"
   const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString())
@@ -107,15 +119,33 @@ const EventPage = () => {
           )}
         </div>
 
-        <TabsContent value="list" className="flex flex-col gap-4 md:flex-row">
+        <TabsContent value="list" className="flex flex-col gap-4 md:gap-8 md:flex-row">
           <div className="md:w-[30%] w-full scroll">
-            <EventFilters
-              onChange={(filter, viewMode) => {
-                setViewMode(viewMode)
-                setFilter(filter)
-              }}
-              groups={useMemo(() => groups ?? [], [groups])}
-            />
+            <div className="max-md:hidden">
+              <EventFilters
+                onChange={(filter, viewMode) => {
+                  setViewMode(viewMode)
+                  setFilter(filter)
+                }}
+                groups={useMemo(() => groups ?? [], [groups])}
+              />
+            </div>
+
+            <Collapsible open={filterOpen} onOpenChange={setFilterOpen} className="md:hidden">
+              <CollapsibleTrigger asChild>
+                <Button variant="outline">{filterOpen ? "Skjul filtre" : "Vis filtre"}</Button>
+              </CollapsibleTrigger>
+
+              <CollapsibleContent className="mt-4 mb-6">
+                <EventFilters
+                  onChange={(filter, viewMode) => {
+                    setViewMode(viewMode)
+                    setFilter(filter)
+                  }}
+                  groups={useMemo(() => groups ?? [], [groups])}
+                />
+              </CollapsibleContent>
+            </Collapsible>
           </div>
           <div className="flex flex-col gap-8 md:w-[70%]">
             {!isLoading && (

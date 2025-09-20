@@ -73,84 +73,81 @@ export const EventFilters = ({ onChange, groups }: Props) => {
   }
 
   return (
-    <div className="border-gray-200 dark:border-stone-700 h-fit rounded-lg border shadow-b-sm py-4">
-      <div className="mx-4">
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
-          <div>
-            <Label htmlFor="bySearchTerm" className="mb-1 text-md">
-              Søk
-            </Label>
-            <TextInput placeholder="Søk etter arrangementer..." {...form.register("bySearchTerm")} id="bySearchTerm" />
-          </div>
-          <Controller
-            control={form.control}
-            name="byType"
-            render={({ field: { onChange, value } }) => (
-              <div>
-                <Label htmlFor="byType" className="mb-1 text-md">
-                  Type
-                </Label>
-                <Select value={value} onValueChange={onChange}>
-                  <SelectTrigger id="byType">
-                    <SelectValue />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="ALL" key="ALL">
-                        Alle
-                      </SelectItem>
-                      {EVENT_TYPE_OPTIONS.map((type) => (
-                        <SelectItem value={type.value} key={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          />
-
-          <Controller
-            control={form.control}
-            name="byOrganizingGroup"
-            render={({ field: { onChange, value } }) => (
-              <div>
-                <Label htmlFor="byOrganizingGroup" className="mb-1 text-md">
-                  Arrangør
-                </Label>
-                <GroupSelect onChange={onChange} groups={groups} value={value} />
-              </div>
-            )}
-          />
-
-          <Controller
-            control={form.control}
-            name="viewMode"
-            render={({ field: { onChange, value } }) => (
-              <div>
-                <Label htmlFor="viewMode" className="mb-1 text-md">
-                  Sorter
-                </Label>
-                <Select value={value} onValueChange={onChange}>
-                  <SelectTrigger id="viewMode">
-                    <SelectValue />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="ATTENDANCE">Påmelding</SelectItem>
-                      <SelectItem value="CHRONOLOGICAL">Kronologisk</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          />
-        </form>
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1 md:gap-1.5">
+        <Label htmlFor="bySearchTerm" className="text-gray-500 dark:text-stone-500">
+          Søk
+        </Label>
+        <TextInput placeholder="Søk etter arrangementer..." {...form.register("bySearchTerm")} id="bySearchTerm" />
       </div>
-    </div>
+
+      <Controller
+        control={form.control}
+        name="byType"
+        render={({ field: { onChange, value } }) => (
+          <div className="flex flex-col gap-1 md:gap-1.5">
+            <Label htmlFor="byType" className="text-gray-500 dark:text-stone-500">
+              Type
+            </Label>
+            <Select value={value} onValueChange={onChange}>
+              <SelectTrigger id="byType">
+                <SelectValue />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="ALL" key="ALL">
+                    Alle
+                  </SelectItem>
+                  {EVENT_TYPE_OPTIONS.map((type) => (
+                    <SelectItem value={type.value} key={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      />
+
+      <Controller
+        control={form.control}
+        name="byOrganizingGroup"
+        render={({ field: { onChange, value } }) => (
+          <div className="flex flex-col gap-1 md:gap-1.5">
+            <Label htmlFor="byOrganizingGroup" className="text-gray-500 dark:text-stone-500">
+              Arrangør
+            </Label>
+            <GroupSelect onChange={onChange} groups={groups} value={value} />
+          </div>
+        )}
+      />
+
+      <Controller
+        control={form.control}
+        name="viewMode"
+        render={({ field: { onChange, value } }) => (
+          <div className="flex flex-col gap-1 md:gap-1.5">
+            <Label htmlFor="viewMode" className="text-gray-500 dark:text-stone-500">
+              Sorter
+            </Label>
+            <Select value={value} onValueChange={onChange}>
+              <SelectTrigger id="viewMode">
+                <SelectValue />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="ATTENDANCE">Påmelding</SelectItem>
+                  <SelectItem value="CHRONOLOGICAL">Kronologisk</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      />
+    </form>
   )
 }
 
