@@ -25,7 +25,7 @@ export const EventFilters = ({ onChange }: Props) => {
       }}
     >
       <Group gap={4}>
-        <TextInput placeholder="Søk etter arrangementer..." {...form.register("bySearchTerm")} />
+        <TextInput placeholder="Søk etter arrangementtittel..." {...form.register("bySearchTerm")} />
         {Boolean(data.bySearchTerm) && (
           <ActionIcon
             size="input-sm"
