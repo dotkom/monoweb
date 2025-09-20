@@ -1,5 +1,5 @@
 import type { Offline } from "@dotkomonline/types"
-import { Text } from "@dotkomonline/ui"
+import { Text, cn } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -14,15 +14,13 @@ export const OfflineCard = ({ offline }: OfflineCardProps) => {
         <Link href={offline.fileUrl}>
           <div className="perspective-[1000px] bg-gray-300 rounded-r-md">
             <div
-              className="
-                transform-style-[preserve-3d]
-                transition-transform duration-[600ms] ease-in-out
-                origin-left hover:rotate-y-[-20deg]
-                shadow-md
-              "
+              className={cn(
+                "transform-style-[preserve-3d] origin-left hover:rotate-y-[-20deg]",
+                "transition-transform duration-[600ms] ease-in-out shadow-md",
+              )}
             >
               <Image
-                src="https://s3.eu-north-1.amazonaws.com/cdn.online.ntnu.no/%2F1755548141016-e7d24ab0-b81e-4b10-bce5-cd975420396f-offline.png"
+                src={offline.imageUrl}
                 width={200}
                 height={250}
                 alt={offline.title}
