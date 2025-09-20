@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "task_type" ADD VALUE 'SEND_FEEDBACK_FORM_EMAILS';

@@ -131,6 +131,8 @@ export function getLocalTaskExecutor(
                   handle,
                   payload as InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
                 )
+              case tasks.SEND_FEEDBACK_FORM_EMAILS.type:
+                return await attendanceService.executeSendFeedbackFormLinkEmails(handle)
             }
             // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
             // still keep this block here to prevent subtle bugs or missed cases in the future.

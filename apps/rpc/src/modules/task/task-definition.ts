@@ -27,12 +27,14 @@ export type MergeAttendancePoolsTaskDefinition = typeof tasks.MERGE_ATTENDANCE_P
 export type VerifyPaymentTaskDefinition = typeof tasks.VERIFY_PAYMENT
 export type ChargeAttendeeTaskDefinition = typeof tasks.CHARGE_ATTENDEE
 export type VerifyFeedbackAnsweredTaskDefinition = typeof tasks.VERIFY_FEEDBACK_ANSWERED
+export type SendFeedbackFormEmailsTaskDefinition = typeof tasks.SEND_FEEDBACK_FORM_EMAILS
 export type AnyTaskDefinition =
   | ReserveAttendeeTaskDefinition
   | MergeAttendancePoolsTaskDefinition
   | VerifyPaymentTaskDefinition
   | ChargeAttendeeTaskDefinition
   | VerifyFeedbackAnsweredTaskDefinition
+  | SendFeedbackFormEmailsTaskDefinition
 
 export const tasks = {
   RESERVE_ATTENDEE: createTaskDefinition({
@@ -75,6 +77,10 @@ export const tasks = {
       z.object({
         feedbackFormId: FeedbackFormSchema.shape.id,
       }),
+  }),
+  SEND_FEEDBACK_FORM_EMAILS: createTaskDefinition({
+    type: "SEND_FEEDBACK_FORM_EMAILS",
+    getSchema: () => z.object({}),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<TaskType, TaskDefinition<any, any>>
