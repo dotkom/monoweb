@@ -132,13 +132,13 @@ interface EmploymentTypeProps {
 const EmploymentType = ({ employment }: EmploymentTypeProps) => {
   switch (employment) {
     case "FULLTIME":
-      return <Text>"Heltid"</Text>
+      return <Text>Heltid</Text>
     case "PARTTIME":
-      return <Text>"Deltid"</Text>
+      return <Text>Deltid</Text>
     case "SUMMER_INTERNSHIP":
-      return <Text>"Sommerjobb"</Text>
+      return <Text>Sommerjobb</Text>
     default:
-      return <Text>"Ukjent stillingsprosent"</Text>
+      return <Text>Ukjent stillingsprosent</Text>
   }
 }
 
