@@ -999,6 +999,13 @@ export function getAttendanceService(
           event.hostingGroups.filter((group) => group.email && validGroupTypes.includes(group.type)).at(0)?.email ??
           "bedkom@online.ntnu.no"
 
+        logger.info(
+          "Sending feedback form email for Event(ID=%s) to %d attendees from email %s",
+          event.id,
+          bcc.length,
+          hostingGroupEmail
+        )
+
         await emailService.send(
           hostingGroupEmail,
           [],
