@@ -967,14 +967,14 @@ export function getAttendanceService(
         },
       })
 
-      for (const event of eventsEndedYesterday) {
+      const promises = eventsEndedYesterday.map(async (event) => {
         if (!event.attendanceId) {
-          continue
+          return
         }
 
         const feedbackForm = await feedbackFormService.findByEventId(handle, event.id)
         if (!feedbackForm || !feedbackForm.isActive) {
-          continue
+          return
         }
 
         const attendance = await this.getAttendanceById(handle, event.attendanceId)
@@ -990,7 +990,7 @@ export function getAttendanceService(
         const bcc = attendeesWithoutAnswers.map((a) => a.user.email).filter((email) => email !== null)
 
         if (bcc.length === 0) {
-          continue
+          return
         }
 
         const validGroupTypes: GroupType[] = ["COMMITTEE", "NODE_COMMITTEE"]
@@ -1016,7 +1016,9 @@ export function getAttendanceService(
             organizerEmail: hostingGroupEmail,
           }
         )
-      }
+      })
+
+      await Promise.all(promises)
     },
     async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
