@@ -1018,8 +1018,8 @@ export function getAttendanceService(
             eventName: event.title,
             eventLink: `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`,
             feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
-            eventStart: new TZDate(event.start).toISOString(),
-            feedbackDeadline: new TZDate(feedbackForm.answerDeadline).toISOString(),
+            eventStart: event.start.toISOString(),
+            feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
             organizerEmail: hostingGroupEmail,
           }
         )
