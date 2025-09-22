@@ -16,7 +16,7 @@ export const OfflineCard = ({ offline }: OfflineCardProps) => {
             <div
               className={cn(
                 "transform-style-[preserve-3d] origin-left hover:rotate-y-[-20deg]",
-                "transition-transform duration-[600ms] ease-in-out shadow-md",
+                "transition-transform duration-[600ms] ease-in-out shadow-md"
               )}
             >
               <Image
