@@ -15,12 +15,10 @@ import {
   IconListDetails,
   IconSelector,
   IconTrash,
-  IconUser,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useDeleteEventMutation } from "../mutations"
 import { AttendancePage } from "./attendance-page"
-import { AttendeesPage } from "./attendees-page"
 import { EventEditCard } from "./edit-card"
 import { FeedbackPage } from "./feedback-page"
 import { PaymentPage } from "./payment-page"
@@ -45,12 +43,6 @@ const SIDEBAR_LINKS = [
     label: "Påmelding",
     slug: "pamelding",
     component: AttendancePage,
-  },
-  {
-    icon: IconUser,
-    label: "Påmeldte",
-    slug: "pameldte",
-    component: AttendeesPage,
   },
   {
     icon: IconSelector,
