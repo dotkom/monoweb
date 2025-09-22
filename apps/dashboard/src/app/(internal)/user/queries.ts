@@ -53,6 +53,6 @@ export const useGroupAllByMemberQuery = (userId: UserId) => {
 
 export const useMarkAllQuery = (filter: MarkFilterQuery) => {
   const trpc = useTRPC()
-  const { data: marks } = useQuery({ ...trpc.mark.findMany.queryOptions(filter), initialData: [] }) //TODO: Initial data might fuck stuff up
+  const { data: marks } = useQuery({ ...trpc.mark.findMany.queryOptions(filter), initialData: [] })
   return marks
 }
