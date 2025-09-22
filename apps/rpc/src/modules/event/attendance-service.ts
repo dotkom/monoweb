@@ -505,10 +505,11 @@ export function getAttendanceService(
       if (isPoolAtMaxCapacity || isPastReservationTime) {
         return
       }
-      await attendanceRepository.updateAttendeeById(handle, attendeeId, {
-        ...attendee,
-        reserved: true,
-      })
+
+      const data = AttendeeWriteSchema.parse(attendee)
+      data.reserved = true
+
+      await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
     },
     async deregisterAttendee(handle, attendeeId, options) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
