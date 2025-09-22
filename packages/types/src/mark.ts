@@ -1,7 +1,8 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
+import { buildAnyOfFilter } from "./filters"
 import { GroupSchema } from "./group"
-import { PublicUserSchema } from "./user"
+import { PublicUserSchema, UserSchema } from "./user"
 
 export const MarkSchema = schemas.MarkSchema.extend({
   groups: z.array(GroupSchema),
@@ -57,3 +58,11 @@ export type PersonalMark = z.infer<typeof PersonalMarkSchema>
 export type Punishment = z.infer<typeof PunishmentSchema>
 
 export const DEFAULT_MARK_DURATION = 14 as const
+
+export type MarkFilterQuery = z.infer<typeof MarkFilterQuerySchema>
+export const MarkFilterQuerySchema = z
+  .object({
+    byId: buildAnyOfFilter(MarkSchema.shape.id),
+    byGivenToUserId: buildAnyOfFilter(UserSchema.shape.id),
+  })
+  .partial()

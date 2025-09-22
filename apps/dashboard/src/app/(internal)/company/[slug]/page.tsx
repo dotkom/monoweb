@@ -3,7 +3,7 @@
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { IconBuildingWarehouse, IconCalendarEvent } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { CompanyEventsPage } from "./company-page"
+import { CompanyEventPage } from "./company-event-page"
 import { CompanyEditCard } from "./edit-card"
 import { useCompanyDetailsContext } from "./provider"
 
@@ -18,7 +18,7 @@ const SIDEBAR_LINKS = [
     icon: IconCalendarEvent,
     label: "Arrangementer",
     slug: "arrangementer",
-    component: CompanyEventsPage,
+    component: CompanyEventPage,
   },
 ] as const
 

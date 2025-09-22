@@ -1,11 +1,20 @@
 "use client"
 
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
-import { IconBuildingWarehouse, IconCircles } from "@tabler/icons-react"
+import {
+  IconBuildingWarehouse,
+  IconCampfire,
+  IconCircles,
+  IconExclamationMark,
+  IconWheelchair,
+} from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { UserEditCard } from "./edit-card"
 import { MembershipPage } from "./membership-page"
 import { useUserDetailsContext } from "./provider"
+import { UserEventPage } from "./user-event-page"
+import { UserGroupPage } from "./user-group-page"
+import { UserPunishmentPage } from "./user-punishment-page"
 
 const SIDEBAR_LINKS = [
   {
@@ -19,6 +28,24 @@ const SIDEBAR_LINKS = [
     label: "Medlemskap",
     slug: "medlemskap",
     component: MembershipPage,
+  },
+  {
+    icon: IconCampfire,
+    label: "Grupper",
+    slug: "Grupper",
+    component: UserGroupPage,
+  },
+  {
+    icon: IconWheelchair,
+    label: "Arrangementer",
+    slug: "Arrangementer",
+    component: UserEventPage,
+  },
+  {
+    icon: IconExclamationMark,
+    label: "Prikker & Suspensjoner",
+    slug: "prikker-og-suspensjoner",
+    component: UserPunishmentPage,
   },
 ] as const
 

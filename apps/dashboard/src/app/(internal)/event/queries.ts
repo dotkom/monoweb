@@ -1,4 +1,4 @@
-import type { AttendanceId, EventFilterQuery, EventId, FeedbackFormId } from "@dotkomonline/types"
+import type { AttendanceId, EventFilterQuery, EventId, FeedbackFormId, UserId } from "@dotkomonline/types"
 import { type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc-client"
@@ -46,6 +46,19 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
 export const useEventWithAttendancesGetQuery = (id: EventId, enabled?: boolean) => {
   const trpc = useTRPC()
   return useQuery(trpc.event.get.queryOptions(id, { enabled }))
+}
+
+export const useEventAllByAttendingUserInfiniteQuery = (id: UserId, page?: Pageable) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.event.allByAttendingUserId.infiniteQueryOptions({
+      id,
+      ...page,
+    }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  })
+
+  return { events: useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]), ...query }
 }
 
 export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
