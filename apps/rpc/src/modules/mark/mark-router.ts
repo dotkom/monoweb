@@ -1,4 +1,4 @@
-import { GroupSchema, MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
+import { GroupSchema, MarkFilterQuerySchema, MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
 import z from "zod"
 import { PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
@@ -34,6 +34,9 @@ export const markRouter = t.router({
   get: procedure
     .input(MarkSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.markService.getMark(handle, input))),
+  findMany: procedure
+    .input(MarkFilterQuerySchema)
+    .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.markService.findMany(handle, input))),
   delete: staffProcedure
     .input(MarkSchema.shape.id)
     .mutation(async ({ input, ctx }) =>

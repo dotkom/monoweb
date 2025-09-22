@@ -56,10 +56,9 @@ export function getPersonalMarkService(
     },
     async listVisibleInformationForUser(handle, userId) {
       const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
-      const marks = await markService.getMany(
-        handle,
-        personalMarks.map(({ markId }) => markId)
-      )
+      const marks = await markService.findMany(handle, {
+        byId: personalMarks.map(({ markId }) => markId),
+      })
 
       return personalMarks.map(({ givenById: _, ...personalMark }): VisiblePersonalMarkDetails => {
         const mark = marks.find((mark) => mark.id === personalMark.markId)
@@ -86,10 +85,9 @@ export function getPersonalMarkService(
     },
     async findPunishmentByUserId(handle, userId) {
       const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
-      const marks = await markService.getMany(
-        handle,
-        personalMarks.map((pm) => pm.markId)
-      )
+      const marks = await markService.findMany(handle, {
+        byId: personalMarks.map((pm) => pm.markId),
+      })
 
       const currentMarkWeight = personalMarks.reduce((acc, pm) => {
         const mark = marks.find((m) => m.id === pm.markId)

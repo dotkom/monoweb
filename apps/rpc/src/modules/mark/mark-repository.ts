@@ -1,11 +1,19 @@
 import type { DBHandle } from "@dotkomonline/db"
-import { type Group, type GroupId, type Mark, type MarkId, MarkSchema, type MarkWrite } from "@dotkomonline/types"
+import {
+  type Group,
+  type GroupId,
+  type Mark,
+  type MarkFilterQuery,
+  type MarkId,
+  MarkSchema,
+  type MarkWrite,
+} from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface MarkRepository {
   getById(handle: DBHandle, markId: MarkId): Promise<Mark | null>
-  findMany(handle: DBHandle, markId: MarkId[]): Promise<Mark[]>
+  findMany(handle: DBHandle, query: MarkFilterQuery): Promise<Mark[]>
   getAll(handle: DBHandle, page: Pageable): Promise<Mark[]>
   create(handle: DBHandle, data: MarkWrite, groupIds: GroupId[]): Promise<Mark>
   update(handle: DBHandle, markId: MarkId, data: MarkWrite, groupIds: GroupId[]): Promise<Mark>
@@ -21,8 +29,32 @@ export function getMarkRepository(): MarkRepository {
       })
       return mark ? mapMark(mark, mark.groups) : null
     },
-    async findMany(handle, markIds) {
-      const marks = await handle.mark.findMany({ where: { id: { in: markIds } }, include: QUERY_WITH_GROUPS })
+    async findMany(handle, query) {
+      const marks = await handle.mark.findMany({
+        where: {
+          AND: [
+            {
+              id:
+                query.byId && query.byId.length > 0
+                  ? {
+                      in: query.byId,
+                    }
+                  : undefined,
+            },
+            {
+              users:
+                query.byGivenToUserId && query.byGivenToUserId.length > 0
+                  ? {
+                      some: {
+                        userId: { in: query.byGivenToUserId },
+                      },
+                    }
+                  : undefined,
+            },
+          ],
+        },
+        include: QUERY_WITH_GROUPS,
+      })
 
       return marks.map((mark) => mapMark(mark, mark.groups))
     },
