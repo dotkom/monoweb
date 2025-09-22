@@ -8,9 +8,10 @@ export interface GenericTableProps<T> {
   readonly table: ReactTable<T>
   filterable?: boolean
   onLoadMore?(): void
+  maxHeight?: number
 }
 
-export function GenericTable<T>({ table, filterable, onLoadMore }: GenericTableProps<T>) {
+export function GenericTable<T>({ table, filterable, onLoadMore, maxHeight = 400 }: GenericTableProps<T>) {
   const { ref, inViewport } = useInViewport()
 
   useEffect(() => {
@@ -21,7 +22,7 @@ export function GenericTable<T>({ table, filterable, onLoadMore }: GenericTableP
 
   return (
     <Card withBorder p="xs">
-      <Table.ScrollContainer minWidth={600} maxHeight={400} type="native">
+      <Table.ScrollContainer minWidth={600} maxHeight={maxHeight} type="native">
         <Table striped stickyHeader>
           <TableThead>
             {table.getHeaderGroups().map((headerGroup) => (
