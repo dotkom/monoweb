@@ -7,7 +7,7 @@ export const offlineRouter = t.router({
   create: staffProcedure
     .input(OfflineWriteSchema)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.offlineService.create(handle, input))
+      ctx.executeAuditedTransaction(async (handle) => ctx.offlineService.create(handle, input))
     ),
   edit: staffProcedure
     .input(
@@ -17,7 +17,7 @@ export const offlineRouter = t.router({
       })
     )
     .mutation(async ({ input: changes, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.offlineService.update(handle, changes.id, changes.input))
+      ctx.executeAuditedTransaction(async (handle) => ctx.offlineService.update(handle, changes.id, changes.input))
     ),
   all: procedure
     .input(PaginateInputSchema)

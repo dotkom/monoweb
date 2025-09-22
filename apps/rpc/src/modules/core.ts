@@ -1,7 +1,8 @@
 import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
 import { SESClient } from "@aws-sdk/client-ses"
-import { createPrisma } from "@dotkomonline/db"
+import { type DBHandle, createPrisma } from "@dotkomonline/db"
+import type { UserId } from "@dotkomonline/types"
 import { ManagementClient } from "auth0"
 import { type admin_directory_v1, google } from "googleapis"
 import Stripe from "stripe"
@@ -12,6 +13,8 @@ import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
 import { getArticleTagRepository } from "./article/article-tag-repository"
+import { getAuditLogRepository } from "./audit-log/audit-log-repository"
+import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
@@ -132,6 +135,14 @@ export async function createServiceLayer(
   clients: ReturnType<typeof createThirdPartyClients>,
   configuration: Configuration
 ) {
+  async function executeAuditedTransaction<T>(fn: (tx: DBHandle) => Promise<T>, userId: UserId | null): Promise<T> {
+    return clients.prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId || null}, TRUE)`
+
+      return fn(tx)
+    })
+  }
+
   const eventEmitter = new EventEmitter()
 
   const taskRepository = getTaskRepository()
@@ -150,6 +161,7 @@ export async function createServiceLayer(
   const privacyPermissionsRepository = getPrivacyPermissionsRepository()
   const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const offlineRepository = getOfflineRepository()
+  const auditLogRepository = getAuditLogRepository()
   const articleRepository = getArticleRepository()
   const articleTagRepository = getArticleTagRepository()
   const articleTagLinkRepository = getArticleTagLinkRepository()
@@ -176,6 +188,7 @@ export async function createServiceLayer(
   const paymentService = getPaymentService(clients.stripe)
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
+  const auditLogService = getAuditLogService(auditLogRepository)
   const eventService = getEventService(eventRepository)
   const feedbackFormService = getFeedbackFormService(feedbackFormRepository, taskSchedulingService, eventService)
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
@@ -224,6 +237,7 @@ export async function createServiceLayer(
     jobListingService,
     offlineService,
     articleService,
+    auditLogService,
     attendanceService,
     attendanceRepository,
     taskService,
@@ -232,6 +246,7 @@ export async function createServiceLayer(
     feedbackFormAnswerService,
     authorizationService,
     paymentWebhookService,
+    executeAuditedTransaction,
     recurringTaskService,
     workspaceService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),

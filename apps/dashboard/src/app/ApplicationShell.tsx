@@ -20,6 +20,7 @@ import { useDisclosure } from "@mantine/hooks"
 import {
   IconBriefcase,
   IconCampfire,
+  IconClipboardList,
   IconExclamationMark,
   IconMoneybag,
   IconPhoto,
@@ -30,7 +31,7 @@ import {
 } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { type FC, type PropsWithChildren, useEffect } from "react"
+import { type FC, useEffect } from "react"
 
 const navigations = [
   {
@@ -79,14 +80,25 @@ const navigations = [
     href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
     openInNewTab: true,
   },
+  {
+    label: "Hendelseslogg",
+    icon: IconClipboardList,
+    href: "/audit-log",
+    isAdmin: true,
+  },
 ] satisfies {
   label: string
   icon: FC
   href: string
   openInNewTab?: boolean
+  isAdmin?: boolean
 }[]
+interface ApplicationShellProps {
+  isAdmin: boolean
+  children: React.ReactNode
+}
 
-export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
+export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
   const pathname = usePathname()
@@ -128,19 +140,21 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
         </Group>
       </AppShellHeader>
       <AppShellNavbar p="md">
-        {navigations.map((navigation) => (
-          <NavLink
-            component={Link}
-            key={navigation.label}
-            label={navigation.label}
-            href={navigation.href}
-            active={pathname.startsWith(navigation.href)}
-            variant="subtle"
-            leftSection={<navigation.icon width={18} height={18} />}
-            style={{ borderRadius: "var(--mantine-radius-md)" }}
-            {...(navigation.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          />
-        ))}
+        {navigations
+          .filter((navigation) => isAdmin || !navigation.isAdmin)
+          .map((navigation) => (
+            <NavLink
+              component={Link}
+              key={navigation.label}
+              label={navigation.label}
+              href={navigation.href}
+              active={pathname.startsWith(navigation.href)}
+              variant="subtle"
+              leftSection={<navigation.icon width={18} height={18} />}
+              style={{ borderRadius: "var(--mantine-radius-md)" }}
+              {...(navigation.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            />
+          ))}
         <Button component="a" variant="outline" href="/api/auth/logout" hiddenFrom="xs" mt="lg">
           Logg ut
         </Button>

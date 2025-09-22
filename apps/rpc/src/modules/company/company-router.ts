@@ -5,7 +5,7 @@ import { procedure, staffProcedure, t } from "../../trpc"
 
 export const companyRouter = t.router({
   create: staffProcedure.input(CompanyWriteSchema).mutation(async ({ input, ctx }) => {
-    return ctx.executeTransaction(async (handle) => ctx.companyService.createCompany(handle, input))
+    return ctx.executeAuditedTransaction(async (handle) => ctx.companyService.createCompany(handle, input))
   }),
 
   edit: staffProcedure
@@ -16,7 +16,7 @@ export const companyRouter = t.router({
       })
     )
     .mutation(async ({ input: changes, ctx }) => {
-      return ctx.executeTransaction(async (handle) =>
+      return ctx.executeAuditedTransaction(async (handle) =>
         ctx.companyService.updateCompany(handle, changes.id, changes.input)
       )
     }),
