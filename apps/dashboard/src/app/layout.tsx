@@ -15,6 +15,7 @@ import "@fontsource/inter-tight/600.css"
 import "@fontsource/inter-tight/700.css"
 import "@fontsource/inter-tight/800.css"
 import { auth } from "@/lib/auth"
+import { server } from "@/lib/trpc-server"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
 import { Notifications } from "@mantine/notifications"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
@@ -75,6 +76,8 @@ const theme = createTheme({
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth.getServerSession()
+
+  const isAdmin = await server.user.isAdmin.query()
   return (
     <html lang="no" {...mantineHtmlProps}>
       <head>
@@ -86,7 +89,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <MantineProvider defaultColorScheme="auto" theme={theme}>
               <Notifications />
               <ModalProvider>
-                <ApplicationShell>{children}</ApplicationShell>
+                <ApplicationShell isAdmin={isAdmin}>{children}</ApplicationShell>
               </ModalProvider>
             </MantineProvider>
           </QueryProvider>

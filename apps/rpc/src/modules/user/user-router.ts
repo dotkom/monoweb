@@ -112,4 +112,12 @@ export const userRouter = t.router({
       return false
     }
   }),
+  isAdmin: procedure.query(async ({ ctx }) => {
+    try {
+      ctx.authorize.requireAffiliation("dotkom", "hs")
+      return true
+    } catch {
+      return false
+    }
+  }),
 })
