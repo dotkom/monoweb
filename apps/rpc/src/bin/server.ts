@@ -29,6 +29,7 @@ const serviceLayer = await createServiceLayer(dependencies, configuration, contr
 // not need to be awaited. While the task execution itself is not blocked on, await here adds unnecessary latency to the
 // server startup.
 void serviceLayer.startTaskExecutor()
+void serviceLayer.emailService.startWorker(controller.signal)
 
 process.on("SIGTERM", () => controller.abort())
 process.on("beforeExit", () => controller.abort())
