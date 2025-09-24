@@ -37,33 +37,37 @@ const CommitteePage = async () => {
       </div>
 
       <Tabs defaultValue="committee" className="w-full">
-        <TabsList className="w-full h-18 p-2 mb-4">
-          <TabsTrigger
-            value="committee"
-            className="flex flex-row gap-2 items-center grow h-full text-sm sm:text-lg md:text-xl"
-          >
-            Komiteer
-            <span className="hidden md:block text-base text-gray-500 dark:text-stone-400">({committees.length})</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="nodecommittee"
-            className="flex flex-row gap-2 items-center grow h-full text-sm sm:text-lg md:text-xl"
-          >
-            Nodekomiteer
-            <span className="hidden md:block text-base text-gray-500 dark:text-stone-400">
-              ({nodeCommittees.length})
-            </span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="associated"
-            className="flex flex-row gap-2 items-center grow h-full text-sm sm:text-lg md:text-xl"
-          >
-            Assosierte grupper
-            <span className="hidden md:block text-base text-gray-500 dark:text-stone-400">
-              ({associatedGroups.length})
-            </span>
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <TabsList className="dark:border-none w-full sm:w-fit">
+            <TabsTrigger
+              value="committee"
+              className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2"
+            >
+              Komiteer
+              <span className="hidden md:block text-base text-gray-500 dark:text-stone-400 text-sm">
+                ({committees.length})
+              </span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="nodecommittee"
+              className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2"
+            >
+              Nodekomiteer
+              <span className="hidden md:block text-base text-gray-500 dark:text-stone-400 text-sm">
+                ({nodeCommittees.length})
+              </span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="associated"
+              className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2"
+            >
+              Assosierte grupper
+              <span className="hidden md:block text-base text-gray-500 dark:text-stone-400 text-sm">
+                ({associatedGroups.length})
+              </span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="committee">
           <GroupList groups={committees} />
