@@ -123,7 +123,10 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
   return (
     <Link
       href={`/karriere/${jobListing.id}`}
-      className={`border ${jobListing.featured ? "border-orange-100" : "border-gray-200"} flex h-56 items-center justify-between rounded-lg px-6 py-2 ${jobListing.featured && "bg-orange-50 dark:bg-neutral-800"}`}
+      className={cn(
+        "border flex h-56 items-center justify-between rounded-lg px-6 py-2",
+        jobListing.featured ? "border-orange-100 bg-orange-50 dark:bg-neutral-800" : "border-gray-200"
+      )}
     >
       <div className="flex flex-row items-center gap-8 w-full">
         <div className="inline-block bg-white p-2 rounded-lg">
