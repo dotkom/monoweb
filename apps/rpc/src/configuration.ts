@@ -38,4 +38,6 @@ export const configuration = defineConfiguration({
   WORKSPACE_USER_ACCOUNT_EMAIL: config(process.env.WORKSPACE_USER_ACCOUNT_EMAIL, null),
   WORKSPACE_DOMAIN: config(process.env.WORKSPACE_DOMAIN, "online.ntnu.no"),
   WORKSPACE_ENABLED: config(process.env.WORKSPACE_ENABLED, "false") === "true",
+
+  AWS_SQS_QUEUE_EMAIL_DELIVERY: config(process.env.AWS_SQS_QUEUE_EMAIL_DELIVERY, null),
 })
