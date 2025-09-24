@@ -50,7 +50,7 @@ const ThemeDropdown: FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="-mr-2 lg:-mr-3 p-1 rounded-2xl bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+        className="-mr-1 lg:-mr-3 p-1 min-w-10 rounded-2xl bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
         sideOffset={24}
       >
         <ThemeToggle />
@@ -72,7 +72,9 @@ const ContactDebugDropdown: FC = () => (
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <Icon icon="tabler:message-report" width={24} height={24} />
-          <Title className="font-semibold text-gray-900 dark:text-white">Opplevd noe ugreit?</Title>
+          <Title size="md" className="font-semibold text-gray-900 dark:text-white">
+            Opplevd noe ugreit?
+          </Title>
         </div>
         <Text className="text-sm px-1 text-gray-700 dark:text-stone-200">
           Her kan du ta kontakt med Debug. De har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten
@@ -93,7 +95,7 @@ const ContactDebugDropdown: FC = () => (
           <Button
             element={Link}
             variant="text"
-            href="/komiteer/debug"
+            href="/grupper/debug"
             target="_blank"
             rel="noopener noreferrer"
             className="w-fit text-gray-600 dark:text-stone-300"

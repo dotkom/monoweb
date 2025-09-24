@@ -1,6 +1,6 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { type Group, createGroupPageUrl, getGroupTypeName } from "@dotkomonline/types"
-import { Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { Badge, Icon, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
@@ -69,7 +69,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
         <Title className="text-3xl break-words">{group.abbreviation}</Title>
       </div>
 
-      <Text className="text-left line-clamp-4">{group.description}</Text>
+      <RichText content={group.description} maxLines={4} hideToggleButton />
     </div>
   )
 
@@ -96,7 +96,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
 
       <div className="flex flex-col">
         <Title className="text-xl">{group.abbreviation}</Title>
-        <Text className="line-clamp-2 break-words">{group.description}</Text>
+        <RichText content={group.description} maxLines={2} hideToggleButton />
       </div>
     </div>
   )

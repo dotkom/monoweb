@@ -38,7 +38,6 @@ export function getTaskRepository(): TaskRepository {
     },
     async update(handle, taskId, data, oldStatus) {
       try {
-        console.log(`${taskId} fra ${oldStatus} til ${data.status}`)
         const task = await handle.task.update({
           where: { id: taskId, status: oldStatus ? { equals: oldStatus } : undefined },
           data: { ...data, payload: data.payload ?? undefined },

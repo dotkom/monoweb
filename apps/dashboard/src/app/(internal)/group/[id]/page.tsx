@@ -1,9 +1,10 @@
 "use client"
 
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
-import { IconCircles, IconListDetails, IconUsers } from "@tabler/icons-react"
+import { IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { GroupEditCard } from "./edit-card"
+import { GroupEventPage } from "./group-event-page"
 import { GroupMembersPage } from "./members-page"
 import { useGroupDetailsContext } from "./provider"
 import { GroupRolesPage } from "./roles-page"
@@ -26,6 +27,12 @@ const SIDEBAR_LINKS = [
     label: "Roller",
     slug: "roller",
     component: GroupRolesPage,
+  },
+  {
+    icon: IconWheelchair,
+    label: "Arrangementer",
+    slug: "arrangementer",
+    component: GroupEventPage,
   },
 ] as const
 

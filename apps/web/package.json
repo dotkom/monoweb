@@ -67,14 +67,14 @@
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/rpc": "workspace:*",
-    "@tailwindcss/postcss": "4.1.12",
+    "@tailwindcss/postcss": "4.1.13",
     "@types/cors": "2.8.19",
-    "@types/node": "22.18.0",
+    "@types/node": "22.18.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "19.1.9",
     "cva": "npm:class-variance-authority@0.7.1",
     "postcss": "8.5.6",
-    "tailwindcss": "4.1.12",
+    "tailwindcss": "4.1.13",
     "tslib": "2.8.1",
     "typescript": "5.9.2"
   }

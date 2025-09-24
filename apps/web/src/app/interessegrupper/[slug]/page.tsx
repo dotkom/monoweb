@@ -1,4 +1,4 @@
-import { GroupPage } from "@/app/komiteer/components/GroupPage"
+import { GroupPage } from "@/app/grupper/components/GroupPage"
 
 interface InterestGroupPageProps {
   params: Promise<{ slug: string }>

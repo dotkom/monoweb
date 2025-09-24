@@ -90,24 +90,6 @@ jobs:
           environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
-  build-invoicification:
-    name: invoicification
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-invoicification
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
   build-kvittering-backend:
     name: kvittering-backend
     runs-on: ubuntu-24.04
@@ -140,24 +122,6 @@ jobs:
       - uses: ./.github/actions/build-kvittering-frontend
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
-  build-rif:
-    name: rif
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-rif
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rpc:

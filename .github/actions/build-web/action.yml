@@ -47,3 +47,4 @@ runs:
         service-name: monoweb-${{ inputs.environment }}-web
         container-name: monoweb-${{ inputs.environment }}-web
         image: ${{ steps.build.outputs.image }}
+        environment-variables: ${{ steps.acquire-secrets.outputs.secrets }}

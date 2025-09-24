@@ -74,7 +74,7 @@ export const createGroupPageUrl = (group: Group) => {
     case "COMMITTEE":
     case "NODE_COMMITTEE":
     case "ASSOCIATED":
-      return `/komiteer/${group.slug}`
+      return `/grupper/${group.slug}`
     case "INTEREST_GROUP":
       return `/interessegrupper/${group.slug}`
     default:

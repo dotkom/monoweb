@@ -4,14 +4,25 @@ import { EventCalendar } from "@/components/organisms/EventCalendar"
 import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
 import { useTRPC } from "@/utils/trpc/client"
 import type { EventFilterQuery } from "@dotkomonline/types"
-import { Icon, Tabs, TabsContent, TabsList, TabsTrigger, Title } from "@dotkomonline/ui"
+import {
+  Button,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Icon,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Title,
+} from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { EventFilters } from "./components/EventFilters"
-import { EventList, EventListSkeleton } from "./components/EventList"
+import { EventList, EventListSkeleton, type EventListViewMode } from "./components/EventList"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
 const EventPage = () => {
@@ -19,6 +30,8 @@ const EventPage = () => {
   const searchParams = useSearchParams()
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const [filter, setFilter] = useState<EventFilterQuery>({})
+  const [viewMode, setViewMode] = useState<EventListViewMode>("ATTENDANCE")
+  const [filterOpen, setFilterOpen] = useState(false)
 
   const view = searchParams.get("view") || "list"
   const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString())
@@ -55,6 +68,8 @@ const EventPage = () => {
       orderBy: "desc",
     },
   })
+
+  const { data: groups } = useQuery(trpc.group.all.queryOptions())
 
   const handleViewChange = (newView: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -104,16 +119,45 @@ const EventPage = () => {
           )}
         </div>
 
-        <TabsContent value="list" className="flex flex-col gap-4">
-          <EventFilters onChange={setFilter} />
-          {!isLoading && (
-            <EventList
-              futureEventWithAttendances={futureEventWithAttendances}
-              pastEventWithAttendances={pastEventWithAttendances}
-              onLoadMore={fetchNextPage}
-            />
-          )}
-          {isLoading && <EventListSkeleton />}
+        <TabsContent value="list" className="flex flex-col gap-4 md:gap-8 md:flex-row">
+          <div className="md:w-[30%] w-full scroll">
+            <div className="max-md:hidden">
+              <EventFilters
+                onChange={(filter, viewMode) => {
+                  setViewMode(viewMode)
+                  setFilter(filter)
+                }}
+                groups={useMemo(() => groups ?? [], [groups])}
+              />
+            </div>
+
+            <Collapsible open={filterOpen} onOpenChange={setFilterOpen} className="md:hidden">
+              <CollapsibleTrigger asChild>
+                <Button variant="outline">{filterOpen ? "Skjul filtre" : "Vis filtre"}</Button>
+              </CollapsibleTrigger>
+
+              <CollapsibleContent className="mt-4 mb-6">
+                <EventFilters
+                  onChange={(filter, viewMode) => {
+                    setViewMode(viewMode)
+                    setFilter(filter)
+                  }}
+                  groups={useMemo(() => groups ?? [], [groups])}
+                />
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+          <div className="flex flex-col gap-8 md:w-[70%]">
+            {!isLoading && (
+              <EventList
+                futureEventWithAttendances={futureEventWithAttendances}
+                pastEventWithAttendances={pastEventWithAttendances}
+                onLoadMore={fetchNextPage}
+                viewMode={viewMode}
+              />
+            )}
+            {isLoading && <EventListSkeleton />}
+          </div>
         </TabsContent>
 
         <TabsContent value="cal">

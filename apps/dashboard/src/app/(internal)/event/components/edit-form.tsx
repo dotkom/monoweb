@@ -6,7 +6,14 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { EventSchema, type EventStatus, EventTypeSchema, type Group, mapEventTypeToLabel } from "@dotkomonline/types"
+import {
+  type Company,
+  EventSchema,
+  type EventStatus,
+  EventTypeSchema,
+  type Group,
+  mapEventTypeToLabel,
+} from "@dotkomonline/types"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
@@ -22,6 +29,7 @@ const EVENT_FORM_DATA_STATUS = [
 
 const FormValidationSchema = EventSchema.extend({
   hostingGroupIds: z.array(z.string()),
+  companyIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
   for (const issue of issues) {
@@ -36,10 +44,12 @@ interface UseEventEditFormProps {
   defaultValues?: Partial<FormValidationResult>
   label?: string
   hostingGroups: Group[]
+  companies: Company[]
 }
 
 export const useEventEditForm = ({
   hostingGroups,
+  companies,
   onSubmit,
   label = "Oppdater arrangement",
   defaultValues,
@@ -91,6 +101,12 @@ export const useEventEditForm = ({
         label: "Arrangører",
         placeholder: "Velg grupper",
         data: hostingGroups.map((group) => ({ value: group.slug, label: group.abbreviation })),
+        searchable: true,
+      }),
+      companyIds: createMultipleSelectInput({
+        label: "Bedrifter",
+        placeholder: "Velg bedrifter",
+        data: companies.map((company) => ({ value: company.id, label: company.name })),
         searchable: true,
       }),
       status: createSelectInput({

@@ -16,13 +16,26 @@ import {
   type AttendeeWrite,
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
+  type GroupType,
   type UserId,
   canUserAttendPool,
   findActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
-import { addDays, addHours, compareAsc, differenceInHours, isAfter, isBefore, isFuture, isPast, min } from "date-fns"
+import {
+  addDays,
+  addHours,
+  compareAsc,
+  differenceInHours,
+  endOfYesterday,
+  isAfter,
+  isBefore,
+  isFuture,
+  isPast,
+  min,
+  startOfYesterday,
+} from "date-fns"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import {
@@ -32,6 +45,8 @@ import {
   NotFoundError,
   ResourceExhaustedError,
 } from "../../error"
+import type { EmailService } from "../email/email-service"
+import { emails } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import type { MarkService } from "../mark/mark-service"
@@ -137,6 +152,7 @@ export interface AttendanceService {
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
+  findChargeAttendeeScheduleDate(handle: DBHandle, attendeeId: AttendeeId): Promise<Date | null>
 
   updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<void>
@@ -151,6 +167,7 @@ export interface AttendanceService {
     handle: DBHandle,
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
   ): Promise<void>
+  executeSendFeedbackFormLinkEmails(handle: DBHandle): Promise<void>
 
   /**
    * Register that an attendee has physically attended an event.
@@ -179,7 +196,8 @@ export function getAttendanceService(
   eventService: EventService,
   feedbackFormService: FeedbackFormService,
   feedbackAnswerService: FeedbackFormAnswerService,
-  configuration: Configuration
+  configuration: Configuration,
+  emailService: EmailService
 ): AttendanceService {
   const logger = getLogger("attendance-service")
   return {
@@ -406,7 +424,7 @@ export function getAttendanceService(
       })
 
       if (attendance.attendancePrice) {
-        const paymentDeadline = options.immediatePayment ? addHours(new TZDate(), 2) : addHours(new TZDate(), 24)
+        const paymentDeadline = options.immediatePayment ? addHours(new TZDate(), 1) : addHours(new TZDate(), 24)
         const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
         attendee.paymentDeadline = paymentDeadline
         attendee.paymentId = payment.id
@@ -436,12 +454,13 @@ export function getAttendanceService(
 
       eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
       logger.info(
-        "Attendee(ID=%s,UserID=%s) named %s has attended Event(ID=%s) named %s",
+        "Attendee(ID=%s,UserID=%s) named %s has attended Event(ID=%s) named %s with options: %o",
         attendee.id,
         attendee.user.id,
         attendee.user.name || "<missing name>",
         event.id,
-        event.title
+        event.title,
+        options
       )
 
       return attendee
@@ -486,10 +505,11 @@ export function getAttendanceService(
       if (isPoolAtMaxCapacity || isPastReservationTime) {
         return
       }
-      await attendanceRepository.updateAttendeeById(handle, attendeeId, {
-        ...attendee,
-        reserved: true,
-      })
+
+      const data = AttendeeWriteSchema.parse(attendee)
+      data.reserved = true
+
+      await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
     },
     async deregisterAttendee(handle, attendeeId, options) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
@@ -513,12 +533,13 @@ export function getAttendanceService(
 
       eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
       logger.info(
-        "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s",
+        "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s with options: %o",
         attendee.id,
         attendee.user.id,
         attendee.user.name || "<missing name>",
         event.id,
-        event.title
+        event.title,
+        options
       )
 
       // If the attendee was reserved, we find a replacement for them in the pool.
@@ -559,6 +580,21 @@ export function getAttendanceService(
           attendee.id
         )
       }
+    },
+    async findChargeAttendeeScheduleDate(handle, attendeeId) {
+      const attendee = await this.getAttendeeById(handle, attendeeId)
+
+      if (!attendee.paymentId) {
+        return null
+      }
+
+      const job = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
+
+      if (!job) {
+        return null
+      }
+
+      return job.scheduledAt
     },
     async deleteAttendancePayment(handle, attendance: Attendance) {
       for (const attendee of attendance.attendees) {
@@ -922,6 +958,75 @@ export function getAttendanceService(
       )
 
       await Promise.all([...personalMarkPromises])
+    },
+    async executeSendFeedbackFormLinkEmails(handle) {
+      const eventsEndedYesterday = await eventService.findEvents(handle, {
+        byHasFeedbackForm: true,
+        byEndDate: {
+          min: new TZDate(startOfYesterday()),
+          max: new TZDate(endOfYesterday()),
+        },
+      })
+
+      const promises = eventsEndedYesterday.map(async (event) => {
+        if (!event.attendanceId) {
+          return
+        }
+
+        const feedbackForm = await feedbackFormService.findByEventId(handle, event.id)
+        if (!feedbackForm || !feedbackForm.isActive) {
+          return
+        }
+
+        const attendance = await this.getAttendanceById(handle, event.attendanceId)
+
+        const attendees = attendance.attendees
+        const attendedAttendees = attendees.filter((attendee) => Boolean(attendee.attendedAt))
+
+        const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
+
+        const attendeesWithoutAnswers = attendedAttendees.filter(
+          (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
+        )
+        const bcc = attendeesWithoutAnswers.map((a) => a.user.email).filter((email) => email !== null)
+
+        if (bcc.length === 0) {
+          return
+        }
+
+        const validGroupTypes: GroupType[] = ["COMMITTEE", "NODE_COMMITTEE"]
+
+        const hostingGroupEmail =
+          event.hostingGroups.filter((group) => group.email && validGroupTypes.includes(group.type)).at(0)?.email ??
+          "bedkom@online.ntnu.no"
+
+        logger.info(
+          "Sending feedback form email for Event(ID=%s) to %d attendees from email %s",
+          event.id,
+          bcc.length,
+          hostingGroupEmail
+        )
+
+        await emailService.send(
+          hostingGroupEmail,
+          [],
+          [],
+          [],
+          bcc,
+          `Tilbakemelding på ${event.title}`,
+          emails.FEEDBACK_FORM_LINK,
+          {
+            eventName: event.title,
+            eventLink: `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`,
+            feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
+            eventStart: event.start.toISOString(),
+            feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
+            organizerEmail: hostingGroupEmail,
+          }
+        )
+      })
+
+      await Promise.all(promises)
     },
     async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)

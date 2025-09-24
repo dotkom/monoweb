@@ -12,7 +12,7 @@ import { procedure, staffProcedure, t } from "../../trpc"
 export const groupRouter = t.router({
   create: staffProcedure.input(GroupWriteSchema).mutation(async ({ input, ctx }) => {
     ctx.authorize.requireAffiliation("dotkom", "backlog", "hs")
-    return ctx.executeTransaction(async (handle) => ctx.groupService.create(handle, input))
+    return ctx.executeAuditedTransaction(async (handle) => ctx.groupService.create(handle, input))
   }),
   all: procedure.query(async ({ ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.getAll(handle))),
   allByType: procedure
@@ -37,11 +37,11 @@ export const groupRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       ctx.authorize.requireAffiliation("dotkom", "backlog", "hs")
-      return ctx.executeTransaction(async (handle) => ctx.groupService.update(handle, input.id, input.values))
+      return ctx.executeAuditedTransaction(async (handle) => ctx.groupService.update(handle, input.id, input.values))
     }),
   delete: staffProcedure.input(GroupSchema.shape.slug).mutation(async ({ input, ctx }) => {
     ctx.authorize.requireAffiliation("dotkom", "backlog", "hs")
-    return ctx.executeTransaction(async (handle) => ctx.groupService.delete(handle, input))
+    return ctx.executeAuditedTransaction(async (handle) => ctx.groupService.delete(handle, input))
   }),
   getMembers: procedure
     .input(GroupSchema.shape.slug)
@@ -72,14 +72,16 @@ export const groupRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
+      ctx.executeAuditedTransaction(async (handle) =>
         ctx.groupService.startMembership(handle, input.userId, input.groupId, new Set(input.roleIds))
       )
     ),
   endMembership: staffProcedure
     .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.endMembership(handle, input.userId, input.groupId))
+      ctx.executeAuditedTransaction(async (handle) =>
+        ctx.groupService.endMembership(handle, input.userId, input.groupId)
+      )
     ),
   updateMembership: staffProcedure
     .input(
@@ -90,14 +92,14 @@ export const groupRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) =>
+      ctx.executeAuditedTransaction(async (handle) =>
         ctx.groupService.updateMembership(handle, input.id, input.data, new Set(input.roleIds))
       )
     ),
   createRole: staffProcedure
     .input(GroupRoleWriteSchema)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.createRole(handle, input))
+      ctx.executeAuditedTransaction(async (handle) => ctx.groupService.createRole(handle, input))
     ),
   updateRole: staffProcedure
     .input(
@@ -107,6 +109,6 @@ export const groupRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.updateRole(handle, input.id, input.role))
+      ctx.executeAuditedTransaction(async (handle) => ctx.groupService.updateRole(handle, input.id, input.role))
     ),
 })

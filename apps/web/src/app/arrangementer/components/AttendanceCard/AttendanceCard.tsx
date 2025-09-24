@@ -13,7 +13,7 @@ import {
 } from "@dotkomonline/types"
 import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
-import { useQueries, useQueryClient } from "@tanstack/react-query"
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
@@ -23,7 +23,6 @@ import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMuta
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
-import { PaymentCard } from "./PaymentCard"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton } from "./RegistrationButton"
@@ -129,6 +128,15 @@ export const AttendanceCard = ({
 
   const attendee = getAttendee(attendance, user)
 
+  const { data: chargeScheduleDate } = useQuery(
+    trpc.event.attendance.findChargeAttendeeScheduleDate.queryOptions(
+      {
+        attendeeId: attendee?.id ?? "",
+      },
+      { enabled: Boolean(attendee?.id) && Boolean(attendance.attendancePrice) }
+    )
+  )
+
   useEffect(() => {
     // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
     // right before even open (as if we don't have enough already)
@@ -139,6 +147,8 @@ export const AttendanceCard = ({
     )
     // }, [attendance, attendee])
   }, [attendee])
+
+  const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const registerMutation = useRegisterMutation()
   const deregisterMutation = useDeregisterMutation()
@@ -154,8 +164,6 @@ export const AttendanceCard = ({
       options: selections,
     })
   }
-
-  const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const registerForAttendance = () => {
     registerMutation.mutate({ attendanceId: attendance.id })
@@ -180,11 +188,16 @@ export const AttendanceCard = ({
         Påmelding
       </Title>
 
-      <AttendanceDateInfo attendance={attendance} />
+      <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
 
       {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
 
-      <MainPoolCard attendance={attendance} user={user} authorizeUrl={authorizeUrl} />
+      <MainPoolCard
+        attendance={attendance}
+        user={user}
+        authorizeUrl={authorizeUrl}
+        chargeScheduleDate={chargeScheduleDate}
+      />
 
       {attendee?.reserved && attendance.selections.length > 0 && (
         <div className="flex flex-col gap-2">
@@ -224,9 +237,7 @@ export const AttendanceCard = ({
         isLoading={isLoading}
       />
 
-      <PaymentCard attendance={attendance} attendee={attendee} />
-
-      <div className="flex flex-row flex-wrap gap-4 text-gray-800 hover:text-black dark:text-stone-300 dark:hover:text-stone-100 transition-colors">
+      <div className="flex flex-row flex-wrap gap-4 text-gray-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
         <div className="flex flex-row gap-1 items-center cursor-pointer">
           <Icon icon="tabler:book-2" className="text-lg" />
           <Text className="text-sm">Arrangementregler</Text>
