@@ -1,15 +1,15 @@
 "use client"
-
 import { filterJobListings, sortDates } from "@/app/karriere/filter-functions"
 import { useTRPC } from "@/utils/trpc/client"
 import type { JobListing } from "@dotkomonline/types"
-import { Badge, Icon, Text } from "@dotkomonline/ui"
+import { Badge, Icon } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
 import Image from "next/image"
 import Link from "next/link"
 import { type FC, useMemo, useState } from "react"
+import { JobListingSkeletonList } from "./[id]/JobListingSkeletonList"
 import {
   CompanyFiltersContainer,
   type EmploymentCheckbox,
@@ -67,32 +67,32 @@ const CareerPage = () => {
           </div>
         </div>
       </div>
-      {isLoading || !jobListings ? (
-        <Text>Laster...</Text>
-      ) : (
-        <div className="mb-10 mt-10 flex flex-col xl:flex-row gap-x-12">
-          <CompanyFiltersContainer
-            chosenLocation={chosenLocation}
-            setChosenLocation={setChosenLocation}
-            searchName={searchName}
-            setSearchName={setSearchName}
-            chosenEmployments={chosenEmployments}
-            setChosenEmployments={setChosenEmployments}
-            chosenSort={chosenSort}
-            setChosenSort={setChosenSort}
-            places={getLocations(jobListings)}
-          />
-          <div className="flex-1">
-            <div className="flex flex-col gap-6">
-              {filteredJobListings.map((c) => (
+      <div className="mb-10 mt-10 flex flex-col xl:flex-row gap-x-12">
+        <CompanyFiltersContainer
+          chosenLocation={chosenLocation}
+          setChosenLocation={setChosenLocation}
+          searchName={searchName}
+          setSearchName={setSearchName}
+          chosenEmployments={chosenEmployments}
+          setChosenEmployments={setChosenEmployments}
+          chosenSort={chosenSort}
+          setChosenSort={setChosenSort}
+          places={getLocations(jobListings ?? [])}
+        />
+        <div className="flex-1">
+          <div className="flex flex-col gap-6">
+            {isLoading || !jobListings ? (
+              <JobListingSkeletonList />
+            ) : (
+              filteredJobListings.map((c) => (
                 <div key={c.id}>
                   <CompanyAdListItem jobListing={c} />
                 </div>
-              ))}
-            </div>
+              ))
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
