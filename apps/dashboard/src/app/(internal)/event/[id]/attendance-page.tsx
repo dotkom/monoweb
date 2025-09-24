@@ -65,19 +65,20 @@ interface AttendanceSectionProps {
 const AttendanceSection: FC<AttendanceSectionProps> = ({ attendance }) => {
   const updateAttendanceMut = useUpdateAttendanceMutation()
 
+  const onAttendanceFormSubmit = (values) => {
+    updateAttendanceMut.mutate({
+      id: attendance.id,
+      attendance: {
+        registerStart: values.registerStart,
+        registerEnd: values.registerEnd,
+        deregisterDeadline: values.deregisterDeadline,
+      },
+    })
+  }
+
   const AttendanceForm = useAttendanceForm({
     defaultValues: attendance,
     label: "Oppdater",
-    onSubmit: (values) => {
-      updateAttendanceMut.mutate({
-        id: attendance.id,
-        attendance: {
-          registerStart: values.registerStart,
-          registerEnd: values.registerEnd,
-          deregisterDeadline: values.deregisterDeadline,
-        },
-      })
-    },
   })
 
   const PoolsForm = usePoolsForm({
