@@ -12,7 +12,7 @@ import {
   loggerLink,
   splitLink,
 } from "@trpc/client"
-import { secondsToMilliseconds } from "date-fns"
+import { minutesToMilliseconds } from "date-fns"
 import { type Dispatch, type PropsWithChildren, type SetStateAction, createContext, useContext, useState } from "react"
 import superjson from "superjson"
 import { TRPCProvider } from "./client"
@@ -44,8 +44,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
   const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
     links: [
       loggerLink({
-        enabled: (opts) =>
-          env.NEXT_PUBLIC_ORIGIN === "development" || (opts.direction === "down" && opts.result instanceof Error),
+        enabled: (opts) => opts.direction === "down" && opts.result instanceof Error,
       }),
       splitLink({
         condition: (op) => op.type === "subscription",
@@ -77,10 +76,12 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: secondsToMilliseconds(30),
+            staleTime: minutesToMilliseconds(5),
+            retry: false,
           },
           mutations: {
             onError: console.error,
+            retry: false,
           },
         },
       })
