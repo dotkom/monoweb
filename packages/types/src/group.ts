@@ -25,10 +25,16 @@ export type Group = z.infer<typeof GroupSchema>
 
 export type GroupType = z.infer<typeof GroupTypeSchema>
 
-export const GroupWriteSchema = GroupSchema.omit({
-  createdAt: true,
-  roles: true,
-  shortDescription: true,
+export const GroupWriteSchema = GroupSchema.pick({
+  type: true,
+  name: true,
+  slug: true,
+  abbreviation: true,
+  description: true,
+  imageUrl: true,
+  email: true,
+  contactUrl: true,
+  deactivatedAt: true,
 }).partial({
   slug: true,
 })
