@@ -35,6 +35,7 @@ export const GroupWriteSchema = GroupSchema.pick({
   email: true,
   contactUrl: true,
   deactivatedAt: true,
+  workspaceGroupId: true,
 }).partial({
   slug: true,
 })
