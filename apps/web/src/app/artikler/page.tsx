@@ -1,9 +1,20 @@
 import { ArticleList } from "@/app/artikler/ArticleList"
+import { TagSearch } from "@/app/artikler/TagSearch"
 import { server } from "@/utils/trpc/server"
-import { Text, Title } from "@dotkomonline/ui"
+import { Text, Title, Button } from "@dotkomonline/ui"
 
 const ArticlePage = async () => {
-  const tags = await server.article.findTagsOrderedByPopularity.query()
+  const tags = await server.article.findTagsOrderedByPopularity.query();
+
+  // Fallback data for development if server call fails
+  const fallbackTags = [
+    { name: "test" },
+    { name: "test2" },
+    { name: "javascript" },
+    { name: "react" }
+  ];
+
+  const tagsToUse = tags.length > 0 ? tags : fallbackTags;
 
   return (
     <div>
@@ -17,7 +28,8 @@ const ArticlePage = async () => {
       </div>
 
       <div className="mt-8">
-        <ArticleList tags={tags} />
+        <TagSearch tags={tagsToUse} />
+        {/* <ArticleList tags={tagsToUse} /> */}
       </div>
     </div>
   )
