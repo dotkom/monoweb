@@ -195,3 +195,17 @@ export const getAttendeeQueuePosition = (attendance: Attendance, user: User | nu
   // Queue position is 1-indexed but arrays are 0-indexed, so we add 1
   return index + 1
 }
+
+export const hasAttendeePaid = (attendance: Attendance, attendee: Attendee | null): boolean | null => {
+  if (!attendance.attendancePrice) {
+    return null
+  }
+
+  if (!attendee) {
+    return false
+  }
+
+  return Boolean(
+    attendee.paymentChargedAt || attendee.paymentReservedAt || (attendee.paymentRefundedAt && !attendee.paymentDeadline)
+  )
+}

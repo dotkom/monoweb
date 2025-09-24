@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { GroupId, Mark, MarkId, MarkWrite } from "@dotkomonline/types"
+import type { GroupId, Mark, MarkFilterQuery, MarkId, MarkWrite } from "@dotkomonline/types"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { MarkRepository } from "./mark-repository"
@@ -11,7 +11,7 @@ export interface MarkService {
    * @throws {NotFoundError} if the mark does not exist
    */
   getMark(handle: DBHandle, markId: MarkId): Promise<Mark>
-  getMany(handle: DBHandle, markIds: MarkId[]): Promise<Mark[]>
+  findMany(handle: DBHandle, query: MarkFilterQuery): Promise<Mark[]>
   getMarks(handle: DBHandle, page: Pageable): Promise<Mark[]>
   createMark(handle: DBHandle, data: MarkWrite, groupIds: GroupId[]): Promise<Mark>
   /**
@@ -37,8 +37,8 @@ export function getMarkService(markRepository: MarkRepository): MarkService {
       }
       return mark
     },
-    async getMany(handle, markIds) {
-      return await markRepository.findMany(handle, markIds)
+    async findMany(handle, query) {
+      return await markRepository.findMany(handle, query)
     },
     async getMarks(handle, page) {
       return await markRepository.getAll(handle, page)

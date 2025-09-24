@@ -16,6 +16,7 @@ import {
 } from "@dotkomonline/types"
 import { addHours, roundToNearestHours } from "date-fns"
 import { z } from "zod"
+import { useCompanyAllQuery } from "../../company/queries"
 import { validateEventWrite } from "../validation"
 
 const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.Values).map((type) => ({
@@ -30,6 +31,7 @@ const EVENT_FORM_DATA_STATUS = [
 
 const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
+  companyIds: z.array(z.string()),
   parentId: EventSchema.shape.id.nullable(),
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
@@ -55,6 +57,7 @@ const DEFAULT_VALUES = {
   locationLink: null,
   imageUrl: null,
   hostingGroupIds: [],
+  companyIds: [],
   parentId: null,
 } as const satisfies FormValidationResult
 
@@ -64,6 +67,7 @@ interface UseEventWriteFormProps {
 
 export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
+  const { companies } = useCompanyAllQuery()
   return useFormBuilder({
     schema: FormValidationSchema,
     defaultValues: DEFAULT_VALUES,
@@ -110,6 +114,12 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Arrangører",
         placeholder: "Velg grupper",
         data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
+        searchable: true,
+      }),
+      companyIds: createMultipleSelectInput({
+        label: "Bedrifter",
+        placeholder: "Velg bedrifter",
+        data: companies.map((company) => ({ value: company.id, label: company.name })),
         searchable: true,
       }),
       status: createSelectInput({

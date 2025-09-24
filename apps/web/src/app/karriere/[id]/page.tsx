@@ -41,7 +41,7 @@ const JobListingPage = async ({ params }: JobListingProps) => {
         <div className="sm:w-2/3">
           <RichText
             content={jobListing.description}
-            lineClamp="line-clamp-10"
+            maxLines={10}
             className="sm:hidden"
             toggleButtonClassName="sm:hidden"
           />
@@ -113,7 +113,7 @@ const CompanyBox = ({ company }: CompanyBoxProps) => {
           <Title size="xl">{company.name}</Title>
         )}
 
-        {company.description && <RichText content={company.description} lineClamp="line-clamp-3" hideToggleButton />}
+        {company.description && <RichText content={company.description} maxLines={3} hideToggleButton />}
       </div>
       <Link href={`/bedrifter/${company.slug}`} className="pb-4 px-6 pt-3 rounded-b-2xl bg-gray-200 dark:bg-stone-500">
         <div className="flex flex-row gap-1 items-center mx-auto w-fit">

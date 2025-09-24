@@ -59,8 +59,18 @@ export const SelectScrollDownButton = ({ className, ref, ...props }: SelectScrol
 )
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName
 
-type SelectContentProps = React.ComponentPropsWithRef<typeof SelectPrimitive.Content>
-export const SelectContent = ({ className, children, position = "popper", ref, ...props }: SelectContentProps) => (
+type SelectContentProps = React.ComponentPropsWithRef<typeof SelectPrimitive.Content> & {
+  hideScrollUpButton?: boolean
+}
+
+export const SelectContent = ({
+  className,
+  children,
+  position = "popper",
+  ref,
+  hideScrollUpButton,
+  ...props
+}: SelectContentProps) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
@@ -80,7 +90,7 @@ export const SelectContent = ({ className, children, position = "popper", ref, .
       position={position}
       {...props}
     >
-      <SelectScrollUpButton />
+      {!hideScrollUpButton && <SelectScrollUpButton />}
       <SelectPrimitive.Viewport
         className={cn(
           "p-1",

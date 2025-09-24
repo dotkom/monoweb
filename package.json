@@ -2,11 +2,7 @@
   "name": "monorepo",
   "version": "1.0.0",
   "description": "Monoweb is the next-generation web application for Online. This is the monorepo source.",
-  "keywords": [
-    "online",
-    "ntnu",
-    "student-association"
-  ],
+  "keywords": ["online", "ntnu", "student-association"],
   "homepage": "https://online.ntnu.no",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
   "bugs": {
@@ -37,12 +33,10 @@
     "clean": "turbo run clean",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "shell": "pnpm -F @dotkomonline/rpc shell",
-    "give-me-staff": "pnpm -rc -F @dotkomonline/rpc exec doppler run --preserve-env pnpm give-me-staff"
+    "give-me-staff": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm give-me-staff",
+    "receive-stripe-webhooks": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm receive-stripe-webhooks"
   },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
+  "workspaces": ["packages/*", "apps/*"],
   "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67",
   "engines": {
     "node": ">=22.0.0",
@@ -51,7 +45,6 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "turbo": "2.5.6",
-    "turbo-ignore": "2.5.6",
     "typescript": "5.9.2"
   }
 }

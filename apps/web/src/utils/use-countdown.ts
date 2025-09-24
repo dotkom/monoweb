@@ -1,3 +1,5 @@
+"use client"
+
 import { addSeconds, differenceInSeconds, intervalToDuration, isPast, secondsToMilliseconds } from "date-fns"
 import { useEffect, useState } from "react"
 

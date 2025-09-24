@@ -1,11 +1,13 @@
 import { auth } from "@/auth"
-import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, Event } from "@dotkomonline/types"
-import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
+import { RichText, cn } from "@dotkomonline/ui"
+import { Icon, Text, Tilt, Title } from "@dotkomonline/ui"
+import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { formatDate, isPast } from "date-fns"
+import { formatDate } from "date-fns"
+import { nb } from "date-fns/locale"
 import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
@@ -14,8 +16,8 @@ import { ConstructionNotice } from "./construction-notice"
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
 
-  const { items } = await server.event.all.query({
-    take: 5,
+  const { items: events } = await server.event.all.query({
+    take: 3,
     filter: {
       byEndDate: {
         max: null,
@@ -26,6 +28,9 @@ export default async function App() {
       orderBy: "asc",
     },
   })
+
+  const featuredEvent = events[0] ?? null
+  const otherEvents = events.slice(1)
 
   const cookies = await getCookies()
   const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
@@ -40,67 +45,132 @@ export default async function App() {
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {items.map(({ event, attendance }) => {
-            const reservedStatus =
-              attendance?.attendees.find((attendee) => attendee.user.id === session?.sub)?.reserved ?? null
+        {featuredEvent ? (
+          <div className="flex flex-col md:grid md:[grid-template-columns:35%_35%_30%] md:[grid-template-rows:2fr_2fr_1fr] gap-6 w-full">
+            <div className="col-span-2 row-span-3">
+              <BigEventCard
+                event={featuredEvent?.event}
+                attendance={featuredEvent?.attendance}
+                userId={session?.sub ?? null}
+                className="max-md:hidden"
+              />
+              <EventCard
+                event={featuredEvent?.event}
+                attendance={featuredEvent?.attendance}
+                userId={session?.sub ?? null}
+                className="md:hidden"
+              />
+            </div>
 
-            return <EventCard key={event.id} event={event} attendance={attendance} reservedStatus={reservedStatus} />
-          })}
+            {otherEvents.map(({ event, attendance }) => (
+              <EventCard key={event.id} event={event} attendance={attendance} userId={session?.sub ?? null} />
+            ))}
 
-          <Tilt className="grow">
-            <Button
-              element={Link}
-              href="/arrangementer"
-              className="w-full h-full bg-blue-100 hover:bg-blue-200 text-brand-800 hover:text-black"
-              iconRight={<Icon icon="tabler:arrow-up-right" />}
-            >
-              <Text>Se alle arrangementer</Text>
-            </Button>
-          </Tilt>
-        </div>
+            <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
+              <Button
+                element={Link}
+                href="/arrangementer"
+                className={cn(
+                  "rounded-xl w-full h-full min-h-[6rem] text-brand-800 hover:text-black md:gap-3",
+                  "bg-blue-200 hover:bg-blue-100",
+                  "dark:bg-brand dark:hover:bg-brand/75"
+                )}
+                iconRight={<Icon icon="tabler:arrow-up-right" className="md:text-2xl" />}
+              >
+                <Text className="md:text-xl">Se alle arrangementer</Text>
+              </Button>
+            </Tilt>
+          </div>
+        ) : (
+          <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
+        )}
       </div>
     </section>
+  )
+}
+
+interface BigEventCardProps {
+  event: Event
+  attendance: Attendance | null
+  userId: string | null
+  className?: string
+}
+
+const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, className }) => {
+  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+
+  return (
+    <Link
+      href={`/arrangementer/${slugify(event.title)}/${event.id}`}
+      className={cn(
+        "flex flex-col w-full gap-5 p-6 rounded-2xl border transition-colors",
+        "border-gray-100 bg-gray-50 hover:bg-transparent",
+        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+        className
+      )}
+    >
+      <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
+        <img
+          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
+          alt={event.title}
+          className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
+        />
+      </Tilt>
+
+      <div className="flex flex-col gap-3">
+        <Title element="p" size="xl" className="text-xl line-clamp-1 max-md:font-medium md:text-4xl">
+          {event.title}
+        </Title>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-row gap-2 items-center">
+            <Icon icon="tabler:calendar-event" className="text-xl text-gray-500 dark:text-stone-500" />
+            <Text className="text-lg">{formatDate(event.start, "dd. MMM", { locale: nb })}</Text>
+          </div>
+          <div className="max-md:hidden">
+            <RichText content={event.description} maxLines={5} hideToggleButton />
+          </div>
+        </div>
+      </div>
+    </Link>
   )
 }
 
 interface ComingEventProps {
   event: Event
   attendance: Attendance | null
-  reservedStatus: boolean | null
+  userId: string | null
+  className?: string
 }
 
-const EventCard: FC<ComingEventProps> = ({ event, attendance, reservedStatus }) => {
+const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className }) => {
+  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+
   return (
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
-      className="flex flex-col w-full gap-2 p-2 -m-2 rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-stone-700"
+      className={cn(
+        "flex flex-col h-full gap-3 p-3 rounded-2xl border transition-colors",
+        "border-gray-100 bg-gray-50 hover:bg-transparent",
+        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+        className
+      )}
     >
-      <Tilt>
+      <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         <img
           src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
           alt={event.title}
-          className="rounded-lg border border-gray-200 object-cover aspect-[4/3]"
+          className="rounded-lg border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
         />
       </Tilt>
-      <div className="flex flex-col gap-1">
-        <Title element="p" size="sm" className="font-normal">
+      <div className="flex flex-col gap-2 w-full">
+        <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
           {event.title}
         </Title>
 
-        <div className="flex flex-row gap-4 items-center">
-          <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-400" />
-            <Text className="text-sm">{formatDate(event.start, "dd.MM")}</Text>
-          </div>
-
-          {attendance && (
-            <AttendanceStatus
-              attendance={attendance}
-              reservedStatus={reservedStatus}
-              eventEndInPast={isPast(event.start)}
-            />
-          )}
+        <div className="flex flex-row gap-2 items-center">
+          <Icon icon="tabler:calendar-event" className="text-base text-gray-800 dark:text-stone-400" />
+          <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
         </div>
       </div>
     </Link>

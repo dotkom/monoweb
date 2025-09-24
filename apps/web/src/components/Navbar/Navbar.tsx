@@ -36,7 +36,7 @@ const links: MenuLink[] = [
     items: [
       {
         title: "Komiteer og grupper",
-        href: "/komiteer",
+        href: "/grupper",
         icon: "tabler:users",
         description: "Informasjon om de ulike komiteene og gruppene i Online",
       },

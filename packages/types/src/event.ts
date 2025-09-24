@@ -82,3 +82,16 @@ export const mapEventTypeToLabel = (eventType: EventType) => {
       return "Ukjent"
   }
 }
+
+export const mapEventStatusToLabel = (status: EventStatus) => {
+  switch (status) {
+    case "PUBLIC":
+      return "Publisert"
+    case "DRAFT":
+      return "Utkast"
+    case "DELETED":
+      return "Slettet"
+    default:
+      return "Ukjent"
+  }
+}
