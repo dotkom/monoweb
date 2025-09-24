@@ -55,8 +55,8 @@ export default function AuditLogDetailsPage() {
             <div style={{ whiteSpace: "pre-wrap" }}>
               {change.old ? (
                 <StringDiff // This component shows the string-difference
-                  oldValue={change.old}
-                  newValue={change.new}
+                  oldValue={change.old ?? ""}
+                  newValue={change.new ?? ""}
                   method={DiffMethod.Lines}
                   styles={diffStyles}
                   key={isDark ? "dark" : "light"}
