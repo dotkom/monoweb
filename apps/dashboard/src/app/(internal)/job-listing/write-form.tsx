@@ -7,7 +7,7 @@ import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { CompanySchema, JobListingLocationSchema, JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { addWeeks, addYears, roundToNearestHours } from "date-fns"
+import { addWeeks, roundToNearestHours } from "date-fns"
 import type { z } from "zod"
 import { useCompanyAllQuery } from "../company/queries"
 import { useJobListingAllLocationsQuery } from "./queries/use-job-listing-locations-all-query"
@@ -15,8 +15,8 @@ import { useJobListingAllLocationsQuery } from "./queries/use-job-listing-locati
 const nextHour = roundToNearestHours(getCurrentUTC(), { roundingMethod: "ceil" })
 
 const JOBLISTING_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
-  start: addYears(nextHour, 1),
-  end: addYears(nextHour, 2),
+  start: nextHour,
+  end: nextHour,
   deadline: addWeeks(nextHour, 1),
 }
 
