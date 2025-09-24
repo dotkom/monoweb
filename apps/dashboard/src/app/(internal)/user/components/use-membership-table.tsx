@@ -2,10 +2,11 @@
 
 import { type Membership, type UserId, getMembershipTypeName, getSpecializationName } from "@dotkomonline/types"
 import { Button } from "@mantine/core"
-import { IconEdit } from "@tabler/icons-react"
+import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import { useMemo } from "react"
+import { useConfirmDeleteMembershipModal } from "./confirm-delete-membership-modal"
 import { useEditMembershipModal } from "./edit-membership-modal"
 
 interface Props {
@@ -15,7 +16,8 @@ interface Props {
 
 export const useMembershipTable = ({ data, userId }: Props) => {
   const columnHelper = createColumnHelper<Membership>()
-  const open = useEditMembershipModal()
+  const openEditMembershipModal = useEditMembershipModal()
+  const openDeleteMembershipModal = useConfirmDeleteMembershipModal()
 
   const columns = useMemo(
     () => [
@@ -43,13 +45,31 @@ export const useMembershipTable = ({ data, userId }: Props) => {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
-          <Button variant="outline" leftSection={<IconEdit />} onClick={() => open({ membership: info.getValue() })}>
+          <Button
+            variant="outline"
+            leftSection={<IconEdit />}
+            onClick={() => openEditMembershipModal({ membership: info.getValue() })}
+          >
             Oppdater
           </Button>
         ),
       }),
+      columnHelper.accessor((role) => role, {
+        id: "delete",
+        header: () => "Slett medlemskap",
+        cell: (info) => (
+          <Button
+            variant="filled"
+            color="red"
+            leftSection={<IconTrash />}
+            onClick={() => openDeleteMembershipModal({ membership: info.getValue() })()}
+          >
+            Slett
+          </Button>
+        ),
+      }),
     ],
-    [columnHelper, open]
+    [columnHelper, openEditMembershipModal, openDeleteMembershipModal]
   )
 
   return useReactTable({
