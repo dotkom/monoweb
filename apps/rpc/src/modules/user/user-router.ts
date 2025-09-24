@@ -85,7 +85,7 @@ export const userRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       ctx.authorize.requireAffiliation("dotkom", "hs")
-      ctx.executeAuditedTransaction(async (handle) => {
+      return ctx.executeAuditedTransaction(async (handle) => {
         return ctx.userService.deleteMembership(handle, input.membershipId)
       })
     }),
