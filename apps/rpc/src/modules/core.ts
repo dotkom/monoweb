@@ -130,10 +130,15 @@ export function createThirdPartyClients(configuration: Configuration) {
  * For ease of mocking and testing, the function does not construct third-party clients like the AWS S3 client or the
  * Auth0 Management client. Instead it takes a `clients` parameter that holds the clients. This allows us to mock them
  * in tests without having to mock the entire service layer.
+ *
+ * NOTE: The `signal` variable can optionally be passed by the orchestrator of the service layer has been terminated.
+ * Example cases where this is useful is listening for a SIGTERM or SIGKILL that can then be used to gracefully shut
+ * down the TaskExecutor or EmailService SQS Queue listener.
  */
 export async function createServiceLayer(
   clients: ReturnType<typeof createThirdPartyClients>,
-  configuration: Configuration
+  configuration: Configuration,
+  signal: AbortSignal | null = null
 ) {
   async function executeAuditedTransaction<T>(fn: (tx: DBHandle) => Promise<T>, userId: UserId | null): Promise<T> {
     return clients.prisma.$transaction(async (tx) => {
@@ -216,7 +221,8 @@ export async function createServiceLayer(
     recurringTaskService,
     taskDiscoveryService,
     taskSchedulingService,
-    attendanceService
+    attendanceService,
+    signal
   )
 
   const workspaceService = configuration.WORKSPACE_ENABLED

@@ -41,11 +41,14 @@ export function getLocalTaskExecutor(
   recurringTaskService: RecurringTaskService,
   taskDiscoveryService: TaskDiscoveryService,
   taskSchedulingService: TaskSchedulingService,
-  attendanceService: AttendanceService
+  attendanceService: AttendanceService,
+  signal: AbortSignal | null
 ): TaskExecutor {
   const logger = getLogger("task-executor")
   const tracer = trace.getTracer("@dotkomonline/rpc/task-executor")
   let intervalId: ReturnType<typeof setInterval> | null = null
+
+  let signalHandler: (() => void) | null
   return {
     async start(client) {
       if (intervalId !== null) {
@@ -79,6 +82,9 @@ export function getLocalTaskExecutor(
           void this.run(client, task)
         }
       }, INTERVAL)
+
+      signalHandler = () => this.stop()
+      signal?.addEventListener("abort", signalHandler)
     },
     stop() {
       if (intervalId === null) {
@@ -88,6 +94,11 @@ export function getLocalTaskExecutor(
       logger.info("Stopping TaskExecutor")
       clearInterval(intervalId)
       intervalId = null
+
+      if (signalHandler !== null) {
+        signal?.removeEventListener("abort", signalHandler)
+        signalHandler = null
+      }
     },
     async run(client, task) {
       let isError = false
