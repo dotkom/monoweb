@@ -6,9 +6,9 @@ import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import { useMemo } from "react"
+import { useIsAdminQuery } from "../queries"
 import { useConfirmDeleteMembershipModal } from "./confirm-delete-membership-modal"
 import { useEditMembershipModal } from "./edit-membership-modal"
-import { useIsAdminQuery } from "../queries"
 
 interface Props {
   data: Membership[]
@@ -56,20 +56,24 @@ export const useMembershipTable = ({ data, userId }: Props) => {
           </Button>
         ),
       }),
-      ...(isAdmin ? [columnHelper.accessor((role) => role, {
-        id: "delete",
-        header: () => "Slett medlemskap",
-        cell: (info) => (
-          <Button
-            variant="filled"
-            color="red"
-            leftSection={<IconTrash />}
-            onClick={() => openDeleteMembershipModal({ membership: info.getValue() })()}
-          >
-            Slett
-          </Button>
-        ),
-      })] : []),
+      ...(isAdmin
+        ? [
+            columnHelper.accessor((role) => role, {
+              id: "delete",
+              header: () => "Slett medlemskap",
+              cell: (info) => (
+                <Button
+                  variant="filled"
+                  color="red"
+                  leftSection={<IconTrash />}
+                  onClick={() => openDeleteMembershipModal({ membership: info.getValue() })()}
+                >
+                  Slett
+                </Button>
+              ),
+            }),
+          ]
+        : []),
     ],
     [columnHelper, openEditMembershipModal, openDeleteMembershipModal, isAdmin]
   )
