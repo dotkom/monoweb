@@ -56,3 +56,9 @@ export const useMarkAllQuery = (filter: MarkFilterQuery) => {
   const { data: marks } = useQuery({ ...trpc.mark.findMany.queryOptions(filter), initialData: [] })
   return marks
 }
+
+export const useIsAdminQuery = () => {
+  const trpc = useTRPC()
+  const { data: isAdmin, isLoading } = useQuery(trpc.user.isAdmin.queryOptions())
+  return { isAdmin, isLoading }
+}
