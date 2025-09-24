@@ -8,6 +8,7 @@ import { formatDate } from "date-fns"
 import { useMemo } from "react"
 import { useConfirmDeleteMembershipModal } from "./confirm-delete-membership-modal"
 import { useEditMembershipModal } from "./edit-membership-modal"
+import { useIsAdminQuery } from "../queries"
 
 interface Props {
   data: Membership[]
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export const useMembershipTable = ({ data, userId }: Props) => {
+  const { isAdmin } = useIsAdminQuery()
   const columnHelper = createColumnHelper<Membership>()
   const openEditMembershipModal = useEditMembershipModal()
   const openDeleteMembershipModal = useConfirmDeleteMembershipModal()
@@ -54,7 +56,7 @@ export const useMembershipTable = ({ data, userId }: Props) => {
           </Button>
         ),
       }),
-      columnHelper.accessor((role) => role, {
+      ...(isAdmin ? [columnHelper.accessor((role) => role, {
         id: "delete",
         header: () => "Slett medlemskap",
         cell: (info) => (
@@ -67,9 +69,9 @@ export const useMembershipTable = ({ data, userId }: Props) => {
             Slett
           </Button>
         ),
-      }),
+      })] : []),
     ],
-    [columnHelper, openEditMembershipModal, openDeleteMembershipModal]
+    [columnHelper, openEditMembershipModal, openDeleteMembershipModal, isAdmin]
   )
 
   return useReactTable({
