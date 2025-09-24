@@ -39,28 +39,19 @@ const CommitteePage = async () => {
       <Tabs defaultValue="committee" className="w-full">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <TabsList className="dark:border-none w-full sm:w-fit">
-            <TabsTrigger
-              value="committee"
-              className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2"
-            >
+            <TabsTrigger value="committee" className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2">
               Komiteer
               <span className="hidden md:block text-base text-gray-500 dark:text-stone-400 text-sm">
                 ({committees.length})
               </span>
             </TabsTrigger>
-            <TabsTrigger
-              value="nodecommittee"
-              className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2"
-            >
+            <TabsTrigger value="nodecommittee" className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2">
               Nodekomiteer
               <span className="hidden md:block text-base text-gray-500 dark:text-stone-400 text-sm">
                 ({nodeCommittees.length})
               </span>
             </TabsTrigger>
-            <TabsTrigger
-              value="associated"
-              className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2"
-            >
+            <TabsTrigger value="associated" className="w-full px-3 sm:w-fit min-h-0 min-w-0 flex items-center gap-2">
               Assosierte grupper
               <span className="hidden md:block text-base text-gray-500 dark:text-stone-400 text-sm">
                 ({associatedGroups.length})
