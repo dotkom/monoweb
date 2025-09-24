@@ -21,13 +21,22 @@ const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
 const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
 
+const controller = new AbortController()
 const dependencies = createThirdPartyClients(configuration)
-const serviceLayer = await createServiceLayer(dependencies, configuration)
+const serviceLayer = await createServiceLayer(dependencies, configuration, controller.signal)
 
 // This spins of all potentially remaining jobs in the queue that this system was not aware of. For this reason, it does
 // not need to be awaited. While the task execution itself is not blocked on, await here adds unnecessary latency to the
 // server startup.
 void serviceLayer.startTaskExecutor()
+
+process.on("SIGTERM", () => controller.abort())
+process.on("beforeExit", () => controller.abort())
+process.on("exit", () => controller.abort())
+
+controller.signal.addEventListener("abort", () => {
+  logger.info("Abort signal received in process... Terminating dependent services...")
+})
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
