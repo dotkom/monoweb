@@ -1,7 +1,7 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { server } from "@/utils/trpc/server"
 import type { Group } from "@dotkomonline/types"
-import { Text, Title } from "@dotkomonline/ui"
+import { RichText, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
@@ -125,7 +125,7 @@ const Card: FC<CardProps> = ({ imageUrl, title, description }: CardProps) => {
       </div>
       <div className="flex-1">
         <Title>{title}</Title>
-        <Text className="line-clamp-4">{description}</Text>
+        <RichText maxLines={5} className="line-clamp-4" content={description} hideToggleButton={true} />
       </div>
     </li>
   )

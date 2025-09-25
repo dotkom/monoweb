@@ -88,10 +88,12 @@ export const useMarkWriteForm = ({
       }),
       groupIds: createMultipleSelectInput({
         label: "Ansvarlige grupper",
-        withAsterisk: true,
+        required: true,
+        searchable: true,
+        placeholder: "Velg grupper",
         data: (groups ?? []).map((group) => ({
           value: group.slug,
-          label: group.name ?? "",
+          label: group.abbreviation,
         })),
       }),
       duration: createNumberInput({

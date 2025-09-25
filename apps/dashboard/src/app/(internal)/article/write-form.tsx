@@ -64,6 +64,7 @@ export const useArticleWriteForm = ({
       }),
       tags: createTagInput({
         label: "Tags",
+        placeholder: "Velg eller skriv inn en tag",
         data: tags.map((tag) => tag.name),
         required: true,
       }),
