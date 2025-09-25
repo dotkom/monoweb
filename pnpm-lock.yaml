@@ -515,7 +515,7 @@ importers:
         specifier: ^3.879.0
         version: 3.883.0
       '@aws-sdk/client-sqs':
-        specifier: ^3.844.0
+        specifier: ^3.883.0
         version: 3.883.0
       '@aws-sdk/client-sts':
         specifier: ^3.821.0

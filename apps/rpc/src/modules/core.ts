@@ -1,6 +1,7 @@
 import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
 import { SESClient } from "@aws-sdk/client-ses"
+import { SQSClient } from "@aws-sdk/client-sqs"
 import { type DBHandle, createPrisma } from "@dotkomonline/db"
 import type { UserId } from "@dotkomonline/types"
 import { ManagementClient } from "auth0"
@@ -108,6 +109,7 @@ export function getDirectory(): admin_directory_v1.Admin {
 export function createThirdPartyClients(configuration: Configuration) {
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
   const sesClient = new SESClient({ region: configuration.AWS_REGION })
+  const sqsClient = new SQSClient({ region: configuration.AWS_REGION })
   const auth0Client = new ManagementClient({
     domain: configuration.AUTH0_MGMT_TENANT,
     clientId: configuration.AUTH0_CLIENT_ID,
@@ -118,7 +120,7 @@ export function createThirdPartyClients(configuration: Configuration) {
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
   const workspaceDirectory = configuration.WORKSPACE_ENABLED ? getDirectory() : null
-  return { s3Client, sesClient, auth0Client, stripe, prisma, workspaceDirectory }
+  return { s3Client, sesClient, sqsClient, auth0Client, stripe, prisma, workspaceDirectory }
 }
 
 /**
@@ -175,7 +177,7 @@ export async function createServiceLayer(
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
 
-  const emailService = getEmailService(clients.sesClient)
+  const emailService = getEmailService(clients.sesClient, clients.sqsClient, configuration)
   const userService = getUserService(
     userRepository,
     privacyPermissionsRepository,
