@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc-client"
-import type { AttendanceId, MarkFilterQuery, UserFilterQuery, UserId } from "@dotkomonline/types"
+import type { AttendanceId, UserFilterQuery, UserId } from "@dotkomonline/types"
 
 import type { Pageable } from "@dotkomonline/rpc"
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
@@ -49,12 +49,6 @@ export const useGroupAllByMemberQuery = (userId: UserId) => {
   })
 
   return groups
-}
-
-export const useMarkAllQuery = (filter: MarkFilterQuery) => {
-  const trpc = useTRPC()
-  const { data: marks } = useQuery({ ...trpc.mark.findMany.queryOptions(filter), initialData: [] })
-  return marks
 }
 
 export const useIsAdminQuery = () => {

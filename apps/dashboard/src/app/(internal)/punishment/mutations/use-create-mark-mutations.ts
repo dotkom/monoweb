@@ -1,33 +1,29 @@
-import { useQueryNotification } from "@/lib/notifications"
+import { useQueryGenericMutationNotification } from "@/lib/notifications"
 import { useTRPC } from "@/lib/trpc-client"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 
 export const useCreateMarkMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const notification = useQueryNotification()
+  const router = useRouter()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "create",
+  })
 
   return useMutation(
     trpc.mark.create.mutationOptions({
       onMutate: () => {
-        notification.loading({
-          title: "Oppretter...",
-          message: "Vellykket opprettelse. Du blir sendt til ressursen.",
-        })
+        loading()
       },
       onSuccess: async (data) => {
-        notification.complete({
-          title: "Opprettet",
-          message: "Ressursen har blitt opprettet.",
-        })
+        complete()
 
-        await queryClient.invalidateQueries(trpc.mark.all.queryOptions())
+        await queryClient.invalidateQueries({ queryKey: trpc.mark.findMany.queryKey() })
+        router.push(`/punishment/${data.id}`)
       },
       onError: (err) => {
-        notification.fail({
-          title: "Feil oppsto",
-          message: `En feil oppsto under opprettelsen: ${err.toString()}.`,
-        })
+        fail(err)
       },
     })
   )
