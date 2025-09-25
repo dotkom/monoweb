@@ -53,6 +53,7 @@ export const useJobListingWriteForm = ({
       }),
       companyId: createSelectInput({
         label: "Selskap",
+        placeholder: "Velg selskap",
         data: companies.map((company) => ({ value: company.id, label: company.name })),
         searchable: true,
         withAsterisk: true,
@@ -80,6 +81,7 @@ export const useJobListingWriteForm = ({
       }),
       employment: createSelectInput({
         label: "Type",
+        placeholder: "Velg type",
         data: Object.values(JobListingSchema.shape.employment.Values).map((employment) => ({
           value: employment,
           label: employment,
@@ -100,6 +102,7 @@ export const useJobListingWriteForm = ({
       }),
       locationIds: createTagInput({
         label: "Sted",
+        placeholder: "Velg eller skriv inn et sted",
         data: locations.map((location) => location.name),
         name: "locations",
         withAsterisk: true,

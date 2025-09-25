@@ -83,6 +83,7 @@ export const useGroupWriteForm = ({
       }),
       email: createTextInput({
         label: "Kontakt-e-post",
+        placeholder: "dotkom@online.ntnu.no",
         type: "email",
       }),
       contactUrl: createTextInput({
