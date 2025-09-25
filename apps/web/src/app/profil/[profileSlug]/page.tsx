@@ -24,6 +24,7 @@ import {
   Icon,
   RadialProgress,
   ReadMore,
+  RichText,
   Text,
   Title,
   Tooltip,
@@ -458,7 +459,7 @@ export default function ProfilePage() {
                 </Avatar>
                 <div className="flex flex-col gap-0.5">
                   <Text className="text-lg">{group.name}</Text>
-                  <Text className="text-sm text-wrap overflow-hidden line-clamp-2">{group.description}</Text>
+                  <RichText maxLines={3} className="line-clamp-2" hideToggleButton={true} content={group.description} />
                 </div>
               </Link>
             ))}
