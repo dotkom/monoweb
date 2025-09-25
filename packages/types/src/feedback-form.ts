@@ -85,9 +85,9 @@ export type FeedbackFormWrite = z.infer<typeof FeedbackFormWriteSchema>
 export const getFeedbackQuestionTypeName = (type: FeedbackQuestionType) => {
   switch (type) {
     case "TEXT":
-      return "Tekst"
+      return "Tekstboks"
     case "LONGTEXT":
-      return "Lang tekst"
+      return "Tekstfelt"
     case "CHECKBOX":
       return "Avkrysningsboks"
     case "MULTISELECT":
