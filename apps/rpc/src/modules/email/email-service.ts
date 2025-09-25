@@ -7,6 +7,14 @@ import z from "zod"
 import type { Configuration } from "../../configuration"
 import { IllegalStateError, InvalidArgumentError } from "../../error"
 import { type EmailTemplate, type EmailType, type InferEmailData, emails } from "./email-template"
+import type { SESClient } from "@aws-sdk/client-ses"
+import { type SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
+import { getLogger } from "@dotkomonline/logger"
+import { SpanStatusCode, trace } from "@opentelemetry/api"
+import z from "zod"
+import type { Configuration } from "../../configuration"
+import { InvalidArgumentError } from "../../error"
+import type { EmailTemplate, EmailType, InferEmailData } from "./email-template"
 
 const EmailMessageSchema = z.object({
   source: z.string().email(),

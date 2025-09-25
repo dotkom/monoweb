@@ -62,3 +62,23 @@ export const useUpdateMembershipMutation = () => {
     })
   )
 }
+
+export const useDeleteMembershipMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "delete",
+  })
+
+  return useMutation(
+    trpc.user.deleteMembership.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (data) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.user.get.queryOptions(data.id))
+      },
+    })
+  )
+}
