@@ -1,10 +1,4 @@
-import {
-  AttendancePoolWriteSchema,
-  AttendanceSchema,
-  AttendeeSchema,
-  FeedbackFormSchema,
-  type TaskType,
-} from "@dotkomonline/types"
+import { AttendancePoolSchema, AttendanceSchema, AttendeeSchema, FeedbackFormSchema, type TaskType } from "@dotkomonline/types"
 import { z } from "zod"
 import { NotFoundError } from "../../error"
 
@@ -50,11 +44,7 @@ export const tasks = {
     getSchema: () =>
       z.object({
         attendanceId: AttendanceSchema.shape.id,
-        // NOTE: The user of this value should turn it into a TZDate.
-        previousPoolMergeTime: z.coerce.date(),
-        data: AttendancePoolWriteSchema.pick({
-          title: true,
-        }),
+        attendancePoolId: AttendancePoolSchema.shape.id,
       }),
   }),
   VERIFY_PAYMENT: createTaskDefinition({

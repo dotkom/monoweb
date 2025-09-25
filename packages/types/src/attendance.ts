@@ -97,6 +97,7 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   registerEnd: true,
   deregisterDeadline: true,
   selections: true,
+  lastCompletedPoolsMergeAt: true,
 })
 
 export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {

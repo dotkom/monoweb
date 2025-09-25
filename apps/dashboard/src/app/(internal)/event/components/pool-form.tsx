@@ -2,13 +2,13 @@ import { createLabelledCheckboxGroupInput } from "@/components/forms/CheckboxGro
 import { createNumberInput } from "@/components/forms/NumberInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { notifyFail } from "@/lib/notifications"
+import { createPoolName } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ActionIcon, Box, Button, Flex, Stack } from "@mantine/core"
 import { IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { createDefaultPoolName } from "./utils"
 
 const yearEntries = [
   { label: "1. klasse", key: 1 },
@@ -55,13 +55,13 @@ export const usePoolForm = (props: PoolFormProps) => {
     mode: "onBlur",
     defaultValues: {
       ...props.defaultValues,
-      title: props.defaultValues.title || createDefaultPoolName(props.defaultValues.yearCriteria),
+      title: props.defaultValues.title || createPoolName(props.defaultValues.yearCriteria),
     },
   })
 
   const yearCriteria = form.watch("yearCriteria")
 
-  const generatedTitle = createDefaultPoolName(yearCriteria ?? [])
+  const generatedTitle = createPoolName(yearCriteria ?? [])
   const defaultTitle = form.formState.defaultValues?.title
 
   const titleIsDirty =

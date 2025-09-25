@@ -35,7 +35,7 @@ export interface TaskSchedulingService {
   cancel(handle: DBHandle, id: TaskId): Promise<void>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
-  findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
+  findMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
@@ -70,8 +70,8 @@ export function getLocalTaskSchedulingService(
     async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
       return taskRepository.findReserveAttendeeTask(handle, attendeeId, attendanceId)
     },
-    async findMergeEventPoolsTask(handle, eventId) {
-      return taskRepository.findMergeEventPoolsTask(handle, eventId)
+    async findMergeEventPoolsTask(handle, attendanceId) {
+      return taskRepository.findMergeEventPoolsTask(handle, attendanceId)
     },
     async findVerifyPaymentTask(handle, attendeeId) {
       return await taskRepository.findVerifyPaymentTask(handle, attendeeId)

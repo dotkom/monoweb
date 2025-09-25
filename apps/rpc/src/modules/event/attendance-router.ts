@@ -38,7 +38,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeAuditedTransaction(async (handle) => {
+      return ctx.executeTransaction(async (handle) => {
         const attendance = await ctx.attendanceService.getAttendanceByPoolId(handle, input.id)
         const pool = attendance.pools.find((pool) => pool.id === input.id)
         if (pool === undefined) {
