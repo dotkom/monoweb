@@ -1,6 +1,6 @@
 import { GroupSchema, MarkFilterQuerySchema, MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
 import z from "zod"
-import { PaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 import { personalMarkRouter } from "./personal-mark-router"
 
@@ -28,15 +28,23 @@ export const markRouter = t.router({
         ctx.markService.updateMark(handle, input.changes.id, input.changes, input.groupIds)
       )
     ),
-  all: procedure
-    .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.markService.getMarks(handle, input))),
   get: procedure
     .input(MarkSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.markService.getMark(handle, input))),
   findMany: procedure
-    .input(MarkFilterQuerySchema)
-    .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.markService.findMany(handle, input))),
+    .input(BasePaginateInputSchema.extend({ filter: MarkFilterQuerySchema.optional() }))
+    .query(async ({ input, ctx }) => {
+      const { filter, ...page } = input
+
+      const marks = await ctx.executeTransaction(async (handle) =>
+        ctx.markService.findMany(handle, { ...filter }, page)
+      )
+
+      return {
+        items: marks,
+        nextCursor: marks.at(-1)?.id,
+      }
+    }),
   delete: staffProcedure
     .input(MarkSchema.shape.id)
     .mutation(async ({ input, ctx }) =>

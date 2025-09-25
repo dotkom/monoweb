@@ -13,8 +13,7 @@ import { type Pageable, pageQuery } from "../../query"
 
 export interface MarkRepository {
   getById(handle: DBHandle, markId: MarkId): Promise<Mark | null>
-  findMany(handle: DBHandle, query: MarkFilterQuery): Promise<Mark[]>
-  getAll(handle: DBHandle, page: Pageable): Promise<Mark[]>
+  findMany(handle: DBHandle, query: MarkFilterQuery, page: Pageable): Promise<Mark[]>
   create(handle: DBHandle, data: MarkWrite, groupIds: GroupId[]): Promise<Mark>
   update(handle: DBHandle, markId: MarkId, data: MarkWrite, groupIds: GroupId[]): Promise<Mark>
   delete(handle: DBHandle, markId: MarkId): Promise<Mark>
@@ -29,8 +28,10 @@ export function getMarkRepository(): MarkRepository {
       })
       return mark ? mapMark(mark, mark.groups) : null
     },
-    async findMany(handle, query) {
+    async findMany(handle, query, page) {
       const marks = await handle.mark.findMany({
+        ...pageQuery(page),
+        orderBy: { createdAt: "desc" },
         where: {
           AND: [
             {
@@ -56,10 +57,6 @@ export function getMarkRepository(): MarkRepository {
         include: QUERY_WITH_GROUPS,
       })
 
-      return marks.map((mark) => mapMark(mark, mark.groups))
-    },
-    async getAll(handle, page) {
-      const marks = await handle.mark.findMany({ ...pageQuery(page), include: QUERY_WITH_GROUPS })
       return marks.map((mark) => mapMark(mark, mark.groups))
     },
     async create(handle, data, groupIds) {

@@ -11,8 +11,7 @@ export interface MarkService {
    * @throws {NotFoundError} if the mark does not exist
    */
   getMark(handle: DBHandle, markId: MarkId): Promise<Mark>
-  findMany(handle: DBHandle, query: MarkFilterQuery): Promise<Mark[]>
-  getMarks(handle: DBHandle, page: Pageable): Promise<Mark[]>
+  findMany(handle: DBHandle, query: MarkFilterQuery, page?: Pageable): Promise<Mark[]>
   createMark(handle: DBHandle, data: MarkWrite, groupIds: GroupId[]): Promise<Mark>
   /**
    * Update a mark by its id
@@ -37,11 +36,8 @@ export function getMarkService(markRepository: MarkRepository): MarkService {
       }
       return mark
     },
-    async findMany(handle, query) {
-      return await markRepository.findMany(handle, query)
-    },
-    async getMarks(handle, page) {
-      return await markRepository.getAll(handle, page)
+    async findMany(handle, query, page) {
+      return await markRepository.findMany(handle, query, page ?? { take: 20 })
     },
     async createMark(handle, data, groupIds) {
       return await markRepository.create(handle, data, groupIds)
