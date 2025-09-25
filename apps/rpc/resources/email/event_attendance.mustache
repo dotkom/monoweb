@@ -9,22 +9,24 @@
       <tbody>
         <tr style="width: 100%">
           <td>
-            <h2>Tilbakemelding på {{ eventName }}</h2>
-            <p>Hei, vi ønsker tilbakemelding på <a href="{{ eventLink }}">{{ eventName }}</a> som du deltok på {{ eventStart }}.</p>
+            <h2>Du er påmeldt {{ eventName }}</h2>
+            <p>Du har meldt deg på arrangementet {{ eventName }} hos Linjeforeningen Online.</p>
+            <br />
+            <a href="{{ eventLink }}">Les mer om arrangementet her</a>
           </td>
         </tr>
 
         <tr style="width: 100%">
           <td>
-            <p>Du kan svare her: <a href="{{ feedbackLink }}">{{ feedbackLink }}</a>.</p>
-            <p>Siste frist til å svare på skjemaet er {{ feedbackDeadline }}.</p>
-            <p>Eventuelle spørsmål sendes til <a href="mailto:{{ organizerEmail }}">{{ organizerEmail }}</a>.</p>
+            <h3>Avmelding</h3>
+            <p>Du har frem til {{ deregistrationDeadline }} å melde deg av arrangementet hvis du ombestemmer deg.</p>
+            <p>Mangel på oppmøte uten avmelding av arrangementet resulterer i prikk og/eller suspensjon. Du kan lese mer om prikkereglene på <a href="https://wiki.online.ntnu.no/info/innsikt-og-interface/prikkeregler/">Online sine nettsider</a></p>
           </td>
         </tr>
 
         <tr style="width: 100%">
           <h3 style="text-align: center">Linjeforeningen Online</h3>
-          <p style="text-align: center">Du mottar denne e-posten fordi du deltok på arrangementet {{ eventName }}</p>
+          <p style="text-align: center">Du mottar denne e-posten fordi du har meldt deg på arrangementet {{ eventName }}</p>
           <p style="text-align: center">Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim</p>
         </tr>
       </tbody>
