@@ -5,7 +5,13 @@ import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { CompanySchema, JobListingLocationSchema, JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
+import {
+  CompanySchema,
+  JobListingLocationSchema,
+  JobListingSchema,
+  JobListingWriteSchema,
+  getJobListingEmploymentName,
+} from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { addWeeks, roundToNearestHours } from "date-fns"
 import type { z } from "zod"
@@ -84,7 +90,7 @@ export const useJobListingWriteForm = ({
         placeholder: "Velg type",
         data: Object.values(JobListingSchema.shape.employment.Values).map((employment) => ({
           value: employment,
-          label: employment,
+          label: getJobListingEmploymentName(employment),
         })),
         withAsterisk: true,
       }),

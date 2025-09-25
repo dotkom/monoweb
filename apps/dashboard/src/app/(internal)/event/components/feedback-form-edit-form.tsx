@@ -6,6 +6,7 @@ import {
   FeedbackQuestionSchema,
   type FeedbackQuestionWrite,
   FeedbackQuestionWriteSchema,
+  getFeedbackQuestionTypeName,
 } from "@dotkomonline/types"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -48,7 +49,7 @@ import { useEventFeedbackPublicResultsTokenGetQuery, useFeedbackAnswersGetQuery 
 
 const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map((type) => ({
   value: type,
-  label: type,
+  label: getFeedbackQuestionTypeName(type),
 }))
 
 const FormValuesSchema = z
