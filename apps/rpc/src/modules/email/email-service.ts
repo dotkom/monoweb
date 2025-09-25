@@ -1,10 +1,11 @@
 import { SendEmailCommand } from "@aws-sdk/client-ses"
 import type { SESClient } from "@aws-sdk/client-ses"
-import { ReceiveMessageCommand } from "@aws-sdk/client-sqs"
+import { DeleteMessageCommand, type Message, ReceiveMessageCommand } from "@aws-sdk/client-sqs"
 import { type SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
 import { getLogger } from "@dotkomonline/logger"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import mustache from "mustache"
+import invariant from "tiny-invariant"
 import z from "zod"
 import type { Configuration } from "../../configuration"
 import { IllegalStateError } from "../../error"
@@ -50,6 +51,84 @@ export function getEmailService(
 ): EmailService {
   const logger = getLogger("email-service")
   const tracer = trace.getTracer("@dotkomonline/monoweb-rpc/email-service")
+  async function processSqsMessage(message: Message): Promise<void> {
+    return await tracer.startActiveSpan("@dotkomonline/rpc/email-submission", async (span) => {
+      try {
+        {
+          const queueUrl = configuration.AWS_SQS_QUEUE_EMAIL_DELIVERY
+          invariant(queueUrl !== null, "Cannot process SQS message if queue is not configured")
+
+          if (message.Body === undefined) {
+            throw new IllegalStateError(
+              `Received Message(ID=${message.MessageId ?? "<missing id>"}) with empty SQS MessageBody`
+            )
+          }
+
+          const payload = EmailMessageSchema.safeParse(JSON.parse(message.Body))
+          if (!payload.success) {
+            logger.error(
+              "Failed to parse email payload for Message(ID=%s): %o with data payload %o",
+              message.MessageId ?? "<missing id>",
+              payload.error.message,
+              message.Body
+            )
+            throw new IllegalStateError(
+              `Failed to parse email payload for Message(ID=${message.MessageId ?? "<missing id>"})`
+            )
+          }
+
+          const emailTemplate = emails[payload.data.type]
+          if (emailTemplate === undefined) {
+            throw new IllegalStateError(`Failed to find email template for Type=${payload.data.type}`)
+          }
+
+          const template = await emailTemplate.getTemplate()
+
+          const html = mustache.render(template, payload.data.data)
+          const sendEmailCommand = new SendEmailCommand({
+            Source: payload.data.source,
+            ReplyToAddresses: payload.data.replyTo,
+            Destination: {
+              ToAddresses: payload.data.to,
+              CcAddresses: payload.data.cc,
+              BccAddresses: payload.data.bcc,
+            },
+            Message: {
+              Body: {
+                Html: {
+                  Charset: "UTF-8",
+                  Data: html,
+                },
+              },
+              Subject: {
+                Charset: "UTF-8",
+                Data: payload.data.subject,
+              },
+            },
+          })
+          logger.info(
+            "Sending Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s)",
+            payload.data.source,
+            payload.data.replyTo,
+            payload.data.to,
+            payload.data.cc,
+            payload.data.bcc,
+            payload.data.subject,
+            payload.data.type
+          )
+          await sesClient.send(sendEmailCommand)
+          const deleteMessageCommand = new DeleteMessageCommand({
+            QueueUrl: queueUrl,
+            ReceiptHandle: message.ReceiptHandle,
+          })
+          await sqsClient.send(deleteMessageCommand)
+        }
+      } finally {
+        span.end()
+      }
+    })
+  }
+
   return {
     async send(source, replyTo, to, cc, bcc, subject, definition, data) {
       return await tracer.startActiveSpan("EmailService#send", async (span) => {
@@ -150,96 +229,16 @@ export function getEmailService(
 
             logger.info("Discovered %s emails to deliver from SQS Queue(Url=%s)", messages.length, queueUrl)
 
-            const commands: SendEmailCommand[] = []
-            const errors: Error[] = []
-            for (const message of messages) {
-              if (message.Body === undefined) {
-                errors.push(
-                  new IllegalStateError(
-                    `Received Message(ID=${message.MessageId ?? "<missing id>"}) with empty SQS MessageBody`
-                  )
-                )
-                continue
-              }
-              const payload = EmailMessageSchema.safeParse(JSON.parse(message.Body))
-              if (!payload.success) {
-                logger.error(
-                  "Failed to parse email payload for Message(ID=%s): %o with data payload %o",
-                  message.MessageId ?? "<missing id>",
-                  payload.error.message,
-                  message.Body
-                )
-                errors.push(
-                  new IllegalStateError(
-                    `Failed to parse email payload for Message(ID=${message.MessageId ?? "<missing id>"})`
-                  )
-                )
-                continue
-              }
-
-              const emailTemplate = emails[payload.data.type]
-              if (emailTemplate === undefined) {
-                errors.push(new IllegalStateError(`Failed to find email template for Type=${payload.data.type}`))
-                continue
-              }
-
-              const template = await emailTemplate.getTemplate()
-
-              const html = mustache.render(template, payload.data.data)
-              const command = new SendEmailCommand({
-                Source: payload.data.source,
-                ReplyToAddresses: payload.data.replyTo,
-                Destination: {
-                  ToAddresses: payload.data.to,
-                  CcAddresses: payload.data.cc,
-                  BccAddresses: payload.data.bcc,
-                },
-                Message: {
-                  Body: {
-                    Html: {
-                      Charset: "UTF-8",
-                      Data: html,
-                    },
-                  },
-                  Subject: {
-                    Charset: "UTF-8",
-                    Data: payload.data.subject,
-                  },
-                },
-              })
-              commands.push(command)
-              logger.info(
-                "Sending Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s)",
-                payload.data.source,
-                payload.data.replyTo,
-                payload.data.to,
-                payload.data.cc,
-                payload.data.bcc,
-                payload.data.subject,
-                payload.data.type
-              )
-            }
-
             try {
-              await Promise.all(commands.map((cmd) => sesClient.send(cmd, { abortSignal: signal })))
+              const promises = messages.map(processSqsMessage)
+              await Promise.all(promises)
             } catch (error) {
               if (error instanceof Error) {
-                errors.push(error)
-              } else {
-                logger.error("Failed to submit all commands to AWS SES: %o", error)
+                span.setStatus({ code: SpanStatusCode.ERROR })
+                span.recordException(error)
+                throw error
               }
             }
-
-            // Error reporting on the span should only fail if one of the emails could not be processed or delivered.
-            // We have to handle errors at the bottom here, as the `for` loop above should not early-return or exit the
-            // enclosing `work` function.
-            if (errors.length !== 0) {
-              const error = new AggregateError(errors)
-              span.setStatus({ code: SpanStatusCode.ERROR })
-              span.recordException(error)
-              throw error
-            }
-
             enqueueWork()
           } finally {
             span.end()
