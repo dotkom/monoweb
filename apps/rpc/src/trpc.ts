@@ -125,7 +125,7 @@ export const router = t.router
  */
 export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
   return await trace.getTracer("@dotkomonline/rpc/trpc-request").startActiveSpan(
-    `tRPC ${type} ${path}`,
+    `tRPC/${type}/${path}`,
     {
       root: true,
     },
