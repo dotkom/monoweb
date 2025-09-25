@@ -23,13 +23,15 @@ const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
 
 const controller = new AbortController()
 const dependencies = createThirdPartyClients(configuration)
-const serviceLayer = await createServiceLayer(dependencies, configuration, controller.signal)
+const serviceLayer = await createServiceLayer(dependencies, configuration)
 
-// This spins of all potentially remaining jobs in the queue that this system was not aware of. For this reason, it does
-// not need to be awaited. While the task execution itself is not blocked on, await here adds unnecessary latency to the
-// server startup.
-void serviceLayer.startTaskExecutor()
-void serviceLayer.emailService.startWorker(controller.signal)
+// Start background workers of different kinds. These are synchronous functions that queue internal timers, and thus
+// do not need to be awaited.
+//
+// NOTE: The provided AbortSignal is the controller that determines when the background workers stop listening for new
+// work to do.
+serviceLayer.taskExecutor.startWorker(dependencies.prisma, controller.signal)
+serviceLayer.emailService.startWorker(controller.signal)
 
 process.on("SIGTERM", () => controller.abort())
 process.on("beforeExit", () => controller.abort())

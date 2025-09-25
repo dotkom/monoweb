@@ -26,8 +26,7 @@ import type { TaskService } from "./task-service"
 const INTERVAL = secondsToMilliseconds(1)
 
 export interface TaskExecutor {
-  start(client: DBClient): Promise<void>
-  stop(): void
+  startWorker(client: DBClient, signal: AbortSignal): void
   /**
    * Execute a single task in its own isolated database transaction.
    *
@@ -41,17 +40,15 @@ export function getLocalTaskExecutor(
   recurringTaskService: RecurringTaskService,
   taskDiscoveryService: TaskDiscoveryService,
   taskSchedulingService: TaskSchedulingService,
-  attendanceService: AttendanceService,
-  signal: AbortSignal | null
+  attendanceService: AttendanceService
 ): TaskExecutor {
   const logger = getLogger("task-executor")
   const tracer = trace.getTracer("@dotkomonline/rpc/task-executor")
-  let intervalId: ReturnType<typeof setInterval> | null = null
+  let interval: ReturnType<typeof setInterval> | null = null
 
-  let signalHandler: (() => void) | null
   return {
-    async start(client) {
-      if (intervalId !== null) {
+    startWorker(client, signal) {
+      if (interval !== null) {
         logger.warn("TaskExecutor is already running, skipping initialization")
         return
       }
@@ -59,7 +56,7 @@ export function getLocalTaskExecutor(
       // CORRECTNESS: We do not run the tasks immediately, as we don't want to interrupt the application startup and
       // hog system resources at startup. This should allow us to run the tasks in a more controlled manner and keep the
       // system resources more stable.
-      intervalId = setInterval(async () => {
+      interval = setInterval(async () => {
         logger.debug("TaskExecutor discovering and scheduling recurring tasks")
 
         const recurringTasks = await taskDiscoveryService.discoverRecurringTasks()
@@ -83,22 +80,11 @@ export function getLocalTaskExecutor(
         }
       }, INTERVAL)
 
-      signalHandler = () => this.stop()
-      signal?.addEventListener("abort", signalHandler)
-    },
-    stop() {
-      if (intervalId === null) {
-        logger.warn("TaskExecutor is not running, skipping stop")
-        return
-      }
-      logger.info("Stopping TaskExecutor")
-      clearInterval(intervalId)
-      intervalId = null
-
-      if (signalHandler !== null) {
-        signal?.removeEventListener("abort", signalHandler)
-        signalHandler = null
-      }
+      signal.addEventListener("abort", () => {
+        if (interval !== null) {
+          clearInterval(interval)
+        }
+      })
     },
     async run(client, task) {
       let isError = false
