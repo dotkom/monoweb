@@ -52,7 +52,7 @@ export function getEmailService(
   const logger = getLogger("email-service")
   const tracer = trace.getTracer("@dotkomonline/monoweb-rpc/email-service")
   async function processSqsMessage(message: Message): Promise<void> {
-    return await tracer.startActiveSpan("@dotkomonline/rpc/email-submission", async (span) => {
+    return await tracer.startActiveSpan("EmailService/SendEmail", async (span) => {
       try {
         {
           const queueUrl = configuration.AWS_SQS_QUEUE_EMAIL_DELIVERY
@@ -131,7 +131,7 @@ export function getEmailService(
 
   return {
     async send(source, replyTo, to, cc, bcc, subject, definition, data) {
-      return await tracer.startActiveSpan("EmailService#send", async (span) => {
+      return await tracer.startActiveSpan("EmailService/QueueEmail", async (span) => {
         try {
           logger.info(
             "Posting Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s) to SQS Queue",
@@ -203,7 +203,7 @@ export function getEmailService(
 
       let interval: ReturnType<typeof setTimeout> | null = null
       async function work() {
-        await tracer.startActiveSpan("@dotkomonline/rpc/email-delivery", { root: true }, async (span) => {
+        await tracer.startActiveSpan("EmailService/DiscoverEmails", { root: true }, async (span) => {
           try {
             // Queue the next recursive call as long as the abort controller hasn't been moved.
             function enqueueWork() {

@@ -92,7 +92,7 @@ export function getLocalTaskExecutor(
       // as running regardless of whether the child transaction commits or rollbacks.
       logger.info("Running task", task.type, "with arguments", task.payload)
       await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
-      return await tracer.startActiveSpan(`TaskExecutor ${task.type}`, { root: true }, async (span) => {
+      return await tracer.startActiveSpan(`TaskExecutor/${task.type}`, { root: true }, async (span) => {
         span.setAttribute("rpc.service", "@dotkomonline/rpc")
         span.setAttribute("rpc.system", "trpc")
         try {

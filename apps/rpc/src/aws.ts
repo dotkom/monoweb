@@ -8,7 +8,7 @@ const logger = getLogger("rpc/aws")
 export async function identifyCallerIAMIdentity() {
   await trace
     .getTracer("@dotkomonline/rpc/aws-caller-identity")
-    .startActiveSpan("identifyCallerIAMIdentity", async (span) => {
+    .startActiveSpan("AWS/QueryCallingIdentity", async (span) => {
       try {
         const stsClient = new STSClient({ region: configuration.AWS_REGION })
         const identity = await stsClient.send(new GetCallerIdentityCommand({}))
