@@ -270,7 +270,10 @@ export function getEmailService(
 
       interval = setTimeout(work, configuration.email.awsSqsWorkerInterval)
 
-      logger.info("Starting TaskExecutor with interval of %d milliseconds", configuration.email.awsSqsWorkerInterval)
+      logger.info(
+        "Starting EmailService Worker with interval of %d milliseconds",
+        configuration.email.awsSqsWorkerInterval
+      )
 
       signal.addEventListener("abort", () => {
         if (interval !== null) {
