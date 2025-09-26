@@ -18,6 +18,7 @@ import {
   DEFAULT_MARK_DURATION,
   type Event,
   type GroupType,
+  type TaskId,
   type UserId,
   canUserAttendPool,
   findActiveMembership,
@@ -175,16 +176,11 @@ export interface AttendanceService {
    * NOTE: Be careful of the difference between this and {@link registerAttendee}.
    */
   registerAttendance(handle: DBHandle, attendee: AttendeeId, at: TZDate | null): Promise<void>
-  scheduleMergeEventPoolsTask(
-    handle: DBHandle,
-    attendanceId: AttendanceId,
-    attendancePoolId: AttendancePoolId,
-    mergeTime: TZDate
-  ): Promise<void>
+  scheduleMergeEventPoolsTask(handle: DBHandle, attendancePoolId: AttendancePoolId, mergeTime: TZDate): Promise<void>
   rescheduleMergeEventPoolsTask(
     handle: DBHandle,
-    attendanceId: AttendanceId,
     attendancePoolId: AttendancePoolId,
+    existingTaskId: TaskId | null,
     mergeTime: TZDate | null
   ): Promise<void>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
@@ -327,7 +323,7 @@ export function getAttendanceService(
 
       if (data.mergeDelayHours) {
         const mergeTime = new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
-        await this.scheduleMergeEventPoolsTask(handle, attendance.id, createdPool.id, mergeTime)
+        await this.scheduleMergeEventPoolsTask(handle, createdPool.id, mergeTime)
       }
 
       return createdPool
@@ -336,16 +332,17 @@ export function getAttendanceService(
       validateAttendancePoolWrite(data)
       const attendance = await this.getAttendanceByPoolId(handle, attendancePoolId)
 
-      // Only pools except the current pool are relevant for the update.
-      const relevantPools = attendance.pools.filter((pool) => pool.id !== attendancePoolId)
-      validateAttendancePoolDisjunction(data.yearCriteria, relevantPools)
+      // Validate that the updated pool would not overlap with any other existing pools
+      const otherPools = attendance.pools.filter((pool) => pool.id !== attendancePoolId)
+      validateAttendancePoolDisjunction(data.yearCriteria, otherPools)
 
       const updatedPool = await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, data)
 
-      if (data.mergeDelayHours) {
-        const mergeTime = new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
-        await this.rescheduleMergeEventPoolsTask(handle, attendance.id, attendancePoolId, mergeTime)
-      }
+      // Update any existing tasks related to the pool
+      const mergeTime = data.mergeDelayHours
+        ? new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
+        : null
+      await this.rescheduleMergeEventPoolsTask(handle, attendancePoolId, updatedPool.taskId, mergeTime)
 
       return updatedPool
     },
@@ -1098,30 +1095,30 @@ export function getAttendanceService(
         })
       )
     },
-    async scheduleMergeEventPoolsTask(handle, attendanceId, attendancePoolId, mergeTime) {
+    async scheduleMergeEventPoolsTask(handle, attendancePoolId, mergeTime) {
+      const pool = await attendanceRepository.findAttendancePoolById(handle, attendancePoolId)
+
+      if (!pool) {
+        throw new NotFoundError(
+          `AttendancePool(ID=${attendancePoolId}) not found when scheduling Task(Type=${tasks.MERGE_ATTENDANCE_POOLS})`
+        )
+      }
+
       await taskSchedulingService.scheduleAt(
         handle,
         tasks.MERGE_ATTENDANCE_POOLS,
-        { attendanceId, attendancePoolId },
+        { attendanceId: pool.attendanceId },
         mergeTime
       )
     },
-    async rescheduleMergeEventPoolsTask(handle, attendanceId, attendancePoolId, mergeTime) {
-      const existingTask = await taskSchedulingService.findMergeEventPoolsTask(handle, attendanceId, attendancePoolId)
-
-      if (existingTask) {
-        if (existingTask.scheduledAt === mergeTime) {
-          return
-        }
-
-        await taskSchedulingService.cancel(handle, existingTask.id)
+    async rescheduleMergeEventPoolsTask(handle, attendancePoolId, existingTaskId, mergeTime) {
+      if (existingTaskId) {
+        await taskSchedulingService.cancel(handle, existingTaskId)
       }
 
-      if (mergeTime === null) {
-        return
+      if (mergeTime !== null) {
+        await this.scheduleMergeEventPoolsTask(handle, attendancePoolId, mergeTime)
       }
-
-      await this.scheduleMergeEventPoolsTask(handle, attendanceId, attendancePoolId, mergeTime)
     },
     async executeMergeEventPoolsTask(handle, { attendanceId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)

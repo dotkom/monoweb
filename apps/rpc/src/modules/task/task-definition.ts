@@ -1,10 +1,4 @@
-import {
-  AttendancePoolSchema,
-  AttendanceSchema,
-  AttendeeSchema,
-  FeedbackFormSchema,
-  type TaskType,
-} from "@dotkomonline/types"
+import { AttendanceSchema, AttendeeSchema, FeedbackFormSchema, type TaskType } from "@dotkomonline/types"
 import { z } from "zod"
 import { NotFoundError } from "../../error"
 
@@ -50,7 +44,6 @@ export const tasks = {
     getSchema: () =>
       z.object({
         attendanceId: AttendanceSchema.shape.id,
-        attendancePoolId: AttendancePoolSchema.shape.id,
       }),
   }),
   VERIFY_PAYMENT: createTaskDefinition({

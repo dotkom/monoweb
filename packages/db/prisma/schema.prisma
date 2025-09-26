@@ -233,15 +233,18 @@ model Attendance {
 }
 
 model AttendancePool {
-  id              String     @id @default(uuid())
-  attendanceId    String
-  attendance      Attendance @relation(fields: [attendanceId], references: [id])
+  id              String   @id @default(uuid())
   title           String
   mergeDelayHours Int?
   yearCriteria    Json
   capacity        Int
-  createdAt       DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime   @default(now()) @updatedAt @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  attendanceId String
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  taskId       String?
+  task         Task?      @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   attendees Attendee[]
 
@@ -543,6 +546,8 @@ model Task {
   processedAt     DateTime?      @db.Timestamptz(3)
   recurringTask   RecurringTask? @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
   recurringTaskId String?
+
+  attendancePools AttendancePool[]
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("task")
