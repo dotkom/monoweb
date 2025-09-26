@@ -67,8 +67,11 @@ export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema
 export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
   value: z.infer<TSpec> | undefined,
   defaultValue?: DefaultVariable<TSpec> | null,
-  validator: TSpec = z.string() as unknown as TSpec
+  spec?: TSpec
 ): z.infer<TSpec> {
+  // If there was no spec validator provided, we default to string, unless the variable is nullable.
+  const validator = spec ?? (defaultValue === null ? z.null() : z.string())
+
   function getDefaultValue(env: string): z.infer<TSpec> | undefined {
     if (typeof defaultValue === "object" && defaultValue !== null) {
       if (env in defaultValue) {
@@ -87,7 +90,7 @@ export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema
   // during build for client-side Next.js applications. NOTE: For NEXT_PUBLIC_DOPPLER_ENVIRONMENT to work, the
   // Dockerfile must set this value from `DOPPLER_ENVIRONMENT` which comes from Doppler.
   const environment = process.env.NEXT_PUBLIC_DOPPLER_ENVIRONMENT ?? process.env.DOPPLER_ENVIRONMENT ?? "dev"
-  const val = value ?? getDefaultValue(environment)
+  const val = value || getDefaultValue(environment)
   // If the `getDefaultValue` function returned undefined, then there was no default value to use, and the value must
   // be defined. Therefor this should result in an error being thrown.
   if (val === undefined) {
