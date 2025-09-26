@@ -51,6 +51,7 @@ export function getEmailService(
 ): EmailService {
   const logger = getLogger("email-service")
   const tracer = trace.getTracer("@dotkomonline/monoweb-rpc/email-service")
+
   async function processSqsMessage(message: Message): Promise<void> {
     return await tracer.startActiveSpan("EmailService/SendEmail", async (span) => {
       try {
@@ -116,12 +117,25 @@ export function getEmailService(
             payload.data.subject,
             payload.data.type
           )
-          await sesClient.send(sendEmailCommand)
+          const sendEmailResponse = await sesClient.send(sendEmailCommand)
+          logger.info(
+            "Received Response(Status=%s) from AWS SES after %s attempts",
+            sendEmailResponse.$metadata.httpStatusCode ?? "<no code>",
+            sendEmailResponse.$metadata.attempts ?? 1
+          )
+
+          // AWS SQS messages have to be marked as deleted by the consumer in order to be discarded from the queue. If
+          // we do not do this, the user will receive multiple emails.
           const deleteMessageCommand = new DeleteMessageCommand({
             QueueUrl: queueUrl,
             ReceiptHandle: message.ReceiptHandle,
           })
-          await sqsClient.send(deleteMessageCommand)
+          const deleteMessageResponse = await sqsClient.send(deleteMessageCommand)
+          logger.info(
+            "Received Response(Status=%s) from AWS SES after %s attempts",
+            deleteMessageResponse.$metadata.httpStatusCode ?? "<no code>",
+            deleteMessageResponse.$metadata.attempts ?? 1
+          )
         }
       } finally {
         span.end()
@@ -205,7 +219,7 @@ export function getEmailService(
       async function work() {
         await tracer.startActiveSpan("EmailService/DiscoverEmails", { root: true }, async (span) => {
           try {
-            // Queue the next recursive call as long as the abort controller hasn't been moved.
+            // Queue the next recursive call as long as the abort controller hasn't been aborted.
             function enqueueWork() {
               if (!signal.aborted) {
                 interval = setTimeout(work, 1000)
