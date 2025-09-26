@@ -23,11 +23,6 @@ export interface TaskRepository {
   getPendingTasks(handle: DBHandle, type: TaskType): Promise<Task[]>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
-  findMergeEventPoolsTask(
-    handle: DBHandle,
-    attendanceId: AttendanceId,
-    attendancePoolId: AttendancePoolId
-  ): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
@@ -97,31 +92,6 @@ export function getTaskRepository(): TaskRepository {
               payload: {
                 path: ["attendanceId"],
                 equals: attendanceId,
-              },
-            },
-          ],
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      })
-      return parseOrReport(TaskSchema.nullable(), task)
-    },
-    async findMergeEventPoolsTask(handle, attendanceId, attendancePoolId) {
-      const task = await handle.task.findFirst({
-        where: {
-          type: tasks.MERGE_ATTENDANCE_POOLS.type,
-          AND: [
-            {
-              payload: {
-                path: ["attendanceId"],
-                equals: attendanceId,
-              },
-            },
-            {
-              payload: {
-                path: ["attendancePoolId"],
-                equals: attendancePoolId,
               },
             },
           ],

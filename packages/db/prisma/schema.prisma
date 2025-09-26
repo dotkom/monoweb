@@ -214,13 +214,13 @@ enum EventType {
 }
 
 model Attendance {
-  id                        String    @id @default(uuid())
-  registerStart             DateTime  @db.Timestamptz(3)
-  registerEnd               DateTime  @db.Timestamptz(3)
-  deregisterDeadline        DateTime  @db.Timestamptz(3)
-  selections                Json      @default("[]")
-  createdAt                 DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt                 DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+  id                 String   @id @default(uuid())
+  registerStart      DateTime @db.Timestamptz(3)
+  registerEnd        DateTime @db.Timestamptz(3)
+  deregisterDeadline DateTime @db.Timestamptz(3)
+  selections         Json     @default("[]")
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   attendancePrice Int?
 

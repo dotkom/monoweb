@@ -36,11 +36,6 @@ export interface TaskSchedulingService {
 
   findById(handle: DBHandle, id: TaskId): Promise<Task | null>
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
-  findMergeEventPoolsTask(
-    handle: DBHandle,
-    attendanceId: AttendanceId,
-    attendancePoolId: AttendancePoolId
-  ): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
@@ -78,9 +73,6 @@ export function getLocalTaskSchedulingService(
     async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
       return taskRepository.findReserveAttendeeTask(handle, attendeeId, attendanceId)
     },
-    async findMergeEventPoolsTask(handle, attendanceId, attendancePoolId) {
-      return taskRepository.findMergeEventPoolsTask(handle, attendanceId, attendancePoolId)
-    },
     async findVerifyPaymentTask(handle, attendeeId) {
       return await taskRepository.findVerifyPaymentTask(handle, attendeeId)
     },
@@ -110,10 +102,6 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
     },
     async findReserveAttendeeTask(_, attendeeId, attendanceId) {
       logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
-      return null
-    },
-    async findMergeEventPoolsTask(_, eventId) {
-      logger.warn("findMergeEventPoolsTask is not implemented in EventBridgeSchedulingService")
       return null
     },
     async findVerifyPaymentTask(_, attendeeId) {

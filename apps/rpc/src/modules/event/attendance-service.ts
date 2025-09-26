@@ -1134,7 +1134,6 @@ export function getAttendanceService(
       const pendingPools = attendance.pools.filter((pool) => !isMergeable(pool))
 
       if (mergeablePools.length <= 1) {
-        console.log(`Only ${mergeablePools.length} pools to merge`)
         return
       }
 
