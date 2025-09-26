@@ -6,7 +6,7 @@ import { slugify } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "googleapis"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
-import { configuration } from "../../configuration"
+import { configuration, isGoogleWorkspaceFeatureEnabled } from "../../configuration"
 import { IllegalStateError, NotFoundError } from "../../error"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
@@ -69,7 +69,7 @@ export function getWorkspaceService(
   userService: UserService,
   groupService: GroupService
 ): WorkspaceService {
-  if (!configuration.WORKSPACE_ENABLED) {
+  if (!isGoogleWorkspaceFeatureEnabled(configuration)) {
     throw new IllegalStateError("Google Workspace integration is not enabled")
   }
   if (!directory) {
@@ -388,7 +388,7 @@ const getLocal = (localResolvable: User | Group | string): string => {
  * getEmail("user@online.ntnu.no") // "user@online.ntnu.no"
  * getEmail("user", "custom.domain") // "user@custom.domain"
  */
-const getEmail = (localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN): string => {
+const getEmail = (localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string => {
   const local = getLocal(localResolvable)
 
   if (local.includes("@")) {
@@ -409,7 +409,7 @@ const getEmail = (localResolvable: User | Group | string, domain = configuration
  * getKey("full.name@online.ntnu.no") // "full.name@online.ntnu.no"
  * getKey("string", "custom.domain") // "string@custom.domain"
  */
-const getKey = (localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN): string => {
+const getKey = (localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string => {
   if (typeof localResolvable === "object") {
     if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
       return localResolvable.workspaceUserId
@@ -423,7 +423,7 @@ const getKey = (localResolvable: User | Group | string, domain = configuration.W
   return getEmail(localResolvable, domain)
 }
 
-const getKeys = (localResolvable: User | Group | string, domain = configuration.WORKSPACE_DOMAIN): string[] => {
+const getKeys = (localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string[] => {
   const keys = new Set<string>()
 
   const baseKey = getKey(localResolvable, domain)

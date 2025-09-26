@@ -5,9 +5,8 @@ import { type SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
 import { getLogger } from "@dotkomonline/logger"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import mustache from "mustache"
-import invariant from "tiny-invariant"
 import z from "zod"
-import type { Configuration } from "../../configuration"
+import type { ConfigurationWithAmazonSesEmail } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import { InvalidArgumentError } from "../../error"
 import { emails } from "./email-template"
@@ -44,10 +43,31 @@ export interface EmailService {
   startWorker(signal: AbortSignal): void
 }
 
+export function getEmptyEmailService(): EmailService {
+  const logger = getLogger("EmptyEmailService")
+  return {
+    async send(source, replyTo, to, cc, bcc, subject, definition, _) {
+      logger.warn(
+        "Discarding Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s) because EmptyEmailService is being used",
+        source,
+        replyTo,
+        to,
+        cc,
+        bcc,
+        subject,
+        definition.type
+      )
+    },
+    startWorker(_) {
+      logger.warn("EmailService#startWorker() called on EmptyEmailService")
+    },
+  }
+}
+
 export function getEmailService(
   sesClient: SESClient,
   sqsClient: SQSClient,
-  configuration: Configuration
+  configuration: ConfigurationWithAmazonSesEmail
 ): EmailService {
   const logger = getLogger("email-service")
   const tracer = trace.getTracer("@dotkomonline/monoweb-rpc/email-service")
@@ -55,88 +75,83 @@ export function getEmailService(
   async function processSqsMessage(message: Message): Promise<void> {
     return await tracer.startActiveSpan("EmailService/SendEmail", async (span) => {
       try {
-        {
-          const queueUrl = configuration.AWS_SQS_QUEUE_EMAIL_DELIVERY
-          invariant(queueUrl !== null, "Cannot process SQS message if queue is not configured")
-
-          if (message.Body === undefined) {
-            throw new IllegalStateError(
-              `Received Message(ID=${message.MessageId ?? "<missing id>"}) with empty SQS MessageBody`
-            )
-          }
-
-          const payload = EmailMessageSchema.safeParse(JSON.parse(message.Body))
-          if (!payload.success) {
-            logger.error(
-              "Failed to parse email payload for Message(ID=%s): %o with data payload %o",
-              message.MessageId ?? "<missing id>",
-              payload.error.message,
-              message.Body
-            )
-            throw new IllegalStateError(
-              `Failed to parse email payload for Message(ID=${message.MessageId ?? "<missing id>"})`
-            )
-          }
-
-          const emailTemplate = emails[payload.data.type]
-          if (emailTemplate === undefined) {
-            throw new IllegalStateError(`Failed to find email template for Type=${payload.data.type}`)
-          }
-
-          const template = await emailTemplate.getTemplate()
-
-          const html = mustache.render(template, payload.data.data)
-          const sendEmailCommand = new SendEmailCommand({
-            Source: payload.data.source,
-            ReplyToAddresses: payload.data.replyTo,
-            Destination: {
-              ToAddresses: payload.data.to,
-              CcAddresses: payload.data.cc,
-              BccAddresses: payload.data.bcc,
-            },
-            Message: {
-              Body: {
-                Html: {
-                  Charset: "UTF-8",
-                  Data: html,
-                },
-              },
-              Subject: {
-                Charset: "UTF-8",
-                Data: payload.data.subject,
-              },
-            },
-          })
-          logger.info(
-            "Sending Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s)",
-            payload.data.source,
-            payload.data.replyTo,
-            payload.data.to,
-            payload.data.cc,
-            payload.data.bcc,
-            payload.data.subject,
-            payload.data.type
-          )
-          const sendEmailResponse = await sesClient.send(sendEmailCommand)
-          logger.info(
-            "Received Response(Status=%s) from AWS SES after %s attempts",
-            sendEmailResponse.$metadata.httpStatusCode ?? "<no code>",
-            sendEmailResponse.$metadata.attempts ?? 1
-          )
-
-          // AWS SQS messages have to be marked as deleted by the consumer in order to be discarded from the queue. If
-          // we do not do this, the user will receive multiple emails.
-          const deleteMessageCommand = new DeleteMessageCommand({
-            QueueUrl: queueUrl,
-            ReceiptHandle: message.ReceiptHandle,
-          })
-          const deleteMessageResponse = await sqsClient.send(deleteMessageCommand)
-          logger.info(
-            "Received Response(Status=%s) from AWS SES after %s attempts",
-            deleteMessageResponse.$metadata.httpStatusCode ?? "<no code>",
-            deleteMessageResponse.$metadata.attempts ?? 1
+        if (message.Body === undefined) {
+          throw new IllegalStateError(
+            `Received Message(ID=${message.MessageId ?? "<missing id>"}) with empty SQS MessageBody`
           )
         }
+
+        const payload = EmailMessageSchema.safeParse(JSON.parse(message.Body))
+        if (!payload.success) {
+          logger.error(
+            "Failed to parse email payload for Message(ID=%s): %o with data payload %o",
+            message.MessageId ?? "<missing id>",
+            payload.error.message,
+            message.Body
+          )
+          throw new IllegalStateError(
+            `Failed to parse email payload for Message(ID=${message.MessageId ?? "<missing id>"})`
+          )
+        }
+
+        const emailTemplate = emails[payload.data.type]
+        if (emailTemplate === undefined) {
+          throw new IllegalStateError(`Failed to find email template for Type=${payload.data.type}`)
+        }
+
+        const template = await emailTemplate.getTemplate()
+
+        const html = mustache.render(template, payload.data.data)
+        const sendEmailCommand = new SendEmailCommand({
+          Source: payload.data.source,
+          ReplyToAddresses: payload.data.replyTo,
+          Destination: {
+            ToAddresses: payload.data.to,
+            CcAddresses: payload.data.cc,
+            BccAddresses: payload.data.bcc,
+          },
+          Message: {
+            Body: {
+              Html: {
+                Charset: "UTF-8",
+                Data: html,
+              },
+            },
+            Subject: {
+              Charset: "UTF-8",
+              Data: payload.data.subject,
+            },
+          },
+        })
+        logger.info(
+          "Sending Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s)",
+          payload.data.source,
+          payload.data.replyTo,
+          payload.data.to,
+          payload.data.cc,
+          payload.data.bcc,
+          payload.data.subject,
+          payload.data.type
+        )
+        const sendEmailResponse = await sesClient.send(sendEmailCommand)
+        logger.info(
+          "Received Response(Status=%s) from AWS SES after %s attempts",
+          sendEmailResponse.$metadata.httpStatusCode ?? "<no code>",
+          sendEmailResponse.$metadata.attempts ?? 1
+        )
+
+        // AWS SQS messages have to be marked as deleted by the consumer in order to be discarded from the queue. If
+        // we do not do this, the user will receive multiple emails.
+        const deleteMessageCommand = new DeleteMessageCommand({
+          QueueUrl: configuration.email.awsSqsQueueUrl,
+          ReceiptHandle: message.ReceiptHandle,
+        })
+        const deleteMessageResponse = await sqsClient.send(deleteMessageCommand)
+        logger.info(
+          "Received Response(Status=%s) from AWS SES after %s attempts",
+          deleteMessageResponse.$metadata.httpStatusCode ?? "<no code>",
+          deleteMessageResponse.$metadata.attempts ?? 1
+        )
       } finally {
         span.end()
       }
@@ -177,13 +192,8 @@ export function getEmailService(
             "email.subject": subject,
           })
 
-          if (configuration.AWS_SQS_QUEUE_EMAIL_DELIVERY === null) {
-            logger.warn("Cancelling posting of email due to disabled or missing AWS SQS email-delivery queue")
-            return
-          }
-
           const cmd = new SendMessageCommand({
-            QueueUrl: configuration.AWS_SQS_QUEUE_EMAIL_DELIVERY,
+            QueueUrl: configuration.email.awsSqsQueueUrl,
             MessageBody: JSON.stringify(
               EmailMessageSchema.parse({
                 source,
@@ -201,7 +211,7 @@ export function getEmailService(
           logger.info(
             "Posted Message(ID=%s) to AWS SQS Queue %s",
             response.MessageId ?? "<unknown>",
-            configuration.AWS_SQS_QUEUE_EMAIL_DELIVERY
+            configuration.email.awsSqsQueueUrl
           )
         } finally {
           span.end()
@@ -209,12 +219,6 @@ export function getEmailService(
       })
     },
     startWorker(signal) {
-      if (configuration.AWS_SQS_QUEUE_EMAIL_DELIVERY === null) {
-        logger.warn("Cancelling posting of email due to disabled or missing AWS SQS email-delivery queue")
-        return
-      }
-      const queueUrl = configuration.AWS_SQS_QUEUE_EMAIL_DELIVERY
-
       let interval: ReturnType<typeof setTimeout> | null = null
       async function work() {
         await tracer.startActiveSpan("EmailService/DiscoverEmails", { root: true }, async (span) => {
@@ -227,7 +231,7 @@ export function getEmailService(
             }
 
             const command = new ReceiveMessageCommand({
-              QueueUrl: queueUrl,
+              QueueUrl: configuration.email.awsSqsQueueUrl,
               MaxNumberOfMessages: 3,
               WaitTimeSeconds: 20,
               VisibilityTimeout: 30,
@@ -241,7 +245,11 @@ export function getEmailService(
               return
             }
 
-            logger.info("Discovered %s emails to deliver from SQS Queue(Url=%s)", messages.length, queueUrl)
+            logger.info(
+              "Discovered %s emails to deliver from SQS Queue(Url=%s)",
+              messages.length,
+              configuration.email.awsSqsQueueUrl
+            )
 
             try {
               const promises = messages.map(processSqsMessage)

@@ -8,7 +8,12 @@ import { ManagementClient } from "auth0"
 import { type admin_directory_v1, google } from "googleapis"
 import Stripe from "stripe"
 import z from "zod"
-import { type Configuration, configuration } from "../configuration"
+import {
+  type Configuration,
+  configuration,
+  isAmazonSesEmailFeatureEnabled,
+  isGoogleWorkspaceFeatureEnabled,
+} from "../configuration"
 import { IllegalStateError } from "../error"
 import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
@@ -19,7 +24,7 @@ import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
-import { getEmailService } from "./email/email-service"
+import { getEmailService, getEmptyEmailService } from "./email/email-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
@@ -80,15 +85,11 @@ const workspaceServiceAccountJsonSchema = z.object({
 })
 
 export function getDirectory(): admin_directory_v1.Admin {
-  if (
-    !configuration.WORKSPACE_ENABLED ||
-    configuration.WORKSPACE_SERVICE_ACCOUNT === null ||
-    configuration.WORKSPACE_USER_ACCOUNT_EMAIL === null
-  ) {
+  if (!isGoogleWorkspaceFeatureEnabled(configuration)) {
     throw new IllegalStateError("Google Workspace integration is not enabled or missing configuration variables")
   }
 
-  const serviceAccountJson = JSON.parse(configuration.WORKSPACE_SERVICE_ACCOUNT)
+  const serviceAccountJson = JSON.parse(configuration.googleWorkspace.serviceAccount)
   const result = workspaceServiceAccountJsonSchema.safeParse(serviceAccountJson)
 
   if (!result.success) {
@@ -99,7 +100,7 @@ export function getDirectory(): admin_directory_v1.Admin {
     email: result.data.client_email,
     key: result.data.private_key,
     scopes: WORKSPACE_SERVICE_ACCOUNT_SCOPES,
-    subject: configuration.WORKSPACE_USER_ACCOUNT_EMAIL,
+    subject: configuration.googleWorkspace.userAccountEmail,
   })
 
   return google.admin({ version: "directory_v1", auth })
@@ -119,7 +120,7 @@ export function createThirdPartyClients(configuration: Configuration) {
     apiVersion: "2025-07-30.basil",
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
-  const workspaceDirectory = configuration.WORKSPACE_ENABLED ? getDirectory() : null
+  const workspaceDirectory = isGoogleWorkspaceFeatureEnabled(configuration) ? getDirectory() : null
   return { s3Client, sesClient, sqsClient, auth0Client, stripe, prisma, workspaceDirectory }
 }
 
@@ -172,7 +173,9 @@ export async function createServiceLayer(
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
 
-  const emailService = getEmailService(clients.sesClient, clients.sqsClient, configuration)
+  const emailService = isAmazonSesEmailFeatureEnabled(configuration)
+    ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
+    : getEmptyEmailService()
   const userService = getUserService(
     userRepository,
     privacyPermissionsRepository,
@@ -221,7 +224,7 @@ export async function createServiceLayer(
     attendanceService
   )
 
-  const workspaceService = configuration.WORKSPACE_ENABLED
+  const workspaceService = isGoogleWorkspaceFeatureEnabled(configuration)
     ? getWorkspaceService(clients.workspaceDirectory, userService, groupService)
     : null
 
