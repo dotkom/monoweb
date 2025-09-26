@@ -26,7 +26,6 @@ export interface TaskSchedulingService {
    */
   cancel(handle: DBHandle, id: TaskId): Promise<void>
 
-  findById(handle: DBHandle, id: TaskId): Promise<Task | null>
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
@@ -59,9 +58,6 @@ export function getLocalTaskSchedulingService(
       }
       await taskRepository.update(handle, task.id, { status: "CANCELED" }, task.status)
     },
-    async findById(handle, id) {
-      return await taskRepository.getById(handle, id)
-    },
     async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
       return taskRepository.findReserveAttendeeTask(handle, attendeeId, attendanceId)
     },
@@ -87,10 +83,6 @@ export function getEventBridgeTaskSchedulingService(client: SchedulerClient): Ta
     },
     async cancel(_, id) {
       throw new UnimplementedError("EventBridgeSchedulingService#cancel")
-    },
-    async findById(_, id) {
-      logger.warn("findById is not implemented in EventBridgeSchedulingService")
-      return null
     },
     async findReserveAttendeeTask(_, attendeeId, attendanceId) {
       logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
