@@ -2,7 +2,7 @@ import type { SchedulerClient } from "@aws-sdk/client-scheduler"
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { AttendanceId, AttendeeId, FeedbackFormId, RecurringTaskId, Task, TaskId } from "@dotkomonline/types"
+import type { AttendanceId, AttendancePoolId, AttendeeId, FeedbackFormId, RecurringTaskId, Task, TaskId } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { UnimplementedError } from "../../error"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
@@ -27,7 +27,7 @@ export interface TaskSchedulingService {
   cancel(handle: DBHandle, id: TaskId): Promise<void>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
-  findMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
@@ -62,8 +62,8 @@ export function getLocalTaskSchedulingService(
     async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
       return taskRepository.findReserveAttendeeTask(handle, attendeeId, attendanceId)
     },
-    async findMergeEventPoolsTask(handle, attendanceId) {
-      return taskRepository.findMergeEventPoolsTask(handle, attendanceId)
+    async findMergeEventPoolsTask(handle, attendanceId, attendancePoolId) {
+      return taskRepository.findMergeEventPoolsTask(handle, attendanceId, attendancePoolId)
     },
     async findVerifyPaymentTask(handle, attendeeId) {
       return await taskRepository.findVerifyPaymentTask(handle, attendeeId)

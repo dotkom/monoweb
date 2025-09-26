@@ -175,8 +175,8 @@ export interface AttendanceService {
    * NOTE: Be careful of the difference between this and {@link registerAttendee}.
    */
   registerAttendance(handle: DBHandle, attendee: AttendeeId, at: TZDate | null): Promise<void>
-  scheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, mergeTime: TZDate): Promise<void>
-  rescheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, mergeTime: TZDate | null): Promise<void>
+  scheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId, mergeTime: TZDate): Promise<void>
+  rescheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId, mergeTime: TZDate | null): Promise<void>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
 }
 
@@ -317,7 +317,7 @@ export function getAttendanceService(
 
       if (data.mergeDelayHours) {
         const mergeTime = new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
-        await this.scheduleMergeEventPoolsTask(handle, attendance.id, mergeTime)
+        await this.scheduleMergeEventPoolsTask(handle, attendance.id, createdPool.id, mergeTime)
       }
 
       return createdPool
@@ -330,12 +330,14 @@ export function getAttendanceService(
       const relevantPools = attendance.pools.filter((pool) => pool.id !== attendancePoolId)
       validateAttendancePoolDisjunction(data.yearCriteria, relevantPools)
 
-      const mergeTime = data.mergeDelayHours
-        ? new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
-        : null
-      await this.rescheduleMergeEventPoolsTask(handle, attendance.id, mergeTime)
+      const updatedPool = await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, data)
 
-      return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, data)
+      if (data.mergeDelayHours) {
+        const mergeTime = new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
+        await this.rescheduleMergeEventPoolsTask(handle, attendance.id, attendancePoolId, mergeTime)
+      }
+      
+      return updatedPool
     },
     async deleteAttendancePool(handle, attendancePoolId) {
       await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
@@ -1086,17 +1088,17 @@ export function getAttendanceService(
         })
       )
     },
-    async scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime) {
-      await taskSchedulingService.scheduleAt(handle, tasks.MERGE_ATTENDANCE_POOLS, { attendanceId }, mergeTime)
+    async scheduleMergeEventPoolsTask(handle, attendanceId, attendancePoolId, mergeTime) {
+      await taskSchedulingService.scheduleAt(handle, tasks.MERGE_ATTENDANCE_POOLS, { attendanceId, attendancePoolId }, mergeTime)
     },
-    async rescheduleMergeEventPoolsTask(handle, attendanceId, mergeTime) {
-      const existingTask = await taskSchedulingService.findMergeEventPoolsTask(handle, attendanceId)
-
-      if (existingTask?.scheduledAt === mergeTime) {
-        return
-      }
+    async rescheduleMergeEventPoolsTask(handle, attendanceId, attendancePoolId, mergeTime) {
+      const existingTask = await taskSchedulingService.findMergeEventPoolsTask(handle, attendanceId, attendancePoolId)
 
       if (existingTask) {
+        if (existingTask.scheduledAt === mergeTime) {
+          return
+        }
+  
         await taskSchedulingService.cancel(handle, existingTask.id)
       }
 
@@ -1104,7 +1106,7 @@ export function getAttendanceService(
         return
       }
 
-      await taskSchedulingService.scheduleAt(handle, tasks.MERGE_ATTENDANCE_POOLS, { attendanceId }, mergeTime)
+      await this.scheduleMergeEventPoolsTask(handle, attendanceId, attendancePoolId, mergeTime)
     },
     async executeMergeEventPoolsTask(handle, { attendanceId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
@@ -1156,7 +1158,7 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
-      await this.updateAttendanceById(handle, attendanceId, { lastCompletedPoolsMergeAt: new Date() })
+      await this.updateAttendanceById(handle, attendanceId, { lastCompletedPoolsMergeAt: getCurrentUTC() })
     },
   }
 }
