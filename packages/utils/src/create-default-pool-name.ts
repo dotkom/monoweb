@@ -1,6 +1,9 @@
-const capitalize = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
+function capitalize(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1)
 
-const formatRangeStrict = (start: number, end: number): string[] => {
+}
+
+function formatRangeStrict(start: number, end: number): string[] {
   if (start === end) {
     return [`${start}.`]
   }
@@ -8,7 +11,7 @@ const formatRangeStrict = (start: number, end: number): string[] => {
   return [`${start}. - ${end}.`]
 }
 
-const createPoolNameFromRange = (start: number, end: number): string[] => {
+function createPoolNameFromRange(start: number, end: number): string[] {
   if (start === 1 && end === 5) {
     return ["alle"]
   }
@@ -32,7 +35,7 @@ const createPoolNameFromRange = (start: number, end: number): string[] => {
   return formatRangeStrict(start, end)
 }
 
-export const createPoolName = (yearCriterias: number[]): string => {
+export function createPoolName(yearCriterias: number[]): string {
   if (yearCriterias.length === 0) {
     return ""
   }
