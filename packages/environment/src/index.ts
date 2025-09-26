@@ -1,13 +1,17 @@
 import { z } from "zod"
 
-export type SpecValue = z.ZodString | z.ZodEffects<z.ZodString>
-export type DefaultVariable<TSpec extends SpecValue> =
-  | z.infer<SpecValue>
+export type DefaultVariable<TSpec extends z.ZodSchema> =
+  | z.infer<TSpec>
   | {
       prd: z.infer<TSpec>
       stg: z.infer<TSpec>
       dev: z.infer<TSpec>
     }
+
+/** The type of process.env[K] */
+export type RawEnvironmentVariableValue = string | undefined
+
+export type DefaultEnvironmentValueSchema = z.ZodString
 
 /**
  * Create a single configuration variable with a global OR per-environment default value.
@@ -49,21 +53,21 @@ export type DefaultVariable<TSpec extends SpecValue> =
  * )
  * ```
  */
-export function config<TSpec extends SpecValue>(value: z.infer<TSpec> | undefined): z.infer<TSpec>
-export function config<TSpec extends SpecValue>(
-  value: z.infer<TSpec> | undefined,
-  defaultValue: null
-): z.infer<TSpec> | null
-export function config<TSpec extends SpecValue>(
-  value: z.infer<TSpec> | undefined,
+export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+  value: string | undefined,
   defaultValue?: DefaultVariable<TSpec>,
-  validator?: TSpec
+  spec?: TSpec
 ): z.infer<TSpec>
+export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+  value: string | undefined,
+  defaultValue: z.infer<TSpec> | null,
+  spec?: TSpec
+): z.infer<TSpec> | null
 
-export function config<TSpec extends SpecValue>(
+export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
   value: z.infer<TSpec> | undefined,
   defaultValue?: DefaultVariable<TSpec> | null,
-  validator: TSpec = z.string() as TSpec
+  validator: TSpec = z.string() as unknown as TSpec
 ): z.infer<TSpec> {
   function getDefaultValue(env: string): z.infer<TSpec> | undefined {
     if (typeof defaultValue === "object" && defaultValue !== null) {

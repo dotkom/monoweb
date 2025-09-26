@@ -5,7 +5,7 @@ import type { Task } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
-import { secondsToMilliseconds } from "date-fns"
+import type { Configuration } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
@@ -23,8 +23,6 @@ import type { TaskDiscoveryService } from "./task-discovery-service"
 import type { TaskSchedulingService } from "./task-scheduling-service"
 import type { TaskService } from "./task-service"
 
-const INTERVAL = secondsToMilliseconds(1)
-
 export interface TaskExecutor {
   startWorker(client: DBClient, signal: AbortSignal): void
 }
@@ -34,7 +32,8 @@ export function getLocalTaskExecutor(
   recurringTaskService: RecurringTaskService,
   taskDiscoveryService: TaskDiscoveryService,
   taskSchedulingService: TaskSchedulingService,
-  attendanceService: AttendanceService
+  attendanceService: AttendanceService,
+  configuration: Configuration
 ): TaskExecutor {
   const logger = getLogger("task-executor")
   const tracer = trace.getTracer("@dotkomonline/rpc/task-executor")
@@ -125,7 +124,7 @@ export function getLocalTaskExecutor(
             // Queue the next recursive call as long as the abort controller hasn't been aborted.
             function enqueueWork() {
               if (!signal.aborted) {
-                interval = setTimeout(work, INTERVAL)
+                interval = setTimeout(work, configuration.tasks.workerInterval)
               }
             }
 
@@ -153,9 +152,9 @@ export function getLocalTaskExecutor(
         })
       }
 
-      logger.info("Starting TaskExecutor with interval of %d milliseconds", INTERVAL)
+      logger.info("Starting TaskExecutor with interval of %d milliseconds", configuration.tasks.workerInterval)
 
-      interval = setTimeout(work, INTERVAL)
+      interval = setTimeout(work, configuration.tasks.workerInterval)
       signal.addEventListener("abort", () => {
         if (interval !== null) {
           clearInterval(interval)
