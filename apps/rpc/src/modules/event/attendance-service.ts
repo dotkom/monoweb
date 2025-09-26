@@ -16,20 +16,20 @@ import {
   type AttendeeWrite,
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
+  type Event,
   type GroupType,
   type UserId,
   canUserAttendPool,
   findActiveMembership,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
+import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import {
   addDays,
   addHours,
   compareAsc,
   differenceInHours,
   endOfYesterday,
-  isAfter,
   isBefore,
   isFuture,
   isPast,
@@ -196,6 +196,28 @@ export function getAttendanceService(
   emailService: EmailService
 ): AttendanceService {
   const logger = getLogger("attendance-service")
+  function sendEventRegistrationEmail(event: Event, attendance: Attendance, attendee: Attendee) {
+    if (attendee.user.email === null) {
+      return
+    }
+    const organizerEmails = event.hostingGroups.map((g) => g.email).filter((email) => email !== null)
+    // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
+    // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
+    void emailService.send(
+      "noreply@online.ntnu.no",
+      organizerEmails,
+      [attendee.user.email],
+      [],
+      [],
+      `Du er påmeldt ${event.title} hos Linjeforeningen Online`,
+      emails.EVENT_ATTENDANCE,
+      {
+        deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
+        eventName: event.title,
+        eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+      }
+    )
+  }
   return {
     async createAttendance(handle, data) {
       validateAttendanceWrite(data)
@@ -292,14 +314,13 @@ export function getAttendanceService(
       }
 
       const createdPool = await attendanceRepository.createAttendancePool(handle, attendanceId, data)
-    
+
       if (data.mergeDelayHours) {
         const mergeTime = new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
         await this.scheduleMergeEventPoolsTask(handle, attendance.id, mergeTime)
       }
 
       return createdPool
-      
     },
     async updateAttendancePool(handle, attendancePoolId, data) {
       validateAttendancePoolWrite(data)
@@ -450,8 +471,11 @@ export function getAttendanceService(
         )
       }
 
-      // When a user is immediately reserved, there is no reason to schedule a task for them.
-      if (!options.immediateReservation) {
+      // Immediate reservations go through right away, otherwise we schedule a task to handle the reservation at the
+      // appropriate time. In this case, the email is sent when the reservation becomes effective.
+      if (isImmediate) {
+        sendEventRegistrationEmail(event, attendance, attendee)
+      } else {
         await taskSchedulingService.scheduleAt(
           handle,
           tasks.RESERVE_ATTENDEE,
@@ -465,10 +489,11 @@ export function getAttendanceService(
 
       eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
       logger.info(
-        "Attendee(ID=%s,UserID=%s) named %s has attended Event(ID=%s) named %s with options: %o",
+        "Attendee(ID=%s,UserID=%s) named %s has registered (effective %s) for Event(ID=%s) named %s with options: %o",
         attendee.id,
         attendee.user.id,
         attendee.user.name || "<missing name>",
+        reservationTime,
         event.id,
         event.title,
         options
@@ -497,6 +522,7 @@ export function getAttendanceService(
     },
     async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
+      const event = await eventService.getByAttendance(handle, attendance.id)
       const attendee = attendance.attendees.find((a) => a.id === attendeeId)
       // NOTE: If the attendee does not exist, we have a non-critical bug in the app. The circumstances where this is
       // possible is when the attendee was removed from the attendance after the task was scheduled AND the task was not
@@ -521,6 +547,7 @@ export function getAttendanceService(
       data.reserved = true
 
       await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
+      sendEventRegistrationEmail(event, attendance, attendee)
     },
     async deregisterAttendee(handle, attendeeId, options) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
@@ -1060,7 +1087,7 @@ export function getAttendanceService(
       )
     },
     async scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime) {
-      await taskSchedulingService.scheduleAt(handle, tasks.MERGE_ATTENDANCE_POOLS, { attendanceId, }, mergeTime)
+      await taskSchedulingService.scheduleAt(handle, tasks.MERGE_ATTENDANCE_POOLS, { attendanceId }, mergeTime)
     },
     async rescheduleMergeEventPoolsTask(handle, attendanceId, mergeTime) {
       const existingTask = await taskSchedulingService.findMergeEventPoolsTask(handle, attendanceId)

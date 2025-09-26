@@ -1,5 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { SESClient } from "@aws-sdk/client-ses"
+import type { SQSClient } from "@aws-sdk/client-sqs"
 import type { DBClient } from "@dotkomonline/db"
 import { getPrismaClientForTest } from "@dotkomonline/db/test-harness"
 import { faker } from "@faker-js/faker"
@@ -15,6 +16,7 @@ faker.seed(69)
 async function createServiceLayerForTesting() {
   s3Client = mockDeep<S3Client>()
   sesClient = mockDeep<SESClient>()
+  sqsClient = mockDeep<SQSClient>()
   auth0Client = mockDeep<ManagementClient>()
   stripe = mockDeep<Stripe>()
   configuration = mockDeep<Configuration>({
@@ -27,6 +29,7 @@ async function createServiceLayerForTesting() {
     {
       prisma: dbClient,
       s3Client,
+      sqsClient,
       sesClient,
       auth0Client,
       stripe,
@@ -40,6 +43,7 @@ export let configuration: DeepMockProxy<Configuration>
 export let stripe: DeepMockProxy<Stripe>
 export let s3Client: DeepMockProxy<S3Client>
 export let sesClient: DeepMockProxy<SESClient>
+export let sqsClient: DeepMockProxy<SQSClient>
 export let auth0Client: DeepMockProxy<ManagementClient>
 export let dbClient: DBClient
 export let core: Awaited<ReturnType<typeof createServiceLayerForTesting>>

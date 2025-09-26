@@ -16,6 +16,7 @@ import {
 } from "@mantine/core"
 import { differenceInHours, formatDate, formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
+import Link from "next/link"
 import type { FC } from "react"
 import { useGroupMemberForm } from "../../group-member-form"
 import { useEndGroupMembershipMutation, useStartGroupMembershipMutation } from "../../mutations"
@@ -71,7 +72,7 @@ export const GroupMemberEditCard: FC = () => {
               style={{ borderRadius: "var(--mantine-radius-sm)" }}
             />
           )}
-          <Text>{group.name || group.abbreviation || "Ukjent gruppe"}</Text>
+          <Link href={`/group/${group.slug}`}>{group.name || group.abbreviation || "Ukjent gruppe"}</Link>
         </Group>
         <Group gap={6}>
           Bruker:
@@ -84,7 +85,7 @@ export const GroupMemberEditCard: FC = () => {
               style={{ borderRadius: "var(--mantine-radius-sm)" }}
             />
           )}
-          <Text>{groupMember.name || "Ukjent bruker"}</Text>
+          <Link href={`/user/${groupMember.id}`}>{groupMember.name || "Ukjent bruker"}</Link>
         </Group>
       </Stack>
 

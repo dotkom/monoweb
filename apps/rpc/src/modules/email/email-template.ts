@@ -10,6 +10,7 @@ export type EmailType =
   | "COMPANY_COLLABORATION_NOTIFICATION"
   | "COMPANY_INVOICE_NOTIFICATION"
   | "FEEDBACK_FORM_LINK"
+  | "EVENT_ATTENDANCE"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
   getSchema(): z.ZodSchema<TData>
@@ -103,6 +104,16 @@ export const emails = {
         organizerEmail: z.string().email(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "feedback_form_link.mustache"), "utf-8"),
+  }),
+  EVENT_ATTENDANCE: createEmailTemplate({
+    type: "EVENT_ATTENDANCE",
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.string().url(),
+        deregistrationDeadline: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM", { locale: nb })),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>

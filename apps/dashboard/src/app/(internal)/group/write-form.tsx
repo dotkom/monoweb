@@ -12,6 +12,7 @@ import { useGroupAllQuery } from "./queries"
 
 const FormSchema = GroupWriteSchema.omit({
   deactivatedAt: true,
+  workspaceGroupId: true,
 }).extend({
   isActive: z.boolean(),
 })
@@ -56,6 +57,7 @@ export const useGroupWriteForm = ({
       onSubmit({
         ...data,
         deactivatedAt,
+        workspaceGroupId: defaultValues?.workspaceGroupId ?? null,
       })
     },
     label,
@@ -81,6 +83,7 @@ export const useGroupWriteForm = ({
       }),
       email: createTextInput({
         label: "Kontakt-e-post",
+        placeholder: "dotkom@online.ntnu.no",
         type: "email",
       }),
       contactUrl: createTextInput({

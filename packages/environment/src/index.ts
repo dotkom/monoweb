@@ -1,13 +1,17 @@
 import { z } from "zod"
 
-export type SpecValue = z.ZodString | z.ZodEffects<z.ZodString>
-export type DefaultVariable<TSpec extends SpecValue> =
-  | z.infer<SpecValue>
+export type DefaultVariable<TSpec extends z.ZodSchema> =
+  | z.infer<TSpec>
   | {
       prd: z.infer<TSpec>
       stg: z.infer<TSpec>
       dev: z.infer<TSpec>
     }
+
+/** The type of process.env[K] */
+export type RawEnvironmentVariableValue = string | undefined
+
+export type DefaultEnvironmentValueSchema = z.ZodString
 
 /**
  * Create a single configuration variable with a global OR per-environment default value.
@@ -49,22 +53,25 @@ export type DefaultVariable<TSpec extends SpecValue> =
  * )
  * ```
  */
-export function config<TSpec extends SpecValue>(value: z.infer<TSpec> | undefined): z.infer<TSpec>
-export function config<TSpec extends SpecValue>(
-  value: z.infer<TSpec> | undefined,
-  defaultValue: null
-): z.infer<TSpec> | null
-export function config<TSpec extends SpecValue>(
-  value: z.infer<TSpec> | undefined,
+export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+  value: string | undefined,
   defaultValue?: DefaultVariable<TSpec>,
-  validator?: TSpec
+  spec?: TSpec
 ): z.infer<TSpec>
+export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+  value: string | undefined,
+  defaultValue: z.infer<TSpec> | null,
+  spec?: TSpec
+): z.infer<TSpec> | null
 
-export function config<TSpec extends SpecValue>(
+export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
   value: z.infer<TSpec> | undefined,
   defaultValue?: DefaultVariable<TSpec> | null,
-  validator: TSpec = z.string() as TSpec
+  spec?: TSpec
 ): z.infer<TSpec> {
+  // If there was no spec validator provided, we default to string, unless the variable is nullable.
+  const validator = spec ?? (defaultValue === null ? z.string().nullable() : z.string())
+
   function getDefaultValue(env: string): z.infer<TSpec> | undefined {
     if (typeof defaultValue === "object" && defaultValue !== null) {
       if (env in defaultValue) {
@@ -83,7 +90,7 @@ export function config<TSpec extends SpecValue>(
   // during build for client-side Next.js applications. NOTE: For NEXT_PUBLIC_DOPPLER_ENVIRONMENT to work, the
   // Dockerfile must set this value from `DOPPLER_ENVIRONMENT` which comes from Doppler.
   const environment = process.env.NEXT_PUBLIC_DOPPLER_ENVIRONMENT ?? process.env.DOPPLER_ENVIRONMENT ?? "dev"
-  const val = value ?? getDefaultValue(environment)
+  const val = value || getDefaultValue(environment)
   // If the `getDefaultValue` function returned undefined, then there was no default value to use, and the value must
   // be defined. Therefor this should result in an error being thrown.
   if (val === undefined) {

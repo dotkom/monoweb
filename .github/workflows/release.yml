@@ -50,6 +50,35 @@ jobs:
       - run: pnpm type-check
         name: Run TypeScript type checker
 
+  migrate:
+    name: Run migrations against database
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+        with:
+          fetch-depth: 1
+      - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10.15.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22.19.0
+          cache: 'pnpm'
+      - uses: ./.github/actions/internal/doppler-secrets
+        id: acquire-secrets
+        with:
+          project: monoweb-rpc
+          config: ${{ inputs.environment }}
+      - run: pnpm migrate deploy
+        name: Run Prisma migrations
+
+  
   build-brevduen:
     name: brevduen
     runs-on: ubuntu-24.04-arm

@@ -60,6 +60,7 @@ export interface UserService {
   discoverMembership(handle: DBHandle, userId: UserId): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
+  deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
   createAvatarUploadURL(handle: DBHandle, userId: UserId): Promise<PresignedPost>
   /**
    * Find the Feide federated access token for a user, if it exists.
@@ -291,7 +292,7 @@ export function getUserService(
         // track the call stack and timings of the operation.
         await trace
           .getTracer("@dotkomonline/rpc/user-service")
-          .startActiveSpan("UserService#discoverMembership", async (span) => {
+          .startActiveSpan("UserService/DiscoverMembership", async (span) => {
             // According to Semantic Conventions (https://opentelemetry.io/docs/specs/semconv/registry/attributes/user/)
             // we should set the user.id attribute on the span to the user's ID. It makes it easier to trace them across
             // logs as well.
@@ -327,6 +328,9 @@ export function getUserService(
     },
     async updateMembership(handle, membershipId, membership) {
       return userRepository.updateMembership(handle, membershipId, membership)
+    },
+    async deleteMembership(handle, membershipId) {
+      return userRepository.deleteMembership(handle, membershipId)
     },
     async createAvatarUploadURL(handle, userId) {
       const user = await this.getById(handle, userId)

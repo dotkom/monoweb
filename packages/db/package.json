@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/utils": "workspace:*",
     "@prisma/client": "^6.8.2",
     "@testcontainers/postgresql": "^11.5.1",
     "date-fns": "^4.1.0",

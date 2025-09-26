@@ -77,6 +77,18 @@ export const userRouter = t.router({
         return ctx.userService.updateMembership(handle, input.membershipId, input.data)
       })
     ),
+  deleteMembership: staffProcedure
+    .input(
+      z.object({
+        membershipId: MembershipSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      ctx.authorize.requireAffiliation("dotkom", "hs")
+      return ctx.executeAuditedTransaction(async (handle) => {
+        return ctx.userService.deleteMembership(handle, input.membershipId)
+      })
+    }),
   getMe: authenticatedProcedure.query(async ({ ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.getById(handle, ctx.principal.subject)

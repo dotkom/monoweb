@@ -238,10 +238,11 @@ export const AttendanceCard = ({
       />
 
       <div className="flex flex-row flex-wrap gap-4 text-gray-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
-        <div className="flex flex-row gap-1 items-center cursor-pointer">
+        {/* Removed until we add event rules */}
+        {/* <div className="flex flex-row gap-1 items-center cursor-pointer">
           <Icon icon="tabler:book-2" className="text-lg" />
           <Text className="text-sm">Arrangementregler</Text>
-        </div>
+        </div> */}
 
         <Link href="/innstillinger/profil" className="flex flex-row gap-1 items-center">
           <Icon icon="tabler:edit" className="text-lg" />

@@ -31,6 +31,7 @@ export interface UserRepository {
   register(handle: DBHandle, userId: UserId): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
+  deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
 }
 
 export function getUserRepository(): UserRepository {
@@ -124,6 +125,19 @@ export function getUserRepository(): UserRepository {
       })
       const user = await this.findById(handle, row.userId)
       invariant(user !== null, `User with id ${row.userId} not found after updating membership`)
+      return user
+    },
+    async deleteMembership(handle, membershipId) {
+      const row = await handle.membership.delete({
+        where: {
+          id: membershipId,
+        },
+        select: {
+          userId: true,
+        },
+      })
+      const user = await this.findById(handle, row.userId)
+      invariant(user !== null, `User with id ${row.userId} not found after deleting membership`)
       return user
     },
   }

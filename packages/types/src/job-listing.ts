@@ -36,3 +36,18 @@ export type JobListing = z.infer<typeof JobListingSchema>
 export type JobListingId = JobListing["id"]
 export type JobListingEmployment = JobListing["employment"]
 export type JobListingWrite = z.infer<typeof JobListingWriteSchema>
+
+export const getJobListingEmploymentName = (type: JobListingEmployment) => {
+  switch (type) {
+    case "FULLTIME":
+      return "Fulltid"
+    case "PARTTIME":
+      return "Deltid"
+    case "SUMMER_INTERNSHIP":
+      return "Sommerjobb"
+    case "OTHER":
+      return "Annet"
+    default:
+      return "Ukjent type"
+  }
+}

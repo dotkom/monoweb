@@ -1,13 +1,19 @@
 import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
 import { SESClient } from "@aws-sdk/client-ses"
+import { SQSClient } from "@aws-sdk/client-sqs"
 import { type DBHandle, createPrisma } from "@dotkomonline/db"
 import type { UserId } from "@dotkomonline/types"
 import { ManagementClient } from "auth0"
 import { type admin_directory_v1, google } from "googleapis"
 import Stripe from "stripe"
 import z from "zod"
-import { type Configuration, configuration } from "../configuration"
+import {
+  type Configuration,
+  configuration,
+  isAmazonSesEmailFeatureEnabled,
+  isGoogleWorkspaceFeatureEnabled,
+} from "../configuration"
 import { IllegalStateError } from "../error"
 import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
@@ -18,7 +24,7 @@ import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
-import { getEmailService } from "./email/email-service"
+import { getEmailService, getEmptyEmailService } from "./email/email-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
@@ -78,16 +84,12 @@ const workspaceServiceAccountJsonSchema = z.object({
   type: z.literal("service_account"),
 })
 
-export function getDirectory(): admin_directory_v1.Admin {
-  if (
-    !configuration.WORKSPACE_ENABLED ||
-    configuration.WORKSPACE_SERVICE_ACCOUNT === null ||
-    configuration.WORKSPACE_USER_ACCOUNT_EMAIL === null
-  ) {
+function getDirectory(): admin_directory_v1.Admin {
+  if (!isGoogleWorkspaceFeatureEnabled(configuration)) {
     throw new IllegalStateError("Google Workspace integration is not enabled or missing configuration variables")
   }
 
-  const serviceAccountJson = JSON.parse(configuration.WORKSPACE_SERVICE_ACCOUNT)
+  const serviceAccountJson = JSON.parse(configuration.googleWorkspace.serviceAccount)
   const result = workspaceServiceAccountJsonSchema.safeParse(serviceAccountJson)
 
   if (!result.success) {
@@ -98,7 +100,7 @@ export function getDirectory(): admin_directory_v1.Admin {
     email: result.data.client_email,
     key: result.data.private_key,
     scopes: WORKSPACE_SERVICE_ACCOUNT_SCOPES,
-    subject: configuration.WORKSPACE_USER_ACCOUNT_EMAIL,
+    subject: configuration.googleWorkspace.userAccountEmail,
   })
 
   return google.admin({ version: "directory_v1", auth })
@@ -108,6 +110,7 @@ export function getDirectory(): admin_directory_v1.Admin {
 export function createThirdPartyClients(configuration: Configuration) {
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
   const sesClient = new SESClient({ region: configuration.AWS_REGION })
+  const sqsClient = new SQSClient({ region: configuration.AWS_REGION })
   const auth0Client = new ManagementClient({
     domain: configuration.AUTH0_MGMT_TENANT,
     clientId: configuration.AUTH0_CLIENT_ID,
@@ -117,8 +120,8 @@ export function createThirdPartyClients(configuration: Configuration) {
     apiVersion: "2025-07-30.basil",
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
-  const workspaceDirectory = configuration.WORKSPACE_ENABLED ? getDirectory() : null
-  return { s3Client, sesClient, auth0Client, stripe, prisma, workspaceDirectory }
+  const workspaceDirectory = isGoogleWorkspaceFeatureEnabled(configuration) ? getDirectory() : null
+  return { s3Client, sesClient, sqsClient, auth0Client, stripe, prisma, workspaceDirectory }
 }
 
 /**
@@ -130,15 +133,10 @@ export function createThirdPartyClients(configuration: Configuration) {
  * For ease of mocking and testing, the function does not construct third-party clients like the AWS S3 client or the
  * Auth0 Management client. Instead it takes a `clients` parameter that holds the clients. This allows us to mock them
  * in tests without having to mock the entire service layer.
- *
- * NOTE: The `signal` variable can optionally be passed by the orchestrator of the service layer has been terminated.
- * Example cases where this is useful is listening for a SIGTERM or SIGKILL that can then be used to gracefully shut
- * down the TaskExecutor or EmailService SQS Queue listener.
  */
 export async function createServiceLayer(
   clients: ReturnType<typeof createThirdPartyClients>,
-  configuration: Configuration,
-  signal: AbortSignal | null = null
+  configuration: Configuration
 ) {
   async function executeAuditedTransaction<T>(fn: (tx: DBHandle) => Promise<T>, userId: UserId | null): Promise<T> {
     return clients.prisma.$transaction(async (tx) => {
@@ -175,7 +173,9 @@ export async function createServiceLayer(
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
 
-  const emailService = getEmailService(clients.sesClient)
+  const emailService = isAmazonSesEmailFeatureEnabled(configuration)
+    ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
+    : getEmptyEmailService()
   const userService = getUserService(
     userRepository,
     privacyPermissionsRepository,
@@ -222,12 +222,13 @@ export async function createServiceLayer(
     taskDiscoveryService,
     taskSchedulingService,
     attendanceService,
-    signal
+    configuration
   )
 
-  const workspaceService = configuration.WORKSPACE_ENABLED
-    ? getWorkspaceService(clients.workspaceDirectory, userService, groupService)
-    : null
+  const workspaceService =
+    isGoogleWorkspaceFeatureEnabled(configuration) && clients.workspaceDirectory !== null
+      ? getWorkspaceService(clients.workspaceDirectory, userService, groupService, configuration)
+      : null
 
   const authorizationService = getAuthorizationService()
 
@@ -256,7 +257,6 @@ export async function createServiceLayer(
     recurringTaskService,
     workspaceService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
-    startTaskExecutor: () => taskExecutor.start(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only
     prisma: clients.prisma,
   }

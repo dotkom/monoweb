@@ -9,9 +9,10 @@ import Link from "next/link"
 
 interface Props {
   marks: Mark[]
+  onLoadMore?: () => void
 }
 
-export const PunishmentTable = ({ marks }: Props) => {
+export const PunishmentTable = ({ marks, onLoadMore }: Props) => {
   const columnHelper = createColumnHelper<Mark>()
   const columns = [
     columnHelper.accessor((mark) => mark, {
@@ -55,5 +56,5 @@ export const PunishmentTable = ({ marks }: Props) => {
     columns,
   })
 
-  return <GenericTable table={table} />
+  return <GenericTable table={table} onLoadMore={onLoadMore} />
 }
