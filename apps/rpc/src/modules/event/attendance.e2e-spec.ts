@@ -20,7 +20,6 @@ function getMockAttendance(input: Partial<AttendanceWrite> = {}): AttendanceWrit
     registerEnd: addHours(getCurrentUTC(), 12),
     deregisterDeadline: addDays(getCurrentUTC(), 2),
     selections: [],
-    lastCompletedPoolsMergeAt: null,
     ...input,
   }
 }
@@ -102,7 +101,6 @@ describe("attendance integration tests", async () => {
         registerEnd: subHours(getCurrentUTC(), 1),
         deregisterDeadline: addHours(getCurrentUTC(), 2),
         selections: [],
-        lastCompletedPoolsMergeAt: null,
       })
     ).rejects.toThrowError(InvalidArgumentError)
     await expect(() =>
@@ -112,7 +110,6 @@ describe("attendance integration tests", async () => {
         registerEnd: addMinutes(getCurrentUTC(), 10),
         deregisterDeadline: addHours(getCurrentUTC(), 2),
         selections: [],
-        lastCompletedPoolsMergeAt: null,
       })
     ).rejects.toThrowError(InvalidArgumentError)
   })

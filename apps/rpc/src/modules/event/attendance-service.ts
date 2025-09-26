@@ -1165,7 +1165,6 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
-      await this.updateAttendanceById(handle, attendanceId, { lastCompletedPoolsMergeAt: getCurrentUTC() })
     },
   }
 }

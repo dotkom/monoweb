@@ -24,7 +24,6 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
       selections: [],
-      lastCompletedPoolsMergeAt: null,
     },
     label: "Opprett",
     onSubmit: (values) => {

@@ -1,7 +1,4 @@
 -- AlterTable
-ALTER TABLE "attendance" ADD COLUMN     "lastCompletedPoolsMergeAt" TIMESTAMPTZ(3);
-
--- AlterTable
 ALTER TABLE "attendance_pool" ADD COLUMN     "taskId" TEXT;
 
 -- AddForeignKey
