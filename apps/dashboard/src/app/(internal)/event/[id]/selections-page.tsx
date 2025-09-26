@@ -29,6 +29,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
       selections: [],
+      lastCompletedPoolsMergeAt: null,
     },
     onSubmit: (values) => {
       mutation.mutate({ eventId, values })
