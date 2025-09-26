@@ -70,7 +70,7 @@ export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema
   spec?: TSpec
 ): z.infer<TSpec> {
   // If there was no spec validator provided, we default to string, unless the variable is nullable.
-  const validator = spec ?? (defaultValue === null ? z.null() : z.string())
+  const validator = spec ?? (defaultValue === null ? z.string().nullable() : z.string())
 
   function getDefaultValue(env: string): z.infer<TSpec> | undefined {
     if (typeof defaultValue === "object" && defaultValue !== null) {
