@@ -84,7 +84,7 @@ const workspaceServiceAccountJsonSchema = z.object({
   type: z.literal("service_account"),
 })
 
-export function getDirectory(): admin_directory_v1.Admin {
+function getDirectory(): admin_directory_v1.Admin {
   if (!isGoogleWorkspaceFeatureEnabled(configuration)) {
     throw new IllegalStateError("Google Workspace integration is not enabled or missing configuration variables")
   }
