@@ -1,4 +1,4 @@
-import fs from "node:fs/promises"
+import { default as fs } from "node:fs/promises"
 import path from "node:path"
 import type { EventType, Prisma } from "@prisma/client"
 import { Command } from "commander"
@@ -42,10 +42,39 @@ async function getGradeRules() {
   return gradeRules
 }
 
+/*
+  ow4_events.json is from this sql query:
+  SELECT
+  json_agg(t)
+  FROM
+    (
+      SELECT
+        events_event.id,
+        title,
+        events_event.description,
+        to_char(event_start, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS event_start,
+        to_char(event_end, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS event_end,
+        location,
+        event_type,
+        organizer_id,
+        gallery_responsiveimage.image_original,
+        EXISTS (
+          SELECT
+            1
+          FROM
+            events_attendanceevent ea
+          WHERE
+            ea.event_id = events_event.id
+        ) AS is_attendance_event
+      FROM
+        events_event
+        LEFT JOIN gallery_responsiveimage ON gallery_responsiveimage.id = events_event.image_id
+    ) t;
+*/
 async function getEvents() {
-  const rawData = await dumpOW4Data("https://old.online.ntnu.no/api/v1/event/events/?")
-  const data = z.array(EventSchema).parse(rawData)
-  return data
+  const fpath = path.resolve(import.meta.dirname, "ow4_events.json")
+  const rawData = JSON.parse((await fs.readFile(fpath)).toString())
+  return EventSchema.array().parse(rawData)
 }
 
 async function getEventAttendees() {
@@ -122,9 +151,22 @@ program.description("Import events from ow4").action(async () => {
   const ruleBundles = await getRuleBundles()
   const gradeRules = await getGradeRules()
 
+  const dbEvents = await prisma.event.findMany({
+    where: {
+      metadataImportId: {
+        not: null,
+      },
+    },
+  })
+
   const existingUsers = new Set((await prisma.user.findMany({ select: { id: true } })).map((user) => user.id))
 
   for (const event of events) {
+    if (dbEvents.some((dbEvent) => dbEvent.metadataImportId === event.id)) {
+      console.log("SKIPPING EVENT", event.title)
+      continue
+    }
+
     console.log("CREATING EVENT", event.title)
     await prisma.$transaction(async (tsx) => {
       let poolString = null
@@ -186,12 +228,12 @@ program.description("Import events from ow4").action(async () => {
       const createdEvent = await tsx.event.create({
         data: {
           description: await marked(event.description),
-          start: event.start_date,
-          end: event.end_date,
+          start: event.event_start,
+          end: event.event_end,
           status: "PUBLIC",
           type: mapEventType(event.event_type),
           title: event.title,
-          imageUrl: event.images.length > 0 ? event.images[0].original : null,
+          imageUrl: event.image_original,
           locationTitle: event.location,
           attendance:
             eventAttendance && poolString && grades && users
@@ -210,7 +252,7 @@ program.description("Import events from ow4").action(async () => {
                   },
                 }
               : undefined,
-          metadataImportId: 420,
+          metadataImportId: event.id,
         },
       })
 
