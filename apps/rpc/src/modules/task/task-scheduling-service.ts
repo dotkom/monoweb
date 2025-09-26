@@ -2,15 +2,7 @@ import type { SchedulerClient } from "@aws-sdk/client-scheduler"
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type {
-  AttendanceId,
-  AttendancePoolId,
-  AttendeeId,
-  FeedbackFormId,
-  RecurringTaskId,
-  Task,
-  TaskId,
-} from "@dotkomonline/types"
+import type { AttendanceId, AttendeeId, FeedbackFormId, RecurringTaskId, Task, TaskId } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { UnimplementedError } from "../../error"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
