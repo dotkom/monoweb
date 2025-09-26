@@ -319,16 +319,16 @@ export function getAttendanceService(
         data.yearCriteria = remaining
       }
 
-      let createdPool = await attendanceRepository.createAttendancePool(handle, attendanceId, null, data)
+      let taskId: TaskId | null = null
 
+      // There is no reason to create a task if there is no merge delay
       if (data.mergeDelayHours) {
         const mergeTime = new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
-        const taskId = await this.scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime)
 
-        createdPool = await attendanceRepository.updateAttendancePoolById(handle, createdPool.id, taskId, {})
+        taskId = await this.scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime)
       }
 
-      return createdPool
+      return await attendanceRepository.createAttendancePool(handle, attendanceId, taskId, data)
     },
     async updateAttendancePool(handle, attendancePoolId, data) {
       validateAttendancePoolWrite(data)
