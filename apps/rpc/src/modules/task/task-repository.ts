@@ -2,7 +2,6 @@ import type { DBHandle, TaskStatus } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendeeId,
-  type EventId,
   type FeedbackFormId,
   type Task,
   type TaskId,
