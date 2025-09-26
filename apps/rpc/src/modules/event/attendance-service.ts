@@ -175,8 +175,18 @@ export interface AttendanceService {
    * NOTE: Be careful of the difference between this and {@link registerAttendee}.
    */
   registerAttendance(handle: DBHandle, attendee: AttendeeId, at: TZDate | null): Promise<void>
-  scheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId, mergeTime: TZDate): Promise<void>
-  rescheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId, mergeTime: TZDate | null): Promise<void>
+  scheduleMergeEventPoolsTask(
+    handle: DBHandle,
+    attendanceId: AttendanceId,
+    attendancePoolId: AttendancePoolId,
+    mergeTime: TZDate
+  ): Promise<void>
+  rescheduleMergeEventPoolsTask(
+    handle: DBHandle,
+    attendanceId: AttendanceId,
+    attendancePoolId: AttendancePoolId,
+    mergeTime: TZDate | null
+  ): Promise<void>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
 }
 
@@ -336,7 +346,7 @@ export function getAttendanceService(
         const mergeTime = new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
         await this.rescheduleMergeEventPoolsTask(handle, attendance.id, attendancePoolId, mergeTime)
       }
-      
+
       return updatedPool
     },
     async deleteAttendancePool(handle, attendancePoolId) {
@@ -1089,7 +1099,12 @@ export function getAttendanceService(
       )
     },
     async scheduleMergeEventPoolsTask(handle, attendanceId, attendancePoolId, mergeTime) {
-      await taskSchedulingService.scheduleAt(handle, tasks.MERGE_ATTENDANCE_POOLS, { attendanceId, attendancePoolId }, mergeTime)
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.MERGE_ATTENDANCE_POOLS,
+        { attendanceId, attendancePoolId },
+        mergeTime
+      )
     },
     async rescheduleMergeEventPoolsTask(handle, attendanceId, attendancePoolId, mergeTime) {
       const existingTask = await taskSchedulingService.findMergeEventPoolsTask(handle, attendanceId, attendancePoolId)
@@ -1098,7 +1113,7 @@ export function getAttendanceService(
         if (existingTask.scheduledAt === mergeTime) {
           return
         }
-  
+
         await taskSchedulingService.cancel(handle, existingTask.id)
       }
 
