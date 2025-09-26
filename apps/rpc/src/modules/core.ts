@@ -221,7 +221,8 @@ export async function createServiceLayer(
     recurringTaskService,
     taskDiscoveryService,
     taskSchedulingService,
-    attendanceService
+    attendanceService,
+    configuration
   )
 
   const workspaceService =

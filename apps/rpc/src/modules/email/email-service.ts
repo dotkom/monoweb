@@ -226,7 +226,7 @@ export function getEmailService(
             // Queue the next recursive call as long as the abort controller hasn't been aborted.
             function enqueueWork() {
               if (!signal.aborted) {
-                interval = setTimeout(work, 1000)
+                interval = setTimeout(work, configuration.email.awsSqsWorkerInterval)
               }
             }
 
@@ -268,7 +268,9 @@ export function getEmailService(
         })
       }
 
-      interval = setTimeout(work, 1000)
+      interval = setTimeout(work, configuration.email.awsSqsWorkerInterval)
+
+      logger.info("Starting TaskExecutor with interval of %d milliseconds", configuration.email.awsSqsWorkerInterval)
 
       signal.addEventListener("abort", () => {
         if (interval !== null) {
