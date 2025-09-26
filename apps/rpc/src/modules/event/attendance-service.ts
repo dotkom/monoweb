@@ -343,11 +343,11 @@ export function getAttendanceService(
       const otherPools = attendance.pools.filter((pool) => pool.id !== attendancePoolId)
       validateAttendancePoolDisjunction(data.yearCriteria, otherPools)
 
-      // Update any existing tasks related to the pool
       const mergeTime = data.mergeDelayHours
         ? new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
         : null
 
+      // Update any existing tasks related to the pool
       const taskId = await this.rescheduleMergeEventPoolsTask(handle, attendancePoolId, pool.taskId, mergeTime)
 
       return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, taskId, data)
