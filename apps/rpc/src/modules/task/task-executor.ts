@@ -152,7 +152,7 @@ export function getLocalTaskExecutor(
         })
       }
 
-      logger.info("Starting TaskExecutor with interval of %d milliseconds", configuration.tasks.workerInterval)
+      logger.info("Starting TaskExecutor Worker with interval of %d milliseconds", configuration.tasks.workerInterval)
 
       interval = setTimeout(work, configuration.tasks.workerInterval)
       signal.addEventListener("abort", () => {
