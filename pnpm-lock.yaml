@@ -718,10 +718,10 @@ importers:
         version: 9.35.0(@opentelemetry/context-async-hooks@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.204.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(webpack@5.99.9)
       '@splinetool/react-spline':
         specifier: ^4.0.0
-        version: 4.1.0(@splinetool/runtime@1.10.56)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 4.1.0(@splinetool/runtime@1.10.57)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@splinetool/runtime':
         specifier: ^1.9.98
-        version: 1.10.56
+        version: 1.10.57
       '@tailwindcss/typography':
         specifier: ^0.5.10
         version: 0.5.16(tailwindcss@4.1.13)
@@ -3993,13 +3993,6 @@ packages:
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
 
-  '@react-email/render@1.2.2':
-    resolution: {integrity: sha512-9MOMX7bGUvb3a7hNtoPguxyQUg38PuL88jhXmAgpWlF93yn0spj6pmVHkngLDlJYwYeBEQusPsQyyBv622Kdnw==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      react: ^18.0 || ^19.0 || ^19.0.0-rc
-      react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
-
   '@react-email/render@1.2.3':
     resolution: {integrity: sha512-qu3XYNkHGao3teJexVD5CrcgFkNLrzbZvpZN17a7EyQYUN3kHkTkE9saqY4VbvGx6QoNU3p8rsk/Xm++D/+pTw==}
     engines: {node: '>=18.0.0'}
@@ -4654,8 +4647,8 @@ packages:
       next:
         optional: true
 
-  '@splinetool/runtime@1.10.56':
-    resolution: {integrity: sha512-IKZHpoNcuMf0KaGHnnIPUpotZvuUErRqDovQxNaGkGZxxTTcmMSEfE9+1KSOKfQVfIRDRIgHyu5QumRADTaOng==}
+  '@splinetool/runtime@1.10.57':
+    resolution: {integrity: sha512-C+nQs4eoRio0HdAW6wzX3KYEAMALXPEsNGkyLF1XINja/wxmMCpwwsbn9codDlfF3rZfkYzmQlQOLQrStuRFvQ==}
 
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
@@ -5542,8 +5535,8 @@ packages:
     resolution: {integrity: sha512-lGe34o6EHj9y3Kts9R4ZYs/Gr+6N7MCaMlIFA3F1R2O5/m7K06AxfSeO5530PEERE6/WyEg3lsuyw4GHlPZHog==}
     engines: {node: ^4.5.0 || >= 5.9}
 
-  baseline-browser-mapping@2.8.7:
-    resolution: {integrity: sha512-bxxN2M3a4d1CRoQC//IqsR5XrLh0IJ8TCv2x6Y9N0nckNz/rTjZB3//GGscZziZOxmjP55rzxg/ze7usFI9FqQ==}
+  baseline-browser-mapping@2.8.8:
+    resolution: {integrity: sha512-be0PUaPsQX/gPWWgFsdD+GFzaoig5PXaUC1xLkQiYdDnANU8sMnHoQd8JhbJQuvTWrWLyeFN9Imb5Qtfvr4RrQ==}
     hasBin: true
 
   bcp-47-match@2.0.3:
@@ -12392,14 +12385,6 @@ snapshots:
     dependencies:
       react: 19.1.1
 
-  '@react-email/render@1.2.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
-    dependencies:
-      html-to-text: 9.0.5
-      prettier: 3.6.2
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
-      react-promise-suspense: 0.3.4
-
   '@react-email/render@1.2.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
       html-to-text: 9.0.5
@@ -13198,9 +13183,9 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.10.56)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.10.57)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
-      '@splinetool/runtime': 1.10.56
+      '@splinetool/runtime': 1.10.57
       blurhash: 2.0.5
       lodash.debounce: 4.0.8
       react: 19.1.1
@@ -13210,7 +13195,7 @@ snapshots:
     optionalDependencies:
       next: 15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
 
-  '@splinetool/runtime@1.10.56':
+  '@splinetool/runtime@1.10.57':
     dependencies:
       on-change: 4.0.2
       semver-compare: 1.0.0
@@ -14151,7 +14136,7 @@ snapshots:
 
   base64id@2.0.0: {}
 
-  baseline-browser-mapping@2.8.7: {}
+  baseline-browser-mapping@2.8.8: {}
 
   bcp-47-match@2.0.3: {}
 
@@ -14214,7 +14199,7 @@ snapshots:
 
   browserslist@4.26.2:
     dependencies:
-      baseline-browser-mapping: 2.8.7
+      baseline-browser-mapping: 2.8.8
       caniuse-lite: 1.0.30001745
       electron-to-chromium: 1.5.224
       node-releases: 2.0.21
