@@ -14,6 +14,7 @@ import {
   AttendeeSchema,
   type AttendeeWrite,
   type EventId,
+  type TaskId,
   type UserId,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
@@ -52,11 +53,17 @@ export interface AttendanceRepository {
     next: AttendancePoolId
   ): Promise<void>
 
-  createAttendancePool(handle: DBHandle, attendanceId: AttendanceId, data: AttendancePoolWrite): Promise<AttendancePool>
+  createAttendancePool(
+    handle: DBHandle,
+    attendanceId: AttendanceId,
+    taskId: TaskId | null,
+    data: AttendancePoolWrite
+  ): Promise<AttendancePool>
   findAttendancePoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendancePool | null>
   updateAttendancePoolById(
     handle: DBHandle,
     attendancePoolId: AttendancePoolId,
+    taskId: TaskId | null,
     data: Partial<AttendancePoolWrite>
   ): Promise<AttendancePool>
   deleteAttendancePoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<void>
@@ -342,11 +349,12 @@ export function getAttendanceRepository(): AttendanceRepository {
       })
       return parseOrReport(AttendeeSchema, attendee)
     },
-    async createAttendancePool(handle, attendanceId, data) {
+    async createAttendancePool(handle, attendanceId, taskId, data) {
       const pool = await handle.attendancePool.create({
         data: {
           ...data,
           attendanceId,
+          taskId,
         },
       })
       return parseOrReport(AttendancePoolSchema, pool)
@@ -357,10 +365,13 @@ export function getAttendanceRepository(): AttendanceRepository {
       })
       return parseOrReport(AttendancePoolSchema.nullable(), pool)
     },
-    async updateAttendancePoolById(handle, attendancePoolId, data) {
+    async updateAttendancePoolById(handle, attendancePoolId, taskId, data) {
       const pool = await handle.attendancePool.update({
         where: { id: attendancePoolId },
-        data,
+        data: {
+          ...data,
+          taskId,
+        },
       })
       return parseOrReport(AttendancePoolSchema, pool)
     },
