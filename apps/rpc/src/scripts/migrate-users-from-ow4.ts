@@ -1,4 +1,4 @@
-import { configuration } from "src/configuration"
+import { createConfiguration } from "src/configuration"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 
 import { TZDate } from "@date-fns/tz"
@@ -10,6 +10,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import type { ManagementClient } from "auth0"
 import { z } from "zod"
 
+const configuration = createConfiguration()
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma

@@ -119,7 +119,7 @@ export function getAttendanceCapacity(attendance: Attendance): number {
   return attendance.pools.reduce((total, pool) => total + pool.capacity, 0)
 }
 
-export function canUserAttendPool(user: User, pool: AttendancePool) {
+export function isAttendable(user: User, pool: AttendancePool) {
   const membership = findActiveMembership(user)
   if (membership === null) {
     return false
@@ -156,7 +156,7 @@ export const getAttendablePool = (attendance: Attendance, user: User | null) => 
     return attendance.pools.find((pool) => pool.id === attendee.attendancePoolId) ?? null
   }
 
-  return attendance.pools.find((pool) => canUserAttendPool(user, pool)) ?? null
+  return attendance.pools.find((pool) => isAttendable(user, pool)) ?? null
 }
 
 export const getNonAttendablePools = (attendance: Attendance, user: User | null) => {

@@ -10,13 +10,14 @@ import fastify from "fastify"
 import rawBody from "fastify-raw-body"
 import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
-import { configuration } from "../configuration"
+import { createConfiguration } from "../configuration"
 import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
 import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createContext } from "../trpc"
 
 const logger = getLogger("rpc")
+const configuration = createConfiguration()
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
 const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
@@ -97,7 +98,7 @@ server.register(fastifyTRPCPlugin, {
 registerObservabilityProbeRoutes(server)
 registerStripeWebhookRoutes(server, serviceLayer)
 
-await identifyCallerIAMIdentity()
+await identifyCallerIAMIdentity(configuration)
 await server.listen({ port: 4444, host: "0.0.0.0" })
 
 // In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`

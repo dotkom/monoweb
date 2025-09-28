@@ -1,9 +1,10 @@
 import { slugify } from "@dotkomonline/utils"
-import { configuration } from "src/configuration"
+import { createConfiguration } from "src/configuration"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 import z from "zod"
 import { dumpOW4Data } from "./migrate-from-ow4"
 
+const configuration = createConfiguration()
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma
