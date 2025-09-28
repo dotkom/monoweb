@@ -135,6 +135,29 @@ export const attendanceRouter = t.router({
       })
     }),
 
+  getRegistrationAvailability: authenticatedProcedure
+    .input(
+      z.object({
+        attendanceId: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        return await ctx.attendanceService.getRegistrationAvailability(
+          handle,
+          input.attendanceId,
+          ctx.principal.subject,
+          {
+            ignoreRegistrationWindow: false,
+            immediateReservation: false,
+            immediatePayment: true,
+            overriddenAttendancePoolId: null,
+            ignoreRegisteredToParent: false,
+          }
+        )
+      })
+    ),
+
   registerForEvent: authenticatedProcedure
     .input(
       z.object({
