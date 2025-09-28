@@ -37,4 +37,3 @@ runs:
         service-name: monoweb-prd-kvittering-backend
         container-name: monoweb-prd-kvittering-backend
         image: ${{ steps.build.outputs.image }}
-        environment-variables: ${{ steps.acquire-secrets.outputs.secrets }}

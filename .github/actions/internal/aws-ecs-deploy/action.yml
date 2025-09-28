@@ -26,8 +26,6 @@ inputs:
   aws-iam-role:
     description: The IAM role to assume for AWS ECS deployment
     required: true
-  environment-variables:
-    description: Environment variables to set in the task definition, in .env file style format
 runs:
   using: composite
   steps:
@@ -43,7 +41,6 @@ runs:
         container-name: ${{ inputs.container-name }}
         task-definition-arn: ${{ inputs.aws-task-definition-arn }}
         image: ${{ inputs.image }}
-        environment-variables: ${{ inputs.environment-variables }}
     - name: Deploy new task definition
       id: deploy-task-definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@69e7aed9b8acdd75a6c585ac669c33831ab1b9a3 # v1

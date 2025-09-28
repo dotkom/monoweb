@@ -41,4 +41,3 @@ runs:
         service-name: monoweb-${{ inputs.environment }}-rpc
         container-name: monoweb-${{ inputs.environment }}-rpc
         image: ${{ steps.build.outputs.image }}
-        environment-variables: ${{ steps.acquire-secrets.outputs.secrets }}
