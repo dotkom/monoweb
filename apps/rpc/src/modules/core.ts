@@ -8,12 +8,7 @@ import { ManagementClient } from "auth0"
 import { type admin_directory_v1, google } from "googleapis"
 import Stripe from "stripe"
 import z from "zod"
-import {
-  type Configuration,
-  configuration,
-  isAmazonSesEmailFeatureEnabled,
-  isGoogleWorkspaceFeatureEnabled,
-} from "../configuration"
+import { type Configuration, isAmazonSesEmailFeatureEnabled, isGoogleWorkspaceFeatureEnabled } from "../configuration"
 import { IllegalStateError } from "../error"
 import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
@@ -84,7 +79,7 @@ const workspaceServiceAccountJsonSchema = z.object({
   type: z.literal("service_account"),
 })
 
-function getDirectory(): admin_directory_v1.Admin {
+function getDirectory(configuration: Configuration): admin_directory_v1.Admin {
   if (!isGoogleWorkspaceFeatureEnabled(configuration)) {
     throw new IllegalStateError("Google Workspace integration is not enabled or missing configuration variables")
   }
@@ -120,7 +115,7 @@ export function createThirdPartyClients(configuration: Configuration) {
     apiVersion: "2025-07-30.basil",
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
-  const workspaceDirectory = isGoogleWorkspaceFeatureEnabled(configuration) ? getDirectory() : null
+  const workspaceDirectory = isGoogleWorkspaceFeatureEnabled(configuration) ? getDirectory(configuration) : null
   return { s3Client, sesClient, sqsClient, auth0Client, stripe, prisma, workspaceDirectory }
 }
 
@@ -246,7 +241,6 @@ export async function createServiceLayer(
     articleService,
     auditLogService,
     attendanceService,
-    attendanceRepository,
     taskService,
     taskExecutor,
     feedbackFormService,

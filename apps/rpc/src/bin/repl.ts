@@ -1,7 +1,8 @@
 import repl from "node:repl"
-import { configuration } from "../configuration"
+import { createConfiguration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 
+const configuration = createConfiguration()
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 

@@ -5,7 +5,7 @@ import { Command } from "commander"
 import { marked } from "marked"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 import z from "zod"
-import { configuration } from "../configuration"
+import { createConfiguration } from "../configuration"
 import {
   AttendanceEventSchema,
   type EventAttendee,
@@ -138,6 +138,7 @@ function mapEventType(ow4EventType: number): EventType {
   }
 }
 
+const configuration = createConfiguration()
 const program = new Command()
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)

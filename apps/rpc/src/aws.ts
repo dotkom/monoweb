@@ -1,11 +1,11 @@
 import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts"
 import { getLogger } from "@dotkomonline/logger"
 import { trace } from "@opentelemetry/api"
-import { configuration } from "./configuration"
+import type { Configuration } from "./configuration"
 
 const logger = getLogger("rpc/aws")
 
-export async function identifyCallerIAMIdentity() {
+export async function identifyCallerIAMIdentity(configuration: Configuration) {
   await trace
     .getTracer("@dotkomonline/rpc/aws-caller-identity")
     .startActiveSpan("AWS/QueryCallingIdentity", async (span) => {

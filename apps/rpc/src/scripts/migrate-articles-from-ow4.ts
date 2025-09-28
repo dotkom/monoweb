@@ -1,7 +1,7 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBClient } from "@dotkomonline/db"
 import { marked } from "marked"
-import { configuration } from "src/configuration"
+import { createConfiguration } from "src/configuration"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 import z from "zod"
 import { DEFAULT_IMAGE_URL, dumpOW4Data } from "./migrate-from-ow4"
@@ -19,6 +19,7 @@ const createUniqueSlug = async (prisma: DBClient, slug: string) => {
   return uniqueSlug
 }
 
+const configuration = createConfiguration()
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma

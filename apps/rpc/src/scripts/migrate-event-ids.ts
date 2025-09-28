@@ -1,10 +1,11 @@
 import fsp from "node:fs/promises"
 import path from "node:path"
 import { marked } from "marked"
-import { configuration } from "../configuration"
+import { createConfiguration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { EventSchema } from "./migrate-events-schemas"
 
+const configuration = createConfiguration()
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma

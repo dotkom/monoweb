@@ -1,7 +1,7 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import { TZDate } from "@date-fns/tz"
-import { configuration } from "src/configuration"
+import { createConfiguration } from "src/configuration"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
 import { z } from "zod"
 
@@ -22,6 +22,7 @@ const SanityOfflineSchema = z.object({
   thumbnail: SanityAssetSchema,
 })
 
+const configuration = createConfiguration()
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma
