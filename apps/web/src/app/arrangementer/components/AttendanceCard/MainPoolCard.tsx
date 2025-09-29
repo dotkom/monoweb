@@ -49,6 +49,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const registerCountdownText = useCountdown(attendance.registerStart)
   const registerCountdownInterval = interval(subMinutes(attendance.registerStart, 15), attendance.registerStart)
   const isWithinRegisterCountdown = isWithinInterval(now, registerCountdownInterval)
+  const showRegisterCountdown = isWithinRegisterCountdown && !attendee
 
   const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null)
   const paymentCountdownInterval =
@@ -57,6 +58,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
     paymentCountdownInterval && hasAttendeePaid(attendance, attendee) === false
       ? isWithinInterval(now, paymentCountdownInterval)
       : false
+  const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null
 
   const cardClassname = cn(
     "flex flex-col w-full min-h-[10rem] gap-2 p-3 rounded-lg",
@@ -160,42 +162,44 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
       </div>
 
       <div className="flex flex-col min-h-[10rem] gap-6 p-3 rounded-lg items-center text-center justify-center w-full">
-        <div className="flex grow flex-col gap-4 items-center text-center justify-center">
-          <div className="flex flex-col gap-1 items-center">
-            <Text
-              className={cn(
-                "text-3xl px-2 py-1",
-                hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
-              )}
-            >
-              {reservedAttendeeCount}
-              {/* Don't show capacity for merge pools (capacity = 0) */}
-              {pool.capacity > 0 && `/${pool.capacity}`}
-            </Text>
-
-            {hasWaitlist && (
+        {!showRegisterCountdown && (
+          <div className="flex grow flex-col gap-4 items-center text-center justify-center">
+            <div className="flex flex-col gap-1 items-center">
               <Text
                 className={cn(
-                  "text-lg px-1 py-0.5",
-                  attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-800 rounded-lg"
+                  "text-3xl px-2 py-1",
+                  hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
                 )}
               >
-                +{unreservedAttendeeCount} i kø
+                {reservedAttendeeCount}
+                {/* Don't show capacity for merge pools (capacity = 0) */}
+                {pool.capacity > 0 && `/${pool.capacity}`}
               </Text>
-            )}
-          </div>
 
-          <div className="flex flex-col gap-2">
-            {servingPunishment ? (
-              <PunishmentStatus attendee={attendee} />
-            ) : (
-              <AttendanceStatus attendance={attendance} attendee={attendee} />
-            )}
-            <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
-          </div>
-        </div>
+              {hasWaitlist && (
+                <Text
+                  className={cn(
+                    "text-lg px-1 py-0.5",
+                    attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-800 rounded-lg"
+                  )}
+                >
+                  +{unreservedAttendeeCount} i kø
+                </Text>
+              )}
+            </div>
 
-        {isWithinRegisterCountdown && !attendee && (
+            <div className="flex flex-col gap-2">
+              {servingPunishment ? (
+                <PunishmentStatus attendee={attendee} />
+              ) : (
+                <AttendanceStatus attendance={attendance} attendee={attendee} />
+              )}
+              <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+            </div>
+          </div>
+        )}
+
+        {showRegisterCountdown && (
           <div className="flex flex-col gap-1 items-center">
             <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
             <Text className="text-4xl font-medium tabular-nums" suppressHydrationWarning>
@@ -204,7 +208,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
           </div>
         )}
 
-        {isWithinPaymentCountdown && attendee?.paymentLink != null && (
+        {showPaymentCountdown && attendee?.paymentLink && (
           <Link href={attendee.paymentLink} className="group relative cursor-pointer items-center w-full">
             <Stripes
               colorA={cn("dark:bg-amber-600", attendee.reserved !== false ? "bg-amber-200" : "bg-indigo-200")}
