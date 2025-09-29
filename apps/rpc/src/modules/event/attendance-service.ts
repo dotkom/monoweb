@@ -36,6 +36,7 @@ import {
   isBefore,
   isFuture,
   isPast,
+  max,
   min,
   startOfYesterday,
 } from "date-fns"
@@ -482,7 +483,10 @@ export function getAttendanceService(
         reservationActiveAt = addHours(reservationActiveAt, applicablePool.mergeDelayHours)
       }
       if (punishment !== null) {
-        reservationActiveAt = addHours(reservationActiveAt, punishment.delay)
+        // Punishment delays are AT MOST `delay` hours after the event registration start. In other words, whichever of
+        // `reservationActiveAt` and the punishment offset comes last.
+        const punishmentOffset = addHours(attendance.registerStart, punishment.delay)
+        reservationActiveAt = max([reservationActiveAt, punishmentOffset])
       }
 
       return {
