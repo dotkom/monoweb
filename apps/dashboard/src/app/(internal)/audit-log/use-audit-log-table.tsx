@@ -8,9 +8,10 @@ import { useMemo } from "react"
 
 interface Props {
   audit_logs: AuditLog[]
+  onLoadMore?(): void
 }
 
-export const AllAuditLogsTable = ({ audit_logs }: Props) => {
+export const AuditLogsTable = ({ audit_logs, onLoadMore }: Props) => {
   const columnHelper = createColumnHelper<AuditLog>()
   const columns = useMemo(
     () => [
@@ -67,5 +68,5 @@ export const AllAuditLogsTable = ({ audit_logs }: Props) => {
     [audit_logs, columns]
   )
 
-  return <GenericTable table={useReactTable(tableOptions)} />
+  return <GenericTable table={useReactTable(tableOptions)} onLoadMore={onLoadMore} />
 }
