@@ -2,7 +2,7 @@
 
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import type { ComponentPropsWithRef, ComponentPropsWithoutRef, FC } from "react"
-import { Button } from "../../atoms/Button/Button"
+import { Button, ButtonProps } from "../../atoms/Button/Button"
 import { cn } from "../../utils"
 
 export const AlertDialog = AlertDialogPrimitive.Root
@@ -27,7 +27,7 @@ export const AlertDialogOverlay: FC<ComponentPropsWithRef<typeof AlertDialogPrim
   return (
     <AlertDialogPrimitive.Overlay
       className={cn(
-        "animate-in fade-in bg-slate-50/50 fixed inset-0 z-50 backdrop-blur-xs transition-opacity",
+        "animate-in fade-in bg-slate-50/50 dark:bg-slate-950/50 fixed inset-0 z-50 backdrop-blur-xs transition-opacity",
         className
       )}
       {...props}
@@ -47,7 +47,7 @@ export const AlertDialogContent: FC<AlertDialogContentProps> = ({ className, ref
       <AlertDialogPrimitive.Content
         ref={ref}
         className={cn(
-          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 bg-gray-200 fixed z-50 grid w-full max-w-[95%] sm:max-w-lg scale-100 gap-4 p-6 opacity-100 rounded-lg md:w-full",
+          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 bg-slate-200 dark:bg-stone-800 fixed z-50 grid w-full max-w-[95%] sm:max-w-lg scale-100 gap-4 p-6 opacity-100 rounded-lg md:w-full",
           className
         )}
         {...props}
@@ -77,7 +77,13 @@ export const AlertDialogDescription: FC<ComponentPropsWithRef<typeof AlertDialog
   ref,
   ...props
 }) => {
-  return <AlertDialogPrimitive.Description ref={ref} className={cn("text-gray-900 text-md", className)} {...props} />
+  return (
+    <AlertDialogPrimitive.Description
+      ref={ref}
+      className={cn("text-gray-900 dark:text-stone-100/80 text-md", className)}
+      {...props}
+    />
+  )
 }
 
 export type AlertDialogActionProps = Omit<ComponentPropsWithRef<typeof AlertDialogPrimitive.Action>, "color"> & {
@@ -88,12 +94,21 @@ export const AlertDialogAction: FC<AlertDialogActionProps> = ({ className, ref, 
   return <Button element={AlertDialogPrimitive.Action} {...props} ref={ref} color={destructive ? "red" : undefined} />
 }
 
-export const AlertDialogCancel: FC<Omit<ComponentPropsWithRef<typeof AlertDialogPrimitive.Cancel>, "color">> = ({
+export const AlertDialogCancel: FC<ComponentPropsWithRef<typeof AlertDialogPrimitive.Cancel> & ButtonProps> = ({
   className,
+  color,
   ref,
   ...props
 }) => {
   return (
-    <Button element={AlertDialogPrimitive.Cancel} className={className} {...props} variant="text" size="lg" ref={ref} />
+    <Button
+      element={AlertDialogPrimitive.Cancel}
+      className={className}
+      {...props}
+      variant={props.variant ?? "text"}
+      size={props.size ?? "lg"}
+      color={color}
+      ref={ref}
+    />
   )
 }
