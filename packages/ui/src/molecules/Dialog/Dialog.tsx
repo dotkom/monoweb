@@ -2,7 +2,7 @@
 
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import type { ComponentPropsWithRef, ComponentPropsWithoutRef, FC } from "react"
-import { Button, ButtonProps } from "../../atoms/Button/Button"
+import { Button, type ButtonProps } from "../../atoms/Button/Button"
 import { cn } from "../../utils"
 
 export const AlertDialog = AlertDialogPrimitive.Root
