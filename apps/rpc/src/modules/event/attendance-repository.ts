@@ -56,14 +56,14 @@ export interface AttendanceRepository {
   createAttendancePool(
     handle: DBHandle,
     attendanceId: AttendanceId,
-    taskId: TaskId | null,
+    mergeAttendancePoolsTaskId: TaskId | null,
     data: AttendancePoolWrite
   ): Promise<AttendancePool>
   findAttendancePoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<AttendancePool | null>
   updateAttendancePoolById(
     handle: DBHandle,
     attendancePoolId: AttendancePoolId,
-    taskId: TaskId | null,
+    mergeAttendancePoolsTaskId: TaskId | null,
     data: Partial<AttendancePoolWrite>
   ): Promise<AttendancePool>
   deleteAttendancePoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<void>
@@ -349,12 +349,12 @@ export function getAttendanceRepository(): AttendanceRepository {
       })
       return parseOrReport(AttendeeSchema, attendee)
     },
-    async createAttendancePool(handle, attendanceId, taskId, data) {
+    async createAttendancePool(handle, attendanceId, mergeAttendancePoolsTaskId, data) {
       const pool = await handle.attendancePool.create({
         data: {
           ...data,
           attendanceId,
-          taskId,
+          taskId: mergeAttendancePoolsTaskId,
         },
       })
       return parseOrReport(AttendancePoolSchema, pool)
@@ -365,12 +365,12 @@ export function getAttendanceRepository(): AttendanceRepository {
       })
       return parseOrReport(AttendancePoolSchema.nullable(), pool)
     },
-    async updateAttendancePoolById(handle, attendancePoolId, taskId, data) {
+    async updateAttendancePoolById(handle, attendancePoolId, mergeAttendancePoolsTaskId, data) {
       const pool = await handle.attendancePool.update({
         where: { id: attendancePoolId },
         data: {
           ...data,
-          taskId,
+          taskId: mergeAttendancePoolsTaskId,
         },
       })
       return parseOrReport(AttendancePoolSchema, pool)
