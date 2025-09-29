@@ -348,7 +348,7 @@ export function getAttendanceService(
         : null
 
       // Update any existing tasks related to the pool
-      const taskId = await this.rescheduleMergeEventPoolsTask(handle, attendancePoolId, pool.taskId, mergeTime)
+      const taskId = await this.rescheduleMergeEventPoolsTask(handle, attendance.id, pool.taskId, mergeTime)
 
       return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, taskId, data)
     },
@@ -1117,13 +1117,17 @@ export function getAttendanceService(
     },
     async executeMergeEventPoolsTask(handle, { attendanceId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
+      console.log(`attendance id: ${attendance.id}`)
 
       const isMergeable = (pool: AttendancePool) => {
+        console.log(`checking mergability of pool ${pool.title} with delay ${pool.mergeDelayHours}`)
         if (pool.mergeDelayHours === null || pool.mergeDelayHours <= 0) {
+          console.log("  - true")
           return true
         }
-
-        const mergeTime = new TZDate(addHours(attendance.registerStart, pool.mergeDelayHours))
+        
+        const mergeTime = addHours(new TZDate(attendance.registerStart), pool.mergeDelayHours)
+        console.log(`  - ${!isFuture(mergeTime)}`)
         return !isFuture(mergeTime)
       }
 
@@ -1134,6 +1138,7 @@ export function getAttendanceService(
       const pendingPools = attendance.pools.filter((pool) => !isMergeable(pool))
 
       if (mergeablePools.length <= 1) {
+        console.log("No pools to merge");
         return
       }
 
