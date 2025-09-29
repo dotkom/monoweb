@@ -1,7 +1,7 @@
 import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
-import { getLogger } from "@dotkomonline/logger"
+import { type Logger, getLogger } from "@dotkomonline/logger"
 import {
   type Attendance,
   type AttendanceId,
@@ -18,11 +18,13 @@ import {
   DEFAULT_MARK_DURATION,
   type Event,
   type GroupType,
+  type Membership,
   type TaskId,
+  type User,
   type UserId,
-  canUserAttendPool,
   findActiveMembership,
   getMembershipGrade,
+  isAttendable,
 } from "@dotkomonline/types"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import {
@@ -87,12 +89,64 @@ type EventRegistrationOptions = {
    *
    * NOTE: This flag should PROBABLY only be used if you are calling registerAttendee as a system administrator.
    */
-  forceAttendancePoolId: AttendancePoolId | null
+  overriddenAttendancePoolId: AttendancePoolId | null
 }
 
 type EventDeregistrationOptions = {
   ignoreDeregistrationWindow: boolean
 }
+
+/** Different types of problems that prevent a user from registering for an event */
+export type RegistrationRejectionCause = keyof typeof RegistrationRejectionCause
+export const RegistrationRejectionCause = {
+  SUSPENDED: "SUSPENDED",
+  TOO_EARLY: "TOO_EARLY",
+  TOO_LATE: "TOO_LATE",
+  ALREADY_REGISTERED: "ALREADY_REGISTERED",
+  MISSING_PARENT_REGISTRATION: "MISSING_PARENT_REGISTRATION",
+  MISSING_PARENT_RESERVATION: "MISSING_PARENT_RESERVATION",
+  MISSING_MEMBERSHIP: "MISSING_MEMBERSHIP",
+  NO_MATCHING_POOL: "NO_MATCHING_POOL",
+} as const
+
+export type RegistrationBypassCause = keyof typeof RegistrationBypassCause
+export const RegistrationBypassCause = {
+  IGNORE_PARENT: "IGNORE_PARENT",
+  IGNORE_REGISTRATION_START: "IGNORE_REGISTRATION_START",
+  IGNORE_REGISTRATION_END: "IGNORE_REGISTRATION_END",
+  OVERRIDDEN_POOL: "OVERRIDDEN_POOL",
+} as const
+
+/**
+ * Discovered registration availability for a user
+ *
+ * A user is either permitted to attend an event at a given point in time, or they are rejected with a corresponding
+ * cause description.
+ *
+ * For performance reasons, this result type also contains the three relations queried from the database, as well as
+ * the AttendancePool object that matches the request.
+ *
+ * NOTE: This type should ONLY EVER be constructed from the `getRegistrationAvailability` function on the
+ * AttendanceService!
+ */
+export type RegistrationAvailabilityResult = RegistrationAvailabilitySuccess | RegistrationAvailabilityFailure
+export type RegistrationAvailabilitySuccess = {
+  /**
+   * The point in time where a reservation could be made for the user. Users of this result should use this point
+   * in time for determining when to set `reserved = true` for the user.
+   */
+  reservationActiveAt: TZDate
+  event: Event
+  attendance: Attendance
+  user: User
+  membership: Membership
+  /** The AttendancePool the user will be placed into based on the EventRegistrationOptions passed */
+  pool: AttendancePool
+  bypassedChecks: RegistrationBypassCause[]
+  options: EventRegistrationOptions
+  success: true
+}
+export type RegistrationAvailabilityFailure = { cause: RegistrationRejectionCause; success: false }
 
 /**
  * Service for managing attendance, attendance pools, and the attendees that are attending an event.
@@ -131,24 +185,19 @@ export interface AttendanceService {
     attendancePoolId: AttendancePoolId,
     data: AttendancePoolWrite
   ): Promise<AttendancePool>
-  /**
-   * Register an attendee for an event.
-   *
-   * Due to how the year constraints are modelled (disjunctive set of all years across all pools), there is ONLY ONE
-   * pool that a user may be eligible to register for at a time. This means that we do not need to provide which pool
-   * to register for, as we can programmatically determine this on our own.
-   *
-   * NOTE: This function does not necessarily register the attendee, it merely checks preconditions and schedules a task
-   * to register the attendee which will be picked up by the task scheduling and executor services.
-   *
-   * NOTE: Be careful of the difference between this and {@link registerAttendance}.
-   */
-  registerAttendee(
+  getRegistrationAvailability(
     handle: DBHandle,
-    attendanceId: AttendanceId,
+    attendaceId: AttendanceId,
     user: UserId,
     options: EventRegistrationOptions
-  ): Promise<Attendee>
+  ): Promise<RegistrationAvailabilityResult>
+  /**
+   * Attempt to register an attendee for an event.
+   *
+   * NOTE: This function only does potential scheduling of associated tasks and other direct writes. The business
+   * logic for checking attendance requirements are given by `getRegistrationAvailability`
+   */
+  registerAttendee(handle: DBHandle, availability: RegistrationAvailabilitySuccess): Promise<Attendee>
   getAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee>
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
@@ -355,123 +404,162 @@ export function getAttendanceService(
     async deleteAttendancePool(handle, attendancePoolId) {
       await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
     },
-    async registerAttendee(handle, attendanceId, userId, options) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
-      const event = await eventService.getByAttendance(handle, attendance.id)
-      const user = await userService.getById(handle, userId)
-      if (attendance.attendees.some((a) => a.userId === userId)) {
-        throw new FailedPreconditionError(`User(ID=${userId}) is already registered for Attendance(ID=${attendanceId})`)
+    async getRegistrationAvailability(handle, attendanceId, userId, options) {
+      // NOTE: There are a few optimizations on queries in this function, as we want to keep the performance if this
+      // procedure high. In order to achieve this, we try to fetch as much data as possible in parallel, and we reduce
+      // the number of queries based on checks needed.
+      //
+      // For example, we do not need to query the parent event if the `options` tell to ignore any constraints on the
+      // parent event.
+      const [attendance, event, user] = await Promise.all([
+        this.getAttendanceById(handle, attendanceId),
+        eventService.getByAttendanceId(handle, attendanceId),
+        userService.getById(handle, userId),
+      ])
+
+      // A registration might be allowed to bypass a number of checks based on the provided options object. We
+      // accumulate these in a list such that downstream users of the result can make decisions based on checks
+      // skipped.
+      const bypassedChecks: RegistrationBypassCause[] = []
+
+      const isPreviouslyRegistered = attendance.attendees.some((a) => a.userId === userId)
+      if (isPreviouslyRegistered) {
+        return { cause: "ALREADY_REGISTERED", success: false }
       }
 
-      // Ensure the attempted registration is within the registration window.
-      if (isFuture(attendance.registerStart) && !options.ignoreRegistrationWindow) {
-        throw new FailedPreconditionError(
-          `Cannot register user(ID=${userId}) for Attendance(ID=${attendanceId}) before registration start`
-        )
-      }
-      if (isPast(attendance.registerEnd) && !options.ignoreRegistrationWindow) {
-        throw new FailedPreconditionError(
-          `Cannot register user(ID=${userId}) for Attendance(ID=${attendanceId}) after registration end`
-        )
+      if (isFuture(attendance.registerStart)) {
+        if (!options.ignoreRegistrationWindow) {
+          return { cause: "TOO_EARLY", success: false }
+        }
+        bypassedChecks.push("IGNORE_REGISTRATION_START")
       }
 
-      if (event.parentId) {
+      if (isPast(attendance.registerEnd)) {
+        if (!options.ignoreRegistrationWindow) {
+          return { cause: "TOO_LATE", success: false }
+        }
+        bypassedChecks.push("IGNORE_REGISTRATION_END")
+      }
+
+      // PERF: We only query and check parent relationship when bypassing is not required.
+      if (event.parentId !== null) {
         if (options.ignoreRegisteredToParent) {
-          logger.info(
-            "Bypassing registered to parent event requirements for Attendance(ID=%s) with parent Event(ID=%s) for User(Id=%s)",
-            attendance.id,
-            event.parentId,
-            userId
-          )
+          bypassedChecks.push("IGNORE_PARENT")
         } else {
-          const parentAttendance = await attendanceRepository.findAttendanceByEventId(handle, event.parentId)
+          const parent = await attendanceRepository.findAttendanceByEventId(handle, event.parentId)
+          // SAFETY: This cannot fail as its enforced on database level through a foreign key
+          invariant(parent !== null)
 
-          // Check only if parent attendance exists
-          if (parentAttendance) {
-            const attendee = parentAttendance.attendees.find((a) => a.userId === userId)
-
-            if (!attendee) {
-              throw new FailedPreconditionError(
-                `User(ID=${userId}) must be registered for parent Attendance(ID=${parentAttendance.id}) before registering for Attendance(ID=${attendanceId})`
-              )
-            }
-            if (!attendee.reserved) {
-              throw new FailedPreconditionError(
-                `User(ID=${userId}) must be reserved in parent Attendance(ID=${parentAttendance.id}) before registering for Attendance(ID=${attendanceId})`
-              )
-            }
+          const attendee = parent.attendees.find((a) => a.userId === userId)
+          if (attendee === undefined) {
+            return { cause: "MISSING_PARENT_REGISTRATION", success: false }
+          }
+          if (!attendee.reserved) {
+            return { cause: "MISSING_PARENT_RESERVATION", success: false }
           }
         }
       }
 
-      // Ensure the user has an active membership, and determine their effective grade
       const membership = findActiveMembership(user)
       if (membership === null) {
-        throw new FailedPreconditionError(`User(ID=${userId}) cannot attend as they do not have an active membership`)
-      }
-      const grade = getMembershipGrade(membership)
-
-      // If the user is suspended at time of registration, we simply do not register them at all.
-      const punishment = await personalMarkService.findPunishmentByUserId(handle, userId)
-      if (punishment?.suspended) {
-        throw new FailedPreconditionError(
-          `User(ID=${userId}) is suspended and cannot register for Attendance(ID=${attendanceId})`
-        )
+        return { cause: "MISSING_MEMBERSHIP", success: false }
       }
 
+      // This is a "free" check that does zero roundtrips against the database, despite having a rather large piece of
+      // code associated with it.
       let applicablePool: AttendancePool | null = null
-      // Attempting to override the attendance pool selection with the administrator flag only requires us to check that
-      // the required pool exists.
-      if (options.forceAttendancePoolId !== null) {
-        logger.info(
-          "Bypassing attendance pool requirements for Attendance(ID=%s) with AttendancePool(ID=%s) for User(Id=%s)",
-          attendance.id,
-          options.forceAttendancePoolId,
-          userId
-        )
-        const pool = attendance.pools.find((p) => p.id === options.forceAttendancePoolId)
+      if (options.overriddenAttendancePoolId !== null) {
+        const pool = attendance.pools.find((p) => p.id === options.overriddenAttendancePoolId)
         if (pool === undefined) {
-          throw new FailedPreconditionError(
-            `Cannot register user for Attendance(ID=${attendanceId}) as the specified pool does not exist`
+          // If this ever happens, there is either a malformed request by a third-party client, or a bug in the web or
+          // dashboard code.
+          logger.warn(
+            "User(ID=%s) attempted to override attendance on Event(ID=%s, Title=%s) with AttendancePool(ID=%s) but no such pool was found.",
+            userId,
+            event.id,
+            event.title,
+            options.overriddenAttendancePoolId
           )
+          // TODO: Maybe this should just be an invariant?
+          return { cause: "NO_MATCHING_POOL", success: false }
         }
         applicablePool = pool
+        bypassedChecks.push("OVERRIDDEN_POOL")
       } else {
-        applicablePool = attendance.pools.find((pool) => canUserAttendPool(user, pool)) ?? null
+        applicablePool = attendance.pools.find((p) => isAttendable(user, p)) ?? null
       }
 
       if (applicablePool === null) {
-        logger.warn(
-          "User(ID=%s) attempted to register for Attendance(ID=%s) but no applicable pool was found",
-          userId,
-          attendanceId
-        )
-        throw new FailedPreconditionError(
-          `User(ID=${userId}) cannot register for Attendance(ID=${attendanceId}) as no applicable pool was found`
-        )
+        return { cause: "NO_MATCHING_POOL", success: false }
       }
 
-      // Marking the attendee as registered is only half of the job, as we also schedule a task to reserve their place
-      // in the pool
-      let reservationTime = addHours(getCurrentUTC(), applicablePool.mergeDelayHours ?? 0)
+      // PERF: This always has to be queried at this point, so for this reason, this query comes relatively late in
+      // the sequence of checks we perform. It is better to reject users earlier so that this check does not need to
+      // always run.
+      const punishment = await personalMarkService.findPunishmentByUserId(handle, userId)
+      if (punishment?.suspended === true) {
+        return { cause: "SUSPENDED", success: false }
+      }
+
+      let reservationActiveAt = getCurrentUTC()
+      if (applicablePool.mergeDelayHours !== null) {
+        reservationActiveAt = addHours(reservationActiveAt, applicablePool.mergeDelayHours)
+      }
       if (punishment !== null) {
-        reservationTime = addHours(reservationTime, punishment.delay)
+        reservationActiveAt = addHours(reservationActiveAt, punishment.delay)
       }
 
-      const poolAttendees = attendance.attendees.filter((a) => a.attendancePoolId === applicablePool.id && a.reserved)
-      const isAvailableNow =
-        !isFuture(reservationTime) && (applicablePool.capacity === 0 || poolAttendees.length < applicablePool.capacity)
-      const isImmediate = options.immediateReservation || isAvailableNow
-      const attendee = await attendanceRepository.createAttendee(handle, attendanceId, applicablePool.id, userId, {
-        attendedAt: null,
-        earliestReservationAt: reservationTime,
-        reserved: isImmediate,
-        selections: [],
-        userGrade: grade,
+      return {
+        reservationActiveAt,
+        event,
+        attendance,
+        user,
+        pool: applicablePool,
+        bypassedChecks,
+        membership,
+        options,
+        success: true,
+      }
+    },
+    async registerAttendee(
+      handle,
+      { user, event, attendance, pool, reservationActiveAt, bypassedChecks, membership, options, success }
+    ) {
+      // Since the user is permitted to attend the event (as the input result is a success), we output some debug
+      // diagnostics based on any potential checks passed. This is done in this function as to not pollute logs when a
+      // user simply checks their event availability.
+      emitRegistrationAvailabilityDiagnostics(logger, {
+        user,
+        event,
+        pool,
+        bypassedChecks,
+        attendance,
+        reservationActiveAt,
+        membership,
+        options,
+        success,
       })
 
-      if (attendance.attendancePrice) {
-        const paymentDeadline = options.immediatePayment ? addHours(new TZDate(), 1) : addHours(new TZDate(), 24)
+      const poolAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved)
+      const isImmediateReservation =
+        (!isFuture(reservationActiveAt) && (pool.capacity === 0 || poolAttendees.length < pool.capacity)) ||
+        options.immediateReservation
+      const attendee = await attendanceRepository.createAttendee(
+        handle,
+        attendance.id,
+        pool.id,
+        user.id,
+        AttendeeWriteSchema.parse({
+          attendedAt: null,
+          earliestReservationAt: reservationActiveAt,
+          reserved: isImmediateReservation,
+          selections: [],
+          userGrade: getMembershipGrade(membership),
+        } satisfies AttendeeWrite)
+      )
+
+      if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0) {
+        const paymentDeadline = options.immediatePayment ? addHours(getCurrentUTC(), 1) : addHours(getCurrentUTC(), 24)
         const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
         attendee.paymentDeadline = paymentDeadline
         attendee.paymentId = payment.id
@@ -488,7 +576,7 @@ export function getAttendanceService(
 
       // Immediate reservations go through right away, otherwise we schedule a task to handle the reservation at the
       // appropriate time. In this case, the email is sent when the reservation becomes effective.
-      if (isImmediate) {
+      if (isImmediateReservation) {
         sendEventRegistrationEmail(event, attendance, attendee)
       } else {
         await taskSchedulingService.scheduleAt(
@@ -496,9 +584,9 @@ export function getAttendanceService(
           tasks.RESERVE_ATTENDEE,
           {
             attendeeId: attendee.id,
-            attendanceId,
+            attendanceId: attendance.id,
           },
-          reservationTime
+          reservationActiveAt
         )
       }
 
@@ -508,7 +596,7 @@ export function getAttendanceService(
         attendee.id,
         attendee.user.id,
         attendee.user.name || "<missing name>",
-        reservationTime,
+        reservationActiveAt,
         event.id,
         event.title,
         options
@@ -537,7 +625,7 @@ export function getAttendanceService(
     },
     async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
-      const event = await eventService.getByAttendance(handle, attendance.id)
+      const event = await eventService.getByAttendanceId(handle, attendance.id)
       const attendee = attendance.attendees.find((a) => a.id === attendeeId)
       // NOTE: If the attendee does not exist, we have a non-critical bug in the app. The circumstances where this is
       // possible is when the attendee was removed from the attendance after the task was scheduled AND the task was not
@@ -582,7 +670,7 @@ export function getAttendanceService(
         await paymentService.cancel(attendee.paymentId)
       }
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
-      const event = await eventService.getByAttendance(handle, attendance.id)
+      const event = await eventService.getByAttendanceId(handle, attendance.id)
 
       eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
       logger.info(
@@ -715,7 +803,7 @@ export function getAttendanceService(
       if (!attendance.attendancePrice) {
         return
       }
-      const event = await eventService.getByAttendance(handle, attendance.id)
+      const event = await eventService.getByAttendanceId(handle, attendance.id)
 
       const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
       const groupsText = ogJoin(event.hostingGroups.map((group) => group.abbreviation))
@@ -909,7 +997,7 @@ export function getAttendanceService(
     },
     async executeVerifyPaymentTask(handle, { attendeeId }) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
-      const event = await eventService.getByAttendance(handle, attendance.id)
+      const event = await eventService.getByAttendanceId(handle, attendance.id)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
@@ -1217,5 +1305,52 @@ function validateAttendeeWrite(data: AttendeeWrite) {
   // This is mostly a sanity check
   if (data.userGrade !== null && (data.userGrade > 5 || data.userGrade < 1)) {
     throw new InvalidArgumentError("User grade must be between 1 and 5")
+  }
+}
+
+function emitRegistrationAvailabilityDiagnostics(
+  logger: Logger,
+  { user, event, pool, bypassedChecks }: RegistrationAvailabilitySuccess
+) {
+  diag: for (const check in bypassedChecks) {
+    switch (check) {
+      case "IGNORE_PARENT":
+        logger.info(
+          "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) is permitted to ignore parent event requirements",
+          event.id,
+          event.title,
+          user.id,
+          user.name
+        )
+        continue diag
+      case "IGNORE_REGISTRATION_START":
+        logger.info(
+          "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) is permitted to ignore registration start requirement",
+          event.id,
+          event.title,
+          user.id,
+          user.name
+        )
+        continue diag
+      case "IGNORE_REGISTRATION_END":
+        logger.info(
+          "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) is permitted to ignore registration end requirement",
+          event.id,
+          event.title,
+          user.id,
+          user.name
+        )
+        continue diag
+      case "OVERRIDDEN_POOL":
+        logger.info(
+          "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) has chosen AttendancePool(ID=%s) as overriden attendance pool",
+          event.id,
+          event.title,
+          user.id,
+          user.name,
+          pool.id
+        )
+        continue diag
+    }
   }
 }

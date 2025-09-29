@@ -5,6 +5,8 @@ import { exit } from "node:process"
 import { Command } from "commander"
 import { marked } from "marked"
 
+const configuration = createConfiguration()
+
 const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma
@@ -75,7 +77,7 @@ import type { DBClient, Prisma } from "@dotkomonline/db"
 import { type GroupId, type GroupRoleWrite, getDefaultGroupMemberRoles } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import z from "zod"
-import { configuration } from "../configuration"
+import { createConfiguration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 
 type OW4GroupMembership = z.infer<typeof OW4GroupMembershipSchema>

@@ -15,47 +15,17 @@ export const EventAttendeeSchema = z.object({
 
 export type EventAttendee = z.infer<typeof EventAttendeeSchema>
 
-export const ImageSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  timestamp: isoDateTime,
-  description: z.string(),
-  thumb: z.string().url(),
-  original: z.string().url(),
-  wide: z.string().url(),
-  lg: z.string().url(),
-  md: z.string().url(),
-  sm: z.string().url(),
-  xs: z.string().url(),
-  tags: z.array(z.string()),
-  photographer: z.string(),
-  preset: z.string(),
-  preset_display: z.string(),
-})
-
 export const EventSchema = z.object({
   id: z.number(),
   title: z.string(),
-  slug: z.string(),
-  ingress: z.string(),
-  ingress_short: z.string(),
   description: z.string(),
-  start_date: isoDateTime,
-  end_date: isoDateTime,
+  event_start: isoDateTime,
+  event_end: isoDateTime,
   location: z.string(),
   event_type: z.number(),
-  event_type_display: z.string(),
-  organizer: z.number().nullable(),
-  author: z.unknown(),
-  images: z.array(ImageSchema),
-  companies: z.array(z.string()),
+  organizer_id: z.number().nullable(),
+  image_original: z.string().nullable(),
   is_attendance_event: z.boolean(),
-  max_capacity: z.number().nullable(),
-  waitlist: z.boolean().nullable(),
-  number_of_seats_taken: z.number().nullable(),
-  attendee_info: z.unknown().nullable(),
-  registration_start: isoDateTime.nullable(),
-  registration_end: isoDateTime.nullable(),
 })
 
 export const EventListSchema = z.object({
@@ -108,6 +78,5 @@ export type GradeRule = z.infer<typeof GradeRuleSchema>
 
 export type RuleBundle = z.infer<typeof RuleBundleSchema>
 
-export type Image = z.infer<typeof ImageSchema>
 export type Event = z.infer<typeof EventSchema>
 export type EventList = z.infer<typeof EventListSchema>

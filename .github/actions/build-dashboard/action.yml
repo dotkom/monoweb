@@ -47,4 +47,3 @@ runs:
         service-name: monoweb-${{ inputs.environment }}-dashboard
         container-name: monoweb-${{ inputs.environment }}-dashboard
         image: ${{ steps.build.outputs.image }}
-        environment-variables: ${{ steps.acquire-secrets.outputs.secrets }}

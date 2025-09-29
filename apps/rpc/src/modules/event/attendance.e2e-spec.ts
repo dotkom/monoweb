@@ -9,9 +9,10 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { faker } from "@faker-js/faker"
 import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
 import { addDays, addHours, addMinutes, isFuture, subHours } from "date-fns"
+import invariant from "tiny-invariant"
 import { describe, expect, it } from "vitest"
 import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
-import { InvalidArgumentError } from "../../error"
+import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import { getMockEvent, getMockGroup } from "./event.e2e-spec"
 
 function getMockAttendance(input: Partial<AttendanceWrite> = {}): AttendanceWrite {
@@ -181,15 +182,15 @@ describe("attendance integration tests", async () => {
     const userWithoutMembership = await core.userService.register(dbClient, subject)
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
     expect(findActiveMembership(user)).not.toBeNull()
-    await expect(
-      core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    expect(
+      await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
-        forceAttendancePoolId: null,
+        overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(InvalidArgumentError)
+    ).toEqual({ success: false, cause: "NO_MATCHING_POOL" })
   })
 
   it("should throw an error if the user has no active membership", async () => {
@@ -201,15 +202,15 @@ describe("attendance integration tests", async () => {
     await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     const user = await core.userService.register(dbClient, subject)
     expect(findActiveMembership(user)).toBeNull()
-    await expect(
-      core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    expect(
+      await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
-        forceAttendancePoolId: null,
+        overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(InvalidArgumentError)
+    ).toEqual({ success: false, cause: "MISSING_MEMBERSHIP" })
   })
 
   it("should throw an error if the user is suspended", async () => {
@@ -219,8 +220,19 @@ describe("attendance integration tests", async () => {
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
     await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+
+    await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        yearCriteria: [1],
+      })
+    )
+
     // Create a user and suspend them by giving them more than 6 marks.
-    const user = await core.userService.register(dbClient, subject)
+    const userWithoutMembership = await core.userService.register(dbClient, subject)
+    const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+    expect(findActiveMembership(user)).not.toBeNull()
     const mark = await core.markService.createMark(
       dbClient,
       {
@@ -236,15 +248,15 @@ describe("attendance integration tests", async () => {
     const punishment = await core.personalMarkService.findPunishmentByUserId(dbClient, user.id)
     expect(punishment).toEqual(expect.objectContaining({ suspended: true }))
 
-    await expect(
-      core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    expect(
+      await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
-        forceAttendancePoolId: null,
+        overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(InvalidArgumentError)
+    ).toEqual({ success: false, cause: "SUSPENDED" })
   })
 
   it("should not allow registration outside of the registration window", async () => {
@@ -273,25 +285,24 @@ describe("attendance integration tests", async () => {
     expect(findActiveMembership(user)).not.toBeNull()
 
     // Attempt to register before the registration window opens
-    await expect(
-      core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    expect(
+      await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
-        forceAttendancePoolId: null,
+        overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(InvalidArgumentError)
-
+    ).toEqual({ success: false, cause: "TOO_EARLY" })
     // But bypassing the registration window, it should succeed
-    const registration = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const registration = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: true,
-      forceAttendancePoolId: null,
+      overriddenAttendancePoolId: null,
       ignoreRegisteredToParent: false,
     })
-    expect(registration.userId).toEqual(user.id)
+    expect(registration.success).toBe(true)
   })
 
   it("should not allow registering twice for the same attendance", async () => {
@@ -314,24 +325,26 @@ describe("attendance integration tests", async () => {
     expect(findActiveMembership(user)).not.toBeNull()
 
     // Register the user for the attendance
-    await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
+      overriddenAttendancePoolId: null,
       ignoreRegisteredToParent: false,
     })
+    invariant(result.success)
+    await core.attendanceService.registerAttendee(dbClient, result)
 
     // Attempt to register the same user again for the same attendance
-    await expect(
-      core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    expect(
+      await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: true,
-        forceAttendancePoolId: null,
+        overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(InvalidArgumentError)
+    ).toEqual({ success: false, cause: "ALREADY_REGISTERED" })
   })
 
   it("should add a reservation time if the user has a punishment", async () => {
@@ -370,13 +383,15 @@ describe("attendance integration tests", async () => {
     const punishment = await core.personalMarkService.findPunishmentByUserId(dbClient, user.id)
     expect(punishment).toEqual(expect.objectContaining({ delay: 1, suspended: false }))
 
-    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
+      overriddenAttendancePoolId: null,
       ignoreRegisteredToParent: false,
     })
+    invariant(result.success)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
     expect(attendee.reserved).toBe(false)
@@ -402,13 +417,15 @@ describe("attendance integration tests", async () => {
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
     expect(findActiveMembership(user)).not.toBeNull()
 
-    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
+      overriddenAttendancePoolId: null,
       ignoreRegisteredToParent: false,
     })
+    invariant(result.success)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
     expect(attendee.reserved).toBe(false)
@@ -433,13 +450,15 @@ describe("attendance integration tests", async () => {
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
     expect(findActiveMembership(user)).not.toBeNull()
 
-    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
+      overriddenAttendancePoolId: null,
       ignoreRegisteredToParent: false,
     })
+    invariant(result.success)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
     expect(attendee.reserved).toBe(true)
   })
 
@@ -458,13 +477,15 @@ describe("attendance integration tests", async () => {
     )
     const userWithoutMembership = await core.userService.register(dbClient, subject)
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
-    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: false,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
+      overriddenAttendancePoolId: null,
       ignoreRegisteredToParent: false,
     })
+    invariant(result.success)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
 
     await core.attendanceService.updateAttendeeById(dbClient, attendee.id, {
       reserved: false,
@@ -495,13 +516,15 @@ describe("attendance integration tests", async () => {
     )
     const userWithoutMembership = await core.userService.register(dbClient, subject)
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
-    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
+      overriddenAttendancePoolId: null,
       ignoreRegisteredToParent: false,
     })
+    invariant(result.success)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
 
     await core.attendanceService.updateAttendanceById(dbClient, attendance.id, {
       deregisterDeadline: subHours(getCurrentUTC(), 1), // Set the deadline to one hour ago
@@ -510,7 +533,7 @@ describe("attendance integration tests", async () => {
       core.attendanceService.deregisterAttendee(dbClient, attendee.id, {
         ignoreDeregistrationWindow: false,
       })
-    ).rejects.toThrow(InvalidArgumentError)
+    ).rejects.toThrow(FailedPreconditionError)
     // it should not be possible to deregister past the deadline with ignoreDeregistrationWindow=true
     await expect(
       core.attendanceService.deregisterAttendee(dbClient, attendee.id, {
@@ -540,24 +563,26 @@ describe("attendance integration tests", async () => {
     expect(findActiveMembership(user)).not.toBeNull()
 
     // If the user themselves attempt to register, it should fail because there is no applicable pool
-    await expect(
-      core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    expect(
+      await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
-        forceAttendancePoolId: null,
+        overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
       })
-    ).rejects.toThrow(InvalidArgumentError)
-
+    ).toEqual({ success: false, cause: "NO_MATCHING_POOL" })
     // But if an admin registers the user with an forceAttendancePoolId, it should succeed
-    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
-      forceAttendancePoolId: pool.id, // Force the user into the pool
+      overriddenAttendancePoolId: pool.id, // Force the user into the pool
       ignoreRegisteredToParent: false,
     })
+    invariant(result.success)
+    console.log(result)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
 
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.earliestReservationAt).toSatisfy(isFuture)
@@ -584,20 +609,34 @@ describe("attendance integration tests", async () => {
     )
 
     // Alpha gets immediate reservation, so that beta can be next in line
-    const alphaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, alpha.id, {
-      immediateReservation: true,
-      immediatePayment: false,
-      ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
-      ignoreRegisteredToParent: false,
-    })
-    const betaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, beta.id, {
-      immediateReservation: false,
-      immediatePayment: false,
-      ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
-      ignoreRegisteredToParent: false,
-    })
+    const alphaAttendeeResult = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      alpha.id,
+      {
+        immediateReservation: true,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        overriddenAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
+      }
+    )
+    invariant(alphaAttendeeResult.success)
+    const alphaAttendee = await core.attendanceService.registerAttendee(dbClient, alphaAttendeeResult)
+    const betaAttendeeResult = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      beta.id,
+      {
+        immediateReservation: false,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        overriddenAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
+      }
+    )
+    invariant(betaAttendeeResult.success)
+    const betaAttendee = await core.attendanceService.registerAttendee(dbClient, betaAttendeeResult)
 
     expect(alphaAttendee.reserved).toBe(true)
     expect(betaAttendee.reserved).toBe(true)
@@ -638,20 +677,35 @@ describe("attendance integration tests", async () => {
       })
     )
     // Neither users get immediate reservation, so they are not reserved, and the bump will not reserve the next user
-    const alphaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, alpha.id, {
-      immediateReservation: false,
-      immediatePayment: false,
-      ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
-      ignoreRegisteredToParent: false,
-    })
-    const betaAttendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, beta.id, {
-      immediateReservation: false,
-      immediatePayment: false,
-      ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
-      ignoreRegisteredToParent: false,
-    })
+    const alphaAttendeeResult = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      alpha.id,
+      {
+        immediateReservation: false,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        overriddenAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
+      }
+    )
+    invariant(alphaAttendeeResult.success)
+    const alphaAttendee = await core.attendanceService.registerAttendee(dbClient, alphaAttendeeResult)
+    const betaAttendeeResult = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      beta.id,
+      {
+        immediateReservation: false,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        overriddenAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
+      }
+    )
+    invariant(betaAttendeeResult.success)
+    const betaAttendee = await core.attendanceService.registerAttendee(dbClient, betaAttendeeResult)
+
     expect(alphaAttendee.reserved).toBe(true)
     expect(betaAttendee.reserved).toBe(true)
 
@@ -692,13 +746,15 @@ describe("attendance integration tests", async () => {
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
     expect(findActiveMembership(user)).not.toBeNull()
     // We immediately reserve the user so that they can be registered
-    const attendee = await core.attendanceService.registerAttendee(dbClient, attendance.id, user.id, {
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
       immediateReservation: true,
       immediatePayment: false,
       ignoreRegistrationWindow: false,
-      forceAttendancePoolId: null,
+      overriddenAttendancePoolId: null,
       ignoreRegisteredToParent: false,
     })
+    invariant(result.success)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
     expect(attendee.reserved).toBe(true)
 
     await expect(
@@ -708,7 +764,7 @@ describe("attendance integration tests", async () => {
 
   it("should fail if you attempt to register physical attendance for a non-registered user", async () => {
     await expect(core.attendanceService.registerAttendance(dbClient, randomUUID(), getCurrentUTC())).rejects.toThrow(
-      InvalidArgumentError
+      NotFoundError
     )
   })
 })

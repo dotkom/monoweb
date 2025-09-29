@@ -14,6 +14,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { TRPCError } from "@trpc/server"
 import { addDays } from "date-fns"
 import { z } from "zod"
+import { FailedPreconditionError } from "../../error"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
@@ -70,13 +71,22 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeAuditedTransaction(async (handle) => {
-        return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, input.userId, {
-          ignoreRegistrationWindow: true,
-          immediateReservation: true,
-          immediatePayment: false,
-          forceAttendancePoolId: input.attendancePoolId,
-          ignoreRegisteredToParent: true,
-        })
+        const result = await ctx.attendanceService.getRegistrationAvailability(
+          handle,
+          input.attendanceId,
+          input.userId,
+          {
+            ignoreRegistrationWindow: true,
+            immediateReservation: true,
+            immediatePayment: false,
+            overriddenAttendancePoolId: input.attendancePoolId,
+            ignoreRegisteredToParent: true,
+          }
+        )
+        if (!result.success) {
+          throw new FailedPreconditionError(`Failed to register: ${result.cause}`)
+        }
+        return await ctx.attendanceService.registerAttendee(handle, result)
       })
     }),
 
@@ -125,6 +135,29 @@ export const attendanceRouter = t.router({
       })
     }),
 
+  getRegistrationAvailability: authenticatedProcedure
+    .input(
+      z.object({
+        attendanceId: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        return await ctx.attendanceService.getRegistrationAvailability(
+          handle,
+          input.attendanceId,
+          ctx.principal.subject,
+          {
+            ignoreRegistrationWindow: false,
+            immediateReservation: false,
+            immediatePayment: true,
+            overriddenAttendancePoolId: null,
+            ignoreRegisteredToParent: false,
+          }
+        )
+      })
+    ),
+
   registerForEvent: authenticatedProcedure
     .input(
       z.object({
@@ -133,13 +166,22 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeAuditedTransaction(async (handle) => {
-        return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, ctx.principal.subject, {
-          ignoreRegistrationWindow: false,
-          immediateReservation: false,
-          immediatePayment: true,
-          forceAttendancePoolId: null,
-          ignoreRegisteredToParent: false,
-        })
+        const result = await ctx.attendanceService.getRegistrationAvailability(
+          handle,
+          input.attendanceId,
+          ctx.principal.subject,
+          {
+            ignoreRegistrationWindow: false,
+            immediateReservation: false,
+            immediatePayment: true,
+            overriddenAttendancePoolId: null,
+            ignoreRegisteredToParent: false,
+          }
+        )
+        if (!result.success) {
+          throw new FailedPreconditionError(`Failed to register: ${result.cause}`)
+        }
+        return await ctx.attendanceService.registerAttendee(handle, result)
       })
     ),
 

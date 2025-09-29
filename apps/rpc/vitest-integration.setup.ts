@@ -23,6 +23,20 @@ async function createServiceLayerForTesting() {
     AWS_S3_BUCKET: "no.online.ntnu.mock-bucket",
     AWS_REGION: "eu-north-1",
     ALLOWED_ORIGINS: "",
+    STRIPE_SECRET_KEY: "fake-key",
+    googleWorkspace: {
+      domain: "online.ntnu.no",
+      serviceAccount: null,
+      userAccountEmail: null,
+    },
+    email: {
+      awsSesRegion: "eu-north-1",
+      awsSqsQueueUrl: null,
+      awsSqsWorkerInterval: 1000,
+    },
+    tasks: {
+      workerInterval: 1000,
+    },
   })
 
   return await createServiceLayer(
