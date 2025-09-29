@@ -1,7 +1,8 @@
 import { useTRPC } from "@/lib/trpc-client"
 import type { Pageable } from "@dotkomonline/rpc"
 import type { AuditLogFilterQuery } from "@dotkomonline/types"
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useMemo } from "react"
 
 interface UseAuditLogAllQueryProps {
   filter: AuditLogFilterQuery
@@ -10,10 +11,17 @@ interface UseAuditLogAllQueryProps {
 
 export const useAuditLogSearchQuery = ({ filter, page }: UseAuditLogAllQueryProps) => {
   const trpc = useTRPC()
-  const { data: auditLogs, ...query } = useQuery({
-    ...trpc.auditLog.findAuditLogs.queryOptions({ filter: { ...filter }, ...page }),
+  const { data: auditLogs, ...query } = useInfiniteQuery({
+    ...trpc.auditLog.findAuditLogs.infiniteQueryOptions({
+      filter: {
+        ...filter,
+      },
+      ...page,
+    }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
-  return { auditLogs, ...query }
+
+  return { auditLogs: useMemo(() => auditLogs?.pages.flatMap((page) => page.items) ?? [], [auditLogs]), ...query }
 }
 
 export const useAuditLogAllQuery = () => {
