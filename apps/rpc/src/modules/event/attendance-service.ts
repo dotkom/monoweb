@@ -1117,17 +1117,13 @@ export function getAttendanceService(
     },
     async executeMergeEventPoolsTask(handle, { attendanceId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
-      console.log(`attendance id: ${attendance.id}`)
 
       const isMergeable = (pool: AttendancePool) => {
-        console.log(`checking mergability of pool ${pool.title} with delay ${pool.mergeDelayHours}`)
         if (pool.mergeDelayHours === null || pool.mergeDelayHours <= 0) {
-          console.log("  - true")
           return true
         }
-        
+
         const mergeTime = addHours(new TZDate(attendance.registerStart), pool.mergeDelayHours)
-        console.log(`  - ${!isFuture(mergeTime)}`)
         return !isFuture(mergeTime)
       }
 
@@ -1138,7 +1134,6 @@ export function getAttendanceService(
       const pendingPools = attendance.pools.filter((pool) => !isMergeable(pool))
 
       if (mergeablePools.length <= 1) {
-        console.log("No pools to merge");
         return
       }
 
