@@ -72,6 +72,8 @@ export function getWorkspaceService(
 ): WorkspaceService {
   const logger = getLogger("workspace-sync-service")
 
+  logger.info("Using Google Workspace integration against Domain=%s", configuration.googleWorkspace.domain)
+
   function joinOnWorkspaceUserId(
     groupMembers: GroupMember[],
     workspaceUsers: admin_directory_v1.Schema$Member[]

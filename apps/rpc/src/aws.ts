@@ -12,7 +12,7 @@ export async function identifyCallerIAMIdentity(configuration: Configuration) {
       try {
         const stsClient = new STSClient({ region: configuration.AWS_REGION })
         const identity = await stsClient.send(new GetCallerIdentityCommand({}))
-        logger.debug(`AWS credentials verified successfully: ${identity.Arn}`)
+        logger.debug("Running service with AWS IAM Identity %s", identity.Arn)
       } catch (error) {
         logger.warn(
           "WARNING: Unable to verify AWS credentials. Functionality involving aws services, e.g. uploading files, will fail."

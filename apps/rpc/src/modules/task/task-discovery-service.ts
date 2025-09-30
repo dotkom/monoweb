@@ -25,6 +25,8 @@ export function getLocalTaskDiscoveryService(
   recurringTaskService: RecurringTaskService
 ): TaskDiscoveryService {
   const logger = getLogger("task-discovery-service/local-backend")
+
+  logger.warn("TaskDiscoveryService started with local (postgres) backend")
   return {
     async discoverAll() {
       const discoveredTasks = await Promise.all([

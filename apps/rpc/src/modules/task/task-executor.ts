@@ -38,6 +38,8 @@ export function getLocalTaskExecutor(
   const logger = getLogger("task-executor")
   const tracer = trace.getTracer("@dotkomonline/rpc/task-executor")
 
+  logger.warn("TaskExecutor started with local (postgres) backend")
+
   async function processTask(client: PrismaClient, task: Task): Promise<void> {
     let isError = false
     // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked

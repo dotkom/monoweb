@@ -45,6 +45,10 @@ export interface EmailService {
 
 export function getEmptyEmailService(): EmailService {
   const logger = getLogger("EmptyEmailService")
+
+  logger.warn(
+    "EmailService constructed with no-op implementations for email sending. This means that email will not be sent to recipients."
+  )
   return {
     async send(source, replyTo, to, cc, bcc, subject, definition, _) {
       logger.warn(
@@ -71,6 +75,12 @@ export function getEmailService(
 ): EmailService {
   const logger = getLogger("email-service")
   const tracer = trace.getTracer("@dotkomonline/monoweb-rpc/email-service")
+
+  logger.info(
+    "EmailService constructed against SQS Queue Url=%s with emails sent from AWS Region %s",
+    configuration.email.awsSqsQueueUrl,
+    configuration.email.awsSesRegion
+  )
 
   async function processSqsMessage(message: Message): Promise<void> {
     return await tracer.startActiveSpan("EmailService/SendEmail", async (span) => {
