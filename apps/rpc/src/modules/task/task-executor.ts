@@ -42,7 +42,6 @@ export function getLocalTaskExecutor(
     let isError = false
     // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
     // as running regardless of whether the child transaction commits or rollbacks.
-    logger.info("Running task", task.type, "with arguments", task.payload)
     await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
     return await tracer.startActiveSpan(`TaskExecutor/${task.type}`, { root: true }, async (span) => {
       span.setAttribute("rpc.service", "@dotkomonline/rpc")
