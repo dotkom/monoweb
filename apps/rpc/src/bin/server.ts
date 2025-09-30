@@ -102,9 +102,9 @@ await identifyCallerIAMIdentity(configuration)
 await server.listen({ port: 4444, host: "0.0.0.0" })
 
 // In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`
-if (configuration.STRIPE_WEBHOOK_IDENTIFIER !== "dev") {
+if (configuration.STRIPE_WEBHOOK_IDENTIFIER !== "dev" && configuration.STRIPE_WEBHOOK_HOST !== null) {
   await serviceLayer.paymentWebhookService.registerWebhook(
-    `${configuration.HOST}/webhook/stripe`,
+    `${configuration.STRIPE_WEBHOOK_HOST}/webhook/stripe`,
     configuration.STRIPE_WEBHOOK_IDENTIFIER
   )
 }

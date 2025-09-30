@@ -21,7 +21,7 @@ export const createConfiguration = () =>
       stg: "stg",
       dev: "dev",
     }),
-    HOST: config(process.env.HOST, "http://localhost:4444"),
+    STRIPE_WEBHOOK_HOST: config(process.env.STRIPE_WEBHOOK_HOST, null),
 
     AWS_REGION: config(process.env.AWS_REGION, "eu-north-1"),
     /**
