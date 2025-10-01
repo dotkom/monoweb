@@ -43,11 +43,11 @@ export const createConfiguration = () =>
     },
     email: {
       awsSqsQueueUrl: config(process.env.EMAIL_AWS_SQS_QUEUE_URL, null),
-      awsSqsWorkerInterval: config(process.env.EMAIL_AWS_SQS_WORKER_INTERVAL, 1000, z.coerce.number().int()),
+      awsSqsWorkerInterval: config(process.env.EMAIL_AWS_SQS_WORKER_INTERVAL, 10000, z.coerce.number().int()),
       awsSesRegion: config(process.env.EMAIL_AWS_SES_REGION, "eu-north-1"),
     },
     tasks: {
-      workerInterval: config(process.env.TASKS_WORKER_INTERVAL, 1000, z.coerce.number().int()),
+      workerInterval: config(process.env.TASKS_WORKER_INTERVAL, 10000, z.coerce.number().int()),
     },
   })
 
