@@ -1,4 +1,4 @@
-import { default as fs } from "node:fs/promises"
+import fs from "node:fs/promises"
 import path from "node:path"
 import type { EventType, Prisma } from "@prisma/client"
 import { Command } from "commander"
@@ -16,11 +16,42 @@ import {
   type RuleBundle,
   RuleBundleSchema,
 } from "./migrate-events-schemas"
-import { dumpOW4Data } from "./migrate-from-ow4"
 
+/*
+
+SELECT
+  COALESCE(
+    json_agg(t ORDER BY t.id),
+    '[]'::json
+  )
+FROM (
+  SELECT
+    e.*,
+    COALESCE(
+      (
+        SELECT JSONB_AGG(gr.graderule_id ORDER BY gr.graderule_id)
+               FILTER (WHERE gr.graderule_id IS NOT NULL)
+        FROM events_rulebundle_grade_rules gr
+        WHERE gr.rulebundle_id = e.id
+      ),
+      '[]'::jsonb
+    ) AS grade_rules,
+    COALESCE(
+      (
+        SELECT JSONB_AGG(fsr.fieldofstudyrule_id ORDER BY fsr.fieldofstudyrule_id)
+               FILTER (WHERE fsr.fieldofstudyrule_id IS NOT NULL)
+        FROM events_rulebundle_field_of_study_rules fsr
+        WHERE fsr.rulebundle_id = e.id
+      ),
+      '[]'::jsonb
+    ) AS field_of_study_rules
+  FROM events_rulebundle e
+) AS t;
+*/
 async function getRuleBundles() {
   const ruleBundles = new Map<number, RuleBundle>()
-  const ruleBundleData = await dumpOW4Data("https://old.online.ntnu.no/api/v1/event/rule-bundles/?")
+  const fpath = path.resolve(import.meta.dirname, "event_rulebundles.json")
+  const ruleBundleData = JSON.parse((await fs.readFile(fpath)).toString())
   const data = z.array(RuleBundleSchema).parse(ruleBundleData)
 
   for (const bundle of data) {
@@ -30,9 +61,24 @@ async function getRuleBundles() {
   return ruleBundles
 }
 
+/*
+  SELECT
+  COALESCE(
+    json_agg(t ORDER BY t.id),
+    '[]'::json
+  )
+FROM (
+  SELECT
+    rule_ptr_id AS id,
+    grade
+  FROM events_graderule
+) AS t;
+*/
 async function getGradeRules() {
   const gradeRules = new Map<number, GradeRule>()
-  const rawData = await dumpOW4Data("https://old.online.ntnu.no/api/v1/event/grade-rules/?")
+  const fpath = path.resolve(import.meta.dirname, "event_graderules.json")
+  const rawData = JSON.parse((await fs.readFile(fpath)).toString())
+
   const data = z.array(GradeRuleSchema).parse(rawData)
 
   for (const bundle of data) {
@@ -106,13 +152,38 @@ async function getEventAttendees() {
   return usersByEvent
 }
 
-async function fetchEventAttendance(id: string) {
-  const response = await fetch(`https://old.online.ntnu.no/api/v1/event/attendance-events/${id}/`)
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-  const attendanceEvent = AttendanceEventSchema.parse(await response.json())
-  return attendanceEvent
+/*
+SELECT
+  COALESCE(
+    json_agg(t ORDER BY t.event_id),
+    '[]'::json
+  )
+FROM (
+  SELECT 
+      e.event_id,
+      e.max_capacity,
+      e.registration_end,
+      e.registration_start,
+      e.unattend_deadline,
+      COALESCE(
+          JSONB_AGG(r.rulebundle_id) FILTER (WHERE r.rulebundle_id IS NOT NULL),
+          '[]'::jsonb
+      ) AS rule_bundles
+  FROM events_attendanceevent AS e
+  LEFT JOIN events_attendanceevent_rule_bundles AS r
+      ON r.attendanceevent_id = e.event_id
+  GROUP BY 
+      e.event_id,
+      e.max_capacity,
+      e.registration_end,
+      e.registration_start,
+      e.unattend_deadline
+) AS t;
+*/
+async function getEventAttendance() {
+  const fpath = path.resolve(import.meta.dirname, "event_attendance.json")
+  const rawData = JSON.parse((await fs.readFile(fpath)).toString())
+  return AttendanceEventSchema.array().parse(rawData)
 }
 
 function mapEventType(ow4EventType: number): EventType {
@@ -138,6 +209,47 @@ function mapEventType(ow4EventType: number): EventType {
   }
 }
 
+function getGradesFromFieldOfStudyRulesId(id: number): number[] {
+  switch (id) {
+    case 1: // Software Systems (Master)
+      return [4, 5]
+    case 2: // Databases and Search (Master)
+      return [4, 5]
+    case 3: // Algorithms and Computers (Master)
+      return [4, 5]
+    case 4: // Game Technology (Master)
+      return [4, 5]
+    case 5: // Artificial Intelligence (Master)
+      return [4, 5]
+    case 6: // Health Informatics (Master)
+      return [4, 5]
+    case 7: // Other Master's degree
+      return [4, 5]
+    case 8: // PhD
+      return [5]
+    case 9: // Bachelor in Computer Science
+      return [1, 2, 3]
+    case 10: // Bachelor in Computer Science
+      return [1, 2, 3]
+    case 25: // Bachelor in Computer Science
+      return [1, 2, 3]
+    case 41: // PhD
+      return [5]
+    case 46: // Interaction Design, Game & Learning Technology (Master)
+      return [4, 5]
+    case 47: // PhD
+      return [5]
+    case 48: // Social Member
+      return []
+    case 49: // Social Member
+      return []
+    case 50: // Guest
+      return []
+    default:
+      return []
+  }
+}
+
 const configuration = createConfiguration()
 const program = new Command()
 const dependencies = createThirdPartyClients(configuration)
@@ -151,32 +263,35 @@ program.description("Import events from ow4").action(async () => {
   const events = await getEvents()
   const ruleBundles = await getRuleBundles()
   const gradeRules = await getGradeRules()
-
-  const dbEvents = await prisma.event.findMany({
-    where: {
-      metadataImportId: {
-        not: null,
-      },
-    },
-  })
+  const eventAttendances = await getEventAttendance()
 
   const existingUsers = new Set((await prisma.user.findMany({ select: { id: true } })).map((user) => user.id))
+  const existingEvents = new Set(
+    (
+      await prisma.event.findMany({
+        select: { metadataImportId: true },
+        where: {
+          metadataImportId: {
+            not: null,
+          },
+        },
+      })
+    ).map((event) => event.metadataImportId)
+  )
 
-  for (const event of events) {
-    if (dbEvents.some((dbEvent) => dbEvent.metadataImportId === event.id)) {
-      console.log("SKIPPING EVENT", event.title)
-      continue
-    }
+  const eventEndCutoff = new Date("2025-08-11")
+  const relevantEvents = events
+    .filter((event) => new Date(event.event_end) < eventEndCutoff && !existingEvents.has(event.id))
+    .toSorted((a, b) => a.event_start.localeCompare(b.event_start))
 
-    console.log("CREATING EVENT", event.title)
+  for (const event of relevantEvents) {
     await prisma.$transaction(async (tsx) => {
       let poolString = null
       let grades = null
       let users = null
-      let eventAttendance = null
-      if (event.is_attendance_event) {
-        eventAttendance = await fetchEventAttendance(event.id.toString())
-
+      const eventAttendance = eventAttendances.find((a) => a.event_id === event.id)
+      let yearCriteria = null
+      if (event.is_attendance_event && eventAttendance) {
         const ruleStrings = []
         grades = []
         for (const ruleBundleId of eventAttendance.rule_bundles) {
@@ -184,46 +299,42 @@ program.description("Import events from ow4").action(async () => {
           if (!ruleBundle) {
             continue
           }
-          ruleStrings.push(
-            ruleBundle.description?.trim() ??
-              ruleBundle.rule_strings
-                .filter((a) => a.trim().length > 0)
-                .join(", ")
-                .trim()
-          )
+
+          if (ruleBundle.description && ruleBundle.description.trim().length > 0) {
+            ruleStrings.push(ruleBundle.description.trim())
+          }
+
           for (const gradeRuleId of ruleBundle.grade_rules) {
             const gradeRule = gradeRules.get(gradeRuleId)
 
             if (gradeRule) {
-              grades.push(gradeRule.id)
+              grades.push(gradeRule.grade)
             }
           }
         }
 
-        if (grades.length === 0) {
-          for (const ruleBundleId of eventAttendance.rule_bundles) {
-            const ruleBundle = ruleBundles.get(ruleBundleId)
+        for (const ruleBundleId of eventAttendance.rule_bundles) {
+          const ruleBundle = ruleBundles.get(ruleBundleId)
 
-            if (!ruleBundle) {
-              continue
-            }
-
-            if (ruleBundle.field_of_study_rules?.includes(1)) {
-              grades.push(1)
-              grades.push(2)
-              grades.push(3)
-            }
-
-            if (ruleBundle.field_of_study_rules.some((rule) => 10 <= rule && rule <= 30)) {
-              grades.push(1)
-              grades.push(2)
-            }
+          if (!ruleBundle) {
+            continue
           }
+
+          const fieldOfStudyGrades = ruleBundle.field_of_study_rules.flatMap(getGradesFromFieldOfStudyRulesId)
+          grades.push(...fieldOfStudyGrades)
         }
+
+        grades = [...new Set(grades)].toSorted((a, b) => a - b)
 
         poolString = ruleStrings.filter((a) => a.trim().length > 0).join(", ")
+        poolString = poolString.length === 0 ? "Alle" : poolString
 
         users = eventAttendees.get(event.id) ?? []
+
+        yearCriteria = grades.filter((grade) => grade >= 1 && grade <= 5)
+        if (yearCriteria.length === 0) {
+          yearCriteria = [1, 2, 3, 4, 5]
+        }
       }
 
       const createdEvent = await tsx.event.create({
@@ -237,7 +348,7 @@ program.description("Import events from ow4").action(async () => {
           imageUrl: event.image_original,
           locationTitle: event.location,
           attendance:
-            eventAttendance && poolString && grades && users
+            eventAttendance && poolString && yearCriteria
               ? {
                   create: {
                     registerStart: eventAttendance.registration_start,
@@ -247,7 +358,7 @@ program.description("Import events from ow4").action(async () => {
                       create: {
                         capacity: eventAttendance.max_capacity,
                         title: poolString,
-                        yearCriteria: grades.filter((grade) => grade >= 1 && grade <= 5),
+                        yearCriteria,
                       },
                     },
                   },
@@ -270,7 +381,7 @@ program.description("Import events from ow4").action(async () => {
               earliestReservationAt: user.timestamp,
               visible: user.show_as_attending_event,
             }))
-            .filter(({ visible, userId }) => visible && userId && existingUsers.has(userId))
+            .filter(({ userId }) => userId && existingUsers.has(userId))
             .map(
               ({ visible, userId, ...data }) =>
                 ({ ...data, userId: userId as string }) satisfies Prisma.AttendeeCreateManyInput
