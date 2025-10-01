@@ -135,7 +135,7 @@ export function getEmailService(
         )
         const sendEmailResponse = await sesClient.send(sendEmailCommand)
         logger.info(
-          "Received Response(Status=%s) from AWS SES after %s attempts",
+          "Received Response(Status=%s) from AWS SES for ses:SendEmail after %s attempts",
           sendEmailResponse.$metadata.httpStatusCode ?? "<no code>",
           sendEmailResponse.$metadata.attempts ?? 1
         )
@@ -148,7 +148,7 @@ export function getEmailService(
         })
         const deleteMessageResponse = await sqsClient.send(deleteMessageCommand)
         logger.info(
-          "Received Response(Status=%s) from AWS SES after %s attempts",
+          "Received Response(Status=%s) from AWS SQS for sqs:DeleteMessage after %s attempts",
           deleteMessageResponse.$metadata.httpStatusCode ?? "<no code>",
           deleteMessageResponse.$metadata.attempts ?? 1
         )
