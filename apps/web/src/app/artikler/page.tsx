@@ -1,7 +1,7 @@
 import { ArticleList } from "@/app/artikler/ArticleList"
-import { TagSearch } from "@/app/artikler/TagSearch"
+import { ArticleSearchSection } from "@/app/artikler/ArticleSearchSection"
 import { server } from "@/utils/trpc/server"
-import { Text, Title, Button } from "@dotkomonline/ui"
+import { Text, Title } from "@dotkomonline/ui"
 
 const ArticlePage = async () => {
   const tags = await server.article.findTagsOrderedByPopularity.query();
@@ -27,9 +27,13 @@ const ArticlePage = async () => {
         </div>
       </div>
 
-      <div className="mt-8">
-        <TagSearch tags={tagsToUse} />
-        {/* <ArticleList tags={tagsToUse} /> */}
+      <div className="mt-8 flex gap-8">
+        <div className="flex-shrink-0">
+          <ArticleSearchSection tags={tagsToUse} />
+        </div>
+        <div className="flex-1">
+          <ArticleList tags={tagsToUse} />
+        </div>
       </div>
     </div>
   )

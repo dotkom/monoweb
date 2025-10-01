@@ -3,6 +3,7 @@
 import { ArticleFilters } from "@/app/artikler/ArticleFilters"
 import { useArticleFilterQuery } from "@/app/artikler/queries"
 import type { ArticleFilterQuery, ArticleTag } from "@dotkomonline/types"
+import { Text } from "@dotkomonline/ui"
 import { useSearchParams } from "next/navigation"
 import { type FC, useEffect, useRef, useState } from "react"
 import { ArticleListItem } from "./ArticleListItem"
@@ -36,15 +37,21 @@ export const ArticleList: FC<ArticleListProps> = ({ tags }: ArticleListProps) =>
 
   return (
     <>
-      <div className="flex md:flex-row flex-col gap-12">
-        <div className="md:w-[30%] w-full scroll">
-          <ArticleFilters onChange={setFilters} tags={tagNames} defaultValues={filters} />
-        </div>
-        <div className="flex flex-col gap-8 md:w-[70%] h-fit">
-          {articles.map((article) => (
+      <div className="flex flex-col gap-8 w-full h-fit">
+        {articles.length > 0 ? (
+          articles.map((article) => (
             <ArticleListItem key={article.id} article={article} orientation="horizontal" />
-          ))}
-        </div>
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <Text className="text-lg text-gray-600 dark:text-gray-400 mb-2">
+              Ingen artikler funnet
+            </Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-500">
+              Prøv å justere filtrene dine eller søk etter noe annet
+            </Text>
+          </div>
+        )}
       </div>
       <div ref={loaderRef} />
     </>
