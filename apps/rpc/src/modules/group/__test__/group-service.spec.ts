@@ -53,6 +53,7 @@ describe("GroupService", () => {
       deactivatedAt: null,
       roles: [],
       workspaceGroupId: null,
+      showLeaderAsContact: false,
     }
     const id = randomUUID()
     vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ ...group })
