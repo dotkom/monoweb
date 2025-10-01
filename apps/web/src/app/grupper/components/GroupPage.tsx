@@ -131,7 +131,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
               </Link>
             )}
 
-            {!hasContactInfo &&
+            {(!hasContactInfo || group.showLeaderAsContact) &&
               (leader ? (
                 <Link
                   href={`/profil/${leader.profileSlug}`}

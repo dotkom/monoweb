@@ -34,6 +34,7 @@ export const GroupWriteSchema = GroupSchema.pick({
   imageUrl: true,
   email: true,
   contactUrl: true,
+  showLeaderAsContact: true,
   deactivatedAt: true,
   workspaceGroupId: true,
 }).partial({
