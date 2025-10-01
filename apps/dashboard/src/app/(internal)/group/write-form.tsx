@@ -86,6 +86,9 @@ export const useGroupWriteForm = ({
         placeholder: "dotkom@online.ntnu.no",
         type: "email",
       }),
+      showLeaderAsContact: createCheckboxInput({
+        label: "Vis leder som kontakt",
+      }),
       contactUrl: createTextInput({
         label: "Kontakt-lenke",
       }),

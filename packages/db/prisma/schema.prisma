@@ -120,17 +120,18 @@ enum GroupType {
 }
 
 model Group {
-  slug             String    @id @unique
-  abbreviation     String
-  name             String?
-  shortDescription String?
-  description      String
-  imageUrl         String?
-  email            String?
-  contactUrl       String?
-  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
-  deactivatedAt    DateTime?
-  workspaceGroupId String?   @unique
+  slug                String    @id @unique
+  abbreviation        String
+  name                String?
+  shortDescription    String?
+  description         String
+  imageUrl            String?
+  email               String?
+  contactUrl          String?
+  showLeaderAsContact Boolean   @default(false)
+  createdAt           DateTime  @default(now()) @db.Timestamptz(3)
+  deactivatedAt       DateTime?
+  workspaceGroupId    String?   @unique
 
   events      EventHostingGroup[]
   type        GroupType
