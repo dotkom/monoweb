@@ -80,10 +80,7 @@
     "typescript": "5.9.2"
   },
   "browserslist": {
-    "production": [
-      "defaults",
-      "ios_saf >= 10"
-    ],
+    "production": ["defaults", "ios_saf >= 10"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

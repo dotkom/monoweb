@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/nextjs"
-import "core-js/stable"; 
+import "core-js/stable"
 
 if (process.env.NEXT_PUBLIC_SENTRY_DSN !== undefined) {
   console.info("Initializing Sentry for client-side Next.js...")
