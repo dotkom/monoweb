@@ -13,14 +13,6 @@ on:
       - opened
       - synchronize
 
-concurrency:
-  group: deploy-${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'main-deployment' || github.sha }}
-  cancel-in-progress: true
-
-env:
-  DEPLOYMENT_TRIGGER_PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-  DEPLOYMENT_TARGET_HASH: ${{ github.event.inputs.git-hash || github.sha }}
-
 permissions:
   id-token: write   
   contents: read
@@ -68,9 +60,9 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-brevduen
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
+          deploy: false
           environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+          git-hash: ${{ github.sha }}
 
   build-dashboard:
     name: dashboard
@@ -86,9 +78,9 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-dashboard
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
+          deploy: false
           environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+          git-hash: ${{ github.sha }}
 
   build-kvittering-backend:
     name: kvittering-backend
@@ -104,8 +96,8 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-kvittering-backend
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+          deploy: false
+          git-hash: ${{ github.sha }}
 
   build-kvittering-frontend:
     name: kvittering-frontend
@@ -121,8 +113,8 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-kvittering-frontend
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+          deploy: false
+          git-hash: ${{ github.sha }}
 
   build-rpc:
     name: rpc
@@ -138,9 +130,9 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-rpc
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
+          deploy: false
           environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+          git-hash: ${{ github.sha }}
 
   build-web:
     name: web
@@ -156,6 +148,6 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-web
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
+          deploy: false
           environment: stg
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+          git-hash: ${{ github.sha }}
