@@ -98,7 +98,7 @@ export const useGroupWriteForm = ({
         label: "Vis leder som kontakt",
       }),
       showMembers: createSelectInput({
-        label: "Rolle som skal vises på nettsiden",
+        label: "Hvilke medlemmer skal vises",
         placeholder: "Velg en",
         data: Object.values(GroupMemberVisibilitySchema.Values).map((groupMemberVisibilityType) => ({
           value: groupMemberVisibilityType,
