@@ -119,6 +119,15 @@ enum GroupType {
   @@map("group_type")
 }
 
+enum GroupMemberVisibility {
+  ALL_MEMBERS @map("ALL_MEMBERS")
+  WITH_ROLES  @map("WITH_ROLES")
+  LEADER      @map("LEADER")
+  NONE        @map("NONE")
+
+  @@map("group_member_visibility")
+}
+
 model Group {
   slug                String                @id @unique
   abbreviation        String
@@ -132,7 +141,7 @@ model Group {
   createdAt           DateTime              @default(now()) @db.Timestamptz(3)
   deactivatedAt       DateTime?
   workspaceGroupId    String?               @unique
-  showMembers         GroupMemberVisibility
+  showMembers         GroupMemberVisibility @default(ALL_MEMBERS)
 
   events      EventHostingGroup[]
   type        GroupType
@@ -504,15 +513,6 @@ model ArticleTag {
   articles ArticleTagLink[]
 
   @@map("article_tag")
-}
-
-enum GroupMemberVisibility {
-  ALL_MEMBERS @map("ALL_MEMBERS")
-  WITH_ROLES  @map("WITH_ROLES")
-  LEADER      @map("LEADER")
-  NONE        @map("NONE")
-
-  @@map("group_member_visibility")
 }
 
 model ArticleTagLink {
