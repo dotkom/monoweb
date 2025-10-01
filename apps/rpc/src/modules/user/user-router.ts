@@ -49,7 +49,7 @@ export const userRouter = t.router({
     })
   ),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
-    ctx.executeAuditedTransaction(async (handle) => {
+    ctx.executeTransaction(async (handle) => {
       return ctx.userService.register(handle, input)
     })
   ),
