@@ -46,6 +46,8 @@ export function getLocalTaskSchedulingService(
   taskService: TaskService
 ): TaskSchedulingService {
   const logger = getLogger("task-scheduling-service/local-backend")
+
+  logger.warn("TaskSchedulingService started with local (postgres) backend")
   return {
     async scheduleAt(handle, task, data, executeAt, recurringTaskId) {
       logger.info("Scheduling task of TaskKind=%s with data: %o", task, data)
