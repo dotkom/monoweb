@@ -11,14 +11,19 @@ export interface MultiSelectOption {
 export interface MultiSelectProps {
   elements: MultiSelectOption[]
   placeholder?: string
+  selectedItems?: string[]
+  onSelectionChange?: (items: string[]) => void
 }
 
-export const MultiSelect = ({ elements, placeholder }: MultiSelectProps) => {
+export const MultiSelect = ({ elements, placeholder, selectedItems: controlledSelectedItems, onSelectionChange }: MultiSelectProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [searchValue, setSearchValue] = useState("")
-  const [selectedItems, setSelectedItems] = useState<string[]>([])
+  const [internalSelectedItems, setInternalSelectedItems] = useState<string[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Use controlled value if provided, otherwise use internal state
+  const selectedItems = controlledSelectedItems !== undefined ? controlledSelectedItems : internalSelectedItems
 
   const filteredItems = elements.filter(item =>
     item.name.toLowerCase().includes(searchValue.toLowerCase())
@@ -29,9 +34,17 @@ export const MultiSelect = ({ elements, placeholder }: MultiSelectProps) => {
     setIsDropdownOpen(true)
   }
 
+  const updateSelectedItems = (newItems: string[]) => {
+    if (onSelectionChange) {
+      onSelectionChange(newItems)
+    } else {
+      setInternalSelectedItems(newItems)
+    }
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Backspace' && searchValue === '' && selectedItems.length > 0) {
-      setSelectedItems(prev => prev.slice(0, -1))
+      updateSelectedItems(selectedItems.slice(0, -1))
     } else if (e.key === 'Enter' && searchValue !== '' && filteredItems.length > 0) {
       e.preventDefault()
       handleItemSelect(filteredItems[0].name)
@@ -44,11 +57,11 @@ export const MultiSelect = ({ elements, placeholder }: MultiSelectProps) => {
   }
 
   const handleItemSelect = (itemName: string) => {
-    setSelectedItems(prev =>
-      prev.includes(itemName)
-        ? prev.filter(item => item !== itemName)
-        : [...prev, itemName]
-    )
+    const newSelection = selectedItems.includes(itemName)
+      ? selectedItems.filter(item => item !== itemName)
+      : [...selectedItems, itemName]
+
+    updateSelectedItems(newSelection)
     setSearchValue('')
     inputRef.current?.focus()
   }
@@ -66,12 +79,12 @@ export const MultiSelect = ({ elements, placeholder }: MultiSelectProps) => {
   }, [])
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className="flex flex-wrap items-center gap-2 min-h-[40px] p-2 border border-gray-200 dark:border-stone-700 rounded-md bg-white dark:bg-stone-800 focus-within:ring-2 focus-within:outline-hidden">
         {selectedItems.map((itemName) => (
           <Text
             key={itemName}
-            className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-50 dark:bg-stone-600 text-blue-800 dark:text-stone-100"
+            className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-50 dark:bg-stone-600 text-blue-800 dark:text-stone-100 shrink-0"
           >
             {itemName}
             <button
@@ -85,7 +98,7 @@ export const MultiSelect = ({ elements, placeholder }: MultiSelectProps) => {
             </button>
           </Text>
         ))}
-        <div className="relative flex-1 min-w-[120px]">
+        <div className="relative flex-1 basis-full min-w-0">
           <input
             ref={inputRef}
             value={searchValue}
@@ -99,7 +112,7 @@ export const MultiSelect = ({ elements, placeholder }: MultiSelectProps) => {
             role="combobox"
           />
           {!searchValue && (
-            <Text className="absolute left-0 top-0 px-0.5 py-0.5 text-sm text-gray-500 dark:text-stone-400 pointer-events-none">
+            <Text className="absolute left-0 top-0 px-0.5 py-0.5 text-sm text-gray-500 dark:text-stone-400 pointer-events-none whitespace-nowrap">
               {placeholder}
             </Text>
           )}

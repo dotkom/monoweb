@@ -1,20 +1,19 @@
 "use client"
 
-import { ArticleFilters } from "@/app/artikler/ArticleFilters"
 import { useArticleFilterQuery } from "@/app/artikler/queries"
 import type { ArticleFilterQuery, ArticleTag } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { useSearchParams } from "next/navigation"
-import { type FC, useEffect, useRef, useState } from "react"
+import { type FC, useEffect, useRef } from "react"
 import { ArticleListItem } from "./ArticleListItem"
 
 interface ArticleListProps {
   tags: ArticleTag[]
+  filters: ArticleFilterQuery
 }
 
-export const ArticleList: FC<ArticleListProps> = ({ tags }: ArticleListProps) => {
+export const ArticleList: FC<ArticleListProps> = ({ tags, filters }: ArticleListProps) => {
   const queryTag = useSearchParams().get("tag")
-  const [filters, setFilters] = useState<ArticleFilterQuery>({ byTags: queryTag ? [queryTag] : [] })
   const { articles, fetchNextPage } = useArticleFilterQuery(filters)
 
   let tagNames = tags.map((tag) => tag.name)
