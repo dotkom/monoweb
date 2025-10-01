@@ -49,18 +49,18 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
       const membership = getLatestActiveMembership(member)
       return membership?.roles.some((r) => r.type === "LEADER")
     }
-    
+
     if (group.showMembers === "NONE") {
       return false
     }
-    
+
     if (group.showMembers === "WITH_ROLES") {
       const membership = getLatestActiveMembership(member)
       return membership?.roles && membership.roles.length > 0
     }
-    
+
     return false
-  });
+  })
 
   const activeMembers = [...membersToShow]
     .filter((member) => getLatestActiveMembership(member) !== undefined)

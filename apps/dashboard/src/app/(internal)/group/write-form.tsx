@@ -4,7 +4,15 @@ import { useFormBuilder } from "@/components/forms/Form"
 import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type GroupId, GroupTypeSchema, type GroupWrite, GroupWriteSchema, getGroupTypeName, GroupMemberVisibilitySchema, getGroupMemberVisibilityName } from "@dotkomonline/types"
+import {
+  type GroupId,
+  GroupMemberVisibilitySchema,
+  GroupTypeSchema,
+  type GroupWrite,
+  GroupWriteSchema,
+  getGroupMemberVisibilityName,
+  getGroupTypeName,
+} from "@dotkomonline/types"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { useMemo } from "react"
 import z from "zod"
@@ -89,13 +97,13 @@ export const useGroupWriteForm = ({
       showLeaderAsContact: createCheckboxInput({
         label: "Vis leder som kontakt",
       }),
-      showMembers: createSelectInput ({
+      showMembers: createSelectInput({
         label: "Rolle som skal vises på nettsiden",
         placeholder: "Velg en",
         data: Object.values(GroupMemberVisibilitySchema.Values).map((groupMemberVisibilityType) => ({
           value: groupMemberVisibilityType,
           label: getGroupMemberVisibilityName(groupMemberVisibilityType) ?? String(groupMemberVisibilityType),
-        }))
+        })),
       }),
       contactUrl: createTextInput({
         label: "Kontakt-lenke",
