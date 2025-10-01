@@ -94,7 +94,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
           <RichText content={group.description || "Ingen beskrivelse"} />
 
-          <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-400">
+          <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-400 flex-wrap">
             <Text>Kontakt:</Text>
 
             {group.email && (
