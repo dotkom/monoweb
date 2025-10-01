@@ -2,7 +2,6 @@ import type { DBHandle, TaskStatus } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendeeId,
-  type EventId,
   type FeedbackFormId,
   type Task,
   type TaskId,
@@ -23,7 +22,6 @@ export interface TaskRepository {
   getPendingTasks(handle: DBHandle, type: TaskType): Promise<Task[]>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
-  findMergeEventPoolsTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
@@ -96,21 +94,6 @@ export function getTaskRepository(): TaskRepository {
               },
             },
           ],
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      })
-      return parseOrReport(TaskSchema.nullable(), task)
-    },
-    async findMergeEventPoolsTask(handle, eventId) {
-      const task = await handle.task.findFirst({
-        where: {
-          type: tasks.MERGE_ATTENDANCE_POOLS.type,
-          payload: {
-            path: ["eventId"],
-            equals: eventId,
-          },
         },
         orderBy: {
           createdAt: "desc",
