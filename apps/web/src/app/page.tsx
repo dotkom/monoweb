@@ -74,7 +74,7 @@ export default async function App() {
     </section>
   )
 }
-
+ 
 interface BigEventCardProps {
   event: Event
   attendance: Attendance | null
