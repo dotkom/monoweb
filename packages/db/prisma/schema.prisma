@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
@@ -87,6 +87,7 @@ model User {
   givenMarks        PersonalMark[]    @relation("GivenBy")
   attendeesRefunded Attendee[]        @relation(name: "RefundedBy")
   auditLogs         AuditLog[]
+
   @@map("ow_user")
 }
 
@@ -119,17 +120,18 @@ enum GroupType {
 }
 
 model Group {
-  slug             String    @id @unique
-  abbreviation     String
-  name             String?
-  shortDescription String?
-  description      String
-  imageUrl         String?
-  email            String?
-  contactUrl       String?
-  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
-  deactivatedAt    DateTime?
-  workspaceGroupId String?   @unique
+  slug                String    @id @unique
+  abbreviation        String
+  name                String?
+  shortDescription    String?
+  description         String
+  imageUrl            String?
+  email               String?
+  contactUrl          String?
+  showLeaderAsContact Boolean   @default(false)
+  createdAt           DateTime  @default(now()) @db.Timestamptz(3)
+  deactivatedAt       DateTime?
+  workspaceGroupId    String?   @unique
 
   events      EventHostingGroup[]
   type        GroupType
@@ -231,15 +233,18 @@ model Attendance {
 }
 
 model AttendancePool {
-  id              String     @id @default(uuid())
-  attendanceId    String
-  attendance      Attendance @relation(fields: [attendanceId], references: [id])
+  id              String   @id @default(uuid())
   title           String
   mergeDelayHours Int?
   yearCriteria    Json
   capacity        Int
-  createdAt       DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime   @default(now()) @updatedAt @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  attendanceId String
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  taskId       String?
+  task         Task?      @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   attendees Attendee[]
 
@@ -532,30 +537,32 @@ enum TaskStatus {
 }
 
 model Task {
-  id              String          @id @default(uuid())
+  id              String         @id @default(uuid())
   type            TaskType
-  status          TaskStatus      @default(PENDING)
-  payload         Json            @default("{}")
-  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
-  scheduledAt     DateTime        @db.Timestamptz(3)
-  processedAt     DateTime?       @db.Timestamptz(3)
-  recurringTask   RecurringTask?  @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
+  status          TaskStatus     @default(PENDING)
+  payload         Json           @default("{}")
+  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
+  scheduledAt     DateTime       @db.Timestamptz(3)
+  processedAt     DateTime?      @db.Timestamptz(3)
+  recurringTask   RecurringTask? @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
   recurringTaskId String?
+
+  attendancePools AttendancePool[]
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("task")
 }
 
 model RecurringTask {
-  id          String     @id @default(uuid())
-  type        TaskType
-  payload     Json       @default("{}")
-  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
-  schedule    String
-  lastRunAt   DateTime?  @db.Timestamptz(3)
-  nextRunAt   DateTime   @db.Timestamptz(3)
+  id        String    @id @default(uuid())
+  type      TaskType
+  payload   Json      @default("{}")
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  schedule  String
+  lastRunAt DateTime? @db.Timestamptz(3)
+  nextRunAt DateTime  @db.Timestamptz(3)
 
-  tasks       Task[]
+  tasks Task[]
 
   @@index([nextRunAt])
   @@map("recurring_task")
@@ -654,19 +661,20 @@ model FeedbackFormAnswer {
 
   @@map("feedback_form_answer")
 }
-model AuditLog {
-  id          String   @id @default(uuid())
 
-  tableName   String
-  rowId       String?
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+model AuditLog {
+  id String @id @default(uuid())
+
+  tableName String
+  rowId     String?
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
   // Optional relation to User, some time operations are performed by the system instead
-  user        User?    @relation(fields: [userId], references: [id])
-  userId      String?
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
 
-  operation   String
-  rowData     Json
+  operation String
+  rowData   Json
 
   // Adds transaction context
   transactionId BigInt

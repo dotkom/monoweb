@@ -19,20 +19,20 @@ import {
   type Event,
   type GroupType,
   type Membership,
+  type TaskId,
   type User,
   type UserId,
   findActiveMembership,
   getMembershipGrade,
   isAttendable,
 } from "@dotkomonline/types"
-import { createAbsoluteEventPageUrl, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
+import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import {
   addDays,
   addHours,
   compareAsc,
   differenceInHours,
   endOfYesterday,
-  isAfter,
   isBefore,
   isFuture,
   isPast,
@@ -225,12 +225,13 @@ export interface AttendanceService {
    * NOTE: Be careful of the difference between this and {@link registerAttendee}.
    */
   registerAttendance(handle: DBHandle, attendee: AttendeeId, at: TZDate | null): Promise<void>
-  scheduleMergeEventPoolsTask(
+  scheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, mergeTime: TZDate): Promise<TaskId | null>
+  rescheduleMergeEventPoolsTask(
     handle: DBHandle,
     attendanceId: AttendanceId,
-    data: Pick<AttendancePoolWrite, "title">,
-    mergeTime?: TZDate
-  ): Promise<void>
+    existingTaskId: TaskId | null,
+    mergeTime: TZDate | null
+  ): Promise<TaskId | null>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
 }
 
@@ -366,16 +367,39 @@ export function getAttendanceService(
         }
         data.yearCriteria = remaining
       }
-      return await attendanceRepository.createAttendancePool(handle, attendanceId, data)
+
+      let taskId: TaskId | null = null
+
+      // There is no reason to create a task if there is no merge delay
+      if (data.mergeDelayHours) {
+        const mergeTime = new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
+
+        taskId = await this.scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime)
+      }
+
+      return await attendanceRepository.createAttendancePool(handle, attendanceId, taskId, data)
     },
     async updateAttendancePool(handle, attendancePoolId, data) {
       validateAttendancePoolWrite(data)
       const attendance = await this.getAttendanceByPoolId(handle, attendancePoolId)
-      invariant(attendance.pools.some((p) => p.id === attendancePoolId))
-      // Only pools except the current pool are relevant for the update.
-      const relevantPools = attendance.pools.filter((pool) => pool.id !== attendancePoolId)
-      validateAttendancePoolDisjunction(data.yearCriteria, relevantPools)
-      return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, data)
+      const pool = attendance.pools.find((pool) => pool.id === attendancePoolId)
+
+      if (!pool) {
+        throw new NotFoundError(`AttendancePool(ID=${attendancePoolId}) not found`)
+      }
+
+      // Validate that the updated pool would not overlap with any other existing pools
+      const otherPools = attendance.pools.filter((pool) => pool.id !== attendancePoolId)
+      validateAttendancePoolDisjunction(data.yearCriteria, otherPools)
+
+      const mergeTime = data.mergeDelayHours
+        ? new TZDate(addHours(attendance.registerStart, data.mergeDelayHours))
+        : null
+
+      // Update any existing tasks related to the pool
+      const taskId = await this.rescheduleMergeEventPoolsTask(handle, attendance.id, pool.taskId, mergeTime)
+
+      return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, taskId, data)
     },
     async deleteAttendancePool(handle, attendancePoolId) {
       await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
@@ -1165,69 +1189,67 @@ export function getAttendanceService(
         })
       )
     },
-    async scheduleMergeEventPoolsTask(handle, attendanceId, data, mergeTime) {
-      if (mergeTime === undefined) {
-        await this.executeMergeEventPoolsTask(handle, { attendanceId, data, previousPoolMergeTime: getCurrentUTC() })
-        return
-      }
-      await taskSchedulingService.scheduleAt(
-        handle,
-        tasks.MERGE_ATTENDANCE_POOLS,
-        {
-          data,
-          previousPoolMergeTime: mergeTime,
-          attendanceId,
-        },
-        mergeTime
-      )
+    async scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime) {
+      return await taskSchedulingService.scheduleAt(handle, tasks.MERGE_ATTENDANCE_POOLS, { attendanceId }, mergeTime)
     },
-    async executeMergeEventPoolsTask(handle, { attendanceId, previousPoolMergeTime, data }) {
+    async rescheduleMergeEventPoolsTask(handle, attendanceId, existingTaskId, mergeTime) {
+      if (existingTaskId) {
+        await taskSchedulingService.cancel(handle, existingTaskId)
+      }
+
+      if (mergeTime === null) {
+        return null
+      }
+
+      return await this.scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime)
+    },
+    async executeMergeEventPoolsTask(handle, { attendanceId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
+
       const isMergeable = (pool: AttendancePool) => {
-        if (pool.mergeDelayHours === null) {
+        if (pool.mergeDelayHours === null || pool.mergeDelayHours <= 0) {
           return true
         }
-        const mergeEligibleAt = addHours(attendance.registerStart, pool.mergeDelayHours)
-        return isAfter(previousPoolMergeTime, mergeEligibleAt)
+
+        const mergeTime = addHours(new TZDate(attendance.registerStart), pool.mergeDelayHours)
+        return !isFuture(mergeTime)
       }
+
       // TODO: Maybe use a utility for partitioning the pools rather than two filters?
       // A pending pool is one that is not yet mergeable, in other words; it has not yet passed the merge delay hours
       // from registration start.
-      const mergeablePools = attendance.pools.filter(isMergeable)
+      const mergeablePools = attendance.pools.filter((pool) => isMergeable(pool))
       const pendingPools = attendance.pools.filter((pool) => !isMergeable(pool))
-      // Depending on if there is zero or one pools, we either update the matching pool, or do nothing
+
       if (mergeablePools.length <= 1) {
-        if (mergeablePools.length === 1) {
-          const pool = mergeablePools.at(0)
-          invariant(pool !== undefined)
-          await attendanceRepository.updateAttendancePoolById(handle, pool.id, {
-            ...pool,
-            title: data.title,
-          })
-        }
         return
       }
 
       // We compute the next properties by summing up for all the pools. The next pool should not have a merge delay
       // since a potential pending pool should be merged into it.
       const defaultMergePool = {
-        title: data.title,
+        title: "Gruppe",
         mergeDelayHours: null,
         capacity: 0,
         yearCriteria: [] as number[],
       } satisfies AttendancePoolWrite
+
       const input = mergeablePools.reduce((acc, curr) => {
+        const newYearCriteria = acc.yearCriteria.concat(...curr.yearCriteria)
         return {
-          title: acc.title,
+          title: createPoolName(newYearCriteria),
           mergeDelayHours: acc.mergeDelayHours,
           capacity: acc.capacity + curr.capacity,
-          yearCriteria: acc.yearCriteria.concat(...curr.yearCriteria),
+          yearCriteria: newYearCriteria,
         }
       }, defaultMergePool)
+
       validateAttendancePoolWrite(input)
       validateAttendancePoolDisjunction(input.yearCriteria, pendingPools)
-      const pool = await attendanceRepository.createAttendancePool(handle, attendanceId, input)
+
+      const pool = await attendanceRepository.createAttendancePool(handle, attendanceId, null, input)
       const mergeablePoolIds = mergeablePools.map((pool) => pool.id)
+
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
     },

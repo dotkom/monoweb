@@ -17,6 +17,7 @@ export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     deactivatedAt: null,
     workspaceGroupId: null,
     slug: "dotkom",
+    showLeaderAsContact: false,
     ...input,
   }
 }
