@@ -40,9 +40,9 @@ export const Auth0Profile = z.object({
   sub: z.string(),
   name: z.string(),
   nickname: z.string(),
-  picture: z.string().url().optional(),
+  picture: z.url().optional(),
   updated_at: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   email_verified: z.boolean(),
 })
 
@@ -92,7 +92,7 @@ export const TokenResponse = z.object({
   access_token: z.string().min(1),
   refresh_token: z.string().min(1),
   id_token: z.string().min(1),
-  expires_in: z.number().int().positive(),
+  expires_in: z.int().positive(),
   token_type: z.literal("Bearer"),
 })
 

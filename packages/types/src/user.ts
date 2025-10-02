@@ -44,7 +44,7 @@ export const UserWriteSchema = UserSchema.pick({
     .max(64, "Brukernavnet kan ikke være lengre enn 64 tegn")
     .regex(PROFILE_SLUG_REGEX, "Brukernavnet kan bare inneholde små bokstaver, tall og bindestrek")
     .refine((value) => slugify(value) === value, {
-      message: "Brukernavnet kan bare inneholde små bokstaver, tall og bindestrek",
+        error: "Brukernavnet kan bare inneholde små bokstaver, tall og bindestrek"
     }),
   name: z
     .string()
@@ -52,9 +52,7 @@ export const UserWriteSchema = UserSchema.pick({
     .max(128, "Navnet kan ikke være lengre enn 128 tegn")
     .regex(NAME_REGEX, "Du kan bare bruke bokstaver, bindestrek, apostrof og mellomrom i navnet")
     .nullable(),
-  email: z
-    .string()
-    .email("Ugyldig e-post")
+  email: z.email("Ugyldig e-post")
     .min(1, "Du må skrive en e-post")
     .max(128, "E-posten kan ikke være lengre enn 128 tegn")
     .nullable(),
@@ -63,7 +61,7 @@ export const UserWriteSchema = UserSchema.pick({
     .regex(PHONE_REGEX, "Ugyldig telefonnummer")
     .max(32, "Telefonnummeret kan ikke være lengre enn 32 tegn")
     .nullable(),
-  imageUrl: z.string().url("Ugyldig URL").max(500, "Bildelenken kan ikke være lengre enn 500 tegn").nullable(),
+  imageUrl: z.url("Ugyldig URL").max(500, "Bildelenken kan ikke være lengre enn 500 tegn").nullable(),
   biography: z.string().max(2000, "Biografien kan ikke være lengre enn 2000 tegn").nullable(),
   gender: z.string().nullable(),
   dietaryRestrictions: z.string().max(200, "Kostholdsrestriksjoner kan ikke være lengre enn 200 tegn").nullable(),

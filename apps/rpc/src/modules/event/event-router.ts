@@ -112,7 +112,7 @@ export const eventRouter = t.router({
     }),
 
   all: procedure
-    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).default({}))
+    .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).prefault({}))
     .output(
       z.object({
         items: EventWithAttendanceSchema.array(),

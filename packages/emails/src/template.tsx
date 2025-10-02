@@ -5,13 +5,13 @@ import type { z } from "zod"
 export class InvalidTemplateArguments extends Error {}
 
 export interface Template<T extends Record<string, unknown>> {
-  (args: z.infer<z.ZodSchema<T>>): Promise<string>
+  (args: z.infer<z.ZodJSONSchema<T>>): Promise<string>
   displayName: string
 }
 
 export function createTemplate<T extends Record<string, unknown>>(
   name: string,
-  schema: z.ZodSchema<T>,
+  schema: z.ZodJSONSchema<T>,
   Component: FC<z.infer<typeof schema>>
 ): Template<T> {
   const handler = async (args: z.infer<typeof schema>) => {
@@ -25,4 +25,4 @@ export function createTemplate<T extends Record<string, unknown>>(
   return handler
 }
 
-export type TemplateProps<S extends z.ZodSchema> = z.infer<S>
+export type TemplateProps<S extends z.ZodJSONSchema> = z.infer<S>

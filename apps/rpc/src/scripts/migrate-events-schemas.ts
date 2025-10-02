@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-const isoDateTime = z.string().datetime({ offset: true })
+const isoDateTime = z.iso.datetime({ offset: true })
 
 export const EventAttendeeSchema = z.object({
   id: z.number(),
@@ -30,8 +30,8 @@ export const EventSchema = z.object({
 
 export const EventListSchema = z.object({
   count: z.number(),
-  next: z.string().url().nullable(),
-  previous: z.string().url().nullable(),
+  next: z.url().nullable(),
+  previous: z.url().nullable(),
   results: z.array(EventSchema),
 })
 

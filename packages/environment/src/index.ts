@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export type DefaultVariable<TSpec extends z.ZodSchema> =
+export type DefaultVariable<TSpec extends z.ZodJSONSchema> =
   | z.infer<TSpec>
   | {
       prd: z.infer<TSpec>
@@ -53,18 +53,18 @@ export type DefaultEnvironmentValueSchema = z.ZodString
  * )
  * ```
  */
-export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z.ZodJSONSchema = DefaultEnvironmentValueSchema>(
   value: string | undefined,
   defaultValue?: DefaultVariable<TSpec>,
   spec?: TSpec
 ): z.infer<TSpec>
-export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z.ZodJSONSchema = DefaultEnvironmentValueSchema>(
   value: string | undefined,
   defaultValue: z.infer<TSpec> | null,
   spec?: TSpec
 ): z.infer<TSpec> | null
 
-export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z.ZodJSONSchema = DefaultEnvironmentValueSchema>(
   value: z.infer<TSpec> | undefined,
   defaultValue?: DefaultVariable<TSpec> | null,
   spec?: TSpec
