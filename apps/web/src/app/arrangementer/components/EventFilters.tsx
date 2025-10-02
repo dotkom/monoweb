@@ -25,7 +25,7 @@ import { useDebounce } from "use-debounce"
 import { z } from "zod"
 import { type EventListViewMode, EventListViewModeSchema } from "./EventList"
 
-const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.Values).map((type) => ({
+const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema._zod.values).map((type) => ({
   value: type,
   label: mapEventTypeToLabel(type),
 }))

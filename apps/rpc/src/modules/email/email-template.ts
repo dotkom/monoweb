@@ -13,7 +13,7 @@ export type EmailType =
   | "EVENT_ATTENDANCE"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
-  getSchema(): z.ZodJSONSchema<TData>
+  getSchema(): z.ZodType<TData>
   getTemplate(): Promise<string>
   type: TType
 }

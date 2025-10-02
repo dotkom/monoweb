@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Flex } from "@mantine/core"
-import { type DefaultValues, type UseFormReturn, useForm } from "react-hook-form"
+import { DeepPartial, type DefaultValues, FieldName, FieldValue, Path, type UseFormReturn, useForm } from "react-hook-form"
 import type { z } from "zod"
 import type { InputProducerResult } from "./types"
 
@@ -8,18 +8,18 @@ function entriesOf<T extends Record<string, unknown>, K extends string & keyof T
   return Object.entries(obj) as [K, T[K]][]
 }
 
-interface FormBuilderOptions<T extends z.ZodRawShape> {
-  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>
+interface FormBuilderOptions<T extends z.ZodObject> {
+  schema: T | z.ZodType<T>
   fields: Partial<{
-    [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
+    [K in keyof z.infer<T>]: InputProducerResult<z.infer<T>>
   }>
-  defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
+  defaultValues?: DefaultValues<z.infer<T>>
   label: string
-  onSubmit(data: z.infer<z.ZodObject<T>>, form: UseFormReturn<z.infer<z.ZodObject<T>>>): void
+  onSubmit(data: z.infer<T>, form: UseFormReturn<z.infer<T>>): void
   disabled?: boolean
 }
 
-export function useFormBuilder<T extends z.ZodRawShape>({
+export function useFormBuilder<T extends z.ZodObject>({
   schema,
   fields,
   defaultValues,
@@ -27,7 +27,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   onSubmit,
   disabled,
 }: FormBuilderOptions<T>) {
-  const form = useForm<z.infer<z.ZodObject<T>>>({
+  const form = useForm<z.infer<T>>({
     resolver: zodResolver(schema),
     mode: "onBlur",
     defaultValues,
@@ -36,12 +36,12 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     if (!fc) {
       throw new Error()
     }
-    const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc
+    const Component: InputProducerResult<z.infer<T>> = fc
     return (
       <Component
-        defaultValue={form.formState.defaultValues?.[name]}
+        defaultValue={form.formState.defaultValues?.[name] as FieldValue<z.infer<T>> | undefined}
         key={name}
-        name={name}
+        name={name as Path<z.infer<T>>}
         register={form.register}
         control={form.control}
         state={form.formState}

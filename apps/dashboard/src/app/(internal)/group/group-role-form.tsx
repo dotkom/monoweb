@@ -40,7 +40,7 @@ export const useGroupRoleForm = ({ onSubmit, label = "Lagre", defaultValues }: U
         label: "Type",
         placeholder: "Velg en",
         required: true,
-        data: Object.values(GroupRoleTypeSchema.Values).map((groupRoleType) => ({
+        data: Object.values(GroupRoleTypeSchema._zod.values).map((groupRoleType) => ({
           value: groupRoleType,
           label: getGroupRoleTypeName(groupRoleType),
         })),

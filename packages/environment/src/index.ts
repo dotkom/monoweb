@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export type DefaultVariable<TSpec extends z.ZodJSONSchema> =
+export type DefaultVariable<TSpec extends z.ZodType> =
   | z.infer<TSpec>
   | {
       prd: z.infer<TSpec>
@@ -53,29 +53,29 @@ export type DefaultEnvironmentValueSchema = z.ZodString
  * )
  * ```
  */
-export function config<TSpec extends z.ZodJSONSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z.ZodType= DefaultEnvironmentValueSchema>(
   value: string | undefined,
   defaultValue?: DefaultVariable<TSpec>,
   spec?: TSpec
 ): z.infer<TSpec>
-export function config<TSpec extends z.ZodJSONSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z.ZodType= DefaultEnvironmentValueSchema>(
   value: string | undefined,
   defaultValue: z.infer<TSpec> | null,
   spec?: TSpec
 ): z.infer<TSpec> | null
 
-export function config<TSpec extends z.ZodJSONSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z._ZodType= DefaultEnvironmentValueSchema>(
   value: z.infer<TSpec> | undefined,
   defaultValue?: DefaultVariable<TSpec> | null,
   spec?: TSpec
-): z.infer<TSpec> {
+) {
   // If there was no spec validator provided, we default to string, unless the variable is nullable.
   const validator = spec ?? (defaultValue === null ? z.string().nullable() : z.string())
 
   function getDefaultValue(env: string): z.infer<TSpec> | undefined {
     if (typeof defaultValue === "object" && defaultValue !== null) {
       if (env in defaultValue) {
-        return defaultValue[env as keyof typeof defaultValue]
+        return defaultValue[env as keyof typeof defaultValue] as z.infer<TSpec>
       }
       throw new Error(`Default value object did not contain value for environment ${env}`)
     }

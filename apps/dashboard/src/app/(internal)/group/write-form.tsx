@@ -42,7 +42,7 @@ export const useGroupWriteForm = ({
       FormSchema.superRefine((data, ctx) => {
         const issues = validateGroupWrite(data, existingGroupSlugs, defaultValues.slug)
         for (const issue of issues) {
-          ctx.addIssue(issue)
+          ctx.addIssue(issue.message)
         }
       }),
     [existingGroupSlugs, defaultValues]
@@ -98,7 +98,7 @@ export const useGroupWriteForm = ({
         placeholder: "Velg en",
         withAsterisk: true,
         required: true,
-        data: Object.values(GroupTypeSchema.Values).map((groupType) => ({
+        data: Object.values(GroupTypeSchema._zod.values).map((groupType) => ({
           value: groupType,
           label: getGroupTypeName(groupType),
         })),

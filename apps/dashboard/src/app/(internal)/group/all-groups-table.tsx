@@ -99,7 +99,7 @@ export const AllGroupsTable = ({ groups }: Props) => {
       filters={[
         { columnId: "status", label: "Aktiv", value: "Aktiv" },
         { columnId: "status", label: "Inaktiv", value: "Inaktiv" },
-        ...Object.values(GroupTypeSchema.Values).map((groupType) => {
+        ...Object.values(GroupTypeSchema._zod.values).map((groupType) => {
           const typeName = getGroupTypeName(groupType)
 
           return {

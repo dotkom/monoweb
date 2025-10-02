@@ -3,7 +3,7 @@ import { z } from "zod"
 import { NotFoundError } from "../../error"
 
 export interface TaskDefinition<TData, TType extends TaskType> {
-  getSchema(): z.ZodJSONSchema<TData>
+  getSchema(): z.ZodType<TData>
   type: TType
 }
 

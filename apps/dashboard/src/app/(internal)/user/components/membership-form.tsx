@@ -52,7 +52,7 @@ export const useMembershipWriteForm = ({
         label: "Type",
         required: true,
         placeholder: "Velg type",
-        data: Object.values(MembershipTypeSchema.Values).map((type) => ({
+        data: Object.values(MembershipTypeSchema._zod.values).map((type) => ({
           value: type,
           label: getMembershipTypeName(type) ?? type,
         })),
@@ -62,7 +62,7 @@ export const useMembershipWriteForm = ({
         required: false,
         clearable: true,
         placeholder: "Velg spesialisering",
-        data: Object.values(MembershipSpecializationSchema.Values)
+        data: Object.values(MembershipSpecializationSchema._zod.values)
           .filter((specialization) => specialization !== "UNKNOWN")
           .map((specialization) => ({
             value: specialization,
