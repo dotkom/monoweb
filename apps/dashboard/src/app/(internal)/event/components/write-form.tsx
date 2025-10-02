@@ -19,7 +19,7 @@ import { z } from "zod"
 import { useCompanyAllQuery } from "../../company/queries"
 import { validateEventWrite } from "../validation"
 
-const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.Values).map((type) => ({
+const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema._zod.values).map((type) => ({
   value: type,
   label: mapEventTypeToLabel(type),
 }))
@@ -36,7 +36,7 @@ const FormValidationSchema = EventWriteSchema.extend({
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
   for (const issue of issues) {
-    ctx.addIssue(issue)
+    ctx.addIssue(issue.message)
   }
 })
 
@@ -49,7 +49,6 @@ const DEFAULT_VALUES = {
   end: addHours(nextHour, 1),
   status: "PUBLIC",
   type: "SOCIAL",
-
   title: "",
   description: "",
   locationTitle: null,

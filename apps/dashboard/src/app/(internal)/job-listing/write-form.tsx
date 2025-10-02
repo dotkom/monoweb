@@ -88,7 +88,7 @@ export const useJobListingWriteForm = ({
       employment: createSelectInput({
         label: "Type",
         placeholder: "Velg type",
-        data: Object.values(JobListingSchema.shape.employment.Values).map((employment) => ({
+        data: Object.values(JobListingSchema.shape.employment._zod.values).map((employment) => ({
           value: employment,
           label: getJobListingEmploymentName(employment),
         })),

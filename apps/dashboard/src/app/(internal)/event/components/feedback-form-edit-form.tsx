@@ -47,7 +47,7 @@ import z from "zod"
 import { useDeleteFeedbackFormMutation } from "../mutations"
 import { useEventFeedbackPublicResultsTokenGetQuery, useFeedbackAnswersGetQuery } from "../queries"
 
-const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.Values).map((type) => ({
+const typeOptions = Object.values(FeedbackQuestionSchema.shape.type._zod.values).map((type) => ({
   value: type,
   label: getFeedbackQuestionTypeName(type),
 }))
@@ -63,8 +63,6 @@ const FormValuesSchema = z
       const code = "custom"
       ctx.addIssue({ message, code, path: ["feedbackForm.answerDeadline"] })
     }
-
-    return true
   })
 
 export type FormValues = z.infer<typeof FormValuesSchema>
