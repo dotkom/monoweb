@@ -27,7 +27,7 @@ export function buildDateRangeFilter() {
         .transform((d) => new TZDate(d, "UTC"))
         .nullable(),
     })
-    .default({
+    .prefault({
       min: null,
       max: null,
     })
@@ -37,19 +37,19 @@ export type AnyOfFilter<T> = z.infer<ReturnType<typeof buildAnyOfFilter<T>>>
 
 /** Expect a field to be one of the provided values */
 export function buildAnyOfFilter<T>(inner: z.Schema<T>) {
-  return z.array(inner).default([])
+  return z.array(inner).prefault([])
 }
 
 export type SearchFilter = z.infer<ReturnType<typeof buildSearchFilter>>
 
 /** Expect a field to be a search string */
 export function buildSearchFilter() {
-  return z.string().nullable().default(null)
+  return z.string().nullable().prefault(null)
 }
 
 export type SortOrder = z.infer<ReturnType<typeof createSortOrder>>
 
 /** Expect a field to be a sort order value */
 export function createSortOrder() {
-  return z.enum(["asc", "desc"]).default("desc")
+  return z.enum(["asc", "desc"]).prefault("desc")
 }

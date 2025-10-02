@@ -33,13 +33,13 @@ const templateMap = templates.reduce<Record<string, Template<any>>>((acc, curr) 
 
 const requestSchema = z.object({
   template: z.string().nonempty(),
-  source: z.string().email(),
-  to: z.array(z.string().email()),
-  cc: z.array(z.string().email()),
-  bcc: z.array(z.string().email()),
+  source: z.email(),
+  to: z.array(z.email()),
+  cc: z.array(z.email()),
+  bcc: z.array(z.email()),
   subject: z.string().nonempty(),
   arguments: z.any(),
-  replyTo: z.array(z.string().email()),
+  replyTo: z.array(z.email()),
 })
 
 const server = fastify()

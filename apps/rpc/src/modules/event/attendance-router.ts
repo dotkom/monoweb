@@ -94,7 +94,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
-        price: z.number().int().nullable(),
+        price: z.int().nullable(),
       })
     )
     .mutation(async ({ input, ctx }) => {

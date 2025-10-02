@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const BasePaginateInputSchema = z.object({
-  take: z.number().default(20),
+  take: z.number().prefault(20),
   cursor: z.string().optional(),
 })
 

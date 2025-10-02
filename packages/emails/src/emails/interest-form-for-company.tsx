@@ -7,7 +7,7 @@ import { type TemplateProps, createTemplate } from "../template.js"
 const Props = z.object({
   companyName: z.string().min(1).max(140),
   contactName: z.string().min(1),
-  contactEmail: z.string().email(),
+  contactEmail: z.email(),
   contactTel: z.string(),
   requestsCompanyPresentation: z.boolean(),
   requestsCourseEvent: z.boolean(),

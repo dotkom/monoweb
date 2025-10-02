@@ -67,15 +67,15 @@ const WORKSPACE_SERVICE_ACCOUNT_SCOPES = [
 ]
 
 const workspaceServiceAccountJsonSchema = z.object({
-  auth_provider_x509_cert_url: z.string().url(),
-  auth_uri: z.string().url(),
-  client_email: z.string().email(),
+  auth_provider_x509_cert_url: z.url(),
+  auth_uri: z.url(),
+  client_email: z.email(),
   client_id: z.string().min(1),
-  client_x509_cert_url: z.string().url(),
+  client_x509_cert_url: z.url(),
   private_key: z.string().min(1),
   private_key_id: z.string().min(1),
   project_id: z.string().min(1),
-  token_uri: z.string().url(),
+  token_uri: z.url(),
   type: z.literal("service_account"),
 })
 

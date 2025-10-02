@@ -30,7 +30,7 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
         return
       }
 
-      const id = z.string().uuid().safeParse(result.getText())
+      const id = z.uuid().safeParse(result.getText())
 
       if (id.success) {
         paused.current = true
