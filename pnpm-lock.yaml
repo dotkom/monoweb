@@ -101,10 +101,10 @@ importers:
         version: link:../../packages/utils
       '@fontsource/inter':
         specifier: ^5.2.6
-        version: 5.2.6
+        version: 5.2.8
       '@fontsource/inter-tight':
         specifier: ^5.2.6
-        version: 5.2.6
+        version: 5.2.7
       '@hello-pangea/dnd':
         specifier: ^18.0.1
         version: 18.0.1(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -1139,10 +1139,10 @@ importers:
     dependencies:
       '@fontsource/figtree':
         specifier: ^5.2.8
-        version: 5.2.8
+        version: 5.2.10
       '@fontsource/inter':
         specifier: ^5.2.6
-        version: 5.2.6
+        version: 5.2.8
       '@iconify-icon/react':
         specifier: ^2.0.0
         version: 2.3.0(react@19.1.1)
@@ -2098,14 +2098,14 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@fontsource/figtree@5.2.8':
-    resolution: {integrity: sha512-FC+t9RSdZDUK402+h+D7kKBXEo1L5xw/ff8SpTo9ZO0xHzqFJ0u78PmNyAju5D77oXPsR3wfs+rjZvWPx4diSA==}
+  '@fontsource/figtree@5.2.10':
+    resolution: {integrity: sha512-nlO06N1qad88ySqzi/a2xwDBkamfZ4MFilP8la5dDyRY36ED0UYTs2hhtwJf8fM52+Nn7dQO2r27reKaXOyOIg==}
 
-  '@fontsource/inter-tight@5.2.6':
-    resolution: {integrity: sha512-4rsygbvEQIbDYs+uMgMToxIb6PGNEuvAeHHc1isM2x7genkwUX+Omona47wFfozF308WRwu3lRSQF3l/BUH/kg==}
+  '@fontsource/inter-tight@5.2.7':
+    resolution: {integrity: sha512-44TmSfHdNQus/3MWOMIonUEnbxwQhiaFo2sfBJEGIE4c7TN+GO6kfLzsTH4Nu52BC9HDZFl9fPQ6Cwzp9vYTtQ==}
 
-  '@fontsource/inter@5.2.6':
-    resolution: {integrity: sha512-CZs9S1CrjD0jPwsNy9W6j0BhsmRSQrgwlTNkgQXTsAeDRM42LBRLo3eo9gCzfH4GvV7zpyf78Ozfl773826csw==}
+  '@fontsource/inter@5.2.8':
+    resolution: {integrity: sha512-P6r5WnJoKiNVV+zvW2xM13gNdFhAEpQ9dQJHt3naLvfg+LkF2ldgSLiF4T41lf1SQCM9QmkqPTn4TH568IRagg==}
 
   '@grpc/grpc-js@1.13.4':
     resolution: {integrity: sha512-GsFaMXCkMqkKIvwCQjCrwH+GHbPKBjhwo/8ZuUkWHqbI73Kky9I+pQltrlT0+MWpedCoosda53lgjYfyEPgxBg==}
@@ -10414,11 +10414,11 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@fontsource/figtree@5.2.8': {}
+  '@fontsource/figtree@5.2.10': {}
 
-  '@fontsource/inter-tight@5.2.6': {}
+  '@fontsource/inter-tight@5.2.7': {}
 
-  '@fontsource/inter@5.2.6': {}
+  '@fontsource/inter@5.2.8': {}
 
   '@grpc/grpc-js@1.13.4':
     dependencies:
