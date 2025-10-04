@@ -37,7 +37,7 @@ export interface GroupRepository {
     data: GroupMembershipWrite,
     roleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
-  createRoles(handle: DBHandle, roles: GroupRoleWrite[]): Promise<void>
+  createRoles(handle: DBHandle, roles: GroupRoleWrite[]): Promise<GroupRole[]>
   updateRole(handle: DBHandle, id: GroupRoleId, role: Partial<GroupRoleWrite>): Promise<GroupRole>
 }
 
@@ -208,9 +208,11 @@ export function getGroupRepository(): GroupRepository {
       })
     },
     async createRoles(handle, roles) {
-      await handle.groupRole.createMany({
+      const rows = await handle.groupRole.createManyAndReturn({
         data: roles,
       })
+
+      return parseOrReport(z.array(GroupRoleSchema), rows)
     },
     async updateRole(handle, id, role) {
       const row = await handle.groupRole.update({
