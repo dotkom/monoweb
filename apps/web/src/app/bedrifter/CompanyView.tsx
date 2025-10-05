@@ -1,6 +1,6 @@
 "use client"
 
-import { EventList } from "@/app/arrangementer/components/EventList"
+import { EventList, EventListSkeleton } from "@/app/arrangementer/components/EventList"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import type { Company } from "@dotkomonline/types"
@@ -26,7 +26,7 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
 
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
 
-  const { eventDetails: futureEventWithAttendances } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
     filter: { byOrganizingCompany: [company.id], byStartDate: { min: now, max: null } },
   })
 
@@ -71,11 +71,17 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
       </div>
       <div className="mt-6 flex flex-col gap-2">
         <Title element="h2">Arrangementer</Title>
-        <EventList
-          futureEventWithAttendances={futureEventWithAttendances}
-          pastEventWithAttendances={pastEventWithAttendances}
-          onLoadMore={fetchNextPage}
-        />
+        {
+          isLoading ? (
+            <EventListSkeleton />
+          ) : (
+            <EventList
+            futureEventWithAttendances={futureEventWithAttendances}
+            pastEventWithAttendances={pastEventWithAttendances}
+            onLoadMore={fetchNextPage}
+            />
+          )
+        }
       </div>
     </EntryDetailLayout>
   )
