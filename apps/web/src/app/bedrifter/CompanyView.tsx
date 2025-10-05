@@ -71,17 +71,15 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
       </div>
       <div className="mt-6 flex flex-col gap-2">
         <Title element="h2">Arrangementer</Title>
-        {
-          isLoading ? (
-            <EventListSkeleton />
-          ) : (
-            <EventList
+        {isLoading ? (
+          <EventListSkeleton />
+        ) : (
+          <EventList
             futureEventWithAttendances={futureEventWithAttendances}
             pastEventWithAttendances={pastEventWithAttendances}
             onLoadMore={fetchNextPage}
-            />
-          )
-        }
+          />
+        )}
       </div>
     </EntryDetailLayout>
   )
