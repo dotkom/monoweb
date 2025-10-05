@@ -82,14 +82,6 @@ const ApplicationInfoBox = ({ jobListing }: ApplicationInfoBoxProps) => {
       </div>
 
       <div className="flex flex-row gap-2 items-center">
-        <Icon icon="tabler:calendar-event" width={20} height={20} />
-        <div className="flex flex-col gap-0.5">
-          {jobListing.start && <Text>Starter {formatDate(jobListing.start, "dd. MMM yyyy")}</Text>}
-          {jobListing.end && <Text>Slutter {formatDate(jobListing.end, "dd. MMM yyyy")}</Text>}
-        </div>
-      </div>
-
-      <div className="flex flex-row gap-2 items-center">
         <Icon icon="tabler:briefcase" width={20} height={20} />
         <EmploymentType employment={jobListing.employment} />
       </div>
@@ -147,9 +139,9 @@ interface DeadlineProps {
 }
 
 const Deadline = ({ jobListing }: DeadlineProps) => {
-  const { deadline, deadlineAsap } = jobListing
+  const { deadline, rollingAdmission } = jobListing
 
-  if (deadlineAsap) {
+  if (rollingAdmission) {
     return <Text>Frist fortløpende</Text>
   }
 

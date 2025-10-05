@@ -444,8 +444,8 @@ model JobListing {
   employment       EmploymentType
   applicationLink  String?
   applicationEmail String?
-  // TODO: Find a better name for this
-  deadlineAsap     Boolean
+  ///Applications are reviewed as soon as they are submitted
+  rollingAdmission Boolean
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
