@@ -159,7 +159,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
               <div className="flex flex-row gap-1 items-center">
                 <Icon width={16} icon={"tabler:clock-hour-3"} />
                 <Text>
-                  Lagt ut for {formatDistanceToNowStrict(jobListing.createdAt, { locale: nb, addSuffix: true })}
+                  Lagt ut for {formatDistanceToNowStrict(jobListing.start, { locale: nb, addSuffix: true })}
                 </Text>
               </div>
             </div>
