@@ -158,9 +158,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
               </div>
               <div className="flex flex-row gap-1 items-center">
                 <Icon width={16} icon={"tabler:clock-hour-3"} />
-                <Text>
-                  Lagt ut for {formatDistanceToNowStrict(jobListing.start, { locale: nb, addSuffix: true })}
-                </Text>
+                <Text>Lagt ut for {formatDistanceToNowStrict(jobListing.start, { locale: nb, addSuffix: true })}</Text>
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">
