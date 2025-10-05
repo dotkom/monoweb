@@ -12,12 +12,12 @@ export default function AuditLogDetailsPage() {
   const { auditLogs, isLoading: isAuditLogsLoading, fetchNextPage } = useAuditLogSearchQuery({ filter })
 
   return (
-    <Skeleton visible={isAuditLogsLoading}>
-      <Stack>
-        <Title>Hendelseslogg</Title>
-        <AuditLogFilters onChange={setFilter} />
+    <Stack>
+      <Title>Hendelseslogg</Title>
+      <AuditLogFilters onChange={setFilter} />
+      <Skeleton visible={isAuditLogsLoading}>
         <AuditLogsTable audit_logs={auditLogs} onLoadMore={fetchNextPage} />
-      </Stack>
-    </Skeleton>
+      </Skeleton>
+    </Stack>
   )
 }
