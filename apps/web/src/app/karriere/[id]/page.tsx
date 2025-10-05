@@ -147,9 +147,9 @@ interface DeadlineProps {
 }
 
 const Deadline = ({ jobListing }: DeadlineProps) => {
-  const { deadline, deadlineAsap } = jobListing
+  const { deadline, rollingAdmission } = jobListing
 
-  if (deadlineAsap) {
+  if (rollingAdmission) {
     return <Text>Frist fortløpende</Text>
   }
 

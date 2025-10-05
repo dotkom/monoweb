@@ -26,7 +26,7 @@ export const JobListingEditCard: FC = () => {
       title: jobListing.title,
       applicationLink: jobListing.applicationLink,
       deadline: jobListing.deadline,
-      deadlineAsap: jobListing.deadlineAsap,
+      rollingAdmission: jobListing.rollingAdmission,
       employment: jobListing.employment,
       featured: jobListing.featured,
       locationIds: jobListing.locations.map((location) => location.name),
