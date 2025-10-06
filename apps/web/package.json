@@ -61,7 +61,7 @@
     "superjson": "^2.0.0",
     "unified": "^11.0.5",
     "use-debounce": "^10.0.5",
-    "zod": "^3.25.47"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

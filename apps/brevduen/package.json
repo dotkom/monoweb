@@ -19,7 +19,7 @@
     "fastify": "^5.3.3",
     "import-in-the-middle": "^1.14.2",
     "require-in-the-middle": "^7.5.2",
-    "zod": "^3.25.47"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

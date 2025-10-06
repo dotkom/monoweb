@@ -32,7 +32,7 @@
     "react-hook-form-persist": "^3.0.0",
     "sonner": "^2.0.4",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.25.47"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

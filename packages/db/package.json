@@ -35,7 +35,7 @@
     "@testcontainers/postgresql": "^11.5.1",
     "date-fns": "^4.1.0",
     "pg": "^8.16.0",
-    "zod": "^3.25.47",
+    "zod": "^4.1.12",
     "zod-prisma-types": "^3.2.4"
   },
   "devDependencies": {

@@ -45,8 +45,8 @@ importers:
         specifier: ^7.5.2
         version: 7.5.2
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -205,8 +205,8 @@ importers:
         specifier: ^2.0.0
         version: 2.2.2
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -287,8 +287,8 @@ importers:
         specifier: ^7.57.0
         version: 7.62.0(react@19.1.1)
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -384,8 +384,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.13)
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -469,8 +469,8 @@ importers:
         specifier: ^7.57.0
         version: 7.62.0(react@19.1.1)
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -605,8 +605,8 @@ importers:
         specifier: ^8.18.3
         version: 8.18.3
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -807,8 +807,8 @@ importers:
         specifier: ^10.0.5
         version: 10.0.6(react@19.1.1)
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -904,8 +904,8 @@ importers:
         specifier: ^8.16.0
         version: 8.16.3
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
       zod-prisma-types:
         specifier: ^3.2.4
         version: 3.2.4(@prisma/client@6.8.2(prisma@6.8.2(typescript@5.9.2))(typescript@5.9.2))(prisma@6.8.2(typescript@5.9.2))
@@ -956,8 +956,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.1(react@19.1.1)
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -981,8 +981,8 @@ importers:
   packages/environment:
     dependencies:
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -1085,8 +1085,8 @@ importers:
         specifier: ^19
         version: 19.1.0(react@19.1.0)
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -1119,8 +1119,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       zod:
-        specifier: ^3.25.47
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -9169,6 +9169,9 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -16515,7 +16518,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.1)
+      styled-jsx: 5.1.6(react@19.1.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.4.7
       '@next/swc-darwin-x64': 15.4.7
@@ -17761,6 +17764,11 @@ snapshots:
       client-only: 0.0.1
       react: 19.1.0
 
+  styled-jsx@5.1.6(react@19.1.1):
+    dependencies:
+      client-only: 0.0.1
+      react: 19.1.1
+
   sugarss@5.0.0(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
@@ -18473,5 +18481,7 @@ snapshots:
       zod: 3.25.76
 
   zod@3.25.76: {}
+
+  zod@4.1.12: {}
 
   zwitch@2.0.4: {}
