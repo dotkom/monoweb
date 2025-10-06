@@ -90,7 +90,7 @@ for (const jobListing of jobListings) {
       employment: getEmploymentType(jobListing.employment),
       applicationLink: jobListing.application_link,
       applicationEmail: jobListing.application_email,
-      deadlineAsap: jobListing.rolling_admission,
+      rollingAdmission: jobListing.rolling_admission,
       deadline: jobListing.deadline,
       start: jobListing.start,
       end: jobListing.end,
