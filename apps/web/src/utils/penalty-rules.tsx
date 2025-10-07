@@ -1,4 +1,3 @@
-import { env } from "@/env"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
@@ -108,7 +107,7 @@ const WaitlistPolicy = () => (
   <section className="space-y-4">
     <Title className="font-bold">Venteliste</Title>
     <ul className="list-disc pl-6 space-y-2">
-      <li>Hvis du står på venteliste kan du melde deg av helt til arrangementet starter.</li>
+      <li>Hvis du står på venteliste kan du melde deg av helt til avmeldingsfristen.</li>
       <li>
         Når du står på venteliste er du inneforstått med at du når som helst kan få plass på arrangementet og dermed er
         bundet til reglene for arrangementet på lik linje med andre påmeldte.
@@ -172,7 +171,7 @@ const WhyHaveIGotMarks = () => {
       <Title className="font-bold">Hvorfor har jeg fått prikk?</Title>
       <Text>
         Under{" "}
-        <Link href={`${env.NEXT_PUBLIC_HOME_URL}profil`} className="text-blue-600 underline">
+        <Link href={"/profil"} className="text-blue-600 underline">
           Profil
         </Link>{" "}
         vil du kunne se prikkene dine, og eventuelle begrunnelser.

@@ -40,6 +40,7 @@ import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { notFound, useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
+import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
 
 const capitalizeFirstLetter = (str: string) => {
@@ -63,11 +64,7 @@ const renderUserInfo = (label: string, value: string | number | null) => {
   )
 }
 
-function MarkDisplay({
-  markInformation: { mark, personalMark },
-}: {
-  markInformation: VisiblePersonalMarkDetails
-}) {
+function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformation: VisiblePersonalMarkDetails }) {
   const expires = getPunishmentExpiryDate(personalMark.createdAt, mark.duration)
   const hasExpired = isPast(expires)
 
@@ -138,7 +135,10 @@ function MarkDisplay({
 const MembershipDisplay = ({
   activeMembership,
   grade,
-}: { activeMembership: Membership | null; grade: number | null }) => {
+}: {
+  activeMembership: Membership | null
+  grade: number | null
+}) => {
   if (activeMembership) {
     return (
       <>
@@ -403,7 +403,10 @@ export default function ProfilePage() {
 
           {marks && marks.length > 0 && (
             <div className="flex flex-col gap-3">
-              <Title>Prikker og suspensjoner</Title>
+              <div>
+                <Title>Prikker og suspensjoner</Title>
+                <PenaltyDialog />
+              </div>
               <div className="flex flex-col gap-2">
                 {marks.map((markInfo) => (
                   <MarkDisplay key={markInfo.mark.id} markInformation={markInfo} />
