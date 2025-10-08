@@ -2,6 +2,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import type {
   CompanyId,
   JobListing,
+  JobListingFilterQuery,
   JobListingId,
   JobListingLocation,
   JobListingLocationId,
@@ -16,6 +17,7 @@ export interface JobListingService {
   getById(handle: DBHandle, id: JobListingId): Promise<JobListing>
   getAll(handle: DBHandle, page: Pageable): Promise<JobListing[]>
   getActive(handle: DBHandle, page: Pageable): Promise<JobListing[]>
+  findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
   create(
     handle: DBHandle,
     payload: JobListingWrite,
@@ -43,6 +45,9 @@ export function getJobListingService(jobListingRepository: JobListingRepository)
     },
     async getAll(handle, page) {
       return await jobListingRepository.getAll(handle, page)
+    },
+    async findMany(handle, query, page) {
+      return await jobListingRepository.findMany(handle, query, page)
     },
     async getActive(handle, page) {
       return await jobListingRepository.getActive(handle, page)
