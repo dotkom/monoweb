@@ -218,6 +218,7 @@ export interface AttendanceService {
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
   ): Promise<void>
   executeSendFeedbackFormLinkEmails(handle: DBHandle): Promise<void>
+  executeVerifyAttendeeAttendedTask(handle: DBHandle): Promise<void>
 
   /**
    * Register that an attendee has physically attended an event.
@@ -1168,6 +1169,58 @@ export function getAttendanceService(
       })
 
       await Promise.all(promises)
+    },
+    async executeVerifyAttendeeAttendedTask(handle) {
+      const eventsEndedYesterday = await eventService.findEvents(handle, {
+        byEndDate: {
+          min: new TZDate(startOfYesterday()),
+          max: new TZDate(endOfYesterday()),
+        },
+      })
+
+      const errors: Error[] = []
+
+      for (const event of eventsEndedYesterday) {
+        if (!event.attendanceId) {
+          return
+        }
+
+        try {
+          const attendance = await this.getAttendanceById(handle, event.attendanceId)
+          const attendeesNotAttended = attendance.attendees.filter(
+            (attendee) => attendee.reserved && !attendee.attendedAt
+          )
+
+          if (attendeesNotAttended.length === 0) {
+            continue
+          }
+
+          const mark = await markService.createMark(
+            handle,
+            {
+              title: `Manglende oppmøte på ${event.title}`,
+              duration: DEFAULT_MARK_DURATION,
+              type: "MISSED_ATTENDANCE",
+              weight: 3,
+              details: null,
+            },
+            event.hostingGroups.map((group) => group.slug)
+          )
+
+          await Promise.all(
+            attendeesNotAttended.map((attendee) => personalMarkService.addToUser(handle, attendee.user.id, mark.id))
+          )
+        } catch (e) {
+          logger.error("Received error when attempting to create marks: %o", e)
+          if (e instanceof Error) {
+            errors.push(e)
+          }
+        }
+      }
+
+      if (errors.length !== 0) {
+        throw new AggregateError(errors, "Failed to give marks to one or more attendees")
+      }
     },
     async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)

@@ -22,6 +22,7 @@ export type VerifyPaymentTaskDefinition = typeof tasks.VERIFY_PAYMENT
 export type ChargeAttendeeTaskDefinition = typeof tasks.CHARGE_ATTENDEE
 export type VerifyFeedbackAnsweredTaskDefinition = typeof tasks.VERIFY_FEEDBACK_ANSWERED
 export type SendFeedbackFormEmailsTaskDefinition = typeof tasks.SEND_FEEDBACK_FORM_EMAILS
+export type VerifyAttendeeAttendedTaskDefinition = typeof tasks.VERIFY_ATTENDEE_ATTENDED
 export type AnyTaskDefinition =
   | ReserveAttendeeTaskDefinition
   | MergeAttendancePoolsTaskDefinition
@@ -29,6 +30,7 @@ export type AnyTaskDefinition =
   | ChargeAttendeeTaskDefinition
   | VerifyFeedbackAnsweredTaskDefinition
   | SendFeedbackFormEmailsTaskDefinition
+  | VerifyAttendeeAttendedTaskDefinition
 
 export const tasks = {
   RESERVE_ATTENDEE: createTaskDefinition({
@@ -69,6 +71,10 @@ export const tasks = {
   }),
   SEND_FEEDBACK_FORM_EMAILS: createTaskDefinition({
     type: "SEND_FEEDBACK_FORM_EMAILS",
+    getSchema: () => z.object({}),
+  }),
+  VERIFY_ATTENDEE_ATTENDED: createTaskDefinition({
+    type: "VERIFY_ATTENDEE_ATTENDED",
     getSchema: () => z.object({}),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
