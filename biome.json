@@ -9,7 +9,6 @@
       "**/out/**",
       "**/.next/**",
       "**/.react-email/**",
-      "**/.turbo/**",
       "**/db.generated.d.ts"
     ]
   },
