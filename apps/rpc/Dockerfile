@@ -2,7 +2,7 @@ FROM node:22-alpine@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5f
 FROM base AS installer
 WORKDIR /app
 
-RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@10.15.1 --ignore-scripts
 COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./

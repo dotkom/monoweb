@@ -5,7 +5,6 @@
   "types": "./src/index.ts",
   "type": "module",
   "scripts": {
-    "clean": "rm -rf .turbo node_modules",
     "test": "vitest run",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
