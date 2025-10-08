@@ -1,3 +1,4 @@
+import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { type Logger, getLogger } from "@dotkomonline/logger"
@@ -38,7 +39,6 @@ import {
   min,
   startOfYesterday,
 } from "date-fns"
-import type { EventEmitter } from "node:events"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import {
