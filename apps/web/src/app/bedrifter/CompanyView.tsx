@@ -59,7 +59,12 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
                 {href === null ? (
                   <Text element="span">{text}</Text>
                 ) : (
-                  <a className="text-blue-950 hover:text-blue-900 dark:text-blue-100 dark:hover:text-blue-300" href={href} target="_blank" rel="noreferrer">
+                  <a
+                    className="text-blue-950 hover:text-blue-900 dark:text-blue-100 dark:hover:text-blue-300"
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {text}
                   </a>
                 )}
