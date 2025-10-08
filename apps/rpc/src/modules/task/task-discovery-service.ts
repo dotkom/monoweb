@@ -36,6 +36,7 @@ export function getLocalTaskDiscoveryService(
         this.discover(tasks.CHARGE_ATTENDEE.type),
         this.discover(tasks.VERIFY_FEEDBACK_ANSWERED.type),
         this.discover(tasks.SEND_FEEDBACK_FORM_EMAILS.type),
+        this.discover(tasks.VERIFY_ATTENDEE_ATTENDED.type),
       ])
       return discoveredTasks.flat()
     },

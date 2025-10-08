@@ -1,4 +1,3 @@
-import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { type Logger, getLogger } from "@dotkomonline/logger"
@@ -39,6 +38,7 @@ import {
   min,
   startOfYesterday,
 } from "date-fns"
+import type { EventEmitter } from "node:events"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import {
@@ -218,6 +218,7 @@ export interface AttendanceService {
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
   ): Promise<void>
   executeSendFeedbackFormLinkEmails(handle: DBHandle): Promise<void>
+  executeVerifyAttendeeAttendedTask(handle: DBHandle): Promise<void>
 
   /**
    * Register that an attendee has physically attended an event.
@@ -1168,6 +1169,45 @@ export function getAttendanceService(
       })
 
       await Promise.all(promises)
+    },
+    async executeVerifyAttendeeAttendedTask(handle) {
+      const eventsEndedYesterday = await eventService.findEvents(handle, {
+        byEndDate: {
+          min: new TZDate(startOfYesterday()),
+          max: new TZDate(endOfYesterday()),
+        },
+      })
+
+      for (const event of eventsEndedYesterday) {
+        if (!event.attendanceId) {
+          return
+        }
+
+        const attendance = await this.getAttendanceById(handle, event.attendanceId)
+        const attendeesNotAttended = attendance.attendees.filter(
+          (attendee) => attendee.reserved && !attendee.attendedAt
+        )
+
+        if (attendeesNotAttended.length === 0) {
+          continue
+        }
+
+        const mark = await markService.createMark(
+          handle,
+          {
+            title: `Manglende oppmøte på ${event.title}`,
+            duration: DEFAULT_MARK_DURATION,
+            type: "MISSED_ATTENDANCE",
+            weight: 3,
+            details: null,
+          },
+          event.hostingGroups.map((group) => group.slug)
+        )
+
+        await Promise.all(
+          attendeesNotAttended.map((attendee) => personalMarkService.addToUser(handle, attendee.user.id, mark.id))
+        )
+      }
     },
     async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)

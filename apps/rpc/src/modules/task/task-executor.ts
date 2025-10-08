@@ -83,6 +83,8 @@ export function getLocalTaskExecutor(
               )
             case tasks.SEND_FEEDBACK_FORM_EMAILS.type:
               return await attendanceService.executeSendFeedbackFormLinkEmails(handle)
+            case tasks.VERIFY_ATTENDEE_ATTENDED.type:
+              return await attendanceService.executeVerifyAttendeeAttendedTask(handle)
           }
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
           // still keep this block here to prevent subtle bugs or missed cases in the future.
