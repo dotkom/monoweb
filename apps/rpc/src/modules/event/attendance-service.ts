@@ -49,7 +49,7 @@ import {
   ResourceExhaustedError,
 } from "../../error"
 import type { EmailService } from "../email/email-service"
-import { emails } from "../email/email-template"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import type { MarkService } from "../mark/mark-service"
@@ -260,7 +260,7 @@ export function getAttendanceService(
     // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
     void emailService.send(
-      "noreply@online.ntnu.no",
+      DEFAULT_EMAIL_SOURCE,
       organizerEmails,
       [attendee.user.email],
       [],

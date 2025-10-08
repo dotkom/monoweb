@@ -184,7 +184,7 @@ export async function createServiceLayer(
   const groupService = getGroupService(groupRepository, userService)
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
-  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
+  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, userService, emailService)
   const paymentService = getPaymentService(clients.stripe)
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)

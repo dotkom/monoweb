@@ -1,4 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
+import { getLogger } from "@dotkomonline/logger"
 import type {
   Mark,
   MarkId,
@@ -11,7 +12,9 @@ import type {
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import { NotFoundError } from "../../error"
-import type { GroupService } from "../group/group-service"
+import type { EmailService } from "../email/email-service"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import type { UserService } from "../user/user-service"
 import type { MarkService } from "./mark-service"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
 
@@ -30,13 +33,17 @@ export interface PersonalMarkService {
   listVisibleInformationForUser(handle: DBHandle, userId: UserId): Promise<VisiblePersonalMarkDetails[]>
   countUsersByMarkId(handle: DBHandle, markId: MarkId): Promise<number>
   findPunishmentByUserId(handle: DBHandle, userId: UserId): Promise<Punishment | null>
+  sendReceivedMarkEmail(handle: DBHandle, personalMark: PersonalMark): Promise<void>
 }
 
 export function getPersonalMarkService(
   personalMarkRepository: PersonalMarkRepository,
   markService: MarkService,
-  groupService: GroupService
+  userService: UserService,
+  emailService: EmailService
 ): PersonalMarkService {
+  const logger = getLogger("personal-mark-service")
+
   return {
     async findPersonalMarksByMark(handle, markId) {
       return await personalMarkRepository.getByMarkId(handle, markId)
@@ -52,7 +59,11 @@ export function getPersonalMarkService(
     },
     async addToUser(handle, userId, markId, givenById) {
       const mark = await markService.getMark(handle, markId)
-      return await personalMarkRepository.addToUserId(handle, userId, mark.id, givenById)
+      const personalMark = await personalMarkRepository.addToUserId(handle, userId, mark.id, givenById)
+
+      await this.sendReceivedMarkEmail(handle, personalMark)
+
+      return personalMark
     },
     async listVisibleInformationForUser(handle, userId) {
       const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
@@ -115,6 +126,37 @@ export function getPersonalMarkService(
       }
 
       return null
+    },
+    async sendReceivedMarkEmail(handle, personalMark) {
+      const user = await userService.getById(handle, personalMark.userId)
+      if (!user) {
+        throw new NotFoundError(`User(ID=${personalMark.userId}) not found`)
+      }
+
+      if (!user.email) {
+        logger.warn(`User(ID=${user.id}) does not have an email, cannot send received mark email`)
+        return
+      }
+
+      const mark = await markService.getMark(handle, personalMark.markId)
+
+      const organizerEmails = mark.groups.map((g) => g.email).filter((email) => email !== null)
+
+      await emailService.send(
+        DEFAULT_EMAIL_SOURCE,
+        organizerEmails,
+        [user.email],
+        [],
+        [],
+        "Du har fått en prikk",
+        emails.RECEIVED_MARK,
+        {
+          title: mark.title,
+          details: mark.details,
+          weight: mark.weight,
+          endsAt: getPunishmentExpiryDate(personalMark.createdAt, mark.duration).toISOString(),
+        }
+      )
     },
   }
 }
