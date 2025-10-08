@@ -52,14 +52,19 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
             </div>
           )}
 
-          <div className="text-black flex flex-col gap-y-2 px-1 text-lg">
+          <div className="flex flex-col gap-y-2 px-1 text-lg">
             {icons.map(({ icon, text, href }) => (
-              <div key={icon} className="flex items-center gap-x-2">
+              <div key={icon} className="flex items-center gap-x-2 dark:text-gray-100">
                 <Icon icon={icon} width="28" />
                 {href === null ? (
                   <Text element="span">{text}</Text>
                 ) : (
-                  <a className="text-blue-950 hover:text-blue-900" href={href} target="_blank" rel="noreferrer">
+                  <a
+                    className="text-blue-950 hover:text-blue-900 dark:text-blue-100 dark:hover:text-blue-300"
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {text}
                   </a>
                 )}
