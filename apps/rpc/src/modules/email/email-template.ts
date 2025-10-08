@@ -11,6 +11,7 @@ export type EmailType =
   | "COMPANY_INVOICE_NOTIFICATION"
   | "FEEDBACK_FORM_LINK"
   | "EVENT_ATTENDANCE"
+  | "RECEIVED_MARK"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
   getSchema(): z.ZodSchema<TData>
@@ -36,6 +37,8 @@ export function createEmailTemplate<const TData, const TType extends EmailType>(
 }
 
 const templates = path.resolve(new URL("../../../resources/email", import.meta.url).pathname)
+
+export const DEFAULT_EMAIL_SOURCE = "noreply@online.ntnu.no"
 
 export const emails = {
   COMPANY_COLLABORATION_RECEIPT: createEmailTemplate({
@@ -114,6 +117,17 @@ export const emails = {
         deregistrationDeadline: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
+  }),
+  RECEIVED_MARK: createEmailTemplate({
+    type: "RECEIVED_MARK",
+    getSchema: () =>
+      z.object({
+        title: z.string(),
+        details: z.string().nullable(),
+        weight: z.number(),
+        endsAt: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM", { locale: nb })),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>
