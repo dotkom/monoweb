@@ -37,14 +37,6 @@ export const jobListingRouter = t.router({
         ctx.jobListingService.update(handle, input.id, input.input, input.companyId, input.locationIds)
       )
     ),
-  all: procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
-    const jobListings = await ctx.executeTransaction(async (handle) => ctx.jobListingService.getAll(handle, input))
-
-    return {
-      items: jobListings,
-      nextCursor: jobListings.at(-1)?.id,
-    }
-  }),
   findMany: procedure
     .input(BasePaginateInputSchema.extend({ filter: JobListingFilterQuerySchema.optional() }).default({}))
     .query(async ({ input, ctx }) => {

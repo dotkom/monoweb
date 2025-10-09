@@ -15,7 +15,6 @@ import { type Pageable, pageQuery } from "../../query"
 
 export interface JobListingRepository {
   getById(handle: DBHandle, jobListingId: JobListingId): Promise<JobListing | null>
-  getAll(handle: DBHandle, page: Pageable): Promise<JobListing[]>
   findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
   getActive(handle: DBHandle, page: Pageable): Promise<JobListing[]>
   createJobListing(
@@ -98,13 +97,6 @@ export function getJobListingRepository(): JobListingRepository {
         },
       })
       return listing ? parseOrReport(JobListingSchema, listing) : null
-    },
-    async getAll(handle, page) {
-      const listings = await handle.jobListing.findMany({
-        include: { company: true, locations: true },
-        ...pageQuery(page),
-      })
-      return listings.map((listing) => parseOrReport(JobListingSchema, listing))
     },
     async findMany(handle, query, page) {
       const jobListings = await handle.jobListing.findMany({

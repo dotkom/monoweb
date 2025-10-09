@@ -15,7 +15,6 @@ import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {
   getById(handle: DBHandle, id: JobListingId): Promise<JobListing>
-  getAll(handle: DBHandle, page: Pageable): Promise<JobListing[]>
   getActive(handle: DBHandle, page: Pageable): Promise<JobListing[]>
   findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
   create(
@@ -42,9 +41,6 @@ export function getJobListingService(jobListingRepository: JobListingRepository)
         throw new NotFoundError(`JobListing(ID=${id}) not found`)
       }
       return jobListing
-    },
-    async getAll(handle, page) {
-      return await jobListingRepository.getAll(handle, page)
     },
     async findMany(handle, query, page) {
       return await jobListingRepository.findMany(handle, query, page)
