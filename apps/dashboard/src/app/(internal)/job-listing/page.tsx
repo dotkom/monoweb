@@ -16,17 +16,18 @@ export default function JobListingPage() {
   const table = useJobListingTable({ data: jobListings })
 
   return (
-    <Skeleton visible={isJobListingsLoading}>
-      <Stack>
-        <Group justify="space-between">
-          <JobListingFilters onChange={setFilter} />
+    <Stack>
+      <Group justify="space-between">
+        <JobListingFilters onChange={setFilter} />
 
-          <Box>
-            <Button onClick={open}>Opprett stillingsannonse</Button>
-          </Box>
-        </Group>
+        <Box>
+          <Button onClick={open}>Opprett stillingsannonse</Button>
+        </Box>
+      </Group>
+      
+      <Skeleton visible={isJobListingsLoading}>
         <GenericTable table={table} onLoadMore={fetchNextPage} />
-      </Stack>
-    </Skeleton>
+      </Skeleton>
+    </Stack>
   )
 }
