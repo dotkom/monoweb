@@ -49,7 +49,7 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
     const principal = await jwtService.verify(token)
     const subject = principal.payload.sub
     if (subject === undefined) {
-      return createContext(null, serviceLayer)
+      return createContext(null, serviceLayer, configuration)
     }
     const affiliations = await serviceLayer.authorizationService.getAffiliations(serviceLayer.prisma, subject)
     return createContext(
@@ -57,11 +57,12 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
         subject,
         affiliations,
       },
-      serviceLayer
+      serviceLayer,
+      configuration
     )
   }
 
-  return createContext(null, serviceLayer)
+  return createContext(null, serviceLayer, configuration)
 }
 
 const server = fastify({

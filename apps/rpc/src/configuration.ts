@@ -84,3 +84,16 @@ export function isAmazonSesEmailFeatureEnabled(
 ): configuration is ConfigurationWithAmazonSesEmail {
   return configuration.email.awsSqsQueueUrl !== null
 }
+
+/**
+ * Is this a development environment?
+ *
+ * This is determined by checking that all allowed origins are localhost or 127.0.0.1. This could also be solved by
+ * creating and setting a specific environment variable. I decided to do it this way so we ensure all origins are
+ * locally hosted.
+ */
+export function isDevelopmentEnvironment(configuration: Configuration) {
+  const origins = configuration.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+
+  return origins.every((origin) => origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1"))
+}

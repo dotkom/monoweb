@@ -22,6 +22,7 @@ import {
 } from "./error"
 import { type Affiliation, type AffiliationSet, isAffiliation } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
+import { Configuration, isDevelopmentEnvironment } from "./configuration"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */
@@ -29,12 +30,17 @@ export type Principal = {
   affiliations: AffiliationSet
 }
 
-export const createContext = async (principal: Principal | null, context: ServiceLayer) => {
+export const createContext = async (principal: Principal | null, context: ServiceLayer, configuration: Configuration) => {
   function require(condition: boolean): asserts condition {
     if (!condition) {
       throw new ForbiddenError(`Principal(ID=${principal ?? "<anonymous>"}) is not permitted to perform this operation`)
     }
   }
+
+  // This will override all requireAffiliation checks to always succeed
+  // If you need to test authorization for specific groups, override this to be false
+  const isDevelopment = isDevelopmentEnvironment(configuration)
+
   return {
     ...context,
     principal,
@@ -60,6 +66,11 @@ export const createContext = async (principal: Principal | null, context: Servic
        */
       requireAffiliation(...affiliations: Affiliation[]) {
         this.requireSignIn()
+
+        if (isDevelopment) {
+          return true
+        }
+
         invariant(principal !== null)
         require(principal.affiliations.size > 0)
         for (const affiliation of affiliations) {
@@ -87,6 +98,11 @@ export const createContext = async (principal: Principal | null, context: Servic
        */
       requireMeOrAffiliation(userId: UserId, affiliations: Affiliation[]) {
         this.requireSignIn()
+
+        if (isDevelopment) {
+          return true
+        }
+
         invariant(principal !== null)
         if (principal.subject !== userId) {
           this.requireAffiliation(...affiliations)
