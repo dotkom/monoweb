@@ -24,7 +24,7 @@ export default function JobListingPage() {
           <Button onClick={open}>Opprett stillingsannonse</Button>
         </Box>
       </Group>
-      
+
       <Skeleton visible={isJobListingsLoading}>
         <GenericTable table={table} onLoadMore={fetchNextPage} />
       </Skeleton>
