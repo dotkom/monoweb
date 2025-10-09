@@ -8,6 +8,7 @@ import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
+import { type Configuration, isDevelopmentEnvironment } from "./configuration"
 import {
   AlreadyExistsError,
   ApplicationError,
@@ -22,7 +23,6 @@ import {
 } from "./error"
 import { type Affiliation, type AffiliationSet, isAffiliation } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
-import { Configuration, isDevelopmentEnvironment } from "./configuration"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */
@@ -30,7 +30,11 @@ export type Principal = {
   affiliations: AffiliationSet
 }
 
-export const createContext = async (principal: Principal | null, context: ServiceLayer, configuration: Configuration) => {
+export const createContext = async (
+  principal: Principal | null,
+  context: ServiceLayer,
+  configuration: Configuration
+) => {
   function require(condition: boolean): asserts condition {
     if (!condition) {
       throw new ForbiddenError(`Principal(ID=${principal ?? "<anonymous>"}) is not permitted to perform this operation`)
