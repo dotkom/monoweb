@@ -2,6 +2,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import {
   type CompanyId,
   type JobListing,
+  type JobListingFilterQuery,
   type JobListingId,
   type JobListingLocation,
   type JobListingLocationId,
@@ -14,7 +15,7 @@ import { type Pageable, pageQuery } from "../../query"
 
 export interface JobListingRepository {
   getById(handle: DBHandle, jobListingId: JobListingId): Promise<JobListing | null>
-  getAll(handle: DBHandle, page: Pageable): Promise<JobListing[]>
+  findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
   getActive(handle: DBHandle, page: Pageable): Promise<JobListing[]>
   createJobListing(
     handle: DBHandle,
@@ -97,12 +98,41 @@ export function getJobListingRepository(): JobListingRepository {
       })
       return listing ? parseOrReport(JobListingSchema, listing) : null
     },
-    async getAll(handle, page) {
-      const listings = await handle.jobListing.findMany({
-        include: { company: true, locations: true },
+    async findMany(handle, query, page) {
+      const jobListings = await handle.jobListing.findMany({
         ...pageQuery(page),
+        orderBy: { start: query.orderBy ?? "desc" },
+        where: {
+          title:
+            query.bySearchTerm !== null
+              ? {
+                  contains: query.bySearchTerm,
+                  mode: "insensitive",
+                }
+              : undefined,
+          id:
+            query.byId && query.byId.length > 0
+              ? {
+                  in: query.byId,
+                }
+              : undefined,
+          start: {
+            gte: query.byStartDate?.min ?? undefined,
+            lte: query.byStartDate?.max ?? undefined,
+          },
+          end: {
+            gte: query.byEndDate?.min ?? undefined,
+            lte: query.byEndDate?.max ?? undefined,
+          },
+        },
+        include: { company: true, locations: true },
       })
-      return listings.map((listing) => parseOrReport(JobListingSchema, listing))
+
+      return jobListings.map((listing) =>
+        parseOrReport(JobListingSchema, {
+          ...listing,
+        })
+      )
     },
     async getActive(handle, page) {
       const listings = await handle.jobListing.findMany({
