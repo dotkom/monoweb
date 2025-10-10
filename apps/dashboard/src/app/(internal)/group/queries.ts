@@ -30,3 +30,9 @@ export const useGroupMemberGetQuery = (groupId: GroupId, userId: UserId) => {
   const trpc = useTRPC()
   return useQuery(trpc.group.getMember.queryOptions({ groupId, userId }))
 }
+
+export const useWorkspaceMembersAllQuery = (groupSlug: GroupId) => {
+  const trpc = useTRPC()
+  const { data: members, ...query } = useQuery(trpc.workspace.getMembersForGroup.queryOptions({ groupSlug }))
+  return { members, ...query }
+}

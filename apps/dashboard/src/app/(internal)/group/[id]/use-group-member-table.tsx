@@ -1,14 +1,15 @@
 "use client"
 
 import type { GroupId, GroupMember, GroupMembership } from "@dotkomonline/types"
-import { Anchor } from "@mantine/core"
+import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
+import type { admin_directory_v1 } from "googleapis"
 import Link from "next/link"
 import { useMemo } from "react"
 
 interface Props {
-  data: GroupMember[]
+  data: { groupMember: GroupMember | null; workspaceMember: admin_directory_v1.Schema$User | null }[]
   groupId: GroupId
 }
 
@@ -22,37 +23,48 @@ function formatMembershipDate(date: Date | undefined | null) {
 }
 
 export const useGroupMemberTable = ({ data, groupId }: Props) => {
-  const columnHelper = createColumnHelper<GroupMember>()
+  const columnHelper = createColumnHelper<{
+    groupMember: GroupMember | null
+    workspaceMember: admin_directory_v1.Schema$User | null
+  }>()
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("name", {
+      columnHelper.accessor("groupMember.name", {
         header: () => "Navn",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor((member) => member, {
+      columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "roles",
         header: () => "Roller",
-        cell: (info) => formatRoles(info.getValue().groupMemberships),
+        cell: (info) => formatRoles(info.getValue()?.groupMemberships ?? []),
       }),
-      columnHelper.accessor((member) => member, {
+      columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "start",
         header: () => "Startdato",
-        cell: (info) => formatMembershipDate(info.getValue().groupMemberships.at(0)?.start),
+        cell: (info) => formatMembershipDate(info.getValue()?.groupMemberships.at(0)?.start),
       }),
-      columnHelper.accessor((member) => member, {
+      columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "end",
         header: () => "Sluttdato",
-        cell: (info) => formatMembershipDate(info.getValue().groupMemberships.at(0)?.end),
+        cell: (info) => formatMembershipDate(info.getValue()?.groupMemberships.at(0)?.end),
       }),
-      columnHelper.accessor((role) => role, {
+      columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "actions",
         header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/group/${groupId}/${info.getValue().id}`}>
-            Rediger
-          </Anchor>
-        ),
+        cell: (info) => {
+          const member = info.getValue()
+
+          if (!member) {
+            return <Text size="xs">-</Text>
+          }
+
+          return (
+            <Anchor component={Link} size="sm" href={`/group/${groupId}/${member.id}`}>
+              Rediger
+            </Anchor>
+          )
+        },
       }),
     ],
     [columnHelper, groupId]
