@@ -28,4 +28,9 @@ export const env = defineConfiguration({
     dev: "http://localhost:3002",
   }),
   NEXT_PUBLIC_HOME_URL: config(process.env.NEXT_PUBLIC_HOME_URL, "/"),
+  AWS_CLOUDFRONT_URL: config(process.env.AWS_CLOUDFRONT_URL, {
+    prd: "https://cdn.online.ntnu.no",
+    stg: "https://cdn.staging.online.ntnu.no",
+    dev: "https://cdn.staging.online.ntnu.no",
+  }),
 })
