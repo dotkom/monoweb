@@ -32,7 +32,6 @@
     "type-check": "pnpm run -r type-check",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "shell": "pnpm -F @dotkomonline/rpc shell",
-    "give-me-staff": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm give-me-staff",
     "receive-stripe-webhooks": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm receive-stripe-webhooks"
   },
   "workspaces": ["packages/*", "apps/*"],
