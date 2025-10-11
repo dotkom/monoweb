@@ -159,6 +159,7 @@ export const useStartGroupMembershipMutation = () => {
         await queryClient.invalidateQueries(
           trpc.group.getMember.queryOptions({ groupId: input.groupId, userId: input.userId })
         )
+        await queryClient.invalidateQueries(trpc.workspace.getMembersForGroup.queryOptions({ groupSlug: input.groupId }))
       },
     })
   )

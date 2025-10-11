@@ -112,29 +112,6 @@ export function getWorkspaceService(
     return [...leftJoin.values()].concat(rightJoin)
   }
 
-  function getKeys(localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string[] {
-    const keys = new Set<string>()
-
-    const baseKey = getKey(localResolvable, domain)
-
-    // In older versions of OnlineWeb, all dashes (-) were removed from the email local part.
-    // We add this to the set of keys to attempt to find an account created by the older version.
-    keys.add(baseKey)
-    keys.add(baseKey.replace("-", ""))
-
-    const names = getLocal(localResolvable).split(".").filter(Boolean)
-
-    // In older version of OnlineWeb, it was less common to have your full name on your profile.
-    // A lot of older accounts were generated with only first name and last name, so we attempt to
-    // find those accounts as well.
-    if (names.length > 2) {
-      keys.add(getEmail(`${names[0]} ${names.at(-1)}`, domain))
-      keys.add(getEmail(`${names[0]} ${names.at(-1)}`.replace("-", ""), domain))
-    }
-
-    return [...keys]
-  }
-
   async function createRecoveryCodes(user: User): Promise<string[] | null> {
     await directory.verificationCodes.generate({
       userKey: getKey(user),
@@ -167,6 +144,22 @@ export function getWorkspaceService(
     return `${local}@${domain}`
   }
 
+  function getLinkedWorkspaceId(localResolvable: User | Group | string): string | null {
+    if (typeof localResolvable === "string") {
+      return null
+    }
+
+    if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
+      return localResolvable.workspaceUserId
+    }
+
+    if ("workspaceGroupId" in localResolvable && localResolvable.workspaceGroupId) {
+      return localResolvable.workspaceGroupId
+    }
+
+    return null
+  }
+
   /**
    * Get a key for a user or a group.
    * A key is used to identify something in Google Workspace. It can be the objects id or an email (primary or alias).
@@ -179,17 +172,36 @@ export function getWorkspaceService(
    * getKey("string", "custom.domain") // "string@custom.domain"
    */
   function getKey(localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string {
-    if (typeof localResolvable === "object") {
-      if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
-        return localResolvable.workspaceUserId
-      }
+    return getLinkedWorkspaceId(localResolvable) ?? getEmail(localResolvable, domain)
+  }
 
-      if ("workspaceGroupId" in localResolvable && localResolvable.workspaceGroupId) {
-        return localResolvable.workspaceGroupId
-      }
+  function getKeys(localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string[] {
+    const linkedId = getLinkedWorkspaceId(localResolvable)
+
+    if (linkedId) {
+      return [linkedId]
     }
 
-    return getEmail(localResolvable, domain)
+    const keys = new Set<string>()
+
+    const emailKey = getEmail(localResolvable, domain)
+
+    keys.add(emailKey)
+    // In older versions of OnlineWeb, all dashes (-) were removed from the email local part.
+    // We add this to the set of keys to attempt to find an account created by the older version.
+    keys.add(emailKey.replace("-", ""))
+
+    const names = getLocal(localResolvable).split(".").filter(Boolean)
+
+    // In older version of OnlineWeb it was less common to have your full name on your profile.
+    // A lot of older accounts were generated with only first name and last name, so we attempt to
+    // find those accounts as well.
+    if (names.length > 2) {
+      keys.add(getEmail(`${names[0]} ${names.at(-1)}`, domain))
+      keys.add(getEmail(`${names[0]} ${names.at(-1)}`.replace("-", ""), domain))
+    }
+
+    return [...keys]
   }
 
   function getCommitteeEmail(fullName: string) {
