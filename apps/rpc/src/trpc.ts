@@ -20,7 +20,7 @@ import {
   ResourceExhaustedError,
   UnimplementedError,
 } from "./error"
-import type { Affiliation, AffiliationSet } from "./modules/authorization-service"
+import { type Affiliation, type AffiliationSet, isAffiliation } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
 
 export type Principal = {
@@ -60,7 +60,15 @@ export const createContext = async (principal: Principal | null, context: Servic
        */
       requireAffiliation(...affiliations: Affiliation[]) {
         this.requireSignIn()
-        return true
+        invariant(principal !== null)
+        require(principal.affiliations.size > 0)
+        for (const affiliation of affiliations) {
+          if (isAffiliation(affiliation) && principal.affiliations.has(affiliation)) {
+            return
+          }
+        }
+        // This is fine if no affiliations were required
+        require(affiliations.length === 0)
       },
       /**
        * Require that the user is signed in and that the provided user id is the user's id.
@@ -79,7 +87,10 @@ export const createContext = async (principal: Principal | null, context: Servic
        */
       requireMeOrAffiliation(userId: UserId, affiliations: Affiliation[]) {
         this.requireSignIn()
-        return true
+        invariant(principal !== null)
+        if (principal.subject !== userId) {
+          this.requireAffiliation(...affiliations)
+        }
       },
     },
   }
