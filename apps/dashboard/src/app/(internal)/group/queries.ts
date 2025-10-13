@@ -17,11 +17,12 @@ export const useGroupGetQuery = (id: GroupId) => {
   return useQuery(trpc.group.get.queryOptions(id))
 }
 
-export const useGroupMembersAllQuery = (groupId: GroupId) => {
+export const useGroupMembersAllQuery = (groupId: GroupId, enabled = true) => {
   const trpc = useTRPC()
   const { data: members, ...query } = useQuery({
     ...trpc.group.getMembers.queryOptions(groupId),
     initialData: new Map(),
+    enabled,
   })
   return { members, ...query }
 }
@@ -31,8 +32,10 @@ export const useGroupMemberGetQuery = (groupId: GroupId, userId: UserId) => {
   return useQuery(trpc.group.getMember.queryOptions({ groupId, userId }))
 }
 
-export const useWorkspaceMembersAllQuery = (groupSlug: GroupId) => {
+export const useWorkspaceMembersAllQuery = (groupSlug: GroupId, enabled = true) => {
   const trpc = useTRPC()
-  const { data: members, ...query } = useQuery(trpc.workspace.getMembersForGroup.queryOptions({ groupSlug }))
+  const { data: members, ...query } = useQuery(
+    trpc.workspace.getMembersForGroup.queryOptions({ groupSlug }, { enabled })
+  )
   return { members, ...query }
 }

@@ -8,14 +8,16 @@ import {
   type WorkspaceMemberSyncAction,
   getActiveGroupMembership,
 } from "@dotkomonline/types"
-import { Anchor, Button, Group, Stack, Text } from "@mantine/core"
-import { IconCheck, IconSquareCheckFilled, IconSquareXFilled, IconX } from "@tabler/icons-react"
+import { Anchor, Group, Stack, Text } from "@mantine/core"
+import { IconAlertTriangleFilled, IconSquareCheckFilled } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMemo } from "react"
 
 interface Props {
+  showWorkspaceColumns: boolean
+  isAdmin: boolean
   groupId: GroupId
   data: {
     groupMember: GroupMember | null
@@ -26,22 +28,22 @@ interface Props {
 
 function formatRoles(memberships: GroupMembership[]) {
   const latestRoles = memberships.at(0)?.roles.map((role) => role.name)
-  return latestRoles?.join(", ")
+  return latestRoles?.join(", ") ?? "-"
 }
 
 function formatMembershipDate(date: Date | undefined | null) {
   return date ? formatDate(date, "dd.MM.yyyy") : "-"
 }
 
-export const useGroupMemberTable = ({ data, groupId }: Props) => {
+export const useGroupMemberTable = ({ data, groupId, isAdmin, showWorkspaceColumns }: Props) => {
   const columnHelper = createColumnHelper<{
     groupMember: GroupMember | null
     workspaceMember: WorkspaceMember | null
     syncAction: WorkspaceMemberSyncAction
   }>()
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const cols = [
       columnHelper.accessor("groupMember.name", {
         header: () => "Navn",
         cell: (info) => {
@@ -49,8 +51,8 @@ export const useGroupMemberTable = ({ data, groupId }: Props) => {
 
           if (!groupMember) {
             return (
-              <Text size="xs" c="dimmed">
-                Ikke i OW-gruppen
+              <Text size="sm" c="dimmed">
+                Ingen bruker
               </Text>
             )
           }
@@ -61,77 +63,34 @@ export const useGroupMemberTable = ({ data, groupId }: Props) => {
               component={Link}
               href={`/user/${groupMember.id}`}
             >
-              <Group gap="xs" w="fit-content">
-                <Text>{groupMember.name || "<Uten navn>"}</Text>
-                {groupMember.workspaceUserId ? (
-                  <IconCheck size={16} color="green" title="Linket til Google Workspace-bruker" />
-                ) : (
-                  <IconX size={16} color="red" title="Ikke linket til Google Workspace-bruker" />
-                )}
-              </Group>
+              <Text size="sm">{groupMember.name || "<Uten navn>"}</Text>
             </Anchor>
           )
         },
       }),
-      columnHelper.accessor("workspaceMember.email", {
-        header: () => "E-postliste",
-        cell: (info) => {
-          const { groupMember, workspaceMember, syncAction } = info.row.original
+      showWorkspaceColumns &&
+        columnHelper.accessor("workspaceMember.email", {
+          header: () => (
+            <>
+              <span>E-post</span> <span style={{ color: "var(--mantine-color-dimmed)" }}>(e-postliste)</span>
+            </>
+          ),
+          cell: (info) => {
+            const email = info.getValue()
 
-          switch (syncAction) {
-            case "TO_ADD": {
-              const disabled = !groupMember?.workspaceUserId
-              return (
-                <Stack gap={4}>
-                  <Group gap={4}>
-                    <IconSquareXFilled size="0.75rem" color="red" />
-                    <Text size="xs">Ikke i e-postlisten</Text>
-                  </Group>
-                  <Group gap="xs">
-                    <Button size="compact-xs" w="fit-content" disabled={disabled}>
-                      Legg til i e-postliste
-                    </Button>
-                    {disabled && (
-                      <Text size="xs" c="red">
-                        Bruker ikke linket til Google Workspace
-                      </Text>
-                    )}
-                  </Group>
-                </Stack>
-              )
-            }
-
-            case "TO_REMOVE": {
-              return (
-                <Stack gap={4}>
-                  <Group gap={4}>
-                    <IconSquareXFilled size="0.75rem" color="red" />
-                    <Text size="xs">{workspaceMember?.email ?? "<Ingen e-post>"}</Text>
-                  </Group>
-                  <Group gap="xs">
-                    <Button color="green" size="compact-xs" w="fit-content">
-                      Fjern fra e-postliste
-                    </Button>
-                  </Group>
-                </Stack>
-              )
-            }
-
-            case "NEEDS_LINKING": {
-              return <Text size="xs">Trenger linking</Text>
-            }
-
-            case "NONE": {
-              return (
-                <Group gap={4}>
-                  <IconSquareCheckFilled size="0.75rem" color="green" />
-                  <Text size="xs">All good</Text>
-                </Group>
-              )
-            }
-          }
-        },
-      }),
+            return (
+              <Stack gap={0}>
+                {email && (
+                  <Text size="sm">{email}</Text>
+                )}
+                <SyncActionStatusText
+                  syncAction={info.row.original.syncAction}
+                  inMemberList={Boolean(info.row.original.workspaceMember)}
+                />
+              </Stack>
+            )
+          },
+        }),
       columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "roles",
         header: () => "Roller",
@@ -164,13 +123,66 @@ export const useGroupMemberTable = ({ data, groupId }: Props) => {
           )
         },
       }),
-    ],
-    [columnHelper, groupId]
-  )
+    ]
+
+    return cols.filter((col): col is Exclude<typeof col, false> => Boolean(col))
+  }, [columnHelper, groupId, isAdmin, showWorkspaceColumns])
 
   return useReactTable({
     data,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
+}
+
+const SyncActionStatusText = ({
+  syncAction,
+  inMemberList,
+}: { syncAction: WorkspaceMemberSyncAction; inMemberList: boolean }) => {
+  switch (syncAction) {
+    case "TO_ADD": {
+      return (
+        <Group gap={6}>
+          <IconAlertTriangleFilled size={14} color="var(--mantine-color-red-text)" />
+          <Text size="xs">Må legges til</Text>
+        </Group>
+      )
+    }
+
+    case "TO_REMOVE": {
+      return (
+        <Group gap={6}>
+          <IconAlertTriangleFilled size={14} color="var(--mantine-color-red-text)" />
+          <Text size="xs">Må fjernes</Text>
+        </Group>
+      )
+    }
+
+    case "NEEDS_LINKING": {
+      return (
+        <Group gap={6}>
+          <IconAlertTriangleFilled size={14} color="var(--mantine-color-yellow-text)" />
+          <Text size="xs">Må linkes. Kontakt HS</Text>
+        </Group>
+      )
+    }
+
+    case "NONE": {
+      return (
+        <Group gap={6}>
+          <IconSquareCheckFilled
+            size={14}
+            color={inMemberList ? "var(--mantine-color-green-text)" : "var(--mantine-color-dimmed)"}
+          />
+          {inMemberList ? (
+            <Text size="xs">Synkronisert</Text>
+          ) : (
+            <Text size="xs" c="dimmed">
+              Ikke i e-postlisten
+            </Text>
+          )}
+        </Group>
+      )
+    }
+  }
 }

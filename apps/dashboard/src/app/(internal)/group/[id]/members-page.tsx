@@ -10,6 +10,8 @@ import {
   Card,
   Divider,
   Group,
+  List,
+  ListItem,
   Stack,
   Table,
   TableTbody,
@@ -20,12 +22,14 @@ import {
   Text,
   Title,
 } from "@mantine/core"
+import { IconAlertTriangleFilled } from "@tabler/icons-react"
 import { flexRender } from "@tanstack/react-table"
 import { compareDesc } from "date-fns"
 import { type FC, useMemo } from "react"
 import { useLinkOwUserToWorkspaceUserMutation } from "../../user/mutations"
+import { useIsAdminQuery } from "../../user/queries"
 import { useCreateGroupMemberModal } from "../modals/create-group-member-modal"
-import { useWorkspaceMembersAllQuery } from "../queries"
+import { useGroupMembersAllQuery, useWorkspaceMembersAllQuery } from "../queries"
 import { useGroupDetailsContext } from "./provider"
 import { useGroupMemberTable } from "./use-group-member-table"
 
@@ -55,8 +59,33 @@ const sortByStartDate = (a: GroupMember | null, b: GroupMember | null) => {
 
 export const GroupMembersPage: FC = () => {
   const { group } = useGroupDetailsContext()
-  const { members } = useWorkspaceMembersAllQuery(group.slug)
+  const { isAdmin } = useIsAdminQuery()
   const linkUserMutation = useLinkOwUserToWorkspaceUserMutation()
+
+  // We only want to fetch workspace members if the group is linked to a workspace group
+  // We don't want to display workspace columns if we do not fetch workspace members
+  // And we do not want to color the rows based on sync action if we do not fetch workspace members
+  // Hence, we have two calls to fetch members, one with workspace members and one with just group members
+  // To make things easier, we then transform the group member list to the same shape as the workspace member list
+  const showWorkspaceColumns = !Boolean(group.workspaceGroupId)
+  const { members: membersWithWorkspace } = useWorkspaceMembersAllQuery(group.slug, showWorkspaceColumns)
+  const { members: membersWithoutWorkspace } = useGroupMembersAllQuery(group.slug, !showWorkspaceColumns)
+
+  // We memoize the transformation since we only need to
+  const lol = useMemo(() => {
+    if (!membersWithoutWorkspace) return []
+
+    return [...membersWithoutWorkspace.values()].map(
+      (groupMember) =>
+        ({
+          groupMember,
+          workspaceMember: null,
+          syncAction: "NONE",
+        }) as const
+    )
+  }, [membersWithoutWorkspace])
+
+  const members = showWorkspaceColumns ? membersWithWorkspace : lol
 
   const openCreate = useCreateGroupMemberModal({ group })
 
@@ -64,7 +93,7 @@ export const GroupMembersPage: FC = () => {
     if (!members) return []
 
     // Sort by active members first, then by sync action, then by start date
-    return Array.from(members.values()).toSorted((a, b) => {
+    return members.toSorted((a, b) => {
       const aIsActive = getActiveGroupMembership(a.groupMember, group.slug) !== null
       const bIsActive = getActiveGroupMembership(b.groupMember, group.slug) !== null
 
@@ -80,7 +109,12 @@ export const GroupMembersPage: FC = () => {
     })
   }, [members, group.slug])
 
-  const membersTable = useGroupMemberTable({ data: membersList, groupId: group.slug })
+  const membersTable = useGroupMemberTable({
+    data: membersList,
+    groupId: group.slug,
+    isAdmin: isAdmin ?? false,
+    showWorkspaceColumns,
+  })
 
   const activeMemberIds = useMemo(() => {
     return membersList.map(({ groupMember }) => groupMember?.id).filter((id): id is string => Boolean(id))
@@ -95,55 +129,38 @@ export const GroupMembersPage: FC = () => {
         <UserSearch onSubmit={(values) => openCreate({ userId: values.id })} excludeUserIds={activeMemberIds} />
         <Divider />
         <Title order={3}>Medlemmer</Title>
-        <MemberTable table={membersTable} groupSlug={group.slug} />
-        <Stack gap={0}>
+
+        <Stack bg="var(--mantine-color-gray-light)" p="sm" style={{ borderRadius: "var(--mantine-radius-md)" }}>
           <Group gap="xs">
-            <Box
-              h={16}
-              w={16}
-              bg="var(--mantine-color-white)"
-              bd="1px solid var(--mantine-color-gray-outline)"
-              style={{ borderRadius: "var(--mantine-radius-sm)" }}
-            />
-            <Text>Hvit - All good</Text>
+            <IconAlertTriangleFilled size={22} color="var(--mantine-color-red-text)" />
+            <Title order={4}>Medlemmer og e-postlisten er usynkron</Title>
           </Group>
-          <Group gap="xs">
-            <Box
-              h={16}
-              w={16}
-              bg="var(--mantine-color-gray-light)"
-              bd="1px solid var(--mantine-color-gray-outline)"
-              style={{ borderRadius: "var(--mantine-radius-sm)" }}
-            />
-            <Text>Grå - Brukeren er ikke aktiv medlem</Text>
-          </Group>
-          <Group gap="xs">
-            <Box
-              h={16}
-              w={16}
-              bg="var(--mantine-color-red-light)"
-              bd="1px solid var(--mantine-color-gray-outline)"
-              style={{ borderRadius: "var(--mantine-radius-sm)" }}
-            />
-            <Text>Rød - Brukeren er i OW-gruppen, men ikke i e-postlisten</Text>
-          </Group>
-          <Group gap="xs">
-            <Box
-              h={16}
-              w={16}
-              bg="var(--mantine-color-yellow-light)"
-              bd="1px solid var(--mantine-color-gray-outline)"
-              style={{ borderRadius: "var(--mantine-radius-sm)" }}
-            />
-            <Text>Gul - Brukeren er i e-postlisten, men ikke i OW-gruppen</Text>
-          </Group>
+          <List>
+            <ListItem>
+              <Text size="sm">Må legges til: 123</Text>
+            </ListItem>
+            <ListItem>
+              <Text size="sm">Må fjernes: 123</Text>
+            </ListItem>
+            <ListItem>
+              <Text size="sm">Må linkes: 123</Text>
+            </ListItem>
+          </List>
         </Stack>
+
+        <MemberTable table={membersTable} groupSlug={group.slug} enableRowBackgroundColor={showWorkspaceColumns} />
       </Stack>
     </Box>
   )
 }
 
-const MemberTable = ({ table, groupSlug }: { table: ReturnType<typeof useGroupMemberTable>; groupSlug?: GroupId }) => {
+interface MemberTableProps {
+  table: ReturnType<typeof useGroupMemberTable>
+  groupSlug?: GroupId
+  enableRowBackgroundColor?: boolean
+}
+
+const MemberTable = ({ table, groupSlug, enableRowBackgroundColor = false }: MemberTableProps) => {
   return (
     <Card withBorder p="xs">
       <Table.ScrollContainer minWidth={600} maxHeight={400} type="native">
@@ -175,27 +192,41 @@ const MemberTable = ({ table, groupSlug }: { table: ReturnType<typeof useGroupMe
                 </TableTd>
               </TableTr>
             )}
-            {table.getRowModel().rows.map((row) => (
-              <TableTr
-                key={row.id}
-                bg={
-                  row.original.syncAction === "TO_ADD" || row.original.syncAction === "TO_REMOVE"
-                    ? "var(--mantine-color-red-light)"
-                    : row.original.syncAction === "NEEDS_LINKING"
-                      ? "var(--mantine-color-yellow-light)"
-                      : row.original.groupMember && !getActiveGroupMembership(row.original.groupMember, groupSlug)
-                        ? "var(--mantine-color-gray-light)"
-                        : undefined
-                }
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableTd key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableTd>
-                ))}
-              </TableTr>
-            ))}
+            {table.getRowModel().rows.map((row) => {
+              const isInactive =
+                Boolean(row.original.groupMember) && !getActiveGroupMembership(row.original.groupMember, groupSlug)
+
+              const background = enableRowBackgroundColor
+                ? getRowBackground(row.original.syncAction, isInactive)
+                : undefined
+
+              return (
+                <TableTr key={row.id} bg={background}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableTd key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableTd>
+                  ))}
+                </TableTr>
+              )
+            })}
           </TableTbody>
         </Table>
       </Table.ScrollContainer>
     </Card>
   )
+}
+
+const getRowBackground = (syncAction: WorkspaceMemberSyncAction, isInactive: boolean) => {
+  if (syncAction === "TO_ADD" || syncAction === "TO_REMOVE") {
+    return "var(--mantine-color-red-light)"
+  }
+
+  if (syncAction === "NEEDS_LINKING") {
+    return "var(--mantine-color-yellow-light)"
+  }
+
+  if (isInactive) {
+    return "var(--mantine-color-gray-light)"
+  }
+
+  return undefined
 }
