@@ -1,12 +1,12 @@
 "use client"
 
 import {
-  getActiveGroupMembership,
   type GroupId,
   type GroupMember,
   type GroupMembership,
   type WorkspaceMember,
   type WorkspaceMemberSyncAction,
+  getActiveGroupMembership,
 } from "@dotkomonline/types"
 import { Anchor, Button, Group, Stack, Text } from "@mantine/core"
 import { IconCheck, IconSquareCheckFilled, IconSquareXFilled, IconX } from "@tabler/icons-react"
@@ -116,7 +116,7 @@ export const useGroupMemberTable = ({ data, groupId }: Props) => {
                 </Stack>
               )
             }
-            
+
             case "NEEDS_LINKING": {
               return <Text size="xs">Trenger linking</Text>
             }
@@ -129,7 +129,7 @@ export const useGroupMemberTable = ({ data, groupId }: Props) => {
                 </Group>
               )
             }
-          }          
+          }
         },
       }),
       columnHelper.accessor(({ groupMember }) => groupMember, {

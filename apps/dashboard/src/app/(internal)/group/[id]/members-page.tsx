@@ -78,7 +78,7 @@ export const GroupMembersPage: FC = () => {
 
       return SYNC_ACTION_SORT_PRIORITY[a.syncAction] - SYNC_ACTION_SORT_PRIORITY[b.syncAction]
     })
-  }, [members])
+  }, [members, group.slug])
 
   const membersTable = useGroupMemberTable({ data: membersList, groupId: group.slug })
 
