@@ -1,5 +1,12 @@
-import { GroupMemberSchema, GroupSchema, UserSchema } from "@dotkomonline/types"
-import type { admin_directory_v1 } from "googleapis"
+import {
+  GroupMemberSchema,
+  GroupSchema,
+  UserSchema,
+  WorkspaceGroupSchema,
+  WorkspaceMemberSchema,
+  WorkspaceMemberSyncActionSchema,
+  WorkspaceUserSchema,
+} from "@dotkomonline/types"
 import invariant from "tiny-invariant"
 import z from "zod"
 import { staffProcedure, t } from "../../trpc"
@@ -11,7 +18,7 @@ export const workspaceRouter = t.router({
     .output(
       z.object({
         user: UserSchema,
-        workspaceUser: z.custom<admin_directory_v1.Schema$User>(),
+        workspaceUser: WorkspaceUserSchema,
         recoveryCodes: z.array(z.string()).nullable(),
         password: z.string(),
       })
@@ -33,7 +40,7 @@ export const workspaceRouter = t.router({
         userId: UserSchema.shape.id,
       })
     )
-    .output(z.custom<admin_directory_v1.Schema$User>().nullable())
+    .output(WorkspaceUserSchema.nullable())
     .query(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
@@ -75,7 +82,7 @@ export const workspaceRouter = t.router({
     .output(
       z.object({
         user: UserSchema,
-        workspaceUser: z.custom<admin_directory_v1.Schema$User>(),
+        workspaceUser: WorkspaceUserSchema,
         recoveryCodes: z.array(z.string()).nullable(),
         password: z.string(),
       })
@@ -100,7 +107,7 @@ export const workspaceRouter = t.router({
     .output(
       z.object({
         group: GroupSchema,
-        workspaceGroup: z.custom<admin_directory_v1.Schema$Group>(),
+        workspaceGroup: WorkspaceGroupSchema,
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -120,7 +127,7 @@ export const workspaceRouter = t.router({
         groupSlug: GroupSchema.shape.slug,
       })
     )
-    .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
+    .output(WorkspaceGroupSchema.nullable())
     .query(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
@@ -140,7 +147,7 @@ export const workspaceRouter = t.router({
         userId: UserSchema.shape.id,
       })
     )
-    .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
+    .output(WorkspaceGroupSchema.nullable())
     .mutation(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
@@ -182,7 +189,8 @@ export const workspaceRouter = t.router({
       z
         .object({
           groupMember: GroupMemberSchema.nullable(),
-          workspaceMember: z.custom<admin_directory_v1.Schema$Member>().nullable(),
+          workspaceMember: WorkspaceMemberSchema.nullable(),
+          syncAction: WorkspaceMemberSyncActionSchema,
         })
         .array()
     )
@@ -208,7 +216,7 @@ export const workspaceRouter = t.router({
       z
         .object({
           group: GroupSchema,
-          workspaceGroup: z.custom<admin_directory_v1.Schema$Group>(),
+          workspaceGroup: WorkspaceGroupSchema,
         })
         .array()
     )

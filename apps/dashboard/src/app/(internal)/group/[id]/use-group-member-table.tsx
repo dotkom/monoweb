@@ -1,17 +1,27 @@
 "use client"
 
-import type { GroupId, GroupMember, GroupMembership } from "@dotkomonline/types"
+import {
+  getActiveGroupMembership,
+  type GroupId,
+  type GroupMember,
+  type GroupMembership,
+  type WorkspaceMember,
+  type WorkspaceMemberSyncAction,
+} from "@dotkomonline/types"
 import { Anchor, Button, Group, Stack, Text } from "@mantine/core"
-import { IconCheck, IconSquareCheckFilled, IconSquareMinusFilled, IconSquareXFilled, IconX } from "@tabler/icons-react"
+import { IconCheck, IconSquareCheckFilled, IconSquareXFilled, IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
-import type { admin_directory_v1 } from "googleapis"
 import Link from "next/link"
 import { useMemo } from "react"
 
 interface Props {
-  data: { groupMember: GroupMember | null; workspaceMember: admin_directory_v1.Schema$Member | null }[]
   groupId: GroupId
+  data: {
+    groupMember: GroupMember | null
+    workspaceMember: WorkspaceMember | null
+    syncAction: WorkspaceMemberSyncAction
+  }[]
 }
 
 function formatRoles(memberships: GroupMembership[]) {
@@ -23,18 +33,11 @@ function formatMembershipDate(date: Date | undefined | null) {
   return date ? formatDate(date, "dd.MM.yyyy") : "-"
 }
 
-function isActiveMember(groupId: GroupId, groupMember: GroupMember | null): boolean {
-  if (!groupMember) {
-    return false
-  }
-
-  return groupMember.groupMemberships.some((membership) => membership.groupId === groupId && membership.end === null)
-}
-
 export const useGroupMemberTable = ({ data, groupId }: Props) => {
   const columnHelper = createColumnHelper<{
     groupMember: GroupMember | null
-    workspaceMember: admin_directory_v1.Schema$Member | null
+    workspaceMember: WorkspaceMember | null
+    syncAction: WorkspaceMemberSyncAction
   }>()
 
   const columns = useMemo(
@@ -54,7 +57,7 @@ export const useGroupMemberTable = ({ data, groupId }: Props) => {
 
           return (
             <Anchor
-              c={isActiveMember(groupId, groupMember) ? undefined : "var(--mantine-color-text)"}
+              c={getActiveGroupMembership(groupMember, groupId) ? undefined : "var(--mantine-color-text)"}
               component={Link}
               href={`/user/${groupMember.id}`}
             >
@@ -73,55 +76,60 @@ export const useGroupMemberTable = ({ data, groupId }: Props) => {
       columnHelper.accessor("workspaceMember.email", {
         header: () => "E-postliste",
         cell: (info) => {
-          const { groupMember, workspaceMember } = info.row.original
-          const isActive = isActiveMember(groupId, groupMember)
+          const { groupMember, workspaceMember, syncAction } = info.row.original
 
-          if (workspaceMember && isActive) {
-            return (
-              <Group gap={4}>
-                <IconSquareCheckFilled size="0.75rem" color="green" />
-                <Text size="xs">I e-postlisten</Text>
-              </Group>
-            )
-          }
+          switch (syncAction) {
+            case "TO_ADD": {
+              const disabled = !groupMember?.workspaceUserId
+              return (
+                <Stack gap={4}>
+                  <Group gap={4}>
+                    <IconSquareXFilled size="0.75rem" color="red" />
+                    <Text size="xs">Ikke i e-postlisten</Text>
+                  </Group>
+                  <Group gap="xs">
+                    <Button size="compact-xs" w="fit-content" disabled={disabled}>
+                      Legg til i e-postliste
+                    </Button>
+                    {disabled && (
+                      <Text size="xs" c="red">
+                        Bruker ikke linket til Google Workspace
+                      </Text>
+                    )}
+                  </Group>
+                </Stack>
+              )
+            }
 
-          if (!workspaceMember) {
-            const disabled = !groupMember?.workspaceUserId
-            return (
-              <Stack gap={4}>
+            case "TO_REMOVE": {
+              return (
+                <Stack gap={4}>
+                  <Group gap={4}>
+                    <IconSquareXFilled size="0.75rem" color="red" />
+                    <Text size="xs">{workspaceMember?.email ?? "<Ingen e-post>"}</Text>
+                  </Group>
+                  <Group gap="xs">
+                    <Button color="green" size="compact-xs" w="fit-content">
+                      Fjern fra e-postliste
+                    </Button>
+                  </Group>
+                </Stack>
+              )
+            }
+            
+            case "NEEDS_LINKING": {
+              return <Text size="xs">Trenger linking</Text>
+            }
+
+            case "NONE": {
+              return (
                 <Group gap={4}>
-                  <IconSquareXFilled size="0.75rem" color="red" />
-                  <Text size="xs">Ikke i e-postlisten</Text>
+                  <IconSquareCheckFilled size="0.75rem" color="green" />
+                  <Text size="xs">All good</Text>
                 </Group>
-                <Group gap="xs">
-                  <Button size="compact-xs" w="fit-content" disabled={disabled}>
-                    Legg til i e-postliste
-                  </Button>
-                  {disabled && (
-                    <Text size="xs" c="red">
-                      Bruker ikke linket til Google Workspace
-                    </Text>
-                  )}
-                </Group>
-              </Stack>
-            )
-          } else if (!groupMember || !isActive) {
-            return (
-              <Stack gap={4}>
-                <Group gap={4}>
-                  <IconSquareXFilled size="0.75rem" color="red" />
-                  <Text size="xs">{workspaceMember.email ?? "<Ingen e-post>"}</Text>
-                </Group>
-                <Group gap="xs">
-                  <Button color="green" size="compact-xs" w="fit-content">
-                    Fjern fra e-postliste
-                  </Button>
-                </Group>
-              </Stack>
-            )
-          }
-
-          return <Text>{workspaceMember.email}</Text>
+              )
+            }
+          }          
         },
       }),
       columnHelper.accessor(({ groupMember }) => groupMember, {

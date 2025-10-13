@@ -1,7 +1,18 @@
 import { randomBytes } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Group, GroupId, GroupMember, User, UserId } from "@dotkomonline/types"
+import {
+  type Group,
+  type GroupId,
+  type GroupMember,
+  type User,
+  type UserId,
+  type WorkspaceGroup,
+  type WorkspaceMember,
+  type WorkspaceMemberSyncAction,
+  type WorkspaceUser,
+  getActiveGroupMembership,
+} from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "googleapis"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
@@ -11,6 +22,7 @@ import { NotFoundError } from "../../error"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 
+// Google Workspace enforces a minimum password length of 8 characters
 const TEMPORARY_PASSWORD_LENGTH = 8
 
 const SLUGIFY_OPTIONS = {
@@ -26,7 +38,7 @@ export interface WorkspaceService {
     userId: UserId
   ): Promise<{
     user: User
-    workspaceUser: admin_directory_v1.Schema$User
+    workspaceUser: WorkspaceUser
     recoveryCodes: string[] | null
     password: string
   }>
@@ -35,33 +47,32 @@ export interface WorkspaceService {
     userId: UserId
   ): Promise<{
     user: User
-    workspaceUser: admin_directory_v1.Schema$User
+    workspaceUser: WorkspaceUser
     recoveryCodes: string[] | null
     password: string
   }>
-  findWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User | null>
-  getWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User>
+  findWorkspaceUser(handle: DBHandle, userId: UserId): Promise<WorkspaceUser | null>
+  getWorkspaceUser(handle: DBHandle, userId: UserId): Promise<WorkspaceUser>
 
   // Groups
-  createWorkspaceGroup(
-    handle: DBHandle,
-    groupSlug: GroupId
-  ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }>
-  findWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<admin_directory_v1.Schema$Group | null>
-  addUserIntoWorkspaceGroup(
-    handle: DBHandle,
-    groupSlug: GroupId,
-    userId: UserId
-  ): Promise<admin_directory_v1.Schema$Member>
+  createWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<{ group: Group; workspaceGroup: WorkspaceGroup }>
+  findWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<WorkspaceGroup | null>
+  addUserIntoWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<WorkspaceMember>
   removeUserFromWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<boolean>
   getMembersForGroup(
     handle: DBHandle,
     groupSlug: GroupId
-  ): Promise<{ groupMember: GroupMember | null; workspaceMember: admin_directory_v1.Schema$Member | null }[]>
+  ): Promise<
+    {
+      groupMember: GroupMember | null
+      workspaceMember: WorkspaceMember | null
+      syncAction: WorkspaceMemberSyncAction
+    }[]
+  >
   getWorkspaceGroupsForWorkspaceUser(
     handle: DBHandle,
     userId: UserId
-  ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[]>
+  ): Promise<{ group: Group; workspaceGroup: WorkspaceGroup }[]>
 }
 
 export function getWorkspaceService(
@@ -74,12 +85,12 @@ export function getWorkspaceService(
 
   logger.info("Using Google Workspace integration against Domain=%s", configuration.googleWorkspace.domain)
 
-  function joinOnWorkspaceUserId(
+  function joinGroupAndWorkspaceMembers(
     groupMembers: GroupMember[],
-    workspaceUsers: admin_directory_v1.Schema$Member[]
-  ): UserAndWorkspaceMember[] {
-    const rightJoin: UserAndWorkspaceMember[] = []
-    const leftJoin = new Map<string, UserAndWorkspaceMember>()
+    workspaceUsers: WorkspaceMember[]
+  ): { groupMember: GroupMember | null; workspaceMember: WorkspaceMember | null }[] {
+    const rightJoin: { groupMember: GroupMember | null; workspaceMember: WorkspaceMember | null }[] = []
+    const leftJoin = new Map<string, { groupMember: GroupMember | null; workspaceMember: WorkspaceMember | null }>()
 
     for (const workspaceMember of workspaceUsers) {
       invariant(workspaceMember.id, "Workspace member must have an ID")
@@ -212,6 +223,51 @@ export function getWorkspaceService(
     return getKey(slugify(fullName, SLUGIFY_OPTIONS))
   }
 
+  function getLocal(localResolvable: User | Group | string): string {
+    if (typeof localResolvable === "string") {
+      return slugify(localResolvable, SLUGIFY_OPTIONS)
+    }
+
+    const isGroup = "type" in localResolvable
+
+    if (isGroup) {
+      return slugify(localResolvable.slug, SLUGIFY_OPTIONS)
+    }
+
+    // It is a user
+    if (!localResolvable.name) {
+      throw new Error("User name is required")
+    }
+
+    return slugify(localResolvable.name, SLUGIFY_OPTIONS)
+  }
+
+  function getTemporaryPassword(): string {
+    return randomBytes(TEMPORARY_PASSWORD_LENGTH).toString("base64").slice(0, TEMPORARY_PASSWORD_LENGTH)
+  }
+
+  function getWorkspaceMemberSyncAction(member: {
+    groupMember: GroupMember | null
+    workspaceMember: WorkspaceMember | null
+  }): WorkspaceMemberSyncAction {
+    if (member.groupMember && !member.groupMember?.workspaceUserId) {
+      return "NEEDS_LINKING"
+    }
+
+    const isActiveMember = getActiveGroupMembership(member.groupMember) !== null
+    const isInWorkspace = member.workspaceMember !== null
+
+    if (isActiveMember && !isInWorkspace) {
+      return "TO_ADD"
+    }
+
+    if (!isActiveMember && isInWorkspace) {
+      return "TO_REMOVE"
+    }
+
+    return "NONE"
+  }
+
   return {
     async createWorkspaceUser(handle, userId) {
       const user = await userService.getById(handle, userId)
@@ -280,10 +336,10 @@ export function getWorkspaceService(
       const user = await userService.getById(handle, userId)
       const keys = getKeys(user)
 
-      let workspaceUser: admin_directory_v1.Schema$User | null = null
+      let workspaceUser: WorkspaceUser | null = null
 
       for (const key of keys) {
-        let response: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$User> | null
+        let response: GaxiosResponseWithHTTP2<WorkspaceUser> | null
 
         try {
           response = await directory.users.get({ userKey: key })
@@ -433,7 +489,8 @@ export function getWorkspaceService(
 
       const workspaceMembers: {
         groupMember: GroupMember | null
-        workspaceMember: admin_directory_v1.Schema$Member | null
+        workspaceMember: WorkspaceMember | null
+        syncAction: WorkspaceMemberSyncAction
       }[] = []
 
       let pageToken: string | undefined = undefined
@@ -446,9 +503,16 @@ export function getWorkspaceService(
 
         invariant(response.data.members, "Expected response data to be defined")
 
-        const users = await groupService.getMembers(handle, group.slug)
+        const members = await groupService.getMembers(handle, group.slug)
 
-        workspaceMembers.push(...joinOnWorkspaceUserId([...users.values()], response.data.members))
+        const variablename = joinGroupAndWorkspaceMembers([...members.values()], response.data.members).map(
+          (member) => ({
+            ...member,
+            syncAction: getWorkspaceMemberSyncAction(member),
+          })
+        )
+
+        workspaceMembers.push(...variablename)
 
         pageToken = response.data.nextPageToken ?? undefined
       } while (pageToken !== undefined)
@@ -459,7 +523,7 @@ export function getWorkspaceService(
     async getWorkspaceGroupsForWorkspaceUser(handle, userId) {
       const user = await userService.getById(handle, userId)
 
-      const groups: { group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[] = []
+      const groups: { group: Group; workspaceGroup: WorkspaceGroup }[] = []
       let pageToken: string | undefined = undefined
 
       do {
@@ -479,32 +543,4 @@ export function getWorkspaceService(
       return groups
     },
   }
-}
-
-const getLocal = (localResolvable: User | Group | string): string => {
-  if (typeof localResolvable === "string") {
-    return slugify(localResolvable, SLUGIFY_OPTIONS)
-  }
-
-  const isGroup = "type" in localResolvable
-
-  if (isGroup) {
-    return slugify(localResolvable.slug, SLUGIFY_OPTIONS)
-  }
-
-  // It is a user
-  if (!localResolvable.name) {
-    throw new Error("User name is required")
-  }
-
-  return slugify(localResolvable.name, SLUGIFY_OPTIONS)
-}
-
-const getTemporaryPassword = () => {
-  return randomBytes(TEMPORARY_PASSWORD_LENGTH).toString("base64").slice(0, TEMPORARY_PASSWORD_LENGTH)
-}
-
-type UserAndWorkspaceMember = {
-  groupMember: GroupMember | null
-  workspaceMember: admin_directory_v1.Schema$Member | null
 }
