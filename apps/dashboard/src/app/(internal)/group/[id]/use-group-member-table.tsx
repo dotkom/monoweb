@@ -80,13 +80,11 @@ export const useGroupMemberTable = ({ data, groupId, isAdmin, showWorkspaceColum
 
             return (
               <Stack gap={0}>
-                {email && (
-                  <Text size="sm">{email}</Text>
-                )}
                 <SyncActionStatusText
                   syncAction={info.row.original.syncAction}
                   inMemberList={Boolean(info.row.original.workspaceMember)}
                 />
+                {email && <Text size="xs">{email}</Text>}
               </Stack>
             )
           },
@@ -144,7 +142,7 @@ const SyncActionStatusText = ({
       return (
         <Group gap={6}>
           <IconAlertTriangleFilled size={14} color="var(--mantine-color-red-text)" />
-          <Text size="xs">Må legges til</Text>
+          <Text size="sm">Må legges til</Text>
         </Group>
       )
     }
@@ -153,7 +151,7 @@ const SyncActionStatusText = ({
       return (
         <Group gap={6}>
           <IconAlertTriangleFilled size={14} color="var(--mantine-color-red-text)" />
-          <Text size="xs">Må fjernes</Text>
+          <Text size="sm">Må fjernes</Text>
         </Group>
       )
     }
@@ -162,7 +160,7 @@ const SyncActionStatusText = ({
       return (
         <Group gap={6}>
           <IconAlertTriangleFilled size={14} color="var(--mantine-color-yellow-text)" />
-          <Text size="xs">Må linkes. Kontakt HS</Text>
+          <Text size="sm">Må linkes. Kontakt HS</Text>
         </Group>
       )
     }
@@ -175,9 +173,9 @@ const SyncActionStatusText = ({
             color={inMemberList ? "var(--mantine-color-green-text)" : "var(--mantine-color-dimmed)"}
           />
           {inMemberList ? (
-            <Text size="xs">Synkronisert</Text>
+            <Text size="sm">Synkronisert</Text>
           ) : (
-            <Text size="xs" c="dimmed">
+            <Text size="sm" c="dimmed">
               Ikke i e-postlisten
             </Text>
           )}
