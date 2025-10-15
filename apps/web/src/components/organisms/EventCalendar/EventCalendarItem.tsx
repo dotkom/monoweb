@@ -136,6 +136,21 @@ const EVENT_TYPE_CONFIG: Record<EventType, EventTypeConfig> = {
     },
     displayName: "Kurs",
   },
+  ANNIVERSARY: {
+    colors: {
+      itemBg: "bg-amber-100 dark:bg-amber-950",
+      itemBgGradientFade: "to-amber-100 dark:to-amber-950",
+      itemBorder: "border-amber-400 dark:border-amber-600",
+      itemBorderLight: "border-amber-200 dark:border-amber-800",
+      itemText: "text-amber-900 dark:text-amber-300",
+      cardBg: "bg-amber-100 dark:bg-amber-950 border-amber-200 dark:border-amber-900",
+      cardText: "text-amber-950 dark:text-amber-50",
+      cardBorderHover: "hover:border-amber-400 dark:hover:border-amber-600",
+      badgeBg: "bg-amber-200 dark:bg-amber-900",
+      badgeText: "text-amber-800 dark:text-amber-300",
+    },
+    displayName: "Jubileum",
+  },
 }
 
 const DEFAULT_STYLES = {
