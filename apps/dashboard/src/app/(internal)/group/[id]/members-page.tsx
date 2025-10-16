@@ -143,7 +143,7 @@ export const GroupMembersPage: FC = () => {
               <Text size="sm">Må fjernes: 123</Text>
             </ListItem>
             <ListItem>
-              <Text size="sm">Må linkes: 123</Text>
+              <Text size="sm">Mangler bruker (kontakt HS): 123</Text>
             </ListItem>
           </List>
         </Stack>

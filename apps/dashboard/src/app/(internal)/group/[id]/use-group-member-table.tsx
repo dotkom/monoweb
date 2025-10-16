@@ -1,5 +1,6 @@
 "use client"
 
+import { useSession } from "@dotkomonline/oauth2/react"
 import {
   type GroupId,
   type GroupMember,
@@ -36,6 +37,8 @@ function formatMembershipDate(date: Date | undefined | null) {
 }
 
 export const useGroupMemberTable = ({ data, groupId, isAdmin, showWorkspaceColumns }: Props) => {
+  const userId = useSession()?.sub ?? null
+  
   const columnHelper = createColumnHelper<{
     groupMember: GroupMember | null
     workspaceMember: WorkspaceMember | null
@@ -63,7 +66,14 @@ export const useGroupMemberTable = ({ data, groupId, isAdmin, showWorkspaceColum
               component={Link}
               href={`/user/${groupMember.id}`}
             >
-              <Text size="sm">{groupMember.name || "<Uten navn>"}</Text>
+              <Group gap={6}>
+                <Text size="sm">{groupMember.name || "<Uten navn>"}</Text>
+                {userId === groupMember.id && (
+                  <Text size="xs" c="var(--mantine-color-dimmed)" span>
+                    (deg)
+                  </Text>
+                )}
+              </Group>
             </Anchor>
           )
         },
@@ -160,7 +170,7 @@ const SyncActionStatusText = ({
       return (
         <Group gap={6}>
           <IconAlertTriangleFilled size={14} color="var(--mantine-color-yellow-text)" />
-          <Text size="sm">Må linkes. Kontakt HS</Text>
+          <Text size="sm">Ingen bruker. Kontakt HS</Text>
         </Group>
       )
     }
