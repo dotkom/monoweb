@@ -8,6 +8,7 @@ import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
+import { type Configuration, isDevelopmentEnvironment } from "./configuration"
 import {
   AlreadyExistsError,
   ApplicationError,
@@ -29,12 +30,21 @@ export type Principal = {
   affiliations: AffiliationSet
 }
 
-export const createContext = async (principal: Principal | null, context: ServiceLayer) => {
+export const createContext = async (
+  principal: Principal | null,
+  context: ServiceLayer,
+  configuration: Configuration
+) => {
   function require(condition: boolean): asserts condition {
     if (!condition) {
       throw new ForbiddenError(`Principal(ID=${principal ?? "<anonymous>"}) is not permitted to perform this operation`)
     }
   }
+
+  // This will override all requireAffiliation checks to always succeed
+  // If you need to test authorization for specific groups, override this to be false
+  const isDevelopment = isDevelopmentEnvironment(configuration)
+
   return {
     ...context,
     principal,
@@ -60,6 +70,11 @@ export const createContext = async (principal: Principal | null, context: Servic
        */
       requireAffiliation(...affiliations: Affiliation[]) {
         this.requireSignIn()
+
+        if (isDevelopment) {
+          return true
+        }
+
         invariant(principal !== null)
         require(principal.affiliations.size > 0)
         for (const affiliation of affiliations) {
@@ -87,6 +102,11 @@ export const createContext = async (principal: Principal | null, context: Servic
        */
       requireMeOrAffiliation(userId: UserId, affiliations: Affiliation[]) {
         this.requireSignIn()
+
+        if (isDevelopment) {
+          return true
+        }
+
         invariant(principal !== null)
         if (principal.subject !== userId) {
           this.requireAffiliation(...affiliations)
