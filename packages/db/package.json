@@ -45,7 +45,7 @@
     "@types/pg": "8.15.5",
     "common-tags": "1.8.2",
     "prisma": "6.8.2",
-    "tsx": "4.20.5",
+    "tsx": "4.20.6",
     "typescript": "5.9.2"
   }
 }
