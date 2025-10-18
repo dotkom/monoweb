@@ -78,6 +78,8 @@ export const mapEventTypeToLabel = (eventType: EventType) => {
       return "Sosialt"
     case "WELCOME":
       return "Fadderuke"
+    case "ANNIVERSARY":
+      return "Jubileum"
     default:
       return "Ukjent"
   }
