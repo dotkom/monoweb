@@ -18,6 +18,7 @@ export const useUpdateUserMutation = () => {
 
         await queryClient.invalidateQueries(trpc.user.get.queryOptions(data.id))
         await queryClient.invalidateQueries({ queryKey: trpc.user.all.queryKey() })
+        await queryClient.invalidateQueries(trpc.workspace.findUser.queryOptions({ userId: data.id }))
       },
     })
   )
@@ -78,6 +79,26 @@ export const useDeleteMembershipMutation = () => {
         complete()
 
         await queryClient.invalidateQueries(trpc.user.get.queryOptions(data.id))
+      },
+    })
+  )
+}
+
+export const useLinkOwUserToWorkspaceUserMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "create",
+  })
+
+  return useMutation(
+    trpc.workspace.linkUser.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (_, input) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.user.get.queryOptions(input.userId))
       },
     })
   )
