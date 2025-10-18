@@ -25,6 +25,9 @@ export type Group = z.infer<typeof GroupSchema>
 
 export type GroupType = z.infer<typeof GroupTypeSchema>
 
+export const GroupMemberVisibilitySchema = schemas.GroupMemberVisibilitySchema
+export type GroupMemberVisibilityType = z.infer<typeof GroupMemberVisibilitySchema>
+
 export const GroupWriteSchema = GroupSchema.pick({
   type: true,
   name: true,
@@ -35,6 +38,7 @@ export const GroupWriteSchema = GroupSchema.pick({
   email: true,
   contactUrl: true,
   showLeaderAsContact: true,
+  showMembers: true,
   deactivatedAt: true,
   workspaceGroupId: true,
 }).partial({
@@ -102,6 +106,19 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
       return "Interessegruppe"
     default:
       return "Ukjent type"
+  }
+}
+
+export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | null | undefined) => {
+  switch (name) {
+    case "ALL_MEMBERS":
+      return "Alle medlemmer"
+    case "WITH_ROLES":
+      return "Alle med roller"
+    case "LEADER":
+      return "Kun leder"
+    case "NONE":
+      return "Ingen"
   }
 }
 
