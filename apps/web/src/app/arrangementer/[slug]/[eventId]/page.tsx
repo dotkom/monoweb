@@ -181,6 +181,7 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
               parentEvent={parentEvent}
               parentAttendance={parentAttendance}
               user={user}
+              event={event}
             />
           </>
         )}

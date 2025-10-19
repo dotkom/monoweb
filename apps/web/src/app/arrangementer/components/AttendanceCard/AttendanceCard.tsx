@@ -6,6 +6,7 @@ import { useFullPathname } from "@/utils/use-full-pathname"
 import {
   type Attendance,
   type AttendanceSelectionResponse,
+  type DeregisterReasonFormWrite,
   type Event,
   type Punishment,
   type User,
@@ -35,12 +36,14 @@ interface AttendanceCardProps {
   initialAttendance: Attendance
   initialPunishment: Punishment | null
   user: User | null
+  event: Event
   parentEvent: Event | null
   parentAttendance: Attendance | null
 }
 
 export const AttendanceCard = ({
   user,
+  event,
   initialAttendance,
   initialPunishment,
   parentAttendance,
@@ -169,8 +172,8 @@ export const AttendanceCard = ({
   const registerForAttendance = () => {
     registerMutation.mutate({ attendanceId: attendance.id })
   }
-  const deregisterForAttendance = () => {
-    deregisterMutation.mutate({ attendanceId: attendance.id })
+  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormWrite) => {
+    deregisterMutation.mutate({ attendanceId: attendance.id, deregisterReason })
   }
 
   const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
@@ -235,6 +238,7 @@ export const AttendanceCard = ({
         parentAttendance={parentAttendance}
         punishment={punishment}
         user={user}
+        event={event}
         isLoading={isLoading}
       />
 

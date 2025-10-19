@@ -8,6 +8,7 @@ import {
   type Attendee,
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
+  DeregisterReasonFormWriteSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -225,6 +226,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendancePoolSchema.shape.id,
+        deregisterReason: DeregisterReasonFormWriteSchema,
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -234,8 +236,17 @@ export const attendanceRouter = t.router({
         if (attendee === undefined) {
           throw new TRPCError({ code: "NOT_FOUND" })
         }
-        return await ctx.attendanceService.deregisterAttendee(handle, attendee.id, {
+        await ctx.attendanceService.deregisterAttendee(handle, attendee.id, {
           ignoreDeregistrationWindow: false,
+        })
+
+        const event = await ctx.eventService.getByAttendanceId(handle, attendance.id)
+        await ctx.attendanceService.createDeregisterReason(handle, {
+          ...input.deregisterReason,
+          userId: ctx.principal.subject,
+          eventId: event.id,
+          registeredAt: attendee.createdAt,
+          userGrade: attendee.userGrade,
         })
       })
     }),
