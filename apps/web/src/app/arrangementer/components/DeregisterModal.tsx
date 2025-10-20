@@ -2,7 +2,6 @@
 
 import {
   type Attendee,
-  type DeregisterReasonFormWrite,
   DeregisterReasonTypeSchema,
   type Event,
   mapDeregisterReasonTypeToLabel,
@@ -27,6 +26,7 @@ import {
 } from "@dotkomonline/ui"
 import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
+import { z } from "zod"
 
 const DEREGISTER_REASON_TYPE_OPTIONS = Object.values(DeregisterReasonTypeSchema.Values).map((type) => ({
   value: type,
@@ -38,7 +38,7 @@ interface Props {
   setOpen: (open: boolean) => void
   event: Event
   attendee: Attendee
-  unregisterForAttendance: (deregisterReason: DeregisterReasonFormWrite) => void
+  unregisterForAttendance: (deregisterReason: DeregisterReasonFormResult) => void
 }
 
 export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance, attendee }: Props) => {
@@ -66,8 +66,14 @@ export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance,
   )
 }
 
+export const DeregisterReasonFormSchema = z.object({
+  type: DeregisterReasonTypeSchema,
+  details: z.string().nullable(),
+})
+export type DeregisterReasonFormResult = z.infer<typeof DeregisterReasonFormSchema>
+
 const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Props) => {
-  const form = useForm<DeregisterReasonFormWrite>({
+  const form = useForm<DeregisterReasonFormResult>({
     defaultValues: {
       details: null,
     },
@@ -80,7 +86,7 @@ const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Pr
     }
   }, [form.trigger, open])
 
-  const handleSubmit = (values: DeregisterReasonFormWrite) => {
+  const handleSubmit = (values: DeregisterReasonFormResult) => {
     unregisterForAttendance(values)
 
     setOpen(false)

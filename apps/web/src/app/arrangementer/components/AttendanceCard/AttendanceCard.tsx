@@ -6,7 +6,6 @@ import { useFullPathname } from "@/utils/use-full-pathname"
 import {
   type Attendance,
   type AttendanceSelectionResponse,
-  type DeregisterReasonFormWrite,
   type Event,
   type Punishment,
   type User,
@@ -19,6 +18,7 @@ import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
@@ -172,7 +172,7 @@ export const AttendanceCard = ({
   const registerForAttendance = () => {
     registerMutation.mutate({ attendanceId: attendance.id })
   }
-  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormWrite) => {
+  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
     deregisterMutation.mutate({ attendanceId: attendance.id, deregisterReason })
   }
 

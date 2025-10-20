@@ -4,7 +4,6 @@ import {
   type Attendance,
   type AttendanceStatus,
   type Attendee,
-  type DeregisterReasonFormWrite,
   type Event,
   type Punishment,
   type User,
@@ -17,6 +16,7 @@ import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTr
 import { isFuture } from "date-fns"
 import { type FC, useState } from "react"
 import { DeregisterModal } from "../DeregisterModal"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 
 const getButtonColor = (
@@ -88,7 +88,7 @@ const getDisabledText = (
 
 interface RegistrationButtonProps {
   registerForAttendance: () => void
-  unregisterForAttendance: (deregisterReason: DeregisterReasonFormWrite) => void
+  unregisterForAttendance: (deregisterReason: DeregisterReasonFormResult) => void
   attendance: Attendance
   parentAttendance: Attendance | null
   punishment: Punishment | null

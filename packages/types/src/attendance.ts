@@ -112,12 +112,6 @@ export const DeregisterReasonWriteSchema = DeregisterReasonSchema.pick({
   userGrade: true,
 })
 
-export type DeregisterReasonFormWrite = z.infer<typeof DeregisterReasonFormWriteSchema>
-export const DeregisterReasonFormWriteSchema = DeregisterReasonWriteSchema.pick({
-  type: true,
-  details: true,
-})
-
 export const DeregisterReasonTypeSchema = schemas.DeregisterReasonTypeSchema
 export type DeregisterReasonType = z.infer<typeof DeregisterReasonTypeSchema>
 

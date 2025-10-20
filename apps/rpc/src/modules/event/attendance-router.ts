@@ -8,7 +8,7 @@ import {
   type Attendee,
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
-  DeregisterReasonFormWriteSchema,
+  DeregisterReasonTypeSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -226,7 +226,10 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendancePoolSchema.shape.id,
-        deregisterReason: DeregisterReasonFormWriteSchema,
+        deregisterReason: z.object({
+          type: DeregisterReasonTypeSchema,
+          details: z.string().nullable(),
+        }),
       })
     )
     .mutation(async ({ input, ctx }) => {
