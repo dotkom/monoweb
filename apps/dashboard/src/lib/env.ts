@@ -28,4 +28,9 @@ export const env = defineConfiguration({
   }),
   // Feature toggle for uploading files to S3. If disabled, uploads are faked and replaced with static URL
   S3_UPLOAD_ENABLED: config(process.env.S3_UPLOAD_ENABLED, "true"),
+  AWS_CLOUDFRONT_URL: config(process.env.AWS_CLOUDFRONT_URL, {
+    prd: "https://cdn.online.ntnu.no",
+    stg: "https://cdn.staging.online.ntnu.no",
+    dev: "https://cdn.staging.online.ntnu.no",
+  }),
 })

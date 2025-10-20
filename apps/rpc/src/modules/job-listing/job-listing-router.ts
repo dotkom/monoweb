@@ -1,6 +1,12 @@
-import { CompanySchema, JobListingLocationSchema, JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
+import {
+  CompanySchema,
+  JobListingFilterQuerySchema,
+  JobListingLocationSchema,
+  JobListingSchema,
+  JobListingWriteSchema,
+} from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const jobListingRouter = t.router({
@@ -31,11 +37,19 @@ export const jobListingRouter = t.router({
         ctx.jobListingService.update(handle, input.id, input.input, input.companyId, input.locationIds)
       )
     ),
-  all: procedure
-    .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.jobListingService.getAll(handle, input))
-    ),
+  findMany: procedure
+    .input(BasePaginateInputSchema.extend({ filter: JobListingFilterQuerySchema.optional() }).default({}))
+    .query(async ({ input, ctx }) => {
+      const { filter, ...page } = input
+      const jobListings = await ctx.executeTransaction(async (handle) =>
+        ctx.jobListingService.findMany(handle, { ...filter }, page)
+      )
+
+      return {
+        items: jobListings,
+        nextCursor: jobListings.at(-1)?.id,
+      }
+    }),
   active: procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>

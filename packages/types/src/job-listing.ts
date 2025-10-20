@@ -1,6 +1,7 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 import { CompanySchema } from "./company"
+import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
 
 export const JobListingLocationSchema = schemas.JobListingLocationSchema.extend({})
 export const JobListingLocationWriteSchema = JobListingLocationSchema.omit({
@@ -51,3 +52,15 @@ export const getJobListingEmploymentName = (type: JobListingEmployment) => {
       return "Ukjent type"
   }
 }
+
+export type JobListingFilterQuery = z.infer<typeof JobListingFilterQuerySchema>
+export const JobListingFilterQuerySchema = z
+  .object({
+    byId: buildAnyOfFilter(JobListingSchema.shape.id),
+    byStartDate: buildDateRangeFilter(),
+    byEndDate: buildDateRangeFilter(),
+    bySearchTerm: buildSearchFilter(),
+    byCompany: buildAnyOfFilter(CompanySchema.shape.id),
+    orderBy: createSortOrder(),
+  })
+  .partial()

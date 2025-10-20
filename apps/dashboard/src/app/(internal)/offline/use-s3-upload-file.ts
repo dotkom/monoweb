@@ -1,10 +1,11 @@
 import { env } from "@/lib/env"
 import { uploadFileToS3PresignedUrl } from "@/lib/s3"
 import { useTRPC } from "@/lib/trpc-client"
+import { createCloudFrontUrl } from "@dotkomonline/utils"
 import { notifications } from "@mantine/notifications"
 import { useMutation } from "@tanstack/react-query"
 
-const TEST_MODE_IMG_URL = "https://s3.eu-north-1.amazonaws.com/cdn.online.ntnu.no/img1.jpeg"
+const TEST_MODE_IMG_URL = "https://cdn.online.ntnu.no/img1.jpeg"
 
 export const useS3UploadFile = () => {
   const trpc = useTRPC()
@@ -16,7 +17,9 @@ export const useS3UploadFile = () => {
         filename: `${file.name}`,
         mimeType: file.type,
       })
-      return await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
+      await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
+
+      return createCloudFrontUrl(env.AWS_CLOUDFRONT_URL, presignedPost.fields.key)
     }
 
     notifications.show({

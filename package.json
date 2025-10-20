@@ -43,6 +43,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   }
 }
