@@ -1,7 +1,7 @@
 services:
   db:
     container_name: ow_db
-    image: postgres:16-alpine@sha256:84fb5d5bdd7d47f1889f325e534f3ce643f853f460832c8a61949f5391b8dc42
+    image: postgres:16-alpine@sha256:7898d413578ff5fa67ce49233cc9743e282010eb2ec6ebf7834a63f4a60b05f0
     restart: always
     environment:
       POSTGRES_PASSWORD: owpassword123
