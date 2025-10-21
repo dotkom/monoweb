@@ -202,9 +202,7 @@ export const GroupMembersPage: FC = () => {
                 )}
               </List>
               <Group>
-                <Button disabled onClick={() => syncGroupMutation.mutate({ groupSlug: group.slug })}>
-                  Synkroniser nå
-                </Button>
+                <Button onClick={() => syncGroupMutation.mutate({ groupSlug: group.slug })}>Synkroniser nå</Button>
               </Group>
             </Stack>
           </Stack>
