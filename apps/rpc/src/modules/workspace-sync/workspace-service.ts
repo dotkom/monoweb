@@ -9,7 +9,7 @@ import {
   type UserId,
   type WorkspaceGroup,
   type WorkspaceMember,
-  type WorkspaceMemberSyncAction,
+  type WorkspaceMemberSyncState,
   type WorkspaceUser,
   getActiveGroupMembership,
 } from "@dotkomonline/types"
@@ -67,7 +67,7 @@ export interface WorkspaceService {
     {
       groupMember: GroupMember | null
       workspaceMember: WorkspaceMember | null
-      syncAction: WorkspaceMemberSyncAction
+      syncAction: WorkspaceMemberSyncState
     }[]
   >
   getWorkspaceGroupsForWorkspaceUser(
@@ -167,17 +167,17 @@ export function getWorkspaceService(
     return `${local}@${domain}`
   }
 
-  function getLinkedWorkspaceId(localResolvable: User | Group | string): string | null {
-    if (typeof localResolvable === "string") {
+  function getLinkedWorkspaceId(workspaceIdResolvable: User | Group | string): string | null {
+    if (typeof workspaceIdResolvable === "string") {
       return null
     }
 
-    if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
-      return localResolvable.workspaceUserId
+    if ("workspaceUserId" in workspaceIdResolvable && workspaceIdResolvable.workspaceUserId) {
+      return workspaceIdResolvable.workspaceUserId
     }
 
-    if ("workspaceGroupId" in localResolvable && localResolvable.workspaceGroupId) {
-      return localResolvable.workspaceGroupId
+    if ("workspaceGroupId" in workspaceIdResolvable && workspaceIdResolvable.workspaceGroupId) {
+      return workspaceIdResolvable.workspaceGroupId
     }
 
     return null
@@ -194,12 +194,12 @@ export function getWorkspaceService(
    * getKey("full.name@online.ntnu.no") // "full.name@online.ntnu.no"
    * getKey("string", "custom.domain") // "string@custom.domain"
    */
-  function getKey(localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string {
-    return getLinkedWorkspaceId(localResolvable) ?? getEmail(localResolvable, domain)
+  function getKey(keyResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string {
+    return getLinkedWorkspaceId(keyResolvable) ?? getEmail(keyResolvable, domain)
   }
 
-  function getKeys(localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string[] {
-    const linkedId = getLinkedWorkspaceId(localResolvable)
+  function getKeys(keyResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string[] {
+    const linkedId = getLinkedWorkspaceId(keyResolvable)
 
     if (linkedId) {
       return [linkedId]
@@ -207,14 +207,14 @@ export function getWorkspaceService(
 
     const keys = new Set<string>()
 
-    const emailKey = getEmail(localResolvable, domain)
+    const emailKey = getEmail(keyResolvable, domain)
 
     keys.add(emailKey)
     // In older versions of OnlineWeb, all dashes (-) were removed from the email local part.
     // We add this to the set of keys to attempt to find an account created by the older version.
     keys.add(emailKey.replace("-", ""))
 
-    const names = getLocal(localResolvable).split(".").filter(Boolean)
+    const names = getLocal(keyResolvable).split(".").filter(Boolean)
 
     // In older version of OnlineWeb it was less common to have your full name on your profile.
     // A lot of older accounts were generated with only first name and last name, so we attempt to
@@ -261,23 +261,23 @@ export function getWorkspaceService(
   function getWorkspaceMemberSyncAction(member: {
     groupMember: GroupMember | null
     workspaceMember: WorkspaceMember | null
-  }): WorkspaceMemberSyncAction {
+  }): WorkspaceMemberSyncState {
     if (member.groupMember && !member.groupMember?.workspaceUserId) {
-      return "NEEDS_LINKING"
+      return "PENDING_LINK"
     }
 
     const isActiveMember = getActiveGroupMembership(member.groupMember) !== null
     const isInWorkspace = member.workspaceMember !== null
 
     if (isActiveMember && !isInWorkspace) {
-      return "TO_ADD"
+      return "PENDING_ADD"
     }
 
     if (!isActiveMember && isInWorkspace) {
-      return "TO_REMOVE"
+      return "PENDING_REMOVE"
     }
 
-    return "NONE"
+    return "SYNCED"
   }
 
   return {
@@ -509,7 +509,7 @@ export function getWorkspaceService(
       const workspaceMembers: {
         groupMember: GroupMember | null
         workspaceMember: WorkspaceMember | null
-        syncAction: WorkspaceMemberSyncAction
+        syncAction: WorkspaceMemberSyncState
       }[] = []
 
       let pageToken: string | undefined = undefined
@@ -570,22 +570,22 @@ export function getWorkspaceService(
         const { groupMember, workspaceMember, syncAction } = member
 
         switch (syncAction) {
-          case "NEEDS_LINKING":
-          case "NONE": {
+          case "PENDING_LINK":
+          case "SYNCED": {
             return null
           }
-          case "TO_ADD": {
-            invariant(groupMember, "Expected group member to be defined for TO_ADD action")
+          case "PENDING_ADD": {
+            invariant(groupMember, "Expected group member to be defined for PENDING_ADD action")
             invariant(
               groupMember.workspaceUserId,
-              "Expected group member to have a workspace user ID for TO_ADD action"
+              "Expected group member to have a workspace user ID for PENDING_ADD action"
             )
 
             return this.addUserIntoWorkspaceGroup(handle, groupSlug, groupMember.id)
           }
-          case "TO_REMOVE": {
-            invariant(group.workspaceGroupId, "Expected group to have a workspace group ID for TO_REMOVE action")
-            invariant(workspaceMember?.id, "Expected workspace member to have an ID for TO_REMOVE action")
+          case "PENDING_REMOVE": {
+            invariant(group.workspaceGroupId, "Expected group to have a workspace group ID for PENDING_REMOVE action")
+            invariant(workspaceMember?.id, "Expected workspace member to have an ID for PENDING_REMOVE action")
 
             return removeFromWorkspaceGroup(group.workspaceGroupId, workspaceMember.id)
           }

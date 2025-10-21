@@ -6,7 +6,7 @@ import {
   type GroupMember,
   type GroupMembership,
   type WorkspaceMember,
-  type WorkspaceMemberSyncAction,
+  type WorkspaceMemberSyncState,
   getActiveGroupMembership,
 } from "@dotkomonline/types"
 import { Anchor, Group, Stack, Text, Tooltip } from "@mantine/core"
@@ -22,7 +22,7 @@ interface Props {
   data: {
     groupMember: GroupMember | null
     workspaceMember: WorkspaceMember | null
-    syncAction: WorkspaceMemberSyncAction
+    syncAction: WorkspaceMemberSyncState
   }[]
 }
 
@@ -41,7 +41,7 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
   const columnHelper = createColumnHelper<{
     groupMember: GroupMember | null
     workspaceMember: WorkspaceMember | null
-    syncAction: WorkspaceMemberSyncAction
+    syncAction: WorkspaceMemberSyncState
   }>()
 
   const columns = useMemo(() => {
@@ -145,9 +145,9 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
 const SyncActionStatusText = ({
   syncAction,
   inMemberList,
-}: { syncAction: WorkspaceMemberSyncAction; inMemberList: boolean }) => {
+}: { syncAction: WorkspaceMemberSyncState; inMemberList: boolean }) => {
   switch (syncAction) {
-    case "TO_ADD": {
+    case "PENDING_ADD": {
       return (
         <Tooltip label="Brukeren er i gruppen, men ikke i e-postlisten">
           <Group gap={6} w="fit-content">
@@ -158,7 +158,7 @@ const SyncActionStatusText = ({
       )
     }
 
-    case "TO_REMOVE": {
+    case "PENDING_REMOVE": {
       return (
         <Tooltip label="E-posten er i e-postlisten, men det finnes ingen tilknyttet bruker i gruppen">
           <Group gap={6} w="fit-content">
@@ -169,7 +169,7 @@ const SyncActionStatusText = ({
       )
     }
 
-    case "NEEDS_LINKING": {
+    case "PENDING_LINK": {
       return (
         <Tooltip label="E-posteadressen er ikke tilknyttet en bruker">
           <Group gap={6}>
@@ -180,7 +180,7 @@ const SyncActionStatusText = ({
       )
     }
 
-    case "NONE": {
+    case "SYNCED": {
       return (
         <Group gap={6}>
           <IconSquareCheckFilled

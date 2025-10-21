@@ -2,7 +2,7 @@ import { UserSearch } from "@/app/(internal)/user/components/user-search"
 import {
   type GroupId,
   type GroupMember,
-  type WorkspaceMemberSyncAction,
+  type WorkspaceMemberSyncState,
   getActiveGroupMembership,
 } from "@dotkomonline/types"
 import {
@@ -37,11 +37,11 @@ import { useGroupDetailsContext } from "./provider"
 import { useGroupMemberTable } from "./use-group-member-table"
 
 // Lower number means higher priority
-const SYNC_ACTION_SORT_PRIORITY: Record<WorkspaceMemberSyncAction, number> = {
-  TO_ADD: 1,
-  TO_REMOVE: 2,
-  NEEDS_LINKING: 3,
-  NONE: 4,
+const SYNC_ACTION_SORT_PRIORITY: Record<WorkspaceMemberSyncState, number> = {
+  PENDING_ADD: 1,
+  PENDING_REMOVE: 2,
+  PENDING_LINK: 3,
+  SYNCED: 4,
 }
 
 const sortByStartDate = (a: GroupMember | null, b: GroupMember | null) => {
@@ -81,7 +81,7 @@ export const GroupMembersPage: FC = () => {
         ({
           groupMember,
           workspaceMember: null,
-          syncAction: "NONE",
+          syncAction: "SYNCED",
         }) as const
     )
   }, [membersWithoutWorkspace])
@@ -124,9 +124,9 @@ export const GroupMembersPage: FC = () => {
     return Object.groupBy(membersList, ({ syncAction }) => syncAction)
   }, [membersList])
 
-  const toAdd = memberStatuses.TO_ADD?.length ?? 0
-  const toRemove = memberStatuses.TO_REMOVE?.length ?? 0
-  const needsLinking = memberStatuses.NEEDS_LINKING?.length ?? 0
+  const toAdd = memberStatuses.PENDING_ADD?.length ?? 0
+  const toRemove = memberStatuses.PENDING_REMOVE?.length ?? 0
+  const needsLinking = memberStatuses.PENDING_LINK?.length ?? 0
   const isOutOfSync = showWorkspaceColumns && toAdd + toRemove + needsLinking > 0
 
   return (
@@ -275,12 +275,12 @@ const MemberTable = ({ table, groupSlug, enableRowBackgroundColor = false }: Mem
   )
 }
 
-const getRowBackground = (syncAction: WorkspaceMemberSyncAction, isInactive: boolean) => {
-  if (syncAction === "TO_ADD" || syncAction === "TO_REMOVE") {
+const getRowBackground = (syncAction: WorkspaceMemberSyncState, isInactive: boolean) => {
+  if (syncAction === "PENDING_ADD" || syncAction === "PENDING_REMOVE") {
     return "var(--mantine-color-red-light)"
   }
 
-  if (syncAction === "NEEDS_LINKING") {
+  if (syncAction === "PENDING_LINK") {
     return "var(--mantine-color-yellow-light)"
   }
 

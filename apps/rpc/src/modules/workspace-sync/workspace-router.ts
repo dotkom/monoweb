@@ -4,7 +4,7 @@ import {
   UserSchema,
   WorkspaceGroupSchema,
   WorkspaceMemberSchema,
-  WorkspaceMemberSyncActionSchema,
+  WorkspaceMemberSyncStateSchema,
   WorkspaceUserSchema,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
@@ -212,7 +212,7 @@ export const workspaceRouter = t.router({
         .object({
           groupMember: GroupMemberSchema.nullable(),
           workspaceMember: WorkspaceMemberSchema.nullable(),
-          syncAction: WorkspaceMemberSyncActionSchema,
+          syncAction: WorkspaceMemberSyncStateSchema,
         })
         .array()
     )
