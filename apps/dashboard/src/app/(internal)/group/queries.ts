@@ -39,3 +39,13 @@ export const useWorkspaceMembersAllQuery = (groupSlug: GroupId, enabled = true) 
   )
   return { members, ...query }
 }
+
+export const useFindWorkspaceGroupQuery = (groupSlug: GroupId, customKey?: string, enabled = true) => {
+  const trpc = useTRPC()
+  const {
+    data: workspaceGroup,
+    isLoading,
+    error,
+  } = useQuery(trpc.workspace.findGroup.queryOptions({ groupSlug, customKey }, { enabled }))
+  return { workspaceGroup, isLoading, error }
+}

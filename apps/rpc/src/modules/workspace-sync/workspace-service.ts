@@ -51,12 +51,13 @@ export interface WorkspaceService {
     recoveryCodes: string[] | null
     password: string
   }>
-  findWorkspaceUser(handle: DBHandle, userId: UserId): Promise<WorkspaceUser | null>
-  getWorkspaceUser(handle: DBHandle, userId: UserId): Promise<WorkspaceUser>
+  findWorkspaceUser(handle: DBHandle, userId: UserId, customKey?: string): Promise<WorkspaceUser | null>
+  getWorkspaceUser(handle: DBHandle, userId: UserId, customKey?: string): Promise<WorkspaceUser>
 
   // Groups
   createWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<{ group: Group; workspaceGroup: WorkspaceGroup }>
-  findWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<WorkspaceGroup | null>
+  findWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, customKey?: string): Promise<WorkspaceGroup | null>
+  getWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, customKey?: string): Promise<WorkspaceGroup>
   addUserIntoWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<WorkspaceMember>
   removeUserFromWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<boolean>
   getMembersForGroup(
@@ -73,6 +74,7 @@ export interface WorkspaceService {
     handle: DBHandle,
     userId: UserId
   ): Promise<{ group: Group; workspaceGroup: WorkspaceGroup }[]>
+  synchronizeWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<boolean>
 }
 
 export function getWorkspaceService(
@@ -137,6 +139,16 @@ export function getWorkspaceService(
     }
 
     return response.data.items.map((code) => code.verificationCode).filter(Boolean) as string[]
+  }
+
+  async function removeFromWorkspaceGroup(groupKey: string, memberKey: string): Promise<boolean> {
+    return await directory.members
+      .delete({
+        groupKey,
+        memberKey,
+      })
+      .then(() => true)
+      .catch(() => false)
   }
 
   /**
@@ -332,9 +344,9 @@ export function getWorkspaceService(
       }
     },
 
-    async findWorkspaceUser(handle, userId) {
+    async findWorkspaceUser(handle, userId, customKey) {
       const user = await userService.getById(handle, userId)
-      const keys = getKeys(user)
+      const keys = customKey != null ? getKeys(customKey) : getKeys(user)
 
       let workspaceUser: WorkspaceUser | null = null
 
@@ -372,7 +384,7 @@ export function getWorkspaceService(
       const workspaceUser = await this.findWorkspaceUser(handle, userId)
 
       if (!workspaceUser) {
-        throw new NotFoundError(`Workspace User for UserID(${userId}) not found`)
+        throw new NotFoundError(`Workspace User for User(ID=${userId}) not found`)
       }
 
       return workspaceUser
@@ -429,13 +441,7 @@ export function getWorkspaceService(
       const group = await groupService.getById(handle, groupId)
       const user = await userService.getById(handle, userId)
 
-      return await directory.members
-        .delete({
-          groupKey: getKey(group),
-          memberKey: getKey(user),
-        })
-        .then(() => true)
-        .catch(() => false)
+      return await removeFromWorkspaceGroup(getKey(group), getKey(user))
     },
 
     async createWorkspaceGroup(handle, groupId) {
@@ -465,23 +471,36 @@ export function getWorkspaceService(
       return { group: updatedGroup, workspaceGroup: data }
     },
 
-    async findWorkspaceGroup(handle, groupId) {
+    async findWorkspaceGroup(handle, groupId, customKey) {
       const group = await groupService.getById(handle, groupId)
+      const groupKey = customKey ? getKey(customKey) : getKey(group)
 
-      const response = await directory.groups.get({
-        groupKey: group.workspaceGroupId ?? getKey(group),
-      })
+      try {
+        const response = await directory.groups.get({ groupKey })
 
-      if (response.status === 404) {
-        return null
+        return response.data
+      } catch (error) {
+        if (!(error instanceof GaxiosError)) {
+          throw error
+        }
+
+        if (error.response?.status === 404) {
+          return null
+        }
+
+        logger.error("Failed to fetch WorkspaceGroup(Key=%s) from workspace with message: %s", groupKey, error.message)
+        throw error
+      }
+    },
+
+    async getWorkspaceGroup(handle, groupId, customKey) {
+      const workspaceGroup = await this.findWorkspaceGroup(handle, groupId, customKey)
+
+      if (!workspaceGroup) {
+        throw new NotFoundError(`Workspace Group for Group(ID=${groupId}) not found`)
       }
 
-      if (response.status !== 200) {
-        logger.warn("Failed to fetch group from workspace")
-        throw new Error()
-      }
-
-      return response.data
+      return workspaceGroup
     },
 
     async getMembersForGroup(handle, groupId) {
@@ -505,14 +524,14 @@ export function getWorkspaceService(
 
         const members = await groupService.getMembers(handle, group.slug)
 
-        const variablename = joinGroupAndWorkspaceMembers([...members.values()], response.data.members).map(
+        const membersWithSyncAction = joinGroupAndWorkspaceMembers([...members.values()], response.data.members).map(
           (member) => ({
             ...member,
             syncAction: getWorkspaceMemberSyncAction(member),
           })
         )
 
-        workspaceMembers.push(...variablename)
+        workspaceMembers.push(...membersWithSyncAction)
 
         pageToken = response.data.nextPageToken ?? undefined
       } while (pageToken !== undefined)
@@ -541,6 +560,41 @@ export function getWorkspaceService(
       } while (pageToken)
 
       return groups
+    },
+
+    async synchronizeWorkspaceGroup(handle, groupSlug) {
+      const group = await groupService.getById(handle, groupSlug)
+      const members = await this.getMembersForGroup(handle, groupSlug)
+
+      const actions = members.map(async (member) => {
+        const { groupMember, workspaceMember, syncAction } = member
+
+        switch (syncAction) {
+          case "NEEDS_LINKING":
+          case "NONE": {
+            return null
+          }
+          case "TO_ADD": {
+            invariant(groupMember, "Expected group member to be defined for TO_ADD action")
+            invariant(
+              groupMember.workspaceUserId,
+              "Expected group member to have a workspace user ID for TO_ADD action"
+            )
+
+            return this.addUserIntoWorkspaceGroup(handle, groupSlug, groupMember.id)
+          }
+          case "TO_REMOVE": {
+            invariant(group.workspaceGroupId, "Expected group to have a workspace group ID for TO_REMOVE action")
+            invariant(workspaceMember?.id, "Expected workspace member to have an ID for TO_REMOVE action")
+
+            return removeFromWorkspaceGroup(group.workspaceGroupId, workspaceMember.id)
+          }
+        }
+      })
+
+      await Promise.all(actions)
+
+      return true
     },
   }
 }

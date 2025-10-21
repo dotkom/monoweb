@@ -38,6 +38,7 @@ export const workspaceRouter = t.router({
     .input(
       z.object({
         userId: UserSchema.shape.id,
+        customKey: z.string().optional(),
       })
     )
     .output(WorkspaceUserSchema.nullable())
@@ -45,10 +46,16 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      // If the user inputs a custom key, we do not allow the userId as affiliation because customKey will take
+      // precedence and thus the user could potentially input any user.
+      if (input.customKey) {
+        ctx.authorize.requireAffiliation("dotkom", "hs")
+      } else {
+        ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      }
 
       return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.findWorkspaceUser(handle, input.userId)
+        return await workspaceService.findWorkspaceUser(handle, input.userId, input.customKey)
       })
     }),
 
@@ -56,6 +63,7 @@ export const workspaceRouter = t.router({
     .input(
       z.object({
         userId: UserSchema.shape.id,
+        customKey: z.string().optional(),
       })
     )
     .output(UserSchema)
@@ -63,13 +71,42 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      ctx.authorize.requireAffiliation("dotkom", "hs")
 
       return ctx.executeTransaction(async (handle) => {
         const user = await ctx.userService.getById(handle, input.userId)
-        const workspaceUser = await workspaceService.getWorkspaceUser(handle, input.userId)
+        const workspaceUser = await workspaceService.getWorkspaceUser(handle, input.userId, input.customKey)
 
         return await ctx.userService.update(handle, user.id, { workspaceUserId: workspaceUser.id })
+      })
+    }),
+
+  linkGroup: staffProcedure
+    .input(
+      z.object({
+        groupSlug: GroupSchema.shape.slug,
+        customKey: z.string().optional(),
+      })
+    )
+    .output(GroupSchema)
+    .mutation(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
+      // If the user inputs a custom key, we do not allow the groupSlug as affiliation because customKey will take
+      // precedence and thus the user could potentially input any group.
+      if (input.customKey) {
+        ctx.authorize.requireAffiliation("dotkom", "hs")
+      } else {
+        // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
+        ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
+      }
+
+      return ctx.executeTransaction(async (handle) => {
+        const group = await ctx.groupService.getById(handle, input.groupSlug)
+        const workspaceGroup = await workspaceService.getWorkspaceGroup(handle, input.groupSlug, input.customKey)
+
+        return await ctx.groupService.update(handle, group.slug, { workspaceGroupId: workspaceGroup.id })
       })
     }),
 
@@ -125,6 +162,7 @@ export const workspaceRouter = t.router({
     .input(
       z.object({
         groupSlug: GroupSchema.shape.slug,
+        customKey: z.string().optional(),
       })
     )
     .output(WorkspaceGroupSchema.nullable())
@@ -132,39 +170,23 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
-      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
-
+      // If the user inputs a custom key, we do not allow the groupSlug as affiliation because customKey will take
+      // precedence and thus the user could potentially input any group.
+      if (input.customKey) {
+        ctx.authorize.requireAffiliation("dotkom", "hs")
+      } else {
+        // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
+        ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
+      }
       return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.findWorkspaceGroup(handle, input.groupSlug)
+        return await workspaceService.findWorkspaceGroup(handle, input.groupSlug, input.customKey)
       })
     }),
 
-  addUserToGroup: staffProcedure
+  synchronizeGroup: staffProcedure
     .input(
       z.object({
         groupSlug: GroupSchema.shape.slug,
-        userId: UserSchema.shape.id,
-      })
-    )
-    .output(WorkspaceGroupSchema.nullable())
-    .mutation(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
-
-      // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
-      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
-
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.addUserIntoWorkspaceGroup(handle, input.groupSlug, input.userId)
-      })
-    }),
-
-  removeUserFromGroup: staffProcedure
-    .input(
-      z.object({
-        groupSlug: GroupSchema.shape.slug,
-        userId: UserSchema.shape.id,
       })
     )
     .output(z.boolean())
@@ -175,7 +197,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.removeUserFromWorkspaceGroup(handle, input.groupSlug, input.userId)
+        return await workspaceService.synchronizeWorkspaceGroup(handle, input.groupSlug)
       })
     }),
 

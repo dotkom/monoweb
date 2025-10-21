@@ -7,11 +7,15 @@ import {
 } from "@dotkomonline/types"
 import {
   Box,
+  Button,
   Card,
   Divider,
   Group,
   List,
   ListItem,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
   Stack,
   Table,
   TableTbody,
@@ -26,9 +30,8 @@ import { IconAlertTriangleFilled } from "@tabler/icons-react"
 import { flexRender } from "@tanstack/react-table"
 import { compareDesc } from "date-fns"
 import { type FC, useMemo } from "react"
-import { useLinkOwUserToWorkspaceUserMutation } from "../../user/mutations"
-import { useIsAdminQuery } from "../../user/queries"
 import { useCreateGroupMemberModal } from "../modals/create-group-member-modal"
+import { useSyncWorkspaceGroupMutation } from "../mutations"
 import { useGroupMembersAllQuery, useWorkspaceMembersAllQuery } from "../queries"
 import { useGroupDetailsContext } from "./provider"
 import { useGroupMemberTable } from "./use-group-member-table"
@@ -59,19 +62,17 @@ const sortByStartDate = (a: GroupMember | null, b: GroupMember | null) => {
 
 export const GroupMembersPage: FC = () => {
   const { group } = useGroupDetailsContext()
-  const { isAdmin } = useIsAdminQuery()
-  const linkUserMutation = useLinkOwUserToWorkspaceUserMutation()
+  const syncGroupMutation = useSyncWorkspaceGroupMutation()
 
   // We only want to fetch workspace members if the group is linked to a workspace group
   // We don't want to display workspace columns if we do not fetch workspace members
   // And we do not want to color the rows based on sync action if we do not fetch workspace members
   // Hence, we have two calls to fetch members, one with workspace members and one with just group members
   // To make things easier, we then transform the group member list to the same shape as the workspace member list
-  const showWorkspaceColumns = !Boolean(group.workspaceGroupId)
+  const showWorkspaceColumns = Boolean(group.workspaceGroupId)
   const { members: membersWithWorkspace } = useWorkspaceMembersAllQuery(group.slug, showWorkspaceColumns)
   const { members: membersWithoutWorkspace } = useGroupMembersAllQuery(group.slug, !showWorkspaceColumns)
 
-  // We memoize the transformation since we only need to
   const lol = useMemo(() => {
     if (!membersWithoutWorkspace) return []
 
@@ -112,13 +113,21 @@ export const GroupMembersPage: FC = () => {
   const membersTable = useGroupMemberTable({
     data: membersList,
     groupId: group.slug,
-    isAdmin: isAdmin ?? false,
     showWorkspaceColumns,
   })
 
   const activeMemberIds = useMemo(() => {
     return membersList.map(({ groupMember }) => groupMember?.id).filter((id): id is string => Boolean(id))
   }, [membersList])
+
+  const memberStatuses = useMemo(() => {
+    return Object.groupBy(membersList, ({ syncAction }) => syncAction)
+  }, [membersList])
+
+  const toAdd = memberStatuses.TO_ADD?.length ?? 0
+  const toRemove = memberStatuses.TO_REMOVE?.length ?? 0
+  const needsLinking = memberStatuses.NEEDS_LINKING?.length ?? 0
+  const isOutOfSync = showWorkspaceColumns && toAdd + toRemove + needsLinking > 0
 
   return (
     <Box>
@@ -130,23 +139,74 @@ export const GroupMembersPage: FC = () => {
         <Divider />
         <Title order={3}>Medlemmer</Title>
 
-        <Stack bg="var(--mantine-color-gray-light)" p="sm" style={{ borderRadius: "var(--mantine-radius-md)" }}>
-          <Group gap="xs">
-            <IconAlertTriangleFilled size={22} color="var(--mantine-color-red-text)" />
-            <Title order={4}>Medlemmer og e-postlisten er usynkron</Title>
-          </Group>
-          <List>
-            <ListItem>
-              <Text size="sm">Må legges til: 123</Text>
-            </ListItem>
-            <ListItem>
-              <Text size="sm">Må fjernes: 123</Text>
-            </ListItem>
-            <ListItem>
-              <Text size="sm">Mangler bruker (kontakt HS): 123</Text>
-            </ListItem>
-          </List>
-        </Stack>
+        {isOutOfSync && (
+          <Stack bg="var(--mantine-color-gray-light)" p="md" style={{ borderRadius: "var(--mantine-radius-md)" }}>
+            <Group gap="xs">
+              <IconAlertTriangleFilled size={22} color="var(--mantine-color-red-text)" />
+              <Title order={4}>Medlemmer og e-postlisten er usynkronisert</Title>
+            </Group>
+
+            <Group>
+              <Popover position="bottom-start">
+                <PopoverTarget>
+                  <Button variant="light" size="sm" w="fit-content">
+                    Forklaring
+                  </Button>
+                </PopoverTarget>
+                <PopoverDropdown maw="min(75vw, 48rem)" miw="16rem">
+                  <Stack gap="xs">
+                    <Text size="sm">
+                      I OW5 velger vi å la deg synkronisere etter du har gjort endringer, for å gi deg mer kontroll over
+                      hvor raskt endringer skjer og for å unngå magi. I OW4 ble synkronisering gjort automatisk to
+                      ganger om dagen.
+                    </Text>
+                    <Text size="sm">
+                      OW5-gruppen er source of truth for hvem som skal være i e-postlisten. Det betyr at om noen legges
+                      manuelt inn i e-postlisten uten å ligge i OW-gruppen, vil systemet ønske å fjerne dem. Dette vil
+                      skje om du avslutter medlemskapet til noen, hvor de da også skal fjernes fra e-postlisten. Dersom
+                      du lager et nytt medlemskap for noen, og de ikke allerede ligger i e-postlisten, vil systemet
+                      ønske å legge dem til.
+                    </Text>
+                    <Text size="sm">
+                      Vi holder styr på hvilken e-postadresse som tilhører hvem ved å tilknytte OW-brukeren og
+                      Google-brukeren. Dersom dette ikke er gjort, vil du få opp at brukeren "mangler tilknyttet
+                      bruker". Dette skal ikke normalt skje, og det er veldig viktig at du kontakter HS dersom dette
+                      skjer, slik at de kan fikse det for deg.
+                    </Text>
+                  </Stack>
+                </PopoverDropdown>
+              </Popover>
+              <Text size="sm" c="dimmed">
+                TLDR: Alltid trykk på knappen når den er der og du er ferdig med å redigere
+              </Text>
+            </Group>
+
+            <Stack>
+              <List withPadding>
+                {needsLinking > 0 && (
+                  <ListItem>
+                    <Text size="sm">Mangler tilknyttet bruker (kontakt HS snarest): {needsLinking}</Text>
+                  </ListItem>
+                )}
+                {toAdd > 0 && (
+                  <ListItem>
+                    <Text size="sm">Må legges til: {toAdd}</Text>
+                  </ListItem>
+                )}
+                {toRemove > 0 && (
+                  <ListItem>
+                    <Text size="sm">Må fjernes: {toRemove}</Text>
+                  </ListItem>
+                )}
+              </List>
+              <Group>
+                <Button disabled onClick={() => syncGroupMutation.mutate({ groupSlug: group.slug })}>
+                  Synkroniser nå
+                </Button>
+              </Group>
+            </Stack>
+          </Stack>
+        )}
 
         <MemberTable table={membersTable} groupSlug={group.slug} enableRowBackgroundColor={showWorkspaceColumns} />
       </Stack>

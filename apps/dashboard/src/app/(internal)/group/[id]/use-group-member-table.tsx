@@ -9,7 +9,7 @@ import {
   type WorkspaceMemberSyncAction,
   getActiveGroupMembership,
 } from "@dotkomonline/types"
-import { Anchor, Group, Stack, Text } from "@mantine/core"
+import { Anchor, Group, Stack, Text, Tooltip } from "@mantine/core"
 import { IconAlertTriangleFilled, IconSquareCheckFilled } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
@@ -18,7 +18,6 @@ import { useMemo } from "react"
 
 interface Props {
   showWorkspaceColumns: boolean
-  isAdmin: boolean
   groupId: GroupId
   data: {
     groupMember: GroupMember | null
@@ -36,9 +35,9 @@ function formatMembershipDate(date: Date | undefined | null) {
   return date ? formatDate(date, "dd.MM.yyyy") : "-"
 }
 
-export const useGroupMemberTable = ({ data, groupId, isAdmin, showWorkspaceColumns }: Props) => {
+export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Props) => {
   const userId = useSession()?.sub ?? null
-  
+
   const columnHelper = createColumnHelper<{
     groupMember: GroupMember | null
     workspaceMember: WorkspaceMember | null
@@ -134,7 +133,7 @@ export const useGroupMemberTable = ({ data, groupId, isAdmin, showWorkspaceColum
     ]
 
     return cols.filter((col): col is Exclude<typeof col, false> => Boolean(col))
-  }, [columnHelper, groupId, isAdmin, showWorkspaceColumns])
+  }, [columnHelper, groupId, showWorkspaceColumns, userId])
 
   return useReactTable({
     data,
@@ -150,28 +149,34 @@ const SyncActionStatusText = ({
   switch (syncAction) {
     case "TO_ADD": {
       return (
-        <Group gap={6}>
-          <IconAlertTriangleFilled size={14} color="var(--mantine-color-red-text)" />
-          <Text size="sm">Må legges til</Text>
-        </Group>
+        <Tooltip label="Brukeren er i gruppen, men ikke i e-postlisten">
+          <Group gap={6} w="fit-content">
+            <IconAlertTriangleFilled size={14} color="var(--mantine-color-red-text)" />
+            <Text size="sm">Må legges til</Text>
+          </Group>
+        </Tooltip>
       )
     }
 
     case "TO_REMOVE": {
       return (
-        <Group gap={6}>
-          <IconAlertTriangleFilled size={14} color="var(--mantine-color-red-text)" />
-          <Text size="sm">Må fjernes</Text>
-        </Group>
+        <Tooltip label="E-posten er i e-postlisten, men det finnes ingen tilknyttet bruker i gruppen">
+          <Group gap={6} w="fit-content">
+            <IconAlertTriangleFilled size={14} color="var(--mantine-color-red-text)" />
+            <Text size="sm">Må fjernes</Text>
+          </Group>
+        </Tooltip>
       )
     }
 
     case "NEEDS_LINKING": {
       return (
-        <Group gap={6}>
-          <IconAlertTriangleFilled size={14} color="var(--mantine-color-yellow-text)" />
-          <Text size="sm">Ingen bruker. Kontakt HS</Text>
-        </Group>
+        <Tooltip label="E-posteadressen er ikke tilknyttet en bruker">
+          <Group gap={6}>
+            <IconAlertTriangleFilled size={14} color="var(--mantine-color-yellow-text)" />
+            <Text size="sm">Ingen tilknyttet bruker. Kontakt HS</Text>
+          </Group>
+        </Tooltip>
       )
     }
 

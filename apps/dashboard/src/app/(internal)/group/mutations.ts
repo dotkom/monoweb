@@ -212,3 +212,56 @@ export const useUpdateGroupMembershipMutation = () => {
     })
   )
 }
+
+export const useSyncWorkspaceGroupMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.workspace.synchronizeGroup.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (_, input) => {
+        complete()
+
+        await queryClient.invalidateQueries(
+          trpc.workspace.getMembersForGroup.queryOptions({ groupSlug: input.groupSlug })
+        )
+      },
+    })
+  )
+}
+
+export const useLinkGroupMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.workspace.linkGroup.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Tilknytter gruppe",
+          message: "Gruppen blir tilknyttet til Workspace. Vennligst vent.",
+        })
+      },
+      onSuccess: async (group) => {
+        notification.complete({
+          title: "Gruppen er tilknyttet",
+          message: "Gruppen er tilknyttet til Workspace.",
+        })
+
+        await queryClient.invalidateQueries(trpc.group.get.queryOptions(group.slug))
+      },
+      onError: () => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: "En feil oppsto under tilknytningen.",
+        })
+      },
+    })
+  )
+}
