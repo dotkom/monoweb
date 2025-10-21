@@ -212,7 +212,7 @@ export const workspaceRouter = t.router({
         .object({
           groupMember: GroupMemberSchema.nullable(),
           workspaceMember: WorkspaceMemberSchema.nullable(),
-          syncAction: WorkspaceMemberSyncStateSchema,
+          syncState: WorkspaceMemberSyncStateSchema,
         })
         .array()
     )

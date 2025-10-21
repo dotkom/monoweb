@@ -67,7 +67,7 @@ export interface WorkspaceService {
     {
       groupMember: GroupMember | null
       workspaceMember: WorkspaceMember | null
-      syncAction: WorkspaceMemberSyncState
+      syncState: WorkspaceMemberSyncState
     }[]
   >
   getWorkspaceGroupsForWorkspaceUser(
@@ -509,7 +509,7 @@ export function getWorkspaceService(
       const workspaceMembers: {
         groupMember: GroupMember | null
         workspaceMember: WorkspaceMember | null
-        syncAction: WorkspaceMemberSyncState
+        syncState: WorkspaceMemberSyncState
       }[] = []
 
       let pageToken: string | undefined = undefined
@@ -527,7 +527,7 @@ export function getWorkspaceService(
         const membersWithSyncAction = joinGroupAndWorkspaceMembers([...members.values()], response.data.members).map(
           (member) => ({
             ...member,
-            syncAction: getWorkspaceMemberSyncAction(member),
+            syncState: getWorkspaceMemberSyncAction(member),
           })
         )
 
@@ -567,9 +567,9 @@ export function getWorkspaceService(
       const members = await this.getMembersForGroup(handle, groupSlug)
 
       const actions = members.map(async (member) => {
-        const { groupMember, workspaceMember, syncAction } = member
+        const { groupMember, workspaceMember, syncState } = member
 
-        switch (syncAction) {
+        switch (syncState) {
           case "PENDING_LINK":
           case "SYNCED": {
             return null

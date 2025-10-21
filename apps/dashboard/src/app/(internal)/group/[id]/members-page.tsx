@@ -81,7 +81,7 @@ export const GroupMembersPage: FC = () => {
         ({
           groupMember,
           workspaceMember: null,
-          syncAction: "SYNCED",
+          syncState: "SYNCED",
         }) as const
     )
   }, [membersWithoutWorkspace])
@@ -102,11 +102,11 @@ export const GroupMembersPage: FC = () => {
         return aIsActive ? -1 : 1
       }
 
-      if (a.syncAction === b.syncAction) {
+      if (a.syncState === b.syncState) {
         return sortByStartDate(a.groupMember, b.groupMember)
       }
 
-      return SYNC_ACTION_SORT_PRIORITY[a.syncAction] - SYNC_ACTION_SORT_PRIORITY[b.syncAction]
+      return SYNC_ACTION_SORT_PRIORITY[a.syncState] - SYNC_ACTION_SORT_PRIORITY[b.syncState]
     })
   }, [members, group.slug])
 
@@ -121,7 +121,7 @@ export const GroupMembersPage: FC = () => {
   }, [membersList])
 
   const memberStatuses = useMemo(() => {
-    return Object.groupBy(membersList, ({ syncAction }) => syncAction)
+    return Object.groupBy(membersList, ({ syncState }) => syncState)
   }, [membersList])
 
   const toAdd = memberStatuses.PENDING_ADD?.length ?? 0
@@ -257,7 +257,7 @@ const MemberTable = ({ table, groupSlug, enableRowBackgroundColor = false }: Mem
                 Boolean(row.original.groupMember) && !getActiveGroupMembership(row.original.groupMember, groupSlug)
 
               const background = enableRowBackgroundColor
-                ? getRowBackground(row.original.syncAction, isInactive)
+                ? getRowBackground(row.original.syncState, isInactive)
                 : undefined
 
               return (
@@ -275,12 +275,12 @@ const MemberTable = ({ table, groupSlug, enableRowBackgroundColor = false }: Mem
   )
 }
 
-const getRowBackground = (syncAction: WorkspaceMemberSyncState, isInactive: boolean) => {
-  if (syncAction === "PENDING_ADD" || syncAction === "PENDING_REMOVE") {
+const getRowBackground = (syncState: WorkspaceMemberSyncState, isInactive: boolean) => {
+  if (syncState === "PENDING_ADD" || syncState === "PENDING_REMOVE") {
     return "var(--mantine-color-red-light)"
   }
 
-  if (syncAction === "PENDING_LINK") {
+  if (syncState === "PENDING_LINK") {
     return "var(--mantine-color-yellow-light)"
   }
 

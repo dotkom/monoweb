@@ -22,7 +22,7 @@ interface Props {
   data: {
     groupMember: GroupMember | null
     workspaceMember: WorkspaceMember | null
-    syncAction: WorkspaceMemberSyncState
+    syncState: WorkspaceMemberSyncState
   }[]
 }
 
@@ -41,7 +41,7 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
   const columnHelper = createColumnHelper<{
     groupMember: GroupMember | null
     workspaceMember: WorkspaceMember | null
-    syncAction: WorkspaceMemberSyncState
+    syncState: WorkspaceMemberSyncState
   }>()
 
   const columns = useMemo(() => {
@@ -90,7 +90,7 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
             return (
               <Stack gap={0}>
                 <SyncActionStatusText
-                  syncAction={info.row.original.syncAction}
+                  syncState={info.row.original.syncState}
                   inMemberList={Boolean(info.row.original.workspaceMember)}
                 />
                 {email && <Text size="xs">{email}</Text>}
@@ -143,10 +143,10 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
 }
 
 const SyncActionStatusText = ({
-  syncAction,
+  syncState,
   inMemberList,
-}: { syncAction: WorkspaceMemberSyncState; inMemberList: boolean }) => {
-  switch (syncAction) {
+}: { syncState: WorkspaceMemberSyncState; inMemberList: boolean }) => {
+  switch (syncState) {
     case "PENDING_ADD": {
       return (
         <Tooltip label="Brukeren er i gruppen, men ikke i e-postlisten">
