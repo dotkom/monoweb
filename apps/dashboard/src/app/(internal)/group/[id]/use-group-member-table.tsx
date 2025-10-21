@@ -3,9 +3,8 @@
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   type GroupId,
-  type GroupMember,
   type GroupMembership,
-  type WorkspaceMember,
+  type WorkspaceMemberLink,
   type WorkspaceMemberSyncState,
   getActiveGroupMembership,
 } from "@dotkomonline/types"
@@ -19,11 +18,7 @@ import { useMemo } from "react"
 interface Props {
   showWorkspaceColumns: boolean
   groupId: GroupId
-  data: {
-    groupMember: GroupMember | null
-    workspaceMember: WorkspaceMember | null
-    syncState: WorkspaceMemberSyncState
-  }[]
+  data: WorkspaceMemberLink[]
 }
 
 function formatRoles(memberships: GroupMembership[]) {
@@ -38,11 +33,7 @@ function formatMembershipDate(date: Date | undefined | null) {
 export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Props) => {
   const userId = useSession()?.sub ?? null
 
-  const columnHelper = createColumnHelper<{
-    groupMember: GroupMember | null
-    workspaceMember: WorkspaceMember | null
-    syncState: WorkspaceMemberSyncState
-  }>()
+  const columnHelper = createColumnHelper<WorkspaceMemberLink>()
 
   const columns = useMemo(() => {
     const cols = [
@@ -89,7 +80,7 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
 
             return (
               <Stack gap={0}>
-                <SyncActionStatusText
+                <SyncStateIndicator
                   syncState={info.row.original.syncState}
                   inMemberList={Boolean(info.row.original.workspaceMember)}
                 />
@@ -142,7 +133,7 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
   })
 }
 
-const SyncActionStatusText = ({
+const SyncStateIndicator = ({
   syncState,
   inMemberList,
 }: { syncState: WorkspaceMemberSyncState; inMemberList: boolean }) => {

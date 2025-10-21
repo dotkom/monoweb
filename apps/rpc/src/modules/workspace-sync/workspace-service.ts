@@ -8,7 +8,9 @@ import {
   type User,
   type UserId,
   type WorkspaceGroup,
+  type WorkspaceGroupLink,
   type WorkspaceMember,
+  type WorkspaceMemberLink,
   type WorkspaceMemberSyncState,
   type WorkspaceUser,
   getActiveGroupMembership,
@@ -55,25 +57,13 @@ export interface WorkspaceService {
   getWorkspaceUser(handle: DBHandle, userId: UserId, customKey?: string): Promise<WorkspaceUser>
 
   // Groups
-  createWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<{ group: Group; workspaceGroup: WorkspaceGroup }>
+  createWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<WorkspaceGroupLink>
   findWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, customKey?: string): Promise<WorkspaceGroup | null>
   getWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, customKey?: string): Promise<WorkspaceGroup>
   addUserIntoWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<WorkspaceMember>
   removeUserFromWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<boolean>
-  getMembersForGroup(
-    handle: DBHandle,
-    groupSlug: GroupId
-  ): Promise<
-    {
-      groupMember: GroupMember | null
-      workspaceMember: WorkspaceMember | null
-      syncState: WorkspaceMemberSyncState
-    }[]
-  >
-  getWorkspaceGroupsForWorkspaceUser(
-    handle: DBHandle,
-    userId: UserId
-  ): Promise<{ group: Group; workspaceGroup: WorkspaceGroup }[]>
+  getMembersForGroup(handle: DBHandle, groupSlug: GroupId): Promise<WorkspaceMemberLink[]>
+  getWorkspaceGroupsForWorkspaceUser(handle: DBHandle, userId: UserId): Promise<WorkspaceGroupLink[]>
   synchronizeWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<boolean>
 }
 
@@ -90,9 +80,9 @@ export function getWorkspaceService(
   function joinGroupAndWorkspaceMembers(
     groupMembers: GroupMember[],
     workspaceUsers: WorkspaceMember[]
-  ): { groupMember: GroupMember | null; workspaceMember: WorkspaceMember | null }[] {
-    const rightJoin: { groupMember: GroupMember | null; workspaceMember: WorkspaceMember | null }[] = []
-    const leftJoin = new Map<string, { groupMember: GroupMember | null; workspaceMember: WorkspaceMember | null }>()
+  ): Omit<WorkspaceMemberLink, "syncState">[] {
+    const rightJoin: Omit<WorkspaceMemberLink, "syncState">[] = []
+    const leftJoin = new Map<string, Omit<WorkspaceMemberLink, "syncState">>()
 
     for (const workspaceMember of workspaceUsers) {
       invariant(workspaceMember.id, "Workspace member must have an ID")
@@ -258,16 +248,13 @@ export function getWorkspaceService(
     return randomBytes(TEMPORARY_PASSWORD_LENGTH).toString("base64").slice(0, TEMPORARY_PASSWORD_LENGTH)
   }
 
-  function getWorkspaceMemberSyncAction(member: {
-    groupMember: GroupMember | null
-    workspaceMember: WorkspaceMember | null
-  }): WorkspaceMemberSyncState {
-    if (member.groupMember && !member.groupMember?.workspaceUserId) {
+  function getWorkspaceMemberSyncState(memberLink: Omit<WorkspaceMemberLink, "syncState">): WorkspaceMemberSyncState {
+    if (memberLink.groupMember && !memberLink.groupMember?.workspaceUserId) {
       return "PENDING_LINK"
     }
 
-    const isActiveMember = getActiveGroupMembership(member.groupMember) !== null
-    const isInWorkspace = member.workspaceMember !== null
+    const isActiveMember = getActiveGroupMembership(memberLink.groupMember) !== null
+    const isInWorkspace = memberLink.workspaceMember !== null
 
     if (isActiveMember && !isInWorkspace) {
       return "PENDING_ADD"
@@ -506,11 +493,7 @@ export function getWorkspaceService(
     async getMembersForGroup(handle, groupId) {
       const group = await groupService.getById(handle, groupId)
 
-      const workspaceMembers: {
-        groupMember: GroupMember | null
-        workspaceMember: WorkspaceMember | null
-        syncState: WorkspaceMemberSyncState
-      }[] = []
+      const workspaceMembers: WorkspaceMemberLink[] = []
 
       let pageToken: string | undefined = undefined
 
@@ -524,14 +507,16 @@ export function getWorkspaceService(
 
         const members = await groupService.getMembers(handle, group.slug)
 
-        const membersWithSyncAction = joinGroupAndWorkspaceMembers([...members.values()], response.data.members).map(
-          (member) => ({
-            ...member,
-            syncState: getWorkspaceMemberSyncAction(member),
-          })
+        const joinedGroupAndWorkspaceMembers = joinGroupAndWorkspaceMembers(
+          [...members.values()],
+          response.data.members
         )
+        const workspaceMemberLink = joinedGroupAndWorkspaceMembers.map((member) => ({
+          ...member,
+          syncState: getWorkspaceMemberSyncState(member),
+        }))
 
-        workspaceMembers.push(...membersWithSyncAction)
+        workspaceMembers.push(...workspaceMemberLink)
 
         pageToken = response.data.nextPageToken ?? undefined
       } while (pageToken !== undefined)
@@ -542,7 +527,7 @@ export function getWorkspaceService(
     async getWorkspaceGroupsForWorkspaceUser(handle, userId) {
       const user = await userService.getById(handle, userId)
 
-      const groups: { group: Group; workspaceGroup: WorkspaceGroup }[] = []
+      const groups: WorkspaceGroupLink[] = []
       let pageToken: string | undefined = undefined
 
       do {

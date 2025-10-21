@@ -1,10 +1,9 @@
 import {
-  GroupMemberSchema,
   GroupSchema,
   UserSchema,
+  WorkspaceGroupLinkSchema,
   WorkspaceGroupSchema,
-  WorkspaceMemberSchema,
-  WorkspaceMemberSyncStateSchema,
+  WorkspaceMemberLinkSchema,
   WorkspaceUserSchema,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
@@ -141,12 +140,7 @@ export const workspaceRouter = t.router({
         groupSlug: GroupSchema.shape.slug,
       })
     )
-    .output(
-      z.object({
-        group: GroupSchema,
-        workspaceGroup: WorkspaceGroupSchema,
-      })
-    )
+    .output(WorkspaceGroupLinkSchema)
     .mutation(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
@@ -207,15 +201,7 @@ export const workspaceRouter = t.router({
         groupSlug: GroupSchema.shape.slug,
       })
     )
-    .output(
-      z
-        .object({
-          groupMember: GroupMemberSchema.nullable(),
-          workspaceMember: WorkspaceMemberSchema.nullable(),
-          syncState: WorkspaceMemberSyncStateSchema,
-        })
-        .array()
-    )
+    .output(WorkspaceMemberLinkSchema.array())
     .query(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
@@ -234,14 +220,7 @@ export const workspaceRouter = t.router({
         userId: UserSchema.shape.id,
       })
     )
-    .output(
-      z
-        .object({
-          group: GroupSchema,
-          workspaceGroup: WorkspaceGroupSchema,
-        })
-        .array()
-    )
+    .output(WorkspaceGroupLinkSchema.array())
     .query(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")

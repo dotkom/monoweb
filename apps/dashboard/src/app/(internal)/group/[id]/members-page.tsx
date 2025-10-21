@@ -2,6 +2,7 @@ import { UserSearch } from "@/app/(internal)/user/components/user-search"
 import {
   type GroupId,
   type GroupMember,
+  type WorkspaceMemberLink,
   type WorkspaceMemberSyncState,
   getActiveGroupMembership,
 } from "@dotkomonline/types"
@@ -37,10 +38,10 @@ import { useGroupDetailsContext } from "./provider"
 import { useGroupMemberTable } from "./use-group-member-table"
 
 // Lower number means higher priority
-const SYNC_ACTION_SORT_PRIORITY: Record<WorkspaceMemberSyncState, number> = {
-  PENDING_ADD: 1,
-  PENDING_REMOVE: 2,
-  PENDING_LINK: 3,
+const SYNC_STATE_SORT_PRIORITY: Record<WorkspaceMemberSyncState, number> = {
+  PENDING_LINK: 1,
+  PENDING_ADD: 2,
+  PENDING_REMOVE: 3,
   SYNCED: 4,
 }
 
@@ -68,33 +69,34 @@ export const GroupMembersPage: FC = () => {
   // We don't want to display workspace columns if we do not fetch workspace members
   // And we do not want to color the rows based on sync action if we do not fetch workspace members
   // Hence, we have two calls to fetch members, one with workspace members and one with just group members
-  // To make things easier, we then transform the group member list to the same shape as the workspace member list
   const showWorkspaceColumns = Boolean(group.workspaceGroupId)
-  const { members: membersWithWorkspace } = useWorkspaceMembersAllQuery(group.slug, showWorkspaceColumns)
-  const { members: membersWithoutWorkspace } = useGroupMembersAllQuery(group.slug, !showWorkspaceColumns)
+  const { members: workspaceMembers } = useWorkspaceMembersAllQuery(group.slug, showWorkspaceColumns)
+  const { members: groupMembers } = useGroupMembersAllQuery(group.slug, !showWorkspaceColumns)
 
-  const lol = useMemo(() => {
-    if (!membersWithoutWorkspace) return []
+  // To make things easier, we then transform the group member list to the same shape as the workspace member list
+  // This lets us work with a single type regardless of whether we are showing workspace columns or not
+  const mappedGroupMembers = useMemo(() => {
+    if (!groupMembers) return []
 
-    return [...membersWithoutWorkspace.values()].map(
+    return [...groupMembers.values()].map(
       (groupMember) =>
         ({
           groupMember,
           workspaceMember: null,
           syncState: "SYNCED",
-        }) as const
+        }) satisfies WorkspaceMemberLink
     )
-  }, [membersWithoutWorkspace])
+  }, [groupMembers])
 
-  const members = showWorkspaceColumns ? membersWithWorkspace : lol
+  const memberLinks = showWorkspaceColumns ? workspaceMembers : mappedGroupMembers
 
   const openCreate = useCreateGroupMemberModal({ group })
 
   const membersList = useMemo(() => {
-    if (!members) return []
+    if (!memberLinks) return []
 
     // Sort by active members first, then by sync action, then by start date
-    return members.toSorted((a, b) => {
+    return memberLinks.toSorted((a, b) => {
       const aIsActive = getActiveGroupMembership(a.groupMember, group.slug) !== null
       const bIsActive = getActiveGroupMembership(b.groupMember, group.slug) !== null
 
@@ -106,9 +108,9 @@ export const GroupMembersPage: FC = () => {
         return sortByStartDate(a.groupMember, b.groupMember)
       }
 
-      return SYNC_ACTION_SORT_PRIORITY[a.syncState] - SYNC_ACTION_SORT_PRIORITY[b.syncState]
+      return SYNC_STATE_SORT_PRIORITY[a.syncState] - SYNC_STATE_SORT_PRIORITY[b.syncState]
     })
-  }, [members, group.slug])
+  }, [memberLinks, group.slug])
 
   const membersTable = useGroupMemberTable({
     data: membersList,
