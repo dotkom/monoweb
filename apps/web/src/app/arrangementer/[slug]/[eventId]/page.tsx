@@ -169,6 +169,8 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
       </div>
 
       <div className="flex flex-1 flex-col gap-8 sm:gap-4">
+        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
+        <TimeLocationBox event={event} />
         {attendance !== null && (
           <>
             <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
@@ -179,13 +181,10 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
               parentEvent={parentEvent}
               parentAttendance={parentAttendance}
               user={user}
+              event={event}
             />
           </>
         )}
-
-        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
-
-        <TimeLocationBox event={event} />
       </div>
     </div>
   )

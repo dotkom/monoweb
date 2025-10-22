@@ -1,3 +1,6 @@
+import { createCloudFrontUrl } from "@dotkomonline/utils"
+import { env } from "./env"
+
 // Expected response: 204 No Content
 export async function uploadFileToS3PresignedUrl(
   file: File,
@@ -24,7 +27,7 @@ export async function uploadFileToS3PresignedUrl(
       throw new Error("File upload failed: No location header")
     }
 
-    return location
+    return createCloudFrontUrl(env.AWS_CLOUDFRONT_URL, fields.key)
   } catch (e) {
     throw new Error(`File upload failed: ${e}`)
   }

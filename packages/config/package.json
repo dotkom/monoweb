@@ -17,12 +17,12 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@radix-ui/colors": "3.0.0",
-    "@tailwindcss/postcss": "4.1.13",
-    "@tailwindcss/typography": "0.5.16",
+    "@tailwindcss/postcss": "4.1.14",
+    "@tailwindcss/typography": "0.5.19",
     "postcss": "8.5.6",
-    "tailwindcss": "4.1.13",
+    "tailwindcss": "4.1.14",
     "tailwindcss-animate": "1.0.7",
     "tailwindcss-radix": "4.0.2",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   }
 }

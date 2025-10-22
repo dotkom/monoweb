@@ -135,8 +135,9 @@ export async function createServiceLayer(
 ) {
   async function executeAuditedTransaction<T>(fn: (tx: DBHandle) => Promise<T>, userId: UserId | null): Promise<T> {
     return clients.prisma.$transaction(async (tx) => {
-      await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId !== null ? `'${userId}'` : "NULL"}, TRUE)`
-
+      if (userId !== null) {
+        await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, true)`
+      }
       return fn(tx)
     })
   }
@@ -184,7 +185,7 @@ export async function createServiceLayer(
   const groupService = getGroupService(groupRepository, userService)
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
-  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, groupService)
+  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, userService, emailService)
   const paymentService = getPaymentService(clients.stripe)
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)

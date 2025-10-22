@@ -15,7 +15,6 @@ package-lock.json
 # typescript
 *.tsbuildinfo
 
-.turbo
 dist/
 build/
 coverage/

@@ -28,7 +28,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       employment: employments.fulltime,
       applicationLink: "https://bekk.no/jobs", // Placeholder link
       applicationEmail: "bekk@bekk.no",
-      deadlineAsap: false, // Placeholder value
+      rollingAdmission: false, // Placeholder value
     },
     {
       companyId: companyIds[1],
@@ -43,7 +43,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       employment: employments.other,
       applicationLink: "https://www.jrc.no/jobs", // Placeholder link
       applicationEmail: "test@jrc.no",
-      deadlineAsap: false, // Placeholder value
+      rollingAdmission: false, // Placeholder value
     },
     {
       companyId: companyIds[1],
@@ -59,7 +59,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-10-19T23:55:55+02:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.internship,
     },
     {
@@ -76,7 +76,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-10-22T23:59:00+02:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.parttime,
     },
     {
@@ -93,7 +93,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-11-05T23:59:59+01:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.internship,
     },
     {
@@ -110,7 +110,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-12-01T23:59:59+01:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.internship,
     },
     {
@@ -127,7 +127,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-11-02T23:59:59+01:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.internship,
     },
     {
@@ -144,7 +144,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-11-05T23:59:59+01:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.internship,
     },
     {
@@ -160,7 +160,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-10-31T23:59:59+01:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.internship,
     },
     {
@@ -176,7 +176,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-11-30T23:59:59+01:00"),
-      deadlineAsap: true,
+      rollingAdmission: true,
       employment: employments.fulltime,
     },
     {
@@ -192,7 +192,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-10-31T23:59:59+01:00"),
-      deadlineAsap: true,
+      rollingAdmission: true,
       employment: employments.fulltime,
     },
     {
@@ -209,7 +209,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-11-01T23:59:59+01:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.internship,
     },
     {
@@ -226,7 +226,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-11-12T23:59:59+01:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.internship,
     },
     {
@@ -244,7 +244,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: new Date("2023-10-31T23:59:59+01:00"),
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.fulltime,
     },
     {
@@ -261,7 +261,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       featured: false,
       hidden: false,
       deadline: null,
-      deadlineAsap: false,
+      rollingAdmission: false,
       employment: employments.fulltime,
     },
   ] as const satisfies Prisma.JobListingCreateManyInput[]

@@ -109,7 +109,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-6">
         <div className="w-full flex flex-col gap-1">
           <TextInput label="Brukernavn" placeholder="supermann99" required {...register("profileSlug")} />
           {errors.profileSlug && (
@@ -167,17 +167,14 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
               <Label htmlFor="pfp" className="text-base">
                 Profilbilde
               </Label>
-              <div className="flex flex-row items-center gap-2 w-full [&>div:last-child]:grow">
-                <input
-                  id="pfp"
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => onFileChange(event, onChange)}
-                  placeholder="https://example.com/image.jpg"
-                  className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                />
-                <TextInput value={value ?? ""} onChange={onChange} placeholder="https://..." />
-              </div>
+              <input
+                id="pfp"
+                type="file"
+                accept="image/*"
+                onChange={(event) => onFileChange(event, onChange)}
+                placeholder="https://example.com/image.jpg"
+                className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
               {errors.imageUrl && (
                 <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
                   {errors.imageUrl?.message ?? "En feil oppstod"}
@@ -187,7 +184,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 <img
                   src={value}
                   alt="Profilbilde"
-                  className="mt-2 min-w-24 w-96 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-600"
+                  className="mt-2 min-w-24 w-72 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-600"
                 />
               )}
             </div>

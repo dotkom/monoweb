@@ -10,6 +10,7 @@ import {
   type GroupId,
   type UserId,
 } from "@dotkomonline/types"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
@@ -363,12 +364,17 @@ export function getEventRepository(): EventRepository {
       return event
     },
     async findUnansweredByUser(handle, userId) {
+      const now = getCurrentUTC()
+
       const events = await handle.event.findMany({
         where: {
           AND: [
             {
               feedbackForm: {
                 isActive: true,
+                answerDeadline: {
+                  gte: now,
+                },
                 answers: {
                   none: {
                     attendee: {
@@ -390,7 +396,7 @@ export function getEventRepository(): EventRepository {
                 },
               },
               end: {
-                lt: new Date(),
+                lt: now,
               },
             },
           ],

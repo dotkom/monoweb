@@ -18,9 +18,11 @@ import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
+import { EventRules } from "./EventRules"
 import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
@@ -34,12 +36,14 @@ interface AttendanceCardProps {
   initialAttendance: Attendance
   initialPunishment: Punishment | null
   user: User | null
+  event: Event
   parentEvent: Event | null
   parentAttendance: Attendance | null
 }
 
 export const AttendanceCard = ({
   user,
+  event,
   initialAttendance,
   initialPunishment,
   parentAttendance,
@@ -168,8 +172,8 @@ export const AttendanceCard = ({
   const registerForAttendance = () => {
     registerMutation.mutate({ attendanceId: attendance.id })
   }
-  const deregisterForAttendance = () => {
-    deregisterMutation.mutate({ attendanceId: attendance.id })
+  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
+    deregisterMutation.mutate({ attendanceId: attendance.id, deregisterReason })
   }
 
   const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
@@ -234,17 +238,17 @@ export const AttendanceCard = ({
         parentAttendance={parentAttendance}
         punishment={punishment}
         user={user}
+        event={event}
         isLoading={isLoading}
       />
 
-      <div className="flex flex-row flex-wrap gap-4 text-gray-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
-        {/* Removed until we add event rules */}
-        {/* <div className="flex flex-row gap-1 items-center cursor-pointer">
-          <Icon icon="tabler:book-2" className="text-lg" />
-          <Text className="text-sm">Arrangementregler</Text>
-        </div> */}
+      <div className="flex flex-row flex-wrap gap-4">
+        <EventRules className="text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />
 
-        <Link href="/innstillinger/profil" className="flex flex-row gap-1 items-center">
+        <Link
+          href="/innstillinger/profil"
+          className="flex flex-row gap-1 items-center text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+        >
           <Icon icon="tabler:edit" className="text-lg" />
           <Text className="text-sm">Oppdater matallergier</Text>
         </Link>

@@ -84,3 +84,7 @@ export const createAbsoluteEventPageUrl = (
 
   return `${origin}/arrangementer/${slug}/${eventId}`
 }
+
+export const createCloudFrontUrl = (cloudFrontUrl: string, key: string): string => {
+  return new URL(key, cloudFrontUrl).toString()
+}

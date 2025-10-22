@@ -15,9 +15,9 @@
   "scripts": {
     "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif -F @dotkomonline/emails build",
     "lint": "pnpm run -r lint",
-    "lint-check": "turbo run lint-check",
-    "test": "turbo run test",
-    "test:it": "turbo run test:it",
+    "lint-check": "pnpm run -r lint-check",
+    "test": "pnpm run -r test",
+    "test:it": "pnpm run -r test:it",
     "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
     "dev:web": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
     "prisma": "pnpm -F @dotkomonline/db prisma",
@@ -28,9 +28,8 @@
     "migrate:deploy-with-fixtures": "pnpm -F @dotkomonline/db prisma migrate deploy && pnpm -F @dotkomonline/db apply-fixtures",
     "migrate:staging": "doppler run --config stg --project monoweb-rpc -- pnpm migrate:deploy",
     "migrate:prod": "doppler run --config prd --project monoweb-rpc -- pnpm migrate:deploy",
-    "storybook": "turbo run storybook --filter=storybook",
-    "type-check": "turbo run type-check",
-    "clean": "turbo run clean",
+    "storybook": "pnpm run -r --filter=storybook storybook",
+    "type-check": "pnpm run -r type-check",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "shell": "pnpm -F @dotkomonline/rpc shell",
     "give-me-staff": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm give-me-staff",
@@ -44,7 +43,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "turbo": "2.5.6",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   }
 }

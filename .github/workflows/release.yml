@@ -30,12 +30,6 @@ jobs:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
           fetch-depth: 1
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
       - uses: pnpm/action-setup@v2
         with:
           version: 10.15.1
@@ -86,42 +80,6 @@ jobs:
           environment: prd
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
-  build-kvittering-backend:
-    name: kvittering-backend
-    runs-on: ubuntu-24.04
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-kvittering-backend
-        with:
-          deploy: true
-          environment: prd
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
-  build-kvittering-frontend:
-    name: kvittering-frontend
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-kvittering-frontend
-        with:
-          deploy: true
-          environment: prd
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
   build-rpc:
     name: rpc
     runs-on: ubuntu-24.04-arm
@@ -164,8 +122,6 @@ jobs:
     needs:
       - build-brevduen
       - build-dashboard
-      - build-kvittering-backend
-      - build-kvittering-frontend
       - build-rpc
       - build-web
     steps:

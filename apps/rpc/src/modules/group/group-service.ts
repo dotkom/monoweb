@@ -17,6 +17,7 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
+import invariant from "tiny-invariant"
 import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
@@ -56,7 +57,7 @@ export interface GroupService {
     data: GroupMembershipWrite,
     roleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
-  createRole(handle: DBHandle, data: GroupRoleWrite): Promise<void>
+  createRole(handle: DBHandle, data: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, id: GroupRoleId, role: GroupRoleWrite): Promise<GroupRole>
 }
 
@@ -234,7 +235,11 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
       return await groupRepository.updateMembership(handle, id, data, roleIds)
     },
     async createRole(handle, data) {
-      await groupRepository.createRoles(handle, [data])
+      const result = await groupRepository.createRoles(handle, [data])
+      const role = result.at(0)
+      invariant(role !== undefined, "Role should exist after creation")
+
+      return role
     },
     async updateRole(handle, id, role) {
       return await groupRepository.updateRole(handle, id, role)

@@ -103,7 +103,7 @@ export const useJobListingWriteForm = ({
         placeholder: "apply@company.com",
         type: "email",
       }),
-      deadlineAsap: createCheckboxInput({
+      rollingAdmission: createCheckboxInput({
         label: "Frist så snart som mulig",
       }),
       locationIds: createTagInput({

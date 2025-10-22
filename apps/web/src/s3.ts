@@ -1,4 +1,6 @@
+import { createCloudFrontUrl } from "@dotkomonline/utils"
 import { useMutation } from "@tanstack/react-query"
+import { env } from "./env"
 import { useTRPC } from "./utils/trpc/client"
 
 /**
@@ -47,6 +49,8 @@ export const useCreateAvatarUploadURL = () => {
   const presignedPostMut = useMutation(trpc.user.createAvatarUploadURL.mutationOptions())
   return async (file: File) => {
     const presignedPost = await presignedPostMut.mutateAsync()
-    return await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
+    await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
+
+    return createCloudFrontUrl(env.AWS_CLOUDFRONT_URL, presignedPost.fields.key)
   }
 }

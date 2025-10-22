@@ -30,7 +30,7 @@ The monorepo is organized as follows:
 - `docs/`: Contains the documentation
 - `tools/`: Internal developer tools, such as the Monoweb Shell CLI
 
-We use [PNPM workspaces](https://pnpm.io/workspaces) along with [Turborepo](https://turbo.build/repo/docs) to manage the
+We use [PNPM workspaces](https://pnpm.io/workspaces) to manage the
 monorepo. All dependencies for all libraries and applications are managed by PNPM.
 
 All of the code in the Monorepo is TypeScript.

@@ -16,6 +16,8 @@ import {
   type AttendeeWrite,
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
+  type DeregisterReason,
+  type DeregisterReasonWrite,
   type Event,
   type GroupType,
   type Membership,
@@ -49,7 +51,7 @@ import {
   ResourceExhaustedError,
 } from "../../error"
 import type { EmailService } from "../email/email-service"
-import { emails } from "../email/email-template"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import type { MarkService } from "../mark/mark-service"
@@ -218,6 +220,7 @@ export interface AttendanceService {
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
   ): Promise<void>
   executeSendFeedbackFormLinkEmails(handle: DBHandle): Promise<void>
+  executeVerifyAttendeeAttendedTask(handle: DBHandle): Promise<void>
 
   /**
    * Register that an attendee has physically attended an event.
@@ -233,6 +236,8 @@ export interface AttendanceService {
     mergeTime: TZDate | null
   ): Promise<TaskId | null>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
+
+  createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
 }
 
 export function getAttendanceService(
@@ -259,7 +264,7 @@ export function getAttendanceService(
     // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
     void emailService.send(
-      "noreply@online.ntnu.no",
+      DEFAULT_EMAIL_SOURCE,
       organizerEmails,
       [attendee.user.email],
       [],
@@ -1169,6 +1174,58 @@ export function getAttendanceService(
 
       await Promise.all(promises)
     },
+    async executeVerifyAttendeeAttendedTask(handle) {
+      const eventsEndedYesterday = await eventService.findEvents(handle, {
+        byEndDate: {
+          min: new TZDate(startOfYesterday()),
+          max: new TZDate(endOfYesterday()),
+        },
+      })
+
+      const errors: Error[] = []
+
+      for (const event of eventsEndedYesterday) {
+        if (!event.attendanceId) {
+          return
+        }
+
+        try {
+          const attendance = await this.getAttendanceById(handle, event.attendanceId)
+          const attendeesNotAttended = attendance.attendees.filter(
+            (attendee) => attendee.reserved && !attendee.attendedAt
+          )
+
+          if (attendeesNotAttended.length === 0) {
+            continue
+          }
+
+          const mark = await markService.createMark(
+            handle,
+            {
+              title: `Manglende oppmøte på ${event.title}`,
+              duration: DEFAULT_MARK_DURATION,
+              type: "MISSED_ATTENDANCE",
+              weight: 3,
+              details: null,
+            },
+            event.hostingGroups.map((group) => group.slug)
+          )
+
+          await Promise.all(
+            attendeesNotAttended.map((attendee) => personalMarkService.addToUser(handle, attendee.user.id, mark.id))
+          )
+        } catch (e) {
+          logger.error("Received error when attempting to create marks: %o", e)
+          if (e instanceof Error) {
+            errors.push(e)
+          }
+        }
+      }
+
+      if (errors.length !== 0) {
+        throw new AggregateError(errors, "Failed to give marks to one or more attendees")
+      }
+    },
     async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
@@ -1252,6 +1309,9 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
+    },
+    async createDeregisterReason(handle, data) {
+      return await attendanceRepository.createDeregisterReason(handle, data)
     },
   }
 }

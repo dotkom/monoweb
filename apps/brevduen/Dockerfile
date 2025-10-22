@@ -3,24 +3,16 @@ FROM node:22-alpine@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5f
 ARG SENTRY_RELEASE
 ARG DOPPLER_ENVIRONMENT
 
-FROM base AS builder
-WORKDIR /app
-
-RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
-COPY apps ./apps
-COPY packages ./packages
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-RUN turbo prune @dotkomonline/brevduen --docker
-
 FROM base AS installer
 WORKDIR /app
 
-RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
-COPY --from=builder /app/out/full .
+RUN apk update && apk add --no-cache libc6-compat
+RUN npm install -g pnpm@10.15.1 --ignore-scripts
+COPY apps ./apps
+COPY packages ./packages
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --ignore-scripts
-
-RUN pnpm run -F @dotkomonline/emails build
+RUN pnpm run -r --filter @dotkomonline/emails build
 
 # Install for production
 RUN pnpm install --prod --ignore-scripts
@@ -42,6 +34,5 @@ RUN adduser --system --uid 1001 brevduen
 USER brevduen
 
 COPY --from=installer --chown=brevduen:nodejs --chmod=755 /app .
-COPY --from=builder --chown=brevduen:nodejs --chmod=755 /app/out/full .
 
 CMD node --loader ./apps/brevduen/runtime.mjs --experimental-strip-types ./apps/brevduen/src/index.ts

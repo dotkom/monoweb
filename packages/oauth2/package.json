@@ -26,7 +26,6 @@
     }
   },
   "scripts": {
-    "clean": "rm -rf .turbo node_modules",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
@@ -56,7 +55,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
-    "typescript": "5.9.2",
+    "typescript": "5.9.3",
     "vitest": "3.1.4",
     "vitest-mock-extended": "3.1.0"
   }

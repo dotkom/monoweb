@@ -57,7 +57,6 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput = {}
 
 export const useSetSelectionsOptionsMutation = () => {
   const trpc = useTRPC()
-  const queryClient = useQueryClient()
 
   return useMutation(trpc.event.attendance.updateSelectionResponses.mutationOptions({}))
 }

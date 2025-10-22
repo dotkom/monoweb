@@ -1,22 +1,18 @@
 FROM node:22-alpine@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5fe231d63de5b AS base
 
-FROM base AS builder
-WORKDIR /app
-
-RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
-COPY apps ./apps
-COPY packages ./packages
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-RUN turbo prune @dotkomonline/invoicification --docker
-
 FROM base AS installer
 WORKDIR /app
 
-RUN npm install -g pnpm@10.15.1 turbo@2.0.14 --ignore-scripts
-COPY --from=builder /app/out/full .
+RUN apk update && apk add --no-cache libc6-compat
+RUN npm install -g pnpm@10.15.1 --ignore-scripts
+COPY apps ./apps
+COPY packages ./packages
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
 RUN pnpm install --ignore-scripts
-RUN turbo run build --filter @dotkomonline/invoicification
+RUN pnpm run -r --filter @dotkomonline/invoicification build
+
+RUN pnpm install --prod --ignore-scripts
 
 FROM base AS runner
 WORKDIR /app
