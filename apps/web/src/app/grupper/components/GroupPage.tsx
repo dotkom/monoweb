@@ -32,7 +32,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     }),
   ])
 
-  const showMembers = group.type !== "ASSOCIATED"
+  const showMembers = group.type !== "ASSOCIATED" && group.memberVisibility !== "NONE"
 
   // We do not show members for ASSOCIATED types because they often have members outside of Online
   // meaning the member list would be incomplete.
