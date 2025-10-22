@@ -113,7 +113,7 @@ export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | n
   switch (name) {
     case "ALL_MEMBERS":
       return "Alle medlemmer"
-    case "WITH_ROLES": 
+    case "WITH_ROLES":
       return "Alle med roller"
     case "LEADER":
       return "Kun leder"

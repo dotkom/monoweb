@@ -32,11 +32,11 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     }),
   ])
 
-  const memberVisibility = group.type !== "ASSOCIATED"
+  const showMembers = group.type !== "ASSOCIATED"
 
   // We do not show members for ASSOCIATED types because they often have members outside of Online
   // meaning the member list would be incomplete.
-  const members = memberVisibility ? await server.group.getMembers.query(slug) : new Map<UserId, GroupMember>()
+  const members = showMembers ? await server.group.getMembers.query(slug) : new Map<UserId, GroupMember>()
 
   const hasContactInfo = group.email || group.contactUrl
 
@@ -178,7 +178,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         </div>
       </div>
 
-      {memberVisibility && (
+      {showMembers && (
         <div className="flex flex-col gap-2">
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
