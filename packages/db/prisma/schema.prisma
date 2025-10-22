@@ -141,7 +141,7 @@ model Group {
   createdAt           DateTime              @default(now()) @db.Timestamptz(3)
   deactivatedAt       DateTime?
   workspaceGroupId    String?               @unique
-  membersVisibility   GroupMemberVisibility @default(ALL_MEMBERS)
+  showMembers         GroupMemberVisibility @default(ALL_MEMBERS)
 
   events      EventHostingGroup[]
   type        GroupType

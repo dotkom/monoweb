@@ -41,23 +41,24 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
   const hasContactInfo = group.email || group.contactUrl
 
   const membersToShow = [...members.values()].filter((member) => {
-    if (group.membersVisibility === "ALL_MEMBERS") {
+    if (group.showMembers === "ALL_MEMBERS") {
       return true
     }
 
-    if (group.membersVisibility === "LEADER") {
+    if (group.showMembers === "LEADER") {
       const membership = getLatestActiveMembership(member)
-      return membership?.roles.some((role) => role.type === "LEADER")
+      return membership?.roles.some((r) => r.type === "LEADER")
     }
 
-    if (group.membersVisibility === "NONE") {
+    if (group.showMembers === "NONE") {
       return false
     }
 
-    if (group.membersVisibility === "WITH_ROLES") {
+    if (group.showMembers === "WITH_ROLES") {
       const membership = getLatestActiveMembership(member)
-      return membership?.roles.some((role) => role.type !== "COSMETIC")
+      return membership?.roles && membership.roles.length > 0
     }
+
     return false
   })
 
