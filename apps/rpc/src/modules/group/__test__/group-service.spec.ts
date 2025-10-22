@@ -48,7 +48,7 @@ describe("GroupService", () => {
       email: "dotkom@online.ntnu.no",
       imageUrl: null,
       type: "COMMITTEE",
-      showMembers: "ALL_MEMBERS",
+      membersVisibility: "ALL_MEMBERS",
       shortDescription: null,
       contactUrl: null,
       deactivatedAt: null,
