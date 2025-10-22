@@ -1,16 +1,64 @@
+"use client"
+
 import type React from "react"
+import { useState, useEffect } from "react"
+import { useTheme } from "next-themes"
+import Confetti from "react-confetti"
 
 export const Logo: React.FC = () => {
+  const [showConfetti, setShowConfetti] = useState(false)
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const handlePartyHatClick = () => {
+    setShowConfetti(true)
+  }
+
+  const isDarkMode = mounted && resolvedTheme === "dark"
+
+  // Simple circle for snow
+  const drawSnowflake = (ctx: CanvasRenderingContext2D) => {
+    ctx.beginPath()
+    ctx.arc(0, 0, 6, 0, 2 * Math.PI)
+    ctx.fill()
+  }
+
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 643 167"
-      version="1.1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlSpace="preserve"
-      style={{ fillRule: "evenodd", clipRule: "evenodd", strokeLinejoin: "round", strokeMiterlimit: 2 }}
-    >
+    <>
+      {showConfetti && (
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <Confetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={true}
+            numberOfPieces={200}
+            gravity={0.1}
+            colors={isDarkMode ? ["#ffffff", "#e0e0e0", "#f0f0f0"] : ["#f4d03f", "#f7dc6f", "#f9e79f"]}
+            drawShape={drawSnowflake}
+          />
+        </div>
+      )}
+      <div className="relative inline-block">
+        <img
+          src="/christmas.png"
+          alt="Christmas hat"
+          className="absolute top-[-32%] left-[9%] w-[20%] h-auto z-10 cursor-pointer"
+          style={{ transform: "rotate(15deg)" }}
+          onClick={handlePartyHatClick}
+        />
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 643 167"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlSpace="preserve"
+        style={{ fillRule: "evenodd", clipRule: "evenodd", strokeLinejoin: "round", strokeMiterlimit: 2 }}
+      >
       <title>Online</title>
       <g transform="matrix(1,0,0,1,-2947.13,-68.8934)">
         <g transform="matrix(1,0,0,1,1956.71,0)">
@@ -84,5 +132,7 @@ export const Logo: React.FC = () => {
         </g>
       </g>
     </svg>
+      </div>
+    </>
   )
 }
