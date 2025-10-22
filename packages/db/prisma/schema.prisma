@@ -84,9 +84,10 @@ model User {
   personalMark      PersonalMark[]
   groupMemberships  GroupMembership[]
   memberships       Membership[]
-  givenMarks        PersonalMark[]    @relation("GivenBy")
-  attendeesRefunded Attendee[]        @relation(name: "RefundedBy")
+  givenMarks        PersonalMark[]     @relation("GivenBy")
+  attendeesRefunded Attendee[]         @relation(name: "RefundedBy")
   auditLogs         AuditLog[]
+  deregisterReasons DeregisterReason[]
 
   @@map("ow_user")
 }
@@ -307,8 +308,9 @@ model Event {
   parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
   children Event[] @relation("children")
 
-  companies     EventCompany[]
-  hostingGroups EventHostingGroup[]
+  companies         EventCompany[]
+  hostingGroups     EventHostingGroup[]
+  deregisterReasons DeregisterReason[]
 
   metadataImportId Int?
 
@@ -580,6 +582,18 @@ enum FeedbackQuestionType {
   @@map("feedback_question_type")
 }
 
+enum DeregisterReasonType {
+  SCHOOL            @map("SCHOOL")
+  WORK              @map("WORK")
+  ECONOMY           @map("ECONOMY")
+  TIME              @map("TIME")
+  SICK              @map("SICK")
+  NO_FAMILIAR_FACES @map("NO_FAMILIAR_FACES")
+  OTHER             @map("OTHER")
+
+  @@map("deregister_reason_type")
+}
+
 model FeedbackForm {
   id                 String   @id @default(uuid())
   eventId            String   @unique
@@ -681,4 +695,19 @@ model AuditLog {
   transactionId BigInt
 
   @@map("audit_log")
+}
+
+model DeregisterReason {
+  id           String               @id @default(uuid())
+  createdAt    DateTime             @default(now()) @db.Timestamptz(3)
+  registeredAt DateTime             @db.Timestamptz(3)
+  type         DeregisterReasonType
+  details      String?
+  userGrade    Int?
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id])
+  eventId      String
+  event        Event                @relation(fields: [eventId], references: [id])
+
+  @@map("deregister_reason")
 }

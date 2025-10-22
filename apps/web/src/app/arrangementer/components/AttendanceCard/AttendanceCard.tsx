@@ -18,6 +18,7 @@ import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
@@ -35,12 +36,14 @@ interface AttendanceCardProps {
   initialAttendance: Attendance
   initialPunishment: Punishment | null
   user: User | null
+  event: Event
   parentEvent: Event | null
   parentAttendance: Attendance | null
 }
 
 export const AttendanceCard = ({
   user,
+  event,
   initialAttendance,
   initialPunishment,
   parentAttendance,
@@ -169,8 +172,8 @@ export const AttendanceCard = ({
   const registerForAttendance = () => {
     registerMutation.mutate({ attendanceId: attendance.id })
   }
-  const deregisterForAttendance = () => {
-    deregisterMutation.mutate({ attendanceId: attendance.id })
+  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
+    deregisterMutation.mutate({ attendanceId: attendance.id, deregisterReason })
   }
 
   const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
@@ -235,6 +238,7 @@ export const AttendanceCard = ({
         parentAttendance={parentAttendance}
         punishment={punishment}
         user={user}
+        event={event}
         isLoading={isLoading}
       />
 

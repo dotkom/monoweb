@@ -1,7 +1,10 @@
+"use client"
+
 import {
   type Attendance,
   type AttendanceStatus,
   type Attendee,
+  type Event,
   type Punishment,
   type User,
   findActiveMembership,
@@ -11,7 +14,9 @@ import {
 } from "@dotkomonline/types"
 import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { isFuture } from "date-fns"
-import type { FC } from "react"
+import { type FC, useState } from "react"
+import { DeregisterModal } from "../DeregisterModal"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 
 const getButtonColor = (
@@ -83,11 +88,12 @@ const getDisabledText = (
 
 interface RegistrationButtonProps {
   registerForAttendance: () => void
-  unregisterForAttendance: () => void
+  unregisterForAttendance: (deregisterReason: DeregisterReasonFormResult) => void
   attendance: Attendance
   parentAttendance: Attendance | null
   punishment: Punishment | null
   user: User | null
+  event: Event
   isLoading: boolean
 }
 
@@ -98,8 +104,11 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   parentAttendance,
   punishment,
   user,
+  event,
   isLoading,
 }) => {
+  const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
+
   const attendee = getAttendee(attendance, user)
   const pool = getAttendablePool(attendance, user)
   const attendanceStatus = getAttendanceStatus(attendance)
@@ -150,7 +159,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
 
   const registrationButton = (
     <Button
-      onClick={attendee ? unregisterForAttendance : registerForAttendance}
+      onClick={attendee ? () => setDeregisterModalOpen(true) : registerForAttendance}
       disabled={disabled}
       icon={buttonIcon}
       className={cn(
@@ -175,5 +184,18 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     )
   }
 
-  return registrationButton
+  return (
+    <>
+      {registrationButton}
+      {attendee && (
+        <DeregisterModal
+          open={deregisterModalOpen}
+          setOpen={setDeregisterModalOpen}
+          event={event}
+          unregisterForAttendance={unregisterForAttendance}
+          attendee={attendee}
+        />
+      )}
+    </>
+  )
 }
