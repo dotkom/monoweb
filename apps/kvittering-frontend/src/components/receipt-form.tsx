@@ -163,11 +163,12 @@ export function ReceiptForm() {
       }),
     })
 
-    if (response.status !== 200) {
-      throw new Error("Feil ved generering av PDF")
-    }
-
     const data = await response.json()
+
+    if (response.status !== 200) {
+      const errorMessage = data.data?.error || "Feil ved generering av PDF"
+      throw new Error(errorMessage)
+    }
 
     return data.data.pdf_url
   }
@@ -185,10 +186,11 @@ export function ReceiptForm() {
       }),
     })
 
-    await response.json()
+    const data = await response.json()
 
     if (response.status !== 200) {
-      throw new Error("Feil ved sending av email")
+      const errorMessage = data.data?.error || "Feil ved sending av email"
+      throw new Error(errorMessage)
     }
   }
 
@@ -216,9 +218,9 @@ export function ReceiptForm() {
       const pdfUrlPromise = toast.promise(generatePdf(formData), {
         loading: "Genererer PDF...",
         success: "PDF generert",
-        error: () => {
-          alertFormSubmission(`${values.name} har feilet ved generering av PDF`)
-          return "Feil ved generering av PDF"
+        error: (error: Error) => {
+          alertFormSubmission(`${values.name} har feilet ved generering av PDF: ${error.message}`)
+          return `Feil ved generering av PDF: ${error.message}`
         },
       })
 
@@ -229,16 +231,18 @@ export function ReceiptForm() {
       const emailPromise = toast.promise(sendEmail(pdfUrl, formData), {
         loading: "Sender email til Bankkom...",
         success: "Email sendt til Bankkom",
-        error: () => {
-          alertFormSubmission(`${values.name} har feilet ved sending av email til Bankkom`)
-          return "Feil ved sending av email til Bankkom"
+        error: (error: Error) => {
+          alertFormSubmission(`${values.name} har feilet ved sending av email til Bankkom: ${error.message}`)
+          return `Feil ved sending av email til Bankkom: ${error.message}`
         },
       })
 
       console.log("emailPromise", emailPromise)
       await emailPromise.unwrap()
     } catch (error) {
-      Sentry.captureMessage("An error ocurred in onSubmit", "error")
+      Sentry.captureException(error)
+      console.error("Error in form submission:", error)
+      // Toast already shows the error via the promise error handlers
     }
   }
 
