@@ -41,14 +41,32 @@ export const OnlineHero: FC = () => {
   }, [resolvedTheme, mounted])
 
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      setMousePosition({ x: event.clientX, y: event.clientY });
+    let frame: number;
+
+    const handleMove = (x: number, y: number) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => { // only update once per frame
+        setMousePosition({ x, y });
+      });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    const handleMouseMove = (event: MouseEvent) => handleMove(event.clientX, event.clientY);
+
+    const handleTouch = (event: TouchEvent) => {
+      const touch = event.touches[0] ?? event.changedTouches[0];
+      if (touch) handleMove(touch.clientX, touch.clientY);
+    };
+
+    // Add listeners for both mouse and touch
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchstart", handleTouch);
+    window.addEventListener("touchmove", handleTouch);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(frame);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchstart", handleTouch);
+      window.removeEventListener("touchmove", handleTouch);
     };
   }, []);
 
