@@ -99,6 +99,8 @@ export const useLinkOwUserToWorkspaceUserMutation = () => {
         complete()
 
         await queryClient.invalidateQueries(trpc.user.get.queryOptions(input.userId))
+        await queryClient.invalidateQueries(trpc.workspace.findUser.queryOptions({ userId: input.userId }))
+        await queryClient.invalidateQueries({ queryKey: trpc.user.all.queryKey() })
       },
     })
   )

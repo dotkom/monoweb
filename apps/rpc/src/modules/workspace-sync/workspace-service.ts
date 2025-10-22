@@ -367,8 +367,8 @@ export function getWorkspaceService(
       return workspaceUser
     },
 
-    async getWorkspaceUser(handle, userId) {
-      const workspaceUser = await this.findWorkspaceUser(handle, userId)
+    async getWorkspaceUser(handle, userId, customKey) {
+      const workspaceUser = await this.findWorkspaceUser(handle, userId, customKey)
 
       if (!workspaceUser) {
         throw new NotFoundError(`Workspace User for User(ID=${userId}) not found`)

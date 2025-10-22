@@ -61,7 +61,7 @@ export const UserEditCard: FC = () => {
         isLoadingWorkspaceUser={isLoadingWorkspaceUser}
         workspaceUser={workspaceUser ?? null}
         setCustomKey={setCustomKey}
-        onClick={() => linkUserMutation.mutate({ userId: user.id })}
+        onClick={() => linkUserMutation.mutate({ userId: user.id, customKey })}
       />
 
       <EditUserProfileComponent />

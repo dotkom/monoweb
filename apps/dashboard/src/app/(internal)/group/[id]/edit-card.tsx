@@ -63,7 +63,7 @@ export const GroupEditCard: FC = () => {
         isLoadingWorkspaceGroup={isLoadingWorkspaceGroup}
         workspaceGroup={workspaceGroup ?? null}
         setCustomKey={setCustomKey}
-        onClick={() => linkGroupMutation.mutate({ groupSlug: group.slug })}
+        onClick={() => linkGroupMutation.mutate({ groupSlug: group.slug, customKey })}
       />
 
       <FormComponent />
