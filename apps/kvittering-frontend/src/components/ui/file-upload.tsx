@@ -188,7 +188,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps & React
                 success: "PDF konvertert til bilde",
                 error: () => {
                   alertFormSubmission(`Feil ved konvertering av PDF til bilde: ${file.name}`)
-                  return "Feil ved konvertering av PDF. Send melding til Henrik Skog på online-slack'en for hjelp"
+                  return "Feil ved konvertering av PDF. Send en melding til noen i Dotkom"
                 },
               })
 
@@ -209,7 +209,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps & React
                 success: "Bilde komprimert",
                 error: () => {
                   alertFormSubmission(`Feil ved komprimering: ${file.name}`)
-                  return "Feil ved komprimering. Send melding til Henrik Skog på online-slack'en for hjelp"
+                  return "Feil ved komprimering. Send en melding til noen i Dotkom"
                 },
               }
             )
@@ -227,7 +227,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps & React
                 success: `${file.name} ble lastet opp`,
                 error: () => {
                   alertFormSubmission(`Feil ved opplasting: ${file.name}`)
-                  return "Feil ved opplasting. Send melding til Henrik Skog på online-slack'en for hjelp"
+                  return "Feil ved opplasting. Send en melding til noen i Dotkom"
                 },
               }
             )
