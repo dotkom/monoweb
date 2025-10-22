@@ -5,7 +5,7 @@ import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
-import { endOfWeek, getWeek, isThisWeek, startOfWeek } from "date-fns"
+import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { eventCategories } from "./eventTypeConfig"
@@ -30,12 +30,9 @@ interface CalendarProps {
 export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const session = useSession()
 
-  // get first and last day of month
-  const firstDayOfMonth = new TZDate(year, month, 1)
-  const lastDayOfMonth = new TZDate(year, month + 1, 0)
-
-  // get monday of the first week and sunday of the last week
-  const calendarStart = startOfWeek(firstDayOfMonth, { weekStartsOn: 1 })
+  // fetch 10 days prior to first day of month as a buffer since fliter is by start date
+  const calendarStart = new TZDate(year, month, 1 - 10)
+  const lastDayOfMonth = endOfMonth(new TZDate(year, month, 1))
   const calendarEnd = endOfWeek(lastDayOfMonth, { weekStartsOn: 1 })
 
   const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
@@ -139,7 +136,6 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
                       eventDetail={{ event, attendance }}
                       eventDisplayProps={eventDisplayProps}
                       reservedStatus={reservedStatus}
-                      className={cn()}
                     />
                   )
                 })}
