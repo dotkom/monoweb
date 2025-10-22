@@ -19,6 +19,12 @@ export const OnlineHero: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [mounted, setMounted] = useState<boolean>(false)
 
+  // easter egg
+  const [switchCount, setSwitchCount] = useState<number>(0)
+  const [showBlackScreen, setShowBlackScreen] = useState<boolean>(false)
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+  const [cooldown, setCooldown] = useState<boolean>(false)
+
   const themeState = useRef<string | undefined>(resolvedTheme)
   const splineRef = useRef<SplineInstance | null>(null)
 
@@ -33,6 +39,18 @@ export const OnlineHero: FC = () => {
       updateSplineDarkMode(resolvedTheme === "dark")
     }
   }, [resolvedTheme, mounted])
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
 
   const onSplineLoad = (spline: SplineInstance) => {
     splineRef.current = spline
@@ -55,19 +73,34 @@ export const OnlineHero: FC = () => {
     const currentTheme = themeState.current
     setTheme(currentTheme === "dark" ? "light" : "dark")
 
-    if (splineRef.current?.getVariable) {
-      const numberValue = splineRef.current.getVariable("lightSwitchCounter") as number
+    setSwitchCount(prev => {
+      const newCount = prev + 1
 
-      // Potential for an easteregg if you spam the lightswitch
-      // For now just an alert
-      if (numberValue > 1 && numberValue % 69 === 0) {
-        alert("Ey yo, det holder nå")
-      }
-    }
+      setShowBlackScreen(prev => {
+        if (newCount > 1 && newCount % 16 === 0) {
+          setTimeout(() => setTheme("dark"), 0)
+          setCooldown(true);
+          setTimeout(() => setCooldown(false), 400);
+          return true
+        }
+        return false
+      })
+
+      return newCount
+    })
   }
 
   return (
-    <div className="flex flex-col lg:justify-stretch md:pt-10 lg:pt-0 gap-4 lg:gap-8 items-center lg:flex-row">
+    <>
+      {showBlackScreen && (
+        <div
+          className="fixed inset-0 bg-black z-[9999] pointer-events-none cursor-none"
+          style={{
+            background: `radial-gradient(circle 15vw at ${mousePosition.x}px ${mousePosition.y}px, transparent 0%, black 100%)`
+          }}
+        />
+      )}
+      <div className="flex flex-col lg:justify-stretch md:pt-10 lg:pt-0 gap-4 lg:gap-8 items-center lg:flex-row">
       <div className="flex flex-col gap-8 w-full max-w-[600px] mx-auto lg:mx-0 lg:order-2">
         <span aria-hidden="true" className="w-full max-w-[300px]">
           <Logo />
@@ -114,6 +147,7 @@ export const OnlineHero: FC = () => {
               )}
             >
               <Spline
+                className={cooldown ? "pointer-events-none" : ""}
                 scene="https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
                 onLoad={onSplineLoad}
                 onSplineMouseDown={lightSwitch}
@@ -123,5 +157,6 @@ export const OnlineHero: FC = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
