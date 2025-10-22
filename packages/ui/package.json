@@ -12,6 +12,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.16",
     "@fontsource/figtree": "^5.2.8",
     "@fontsource/inter": "^5.2.6",
     "@iconify-icon/react": "^2.0.0",

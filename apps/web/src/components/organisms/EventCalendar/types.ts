@@ -1,4 +1,5 @@
 import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventCategoryKey } from "./eventTypeConfig"
 
 export interface EventDisplayProps {
   startCol: number
@@ -6,6 +7,7 @@ export interface EventDisplayProps {
   leftEdge: boolean
   rightEdge: boolean
   active: boolean
+  type?: EventCategoryKey
 }
 
 export interface Week {

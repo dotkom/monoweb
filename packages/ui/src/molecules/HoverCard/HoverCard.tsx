@@ -1,31 +1,113 @@
 "use client"
 
-import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
-import type { ComponentPropsWithRef, FC } from "react"
+import {
+  type ExtendedRefs,
+  FloatingPortal,
+  type Placement,
+  flip,
+  offset,
+  safePolygon,
+  shift,
+  useClick,
+  useDismiss,
+  useFloating,
+  useHover,
+  useInteractions,
+  useRole,
+} from "@floating-ui/react"
+import React from "react"
 import { cn } from "../../utils"
 
-export const HoverCard = HoverCardPrimitive.Root
-export const HoverCardTrigger = HoverCardPrimitive.Trigger
+interface HoverCardProps {
+  /** Placement of the floating card */
+  placement?: Placement
+  /** Offset from the trigger element */
+  offsetDistance?: number
+  /** Children using the compound component pattern */
+  children: React.ReactNode
+}
 
-export const HoverCardContent: FC<ComponentPropsWithRef<typeof HoverCardPrimitive.Content>> = ({
-  className,
-  ref,
-  align = "center",
-  sideOffset = 4,
-  ...props
-}) => {
+interface HoverCardTriggerProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface HoverCardContentProps {
+  children: React.ReactNode
+  className?: string
+}
+
+const HoverCardContext = React.createContext<{
+  open: boolean
+  refs: ExtendedRefs<HTMLElement>
+  floatingStyles: React.CSSProperties
+  getReferenceProps: (userProps?: React.HTMLProps<Element>) => Record<string, unknown>
+  getFloatingProps: (userProps?: React.HTMLProps<HTMLElement>) => Record<string, unknown>
+} | null>(null)
+
+export const HoverCard = ({ placement = "bottom", offsetDistance = 2, children }: HoverCardProps) => {
+  const [open, setOpen] = React.useState(false)
+
+  const { refs, floatingStyles, context } = useFloating({
+    open,
+    onOpenChange: setOpen,
+    placement,
+    middleware: [offset(offsetDistance), flip({ padding: 8 }), shift({ padding: 8 })],
+  })
+
+  const isTouchDevice = typeof window !== "undefined" && "ontouchstart" in window
+
+  const hover = useHover(context, {
+    enabled: !isTouchDevice,
+    move: false,
+    handleClose: safePolygon(),
+  })
+  const click = useClick(context, { enabled: isTouchDevice })
+  const dismiss = useDismiss(context)
+  const role = useRole(context)
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover, click, dismiss, role])
+
   return (
-    <HoverCardPrimitive.Content
-      ref={ref}
-      align={align}
-      sideOffset={sideOffset}
-      className={cn(
-        "z-50 w-64 rounded-lg border border-gray-200 text-gray-800 shadow-lg outline-hidden transition-transform ease-in-out",
-        "data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out",
-        "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        className
-      )}
-      {...props}
-    />
+    <HoverCardContext.Provider value={{ open, refs, floatingStyles, getReferenceProps, getFloatingProps }}>
+      {children}
+    </HoverCardContext.Provider>
+  )
+}
+
+const useHoverCardContext = () => {
+  const context = React.useContext(HoverCardContext)
+  if (!context) {
+    throw new Error("HoverCard components must be used within HoverCard")
+  }
+  return context
+}
+
+export const HoverCardTrigger = ({ children, className }: HoverCardTriggerProps) => {
+  const { refs, getReferenceProps } = useHoverCardContext()
+
+  return (
+    <div ref={refs.setReference} {...getReferenceProps()} className={className}>
+      {children}
+    </div>
+  )
+}
+
+export const HoverCardContent = ({ children, className }: HoverCardContentProps) => {
+  const { open, refs, floatingStyles, getFloatingProps } = useHoverCardContext()
+
+  if (!open) return null
+
+  return (
+    <FloatingPortal>
+      <div
+        ref={refs.setFloating}
+        style={floatingStyles}
+        {...getFloatingProps()}
+        className={cn("rounded-lg min-w-64 z-50", className)}
+      >
+        <div className="p-3">{children}</div>
+      </div>
+    </FloatingPortal>
   )
 }
