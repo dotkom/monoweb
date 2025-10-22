@@ -1,7 +1,7 @@
 "use client"
 
-import { EventCalendar } from "@/components/organisms/EventCalendar"
 import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
+import { EventCalendar } from "@/components/organisms/EventCalendar/EventCalendar"
 import { useTRPC } from "@/utils/trpc/client"
 import type { EventFilterQuery } from "@dotkomonline/types"
 import {

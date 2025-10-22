@@ -3,79 +3,22 @@
 import { useEventAllQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { Event } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
-import { getWeek, isThisWeek } from "date-fns"
+import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
+import { eventCategories } from "./eventTypeConfig"
 import { getCalendarArray } from "./getCalendarArray"
 
-// helper functions so tailwind picks up the class names correctly
-function getColStartClass(startCol: number) {
-  switch (startCol) {
-    case 3:
-      return "col-start-3"
-    case 4:
-      return "col-start-4"
-    case 5:
-      return "col-start-5"
-    case 6:
-      return "col-start-6"
-    case 7:
-      return "col-start-7"
-    case 8:
-      return "col-start-8"
-    default:
-      return ""
-  }
-}
+function getEventTypeGuide(events: EventWithAttendance[]) {
+  const presentTypes = new Set(events.map((event) => event.event.type))
 
-function getColSpanClass(span: number) {
-  switch (span) {
-    case 1:
-      return "col-span-1"
-    case 2:
-      return "col-span-2"
-    case 3:
-      return "col-span-3"
-    case 4:
-      return "col-span-4"
-    case 5:
-      return "col-span-5"
-    case 6:
-      return "col-span-6"
-    case 7:
-      return "col-span-7"
-    default:
-      return ""
-  }
-}
-
-function getEventTypeGuide(events: Event[]) {
-  const eventTypeConfig = {
-    SOCIAL: { color: "bg-green-400 dark:bg-green-400", label: "Sosialt" },
-    ACADEMIC: { color: "bg-blue-400 dark:bg-blue-400", label: "Kurs" },
-    COMPANY: {
-      color: "bg-red-400 dark:bg-red-400",
-      label: "Bedriftsarrangement",
-    },
-    WELCOME: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Fadderuke" },
-    OTHER: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Annet" },
-    GENERAL_ASSEMBLY: {
-      color: "bg-yellow-400 dark:bg-yellow-400",
-      label: "Generalforsamling",
-    },
-    INTERNAL: { color: "bg-yellow-400 dark:bg-yellow-400", label: "Internt" },
-  }
-
-  const presentTypes = new Set(events.map((event) => event.type))
-
-  // Return only the items for types that are present
   return Array.from(presentTypes)
-    .filter((type) => eventTypeConfig[type as keyof typeof eventTypeConfig]) // Filter out unknown types
+    .filter((type) => eventCategories[type as keyof typeof eventCategories])
     .map((type) => ({
       type,
-      ...eventTypeConfig[type as keyof typeof eventTypeConfig],
+      ...eventCategories[type as keyof typeof eventCategories],
     }))
 }
 
@@ -87,13 +30,17 @@ interface CalendarProps {
 export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const session = useSession()
 
+  // fetch 10 days prior to first day of month as a buffer since fliter is by start date
+  const calendarStart = new TZDate(year, month, 1 - 10)
+  const lastDayOfMonth = endOfMonth(new TZDate(year, month, 1))
+  const calendarEnd = endOfWeek(lastDayOfMonth, { weekStartsOn: 1 })
+
   const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
     filter: {
       byStartDate: {
-        min: new TZDate(year, month, 1),
-        max: new TZDate(year, month + 1, 0),
+        min: calendarStart,
+        max: calendarEnd,
       },
-      excludingOrganizingGroup: ["velkom"],
       orderBy: "asc",
     },
     page: {
@@ -105,7 +52,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const userId = session?.sub
 
   const cal = getCalendarArray(year, month, eventDetails)
-  const eventTypeGuideItems = getEventTypeGuide(eventDetails.map(({ event }) => event))
+  const eventTypeGuideItems = getEventTypeGuide(eventDetails)
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
 
@@ -187,13 +134,8 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
                     <EventCalendarItem
                       key={event.id}
                       eventDetail={{ event, attendance }}
+                      eventDisplayProps={eventDisplayProps}
                       reservedStatus={reservedStatus}
-                      className={cn(
-                        getColStartClass(eventDisplayProps.startCol + 2),
-                        getColSpanClass(eventDisplayProps.span),
-                        eventDisplayProps.leftEdge && "sm:border-l-4 rounded-l-md",
-                        eventDisplayProps.rightEdge && "rounded-r-md"
-                      )}
                     />
                   )
                 })}
@@ -205,10 +147,10 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
 
       {eventTypeGuideItems.length > 0 && (
         <div className="flex gap-y-2 gap-x-4 text-sm p-2 sm:pl-6 flex-wrap">
-          {eventTypeGuideItems.map(({ type, color, label }) => (
+          {eventTypeGuideItems.map(({ type, classes, displayName }) => (
             <span key={type} className="flex items-center">
-              <span className={`w-3 h-3 ${color} rounded-full mr-1`} />
-              {label}
+              <span className={cn("w-3 h-3 rounded-full mr-1", classes.guide)} />
+              {displayName}
             </span>
           ))}
         </div>
