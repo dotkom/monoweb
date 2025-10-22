@@ -32,7 +32,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     }),
   ])
 
-  const showMembers = group.type !== "ASSOCIATED"
+  const showMembers = group.type !== "ASSOCIATED" && group.memberVisibility !== "NONE"
 
   // We do not show members for ASSOCIATED types because they often have members outside of Online
   // meaning the member list would be incomplete.
@@ -178,18 +178,26 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         </div>
       </div>
 
-      {showMembers && group.memberVisibility !== "NONE" && activeMembers.length > 0 && (
+      {showMembers && (
         <div className="flex flex-col gap-2">
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
-            <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.length})</Text>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-            {Array.from(
-              activeMembers.map((member) => <GroupMemberEntry key={member.id} userId={session?.sub} member={member} />)
+            {members.size > 0 && (
+              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.length})</Text>
             )}
           </div>
+
+          {activeMembers.length ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {Array.from(
+                activeMembers.map((member) => (
+                  <GroupMemberEntry key={member.id} userId={session?.sub} member={member} />
+                ))
+              )}
+            </div>
+          ) : (
+            <Text className="text-gray-500 dark:text-stone-400">Ingen aktive medlemmer</Text>
+          )}
         </div>
       )}
 
