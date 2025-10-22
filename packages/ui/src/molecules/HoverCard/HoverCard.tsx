@@ -106,7 +106,7 @@ export const HoverCardContent = ({ children, className }: HoverCardContentProps)
         {...getFloatingProps()}
         className={cn("rounded-lg min-w-64 z-50", className)}
       >
-        <div className="p-3">{children}</div>
+        {children}
       </div>
     </FloatingPortal>
   )
