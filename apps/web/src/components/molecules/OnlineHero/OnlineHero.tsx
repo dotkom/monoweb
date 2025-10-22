@@ -95,10 +95,10 @@ export const OnlineHero: FC = () => {
       const newCount = prev + 1
 
       setShowBlackScreen(prev => {
-        if (newCount > 1 && newCount % 16 === 0) {
+        if (newCount > 1 && newCount % 20 === 0) {
           setTimeout(() => setTheme("dark"), 0)
           setCooldown(true);
-          setTimeout(() => setCooldown(false), 400);
+          setTimeout(() => setCooldown(false), 1000);
           return true
         }
         return false
