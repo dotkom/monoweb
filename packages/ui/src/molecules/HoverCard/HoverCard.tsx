@@ -39,7 +39,7 @@ interface HoverCardContentProps {
 
 const HoverCardContext = React.createContext<{
   open: boolean
-  refs: ExtendedRefs<HTMLElement>
+  refs: ExtendedRefs<Element>
   floatingStyles: React.CSSProperties
   getReferenceProps: (userProps?: React.HTMLProps<Element>) => Record<string, unknown>
   getFloatingProps: (userProps?: React.HTMLProps<HTMLElement>) => Record<string, unknown>
