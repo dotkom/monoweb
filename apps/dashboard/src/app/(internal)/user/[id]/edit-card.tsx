@@ -35,7 +35,6 @@ export const UserEditCard: FC = () => {
   const EditUserProfileComponent = useUserProfileEditForm({
     label: "Oppdater profil",
     onSubmit: (data) => {
-      console.log(data)
       const result = UserWriteSchema.parse(data)
 
       if (result.phone === "") {
