@@ -32,31 +32,31 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     }),
   ])
 
-  const showMembers = group.type !== "ASSOCIATED"
+  const memberVisibility = group.type !== "ASSOCIATED"
 
   // We do not show members for ASSOCIATED types because they often have members outside of Online
   // meaning the member list would be incomplete.
-  const members = showMembers ? await server.group.getMembers.query(slug) : new Map<UserId, GroupMember>()
+  const members = memberVisibility ? await server.group.getMembers.query(slug) : new Map<UserId, GroupMember>()
 
   const hasContactInfo = group.email || group.contactUrl
 
   const membersToShow = [...members.values()].filter((member) => {
-    if (group.showMembers === "ALL_MEMBERS") {
+    if (group.memberVisibility === "ALL_MEMBERS") {
       return true
     }
 
-    if (group.showMembers === "LEADER") {
+    if (group.memberVisibility === "LEADER") {
       const membership = getLatestActiveMembership(member)
       return membership?.roles.some((r) => r.type === "LEADER")
     }
 
-    if (group.showMembers === "NONE") {
+    if (group.memberVisibility === "NONE") {
       return false
     }
 
-    if (group.showMembers === "WITH_ROLES") {
+    if (group.memberVisibility === "WITH_ROLES") {
       const membership = getLatestActiveMembership(member)
-      return membership?.roles && membership.roles.length > 0
+      return membership?.roles.some((r) => r.type !== "COSMETIC")
     }
 
     return false
@@ -178,7 +178,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         </div>
       </div>
 
-      {showMembers && (
+      {memberVisibility && (
         <div className="flex flex-col gap-2">
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>

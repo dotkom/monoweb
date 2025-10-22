@@ -38,7 +38,7 @@ export const GroupWriteSchema = GroupSchema.pick({
   email: true,
   contactUrl: true,
   showLeaderAsContact: true,
-  showMembers: true,
+  memberVisibility: true,
   deactivatedAt: true,
   workspaceGroupId: true,
 }).partial({
@@ -113,12 +113,14 @@ export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | n
   switch (name) {
     case "ALL_MEMBERS":
       return "Alle medlemmer"
-    case "WITH_ROLES":
+    case "WITH_ROLES": 
       return "Alle med roller"
     case "LEADER":
       return "Kun leder"
     case "NONE":
       return "Ingen"
+    default:
+      return "Ukjent"
   }
 }
 

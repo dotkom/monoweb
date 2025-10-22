@@ -97,12 +97,12 @@ export const useGroupWriteForm = ({
       showLeaderAsContact: createCheckboxInput({
         label: "Vis leder som kontakt",
       }),
-      showMembers: createSelectInput({
+      memberVisibility: createSelectInput({
         label: "Hvilke medlemmer skal vises",
         placeholder: "Velg en",
         data: Object.values(GroupMemberVisibilitySchema.Values).map((groupMemberVisibilityType) => ({
           value: groupMemberVisibilityType,
-          label: getGroupMemberVisibilityName(groupMemberVisibilityType) ?? String(groupMemberVisibilityType),
+          label: getGroupMemberVisibilityName(groupMemberVisibilityType),
         })),
       }),
       contactUrl: createTextInput({
