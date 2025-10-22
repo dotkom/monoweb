@@ -178,26 +178,20 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         </div>
       </div>
 
-      {showMembers && (
+      {showMembers && group.memberVisibility !== "NONE" && activeMembers.length > 0 && (
         <div className="flex flex-col gap-2">
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
-            {members.size > 0 && (
-              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.length})</Text>
-            )}
+            <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.length})</Text>
           </div>
 
-          {activeMembers.length ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {Array.from(
-                activeMembers.map((member) => (
-                  <GroupMemberEntry key={member.id} userId={session?.sub} member={member} />
-                ))
-              )}
-            </div>
-          ) : (
-            <Text className="text-gray-500 dark:text-stone-400">Ingen aktive medlemmer</Text>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {Array.from(
+              activeMembers.map((member) => (
+                <GroupMemberEntry key={member.id} userId={session?.sub} member={member} />
+              ))
+            )}
+          </div>
         </div>
       )}
 
@@ -217,7 +211,7 @@ interface GroupMemberEntryProps {
 const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   const isVerified = member.flags.includes("VANITY_VERIFIED")
   const isUser = userId === member.id
-
+  
   // This requires periods to be sorted by startedAt in descending order
   const firstActiveMembership = getLatestActiveMembership(member)
 
