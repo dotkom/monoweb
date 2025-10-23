@@ -89,5 +89,5 @@ export function isAmazonSesEmailFeatureEnabled(
 // This should be safe enough with Dopplers own environment as well.
 export const isDevelopmentEnvironment =
   process.env.DOPPLER_ENVIRONMENT === "dev" &&
-  process.env.NODE_ENV !== "development" &&
+  process.env.NODE_ENV !== "production" &&
   process.env.NODE_ENV !== "staging"
