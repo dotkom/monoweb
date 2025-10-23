@@ -5,7 +5,7 @@ import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
+import { compareAsc, interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 import z from "zod"
 
@@ -81,6 +81,22 @@ export const EventList: FC<EventListProps> = ({
   })
 
   const { yourEvents = [], openEvents = [], openingSoonEvents = [], otherFutureEvents = [] } = groupedEvents
+
+  openingSoonEvents.sort((a, b) => {
+    if (!a.attendance && !b.attendance) {
+      return 0
+    }
+
+    if (!a.attendance?.registerStart) {
+      return 1
+    }
+
+    if (!b.attendance?.registerStart) {
+      return -1
+    }
+
+    return compareAsc(a.attendance.registerStart, b.attendance.registerStart)
+  })
 
   const loaderRef = useRef<HTMLDivElement>(null)
 
