@@ -30,161 +30,50 @@ export type Principal = {
   affiliations: AffiliationSet
 }
 
-const getRequire = (principal: Principal | null) => {
-  return (condition: boolean): asserts condition => {
-    if (!condition) {
-      throw new ForbiddenError(`Principal(ID=${principal ?? "<anonymous>"}) is not permitted to perform this operation`)
-    }
-  }
-}
-type Require = ReturnType<typeof getRequire>
+type AuthorizeOptions = { localDevelopment: boolean }
+type AuthorizeProps = AuthorizeOptions & { principal: Principal | null }
 
-const getRequireSignIn = (principal: Principal | null, require: Require) => {
-  /**
-   * Require that the user is signed in (i.e., the principal is not null).
-   */
-  return () => {
-    require(principal !== null)
-  }
-}
-type RequireSignIn = ReturnType<typeof getRequireSignIn>
-
-const getRequireAffiliation = (principal: Principal | null, require: Require, requireSignIn: RequireSignIn) => {
-  /**
-   * Require that the user is a member of at least one of the provided groups.
-   *
-   * If the provided list is empty, we assume permission for any group affiliation is sufficient.
-   */
-  return (...affiliations: Affiliation[]) => {
-    requireSignIn()
-
-    invariant(principal !== null)
-    require(principal.affiliations.size > 0)
-    for (const affiliation of affiliations) {
-      if (isAffiliation(affiliation) && principal.affiliations.has(affiliation)) {
-        return
-      }
-    }
-    // This is fine if no affiliations were required
-    require(affiliations.length === 0)
-  }
-}
-type RequireAffiliation = ReturnType<typeof getRequireAffiliation>
-
-const getDevelopmentRequireAffiliation = (requireSignIn: RequireSignIn) => {
-  /**
-   * Require that the user is a member of at least one of the provided groups.
-   *
-   * If the provided list is empty, we assume permission for any group affiliation is sufficient.
-   */
-  return (...affiliations: Affiliation[]) => {
-    requireSignIn()
-
-    // For development, you are always authorized regardless of affiliations
-    return true
-  }
-}
-
-const getRequireMe = (principal: Principal | null, require: Require, requireSignIn: RequireSignIn) => {
-  /**
-   * Require that the user is signed in and that the provided user id is the user's id.
-   */
-  return (userId: UserId) => {
-    requireSignIn()
-    invariant(principal !== null)
-    require(principal.subject === userId)
-  }
-}
-
-const getRequireMeOrAffiliation = (
-  principal: Principal | null,
-  requireSignIn: RequireSignIn,
-  requireAffiliation: RequireAffiliation
-) => {
-  /**
-   * Requires either `requireMe` or `requireAffiliation` to be true.
-   *
-   * One of the following must be true:
-   * - The user is signed in and that the provided user id is the user's id.
-   * - The user is a member of at least one of the provided groups (or any group if empty).
-   */
-  return (userId: UserId, affiliations: Affiliation[]) => {
-    requireSignIn()
-
-    invariant(principal !== null)
-    if (principal.subject !== userId) {
-      requireAffiliation(...affiliations)
-    }
-  }
-}
-
-const getExecuteAuditedTransaction = (principal: Principal | null, context: ServiceLayer) => {
-  return <T>(call: (tx: DBHandle) => Promise<T>): Promise<T> => {
-    return context.executeAuditedTransaction(call, principal?.subject || null)
-  }
-}
-
-export const createContext = async (
-  principal: Principal | null,
-  context: ServiceLayer,
-  configuration: Configuration
-) => {
+const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
   const require = getRequire(principal)
   const requireSignIn = getRequireSignIn(principal, require)
   const requireAffiliation = getRequireAffiliation(principal, require, requireSignIn)
+  const localDevelopmentRequireAffiliation = getDevelopmentRequireAffiliation(requireSignIn)
   const requireMe = getRequireMe(principal, require, requireSignIn)
   const requireMeOrAffiliation = getRequireMeOrAffiliation(principal, requireSignIn, requireAffiliation)
 
-  const executeAuditedTransaction = getExecuteAuditedTransaction(principal, context)
-
   return {
-    ...context,
-    principal,
-
-    executeAuditedTransaction,
-
-    /** Authorization middlewares that each procedure can use to enforce access control */
-    authorize: {
-      require,
-      requireSignIn,
-      requireAffiliation,
-      requireMe,
-      requireMeOrAffiliation,
-    },
+    require,
+    requireSignIn,
+    requireAffiliation: localDevelopment ? localDevelopmentRequireAffiliation : requireAffiliation,
+    requireMe,
+    requireMeOrAffiliation,
   }
 }
+
+const getCreateContext = (authorizeOptions: AuthorizeOptions) => {
+  return async (principal: Principal | null, context: ServiceLayer, configuration: Configuration) => {
+    function executeAuditedTransaction<T>(call: (tx: DBHandle) => Promise<T>): Promise<T> {
+      return context.executeAuditedTransaction(call, principal?.subject || null)
+    }
+
+    const authorize = getAuthorize({ principal, ...authorizeOptions })
+
+    return {
+      ...context,
+      principal,
+
+      executeAuditedTransaction,
+
+      /** Authorization middlewares that each procedure can use to enforce access control */
+      authorize,
+    }
+  }
+}
+
+export const createContext = getCreateContext({ localDevelopment: false })
+export const createLocalDevelopmentContext = getCreateContext({ localDevelopment: true })
 
 export type Context = Awaited<ReturnType<typeof createContext>>
-
-export const createLocalDevelopmentContext = async (
-  principal: Principal | null,
-  context: ServiceLayer,
-  configuration: Configuration
-): Promise<Context> => {
-  const require = getRequire(principal)
-  const requireSignIn = getRequireSignIn(principal, require)
-  const requireAffiliation = getDevelopmentRequireAffiliation(requireSignIn)
-  const requireMe = getRequireMe(principal, require, requireSignIn)
-  const requireMeOrAffiliation = getRequireMeOrAffiliation(principal, requireSignIn, requireAffiliation)
-
-  const executeAuditedTransaction = getExecuteAuditedTransaction(principal, context)
-
-  return {
-    ...context,
-    principal,
-
-    executeAuditedTransaction,
-
-    /** Authorization middlewares that each procedure can use to enforce access control */
-    authorize: {
-      require,
-      requireSignIn,
-      requireAffiliation,
-      requireMe,
-      requireMeOrAffiliation,
-    },
-  }
-}
 
 export const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -332,3 +221,91 @@ export const staffProcedure = procedure.use(({ ctx, next }) => {
     },
   })
 })
+
+function getRequire(principal: Principal | null) {
+  return (condition: boolean): asserts condition => {
+    if (!condition) {
+      throw new ForbiddenError(`Principal(ID=${principal ?? "<anonymous>"}) is not permitted to perform this operation`)
+    }
+  }
+}
+type Require = ReturnType<typeof getRequire>
+
+function getRequireSignIn(principal: Principal | null, require: Require) {
+  /**
+   * Require that the user is signed in (i.e., the principal is not null).
+   */
+  return () => {
+    require(principal !== null)
+  }
+}
+type RequireSignIn = ReturnType<typeof getRequireSignIn>
+
+function getRequireAffiliation(principal: Principal | null, require: Require, requireSignIn: RequireSignIn) {
+  /**
+   * Require that the user is a member of at least one of the provided groups.
+   *
+   * If the provided list is empty, we assume permission for any group affiliation is sufficient.
+   */
+  return (...affiliations: Affiliation[]) => {
+    requireSignIn()
+
+    invariant(principal !== null)
+    require(principal.affiliations.size > 0)
+    for (const affiliation of affiliations) {
+      if (isAffiliation(affiliation) && principal.affiliations.has(affiliation)) {
+        return
+      }
+    }
+    // This is fine if no affiliations were required
+    require(affiliations.length === 0)
+  }
+}
+type RequireAffiliation = ReturnType<typeof getRequireAffiliation>
+
+function getDevelopmentRequireAffiliation(requireSignIn: RequireSignIn): RequireAffiliation {
+  /**
+   * Require that the user is a member of at least one of the provided groups.
+   *
+   * If the provided list is empty, we assume permission for any group affiliation is sufficient.
+   */
+  return (...affiliations: Affiliation[]) => {
+    requireSignIn()
+
+    // For local development, you are always authorized regardless of affiliations
+    return true
+  }
+}
+
+function getRequireMe(principal: Principal | null, require: Require, requireSignIn: RequireSignIn) {
+  /**
+   * Require that the user is signed in and that the provided user id is the user's id.
+   */
+  return (userId: UserId) => {
+    requireSignIn()
+    invariant(principal !== null)
+    require(principal.subject === userId)
+  }
+}
+
+function getRequireMeOrAffiliation(
+  principal: Principal | null,
+  requireSignIn: RequireSignIn,
+  requireAffiliation: RequireAffiliation
+) {
+  /**
+   * Requires either `requireMe` or `requireAffiliation` to be true.
+   *
+   * One of the following must be true:
+   * - The user is signed in and that the provided user id is the user's id.
+   * - The user is a member of at least one of the provided groups (or any group if empty).
+   */
+  return (userId: UserId, affiliations: Affiliation[]) => {
+    requireSignIn()
+
+    invariant(principal !== null)
+    if (principal.subject !== userId) {
+      requireAffiliation(...affiliations)
+    }
+  }
+}
