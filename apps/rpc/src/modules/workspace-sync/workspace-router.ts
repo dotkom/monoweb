@@ -1,5 +1,11 @@
-import { GroupMemberSchema, GroupSchema, UserSchema } from "@dotkomonline/types"
-import type { admin_directory_v1 } from "googleapis"
+import {
+  GroupSchema,
+  UserSchema,
+  WorkspaceGroupLinkSchema,
+  WorkspaceGroupSchema,
+  WorkspaceMemberLinkSchema,
+  WorkspaceUserSchema,
+} from "@dotkomonline/types"
 import invariant from "tiny-invariant"
 import z from "zod"
 import { staffProcedure, t } from "../../trpc"
@@ -11,7 +17,7 @@ export const workspaceRouter = t.router({
     .output(
       z.object({
         user: UserSchema,
-        workspaceUser: z.custom<admin_directory_v1.Schema$User>(),
+        workspaceUser: WorkspaceUserSchema,
         recoveryCodes: z.array(z.string()).nullable(),
         password: z.string(),
       })
@@ -31,17 +37,24 @@ export const workspaceRouter = t.router({
     .input(
       z.object({
         userId: UserSchema.shape.id,
+        customKey: z.string().optional(),
       })
     )
-    .output(z.custom<admin_directory_v1.Schema$User>().nullable())
+    .output(WorkspaceUserSchema.nullable())
     .query(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      // If the user inputs a custom key, we do not allow the userId as affiliation because customKey will take
+      // precedence and thus the user could potentially input any user.
+      if (input.customKey) {
+        ctx.authorize.requireAffiliation("dotkom", "hs")
+      } else {
+        ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      }
 
       return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.findWorkspaceUser(handle, input.userId)
+        return await workspaceService.findWorkspaceUser(handle, input.userId, input.customKey)
       })
     }),
 
@@ -49,6 +62,7 @@ export const workspaceRouter = t.router({
     .input(
       z.object({
         userId: UserSchema.shape.id,
+        customKey: z.string().optional(),
       })
     )
     .output(UserSchema)
@@ -56,13 +70,42 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      ctx.authorize.requireAffiliation("dotkom", "hs")
 
       return ctx.executeTransaction(async (handle) => {
         const user = await ctx.userService.getById(handle, input.userId)
-        const workspaceUser = await workspaceService.getWorkspaceUser(handle, input.userId)
+        const workspaceUser = await workspaceService.getWorkspaceUser(handle, input.userId, input.customKey)
 
         return await ctx.userService.update(handle, user.id, { workspaceUserId: workspaceUser.id })
+      })
+    }),
+
+  linkGroup: staffProcedure
+    .input(
+      z.object({
+        groupSlug: GroupSchema.shape.slug,
+        customKey: z.string().optional(),
+      })
+    )
+    .output(GroupSchema)
+    .mutation(async ({ input, ctx }) => {
+      const workspaceService = ctx.workspaceService
+      invariant(workspaceService, "Workspace service is not available")
+
+      // If the user inputs a custom key, we do not allow the groupSlug as affiliation because customKey will take
+      // precedence and thus the user could potentially input any group.
+      if (input.customKey) {
+        ctx.authorize.requireAffiliation("dotkom", "hs")
+      } else {
+        // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
+        ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
+      }
+
+      return ctx.executeTransaction(async (handle) => {
+        const group = await ctx.groupService.getById(handle, input.groupSlug)
+        const workspaceGroup = await workspaceService.getWorkspaceGroup(handle, input.groupSlug, input.customKey)
+
+        return await ctx.groupService.update(handle, group.slug, { workspaceGroupId: workspaceGroup.id })
       })
     }),
 
@@ -75,7 +118,7 @@ export const workspaceRouter = t.router({
     .output(
       z.object({
         user: UserSchema,
-        workspaceUser: z.custom<admin_directory_v1.Schema$User>(),
+        workspaceUser: WorkspaceUserSchema,
         recoveryCodes: z.array(z.string()).nullable(),
         password: z.string(),
       })
@@ -97,12 +140,7 @@ export const workspaceRouter = t.router({
         groupSlug: GroupSchema.shape.slug,
       })
     )
-    .output(
-      z.object({
-        group: GroupSchema,
-        workspaceGroup: z.custom<admin_directory_v1.Schema$Group>(),
-      })
-    )
+    .output(WorkspaceGroupLinkSchema)
     .mutation(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
@@ -118,46 +156,31 @@ export const workspaceRouter = t.router({
     .input(
       z.object({
         groupSlug: GroupSchema.shape.slug,
+        customKey: z.string().optional(),
       })
     )
-    .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
+    .output(WorkspaceGroupSchema.nullable())
     .query(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
-      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
-
+      // If the user inputs a custom key, we do not allow the groupSlug as affiliation because customKey will take
+      // precedence and thus the user could potentially input any group.
+      if (input.customKey) {
+        ctx.authorize.requireAffiliation("dotkom", "hs")
+      } else {
+        // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
+        ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
+      }
       return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.findWorkspaceGroup(handle, input.groupSlug)
+        return await workspaceService.findWorkspaceGroup(handle, input.groupSlug, input.customKey)
       })
     }),
 
-  addUserToGroup: staffProcedure
+  synchronizeGroup: staffProcedure
     .input(
       z.object({
         groupSlug: GroupSchema.shape.slug,
-        userId: UserSchema.shape.id,
-      })
-    )
-    .output(z.custom<admin_directory_v1.Schema$Group>().nullable())
-    .mutation(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
-
-      // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
-      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
-
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.addUserIntoWorkspaceGroup(handle, input.groupSlug, input.userId)
-      })
-    }),
-
-  removeUserFromGroup: staffProcedure
-    .input(
-      z.object({
-        groupSlug: GroupSchema.shape.slug,
-        userId: UserSchema.shape.id,
       })
     )
     .output(z.boolean())
@@ -168,7 +191,7 @@ export const workspaceRouter = t.router({
       ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
 
       return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.removeUserFromWorkspaceGroup(handle, input.groupSlug, input.userId)
+        return await workspaceService.synchronizeWorkspaceGroup(handle, input.groupSlug)
       })
     }),
 
@@ -178,14 +201,7 @@ export const workspaceRouter = t.router({
         groupSlug: GroupSchema.shape.slug,
       })
     )
-    .output(
-      z
-        .object({
-          groupMember: GroupMemberSchema.nullable(),
-          workspaceMember: z.custom<admin_directory_v1.Schema$Member>().nullable(),
-        })
-        .array()
-    )
+    .output(WorkspaceMemberLinkSchema.array())
     .query(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
@@ -204,14 +220,7 @@ export const workspaceRouter = t.router({
         userId: UserSchema.shape.id,
       })
     )
-    .output(
-      z
-        .object({
-          group: GroupSchema,
-          workspaceGroup: z.custom<admin_directory_v1.Schema$Group>(),
-        })
-        .array()
-    )
+    .output(WorkspaceGroupLinkSchema.array())
     .query(async ({ input, ctx }) => {
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")

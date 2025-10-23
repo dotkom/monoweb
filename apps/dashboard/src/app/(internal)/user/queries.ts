@@ -56,3 +56,13 @@ export const useIsAdminQuery = () => {
   const { data: isAdmin, isLoading } = useQuery(trpc.user.isAdmin.queryOptions())
   return { isAdmin, isLoading }
 }
+
+export const useFindWorkspaceUserQuery = (userId: UserId, customKey?: string, enabled = true) => {
+  const trpc = useTRPC()
+  const {
+    data: workspaceUser,
+    isLoading,
+    error,
+  } = useQuery(trpc.workspace.findUser.queryOptions({ userId, customKey }, { enabled }))
+  return { workspaceUser, isLoading, error }
+}

@@ -1,6 +1,7 @@
 import type { z } from "zod"
 
 import { schemas } from "@dotkomonline/db/schemas"
+import { compareDesc } from "date-fns"
 import { UserSchema } from "./user"
 
 export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
@@ -143,4 +144,17 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
     default:
       return "Ukjent type"
   }
+}
+
+export const getActiveGroupMembership = (member: GroupMember | null, groupSlug?: GroupId): GroupMembership | null => {
+  if (!member) {
+    return null
+  }
+
+  const isGroup = (inputGroupSlug: GroupId) => (groupSlug ? inputGroupSlug === groupSlug : true)
+
+  // This is to make sure the function is deterministic
+  const sortedMemberships = member.groupMemberships.toSorted((a, b) => compareDesc(a.start, b.start))
+
+  return sortedMemberships.find((membership) => membership.end === null && isGroup(membership.groupId)) ?? null
 }

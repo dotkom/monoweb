@@ -1,7 +1,20 @@
 import { randomBytes } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Group, GroupId, GroupMember, User, UserId } from "@dotkomonline/types"
+import {
+  type Group,
+  type GroupId,
+  type GroupMember,
+  type User,
+  type UserId,
+  type WorkspaceGroup,
+  type WorkspaceGroupLink,
+  type WorkspaceMember,
+  type WorkspaceMemberLink,
+  type WorkspaceMemberSyncState,
+  type WorkspaceUser,
+  getActiveGroupMembership,
+} from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "googleapis"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
@@ -11,6 +24,7 @@ import { NotFoundError } from "../../error"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 
+// Google Workspace enforces a minimum password length of 8 characters
 const TEMPORARY_PASSWORD_LENGTH = 8
 
 const SLUGIFY_OPTIONS = {
@@ -26,7 +40,7 @@ export interface WorkspaceService {
     userId: UserId
   ): Promise<{
     user: User
-    workspaceUser: admin_directory_v1.Schema$User
+    workspaceUser: WorkspaceUser
     recoveryCodes: string[] | null
     password: string
   }>
@@ -35,33 +49,22 @@ export interface WorkspaceService {
     userId: UserId
   ): Promise<{
     user: User
-    workspaceUser: admin_directory_v1.Schema$User
+    workspaceUser: WorkspaceUser
     recoveryCodes: string[] | null
     password: string
   }>
-  findWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User | null>
-  getWorkspaceUser(handle: DBHandle, userId: UserId): Promise<admin_directory_v1.Schema$User>
+  findWorkspaceUser(handle: DBHandle, userId: UserId, customKey?: string): Promise<WorkspaceUser | null>
+  getWorkspaceUser(handle: DBHandle, userId: UserId, customKey?: string): Promise<WorkspaceUser>
 
   // Groups
-  createWorkspaceGroup(
-    handle: DBHandle,
-    groupSlug: GroupId
-  ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }>
-  findWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<admin_directory_v1.Schema$Group | null>
-  addUserIntoWorkspaceGroup(
-    handle: DBHandle,
-    groupSlug: GroupId,
-    userId: UserId
-  ): Promise<admin_directory_v1.Schema$Member>
+  createWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<WorkspaceGroupLink>
+  findWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, customKey?: string): Promise<WorkspaceGroup | null>
+  getWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, customKey?: string): Promise<WorkspaceGroup>
+  addUserIntoWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<WorkspaceMember>
   removeUserFromWorkspaceGroup(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<boolean>
-  getMembersForGroup(
-    handle: DBHandle,
-    groupSlug: GroupId
-  ): Promise<{ groupMember: GroupMember | null; workspaceMember: admin_directory_v1.Schema$Member | null }[]>
-  getWorkspaceGroupsForWorkspaceUser(
-    handle: DBHandle,
-    userId: UserId
-  ): Promise<{ group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[]>
+  getMembersForGroup(handle: DBHandle, groupSlug: GroupId): Promise<WorkspaceMemberLink[]>
+  getWorkspaceGroupsForWorkspaceUser(handle: DBHandle, userId: UserId): Promise<WorkspaceGroupLink[]>
+  synchronizeWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<boolean>
 }
 
 export function getWorkspaceService(
@@ -74,12 +77,12 @@ export function getWorkspaceService(
 
   logger.info("Using Google Workspace integration against Domain=%s", configuration.googleWorkspace.domain)
 
-  function joinOnWorkspaceUserId(
+  function joinGroupAndWorkspaceMembers(
     groupMembers: GroupMember[],
-    workspaceUsers: admin_directory_v1.Schema$Member[]
-  ): UserAndWorkspaceMember[] {
-    const rightJoin: UserAndWorkspaceMember[] = []
-    const leftJoin = new Map<string, UserAndWorkspaceMember>()
+    workspaceUsers: WorkspaceMember[]
+  ): Omit<WorkspaceMemberLink, "syncState">[] {
+    const rightJoin: Omit<WorkspaceMemberLink, "syncState">[] = []
+    const leftJoin = new Map<string, Omit<WorkspaceMemberLink, "syncState">>()
 
     for (const workspaceMember of workspaceUsers) {
       invariant(workspaceMember.id, "Workspace member must have an ID")
@@ -112,29 +115,6 @@ export function getWorkspaceService(
     return [...leftJoin.values()].concat(rightJoin)
   }
 
-  function getKeys(localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string[] {
-    const keys = new Set<string>()
-
-    const baseKey = getKey(localResolvable, domain)
-
-    // In older versions of OnlineWeb, all dashes (-) were removed from the email local part.
-    // We add this to the set of keys to attempt to find an account created by the older version.
-    keys.add(baseKey)
-    keys.add(baseKey.replace("-", ""))
-
-    const names = getLocal(localResolvable).split(".").filter(Boolean)
-
-    // In older version of OnlineWeb, it was less common to have your full name on your profile.
-    // A lot of older accounts were generated with only first name and last name, so we attempt to
-    // find those accounts as well.
-    if (names.length > 2) {
-      keys.add(getEmail(`${names[0]} ${names.at(-1)}`, domain))
-      keys.add(getEmail(`${names[0]} ${names.at(-1)}`.replace("-", ""), domain))
-    }
-
-    return [...keys]
-  }
-
   async function createRecoveryCodes(user: User): Promise<string[] | null> {
     await directory.verificationCodes.generate({
       userKey: getKey(user),
@@ -149,6 +129,16 @@ export function getWorkspaceService(
     }
 
     return response.data.items.map((code) => code.verificationCode).filter(Boolean) as string[]
+  }
+
+  async function removeFromWorkspaceGroup(groupKey: string, memberKey: string): Promise<boolean> {
+    return await directory.members
+      .delete({
+        groupKey,
+        memberKey,
+      })
+      .then(() => true)
+      .catch(() => false)
   }
 
   /**
@@ -167,6 +157,22 @@ export function getWorkspaceService(
     return `${local}@${domain}`
   }
 
+  function getLinkedWorkspaceId(workspaceIdResolvable: User | Group | string): string | null {
+    if (typeof workspaceIdResolvable === "string") {
+      return null
+    }
+
+    if ("workspaceUserId" in workspaceIdResolvable && workspaceIdResolvable.workspaceUserId) {
+      return workspaceIdResolvable.workspaceUserId
+    }
+
+    if ("workspaceGroupId" in workspaceIdResolvable && workspaceIdResolvable.workspaceGroupId) {
+      return workspaceIdResolvable.workspaceGroupId
+    }
+
+    return null
+  }
+
   /**
    * Get a key for a user or a group.
    * A key is used to identify something in Google Workspace. It can be the objects id or an email (primary or alias).
@@ -178,18 +184,37 @@ export function getWorkspaceService(
    * getKey("full.name@online.ntnu.no") // "full.name@online.ntnu.no"
    * getKey("string", "custom.domain") // "string@custom.domain"
    */
-  function getKey(localResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string {
-    if (typeof localResolvable === "object") {
-      if ("workspaceUserId" in localResolvable && localResolvable.workspaceUserId) {
-        return localResolvable.workspaceUserId
-      }
+  function getKey(keyResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string {
+    return getLinkedWorkspaceId(keyResolvable) ?? getEmail(keyResolvable, domain)
+  }
 
-      if ("workspaceGroupId" in localResolvable && localResolvable.workspaceGroupId) {
-        return localResolvable.workspaceGroupId
-      }
+  function getKeys(keyResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string[] {
+    const linkedId = getLinkedWorkspaceId(keyResolvable)
+
+    if (linkedId) {
+      return [linkedId]
     }
 
-    return getEmail(localResolvable, domain)
+    const keys = new Set<string>()
+
+    const emailKey = getEmail(keyResolvable, domain)
+
+    keys.add(emailKey)
+    // In older versions of OnlineWeb, all dashes (-) were removed from the email local part.
+    // We add this to the set of keys to attempt to find an account created by the older version.
+    keys.add(emailKey.replace("-", ""))
+
+    const names = getLocal(keyResolvable).split(".").filter(Boolean)
+
+    // In older version of OnlineWeb it was less common to have your full name on your profile.
+    // A lot of older accounts were generated with only first name and last name, so we attempt to
+    // find those accounts as well.
+    if (names.length > 2) {
+      keys.add(getEmail(`${names[0]} ${names.at(-1)}`, domain))
+      keys.add(getEmail(`${names[0]} ${names.at(-1)}`.replace("-", ""), domain))
+    }
+
+    return [...keys]
   }
 
   function getCommitteeEmail(fullName: string) {
@@ -198,6 +223,48 @@ export function getWorkspaceService(
     }
 
     return getKey(slugify(fullName, SLUGIFY_OPTIONS))
+  }
+
+  function getLocal(localResolvable: User | Group | string): string {
+    if (typeof localResolvable === "string") {
+      return slugify(localResolvable, SLUGIFY_OPTIONS)
+    }
+
+    const isGroup = "type" in localResolvable
+
+    if (isGroup) {
+      return slugify(localResolvable.slug, SLUGIFY_OPTIONS)
+    }
+
+    // It is a user
+    if (!localResolvable.name) {
+      throw new Error("User name is required")
+    }
+
+    return slugify(localResolvable.name, SLUGIFY_OPTIONS)
+  }
+
+  function getTemporaryPassword(): string {
+    return randomBytes(TEMPORARY_PASSWORD_LENGTH).toString("base64").slice(0, TEMPORARY_PASSWORD_LENGTH)
+  }
+
+  function getWorkspaceMemberSyncState(memberLink: Omit<WorkspaceMemberLink, "syncState">): WorkspaceMemberSyncState {
+    if (memberLink.groupMember && !memberLink.groupMember?.workspaceUserId) {
+      return "PENDING_LINK"
+    }
+
+    const isActiveMember = getActiveGroupMembership(memberLink.groupMember) !== null
+    const isInWorkspace = memberLink.workspaceMember !== null
+
+    if (isActiveMember && !isInWorkspace) {
+      return "PENDING_ADD"
+    }
+
+    if (!isActiveMember && isInWorkspace) {
+      return "PENDING_REMOVE"
+    }
+
+    return "SYNCED"
   }
 
   return {
@@ -264,14 +331,14 @@ export function getWorkspaceService(
       }
     },
 
-    async findWorkspaceUser(handle, userId) {
+    async findWorkspaceUser(handle, userId, customKey) {
       const user = await userService.getById(handle, userId)
-      const keys = getKeys(user)
+      const keys = customKey != null ? getKeys(customKey) : getKeys(user)
 
-      let workspaceUser: admin_directory_v1.Schema$User | null = null
+      let workspaceUser: WorkspaceUser | null = null
 
       for (const key of keys) {
-        let response: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$User> | null
+        let response: GaxiosResponseWithHTTP2<WorkspaceUser> | null
 
         try {
           response = await directory.users.get({ userKey: key })
@@ -300,11 +367,11 @@ export function getWorkspaceService(
       return workspaceUser
     },
 
-    async getWorkspaceUser(handle, userId) {
-      const workspaceUser = await this.findWorkspaceUser(handle, userId)
+    async getWorkspaceUser(handle, userId, customKey) {
+      const workspaceUser = await this.findWorkspaceUser(handle, userId, customKey)
 
       if (!workspaceUser) {
-        throw new NotFoundError(`Workspace User for UserID(${userId}) not found`)
+        throw new NotFoundError(`Workspace User for User(ID=${userId}) not found`)
       }
 
       return workspaceUser
@@ -361,13 +428,7 @@ export function getWorkspaceService(
       const group = await groupService.getById(handle, groupId)
       const user = await userService.getById(handle, userId)
 
-      return await directory.members
-        .delete({
-          groupKey: getKey(group),
-          memberKey: getKey(user),
-        })
-        .then(() => true)
-        .catch(() => false)
+      return await removeFromWorkspaceGroup(getKey(group), getKey(user))
     },
 
     async createWorkspaceGroup(handle, groupId) {
@@ -397,32 +458,42 @@ export function getWorkspaceService(
       return { group: updatedGroup, workspaceGroup: data }
     },
 
-    async findWorkspaceGroup(handle, groupId) {
+    async findWorkspaceGroup(handle, groupId, customKey) {
       const group = await groupService.getById(handle, groupId)
+      const groupKey = customKey ? getKey(customKey) : getKey(group)
 
-      const response = await directory.groups.get({
-        groupKey: group.workspaceGroupId ?? getKey(group),
-      })
+      try {
+        const response = await directory.groups.get({ groupKey })
 
-      if (response.status === 404) {
-        return null
+        return response.data
+      } catch (error) {
+        if (!(error instanceof GaxiosError)) {
+          throw error
+        }
+
+        if (error.response?.status === 404) {
+          return null
+        }
+
+        logger.error("Failed to fetch WorkspaceGroup(Key=%s) from workspace with message: %s", groupKey, error.message)
+        throw error
+      }
+    },
+
+    async getWorkspaceGroup(handle, groupId, customKey) {
+      const workspaceGroup = await this.findWorkspaceGroup(handle, groupId, customKey)
+
+      if (!workspaceGroup) {
+        throw new NotFoundError(`Workspace Group for Group(ID=${groupId}) not found`)
       }
 
-      if (response.status !== 200) {
-        logger.warn("Failed to fetch group from workspace")
-        throw new Error()
-      }
-
-      return response.data
+      return workspaceGroup
     },
 
     async getMembersForGroup(handle, groupId) {
       const group = await groupService.getById(handle, groupId)
 
-      const workspaceMembers: {
-        groupMember: GroupMember | null
-        workspaceMember: admin_directory_v1.Schema$Member | null
-      }[] = []
+      const workspaceMembers: WorkspaceMemberLink[] = []
 
       let pageToken: string | undefined = undefined
 
@@ -434,9 +505,18 @@ export function getWorkspaceService(
 
         invariant(response.data.members, "Expected response data to be defined")
 
-        const users = await groupService.getMembers(handle, group.slug)
+        const members = await groupService.getMembers(handle, group.slug)
 
-        workspaceMembers.push(...joinOnWorkspaceUserId([...users.values()], response.data.members))
+        const joinedGroupAndWorkspaceMembers = joinGroupAndWorkspaceMembers(
+          [...members.values()],
+          response.data.members
+        )
+        const workspaceMemberLink = joinedGroupAndWorkspaceMembers.map((member) => ({
+          ...member,
+          syncState: getWorkspaceMemberSyncState(member),
+        }))
+
+        workspaceMembers.push(...workspaceMemberLink)
 
         pageToken = response.data.nextPageToken ?? undefined
       } while (pageToken !== undefined)
@@ -447,7 +527,7 @@ export function getWorkspaceService(
     async getWorkspaceGroupsForWorkspaceUser(handle, userId) {
       const user = await userService.getById(handle, userId)
 
-      const groups: { group: Group; workspaceGroup: admin_directory_v1.Schema$Group }[] = []
+      const groups: WorkspaceGroupLink[] = []
       let pageToken: string | undefined = undefined
 
       do {
@@ -466,33 +546,40 @@ export function getWorkspaceService(
 
       return groups
     },
+
+    async synchronizeWorkspaceGroup(handle, groupSlug) {
+      const group = await groupService.getById(handle, groupSlug)
+      const members = await this.getMembersForGroup(handle, groupSlug)
+
+      const actions = members.map(async (member) => {
+        const { groupMember, workspaceMember, syncState } = member
+
+        switch (syncState) {
+          case "PENDING_LINK":
+          case "SYNCED": {
+            return null
+          }
+          case "PENDING_ADD": {
+            invariant(groupMember, "Expected group member to be defined for PENDING_ADD action")
+            invariant(
+              groupMember.workspaceUserId,
+              "Expected group member to have a workspace user ID for PENDING_ADD action"
+            )
+
+            return this.addUserIntoWorkspaceGroup(handle, groupSlug, groupMember.id)
+          }
+          case "PENDING_REMOVE": {
+            invariant(group.workspaceGroupId, "Expected group to have a workspace group ID for PENDING_REMOVE action")
+            invariant(workspaceMember?.id, "Expected workspace member to have an ID for PENDING_REMOVE action")
+
+            return removeFromWorkspaceGroup(group.workspaceGroupId, workspaceMember.id)
+          }
+        }
+      })
+
+      await Promise.all(actions)
+
+      return true
+    },
   }
-}
-
-const getLocal = (localResolvable: User | Group | string): string => {
-  if (typeof localResolvable === "string") {
-    return slugify(localResolvable, SLUGIFY_OPTIONS)
-  }
-
-  const isGroup = "type" in localResolvable
-
-  if (isGroup) {
-    return slugify(localResolvable.slug, SLUGIFY_OPTIONS)
-  }
-
-  // It is a user
-  if (!localResolvable.name) {
-    throw new Error("User name is required")
-  }
-
-  return slugify(localResolvable.name, SLUGIFY_OPTIONS)
-}
-
-const getTemporaryPassword = () => {
-  return randomBytes(TEMPORARY_PASSWORD_LENGTH).toString("base64").slice(0, TEMPORARY_PASSWORD_LENGTH)
-}
-
-type UserAndWorkspaceMember = {
-  groupMember: GroupMember | null
-  workspaceMember: admin_directory_v1.Schema$Member | null
 }
