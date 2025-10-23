@@ -412,11 +412,16 @@ export function getWorkspaceService(
     async addUserIntoWorkspaceGroup(handle, groupSlug, userId) {
       const group = await groupService.getById(handle, groupSlug)
       const user = await userService.getById(handle, userId)
+      const workspaceUser = await this.getWorkspaceUser(handle, userId)
+
+      if (!workspaceUser.primaryEmail) {
+        throw new NotFoundError("Workspace user does not have a primary email")
+      }
 
       const res = await directory.members.insert({
         groupKey: getKey(group),
         requestBody: {
-          email: getEmail(user),
+          email: workspaceUser.primaryEmail,
           role: "MEMBER",
         },
       })
