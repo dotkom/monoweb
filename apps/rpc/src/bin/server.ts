@@ -10,17 +10,29 @@ import fastify from "fastify"
 import rawBody from "fastify-raw-body"
 import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
-import { createConfiguration } from "../configuration"
+import { createConfiguration, isDevelopmentEnvironment } from "../configuration"
 import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
 import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
-import { createContext } from "../trpc"
+import { createContext, createLocalDevelopmentContext } from "../trpc"
 
 const logger = getLogger("rpc")
 const configuration = createConfiguration()
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
 const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
+
+let getContext: typeof createContext
+
+if (isDevelopmentEnvironment) {
+  logger.warn(
+    "RPC server constructed using local development context. Authorization checks will be relaxed. This should NOT be used in production."
+  )
+  getContext = createLocalDevelopmentContext
+} else {
+  logger.info("RPC server constructed using production context.")
+  getContext = createContext
+}
 
 const controller = new AbortController()
 const dependencies = createThirdPartyClients(configuration)
@@ -49,19 +61,20 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
     const principal = await jwtService.verify(token)
     const subject = principal.payload.sub
     if (subject === undefined) {
-      return createContext(null, serviceLayer)
+      return getContext(null, serviceLayer, configuration)
     }
     const affiliations = await serviceLayer.authorizationService.getAffiliations(serviceLayer.prisma, subject)
-    return createContext(
+    return getContext(
       {
         subject,
         affiliations,
       },
-      serviceLayer
+      serviceLayer,
+      configuration
     )
   }
 
-  return createContext(null, serviceLayer)
+  return getContext(null, serviceLayer, configuration)
 }
 
 const server = fastify({

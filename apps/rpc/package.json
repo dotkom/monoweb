@@ -21,8 +21,7 @@
     "test:it": "vitest run -c ./vitest-integration.config.ts",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
-    "receive-stripe-webhooks": "stripe listen --forward-to localhost:4444/webhook/stripe",
-    "give-me-staff": "dotenv -o -- tsx src/scripts/give-me-staff.ts"
+    "receive-stripe-webhooks": "stripe listen --forward-to localhost:4444/webhook/stripe"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.821.0",
