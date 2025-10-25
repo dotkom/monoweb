@@ -99,43 +99,6 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   selections: true,
 })
 
-export type DeregisterReason = z.infer<typeof DeregisterReasonSchema>
-export const DeregisterReasonSchema = schemas.DeregisterReasonSchema
-
-export type DeregisterReasonWrite = z.infer<typeof DeregisterReasonWriteSchema>
-export const DeregisterReasonWriteSchema = DeregisterReasonSchema.pick({
-  type: true,
-  details: true,
-  userId: true,
-  eventId: true,
-  registeredAt: true,
-  userGrade: true,
-})
-
-export const DeregisterReasonTypeSchema = schemas.DeregisterReasonTypeSchema
-export type DeregisterReasonType = z.infer<typeof DeregisterReasonTypeSchema>
-
-export const mapDeregisterReasonTypeToLabel = (type: DeregisterReasonType) => {
-  switch (type) {
-    case "SICK":
-      return "Sykdom"
-    case "SCHOOL":
-      return "Skole"
-    case "WORK":
-      return "Jobb"
-    case "ECONOMY":
-      return "Økonomi"
-    case "NO_FAMILIAR_FACES":
-      return "Ingen bekjentskap"
-    case "TIME":
-      return "Tidsklemma"
-    case "OTHER":
-      return "Annet"
-    default:
-      return "Ukjent"
-  }
-}
-
 export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
   if (poolId) {
     return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.reserved).length

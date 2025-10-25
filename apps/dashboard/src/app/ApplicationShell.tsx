@@ -26,6 +26,7 @@ import {
   IconPhoto,
   IconPhotoShare,
   IconSkull,
+  IconUserMinus,
   IconUsersGroup,
   IconWheelchair,
 } from "@tabler/icons-react"
@@ -79,6 +80,11 @@ const navigations = [
     icon: IconPhotoShare,
     href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
     openInNewTab: true,
+  },
+  {
+    label: "Avmeldingsgrunner",
+    icon: IconUserMinus,
+    href: "/deregister-reason",
   },
   {
     label: "Hendelseslogg",

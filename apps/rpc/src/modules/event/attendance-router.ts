@@ -244,7 +244,7 @@ export const attendanceRouter = t.router({
         })
 
         const event = await ctx.eventService.getByAttendanceId(handle, attendance.id)
-        await ctx.attendanceService.createDeregisterReason(handle, {
+        await ctx.eventService.createDeregisterReason(handle, {
           ...input.deregisterReason,
           userId: ctx.principal.subject,
           eventId: event.id,

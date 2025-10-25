@@ -13,9 +13,6 @@ import {
   type AttendeePaymentWrite,
   AttendeeSchema,
   type AttendeeWrite,
-  type DeregisterReason,
-  DeregisterReasonSchema,
-  type DeregisterReasonWrite,
   type EventId,
   type TaskId,
   type UserId,
@@ -71,8 +68,6 @@ export interface AttendanceRepository {
   ): Promise<AttendancePool>
   deleteAttendancePoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<void>
   deleteAttendancePoolsByIds(handle: DBHandle, attendancePoolIds: AttendancePoolId[]): Promise<void>
-
-  createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
 }
 
 export function getAttendanceRepository(): AttendanceRepository {
@@ -394,13 +389,6 @@ export function getAttendanceRepository(): AttendanceRepository {
           },
         },
       })
-    },
-    async createDeregisterReason(handle, data) {
-      const row = await handle.deregisterReason.create({
-        data,
-      })
-
-      return parseOrReport(DeregisterReasonSchema, row)
     },
   }
 }

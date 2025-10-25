@@ -16,8 +16,6 @@ import {
   type AttendeeWrite,
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
-  type DeregisterReason,
-  type DeregisterReasonWrite,
   type Event,
   type GroupType,
   type Membership,
@@ -236,8 +234,6 @@ export interface AttendanceService {
     mergeTime: TZDate | null
   ): Promise<TaskId | null>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
-
-  createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
 }
 
 export function getAttendanceService(
@@ -1309,9 +1305,6 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
-    },
-    async createDeregisterReason(handle, data) {
-      return await attendanceRepository.createDeregisterReason(handle, data)
     },
   }
 }

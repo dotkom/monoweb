@@ -2,6 +2,9 @@ import type { DBHandle } from "@dotkomonline/db"
 import type {
   AttendanceId,
   CompanyId,
+  DeregisterReason,
+  DeregisterReasonWithEvent,
+  DeregisterReasonWrite,
   Event,
   EventFilterQuery,
   EventId,
@@ -45,6 +48,9 @@ export interface EventService {
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
   getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event>
+
+  createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
+  findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
 }
 
 export function getEventService(eventRepository: EventRepository): EventService {
@@ -123,6 +129,12 @@ export function getEventService(eventRepository: EventRepository): EventService 
         )
       }
       return await eventRepository.updateEventParent(handle, event.id, parentEvent.id)
+    },
+    async createDeregisterReason(handle, data) {
+      return await eventRepository.createDeregisterReason(handle, data)
+    },
+    async findManyDeregisterReasonsWithEvent(handle, page) {
+      return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
     },
   }
 }

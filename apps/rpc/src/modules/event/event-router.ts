@@ -9,7 +9,7 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { BasePaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { feedbackRouter } from "./feedback-router"
@@ -279,4 +279,15 @@ export const eventRouter = t.router({
         return groups.some((group) => event.hostingGroups.some((organizer) => organizer.slug === group.slug))
       })
     }),
+
+  findManyDeregisterReasonsWithEvent: staffProcedure.input(PaginateInputSchema).query(async ({ ctx, input }) => {
+    return ctx.executeTransaction(async (handle) => {
+      const rows = await ctx.eventService.findManyDeregisterReasonsWithEvent(handle, input)
+
+      return {
+        items: rows,
+        nextCursor: rows.at(-1)?.id,
+      }
+    })
+  }),
 })
