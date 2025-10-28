@@ -32,13 +32,13 @@ const SIDEBAR_LINKS = [
   {
     icon: IconCampfire,
     label: "Grupper",
-    slug: "Grupper",
+    slug: "grupper",
     component: UserGroupPage,
   },
   {
     icon: IconWheelchair,
     label: "Arrangementer",
-    slug: "Arrangementer",
+    slug: "arrangementer",
     component: UserEventPage,
   },
   {
