@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto"
+import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
@@ -24,7 +25,6 @@ import type { ConfigurationWithGoogleWorkspace } from "../../configuration"
 import { NotFoundError } from "../../error"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
-import { TZDate } from "@date-fns/tz"
 
 // Google Workspace enforces a minimum password length of 8 characters
 const TEMPORARY_PASSWORD_LENGTH = 8
