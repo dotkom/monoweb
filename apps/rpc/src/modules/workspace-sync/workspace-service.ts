@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto"
+import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
@@ -16,6 +17,7 @@ import {
   getActiveGroupMembership,
 } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
+import { isAfter } from "date-fns"
 import type { admin_directory_v1 } from "googleapis"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
@@ -249,6 +251,22 @@ export function getWorkspaceService(
   }
 
   function getWorkspaceMemberSyncState(memberLink: Omit<WorkspaceMemberLink, "syncState">): WorkspaceMemberSyncState {
+    // Some of the oldest users do not have Workspace accounts, and we do not want to give "Needs linking" warnings for
+    // them, since it has been over a decade since their last group membership ended. We do not want to create new
+    // accounts for these old users either, so we treat them as synced.
+
+    // Some group members have their latest membership end set to 2016-01-01T00:00:00Z and do not have Workspace accounts.
+    // This cutoff is chosen because everyone with their latest membership end after this date has a Workspace account.
+    // January 2nd is just to be safe.
+    const oldUserLastGroupMembershipCutoff = new TZDate("2016-01-02T00:00:00Z")
+    const isOldUser = memberLink.groupMember?.groupMemberships.every(
+      ({ end }) => end && !isAfter(end, oldUserLastGroupMembershipCutoff)
+    )
+
+    if (isOldUser) {
+      return "SYNCED"
+    }
+
     if (memberLink.groupMember && !memberLink.groupMember?.workspaceUserId) {
       return "PENDING_LINK"
     }
