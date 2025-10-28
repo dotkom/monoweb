@@ -90,4 +90,4 @@ export function isAmazonSesEmailFeatureEnabled(
 export const isDevelopmentEnvironment =
   process.env.DOPPLER_ENVIRONMENT === "dev" &&
   process.env.NODE_ENV !== "production" &&
-  process.env.NODE_ENV !== "staging"
+  process.env.NODE_ENV !== "test"
