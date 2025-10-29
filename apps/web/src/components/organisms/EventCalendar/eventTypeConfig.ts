@@ -45,7 +45,7 @@ export const eventCategories: Record<string, EventCategoryConfig> = {
     },
   },
   INTERNAL: {
-    displayName: "Intern",
+    displayName: "Internt",
     classes: {
       guide: "bg-yellow-500 dark:bg-yellow-600",
       item: "bg-yellow-100 text-yellow-900 border-yellow-500 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-600",
