@@ -88,6 +88,4 @@ export function isAmazonSesEmailFeatureEnabled(
 // We do not set NODE_ENV to development in our containers, so we just check that it's not staging or production
 // This should be safe enough with Dopplers own environment as well.
 export const isDevelopmentEnvironment =
-  process.env.DOPPLER_ENVIRONMENT === "dev" &&
-  process.env.NODE_ENV !== "production" &&
-  process.env.NODE_ENV !== "test"
+  process.env.DOPPLER_ENVIRONMENT === "dev" && process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test"
