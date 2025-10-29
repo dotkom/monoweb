@@ -80,7 +80,9 @@ const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProp
           {pool.capacity > 0 && `/${pool.capacity}`}
         </Text>
 
-        {unreservedAttendeeCount > 0 && <Text className="text-gray-900">+{unreservedAttendeeCount} i kø</Text>}
+        {unreservedAttendeeCount > 0 && (
+          <Text className="text-gray-900 dark:text-stone-400">+{unreservedAttendeeCount} i kø</Text>
+        )}
       </div>
     </div>
   )
