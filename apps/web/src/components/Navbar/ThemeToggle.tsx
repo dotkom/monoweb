@@ -1,6 +1,6 @@
 import { cn } from "@dotkomonline/ui"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
-import { IconDeviceDesktop, IconMoon, IconSun } from "@tabler/icons-react"
+import { IconDeviceDesktop, IconDeviceMobile, IconMoon, IconSun } from "@tabler/icons-react"
 import type { Icon } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 
@@ -15,6 +15,7 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
     theme: "light" | "dark" | "system"
     label: string
     icon: Icon
+    className?: string
   }> = [
     {
       theme: "light",
@@ -30,6 +31,13 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
       theme: "system",
       label: "Systempreferanse",
       icon: IconDeviceDesktop,
+      className: "hidden sm:flex",
+    },
+    {
+      theme: "system",
+      label: "Systempreferanse",
+      icon: IconDeviceMobile,
+      className: "sm:hidden",
     },
   ]
 
@@ -50,12 +58,15 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
               <button
                 type="button"
                 onClick={() => setTheme(item.theme)}
-                className="relative flex items-center justify-center rounded-md transition-colors w-8 h-8"
+                className={cn(
+                  "relative flex items-center justify-center rounded-md transition-colors w-8 h-8",
+                  item.className
+                )}
               >
                 <IconComponent
                   width={20}
                   height={20}
-                  className="transition-colors duration-200 text-black dark:text-stone-100"
+                  className="transition-colors duration-200 text-black dark:text-stone-100 sm"
                 />
               </button>
             </TooltipTrigger>
