@@ -467,7 +467,20 @@ export function getEventRepository(): EventRepository {
           },
         },
       })
-      return rows.map((row) => parseOrReport(DeregisterReasonWithEventSchema, row))
+
+      return rows.map((row) => {
+        const { event, ...rest } = row
+        const deregisterReason = {
+          event: {
+            ...event,
+            companies: event.companies.map((c) => c.company),
+            hostingGroups: event.hostingGroups.map((g) => g.group),
+          },
+          ...rest,
+        }
+
+        return parseOrReport(DeregisterReasonWithEventSchema, deregisterReason)
+      })
     },
   }
 }
