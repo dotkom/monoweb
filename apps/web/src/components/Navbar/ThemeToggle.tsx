@@ -15,16 +15,25 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
       theme: "light",
       label: "Lyst tema",
       icon: "tabler:sun",
+      className: "",
     },
     {
       theme: "dark",
       label: "Mørkt tema",
       icon: "tabler:moon",
+      className: "",
     },
     {
       theme: "system",
       label: "Systempreferanse",
       icon: "tabler:device-desktop",
+      className: "hidden sm:flex",
+    },
+    {
+      theme: "system",
+      label: "Systempreferanse",
+      icon: "tabler:device-mobile",
+      className: "sm:hidden",
     },
   ] as const
 
@@ -44,13 +53,16 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
               <button
                 type="button"
                 onClick={() => setTheme(item.theme)}
-                className="relative flex items-center justify-center rounded-md transition-colors w-8 h-8"
+                className={cn(
+                  "relative flex items-center justify-center rounded-md transition-colors w-8 h-8",
+                  item.className
+                )}
               >
                 <Icon
                   icon={item.icon}
                   width={20}
                   height={20}
-                  className="transition-colors duration-200 text-black dark:text-stone-100"
+                  className="transition-colors duration-200 text-black dark:text-stone-100 sm"
                 />
               </button>
             </TooltipTrigger>
