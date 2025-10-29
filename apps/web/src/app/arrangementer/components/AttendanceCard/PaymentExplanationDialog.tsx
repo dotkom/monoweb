@@ -13,12 +13,13 @@ import {
 export const PaymentExplanationDialog = () => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <button type="button" className="flex flex-row gap-1 items-center">
+      <AlertDialogTrigger>
+        <div className="flex flex-row gap-1 items-center cursor-pointer text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
           <Icon icon="material-symbols:info-outline-rounded" className="text-lg" />
           <Text className="text-sm">Hvordan fungerer betaling?</Text>
-        </button>
+        </div>
       </AlertDialogTrigger>
+
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-row gap-2 items-center justify-between font-medium">
