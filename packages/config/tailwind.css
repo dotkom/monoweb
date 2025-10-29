@@ -69,3 +69,7 @@
     will-change: auto;
   }
 }
+
+@theme {
+  --breakpoint-xs: 30rem;
+}
