@@ -75,10 +75,11 @@
 }
 
 @theme {
+  --breakpoint-xs: 30rem;
   --font-glass: Glass, 'sans-serif';
   --animate-flicker: flicker 0.25s infinite;
   --animate-scan: scan 0.2s linear infinite;
-
+  
   @keyframes scan {
     0% {
       background-position: 0 0;
@@ -97,4 +98,4 @@
       opacity: 0.85;
     }
   }
-}
+

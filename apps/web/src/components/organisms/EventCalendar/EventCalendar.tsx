@@ -1,10 +1,12 @@
 "use client"
 
 import { useEventAllQuery } from "@/app/arrangementer/components/queries"
+import { useTRPC } from "@/utils/trpc/client"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
+import { useQuery } from "@tanstack/react-query"
 import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
@@ -30,6 +32,9 @@ interface CalendarProps {
 export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const session = useSession()
 
+  const trpc = useTRPC()
+  const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
+
   // fetch 10 days prior to first day of month as a buffer since fliter is by start date
   const calendarStart = new TZDate(year, month, 1 - 10)
   const lastDayOfMonth = endOfMonth(new TZDate(year, month, 1))
@@ -42,6 +47,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
         max: calendarEnd,
       },
       orderBy: "asc",
+      excludingType: isStaff ? [] : undefined,
     },
     page: {
       take: 1000,

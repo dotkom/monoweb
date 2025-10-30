@@ -127,7 +127,7 @@ export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayPro
                 />
               )}
               {categoryName && (
-                <div>
+                <div className="ml-auto">
                   <Text
                     element="span"
                     className={cn("inline-block px-2 py-1 text-sm rounded-md font-semibold", badgeClasses)}

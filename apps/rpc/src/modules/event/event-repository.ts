@@ -2,6 +2,11 @@ import type { DBHandle } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type CompanyId,
+  type DeregisterReason,
+  DeregisterReasonSchema,
+  type DeregisterReasonWithEvent,
+  DeregisterReasonWithEventSchema,
+  type DeregisterReasonWrite,
   type Event,
   type EventFilterQuery,
   type EventId,
@@ -60,6 +65,9 @@ export interface EventRepository {
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
   findUnansweredByUser(handle: DBHandle, userId: UserId): Promise<Event[]>
+
+  createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
+  findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
 }
 
 export function getEventRepository(): EventRepository {
@@ -426,6 +434,53 @@ export function getEventRepository(): EventRepository {
           hostingGroups: event.hostingGroups.map((g) => g.group),
         })
       )
+    },
+    async createDeregisterReason(handle, data) {
+      const row = await handle.deregisterReason.create({
+        data,
+      })
+
+      return parseOrReport(DeregisterReasonSchema, row)
+    },
+    async findManyDeregisterReasonsWithEvent(handle, page) {
+      const rows = await handle.deregisterReason.findMany({
+        ...pageQuery(page),
+        orderBy: { createdAt: "desc" },
+        include: {
+          event: {
+            include: {
+              companies: {
+                include: {
+                  company: true,
+                },
+              },
+              hostingGroups: {
+                include: {
+                  group: {
+                    include: {
+                      roles: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      })
+
+      return rows.map((row) => {
+        const { event, ...rest } = row
+        const deregisterReason = {
+          event: {
+            ...event,
+            companies: event.companies.map((c) => c.company),
+            hostingGroups: event.hostingGroups.map((g) => g.group),
+          },
+          ...rest,
+        }
+
+        return parseOrReport(DeregisterReasonWithEventSchema, deregisterReason)
+      })
     },
   }
 }

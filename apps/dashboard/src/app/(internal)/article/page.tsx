@@ -5,7 +5,7 @@ import { AllArticlesTable } from "./all-articles-table"
 import { useCreateArticleModal } from "./modals/create-article"
 import { useArticleAllQuery } from "./queries"
 
-export default function CompanyPage() {
+export default function ArticlePage() {
   const { articles, isLoading: isArticlesLoading } = useArticleAllQuery()
   const open = useCreateArticleModal()
 
