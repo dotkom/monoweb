@@ -15,23 +15,23 @@ import { ConstructionNotice } from "./construction-notice"
 import JubNotice from "./jubileum-notice"
 
 export default async function App() {
-  // const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
+  const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
 
-  // const { items: events } = await server.event.all.query({
-  //   take: 3,
-  //   filter: {
-  //     byEndDate: {
-  //       max: null,
-  //       min: getCurrentUTC(),
-  //     },
-  //     excludingOrganizingGroup: ["velkom"],
-  //     excludingType: isStaff ? [] : undefined,
-  //     orderBy: "asc",
-  //   },
-  // })
+  const { items: events } = await server.event.all.query({
+    take: 3,
+    filter: {
+      byEndDate: {
+        max: null,
+        min: getCurrentUTC(),
+      },
+      excludingOrganizingGroup: ["velkom"],
+      excludingType: isStaff ? [] : undefined,
+      orderBy: "asc",
+    },
+  })
 
-  // const featuredEvent = events[0] ?? null
-  // const otherEvents = events.slice(1)
+  const featuredEvent = events[0] ?? null
+  const otherEvents = events.slice(1)
 
   const cookies = await getCookies()
   const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
@@ -47,7 +47,7 @@ export default async function App() {
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
-        {/* {featuredEvent ? (
+        {featuredEvent ? (
           <div className="flex flex-col md:grid md:[grid-template-columns:35%_35%_30%] md:[grid-template-rows:2fr_2fr_1fr] gap-6 w-full">
             <div className="col-span-2 row-span-3">
               <BigEventCard
@@ -83,9 +83,9 @@ export default async function App() {
               </Button>
             </Tilt>
           </div>
-        ) : ( */}
+        ) : (
           <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
-        {/* )} */}
+        )}
       </div>
     </section>
   )
@@ -98,45 +98,45 @@ interface BigEventCardProps {
   className?: string
 }
 
-// const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, className }) => {
-//   const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, className }) => {
+  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
-//   return (
-//     <Link
-//       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
-//       className={cn(
-//         "flex flex-col w-full gap-5 p-6 rounded-2xl border transition-colors",
-//         "border-gray-100 bg-gray-50 hover:bg-transparent",
-//         "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
-//         className
-//       )}
-//     >
-//       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-//         <img
-//           src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
-//           alt={event.title}
-//           className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
-//         />
-//       </Tilt>
+  return (
+    <Link
+      href={`/arrangementer/${slugify(event.title)}/${event.id}`}
+      className={cn(
+        "flex flex-col w-full gap-5 p-6 rounded-2xl border transition-colors",
+        "border-gray-100 bg-gray-50 hover:bg-transparent",
+        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+        className
+      )}
+    >
+      <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
+        <img
+          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
+          alt={event.title}
+          className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
+        />
+      </Tilt>
 
-//       <div className="flex flex-col gap-3">
-//         <Title element="p" size="xl" className="text-xl line-clamp-1 max-md:font-medium md:text-4xl">
-//           {event.title}
-//         </Title>
+      <div className="flex flex-col gap-3">
+        <Title element="p" size="xl" className="text-xl line-clamp-1 max-md:font-medium md:text-4xl">
+          {event.title}
+        </Title>
 
-//         <div className="flex flex-col gap-4">
-//           <div className="flex flex-row gap-2 items-center">
-//             <Icon icon="tabler:calendar-event" className="text-xl text-gray-500 dark:text-stone-500" />
-//             <Text className="text-lg">{formatDate(event.start, "dd. MMM", { locale: nb })}</Text>
-//           </div>
-//           <div className="max-md:hidden">
-//             <RichText content={event.description} maxLines={5} hideToggleButton />
-//           </div>
-//         </div>
-//       </div>
-//     </Link>
-//   )
-// }
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-row gap-2 items-center">
+            <Icon icon="tabler:calendar-event" className="text-xl text-gray-500 dark:text-stone-500" />
+            <Text className="text-lg">{formatDate(event.start, "dd. MMM", { locale: nb })}</Text>
+          </div>
+          <div className="max-md:hidden">
+            <RichText content={event.description} maxLines={5} hideToggleButton />
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+}
 
 interface ComingEventProps {
   event: Event
@@ -145,36 +145,36 @@ interface ComingEventProps {
   className?: string
 }
 
-// const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className }) => {
-//   const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className }) => {
+  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
-//   return (
-//     <Link
-//       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
-//       className={cn(
-//         "flex flex-col h-full gap-3 p-3 rounded-2xl border transition-colors",
-//         "border-gray-100 bg-gray-50 hover:bg-transparent",
-//         "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
-//         className
-//       )}
-//     >
-//       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-//         <img
-//           src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
-//           alt={event.title}
-//           className="rounded-lg border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
-//         />
-//       </Tilt>
-//       <div className="flex flex-col gap-2 w-full">
-//         <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
-//           {event.title}
-//         </Title>
+  return (
+    <Link
+      href={`/arrangementer/${slugify(event.title)}/${event.id}`}
+      className={cn(
+        "flex flex-col h-full gap-3 p-3 rounded-2xl border transition-colors",
+        "border-gray-100 bg-gray-50 hover:bg-transparent",
+        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+        className
+      )}
+    >
+      <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
+        <img
+          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
+          alt={event.title}
+          className="rounded-lg border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
+        />
+      </Tilt>
+      <div className="flex flex-col gap-2 w-full">
+        <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
+          {event.title}
+        </Title>
 
-//         <div className="flex flex-row gap-2 items-center">
-//           <Icon icon="tabler:calendar-event" className="text-base text-gray-800 dark:text-stone-400" />
-//           <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
-//         </div>
-//       </div>
-//     </Link>
-//   )
-// }
+        <div className="flex flex-row gap-2 items-center">
+          <Icon icon="tabler:calendar-event" className="text-base text-gray-800 dark:text-stone-400" />
+          <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
+        </div>
+      </div>
+    </Link>
+  )
+}
