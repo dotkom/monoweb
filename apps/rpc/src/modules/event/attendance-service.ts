@@ -824,17 +824,13 @@ export function getAttendanceService(
     async executeChargeAttendeeTask(handle, { attendeeId }) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((a) => a.id === attendeeId)
+
       if (!attendee) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
+
       logger.info("Executing Stripe charge for Attendee(ID=%s) of Attendance(ID=%s)", attendee.id, attendance.id)
-      if (attendance.deregisterDeadline > getCurrentUTC()) {
-        logger.error(
-          "Cancelling charge of Attendee(ID=%s) as task is scheduled too early. This is likely a bug",
-          attendee.id
-        )
-        return
-      }
+
       await this.createAttendeePaymentCharge(handle, attendee.id)
     },
     async startAttendeePayment(handle, attendeeId, deadline): Promise<Payment> {
@@ -1027,7 +1023,7 @@ export function getAttendanceService(
         )
         await personalMarkService.addToUser(handle, attendee.userId, mark.id)
         logger.info(
-          "Suspended User(ID=％s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
+          "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
           attendee.userId,
           event.id,
           event.title,
