@@ -6,9 +6,10 @@ export type TextInputProps = ComponentPropsWithRef<"input"> & {
   placeholder?: string
   label?: string
   error?: boolean | string
+  className?: string
 }
 
-export const TextInput: FC<TextInputProps> = ({ label, error, ref, ...props }) => {
+export const TextInput: FC<TextInputProps> = ({ label, error, ref, className, ...props }) => {
   const hasError = Boolean(error)
   const hasTextError = typeof error === "string"
 
@@ -35,7 +36,7 @@ export const TextInput: FC<TextInputProps> = ({ label, error, ref, ...props }) =
         {...props}
         ref={ref}
         className={cn(
-          "flex h-10 w-full items-center justify-between rounded-md border text-left",
+          "flex h-10 w-full items-center justify-between rounded-lg border text-left",
           "text-black dark:text-white",
           "placeholder:text-gray-500 dark:placeholder:text-stone-400",
           "border-gray-200 px-3 py-2 text-sm ring-offset-background",
@@ -45,7 +46,8 @@ export const TextInput: FC<TextInputProps> = ({ label, error, ref, ...props }) =
           hasError && [
             "text-red-600 border-red-300 focus:ring-red-400 focus:border-red-400",
             "dark:text-red-400 dark:border-red-700 dark:focus:ring-red-600 dark:focus:border-red-600",
-          ]
+          ],
+          className
         )}
       />
 

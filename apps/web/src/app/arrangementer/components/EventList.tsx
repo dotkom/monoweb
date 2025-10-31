@@ -3,7 +3,7 @@
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
-import { Text } from "@dotkomonline/ui"
+import { Icon, Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { compareAsc, interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
@@ -112,7 +112,12 @@ export const EventList: FC<EventListProps> = ({
   }, [onLoadMore])
 
   if (futureEvents.length === 0 && pastEvents.length === 0) {
-    return <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
+    return (
+      <div className="flex flex-col items-center gap-2 p-4">
+        <Icon icon="tabler:mood-confuzed" className="text-3xl text-gray-500 dark:text-stone-500" />
+        <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise...</Text>
+      </div>
+    )
   }
 
   return (
