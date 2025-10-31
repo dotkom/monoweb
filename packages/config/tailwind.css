@@ -69,7 +69,33 @@
     will-change: auto;
   }
 }
+@font-face {
+  font-family: Glass;
+  src: url('fonts/Glass_TTY_VT220.ttf');
+}
 
 @theme {
   --breakpoint-xs: 30rem;
-}
+  --font-glass: Glass, 'sans-serif';
+  --animate-flicker: flicker 0.25s infinite;
+  --animate-scan: scan 0.2s linear infinite;
+  
+  @keyframes scan {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 0 10px;
+    }
+  }
+
+  @keyframes flicker {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.85;
+    }
+  }
+
