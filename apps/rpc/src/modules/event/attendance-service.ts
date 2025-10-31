@@ -654,7 +654,13 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
 
-      if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0) {
+      const alreadyHasPayment =
+        attendee.paymentLink !== null ||
+        attendee.paymentReservedAt !== null ||
+        attendee.paymentRefundedAt !== null ||
+        attendee.paymentChargedAt !== null
+
+      if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0 && !alreadyHasPayment) {
         const paymentDeadline = addHours(getCurrentUTC(), 24)
         const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
         attendee.paymentDeadline = paymentDeadline
