@@ -12,7 +12,7 @@ import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
 import { ConstructionNotice } from "./construction-notice"
-import JubNotice from "./jubileum-notice"
+import { JubileumNotice } from "./jubileum-notice"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
@@ -40,7 +40,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
         {constructionNoticeShown && <ConstructionNotice />}
-        <JubNotice />
+        <JubileumNotice />
         <OnlineHero />
       </div>
 
