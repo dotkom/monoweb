@@ -1202,8 +1202,8 @@ export function getAttendanceService(
       const errors: Error[] = []
 
       for (const event of eventsEndedYesterday) {
-        if (!event.attendanceId) {
-          return
+        if (!event.attendanceId || !event.markForMissedAttendance) {
+          continue
         }
 
         try {

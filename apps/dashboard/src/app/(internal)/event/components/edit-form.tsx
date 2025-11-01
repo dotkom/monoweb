@@ -1,3 +1,4 @@
+import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
@@ -126,6 +127,9 @@ export const useEventEditForm = ({
         placeholder: "Søk etter arrangement...",
         clearable: true,
         excludeEventIds: defaultValues?.id ? [defaultValues.id] : [],
+      }),
+      markForMissedAttendance: createCheckboxInput({
+        label: "Gi prikk for fravær",
       }),
     },
   })
