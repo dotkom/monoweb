@@ -1203,7 +1203,7 @@ export function getAttendanceService(
 
       for (const event of eventsEndedYesterday) {
         if (!event.attendanceId || !event.markForMissedAttendance) {
-          return
+          continue
         }
 
         try {
