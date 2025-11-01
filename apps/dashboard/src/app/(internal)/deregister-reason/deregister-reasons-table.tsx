@@ -3,19 +3,8 @@ import { type DeregisterReasonWithEvent, mapDeregisterReasonTypeToLabel } from "
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { useMemo } from "react"
-
-const capitalizeFirstLetter = (string: string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`
-
-const getFormattedDate = (date: Date) => {
-  return capitalizeFirstLetter(
-    formatDate(date, "eeee dd. MMMM yyyy HH:mm", {
-      locale: nb,
-    })
-  )
-}
 
 interface Props {
   data: DeregisterReasonWithEvent[]
@@ -37,15 +26,11 @@ export const DeregisterReasonsTable = ({ data, onLoadMore }: Props) => {
       }),
       columnHelper.accessor("registeredAt", {
         header: () => "Registreringsdato",
-        cell: (info) => {
-          return getFormattedDate(info.getValue())
-        },
+        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy HH:mm"),
       }),
       columnHelper.accessor("createdAt", {
         header: () => "Avmeldingsdato",
-        cell: (info) => {
-          return getFormattedDate(info.getValue())
-        },
+        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy HH:mm"),
       }),
       columnHelper.accessor("userGrade", {
         header: () => "Klassetrinn",

@@ -1,14 +1,11 @@
+import { DateTooltip } from "@/components/DateTooltip"
 import { GenericTable } from "@/components/GenericTable"
 import { type EventWithAttendance, mapEventStatusToLabel, mapEventTypeToLabel } from "@dotkomonline/types"
-import { Anchor, Text, Tooltip } from "@mantine/core"
+import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { useMemo } from "react"
 import { EventHostingGroupList } from "./event-hosting-group-list"
-
-const capitalizeFirstLetter = (string: string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`
 
 interface Props {
   events: EventWithAttendance[]
@@ -30,18 +27,7 @@ export const EventTable = ({ events, onLoadMore }: Props) => {
       }),
       columnHelper.accessor("event.start", {
         header: () => "Startdato",
-        cell: (info) => {
-          const longDate = formatDate(info.getValue(), "eeee dd. MMMM yyyy HH:mm", { locale: nb })
-          const shortDate = formatDate(info.getValue(), "dd. MMM yyyy", { locale: nb })
-
-          return (
-            <Tooltip label={capitalizeFirstLetter(longDate)}>
-              <Text size="sm" w="fit-content">
-                {shortDate}
-              </Text>
-            </Tooltip>
-          )
-        },
+        cell: (info) => <DateTooltip date={info.getValue()} />,
       }),
       columnHelper.accessor(({ event }) => event, {
         id: "organizers",
