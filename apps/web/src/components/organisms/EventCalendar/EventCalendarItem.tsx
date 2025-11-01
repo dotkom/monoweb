@@ -73,7 +73,7 @@ export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayPro
       <Link href={`/arrangementer/${slugify(event.title)}/${event.id}`}>
         <HoverCardTrigger
           className={cn(
-            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] asm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
+            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
             isActive ? triggerClasses : "bg-gray-100 text-gray-500 dark:bg-stone-800 dark:text-stone-400",
             borderClasses,
             getColStartClass(eventDisplayProps.startCol + 2),
