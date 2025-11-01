@@ -296,23 +296,24 @@ model Attendee {
 }
 
 model Event {
-  id               String        @id @default(uuid())
-  title            String
-  start            DateTime      @db.Timestamptz(3)
-  end              DateTime      @db.Timestamptz(3)
-  status           EventStatus
-  description      String
-  shortDescription String?
-  imageUrl         String?
-  locationTitle    String?
-  locationAddress  String?
-  locationLink     String?
-  attendance       Attendance?   @relation(fields: [attendanceId], references: [id])
-  attendanceId     String?
-  type             EventType
-  feedbackForm     FeedbackForm?
-  createdAt        DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt        DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
+  id                      String        @id @default(uuid())
+  title                   String
+  start                   DateTime      @db.Timestamptz(3)
+  end                     DateTime      @db.Timestamptz(3)
+  status                  EventStatus
+  description             String
+  shortDescription        String?
+  imageUrl                String?
+  locationTitle           String?
+  locationAddress         String?
+  locationLink            String?
+  attendance              Attendance?   @relation(fields: [attendanceId], references: [id])
+  attendanceId            String?
+  type                    EventType
+  feedbackForm            FeedbackForm?
+  markForMissedAttendance Boolean       @default(true)
+  createdAt               DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt               DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
 
   parentId String?
   parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
