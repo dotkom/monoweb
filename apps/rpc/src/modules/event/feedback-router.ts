@@ -10,9 +10,27 @@ import {
   FeedbackQuestionWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
+import { FailedPreconditionError } from "../../error"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
 
 export const feedbackRouter = t.router({
+  getFeedbackEligibility: authenticatedProcedure.input(FeedbackFormIdSchema).query(async ({ input, ctx }) =>
+    ctx.executeTransaction(async (handle) => {
+      return ctx.feedbackFormService.getFeedbackEligibility(handle, input, ctx.principal.subject)
+    })
+  ),
+
+  getStaffFeedbackFormPreview: staffProcedure.input(FeedbackFormIdSchema).query(async ({ input, ctx }) =>
+    ctx.executeTransaction(async (handle) => {
+      const feedbackForm = await ctx.feedbackFormService.getById(handle, input)
+      const event = await ctx.eventService.getEventById(handle, feedbackForm.eventId)
+      return {
+        event,
+        feedbackForm,
+      }
+    })
+  ),
+
   createForm: staffProcedure
     .input(
       z.object({
@@ -67,7 +85,7 @@ export const feedbackRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.findByEventId(handle, input))
     ),
-  getFormByEventid: procedure
+  getFormByEventId: procedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.feedbackFormService.getByEventId(handle, input))
@@ -90,9 +108,21 @@ export const feedbackRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeAuditedTransaction(async (handle) =>
-        ctx.feedbackFormAnswerService.create(handle, input.formAnswer, input.questionAnswers)
-      )
+      ctx.executeAuditedTransaction(async (handle) => {
+        const attendee = await ctx.attendanceService.getAttendeeById(handle, input.formAnswer.attendeeId)
+        ctx.authorize.requireMe(attendee.userId)
+
+        const answerEligibility = await ctx.feedbackFormService.getFeedbackEligibility(
+          handle,
+          input.formAnswer.feedbackFormId,
+          ctx.principal.subject
+        )
+        if (!answerEligibility.success) {
+          throw new FailedPreconditionError(`Failed to submit feedback: ${answerEligibility.cause}`)
+        }
+
+        return ctx.feedbackFormAnswerService.create(handle, input.formAnswer, input.questionAnswers)
+      })
     ),
   findAnswerByAttendee: staffProcedure
     .input(
