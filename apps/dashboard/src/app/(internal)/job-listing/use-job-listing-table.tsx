@@ -1,29 +1,11 @@
 "use client"
 
+import { DateTooltip } from "@/components/DateTooltip"
 import { type JobListing, getJobListingEmploymentName } from "@dotkomonline/types"
-import { Anchor, Text, Tooltip } from "@mantine/core"
+import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { useMemo } from "react"
-
-const capitalizeFirstLetter = (string: string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`
-
-const getDateTooltip = (date: Date) => {
-  const longDate = formatDate(date, "eeee dd. MMMM yyyy HH:mm", {
-    locale: nb,
-  })
-  const shortDate = formatDate(date, "dd. MMM yyyy", { locale: nb })
-
-  return (
-    <Tooltip label={capitalizeFirstLetter(longDate)}>
-      <Text size="sm" w="fit-content">
-        {shortDate}
-      </Text>
-    </Tooltip>
-  )
-}
 
 interface Props {
   data: JobListing[]
@@ -53,15 +35,11 @@ export const useJobListingTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("start", {
         header: () => "Aktiv fra",
-        cell: (info) => {
-          return getDateTooltip(info.getValue())
-        },
+        cell: (info) => <DateTooltip date={info.getValue()} />,
       }),
       columnHelper.accessor("end", {
         header: () => "Aktiv til",
-        cell: (info) => {
-          return getDateTooltip(info.getValue())
-        },
+        cell: (info) => <DateTooltip date={info.getValue()} />,
       }),
       columnHelper.accessor("employment", {
         header: () => "Type",
@@ -74,7 +52,7 @@ export const useJobListingTable = ({ data }: Props) => {
         cell: (info) => {
           const date = info.getValue()
 
-          return date ? getDateTooltip(date) : "Ingen frist"
+          return date ? <DateTooltip date={date} /> : "Ingen frist"
         },
       }),
       columnHelper.accessor("rollingAdmission", {

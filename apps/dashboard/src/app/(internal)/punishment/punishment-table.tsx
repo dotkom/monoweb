@@ -1,10 +1,10 @@
 "use client"
 
+import { DateTooltip } from "@/components/DateTooltip"
 import { GenericTable } from "@/components/GenericTable"
 import type { Mark } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 import Link from "next/link"
 
 interface Props {
@@ -26,7 +26,7 @@ export const PunishmentTable = ({ marks, onLoadMore }: Props) => {
     }),
     columnHelper.accessor("createdAt", {
       header: () => "Opprettet",
-      cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
+      cell: (info) => <DateTooltip date={info.getValue()} />,
     }),
     columnHelper.accessor("weight", {
       header: () => "Vekt",

@@ -33,7 +33,7 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
+import { capitalizeFirstLetter, createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -42,10 +42,6 @@ import { notFound, useParams, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
-
-const capitalizeFirstLetter = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
 
 const renderUserInfo = (label: string, value: string | number | null) => {
   if (value === null || value === undefined) {
