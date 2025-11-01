@@ -185,6 +185,9 @@ export const useEndGroupMembershipMutation = () => {
         await queryClient.invalidateQueries(
           trpc.group.getMember.queryOptions({ groupId: input.groupId, userId: input.userId })
         )
+        await queryClient.invalidateQueries(
+          trpc.workspace.getMembersForGroup.queryOptions({ groupSlug: input.groupId })
+        )
       },
     })
   )
@@ -216,16 +219,27 @@ export const useUpdateGroupMembershipMutation = () => {
 export const useSyncWorkspaceGroupMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
+  const notification = useQueryNotification()
 
   return useMutation(
     trpc.workspace.synchronizeGroup.mutationOptions({
-      onError: fail,
-      onMutate: loading,
+      onError: () => {
+        notification.fail({
+          title: "Feil",
+          message: "Det oppsto en feil under synkronisering.",
+        })
+      },
+      onMutate: () => {
+        notification.loading({
+          title: "Synkroniserer",
+          message: "E-postlisten blir synkronisert.",
+        })
+      },
       onSuccess: async (_, input) => {
-        complete()
+        notification.complete({
+          title: "Synkronisert",
+          message: "E-postlisten har blitt synkronisert.",
+        })
 
         await queryClient.invalidateQueries(
           trpc.workspace.getMembersForGroup.queryOptions({ groupSlug: input.groupSlug })
