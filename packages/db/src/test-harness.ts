@@ -1,6 +1,5 @@
 import { spawn } from "node:child_process"
 import os from "node:os"
-// biome-ignore lint/style/useNodejsImportProtocol: Cannot import with node path on vercel
 import { PostgreSqlContainer } from "@testcontainers/postgresql"
 import { createPrisma } from "."
 
