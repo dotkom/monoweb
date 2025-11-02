@@ -653,10 +653,11 @@ export function getAttendanceService(
         return
       }
 
-      // If this happens the task was scheduled too early.
       if (isFutureReservationTime) {
-        throw new FailedPreconditionError(
-          `Cannot reserve Attendee(ID=${attendeeId}) before earliestReservationAt (${attendee.earliestReservationAt.toUTCString()})`
+        logger.warn(
+          "ReserveAttendee task for Attendee(ID=%s) ran before earliestReservationAt %s.",
+          attendee.id,
+          attendee.earliestReservationAt.toUTCString()
         )
       }
 
