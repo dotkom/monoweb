@@ -8,6 +8,7 @@ import {
 } from "@dotkomonline/types"
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTitle,
@@ -23,7 +24,7 @@ import {
   Textarea,
   cn,
 } from "@dotkomonline/ui"
-import { IconUserMinus } from "@tabler/icons-react"
+import { IconInfoCircle, IconUserMinus, IconX } from "@tabler/icons-react"
 import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
@@ -42,7 +43,6 @@ interface Props {
 }
 
 export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance, attendee }: Props) => {
-  //const hasCompanyOrganizer = event.companies.length > 0
   const hasCompanyOrganizer = event.companies.length > 0
 
   return (
@@ -51,27 +51,38 @@ export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance,
         className="relative flex flex-col overflow-hidden bg-white"
         onOutsideClick={() => setOpen(false)}
       >
-        <AlertDialogTitle className="text-2xl font-bold">Er du sikker?</AlertDialogTitle>
-        {hasCompanyOrganizer && (
-          <AlertDialogDescription className="mb-4">
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-row gap-2 items-center">
-                <Icon icon="tabler:info-circle" className="text-sm text-gray-500 dark:text-stone-500" />
-                <Text className="text-xs text-gray-500 dark:text-stone-500">
-                  Dette arrangementet er i samarbeid med en bedrift.
+        <div className="flex flex-row gap-4 justify-between">
+          <AlertDialogTitle className="text-2xl font-bold">Avmelding</AlertDialogTitle>
+          <AlertDialogCancel>
+            <IconX className="size-[1.25em]" />
+          </AlertDialogCancel>
+        </div>
+        <AlertDialogDescription className="mb-4">
+          <div className="flex flex-col gap-3">
+            <Text className="text-sm">Er du sikker på at du vil melde deg av arrangementet?</Text>
+            {hasCompanyOrganizer && (
+              <div className="flex flex-col gap-3 rounded-lg border bg-yellow-50 border-yellow-200 dark:border-yellow-700 dark:bg-yellow-900/20 p-2 -mx-2">
+                <div className="flex flex-row gap-1 items-center">
+                  <IconInfoCircle className="size-3.5 text-yellow-700 dark:text-yellow-500" />
+                  <Text className="text-xs text-yellow-700 dark:text-yellow-500">
+                    Dette arrangementet er i samarbeid med en bedrift.
+                  </Text>
+                </div>
+
+                <Text className="text-sm">
+                  Arrangementer med bedrifter er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av
+                  hovedinntektskildene til linjeforeningen.
+                </Text>
+
+                <Text className="text-sm">
+                  Avmelding like før arrangementstart kan føre til at det blir vanskeligere å finne samarbeid i
+                  fremtiden.
                 </Text>
               </div>
-              <Text className="text-sm">
-                Arrangementer med bedrifter er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av
-                hovedinntektskildene til linjeforeningen.
-              </Text>
-              <Text className="text-sm">
-                Ved avmelding like før arrangementet, kan det føre til at det blir vanskeligere å finne samarbeid i
-                fremtiden.
-              </Text>
-            </div>
-          </AlertDialogDescription>
-        )}
+            )}
+          </div>
+        </AlertDialogDescription>
+
         <DeregisterForm
           unregisterForAttendance={unregisterForAttendance}
           setOpen={setOpen}
@@ -120,7 +131,12 @@ const DeregisterForm = ({ unregisterForAttendance, setOpen, open }: Props) => {
         rules={{ required: "Du må velge en grunn" }}
         render={({ field }) => (
           <div className="flex flex-col gap-1 md:gap-1.5">
-            <Label htmlFor="type">Avmeldingsgrunn</Label>
+            <Label htmlFor="type" className="flex flex-row items-center gap-0.5">
+              <Text element="span">Avmeldingsgrunn</Text>
+              <Text element="span" className="text-red-500">
+                *
+              </Text>
+            </Label>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <SelectTrigger
                 id="type"
@@ -167,7 +183,7 @@ const DeregisterForm = ({ unregisterForAttendance, setOpen, open }: Props) => {
         <Button
           color="light"
           variant="text"
-          className="rounded-lg px-4 py-3"
+          className="rounded-lg px-4 py-3 min-h-16"
           type="button"
           autoFocus
           onClick={() => setOpen(false)}
