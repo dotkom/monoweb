@@ -16,7 +16,6 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  TextInput,
   Title,
   cn,
 } from "@dotkomonline/ui"
@@ -24,25 +23,30 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
-import { useDebounce } from "use-debounce"
+import { useMemo, useState } from "react"
 import { EventFilters } from "./components/EventFilters"
 import { EventList, EventListSkeleton, type EventListViewMode } from "./components/EventList"
 import { FilterChips } from "./components/FilterChips"
+import { SearchInput } from "./components/SearchInput"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
 const EventPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [isSearchBarOpen, setIsSearchBarOpen] = useState(false)
 
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [searchBarOpen, setSearchBarOpen] = useState(false)
+
+  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const view = searchParams.get("view") || "list"
   const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString())
-  const month = Number.parseInt(searchParams.get("m") || (now.getMonth() + 1).toString()) - 1 // Convert to 0-based month
+  const month = Number.parseInt(searchParams.get("m") || (now.getMonth() + 1).toString()) - 1 // convert to 0-based month
 
-  // Read filters from URL - support multiple types and groups
+  const trpc = useTRPC()
+  const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
+  const { data: groups } = useQuery(trpc.group.all.queryOptions())
+
+  // read filters from URL
   const searchTerm = searchParams.get("search") || ""
   const typeFiltersParam = searchParams.get("type") || ""
   const typeFilters = typeFiltersParam ? typeFiltersParam.split(",") : []
@@ -50,24 +54,17 @@ const EventPage = () => {
   const groupFilters = groupFiltersParam ? groupFiltersParam.split(",") : []
   const viewMode = (searchParams.get("sort") || "ATTENDANCE") as EventListViewMode
 
-  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm)
-  const [debouncedSearchTerm] = useDebounce(localSearchTerm, 300)
-
-  const trpc = useTRPC()
-  const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
-  const { data: groups } = useQuery(trpc.group.all.queryOptions())
-
   const parsedTypeFilterResult = EventTypeSchema.array().safeParse(typeFilters)
   const parsedTypeFilters = parsedTypeFilterResult.success ? parsedTypeFilterResult.data : []
 
   // build filter object from url params
   const filter: EventFilterQuery = useMemo(
     () => ({
-      bySearchTerm: debouncedSearchTerm || undefined,
+      bySearchTerm: searchTerm || undefined,
       byType: parsedTypeFilters.length > 0 ? parsedTypeFilters : undefined,
       byOrganizingGroup: groupFilters.length > 0 ? groupFilters : undefined,
     }),
-    [debouncedSearchTerm, parsedTypeFilters, groupFilters]
+    [searchTerm, parsedTypeFilters, groupFilters]
   )
 
   const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
@@ -117,12 +114,11 @@ const EventPage = () => {
     router.replace(queryString ? `/arrangementer?${queryString}` : "/arrangementer", { scroll: false })
   }
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: should only rerender on debouncedSearchTerm change
-  useEffect(() => {
+  const handleSearchChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString())
 
-    if (debouncedSearchTerm) {
-      params.set("search", debouncedSearchTerm)
+    if (value) {
+      params.set("search", value)
     } else {
       params.delete("search")
     }
@@ -133,7 +129,7 @@ const EventPage = () => {
 
     const queryString = params.toString()
     router.replace(queryString ? `/arrangementer?${queryString}` : "/arrangementer", { scroll: false })
-  }, [debouncedSearchTerm, router])
+  }
 
   const handleFilterChange = (newFilter: EventFilterQuery, newViewMode: EventListViewMode) => {
     updateURLParams({
@@ -147,7 +143,6 @@ const EventPage = () => {
   }
 
   const handleResetFilters = () => {
-    setLocalSearchTerm("")
     updateURLParams({
       search: null,
       type: null,
@@ -158,12 +153,9 @@ const EventPage = () => {
 
   const handleRemoveFilter = (filterType: "search" | "type" | "group" | "sort", value?: string) => {
     if (filterType === "search") {
-      setLocalSearchTerm("")
-
       const params = new URLSearchParams(searchParams.toString())
       params.delete("search")
 
-      // Remove view param if it's "list" (default)
       if (params.get("view") === "list") {
         params.delete("view")
       }
@@ -203,7 +195,7 @@ const EventPage = () => {
   }
 
   const toggleSearchBar = () => {
-    setIsSearchBarOpen((prev) => !prev)
+    setSearchBarOpen((prev) => !prev)
   }
 
   const groupsMemo = useMemo(() => groups ?? [], [groups])
@@ -273,22 +265,15 @@ const EventPage = () => {
                 >
                   <Icon
                     className="text-lg flex items-center justify-center"
-                    icon={isSearchBarOpen ? "tabler:x" : "tabler:search"}
+                    icon={searchBarOpen ? "tabler:x" : "tabler:search"}
                   />
                 </Button>
 
-                <div className="hidden relative sm:block w-full max-w-80">
-                  <Icon
-                    className="text-lg h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3"
-                    icon="tabler:search"
-                  />
-                  <TextInput
-                    className="pl-10 text-sm w-full h-[2.875rem] dark:border-none"
-                    placeholder="Søk etter arrangementer..."
-                    value={localSearchTerm}
-                    onChange={(e) => setLocalSearchTerm(e.target.value)}
-                  />
-                </div>
+                <SearchInput
+                  initialValue={searchTerm}
+                  onDebouncedChange={handleSearchChange}
+                  className="hidden relative sm:block w-full max-w-80"
+                />
               </div>
             )}
           </div>
@@ -303,24 +288,15 @@ const EventPage = () => {
           )}
         </div>
 
-        {view === "list" && isSearchBarOpen && (
+        {view === "list" && searchBarOpen && (
           <div className="sm:hidden mt-2 relative w-full">
-            <Icon
-              className="text-lg h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3"
-              icon="tabler:search"
-            />
-            <TextInput
-              className="pl-10 text-base w-full h-[2.875rem] dark:border-none"
-              placeholder="Søk etter arrangementer..."
-              value={localSearchTerm}
-              onChange={(e) => setLocalSearchTerm(e.target.value)}
-            />
+            <SearchInput initialValue={searchTerm} onDebouncedChange={handleSearchChange} />
           </div>
         )}
 
         <TabsContent value="list" className="md:grid md:grid-cols-[15rem_auto] md:gap-[3rem] lg:gap[4rem]">
           <div className="w-full scroll">
-            <div className="max-md:hidden pl-2">
+            <div className="max-md:hidden pl-1">
               <EventFilters
                 onChange={handleFilterChange}
                 groups={groupsMemo}
@@ -331,7 +307,7 @@ const EventPage = () => {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-4 mt-2">
+          <div className="mt-2">
             {hasActiveFilters && (
               <FilterChips
                 searchTerm={searchTerm}
@@ -344,12 +320,14 @@ const EventPage = () => {
               />
             )}
             {!isLoading && (
-              <EventList
-                futureEventWithAttendances={futureEventWithAttendances}
-                pastEventWithAttendances={pastEventWithAttendances}
-                onLoadMore={fetchNextPage}
-                viewMode={viewMode}
-              />
+              <div className="mt-6">
+                <EventList
+                  futureEventWithAttendances={futureEventWithAttendances}
+                  pastEventWithAttendances={pastEventWithAttendances}
+                  onLoadMore={fetchNextPage}
+                  viewMode={viewMode}
+                />
+              </div>
             )}
             {isLoading && <EventListSkeleton />}
           </div>
