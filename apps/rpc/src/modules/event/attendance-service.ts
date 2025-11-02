@@ -630,23 +630,34 @@ export function getAttendanceService(
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
       const attendee = attendance.attendees.find((a) => a.id === attendeeId)
+
       // NOTE: If the attendee does not exist, we have a non-critical bug in the app. The circumstances where this is
       // possible is when the attendee was removed from the attendance after the task was scheduled AND the task was not
       // cancelled.
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendanceId})`)
       }
+
       if (attendee.reserved) {
         return
       }
 
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
+
       const adjacentAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved)
       const isPoolAtMaxCapacity = adjacentAttendees.length >= pool.capacity
-      const isPastReservationTime = isPast(attendee.earliestReservationAt)
-      if (isPoolAtMaxCapacity || isPastReservationTime) {
+      const isFutureReservationTime = isFuture(attendee.earliestReservationAt)
+
+      if (isPoolAtMaxCapacity) {
         return
+      }
+
+      // If this happens the task was scheduled too early.
+      if (isFutureReservationTime) {
+        throw new FailedPreconditionError(
+          `Cannot reserve Attendee(ID=${attendeeId}) before earliestReservationAt (${attendee.earliestReservationAt.toUTCString()})`
+        )
       }
 
       const data = AttendeeWriteSchema.parse(attendee)
