@@ -19,7 +19,7 @@ const formatCountdown = (now: Date, target: Date) => {
 
 export const JubileumNotice = () => {
   const [now, setNow] = useState(new Date())
-  const jubileumStartDateUtc = new TZDate("2026-02-16T17:30:00", "+02:00")
+  const jubileumStartDateUtc = new TZDate("2026-02-16T11:00:00") // 12 o'clock in CET
 
   useEffect(() => {
     const interval = setInterval(() => {
