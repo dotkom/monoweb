@@ -1,5 +1,5 @@
-// biome-ignore lint/style/useNodejsImportProtocol: Cannot import with node path on vercel
-import { spawn } from "child_process"
+import { spawn } from "node:child_process"
+import os from "node:os"
 import { PostgreSqlContainer } from "@testcontainers/postgresql"
 import { createPrisma } from "."
 
@@ -24,6 +24,8 @@ async function getTestContainerDatabase() {
 
 function migrateTestDatabase(dbUrl: string) {
   return new Promise<void>((resolve, reject) => {
+    const isWindows = os.platform() === "win32"
+
     const proc = spawn(
       PRISMA_BIN_PATH,
       ["migrate", "reset", "--force", "--skip-generate", "--schema", SCHEMA_FILE_PATH],
@@ -32,6 +34,7 @@ function migrateTestDatabase(dbUrl: string) {
           DATABASE_URL: dbUrl,
           NODE_ENV: "development",
         },
+        shell: isWindows,
       }
     )
     // Only inherit stderr as stdout will be bloated by Prisma migration output
