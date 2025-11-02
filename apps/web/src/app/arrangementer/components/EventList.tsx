@@ -114,7 +114,7 @@ export const EventList: FC<EventListProps> = ({
   if (futureEvents.length === 0 && pastEvents.length === 0) {
     return (
       <div className="flex flex-col items-center gap-2 p-4">
-        <Icon icon="tabler:mood-confuzed" className="text-3xl text-gray-500 dark:text-stone-500" />
+        <Icon icon="tabler:mood-confuzed" className="text-4xl text-gray-500 dark:text-stone-500" />
         <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise...</Text>
       </div>
     )
