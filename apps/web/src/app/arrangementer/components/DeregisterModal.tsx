@@ -42,7 +42,6 @@ interface Props {
 }
 
 export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance, attendee }: Props) => {
-  //const hasCompanyOrganizer = event.companies.length > 0
   const hasCompanyOrganizer = event.companies.length > 0
 
   return (
@@ -52,19 +51,26 @@ export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance,
         onOutsideClick={() => setOpen(false)}
       >
         <AlertDialogTitle className="text-2xl font-bold">Er du sikker?</AlertDialogTitle>
-          {hasCompanyOrganizer && (
-        <AlertDialogDescription className="mb-4">
+        {hasCompanyOrganizer && (
+          <AlertDialogDescription className="mb-4">
             <div className="flex flex-col gap-3">
-              <div className="flex flex-row gap-2 items-center"><Icon icon="tabler:info-circle" className="text-sm text-gray-500 dark:text-stone-500" /><Text className="text-xs text-gray-500 dark:text-stone-500">Dette arrangementet er i samarbeid med en bedrift.</Text>
-              </div><Text className="text-sm">
+              <div className="flex flex-row gap-2 items-center">
+                <Icon icon="tabler:info-circle" className="text-sm text-gray-500 dark:text-stone-500" />
+                <Text className="text-xs text-gray-500 dark:text-stone-500">
+                  Dette arrangementet er i samarbeid med en bedrift.
+                </Text>
+              </div>
+              <Text className="text-sm">
                 Arrangementer med bedrifter er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av
                 hovedinntektskildene til linjeforeningen.
-                </Text><Text className="text-sm">Ved avmelding like før arrangementet, kan det føre til at det
-                blir vanskeligere å finne samarbeid i fremtiden.
+              </Text>
+              <Text className="text-sm">
+                Ved avmelding like før arrangementet, kan det føre til at det blir vanskeligere å finne samarbeid i
+                fremtiden.
               </Text>
             </div>
-        </AlertDialogDescription>
-          )}
+          </AlertDialogDescription>
+        )}
         <DeregisterForm
           unregisterForAttendance={unregisterForAttendance}
           setOpen={setOpen}
