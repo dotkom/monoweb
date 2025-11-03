@@ -93,7 +93,7 @@ resource "auth0_client" "appkom_events_app" {
   callbacks = {
     "dev" = [
       "ntnu.online.app://dev.auth.online.ntnu.no/ios/ntnu.online.app/callback",
-      "https://dev.auth.online.ntnu.no/android/ntnu.online.app/callback",
+      "ntnu.online.app://dev.auth.online.ntnu.no/android/ntnu.online.app/callback",
     ]
     "stg" = []
     "prd" = [
