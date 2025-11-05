@@ -104,8 +104,8 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                               icon={item.icon}
                               onClick={() => setOpen(false)}
                             />
-                          )}
-                        )}
+                          )
+                        })}
                       </div>
                     )}
 
