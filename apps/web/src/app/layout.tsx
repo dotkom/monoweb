@@ -11,6 +11,7 @@ import "../globals.css"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
+import PlausibleProvider from "next-plausible"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -60,17 +61,19 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning>
       <body className={cn(fontTitle.variable, fontBody.variable, "bg-white dark:bg-stone-900")}>
-        <SessionProvider session={session}>
-          <QueryProvider>
-            <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-              <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
-                <Navbar />
-                <main className="grow">{children}</main>
-                <Footer />
-              </div>
-            </ThemeProvider>
-          </QueryProvider>
-        </SessionProvider>
+        <PlausibleProvider domain="online.ntnu.no">
+          <SessionProvider session={session}>
+            <QueryProvider>
+              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
+                <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
+                  <Navbar />
+                  <main className="grow">{children}</main>
+                  <Footer />
+                </div>
+              </ThemeProvider>
+            </QueryProvider>
+          </SessionProvider>
+        </PlausibleProvider>
       </body>
     </html>
   )
