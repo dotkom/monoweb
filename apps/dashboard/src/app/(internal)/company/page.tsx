@@ -29,7 +29,7 @@ export default function CompanyPage() {
 
   return (
     <Stack>
-      <Group>
+      <Group justify="space-between">
         <CompanySearchBar onChange={setFilter} />
 
         <Box>
