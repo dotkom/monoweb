@@ -162,22 +162,19 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                         </div>
                       ) : (
                         (() => {
-                          if ("href" in link) {
-                            const item = link as MenuItem
-                            return (
-                              <DropdownMenuItem
-                                asChild
-                                key={item.title}
-                                className="flex items-center gap-3 px-3 py-2 rounded-lg text-base hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors"
-                              >
-                                <Link href={item.href} onClick={() => setOpen(false)}>
-                                  <Icon className="text-xl" icon={item.icon} />
-                                  <Text className="text-lg">{item.title}</Text>
-                                </Link>
-                              </DropdownMenuItem>
-                            )
-                          }
-                          return null
+                          const item = link as MenuItem
+                          return (
+                            <DropdownMenuItem
+                              asChild
+                              key={item.title}
+                              className="flex items-center gap-3 px-3 py-2 rounded-lg text-base hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors"
+                            >
+                              <Link href={item.href} onClick={() => setOpen(false)}>
+                                <Icon className="text-xl" icon={item.icon} />
+                                <Text className="text-lg">{item.title}</Text>
+                              </Link>
+                            </DropdownMenuItem>
+                          )
                         })()
                       )
                     )}
