@@ -41,14 +41,12 @@ export function getFeedbackFormService(
     async create(handle, feedbackForm, questions) {
       const row = await formRepository.create(handle, feedbackForm, questions)
 
-      if (row.isActive) {
-        await taskSchedulingService.scheduleAt(
-          handle,
-          tasks.VERIFY_FEEDBACK_ANSWERED,
-          { feedbackFormId: row.id },
-          new TZDate(row.answerDeadline)
-        )
-      }
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.VERIFY_FEEDBACK_ANSWERED,
+        { feedbackFormId: row.id },
+        new TZDate(row.answerDeadline)
+      )
 
       return row
     },
@@ -58,21 +56,18 @@ export function getFeedbackFormService(
 
       const feedbackForm: FeedbackFormWrite = {
         eventId,
-        isActive: false,
         answerDeadline: addWeeks(event.end, 2),
       }
       const questions = formToCopy.questions
 
       const row = await formRepository.create(handle, feedbackForm, questions)
 
-      if (row.isActive) {
-        await taskSchedulingService.scheduleAt(
-          handle,
-          tasks.VERIFY_FEEDBACK_ANSWERED,
-          { feedbackFormId: row.id },
-          new TZDate(row.answerDeadline)
-        )
-      }
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.VERIFY_FEEDBACK_ANSWERED,
+        { feedbackFormId: row.id },
+        new TZDate(row.answerDeadline)
+      )
 
       return row
     },
@@ -86,14 +81,11 @@ export function getFeedbackFormService(
 
       const row = await formRepository.update(handle, id, feedbackForm, questions)
 
-      // Inactive feedback forms should not cause marks for missing answers
-      const desiredAt = row.isActive ? row.answerDeadline : null
-
-      if (task && (!desiredAt || !isEqual(task.scheduledAt, desiredAt))) {
+      if (task && !isEqual(task.scheduledAt, row.answerDeadline)) {
         await taskSchedulingService.cancel(handle, task.id)
       }
 
-      if (desiredAt && task?.status !== "COMPLETED") {
+      if (task?.status !== "COMPLETED") {
         await taskSchedulingService.scheduleAt(
           handle,
           tasks.VERIFY_FEEDBACK_ANSWERED,
