@@ -1,6 +1,6 @@
 import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const companyRouter = t.router({
@@ -26,6 +26,19 @@ export const companyRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.companyService.getCompanies(handle, input))
     ),
+
+  findMany: procedure
+    .input(BasePaginateInputSchema.default({}))
+    .query(async ({ input, ctx }) => {
+      const companies = await ctx.executeTransaction(async (handle) =>
+        ctx.companyService.getCompanies(handle, input)
+      )
+
+      return {
+        items: companies,
+        nextCursor: companies.at(-1)?.id,
+      }
+    }),
 
   getById: procedure
     .input(CompanySchema.shape.id)

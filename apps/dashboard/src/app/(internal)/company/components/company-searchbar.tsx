@@ -1,18 +1,21 @@
-import type { JobListingFilterQuery } from "@dotkomonline/types"
 import { ActionIcon, Group, TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconX } from "@tabler/icons-react"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-interface Props {
-  onChange(filters: JobListingFilterQuery): void
+interface CompanyFilterQuery {
+  bySearchTerm?: string | null
 }
 
-export const JobListingFilters = ({ onChange }: Props) => {
-  const form = useForm<JobListingFilterQuery>()
-  const data = useWatch(form) as JobListingFilterQuery
-  const [debouncedData] = useDebouncedValue(data, 999)
+interface Props {
+  onChange(filters: CompanyFilterQuery): void
+}
+
+export const CompanySearchBar = ({ onChange }: Props) => {
+  const form = useForm<CompanyFilterQuery>()
+  const data = useWatch(form) as CompanyFilterQuery
+  const [debouncedData] = useDebouncedValue(data, 300)
 
   useEffect(() => {
     onChange(debouncedData)
@@ -25,7 +28,7 @@ export const JobListingFilters = ({ onChange }: Props) => {
       }}
     >
       <Group gap={4}>
-        <TextInput placeholder="Søk etter utlysninger..." {...form.register("bySearchTerm")} />
+        <TextInput placeholder="Søk etter bedriftsnavn..." {...form.register("bySearchTerm")} />
         {Boolean(data.bySearchTerm) && (
           <ActionIcon
             size="input-sm"
