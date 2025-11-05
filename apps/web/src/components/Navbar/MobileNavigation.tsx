@@ -95,20 +95,17 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                     {highlightedLinks.length > 0 && (
                       <div className="flex gap-3 w-full pb-4">
                         {highlightedLinks.map((link) => {
-                          if ("href" in link) {
-                            const item = link as MenuItem
-                            return (
-                              <MobileMenuCard
-                                key={item.title}
-                                title={item.title}
-                                href={item.href}
-                                icon={item.icon}
-                                onClick={() => setOpen(false)}
-                              />
-                            )
-                          }
-                          return null
-                        })}
+                          const item = link as MenuItem
+                          return (
+                            <MobileMenuCard
+                              key={item.title}
+                              title={item.title}
+                              href={item.href}
+                              icon={item.icon}
+                              onClick={() => setOpen(false)}
+                            />
+                          )}
+                        )}
                       </div>
                     )}
 
