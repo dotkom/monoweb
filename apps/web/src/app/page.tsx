@@ -8,10 +8,8 @@ import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
-import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
-import { ConstructionNotice } from "./construction-notice"
 import { JubileumNotice } from "./jubileum-notice"
 
 export default async function App() {
@@ -33,13 +31,9 @@ export default async function App() {
   const featuredEvent = events[0] ?? null
   const otherEvents = events.slice(1)
 
-  const cookies = await getCookies()
-  const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
-
   return (
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
-        {constructionNoticeShown && <ConstructionNotice />}
         <JubileumNotice />
         <OnlineHero />
       </div>
