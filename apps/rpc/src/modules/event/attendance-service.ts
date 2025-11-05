@@ -24,6 +24,7 @@ import {
   type UserId,
   findActiveMembership,
   getMembershipGrade,
+  hasAttendeePaid,
   isAttendable,
 } from "@dotkomonline/types"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
@@ -274,6 +275,7 @@ export function getAttendanceService(
       }
     )
   }
+
   return {
     async createAttendance(handle, data) {
       validateAttendanceWrite(data)
@@ -695,6 +697,14 @@ export function getAttendanceService(
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+      }
+
+      const hasPaid = hasAttendeePaid(attendance, attendee)
+
+      if (hasPaid) {
+        throw new FailedPreconditionError(
+          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) because payment has been completed`
+        )
       }
 
       // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.reserved`

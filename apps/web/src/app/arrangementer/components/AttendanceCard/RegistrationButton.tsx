@@ -1,7 +1,6 @@
 "use client"
 
 import {
-hasAttendeePaid,
   type Attendance,
   type AttendanceStatus,
   type Attendee,
@@ -15,11 +14,11 @@ hasAttendeePaid,
 } from "@dotkomonline/types"
 import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { isFuture } from "date-fns"
+import { min } from "date-fns"
 import { type FC, useState } from "react"
 import { DeregisterModal } from "../DeregisterModal"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
-import { min } from "date-fns"
 
 const getButtonColor = (
   disabled: boolean,
@@ -148,7 +147,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     hasMembership,
     isSuspended,
     registeredToParentEvent,
-    reservedToParentEvent,
+    reservedToParentEvent
   )
   const disabled = Boolean(disabledText)
 
