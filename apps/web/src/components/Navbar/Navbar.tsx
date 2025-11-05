@@ -20,6 +20,7 @@ export type MenuLink =
       title: string
       icon?: string
       items: MenuItem[]
+      highlighted?: false // renderes a card on mobile menu
     }
 
 const links: MenuLink[] = [
@@ -27,7 +28,7 @@ const links: MenuLink[] = [
     title: "Arrangementer",
     href: "/arrangementer",
     icon: "tabler:calendar-event",
-    highlighted: true, // renderes a card on mobile menu
+    highlighted: true,
   },
   {
     title: "Jobbannonser",

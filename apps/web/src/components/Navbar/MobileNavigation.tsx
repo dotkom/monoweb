@@ -38,8 +38,8 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   }
   const linksWithHome = [homeLink, ...links]
 
-  const highlightedLinks = linksWithHome.filter((link) => "highlighted" in link && link.highlighted)
-  const regularLinks = linksWithHome.filter((link) => !("highlighted" in link && link.highlighted))
+  const highlightedLinks = linksWithHome.filter((link) => link.highlighted)
+  const regularLinks = linksWithHome.filter((link) => !link.highlighted)
 
   // Lock body scroll when menu is open
   useEffect(() => {
