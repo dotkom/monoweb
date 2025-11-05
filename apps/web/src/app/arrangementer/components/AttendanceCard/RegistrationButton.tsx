@@ -14,6 +14,7 @@ import {
 } from "@dotkomonline/types"
 import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { isFuture } from "date-fns"
+import { min } from "date-fns"
 import { type FC, useState } from "react"
 import { DeregisterModal } from "../DeregisterModal"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
@@ -55,7 +56,7 @@ const getDisabledText = (
       return "Avmeldingsfristen har utløpt"
     }
     if (hasBeenCharged) {
-      return "Betaling er utført. Kontakt arrangør for refusjon"
+      return "Betaling er utført. Kontakt arrangør for avmelding og refusjon"
     }
 
     return null
@@ -95,6 +96,7 @@ interface RegistrationButtonProps {
   user: User | null
   event: Event
   isLoading: boolean
+  chargeScheduleDate: Date | null
 }
 
 export const RegistrationButton: FC<RegistrationButtonProps> = ({
@@ -106,6 +108,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   user,
   event,
   isLoading,
+  chargeScheduleDate,
 }) => {
   const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
 
@@ -114,7 +117,12 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const attendanceStatus = getAttendanceStatus(attendance)
   const hasMembership = user !== null && Boolean(findActiveMembership(user))
 
-  const isPastDeregisterDeadline = !isFuture(attendance.deregisterDeadline)
+  // TODO: dont calculate this in frontend
+  const actualDeregisterDeadline = chargeScheduleDate
+    ? min([attendance.deregisterDeadline, chargeScheduleDate])
+    : attendance.deregisterDeadline
+
+  const isPastDeregisterDeadline = !isFuture(actualDeregisterDeadline)
   const hasMergeDelay = pool?.mergeDelayHours ? pool.mergeDelayHours > 0 : false
   const isSuspended = punishment?.suspended ?? false
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
