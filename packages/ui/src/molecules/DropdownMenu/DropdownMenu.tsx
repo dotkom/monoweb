@@ -98,7 +98,7 @@ export const DropdownMenuItem = React.forwardRef<
       "px-3 py-2 rounded-md",
       "text-sm",
       inset && "pl-8",
-      "focus:bg-gray-200 focus:dark:bg-stone-600",
+      "focus-visible::bg-gray-200 focus-visible:dark:bg-stone-600",
       className
     )}
     {...props}
