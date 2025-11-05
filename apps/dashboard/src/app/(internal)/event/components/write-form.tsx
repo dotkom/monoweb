@@ -1,4 +1,5 @@
 import { useGroupAllQuery } from "@/app/(internal)/group/queries"
+import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
@@ -59,6 +60,7 @@ const DEFAULT_VALUES = {
   hostingGroupIds: [],
   companyIds: [],
   parentId: null,
+  markForMissedAttendance: true,
 } as const satisfies FormValidationResult
 
 interface UseEventWriteFormProps {
@@ -138,6 +140,9 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Forelderarrangement",
         placeholder: "Søk etter arrangement...",
         clearable: true,
+      }),
+      markForMissedAttendance: createCheckboxInput({
+        label: "Gi prikk for fravær",
       }),
     },
   })

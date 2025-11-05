@@ -1,9 +1,9 @@
 "use client"
 
+import { DateTooltip } from "@/components/DateTooltip"
 import type { Offline } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMemo } from "react"
 
@@ -26,7 +26,7 @@ export const useOfflineTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("publishedAt", {
         header: () => "Utgivelsesdato",
-        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
+        cell: (info) => <DateTooltip date={info.getValue()} />,
       }),
       columnHelper.accessor("fileUrl", {
         header: () => "Fil",

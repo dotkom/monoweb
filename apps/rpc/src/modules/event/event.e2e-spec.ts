@@ -36,6 +36,7 @@ export function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
     locationTitle: faker.location.city(),
     locationAddress: faker.location.streetAddress(),
     locationLink: null,
+    markForMissedAttendance: true,
     ...input,
   }
 }

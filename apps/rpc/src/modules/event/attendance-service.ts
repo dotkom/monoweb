@@ -24,6 +24,7 @@ import {
   type UserId,
   findActiveMembership,
   getMembershipGrade,
+  hasAttendeePaid,
   isAttendable,
 } from "@dotkomonline/types"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
@@ -274,6 +275,7 @@ export function getAttendanceService(
       }
     )
   }
+
   return {
     async createAttendance(handle, data) {
       validateAttendanceWrite(data)
@@ -559,25 +561,27 @@ export function getAttendanceService(
         } satisfies AttendeeWrite)
       )
 
-      if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0) {
-        const paymentDeadline = options.immediatePayment ? addHours(getCurrentUTC(), 1) : addHours(getCurrentUTC(), 24)
-        const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
-        attendee.paymentDeadline = paymentDeadline
-        attendee.paymentId = payment.id
-        attendee.paymentLink = payment.url
-        logger.info(
-          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
-          attendee.id,
-          attendee.user.id,
-          paymentDeadline.toUTCString(),
-          event.id,
-          payment.url
-        )
-      }
-
       // Immediate reservations go through right away, otherwise we schedule a task to handle the reservation at the
       // appropriate time. In this case, the email is sent when the reservation becomes effective.
       if (isImmediateReservation) {
+        if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0) {
+          const paymentDeadline = options.immediatePayment
+            ? addHours(getCurrentUTC(), 1)
+            : addHours(getCurrentUTC(), 24)
+          const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
+          attendee.paymentDeadline = paymentDeadline
+          attendee.paymentId = payment.id
+          attendee.paymentLink = payment.url
+          logger.info(
+            "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
+            attendee.id,
+            attendee.user.id,
+            paymentDeadline.toUTCString(),
+            event.id,
+            payment.url
+          )
+        }
+
         sendEventRegistrationEmail(event, attendance, attendee)
       } else {
         await taskSchedulingService.scheduleAt(
@@ -628,29 +632,64 @@ export function getAttendanceService(
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
       const attendee = attendance.attendees.find((a) => a.id === attendeeId)
+
       // NOTE: If the attendee does not exist, we have a non-critical bug in the app. The circumstances where this is
       // possible is when the attendee was removed from the attendance after the task was scheduled AND the task was not
       // cancelled.
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendanceId})`)
       }
+
       if (attendee.reserved) {
         return
       }
 
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
+
       const adjacentAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved)
       const isPoolAtMaxCapacity = adjacentAttendees.length >= pool.capacity
-      const isPastReservationTime = isPast(attendee.earliestReservationAt)
-      if (isPoolAtMaxCapacity || isPastReservationTime) {
+      const isFutureReservationTime = isFuture(attendee.earliestReservationAt)
+
+      if (isPoolAtMaxCapacity) {
         return
+      }
+
+      if (isFutureReservationTime) {
+        logger.warn(
+          "ReserveAttendee task for Attendee(ID=%s) ran before earliestReservationAt %s.",
+          attendee.id,
+          attendee.earliestReservationAt.toUTCString()
+        )
       }
 
       const data = AttendeeWriteSchema.parse(attendee)
       data.reserved = true
 
       await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
+
+      const hasExistingPayment =
+        attendee.paymentLink !== null ||
+        attendee.paymentReservedAt !== null ||
+        attendee.paymentRefundedAt !== null ||
+        attendee.paymentChargedAt !== null
+
+      if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0 && !hasExistingPayment) {
+        const paymentDeadline = addHours(getCurrentUTC(), 24)
+        const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
+        attendee.paymentDeadline = paymentDeadline
+        attendee.paymentId = payment.id
+        attendee.paymentLink = payment.url
+        logger.info(
+          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
+          attendee.id,
+          attendee.user.id,
+          paymentDeadline.toUTCString(),
+          event.id,
+          payment.url
+        )
+      }
+
       sendEventRegistrationEmail(event, attendance, attendee)
     },
     async deregisterAttendee(handle, attendeeId, options) {
@@ -658,6 +697,14 @@ export function getAttendanceService(
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+      }
+
+      const hasPaid = hasAttendeePaid(attendance, attendee)
+
+      if (hasPaid) {
+        throw new FailedPreconditionError(
+          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) because payment has been completed`
+        )
       }
 
       // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.reserved`
@@ -824,17 +871,13 @@ export function getAttendanceService(
     async executeChargeAttendeeTask(handle, { attendeeId }) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((a) => a.id === attendeeId)
+
       if (!attendee) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
+
       logger.info("Executing Stripe charge for Attendee(ID=%s) of Attendance(ID=%s)", attendee.id, attendance.id)
-      if (attendance.deregisterDeadline > getCurrentUTC()) {
-        logger.error(
-          "Cancelling charge of Attendee(ID=%s) as task is scheduled too early. This is likely a bug",
-          attendee.id
-        )
-        return
-      }
+
       await this.createAttendeePaymentCharge(handle, attendee.id)
     },
     async startAttendeePayment(handle, attendeeId, deadline): Promise<Payment> {
@@ -1027,7 +1070,7 @@ export function getAttendanceService(
         )
         await personalMarkService.addToUser(handle, attendee.userId, mark.id)
         logger.info(
-          "Suspended User(ID=％s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
+          "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
           attendee.userId,
           event.id,
           event.title,
@@ -1181,8 +1224,8 @@ export function getAttendanceService(
       const errors: Error[] = []
 
       for (const event of eventsEndedYesterday) {
-        if (!event.attendanceId) {
-          return
+        if (!event.attendanceId || !event.markForMissedAttendance) {
+          continue
         }
 
         try {

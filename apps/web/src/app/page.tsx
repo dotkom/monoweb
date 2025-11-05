@@ -12,6 +12,7 @@ import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
 import { ConstructionNotice } from "./construction-notice"
+import { JubileumNotice } from "./jubileum-notice"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
@@ -39,6 +40,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
         {constructionNoticeShown && <ConstructionNotice />}
+        <JubileumNotice />
         <OnlineHero />
       </div>
 
@@ -46,41 +48,72 @@ export default async function App() {
         <Title className="text-3xl font-semibold">Arrangementer</Title>
 
         {featuredEvent ? (
-          <div className="flex flex-col md:grid md:[grid-template-columns:35%_35%_30%] md:[grid-template-rows:2fr_2fr_1fr] gap-6 w-full">
-            <div className="col-span-2 row-span-3">
+          <>
+            {/* desktop grid layout */}
+            <div className="hidden md:grid md:grid-cols-[70%_30%] auto-rows-max w-full gap-6 pr-6">
               <BigEventCard
                 event={featuredEvent?.event}
                 attendance={featuredEvent?.attendance}
                 userId={session?.sub ?? null}
-                className="max-md:hidden"
+                className="row-span-3"
               />
-              <EventCard
-                event={featuredEvent?.event}
-                attendance={featuredEvent?.attendance}
-                userId={session?.sub ?? null}
-                className="md:hidden"
-              />
+
+              {otherEvents.map(({ event, attendance }) => (
+                <EventCard key={event.id} event={event} attendance={attendance} userId={session?.sub ?? null} />
+              ))}
+
+              <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
+                <Button
+                  element={Link}
+                  href="/arrangementer"
+                  className={cn(
+                    "rounded-xl w-full h-full min-h-[6rem] text-brand-800 hover:text-black md:gap-3",
+                    "bg-blue-200 hover:bg-blue-100",
+                    "dark:bg-brand dark:hover:bg-brand/75"
+                  )}
+                  iconRight={<Icon icon="tabler:arrow-right" className="md:text-2xl" />}
+                >
+                  <Text className="md:text-xl">Se alle</Text>
+                </Button>
+              </Tilt>
             </div>
 
-            {otherEvents.map(({ event, attendance }) => (
-              <EventCard key={event.id} event={event} attendance={attendance} userId={session?.sub ?? null} />
-            ))}
+            {/* mobile horizontal scroll */}
+            <div className="md:hidden -mx-4">
+              <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
+                <div className="flex-shrink-0 w-[85vw] max-w-[24rem] ml-4 snap-center">
+                  <EventCard
+                    event={featuredEvent?.event}
+                    attendance={featuredEvent?.attendance}
+                    userId={session?.sub ?? null}
+                  />
+                </div>
 
-            <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-              <Button
-                element={Link}
-                href="/arrangementer"
-                className={cn(
-                  "rounded-xl w-full h-full min-h-[6rem] text-brand-800 hover:text-black md:gap-3",
-                  "bg-blue-200 hover:bg-blue-100",
-                  "dark:bg-brand dark:hover:bg-brand/75"
-                )}
-                iconRight={<Icon icon="tabler:arrow-up-right" className="md:text-2xl" />}
-              >
-                <Text className="md:text-xl">Se alle arrangementer</Text>
-              </Button>
-            </Tilt>
-          </div>
+                {otherEvents.map(({ event, attendance }) => (
+                  <div key={event.id} className="flex-shrink-0 w-[85vw] max-w-[24rem] snap-center">
+                    <EventCard event={event} attendance={attendance} userId={session?.sub ?? null} />
+                  </div>
+                ))}
+
+                <div className="snap-center pr-4">
+                  <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
+                    <Button
+                      element={Link}
+                      href="/arrangementer"
+                      className={cn(
+                        "rounded-xl h-full min-h-[12rem] aspect-square text-brand-800 hover:text-black gap-2 mr-4",
+                        "bg-blue-200 hover:bg-blue-100",
+                        "dark:bg-brand dark:hover:bg-brand/75"
+                      )}
+                      iconRight={<Icon icon="tabler:arrow-right" className="text-xl" />}
+                    >
+                      <Text className="text-lg">Se alle</Text>
+                    </Button>
+                  </Tilt>
+                </div>
+              </div>
+            </div>
+          </>
         ) : (
           <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
         )}
@@ -128,7 +161,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
             <Text className="text-lg">{formatDate(event.start, "dd. MMM", { locale: nb })}</Text>
           </div>
           <div className="max-md:hidden">
-            <RichText content={event.description} maxLines={5} hideToggleButton />
+            <RichText content={event.description} maxLines={5} hideToggleButton className="h-32" />
           </div>
         </div>
       </div>
@@ -150,7 +183,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
     <Link
       href={`/arrangementer/${slugify(event.title)}/${event.id}`}
       className={cn(
-        "flex flex-col h-full gap-3 p-3 rounded-2xl border transition-colors",
+        "flex flex-col w-full h-fit gap-3 p-3 rounded-2xl border transition-colors",
         "border-gray-100 bg-gray-50 hover:bg-transparent",
         "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
         className

@@ -66,7 +66,7 @@ const ContactDebugDropdown: FC = () => (
     </DropdownMenuTrigger>
     <DropdownMenuContent
       align="end"
-      className="w-80 rounded-3xl ml-4 p-6 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+      className="w-[calc(100vw-2rem)] mx-4 xs:w-80 xs:ml-4 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 rounded-3xl shadow-sm"
       sideOffset={24}
     >
       <div className="space-y-4">
@@ -96,7 +96,6 @@ const ContactDebugDropdown: FC = () => (
             element={Link}
             variant="text"
             href="/grupper/debug"
-            target="_blank"
             rel="noopener noreferrer"
             className="w-fit text-gray-600 dark:text-stone-300"
           >
@@ -145,7 +144,7 @@ const UnauthenticatedActions: FC = () => {
           className="text-sm font-semibold px-3 py-2"
           href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
           prefetch={false}
-          icon={<Icon className="mr-2 text-xl" icon="tabler:login-2" />}
+          icon={<Icon className="text-xl" icon="tabler:login-2" />}
         >
           Logg inn
         </Button>
@@ -278,7 +277,7 @@ export const AvatarDropdown: FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-72 -mr-16 lg:-mr-4 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+        className="w-[calc(100vw-2rem)] mx-4 xs:ml-4 xs:w-72 xs:-mr-16 lg:-mr-4 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
         sideOffset={24}
       >
         <DropdownMenuLabel className="font-normal p-3 mb-2">
