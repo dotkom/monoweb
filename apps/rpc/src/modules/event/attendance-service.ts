@@ -1159,7 +1159,7 @@ export function getAttendanceService(
         }
 
         const feedbackForm = await feedbackFormService.findByEventId(handle, event.id)
-        if (!feedbackForm || !feedbackForm.isActive) {
+        if (!feedbackForm) {
           return
         }
 

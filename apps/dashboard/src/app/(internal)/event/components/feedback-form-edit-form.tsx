@@ -28,6 +28,7 @@ import {
   Tooltip,
 } from "@mantine/core"
 
+import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import { env } from "@/lib/env"
 import { DateTimePicker } from "@mantine/dates"
 import { IconCheck, IconCopy, IconGripVertical, IconInfoCircle, IconTrash } from "@tabler/icons-react"
@@ -42,7 +43,6 @@ import {
   useFormContext,
   useWatch,
 } from "react-hook-form"
-import { useConfirmDeleteModal } from "src/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import z from "zod"
 import { useDeleteFeedbackFormMutation } from "../mutations"
 import { useEventFeedbackPublicResultsTokenGetQuery, useFeedbackAnswersGetQuery } from "../queries"
@@ -163,17 +163,6 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
         <form onSubmit={form.handleSubmit(handleSubmit)}>
           <Stack>
             <Controller
-              name={"feedbackForm.isActive"}
-              control={form.control}
-              render={({ field }) => (
-                <Checkbox
-                  label="Aktiv"
-                  checked={!!field.value}
-                  onChange={(e) => field.onChange(e.currentTarget.checked)}
-                />
-              )}
-            />
-            <Controller
               name={"feedbackForm.answerDeadline"}
               control={form.control}
               render={({ field }) => <DateTimePicker value={field.value} onChange={field.onChange} label="Svarfrist" />}
@@ -203,6 +192,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
                           hasAnswers={!!field.id && answeredQuestionIds.has(field.id)}
                         />
                       ))}
+                      {fields.length === 0 && <Text c="red">Ingen spørsmål lagt til</Text>}
                       {provided.placeholder}
                     </div>
                   )}
@@ -210,15 +200,8 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
               </DragDropContext>
             </Card>
             <Group>
-              <Tooltip label="Legg til minst ett spørsmål først" disabled={fields.length > 0}>
-                <Button type="submit" disabled={fields.length === 0}>
-                  Lagre skjema
-                </Button>
-              </Tooltip>
-              <Tooltip
-                disabled={!hasFormAnswers}
-                label="Skjemaet har mottatt svar og kan ikke slettes. Deaktiver det for å stoppe nye svar"
-              >
+              <Button type="submit">Lagre skjema</Button>
+              <Tooltip disabled={!hasFormAnswers} label="Skjemaet har mottatt svar og kan ikke slettes">
                 <Button
                   bg="red"
                   onClick={openDeleteFormModal}

@@ -26,10 +26,6 @@ const EventFeedbackPage = async ({
     return <PageContent event={event} feedbackForm={feedbackForm} isPreview={true} />
   }
 
-  if (!feedbackForm.isActive) {
-    return <Text>Tilbakemeldingsskjemaet er ikke åpent.</Text>
-  }
-
   const user = session ? await server.user.getMe.query() : undefined
 
   const attendee = user && attendance?.attendees?.find((attendee) => attendee.userId === user.id)
