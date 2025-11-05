@@ -38,14 +38,12 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           max: now,
           min: null,
         },
-        excludingOrganizingGroup: ["velkom"],
+        byOrganizingGroup: [slug],
         excludingType: isStaff ? [] : undefined,
         orderBy: "desc",
       },
-
-    })
+    }),
   ])
-
 
   const showMembers = group.type !== "ASSOCIATED" && group.memberVisibility !== "NONE"
 
@@ -218,7 +216,10 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
       <div className="flex flex-col gap-4">
         <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
-        <EventList futureEventWithAttendances={futureEventWithAttendances.items} pastEventWithAttendances={pastEventWithAttendances.items} />
+        <EventList
+          futureEventWithAttendances={futureEventWithAttendances.items}
+          pastEventWithAttendances={pastEventWithAttendances.items}
+        />
       </div>
     </div>
   )
