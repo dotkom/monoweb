@@ -112,7 +112,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       </div>
                     )}
 
-                    {regularLinks.map((link, index) =>
+                    {regularLinks.map((link) =>
                       "items" in link && link.items.length > 0 ? (
                         <div key={link.title}>
                           <Collapsible defaultOpen={false}>
