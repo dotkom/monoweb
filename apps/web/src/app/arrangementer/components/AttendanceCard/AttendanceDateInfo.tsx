@@ -23,10 +23,12 @@ interface AttendanceDateInfoProps {
 export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }: AttendanceDateInfoProps) => {
   const { registerStart, registerEnd, deregisterDeadline } = attendance
 
+  // TODO: dont calculate this in frontend
   const actualDeregisterDeadline = chargeScheduleDate
     ? min([deregisterDeadline, chargeScheduleDate])
     : deregisterDeadline
 
+  // TODO: dont calculate this in frontend
   const hasPaid = hasAttendeePaid(attendance, attendee) ?? false
   const showDeregisterDeadlineNotice = hasPaid && !isEqual(actualDeregisterDeadline, deregisterDeadline)
 

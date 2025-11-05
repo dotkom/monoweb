@@ -1,6 +1,7 @@
 "use client"
 
 import {
+hasAttendeePaid,
   type Attendance,
   type AttendanceStatus,
   type Attendee,
@@ -18,6 +19,7 @@ import { type FC, useState } from "react"
 import { DeregisterModal } from "../DeregisterModal"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
+import { min } from "date-fns"
 
 const getButtonColor = (
   disabled: boolean,
@@ -55,7 +57,7 @@ const getDisabledText = (
       return "Avmeldingsfristen har utløpt"
     }
     if (hasBeenCharged) {
-      return "Betaling er utført. Kontakt arrangør for refusjon"
+      return "Betaling er utført. Kontakt arrangør for avmelding og refusjon"
     }
 
     return null
@@ -95,6 +97,7 @@ interface RegistrationButtonProps {
   user: User | null
   event: Event
   isLoading: boolean
+  chargeScheduleDate: Date | null
 }
 
 export const RegistrationButton: FC<RegistrationButtonProps> = ({
@@ -106,6 +109,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   user,
   event,
   isLoading,
+  chargeScheduleDate,
 }) => {
   const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
 
@@ -114,7 +118,12 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const attendanceStatus = getAttendanceStatus(attendance)
   const hasMembership = user !== null && Boolean(findActiveMembership(user))
 
-  const isPastDeregisterDeadline = !isFuture(attendance.deregisterDeadline)
+  // TODO: dont calculate this in frontend
+  const actualDeregisterDeadline = chargeScheduleDate
+    ? min([attendance.deregisterDeadline, chargeScheduleDate])
+    : attendance.deregisterDeadline
+
+  const isPastDeregisterDeadline = !isFuture(actualDeregisterDeadline)
   const hasMergeDelay = pool?.mergeDelayHours ? pool.mergeDelayHours > 0 : false
   const isSuspended = punishment?.suspended ?? false
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
@@ -139,7 +148,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     hasMembership,
     isSuspended,
     registeredToParentEvent,
-    reservedToParentEvent
+    reservedToParentEvent,
   )
   const disabled = Boolean(disabledText)
 
