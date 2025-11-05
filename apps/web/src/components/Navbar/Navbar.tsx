@@ -11,13 +11,16 @@ export type MenuItem = {
   href: string
   icon: string
   description?: string
+  highlighted?: boolean
 }
 
 export type MenuLink =
   | MenuItem
   | {
       title: string
+      icon?: string
       items: MenuItem[]
+      highlighted?: false // renderes a card on mobile menu
     }
 
 const links: MenuLink[] = [
@@ -25,14 +28,17 @@ const links: MenuLink[] = [
     title: "Arrangementer",
     href: "/arrangementer",
     icon: "tabler:calendar-event",
+    highlighted: true,
   },
   {
     title: "Jobbannonser",
     href: "/karriere",
     icon: "tabler:briefcase",
+    highlighted: true,
   },
   {
     title: "Om oss",
+    icon: "tabler:info-circle",
     items: [
       {
         title: "Komiteer og grupper",
@@ -62,6 +68,7 @@ const links: MenuLink[] = [
   },
   {
     title: "For studenter",
+    icon: "tabler:school",
     items: [
       {
         title: "Offline",
@@ -85,6 +92,7 @@ const links: MenuLink[] = [
   },
   {
     title: "For bedrifter",
+    icon: "tabler:building",
     items: [
       {
         title: "Samarbeid med Online",

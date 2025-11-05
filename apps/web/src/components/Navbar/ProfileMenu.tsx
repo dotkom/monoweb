@@ -144,7 +144,7 @@ const UnauthenticatedActions: FC = () => {
           className="text-sm font-semibold px-3 py-2"
           href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
           prefetch={false}
-          icon={<Icon className="text-xl" icon="tabler:login-2" />}
+          icon={<Icon className="mr-1 text-xl" icon="tabler:login-2" />}
         >
           Logg inn
         </Button>
