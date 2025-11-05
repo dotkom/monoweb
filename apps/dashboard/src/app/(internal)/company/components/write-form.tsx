@@ -1,7 +1,7 @@
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
+import { createRichTextInput } from "@/components/forms/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { createTextareaInput } from "@/components/forms/TextareaInput"
 import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
@@ -35,10 +35,9 @@ export const useCompanyWriteForm = ({
         placeholder: "bekk",
         withAsterisk: true,
       }),
-      description: createTextareaInput({
+      description: createRichTextInput({
         label: "Beskrivelse",
-        placeholder: "Bekk er et konsulentselskap fylt med action og moro!",
-        withAsterisk: true,
+        required: true,
       }),
       email: createTextInput({
         label: "Kontakt-e-post",
