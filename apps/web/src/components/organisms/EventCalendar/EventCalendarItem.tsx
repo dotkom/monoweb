@@ -70,34 +70,34 @@ export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayPro
 
   return (
     <HoverCard>
-      <Link href={`/arrangementer/${slugify(event.title)}/${event.id}`}>
-        <HoverCardTrigger
-          className={cn(
-            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
-            isActive ? triggerClasses : "bg-gray-100 text-gray-500 dark:bg-stone-800 dark:text-stone-400",
-            borderClasses,
-            getColStartClass(eventDisplayProps.startCol + 2),
-            getColSpanClass(eventDisplayProps.span),
-            eventDisplayProps.leftEdge && "sm:border-l-4 rounded-l-md",
-            eventDisplayProps.rightEdge && "rounded-r-md"
-          )}
-        >
-          <div className="relative">
-            <span className="block text-nowrap text-clip font-semibold sm:font-medium leading-8">{event.title}</span>
-            <div
-              className={cn(
-                "absolute inset-y-0 right-0 w-5 bg-gradient-to-r from-transparent pointer-events-none",
-                isActive ? fadeClasses : "to-gray-100 dark:to-stone-800"
-              )}
-            />
-          </div>
-        </HoverCardTrigger>
-        <HoverCardContent
-          className={cn(
-            "border-2 border-transparent transition-colors duration-300 max-w-80 min-w-60 w-full",
-            cardClasses
-          )}
-        >
+      <HoverCardTrigger
+        className={cn(
+          "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
+          isActive ? triggerClasses : "bg-gray-100 text-gray-500 dark:bg-stone-800 dark:text-stone-400",
+          borderClasses,
+          getColStartClass(eventDisplayProps.startCol + 2),
+          getColSpanClass(eventDisplayProps.span),
+          eventDisplayProps.leftEdge && "sm:border-l-4 rounded-l-md",
+          eventDisplayProps.rightEdge && "rounded-r-md"
+        )}
+      >
+        <div className="relative">
+          <span className="block text-nowrap text-clip font-semibold sm:font-medium leading-8">{event.title}</span>
+          <div
+            className={cn(
+              "absolute inset-y-0 right-0 w-5 bg-gradient-to-r from-transparent pointer-events-none",
+              isActive ? fadeClasses : "to-gray-100 dark:to-stone-800"
+            )}
+          />
+        </div>
+      </HoverCardTrigger>
+      <HoverCardContent
+        className={cn(
+          "border-2 border-transparent transition-colors duration-300 max-w-80 min-w-60 w-full",
+          cardClasses
+        )}
+      >
+        <Link href={`/arrangementer/${slugify(event.title)}/${event.id}`}>
           <div className="p-4">
             <Title element="p" size="md" className="mb-2">
               {event.title}
@@ -138,8 +138,8 @@ export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayPro
               )}
             </div>
           </div>
-        </HoverCardContent>
-      </Link>
+        </Link>
+      </HoverCardContent>
     </HoverCard>
   )
 }
