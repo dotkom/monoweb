@@ -5,13 +5,15 @@ import { mapEventTypeToLabel } from "@dotkomonline/types"
 import { Button, Icon, cn } from "@dotkomonline/ui"
 import type { EventListViewMode } from "./EventList"
 
+type FilterType = "search" | "type" | "group" | "sort"
+
 interface FilterChipsProps {
   searchTerm: string
-  typeFilter: string
+  typeFilter: string[]
   groupFilters: string[]
   viewMode: EventListViewMode
   groups: Group[]
-  onRemoveFilter: (filterType: "search" | "type" | "group" | "sort", value?: string) => void
+  onRemoveFilter: (filterType: FilterType, value?: string) => void
   onResetAll: () => void
 }
 
@@ -29,14 +31,19 @@ export const FilterChips = ({
     return group?.abbreviation || slug
   }
 
-  const chips: Array<{ label: string; value: string; filterType: "search" | "type" | "group" | "sort" }> = []
+  interface Chip {
+    label: string
+    value: string
+    filterType: FilterType
+  }
+
+  const chips: Chip[] = []
 
   if (searchTerm) {
     chips.push({ label: `'${searchTerm}'`, value: searchTerm, filterType: "search" })
   }
 
-  const typeFilters = typeFilter ? typeFilter.split(",").filter(Boolean) : []
-  for (const type of typeFilters) {
+  for (const type of typeFilter) {
     chips.push({
       label: mapEventTypeToLabel(type as EventType),
       value: type,
@@ -82,7 +89,7 @@ export const FilterChips = ({
         </button>
       ))}
 
-      <Button onClick={onResetAll} variant="solid" size="sm" className="text-sm rounded-full px-3 py-1.5 ">
+      <Button onClick={onResetAll} variant="solid" size="sm" className="text-sm rounded-full px-3 py-1.5">
         Fjern alle
       </Button>
     </div>

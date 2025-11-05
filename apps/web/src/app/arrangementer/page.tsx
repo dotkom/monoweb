@@ -30,6 +30,8 @@ import { FilterChips } from "./components/FilterChips"
 import { SearchInput } from "./components/SearchInput"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
+type FilterType = "search" | "type" | "group" | "sort"
+
 const EventPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -151,7 +153,7 @@ const EventPage = () => {
     })
   }
 
-  const handleRemoveFilter = (filterType: "search" | "type" | "group" | "sort", value?: string) => {
+  const handleRemoveFilter = (filterType: FilterType, value?: string) => {
     if (filterType === "search") {
       const params = new URLSearchParams(searchParams.toString())
       params.delete("search")
@@ -295,8 +297,8 @@ const EventPage = () => {
         )}
 
         <TabsContent value="list" className="md:grid md:grid-cols-[15rem_auto] md:gap-[3rem] lg:gap[4rem]">
-          <div className="w-full scroll">
-            <div className="max-md:hidden pl-1">
+          <div className="max-md:hidden w-full scroll mt-4">
+            <div className="pl-1">
               <EventFilters
                 onChange={handleFilterChange}
                 groups={groupsMemo}
@@ -311,7 +313,7 @@ const EventPage = () => {
             {hasActiveFilters && (
               <FilterChips
                 searchTerm={searchTerm}
-                typeFilter={typeFilters.join(",") || ""}
+                typeFilter={typeFilters}
                 groupFilters={groupFilters}
                 viewMode={viewMode}
                 groups={groups ?? []}
