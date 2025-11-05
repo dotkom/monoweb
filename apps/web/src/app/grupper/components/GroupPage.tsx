@@ -16,7 +16,9 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
   const isStaff = await server.user.isStaff.query()
 
-  const [session, group, futureEventWithAttendances] = await Promise.all([
+  const now = getCurrentUTC()
+
+  const [session, group, futureEventWithAttendances, pastEventWithAttendances] = await Promise.all([
     auth.getServerSession(),
     server.group.get.query(slug),
     server.event.all.query({
@@ -24,13 +26,26 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         byOrganizingGroup: [slug],
         byEndDate: {
           max: null,
-          min: getCurrentUTC(),
+          min: now,
         },
         excludingType: isStaff ? [] : undefined,
         orderBy: "asc",
       },
     }),
+    server.event.all.query({
+      filter: {
+        byEndDate: {
+          max: now,
+          min: null,
+        },
+        excludingOrganizingGroup: ["velkom"],
+        excludingType: isStaff ? [] : undefined,
+        orderBy: "desc",
+      },
+
+    })
   ])
+
 
   const showMembers = group.type !== "ASSOCIATED" && group.memberVisibility !== "NONE"
 
@@ -203,7 +218,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
       <div className="flex flex-col gap-4">
         <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
-        <EventList futureEventWithAttendances={futureEventWithAttendances.items} pastEventWithAttendances={[]} />
+        <EventList futureEventWithAttendances={futureEventWithAttendances.items} pastEventWithAttendances={pastEventWithAttendances.items} />
       </div>
     </div>
   )
