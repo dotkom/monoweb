@@ -600,25 +600,6 @@ export function getAttendanceService(
         } satisfies AttendeeWrite)
       )
 
-<<<<<<< Updated upstream
-=======
-      if (isImmediateReservation && attendance.attendancePrice !== null && attendance.attendancePrice !== 0) {
-        const paymentDeadline = options.immediatePayment ? addHours(getCurrentUTC(), 1) : addHours(getCurrentUTC(), 24)
-        const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
-        attendee.paymentDeadline = paymentDeadline
-        attendee.paymentId = payment.id
-        attendee.paymentLink = payment.url
-        logger.info(
-          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
-          attendee.id,
-          attendee.user.id,
-          paymentDeadline.toUTCString(),
-          event.id,
-          payment.url
-        )
-      }
-
->>>>>>> Stashed changes
       // Immediate reservations go through right away, otherwise we schedule a task to handle the reservation at the
       // appropriate time. In this case, the email is sent when the reservation becomes effective.
       if (isImmediateReservation) {
@@ -733,22 +714,6 @@ export function getAttendanceService(
       const data = AttendeeWriteSchema.parse(attendee)
       data.reserved = true
 
-      if (attendee.paymentId === null) {
-        const paymentDeadline = addHours(getCurrentUTC(), 24)
-        const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
-        attendee.paymentDeadline = paymentDeadline
-        attendee.paymentId = payment.id
-        attendee.paymentLink = payment.url
-        logger.info(
-          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
-          attendee.id,
-          attendee.user.id,
-          paymentDeadline.toUTCString(),
-          event.id,
-          payment.url
-        )
-      }
-
       await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
 
       const hasExistingPayment =
@@ -766,7 +731,7 @@ export function getAttendanceService(
         attendee.paymentLink = payment.url
 
         logger.info(
-          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
+          "Attendee(ID=%s,UserID=%s) has reserved by a task and been given until %s UTC to pay for Event(ID=%s) at link %s",
           attendee.id,
           attendee.user.id,
           paymentDeadline.toUTCString(),
@@ -819,10 +784,6 @@ export function getAttendanceService(
         options
       )
 
-      if (!attendee.reserved) {
-        return
-      }
-
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
 
@@ -847,6 +808,27 @@ export function getAttendanceService(
 
       if (firstUnreservedAdjacentAttendee === undefined) {
         return
+      }
+
+      // If this event is paid, the new attendee must also receive payment information.
+      if (
+        firstUnreservedAdjacentAttendee.paymentId === null &&
+        attendance.attendancePrice !== null &&
+        attendance.attendancePrice !== 0
+      ) {
+        const paymentDeadline = addHours(getCurrentUTC(), 24)
+        const payment = await this.startAttendeePayment(handle, firstUnreservedAdjacentAttendee.id, paymentDeadline)
+        firstUnreservedAdjacentAttendee.paymentDeadline = paymentDeadline
+        firstUnreservedAdjacentAttendee.paymentId = payment.id
+        firstUnreservedAdjacentAttendee.paymentLink = payment.url
+        logger.info(
+          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s after reciving spot due to another user deregistering",
+          firstUnreservedAdjacentAttendee.id,
+          firstUnreservedAdjacentAttendee.user.id,
+          paymentDeadline.toUTCString(),
+          event.id,
+          payment.url
+        )
       }
 
       await attendanceRepository.updateAttendeeById(
