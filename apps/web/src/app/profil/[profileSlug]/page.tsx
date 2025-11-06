@@ -204,10 +204,7 @@ export default function ProfilePage() {
         },
         { enabled: isLoggedIn && Boolean(user?.id) }
       ),
-      trpc.personalMark.getVisibleInformation.queryOptions(
-        { userId: user?.id ?? "" },
-        { enabled: isLoggedIn && Boolean(user?.id) }
-      ),
+      trpc.personalMark.getVisibleInformation.queryOptions({ userId: user?.id ?? "" }, { enabled: isUser }),
       trpc.event.findUnansweredByUser.queryOptions(user?.id ?? "", { enabled: isUser }),
     ],
   })
