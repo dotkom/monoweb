@@ -1,8 +1,5 @@
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import  { User,
-getAttendee,
-type UserId,
-type EventWithAttendance } from "@dotkomonline/types"
+import { type EventWithAttendance, type User, getAttendee } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
@@ -125,11 +122,7 @@ export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps }: Even
             </div>
             <div className="flex justify-between items-center gap-2 mt-2">
               {attendance && (
-                <AttendanceStatus
-                  attendance={attendance}
-                  attendee={attendee}
-                  eventEndInPast={new Date() > event.end}
-                />
+                <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={new Date() > event.end} />
               )}
               {categoryName && (
                 <div className="ml-auto">
