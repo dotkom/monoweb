@@ -13,7 +13,7 @@ import {
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { TRPCError } from "@trpc/server"
-import { addDays } from "date-fns"
+import { addHours, max } from "date-fns"
 import { z } from "zod"
 import { FailedPreconditionError } from "../../error"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
@@ -218,9 +218,21 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input: { attendeeId }, ctx }) => {
-      return ctx.executeAuditedTransaction(async (handle) =>
-        ctx.attendanceService.startAttendeePayment(handle, attendeeId, addDays(getCurrentUTC(), 1))
-      )
+      return ctx.executeAuditedTransaction(async (handle) => {
+        let deadline = addHours(getCurrentUTC(), 24)
+
+        // DELETE THIS START
+        // turn deadline back to const after this is removed
+        const julebordAttendanceId = "b470eda0-4650-4dbd-bb6e-7bcf9c7757f9"
+        const arbitraryJulebordDeadline = new TZDate("2025-11-07T18:00:00Z")
+        const attendee = await ctx.attendanceService.getAttendeeById(handle, attendeeId)
+        if (attendee.attendanceId === julebordAttendanceId) {
+          deadline = max([arbitraryJulebordDeadline, deadline])
+        }
+        // DELETE THIS END
+
+        return ctx.attendanceService.startAttendeePayment(handle, attendeeId, deadline)
+      })
     }),
   deregisterForEvent: authenticatedProcedure
     .input(
