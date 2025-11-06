@@ -2,7 +2,13 @@ import { auth } from "@/auth"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type Event,
+  type EventWithAttendance,
+  type UserId,
+  hasAttendeePaid,
+} from "@dotkomonline/types"
 import { RichText, cn } from "@dotkomonline/ui"
 import { Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
@@ -41,7 +47,7 @@ export default async function App() {
           if (!julebord.attendance) return false // typescript geeking
 
           const isUser = attendee.user.id === session?.sub
-          const hasNotPaid = !hasAttendeePaid(julebord.attendance, attendee)
+          const hasNotPaid = hasAttendeePaid(julebord.attendance, attendee) === false
           const eventIsInFuture = isFuture(julebord.event.start)
 
           return isUser && hasNotPaid && eventIsInFuture
