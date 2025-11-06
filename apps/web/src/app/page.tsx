@@ -33,8 +33,7 @@ export default async function App() {
   const otherEvents = events.slice(1)
 
   // DELETE THIS START
-  //const julebordEventId = "4e0868e4-ed79-428e-a340-4ceb82bf5497"
-  const julebordEventId = "cd351d9b-a3f7-4b20-b053-c53d2111d776"
+  const julebordEventId = "4e0868e4-ed79-428e-a340-4ceb82bf5497"
   const julebord = await server.event.find.query(julebordEventId)
   const julebordAttendee =
     julebord?.event && julebord.attendance
@@ -42,8 +41,7 @@ export default async function App() {
           if (!julebord.attendance) return false // typescript geeking
 
           const isUser = attendee.user.id === session?.sub
-          //const hasNotPaid = !hasAttendeePaid(julebord.attendance, attendee)
-          const hasNotPaid = true
+          const hasNotPaid = !hasAttendeePaid(julebord.attendance, attendee)
           const eventIsInFuture = isFuture(julebord.event.start)
 
           return isUser && hasNotPaid && eventIsInFuture
