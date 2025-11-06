@@ -6,7 +6,7 @@ import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
 import { Icon, cn } from "@dotkomonline/ui"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueries } from "@tanstack/react-query"
 import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
@@ -33,8 +33,16 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const session = useSession()
 
   const trpc = useTRPC()
-  const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
+  const [userResult, isStaffResult] = useQueries({
+    queries: [
+      trpc.user.findMe.queryOptions(),
+      trpc.user.isStaff.queryOptions(),
+    ]
+  })
 
+  const { data: user } = userResult
+  const { data: isStaff = false } = isStaffResult
+  
   // fetch 10 days prior to first day of month as a buffer since fliter is by start date
   const calendarStart = new TZDate(year, month, 1 - 10)
   const lastDayOfMonth = endOfMonth(new TZDate(year, month, 1))
@@ -133,15 +141,12 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
                 {row.map(({ event, attendance, eventDisplayProps }) => {
-                  const reservedStatus =
-                    attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
-
                   return (
                     <EventCalendarItem
                       key={event.id}
                       eventDetail={{ event, attendance }}
                       eventDisplayProps={eventDisplayProps}
-                      reservedStatus={reservedStatus}
+                      user={user ?? null}
                     />
                   )
                 })}
