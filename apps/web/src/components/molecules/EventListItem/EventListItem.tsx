@@ -12,9 +12,10 @@ export interface EventListItemProps {
   event: Event
   attendance: Attendance | null
   userId: string | null
+  className?: string
 }
 
-export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userId }: EventListItemProps) => {
+export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userId, className }: EventListItemProps) => {
   const { id, title, type, imageUrl: customImageUrl } = event
   const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
@@ -27,7 +28,8 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
         // [calc(100%+1rem)] is to offset the -mx-2
         "group flex flex-row gap-3 w-[calc(100%+1rem)] rounded-xl p-2 -mx-2 last:-mb-2",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
-        past && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300"
+        past && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300",
+        className
       )}
     >
       <Thumbnail imageUrl={customImageUrl} alt={title} startInPast={past} eventType={type} />
