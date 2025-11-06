@@ -735,39 +735,44 @@ export function getAttendanceService(
       if (attendee.reserved) {
         const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
         invariant(pool !== undefined)
-        // We are now looking for a replacement for the attendee that just deregistered. The criteria that we need to
-        // match are:
-        //
-        // 1. The attendee must be in the same pool as the deregistered attendee
-        // 2. The attendee must not already be reserved
-        // 3. The attendee must have a reservation time not in the future
-        const firstUnreservedAdjacentAttendee = attendance.attendees
-          .filter((a) => a.attendancePoolId === pool.id)
-          .filter((a) => !a.reserved)
-          .filter((a) => !isFuture(a.earliestReservationAt))
-          .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
-          .at(0)
-        if (firstUnreservedAdjacentAttendee === undefined) {
-          return
-        }
 
-        await attendanceRepository.updateAttendeeById(
-          handle,
-          firstUnreservedAdjacentAttendee.id,
-          AttendeeWriteSchema.parse({
-            ...firstUnreservedAdjacentAttendee,
-            reserved: true,
-          })
-        )
-        logger.info(
-          "Attendee(ID=%s,UserID=%s) named %s has been reserved for Event(ID=%s) named %s because User(ID=%s) was deregistered",
-          firstUnreservedAdjacentAttendee.id,
-          firstUnreservedAdjacentAttendee.user.id,
-          firstUnreservedAdjacentAttendee.user.name || "<missing name>",
-          event.id,
-          event.title,
-          attendee.id
-        )
+        const attendeeCount = attendance.attendees.filter((a) => a.attendancePoolId === pool.id).length
+
+        if (pool.capacity > 0 && attendeeCount < pool.capacity) {
+          // We are now looking for a replacement for the attendee that just deregistered. The criteria that we need to
+          // match are:
+          //
+          // 1. The attendee must be in the same pool as the deregistered attendee
+          // 2. The attendee must not already be reserved
+          // 3. The attendee must have a reservation time not in the future
+          const firstUnreservedAdjacentAttendee = attendance.attendees
+            .filter((a) => a.attendancePoolId === pool.id)
+            .filter((a) => !a.reserved)
+            .filter((a) => !isFuture(a.earliestReservationAt))
+            .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
+            .at(0)
+          if (firstUnreservedAdjacentAttendee === undefined) {
+            return
+          }
+
+          await attendanceRepository.updateAttendeeById(
+            handle,
+            firstUnreservedAdjacentAttendee.id,
+            AttendeeWriteSchema.parse({
+              ...firstUnreservedAdjacentAttendee,
+              reserved: true,
+            })
+          )
+          logger.info(
+            "Attendee(ID=%s,UserID=%s) named %s has been reserved for Event(ID=%s) named %s because User(ID=%s) was deregistered",
+            firstUnreservedAdjacentAttendee.id,
+            firstUnreservedAdjacentAttendee.user.id,
+            firstUnreservedAdjacentAttendee.user.name || "<missing name>",
+            event.id,
+            event.title,
+            attendee.id
+          )
+        }
       }
     },
     async findChargeAttendeeScheduleDate(handle, attendeeId) {
