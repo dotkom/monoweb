@@ -17,7 +17,7 @@ export interface EventListItemProps {
 
 export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userId, className }: EventListItemProps) => {
   const { id, title, type, imageUrl: customImageUrl } = event
-  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+  const attendee = attendance?.attendees.find((attendee) => attendee.user.id === userId) ?? null
 
   const past = isPast(event.end)
 
@@ -44,9 +44,7 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
         <div className="flex flex-col gap-2">
           <DateAndTime start={event.start} end={event.end} />
 
-          {attendance && (
-            <AttendanceStatus attendance={attendance} reservedStatus={reservedStatus} eventEndInPast={past} />
-          )}
+          {attendance && <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={past} />}
         </div>
       </div>
     </Link>
