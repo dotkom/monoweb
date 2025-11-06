@@ -40,7 +40,8 @@ export const PaymentExplanationDialog = () => {
             </Text>
             <Text element="span" className="border-l-2 border-brand pl-3 my-1 text-left">
               <strong>Reservert betaling: </strong>
-              Beløpet holdes av på kontoen din og trekkes senest på den femte dagen, eller før dersom avmeldingsfristen inntrer tidligere.
+              Beløpet holdes av på kontoen din og trekkes senest på den femte dagen, eller før dersom avmeldingsfristen
+              inntrer tidligere.
             </Text>
             <Text element="span" className="text-left">
               Dersom ingen betaling er reservert innen nedtellingen er ferdig, vil du automatisk bli avmeldt
