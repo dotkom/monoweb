@@ -1,12 +1,13 @@
 import { auth } from "@/auth"
+import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Event } from "@dotkomonline/types"
+import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
 import { RichText, cn } from "@dotkomonline/ui"
 import { Icon, Text, Tilt, Title } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { formatDate } from "date-fns"
+import { formatDate, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 import type { FC } from "react"
@@ -31,9 +32,31 @@ export default async function App() {
   const featuredEvent = events[0] ?? null
   const otherEvents = events.slice(1)
 
+  // DELETE THIS START
+  //const julebordEventId = "4e0868e4-ed79-428e-a340-4ceb82bf5497"
+  const julebordEventId = "cd351d9b-a3f7-4b20-b053-c53d2111d776"
+  const julebord = await server.event.find.query(julebordEventId)
+  const julebordAttendee =
+    julebord?.event && julebord.attendance
+      ? julebord.attendance.attendees.find((attendee) => {
+          if (!julebord.attendance) return false // typescript geeking
+
+          const isUser = attendee.user.id === session?.sub
+          //const hasNotPaid = !hasAttendeePaid(julebord.attendance, attendee)
+          const hasNotPaid = true
+          const eventIsInFuture = isFuture(julebord.event.start)
+
+          return isUser && hasNotPaid && eventIsInFuture
+        })
+      : undefined
+  // END DELETE
+
   return (
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-4">
+        {julebord && julebordAttendee && (
+          <AttendancePaymentOopsNotice userId={session?.sub ?? null} eventWithAttendance={julebord} />
+        )}
         <JubileumNotice />
         <OnlineHero />
       </div>
@@ -201,5 +224,38 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
         </div>
       </div>
     </Link>
+  )
+}
+
+function AttendancePaymentOopsNotice({
+  userId,
+  eventWithAttendance,
+}: { userId: UserId | null; eventWithAttendance: EventWithAttendance }) {
+  return (
+    <div className="w-full p-6 text-white bg-red-600 rounded-2xl">
+      <div className="flex flex-col gap-4 w-fit">
+        <Text className="text-sm text-red-200">Oops. Dotkom har klusset med betaling igjen :(</Text>
+        <Text className="text-2xl text-red-50 font-bold">Du må gjennomføre en betaling på nytt!</Text>
+
+        <div className="bg-white dark:bg-stone-950 p-2 rounded-xl text-black dark:text-white">
+          <EventListItem
+            userId={userId}
+            event={eventWithAttendance.event}
+            attendance={eventWithAttendance.attendance}
+            className="-mt-2"
+          />
+        </div>
+
+        <Text className="text-sm text-red-200">
+          Du skal bare trukket <span className="underline">én</span> gang! Selv om du tidligere har betalt.
+          <br />
+          Dersom du allerede har blitt trukket fra kontoen eller har et beløp reservert og ser denne meldingen, ta
+          kontakt.
+        </Text>
+        <Text className="text-sm text-red-200">
+          Kontakt dotkom@online.ntnu.no og arrangør dersom det oppstår problemer.
+        </Text>
+      </div>
+    </div>
   )
 }
