@@ -224,7 +224,7 @@ export const attendanceRouter = t.router({
         // DELETE THIS START
         // turn deadline back to const after this is removed
         const julebordAttendanceId = "b470eda0-4650-4dbd-bb6e-7bcf9c7757f9"
-        const arbitraryJulebordDeadline = new TZDate("2025-11-07T18:00:00Z")
+        const arbitraryJulebordDeadline = new TZDate("2025-11-07T19:00:00Z") // this is 20:00 local time in norway
         const attendee = await ctx.attendanceService.getAttendeeById(handle, attendeeId)
         if (attendee.attendanceId === julebordAttendanceId) {
           deadline = max([arbitraryJulebordDeadline, deadline])
