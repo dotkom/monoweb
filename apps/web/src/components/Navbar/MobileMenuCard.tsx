@@ -1,15 +1,17 @@
-import { DropdownMenuItem, Icon, cn } from "@dotkomonline/ui"
+import { DropdownMenuItem, cn } from "@dotkomonline/ui"
+import type { Icon } from "@tabler/icons-react"
+import { IconChevronRight } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
 
 interface MobileMenuCardProps {
   title: string
   href: string
-  icon: string
+  icon: Icon
   onClick?: () => void
 }
 
-export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon, onClick }) => {
+export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon: IconComponent, onClick }) => {
   return (
     <DropdownMenuItem asChild className="flex-1 cursor-pointer p-0">
       <Link
@@ -22,8 +24,8 @@ export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon, onC
         )}
       >
         <div className="flex w-full items-start justify-between mb-2">
-          <Icon icon={icon} className="text-3xl text-gray-700 dark:text-stone-300" />
-          <Icon icon="tabler:chevron-right" className="text-xl opacity-70 text-gray-700 dark:text-stone-300" />
+          <IconComponent className="text-3xl text-gray-700 dark:text-stone-300" />
+          <IconChevronRight className="text-xl opacity-70 text-gray-700 dark:text-stone-300" />
         </div>
         <span className="text-base font-medium text-gray-800 dark:text-stone-100">{title}</span>
       </Link>

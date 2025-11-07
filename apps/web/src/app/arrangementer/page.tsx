@@ -30,6 +30,9 @@ import { FilterChips } from "./components/FilterChips"
 import { SearchInput } from "./components/SearchInput"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
+import { IconFilter2 } from "@tabler/icons-react"
+
+
 type FilterType = "search" | "type" | "group" | "sort"
 
 const EventPage = () => {
@@ -242,7 +245,7 @@ const EventPage = () => {
                       <div className="max-w-sm mx-auto pb-6">
                         <DrawerHeader className="">
                           <DrawerTitle className="flex items-center gap-2">
-                            <Icon icon="tabler:filter-2" className="text-lg" />
+                            <IconFilter2 className="w-[1.25em] h-[1.25em]" />
                             Filtrer arrangementer
                           </DrawerTitle>
                         </DrawerHeader>
