@@ -1,6 +1,7 @@
 "use client"
 import { type Attendance, type User, getAttendee } from "@dotkomonline/types"
-import { Icon, Stripes, Text, cn } from "@dotkomonline/ui"
+import { Stripes, Text, cn } from "@dotkomonline/ui"
+import { IconCreditCard } from "@tabler/icons-react"
 import Link from "next/link"
 
 interface PaymentCardProps {
@@ -24,7 +25,7 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
         )}
       >
         <div className="flex flex-row items-center justify-center gap-2 font-medium">
-          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <IconCreditCard className="h-[1.25em] w-[1.25em]" />
           <Text>{attendance.attendancePrice} kr</Text>
         </div>
       </div>
@@ -40,7 +41,7 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
         )}
       >
         <div className="flex flex-row items-center justify-center gap-1 font-medium">
-          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <IconCreditCard className="h-[1.25em] w-[1.25em]" />
           <Text>{attendance.attendancePrice} kr betalt</Text>
         </div>
       </div>
@@ -54,7 +55,7 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
         className="rounded-lg h-fit min-h-[4rem] flex items-center justify-center bg-yellow-200"
       >
         <div className="flex flex-row items-center justify-center gap-1 font-medium">
-          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <IconCreditCard className="h-[1.25em] w-[1.25em]" />
           <Text>Betal</Text>
         </div>
       </Link>
@@ -70,7 +71,7 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
         className={cn("rounded-lg h-fit min-h-[4rem] flex items-center justify-center")}
       >
         <div className="flex flex-row items-center justify-center gap-1 font-medium">
-          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <IconCreditCard className="h-[1.25em] w-[1.25em]" />
           <Text>Betal</Text>
         </div>
       </Stripes>

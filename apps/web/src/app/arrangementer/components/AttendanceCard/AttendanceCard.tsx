@@ -11,8 +11,9 @@ import {
   type User,
   getAttendee,
 } from "@dotkomonline/types"
-import { Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
+import { IconEdit } from "@tabler/icons-react"
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
@@ -248,10 +249,10 @@ export const AttendanceCard = ({
 
         <Link
           href="/innstillinger/profil"
-          className="flex flex-row gap-1 items-center text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+          className="flex flex-row gap-1 text-sm items-center text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
         >
-          <Icon icon="tabler:edit" className="text-lg" />
-          <Text className="text-sm">Oppdater matallergier</Text>
+          <IconEdit className="h-[1.25em] w-[1.25em]" />
+          <Text>Oppdater matallergier</Text>
         </Link>
 
         {attendance.attendancePrice && <PaymentExplanationDialog />}

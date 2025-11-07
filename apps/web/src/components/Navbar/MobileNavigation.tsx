@@ -191,7 +191,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                   </div>
 
                   {session === null && (
-                    <div className="pt-8 flex justify-between gap-2">
+                    <div className="p-2 pt-8 flex justify-between gap-2">
                       <Button
                         element={Link}
                         variant="solid"

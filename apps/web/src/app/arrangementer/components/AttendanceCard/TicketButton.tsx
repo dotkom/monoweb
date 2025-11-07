@@ -8,10 +8,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   Button,
-  Icon,
   Text,
   Title,
 } from "@dotkomonline/ui"
+import { IconTicket, IconX } from "@tabler/icons-react"
 import { QRCodeSVG } from "qrcode.react"
 import { useState } from "react"
 
@@ -29,7 +29,7 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
           onClick={() => setOpen(true)}
           className="w-full rounded-lg h-fit min-h-[4rem] font-medium"
           color="light"
-          icon={<Icon icon="tabler:ticket" className="text-lg" />}
+          icon={<IconTicket className="h-[1.25em] w-[1.25em]" />}
         >
           Vis billett
         </Button>
@@ -45,7 +45,7 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
             </Title>
           </AlertDialogTitle>
           <AlertDialogCancel className="p-2">
-            <Icon className="text-xl" icon="tabler:x" />
+            <IconX className="h-[1.25em] w-[1.25em]" />
           </AlertDialogCancel>
         </div>
 

@@ -10,10 +10,10 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Icon,
   Text,
   cn,
 } from "@dotkomonline/ui"
+import { IconBook2 } from "@tabler/icons-react"
 import { useState } from "react"
 
 interface EventRulesProps {
@@ -25,9 +25,9 @@ export const EventRules = ({ className }: EventRulesProps) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger>
-        <div className={cn("flex flex-row gap-1 items-center cursor-pointer", className)}>
-          <Icon icon="tabler:book-2" className="text-lg" />
-          <Text className="text-sm">Arrangementregler</Text>
+        <div className={cn("text-sm flex flex-row gap-1 items-center cursor-pointer", className)}>
+          <IconBook2 className="h-[1.25em] w-[1.25em]" />
+          <Text>Arrangementregler</Text>
         </div>
       </AlertDialogTrigger>
       <AlertDialogContent

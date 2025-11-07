@@ -6,32 +6,29 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Icon,
   Text,
 } from "@dotkomonline/ui"
+import { IconInfoCircle, IconX } from "@tabler/icons-react"
 
 export const PaymentExplanationDialog = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger>
-        <div className="flex flex-row gap-1 items-center cursor-pointer text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
-          <Icon icon="material-symbols:info-outline-rounded" className="text-lg" />
-          <Text className="text-sm">Hvordan fungerer betaling?</Text>
+        <div className="text-sm flex flex-row gap-1 items-center cursor-pointer text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
+          <IconInfoCircle className="h-[1.25em] w-[1.25em]" />
+          <Text>Hvordan fungerer betaling?</Text>
         </div>
       </AlertDialogTrigger>
 
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-row gap-2 items-center justify-between font-medium">
-            <span className="flex flex-row gap-2 items-center">
-              <Icon
-                icon="material-symbols:info-outline-rounded"
-                className="text-3xl text-blue-500 dark:text-stone-300"
-              />
-              <Text className="text-xl">Betalingsinformasjon</Text>
+            <span className="text-xl flex flex-row gap-2 items-center">
+              <IconInfoCircle className="h-[1.25em] w-[1.25em] text-blue-500 dark:text-stone-300" />
+              <Text>Betalingsinformasjon</Text>
             </span>
             <AlertDialogCancel>
-              <Icon icon="tabler:x" className="text-lg" />
+              <IconX className="h-[1.25em] w-[1.25em]" />
             </AlertDialogCancel>
           </AlertDialogTitle>
           <AlertDialogDescription className="flex flex-col gap-2">

@@ -1,5 +1,6 @@
 import type { Punishment } from "@dotkomonline/types"
-import { Button, Icon, Text } from "@dotkomonline/ui"
+import { Button, Text } from "@dotkomonline/ui"
+import { IconAlertTriangle, IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -11,9 +12,9 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
   if (punishment.suspended) {
     return (
       <div className="flex flex-col gap-3 p-4 rounded-lg bg-black dark:bg-white text-white dark:text-black text-sm">
-        <div className="flex flex-row gap-2 items-center">
-          <Icon icon="tabler:alert-triangle" className="text-lg" />
-          <Text className="text-base">Du er suspendert</Text>
+        <div className="flex flex-row gap-2 items-center text-base">
+          <IconAlertTriangle className="h-[1.25em] w-[1.25em]" />
+          <Text>Du er suspendert</Text>
         </div>
 
         <Text>
@@ -24,7 +25,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
             variant="text"
             color="dark"
             className="-mx-0.5 -my-1 text-sm text-white dark:text-black"
-            iconRight={<Icon icon="tabler:arrow-up-right" />}
+            iconRight={<IconArrowUpRight/>}
           >
             profilen din
           </Button>{" "}
@@ -36,9 +37,9 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
 
   return (
     <div className="flex flex-col gap-3 p-4 rounded-lg bg-red-200 dark:bg-red-900 text-sm">
-      <div className="flex flex-row gap-2 items-center">
-        <Icon icon="tabler:alert-triangle" className="text-lg" />
-        <Text className="text-base">{punishment.delay} timer utsatt påmelding pga. prikk</Text>
+      <div className="flex flex-row gap-2 items-center text-base">
+        <IconAlertTriangle className="h-[1.25em] w-[1.25em]" />
+        <Text>{punishment.delay} timer utsatt påmelding pga. prikk</Text>
       </div>
 
       <Text>
@@ -55,7 +56,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
           variant="text"
           color="red"
           className="-mx-0.5 -my-1 text-sm hover:bg-red-100 dark:hover:bg-red-950/50"
-          iconRight={<Icon icon="tabler:arrow-up-right" />}
+          iconRight={<IconArrowUpRight/>}
         >
           profilen din
         </Button>{" "}

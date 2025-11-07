@@ -1,12 +1,13 @@
 "use client"
 
 import type { Event } from "@dotkomonline/types"
-import { Icon, Text } from "@dotkomonline/ui"
+import { Text } from "@dotkomonline/ui"
 import { formatDate, isSameDay } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { createGoogleCalendarLink } from "./utils"
+import { IconClock, IconArrowRight,  } from "@tabler/icons-react"
 
 interface TimeBoxProps {
   event: Event
@@ -25,7 +26,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
 
   return (
     <div className="flex flex-row gap-4 items-center">
-      <Icon icon="tabler:clock" className="text-xl" />
+      <IconClock className="h-6 w-6" />
 
       <div className="flex flex-row grow gap-4 items-center">
         <div className="flex flex-col">
@@ -37,7 +38,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
         </div>
         {!isSameDay(start, end) && (
           <>
-            <Icon icon="tabler:arrow-right" className="text-2xl" />
+            <IconArrowRight className="h-6 w-6" />
             <div className="flex flex-col">
               <Text>{formatDate(end, "dd. MMMM", { locale: nb })}</Text>
               <Text>{formatDate(end, "HH:mm", { locale: nb })}</Text>
