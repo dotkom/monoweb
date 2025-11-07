@@ -1,5 +1,5 @@
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import type { EventWithAttendance } from "@dotkomonline/types"
+import { type EventWithAttendance, type User, getAttendee } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
@@ -51,14 +51,16 @@ function getColSpanClass(span: number) {
 
 interface EventCalendarItemProps {
   eventDetail: EventWithAttendance
-  reservedStatus: boolean | null
+  user: User | null
   className?: string
   eventDisplayProps: EventDisplayProps
 }
 
-export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayProps }: EventCalendarItemProps) => {
+export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps }: EventCalendarItemProps) => {
   const { event, attendance } = eventDetail
   const isActive = new Date() < event.end
+
+  const attendee = getAttendee(eventDetail.attendance, user)
 
   const category = event.type ? eventCategories[event.type] : undefined
   const triggerClasses = category?.classes.item ?? "bg-gray-100 dark:bg-stone-800"
@@ -120,11 +122,7 @@ export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayPro
             </div>
             <div className="flex justify-between items-center gap-2 mt-2">
               {attendance && (
-                <AttendanceStatus
-                  attendance={attendance}
-                  reservedStatus={reservedStatus}
-                  eventEndInPast={new Date() > event.end}
-                />
+                <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={new Date() > event.end} />
               )}
               {categoryName && (
                 <div className="ml-auto">

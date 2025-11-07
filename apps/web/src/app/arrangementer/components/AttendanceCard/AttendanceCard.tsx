@@ -240,6 +240,7 @@ export const AttendanceCard = ({
         user={user}
         event={event}
         isLoading={isLoading}
+        chargeScheduleDate={chargeScheduleDate ?? null}
       />
 
       <div className="flex flex-row flex-wrap gap-4">

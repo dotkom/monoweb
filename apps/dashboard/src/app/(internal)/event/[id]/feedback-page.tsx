@@ -34,7 +34,6 @@ export const FeedbackPage: FC = () => {
     createMutation.mutate({
       feedbackForm: {
         eventId: event.id,
-        isActive: false,
         answerDeadline: addWeeks(event.end, 2),
       },
       questions: [],
@@ -51,7 +50,6 @@ export const FeedbackPage: FC = () => {
   const defaultValues = {
     feedbackForm: {
       eventId: event.id,
-      isActive: feedbackFormQuery?.data?.isActive ?? false,
       answerDeadline: feedbackFormQuery?.data?.answerDeadline ?? addWeeks(event.end, 2),
     },
     questions: feedbackFormQuery?.data?.questions ?? [],

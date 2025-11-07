@@ -46,9 +46,16 @@ interface Props {
   defaultValues?: Partial<FormResult>
   label?: string
   groupId: GroupId
+  allowEditEndDate?: boolean
 }
 
-export const useGroupMembershipForm = ({ onSubmit, label = "Lagre", defaultValues, groupId }: Props) => {
+export const useGroupMembershipForm = ({
+  onSubmit,
+  label = "Lagre",
+  defaultValues,
+  groupId,
+  allowEditEndDate,
+}: Props) => {
   const { data: group } = useGroupGetQuery(groupId)
 
   return useFormBuilder({
@@ -71,6 +78,8 @@ export const useGroupMembershipForm = ({ onSubmit, label = "Lagre", defaultValue
       end: createDateTimeInput({
         label: "Slutt",
         clearable: true,
+        disabled: !allowEditEndDate,
+        description: !allowEditEndDate ? "Du kan ikke endre sluttdato for et aktivt medlemskap" : undefined,
       }),
     },
   })

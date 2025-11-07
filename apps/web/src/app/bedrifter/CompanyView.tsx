@@ -4,7 +4,7 @@ import { EventList, EventListSkeleton } from "@/app/arrangementer/components/Eve
 import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import type { Company } from "@dotkomonline/types"
-import { Icon, Text, Title } from "@dotkomonline/ui"
+import { Icon, RichText, Text, Title } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { roundToNearestMinutes } from "date-fns"
 import Image from "next/image"
@@ -72,7 +72,7 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
             ))}
           </div>
         </div>
-        <Text>{description}</Text>
+        {description && <RichText content={description} />}
       </div>
       <div className="mt-6 flex flex-col gap-2">
         <Title element="h2">Arrangementer</Title>

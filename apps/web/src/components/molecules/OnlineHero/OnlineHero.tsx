@@ -4,6 +4,7 @@ import { Button, Icon, Text, cn } from "@dotkomonline/ui"
 import { Title } from "@dotkomonline/ui"
 import Spline from "@splinetool/react-spline"
 import { useTheme } from "next-themes"
+import Link from "next/link"
 import type { FC } from "react"
 import { useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
@@ -72,31 +73,28 @@ export const OnlineHero: FC = () => {
         <span aria-hidden="true" className="w-full max-w-[300px]">
           <Logo />
         </span>
-
         <Title size="xl" className="font-medium lg:text-3xl">
           Linjeforeningen for informatikk ved NTNU
         </Title>
-
-        <Text className="md:text-lg max-w-xl">
-          Linjeforeningens oppgave er å forbedre studiemiljøet ved å fremme sosialt samvær, faglig kompetanse og kontakt
-          med næringslivet.
-        </Text>
-
-        <div className="flex flex-col flex-wrap md:flex-row gap-1 md:items-center">
+        <div>
           <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:briefcase-filled" className="text-lg" />
+            <Icon icon="tabler:briefcase" className="text-lg" />
             <Text>Er du fra en bedrift og ønsker samarbeid?</Text>
           </div>
-
-          <Button
-            variant="text"
-            element="a"
-            href="https://interesse.online.ntnu.no"
-            iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
-            className="ml-5 md:ml-0 w-fit"
-          >
-            Ta kontakt her
-          </Button>
+          <div className="flex gap-4 pt-4">
+            <Button
+              variant="solid"
+              color="brand"
+              element="a"
+              href="https://interesse.online.ntnu.no"
+              iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
+            >
+              Ta kontakt
+            </Button>
+            <Button variant="solid" element={Link} href="/om-linjeforeningen">
+              Les mer om oss
+            </Button>
+          </div>
         </div>
       </div>
 

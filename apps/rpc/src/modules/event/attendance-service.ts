@@ -24,6 +24,7 @@ import {
   type UserId,
   findActiveMembership,
   getMembershipGrade,
+  hasAttendeePaid,
   isAttendable,
 } from "@dotkomonline/types"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
@@ -274,6 +275,7 @@ export function getAttendanceService(
       }
     )
   }
+
   return {
     async createAttendance(handle, data) {
       validateAttendanceWrite(data)
@@ -630,23 +632,35 @@ export function getAttendanceService(
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
       const attendee = attendance.attendees.find((a) => a.id === attendeeId)
+
       // NOTE: If the attendee does not exist, we have a non-critical bug in the app. The circumstances where this is
       // possible is when the attendee was removed from the attendance after the task was scheduled AND the task was not
       // cancelled.
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendanceId})`)
       }
+
       if (attendee.reserved) {
         return
       }
 
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
+
       const adjacentAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved)
       const isPoolAtMaxCapacity = adjacentAttendees.length >= pool.capacity
-      const isPastReservationTime = isPast(attendee.earliestReservationAt)
-      if (isPoolAtMaxCapacity || isPastReservationTime) {
+      const isFutureReservationTime = isFuture(attendee.earliestReservationAt)
+
+      if (isPoolAtMaxCapacity) {
         return
+      }
+
+      if (isFutureReservationTime) {
+        logger.warn(
+          "ReserveAttendee task for Attendee(ID=%s) ran before earliestReservationAt %s.",
+          attendee.id,
+          attendee.earliestReservationAt.toUTCString()
+        )
       }
 
       const data = AttendeeWriteSchema.parse(attendee)
@@ -683,6 +697,14 @@ export function getAttendanceService(
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+      }
+
+      const hasPaid = hasAttendeePaid(attendance, attendee)
+
+      if (hasPaid) {
+        throw new FailedPreconditionError(
+          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) because payment has been completed`
+        )
       }
 
       // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.reserved`
@@ -1137,7 +1159,7 @@ export function getAttendanceService(
         }
 
         const feedbackForm = await feedbackFormService.findByEventId(handle, event.id)
-        if (!feedbackForm || !feedbackForm.isActive) {
+        if (!feedbackForm) {
           return
         }
 

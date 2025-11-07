@@ -379,7 +379,6 @@ export function getEventRepository(): EventRepository {
           AND: [
             {
               feedbackForm: {
-                isActive: true,
                 answerDeadline: {
                   gte: now,
                 },
