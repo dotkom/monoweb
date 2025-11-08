@@ -4,8 +4,9 @@ import { EventList, EventListSkeleton } from "@/app/arrangementer/components/Eve
 import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import type { Company } from "@dotkomonline/types"
-import { Icon, RichText, Text, Title } from "@dotkomonline/ui"
+import { RichText, Text, Title } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
+import { IconMapPin, IconMail, IconPhone, IconWorld } from "@tabler/icons-react"
 import { roundToNearestMinutes } from "date-fns"
 import Image from "next/image"
 import type { FC } from "react"
@@ -18,10 +19,10 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
   const { name, description, phone, email, website, location, imageUrl } = company
 
   const icons = [
-    { icon: "material-symbols:location-on", text: location, href: null },
-    { icon: "ph:globe-bold", text: "Nettside", href: website },
-    { icon: "material-symbols:mail", text: email, href: `mailto:${email}` },
-    { icon: "material-symbols:phone-enabled", text: phone, href: `tel:${phone}` },
+    { icon: IconMapPin, text: location, href: null },
+    { icon: IconWorld, text: "Nettside", href: website },
+    { icon: IconMail, text: email, href: `mailto:${email}` },
+    { icon: IconPhone, text: phone, href: `tel:${phone}` },
   ]
 
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
@@ -53,9 +54,9 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
           )}
 
           <div className="flex flex-col gap-y-2 px-1 text-lg">
-            {icons.map(({ icon, text, href }) => (
-              <div key={icon} className="flex items-center gap-x-2 dark:text-gray-100">
-                <Icon icon={icon} width="28" />
+            {icons.map(({ icon: Icon, text, href }, index) => (
+              <div key={index} className="flex items-center gap-x-2 dark:text-gray-100">
+                <Icon width={24} height={24} />
                 {href === null ? (
                   <Text element="span">{text}</Text>
                 ) : (
