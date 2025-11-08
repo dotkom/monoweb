@@ -142,7 +142,11 @@ export function getLocalTaskExecutor(
             }
             logger.debug("TaskExecutor performing discovery and execution of all pending tasks")
             const tasks = await taskDiscoveryService.discoverAll()
-            for (const task of tasks) {
+
+            // Limit to 15 tasks per run to avoid exceeding database connections
+            const limitedTasks = tasks.slice(0, 15)
+
+            for (const task of limitedTasks) {
               // CORRECTNESS: Do not await here, as we would block the entire event loop on each task execution which is
               // very slow for large task queues.
               void processTask(client, task)
