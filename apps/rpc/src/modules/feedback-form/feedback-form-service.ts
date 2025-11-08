@@ -121,16 +121,7 @@ export function getFeedbackFormService(
       }
       const questions = formToCopy.questions
 
-      const row = await formRepository.create(handle, feedbackForm, questions)
-
-      await taskSchedulingService.scheduleAt(
-        handle,
-        tasks.VERIFY_FEEDBACK_ANSWERED,
-        { feedbackFormId: row.id },
-        new TZDate(row.answerDeadline)
-      )
-
-      return row
+      return await this.create(handle, feedbackForm, questions)
     },
     async update(handle, id, feedbackForm, questions) {
       const previousRow = await this.getById(handle, id)
@@ -142,11 +133,17 @@ export function getFeedbackFormService(
 
       const row = await formRepository.update(handle, id, feedbackForm, questions)
 
-      if (task && !isEqual(task.scheduledAt, row.answerDeadline)) {
-        await taskSchedulingService.cancel(handle, task.id)
+      if (task?.status === "COMPLETED") {
+        return row
       }
 
-      if (task?.status !== "COMPLETED") {
+      let cancelled = false
+      if (task && !isEqual(task.scheduledAt, row.answerDeadline)) {
+        await taskSchedulingService.cancel(handle, task.id)
+        cancelled = true
+      }
+
+      if (!task || cancelled) {
         await taskSchedulingService.scheduleAt(
           handle,
           tasks.VERIFY_FEEDBACK_ANSWERED,

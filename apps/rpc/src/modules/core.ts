@@ -250,6 +250,7 @@ export async function createServiceLayer(
     attendanceService,
     taskService,
     taskExecutor,
+    taskSchedulingService,
     feedbackFormService,
     feedbackFormAnswerService,
     authorizationService,
