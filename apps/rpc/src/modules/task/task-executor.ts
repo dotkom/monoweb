@@ -24,6 +24,8 @@ import type { TaskDiscoveryService } from "./task-discovery-service"
 import type { TaskSchedulingService } from "./task-scheduling-service"
 import type { TaskService } from "./task-service"
 
+const MAX_TASK_PROCESS_COUNT = 15
+
 export interface TaskExecutor {
   startWorker(client: DBClient, signal: AbortSignal): void
 }
@@ -144,8 +146,10 @@ export function getLocalTaskExecutor(
             logger.debug("TaskExecutor performing discovery and execution of all pending tasks")
             const tasks = await taskDiscoveryService.discoverAll()
 
-            // Limit to 15 tasks per run to avoid exceeding database connections
-            const limitedTasks = tasks.toSorted((a, b) => compareAsc(a.scheduledAt, b.scheduledAt)).slice(0, 15)
+            // Limit the number of tasks per run to avoid exceeding database connections
+            const limitedTasks = tasks
+              .toSorted((a, b) => compareAsc(a.scheduledAt, b.scheduledAt))
+              .slice(0, MAX_TASK_PROCESS_COUNT)
 
             for (const task of limitedTasks) {
               // CORRECTNESS: Do not await here, as we would block the entire event loop on each task execution which is
