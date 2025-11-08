@@ -5,6 +5,7 @@ import type { Task } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
+import { compareAsc } from "date-fns"
 import type { Configuration } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
@@ -22,6 +23,8 @@ import {
 import type { TaskDiscoveryService } from "./task-discovery-service"
 import type { TaskSchedulingService } from "./task-scheduling-service"
 import type { TaskService } from "./task-service"
+
+const MAX_TASK_PROCESS_COUNT = 15
 
 export interface TaskExecutor {
   startWorker(client: DBClient, signal: AbortSignal): void
@@ -142,7 +145,13 @@ export function getLocalTaskExecutor(
             }
             logger.debug("TaskExecutor performing discovery and execution of all pending tasks")
             const tasks = await taskDiscoveryService.discoverAll()
-            for (const task of tasks) {
+
+            // Limit the number of tasks per run to avoid exceeding database connections
+            const limitedTasks = tasks
+              .toSorted((a, b) => compareAsc(a.scheduledAt, b.scheduledAt))
+              .slice(0, MAX_TASK_PROCESS_COUNT)
+
+            for (const task of limitedTasks) {
               // CORRECTNESS: Do not await here, as we would block the entire event loop on each task execution which is
               // very slow for large task queues.
               void processTask(client, task)
