@@ -20,7 +20,7 @@ export const feedbackRouter = t.router({
     })
   ),
 
-  getStaffFeedbackFormPreview: staffProcedure.input(FeedbackFormIdSchema).query(async ({ input, ctx }) =>
+  getFeedbackFormStaffPreview: staffProcedure.input(FeedbackFormIdSchema).query(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       const feedbackForm = await ctx.feedbackFormService.getById(handle, input)
       const event = await ctx.eventService.getEventById(handle, feedbackForm.eventId)

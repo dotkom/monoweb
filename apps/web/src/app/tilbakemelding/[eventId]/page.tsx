@@ -29,7 +29,7 @@ const EventFeedbackPage = async ({
   const feedbackForm = await server.event.feedback.getFormByEventId.query(eventId)
 
   if (isPreview) {
-    const staffPreview = await server.event.feedback.getStaffFeedbackFormPreview.query(feedbackForm.id)
+    const staffPreview = await server.event.feedback.getFeedbackFormStaffPreview.query(feedbackForm.id)
 
     return <PageContent event={staffPreview.event} feedbackForm={staffPreview.feedbackForm} isPreview={true} />
   }
@@ -37,11 +37,10 @@ const EventFeedbackPage = async ({
   const feedbackEligibility = await server.event.feedback.getFeedbackEligibility.query(feedbackForm.id)
 
   if (feedbackEligibility.success) {
-    const attendee = feedbackEligibility.attendee
     return (
       <PageContent
         event={feedbackEligibility.event}
-        attendee={attendee}
+        attendee={feedbackEligibility.attendee}
         feedbackForm={feedbackEligibility.feedbackForm}
         isPreview={false}
       />
