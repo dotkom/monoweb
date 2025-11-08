@@ -5,6 +5,7 @@ import type { Task } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
+import { compareAsc } from "date-fns"
 import type { Configuration } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
@@ -144,7 +145,7 @@ export function getLocalTaskExecutor(
             const tasks = await taskDiscoveryService.discoverAll()
 
             // Limit to 15 tasks per run to avoid exceeding database connections
-            const limitedTasks = tasks.slice(0, 15)
+            const limitedTasks = tasks.toSorted((a, b) => compareAsc(a.scheduledAt, b.scheduledAt)).slice(0, 15)
 
             for (const task of limitedTasks) {
               // CORRECTNESS: Do not await here, as we would block the entire event loop on each task execution which is
