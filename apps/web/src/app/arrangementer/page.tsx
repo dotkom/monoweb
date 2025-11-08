@@ -11,7 +11,6 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-  Icon,
   Tabs,
   TabsContent,
   TabsList,
@@ -30,7 +29,7 @@ import { FilterChips } from "./components/FilterChips"
 import { SearchInput } from "./components/SearchInput"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
 
-import { IconFilter2 } from "@tabler/icons-react"
+import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
 
 
 type FilterType = "search" | "type" | "group" | "sort"
@@ -217,11 +216,11 @@ const EventPage = () => {
           <div className={cn("flex gap-2 justify-between w-full", view === "cal" ? "sm:w-fit" : "")}>
             <TabsList className="dark:border-none shrink-0">
               <TabsTrigger value="list" className="px-3 w-fit min-w-0 min-h-0">
-                <Icon icon="tabler:layout-list" width="1.25rem" height="1.25rem" className="mr-2 h-5 w-5" />
+                <IconLayoutList className="mr-2 h-5 w-5" />
                 Liste
               </TabsTrigger>
               <TabsTrigger value="cal" className="px-3 w-fit min-w-0 min-h-0">
-                <Icon icon="tabler:calendar-month" width="1.25rem" height="1.25rem" className="mr-2 h-5 w-5" />
+                <IconCalendarMonth className="mr-2 h-5 w-5" />
                 Kalender
               </TabsTrigger>
             </TabsList>
@@ -233,10 +232,10 @@ const EventPage = () => {
                     <Button
                       variant="solid"
                       className={cn(
-                        "px-4 rounded-lg h-[2.875rem] w-[2.875rem] sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
+                        "sm:px-4 rounded-lg h-[2.875rem] w-[2.875rem] sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                       )}
                     >
-                      <Icon icon="tabler:filter-2" width="1.25rem" height="1.25rem" className="h-5 w-5" />
+                      <IconFilter2 className="h-5 w-5" />
                       <span className="hidden sm:block text-sm">Filtrer</span>
                     </Button>
                   </DrawerTrigger>
@@ -268,10 +267,7 @@ const EventPage = () => {
                   onClick={toggleSearchBar}
                   className="sm:hidden w-[2.875rem] rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                 >
-                  <Icon
-                    className="text-lg flex items-center justify-center"
-                    icon={searchBarOpen ? "tabler:x" : "tabler:search"}
-                  />
+                  { searchBarOpen ? <IconX className="w-5 h-5 flex items-center justify-center"/> : <IconSearch className="w-5 h-5 flex items-center justify-center"/>}
                 </Button>
 
                 <SearchInput

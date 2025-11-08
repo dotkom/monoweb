@@ -15,7 +15,6 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-  Icon,
   Label,
   RadioGroup,
   RadioGroupItem,
@@ -26,6 +25,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { type EventListViewMode, EventListViewModeSchema } from "./EventList"
+import { IconCheck, IconChevronDown, IconSearch } from "@tabler/icons-react"
 
 const FormSchema = z.object({
   byType: z.array(EventSchema.shape.type),
@@ -108,12 +108,12 @@ export const EventFilters = ({ onChange, groups, typeFilters, groupFilters, view
               <CollapsibleTrigger
                 className={cn(
                   "cursor-pointer w-full flex items-center justify-between gap-2 py-1 font-medium text-gray-500",
-                  "[&[data-state=open]>iconify-icon]:rotate-180",
+                  "[&[data-state=open]>svg]:rotate-180",
                   "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
                 )}
               >
                 <Label>Kategori</Label>
-                <Icon icon="tabler:chevron-down" className="transition-transform text-lg" />
+                <IconChevronDown className="w-[1.25em] h-[1.25em] transition-transform"/>
               </CollapsibleTrigger>
               <CollapsibleContent
                 className={cn(
@@ -194,12 +194,12 @@ const CollapsibleGroupSelect = ({
         <CollapsibleTrigger
           className={cn(
             "cursor-pointer w-full flex items-center justify-between gap-2 py-1 font-medium text-gray-500",
-            "[&[data-state=open]>iconify-icon]:rotate-180",
+            "[&[data-state=open]>svg]:rotate-180",
             "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
           )}
         >
           <Label>Arrangør</Label>
-          <Icon icon="tabler:chevron-down" className="transition-transform text-lg" />
+          <IconChevronDown className="w-[1.25em] h-[1.25em] transition-transform"/>
         </CollapsibleTrigger>
 
         <CollapsibleContent
@@ -211,9 +211,8 @@ const CollapsibleGroupSelect = ({
         >
           <div className="relative flex flex-col border border-gray-200 dark:border-stone-700 rounded-xl">
             <div className="relative m-0.5">
-              <Icon
-                className="text-lg h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3"
-                icon="tabler:search"
+              <IconSearch 
+                className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3"
               />
               <TextInput
                 className="pl-10 text-base md:text-sm border-none dark:bg-transparent"
@@ -239,7 +238,7 @@ const CollapsibleGroupSelect = ({
                     )}
                   >
                     <span>{group.abbreviation}</span>
-                    {isSelected && <Icon icon="tabler:check" className="w-4 h-4" />}
+                    {isSelected && <IconCheck className="w-4 h-4" />}
                   </button>
                 )
               })}

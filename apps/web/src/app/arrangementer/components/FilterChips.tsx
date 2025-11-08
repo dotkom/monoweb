@@ -2,8 +2,9 @@
 
 import type { EventType, Group } from "@dotkomonline/types"
 import { mapEventTypeToLabel } from "@dotkomonline/types"
-import { Button, Icon, cn } from "@dotkomonline/ui"
+import { Button, cn } from "@dotkomonline/ui"
 import type { EventListViewMode } from "./EventList"
+import { IconX } from "@tabler/icons-react"
 
 type FilterType = "search" | "type" | "group" | "sort"
 
@@ -85,7 +86,7 @@ export const FilterChips = ({
           )}
         >
           <span>{chip.label}</span>
-          <Icon icon="tabler:x" width="1rem" height="1rem" className="w-4 h-4" />
+          <IconX className="w-4 h-4" />
         </button>
       ))}
 

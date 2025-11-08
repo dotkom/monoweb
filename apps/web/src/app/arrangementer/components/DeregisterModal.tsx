@@ -12,7 +12,6 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
   Button,
-  Icon,
   Label,
   Select,
   SelectContent,
@@ -24,6 +23,7 @@ import {
   Textarea,
   cn,
 } from "@dotkomonline/ui"
+import { IconUserMinus } from "@tabler/icons-react"
 import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
@@ -163,7 +163,7 @@ const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Pr
           )}
           disabled={!form.formState.isValid || form.formState.isSubmitting}
         >
-          <Icon className="text-lg" icon="tabler:user-minus" />
+          <IconUserMinus className="h-[1.25em] w-[1.25em]"/>
           Meld meg av
         </Button>
       </div>
