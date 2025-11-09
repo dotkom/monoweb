@@ -1,6 +1,7 @@
 import { GroupList } from "@/components/organisms/GroupList"
 import { server } from "@/utils/trpc/server"
-import { Button, Icon, Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { Button, Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"
 
 const CommitteePage = async () => {
@@ -29,7 +30,7 @@ const CommitteePage = async () => {
           variant="text"
           element={Link}
           href="/interessegrupper"
-          iconRight={<Icon icon="tabler:arrow-up-right" />}
+          iconRight={<IconArrowUpRight width={20} height={20} />}
           className="text-lg"
         >
           Se alle interessegrupper her
