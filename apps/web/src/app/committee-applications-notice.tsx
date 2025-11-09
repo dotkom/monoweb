@@ -1,5 +1,6 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { Button, Icon, Text, Title } from "@dotkomonline/ui"
+import { Button, Text, Title } from "@dotkomonline/ui"
+import { IconArrowUpRight } from "@tabler/icons-react"
 
 export const CommitteeApplicationsNotice = () => {
   return (
@@ -22,7 +23,7 @@ export const CommitteeApplicationsNotice = () => {
         </div>
       </div>
 
-      <Icon icon="tabler:arrow-up-right" className="text-2xl" />
+      <IconArrowUpRight className="w-6 h-6" />
     </Button>
   )
 }

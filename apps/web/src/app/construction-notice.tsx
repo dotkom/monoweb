@@ -1,6 +1,7 @@
 "use client"
 
 import { Button, Icon, Text, Title } from "@dotkomonline/ui"
+import { IconArrowUpRight, IconX } from "@tabler/icons-react"
 import { useState } from "react"
 
 export const ConstructionNotice = () => {
@@ -26,7 +27,7 @@ export const ConstructionNotice = () => {
           variant="text"
           className="-m-1 p-2 hover:bg-yellow-100 dark:hover:bg-amber-100 rounded-lg"
         >
-          <Icon icon="tabler:x" className="text-xl dark:text-black" />
+          <IconX className="w-5 h-5 dark:text-black" />
         </Button>
       </div>
 
@@ -50,7 +51,7 @@ export const ConstructionNotice = () => {
               variant="text"
               element="a"
               href="mailto:dotkom@online.ntnu.no"
-              iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
+              iconRight={<IconArrowUpRight width={16} height={16} />}
               className="text-sm md:text-base font-semibold hover:bg-yellow-200 dark:text-black dark:hover:bg-amber-200"
             >
               dotkom@online.ntnu.no
