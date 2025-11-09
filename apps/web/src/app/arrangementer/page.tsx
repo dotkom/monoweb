@@ -321,17 +321,17 @@ const EventPage = () => {
                 onResetAll={handleResetFilters}
               />
             )}
-            {!isLoading && (
-              <div className="mt-6">
+            <div className="mt-6">
+              {!isLoading && (
                 <EventList
                   futureEventWithAttendances={futureEventWithAttendances}
                   pastEventWithAttendances={pastEventWithAttendances}
                   onLoadMore={fetchNextPage}
                   viewMode={viewMode}
                 />
-              </div>
-            )}
-            {isLoading && <EventListSkeleton />}
+              )}
+              {isLoading && <EventListSkeleton />}
+            </div>
           </div>
         </TabsContent>
 
