@@ -18,6 +18,7 @@ import {
 import { Button, Icon, Text, Title } from "@dotkomonline/ui"
 import type { Payload } from "recharts/types/component/DefaultTooltipContent"
 import { useDeleteFeedbackQuestionAnswerMutation } from "../mutations"
+import { IconTrash } from "@tabler/icons-react"
 
 const CHART_COLORS: string[] = ["#2b7fff", "#00bc7d", "#fd9a00", "#fb2c36", "#8e51ff", "#f6339a"] as const
 
@@ -179,7 +180,7 @@ const TextTable = ({ answers, canDelete, onDelete }: TextTableProps) => {
           </Text>
           {canDelete && (
             <Button variant="text" color="red" onClick={() => onDelete(answer.id)}>
-              <Icon icon="tabler:trash" className="w-4 h-4" />
+              <IconTrash className="w-4 h-4" />
             </Button>
           )}
         </div>
