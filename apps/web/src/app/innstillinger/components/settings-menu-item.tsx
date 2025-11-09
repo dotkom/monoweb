@@ -1,4 +1,5 @@
-import { Button, Icon, cn } from "@dotkomonline/ui"
+import { Button, cn } from "@dotkomonline/ui"
+import type { Icon } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { FC } from "react"
@@ -6,10 +7,10 @@ import type { FC } from "react"
 export type SettingsMenuItemProps = {
   title: string
   slug: string
-  icon: string
+  icon: Icon
 }
 
-export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon }) => {
+export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon: Icon }) => {
   const path = usePathname()
   const isCurrent = path === slug
 
@@ -17,7 +18,7 @@ export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon 
     <Button
       element={Link}
       href={slug}
-      icon={<Icon icon={icon} className="text-lg" />}
+      icon={<Icon width={20} height={20} />}
       variant="text"
       color="light"
       size="lg"

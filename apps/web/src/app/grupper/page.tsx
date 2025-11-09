@@ -24,7 +24,7 @@ const CommitteePage = async () => {
         </Text>
       </div>
 
-      <div className="flex flex-row gap-0.5 items-center">
+      <div className="sm:flex flex-row gap-0.5 items-center">
         <Text className="text-lg">Er du medlem av en interessegruppe?</Text>
         <Button
           variant="text"

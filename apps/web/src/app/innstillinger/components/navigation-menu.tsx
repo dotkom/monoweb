@@ -1,17 +1,18 @@
 "use client"
 
+import { IconSpy, IconUser } from "@tabler/icons-react"
 import { Title } from "@dotkomonline/ui"
 import { SettingsMenuItem } from "./settings-menu-item"
 
 export const settingsNavigationItems = [
   {
     slug: "/innstillinger/profil",
-    icon: "tabler:user",
+    icon: IconUser,
     title: "Profil",
   },
   {
     slug: "/innstillinger/personvern",
-    icon: "tabler:spy",
+    icon: IconSpy,
     title: "Personvern",
   },
 ]

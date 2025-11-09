@@ -1,7 +1,7 @@
 "use client"
 
-import { Icon } from "@dotkomonline/ui"
 import * as Popover from "@radix-ui/react-popover"
+import { IconChevronDown, IconChevronRight } from "@tabler/icons-react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { settingsNavigationItems } from "./navigation-menu"
@@ -12,6 +12,8 @@ export const MobileProfileNavigationMenu = () => {
   const currentLink = settingsNavigationItems.find((item) => item.slug === currentSlug)
   const [open, setOpen] = useState(false)
 
+  const CurrentIcon = currentLink?.icon
+
   return (
     <div className="mx-auto flex items-center md:hidden">
       <Popover.Root open={open} onOpenChange={(val: boolean) => setOpen(val)}>
@@ -19,13 +21,13 @@ export const MobileProfileNavigationMenu = () => {
           <div className="mt-3 flex">
             <span className="float-left">
               {open ? (
-                <Icon icon={"tabler:chevron-down"} width={28} />
+                <IconChevronDown width={28} height={28} />
               ) : (
-                <Icon icon={"tabler:chevron-right"} width={28} />
+                <IconChevronRight width={28} height={28} />
               )}
             </span>
             <p className="flex grow justify-center">
-              <Icon icon={currentLink?.icon ? currentLink.icon : ""} width={28} />
+              {CurrentIcon && <CurrentIcon width={28} height={28} />}
               <span className="ml-2 mt-1 text-lg">{currentLink?.title}</span>
             </p>
           </div>

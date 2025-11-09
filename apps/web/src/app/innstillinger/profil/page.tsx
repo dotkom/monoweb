@@ -11,6 +11,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { ProfileForm } from "./form"
 import SkeletonProfileForm from "./loading"
+import { IconArrowLeft } from "@tabler/icons-react"
 
 const EditProfilePage = () => {
   const trpc = useTRPC()
@@ -67,7 +68,7 @@ const EditProfilePage = () => {
         <Button
           element={Link}
           href={`/profil/${user.profileSlug}`}
-          icon={<Icon icon="tabler:arrow-left" />}
+          icon={<IconArrowLeft className="w-5 h-5" />}
           className="w-fit"
         >
           Til profil
