@@ -16,6 +16,7 @@ import {
   type SortOption,
   translationJobTypes,
 } from "./company-filters-container"
+import { IconCalendar, IconCalendarDown, IconClock, IconClockHour1, IconClockHour3, IconMapPin } from "@tabler/icons-react"
 
 const getLocations = (jobListings: JobListing[]) => {
   const locations = new Set<string>()
@@ -153,11 +154,11 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
           <div className="flex flex-row justify-between w-full">
             <div>
               <div className="flex flex-row gap-1 items-center">
-                <Icon width={16} icon={"tabler:map-pin"} />
+                <IconMapPin width={16} height={16}/>
                 <Text>{showLocations(jobListing.locations.map((location) => location.name))}</Text>
               </div>
               <div className="flex flex-row gap-1 items-center">
-                <Icon width={16} icon={"tabler:clock-hour-3"} />
+                <IconClockHour3 width={16} height={16} />
                 <Text>Lagt ut for {formatDistanceToNowStrict(jobListing.start, { locale: nb, addSuffix: true })}</Text>
               </div>
             </div>
@@ -167,8 +168,8 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
                   <Text>{translationJobTypes[jobListing.employment]}</Text>
                 </Badge>
               </div>
-              <div className="flex flex-row text-right">
-                <Icon width={16} icon={"tabler:calendar-down"} className="mr-1 pt-1" />
+              <div className="flex flex-row text-right items-center gap-2">
+                <IconCalendarDown width={16} height={16} />
                 <Text>
                   <b>Frist: </b>
                   {jobListing.deadline == null
