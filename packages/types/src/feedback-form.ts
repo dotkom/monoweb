@@ -100,3 +100,12 @@ export const getFeedbackQuestionTypeName = (type: FeedbackQuestionType) => {
       return "Ukjent type"
   }
 }
+
+export type FeedbackRejectionCause = keyof typeof FeedbackRejectionCause
+export const FeedbackRejectionCause = {
+  NO_FEEDBACK_FORM: "NO_FEEDBACK_FORM",
+  TOO_EARLY: "TOO_EARLY",
+  TOO_LATE: "TOO_LATE",
+  ALREADY_ANSWERED: "ALREADY_ANSWERED",
+  DID_NOT_ATTEND: "DID_NOT_ATTEND",
+} as const
