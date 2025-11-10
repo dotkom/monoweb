@@ -1,21 +1,43 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import type {
+  Attendee,
+  Event,
   EventId,
   FeedbackForm,
   FeedbackFormId,
   FeedbackFormWrite,
   FeedbackPublicResultsToken,
   FeedbackQuestionWrite,
+  FeedbackRejectionCause,
+  UserId,
 } from "@dotkomonline/types"
-import { addWeeks, isEqual } from "date-fns"
+import { addWeeks, isEqual, isFuture, isPast } from "date-fns"
 import { NotFoundError } from "../../error"
+import type { AttendanceRepository } from "../event/attendance-repository"
 import type { EventService } from "../event/event-service"
 import { tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
+import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
 import type { FeedbackFormRepository } from "./feedback-form-repository"
 
+export type FeedbackEligibilityResult = FeedbackEligibilitySuccess | FeedbackEligibilityFailure
+
+export type FeedbackEligibilitySuccess = {
+  event: Event
+  feedbackForm: FeedbackForm
+  attendee: Attendee
+  success: true
+}
+export type FeedbackEligibilityFailure = { cause: FeedbackRejectionCause; success: false }
+
 export interface FeedbackFormService {
+  getFeedbackEligibility(
+    handle: DBHandle,
+    feedbackFormId: FeedbackFormId,
+    userId: UserId
+  ): Promise<FeedbackEligibilityResult>
+
   create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>
   createCopyFromEvent(handle: DBHandle, eventId: EventId, eventIdToCopyFrom: EventId): Promise<FeedbackForm>
   update(
@@ -34,10 +56,49 @@ export interface FeedbackFormService {
 
 export function getFeedbackFormService(
   formRepository: FeedbackFormRepository,
+  formAnswerRepository: FeedbackFormAnswerRepository,
   taskSchedulingService: TaskSchedulingService,
-  eventService: EventService
+  eventService: EventService,
+  attendanceRepository: AttendanceRepository
 ): FeedbackFormService {
   return {
+    async getFeedbackEligibility(handle, feedbackFormId, userId) {
+      const feedbackForm = await formRepository.getById(handle, feedbackFormId)
+
+      if (!feedbackForm) {
+        return { cause: "NO_FEEDBACK_FORM", success: false }
+      }
+
+      const event = await eventService.getEventById(handle, feedbackForm.eventId)
+
+      if (!event.attendanceId) {
+        return { cause: "NO_FEEDBACK_FORM", success: false }
+      }
+
+      if (!isPast(event.end)) {
+        return { cause: "TOO_EARLY", success: false }
+      }
+
+      if (!isFuture(feedbackForm.answerDeadline)) {
+        return { cause: "TOO_LATE", success: false }
+      }
+
+      const attendance = await attendanceRepository.findAttendanceById(handle, event.attendanceId)
+
+      const attendee = attendance?.attendees.find((attendee) => attendee.userId === userId)
+
+      if (!attendee || !attendee.attendedAt) {
+        return { cause: "DID_NOT_ATTEND", success: false }
+      }
+
+      const previousAnswer = await formAnswerRepository.findAnswerByAttendee(handle, feedbackForm.id, attendee.id)
+
+      if (previousAnswer) {
+        return { cause: "ALREADY_ANSWERED", success: false }
+      }
+
+      return { success: true, event, feedbackForm, attendee }
+    },
     async create(handle, feedbackForm, questions) {
       const row = await formRepository.create(handle, feedbackForm, questions)
 
@@ -60,16 +121,7 @@ export function getFeedbackFormService(
       }
       const questions = formToCopy.questions
 
-      const row = await formRepository.create(handle, feedbackForm, questions)
-
-      await taskSchedulingService.scheduleAt(
-        handle,
-        tasks.VERIFY_FEEDBACK_ANSWERED,
-        { feedbackFormId: row.id },
-        new TZDate(row.answerDeadline)
-      )
-
-      return row
+      return await this.create(handle, feedbackForm, questions)
     },
     async update(handle, id, feedbackForm, questions) {
       const previousRow = await this.getById(handle, id)
@@ -81,11 +133,17 @@ export function getFeedbackFormService(
 
       const row = await formRepository.update(handle, id, feedbackForm, questions)
 
-      if (task && !isEqual(task.scheduledAt, row.answerDeadline)) {
-        await taskSchedulingService.cancel(handle, task.id)
+      if (task?.status === "COMPLETED") {
+        return row
       }
 
-      if (task?.status !== "COMPLETED") {
+      let cancelled = false
+      if (task && !isEqual(task.scheduledAt, row.answerDeadline)) {
+        await taskSchedulingService.cancel(handle, task.id)
+        cancelled = true
+      }
+
+      if (!task || cancelled) {
         await taskSchedulingService.scheduleAt(
           handle,
           tasks.VERIFY_FEEDBACK_ANSWERED,
