@@ -5,13 +5,14 @@ import { useTRPC } from "@/utils/trpc/client"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
-import { Icon, cn } from "@dotkomonline/ui"
+import { cn } from "@dotkomonline/ui"
 import { useQueries } from "@tanstack/react-query"
 import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { eventCategories } from "./eventTypeConfig"
 import { getCalendarArray } from "./getCalendarArray"
+import { IconLoader2 } from "@tabler/icons-react"
 
 function getEventTypeGuide(events: EventWithAttendance[]) {
   const presentTypes = new Set(events.map((event) => event.event.type))
@@ -74,7 +75,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
     <div className="relative">
       {isLoading && (
         <div className="z-50 absolute flex justify-center w-full h-full">
-          <Icon className="animate-spin absolute top-40" icon="tabler:loader-2" width={40} height={40} />
+          <IconLoader2 className="gray-800 dark:stone-200 animate-spin absolute top-40" width={40} height={40} />
         </div>
       )}
       <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
