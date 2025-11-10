@@ -286,8 +286,8 @@ export const AvatarDropdown: FC = () => {
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
-            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-sm font-medium">
-              <IconUser className="text-lg" />
+            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-800 text-white">
+              <IconUser className="size-5" />
             </AvatarFallback>
           </Avatar>
           {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />}
@@ -324,31 +324,31 @@ export const AvatarDropdown: FC = () => {
                       className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
                     >
                       <Link
-                        className="flex items-center gap-3 text-sm"
+                        className="flex items-center gap-3"
                         href={link.href ?? "#"}
                         target={link.openInNewTab ? "_blank" : undefined}
                         rel="noreferrer"
                       >
                         {(() => {
                           const IconComponent = link.icon
-                          return <IconComponent width={16} height={16} className="text-gray-600 dark:text-stone-300" />
+                          return <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
                         })()}
                         <div className="flex items-center justify-between w-full">
                           <div className="flex flex-row gap-2 items-center">
-                            <Text className="font-medium text-gray-900 dark:text-white">{link.label}</Text>
+                            <Text className="text-sm font-medium text-gray-900 dark:text-white">{link.label}</Text>
                             {showFeedbackFormPing && open && isProfile && (
                               <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
                             )}
                           </div>
                           {link.adminOnly && (
                             <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
-                              <IconLock width={12} height={12} className="text-amber-700 dark:text-amber-300" />
+                              <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
                               <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
                             </div>
                           )}
                         </div>
                         {link.openInNewTab && (
-                          <IconArrowUpRight width={16} height={16} className="text-gray-400 ml-auto" />
+                          <IconArrowUpRight className="size-5 shrink-0 text-gray-400 dark:text-stone-400" />
                         )}
                       </Link>
                     </DropdownMenuItem>
@@ -364,7 +364,7 @@ export const AvatarDropdown: FC = () => {
 
         <div className="flex items-center justify-between px-3">
           <div className="flex gap-3 items-center">
-            <IconPalette width={16} height={16} className="text-gray-600 dark:text-stone-300" />
+            <IconPalette className="size-5 text-gray-600 dark:text-stone-300" />
             <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
           </div>
           <ThemeToggle />
@@ -378,7 +378,7 @@ export const AvatarDropdown: FC = () => {
             href={createLogoutUrl({ redirectAfter: fullPathname })}
             className="flex items-center w-full gap-3 text-sm"
           >
-            <IconLogout2 width={16} height={16} className="text-red-500" />
+            <IconLogout2 className="size-5 text-red-500" />
             <Text className="font-medium text-red-500">Logg ut</Text>
           </Link>
         </DropdownMenuItem>
