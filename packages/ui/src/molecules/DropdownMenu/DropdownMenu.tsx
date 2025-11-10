@@ -1,20 +1,15 @@
 "use client"
 
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+import { IconCheck, IconChevronRight, IconCircleFilled } from "@tabler/icons-react"
 import * as React from "react"
-import { Icon } from "../../atoms/Icon/Icon"
 import { cn } from "../../utils"
 
 export const DropdownMenu = DropdownMenuPrimitive.Root
-
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
-
 export const DropdownMenuGroup = DropdownMenuPrimitive.Group
-
 export const DropdownMenuPortal = DropdownMenuPrimitive.Portal
-
 export const DropdownMenuSub = DropdownMenuPrimitive.Sub
-
 export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 export const DropdownMenuSubTrigger = React.forwardRef<
@@ -37,8 +32,7 @@ export const DropdownMenuSubTrigger = React.forwardRef<
     {...props}
   >
     {children}
-
-    <Icon icon="tabler:chevron-right" className="ml-auto" width={12} />
+    <IconChevronRight size={12} className="ml-auto" />
   </DropdownMenuPrimitive.SubTrigger>
 ))
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName
@@ -125,7 +119,7 @@ export const DropdownMenuCheckboxItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <Icon icon="tabler:check" width={12} />
+        <IconCheck size={12} />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -151,7 +145,7 @@ export const DropdownMenuRadioItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator className="grid place-content-center">
-        <Icon icon="tabler:circle-filled" width={6} className="text-gray-800 dark:text-stone-300 rounded-full" />
+        <IconCircleFilled size={6} className="text-gray-800 dark:text-stone-300 rounded-full" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}

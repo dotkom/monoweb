@@ -32,6 +32,7 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "@tabler/icons-react": "^3.35.0",
     "clsx": "^2.0.0",
     "cva": "npm:class-variance-authority@^0.7.0",
     "isomorphic-dompurify": "^2.24.0",

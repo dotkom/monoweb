@@ -156,7 +156,7 @@ const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Pr
 
         <Button
           className={cn(
-            "rounded-lg h-fit min-h-[4rem] flex-row gap-1",
+            "rounded-lg h-fit min-h-16 flex-row gap-1",
             form.formState.isValid
               ? "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
               : "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"

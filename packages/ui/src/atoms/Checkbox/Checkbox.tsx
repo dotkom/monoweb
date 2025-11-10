@@ -1,7 +1,7 @@
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
+import { IconCheck } from "@tabler/icons-react"
 import type { ComponentPropsWithRef, FC } from "react"
 import { cn } from "../../utils"
-import { Icon } from "../Icon/Icon"
 import { Label } from "../Label/Label"
 
 export type CheckboxProps = ComponentPropsWithRef<typeof CheckboxPrimitive.Root> & {
@@ -15,7 +15,7 @@ export const Checkbox: FC<CheckboxProps> = ({ label, className, ref, ...props })
         ref={ref}
         {...props}
         className={cn(
-          "peer h-5 w-5 shrink-0 rounded-sm border transition-all duration-150 ease-in-out",
+          "peer h-6 w-6 shrink-0 rounded-sm border transition-all duration-150 ease-in-out",
           "border-gray-400 bg-white hover:border-gray-600",
           "focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2",
           "data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-200",
@@ -27,7 +27,7 @@ export const Checkbox: FC<CheckboxProps> = ({ label, className, ref, ...props })
         )}
       >
         <CheckboxPrimitive.Indicator className="flex items-center justify-center text-blue-900 dark:text-sky-100">
-          <Icon icon="tabler:check" width={16} />
+          <IconCheck className="size-5" />
         </CheckboxPrimitive.Indicator>
       </CheckboxPrimitive.Root>
 
