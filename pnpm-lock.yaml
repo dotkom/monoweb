@@ -1155,9 +1155,6 @@ importers:
       '@fontsource/inter':
         specifier: ^5.2.6
         version: 5.2.8
-      '@iconify-icon/react':
-        specifier: ^2.0.0
-        version: 2.3.0(react@19.1.1)
       '@radix-ui/react-accordion':
         specifier: ^1.2.11
         version: 1.2.12(@types/react-dom@19.1.9(@types/react@19.1.14))(@types/react@19.1.14)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -2141,11 +2138,6 @@ packages:
     resolution: {integrity: sha512-Jsv6UOWYTrEFJ/01ZrnwVXs7KDvP8XIo115i++5PWvNkNvkrsTfGiLS6w+eJ57CYtUtDQalUWovCZDHFJ8u1VQ==}
     peerDependencies:
       react-hook-form: ^7.0.0
-
-  '@iconify-icon/react@2.3.0':
-    resolution: {integrity: sha512-7at8wGF+igiCS2XMaIrkZokD0zxz0pNa5SZn5tJAkZMJezeJlYiFXI5rYkiEpUpMaNYhYTqGLB90I/0sKJZkUw==}
-    peerDependencies:
-      react: '>=16'
 
   '@iconify/react@5.2.1':
     resolution: {integrity: sha512-37GDR3fYDZmnmUn9RagyaX+zca24jfVOMY8E1IXTqJuE8pxNtN51KWPQe3VODOWvuUurq7q9uUu3CFrpqj5Iqg==}
@@ -6701,9 +6693,6 @@ packages:
       rrule:
         optional: true
 
-  iconify-icon@2.3.0:
-    resolution: {integrity: sha512-C0beI9oTDxQz6voI5CKl7MiJf0Lw4UU8K4G4t6pcUDClLmCvuMOpcvd8MAztQ2SfoH0iv7WHdxBFjekKPFKH2Q==}
-
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
@@ -10403,11 +10392,6 @@ snapshots:
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.62.0(react@19.1.1)
-
-  '@iconify-icon/react@2.3.0(react@19.1.1)':
-    dependencies:
-      iconify-icon: 2.3.0
-      react: 19.1.1
 
   '@iconify/react@5.2.1(react@19.1.1)':
     dependencies:
@@ -15409,10 +15393,6 @@ snapshots:
       '@types/node': 22.18.6
       dayjs: 1.11.13
       luxon: 3.7.2
-
-  iconify-icon@2.3.0:
-    dependencies:
-      '@iconify/types': 2.0.0
 
   iconv-lite@0.6.3:
     dependencies:
