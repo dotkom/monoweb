@@ -42,6 +42,8 @@ interface Props {
 }
 
 export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance, attendee }: Props) => {
+  const hasCompanyOrganizer = event.companies.length > 0
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent
@@ -49,11 +51,26 @@ export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance,
         onOutsideClick={() => setOpen(false)}
       >
         <AlertDialogTitle className="text-2xl font-bold">Er du sikker?</AlertDialogTitle>
-        <AlertDialogDescription className="mb-4">
-          {event.type === "ACADEMIC" || event.type === "COMPANY"
-            ? "Vi vil minne om at bedriftspresentasjoner og kurs er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av hovedinntektskildene til linjeforeningen."
-            : "Er du sikker på at du vil melde deg av arrangementet?"}
-        </AlertDialogDescription>
+        {hasCompanyOrganizer && (
+          <AlertDialogDescription className="mb-4">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-row gap-2 items-center">
+                <Icon icon="tabler:info-circle" className="text-sm text-gray-500 dark:text-stone-500" />
+                <Text className="text-xs text-gray-500 dark:text-stone-500">
+                  Dette arrangementet er i samarbeid med en bedrift.
+                </Text>
+              </div>
+              <Text className="text-sm">
+                Arrangementer med bedrifter er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av
+                hovedinntektskildene til linjeforeningen.
+              </Text>
+              <Text className="text-sm">
+                Ved avmelding like før arrangementet, kan det føre til at det blir vanskeligere å finne samarbeid i
+                fremtiden.
+              </Text>
+            </div>
+          </AlertDialogDescription>
+        )}
         <DeregisterForm
           unregisterForAttendance={unregisterForAttendance}
           setOpen={setOpen}
@@ -146,7 +163,8 @@ const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Pr
       <div className="flex flex-row gap-4 justify-end items-center">
         <Button
           color="light"
-          className="rounded-lg h-fit min-h-[4rem]"
+          variant="text"
+          className="rounded-lg px-4 py-3"
           type="button"
           autoFocus
           onClick={() => setOpen(false)}
@@ -156,7 +174,7 @@ const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Pr
 
         <Button
           className={cn(
-            "rounded-lg h-fit min-h-[4rem] flex-row gap-1",
+            "rounded-lg px-4 py-3 flex-row gap-1",
             form.formState.isValid
               ? "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
               : "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"
