@@ -237,8 +237,8 @@ const linkGroups: LinkGroup[] = [
 ]
 
 export const ProfileMenu: FC = () => {
-  // const session = useSession()
-  // if (session === null) return <UnauthenticatedActions />
+  const session = useSession()
+  if (session === null) return <UnauthenticatedActions />
   return (
     <div className="flex gap-2 mr-2 lg:mr-0">
       <ContactDebugDropdown />
