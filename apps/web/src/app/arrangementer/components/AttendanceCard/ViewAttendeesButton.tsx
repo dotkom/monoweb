@@ -9,7 +9,6 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
-  Icon,
   Text,
   Title,
   Tooltip,
@@ -18,6 +17,7 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
+import { IconRosetteDiscountCheckFilled, IconUser, IconUsers, IconX } from "@tabler/icons-react"
 import { compareAsc } from "date-fns"
 import Link from "next/link"
 
@@ -61,7 +61,7 @@ export const ViewAttendeesButton = ({
     <Button
       color="light"
       className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
-      icon={<Icon className="text-lg" icon="tabler:users" />}
+      icon={<IconUsers className="size-[1.25em]" />}
       disabled={!user}
     >
       Vis påmeldte
@@ -95,7 +95,7 @@ export const ViewAttendeesButton = ({
             </Title>
           </AlertDialogTitle>
           <AlertDialogCancel className="p-2">
-            <Icon className="text-xl" icon="tabler:x" />
+            <IconX className="size-[1.25em]" />
           </AlertDialogCancel>
         </div>
 
@@ -181,7 +181,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
                     : "bg-gray-500 dark:bg-stone-500"
               }
             >
-              <Icon className="text-lg" icon="tabler:user" />
+              <IconUser className="size-[1.25em]" />
             </AvatarFallback>
           </Avatar>
 
@@ -189,10 +189,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
             {isVerified ? (
               <div className="flex items-center gap-1">
                 <Text className="text-sm dark:text-black">{attendee.user.name}</Text>
-                <Icon
-                  icon="tabler:rosette-discount-check-filled"
-                  className="text-base text-blue-600 dark:text-sky-700"
-                />
+                <IconRosetteDiscountCheckFilled className="size-[1.25em] text-blue-600 dark:text-sky-700" />
               </div>
             ) : (
               <Text className="text-sm">{attendee.user.name}</Text>

@@ -2,8 +2,16 @@ import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupRole, type UserId, getGroupTypeName } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Badge, Icon, RichText, Text, Title, cn } from "@dotkomonline/ui"
+import { Avatar, AvatarFallback, AvatarImage, Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
+import {
+  IconArrowUpRight,
+  IconMail,
+  IconRosetteDiscountCheckFilled,
+  IconUser,
+  IconUsers,
+  IconWorld,
+} from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
 
@@ -108,7 +116,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         <Avatar className="w-24 h-24 md:w-32 md:h-32">
           <AvatarImage src={group.imageUrl ?? undefined} alt={name} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
-            <Icon className="text-5xl md:text-6xl" icon="tabler:users" />
+            <IconUsers width={48} height={48} />
           </AvatarFallback>
         </Avatar>
 
@@ -143,9 +151,9 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                   "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                 )}
               >
-                <Icon icon="tabler:mail" className="text-base" />
+                <IconMail width={16} height={16} />
                 <Text>{group.email}</Text>
-                <Icon icon="tabler:arrow-up-right" className="text-base" />
+                <IconArrowUpRight width={16} height={16} />
               </Link>
             )}
 
@@ -160,9 +168,9 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                   "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                 )}
               >
-                <Icon icon="tabler:world" className="text-base" />
+                <IconWorld width={16} height={16} />
                 <Text>{group.contactUrl}</Text>
-                <Icon icon="tabler:arrow-up-right" className="text-base" />
+                <IconArrowUpRight width={16} height={16} />
               </Link>
             )}
 
@@ -176,10 +184,10 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                     "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                   )}
                 >
-                  <Avatar className="h-5 w-5">
+                  <Avatar className="size-5">
                     <AvatarImage src={leader.imageUrl ?? undefined} />
                     <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
-                      <Icon className="text-xs" icon="tabler:user" />
+                      <IconUser width={12} height={12} />
                     </AvatarFallback>
                   </Avatar>
                   <Text>{leader.name}</Text>
@@ -261,14 +269,14 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       <Avatar className="w-10 h-10 md:w-12 md:h-12">
         <AvatarImage src={member.imageUrl ?? undefined} />
         <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
-          <Icon className="text-xl" icon="tabler:user" />
+          <IconUser width={20} height={20} />
         </AvatarFallback>
       </Avatar>
       <div className="flex flex-col gap-0">
         {isVerified ? (
           <div className="flex items-center gap-1">
             <Text className="text-lg/6 dark:text-black">{member.name}</Text>
-            <Icon icon="tabler:rosette-discount-check-filled" className="text-base text-blue-600 dark:text-sky-700" />
+            <IconRosetteDiscountCheckFilled className="text-blue-600 dark:text-sky-700" width={16} height={16} />
           </div>
         ) : (
           <Text className="text-lg/6">{member.name}</Text>

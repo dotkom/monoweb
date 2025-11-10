@@ -1,8 +1,8 @@
 "use client"
 
+import { IconX } from "@tabler/icons-react"
 import { cva } from "cva"
 import type { FC, PropsWithChildren } from "react"
-import { Icon } from "../../atoms/Icon/Icon"
 import { AlertIcon } from "../Alert/AlertIcon"
 
 export type ToastProps = PropsWithChildren & {
@@ -23,7 +23,7 @@ export const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
         type="button"
         className="ml-auto border-0 bg-transparent transition-transform hover:-translate-y-[1px] active:translate-y-[2px]"
       >
-        <Icon icon="tabler:x" aria-hidden className={close({ color: styleCheck })} width={24} />
+        <IconX aria-hidden className={close({ color: styleCheck })} size={24} />
       </button>
     </div>
   )

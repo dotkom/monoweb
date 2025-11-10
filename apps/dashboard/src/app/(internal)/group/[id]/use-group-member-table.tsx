@@ -1,5 +1,6 @@
 "use client"
 
+import { DateTooltip } from "@/components/DateTooltip"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   type GroupId,
@@ -11,7 +12,6 @@ import {
 import { Anchor, Group, Stack, Text, Tooltip } from "@mantine/core"
 import { IconAlertTriangleFilled, IconSquareCheckFilled } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMemo } from "react"
 
@@ -24,10 +24,6 @@ interface Props {
 function formatRoles(memberships: GroupMembership[]) {
   const latestRoles = memberships.at(0)?.roles.map((role) => role.name)
   return latestRoles?.join(", ") ?? "-"
-}
-
-function formatMembershipDate(date: Date | undefined | null) {
-  return date ? formatDate(date, "dd.MM.yyyy") : "-"
 }
 
 export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Props) => {
@@ -97,12 +93,18 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
       columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "start",
         header: () => "Startdato",
-        cell: (info) => formatMembershipDate(info.getValue()?.groupMemberships.at(0)?.start),
+        cell: (info) => {
+          const date = info.getValue()?.groupMemberships.at(0)?.start
+          return date ? <DateTooltip date={date} /> : "-"
+        },
       }),
       columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "end",
         header: () => "Sluttdato",
-        cell: (info) => formatMembershipDate(info.getValue()?.groupMemberships.at(0)?.end),
+        cell: (info) => {
+          const date = info.getValue()?.groupMemberships.at(0)?.end
+          return date ? <DateTooltip date={date} /> : "-"
+        },
       }),
       columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "actions",

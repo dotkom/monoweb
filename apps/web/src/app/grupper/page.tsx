@@ -1,6 +1,7 @@
 import { GroupList } from "@/components/organisms/GroupList"
 import { server } from "@/utils/trpc/server"
-import { Button, Icon, Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { Button, Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"
 
 const CommitteePage = async () => {
@@ -23,13 +24,13 @@ const CommitteePage = async () => {
         </Text>
       </div>
 
-      <div className="flex flex-row gap-0.5 items-center">
+      <div className="sm:flex flex-row gap-0.5 items-center">
         <Text className="text-lg">Er du medlem av en interessegruppe?</Text>
         <Button
           variant="text"
           element={Link}
           href="/interessegrupper"
-          iconRight={<Icon icon="tabler:arrow-up-right" />}
+          iconRight={<IconArrowUpRight width={20} height={20} />}
           className="text-lg"
         >
           Se alle interessegrupper her

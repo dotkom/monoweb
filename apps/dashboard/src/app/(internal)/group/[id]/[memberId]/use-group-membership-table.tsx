@@ -1,8 +1,8 @@
 "use client"
+import { DateTooltip } from "@/components/DateTooltip"
 import type { GroupMember, GroupMembership } from "@dotkomonline/types"
-import { Button, Tooltip } from "@mantine/core"
+import { Button } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 import { useMemo } from "react"
 import { useEditGroupMembershipModal } from "../../modals/edit-group-membership-modal"
 
@@ -28,44 +28,24 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
       columnHelper.accessor((membership) => membership, {
         id: "start",
         header: () => "Startdato",
-        cell: (info) => formatDate(info.getValue().start, "dd.MM.yyyy"),
+        cell: (info) => <DateTooltip date={info.getValue().start} />,
       }),
       columnHelper.accessor((membership) => membership, {
         id: "end",
         header: () => "Sluttdato",
         cell: (info) => {
           const end = info.getValue().end
-          return end ? formatDate(end, "dd.MM.yyyy") : "-"
+          return end ? <DateTooltip date={end} /> : "-"
         },
       }),
       columnHelper.accessor((membership) => membership, {
         id: "actions",
         header: () => "Rediger",
-        cell: (info) => {
-          const membership = info.getValue()
-          const isActive = membership.end === null
-
-          const button = (
-            <Button
-              size="sm"
-              variant="subtle"
-              disabled={isActive}
-              onClick={() => openGroupEditModal({ groupMembership: info.getValue() })}
-            >
-              Rediger
-            </Button>
-          )
-
-          if (isActive) {
-            return (
-              <Tooltip label="Du kan ikke redigere aktivt medlemskap. Om du ønsker å endre roller, avslutt og lag nytt medlemskap.">
-                {button}
-              </Tooltip>
-            )
-          }
-
-          return button
-        },
+        cell: (info) => (
+          <Button size="sm" variant="subtle" onClick={() => openGroupEditModal({ groupMembership: info.getValue() })}>
+            Rediger
+          </Button>
+        ),
       }),
     ],
     [columnHelper, openGroupEditModal]

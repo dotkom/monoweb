@@ -1,6 +1,7 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { type Group, createGroupPageUrl, getGroupTypeName } from "@dotkomonline/types"
-import { Badge, Icon, RichText, Text, Title, cn } from "@dotkomonline/ui"
+import { Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
+import { IconMoonFilled } from "@tabler/icons-react"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
@@ -28,7 +29,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
     >
       {inactive && (
         <div className="absolute top-3 left-3 flex flex-row items-center gap-1">
-          <Icon icon="tabler:moon-filled" className="text-sm" />
+          <IconMoonFilled className="size-4" />
           <Text className="text-sm font-semibold">Inaktiv</Text>
         </div>
       )}

@@ -1,8 +1,9 @@
 "use client"
 
-import { Button, Icon, Text, cn } from "@dotkomonline/ui"
+import { Button, Text, cn } from "@dotkomonline/ui"
 import { Title } from "@dotkomonline/ui"
 import Spline from "@splinetool/react-spline"
+import { IconArrowUpRight, IconBriefcase } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import type { FC } from "react"
@@ -78,7 +79,7 @@ export const OnlineHero: FC = () => {
         </Title>
         <div>
           <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:briefcase" className="text-lg" />
+            <IconBriefcase className="size-5" />
             <Text>Er du fra en bedrift og ønsker samarbeid?</Text>
           </div>
           <div className="flex gap-4 pt-4">
@@ -87,7 +88,7 @@ export const OnlineHero: FC = () => {
               color="brand"
               element="a"
               href="https://interesse.online.ntnu.no"
-              iconRight={<Icon icon="tabler:arrow-up-right" className="text-base" />}
+              iconRight={<IconArrowUpRight className="size-4" />}
             >
               Ta kontakt
             </Button>

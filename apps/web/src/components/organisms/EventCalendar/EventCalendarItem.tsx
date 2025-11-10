@@ -1,9 +1,10 @@
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { type EventWithAttendance, type User, getAttendee } from "@dotkomonline/types"
-import { Icon, Text, Title } from "@dotkomonline/ui"
+import { Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
+import { IconClock, IconMapPin } from "@tabler/icons-react"
 import Link from "next/link"
 import { eventCategories } from "./eventTypeConfig"
 import type { EventDisplayProps } from "./types"
@@ -106,14 +107,14 @@ export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps }: Even
             </Title>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
-                <Icon icon="tabler:clock" width={16} height={16} />
+                <IconClock width={16} height={16} />
                 <Text element="span" className="text-sm">
                   {String(event.start.getHours()).padStart(2, "0")}:{String(event.start.getMinutes()).padStart(2, "0")}
                 </Text>
               </div>
               {event.locationTitle && (
                 <div className="flex items-center gap-1 overflow-hidden">
-                  <Icon icon="tabler:map-pin" width={16} height={16} />
+                  <IconMapPin width={16} height={16} />
                   <Text element="span" className="text-sm truncate">
                     {event.locationTitle}
                   </Text>

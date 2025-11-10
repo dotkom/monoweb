@@ -1,6 +1,7 @@
 "use client"
 import { type Attendance, type User, getAttendee } from "@dotkomonline/types"
-import { Icon, Stripes, Text, cn } from "@dotkomonline/ui"
+import { Stripes, Text, cn } from "@dotkomonline/ui"
+import { IconCreditCard } from "@tabler/icons-react"
 import Link from "next/link"
 
 interface PaymentCardProps {
@@ -18,13 +19,10 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
   if (!user || !attendee?.reserved) {
     return (
       <div
-        className={cn(
-          "rounded-lg h-fit min-h-[4rem] flex items-center justify-center",
-          "bg-gray-100 cursor-not-allowed"
-        )}
+        className={cn("rounded-lg h-fit min-h-16 flex items-center justify-center", "bg-gray-100 cursor-not-allowed")}
       >
         <div className="flex flex-row items-center justify-center gap-2 font-medium">
-          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <IconCreditCard className="size-[1.25em]" />
           <Text>{attendance.attendancePrice} kr</Text>
         </div>
       </div>
@@ -34,13 +32,10 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
   if (attendee.paymentReservedAt || attendee.paymentChargedAt) {
     return (
       <div
-        className={cn(
-          "rounded-lg h-fit min-h-[4rem] flex items-center justify-center",
-          "bg-gray-200 cursor-not-allowed"
-        )}
+        className={cn("rounded-lg h-fit min-h-16 flex items-center justify-center", "bg-gray-200 cursor-not-allowed")}
       >
         <div className="flex flex-row items-center justify-center gap-1 font-medium">
-          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <IconCreditCard className="size-[1.25em]" />
           <Text>{attendance.attendancePrice} kr betalt</Text>
         </div>
       </div>
@@ -51,10 +46,10 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
     return (
       <Link
         href={attendee.paymentLink}
-        className="rounded-lg h-fit min-h-[4rem] flex items-center justify-center bg-yellow-200"
+        className="rounded-lg h-fit min-h-16 flex items-center justify-center bg-yellow-200"
       >
         <div className="flex flex-row items-center justify-center gap-1 font-medium">
-          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <IconCreditCard className="size-[1.25em]" />
           <Text>Betal</Text>
         </div>
       </Link>
@@ -67,10 +62,10 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
         colorA={"bg-gray-200"}
         colorB={"bg-green-200"}
         animated
-        className={cn("rounded-lg h-fit min-h-[4rem] flex items-center justify-center")}
+        className={cn("rounded-lg h-fit min-h-16 flex items-center justify-center")}
       >
         <div className="flex flex-row items-center justify-center gap-1 font-medium">
-          <Icon className="text-lg font-normal" icon="tabler:credit-card" />
+          <IconCreditCard className="size-[1.25em]" />
           <Text>Betal</Text>
         </div>
       </Stripes>

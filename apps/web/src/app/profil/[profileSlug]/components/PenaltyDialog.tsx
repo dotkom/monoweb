@@ -5,9 +5,9 @@ import {
   AlertDialogContent,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Icon,
   Title,
 } from "@dotkomonline/ui"
+import { IconInfoCircle } from "@tabler/icons-react"
 import { useState } from "react"
 
 export const PenaltyDialog = () => {
@@ -15,7 +15,7 @@ export const PenaltyDialog = () => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger className="w-fit flex items-center gap-1 underline">
-        Hva er en prikk? <Icon icon="tabler:info-circle" />
+        <IconInfoCircle className="size-5" /> Hva er en prikk?
       </AlertDialogTrigger>
       <AlertDialogContent className="max-h-[80vh]" onOutsideClick={() => setOpen(false)}>
         <AlertDialogTitle asChild>

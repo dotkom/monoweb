@@ -1,58 +1,55 @@
 import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
-import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import type { Attendee, Event, FeedbackForm } from "@dotkomonline/types"
+import type { Attendee, Event, FeedbackForm, FeedbackRejectionCause } from "@dotkomonline/types"
 import { Text, Title } from "@dotkomonline/ui"
-import { formatDate, isAfter, isPast } from "date-fns"
+
+function getFailureMessage(cause: FeedbackRejectionCause) {
+  switch (cause) {
+    case "ALREADY_ANSWERED":
+      return "Du har allerede svart på dette skjemaet."
+    case "DID_NOT_ATTEND":
+      return "Du kan ikke svare på dette skjemaet."
+    case "TOO_EARLY":
+      return "Tilbakemelding er ikke tilgjengelig ennå."
+    case "TOO_LATE":
+      return "Fristen for å gi tilbakemelding har utløpt."
+    case "NO_FEEDBACK_FORM":
+      return "Dette arrangementet har ikke et tilbakemeldingsskjema."
+  }
+}
 
 const EventFeedbackPage = async ({
   params,
   searchParams,
 }: { params: Promise<{ eventId: string }>; searchParams: Promise<{ preview: string }> }) => {
   const { eventId } = await params
-  const { preview: requestedPreview } = await searchParams
-  const session = await auth.getServerSession()
+  const { preview } = await searchParams
+  const isPreview = preview === "true"
 
-  const { event, attendance } = await server.event.get.query(eventId)
-  const feedbackForm = await server.event.feedback.findFormByEventId.query(eventId)
+  const feedbackForm = await server.event.feedback.getFormByEventId.query(eventId)
 
-  if (!feedbackForm) {
-    return <Text>Dette arrangementet har ikke et tilbakemeldingsskjema.</Text>
-  }
-
-  // Preview skips validation, but can't submit the form
-  const isPreview = requestedPreview && (await server.user.isStaff.query())
   if (isPreview) {
-    return <PageContent event={event} feedbackForm={feedbackForm} isPreview={true} />
+    const staffPreview = await server.event.feedback.getFeedbackFormStaffPreview.query(feedbackForm.id)
+
+    return <PageContent event={staffPreview.event} feedbackForm={staffPreview.feedbackForm} isPreview={true} />
   }
 
-  const user = session ? await server.user.getMe.query() : undefined
+  const feedbackEligibility = await server.event.feedback.getFeedbackEligibility.query(feedbackForm.id)
 
-  const attendee = user && attendance?.attendees?.find((attendee) => attendee.userId === user.id)
-
-  if (!attendee || !attendee.attendedAt) {
-    return <Text>Du kan ikke svare på dette skjemaet.</Text>
-  }
-
-  const previousAnswer = await server.event.feedback.findOwnAnswerByAttendee.query({
-    formId: feedbackForm.id,
-    attendeeId: attendee.id,
-  })
-  if (previousAnswer) return <Text>Du har allerede svart på dette skjemaet.</Text>
-
-  if (isPast(feedbackForm.answerDeadline)) {
-    return <Text>Fristen for å gi tilbakemelding har utløpt.</Text>
-  }
-
-  if (isAfter(event.end, Date.now())) {
+  if (feedbackEligibility.success) {
     return (
-      <Text>
-        Du kan ikke sende inn tilbakemelding før arrangementet er over {formatDate(event.end, "dd.MM.yyyy HH:mm")}.
-      </Text>
+      <PageContent
+        event={feedbackEligibility.event}
+        attendee={feedbackEligibility.attendee}
+        feedbackForm={feedbackEligibility.feedbackForm}
+        isPreview={false}
+      />
     )
   }
 
-  return <PageContent event={event} feedbackForm={feedbackForm} isPreview={false} attendee={attendee} />
+  const failureMessage = getFailureMessage(feedbackEligibility.cause)
+
+  return <Text>{failureMessage}</Text>
 }
 
 export default EventFeedbackPage

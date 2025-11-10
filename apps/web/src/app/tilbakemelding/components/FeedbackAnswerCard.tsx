@@ -15,7 +15,8 @@ import {
   YAxis,
 } from "recharts"
 
-import { Button, Icon, Text, Title } from "@dotkomonline/ui"
+import { Button, Text, Title } from "@dotkomonline/ui"
+import { IconTrash } from "@tabler/icons-react"
 import type { Payload } from "recharts/types/component/DefaultTooltipContent"
 import { useDeleteFeedbackQuestionAnswerMutation } from "../mutations"
 
@@ -179,7 +180,7 @@ const TextTable = ({ answers, canDelete, onDelete }: TextTableProps) => {
           </Text>
           {canDelete && (
             <Button variant="text" color="red" onClick={() => onDelete(answer.id)}>
-              <Icon icon="tabler:trash" className="w-4 h-4" />
+              <IconTrash className="size-4" />
             </Button>
           )}
         </div>

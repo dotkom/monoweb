@@ -191,7 +191,13 @@ export async function createServiceLayer(
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const auditLogService = getAuditLogService(auditLogRepository)
   const eventService = getEventService(eventRepository)
-  const feedbackFormService = getFeedbackFormService(feedbackFormRepository, taskSchedulingService, eventService)
+  const feedbackFormService = getFeedbackFormService(
+    feedbackFormRepository,
+    feedbackFormAnswerRepository,
+    taskSchedulingService,
+    eventService,
+    attendanceRepository
+  )
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
@@ -244,6 +250,7 @@ export async function createServiceLayer(
     attendanceService,
     taskService,
     taskExecutor,
+    taskSchedulingService,
     feedbackFormService,
     feedbackFormAnswerService,
     authorizationService,

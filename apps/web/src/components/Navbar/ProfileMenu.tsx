@@ -16,11 +16,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Icon,
   Text,
   Title,
 } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
+import type { Icon } from "@tabler/icons-react"
+import {
+  IconAdjustments,
+  IconArrowUpRight,
+  IconBug,
+  IconDotsVertical,
+  IconLock,
+  IconLogin2,
+  IconLogout2,
+  IconMailForward,
+  IconMessageReport,
+  IconMoon,
+  IconPalette,
+  IconSettings,
+  IconSun,
+  IconUser,
+} from "@tabler/icons-react"
 import { skipToken, useQueries, useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
@@ -30,11 +46,11 @@ import { ThemeToggle } from "./ThemeToggle"
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
 
-const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefined) => {
+const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefined): Icon => {
   if (theme === "system") {
-    return resolvedTheme === "dark" ? "tabler:moon" : "tabler:sun"
+    return resolvedTheme === "dark" ? IconMoon : IconSun
   }
-  return theme === "dark" ? "tabler:moon" : "tabler:sun"
+  return theme === "dark" ? IconMoon : IconSun
 }
 
 const ThemeDropdown: FC = () => {
@@ -43,10 +59,12 @@ const ThemeDropdown: FC = () => {
 
   useEffect(() => setMounted(true), [])
 
+  const ThemeIcon = mounted ? getThemeIcon(theme, resolvedTheme) : IconSun
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
-        <Icon icon={mounted ? getThemeIcon(theme, resolvedTheme) : "tabler:sun"} width={22} height={22} />
+        <ThemeIcon width={22} height={22} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
@@ -62,7 +80,7 @@ const ThemeDropdown: FC = () => {
 const ContactDebugDropdown: FC = () => (
   <DropdownMenu>
     <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
-      <Icon icon="tabler:message-report" width={24} height={24} />
+      <IconMessageReport width={24} height={24} />
     </DropdownMenuTrigger>
     <DropdownMenuContent
       align="end"
@@ -71,7 +89,7 @@ const ContactDebugDropdown: FC = () => (
     >
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <Icon icon="tabler:message-report" width={24} height={24} />
+          <IconMessageReport width={24} height={24} />
           <Title size="md" className="font-semibold text-gray-900 dark:text-white">
             Opplevd noe ugreit?
           </Title>
@@ -90,7 +108,7 @@ const ContactDebugDropdown: FC = () => (
             className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 hover:bg-blue-200 dark:hover:bg-stone-600 transition-colors"
           >
             <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
-            <Icon icon="tabler:arrow-up-right" width={16} height={16} />
+            <IconArrowUpRight width={16} height={16} />
           </Button>
           <Button
             element={Link}
@@ -113,7 +131,7 @@ const LoginAlternativesDropdown: FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center justify-center w-6 h-10">
-        <Icon icon="tabler:dots-vertical" className="" width={22} height={22} />
+        <IconDotsVertical className="" width={22} height={22} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
@@ -144,7 +162,7 @@ const UnauthenticatedActions: FC = () => {
           className="text-sm font-semibold px-3 py-2"
           href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
           prefetch={false}
-          icon={<Icon className="mr-1 text-xl" icon="tabler:login-2" />}
+          icon={<IconLogin2 className="mr-1 text-xl" />}
         >
           Logg inn
         </Button>
@@ -160,7 +178,7 @@ const UnauthenticatedActions: FC = () => {
 
 interface LinkDetail {
   label: string
-  icon: string
+  icon: Icon
   href?: string
   openInNewTab?: boolean
   adminOnly?: boolean
@@ -176,12 +194,12 @@ const linkGroups: LinkGroup[] = [
     id: "profile",
     links: [
       {
-        icon: "tabler:user",
+        icon: IconUser,
         label: "Min profil",
         href: "/profil",
       },
       {
-        icon: "tabler:settings",
+        icon: IconSettings,
         label: "Innstillinger",
         href: "/innstillinger/profil",
       },
@@ -191,7 +209,7 @@ const linkGroups: LinkGroup[] = [
     id: "admin",
     links: [
       {
-        icon: "tabler:adjustments",
+        icon: IconAdjustments,
         label: "Dashboard",
         href: env.NEXT_PUBLIC_DASHBOARD_URL,
         openInNewTab: true,
@@ -203,13 +221,13 @@ const linkGroups: LinkGroup[] = [
     id: "support",
     links: [
       {
-        icon: "tabler:mail-forward",
+        icon: IconMailForward,
         label: "Kontakt oss",
         href: "mailto:hovedstyret@online.ntnu.no",
         openInNewTab: true,
       },
       {
-        icon: "tabler:bug",
+        icon: IconBug,
         label: "Rapporter en feil",
         href: "mailto:dotkom@online.ntnu.no",
         openInNewTab: true,
@@ -268,11 +286,11 @@ export const AvatarDropdown: FC = () => {
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
-            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-sm font-medium">
-              <Icon className="text-lg" icon="tabler:user" />
+            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-800 text-white">
+              <IconUser className="size-5" />
             </AvatarFallback>
           </Avatar>
-          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
+          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -306,33 +324,31 @@ export const AvatarDropdown: FC = () => {
                       className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
                     >
                       <Link
-                        className="flex items-center gap-3 text-sm"
+                        className="flex items-center gap-3"
                         href={link.href ?? "#"}
                         target={link.openInNewTab ? "_blank" : undefined}
                         rel="noreferrer"
                       >
-                        <Icon icon={link.icon} width={16} height={16} className="text-gray-600 dark:text-stone-300" />
+                        {(() => {
+                          const IconComponent = link.icon
+                          return <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+                        })()}
                         <div className="flex items-center justify-between w-full">
                           <div className="flex flex-row gap-2 items-center">
-                            <Text className="font-medium text-gray-900 dark:text-white">{link.label}</Text>
+                            <Text className="text-sm font-medium text-gray-900 dark:text-white">{link.label}</Text>
                             {showFeedbackFormPing && open && isProfile && (
                               <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
                             )}
                           </div>
                           {link.adminOnly && (
                             <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
-                              <Icon
-                                icon="tabler:lock"
-                                width={12}
-                                height={12}
-                                className="text-amber-700 dark:text-amber-300"
-                              />
+                              <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
                               <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
                             </div>
                           )}
                         </div>
                         {link.openInNewTab && (
-                          <Icon icon="tabler:arrow-up-right" width={16} height={16} className="text-gray-400 ml-auto" />
+                          <IconArrowUpRight className="size-5 shrink-0 text-gray-400 dark:text-stone-400" />
                         )}
                       </Link>
                     </DropdownMenuItem>
@@ -348,7 +364,7 @@ export const AvatarDropdown: FC = () => {
 
         <div className="flex items-center justify-between px-3">
           <div className="flex gap-3 items-center">
-            <Icon icon="tabler:palette" width={16} height={16} className="text-gray-600 dark:text-stone-300" />
+            <IconPalette className="size-5 text-gray-600 dark:text-stone-300" />
             <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
           </div>
           <ThemeToggle />
@@ -362,7 +378,7 @@ export const AvatarDropdown: FC = () => {
             href={createLogoutUrl({ redirectAfter: fullPathname })}
             className="flex items-center w-full gap-3 text-sm"
           >
-            <Icon icon="tabler:logout-2" width={16} height={16} className="text-red-500" />
+            <IconLogout2 className="size-5 text-red-500" />
             <Text className="font-medium text-red-500">Logg ut</Text>
           </Link>
         </DropdownMenuItem>

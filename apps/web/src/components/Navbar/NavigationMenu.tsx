@@ -1,7 +1,8 @@
 "use client"
 
-import { Icon, cn } from "@dotkomonline/ui"
+import { cn } from "@dotkomonline/ui"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
+import { IconChevronDown } from "@tabler/icons-react"
 import * as React from "react"
 
 export const NavigationMenu = React.forwardRef<
@@ -46,9 +47,8 @@ export const NavigationMenuTrigger = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger ref={ref} className={cn(navigationMenuTriggerStyle, "group", className)} {...props}>
     {children}
-    <Icon
-      icon="tabler:chevron-down"
-      className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
+    <IconChevronDown
+      className="relative top-[1px] ml-1 size-3 transition duration-200 group-data-[state=open]:rotate-180"
       aria-hidden="true"
     />
     <div className="group absolute left-0 top-0 hidden h-[200%] w-full justify-start group-data-[state=open]:block" />

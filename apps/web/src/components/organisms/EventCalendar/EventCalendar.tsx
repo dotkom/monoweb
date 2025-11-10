@@ -5,7 +5,8 @@ import { useTRPC } from "@/utils/trpc/client"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
-import { Icon, cn } from "@dotkomonline/ui"
+import { cn } from "@dotkomonline/ui"
+import { IconLoader2 } from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
 import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
@@ -74,7 +75,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
     <div className="relative">
       {isLoading && (
         <div className="z-50 absolute flex justify-center w-full h-full">
-          <Icon className="animate-spin absolute top-40" icon="tabler:loader-2" width={40} height={40} />
+          <IconLoader2 className="gray-800 dark:stone-200 animate-spin absolute top-40" width={40} height={40} />
         </div>
       )}
       <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
@@ -157,7 +158,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
         <div className="flex gap-y-2 gap-x-4 text-sm p-2 sm:pl-6 flex-wrap">
           {eventTypeGuideItems.map(({ type, classes, displayName }) => (
             <span key={type} className="flex items-center">
-              <span className={cn("w-3 h-3 rounded-full mr-1", classes.guide)} />
+              <span className={cn("size-3 rounded-full mr-1", classes.guide)} />
               {displayName}
             </span>
           ))}
