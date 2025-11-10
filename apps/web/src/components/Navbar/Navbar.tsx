@@ -8,14 +8,11 @@ import {
   IconBolt,
   IconBooks,
   IconBriefcase,
-  IconBuilding,
   IconCalendarEvent,
   IconHeartHandshake,
-  IconInfoCircle,
   IconMessage,
   IconNews,
   IconReceipt,
-  IconSchool,
   IconUsers,
 } from "@tabler/icons-react"
 import Link from "next/link"
@@ -56,7 +53,6 @@ const links: MenuLink[] = [
   },
   {
     title: "Om oss",
-    icon: IconInfoCircle,
     items: [
       {
         title: "Komiteer og grupper",
@@ -86,7 +82,6 @@ const links: MenuLink[] = [
   },
   {
     title: "For studenter",
-    icon: IconSchool,
     items: [
       {
         title: "Offline",
@@ -110,7 +105,6 @@ const links: MenuLink[] = [
   },
   {
     title: "For bedrifter",
-    icon: IconBuilding,
     items: [
       {
         title: "Samarbeid med Online",

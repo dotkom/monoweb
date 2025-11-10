@@ -87,11 +87,11 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
           sideOffset={8}
           className="w-[calc(100vw-2rem)] mx-4 mt-4 p-0 lg:hidden bg-blue-50 z-50 dark:bg-stone-800 border-blue-100 dark:border-stone-700 shadow-sm rounded-3xl"
         >
-          <nav ref={navRef} className="max-h-[calc(100dvh-10rem)]">
+          <nav ref={navRef} className="max-h-[calc(100dvh-8rem)]">
             <ScrollArea.Root type="always" className="z-50 max-h-[inherit] overflow-hidden">
               <ScrollArea.Viewport className="w-full max-h-[inherit]">
                 <div className="p-4">
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
                     {highlightedLinks.length > 0 && (
                       <div className="flex gap-3 w-full pb-4">
                         {highlightedLinks.map((link) => {
@@ -115,18 +115,11 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                           <Collapsible defaultOpen={false}>
                             <CollapsibleTrigger
                               className={cn(
-                                "cursor-pointer w-full flex items-center justify-between sm:justify-start gap-2 font-medium text-base px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors",
+                                "cursor-pointer w-full flex items-center justify-between sm:justify-start gap-2 text-base px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors",
                                 "[&[data-state=open]>svg]:rotate-180"
                               )}
                             >
-                              <div className="flex items-center gap-3">
-                                {link.icon &&
-                                  (() => {
-                                    const IconComponent = link.icon
-                                    return <IconComponent className="text-xl" />
-                                  })()}
-                                <Text className="text-lg">{link.title}</Text>
-                              </div>
+                              <Text className="text-lg">{link.title}</Text>
                               <IconChevronDown className="transition-transform text-xl" />
                             </CollapsibleTrigger>
                             <CollapsibleContent
@@ -142,20 +135,20 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                                   <DropdownMenuItem
                                     asChild
                                     key={subLink.title}
-                                    className="flex items-start gap-2 hover:bg-blue-100 dark:hover:bg-stone-700 select-none rounded-lg p-3 border border-gray-300 dark:border-stone-700 leading-none no-underline transition-colors"
+                                    className="flex items-start gap-2 hover:bg-blue-100 dark:hover:bg-stone-700 select-none rounded-lg p-3 leading-none no-underline transition-colors"
                                   >
                                     <Link href={subLink.href}>
                                       {(() => {
                                         const IconComponent = subLink.icon
                                         return (
-                                          <IconComponent className="text-xl group-hover:text-gray-800 dark:group-hover:text-stone-200 mt-0.5 flex-shrink-0" />
+                                          <IconComponent className="text-xl group-hover:text-gray-800 dark:group-hover:text-stone-200 mt-0.5 shrink-0" />
                                         )
                                       })()}
                                       <div className="flex flex-col space-y-1">
                                         <Text className="text-gray-900 dark:text-stone-100 group-hover:text-black dark:group-hover:text-white text-base font-medium leading-none">
                                           {subLink.title}
                                         </Text>
-                                        <Text className="text-gray-600 dark:text-stone-200 group-hover:text-black dark:group-hover:text-white line-clamp-2 text-sm font-medium leading-snug">
+                                        <Text className="text-gray-600 dark:text-stone-400 group-hover:text-black dark:group-hover:text-white line-clamp-2 text-sm leading-snug">
                                           {subLink.description}
                                         </Text>
                                       </div>
@@ -173,13 +166,9 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                             <DropdownMenuItem
                               asChild
                               key={item.title}
-                              className="flex items-center gap-3 px-3 py-2 rounded-lg text-base hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors"
+                              className="px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors"
                             >
                               <Link href={item.href} onClick={() => setOpen(false)}>
-                                {(() => {
-                                  const IconComponent = item.icon
-                                  return <IconComponent className="text-xl" />
-                                })()}
                                 <Text className="text-lg">{item.title}</Text>
                               </Link>
                             </DropdownMenuItem>
