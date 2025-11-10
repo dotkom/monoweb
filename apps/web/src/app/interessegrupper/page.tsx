@@ -1,6 +1,7 @@
 import { GroupList } from "@/components/organisms/GroupList"
 import { server } from "@/utils/trpc/server"
-import { Button, Icon, Text, Title } from "@dotkomonline/ui"
+import { Button, Text, Title } from "@dotkomonline/ui"
+import { IconCoins, IconUsersPlus } from "@tabler/icons-react"
 import Link from "next/link"
 
 export default async function InterestGroupPage() {
@@ -25,7 +26,7 @@ export default async function InterestGroupPage() {
           color="brand"
           element={Link}
           href="https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"
-          icon={<Icon icon="tabler:users-plus" className="text-lg" />}
+          icon={<IconUsersPlus className="size-5" />}
         >
           Opprett eller overta interessegruppe
         </Button>
@@ -33,7 +34,7 @@ export default async function InterestGroupPage() {
         <Button
           element={Link}
           href="https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
-          icon={<Icon icon="tabler:coins" className="text-lg" />}
+          icon={<IconCoins className="size-5" />}
         >
           Søk om støtte
         </Button>

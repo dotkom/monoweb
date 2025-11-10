@@ -1,6 +1,7 @@
 "use client"
 
-import { Icon, TextInput } from "@dotkomonline/ui"
+import { TextInput } from "@dotkomonline/ui"
+import { IconSearch } from "@tabler/icons-react"
 import { useEffect, useRef, useState } from "react"
 import { useDebounce } from "use-debounce"
 
@@ -39,10 +40,7 @@ export const SearchInput = ({
 
   return (
     <div className={className}>
-      <Icon
-        className="text-lg h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3"
-        icon="tabler:search"
-      />
+      <IconSearch className="w-8 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
       <TextInput
         className="pl-10 w-full h-[2.875rem] dark:border-none text-base sm:text-sm"
         placeholder={placeholder}

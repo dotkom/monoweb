@@ -1,6 +1,7 @@
 "use client"
 
-import { Icon, Text, cn } from "@dotkomonline/ui"
+import { Text, cn } from "@dotkomonline/ui"
+import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { differenceInDays, formatDate, isPast, isSameDay, isSameYear, isThisYear } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
@@ -32,10 +33,7 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
           past && "text-gray-600 dark:text-stone-600 group-hover:text-gray-800 dark:group-hover:text-stone-400"
         )}
       >
-        <Icon
-          icon="tabler:calendar-event"
-          className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-400")}
-        />
+        <IconCalendarEvent width={16} height={16} className={cn(!past && "text-gray-800 dark:text-stone-400")} />
 
         {ongoing ? (
           <Text>Pågår nå</Text>
@@ -62,20 +60,14 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
         past && "text-gray-600 group-hover:text-gray-800 dark:text-stone-600 dark:group-hover:text-stone-400"
       )}
     >
-      <Icon
-        icon="tabler:calendar-event"
-        className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-400")}
-      />
+      <IconCalendarEvent width={16} height={16} className={cn(!past && "text-gray-800 dark:text-stone-400")} />
 
       <div className="flex flex-col md:flex-row md:gap-1">
         <Text>{startDate}</Text>
         {showTime && <Text> kl. {startTime}</Text>}
       </div>
 
-      <Icon
-        icon="tabler:arrow-right"
-        className={cn("text-sm md:text-base", !past && "text-gray-800 dark:text-stone-300")}
-      />
+      <IconArrowRight width={16} height={16} className={cn(!past && "text-gray-800 dark:text-stone-300")} />
 
       <div className="flex flex-col md:flex-row md:gap-1">
         <Text>{endDate}</Text>

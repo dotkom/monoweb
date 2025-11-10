@@ -12,7 +12,8 @@ import {
   getAttendee,
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
-import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { Button, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { IconLoader2, IconLock, IconUserMinus, IconUserPlus } from "@tabler/icons-react"
 import { isFuture } from "date-fns"
 import { min } from "date-fns"
 import { type FC, useState } from "react"
@@ -152,7 +153,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const disabled = Boolean(disabledText)
 
   const buttonContent = isLoading ? (
-    <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
+    <IconLoader2 className="size-6 animate-spin py-2" />
   ) : (
     <div
       className={cn(
@@ -160,7 +161,13 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
         disabled ? "text-gray-800 dark:text-stone-300" : "text-black dark:text-white"
       )}
     >
-      <Icon className="text-lg" icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`} />
+      {disabled ? (
+        <IconLock className="size-[1.25em]" />
+      ) : attendee ? (
+        <IconUserMinus className="size-[1.25em]" />
+      ) : (
+        <IconUserPlus className="size-[1.25em]" />
+      )}
       <Text className="font-medium">{buttonText}</Text>
     </div>
   )

@@ -9,7 +9,8 @@ import {
   getReservedAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/types"
-import { Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
 import { formatDistanceToNowStrict, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
@@ -45,10 +46,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
           "text-gray-600 dark:text-stone-300 group-hover:text-gray-800 dark:group-hover:text-stone-400"
       )}
     >
-      <Icon
-        icon="tabler:users"
-        className={cn("text-sm md:text-base", !eventEndInPast && "text-gray-800 dark:text-stone-400")}
-      />
+      <IconUsers className={cn("size-4", !eventEndInPast && "text-gray-800 dark:text-stone-400")} />
 
       <div className="flex flex-row gap-1">
         <div
@@ -65,11 +63,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
             {hasCapacity && `/${capacity}`}
           </Text>
 
-          {isReserved ? (
-            <Icon icon="tabler:check" className="text-sm" />
-          ) : isUnreserved ? (
-            <Icon icon="tabler:clock" className="text-sm" />
-          ) : null}
+          {isReserved ? <IconCheck className="size-4" /> : isUnreserved ? <IconClock className="size-4" /> : null}
         </div>
 
         {showLock && (
@@ -77,7 +71,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <div className="px-1 rounded-md bg-gray-100 dark:bg-stone-700 text-gray-700 dark:text-stone-200">
-                  <Icon icon="tabler:lock" className="text-sm" />
+                  <IconLock className="size-4" />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -92,7 +86,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <div className="flex flex-row gap-1 items-center px-1 rounded-md text-red-800 bg-red-100 dark:text-red-200 dark:bg-red-950">
-                  <Icon icon="tabler:clock-dollar" className="text-sm" />
+                  <IconClockDollar className="size-4" />
                   <Text className="text-xs md:text-sm tabular-nums" suppressHydrationWarning>
                     {paymentCountdown}
                   </Text>

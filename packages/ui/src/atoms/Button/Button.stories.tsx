@@ -1,9 +1,9 @@
 import type { Story } from "@ladle/react"
-import { Icon } from "../Icon/Icon"
+import { IconBolt } from "@tabler/icons-react"
 import { Title } from "../Typography/Title"
 import { BUTTON_COLORS, BUTTON_SIZES, BUTTON_VARIANTS, Button, type ButtonSize } from "./Button"
 
-const icon = (size: ButtonSize) => <Icon icon="tabler:bolt" width={size === "sm" ? 10 : size === "md" ? 13 : 16} />
+const icon = (size: ButtonSize) => <IconBolt width={size === "sm" ? 10 : size === "md" ? 13 : 16} />
 
 export const AllVariants: Story = () => (
   <div className="flex flex-col gap-12">

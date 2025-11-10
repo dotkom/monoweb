@@ -3,8 +3,8 @@
 import * as SelectPrimitive from "@radix-ui/react-select"
 import type * as React from "react"
 
+import { IconCheck, IconChevronDown, IconChevronUp } from "@tabler/icons-react"
 import { cn } from "../../utils"
-import { Icon } from "../Icon/Icon"
 
 export const Select = SelectPrimitive.Root
 
@@ -29,7 +29,7 @@ export const SelectTrigger = ({ className, children, ref, ...props }: SelectTrig
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <Icon icon="tabler:chevron-down" className="h-4 w-4 opacity-50" />
+      <IconChevronDown className="size-4 opacity-50" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 )
@@ -42,7 +42,7 @@ export const SelectScrollUpButton = ({ className, ref, ...props }: SelectScrollU
     className={cn("flex cursor-default items-center justify-center py-1", className)}
     {...props}
   >
-    <Icon icon="tabler:chevron-up" className="h-4 w-4" />
+    <IconChevronUp className="size-4" />
   </SelectPrimitive.ScrollUpButton>
 )
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
@@ -54,7 +54,7 @@ export const SelectScrollDownButton = ({ className, ref, ...props }: SelectScrol
     className={cn("flex cursor-default items-center justify-center py-1", className)}
     {...props}
   >
-    <Icon icon="tabler:chevron-down" className="h-4 w-4" />
+    <IconChevronDown className="size-4" />
   </SelectPrimitive.ScrollDownButton>
 )
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName
@@ -130,7 +130,7 @@ export const SelectItem = ({ className, children, ref, ...props }: SelectItemPro
   >
     <span className="absolute left-2 top-1/2 transform -translate-y-1/2">
       <SelectPrimitive.ItemIndicator>
-        <Icon icon="tabler:check" />
+        <IconCheck />
       </SelectPrimitive.ItemIndicator>
     </span>
 
