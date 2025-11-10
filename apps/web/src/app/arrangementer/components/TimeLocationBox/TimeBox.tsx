@@ -26,7 +26,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
 
   return (
     <div className="flex flex-row gap-4 items-center">
-      <IconClock className="h-6 w-6" />
+      <IconClock className="size-6" />
 
       <div className="flex flex-row grow gap-4 items-center">
         <div className="flex flex-col">
@@ -38,7 +38,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
         </div>
         {!isSameDay(start, end) && (
           <>
-            <IconArrowRight className="h-6 w-6" />
+            <IconArrowRight className="size-6" />
             <div className="flex flex-col">
               <Text>{formatDate(end, "dd. MMMM", { locale: nb })}</Text>
               <Text>{formatDate(end, "HH:mm", { locale: nb })}</Text>

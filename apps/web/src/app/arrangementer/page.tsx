@@ -215,11 +215,11 @@ const EventPage = () => {
           <div className={cn("flex gap-2 justify-between w-full", view === "cal" ? "sm:w-fit" : "")}>
             <TabsList className="dark:border-none shrink-0">
               <TabsTrigger value="list" className="px-3 w-fit min-w-0 min-h-0">
-                <IconLayoutList className="mr-2 h-5 w-5" />
+                <IconLayoutList className="mr-2 size-5" />
                 Liste
               </TabsTrigger>
               <TabsTrigger value="cal" className="px-3 w-fit min-w-0 min-h-0">
-                <IconCalendarMonth className="mr-2 h-5 w-5" />
+                <IconCalendarMonth className="mr-2 size-5" />
                 Kalender
               </TabsTrigger>
             </TabsList>
@@ -234,7 +234,7 @@ const EventPage = () => {
                         "sm:px-4 rounded-lg h-[2.875rem] w-[2.875rem] sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                       )}
                     >
-                      <IconFilter2 className="h-5 w-5" />
+                      <IconFilter2 className="size-5" />
                       <span className="hidden sm:block text-sm">Filtrer</span>
                     </Button>
                   </DrawerTrigger>
@@ -243,7 +243,7 @@ const EventPage = () => {
                       <div className="max-w-sm mx-auto pb-6">
                         <DrawerHeader className="">
                           <DrawerTitle className="flex items-center gap-2">
-                            <IconFilter2 className="w-[1.25em] h-[1.25em]" />
+                            <IconFilter2 className="size-[1.25em]" />
                             Filtrer arrangementer
                           </DrawerTitle>
                         </DrawerHeader>
@@ -267,9 +267,9 @@ const EventPage = () => {
                   className="sm:hidden w-[2.875rem] rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                 >
                   {searchBarOpen ? (
-                    <IconX className="w-5 h-5 flex items-center justify-center" />
+                    <IconX className="size-5 flex items-center justify-center" />
                   ) : (
-                    <IconSearch className="w-5 h-5 flex items-center justify-center" />
+                    <IconSearch className="size-5 flex items-center justify-center" />
                   )}
                 </Button>
 

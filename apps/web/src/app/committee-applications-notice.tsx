@@ -23,7 +23,7 @@ export const CommitteeApplicationsNotice = () => {
         </div>
       </div>
 
-      <IconArrowUpRight className="w-6 h-6" />
+      <IconArrowUpRight className="size-6" />
     </Button>
   )
 }

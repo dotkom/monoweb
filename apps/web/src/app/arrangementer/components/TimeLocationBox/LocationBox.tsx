@@ -17,7 +17,7 @@ export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
 
   return (
     <section className="flex flex-row gap-4 items-center">
-      <IconMapPin className="w-6 h-6" />
+      <IconMapPin className="size-6" />
 
       <div className="flex flex-col grow justify-center">
         <Text>{locationTitle}</Text>

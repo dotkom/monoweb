@@ -113,7 +113,7 @@ export const EventFilters = ({ onChange, groups, typeFilters, groupFilters, view
                 )}
               >
                 <Label>Kategori</Label>
-                <IconChevronDown className="w-[1.25em] h-[1.25em] transition-transform" />
+                <IconChevronDown className="size-[1.25em] transition-transform" />
               </CollapsibleTrigger>
               <CollapsibleContent
                 className={cn(
@@ -199,7 +199,7 @@ const CollapsibleGroupSelect = ({
           )}
         >
           <Label>Arrangør</Label>
-          <IconChevronDown className="w-[1.25em] h-[1.25em] transition-transform" />
+          <IconChevronDown className="size-[1.25em] transition-transform" />
         </CollapsibleTrigger>
 
         <CollapsibleContent
@@ -236,7 +236,7 @@ const CollapsibleGroupSelect = ({
                     )}
                   >
                     <span>{group.abbreviation}</span>
-                    {isSelected && <IconCheck className="w-4 h-4" />}
+                    {isSelected && <IconCheck className="size-4" />}
                   </button>
                 )
               })}

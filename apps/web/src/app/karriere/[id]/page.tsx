@@ -35,7 +35,7 @@ const JobListingPage = async ({ params }: JobListingProps) => {
         variant="text"
         element={Link}
         href="/karriere"
-        icon={<IconArrowLeft className="w-5 h-5" />}
+        icon={<IconArrowLeft className="size-5" />}
         className="w-fit"
       >
         Andre muligheter
@@ -118,7 +118,7 @@ const CompanyBox = ({ company }: CompanyBoxProps) => {
       <Link href={`/bedrifter/${company.slug}`} className="pb-4 px-6 pt-3 rounded-b-2xl bg-gray-200 dark:bg-stone-500">
         <div className="flex flex-row gap-1 items-center mx-auto w-fit">
           <Text>Se bedriften</Text>
-          <IconArrowRight className="w-5 h-5" />
+          <IconArrowRight className="size-5" />
         </div>
       </Link>
     </div>

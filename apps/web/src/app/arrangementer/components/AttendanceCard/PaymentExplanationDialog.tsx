@@ -15,7 +15,7 @@ export const PaymentExplanationDialog = () => {
     <AlertDialog>
       <AlertDialogTrigger>
         <div className="text-sm flex flex-row gap-1 items-center cursor-pointer text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
-          <IconInfoCircle className="h-[1.25em] w-[1.25em]" />
+          <IconInfoCircle className="size-[1.25em]" />
           <Text>Hvordan fungerer betaling?</Text>
         </div>
       </AlertDialogTrigger>
@@ -24,11 +24,11 @@ export const PaymentExplanationDialog = () => {
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-row gap-2 items-center justify-between font-medium">
             <span className="text-xl flex flex-row gap-2 items-center">
-              <IconInfoCircle className="h-[1.25em] w-[1.25em] text-blue-500 dark:text-stone-300" />
+              <IconInfoCircle className="size-[1.25em] text-blue-500 dark:text-stone-300" />
               <Text>Betalingsinformasjon</Text>
             </span>
             <AlertDialogCancel>
-              <IconX className="h-[1.25em] w-[1.25em]" />
+              <IconX className="size-[1.25em]" />
             </AlertDialogCancel>
           </AlertDialogTitle>
           <AlertDialogDescription className="flex flex-col gap-2">

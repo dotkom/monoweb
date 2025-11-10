@@ -120,20 +120,20 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
           {!errors.profileSlug &&
             ((isUserFetching && (
               <div className="flex items-center gap-1 text-slate-500 dark:text-stone-400">
-                <IconLoader className="animate-spin w-4 h-4" />
+                <IconLoader className="animate-spin size-4" />
                 <Text className="text-xs">Sjekker tilgjengelighet...</Text>
               </div>
             )) || (
               <>
                 {fetchedUser !== null && isProfileSlugChanged && (
                   <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
-                    <IconX className="w-4 h-4" />
+                    <IconX className="size-4" />
                     <Text className="text-xs">Brukernavnet er opptatt</Text>
                   </div>
                 )}
                 {fetchedUser === null && (
                   <div className="flex items-center gap-1 text-slate-500 dark:text-stone-400">
-                    <IconCheck className="w-4 h-4" />
+                    <IconCheck className="size-4" />
                     <Text className="text-xs">Brukernavnet er ledig</Text>
                   </div>
                 )}
@@ -278,19 +278,19 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
         {isSaving && (
           <div className="flex items-center gap-1 text-slate-600 dark:text-stone-300 fade-in transition-all">
-            <IconLoader className="animate-spin w-4 h-4" />
+            <IconLoader className="animate-spin size-4" />
             <Text className="text-sm">Lagrer</Text>
           </div>
         )}
         {!isSaving && saveSuccess && (
           <div className="flex items-center gap-1 text-green-600 dark:text-green-400 fade-out transition-all">
-            <IconCheck className="w-4 h-4" />
+            <IconCheck className="size-4" />
             <Text className="text-sm">Profil oppdatert</Text>
           </div>
         )}
         {!isSaving && Boolean(saveError) && (
           <div className="flex items-center gap-1 text-red-600 dark:text-red-400 fade-out transition-all">
-            <IconAlertTriangle className="w-4 h-4" />
+            <IconAlertTriangle className="size-4" />
             <Text className="text-sm">Kunne ikke oppdatere: {saveError}</Text>
           </div>
         )}

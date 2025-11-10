@@ -158,7 +158,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
         <div className="flex gap-y-2 gap-x-4 text-sm p-2 sm:pl-6 flex-wrap">
           {eventTypeGuideItems.map(({ type, classes, displayName }) => (
             <span key={type} className="flex items-center">
-              <span className={cn("w-3 h-3 rounded-full mr-1", classes.guide)} />
+              <span className={cn("size-3 rounded-full mr-1", classes.guide)} />
               {displayName}
             </span>
           ))}

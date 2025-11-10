@@ -29,7 +29,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
     >
       {inactive && (
         <div className="absolute top-3 left-3 flex flex-row items-center gap-1">
-          <IconMoonFilled className="w-4 h-4" />
+          <IconMoonFilled className="size-4" />
           <Text className="text-sm font-semibold">Inaktiv</Text>
         </div>
       )}

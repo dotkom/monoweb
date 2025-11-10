@@ -180,7 +180,7 @@ const TextTable = ({ answers, canDelete, onDelete }: TextTableProps) => {
           </Text>
           {canDelete && (
             <Button variant="text" color="red" onClick={() => onDelete(answer.id)}>
-              <IconTrash className="w-4 h-4" />
+              <IconTrash className="size-4" />
             </Button>
           )}
         </div>

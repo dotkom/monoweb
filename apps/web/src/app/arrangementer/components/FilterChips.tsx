@@ -86,7 +86,7 @@ export const FilterChips = ({
           )}
         >
           <span>{chip.label}</span>
-          <IconX className="w-4 h-4" />
+          <IconX className="size-4" />
         </button>
       ))}
 

@@ -251,7 +251,7 @@ export const AttendanceCard = ({
           href="/innstillinger/profil"
           className="flex flex-row gap-1 text-sm items-center text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
         >
-          <IconEdit className="h-[1.25em] w-[1.25em]" />
+          <IconEdit className="size-[1.25em]" />
           <Text>Oppdater matallergier</Text>
         </Link>
 

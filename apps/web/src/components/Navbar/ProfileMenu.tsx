@@ -290,7 +290,7 @@ export const AvatarDropdown: FC = () => {
               <IconUser className="text-lg" />
             </AvatarFallback>
           </Avatar>
-          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500" />}
+          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

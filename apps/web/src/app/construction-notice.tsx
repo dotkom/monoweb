@@ -27,7 +27,7 @@ export const ConstructionNotice = () => {
           variant="text"
           className="-m-1 p-2 hover:bg-yellow-100 dark:hover:bg-amber-100 rounded-lg"
         >
-          <IconX className="w-5 h-5 dark:text-black" />
+          <IconX className="size-5 dark:text-black" />
         </Button>
       </div>
 

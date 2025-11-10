@@ -54,7 +54,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 gap-1.5"
             title="Rediger arrangement"
           >
-            <IconEdit className="w-[1.25em] h-[1.25em] md:w-6 md:h-6" />
+            <IconEdit className="size-[1.25em] md:w-6 md:h-6" />
             <Text className="md:hidden">Rediger</Text>
           </Button>
         )}

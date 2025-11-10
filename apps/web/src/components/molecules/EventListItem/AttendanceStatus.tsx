@@ -46,7 +46,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
           "text-gray-600 dark:text-stone-300 group-hover:text-gray-800 dark:group-hover:text-stone-400"
       )}
     >
-      <IconUsers className={cn("w-4 h-4", !eventEndInPast && "text-gray-800 dark:text-stone-400")} />
+      <IconUsers className={cn("size-4", !eventEndInPast && "text-gray-800 dark:text-stone-400")} />
 
       <div className="flex flex-row gap-1">
         <div
@@ -63,7 +63,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
             {hasCapacity && `/${capacity}`}
           </Text>
 
-          {isReserved ? <IconCheck className="w-4 h-4" /> : isUnreserved ? <IconClock className="w-4 h-4" /> : null}
+          {isReserved ? <IconCheck className="size-4" /> : isUnreserved ? <IconClock className="size-4" /> : null}
         </div>
 
         {showLock && (
@@ -71,7 +71,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <div className="px-1 rounded-md bg-gray-100 dark:bg-stone-700 text-gray-700 dark:text-stone-200">
-                  <IconLock className="w-4 h-4" />
+                  <IconLock className="size-4" />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -86,7 +86,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <div className="flex flex-row gap-1 items-center px-1 rounded-md text-red-800 bg-red-100 dark:text-red-200 dark:bg-red-950">
-                  <IconClockDollar className="w-4 h-4" />
+                  <IconClockDollar className="size-4" />
                   <Text className="text-xs md:text-sm tabular-nums" suppressHydrationWarning>
                     {paymentCountdown}
                   </Text>

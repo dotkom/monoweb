@@ -20,7 +20,7 @@ export const ActionLink = ({ href, label }: Props) => (
           target="_blank"
           rel="noreferrer"
         >
-          <IconArrowUpRight className="w-6 h-6" />
+          <IconArrowUpRight className="size-6" />
         </Link>
       </TooltipTrigger>
       <TooltipContent>

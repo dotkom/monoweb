@@ -27,9 +27,9 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
       <AlertDialogTrigger asChild>
         <Button
           onClick={() => setOpen(true)}
-          className="w-full rounded-lg h-fit min-h-[4rem] font-medium"
+          className="w-full rounded-lg h-fit min-h-16 font-medium"
           color="light"
-          icon={<IconTicket className="h-[1.25em] w-[1.25em]" />}
+          icon={<IconTicket className="size-[1.25em]" />}
         >
           Vis billett
         </Button>
@@ -45,7 +45,7 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
             </Title>
           </AlertDialogTitle>
           <AlertDialogCancel className="p-2">
-            <IconX className="h-[1.25em] w-[1.25em]" />
+            <IconX className="size-[1.25em]" />
           </AlertDialogCancel>
         </div>
 

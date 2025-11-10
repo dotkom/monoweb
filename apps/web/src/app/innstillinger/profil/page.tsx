@@ -68,7 +68,7 @@ const EditProfilePage = () => {
         <Button
           element={Link}
           href={`/profil/${user.profileSlug}`}
-          icon={<IconArrowLeft className="w-5 h-5" />}
+          icon={<IconArrowLeft className="size-5" />}
           className="w-fit"
         >
           Til profil

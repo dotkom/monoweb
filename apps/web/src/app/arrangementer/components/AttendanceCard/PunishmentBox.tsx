@@ -13,7 +13,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
     return (
       <div className="flex flex-col gap-3 p-4 rounded-lg bg-black dark:bg-white text-white dark:text-black text-sm">
         <div className="flex flex-row gap-2 items-center text-base">
-          <IconAlertTriangle className="h-[1.25em] w-[1.25em]" />
+          <IconAlertTriangle className="size-[1.25em]" />
           <Text>Du er suspendert</Text>
         </div>
 
@@ -38,7 +38,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
   return (
     <div className="flex flex-col gap-3 p-4 rounded-lg bg-red-200 dark:bg-red-900 text-sm">
       <div className="flex flex-row gap-2 items-center text-base">
-        <IconAlertTriangle className="h-[1.25em] w-[1.25em]" />
+        <IconAlertTriangle className="size-[1.25em]" />
         <Text>{punishment.delay} timer utsatt påmelding pga. prikk</Text>
       </div>
 

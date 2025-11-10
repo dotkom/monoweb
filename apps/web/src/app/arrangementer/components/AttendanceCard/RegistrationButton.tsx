@@ -153,7 +153,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const disabled = Boolean(disabledText)
 
   const buttonContent = isLoading ? (
-    <IconLoader2 className="w-6 h-6 animate-spin py-2" />
+    <IconLoader2 className="size-6 animate-spin py-2" />
   ) : (
     <div
       className={cn(
@@ -162,11 +162,11 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
       )}
     >
       {disabled ? (
-        <IconLock className="h-[1.25em] w-[1.25em]" />
+        <IconLock className="size-[1.25em]" />
       ) : attendee ? (
-        <IconUserMinus className="h-[1.25em] w-[1.25em]" />
+        <IconUserMinus className="size-[1.25em]" />
       ) : (
-        <IconUserPlus className="h-[1.25em] w-[1.25em]" />
+        <IconUserPlus className="size-[1.25em]" />
       )}
       <Text className="font-medium">{buttonText}</Text>
     </div>

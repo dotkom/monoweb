@@ -26,7 +26,7 @@ export default async function InterestGroupPage() {
           color="brand"
           element={Link}
           href="https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"
-          icon={<IconUsersPlus className="w-5 h-5" />}
+          icon={<IconUsersPlus className="size-5" />}
         >
           Opprett eller overta interessegruppe
         </Button>
@@ -34,7 +34,7 @@ export default async function InterestGroupPage() {
         <Button
           element={Link}
           href="https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
-          icon={<IconCoins className="w-5 h-5" />}
+          icon={<IconCoins className="size-5" />}
         >
           Søk om støtte
         </Button>

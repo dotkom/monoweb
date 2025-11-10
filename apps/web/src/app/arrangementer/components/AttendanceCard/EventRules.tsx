@@ -26,7 +26,7 @@ export const EventRules = ({ className }: EventRulesProps) => {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger>
         <div className={cn("text-sm flex flex-row gap-1 items-center cursor-pointer", className)}>
-          <IconBook2 className="h-[1.25em] w-[1.25em]" />
+          <IconBook2 className="size-[1.25em]" />
           <Text>Arrangementregler</Text>
         </div>
       </AlertDialogTrigger>

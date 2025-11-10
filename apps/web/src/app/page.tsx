@@ -93,7 +93,7 @@ export default async function App() {
                     "bg-blue-200 hover:bg-blue-100",
                     "dark:bg-brand dark:hover:bg-brand/75"
                   )}
-                  iconRight={<IconArrowRight className="w-5 h-5 md:w-6 md:h-6" />}
+                  iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
                 >
                   <Text className="md:text-xl">Se alle</Text>
                 </Button>
@@ -127,7 +127,7 @@ export default async function App() {
                         "bg-blue-200 hover:bg-blue-100",
                         "dark:bg-brand dark:hover:bg-brand/75"
                       )}
-                      iconRight={<IconArrowRight className="w-5 h-5 md:w-6 md:h-6" />}
+                      iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
                     >
                       <Text className="text-lg">Se alle</Text>
                     </Button>
@@ -179,7 +179,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-row gap-2 items-center">
-            <IconCalendarEvent className="w-5 h-5 text-gray-500 dark:text-stone-500" />
+            <IconCalendarEvent className="size-5 text-gray-500 dark:text-stone-500" />
             <Text className="text-lg">{formatDate(event.start, "dd. MMM", { locale: nb })}</Text>
           </div>
           <div className="max-md:hidden">
@@ -224,7 +224,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
         </Title>
 
         <div className="flex flex-row gap-2 items-center">
-          <IconCalendarEvent className="w-5 h-5 text-gray-800 dark:text-stone-400" />
+          <IconCalendarEvent className="size-5 text-gray-800 dark:text-stone-400" />
           <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
         </div>
       </div>

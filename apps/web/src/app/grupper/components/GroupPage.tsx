@@ -184,7 +184,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                     "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
                   )}
                 >
-                  <Avatar className="h-5 w-5">
+                  <Avatar className="size-5">
                     <AvatarImage src={leader.imageUrl ?? undefined} />
                     <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
                       <IconUser width={12} height={12} />

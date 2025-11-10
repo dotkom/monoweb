@@ -61,7 +61,7 @@ export const ViewAttendeesButton = ({
     <Button
       color="light"
       className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
-      icon={<IconUsers className="h-[1.25em] w-[1.25em]" />}
+      icon={<IconUsers className="size-[1.25em]" />}
       disabled={!user}
     >
       Vis påmeldte
@@ -95,7 +95,7 @@ export const ViewAttendeesButton = ({
             </Title>
           </AlertDialogTitle>
           <AlertDialogCancel className="p-2">
-            <IconX className="h-[1.25em] w-[1.25em]" />
+            <IconX className="size-[1.25em]" />
           </AlertDialogCancel>
         </div>
 
@@ -181,7 +181,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
                     : "bg-gray-500 dark:bg-stone-500"
               }
             >
-              <IconUser className="h-[1.25em] w-[1.25em]" />
+              <IconUser className="size-[1.25em]" />
             </AvatarFallback>
           </Avatar>
 
@@ -189,7 +189,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
             {isVerified ? (
               <div className="flex items-center gap-1">
                 <Text className="text-sm dark:text-black">{attendee.user.name}</Text>
-                <IconRosetteDiscountCheckFilled className="h-[1.25em] w-[1.25em] text-blue-600 dark:text-sky-700" />
+                <IconRosetteDiscountCheckFilled className="size-[1.25em] text-blue-600 dark:text-sky-700" />
               </div>
             ) : (
               <Text className="text-sm">{attendee.user.name}</Text>

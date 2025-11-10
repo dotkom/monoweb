@@ -15,7 +15,7 @@ export const PenaltyDialog = () => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger className="w-fit flex items-center gap-1 underline">
-        <IconInfoCircle className="w-5 h-5" /> Hva er en prikk?
+        <IconInfoCircle className="size-5" /> Hva er en prikk?
       </AlertDialogTrigger>
       <AlertDialogContent className="max-h-[80vh]" onOutsideClick={() => setOpen(false)}>
         <AlertDialogTitle asChild>

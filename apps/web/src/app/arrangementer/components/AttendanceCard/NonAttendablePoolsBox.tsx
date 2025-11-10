@@ -40,7 +40,7 @@ export const NonAttendablePoolsBox = ({ attendance, user }: NonAttendablePoolsBo
     <Collapsible defaultOpen={!hasAttendablePool} className="w-full flex flex-col gap-1">
       <CollapsibleTrigger className="w-full flex items-center gap-2 py-1 font-medium hover:font-semibold [&[data-state=open]>svg]:rotate-90">
         <Text className="text-sm">{hasAttendablePool ? "Andre påmeldingsgrupper" : "Påmeldingsgrupper"}</Text>
-        <IconChevronRight className="h-[1.25em] w-[1.25em] transition-transform -mt-[1px]" />
+        <IconChevronRight className="size-[1.25em] transition-transform -mt-[1px]" />
       </CollapsibleTrigger>
 
       <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
@@ -98,7 +98,7 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
           <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-gray-200 dark:bg-stone-600 text-gray-900 dark:text-stone-50">
-            <IconClock className="h-[1.25em] w-[1.25em]" />
+            <IconClock className="size-[1.25em]" />
             <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
           </div>
         </TooltipTrigger>
