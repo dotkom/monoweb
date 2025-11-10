@@ -11,6 +11,7 @@ import {
 } from "@dotkomonline/types"
 import { Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
+import { interval, isWithinInterval } from "date-fns"
 import { formatDistanceToNowStrict, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
@@ -32,9 +33,14 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
     !eventEndInPast &&
     (isReserved || isUnreserved ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "Closed")
 
-  const paymentCountdown = useCountdown(attendee?.paymentDeadline ?? null)
-  const showPaymentCountdown =
-    hasAttendeePaid(attendance, attendee) === false && Boolean(attendee?.paymentChargeDeadline)
+  const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null)
+  const paymentCountdownInterval =
+    attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
+  const isWithinPaymentCountdown =
+    paymentCountdownInterval && hasAttendeePaid(attendance, attendee) === false
+      ? isWithinInterval(new Date(), paymentCountdownInterval)
+      : false
+  const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null
 
   const hasCapacity = capacity > 0
 
@@ -88,12 +94,12 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
                 <div className="flex flex-row gap-1 items-center px-1 rounded-md text-red-800 bg-red-100 dark:text-red-200 dark:bg-red-950">
                   <IconClockDollar className="size-4" />
                   <Text className="text-xs md:text-sm tabular-nums" suppressHydrationWarning>
-                    {paymentCountdown}
+                    {paymentCountdownText}
                   </Text>
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <Text>Du har ikke betalt for arrangentet.</Text>
+                <Text>Du har ikke betalt for arrangementet.</Text>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
