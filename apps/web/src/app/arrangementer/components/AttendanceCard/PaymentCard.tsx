@@ -19,10 +19,7 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
   if (!user || !attendee?.reserved) {
     return (
       <div
-        className={cn(
-          "rounded-lg h-fit min-h-16 flex items-center justify-center",
-          "bg-gray-100 cursor-not-allowed"
-        )}
+        className={cn("rounded-lg h-fit min-h-16 flex items-center justify-center", "bg-gray-100 cursor-not-allowed")}
       >
         <div className="flex flex-row items-center justify-center gap-2 font-medium">
           <IconCreditCard className="size-[1.25em]" />
@@ -35,10 +32,7 @@ export const PaymentCard = ({ attendance, user }: PaymentCardProps) => {
   if (attendee.paymentReservedAt || attendee.paymentChargedAt) {
     return (
       <div
-        className={cn(
-          "rounded-lg h-fit min-h-16 flex items-center justify-center",
-          "bg-gray-200 cursor-not-allowed"
-        )}
+        className={cn("rounded-lg h-fit min-h-16 flex items-center justify-center", "bg-gray-200 cursor-not-allowed")}
       >
         <div className="flex flex-row items-center justify-center gap-1 font-medium">
           <IconCreditCard className="size-[1.25em]" />
