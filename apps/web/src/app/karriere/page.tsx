@@ -2,7 +2,8 @@
 import { filterJobListings, sortDates } from "@/app/karriere/filter-functions"
 import { useTRPC } from "@/utils/trpc/client"
 import type { JobListing } from "@dotkomonline/types"
-import { Badge, Icon, Text, Title, cn } from "@dotkomonline/ui"
+import { Badge, Text, Title, cn } from "@dotkomonline/ui"
+import { IconCalendarDown, IconClockHour3, IconMapPin } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -16,7 +17,6 @@ import {
   type SortOption,
   translationJobTypes,
 } from "./company-filters-container"
-import { IconCalendar, IconCalendarDown, IconClock, IconClockHour1, IconClockHour3, IconMapPin } from "@tabler/icons-react"
 
 const getLocations = (jobListings: JobListing[]) => {
   const locations = new Set<string>()
@@ -154,7 +154,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
           <div className="flex flex-row justify-between w-full">
             <div>
               <div className="flex flex-row gap-1 items-center">
-                <IconMapPin width={16} height={16}/>
+                <IconMapPin width={16} height={16} />
                 <Text>{showLocations(jobListing.locations.map((location) => location.name))}</Text>
               </div>
               <div className="flex flex-row gap-1 items-center">

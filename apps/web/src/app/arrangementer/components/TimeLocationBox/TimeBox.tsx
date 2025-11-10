@@ -2,12 +2,12 @@
 
 import type { Event } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
+import { IconArrowRight, IconClock } from "@tabler/icons-react"
 import { formatDate, isSameDay } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { createGoogleCalendarLink } from "./utils"
-import { IconClock, IconArrowRight,  } from "@tabler/icons-react"
 
 interface TimeBoxProps {
   event: Event

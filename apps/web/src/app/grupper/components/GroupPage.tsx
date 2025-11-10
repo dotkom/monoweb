@@ -276,11 +276,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
         {isVerified ? (
           <div className="flex items-center gap-1">
             <Text className="text-lg/6 dark:text-black">{member.name}</Text>
-            <IconRosetteDiscountCheckFilled
-              className="text-blue-600 dark:text-sky-700"
-              width={16}
-              height={16}
-            />
+            <IconRosetteDiscountCheckFilled className="text-blue-600 dark:text-sky-700" width={16} height={16} />
           </div>
         ) : (
           <Text className="text-lg/6">{member.name}</Text>

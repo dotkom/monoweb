@@ -25,7 +25,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
             variant="text"
             color="dark"
             className="-mx-0.5 -my-1 text-sm text-white dark:text-black"
-            iconRight={<IconArrowUpRight/>}
+            iconRight={<IconArrowUpRight />}
           >
             profilen din
           </Button>{" "}
@@ -56,7 +56,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
           variant="text"
           color="red"
           className="-mx-0.5 -my-1 text-sm hover:bg-red-100 dark:hover:bg-red-950/50"
-          iconRight={<IconArrowUpRight/>}
+          iconRight={<IconArrowUpRight />}
         >
           profilen din
         </Button>{" "}

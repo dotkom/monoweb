@@ -11,16 +11,7 @@ import {
   getUnreservedAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/types"
-import {
-  Stripes,
-  Text,
-  Title,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  cn,
-} from "@dotkomonline/ui"
+import { Stripes, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import {
   IconArrowForward,
   IconArrowUpRight,
@@ -234,9 +225,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
                     {paymentCountdownText}
                   </Text>
                 </div>
-                <IconArrowUpRight
-                  className="h-[1.25em] w-[1.25em] [@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0"
-                />
+                <IconArrowUpRight className="h-[1.25em] w-[1.25em] [@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0" />
               </div>
             </Stripes>
 

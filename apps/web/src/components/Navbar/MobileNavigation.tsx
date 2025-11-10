@@ -120,10 +120,11 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                               )}
                             >
                               <div className="flex items-center gap-3">
-                                {link.icon && (() => {
-                                  const IconComponent = link.icon
-                                  return <IconComponent className="text-xl" />
-                                })()}
+                                {link.icon &&
+                                  (() => {
+                                    const IconComponent = link.icon
+                                    return <IconComponent className="text-xl" />
+                                  })()}
                                 <Text className="text-lg">{link.title}</Text>
                               </div>
                               <IconChevronDown className="transition-transform text-xl" />
@@ -147,9 +148,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                                       {(() => {
                                         const IconComponent = subLink.icon
                                         return (
-                                          <IconComponent
-                                            className="text-xl group-hover:text-gray-800 dark:group-hover:text-stone-200 mt-0.5 flex-shrink-0"
-                                          />
+                                          <IconComponent className="text-xl group-hover:text-gray-800 dark:group-hover:text-stone-200 mt-0.5 flex-shrink-0" />
                                         )
                                       })()}
                                       <div className="flex flex-col space-y-1">

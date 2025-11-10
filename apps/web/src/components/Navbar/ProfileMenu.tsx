@@ -342,11 +342,7 @@ export const AvatarDropdown: FC = () => {
                           </div>
                           {link.adminOnly && (
                             <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
-                              <IconLock
-                                width={12}
-                                height={12}
-                                className="text-amber-700 dark:text-amber-300"
-                              />
+                              <IconLock width={12} height={12} className="text-amber-700 dark:text-amber-300" />
                               <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
                             </div>
                           )}

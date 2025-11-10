@@ -31,7 +31,6 @@ import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries
 
 import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
 
-
 type FilterType = "search" | "type" | "group" | "sort"
 
 const EventPage = () => {
@@ -267,7 +266,11 @@ const EventPage = () => {
                   onClick={toggleSearchBar}
                   className="sm:hidden w-[2.875rem] rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                 >
-                  { searchBarOpen ? <IconX className="w-5 h-5 flex items-center justify-center"/> : <IconSearch className="w-5 h-5 flex items-center justify-center"/>}
+                  {searchBarOpen ? (
+                    <IconX className="w-5 h-5 flex items-center justify-center" />
+                  ) : (
+                    <IconSearch className="w-5 h-5 flex items-center justify-center" />
+                  )}
                 </Button>
 
                 <SearchInput

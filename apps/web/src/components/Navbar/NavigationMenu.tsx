@@ -1,8 +1,8 @@
 "use client"
 
 import { cn } from "@dotkomonline/ui"
-import { IconChevronDown } from "@tabler/icons-react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
+import { IconChevronDown } from "@tabler/icons-react"
 import * as React from "react"
 
 export const NavigationMenu = React.forwardRef<

@@ -6,7 +6,7 @@ import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import type { Company } from "@dotkomonline/types"
 import { RichText, Text, Title } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { IconMapPin, IconMail, IconPhone, IconWorld } from "@tabler/icons-react"
+import { IconMail, IconMapPin, IconPhone, IconWorld } from "@tabler/icons-react"
 import { roundToNearestMinutes } from "date-fns"
 import Image from "next/image"
 import type { FC } from "react"
@@ -54,8 +54,8 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
           )}
 
           <div className="flex flex-col gap-y-2 px-1 text-lg">
-            {icons.map(({ icon: Icon, text, href }, index) => (
-              <div key={index} className="flex items-center gap-x-2 dark:text-gray-100">
+            {icons.map(({ icon: Icon, text, href }) => (
+              <div key={`${text}-${href ?? "no-link"}`} className="flex items-center gap-x-2 dark:text-gray-100">
                 <Icon width={24} height={24} />
                 {href === null ? (
                   <Text element="span">{text}</Text>

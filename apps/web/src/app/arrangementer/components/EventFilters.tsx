@@ -21,11 +21,11 @@ import {
   TextInput,
   cn,
 } from "@dotkomonline/ui"
+import { IconCheck, IconChevronDown, IconSearch } from "@tabler/icons-react"
 import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { type EventListViewMode, EventListViewModeSchema } from "./EventList"
-import { IconCheck, IconChevronDown, IconSearch } from "@tabler/icons-react"
 
 const FormSchema = z.object({
   byType: z.array(EventSchema.shape.type),
@@ -113,7 +113,7 @@ export const EventFilters = ({ onChange, groups, typeFilters, groupFilters, view
                 )}
               >
                 <Label>Kategori</Label>
-                <IconChevronDown className="w-[1.25em] h-[1.25em] transition-transform"/>
+                <IconChevronDown className="w-[1.25em] h-[1.25em] transition-transform" />
               </CollapsibleTrigger>
               <CollapsibleContent
                 className={cn(
@@ -199,7 +199,7 @@ const CollapsibleGroupSelect = ({
           )}
         >
           <Label>Arrangør</Label>
-          <IconChevronDown className="w-[1.25em] h-[1.25em] transition-transform"/>
+          <IconChevronDown className="w-[1.25em] h-[1.25em] transition-transform" />
         </CollapsibleTrigger>
 
         <CollapsibleContent
@@ -211,9 +211,7 @@ const CollapsibleGroupSelect = ({
         >
           <div className="relative flex flex-col border border-gray-200 dark:border-stone-700 rounded-xl">
             <div className="relative m-0.5">
-              <IconSearch 
-                className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3"
-              />
+              <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
               <TextInput
                 className="pl-10 text-base md:text-sm border-none dark:bg-transparent"
                 value={search}

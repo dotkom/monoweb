@@ -163,7 +163,7 @@ const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Pr
           )}
           disabled={!form.formState.isValid || form.formState.isSubmitting}
         >
-          <IconUserMinus className="h-[1.25em] w-[1.25em]"/>
+          <IconUserMinus className="h-[1.25em] w-[1.25em]" />
           Meld meg av
         </Button>
       </div>

@@ -3,12 +3,12 @@
 import { Button, Text, cn } from "@dotkomonline/ui"
 import { Title } from "@dotkomonline/ui"
 import Spline from "@splinetool/react-spline"
+import { IconArrowUpRight, IconBriefcase } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import type { FC } from "react"
 import { useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
-import { IconArrowUpRight, IconBriefcase } from "@tabler/icons-react"
 
 interface SplineInstance {
   setVariable?: (name: string, value: boolean | number | string) => void

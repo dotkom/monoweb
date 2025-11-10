@@ -2,8 +2,6 @@
 
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { env } from "@/env"
-import Link from "next/link"
-import type { FC } from "react"
 import type { Icon } from "@tabler/icons-react"
 import {
   IconArticle,
@@ -20,6 +18,8 @@ import {
   IconSchool,
   IconUsers,
 } from "@tabler/icons-react"
+import Link from "next/link"
+import type { FC } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"

@@ -9,7 +9,7 @@ import {
   getReservedAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/types"
-import { Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
 import { formatDistanceToNowStrict, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -46,9 +46,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
           "text-gray-600 dark:text-stone-300 group-hover:text-gray-800 dark:group-hover:text-stone-400"
       )}
     >
-      <IconUsers
-        className={cn("w-4 h-4", !eventEndInPast && "text-gray-800 dark:text-stone-400")}
-      />
+      <IconUsers className={cn("w-4 h-4", !eventEndInPast && "text-gray-800 dark:text-stone-400")} />
 
       <div className="flex flex-row gap-1">
         <div
@@ -65,11 +63,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
             {hasCapacity && `/${capacity}`}
           </Text>
 
-          {isReserved ? (
-            <IconCheck className="w-4 h-4" />
-          ) : isUnreserved ? (
-            <IconClock className="w-4 h-4" />
-          ) : null}
+          {isReserved ? <IconCheck className="w-4 h-4" /> : isUnreserved ? <IconClock className="w-4 h-4" /> : null}
         </div>
 
         {showLock && (

@@ -1,7 +1,14 @@
 import { server } from "@/utils/trpc/server"
 import type { Company, JobListing, JobListingEmployment } from "@dotkomonline/types"
-import { Button, Icon, RichText, Text, Title } from "@dotkomonline/ui"
-import { IconArrowLeft, IconArrowRight, IconArrowUpRight, IconBriefcase, IconClock, IconWorld } from "@tabler/icons-react"
+import { Button, RichText, Text, Title } from "@dotkomonline/ui"
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconArrowUpRight,
+  IconBriefcase,
+  IconClock,
+  IconWorld,
+} from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"

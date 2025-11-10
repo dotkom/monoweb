@@ -15,10 +15,10 @@ import {
   YAxis,
 } from "recharts"
 
-import { Button, Icon, Text, Title } from "@dotkomonline/ui"
+import { Button, Text, Title } from "@dotkomonline/ui"
+import { IconTrash } from "@tabler/icons-react"
 import type { Payload } from "recharts/types/component/DefaultTooltipContent"
 import { useDeleteFeedbackQuestionAnswerMutation } from "../mutations"
-import { IconTrash } from "@tabler/icons-react"
 
 const CHART_COLORS: string[] = ["#2b7fff", "#00bc7d", "#fd9a00", "#fb2c36", "#8e51ff", "#f6339a"] as const
 

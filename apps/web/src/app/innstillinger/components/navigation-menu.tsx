@@ -1,7 +1,7 @@
 "use client"
 
-import { IconSpy, IconUser } from "@tabler/icons-react"
 import { Title } from "@dotkomonline/ui"
+import { IconSpy, IconUser } from "@tabler/icons-react"
 import { SettingsMenuItem } from "./settings-menu-item"
 
 export const settingsNavigationItems = [

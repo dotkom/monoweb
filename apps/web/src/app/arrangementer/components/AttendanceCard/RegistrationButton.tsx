@@ -13,13 +13,13 @@ import {
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
 import { Button, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { IconLoader2, IconLock, IconUserMinus, IconUserPlus } from "@tabler/icons-react"
 import { isFuture } from "date-fns"
 import { min } from "date-fns"
 import { type FC, useState } from "react"
 import { DeregisterModal } from "../DeregisterModal"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
-import { IconLock, IconLoader2, IconUserMinus, IconUserPlus } from "@tabler/icons-react"
 
 const getButtonColor = (
   disabled: boolean,
@@ -153,7 +153,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const disabled = Boolean(disabledText)
 
   const buttonContent = isLoading ? (
-    <IconLoader2 className="w-6 h-6 animate-spin py-2"/>
+    <IconLoader2 className="w-6 h-6 animate-spin py-2" />
   ) : (
     <div
       className={cn(

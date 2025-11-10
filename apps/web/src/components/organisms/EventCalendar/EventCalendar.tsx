@@ -6,13 +6,13 @@ import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
 import { cn } from "@dotkomonline/ui"
+import { IconLoader2 } from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
 import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { eventCategories } from "./eventTypeConfig"
 import { getCalendarArray } from "./getCalendarArray"
-import { IconLoader2 } from "@tabler/icons-react"
 
 function getEventTypeGuide(events: EventWithAttendance[]) {
   const presentTypes = new Set(events.map((event) => event.event.type))

@@ -1,7 +1,7 @@
 import { Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
+import { IconArrowUpRight } from "@tabler/icons-react"
 import clsx from "clsx"
 import Link from "next/link.js"
-import { IconArrowUpRight } from "@tabler/icons-react"
 
 interface Props {
   href: string
@@ -20,7 +20,7 @@ export const ActionLink = ({ href, label }: Props) => (
           target="_blank"
           rel="noreferrer"
         >
-          <IconArrowUpRight className="w-6 h-6"/>
+          <IconArrowUpRight className="w-6 h-6" />
         </Link>
       </TooltipTrigger>
       <TooltipContent>

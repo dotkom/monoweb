@@ -20,11 +20,7 @@ export const MobileProfileNavigationMenu = () => {
         <Popover.Trigger>
           <div className="mt-3 flex">
             <span className="float-left">
-              {open ? (
-                <IconChevronDown width={28} height={28} />
-              ) : (
-                <IconChevronRight width={28} height={28} />
-              )}
+              {open ? <IconChevronDown width={28} height={28} /> : <IconChevronRight width={28} height={28} />}
             </span>
             <p className="flex grow justify-center">
               {CurrentIcon && <CurrentIcon width={28} height={28} />}

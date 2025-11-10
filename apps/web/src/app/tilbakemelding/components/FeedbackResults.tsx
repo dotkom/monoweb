@@ -10,9 +10,9 @@ import type {
 } from "@dotkomonline/types"
 
 import { Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
+import { IconCalendarEvent, IconSchool } from "@tabler/icons-react"
 import { formatDate, isSameDay } from "date-fns"
 import { type ChartValue, FeedbackAnswerCard, QuestionPieChart } from "./FeedbackAnswerCard"
-import { IconCalendarEvent, IconSchool } from "@tabler/icons-react"
 
 const formatPoolYears = (yearCriterias: number[][]): string => {
   const flat = yearCriterias.flat().toSorted((a, b) => a - b)
@@ -54,7 +54,7 @@ export const FeedbackResults = ({ questions, answers, attendees, event, pools, p
             <Text className="text-gray-800 dark:text-stone-300">{eventDate}</Text>
           </div>
           <div className="flex items-center gap-1">
-            <IconSchool className="text-gray-800 dark:text-stone-300" width={16} height={16}/>
+            <IconSchool className="text-gray-800 dark:text-stone-300" width={16} height={16} />
             <Text className="text-gray-800 dark:text-stone-300">{formattedYears}</Text>
           </div>
         </div>

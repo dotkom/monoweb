@@ -10,15 +10,15 @@ import {
   hasAttendeePaid,
 } from "@dotkomonline/types"
 import { RichText, cn } from "@dotkomonline/ui"
-import { Icon, Text, Tilt, Title } from "@dotkomonline/ui"
+import { Text, Tilt, Title } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { formatDate, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 import type { FC } from "react"
 import { JubileumNotice } from "./jubileum-notice"
-import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])

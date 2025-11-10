@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Icon, Text, Title } from "@dotkomonline/ui"
+import { Button, Text, Title } from "@dotkomonline/ui"
 import { IconArrowUpRight, IconX } from "@tabler/icons-react"
 import { useState } from "react"
 

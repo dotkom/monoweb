@@ -1,8 +1,8 @@
 import type { Event } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
+import { IconMapPin } from "@tabler/icons-react"
 import type { FC } from "react"
 import { LocationLink } from "./LocationLink"
-import { IconMapPin } from "@tabler/icons-react"
 
 interface LocationBoxProps {
   event: Event

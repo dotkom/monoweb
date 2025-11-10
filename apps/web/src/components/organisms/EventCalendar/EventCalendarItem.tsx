@@ -4,10 +4,10 @@ import { Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
+import { IconClock, IconMapPin } from "@tabler/icons-react"
 import Link from "next/link"
 import { eventCategories } from "./eventTypeConfig"
 import type { EventDisplayProps } from "./types"
-import { IconClock, IconMapPin } from "@tabler/icons-react"
 
 // helper functions so tailwind picks up the class names correctly
 function getColStartClass(startCol: number) {

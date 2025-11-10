@@ -32,6 +32,7 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
+import { capitalizeFirstLetter, createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import {
   IconAlertTriangle,
   IconEdit,
@@ -42,7 +43,6 @@ import {
   IconPointFilled,
   IconUser,
 } from "@tabler/icons-react"
-import { capitalizeFirstLetter, createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
