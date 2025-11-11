@@ -740,7 +740,7 @@ export function getAttendanceService(
 
       const attendeeCount = attendance.attendees.filter((a) => a.attendancePoolId === pool.id).length
 
-      if (pool.capacity < 0 && attendeeCount >= pool.capacity) {
+      if (pool.capacity !== 0 && (pool.capacity < 0 || attendeeCount >= pool.capacity)) {
         return
       }
 
