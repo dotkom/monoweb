@@ -1,7 +1,6 @@
 import * as crypto from "node:crypto"
 import type { S3Client } from "@aws-sdk/client-s3"
 import { type PresignedPost, createPresignedPost } from "@aws-sdk/s3-presigned-post"
-import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
@@ -22,11 +21,10 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
-import { addYears, differenceInYears, getYear, isBefore, isSameDay, subYears } from "date-fns"
+import { addYears, isBefore, isSameDay, subYears } from "date-fns"
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
-import type { StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
 import type { MembershipService } from "./membership-service"
 import type { UserRepository } from "./user-repository"
 
@@ -378,50 +376,6 @@ function areMembershipsEqual(a: Membership, b: MembershipWrite) {
   return (
     isSameDay(a.start, b.start) && isSameDay(a.end, b.end) && a.specialization === b.specialization && a.type === b.type
   )
-}
-
-/**
- * Attempt to guess the current year of the provided user based on the courses they have taken and the courses that
- * are in their study plan.
- *
- * This algorithm is best-effort, and works by summing the credits of the courses that the user has taken, and the
- * credits granted by the courses in the study plan. It then estimates the grade level based on the number of credits
- *
- * NOTE: This does not take into account point reductions, or other edge cases, but should be a good enough
- * approximation for most.
- */
-function estimateStudyGrade(studyPlanCourses: StudyplanCourse[], coursesTaken: NTNUGroup[]): number {
-  // Sum up how much each course from the study plan indicates each grade level in the study plan
-  // Example: { TDT4100: { "1": 7.5 } }, Object oriented programming indicates a first year (grade 1) with 7.5 credits indication strength
-  const courseGradeIndications: Record<string, { grade: number; credits: number }> = {}
-  for (const course of studyPlanCourses) {
-    // Use 7.5 credits if not specified or zero
-    const courseCredits = Number.parseFloat(course.credit ?? "7.5")
-
-    courseGradeIndications[course.code] = { grade: course.year, credits: courseCredits }
-  }
-
-  const totalGradeIndications: Record<number, number> = {}
-  for (const course of coursesTaken) {
-    // If the course is not in the study plan, we ignore it
-    if (!courseGradeIndications[course.code]) {
-      continue
-    }
-
-    // This might mean the user is currently taking the course, but it also may be wrong as the feide api does not reliably track finished date
-    // Therefore we ignore it
-    if (!course.finished) {
-      continue
-    }
-
-    const yearSinceTakenCourse = differenceInYears(getAcademicStart(getCurrentUTC()), getAcademicStart(course.finished))
-    const { grade, credits } = courseGradeIndications[course.code]
-    const indicatedGrade = grade + yearSinceTakenCourse
-    totalGradeIndications[indicatedGrade] = (totalGradeIndications[indicatedGrade] ?? 0) + credits
-  }
-
-  // Find the key with highest value - JS has ZERO nice utility functions :(
-  return Number.parseInt(Object.entries(totalGradeIndications).reduce((a, b) => (a[1] > b[1] ? a : b), ["0", 0])[0])
 }
 
 function getSpecializationFromCode(code: string): MembershipSpecialization {
