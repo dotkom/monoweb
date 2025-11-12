@@ -5,6 +5,7 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import { formatDate } from "date-fns"
 import { useMemo } from "react"
 import { useEditGroupMembershipModal } from "../../modals/edit-group-membership-modal"
+import { useConfirmDeleteGroupMembershipModal } from "./confirm-delete-group-membership-modal"
 
 interface Props {
   groupMember: GroupMember
@@ -13,6 +14,7 @@ interface Props {
 export const useGroupMembershipTable = ({ groupMember }: Props) => {
   const columnHelper = createColumnHelper<GroupMembership>()
   const openGroupEditModal = useEditGroupMembershipModal()
+  const openConfirmDeleteModal = useConfirmDeleteGroupMembershipModal()
 
   const columns = useMemo(
     () => [
@@ -67,8 +69,33 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
           return button
         },
       }),
+      columnHelper.accessor((membership) => membership, {
+        id: "delete",
+        header: () => "Slett",
+        cell: (info) => {
+          const groupMembership = info.getValue()
+          const isActive = groupMembership.end === null
+
+          const button = (
+            <Button
+              size="sm"
+              variant="subtle"
+              disabled={isActive}
+              onClick={() => openConfirmDeleteModal({ groupMembership: groupMembership })()}
+            >
+              Slett
+            </Button>
+          )
+
+          if (isActive) {
+            return <Tooltip label="Du kan ikke slette et aktivt gruppemedlemskap.">{button}</Tooltip>
+          }
+
+          return button
+        },
+      }),
     ],
-    [columnHelper, openGroupEditModal]
+    [columnHelper, openGroupEditModal, openConfirmDeleteModal]
   )
 
   return useReactTable({
@@ -76,4 +103,23 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
+}
+function openConfirmDeleteModal(arg0: {
+  groupMembership: {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    userId: string
+    start: Date
+    end: Date | null
+    groupId: string
+    roles: {
+      id: string
+      name: string
+      type: "LEADER" | "PUNISHER" | "TREASURER" | "COSMETIC" | "DEPUTY_LEADER" | "TRUSTEE" | "EMAIL_ONLY"
+      groupId: string
+    }[]
+  }
+}) {
+  throw new Error("Function not implemented.")
 }

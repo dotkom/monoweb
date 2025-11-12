@@ -249,6 +249,37 @@ export const useSyncWorkspaceGroupMutation = () => {
   )
 }
 
+export const useDeleteGroupMembershipMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.group.deleteMembership.mutationOptions({
+      onError: () => {
+        notification.fail({
+          title: "Feil",
+          message: "Det oppsto en feil under sletting av medlemskap.",
+        })
+      },
+      onMutate: () => {
+        notification.loading({
+          title: "Sletter medlemskap",
+          message: "Medlemskapet blir slettet.",
+        })
+      },
+      onSuccess: async (_, input) => {
+        notification.complete({
+          title: "Medlemskap slettet",
+          message: "Medlemskapet har blitt slettet.",
+        })
+
+        await queryClient.invalidateQueries({ queryKey: trpc.group.getMember.queryKey() })
+      },
+    })
+  )
+}
+
 export const useLinkGroupMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
