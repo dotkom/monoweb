@@ -257,6 +257,8 @@ export const AttendanceCard = ({
         chargeScheduleDate={chargeScheduleDate ?? null}
       />
 
+      {turnstileError && <Text className="text-red-600">{turnstileError}</Text>}
+
       <div className="flex flex-row flex-wrap gap-4">
         <EventRules className="text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />
 

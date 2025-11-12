@@ -92,7 +92,7 @@ export interface UserService {
     filename: string,
     contentType: string,
     userId: UserId,
-    createdByUserId: UserId
+    createdByUserId: UserId,
   ): Promise<PresignedPost>
 }
 
@@ -105,14 +105,14 @@ export function getUserService(
   managementClient: ManagementClient,
   membershipService: MembershipService,
   client: S3Client,
-  bucket: string
+  bucket: string,
 ): UserService {
   const logger = getLogger("user-service")
 
   async function findApplicableMembership(
     studyProgrammes: NTNUGroup[],
     studySpecializations: NTNUGroup[],
-    courses: NTNUGroup[]
+    courses: NTNUGroup[],
   ): Promise<MembershipWrite | null> {
     const masterProgramme = studyProgrammes.find((programme) => ONLINE_MASTER_PROGRAMMES.includes(programme.code))
     const bachelorProgramme = studyProgrammes.find((programme) => ONLINE_BACHELOR_PROGRAMMES.includes(programme.code))
@@ -135,7 +135,7 @@ export function getUserService(
     // Master's programme takes precedence over bachelor's programme.
     if (masterProgramme !== undefined) {
       const code = MembershipSpecializationSchema.catch("UNKNOWN").parse(
-        getSpecializationFromCode(studySpecializations?.[0].code)
+        getSpecializationFromCode(studySpecializations?.[0].code),
       )
       // If we have a new code that we have not seen, or for some other reason the code catches and returns UNKNOWN, we
       // emit a trace for it.
@@ -143,7 +143,7 @@ export function getUserService(
         logger.warn(
           "Caught unrecognized specialization code %s for specializations %o",
           studySpecializations?.[0].code,
-          studySpecializations
+          studySpecializations,
         )
       }
 
@@ -185,7 +185,7 @@ export function getUserService(
           "Received non-200 OR non-404 response from Auth0 when fetching User(ID=%s): %s (%s)",
           userId,
           response.statusText,
-          response.status
+          response.status,
         )
         // TODO: Maybe this should not silently fail?
         return null
@@ -254,7 +254,7 @@ export function getUserService(
 
       if (response.status !== 200) {
         throw new IllegalStateError(
-          `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
+          `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`,
         )
       }
 
@@ -273,7 +273,7 @@ export function getUserService(
           logger.info(
             "Found existing user with same email but different ID. Updating User(ID=%s) to new ID=%s",
             existingUserByEmail.id,
-            userId
+            userId,
           )
           // Update the user's ID directly. PostgreSQL will cascade this to all FK references
           // because they all have ON UPDATE CASCADE.
@@ -338,7 +338,7 @@ export function getUserService(
       if (data.profileSlug) {
         if (data.profileSlug !== slugify(data.profileSlug)) {
           throw new InvalidArgumentError(
-            `User(ID=${userId}) cannot have ProfileSlug=${data.profileSlug} because it is not a valid slug`
+            `User(ID=${userId}) cannot have ProfileSlug=${data.profileSlug} because it is not a valid slug`,
           )
         }
 
@@ -346,7 +346,7 @@ export function getUserService(
 
         if (existingUser && existingUser.id !== userId) {
           throw new AlreadyExistsError(
-            `User(ID=${userId}) cannot have ProfileSlug=${data.profileSlug} because it is already taken`
+            `User(ID=${userId}) cannot have ProfileSlug=${data.profileSlug} because it is already taken`,
           )
         }
       }
@@ -377,7 +377,7 @@ export function getUserService(
                 const applicableMembership = await findApplicableMembership(
                   studentInformation.studyProgrammes,
                   studentInformation.studySpecializations,
-                  studentInformation.courses
+                  studentInformation.courses,
                 )
 
                 // We can only replace memberships if there is a new applicable one for the user
@@ -416,7 +416,7 @@ export function getUserService(
       const response = await managementClient.users.get({ id: userId })
       if (response.status !== 200) {
         throw new IllegalStateError(
-          `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
+          `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`,
         )
       }
       const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
@@ -443,7 +443,7 @@ export function getUserService(
 function shouldReplaceMembership(
   allMemberships: Membership[],
   previous: Membership | null,
-  next: MembershipWrite | null
+  next: MembershipWrite | null,
 ) {
   if (next === null) {
     return false
