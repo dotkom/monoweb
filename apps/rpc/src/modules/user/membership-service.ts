@@ -2,6 +2,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { differenceInYears, subMonths, subYears } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
+import { getAcademicStart } from "@dotkomonline/types"
 
 export interface MembershipService {
   findApproximateMasterStartYear(courses: NTNUGroup[]): number
@@ -124,12 +125,12 @@ export function getMembershipService(): MembershipService {
             // If you were supposed to finish your degree this year, how far away would the semester in question be?
             // For example; if previousSemester=3 (algdat+itp+datdig), then the distance would be 2.
             const years = Math.ceil(semesterDistanceFromEnd / 2)
-            const courseEndIfProgrammeEndedToday = subYears(now, years)
+            const courseEndIfProgrammeEndedThisYear = subYears(getAcademicStart(now), years)
 
             // INVARIANT: The course should join should exist, and it should be finished according to
             // `hasPassedPreviousSemester`.
             invariant(studentCourse !== undefined && studentCourse.finished !== undefined)
-            const distance = differenceInYears(courseEndIfProgrammeEndedToday, studentCourse.finished)
+            const distance = differenceInYears(courseEndIfProgrammeEndedThisYear, getAcademicStart(studentCourse.finished))
             return previousSemester.semester + distance
           })
 
