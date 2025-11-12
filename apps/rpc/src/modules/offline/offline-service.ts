@@ -45,8 +45,8 @@ export function getOfflineService(
     async createOfflineUploadURL(filename, mimeType) {
       const uuid = crypto.randomUUID()
       const key = `offlines/${Date.now()}-${uuid}-${filename}`
-      // Kind of arbitrary, but this is gmail max size for attachments, so I figured it's a sane max size.
-      const maxSizeMB = 25
+
+      const maxSizeMB = 50
       return await createPresignedPost(client, {
         Bucket: bucket,
         Key: key,
