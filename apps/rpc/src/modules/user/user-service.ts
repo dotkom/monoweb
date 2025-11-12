@@ -1,6 +1,7 @@
 import * as crypto from "node:crypto"
 import type { S3Client } from "@aws-sdk/client-s3"
 import { type PresignedPost, createPresignedPost } from "@aws-sdk/s3-presigned-post"
+import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
@@ -29,7 +30,6 @@ import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-pla
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
-import { TZDate } from "@date-fns/tz"
 
 export interface UserService {
   /**
@@ -117,7 +117,7 @@ export function getUserService(
       estimatedStudyStart.toUTCString(),
       estimatedStudyGrade
     )
-   
+
     // NOTE: We grant memberships for at most one year at a time. If you are granted membership after new-years, you
     // will only keep the membership until the start of the next school year.
     const now = getCurrentUTC()
