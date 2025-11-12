@@ -117,7 +117,7 @@ export function getFeedbackFormService(
 
       const feedbackForm: FeedbackFormWrite = {
         eventId,
-        answerDeadline: addWeeks(event.end, 2),
+        answerDeadline: addWeeks(event.end, 1),
       }
       const questions = formToCopy.questions
 
