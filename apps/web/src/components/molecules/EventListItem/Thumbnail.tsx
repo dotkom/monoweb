@@ -43,10 +43,6 @@ interface EventListItemThumbnailProps {
 }
 
 export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, startInPast, eventType }) => {
-  const imageStyle = cn(
-    "rounded-md object-cover",
-    startInPast && "opacity-50 grayscale group-hover:grayscale-0 transition-all"
-  )
   const { label, backgroundColor } = EVENTS[eventType]
 
   return (
