@@ -101,7 +101,7 @@ export function getMembershipService(): MembershipService {
         invariant(previousSemesters.length !== 0)
 
         // We take the ceil(mean(distances)) across all past semesters.
-        const distances = []
+        let largestLocalSemester = 0
         for (const previousSemester of previousSemesters.toReversed()) {
           // The criteria here is the same as below, except we also require the course to have a finished date.
           const hasPassedPreviousSemester = previousSemester.courses.every((course) =>
@@ -129,16 +129,15 @@ export function getMembershipService(): MembershipService {
             // `hasPassedPreviousSemester`.
             invariant(studentCourse !== undefined && studentCourse.finished !== undefined)
             const distance = differenceInYears(courseEndIfProgrammeEndedToday, studentCourse.finished)
-            return distance
+            return previousSemester.semester + distance
           })
 
           // Take the mean distance for this semester
           const sum = previousSemesterDistances.reduce((acc, curr) => acc + curr, 0)
-          distances.push(sum / previousSemesterDistances.length)
+          largestLocalSemester = (sum / previousSemesterDistances.length)
         }
 
-        const sum = distances.reduce((acc, curr) => acc + curr, 0)
-        largestSemester = Math.ceil(sum / distances.length)
+        largestSemester = Math.max(largestSemester, largestLocalSemester)
         continue
       }
 
