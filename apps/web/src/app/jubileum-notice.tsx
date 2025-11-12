@@ -41,7 +41,7 @@ const formatCountdown = (now: number | Date, target: number | Date): Countdown |
 
 export const JubileumNotice = () => {
   const [now, setNow] = useState(new Date())
-  const jubileumDate = new Date("2025-02-16T11:00:00Z")
+  const jubileumDate = new Date("2026-02-16T11:00:00Z")
 
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000)
