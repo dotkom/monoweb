@@ -96,31 +96,27 @@ describe("feedback integration tests", () => {
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
 
     const mockFeedbackForm = getMockFeedbackForm({ eventId: event.id })
-    const mockQuestions = Array.from({ length: 3 }, () => getMockQuestion())
+    const mockQuestions = Array.from({ length: 3 }, () =>
+      getMockQuestion({
+        options: [getMockQuestionOption()],
+      })
+    )
     const feedbackForm = await core.feedbackFormService.create(dbClient, mockFeedbackForm, mockQuestions)
 
     expect(feedbackForm.eventId).toBe(event.id)
     expect(feedbackForm.answerDeadline.getTime()).toBe(mockFeedbackForm.answerDeadline.getTime())
     expect(feedbackForm.questions).toHaveLength(mockQuestions.length)
 
-    for (const mockQuestion of mockQuestions) {
-      const question = feedbackForm.questions.find((q) => q.label === mockQuestion.label)
-      invariant(question, "Question should exist")
-
-      expect(question.type).toBe(mockQuestion.type)
-      expect(question.required).toBe(mockQuestion.required)
-      expect(question.order).toBe(mockQuestion.order)
-      expect(question.showInPublicResults).toBe(mockQuestion.showInPublicResults)
-      expect(question.label).toBe(mockQuestion.label)
-      expect(question.options).toHaveLength(mockQuestion.options.length)
-
-      for (const originalOption of mockQuestion.options) {
-        const option = question.options.find((o) => o.name === originalOption.name)
-
-        invariant(option, "Option should exist")
-        expect(option.name).toBe(originalOption.name)
-      }
-    }
+    expect(feedbackForm.questions).toEqual(
+      expect.arrayContaining(
+        mockQuestions.map((question) =>
+          expect.objectContaining({
+            ...question,
+            options: expect.arrayContaining(question.options.map((option) => expect.objectContaining(option))),
+          })
+        )
+      )
+    )
   })
 
   it("should copy feedback form with the same questions", async () => {
@@ -141,24 +137,24 @@ describe("feedback integration tests", () => {
     expect(copiedForm.eventId).toBe(event2.id)
     expect(copiedForm.questions).toHaveLength(originalForm.questions.length)
 
-    for (const originalQuestion of originalForm.questions) {
-      const copiedQuestion = copiedForm.questions.find((q) => q.label === originalQuestion.label)
-      invariant(copiedQuestion, "Copied question should exist")
+    expect(copiedForm.questions).toEqual(
+      expect.arrayContaining(
+        originalForm.questions.map((question) => {
+          const { createdAt, updatedAt, id, feedbackFormId, options, ...questionRest } = question
 
-      expect(copiedQuestion.type).toBe(originalQuestion.type)
-      expect(copiedQuestion.required).toBe(originalQuestion.required)
-      expect(copiedQuestion.order).toBe(originalQuestion.order)
-      expect(copiedQuestion.showInPublicResults).toBe(originalQuestion.showInPublicResults)
-      expect(copiedQuestion.label).toBe(originalQuestion.label)
-      expect(copiedQuestion.options).toHaveLength(originalQuestion.options.length)
+          return expect.objectContaining({
+            ...questionRest,
+            options: expect.arrayContaining(
+              question.options.map((option) => {
+                const { id, questionId, ...optionRest } = option
 
-      for (const originalOption of originalQuestion.options) {
-        const copiedOption = copiedQuestion.options.find((o) => o.name === originalOption.name)
-
-        invariant(copiedOption, "Copied option should exist")
-        expect(copiedOption.name).toBe(originalOption.name)
-      }
-    }
+                return expect.objectContaining(optionRest)
+              })
+            ),
+          })
+        })
+      )
+    )
   })
 
   it("creating a feedback form should schedule verify answered task", async () => {
