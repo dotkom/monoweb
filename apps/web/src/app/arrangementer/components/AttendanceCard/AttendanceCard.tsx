@@ -1,5 +1,4 @@
 "use client"
-
 import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
@@ -13,6 +12,7 @@ import {
 } from "@dotkomonline/types"
 import { Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
+import { Turnstile } from "@marsidev/react-turnstile"
 import { IconEdit } from "@tabler/icons-react"
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
@@ -54,7 +54,14 @@ export const AttendanceCard = ({
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
 
   const fullPathname = useFullPathname()
-  const authorizeUrl = createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })
+  const authorizeUrl = createAuthorizeUrl({
+    connection: "FEIDE",
+    redirectAfter: fullPathname,
+  })
+
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileError, setTurnstileError] = useState<string | null>(null)
+  const [turnstileVisible, setTurnstileVisible] = useState(false)
 
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
@@ -102,7 +109,9 @@ export const AttendanceCard = ({
         onData: ({ status, attendee }) => {
           // If the attendee is not the current user, we can update the state
           queryClient.setQueryData(
-            trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
+            trpc.event.attendance.getAttendance.queryOptions({
+              id: attendance?.id,
+            }).queryKey,
             (oldData) => {
               if (!oldData) {
                 return oldData
@@ -171,10 +180,24 @@ export const AttendanceCard = ({
   }
 
   const registerForAttendance = () => {
-    registerMutation.mutate({ attendanceId: attendance.id })
+    if (!turnstileToken) {
+      setTurnstileError("CAPTCHA ble ikke godkjent. Refresh siden og prøv igjen.")
+      return
+    }
+
+    setTurnstileError(null)
+
+    registerMutation.mutate({
+      attendanceId: attendance.id,
+      turnstileToken,
+    })
   }
+
   const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
-    deregisterMutation.mutate({ attendanceId: attendance.id, deregisterReason })
+    deregisterMutation.mutate({
+      attendanceId: attendance.id,
+      deregisterReason,
+    })
   }
 
   const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
@@ -192,18 +215,14 @@ export const AttendanceCard = ({
       <Title element="h2" size="lg">
         Påmelding
       </Title>
-
       <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
-
       {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
-
       <MainPoolCard
         attendance={attendance}
         user={user}
         authorizeUrl={authorizeUrl}
         chargeScheduleDate={chargeScheduleDate}
       />
-
       {attendee?.reserved && attendance.selections.length > 0 && (
         <div className="flex flex-col gap-2">
           <Title element="p" size="sm" className="text-base">
@@ -218,9 +237,7 @@ export const AttendanceCard = ({
           />
         </div>
       )}
-
       <NonAttendablePoolsBox attendance={attendance} user={user} />
-
       <div className="flex flex-col gap-4 sm:flex-row">
         {attendee?.reserved && <TicketButton attendee={attendee} />}
 
@@ -231,6 +248,16 @@ export const AttendanceCard = ({
           setAttendeeListOpen={setAttendeeListOpen}
         />
       </div>
+
+      <Turnstile
+        style={{ display: turnstileVisible ? "flex" : "hidden" }}
+        siteKey={"0x4AAAAAABu6CgmuG63-w5SP"}
+        options={{ appearance: "interaction-only", size: "flexible" }}
+        onSuccess={(token) => setTurnstileToken(token)}
+        onExpire={() => setTurnstileToken(null)}
+        onBeforeInteractive={() => setTurnstileVisible(true)}
+        onAfterInteractive={() => setTurnstileVisible(false)}
+      />
 
       <RegistrationButton
         registerForAttendance={registerForAttendance}
@@ -243,6 +270,8 @@ export const AttendanceCard = ({
         isLoading={isLoading}
         chargeScheduleDate={chargeScheduleDate ?? null}
       />
+
+      {turnstileError && <Text className="text-red-600">{turnstileError}</Text>}
 
       <div className="flex flex-row flex-wrap gap-4">
         <EventRules className="text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />

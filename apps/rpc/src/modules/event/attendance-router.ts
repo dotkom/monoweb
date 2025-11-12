@@ -163,6 +163,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
+        turnstileToken: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) =>
@@ -179,9 +180,17 @@ export const attendanceRouter = t.router({
             ignoreRegisteredToParent: false,
           }
         )
+
         if (!result.success) {
           throw new FailedPreconditionError(`Failed to register: ${result.cause}`)
         }
+
+        const isTurnstileValid = await ctx.attendanceService.validateTurnstileToken(input.turnstileToken)
+
+        if (!isTurnstileValid) {
+          throw new FailedPreconditionError("Failed to validate turnstile token")
+        }
+
         return await ctx.attendanceService.registerAttendee(handle, result)
       })
     ),
