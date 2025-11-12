@@ -196,7 +196,11 @@ export const getAttendeeQueuePosition = (attendance: Attendance, user: User | nu
   return index + 1
 }
 
-export const hasAttendeePaid = (attendance: Attendance, attendee: Attendee | null): boolean | null => {
+export const hasAttendeePaid = (
+  attendance: Attendance,
+  attendee: Attendee | null,
+  options?: { excludeReservation?: boolean }
+): boolean | null => {
   if (!attendance.attendancePrice) {
     return null
   }
@@ -205,7 +209,7 @@ export const hasAttendeePaid = (attendance: Attendance, attendee: Attendee | nul
     return false
   }
 
-  return Boolean(
-    attendee.paymentChargedAt || attendee.paymentReservedAt || (attendee.paymentRefundedAt && !attendee.paymentDeadline)
-  )
+  const hasReserved = options?.excludeReservation ? false : Boolean(attendee.paymentReservedAt)
+
+  return Boolean(attendee.paymentChargedAt || hasReserved || (attendee.paymentRefundedAt && !attendee.paymentDeadline))
 }
