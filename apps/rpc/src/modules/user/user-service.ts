@@ -26,9 +26,8 @@ import { addYears, differenceInYears, getYear, isBefore, isSameDay, subYears } f
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
-import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
-import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
-import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
+import type { StudyplanCourse } from "../ntnu-study-plan/ntnu-study-plan-repository"
+import type { MembershipService } from "./membership-service"
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
@@ -80,11 +79,9 @@ const ONLINE_BACHELOR_PROGRAMMES = ["BIT"]
 
 export function getUserService(
   userRepository: UserRepository,
-  privacyPermissionsRepository: PrivacyPermissionsRepository,
-  notificationPermissionsRepository: NotificationPermissionsRepository,
   feideGroupsRepository: FeideGroupsRepository,
-  ntnuStudyPlanRepository: NTNUStudyPlanRepository,
   managementClient: ManagementClient,
+  membershipService: MembershipService,
   client: S3Client,
   bucket: string
 ): UserService {
@@ -96,32 +93,22 @@ export function getUserService(
   ): Promise<MembershipWrite | null> {
     const masterProgramme = studyProgrammes.find((programme) => ONLINE_MASTER_PROGRAMMES.includes(programme.code))
     const bachelorProgramme = studyProgrammes.find((programme) => ONLINE_BACHELOR_PROGRAMMES.includes(programme.code))
-    logger.info("Discovered master programme: %o", masterProgramme)
-    logger.info("Discovered bachelor programme: %o", bachelorProgramme)
-    // Master programmes take precedence over bachelor programmes
-    const relevantProgramme = masterProgramme ?? bachelorProgramme
-    if (relevantProgramme === undefined) {
+
+    if (masterProgramme === undefined && bachelorProgramme === undefined) {
       return null
     }
 
-    // We determine the newest study plan based on the length, so that we get the newest study plan available
-    const studyProgramLength = masterProgramme !== undefined ? 2 : 3
-    const studyStartYear = getAcademicStart(getCurrentUTC()).getUTCFullYear() - studyProgramLength
-    const studyPlanCourses = await ntnuStudyPlanRepository.getStudyPlanCourses(relevantProgramme.code, studyStartYear)
-    // We guesstimate which year of study the user is in, based on the courses they have taken and the courses in the
-    // study plan.
-    const estimatedStudyGrade = estimateStudyGrade(studyPlanCourses, courses)
-    const estimatedStudyStart = subYears(getAcademicStart(getCurrentUTC()), estimatedStudyGrade - 1)
-    logger.info(
-      "Estimated study start date to be %s for a student in grade %d",
-      estimatedStudyStart.toUTCString(),
-      estimatedStudyGrade
-    )
+    // Master degree always takes precedence over bachelor every single time.
+    const isMasterStudent = masterProgramme !== undefined
+    const distanceFromStartInYears = isMasterStudent
+      ? membershipService.findApproximateMasterStartYear(courses)
+      : membershipService.findApproximateBachelorStartYear(courses)
+    const estimatedStudyStart = subYears(getAcademicStart(getCurrentUTC()), distanceFromStartInYears)
 
     // NOTE: We grant memberships for at most one year at a time. If you are granted membership after new-years, you
     // will only keep the membership until the start of the next school year.
     const now = getCurrentUTC()
-    const firstAugust = new TZDate(getYear(now), 7, 1, "Europe/Oslo")
+    const firstAugust = getAcademicStart(getCurrentUTC())
     const isDueThisYear = isBefore(now, firstAugust)
     const endDate = isDueThisYear ? firstAugust : addYears(firstAugust, 1)
 

@@ -55,6 +55,8 @@ import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repo
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
+import { getMembershipService } from "./user/membership-service"
+import { maybeInitializeEsmLoader } from "node_modules/@sentry/node/build/types/sdk/initOtel"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -157,28 +159,24 @@ export async function createServiceLayer(
   const attendanceRepository = getAttendanceRepository()
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
-  const privacyPermissionsRepository = getPrivacyPermissionsRepository()
-  const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const offlineRepository = getOfflineRepository()
   const auditLogRepository = getAuditLogRepository()
   const articleRepository = getArticleRepository()
   const articleTagRepository = getArticleTagRepository()
   const articleTagLinkRepository = getArticleTagLinkRepository()
   const feideGroupsRepository = getFeideGroupsRepository()
-  const ntnuStudyplanRepository = getNTNUStudyplanRepository()
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
 
+  const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
     ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
     : getEmptyEmailService()
   const userService = getUserService(
     userRepository,
-    privacyPermissionsRepository,
-    notificationPermissionsRepository,
     feideGroupsRepository,
-    ntnuStudyplanRepository,
     clients.auth0Client,
+    membershipService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )

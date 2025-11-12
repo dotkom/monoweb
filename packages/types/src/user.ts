@@ -109,7 +109,8 @@ export function getMembershipGrade(membership: Membership): 1 | 2 | 3 | 4 | 5 | 
     case "MASTER_STUDENT": {
       // Master students must be clamped at 4-5 because they can only be in their first or second year, but are always
       // considered to have a bachelor's degree from beforehand.
-      return Math.max(4, Math.min(5, delta)) as 4 | 5
+      const yearsGivenBachelors = delta + 3
+      return Math.max(4, Math.min(5, yearsGivenBachelors)) as 4 | 5
     }
     case "OTHER":
       return null
