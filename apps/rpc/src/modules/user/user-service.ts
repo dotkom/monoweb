@@ -21,7 +21,7 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
-import { addYears, differenceInYears, isSameDay, subYears } from "date-fns"
+import { addYears, differenceInYears, getYear, isBefore, isSameDay, subYears } from "date-fns"
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
@@ -29,6 +29,7 @@ import type { NTNUStudyPlanRepository, StudyplanCourse } from "../ntnu-study-pla
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
+import { TZDate } from "@date-fns/tz"
 
 export interface UserService {
   /**
@@ -117,6 +118,14 @@ export function getUserService(
       estimatedStudyGrade
     )
 
+    // NOTE: We grant memberships for at most one year at a time. If you are granted membership after new-years, you
+    // will only keep the membership until the start of the next school year.
+    const now = getCurrentUTC()
+    const firstAugust = new TZDate(getYear(now), 7, 1, 'Europe/Oslo')
+    const isDueThisYear = isBefore(now, firstAugust)
+    const endDate = isDueThisYear ? firstAugust : addYears(firstAugust, 1)
+
+    // Master's programme takes precedence over bachelor's programme.
     if (masterProgramme !== undefined) {
       const code = MembershipSpecializationSchema.catch("UNKNOWN").parse(
         getSpecializationFromCode(studySpecializations?.[0].code)
@@ -130,24 +139,21 @@ export function getUserService(
           studySpecializations
         )
       }
-      // This is something of a bolder assumption, but we assume that if the user's estimated grade is greater than 3,
-      // which is the duration of a bachelor programme, add 3 years to the estimated end date.
-      const expectedEnd = estimatedStudyGrade > 3 ? addYears(estimatedStudyStart, 5) : addYears(estimatedStudyStart, 2)
-      logger.info("Estimated end date for the master's programme to be %s", expectedEnd.toUTCString())
+
+      logger.info("Estimated end date for the master's programme to be %s", endDate.toUTCString())
       return {
         type: "MASTER_STUDENT",
         start: estimatedStudyStart,
-        end: expectedEnd,
+        end: endDate,
         specialization: code,
       }
     }
 
-    const expectedEnd = addYears(estimatedStudyStart, 3)
-    logger.info("Estimated end date for the bachelor's programme to be %s", expectedEnd)
+    logger.info("Estimated end date for the bachelor's programme to be %s", endDate.toUTCString())
     return {
       type: "BACHELOR_STUDENT",
       start: estimatedStudyStart,
-      end: expectedEnd,
+      end: endDate,
       specialization: null,
     }
   }
