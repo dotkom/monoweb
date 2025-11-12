@@ -11,7 +11,6 @@ node_modules/
 .pnp.*
 package-lock.json
 # IDE specific
-.editorconfig
 .idea
 # typescript
 *.tsbuildinfo
