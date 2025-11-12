@@ -1,5 +1,6 @@
 "use client"
 
+import { env } from "@/env"
 import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
@@ -13,12 +14,13 @@ import {
 } from "@dotkomonline/types"
 import { Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile"
 import { IconEdit } from "@tabler/icons-react"
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
@@ -54,7 +56,13 @@ export const AttendanceCard = ({
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
 
   const fullPathname = useFullPathname()
-  const authorizeUrl = createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })
+  const authorizeUrl = createAuthorizeUrl({
+    connection: "FEIDE",
+    redirectAfter: fullPathname,
+  })
+
+  const turnstileRef = useRef<TurnstileInstance>(null)
+  const [token, setToken] = useState<string | null>(null)
 
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
@@ -69,7 +77,7 @@ export const AttendanceCard = ({
           initialData: initialAttendance,
           enabled: Boolean(user),
           refetchInterval: closeToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
-        }
+        },
       ),
       trpc.personalMark.getExpiryDateForUser.queryOptions(
         {
@@ -78,7 +86,7 @@ export const AttendanceCard = ({
         {
           initialData: initialPunishment,
           enabled: Boolean(user),
-        }
+        },
       ),
     ],
   })
@@ -102,7 +110,9 @@ export const AttendanceCard = ({
         onData: ({ status, attendee }) => {
           // If the attendee is not the current user, we can update the state
           queryClient.setQueryData(
-            trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
+            trpc.event.attendance.getAttendance.queryOptions({
+              id: attendance?.id,
+            }).queryKey,
             (oldData) => {
               if (!oldData) {
                 return oldData
@@ -124,11 +134,11 @@ export const AttendanceCard = ({
                 ...oldData,
                 attendees: [...oldData.attendees, attendee],
               }
-            }
+            },
           )
         },
-      }
-    )
+      },
+    ),
   )
 
   const attendee = getAttendee(attendance, user)
@@ -138,8 +148,8 @@ export const AttendanceCard = ({
       {
         attendeeId: attendee?.id ?? "",
       },
-      { enabled: Boolean(attendee?.id) && Boolean(attendance.attendancePrice) }
-    )
+      { enabled: Boolean(attendee?.id) && Boolean(attendance.attendancePrice) },
+    ),
   )
 
   useEffect(() => {
@@ -148,7 +158,7 @@ export const AttendanceCard = ({
     // const attendanceEventDateTimes = [attendance.registerStart, attendance.registerEnd, attendance.deregisterDeadline, attendee?.paymentDeadline]
     const attendanceEventDateTimes = [attendee?.paymentDeadline]
     setCloseToEvent(
-      attendanceEventDateTimes.some((date) => date && Math.abs(differenceInSeconds(date, new Date())) < 60)
+      attendanceEventDateTimes.some((date) => date && Math.abs(differenceInSeconds(date, new Date())) < 60),
     )
     // }, [attendance, attendee])
   }, [attendee])
@@ -171,10 +181,17 @@ export const AttendanceCard = ({
   }
 
   const registerForAttendance = () => {
+    if (!token) {
+      alert("Please verify you are human first.")
+      return
+    }
     registerMutation.mutate({ attendanceId: attendance.id })
   }
   const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
-    deregisterMutation.mutate({ attendanceId: attendance.id, deregisterReason })
+    deregisterMutation.mutate({
+      attendanceId: attendance.id,
+      deregisterReason,
+    })
   }
 
   const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
@@ -192,18 +209,14 @@ export const AttendanceCard = ({
       <Title element="h2" size="lg">
         Påmelding
       </Title>
-
       <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
-
       {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
-
       <MainPoolCard
         attendance={attendance}
         user={user}
         authorizeUrl={authorizeUrl}
         chargeScheduleDate={chargeScheduleDate}
       />
-
       {attendee?.reserved && attendance.selections.length > 0 && (
         <div className="flex flex-col gap-2">
           <Title element="p" size="sm" className="text-base">
@@ -218,9 +231,7 @@ export const AttendanceCard = ({
           />
         </div>
       )}
-
       <NonAttendablePoolsBox attendance={attendance} user={user} />
-
       <div className="flex flex-col gap-4 sm:flex-row">
         {attendee?.reserved && <TicketButton attendee={attendee} />}
 
@@ -231,6 +242,8 @@ export const AttendanceCard = ({
           setAttendeeListOpen={setAttendeeListOpen}
         />
       </div>
+
+      <Turnstile siteKey={env.TURNSTILE_SITE_KEY} options={{ appearance: "always" }} />
 
       <RegistrationButton
         registerForAttendance={registerForAttendance}
