@@ -208,6 +208,15 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     },
 
     async deleteMembership(handle, id) {
+      const membership = await groupRepository.getMembershipById(handle, id)
+      if (!membership) {
+        throw new NotFoundError(`GroupMembership(ID=${id}) not found`)
+      }
+
+      if (!membership.end) {
+        throw new FailedPreconditionError(`Cannot delete active GroupMembership(ID=${id})`)
+      }
+
       return await groupRepository.deleteMembership(handle, id)
     },
 
