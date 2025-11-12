@@ -112,7 +112,14 @@ export const EventFilters = ({ onChange, groups, typeFilters, groupFilters, view
                   "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
                 )}
               >
-                <Label>Kategori</Label>
+                <div className="flex items-center gap-2">
+                  <Label>Kategori</Label>
+                  {value.length > 0 && (
+                    <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
+                      {value.length}
+                    </span>
+                  )}
+                </div>
                 <IconChevronDown className="size-[1.25em] transition-transform" />
               </CollapsibleTrigger>
               <CollapsibleContent
@@ -122,7 +129,7 @@ export const EventFilters = ({ onChange, groups, typeFilters, groupFilters, view
                   "data-[state=closed]:animate-collapsible-up"
                 )}
               >
-                <div className="flex flex-col gap-2 pt-2 pl-1">
+                <div className="flex flex-col gap-2 pt-2">
                   {EVENT_TYPE_OPTIONS.map((type) => (
                     <div key={type.value} className="flex items-center gap-3">
                       <Checkbox
@@ -198,7 +205,14 @@ const CollapsibleGroupSelect = ({
             "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
           )}
         >
-          <Label>Arrangør</Label>
+          <div className="flex items-center gap-2">
+            <Label>Arrangør</Label>
+            {value.length > 0 && (
+              <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
+                {value.length}
+              </span>
+            )}
+          </div>
           <IconChevronDown className="size-[1.25em] transition-transform" />
         </CollapsibleTrigger>
 

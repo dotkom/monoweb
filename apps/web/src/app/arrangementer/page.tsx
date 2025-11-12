@@ -204,6 +204,14 @@ const EventPage = () => {
   const groupsMemo = useMemo(() => groups ?? [], [groups])
   const hasActiveFilters = searchTerm || typeFilters.length > 0 || groupFilters.length > 0 || viewMode !== "ATTENDANCE"
 
+  const activeFilterCount = useMemo(() => {
+    let count = 0
+    if (typeFilters.length > 0) count += typeFilters.length
+    if (groupFilters.length > 0) count += groupFilters.length
+    if (viewMode !== "ATTENDANCE") count++
+    return count
+  }, [typeFilters.length, groupFilters.length, viewMode])
+
   return (
     <div className="flex flex-col gap-4">
       <Title element="h1" size="xl">
@@ -231,11 +239,16 @@ const EventPage = () => {
                     <Button
                       variant="solid"
                       className={cn(
-                        "sm:px-4 rounded-lg h-[2.875rem] w-[2.875rem] sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
+                        "relative sm:px-4 rounded-lg h-[2.875rem] w-[2.875rem] sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                       )}
                     >
                       <IconFilter2 className="size-5" />
                       <span className="hidden sm:block text-sm">Filtrer</span>
+                      {activeFilterCount > 0 && (
+                        <div className="flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full">
+                          {activeFilterCount}
+                        </div>
+                      )}
                     </Button>
                   </DrawerTrigger>
                   <DrawerContent>
@@ -276,7 +289,7 @@ const EventPage = () => {
                 <SearchInput
                   initialValue={searchTerm}
                   onDebouncedChange={handleSearchChange}
-                  className="hidden relative sm:block w-full max-w-80"
+                  className="hidden relative sm:block w-full max-w-90"
                 />
               </div>
             )}
