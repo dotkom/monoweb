@@ -22,7 +22,7 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
-import { addYears, isBefore, isSameDay, subYears } from "date-fns"
+import { isSameDay, subYears } from "date-fns"
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"

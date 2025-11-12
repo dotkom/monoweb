@@ -1,8 +1,8 @@
+import { getAcademicStart, getNextAcademicStart } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { differenceInMonths, differenceInYears, subMonths, subYears } from "date-fns"
+import { differenceInMonths, subYears } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
-import { getAcademicStart, getNextAcademicStart } from "@dotkomonline/types"
 
 export interface MembershipService {
   findApproximateMasterStartYear(courses: NTNUGroup[]): number
@@ -129,14 +129,18 @@ export function getMembershipService(): MembershipService {
             // INVARIANT: The course should join should exist, and it should be finished according to
             // `hasPassedPreviousSemester`.
             invariant(studentCourse !== undefined && studentCourse.finished !== undefined)
-            const semestersSinceTaken = Math.floor(differenceInMonths(getAcademicStart(getCurrentUTC()), studentCourse.finished) / 6)
-                        const distance = Math.floor(differenceInMonths( getAcademicStart(studentCourse.finished), courseEndAssumingLastYearStudent) / 6)
+            const semestersSinceTaken = Math.floor(
+              differenceInMonths(getAcademicStart(getCurrentUTC()), studentCourse.finished) / 6
+            )
+            const distance = Math.floor(
+              differenceInMonths(getAcademicStart(studentCourse.finished), courseEndAssumingLastYearStudent) / 6
+            )
             return previousSemester.semester + (semesterDistanceFromEnd - distance)
           })
 
           // Take the mean distance for this semester
           const sum = previousSemesterDistances.reduce((acc, curr) => acc + curr, 0)
-          largestLocalSemester = Math.ceil((sum / previousSemesterDistances.length))
+          largestLocalSemester = Math.ceil(sum / previousSemesterDistances.length)
         }
 
         largestSemester = Math.max(largestSemester, largestLocalSemester)

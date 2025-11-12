@@ -156,8 +156,8 @@ export function getAcademicStart(date: TZDate | Date): TZDate {
 }
 
 export function getNextAcademicStart(): TZDate {
-    const now = getCurrentUTC()
-    const firstAugust = getAcademicStart(getCurrentUTC())
-    const isBeforeAugust = isBefore(now, firstAugust)
-    return isBeforeAugust ? firstAugust : addYears(firstAugust, 1)
+  const now = getCurrentUTC()
+  const firstAugust = getAcademicStart(getCurrentUTC())
+  const isBeforeAugust = isBefore(now, firstAugust)
+  return isBeforeAugust ? firstAugust : addYears(firstAugust, 1)
 }
