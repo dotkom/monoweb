@@ -17,6 +17,7 @@ import {
   UserWriteSchema,
   findActiveMembership,
   getAcademicStart,
+  getNextAcademicStart,
 } from "@dotkomonline/types"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
@@ -105,10 +106,7 @@ export function getUserService(
 
     // NOTE: We grant memberships for at most one year at a time. If you are granted membership after new-years, you
     // will only keep the membership until the start of the next school year.
-    const now = getCurrentUTC()
-    const firstAugust = getAcademicStart(getCurrentUTC())
-    const isDueThisYear = isBefore(now, firstAugust)
-    const endDate = isDueThisYear ? firstAugust : addYears(firstAugust, 1)
+    const endDate = getNextAcademicStart()
 
     // Master's programme takes precedence over bachelor's programme.
     if (masterProgramme !== undefined) {

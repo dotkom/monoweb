@@ -2,7 +2,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { differenceInYears, subMonths, subYears } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
-import { getAcademicStart } from "@dotkomonline/types"
+import { getAcademicStart, getNextAcademicStart } from "@dotkomonline/types"
 
 export interface MembershipService {
   findApproximateMasterStartYear(courses: NTNUGroup[]): number
@@ -117,7 +117,6 @@ export function getMembershipService(): MembershipService {
 
           // There is a scenario where a user failed a course in year 1, but passed in year 2. This is why we take the
           // mean distance, which is later ceil()'d.
-          const now = getCurrentUTC()
           const previousSemesterDistances = previousSemester.courses.map((course) => {
             const studentCourse = studentCourses.find((studentCourse) => studentCourse.code === course)
             // NOTE: -1 because length is 1-indexed
@@ -125,7 +124,7 @@ export function getMembershipService(): MembershipService {
             // If you were supposed to finish your degree this year, how far away would the semester in question be?
             // For example; if previousSemester=3 (algdat+itp+datdig), then the distance would be 2.
             const years = Math.ceil(semesterDistanceFromEnd / 2)
-            const courseEndIfProgrammeEndedThisYear = subYears(getAcademicStart(now), years)
+            const courseEndIfProgrammeEndedThisYear = subYears(getNextAcademicStart(), years)
 
             // INVARIANT: The course should join should exist, and it should be finished according to
             // `hasPassedPreviousSemester`.
