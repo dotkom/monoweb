@@ -15,7 +15,8 @@ import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import { getMockEvent, getMockGroup } from "./event.e2e-spec"
 
-function getMockAttendance(input: Partial<AttendanceWrite> = {}): AttendanceWrite {
+// biome-ignore lint/suspicious/noExportsInTest: used in another spec
+export function getMockAttendance(input: Partial<AttendanceWrite> = {}): AttendanceWrite {
   return {
     registerStart: getCurrentUTC(),
     registerEnd: addHours(getCurrentUTC(), 12),
@@ -25,7 +26,8 @@ function getMockAttendance(input: Partial<AttendanceWrite> = {}): AttendanceWrit
   }
 }
 
-function getMockAttendancePool(input: Partial<AttendancePoolWrite> = {}): AttendancePoolWrite {
+// biome-ignore lint/suspicious/noExportsInTest: used in another spec
+export function getMockAttendancePool(input: Partial<AttendancePoolWrite> = {}): AttendancePoolWrite {
   return {
     title: faker.lorem.sentence(),
     mergeDelayHours: null,
@@ -35,7 +37,8 @@ function getMockAttendancePool(input: Partial<AttendancePoolWrite> = {}): Attend
   }
 }
 
-function getMockMembership(input: Partial<MembershipWrite> = {}): MembershipWrite {
+// biome-ignore lint/suspicious/noExportsInTest: used in another spec
+export function getMockMembership(input: Partial<MembershipWrite> = {}): MembershipWrite {
   return {
     type: "BACHELOR_STUDENT",
     start: addDays(getCurrentUTC(), -100),
@@ -45,7 +48,8 @@ function getMockMembership(input: Partial<MembershipWrite> = {}): MembershipWrit
   }
 }
 
-function getMockAuth0UserResponse(subject: string): ApiResponse<GetUsers200ResponseOneOfInner> {
+// biome-ignore lint/suspicious/noExportsInTest: used in another spec
+export function getMockAuth0UserResponse(subject: string): ApiResponse<GetUsers200ResponseOneOfInner> {
   return {
     status: 200,
     statusText: "OK",
