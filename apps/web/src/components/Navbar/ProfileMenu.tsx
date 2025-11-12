@@ -79,8 +79,14 @@ const ThemeDropdown: FC = () => {
 
 const ContactDebugDropdown: FC = () => (
   <DropdownMenu>
-    <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
-      <IconMessageReport width={24} height={24} />
+    <DropdownMenuTrigger asChild>
+      <button
+        aria-label="Kontakt debug, les mer om debug"
+        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors"
+        type="button"
+      >
+        <IconMessageReport width={24} height={24} />
+      </button>
     </DropdownMenuTrigger>
     <DropdownMenuContent
       align="end"
