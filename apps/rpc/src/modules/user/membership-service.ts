@@ -123,7 +123,7 @@ export function getMembershipService(): MembershipService {
             const semesterDistanceFromEnd = courseSet.length - 1 - previousSemester.semester
             // If you were supposed to finish your degree this year, how far away would the semester in question be?
             // For example; if previousSemester=3 (algdat+itp+datdig), then the distance would be 2.
-            const years = Math.ceil((semesterDistanceFromEnd * 6) / 12)
+            const years = Math.ceil(semesterDistanceFromEnd / 2)
             const courseEndIfProgrammeEndedToday = subYears(now, years)
 
             // INVARIANT: The course should join should exist, and it should be finished according to
