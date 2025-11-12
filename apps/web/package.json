@@ -22,6 +22,7 @@
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
     "@hookform/resolvers": "^4.0.0",
+    "@marsidev/react-turnstile": "^1.3.1",
     "@next/env": "^15.3.5",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-checkbox": "^1.3.2",
@@ -82,7 +83,10 @@
     "typescript": "5.9.3"
   },
   "browserslist": {
-    "production": ["defaults", "ios_saf >= 10"],
+    "production": [
+      "defaults",
+      "ios_saf >= 10"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

@@ -1,4 +1,4 @@
-import { config, defineConfiguration } from "@dotkomonline/environment"
+import { config, defineConfiguration } from "@dotkomonline/environment";
 
 export const env = defineConfiguration({
   AUTH0_CLIENT_ID: config(process.env.AUTH0_CLIENT_ID),
@@ -33,4 +33,5 @@ export const env = defineConfiguration({
     stg: "https://cdn.staging.online.ntnu.no",
     dev: "https://cdn.staging.online.ntnu.no",
   }),
-})
+  TURNSTILE_SITE_KEY: config(process.env.TURNSTILE_SITE_KEY),
+});
