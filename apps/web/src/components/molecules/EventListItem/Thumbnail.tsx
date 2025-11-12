@@ -2,6 +2,7 @@ import type { EventType } from "@dotkomonline/types"
 import { Badge, Tilt, cn } from "@dotkomonline/ui"
 import Image from "next/image.js"
 import type { FC } from "react"
+import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"
 
 const EVENTS = {
   ACADEMIC: {
@@ -42,22 +43,37 @@ interface EventListItemThumbnailProps {
 }
 
 export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, startInPast, eventType }) => {
-  const imageUrlLight = imageUrl || "https://placehold.co/320x240/png?text=Arrangement"
-  const imageUrlDark = imageUrl || "https://placehold.co/320x240/27272a/9f9fa9/png?text=Arrangement"
-
   const imageStyle = cn(
     "rounded-md object-cover",
     startInPast && "opacity-50 grayscale group-hover:grayscale-0 transition-all"
   )
-
   const { label, backgroundColor } = EVENTS[eventType]
 
   return (
     <Tilt>
       <div className="relative w-max">
-        <div className="aspect-[4/3] h-[6rem]">
-          <Image src={imageUrlLight} fill alt={alt} className={cn(imageStyle, "dark:hidden")} />
-          <Image src={imageUrlDark} fill alt={alt} className={cn(imageStyle, "hidden dark:block")} />
+        <div className="aspect-[4/3] h-[6rem] bg-gray-100 dark:bg-stone-800 rounded-lg overflow-hidden">
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              fill
+              alt={alt}
+              className={cn(
+                "rounded-md object-cover",
+                startInPast && "opacity-50 grayscale group-hover:grayscale-0 transition-all"
+              )}
+            />
+          ) : (
+            <PlaceHolderImage
+              variant={eventType}
+              width={160}
+              height={90}
+              className={cn(
+                "rounded-md object-cover",
+                startInPast && "opacity-50 grayscale group-hover:grayscale-0 transition-all"
+              )}
+            />
+          )}
         </div>
 
         <Badge

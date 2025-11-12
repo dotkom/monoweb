@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
@@ -165,11 +166,17 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
       )}
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-        <img
-          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
-          alt={event.title}
-          className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
-        />
+        {event.imageUrl ? (
+          <img
+            src={event.imageUrl}
+            alt={event.title}
+            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
+          />
+        ) : (
+          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-[16/9]">
+            <PlaceHolderImage width={16} height={9} variant={event.type} className="scale-160 object-contain" />
+          </div>
+        )}
       </Tilt>
 
       <div className="flex flex-col gap-3">
@@ -212,11 +219,17 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
       )}
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-        <img
-          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
-          alt={event.title}
-          className="rounded-lg border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
-        />
+        {event.imageUrl ? (
+          <img
+            src={event.imageUrl}
+            alt={event.title}
+            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
+          />
+        ) : (
+          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-[16/9]">
+            <PlaceHolderImage width={16} height={9} variant={event.type} className="scale-160 object-contain" />
+          </div>
+        )}
       </Tilt>
       <div className="flex flex-col gap-2 w-full">
         <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
