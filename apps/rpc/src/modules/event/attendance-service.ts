@@ -24,10 +24,10 @@ import {
   type UserId,
   findActiveMembership,
   getMembershipGrade,
-  hasAttendeePaid,
   isAttendable,
 } from "@dotkomonline/types"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
+import type { TurnstileServerValidationResponse } from "@marsidev/react-turnstile"
 import {
   addDays,
   addHours,
@@ -192,6 +192,7 @@ export interface AttendanceService {
     user: UserId,
     options: EventRegistrationOptions
   ): Promise<RegistrationAvailabilityResult>
+  validateTurnstileToken(turnstileToken: string): Promise<boolean>
   /**
    * Attempt to register an attendee for an event.
    *
@@ -524,6 +525,19 @@ export function getAttendanceService(
         success: true,
       }
     },
+    async validateTurnstileToken(turnstileToken: string): Promise<boolean> {
+      const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        body: `secret=${encodeURIComponent(configuration.TURNSTILE_SECRET_KEY)}&response=${encodeURIComponent(turnstileToken)}`,
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+        },
+      })
+
+      const data = (await res.json()) as TurnstileServerValidationResponse
+
+      return data.success
+    },
     async registerAttendee(
       handle,
       { user, event, attendance, pool, reservationActiveAt, bypassedChecks, membership, options, success }
@@ -699,7 +713,10 @@ export function getAttendanceService(
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      const hasPaid = hasAttendeePaid(attendance, attendee)
+      const hasPaid =
+        attendance.paymentPrice &&
+        attendance.paymentPrice !== 0 &&
+        Boolean(attendee.paymentChargedAt || (attendee.paymentRefundedAt && !attendee.paymentDeadline))
 
       if (hasPaid) {
         throw new FailedPreconditionError(

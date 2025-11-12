@@ -1,8 +1,7 @@
-"use client";
-
-import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider";
-import { useTRPC } from "@/utils/trpc/client";
-import { useFullPathname } from "@/utils/use-full-pathname";
+"use client"
+import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
+import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import {
   type Attendance,
   type AttendanceSelectionResponse,
@@ -10,42 +9,37 @@ import {
   type Punishment,
   type User,
   getAttendee,
-} from "@dotkomonline/types";
-import { Text, Title, cn } from "@dotkomonline/ui";
-import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils";
-import { IconEdit } from "@tabler/icons-react";
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import type { DeregisterReasonFormResult } from "../DeregisterModal";
-import { getAttendanceStatus } from "../attendanceStatus";
-import {
-  useDeregisterMutation,
-  useRegisterMutation,
-  useSetSelectionsOptionsMutation,
-} from "./../mutations";
-import { AttendanceDateInfo } from "./AttendanceDateInfo";
-import { EventRules } from "./EventRules";
-import { MainPoolCard } from "./MainPoolCard";
-import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox";
-import { PaymentExplanationDialog } from "./PaymentExplanationDialog";
-import { PunishmentBox } from "./PunishmentBox";
-import { RegistrationButton } from "./RegistrationButton";
-import { SelectionsForm } from "./SelectionsForm";
-import { TicketButton } from "./TicketButton";
-import { ViewAttendeesButton } from "./ViewAttendeesButton";
-import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
-import { env } from "@/env";
+} from "@dotkomonline/types"
+import { Text, Title, cn } from "@dotkomonline/ui"
+import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
+import { Turnstile } from "@marsidev/react-turnstile"
+import { IconEdit } from "@tabler/icons-react"
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useSubscription } from "@trpc/tanstack-react-query"
+import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
+import { getAttendanceStatus } from "../attendanceStatus"
+import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
+import { AttendanceDateInfo } from "./AttendanceDateInfo"
+import { EventRules } from "./EventRules"
+import { MainPoolCard } from "./MainPoolCard"
+import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
+import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
+import { PunishmentBox } from "./PunishmentBox"
+import { RegistrationButton } from "./RegistrationButton"
+import { SelectionsForm } from "./SelectionsForm"
+import { TicketButton } from "./TicketButton"
+import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
 interface AttendanceCardProps {
-  initialAttendance: Attendance;
-  initialPunishment: Punishment | null;
-  user: User | null;
-  event: Event;
-  parentEvent: Event | null;
-  parentAttendance: Attendance | null;
+  initialAttendance: Attendance
+  initialPunishment: Punishment | null
+  user: User | null
+  event: Event
+  parentEvent: Event | null
+  parentAttendance: Attendance | null
 }
 
 export const AttendanceCard = ({
@@ -55,24 +49,22 @@ export const AttendanceCard = ({
   initialPunishment,
   parentAttendance,
 }: AttendanceCardProps) => {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  const { setTRPCSSERegisterChangeConnectionState } =
-    useTRPCSSERegisterChangeConnectionState();
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
 
-  const fullPathname = useFullPathname();
+  const fullPathname = useFullPathname()
   const authorizeUrl = createAuthorizeUrl({
     connection: "FEIDE",
     redirectAfter: fullPathname,
-  });
+  })
 
-  const turnstileRef = useRef<TurnstileInstance>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileError, setTurnstileError] = useState<string | null>(null)
+  const [turnstileVisible, setTurnstileVisible] = useState(false)
 
-  const [closeToEvent, setCloseToEvent] = useState(false);
-  const [attendanceStatus, setAttendanceStatus] = useState(
-    getAttendanceStatus(initialAttendance)
-  );
+  const [closeToEvent, setCloseToEvent] = useState(false)
+  const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
 
   const [attendanceResponse, punishmentResponse] = useQueries({
     queries: [
@@ -83,9 +75,7 @@ export const AttendanceCard = ({
         {
           initialData: initialAttendance,
           enabled: Boolean(user),
-          refetchInterval: closeToEvent
-            ? secondsToMilliseconds(1)
-            : secondsToMilliseconds(60),
+          refetchInterval: closeToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
         }
       ),
       trpc.personalMark.getExpiryDateForUser.queryOptions(
@@ -98,14 +88,14 @@ export const AttendanceCard = ({
         }
       ),
     ],
-  });
+  })
 
-  const { data: attendance, isLoading: attendanceLoading } = attendanceResponse;
-  const { data: punishment, isLoading: punishmentLoading } = punishmentResponse;
+  const { data: attendance, isLoading: attendanceLoading } = attendanceResponse
+  const { data: punishment, isLoading: punishmentLoading } = punishmentResponse
 
   useEffect(() => {
-    setAttendanceStatus(getAttendanceStatus(attendance));
-  }, [attendance]);
+    setAttendanceStatus(getAttendanceStatus(attendance))
+  }, [attendance])
 
   useSubscription(
     trpc.event.attendance.onRegisterChange.subscriptionOptions(
@@ -114,7 +104,7 @@ export const AttendanceCard = ({
       },
       {
         onConnectionStateChange: (state) => {
-          setTRPCSSERegisterChangeConnectionState(state.state);
+          setTRPCSSERegisterChangeConnectionState(state.state)
         },
         onData: ({ status, attendee }) => {
           // If the attendee is not the current user, we can update the state
@@ -124,41 +114,33 @@ export const AttendanceCard = ({
             }).queryKey,
             (oldData) => {
               if (!oldData) {
-                return oldData;
+                return oldData
               }
 
               if (status === "deregistered") {
                 return {
                   ...oldData,
-                  attendees: oldData.attendees.filter(
-                    (oldAttendee) => oldAttendee.id !== attendee.id
-                  ),
-                };
+                  attendees: oldData.attendees.filter((oldAttendee) => oldAttendee.id !== attendee.id),
+                }
               }
 
-              if (
-                oldData.attendees.some(
-                  (oldAttendee) => oldAttendee.id === attendee.id
-                )
-              ) {
-                console.warn(
-                  "Attendee already exists in the list, not updating state."
-                );
-                return oldData;
+              if (oldData.attendees.some((oldAttendee) => oldAttendee.id === attendee.id)) {
+                console.warn("Attendee already exists in the list, not updating state.")
+                return oldData
               }
 
               return {
                 ...oldData,
                 attendees: [...oldData.attendees, attendee],
-              };
+              }
             }
-          );
+          )
         },
       }
     )
-  );
+  )
 
-  const attendee = getAttendee(attendance, user);
+  const attendee = getAttendee(attendance, user)
 
   const { data: chargeScheduleDate } = useQuery(
     trpc.event.attendance.findChargeAttendeeScheduleDate.queryOptions(
@@ -167,67 +149,65 @@ export const AttendanceCard = ({
       },
       { enabled: Boolean(attendee?.id) && Boolean(attendance.attendancePrice) }
     )
-  );
+  )
 
   useEffect(() => {
     // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
     // right before even open (as if we don't have enough already)
     // const attendanceEventDateTimes = [attendance.registerStart, attendance.registerEnd, attendance.deregisterDeadline, attendee?.paymentDeadline]
-    const attendanceEventDateTimes = [attendee?.paymentDeadline];
+    const attendanceEventDateTimes = [attendee?.paymentDeadline]
     setCloseToEvent(
-      attendanceEventDateTimes.some(
-        (date) => date && Math.abs(differenceInSeconds(date, new Date())) < 60
-      )
-    );
+      attendanceEventDateTimes.some((date) => date && Math.abs(differenceInSeconds(date, new Date())) < 60)
+    )
     // }, [attendance, attendee])
-  }, [attendee]);
+  }, [attendee])
 
-  const [attendeeListOpen, setAttendeeListOpen] = useState(false);
+  const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
-  const registerMutation = useRegisterMutation();
-  const deregisterMutation = useDeregisterMutation();
-  const selectionsMutation = useSetSelectionsOptionsMutation();
+  const registerMutation = useRegisterMutation()
+  const deregisterMutation = useDeregisterMutation()
+  const selectionsMutation = useSetSelectionsOptionsMutation()
 
   const handleSelectionChange = (selections: AttendanceSelectionResponse[]) => {
     if (!attendee) {
-      return;
+      return
     }
 
     selectionsMutation.mutate({
       attendeeId: attendee.id,
       options: selections,
-    });
-  };
+    })
+  }
 
   const registerForAttendance = () => {
-    if (!token) {
-      alert("Please verify you are human first.");
-      return;
+    if (!turnstileToken) {
+      setTurnstileError("CAPTCHA ble ikke godkjent. Refresh siden og prøv igjen.")
+      return
     }
-    registerMutation.mutate({ attendanceId: attendance.id });
-  };
-  const deregisterForAttendance = (
-    deregisterReason: DeregisterReasonFormResult
-  ) => {
+
+    setTurnstileError(null)
+
+    registerMutation.mutate({
+      attendanceId: attendance.id,
+      turnstileToken,
+    })
+  }
+
+  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
     deregisterMutation.mutate({
       attendanceId: attendance.id,
       deregisterReason,
-    });
-  };
+    })
+  }
 
-  const isLoading =
-    attendanceLoading ||
-    punishmentLoading ||
-    deregisterMutation.isPending ||
-    registerMutation.isPending;
+  const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
 
-  const hasPunishment =
-    punishment && (punishment.delay > 0 || punishment.suspended);
+  const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
 
   if (isBefore(getCurrentUTC(), attendance.registerStart)) {
     setTimeout(() => {
-      setAttendanceStatus("Open");
-    }, attendance.registerStart.getTime() - new Date().getTime());
+      setAttendanceStatus("Open")
+    }, attendance.registerStart.getTime() - new Date().getTime())
   }
 
   return (
@@ -235,14 +215,8 @@ export const AttendanceCard = ({
       <Title element="h2" size="lg">
         Påmelding
       </Title>
-      <AttendanceDateInfo
-        attendance={attendance}
-        attendee={attendee}
-        chargeScheduleDate={chargeScheduleDate}
-      />
-      {punishment && hasPunishment && !attendee && (
-        <PunishmentBox punishment={punishment} />
-      )}
+      <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+      {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
       <MainPoolCard
         attendance={attendance}
         user={user}
@@ -276,8 +250,13 @@ export const AttendanceCard = ({
       </div>
 
       <Turnstile
-        siteKey={env.TURNSTILE_SITE_KEY}
-        options={{ appearance: "always" }}
+        style={{ display: turnstileVisible ? "flex" : "hidden" }}
+        siteKey={"0x4AAAAAABu6CgmuG63-w5SP"}
+        options={{ appearance: "interaction-only", size: "flexible" }}
+        onSuccess={(token) => setTurnstileToken(token)}
+        onExpire={() => setTurnstileToken(null)}
+        onBeforeInteractive={() => setTurnstileVisible(true)}
+        onAfterInteractive={() => setTurnstileVisible(false)}
       />
 
       <RegistrationButton
@@ -291,6 +270,8 @@ export const AttendanceCard = ({
         isLoading={isLoading}
         chargeScheduleDate={chargeScheduleDate ?? null}
       />
+
+      {turnstileError && <Text className="text-red-600">{turnstileError}</Text>}
 
       <div className="flex flex-row flex-wrap gap-4">
         <EventRules className="text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />
@@ -306,33 +287,24 @@ export const AttendanceCard = ({
         {attendance.attendancePrice && <PaymentExplanationDialog />}
       </div>
     </section>
-  );
-};
+  )
+}
 
 export const AttendanceCardSkeleton = () => {
   const skeletonText = (heightAndWidth: string) => (
-    <div
-      className={cn(
-        "h-4 bg-gray-300 dark:bg-stone-600 rounded-full animate-pulse",
-        heightAndWidth
-      )}
-    />
-  );
+    <div className={cn("h-4 bg-gray-300 dark:bg-stone-600 rounded-full animate-pulse", heightAndWidth)} />
+  )
 
   const dateInfo = () => (
     <div className="flex flex-col gap-1 w-[25%]">
       {skeletonText("w-[80%] h-5")}
       {skeletonText("w-[90%] h-5")}
     </div>
-  );
+  )
 
-  const title = skeletonText("w-[50%] h-8");
-  const card = (
-    <div className="min-h-[12rem] rounded-lg bg-gray-300 dark:bg-stone-600 animate-pulse" />
-  );
-  const button = (
-    <div className="min-h-[4rem] rounded-lg bg-gray-300 dark:bg-stone-600 animate-pulse" />
-  );
+  const title = skeletonText("w-[50%] h-8")
+  const card = <div className="min-h-[12rem] rounded-lg bg-gray-300 dark:bg-stone-600 animate-pulse" />
+  const button = <div className="min-h-[4rem] rounded-lg bg-gray-300 dark:bg-stone-600 animate-pulse" />
 
   return (
     <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800 sm:p-4 sm:rounded-xl">
@@ -352,5 +324,5 @@ export const AttendanceCardSkeleton = () => {
 
       {button}
     </section>
-  );
-};
+  )
+}
