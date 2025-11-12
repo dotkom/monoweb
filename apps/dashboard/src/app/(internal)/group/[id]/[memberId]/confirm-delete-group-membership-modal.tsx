@@ -3,7 +3,6 @@ import type { GroupMembership } from "@dotkomonline/types"
 import { useDeleteGroupMembershipMutation } from "../../mutations"
 
 export const useConfirmDeleteGroupMembershipModal = () => {
-  console.log("useConfirmDeleteGroupMembershipModal called")
   const deleteMembership = useDeleteGroupMembershipMutation()
 
   return ({ groupMembership }: { groupMembership: GroupMembership }) => {
