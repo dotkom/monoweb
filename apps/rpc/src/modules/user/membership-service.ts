@@ -1,5 +1,5 @@
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { differenceInYears, subMonths, subYears } from "date-fns"
+import { differenceInMonths, differenceInYears, subMonths, subYears } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
 import { getAcademicStart, getNextAcademicStart } from "@dotkomonline/types"
@@ -124,13 +124,14 @@ export function getMembershipService(): MembershipService {
             // If you were supposed to finish your degree this year, how far away would the semester in question be?
             // For example; if previousSemester=3 (algdat+itp+datdig), then the distance would be 2.
             const years = Math.ceil(semesterDistanceFromEnd / 2)
-            const courseEndIfProgrammeEndedThisYear = subYears(getNextAcademicStart(), years)
+            const courseEndAssumingLastYearStudent = subYears(getNextAcademicStart(), years)
 
             // INVARIANT: The course should join should exist, and it should be finished according to
             // `hasPassedPreviousSemester`.
             invariant(studentCourse !== undefined && studentCourse.finished !== undefined)
-            const distance = differenceInYears( getAcademicStart(studentCourse.finished), courseEndIfProgrammeEndedThisYear)
-            return previousSemester.semester + distance
+            const semestersSinceTaken = Math.floor(differenceInMonths(getAcademicStart(getCurrentUTC()), studentCourse.finished) / 6)
+                        const distance = Math.floor(differenceInMonths( getAcademicStart(studentCourse.finished), courseEndAssumingLastYearStudent) / 6)
+            return previousSemester.semester + (semesterDistanceFromEnd - distance)
           })
 
           // Take the mean distance for this semester
