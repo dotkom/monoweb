@@ -117,11 +117,11 @@ export function getUserService(
       estimatedStudyStart.toUTCString(),
       estimatedStudyGrade
     )
-
+   
     // NOTE: We grant memberships for at most one year at a time. If you are granted membership after new-years, you
     // will only keep the membership until the start of the next school year.
     const now = getCurrentUTC()
-    const firstAugust = new TZDate(getYear(now), 7, 1, 'Europe/Oslo')
+    const firstAugust = new TZDate(getYear(now), 7, 1, "Europe/Oslo")
     const isDueThisYear = isBefore(now, firstAugust)
     const endDate = isDueThisYear ? firstAugust : addYears(firstAugust, 1)
 
