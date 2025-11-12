@@ -58,7 +58,7 @@ export default async function App() {
 
   return (
     <section className="flex flex-col gap-16 w-full">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-10 md:gap-2">
         {julebord && julebordAttendee && (
           <AttendancePaymentOopsNotice userId={session?.sub ?? null} eventWithAttendance={julebord} />
         )}
