@@ -130,7 +130,7 @@ export function getMembershipService(): MembershipService {
             // INVARIANT: The course should join should exist, and it should be finished according to
             // `hasPassedPreviousSemester`.
             invariant(studentCourse !== undefined && studentCourse.finished !== undefined)
-            const distance = differenceInYears(courseEndIfProgrammeEndedThisYear, getAcademicStart(studentCourse.finished))
+            const distance = differenceInYears( getAcademicStart(studentCourse.finished), courseEndIfProgrammeEndedThisYear)
             return previousSemester.semester + distance
           })
 
