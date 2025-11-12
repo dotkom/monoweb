@@ -24,7 +24,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             className="rounded-xl border object-cover aspect-[16/9] md:aspect-[24/9]"
           />
         ) : (
-          <div className="rounded-xl w-full bg-gray-100 dark:bg-stone-800 object-cover aspect-[16/9] md:aspect-[24/9]">
+          <div className="rounded-xl w-full bg-gray-100 dark:bg-stone-800 object-cover overflow-hidden aspect-[16/9] md:aspect-[24/9]">
             <PlaceHolderImage
               width={16}
               height={9}

@@ -174,7 +174,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
           />
         ) : (
           <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-[16/9]">
-            <PlaceHolderImage width={16} height={9} variant={event.type} className="scale-160 object-contain" />
+            <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
           </div>
         )}
       </Tilt>
@@ -227,7 +227,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
           />
         ) : (
           <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-[16/9]">
-            <PlaceHolderImage width={16} height={9} variant={event.type} className="scale-160 object-contain" />
+            <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
           </div>
         )}
       </Tilt>

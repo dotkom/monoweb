@@ -66,8 +66,6 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, star
           ) : (
             <PlaceHolderImage
               variant={eventType}
-              width={160}
-              height={90}
               className={cn(
                 "rounded-md object-cover",
                 startInPast && "opacity-50 grayscale group-hover:grayscale-0 transition-all"
