@@ -104,22 +104,3 @@ export const useGroupMembershipTable = ({ groupMember }: Props) => {
     columns,
   })
 }
-function openConfirmDeleteModal(arg0: {
-  groupMembership: {
-    id: string
-    createdAt: Date
-    updatedAt: Date
-    userId: string
-    start: Date
-    end: Date | null
-    groupId: string
-    roles: {
-      id: string
-      name: string
-      type: "LEADER" | "PUNISHER" | "TREASURER" | "COSMETIC" | "DEPUTY_LEADER" | "TRUSTEE" | "EMAIL_ONLY"
-      groupId: string
-    }[]
-  }
-}) {
-  throw new Error("Function not implemented.")
-}
