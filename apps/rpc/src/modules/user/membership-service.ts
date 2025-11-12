@@ -134,7 +134,7 @@ export function getMembershipService(): MembershipService {
 
           // Take the mean distance for this semester
           const sum = previousSemesterDistances.reduce((acc, curr) => acc + curr, 0)
-          largestLocalSemester = (sum / previousSemesterDistances.length)
+          largestLocalSemester = Math.ceil((sum / previousSemesterDistances.length))
         }
 
         largestSemester = Math.max(largestSemester, largestLocalSemester)
