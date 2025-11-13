@@ -12,7 +12,7 @@ const dateComponent = (label: string, date: Date, time: string, showNotice?: boo
   return (
     <div className="flex flex-col gap-0">
       <div className="flex items-center sm:items-start gap-4 sm:gap-0">
-        <div className="sm:hidden pl-2">{icon}</div>
+        <div className="sm:hidden pl-2 text-gray-600 dark:text-stone-400">{icon}</div>
 
         <div className="flex flex-col">
           <Text
