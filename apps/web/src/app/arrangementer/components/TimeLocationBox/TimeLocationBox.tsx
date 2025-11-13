@@ -12,7 +12,7 @@ export const TimeLocationBox: FC<TimeLocationBoxProps> = ({ event }) => {
   return (
     <section className="flex flex-col gap-4 min-h-24 rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800 sm:p-4 sm:rounded-xl">
       <Title element="h2">Oppmøte</Title>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 pl-2 sm:pl-0">
         <TimeBox event={event} />
         <LocationBox event={event} />
       </div>
