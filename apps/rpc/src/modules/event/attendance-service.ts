@@ -564,7 +564,7 @@ export function getAttendanceService(
       // Immediate reservations go through right away, otherwise we schedule a task to handle the reservation at the
       // appropriate time. In this case, the email is sent when the reservation becomes effective.
       if (isImmediateReservation) {
-        if (attendance.attendancePrice !== null && attendance.attendancePrice >0) {
+        if (attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
           const paymentDeadline = options.immediatePayment
             ? addHours(getCurrentUTC(), 1)
             : addHours(getCurrentUTC(), 24)
