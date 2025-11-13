@@ -564,7 +564,7 @@ export function getAttendanceService(
       // Immediate reservations go through right away, otherwise we schedule a task to handle the reservation at the
       // appropriate time. In this case, the email is sent when the reservation becomes effective.
       if (isImmediateReservation) {
-        if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0) {
+        if (attendance.attendancePrice !== null && attendance.attendancePrice >0) {
           const paymentDeadline = options.immediatePayment
             ? addHours(getCurrentUTC(), 1)
             : addHours(getCurrentUTC(), 24)
@@ -674,7 +674,7 @@ export function getAttendanceService(
         attendee.paymentRefundedAt !== null ||
         attendee.paymentChargedAt !== null
 
-      if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0 && !hasExistingPayment) {
+      if (attendance.attendancePrice !== null && attendance.attendancePrice > 0 && !hasExistingPayment) {
         const paymentDeadline = addHours(getCurrentUTC(), 24)
         const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
         attendee.paymentDeadline = paymentDeadline
@@ -751,16 +751,16 @@ export function getAttendanceService(
           return
         }
 
-        if (attendee.paymentId === null && attendance.attendancePrice !== null && attendance.attendancePrice !== 0) {
+        if (attendee.paymentId === null && attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
           const paymentDeadline = addHours(getCurrentUTC(), 24)
-          const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
-          attendee.paymentDeadline = paymentDeadline
-          attendee.paymentId = payment.id
-          attendee.paymentLink = payment.url
+          const payment = await this.startAttendeePayment(handle, firstUnreservedAdjacentAttendee.id, paymentDeadline)
+          firstUnreservedAdjacentAttendee.paymentDeadline = paymentDeadline
+          firstUnreservedAdjacentAttendee.paymentId = payment.id
+          firstUnreservedAdjacentAttendee.paymentLink = payment.url
           logger.info(
             "Attendee(ID=%s,UserID=%s) has been reserved due to deregistration and given until %s UTC to pay for Event(ID=%s) at link %s",
-            attendee.id,
-            attendee.user.id,
+            firstUnreservedAdjacentAttendee.id,
+            firstUnreservedAdjacentAttendee.user.id,
             paymentDeadline.toUTCString(),
             event.id,
             payment.url
