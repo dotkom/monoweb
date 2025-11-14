@@ -22,10 +22,9 @@ import { type FC, useEffect, useRef, useState } from "react"
 import type { MenuItem, MenuLink } from "@/components/Navbar/Navbar"
 import { env } from "@/env"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { isExternal } from "../../utils/is-link-external"
 import { Hamburger } from "./Hamburger"
 import { MobileMenuCard } from "./MobileMenuCard"
-import { isExternal } from "../../utils/is-link-external"
-
 
 export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   const [open, setOpen] = useState(false)
