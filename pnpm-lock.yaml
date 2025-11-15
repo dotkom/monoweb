@@ -718,10 +718,10 @@ importers:
         version: 9.35.0(@opentelemetry/context-async-hooks@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.204.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(webpack@5.99.9)
       '@splinetool/react-spline':
         specifier: ^4.0.0
-        version: 4.1.0(@splinetool/runtime@1.10.77)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 4.1.0(@splinetool/runtime@1.10.91)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@splinetool/runtime':
         specifier: ^1.9.98
-        version: 1.10.77
+        version: 1.10.91
       '@tabler/icons-react':
         specifier: ^3.35.0
         version: 3.35.0(react@19.1.1)
@@ -4677,8 +4677,8 @@ packages:
       next:
         optional: true
 
-  '@splinetool/runtime@1.10.77':
-    resolution: {integrity: sha512-2uMy7/LDWqRsvClDDyyLZ7GbTHwCIJvhmadTRLLso4VwVNaeKrz/P9IPF71Z7HTj3mAGoavxxdKemb4bkcJxjA==}
+  '@splinetool/runtime@1.10.91':
+    resolution: {integrity: sha512-mmDzfRvO1lMKUnN7WvQeUIISEl0ylUz3D0KyM5bRaUb8t8/9UfdQoC3bWol3/xarL3uuuqYxKgdOiXgVc2UKFg==}
 
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
@@ -5567,8 +5567,8 @@ packages:
     resolution: {integrity: sha512-JMWsdF+O8Orq3EMukbUN1QfbLK9mX2CkUmQBcW2T0s8OmdAUL5LLM/6wFwSrqXzlXB13yhyK9gTKS1rIizOduQ==}
     hasBin: true
 
-  baseline-browser-mapping@2.8.27:
-    resolution: {integrity: sha512-2CXFpkjVnY2FT+B6GrSYxzYf65BJWEqz5tIRHCvNsZZ2F3CmsCB37h8SpYgKG7y9C4YAeTipIPWG7EmFmhAeXA==}
+  baseline-browser-mapping@2.8.28:
+    resolution: {integrity: sha512-gYjt7OIqdM0PcttNYP2aVrr2G0bMALkBaoehD4BuRGjAOtipg0b6wHg1yNL+s5zSnLZZrGHOw4IrND8CD+3oIQ==}
     hasBin: true
 
   bcp-47-match@2.0.3:
@@ -6199,8 +6199,8 @@ packages:
   electron-to-chromium@1.5.240:
     resolution: {integrity: sha512-OBwbZjWgrCOH+g6uJsA2/7Twpas2OlepS9uvByJjR2datRDuKGYeD+nP8lBBks2qnB7bGJNHDUx7c/YLaT3QMQ==}
 
-  electron-to-chromium@1.5.250:
-    resolution: {integrity: sha512-/5UMj9IiGDMOFBnN4i7/Ry5onJrAGSbOGo3s9FEKmwobGq6xw832ccET0CE3CkkMBZ8GJSlUIesZofpyurqDXw==}
+  electron-to-chromium@1.5.253:
+    resolution: {integrity: sha512-O0tpQ/35rrgdiGQ0/OFWhy1itmd9A6TY9uQzlqj3hKSu/aYpe7UIn5d7CU2N9myH6biZiWF3VMZVuup8pw5U9w==}
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -13254,9 +13254,9 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.10.77)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.10.91)(next@15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
-      '@splinetool/runtime': 1.10.77
+      '@splinetool/runtime': 1.10.91
       blurhash: 2.0.5
       lodash.debounce: 4.0.8
       react: 19.1.1
@@ -13266,7 +13266,7 @@ snapshots:
     optionalDependencies:
       next: 15.4.7(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
 
-  '@splinetool/runtime@1.10.77':
+  '@splinetool/runtime@1.10.91':
     dependencies:
       on-change: 4.0.2
       semver-compare: 1.0.0
@@ -13929,7 +13929,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.14
       tinyrainbow: 2.0.0
-      vitest: 3.1.4(@types/debug@4.1.12)(@types/node@22.18.6)(@vitest/ui@3.1.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.2)(msw@2.7.0(@types/node@22.18.6)(typescript@5.9.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.0)
+      vitest: 3.1.4(@types/debug@4.1.12)(@types/node@22.18.6)(@vitest/ui@3.1.4)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.7.0(@types/node@22.18.6)(typescript@5.9.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.0)
 
   '@vitest/utils@3.1.4':
     dependencies:
@@ -14208,7 +14208,7 @@ snapshots:
 
   baseline-browser-mapping@2.8.20: {}
 
-  baseline-browser-mapping@2.8.27: {}
+  baseline-browser-mapping@2.8.28: {}
 
   bcp-47-match@2.0.3: {}
 
@@ -14269,9 +14269,9 @@ snapshots:
 
   browserslist@4.28.0:
     dependencies:
-      baseline-browser-mapping: 2.8.27
+      baseline-browser-mapping: 2.8.28
       caniuse-lite: 1.0.30001754
-      electron-to-chromium: 1.5.250
+      electron-to-chromium: 1.5.253
       node-releases: 2.0.27
       update-browserslist-db: 1.1.4(browserslist@4.28.0)
 
@@ -14802,7 +14802,7 @@ snapshots:
 
   electron-to-chromium@1.5.240: {}
 
-  electron-to-chromium@1.5.250: {}
+  electron-to-chromium@1.5.253: {}
 
   emoji-regex@10.4.0: {}
 
@@ -16646,7 +16646,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      styled-jsx: 5.1.6(react@19.1.1)
+      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.4.7
       '@next/swc-darwin-x64': 15.4.7
@@ -17900,11 +17900,6 @@ snapshots:
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
-
-  styled-jsx@5.1.6(react@19.1.1):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.1.1
 
   sugarss@5.0.0(postcss@8.5.6):
     dependencies:
