@@ -6,7 +6,7 @@ import type { Icon } from "@tabler/icons-react"
 import {
   IconArticle,
   IconBolt,
-  IconBooks,
+  IconBook2,
   IconBriefcase,
   IconCalendarEvent,
   IconHeartHandshake,
@@ -75,7 +75,7 @@ const links: MenuLink[] = [
       {
         title: "Wiki",
         href: "https://wiki.online.ntnu.no/",
-        icon: IconBooks,
+        icon: IconBook2,
         description: "Onlines Wiki, brukt av hele Trondheim",
       },
     ],
