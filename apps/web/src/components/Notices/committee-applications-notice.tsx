@@ -1,8 +1,14 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { Button, Text, Title } from "@dotkomonline/ui"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowUpRight } from "@tabler/icons-react"
+import { type Interval, isWithinInterval } from "date-fns"
 
-export const CommitteeApplicationsNotice = () => {
+export const CommitteeApplicationsNotice = (interval: Interval) => {
+  if (!isWithinInterval(getCurrentUTC(), interval)) {
+    return null
+  }
+
   return (
     <Button
       element="a"
