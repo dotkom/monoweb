@@ -1,9 +1,11 @@
 import { auth } from "@/auth"
 import { JubileumNotice } from "@/components/Notices/jubileum-notice"
+import { SmallerCommitteeApplicationsNotice } from "@/components/Notices/smaller-committee-applications-notice"
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
+import { TZDate } from "@date-fns/tz"
 import {
   type Attendance,
   type Event,
@@ -59,11 +61,15 @@ export default async function App() {
 
   return (
     <section className="flex flex-col gap-16 w-full">
-      <div className="flex flex-col gap-10 md:gap-2">
+      <div className="flex flex-col gap-6">
         {julebord && julebordAttendee && (
           <AttendancePaymentOopsNotice userId={session?.sub ?? null} eventWithAttendance={julebord} />
         )}
         <JubileumNotice />
+        <SmallerCommitteeApplicationsNotice
+          start={TZDate.tz("Europe/Oslo", 2025, 10, 20, 12, 0, 0)}
+          end={TZDate.tz("Europe/Oslo", 2025, 10, 30, 23, 59, 59)}
+        />
         <OnlineHero />
       </div>
 
