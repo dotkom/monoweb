@@ -68,7 +68,7 @@ export default async function App() {
         <JubileumNotice />
         <SmallerCommitteeApplicationsNotice
           start={TZDate.tz("Europe/Oslo", 2025, 10, 20, 12, 0, 0)}
-          end={TZDate.tz("Europe/Oslo", 2025, 10, 30, 23, 59, 59)}
+          end={TZDate.tz("Europe/Oslo", 2025, 11, 1, 23, 59, 59)}
         />
         <OnlineHero />
       </div>
@@ -96,7 +96,7 @@ export default async function App() {
                   element={Link}
                   href="/arrangementer"
                   className={cn(
-                    "rounded-xl w-full h-full min-h-[6rem] text-brand-800 hover:text-black md:gap-3",
+                    "rounded-xl w-full h-full min-h-24 text-brand-800 hover:text-black md:gap-3",
                     "bg-blue-200 hover:bg-blue-100",
                     "dark:bg-brand dark:hover:bg-brand/75"
                   )}
@@ -110,7 +110,7 @@ export default async function App() {
             {/* mobile horizontal scroll */}
             <div className="md:hidden -mx-4">
               <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-                <div className="flex-shrink-0 w-[85vw] max-w-[24rem] ml-4 snap-center">
+                <div className="shrink-0 w-[85vw] max-w-[24rem] ml-4 snap-center">
                   <EventCard
                     event={featuredEvent?.event}
                     attendance={featuredEvent?.attendance}
@@ -119,7 +119,7 @@ export default async function App() {
                 </div>
 
                 {otherEvents.map(({ event, attendance }) => (
-                  <div key={event.id} className="flex-shrink-0 w-[85vw] max-w-[24rem] snap-center">
+                  <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center">
                     <EventCard event={event} attendance={attendance} userId={session?.sub ?? null} />
                   </div>
                 ))}
@@ -130,7 +130,7 @@ export default async function App() {
                       element={Link}
                       href="/arrangementer"
                       className={cn(
-                        "rounded-xl h-full min-h-[12rem] aspect-square text-brand-800 hover:text-black gap-2 mr-4",
+                        "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
                         "bg-blue-200 hover:bg-blue-100",
                         "dark:bg-brand dark:hover:bg-brand/75"
                       )}
@@ -176,10 +176,10 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
           <img
             src={event.imageUrl}
             alt={event.title}
-            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
+            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video"
           />
         ) : (
-          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-[16/9]">
+          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
             <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
           </div>
         )}
@@ -229,10 +229,10 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
           <img
             src={event.imageUrl}
             alt={event.title}
-            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
+            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video"
           />
         ) : (
-          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-[16/9]">
+          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
             <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
           </div>
         )}
