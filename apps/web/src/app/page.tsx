@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { JubileumNotice } from "@/components/Notices/jubileum-notice"
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
@@ -19,7 +20,6 @@ import { formatDate, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 import type { FC } from "react"
-import { JubileumNotice } from "./jubileum-notice"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])

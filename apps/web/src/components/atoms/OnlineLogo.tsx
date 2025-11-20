@@ -11,7 +11,7 @@ export const OnlineLogo: FC<OnlineLogoProps> = ({ className, style = "brand" }) 
   const textFill = style === "brand" ? "#0B5374" : style === "black" ? "#FFFFFF" : "#000000"
 
   return (
-    <div className={cn("aspect-[643/167]", className)}>
+    <div className={cn("aspect-643/167", className)}>
       <svg
         className="h-full"
         viewBox="0 0 643 167"
