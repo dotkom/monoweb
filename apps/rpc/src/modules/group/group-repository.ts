@@ -37,6 +37,7 @@ export interface GroupRepository {
     data: GroupMembershipWrite,
     roleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
+  deleteMembership(handle: DBHandle, id: GroupMembershipId): Promise<void>
   createRoles(handle: DBHandle, roles: GroupRoleWrite[]): Promise<GroupRole[]>
   updateRole(handle: DBHandle, id: GroupRoleId, role: Partial<GroupRoleWrite>): Promise<GroupRole>
 }
@@ -205,6 +206,13 @@ export function getGroupRepository(): GroupRepository {
       return parseOrReport(GroupMembershipSchema, {
         ...membership,
         roles: membership.roles.map((role) => role.role),
+      })
+    },
+    async deleteMembership(handle, id) {
+      await handle.groupMembership.delete({
+        where: {
+          id,
+        },
       })
     },
     async createRoles(handle, roles) {
