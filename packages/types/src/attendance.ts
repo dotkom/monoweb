@@ -1,5 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { compareAsc } from "date-fns"
+import { isBefore } from "date-fns"
 import { z } from "zod"
 import { type User, UserSchema, findActiveMembership, getMembershipGrade } from "./user"
 
@@ -97,6 +98,25 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   registerEnd: true,
   deregisterDeadline: true,
   selections: true,
+  attendancePrice: true,
+}).superRefine((val, ctx) => {
+  if (isBefore(val.registerEnd, val.registerStart)) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Påmeldingsslutt kan ikke være før påmeldingsstart",
+      path: ["registerEnd"],
+    })
+  }
+
+  if (isBefore(val.deregisterDeadline, val.registerStart)) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Avmeldingsfrist kan ikke være før påmeldingsstart",
+      path: ["deregisterDeadline"],
+    })
+  }
+
+  return true
 })
 
 export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
