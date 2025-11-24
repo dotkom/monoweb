@@ -62,7 +62,7 @@ const UserProp = (props: { label: string; value: string | number | null; icon: E
   return (
     <>
       <div className="flex flex-row gap-2 items-center">
-        <Icon className="size-5"/>
+        <Icon className="size-5" />
         <Text>{props.label}:</Text>
       </div>
       {props.value !== null ? (
