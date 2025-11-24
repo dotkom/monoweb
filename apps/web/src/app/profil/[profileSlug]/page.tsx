@@ -35,10 +35,14 @@ import {
 import { capitalizeFirstLetter, createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import {
   IconAlertTriangle,
+  IconChefHatOff,
   IconEdit,
+  IconGenderBigender,
   IconLock,
+  IconMail,
   IconNotes,
   IconNotesOff,
+  IconPhone,
   IconPhoto,
   IconPointFilled,
   IconUser,
@@ -48,29 +52,24 @@ import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { notFound, useParams, useSearchParams } from "next/navigation"
-import { useMemo } from "react"
+import { type ElementType, useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
 
-const renderUserInfo = (label: string, value: string | number | null, icon: string) => {
-  if (value === null || value === undefined) {
-    return (
-      <>
-        <div className="flex flex-row items-center gap-2">
-          <Icon icon={icon}/>
-          <Text>{label}:</Text>
-        </div>
-        <Text className="text-gray-500 dark:text-stone-400">Ingen informasjon</Text>
-      </>
-    )
-  }
+const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
+  const Icon = props.icon
+
   return (
     <>
-  <div className="flex flex-row gap-1">
-      <Icon icon={icon} className="text-lg" />
-      <Text>{label}:</Text>
-    </div>
-    <Text>{value}</Text>
+      <div className="flex flex-row gap-2 items-center">
+        <Icon className="size-5"/>
+        <Text>{props.label}:</Text>
+      </div>
+      {props.value !== null ? (
+        <Text>{props.value}</Text>
+      ) : (
+        <Text className="text-gray-500 dark:text-stone-400">Ingen informasjon</Text>
+      )}
     </>
   )
 }
@@ -340,12 +339,16 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border border-gray-200 dark:border-stone-700 rounded-xl">
           <div className="flex flex-col gap-3">
             <Title>Din bruker</Title>
-            <div className="grid grid-cols-[auto_1fr] gap-3 overflow-x-scroll sm:overflow-hidden text-sm  sm:text-base">
-              {renderUserInfo("Brukernavn", user.profileSlug, "tabler:user")}
-              {renderUserInfo("E-post", user.email, "tabler:mail")}
-              {renderUserInfo("Kjønn", user.gender || "Ikke oppgitt", "tabler:gender-bigender")}
-              {renderUserInfo("Telefon", user.phone, "tabler:phone")}
-              {renderUserInfo("Kostholdsrestriksjoner", user.dietaryRestrictions || "Ingen kostholdsrestriksjoner", "tabler:chef-hat-off")}
+            <div className="grid grid-cols-[auto_1fr] items-start gap-3 overflow-x-scroll sm:overflow-hidden text-sm  sm:text-base">
+              <UserProp label="Brukernavn" value={user.profileSlug} icon={IconUser} />
+              <UserProp label="E-post" value={user.email} icon={IconMail} />
+              <UserProp label="Kjønn" value={user.gender || "Ikke oppgitt"} icon={IconGenderBigender} />
+              <UserProp label="Telefon" value={user.phone} icon={IconPhone} />
+              <UserProp
+                label="Kostholdsrestriksjoner"
+                value={user.dietaryRestrictions || "Ingen kostholdsrestriksjoner"}
+                icon={IconChefHatOff}
+              />
             </div>
           </div>
 
