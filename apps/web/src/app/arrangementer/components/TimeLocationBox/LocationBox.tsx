@@ -1,5 +1,5 @@
 import type { Event } from "@dotkomonline/types"
-import { Text } from "@dotkomonline/ui"
+import { cn, Text } from "@dotkomonline/ui"
 import { IconMapPin } from "@tabler/icons-react"
 import type { FC } from "react"
 import { LocationLink } from "./LocationLink"
@@ -17,11 +17,13 @@ export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
 
   return (
     <section className="flex flex-row gap-4 items-center">
-      <IconMapPin className="size-6 text-gray-600 dark:text-stone-400" />
+      <IconMapPin className="shrink-0 size-6 text-gray-600 dark:text-stone-400" />
 
       <div className="flex flex-col grow justify-center">
         {locationTitle && <Text>{locationTitle}</Text>}
-        {locationAddress && <Text className="text-gray-600 dark:text-stone-400">{locationAddress}</Text>}
+        {locationAddress && (
+          <Text className={cn(locationTitle && "text-gray-600 dark:text-stone-400")}>{locationAddress}</Text>
+        )}
       </div>
 
       {locationLink && <LocationLink link={locationLink} />}
