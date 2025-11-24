@@ -339,7 +339,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border border-gray-200 dark:border-stone-700 rounded-xl">
           <div className="flex flex-col gap-3">
             <Title>Din bruker</Title>
-            <div className="grid grid-cols-[auto_1fr] items-start gap-3 overflow-x-scroll sm:overflow-hidden text-sm  sm:text-base">
+            <div className="grid grid-cols-[auto_1fr] items-start gap-3 overflow-x-scroll sm:overflow-hidden text-sm sm:text-base">
               <UserProp label="Brukernavn" value={user.profileSlug} icon={IconUser} />
               <UserProp label="E-post" value={user.email} icon={IconMail} />
               <UserProp label="Kjønn" value={user.gender || "Ikke oppgitt"} icon={IconGenderBigender} />
