@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef, FC } from "react"
+import type { ReactNode } from "react"
 import { cn } from "../../utils"
 import { Text } from "../Typography/Text"
-import type { ReactNode } from "react"
 
 export type TextInputProps = ComponentPropsWithRef<"input"> & {
   placeholder?: string
@@ -32,11 +32,12 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
         </Text>
       )}
 
-      {description && (typeof description === "string" || typeof description === "number" ? (
-        <Text className="text-gray-500 dark:text-stone-400 text-xs">
-          {description}
-        </Text>
-      ) : description)}
+      {description &&
+        (typeof description === "string" || typeof description === "number" ? (
+          <Text className="text-gray-500 dark:text-stone-400 text-xs">{description}</Text>
+        ) : (
+          description
+        ))}
 
       <Text
         element="input"
