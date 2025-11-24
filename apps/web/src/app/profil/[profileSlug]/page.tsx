@@ -43,20 +43,26 @@ import { useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
 
-const renderUserInfo = (label: string, value: string | number | null) => {
+const renderUserInfo = (label: string, value: string | number | null, icon: string) => {
   if (value === null || value === undefined) {
     return (
-      <div className="flex flex-row gap-1 items-center">
-        <Text>{label}:</Text>
+      <>
+        <div className="flex flex-row items-center gap-2">
+          <Icon icon={icon}/>
+          <Text>{label}:</Text>
+        </div>
         <Text className="text-gray-500 dark:text-stone-400">Ingen informasjon</Text>
-      </div>
+      </>
     )
   }
   return (
-    <div className="flex flex-row gap-1 items-center">
+    <>
+  <div className="flex flex-row gap-1">
+      <Icon icon={icon} className="text-lg" />
       <Text>{label}:</Text>
-      <Text>{value}</Text>
     </div>
+    <Text>{value}</Text>
+    </>
   )
 }
 
@@ -328,14 +334,12 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border border-gray-200 dark:border-stone-700 rounded-xl">
           <div className="flex flex-col gap-3">
             <Title>Din bruker</Title>
-            <div className="flex flex-row gap-8">
-              <div className="flex flex-col gap-2">
-                {renderUserInfo("Brukernavn", user.profileSlug)}
-                {renderUserInfo("E-post", user.email)}
-                {renderUserInfo("Kjønn", user.gender || "Ikke oppgitt")}
-                {renderUserInfo("Telefon", user.phone)}
-                {renderUserInfo("Kostholdsrestriksjoner", user.dietaryRestrictions || "Ingen kostholdsrestriksjoner")}
-              </div>
+            <div className="grid grid-cols-[auto_1fr] gap-3 overflow-x-scroll sm:overflow-hidden text-sm  sm:text-base">
+              {renderUserInfo("Brukernavn", user.profileSlug, "tabler:user")}
+              {renderUserInfo("E-post", user.email, "tabler:mail")}
+              {renderUserInfo("Kjønn", user.gender || "Ikke oppgitt", "tabler:gender-bigender")}
+              {renderUserInfo("Telefon", user.phone, "tabler:phone")}
+              {renderUserInfo("Kostholdsrestriksjoner", user.dietaryRestrictions || "Ingen kostholdsrestriksjoner", "tabler:chef-hat-off")}
             </div>
           </div>
 
