@@ -2,39 +2,34 @@
 
 import {
   type EventFilterQuery,
-  EventFilterQuerySchema,
   EventSchema,
+  type EventType,
   EventTypeSchema,
   type Group,
+  type GroupId,
   GroupSchema,
   mapEventTypeToLabel,
 } from "@dotkomonline/types"
 import {
+  Checkbox,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   Label,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  RadioGroup,
+  RadioGroupItem,
   TextInput,
+  cn,
 } from "@dotkomonline/ui"
+import { IconCheck, IconChevronDown, IconSearch } from "@tabler/icons-react"
 import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
-import { useDebounce } from "use-debounce"
 import { z } from "zod"
 import { type EventListViewMode, EventListViewModeSchema } from "./EventList"
 
-const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.Values).map((type) => ({
-  value: type,
-  label: mapEventTypeToLabel(type),
-}))
-
-const FormSchema = EventFilterQuerySchema.pick({
-  bySearchTerm: true,
-}).extend({
-  byType: EventSchema.shape.type.or(z.literal("ALL")),
-  byOrganizingGroup: GroupSchema.shape.slug,
+const FormSchema = z.object({
+  byType: z.array(EventSchema.shape.type),
+  byOrganizingGroup: z.array(GroupSchema.shape.slug),
   viewMode: EventListViewModeSchema,
 })
 
@@ -43,70 +38,119 @@ type FormValues = z.infer<typeof FormSchema>
 interface Props {
   onChange(filters: EventFilterQuery, viewMode: EventListViewMode): void
   groups: Group[]
+  typeFilters: EventType[]
+  groupFilters: GroupId[]
+  viewMode: EventListViewMode
+  isStaff: boolean
 }
 
-export const EventFilters = ({ onChange, groups }: Props) => {
+export const EventFilters = ({ onChange, groups, typeFilters, groupFilters, viewMode, isStaff }: Props) => {
   const form = useForm<FormValues>({
-    defaultValues: {
-      bySearchTerm: "",
-      byType: "ALL",
-      byOrganizingGroup: "ALL",
-      viewMode: "ATTENDANCE",
+    values: {
+      byType: typeFilters,
+      byOrganizingGroup: groupFilters,
+      viewMode: viewMode,
     },
   })
   const data = useWatch({ control: form.control }) as FormValues
-  const [debouncedData] = useDebounce(data, 300)
 
   useEffect(() => {
-    handleSubmit(debouncedData)
-  }, [debouncedData])
+    handleSubmit(data)
+  }, [data])
 
   const handleSubmit = (values: FormValues) => {
     onChange(
       {
-        bySearchTerm: values.bySearchTerm,
-        byType: values.byType !== "ALL" ? [values.byType] : [],
-        byOrganizingGroup: values.byOrganizingGroup !== "ALL" ? [values.byOrganizingGroup] : [],
+        byType: values.byType.length > 0 ? values.byType : undefined,
+        byOrganizingGroup: values.byOrganizingGroup.length > 0 ? values.byOrganizingGroup : undefined,
       },
       values.viewMode
     )
   }
 
+  const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.Values)
+    .filter((type) => isStaff || type !== "INTERNAL")
+    .map((type) => ({
+      value: type,
+      label: mapEventTypeToLabel(type),
+    }))
+
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1 md:gap-1.5">
-        <Label htmlFor="bySearchTerm" className="text-gray-500 dark:text-stone-500">
-          Søk
-        </Label>
-        <TextInput placeholder="Søk etter arrangementer..." {...form.register("bySearchTerm")} id="bySearchTerm" />
-      </div>
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-6 max-w-sm mx-auto">
+      <Controller
+        control={form.control}
+        name="viewMode"
+        render={({ field: { onChange, value } }) => (
+          <div className="flex flex-col gap-1 md:gap-1.5">
+            <Label htmlFor="viewMode" className="text-gray-500 font-medium dark:text-stone-400 pointer-events-none">
+              Sorter
+            </Label>
+            <RadioGroup className="pt-2 pl-1 flex md:flex-col gap-6 md:gap-2" value={value} onValueChange={onChange}>
+              <div className="flex items-center gap-3">
+                <RadioGroupItem value="ATTENDANCE" id="r1" />
+                <Label htmlFor="r1">Påmelding</Label>
+              </div>
+              <div className="flex items-center gap-3">
+                <RadioGroupItem value="CHRONOLOGICAL" id="r2" />
+                <Label htmlFor="r2">Kronologisk</Label>
+              </div>
+            </RadioGroup>
+          </div>
+        )}
+      />
 
       <Controller
         control={form.control}
         name="byType"
         render={({ field: { onChange, value } }) => (
           <div className="flex flex-col gap-1 md:gap-1.5">
-            <Label htmlFor="byType" className="text-gray-500 dark:text-stone-500">
-              Type
-            </Label>
-            <Select value={value} onValueChange={onChange}>
-              <SelectTrigger id="byType">
-                <SelectValue />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="ALL" key="ALL">
-                    Alle
-                  </SelectItem>
+            <Collapsible defaultOpen={true}>
+              <CollapsibleTrigger
+                className={cn(
+                  "cursor-pointer w-full flex items-center justify-between gap-2 py-1 font-medium text-gray-500",
+                  "[&[data-state=open]>svg]:rotate-180",
+                  "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Label>Kategori</Label>
+                  {value.length > 0 && (
+                    <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
+                      {value.length}
+                    </span>
+                  )}
+                </div>
+                <IconChevronDown className="size-[1.25em] transition-transform" />
+              </CollapsibleTrigger>
+              <CollapsibleContent
+                className={cn(
+                  "overflow-hidden",
+                  "data-[state=open]:animate-collapsible-down",
+                  "data-[state=closed]:animate-collapsible-up"
+                )}
+              >
+                <div className="flex flex-col gap-2 pt-2">
                   {EVENT_TYPE_OPTIONS.map((type) => (
-                    <SelectItem value={type.value} key={type.value}>
-                      {type.label}
-                    </SelectItem>
+                    <div key={type.value} className="flex items-center gap-3">
+                      <Checkbox
+                        id={`type-${type.value}`}
+                        checked={value.includes(type.value)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            onChange([...value, type.value])
+                          } else {
+                            onChange(value.filter((v) => v !== type.value))
+                          }
+                        }}
+                      />
+                      <Label htmlFor={`type-${type.value}`} className="cursor-pointer font-normal">
+                        {type.label}
+                      </Label>
+                    </div>
                   ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         )}
       />
@@ -116,34 +160,7 @@ export const EventFilters = ({ onChange, groups }: Props) => {
         name="byOrganizingGroup"
         render={({ field: { onChange, value } }) => (
           <div className="flex flex-col gap-1 md:gap-1.5">
-            <Label htmlFor="byOrganizingGroup" className="text-gray-500 dark:text-stone-500">
-              Arrangør
-            </Label>
-            <GroupSelect onChange={onChange} groups={groups} value={value} />
-          </div>
-        )}
-      />
-
-      <Controller
-        control={form.control}
-        name="viewMode"
-        render={({ field: { onChange, value } }) => (
-          <div className="flex flex-col gap-1 md:gap-1.5">
-            <Label htmlFor="viewMode" className="text-gray-500 dark:text-stone-500">
-              Sorter
-            </Label>
-            <Select value={value} onValueChange={onChange}>
-              <SelectTrigger id="viewMode">
-                <SelectValue />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="ATTENDANCE">Påmelding</SelectItem>
-                  <SelectItem value="CHRONOLOGICAL">Kronologisk</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <CollapsibleGroupSelect onChange={onChange} groups={groups} value={value} />
           </div>
         )}
       />
@@ -151,13 +168,13 @@ export const EventFilters = ({ onChange, groups }: Props) => {
   )
 }
 
-const GroupSelect = ({
+const CollapsibleGroupSelect = ({
   value,
   onChange,
   groups,
 }: {
-  value?: string
-  onChange: (value: string | undefined) => void
+  value: string[]
+  onChange: (value: string[]) => void
   groups: Group[]
 }) => {
   const [search, setSearch] = useState("")
@@ -165,43 +182,82 @@ const GroupSelect = ({
   const filtered = useMemo(() => {
     const searchValue = search.trim().toLowerCase()
 
-    return groups.filter((group) => group.slug === value || group.abbreviation.toLowerCase().includes(searchValue))
+    return groups.filter(
+      (group) => value.includes(group.slug) || group.abbreviation.toLowerCase().includes(searchValue)
+    )
   }, [search, groups, value])
 
-  const handleOpenChange = (open: boolean) => {
-    if (open) {
-      setSearch("")
+  const handleToggle = (slug: string) => {
+    if (value.includes(slug)) {
+      onChange(value.filter((v) => v !== slug))
+    } else {
+      onChange([...value, slug])
     }
   }
 
   return (
-    <Select value={value} onValueChange={(val) => onChange(val)} onOpenChange={handleOpenChange}>
-      <SelectTrigger id="byOrganizingGroup">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent className="max-h-72" hideScrollUpButton>
-        <div
-          className="sticky top-0 z-10 -translate-y-1 p-2
-               bg-white dark:bg-stone-800
-               border-b border-gray-200 dark:border-stone-700"
+    <div className="flex flex-col gap-1">
+      <Collapsible className="w-full flex flex-col gap-2">
+        <CollapsibleTrigger
+          className={cn(
+            "cursor-pointer w-full flex items-center justify-between gap-2 py-1 font-medium text-gray-500",
+            "[&[data-state=open]>svg]:rotate-180",
+            "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+          )}
         >
-          <TextInput
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => e.stopPropagation()}
-            placeholder="Søk…"
-          />
-        </div>
+          <div className="flex items-center gap-2">
+            <Label>Arrangør</Label>
+            {value.length > 0 && (
+              <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
+                {value.length}
+              </span>
+            )}
+          </div>
+          <IconChevronDown className="size-[1.25em] transition-transform" />
+        </CollapsibleTrigger>
 
-        <SelectGroup>
-          <SelectItem value="ALL">Alle</SelectItem>
-          {filtered.map((group) => (
-            <SelectItem key={group.slug} value={group.slug}>
-              {group.abbreviation}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+        <CollapsibleContent
+          className={cn(
+            "overflow-hidden",
+            "data-[state=open]:animate-collapsible-down",
+            "data-[state=closed]:animate-collapsible-up"
+          )}
+        >
+          <div className="relative flex flex-col border border-gray-200 dark:border-stone-700 rounded-xl">
+            <div className="relative m-0.5">
+              <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
+              <TextInput
+                className="pl-10 text-base md:text-sm border-none dark:bg-transparent"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Søk etter arrangør…"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1 md:max-h-60 overflow-y-auto p-2 border-t border-gray-200 dark:border-stone-700">
+              {filtered.map((group) => {
+                const isSelected = value.includes(group.slug)
+                return (
+                  <button
+                    key={group.slug}
+                    type="button"
+                    onClick={() => handleToggle(group.slug)}
+                    className={cn(
+                      "flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors",
+                      isSelected
+                        ? "bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100"
+                        : "hover:bg-gray-100 dark:hover:bg-stone-800"
+                    )}
+                  >
+                    <span>{group.abbreviation}</span>
+                    {isSelected && <IconCheck className="size-4" />}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </div>
   )
 }

@@ -11,17 +11,17 @@ import {
   getUnreservedAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/types"
+import { Stripes, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import {
-  Icon,
-  Stripes,
-  Text,
-  Title,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  cn,
-} from "@dotkomonline/ui"
+  IconArrowForward,
+  IconArrowUpRight,
+  IconCheck,
+  IconClock,
+  IconClockHour2,
+  IconCoins,
+  IconUserX,
+  IconX,
+} from "@tabler/icons-react"
 import {
   formatDate,
   formatDistanceToNowStrict,
@@ -74,7 +74,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
           <div className="flex flex-row gap-1 items-center">
             <Text>Logg inn</Text>
-            <Icon icon="tabler:arrow-up-right" className="text-base" />
+            <IconArrowUpRight className="size-[1.25em]" />
           </div>
 
           {attendance.attendancePrice && attendance.attendancePrice > 0 && (
@@ -98,7 +98,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
           <div className="flex gap-[0.5ch] text-sm">
             <Text>Gå til</Text>
             <Link href="/profil" className="flex items-center text-blue-800 dark:text-blue-400 hover:underline">
-              <Text>profilsiden</Text> <Icon icon="tabler:arrow-up-right" className="text-base" />
+              <Text>profilsiden</Text> <IconArrowUpRight className="size-[1.25em]" />
             </Link>
             <Text>for å registrere deg</Text>
           </div>
@@ -225,12 +225,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
                     {paymentCountdownText}
                   </Text>
                 </div>
-                <Icon
-                  icon="tabler:arrow-up-right"
-                  height={32}
-                  width={32}
-                  className="[@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0"
-                />
+                <IconArrowUpRight className="size-[1.25em] [@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0" />
               </div>
             </Stripes>
 
@@ -266,7 +261,7 @@ const DelayPill = ({ mergeDelayHours, className }: DelayPillProps) => {
           <div
             className={cn("flex items-center gap-0.5 px-1 rounded-md bg-gray-300/50 dark:bg-stone-600/75", className)}
           >
-            <Icon icon="tabler:clock" className="text-sm" />
+            <IconClock className="size-[1.25em]" />
             <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
           </div>
         </TooltipTrigger>
@@ -287,7 +282,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
   if (!attendee) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:user-x" size={16} />
+        <IconUserX className="size-[1.25em]" />
         <Text>Du er ikke påmeldt</Text>
       </div>
     )
@@ -296,7 +291,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
   if (attendee.reserved === true) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:check" size={16} className="text-green-700 dark:text-green-400" />
+        <IconCheck className="size-[1.25em] text-green-700 dark:text-green-400" />
         <Text>Du er påmeldt</Text>
       </div>
     )
@@ -306,7 +301,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
 
   return (
     <div className="flex flex-row items-center gap-2">
-      <Icon icon="tabler:clock-hour-2" size={16} className="dark:text-indigo-400" />
+      <IconClockHour2 className="size-[1.25em] dark:text-indigo-400" />
       <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
     </div>
   )
@@ -328,7 +323,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   if (!attendee) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:coins" size={16} />
+        <IconCoins className="size-[1.25em]" />
         <Text>{attendance.attendancePrice} kr</Text>
       </div>
     )
@@ -337,7 +332,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   if (!hasPaid) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:x" size={16} className="text-red-700 dark:text-red-400" />
+        <IconX className="size-[1.25em] text-red-700 dark:text-red-400" />
         <Text>{attendance.attendancePrice} kr ubetalt</Text>
       </div>
     )
@@ -346,7 +341,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   if (attendee.paymentChargedAt) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:check" size={16} className="text-green-700 dark:text-green-400" />
+        <IconCheck className="size-[1.25em] text-green-700 dark:text-green-400" />
         <Text>Du har betalt {attendance.attendancePrice} kr</Text>
       </div>
     )
@@ -355,7 +350,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   if (attendee.paymentReservedAt) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:check" size={16} className="text-green-700 dark:text-green-400" />
+        <IconCheck className="size-[1.25em] text-green-700 dark:text-green-400" />
 
         <div className="flex flex-col gap-0 items-start">
           <Text>Du har reservert {attendance.attendancePrice} kr</Text>
@@ -374,7 +369,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   if (attendee.paymentRefundedAt) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <Icon icon="tabler:arrow-forward" size={16} />
+        <IconArrowForward className="size-[1.25em]" />
         <Text>Du er refundert {attendance.attendancePrice} kr</Text>
       </div>
     )
@@ -393,7 +388,7 @@ const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
           <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:clock-hour-2" size={16} />
+            <IconClockHour2 className="size-[1.25em]" />
             <Text>{formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse</Text>
           </div>
         </TooltipTrigger>

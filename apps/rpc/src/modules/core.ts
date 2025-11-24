@@ -37,7 +37,6 @@ import { getMarkRepository } from "./mark/mark-repository"
 import { getMarkService } from "./mark/mark-service"
 import { getPersonalMarkRepository } from "./mark/personal-mark-repository"
 import { getPersonalMarkService } from "./mark/personal-mark-service"
-import { getNTNUStudyplanRepository } from "./ntnu-study-plan/ntnu-study-plan-repository"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
 import { getPaymentProductsService } from "./payment/payment-products-service"
@@ -50,8 +49,7 @@ import { getLocalTaskExecutor } from "./task/task-executor"
 import { getTaskRepository } from "./task/task-repository"
 import { getLocalTaskSchedulingService } from "./task/task-scheduling-service"
 import { getTaskService } from "./task/task-service"
-import { getNotificationPermissionsRepository } from "./user/notification-permissions-repository"
-import { getPrivacyPermissionsRepository } from "./user/privacy-permissions-repository"
+import { getMembershipService } from "./user/membership-service"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
@@ -157,28 +155,24 @@ export async function createServiceLayer(
   const attendanceRepository = getAttendanceRepository()
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
-  const privacyPermissionsRepository = getPrivacyPermissionsRepository()
-  const notificationPermissionsRepository = getNotificationPermissionsRepository()
   const offlineRepository = getOfflineRepository()
   const auditLogRepository = getAuditLogRepository()
   const articleRepository = getArticleRepository()
   const articleTagRepository = getArticleTagRepository()
   const articleTagLinkRepository = getArticleTagLinkRepository()
   const feideGroupsRepository = getFeideGroupsRepository()
-  const ntnuStudyplanRepository = getNTNUStudyplanRepository()
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
 
+  const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
     ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
     : getEmptyEmailService()
   const userService = getUserService(
     userRepository,
-    privacyPermissionsRepository,
-    notificationPermissionsRepository,
     feideGroupsRepository,
-    ntnuStudyplanRepository,
     clients.auth0Client,
+    membershipService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
@@ -191,7 +185,13 @@ export async function createServiceLayer(
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const auditLogService = getAuditLogService(auditLogRepository)
   const eventService = getEventService(eventRepository)
-  const feedbackFormService = getFeedbackFormService(feedbackFormRepository, taskSchedulingService, eventService)
+  const feedbackFormService = getFeedbackFormService(
+    feedbackFormRepository,
+    feedbackFormAnswerRepository,
+    taskSchedulingService,
+    eventService,
+    attendanceRepository
+  )
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
@@ -244,6 +244,7 @@ export async function createServiceLayer(
     attendanceService,
     taskService,
     taskExecutor,
+    taskSchedulingService,
     feedbackFormService,
     feedbackFormAnswerService,
     authorizationService,

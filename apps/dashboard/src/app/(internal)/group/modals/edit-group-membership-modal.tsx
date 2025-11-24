@@ -1,4 +1,5 @@
 import type { GroupMembership } from "@dotkomonline/types"
+import { Stack, Text } from "@mantine/core"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useGroupMembershipForm } from "../[id]/[memberId]/group-membership-form"
@@ -11,7 +12,11 @@ export const EditGroupMembershipModal: FC<ContextModalProps<{ groupMembership: G
 }) => {
   const close = () => context.closeModal(id)
   const update = useUpdateGroupMembershipMutation()
+
+  const membershipIsActive = groupMembership.end === null
+
   const FormComponent = useGroupMembershipForm({
+    allowEditEndDate: !membershipIsActive,
     groupId: groupMembership.groupId,
     defaultValues: {
       roleIds: groupMembership.roles.map((role) => role.id),
@@ -31,7 +36,17 @@ export const EditGroupMembershipModal: FC<ContextModalProps<{ groupMembership: G
       close()
     },
   })
-  return <FormComponent />
+  return (
+    <Stack>
+      {membershipIsActive && (
+        <Text c="red" size="md">
+          Kun rediger aktivt medlemskap hvis noe er feil. For å legge til nye roller, avslutt nåværende og lag nytt
+          medlemskap.
+        </Text>
+      )}
+      <FormComponent />
+    </Stack>
+  )
 }
 
 export const useEditGroupMembershipModal =
@@ -39,7 +54,7 @@ export const useEditGroupMembershipModal =
   ({ groupMembership }: { groupMembership: GroupMembership }) => {
     return modals.openContextModal({
       modal: "group/membership/update",
-      title: "Endre tidligere medlemskap",
+      title: "Endre medlemskap",
       innerProps: { groupMembership },
     })
   }

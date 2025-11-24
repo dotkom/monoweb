@@ -1,32 +1,46 @@
 "use client"
 
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
-import { type Attendance, getAttendanceCapacity, getReservedAttendeeCount } from "@dotkomonline/types"
-import { Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { useCountdown } from "@/utils/use-countdown"
+import {
+  type Attendance,
+  type Attendee,
+  getAttendanceCapacity,
+  getReservedAttendeeCount,
+  hasAttendeePaid,
+} from "@dotkomonline/types"
+import { Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
+import { interval, isWithinInterval } from "date-fns"
 import { formatDistanceToNowStrict, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 
 interface EventListItemAttendanceStatusProps {
   attendance: Attendance
-  reservedStatus: boolean | null
+  attendee: Attendee | null
   eventEndInPast: boolean
 }
 
-export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
-  attendance,
-  reservedStatus,
-  eventEndInPast,
-}) => {
+export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ attendance, attendee, eventEndInPast }) => {
   const attendanceStatus = getAttendanceStatus(attendance)
-  const isReserved = reservedStatus === true
-  const isUnreserved = reservedStatus === false
+  const isReserved = attendee?.reserved === true
+  const isUnreserved = attendee?.reserved === false
   const numberOfAttendees = getReservedAttendeeCount(attendance)
   const capacity = getAttendanceCapacity(attendance)
 
   const showLock =
     !eventEndInPast &&
     (isReserved || isUnreserved ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "Closed")
+
+  const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null)
+  const paymentCountdownInterval =
+    attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
+  const isWithinPaymentCountdown =
+    paymentCountdownInterval && hasAttendeePaid(attendance, attendee) === false
+      ? isWithinInterval(new Date(), paymentCountdownInterval)
+      : false
+  const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null
 
   const hasCapacity = capacity > 0
 
@@ -38,10 +52,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           "text-gray-600 dark:text-stone-300 group-hover:text-gray-800 dark:group-hover:text-stone-400"
       )}
     >
-      <Icon
-        icon="tabler:users"
-        className={cn("text-sm md:text-base", !eventEndInPast && "text-gray-800 dark:text-stone-400")}
-      />
+      <IconUsers className={cn("size-4", !eventEndInPast && "text-gray-800 dark:text-stone-400")} />
 
       <div className="flex flex-row gap-1">
         <div
@@ -58,25 +69,37 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             {hasCapacity && `/${capacity}`}
           </Text>
 
-          {isReserved ? (
-            <Icon icon="tabler:check" className="text-sm" />
-          ) : isUnreserved ? (
-            <Icon icon="tabler:clock" className="text-sm" />
-          ) : null}
+          {isReserved ? <IconCheck className="size-4" /> : isUnreserved ? <IconClock className="size-4" /> : null}
         </div>
 
         {showLock && (
           <TooltipProvider>
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
-                <div
-                  className={cn("px-1 rounded-md", "bg-gray-100 dark:bg-stone-700 text-gray-700 dark:text-stone-200")}
-                >
-                  <Icon icon="tabler:lock" className="text-sm" />
+                <div className="px-1 rounded-md bg-gray-100 dark:bg-stone-700 text-gray-700 dark:text-stone-200">
+                  <IconLock className="size-4" />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
                 <Text>{isReserved || isUnreserved ? "Avmeldingsfristen er utgått" : "Påmeldingen er avsluttet"}</Text>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+
+        {showPaymentCountdown && (
+          <TooltipProvider>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <div className="flex flex-row gap-1 items-center px-1 rounded-md text-red-800 bg-red-100 dark:text-red-200 dark:bg-red-950">
+                  <IconClockDollar className="size-4" />
+                  <Text className="text-xs md:text-sm tabular-nums" suppressHydrationWarning>
+                    {paymentCountdownText}
+                  </Text>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <Text>Du har ikke betalt for arrangementet.</Text>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

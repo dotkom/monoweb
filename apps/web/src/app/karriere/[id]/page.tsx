@@ -1,6 +1,14 @@
 import { server } from "@/utils/trpc/server"
 import type { Company, JobListing, JobListingEmployment } from "@dotkomonline/types"
-import { Button, Icon, RichText, Text, Title } from "@dotkomonline/ui"
+import { Button, RichText, Text, Title } from "@dotkomonline/ui"
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconArrowUpRight,
+  IconBriefcase,
+  IconClock,
+  IconWorld,
+} from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -27,7 +35,7 @@ const JobListingPage = async ({ params }: JobListingProps) => {
         variant="text"
         element={Link}
         href="/karriere"
-        icon={<Icon icon="tabler:arrow-left" className="text-lg" />}
+        icon={<IconArrowLeft className="size-5" />}
         className="w-fit"
       >
         Andre muligheter
@@ -72,17 +80,17 @@ const ApplicationInfoBox = ({ jobListing }: ApplicationInfoBoxProps) => {
       <Title size="md">Stillingsinformasjon</Title>
 
       <div className="flex flex-row gap-2 items-center">
-        <Icon icon="tabler:world" width={20} height={20} />
+        <IconWorld width={20} height={20} />
         <Text>{locationNames}</Text>
       </div>
 
       <div className="flex flex-row gap-2 items-center">
-        <Icon icon="tabler:clock" width={20} height={20} />
+        <IconClock width={20} height={20} />
         <Deadline jobListing={jobListing} />
       </div>
 
       <div className="flex flex-row gap-2 items-center">
-        <Icon icon="tabler:briefcase" width={20} height={20} />
+        <IconBriefcase width={20} height={20} />
         <EmploymentType employment={jobListing.employment} />
       </div>
     </div>
@@ -110,7 +118,7 @@ const CompanyBox = ({ company }: CompanyBoxProps) => {
       <Link href={`/bedrifter/${company.slug}`} className="pb-4 px-6 pt-3 rounded-b-2xl bg-gray-200 dark:bg-stone-500">
         <div className="flex flex-row gap-1 items-center mx-auto w-fit">
           <Text>Se bedriften</Text>
-          <Icon icon="tabler:arrow-up-right" />
+          <IconArrowRight className="size-5" />
         </div>
       </Link>
     </div>
@@ -165,7 +173,7 @@ const ApplyButton = ({ jobListing }: ApplyButtonProps) => {
 
     return (
       <Button color="brand" element={Link} href={href} className="min-h-[6rem]">
-        {text} {<Icon icon={"tabler:arrow-up-right"} />}
+        {text} {<IconArrowUpRight />}
       </Button>
     )
   }

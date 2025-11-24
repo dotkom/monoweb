@@ -12,11 +12,12 @@ export interface EventListItemProps {
   event: Event
   attendance: Attendance | null
   userId: string | null
+  className?: string
 }
 
-export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userId }: EventListItemProps) => {
+export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userId, className }: EventListItemProps) => {
   const { id, title, type, imageUrl: customImageUrl } = event
-  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+  const attendee = attendance?.attendees.find((attendee) => attendee.user.id === userId) ?? null
 
   const past = isPast(event.end)
 
@@ -27,7 +28,8 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
         // [calc(100%+1rem)] is to offset the -mx-2
         "group flex flex-row gap-3 w-[calc(100%+1rem)] rounded-xl p-2 -mx-2 last:-mb-2",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
-        past && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300"
+        past && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300",
+        className
       )}
     >
       <Thumbnail imageUrl={customImageUrl} alt={title} startInPast={past} eventType={type} />
@@ -42,9 +44,7 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
         <div className="flex flex-col gap-2">
           <DateAndTime start={event.start} end={event.end} />
 
-          {attendance && (
-            <AttendanceStatus attendance={attendance} reservedStatus={reservedStatus} eventEndInPast={past} />
-          )}
+          {attendance && <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={past} />}
         </div>
       </div>
     </Link>
@@ -53,7 +53,7 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
 
 export const EventListItemSkeleton: FC = () => {
   return (
-    <div className="flex flex-row gap-2 w-full rounded-lg py-2 pl-2">
+    <div className="flex flex-row gap-4 w-full rounded-lg py-2">
       <div className="aspect-[4/3] h-[6rem] bg-gray-300 dark:bg-stone-600 rounded-lg animate-pulse" />
 
       <div className="flex flex-col gap-4 w-full">

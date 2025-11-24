@@ -4,8 +4,9 @@ import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { UserWrite } from "@dotkomonline/types"
-import { Button, Icon, Title } from "@dotkomonline/ui"
+import { Button, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { IconArrowLeft } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { redirect } from "next/navigation"
@@ -67,7 +68,7 @@ const EditProfilePage = () => {
         <Button
           element={Link}
           href={`/profil/${user.profileSlug}`}
-          icon={<Icon icon="tabler:arrow-left" />}
+          icon={<IconArrowLeft className="size-5" />}
           className="w-fit"
         >
           Til profil

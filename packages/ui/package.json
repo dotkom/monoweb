@@ -15,7 +15,6 @@
     "@floating-ui/react": "^0.27.16",
     "@fontsource/figtree": "^5.2.8",
     "@fontsource/inter": "^5.2.6",
-    "@iconify-icon/react": "^2.0.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -32,6 +31,7 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "@tabler/icons-react": "^3.35.0",
     "clsx": "^2.0.0",
     "cva": "npm:class-variance-authority@^0.7.0",
     "isomorphic-dompurify": "^2.24.0",
@@ -39,7 +39,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-parallax-tilt": "^1.7.299",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "vaul": "^1.1.2"
   },
   "peerDependencies": {
     "next": "^15"
@@ -48,10 +49,10 @@
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
     "@ladle/react": "5.1.0",
-    "@tailwindcss/postcss": "4.1.14",
+    "@tailwindcss/postcss": "4.1.16",
     "@types/react": "19.1.14",
     "postcss": "8.5.6",
-    "tailwindcss": "4.1.14",
+    "tailwindcss": "4.1.16",
     "typescript": "5.9.3",
     "vite": "6.4.1",
     "vitest": "3.1.4"

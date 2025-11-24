@@ -9,7 +9,8 @@ import type {
   FeedbackQuestion,
 } from "@dotkomonline/types"
 
-import { Icon, Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
+import { Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
+import { IconCalendarEvent, IconSchool } from "@tabler/icons-react"
 import { formatDate, isSameDay } from "date-fns"
 import { type ChartValue, FeedbackAnswerCard, QuestionPieChart } from "./FeedbackAnswerCard"
 
@@ -49,11 +50,11 @@ export const FeedbackResults = ({ questions, answers, attendees, event, pools, p
         </Title>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">
-            <Icon icon="tabler:calendar-event" className="text-gray-800 dark:text-stone-300" />
+            <IconCalendarEvent className="text-gray-800 dark:text-stone-300" width={16} height={16} />
             <Text className="text-gray-800 dark:text-stone-300">{eventDate}</Text>
           </div>
           <div className="flex items-center gap-1">
-            <Icon icon="tabler:school" className="text-gray-800 dark:text-stone-300" />
+            <IconSchool className="text-gray-800 dark:text-stone-300" width={16} height={16} />
             <Text className="text-gray-800 dark:text-stone-300">{formattedYears}</Text>
           </div>
         </div>

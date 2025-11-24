@@ -1,18 +1,27 @@
 import { auth } from "@/auth"
+import { JubileumNotice } from "@/components/Notices/jubileum-notice"
+import { SmallerCommitteeApplicationsNotice } from "@/components/Notices/smaller-committee-applications-notice"
+import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
+import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Event } from "@dotkomonline/types"
+import { TZDate } from "@date-fns/tz"
+import {
+  type Attendance,
+  type Event,
+  type EventWithAttendance,
+  type UserId,
+  hasAttendeePaid,
+} from "@dotkomonline/types"
 import { RichText, cn } from "@dotkomonline/ui"
-import { Icon, Text, Tilt, Title } from "@dotkomonline/ui"
+import { Text, Tilt, Title } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { formatDate } from "date-fns"
+import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
+import { formatDate, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
-import { cookies as getCookies } from "next/headers"
 import Link from "next/link"
 import type { FC } from "react"
-import { ConstructionNotice } from "./construction-notice"
-import { JubileumNotice } from "./jubileum-notice"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
@@ -33,14 +42,34 @@ export default async function App() {
   const featuredEvent = events[0] ?? null
   const otherEvents = events.slice(1)
 
-  const cookies = await getCookies()
-  const constructionNoticeShown = cookies.get("hide-construction-notice")?.value !== "1"
+  // DELETE THIS START
+  const julebordEventId = "4e0868e4-ed79-428e-a340-4ceb82bf5497"
+  const julebord = await server.event.find.query(julebordEventId)
+  const julebordAttendee =
+    julebord?.event && julebord.attendance
+      ? julebord.attendance.attendees.find((attendee) => {
+          if (!julebord.attendance) return false // typescript geeking
+
+          const isUser = attendee.user.id === session?.sub
+          const hasNotPaid = hasAttendeePaid(julebord.attendance, attendee) === false
+          const eventIsInFuture = isFuture(julebord.event.start)
+
+          return isUser && hasNotPaid && eventIsInFuture
+        })
+      : undefined
+  // END DELETE
 
   return (
     <section className="flex flex-col gap-16 w-full">
-      <div className="flex flex-col gap-4">
-        {constructionNoticeShown && <ConstructionNotice />}
+      <div className="flex flex-col gap-6">
+        {julebord && julebordAttendee && (
+          <AttendancePaymentOopsNotice userId={session?.sub ?? null} eventWithAttendance={julebord} />
+        )}
         <JubileumNotice />
+        <SmallerCommitteeApplicationsNotice
+          start={TZDate.tz("Europe/Oslo", 2025, 10, 20, 12, 0, 0)}
+          end={TZDate.tz("Europe/Oslo", 2025, 11, 1, 23, 59, 59)}
+        />
         <OnlineHero />
       </div>
 
@@ -67,11 +96,11 @@ export default async function App() {
                   element={Link}
                   href="/arrangementer"
                   className={cn(
-                    "rounded-xl w-full h-full min-h-[6rem] text-brand-800 hover:text-black md:gap-3",
+                    "rounded-xl w-full h-full min-h-24 text-brand-800 hover:text-black md:gap-3",
                     "bg-blue-200 hover:bg-blue-100",
                     "dark:bg-brand dark:hover:bg-brand/75"
                   )}
-                  iconRight={<Icon icon="tabler:arrow-right" className="md:text-2xl" />}
+                  iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
                 >
                   <Text className="md:text-xl">Se alle</Text>
                 </Button>
@@ -81,7 +110,7 @@ export default async function App() {
             {/* mobile horizontal scroll */}
             <div className="md:hidden -mx-4">
               <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-                <div className="flex-shrink-0 w-[85vw] max-w-[24rem] ml-4 snap-center">
+                <div className="shrink-0 w-[85vw] max-w-[24rem] ml-4 snap-center">
                   <EventCard
                     event={featuredEvent?.event}
                     attendance={featuredEvent?.attendance}
@@ -90,7 +119,7 @@ export default async function App() {
                 </div>
 
                 {otherEvents.map(({ event, attendance }) => (
-                  <div key={event.id} className="flex-shrink-0 w-[85vw] max-w-[24rem] snap-center">
+                  <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center">
                     <EventCard event={event} attendance={attendance} userId={session?.sub ?? null} />
                   </div>
                 ))}
@@ -101,11 +130,11 @@ export default async function App() {
                       element={Link}
                       href="/arrangementer"
                       className={cn(
-                        "rounded-xl h-full min-h-[12rem] aspect-square text-brand-800 hover:text-black gap-2 mr-4",
+                        "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
                         "bg-blue-200 hover:bg-blue-100",
                         "dark:bg-brand dark:hover:bg-brand/75"
                       )}
-                      iconRight={<Icon icon="tabler:arrow-right" className="text-xl" />}
+                      iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
                     >
                       <Text className="text-lg">Se alle</Text>
                     </Button>
@@ -143,11 +172,17 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
       )}
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-        <img
-          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
-          alt={event.title}
-          className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-[16/9]"
-        />
+        {event.imageUrl ? (
+          <img
+            src={event.imageUrl}
+            alt={event.title}
+            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video"
+          />
+        ) : (
+          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
+            <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
+          </div>
+        )}
       </Tilt>
 
       <div className="flex flex-col gap-3">
@@ -157,7 +192,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-row gap-2 items-center">
-            <Icon icon="tabler:calendar-event" className="text-xl text-gray-500 dark:text-stone-500" />
+            <IconCalendarEvent className="size-5 text-gray-500 dark:text-stone-500" />
             <Text className="text-lg">{formatDate(event.start, "dd. MMM", { locale: nb })}</Text>
           </div>
           <div className="max-md:hidden">
@@ -190,11 +225,17 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
       )}
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-        <img
-          src={event.imageUrl ? event.imageUrl : "/placeholder.svg"}
-          alt={event.title}
-          className="rounded-lg border border-gray-200 dark:border-stone-700 object-cover aspect-[16/9]"
-        />
+        {event.imageUrl ? (
+          <img
+            src={event.imageUrl}
+            alt={event.title}
+            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video"
+          />
+        ) : (
+          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
+            <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
+          </div>
+        )}
       </Tilt>
       <div className="flex flex-col gap-2 w-full">
         <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
@@ -202,10 +243,43 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
         </Title>
 
         <div className="flex flex-row gap-2 items-center">
-          <Icon icon="tabler:calendar-event" className="text-base text-gray-800 dark:text-stone-400" />
+          <IconCalendarEvent className="size-5 text-gray-800 dark:text-stone-400" />
           <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
         </div>
       </div>
     </Link>
+  )
+}
+
+function AttendancePaymentOopsNotice({
+  userId,
+  eventWithAttendance,
+}: { userId: UserId | null; eventWithAttendance: EventWithAttendance }) {
+  return (
+    <div className="w-full p-6 text-white bg-red-600 rounded-2xl">
+      <div className="flex flex-col gap-4 w-fit">
+        <Text className="text-sm text-red-200">Oops. Dotkom har klusset med betaling igjen :(</Text>
+        <Text className="text-2xl text-red-50 font-bold">Du må gjennomføre en betaling på nytt!</Text>
+
+        <div className="bg-white dark:bg-stone-950 p-2 rounded-xl text-black dark:text-white">
+          <EventListItem
+            userId={userId}
+            event={eventWithAttendance.event}
+            attendance={eventWithAttendance.attendance}
+            className="-mt-2"
+          />
+        </div>
+
+        <Text className="text-sm text-red-200">
+          Du skal bare trukket <span className="underline">én</span> gang! Selv om du tidligere har betalt.
+          <br />
+          Dersom du allerede har blitt trukket fra kontoen eller har et beløp reservert og ser denne meldingen, ta
+          kontakt.
+        </Text>
+        <Text className="text-sm text-red-200">
+          Kontakt dotkom@online.ntnu.no og arrangør dersom det oppstår problemer.
+        </Text>
+      </div>
+    </div>
   )
 }

@@ -1,9 +1,9 @@
 "use client"
 
 import { Label } from "@radix-ui/react-label"
+import { IconEyeCheck, IconEyeOff } from "@tabler/icons-react"
 import { cva } from "cva"
 import { type ComponentPropsWithRef, type FC, useState } from "react"
-import { Icon } from "../Icon/Icon"
 
 export type PasswordInputProps = ComponentPropsWithRef<"input"> & {
   placeholder?: string
@@ -38,11 +38,11 @@ export const PasswordInput: FC<PasswordInputProps> = ({
         <input type={InputType} {...props} ref={ref} className={input({ error: Boolean(error) })} />
         <div>
           <span className={eye({ color: eyeColor })}>
-            <Icon
-              width={24}
-              icon={visible ? "tabler:eye-check" : "tabler:eye-off"}
-              onClick={() => setVisible((visibility) => !visibility)}
-            />
+            {visible ? (
+              <IconEyeCheck className="size-6" onClick={() => setVisible((visibility) => !visibility)} />
+            ) : (
+              <IconEyeOff className="size-6" onClick={() => setVisible((visibility) => !visibility)} />
+            )}
           </span>
         </div>
       </div>

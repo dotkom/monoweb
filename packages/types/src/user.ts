@@ -1,7 +1,7 @@
 import type { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { differenceInYears, isAfter, setMonth, startOfMonth } from "date-fns"
+import { addYears, differenceInYears, isAfter, isBefore, setMonth, startOfMonth } from "date-fns"
 import { z } from "zod"
 import { buildSearchFilter } from "./filters"
 
@@ -109,7 +109,8 @@ export function getMembershipGrade(membership: Membership): 1 | 2 | 3 | 4 | 5 | 
     case "MASTER_STUDENT": {
       // Master students must be clamped at 4-5 because they can only be in their first or second year, but are always
       // considered to have a bachelor's degree from beforehand.
-      return Math.max(4, Math.min(5, delta)) as 4 | 5
+      const yearsGivenBachelors = delta + 3
+      return Math.max(4, Math.min(5, yearsGivenBachelors)) as 4 | 5
     }
     case "OTHER":
       return null
@@ -152,4 +153,11 @@ export function getSpecializationName(specialization: MembershipSpecialization) 
 export function getAcademicStart(date: TZDate | Date): TZDate {
   // August is the 8th month, so we set the month to 7 (0-indexed)
   return startOfMonth(setMonth(date, 7))
+}
+
+export function getNextAcademicStart(): TZDate {
+  const now = getCurrentUTC()
+  const firstAugust = getAcademicStart(getCurrentUTC())
+  const isBeforeAugust = isBefore(now, firstAugust)
+  return isBeforeAugust ? firstAugust : addYears(firstAugust, 1)
 }

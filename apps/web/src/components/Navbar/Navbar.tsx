@@ -1,5 +1,20 @@
+"use client"
+
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { env } from "@/env"
+import type { Icon } from "@tabler/icons-react"
+import {
+  IconArticle,
+  IconBolt,
+  IconBook2,
+  IconBriefcase,
+  IconCalendarEvent,
+  IconHeartHandshake,
+  IconMessage,
+  IconNews,
+  IconReceipt,
+  IconUsers,
+} from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
 import { MainNavigation } from "./MainNavigation"
@@ -9,27 +24,32 @@ import { ProfileMenu } from "./ProfileMenu"
 export type MenuItem = {
   title: string
   href: string
-  icon: string
+  icon: Icon
   description?: string
+  highlighted?: boolean
 }
 
 export type MenuLink =
   | MenuItem
   | {
       title: string
+      icon?: Icon
       items: MenuItem[]
+      highlighted?: false // renderes a card on mobile menu
     }
 
 const links: MenuLink[] = [
   {
     title: "Arrangementer",
     href: "/arrangementer",
-    icon: "tabler:calendar-event",
+    icon: IconCalendarEvent,
+    highlighted: true,
   },
   {
     title: "Jobbannonser",
     href: "/karriere",
-    icon: "tabler:briefcase",
+    icon: IconBriefcase,
+    highlighted: true,
   },
   {
     title: "Om oss",
@@ -37,25 +57,25 @@ const links: MenuLink[] = [
       {
         title: "Komiteer og grupper",
         href: "/grupper",
-        icon: "tabler:users",
+        icon: IconUsers,
         description: "Informasjon om de ulike komiteene og gruppene i Online",
       },
       {
         title: "Interessegrupper",
         href: "/interessegrupper",
-        icon: "tabler:users",
+        icon: IconUsers,
         description: "Er du medlem av en interessegruppe? Sjekk de ut her!",
       },
       {
         title: "Om Linjeforeningen",
         href: "/om-linjeforeningen",
-        icon: "tabler:bolt",
+        icon: IconBolt,
         description: "Informasjon om linjeforeningen Online.",
       },
       {
         title: "Wiki",
         href: "https://wiki.online.ntnu.no/",
-        icon: "tabler:books",
+        icon: IconBook2,
         description: "Onlines Wiki, brukt av hele Trondheim",
       },
     ],
@@ -66,19 +86,19 @@ const links: MenuLink[] = [
       {
         title: "Offline",
         href: "/offline",
-        icon: "tabler:news",
+        icon: IconNews,
         description: "Onlines egne tidsskrift",
       },
       {
         title: "Artikler",
         href: "/artikler",
-        icon: "tabler:article",
+        icon: IconArticle,
         description: "Artikler skrevet for og av studenter",
       },
       {
         title: "Kvitteringskjema",
         href: "https://kvittering.online.ntnu.no/",
-        icon: "tabler:receipt",
+        icon: IconReceipt,
         description: "Har du lagt ut noe for linjeforeningen? Få refusjon her",
       },
     ],
@@ -89,19 +109,19 @@ const links: MenuLink[] = [
       {
         title: "Samarbeid med Online",
         href: "/for-bedrifter",
-        icon: "tabler:heart-handshake",
+        icon: IconHeartHandshake,
         description: "Utforsk linjeforeningens tilbud og ta kontakt",
       },
       {
         title: "Fakturaskjema",
         href: "https://faktura.online.ntnu.no/",
-        icon: "tabler:receipt",
+        icon: IconReceipt,
         description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt",
       },
       {
         title: "Interesseskjema",
         href: "https://interesse.online.ntnu.no/",
-        icon: "tabler:message",
+        icon: IconMessage,
         description: "Interessert i å vise bedriften din for studentene våre? Meld interesse!",
       },
     ],

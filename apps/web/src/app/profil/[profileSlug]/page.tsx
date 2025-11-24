@@ -21,7 +21,6 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
-  Icon,
   RadialProgress,
   ReadMore,
   RichText,
@@ -34,6 +33,16 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { capitalizeFirstLetter, createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
+import {
+  IconAlertTriangle,
+  IconEdit,
+  IconLock,
+  IconNotes,
+  IconNotesOff,
+  IconPhoto,
+  IconPointFilled,
+  IconUser,
+} from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -93,7 +102,7 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
             ) : (
               <div className="flex flex-col gap-1 text-sm">
                 <div className="flex flex-row gap-1 items-center">
-                  {!hasExpired && <Icon icon="tabler:point-filled" className="text-red-500 text-xl -mx-1" />}
+                  {!hasExpired && <IconPointFilled className="text-red-500 -mx-1" width={20} height={20} />}
                   <Text className={cn(!hasExpired && "text-lg font-medium")}>{mark.title}</Text>
                 </div>
                 <div className={cn("flex flex-row gap-2 items-center")}>
@@ -101,7 +110,7 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
                     {mark.weight} prikk{mark.weight !== 1 ? "er" : ""}
                   </Text>
 
-                  <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-400" />
+                  <IconPointFilled className="text-gray-500 dark:text-stone-400" width={16} height={16} />
 
                   <TooltipProvider>
                     <Tooltip delayDuration={100}>
@@ -144,7 +153,7 @@ const MembershipDisplay = ({
   if (activeMembership) {
     return (
       <>
-        <Icon icon="tabler:notes" className="text-2xl text-gray-500 dark:text-stone-400" />
+        <IconNotes className="text-gray-500 dark:text-stone-400" width={32} height={32} />
         <div className="flex flex-col gap-1">
           <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
           {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
@@ -160,7 +169,7 @@ const MembershipDisplay = ({
 
   return (
     <>
-      <Icon icon="tabler:notes-off" className="text-2xl text-gray-500 dark:text-stone-400" />
+      <IconNotesOff className="text-gray-500 dark:text-stone-400" width={32} height={32} />
       <Text className="text-xl">Ingen medlemskap</Text>
     </>
   )
@@ -210,10 +219,7 @@ export default function ProfilePage() {
         },
         { enabled: isLoggedIn && Boolean(user?.id) }
       ),
-      trpc.personalMark.getVisibleInformation.queryOptions(
-        { userId: user?.id ?? "" },
-        { enabled: isLoggedIn && Boolean(user?.id) }
-      ),
+      trpc.personalMark.getVisibleInformation.queryOptions({ userId: user?.id ?? "" }, { enabled: isUser }),
       trpc.event.findUnansweredByUser.queryOptions(user?.id ?? "", { enabled: isUser }),
     ],
   })
@@ -260,7 +266,7 @@ export default function ProfilePage() {
         <Avatar className="w-16 h-16 md:w-32 md:h-32">
           <AvatarImage src={user.imageUrl ?? undefined} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
-            <Icon className="text-6xl" icon="tabler:user" />
+            <IconUser width={64} height={64} />
           </AvatarFallback>
         </Avatar>
 
@@ -274,7 +280,7 @@ export default function ProfilePage() {
                 element={Link}
                 href="/innstillinger/profil"
                 color="dark"
-                icon={<Icon icon="tabler:edit" className="text-lg" />}
+                icon={<IconEdit width={20} height={20} />}
                 className="hidden gap-2 md:flex"
               >
                 Rediger profil
@@ -293,7 +299,7 @@ export default function ProfilePage() {
               <Text className="text-gray-500 dark:text-stone-400">Ingen klasseinformasjon</Text>
             )}
 
-            <Icon icon="tabler:point-filled" className="text-gray-500 dark:text-stone-400 hidden md:block" />
+            <IconPointFilled className="text-gray-500 dark:text-stone-400 hidden md:block" width={16} height={16} />
 
             {user.createdAt && (
               <TooltipProvider>
@@ -348,7 +354,7 @@ export default function ProfilePage() {
 
             {returnedFromFeide && (
               <div className="flex items-center dark:bg-red-900 bg-red-600 p-6 text-white rounded-xl gap-4">
-                <Icon icon="tabler:alert-triangle" width={36} />
+                <IconAlertTriangle width={36} height={36} />
                 <Text>
                   Vi kunne ikke bekrefte ditt medlemsskap automatisk. Dersom dette er feil ta kontakt med{" "}
                   <Link className="underline" href="/grupper/hs">
@@ -457,7 +463,7 @@ export default function ProfilePage() {
                 <Avatar className="w-14 h-14">
                   <AvatarImage src={group.imageUrl ?? undefined} />
                   <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
-                    <Icon className="text-3xl" icon="tabler:photo" />
+                    <IconPhoto width={32} height={32} />
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-0.5">
@@ -492,7 +498,7 @@ export default function ProfilePage() {
           )
         ) : (
           <div className="flex flex-row items-center gap-2 text-gray-500 dark:text-stone-400">
-            <Icon icon="tabler:lock" className="text-lg" /> <Text>Du må være innlogget for å se arrangementer.</Text>
+            <IconLock width={20} height={20} /> <Text>Du må være innlogget for å se arrangementer.</Text>
           </div>
         )}
       </div>

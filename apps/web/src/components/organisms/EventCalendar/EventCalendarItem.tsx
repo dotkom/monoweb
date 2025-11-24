@@ -1,9 +1,10 @@
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import type { EventWithAttendance } from "@dotkomonline/types"
-import { Icon, Text, Title } from "@dotkomonline/ui"
+import { type EventWithAttendance, type User, getAttendee } from "@dotkomonline/types"
+import { Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
 import { slugify } from "@dotkomonline/utils"
+import { IconClock, IconMapPin } from "@tabler/icons-react"
 import Link from "next/link"
 import { eventCategories } from "./eventTypeConfig"
 import type { EventDisplayProps } from "./types"
@@ -51,14 +52,16 @@ function getColSpanClass(span: number) {
 
 interface EventCalendarItemProps {
   eventDetail: EventWithAttendance
-  reservedStatus: boolean | null
+  user: User | null
   className?: string
   eventDisplayProps: EventDisplayProps
 }
 
-export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayProps }: EventCalendarItemProps) => {
+export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps }: EventCalendarItemProps) => {
   const { event, attendance } = eventDetail
   const isActive = new Date() < event.end
+
+  const attendee = getAttendee(eventDetail.attendance, user)
 
   const category = event.type ? eventCategories[event.type] : undefined
   const triggerClasses = category?.classes.item ?? "bg-gray-100 dark:bg-stone-800"
@@ -104,14 +107,14 @@ export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayPro
             </Title>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
-                <Icon icon="tabler:clock" width={16} height={16} />
+                <IconClock width={16} height={16} />
                 <Text element="span" className="text-sm">
                   {String(event.start.getHours()).padStart(2, "0")}:{String(event.start.getMinutes()).padStart(2, "0")}
                 </Text>
               </div>
               {event.locationTitle && (
                 <div className="flex items-center gap-1 overflow-hidden">
-                  <Icon icon="tabler:map-pin" width={16} height={16} />
+                  <IconMapPin width={16} height={16} />
                   <Text element="span" className="text-sm truncate">
                     {event.locationTitle}
                   </Text>
@@ -120,11 +123,7 @@ export const EventCalendarItem = ({ eventDetail, reservedStatus, eventDisplayPro
             </div>
             <div className="flex justify-between items-center gap-2 mt-2">
               {attendance && (
-                <AttendanceStatus
-                  attendance={attendance}
-                  reservedStatus={reservedStatus}
-                  eventEndInPast={new Date() > event.end}
-                />
+                <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={new Date() > event.end} />
               )}
               {categoryName && (
                 <div className="ml-auto">

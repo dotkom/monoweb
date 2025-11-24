@@ -1,7 +1,8 @@
+import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
-import { Button, Icon, Text, Tilt, Title } from "@dotkomonline/ui"
-import Image from "next/image"
+import { Button, Text, Tilt, Title } from "@dotkomonline/ui"
+import { IconEdit } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -11,32 +12,27 @@ interface Props {
 }
 
 export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
-  const imageUrlLight = event.imageUrl || "/placeholder.svg"
-  const imageUrlDark = event.imageUrl || "/placeholder.svg"
-
   const dashboardUrl = new URL(`/event/${event.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
   return (
     <section className="flex flex-col gap-8">
       <Tilt scale={1} tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} glareMaxOpacity={0.1}>
-        <Image
-          src={imageUrlLight}
-          alt="Banner"
-          width="0"
-          height="0"
-          sizes="100%"
-          style={{ objectFit: "cover" }}
-          className="w-full rounded-xl bg-gray-400 aspect-[16/9] md:aspect-[24/9] dark:hidden"
-        />
-        <Image
-          src={imageUrlDark}
-          alt="Banner"
-          width="0"
-          height="0"
-          sizes="100%"
-          style={{ objectFit: "cover" }}
-          className="w-full rounded-xl bg-gray-400 aspect-[16/9] md:aspect-[24/9] hidden dark:block"
-        />
+        {event.imageUrl ? (
+          <img
+            src={event.imageUrl}
+            alt={event.title}
+            className="rounded-xl object-cover aspect-[16/9] md:aspect-[24/9]"
+          />
+        ) : (
+          <div className="rounded-xl w-full bg-gray-100 dark:bg-stone-800 object-cover overflow-hidden aspect-[16/9] md:aspect-[24/9]">
+            <PlaceHolderImage
+              width={16}
+              height={9}
+              variant={event.type}
+              className="scale-160 md:scale-180 md:object-contain"
+            />
+          </div>
+        )}
       </Tilt>
 
       <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:items-center">
@@ -53,8 +49,8 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 gap-1.5"
             title="Rediger arrangement"
           >
-            <Icon icon="tabler:edit" className="text-lg md:text-2xl" />
-            <Text className="md:hidden">Dashboard</Text>
+            <IconEdit className="size-[1.25em] md:w-6 md:h-6" />
+            <Text className="md:hidden">Rediger</Text>
           </Button>
         )}
       </div>

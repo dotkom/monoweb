@@ -21,6 +21,7 @@ import { Notifications } from "@mantine/notifications"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
+import PlausibleProvider from "next-plausible"
 import type { PropsWithChildren } from "react"
 import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
@@ -84,16 +85,18 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <ColorSchemeScript defaultColorScheme="auto" />
       </head>
       <body>
-        <SessionProvider session={session}>
-          <QueryProvider>
-            <MantineProvider defaultColorScheme="auto" theme={theme}>
-              <Notifications />
-              <ModalProvider>
-                <ApplicationShell isAdmin={isAdmin}>{children}</ApplicationShell>
-              </ModalProvider>
-            </MantineProvider>
-          </QueryProvider>
-        </SessionProvider>
+        <PlausibleProvider domain="dashboard.online.ntnu.no">
+          <SessionProvider session={session}>
+            <QueryProvider>
+              <MantineProvider defaultColorScheme="auto" theme={theme}>
+                <Notifications />
+                <ModalProvider>
+                  <ApplicationShell isAdmin={isAdmin}>{children}</ApplicationShell>
+                </ModalProvider>
+              </MantineProvider>
+            </QueryProvider>
+          </SessionProvider>
+        </PlausibleProvider>
       </body>
     </html>
   )

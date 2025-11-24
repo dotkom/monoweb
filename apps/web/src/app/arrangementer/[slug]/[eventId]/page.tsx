@@ -93,9 +93,13 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: str
 
       {childEventWithAttendance.length > 0 ? (
         <Tabs defaultValue="description">
-          <TabsList>
-            <TabsTrigger value="description">Arrangement</TabsTrigger>
-            <TabsTrigger value="child-events">Underarrangementer</TabsTrigger>
+          <TabsList className="w-full sm:w-fit">
+            <TabsTrigger className="w-full sm:w-fit" value="description">
+              Arrangement
+            </TabsTrigger>
+            <TabsTrigger className="w-full sm:w-fit" value="child-events">
+              Underarrangementer
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="description" className="p-0 border-none mt-4">
@@ -149,7 +153,7 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
 
   return (
     <div className="flex w-full flex-col gap-8 md:flex-row">
-      <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
+      <div className="w-full flex flex-col gap-4 md:w-[60%]">
         {parentEvent && (
           <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-700">
             <Title element="h4" size="sm" className="text-base">
@@ -162,18 +166,18 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
         {organizers.length > 0 ? (
           <div className="flex flex-row gap-2">{organizers}</div>
         ) : (
-          <Text className="text-gray-900">Ingen arrangører</Text>
+          <Text className="text-gray-900 dark:text-stone-400">Ingen arrangører</Text>
         )}
 
         {event.description && <EventDescription description={event.description} />}
       </div>
 
-      <div className="flex flex-1 flex-col gap-8 sm:gap-4">
-        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
+      <div className="flex flex-1 flex-col gap-8 sm:gap-4 md:min-w-88 lg:min-w-104">
+        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
         <TimeLocationBox event={event} />
         {attendance !== null && (
           <>
-            <div className="sm:hidden h-1 rounded-full w-full bg-gray-200" />
+            <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
 
             <AttendanceCard
               initialAttendance={attendance}

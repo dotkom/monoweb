@@ -5,8 +5,9 @@ import { useTRPC } from "@/utils/trpc/client"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
-import { Icon, cn } from "@dotkomonline/ui"
-import { useQuery } from "@tanstack/react-query"
+import { cn } from "@dotkomonline/ui"
+import { IconLoader2 } from "@tabler/icons-react"
+import { useQueries } from "@tanstack/react-query"
 import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
@@ -33,7 +34,12 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const session = useSession()
 
   const trpc = useTRPC()
-  const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
+  const [userResult, isStaffResult] = useQueries({
+    queries: [trpc.user.findMe.queryOptions(), trpc.user.isStaff.queryOptions()],
+  })
+
+  const { data: user } = userResult
+  const { data: isStaff = false } = isStaffResult
 
   // fetch 10 days prior to first day of month as a buffer since fliter is by start date
   const calendarStart = new TZDate(year, month, 1 - 10)
@@ -69,7 +75,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
     <div className="relative">
       {isLoading && (
         <div className="z-50 absolute flex justify-center w-full h-full">
-          <Icon className="animate-spin absolute top-40" icon="tabler:loader-2" width={40} height={40} />
+          <IconLoader2 className="gray-800 dark:stone-200 animate-spin absolute top-40" width={40} height={40} />
         </div>
       )}
       <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
@@ -133,15 +139,12 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
                 {row.map(({ event, attendance, eventDisplayProps }) => {
-                  const reservedStatus =
-                    attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
-
                   return (
                     <EventCalendarItem
                       key={event.id}
                       eventDetail={{ event, attendance }}
                       eventDisplayProps={eventDisplayProps}
-                      reservedStatus={reservedStatus}
+                      user={user ?? null}
                     />
                   )
                 })}
@@ -155,7 +158,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
         <div className="flex gap-y-2 gap-x-4 text-sm p-2 sm:pl-6 flex-wrap">
           {eventTypeGuideItems.map(({ type, classes, displayName }) => (
             <span key={type} className="flex items-center">
-              <span className={cn("w-3 h-3 rounded-full mr-1", classes.guide)} />
+              <span className={cn("size-3 rounded-full mr-1", classes.guide)} />
               {displayName}
             </span>
           ))}

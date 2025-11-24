@@ -1,31 +1,7 @@
+import { IconAlertCircle, IconAlertTriangle, IconCircleCheck, IconError404, IconInfoCircle } from "@tabler/icons-react"
 import { type VariantProps, cva } from "cva"
 import type { FC } from "react"
-import { Icon } from "../../atoms/Icon/Icon"
 import { cn } from "../../utils"
-
-interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
-  className?: string
-  size?: number
-}
-
-export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => (
-  <Icon icon={iconKey(status)} width={size} className={cn(iconVariant({ status }), className)} />
-)
-
-const iconKey = (status: AlertIconProps["status"]) => {
-  switch (status) {
-    case "info":
-      return "tabler:info-circle"
-    case "success":
-      return "tabler:circle-check"
-    case "danger":
-      return "tabler:alert-circle"
-    case "warning":
-      return "tabler:alert-triangle"
-    default:
-      return "tabler:error-404"
-  }
-}
 
 const iconVariant = cva("", {
   variants: {
@@ -37,3 +13,29 @@ const iconVariant = cva("", {
     },
   },
 })
+
+interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
+  className?: string
+  size?: number
+}
+
+export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => {
+  const IconComponent = getIconComponent(status)
+
+  return <IconComponent size={size} className={cn(iconVariant({ status }), className)} />
+}
+
+const getIconComponent = (status: AlertIconProps["status"]) => {
+  switch (status) {
+    case "info":
+      return IconInfoCircle
+    case "success":
+      return IconCircleCheck
+    case "danger":
+      return IconAlertCircle
+    case "warning":
+      return IconAlertTriangle
+    default:
+      return IconError404
+  }
+}

@@ -1,7 +1,7 @@
 "use client"
 
-import { Icon } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"
 import type { FC } from "react"
 
 interface CalendarNavigationProps {
@@ -52,7 +52,7 @@ export const CalendarNavigation: FC<CalendarNavigationProps> = ({ year, month, o
           onClick={handlePreviousMonth}
           aria-label="Forrige måned"
         >
-          <Icon icon="tabler:chevron-left" width={24} height={24} />
+          <IconChevronLeft width={24} height={24} />
         </button>
         <button
           type="button"
@@ -60,7 +60,7 @@ export const CalendarNavigation: FC<CalendarNavigationProps> = ({ year, month, o
           onClick={handleNextMonth}
           aria-label="Neste måned"
         >
-          <Icon icon="tabler:chevron-right" width={24} height={24} />
+          <IconChevronRight width={24} height={24} />
         </button>
       </div>
     </div>

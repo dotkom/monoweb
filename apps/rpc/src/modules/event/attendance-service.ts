@@ -699,7 +699,7 @@ export function getAttendanceService(
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      const hasPaid = hasAttendeePaid(attendance, attendee)
+      const hasPaid = hasAttendeePaid(attendance, attendee, { excludeReservation: true })
 
       if (hasPaid) {
         throw new FailedPreconditionError(
@@ -1159,7 +1159,7 @@ export function getAttendanceService(
         }
 
         const feedbackForm = await feedbackFormService.findByEventId(handle, event.id)
-        if (!feedbackForm || !feedbackForm.isActive) {
+        if (!feedbackForm) {
           return
         }
 
