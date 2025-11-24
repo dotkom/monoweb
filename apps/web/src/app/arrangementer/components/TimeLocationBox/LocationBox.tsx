@@ -11,7 +11,7 @@ interface LocationBoxProps {
 export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
   const { locationAddress, locationTitle, locationLink } = event
 
-  if (!locationTitle) {
+  if (!locationTitle && !locationAddress) {
     return null
   }
 
@@ -20,8 +20,8 @@ export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
       <IconMapPin className="size-6 text-gray-600 dark:text-stone-400" />
 
       <div className="flex flex-col grow justify-center">
-        <Text>{locationTitle}</Text>
-        <Text>{locationAddress}</Text>
+        {locationTitle && <Text>{locationTitle}</Text>}
+        {locationAddress && <Text>{locationAddress}</Text>}
       </div>
 
       {locationLink && <LocationLink link={locationLink} />}
