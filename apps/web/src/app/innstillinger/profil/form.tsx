@@ -26,9 +26,11 @@ import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 
+type FormUserWrite = Omit<UserWrite, "workspaceUserId" | "name">
+
 interface FormProps {
   user: User
-  onSubmit: (data: Omit<UserWrite, "workspaceUserId">) => void
+  onSubmit: (data: FormUserWrite) => void
   isSaving?: boolean
   saveSuccess?: boolean
   saveError?: string | null
@@ -36,9 +38,8 @@ interface FormProps {
 }
 
 export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, resetSaveState }: FormProps) {
-  const defaultValues: Omit<UserWrite, "workspaceUserId"> = {
+  const defaultValues: FormUserWrite = {
     profileSlug: user.profileSlug,
-    name: user.name ?? null,
     email: user.email ?? null,
     imageUrl: user.imageUrl ?? null,
     biography: user.biography ?? null,
@@ -54,11 +55,11 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     setError,
     formState: { errors, isDirty },
     handleSubmit,
-  } = useForm<Omit<UserWrite, "workspaceUserId">>({
+  } = useForm<FormUserWrite>({
     defaultValues,
     mode: "onTouched",
     reValidateMode: "onBlur",
-    resolver: zodResolver(UserWriteSchema.omit({ workspaceUserId: true })),
+    resolver: zodResolver(UserWriteSchema.omit({ workspaceUserId: true, name: true })),
   })
 
   const profileSlug = useWatch({ control, name: "profileSlug" })
@@ -111,7 +112,13 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <div className="flex flex-col gap-6">
         <div className="w-full flex flex-col gap-1">
-          <TextInput label="Brukernavn" placeholder="supermann99" required {...register("profileSlug")} />
+          <TextInput
+            description={`Dette brukes i din profil-URL: https://online.ntnu.no/profil/${profileSlug || "..."}`}
+            label="Brukernavn"
+            placeholder="supermann99"
+            required
+            {...register("profileSlug")}
+          />
           {errors.profileSlug && (
             <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
               {errors.profileSlug?.message ?? "En feil oppstod"}
@@ -142,12 +149,12 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <TextInput label="Fullt navn" placeholder="Ola Nordmann" required {...register("name")} disabled />
-          {errors.name && (
-            <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-              {errors.name?.message ?? "En feil oppstod"}
-            </Text>
-          )}
+          <TextInput
+            label="Fullt navn"
+            description="Dersom dette navnet er feil, kontakt hovedstyret@online.ntnu.no."
+            value={user.name || "<Tomt navn>"}
+            disabled
+          />
         </div>
 
         <div className="w-full flex flex-col gap-1">
