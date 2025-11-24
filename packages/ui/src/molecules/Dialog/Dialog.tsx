@@ -27,7 +27,7 @@ export const AlertDialogOverlay: FC<ComponentPropsWithRef<typeof AlertDialogPrim
   return (
     <AlertDialogPrimitive.Overlay
       className={cn(
-        "animate-in fade-in bg-slate-50/50 dark:bg-slate-950/50 fixed inset-0 z-50 backdrop-blur-xs transition-opacity",
+        "animate-in fade-in bg-gray-50/50 dark:bg-stone-950/50 fixed inset-0 z-50 backdrop-blur-xs transition-opacity",
         className
       )}
       {...props}
@@ -47,7 +47,11 @@ export const AlertDialogContent: FC<AlertDialogContentProps> = ({ className, ref
       <AlertDialogPrimitive.Content
         ref={ref}
         className={cn(
-          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 bg-slate-200 dark:bg-stone-800 fixed z-50 grid w-full max-w-[95%] sm:max-w-lg scale-100 gap-4 p-6 opacity-100 rounded-lg md:w-full",
+          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0",
+          "bg-white dark:bg-stone-800 fixed z-50 drop-shadow-lg scale-100 opacity-100",
+          "flex flex-col gap-4 p-4 rounded-lg",
+          "w-full max-w-[95%] sm:max-w-2xl md:w-full",
+          "min-h-[25dvh] max-h-[75dvh] overflow-y-auto",
           className
         )}
         {...props}
@@ -103,7 +107,7 @@ export const AlertDialogCancel: FC<ComponentPropsWithRef<typeof AlertDialogPrimi
   return (
     <Button
       element={AlertDialogPrimitive.Cancel}
-      className={className}
+      className={cn("p-2", className)}
       {...props}
       variant={props.variant ?? "text"}
       size={props.size ?? "lg"}

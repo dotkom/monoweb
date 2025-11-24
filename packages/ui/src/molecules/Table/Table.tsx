@@ -34,7 +34,10 @@ export const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttribut
   ({ className, ...props }, ref) => (
     <tr
       ref={ref}
-      className={cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)}
+      className={cn(
+        "border-b border-gray-200 dark:border-stone-800 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        className
+      )}
       {...props}
     />
   )
@@ -45,7 +48,10 @@ export const TableRowDivider = React.forwardRef<HTMLTableRowElement, React.HTMLA
   ({ className, children, ...props }, ref) => (
     <tr
       ref={ref}
-      className={cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)}
+      className={cn(
+        "border-b border-gray-200 dark:border-stone-800 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        className
+      )}
       {...props}
     >
       <td className="row-span-full">{children}</td>

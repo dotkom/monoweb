@@ -84,17 +84,14 @@ export const ViewAttendeesButton = ({
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
-      <AlertDialogContent
-        className="flex flex-col gap-4 w-full p-0 bg-white dark:bg-stone-800 drop-shadow-lg sm:max-w-2xl rounded-lg"
-        onOutsideClick={() => setAttendeeListOpen(false)}
-      >
+      <AlertDialogContent className="p-0" onOutsideClick={() => setAttendeeListOpen(false)}>
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
           <AlertDialogTitle asChild>
             <Title element="h1" size="lg">
               Påmeldingsliste
             </Title>
           </AlertDialogTitle>
-          <AlertDialogCancel className="p-2">
+          <AlertDialogCancel>
             <IconX className="size-[1.25em]" />
           </AlertDialogCancel>
         </div>
@@ -130,7 +127,7 @@ interface AttendeeListProps {
 
 const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListProps) => {
   if (!attendees.length) {
-    return <Text className="text-gray-900 text-sm mx-2">Ingen påmeldte</Text>
+    return <Text className="text-gray-500 dark:text-stone-500 text-sm mx-2">Ingen påmeldte</Text>
   }
 
   return attendees.map((attendee, index) => {
