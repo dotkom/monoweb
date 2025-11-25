@@ -6,19 +6,13 @@ import { EventListItem } from "@/components/molecules/EventListItem/EventListIte
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
-import {
-  type Attendance,
-  type Event,
-  type EventWithAttendance,
-  type UserId,
-  hasAttendeePaid,
-} from "@dotkomonline/types"
+import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
 import { RichText, cn } from "@dotkomonline/ui"
 import { Text, Tilt, Title } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
-import { formatDate, isFuture } from "date-fns"
+import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 import type { FC } from "react"
@@ -42,29 +36,9 @@ export default async function App() {
   const featuredEvent = events[0] ?? null
   const otherEvents = events.slice(1)
 
-  // DELETE THIS START
-  const julebordEventId = "4e0868e4-ed79-428e-a340-4ceb82bf5497"
-  const julebord = await server.event.find.query(julebordEventId)
-  const julebordAttendee =
-    julebord?.event && julebord.attendance
-      ? julebord.attendance.attendees.find((attendee) => {
-          if (!julebord.attendance) return false // typescript geeking
-
-          const isUser = attendee.user.id === session?.sub
-          const hasNotPaid = hasAttendeePaid(julebord.attendance, attendee) === false
-          const eventIsInFuture = isFuture(julebord.event.start)
-
-          return isUser && hasNotPaid && eventIsInFuture
-        })
-      : undefined
-  // END DELETE
-
   return (
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-6">
-        {julebord && julebordAttendee && (
-          <AttendancePaymentOopsNotice userId={session?.sub ?? null} eventWithAttendance={julebord} />
-        )}
         <JubileumNotice />
         <SmallerCommitteeApplicationsNotice
           start={TZDate.tz("Europe/Oslo", 2025, 10, 20, 12, 0, 0)}
