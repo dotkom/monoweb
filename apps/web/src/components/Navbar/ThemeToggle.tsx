@@ -1,5 +1,5 @@
 import { cn } from "@dotkomonline/ui"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconDeviceDesktop, IconMoon, IconSun } from "@tabler/icons-react"
 import type { Icon } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
@@ -34,39 +34,37 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   ]
 
   return (
-    <TooltipProvider>
-      <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
-        <div
-          className="absolute top-1 bottom-1 h-8 w-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700"
-          style={{
-            transform: `translateX(${THEME_OPTIONS.findIndex((option) => option.theme === theme) * 2.25}rem)`,
-          }}
-        />
+    <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
+      <div
+        className="absolute top-1 bottom-1 h-8 w-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700"
+        style={{
+          transform: `translateX(${THEME_OPTIONS.findIndex((option) => option.theme === theme) * 2.25}rem)`,
+        }}
+      />
 
-        {THEME_OPTIONS.map((item) => {
-          const IconComponent = item.icon
-          return (
-            <Tooltip key={item.theme}>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => setTheme(item.theme)}
-                  className="relative flex items-center justify-center rounded-md transition-colors w-8 h-8"
-                >
-                  <IconComponent
-                    width={20}
-                    height={20}
-                    className="transition-colors duration-200 text-black dark:text-stone-100"
-                  />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{item.label}</p>
-              </TooltipContent>
-            </Tooltip>
-          )
-        })}
-      </div>
-    </TooltipProvider>
+      {THEME_OPTIONS.map((item) => {
+        const IconComponent = item.icon
+        return (
+          <Tooltip key={item.theme}>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={() => setTheme(item.theme)}
+                className="relative flex items-center justify-center rounded-md transition-colors w-8 h-8"
+              >
+                <IconComponent
+                  width={20}
+                  height={20}
+                  className="transition-colors duration-200 text-black dark:text-stone-100"
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{item.label}</p>
+            </TooltipContent>
+          </Tooltip>
+        )
+      })}
+    </div>
   )
 }

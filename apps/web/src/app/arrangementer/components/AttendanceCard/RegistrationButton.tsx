@@ -12,7 +12,7 @@ import {
   getAttendee,
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
-import { Button, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconLoader2, IconLock, IconUserMinus, IconUserPlus } from "@tabler/icons-react"
 import { isFuture } from "date-fns"
 import { min } from "date-fns"
@@ -188,14 +188,12 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
 
   if (disabled) {
     return (
-      <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
-          <TooltipContent sideOffset={-10}>
-            <Text>{disabledText}</Text>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip delayDuration={100}>
+        <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
+        <TooltipContent sideOffset={-10}>
+          <Text>{disabledText}</Text>
+        </TooltipContent>
+      </Tooltip>
     )
   }
 
