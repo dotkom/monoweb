@@ -158,6 +158,10 @@ const getAttendeeListEntryComponent = (attendee: Attendee) => {
     return VerifiedAttendeeListUser
   }
 
+  if (attendee.user.flags.includes("THE_THINKER")) {
+    return TheThinkerAttendeeListUser
+  }
+
   return GenericAttendeeListEntry
 }
 
@@ -253,4 +257,25 @@ const VerifiedAttendeeListUser = ({ attendee, user }: AttendeeListEntryProps) =>
       </div>
     </Link>
   )
+}
+
+const TheThinkerAttendeeListUser = ({ attendee, user }: AttendeeListEntryProps) => {
+  const userSection = (
+    <div className="flex flex-col gap-0.5 grow min-w-0">
+      <div className="flex items-center gap-3 overflow-x-auto">
+        <Text className="text-sm text-nowrap">{attendee.user.name}</Text>
+        <div className="flex items-center gap-1">
+          <img alt="TheThinker" src="https://i.imgur.com/vVIfdfi.png" className="size-3.5 rounded-sm" />
+          <Text className="text-[0.6rem] font-medium text-gray-500 dark:text-stone-500" element="span">
+            TheThinker
+          </Text>
+        </div>
+      </div>
+      <Text className="text-xs dark:text-black truncate">
+        {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
+      </Text>
+    </div>
+  )
+
+  return <GenericAttendeeListEntry attendee={attendee} user={user} userSection={userSection} />
 }
