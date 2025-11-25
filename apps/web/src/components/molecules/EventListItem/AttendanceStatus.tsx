@@ -9,7 +9,7 @@ import {
   getReservedAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/types"
-import { Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
 import { interval, isWithinInterval } from "date-fns"
 import { formatDistanceToNowStrict, isFuture } from "date-fns"
@@ -73,36 +73,32 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
         </div>
 
         {showLock && (
-          <TooltipProvider>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <div className="px-1 rounded-md bg-gray-100 dark:bg-stone-700 text-gray-700 dark:text-stone-200">
-                  <IconLock className="size-4" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <Text>{isReserved || isUnreserved ? "Avmeldingsfristen er utgått" : "Påmeldingen er avsluttet"}</Text>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <div className="px-1 rounded-md bg-gray-100 dark:bg-stone-700 text-gray-700 dark:text-stone-200">
+                <IconLock className="size-4" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <Text>{isReserved || isUnreserved ? "Avmeldingsfristen er utgått" : "Påmeldingen er avsluttet"}</Text>
+            </TooltipContent>
+          </Tooltip>
         )}
 
         {showPaymentCountdown && (
-          <TooltipProvider>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <div className="flex flex-row gap-1 items-center px-1 rounded-md text-red-800 bg-red-100 dark:text-red-200 dark:bg-red-950">
-                  <IconClockDollar className="size-4" />
-                  <Text className="text-xs md:text-sm tabular-nums" suppressHydrationWarning>
-                    {paymentCountdownText}
-                  </Text>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <Text>Du har ikke betalt for arrangementet.</Text>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <div className="flex flex-row gap-1 items-center px-1 rounded-md text-red-800 bg-red-100 dark:text-red-200 dark:bg-red-950">
+                <IconClockDollar className="size-4" />
+                <Text className="text-xs md:text-sm tabular-nums" suppressHydrationWarning>
+                  {paymentCountdownText}
+                </Text>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <Text>Du har ikke betalt for arrangementet.</Text>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
 

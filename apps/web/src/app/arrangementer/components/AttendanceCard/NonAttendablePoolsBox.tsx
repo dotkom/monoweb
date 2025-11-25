@@ -14,7 +14,6 @@ import {
   Text,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@dotkomonline/ui"
 import { IconChevronRight, IconClock } from "@tabler/icons-react"
@@ -94,18 +93,16 @@ interface DelayPillProps {
 
 const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={100}>
-        <TooltipTrigger asChild>
-          <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-gray-200 dark:bg-stone-600 text-gray-900 dark:text-stone-50">
-            <IconClock className="size-[1.25em]" />
-            <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <Text>Denne gruppen får plasser {mergeDelayHours} timer etter påmeldingsstart</Text>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip delayDuration={100}>
+      <TooltipTrigger asChild>
+        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-gray-200 dark:bg-stone-600 text-gray-900 dark:text-stone-50">
+          <IconClock className="size-[1.25em]" />
+          <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <Text>Denne gruppen får plasser {mergeDelayHours} timer etter påmeldingsstart</Text>
+      </TooltipContent>
+    </Tooltip>
   )
 }

@@ -28,7 +28,6 @@ import {
   Title,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
@@ -111,20 +110,18 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
 
                   <IconPointFilled className="text-gray-500 dark:text-stone-400" width={16} height={16} />
 
-                  <TooltipProvider>
-                    <Tooltip delayDuration={100}>
-                      <TooltipTrigger className="flex flex-row items-center gap-2">
-                        <RadialProgress percentage={percentageLeft} size={16} strokeWidth={4} reverse hideText />
+                  <Tooltip delayDuration={100}>
+                    <TooltipTrigger className="flex flex-row items-center gap-2">
+                      <RadialProgress percentage={percentageLeft} size={16} strokeWidth={4} reverse hideText />
 
-                        <Text>Utløper om {formatDistanceToNowStrict(expires)}</Text>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <Text className="text-xs text-gray-500 dark:text-stone-400">
-                          Utløper {formatDate(expires, "dd. MMMM yyyy HH:mm")}
-                        </Text>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                      <Text>Utløper om {formatDistanceToNowStrict(expires)}</Text>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <Text className="text-xs text-gray-500 dark:text-stone-400">
+                        Utløper {formatDate(expires, "dd. MMMM yyyy HH:mm")}
+                      </Text>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             )}
@@ -301,20 +298,18 @@ export default function ProfilePage() {
             <IconPointFilled className="text-gray-500 dark:text-stone-400 hidden md:block" width={16} height={16} />
 
             {user.createdAt && (
-              <TooltipProvider>
-                <Tooltip delayDuration={100}>
-                  <TooltipTrigger>
-                    <Text>
-                      {capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt, { locale: nb }))} i Online
-                    </Text>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <Text className="text-xs text-gray-500 dark:text-stone-400">
-                      Registrert {formatDate(user.createdAt, "dd. MMMM yyyy HH:mm")}
-                    </Text>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger>
+                  <Text>
+                    {capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt, { locale: nb }))} i Online
+                  </Text>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <Text className="text-xs text-gray-500 dark:text-stone-400">
+                    Registrert {formatDate(user.createdAt, "dd. MMMM yyyy HH:mm")}
+                  </Text>
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
 

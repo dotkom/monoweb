@@ -13,7 +13,6 @@ import {
   Title,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
@@ -70,14 +69,12 @@ export const ViewAttendeesButton = ({
 
   if (!user) {
     return (
-      <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>{button}</TooltipTrigger>
-          <TooltipContent sideOffset={-10}>
-            <Text>Du må være innlogget for å se påmeldte</Text>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip delayDuration={100}>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent sideOffset={-10}>
+          <Text>Du må være innlogget for å se påmeldte</Text>
+        </TooltipContent>
+      </Tooltip>
     )
   }
 

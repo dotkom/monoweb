@@ -11,7 +11,7 @@ import {
   getUnreservedAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/types"
-import { Stripes, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { Stripes, Text, Title, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import {
   IconArrowForward,
   IconArrowUpRight,
@@ -255,21 +255,17 @@ const DelayPill = ({ mergeDelayHours, className }: DelayPillProps) => {
     : "Denne påmeldingsgruppen kan få plasser senere"
 
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={100}>
-        <TooltipTrigger asChild>
-          <div
-            className={cn("flex items-center gap-0.5 px-1 rounded-md bg-gray-300/50 dark:bg-stone-600/75", className)}
-          >
-            <IconClock className="size-[1.25em]" />
-            <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent className="font-normal">
-          <Text>{content}</Text>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip delayDuration={100}>
+      <TooltipTrigger asChild>
+        <div className={cn("flex items-center gap-0.5 px-1 rounded-md bg-gray-300/50 dark:bg-stone-600/75", className)}>
+          <IconClock className="size-[1.25em]" />
+          <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent className="font-normal">
+        <Text>{content}</Text>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -384,19 +380,17 @@ interface PunishmentStatusProps {
 
 const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={100}>
-        <TooltipTrigger asChild>
-          <div className="flex flex-row gap-2 items-center">
-            <IconClockHour2 className="size-[1.25em]" />
-            <Text>{formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse</Text>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent className="font-normal">
-          Utsettelsen varer til{" "}
-          {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip delayDuration={100}>
+      <TooltipTrigger asChild>
+        <div className="flex flex-row gap-2 items-center">
+          <IconClockHour2 className="size-[1.25em]" />
+          <Text>{formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse</Text>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent className="font-normal">
+        Utsettelsen varer til{" "}
+        {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
+      </TooltipContent>
+    </Tooltip>
   )
 }

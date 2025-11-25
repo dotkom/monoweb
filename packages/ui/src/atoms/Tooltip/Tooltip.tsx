@@ -5,7 +5,13 @@ import * as React from "react"
 import { cn } from "../../utils"
 
 export const TooltipProvider = TooltipPrimitive.Provider
-export const Tooltip = TooltipPrimitive.Root
+export const Tooltip = (props: React.ComponentProps<typeof TooltipPrimitive.Root>) => {
+  return (
+    <TooltipProvider>
+      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+    </TooltipProvider>
+  )
+}
 export const TooltipTrigger = TooltipPrimitive.Trigger
 export const TooltipPortal = TooltipPrimitive.Portal
 export const TooltipArrow = TooltipPrimitive.Arrow
