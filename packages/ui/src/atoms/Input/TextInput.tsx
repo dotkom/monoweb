@@ -1,20 +1,22 @@
 import type { ComponentPropsWithRef, FC } from "react"
+import type { ReactNode } from "react"
 import { cn } from "../../utils"
 import { Text } from "../Typography/Text"
 
 export type TextInputProps = ComponentPropsWithRef<"input"> & {
   placeholder?: string
   label?: string
+  description?: ReactNode
   error?: boolean | string
   className?: string
 }
 
-export const TextInput: FC<TextInputProps> = ({ label, error, ref, className, ...props }) => {
+export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, className, ...props }) => {
   const hasError = Boolean(error)
   const hasTextError = typeof error === "string"
 
   return (
-    <div className="flex flex-col gap-1 transition-colors">
+    <div className="flex flex-col gap-3 transition-colors">
       {label && (
         <Text
           element="label"
@@ -29,6 +31,13 @@ export const TextInput: FC<TextInputProps> = ({ label, error, ref, className, ..
           )}
         </Text>
       )}
+
+      {description &&
+        (typeof description === "string" || typeof description === "number" ? (
+          <Text className="text-gray-500 dark:text-stone-400 text-xs">{description}</Text>
+        ) : (
+          description
+        ))}
 
       <Text
         element="input"

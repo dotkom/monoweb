@@ -109,11 +109,18 @@ export const userRouter = t.router({
         input: UserWriteSchema.partial(),
       })
     )
-
     .mutation(async ({ input, ctx }) => {
       ctx.authorize.requireMeOrAffiliation(input.id, ["dotkom", "hs"])
+
+      let { name, ...data } = input.input
+
+      // Only admins can change the name field
+      if (!ctx.principal.affiliations.has("dotkom") && !ctx.principal.affiliations.has("hs")) {
+        name = undefined
+      }
+
       return ctx.executeAuditedTransaction(async (handle) => {
-        return ctx.userService.update(handle, input.id, input.input)
+        return ctx.userService.update(handle, input.id, { name, ...data })
       })
     }),
   isStaff: procedure.query(async ({ ctx }) => {

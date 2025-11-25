@@ -54,7 +54,7 @@ const EditProfilePage = () => {
     )
   }
 
-  const onSubmit = (data: Omit<UserWrite, "workspaceUserId">) => {
+  const onSubmit = (data: Omit<UserWrite, "name" | "workspaceUserId">) => {
     userEdit.mutate({ id: user.id, input: data })
   }
 
