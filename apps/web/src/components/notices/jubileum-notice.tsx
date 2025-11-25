@@ -17,8 +17,8 @@ export const JubileumNotice = () => {
 
   return (
     <Link
-      href="https://jub.online.ntnu.no/"
-      className="flex flex-row items-center gap-4 p-1.5 justify-between cursor-pointer bg-gray-900 dark:bg-stone-200 rounded-lg"
+      href="/arrangementer/Online-Jubileum/d039731c-721a-4746-8950-fc125dc179ff/"
+      className="flex flex-row items-center gap-4 p-1.5 justify-between cursor-pointer bg-zinc-700 dark:bg-stone-100 rounded-lg"
     >
       <div className="flex items-center gap-2 ml-1">
         <OnlineIcon variant="dark" size={16} className="dark:hidden" />
