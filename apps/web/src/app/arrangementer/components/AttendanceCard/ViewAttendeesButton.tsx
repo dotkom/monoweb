@@ -19,6 +19,7 @@ import {
 import { IconRosetteDiscountCheckFilled, IconUser, IconUsers, IconX } from "@tabler/icons-react"
 import { compareAsc } from "date-fns"
 import Link from "next/link"
+import type { ReactNode } from "react"
 
 const getMinWidth = (maxNumberOfAttendees: number) => {
   switch (maxNumberOfAttendees.toString().length) {
@@ -131,81 +132,125 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
   }
 
   return attendees.map((attendee, index) => {
+    const UserEntry = getAttendeeListEntryComponent(attendee)
     const minWidth = getMinWidth(maxNumberOfAttendees)
-
-    const isVerified = attendee.user.flags.includes("VANITY_VERIFIED")
-    const isUser = attendee.userId === user.id
 
     return (
       <div key={attendee.id} className="flex flex-row gap-1 items-center group">
         <Text
           className={cn(
-            "text-gray-400 group-hover:text-black dark:text-stone-300 dark:group-hover:text-stone-300 text-right text-sm font-mono transition-colors",
+            "text-gray-400 group-hover:text-black dark:text-stone-500 dark:group-hover:text-stone-300",
+            "text-right text-sm font-mono transition-colors",
             minWidth
           )}
         >
           {index + 1}.
         </Text>
 
-        <Link
-          href={`/profil/${attendee.user.profileSlug}`}
-          className={cn(
-            "flex items-center gap-4 p-1.5 rounded-lg w-full transition-colors",
-            !isVerified && !isUser && "hover:bg-gray-100 dark:hover:bg-stone-700",
-            isUser && !isVerified && "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900",
-            isVerified && [
-              "bg-gradient-to-r",
-              "from-yellow-200 via-yellow-100 hover:from-yellow-300 hover:via-yellow-200 hover:to-yellow-200",
-              "dark:from-yellow-500 dark:via-yellow-600 dark:hover:from-yellow-400 dark:hover:via-yellow-500 dark:hover:to-yellow-800",
-            ]
-          )}
-        >
-          <Avatar
-            className={cn(
-              "h-10 w-10",
-              (isVerified || isUser) && "outline-2 outline-offset-1",
-              isVerified && "outline-yellow-500 dark:outline-yellow-600",
-              isUser && !isVerified && "outline-blue-500 dark:outline-sky-800"
-            )}
-          >
-            <AvatarImage src={attendee.user.imageUrl ?? undefined} />
-            <AvatarFallback
-              className={
-                isVerified
-                  ? "bg-yellow-500 dark:bg-yellow-700"
-                  : isUser
-                    ? "bg-blue-500 dark:bg-sky-800"
-                    : "bg-gray-500 dark:bg-stone-500"
-              }
-            >
-              <IconUser className="size-[1.25em]" />
-            </AvatarFallback>
-          </Avatar>
-
-          <div className="flex flex-col gap-0.5">
-            {isVerified ? (
-              <div className="flex items-center gap-1">
-                <Text className="text-sm dark:text-black">{attendee.user.name}</Text>
-                <IconRosetteDiscountCheckFilled className="size-[1.25em] text-blue-600 dark:text-sky-700" />
-              </div>
-            ) : (
-              <Text className="text-sm">{attendee.user.name}</Text>
-            )}
-            <Text
-              className={cn(
-                "text-xs",
-                isVerified
-                  ? "dark:text-black"
-                  : isUser
-                    ? "text-black dark:text-white"
-                    : "text-gray-900 dark:text-stone-300"
-              )}
-            >
-              {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
-            </Text>
-          </div>
-        </Link>
+        <UserEntry attendee={attendee} user={user} />
       </div>
     )
   })
+}
+
+const getAttendeeListEntryComponent = (attendee: Attendee) => {
+  if (attendee.user.flags.includes("VANITY_VERIFIED")) {
+    return VerifiedAttendeeListUser
+  }
+
+  return GenericAttendeeListEntry
+}
+
+interface AttendeeListEntryProps {
+  attendee: Attendee
+  user: User
+}
+
+type GenericAttendeeListEntryProps = AttendeeListEntryProps & {
+  userSection?: ReactNode
+}
+
+const GenericAttendeeListEntry = ({
+  attendee,
+  user,
+  userSection: customUserSection,
+}: GenericAttendeeListEntryProps) => {
+  const isUser = attendee.userId === user.id
+
+  const userSection = customUserSection ?? (
+    <div className="flex flex-col gap-0.5 grow min-w-0">
+      <Text className="text-sm truncate" title={attendee.user.name ?? undefined}>
+        {attendee.user.name}
+      </Text>
+      <Text
+        className={cn(
+          "text-xs truncate",
+          !isUser && "text-gray-900 dark:text-stone-300",
+          isUser && "text-black dark:text-white"
+        )}
+      >
+        {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
+      </Text>
+    </div>
+  )
+
+  return (
+    <Link
+      href={`/profil/${attendee.user.profileSlug}`}
+      className={cn(
+        "flex flex-1 min-w-0 items-center gap-4 p-1.5 rounded-lg w-full overflow-x-hidden transition-colors",
+        !isUser && "hover:bg-gray-100 dark:hover:bg-stone-700",
+        isUser && "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900"
+      )}
+    >
+      <Avatar className={cn("size-10", isUser && "outline-2 outline-blue-500 dark:outline-sky-800")}>
+        <AvatarImage src={attendee.user.imageUrl ?? undefined} />
+        <AvatarFallback className="bg-gray-500 dark:bg-stone-500">
+          <IconUser className="size-[1.25em]" />
+        </AvatarFallback>
+      </Avatar>
+
+      {userSection}
+    </Link>
+  )
+}
+
+const VerifiedAttendeeListUser = ({ attendee, user }: AttendeeListEntryProps) => {
+  return (
+    <Link
+      href={`/profil/${attendee.user.profileSlug}`}
+      className={cn(
+        "flex flex-1 min-w-0 items-center gap-4 p-1.5 rounded-lg w-full overflow-x-hidden transition-colors",
+        "bg-gradient-to-r",
+        "from-yellow-200 via-yellow-100 hover:from-yellow-300 hover:via-yellow-200 hover:to-yellow-200",
+        "dark:from-yellow-500 dark:via-yellow-600 dark:hover:from-yellow-400 dark:hover:via-yellow-500 dark:hover:to-yellow-800"
+      )}
+    >
+      <Avatar className="size-10 outline-2 outline-yellow-500 dark:outline-yellow-600">
+        <AvatarImage src={attendee.user.imageUrl ?? undefined} />
+        <AvatarFallback className="bg-yellow-500 dark:bg-yellow-700">
+          <IconUser className="size-[1.25em]" />
+        </AvatarFallback>
+      </Avatar>
+
+      <div className="flex flex-col gap-0.5 grow min-w-0">
+        <div className="flex items-center gap-2">
+          <Text className="text-sm dark:text-black truncate" title={attendee.user.name ?? undefined}>
+            {attendee.user.name}
+          </Text>
+          <Tooltip>
+            <TooltipTrigger>
+              <IconRosetteDiscountCheckFilled className="size-[1.25em] text-blue-600 dark:text-sky-700" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <Text>OW-verified</Text>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <Text className="text-xs dark:text-black truncate">
+          {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
+        </Text>
+      </div>
+    </Link>
+  )
 }
