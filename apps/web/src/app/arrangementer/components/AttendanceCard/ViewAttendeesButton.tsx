@@ -264,18 +264,24 @@ const TheThinkerAttendeeListUser = ({ attendee, user }: AttendeeListEntryProps) 
     <div className="flex flex-col gap-0.5 grow min-w-0">
       <div className="flex items-center gap-3 overflow-x-auto">
         <Text className="text-sm text-nowrap">{attendee.user.name}</Text>
-        <div className="flex items-center gap-1">
-          <img alt="TheThinker" src="https://i.imgur.com/vVIfdfi.png" className="size-3.5 rounded-sm" />
-          <Text className="text-[0.6rem] font-medium text-gray-500 dark:text-stone-500" element="span">
-            TheThinker
-          </Text>
-        </div>
+        <Tooltip delayDuration={100}>
+          <TooltipTrigger asChild>
+            <div className="flex items-center gap-1">
+              <img alt="TheThinker" src="https://i.imgur.com/vVIfdfi.png" className="size-3.5 rounded-sm" />
+              <Text className="text-[0.6rem] font-medium text-gray-500 dark:text-stone-300" element="span">
+                TheThinker
+              </Text>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <Text>"inshallah hehehe suiii" - en vis mann</Text>
+          </TooltipContent>
+        </Tooltip>
       </div>
-      <Text className="text-xs dark:text-black truncate">
-        {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
-      </Text>
+
+      <Text className="text-xs truncate">{attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}</Text>
     </div>
   )
 
-  return <GenericAttendeeListEntry attendee={attendee} user={user} userSection={userSection} />
+  return <GenericAttendeeListEntry attendee={attendee} user={{ ...user, id: "1" }} userSection={userSection} />
 }
