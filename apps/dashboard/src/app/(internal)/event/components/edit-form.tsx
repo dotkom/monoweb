@@ -4,7 +4,7 @@ import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
-import { createRichTextInput } from "@/components/forms/RichTextInput"
+import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import {

@@ -100,21 +100,28 @@ export function RichText({
     setIsExpanded((previous) => !previous)
   }
 
-  const sanitizedContent = DOMPurify.sanitize(content)
+  const sanitizedHTML = wrapTablesInDiv(DOMPurify.sanitize(content))
 
-  const richTextContent = (
+  // Prose docs:
+  // https://github.com/tailwindlabs/tailwindcss-typography
+  const RichTextContent = (
     <Text
       element="div"
       ref={contentElementRef}
       // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized
-      dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+      dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
       className={cn(
-        "prose dark:prose-invert overflow-hidden",
+        "prose dark:prose-stone dark:prose-invert overflow-hidden",
         "prose-a:text-blue-600 dark:prose-a:text-blue-300",
         "[&_ul>li::marker]:text-black dark:[&_ul>li::marker]:text-white",
         "[&_ol>li::marker]:text-black dark:[&_ol>li::marker]:text-white",
-        "prose-code:px-1 prose-code:py-0.5 prose-code:bg-black/10 prose-code:dark:bg-white/10 prose-code:rounded-md",
-        "[&_li>p]:my-0",
+        "prose-pre:p-2.5 prose-code:rounded-md prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-100 prose-pre:dark:bg-stone-800 prose-pre:dark:border-stone-700",
+        "prose-code:text-black prose-code:dark:text-white",
+        "[&_.table-wrapper]:overflow-x-auto",
+        "prose-table:prose-sm",
+        "prose-th:p-2.5 prose-th:align-top prose-th:h-fit prose-th:border prose-th:border-[var(--tw-prose-td-borders)] ",
+        "prose-td:p-2.5 prose-td:align-top prose-td:h-fit prose-td:border prose-td:border-[var(--tw-prose-td-borders)]",
+        "[&_li>p]:my-0 [&_th>p]:my-0 [&_td>p]:my-0",
         "[&_p:empty]:m-0 [&_p:empty]:before:content-[''] [&_p:empty]:before:block [&_p:empty]:before:h-3",
         className
       )}
@@ -128,12 +135,12 @@ export function RichText({
   )
 
   if (!isOverflowing || hideToggleButton) {
-    return richTextContent
+    return RichTextContent
   }
 
   return (
     <Collapsible ref={containerRef} open={isExpanded} onOpenChange={setIsExpanded}>
-      <CollapsibleContent forceMount>{richTextContent}</CollapsibleContent>
+      <CollapsibleContent forceMount>{RichTextContent}</CollapsibleContent>
       <CollapsibleTrigger
         asChild
         onClick={handleToggleExpandCollapse}
@@ -147,4 +154,9 @@ export function RichText({
       </CollapsibleTrigger>
     </Collapsible>
   )
+}
+
+/** This exists so the wrapper can be assigned overflow-x-auto whilst the table retains its original width */
+const wrapTablesInDiv = (sanitizedHtml: string) => {
+  return sanitizedHtml.replace(/<table/g, '<div class="table-wrapper"><table').replace(/<\/table>/g, "</table></div>")
 }

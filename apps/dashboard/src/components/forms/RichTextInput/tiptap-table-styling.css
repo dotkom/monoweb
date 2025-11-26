@@ -1,0 +1,56 @@
+/* Tiptap table base */
+.ProseMirror table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+}
+
+/* Cells */
+.ProseMirror td,
+.ProseMirror th {
+  border: 1px solid var(--mantine-color-default-border);
+  padding: 0.5rem;
+  vertical-align: top;
+  position: relative;
+  box-sizing: border-box;
+  min-width: 5rem;
+  line-height: var(--mantine-line-height);
+}
+
+.ProseMirror .selectedCell {
+  background-color: var(--mantine-color-blue-light-hover);
+  outline: 2px solid var(--mantine-color-blue-filled);
+  outline-offset: -1px;
+}
+
+/* Removes weird phantom spacing when hovering resize handle */
+.ProseMirror td > *,
+.ProseMirror th > * {
+  margin-bottom: 0;
+}
+
+/* Wrapper */
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+/* Resize handle */
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  transform: translateX(50%);
+  width: 3px;
+  background-color: var(--mantine-color-blue-filled);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Cursor while resizing */
+.resize-cursor {
+  cursor: col-resize;
+}
