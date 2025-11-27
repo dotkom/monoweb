@@ -14,6 +14,32 @@
   }
 }
 
+@layer components {
+  /* Top-left corner */
+  .table-rounded-md table tbody tr:first-child > th:first-child,
+  .table-rounded-md table tbody tr:first-child > td:first-child {
+    @apply rounded-tl-md;
+  }
+
+  /* Top-right corner */
+  .table-rounded-md table tbody tr:first-child > th:last-child,
+  .table-rounded-md table tbody tr:first-child > td:last-child {
+    @apply rounded-tr-md;
+  }
+
+  /* Bottom-left corner */
+  .table-rounded-md table tbody tr:last-child > th:first-child,
+  .table-rounded-md table tbody tr:last-child > td:first-child {
+    @apply rounded-bl-md;
+  }
+
+  /* Bottom-right corner */
+  .table-rounded-md table tbody tr:last-child > th:last-child,
+  .table-rounded-md table tbody tr:last-child > td:last-child {
+    @apply rounded-br-md;
+  }
+}
+
 @utility animate-shine {
   animation: shine 1s linear;
 }

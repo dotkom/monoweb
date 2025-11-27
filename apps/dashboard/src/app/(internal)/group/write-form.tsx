@@ -1,7 +1,7 @@
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createRichTextInput } from "@/components/forms/RichTextInput"
+import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import {

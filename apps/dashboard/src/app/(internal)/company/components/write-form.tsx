@@ -1,6 +1,6 @@
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createRichTextInput } from "@/components/forms/RichTextInput"
+import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 

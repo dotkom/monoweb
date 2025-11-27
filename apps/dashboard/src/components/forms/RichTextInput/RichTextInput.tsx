@@ -1,16 +1,32 @@
 "use client"
 
+import {
+  AddColumnAfter,
+  AddRowAfter,
+  DeleteColumn,
+  DeleteRow,
+  DeleteTable,
+  InsertTableControl,
+  MergeCells,
+  SplitCell,
+  ToggleHeaderColumn,
+  ToggleHeaderRow,
+} from "@/components/forms/RichTextInput/TableActionButtons"
+import { ErrorMessage } from "@hookform/error-message"
 import { Divider, Input } from "@mantine/core"
-import { RichTextEditor, type RichTextEditorProps, useRichTextEditorContext } from "@mantine/tiptap"
+import { RichTextEditor, type RichTextEditorProps } from "@mantine/tiptap"
 import Link from "@tiptap/extension-link"
+import { TableKit } from "@tiptap/extension-table"
+import TableCell from "@tiptap/extension-table-cell"
+import TableHeader from "@tiptap/extension-table-header"
+import TableRow from "@tiptap/extension-table-row"
 import Underline from "@tiptap/extension-underline"
 import { useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import type { InputProducerResult } from "../types"
 import "@mantine/tiptap/styles.css"
-import { ErrorMessage } from "@hookform/error-message"
-import { IconCornerRightDownDouble } from "@tabler/icons-react"
+import "./tiptap-table-styling.css"
 
 export function createRichTextInput<F extends FieldValues>({
   onChange,
@@ -30,7 +46,19 @@ export function createRichTextInput<F extends FieldValues>({
           name={name}
           render={({ field }) => {
             const editor = useEditor({
-              extensions: [StarterKit, Underline, Link],
+              extensions: [
+                StarterKit,
+                Underline,
+                Link,
+                TableKit.configure({
+                  table: {
+                    resizable: true,
+                  },
+                }),
+                TableRow,
+                TableHeader,
+                TableCell,
+              ],
               content: field.value,
               immediatelyRender: false,
               onUpdate: (value) => field.onChange(value.editor.getHTML()),
@@ -42,6 +70,7 @@ export function createRichTextInput<F extends FieldValues>({
                   <RichTextEditor.ControlsGroup>
                     <RichTextEditor.Undo />
                     <RichTextEditor.Redo />
+                    <RichTextEditor.ClearFormatting />
                   </RichTextEditor.ControlsGroup>
 
                   <Divider orientation="vertical" className="mx-0" />
@@ -51,28 +80,35 @@ export function createRichTextInput<F extends FieldValues>({
                     <RichTextEditor.Italic />
                     <RichTextEditor.Underline />
                     <RichTextEditor.Strikethrough />
-                  </RichTextEditor.ControlsGroup>
-
-                  <Divider orientation="vertical" className="mx-0" />
-
-                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.CodeBlock />
                     <RichTextEditor.Link />
                     <RichTextEditor.Unlink />
-                    <HardBreakControl />
                   </RichTextEditor.ControlsGroup>
 
                   <Divider orientation="vertical" className="mx-0" />
 
                   <RichTextEditor.ControlsGroup>
-                    <RichTextEditor.Code />
+                    <RichTextEditor.H2 />
+                    <RichTextEditor.H3 />
+                    <RichTextEditor.H4 />
                     <RichTextEditor.BulletList />
                     <RichTextEditor.OrderedList />
+                    <RichTextEditor.Hr />
                   </RichTextEditor.ControlsGroup>
 
                   <Divider orientation="vertical" className="mx-0" />
 
                   <RichTextEditor.ControlsGroup>
-                    <RichTextEditor.ClearFormatting />
+                    <InsertTableControl />
+                    <AddColumnAfter />
+                    <AddRowAfter />
+                    <DeleteColumn />
+                    <DeleteRow />
+                    <SplitCell />
+                    <MergeCells />
+                    <ToggleHeaderRow />
+                    <ToggleHeaderColumn />
+                    <DeleteTable />
                   </RichTextEditor.ControlsGroup>
                 </RichTextEditor.Toolbar>
                 <RichTextEditor.Content />
@@ -83,17 +119,4 @@ export function createRichTextInput<F extends FieldValues>({
       </Input.Wrapper>
     )
   }
-}
-
-function HardBreakControl() {
-  const { editor } = useRichTextEditorContext()
-  return (
-    <RichTextEditor.Control
-      onClick={() => editor?.chain().focus().setHardBreak().run()}
-      aria-label="Insert line break"
-      title="Line break"
-    >
-      <IconCornerRightDownDouble width={18} height={18} />
-    </RichTextEditor.Control>
-  )
 }
