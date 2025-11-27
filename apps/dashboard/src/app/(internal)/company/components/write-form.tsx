@@ -1,5 +1,6 @@
-import { createFileInput } from "@/components/forms/FileInput"
+import { useCompanyFileUploadMutation } from "@/app/(internal)/company/mutations"
 import { useFormBuilder } from "@/components/forms/Form"
+import { createImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
@@ -18,8 +19,10 @@ export const useCompanyWriteForm = ({
   onSubmit,
   label = "Registrer ny bedrift",
   defaultValues = COMPANY_FORM_DEFAULT_VALUES,
-}: UseCompanyWriteFormProps) =>
-  useFormBuilder({
+}: UseCompanyWriteFormProps) => {
+  const fileUpload = useCompanyFileUploadMutation()
+
+  return useFormBuilder({
     schema: CompanyWriteSchema,
     defaultValues,
     onSubmit,
@@ -60,9 +63,11 @@ export const useCompanyWriteForm = ({
         label: "Lokasjon",
         placeholder: "Oslo",
       }),
-      imageUrl: createFileInput({
+      imageUrl: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
+        onFileUpload: fileUpload,
       }),
     },
   })
+}

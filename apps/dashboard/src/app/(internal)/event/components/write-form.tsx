@@ -1,3 +1,4 @@
+import { useEventFileUploadMutation } from "@/app/(internal)/event/mutations"
 import { useGroupAllQuery } from "@/app/(internal)/group/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
@@ -70,6 +71,9 @@ interface UseEventWriteFormProps {
 export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
   const { companies } = useCompanyAllQuery()
+
+  const uploadFile = useEventFileUploadMutation()
+
   return useFormBuilder({
     schema: FormValidationSchema,
     defaultValues: DEFAULT_VALUES,
@@ -107,6 +111,7 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
             Bildet bør passe sideforholdene <strong>24:9</strong> (arrangementsiden) og 16:9 (alle andre sider).
           </>
         ),
+        onFileUpload: uploadFile,
       }),
       start: createDateTimeInput({
         label: "Starttidspunkt",

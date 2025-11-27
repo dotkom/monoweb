@@ -1,6 +1,6 @@
 import * as crypto from "node:crypto"
 import type { S3Client } from "@aws-sdk/client-s3"
-import { type PresignedPost, createPresignedPost } from "@aws-sdk/s3-presigned-post"
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
@@ -19,7 +19,7 @@ import {
   getAcademicStart,
   getNextAcademicStart,
 } from "@dotkomonline/types"
-import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import { isSameDay, subYears } from "date-fns"
@@ -60,7 +60,13 @@ export interface UserService {
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
-  createAvatarUploadURL(handle: DBHandle, userId: UserId): Promise<PresignedPost>
+  createFileUpload(
+    handle: DBHandle,
+    filename: string,
+    contentType: string,
+    userId: UserId,
+    createdByUserId: UserId
+  ): Promise<PresignedPost>
   /**
    * Find the Feide federated access token for a user, if it exists.
    *
@@ -321,19 +327,21 @@ export function getUserService(
     async deleteMembership(handle, membershipId) {
       return userRepository.deleteMembership(handle, membershipId)
     },
-    async createAvatarUploadURL(handle, userId) {
+    async createFileUpload(handle, filename, contentType, userId, createdByUserId) {
       const user = await this.getById(handle, userId)
 
+      const uuid = crypto.randomUUID()
+      const key = `user/${user.id}/${Date.now()}-${uuid}-${filename}`
+
       // Arbitrarily set max size. This value is referenced in innstillinger/profil/form.tsx
-      const maxSizeKB = 500
-      const key = `avatar/${user.id}`
+      const maxSizeKiB = 512 // 0.5 MiB
 
-      logger.info(`Creating AWS S3 Presigned URL for User(ID=%s) at S3 address s3://${bucket}/${key}`, user.id)
-
-      return await createPresignedPost(client, {
-        Bucket: bucket,
-        Key: key,
-        Conditions: [["content-length-range", 0, maxSizeKB * 1024]],
+      return await createS3PresignedPost(client, {
+        bucket,
+        key,
+        maxSizeKiB,
+        contentType,
+        createdByUserId,
       })
     },
     async findFeideAccessTokenByUserId(userId) {

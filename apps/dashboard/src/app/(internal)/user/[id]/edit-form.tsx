@@ -1,3 +1,4 @@
+import { useUserFileUploadMutation } from "@/app/(internal)/user/mutations"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
@@ -10,7 +11,9 @@ interface UseUserProfileWriteFormProps {
   label?: string
 }
 
-export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: UseUserProfileWriteFormProps) =>
+export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: UseUserProfileWriteFormProps) => {
+  const fileUpload = useUserFileUploadMutation()
+
   useFormBuilder({
     schema: UserWriteSchema,
     onSubmit,
@@ -52,6 +55,8 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       }),
       imageUrl: createImageInput({
         label: "Profilbilde",
+        onFileUpload: fileUpload,
       }),
     },
   })
+}

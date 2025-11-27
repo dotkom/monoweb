@@ -29,12 +29,16 @@ export const offlineRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.offlineService.getById(handle, input))
     ),
-  createPresignedPost: staffProcedure
+  createFileUpload: staffProcedure
     .input(
       z.object({
         filename: z.string(),
-        mimeType: z.string(),
+        contentType: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.offlineService.createOfflineUploadURL(input.filename, input.mimeType)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => {
+        return ctx.offlineService.createFileUpload(handle, input.filename, input.contentType, ctx.principal.subject)
+      })
+    ),
 })

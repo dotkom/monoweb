@@ -1,3 +1,4 @@
+import { useEventFileUploadMutation } from "@/app/(internal)/event/mutations"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createEventSelectInput } from "@/components/forms/EventSelectInput"
@@ -54,8 +55,10 @@ export const useEventEditForm = ({
   onSubmit,
   label = "Oppdater arrangement",
   defaultValues,
-}: UseEventEditFormProps) =>
-  useFormBuilder({
+}: UseEventEditFormProps) => {
+  const uploadFile = useEventFileUploadMutation()
+
+  return useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
     onSubmit,
@@ -92,6 +95,7 @@ export const useEventEditForm = ({
             Bildet bør passe sideforholdene <strong>24:9</strong> (arrangementsiden) og 16:9 (alle andre sider).
           </>
         ),
+        onFileUpload: uploadFile,
       }),
       start: createDateTimeInput({
         label: "Starttidspunkt",
@@ -137,3 +141,4 @@ export const useEventEditForm = ({
       }),
     },
   })
+}

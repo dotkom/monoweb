@@ -176,7 +176,7 @@ export async function createServiceLayer(
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
-  const groupService = getGroupService(groupRepository, userService)
+  const groupService = getGroupService(groupRepository, userService, clients.s3Client, configuration.AWS_S3_BUCKET)
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, userService, emailService)
@@ -184,7 +184,7 @@ export async function createServiceLayer(
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const auditLogService = getAuditLogService(auditLogRepository)
-  const eventService = getEventService(eventRepository)
+  const eventService = getEventService(eventRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const feedbackFormService = getFeedbackFormService(
     feedbackFormRepository,
     feedbackFormAnswerRepository,
@@ -209,9 +209,15 @@ export async function createServiceLayer(
     configuration,
     emailService
   )
-  const companyService = getCompanyService(companyRepository)
+  const companyService = getCompanyService(companyRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
-  const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
+  const articleService = getArticleService(
+    articleRepository,
+    articleTagRepository,
+    articleTagLinkRepository,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET
+  )
   const taskExecutor = getLocalTaskExecutor(
     taskService,
     recurringTaskService,

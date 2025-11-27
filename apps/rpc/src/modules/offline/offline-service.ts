@@ -1,8 +1,8 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
-import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
+import type { Offline, OfflineId, OfflineWrite, UserId } from "@dotkomonline/types"
+import { createS3PresignedPost } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { OfflineRepository } from "./offline-repository"
@@ -11,19 +11,24 @@ export interface OfflineService {
   /**
    * Get an offline by its id
    *
-   * @throws {OfflineNotFoundError} if the offline does not exist
+   * @throws {NotFoundError} if the offline does not exist
    */
   getById(handle: DBHandle, offlineId: OfflineId): Promise<Offline>
   getAll(handle: DBHandle, page: Pageable): Promise<Offline[]>
   create(handle: DBHandle, data: OfflineWrite): Promise<Offline>
   update(handle: DBHandle, offlineId: OfflineId, data: Partial<OfflineWrite>): Promise<Offline>
-  createOfflineUploadURL(filename: string, mimeType: string): Promise<PresignedPost>
+  createFileUpload(
+    handle: DBHandle,
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId
+  ): Promise<PresignedPost>
 }
 
 export function getOfflineService(
   offlineRepository: OfflineRepository,
-  client: S3Client,
-  bucket: string
+  s3Client: S3Client,
+  s3BucketName: string
 ): OfflineService {
   return {
     async getById(handle, id) {
@@ -42,18 +47,18 @@ export function getOfflineService(
     async update(handle, id, data) {
       return offlineRepository.update(handle, id, data)
     },
-    async createOfflineUploadURL(filename, mimeType) {
+    async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `offlines/${Date.now()}-${uuid}-${filename}`
 
-      const maxSizeMB = 50
-      return await createPresignedPost(client, {
-        Bucket: bucket,
-        Key: key,
-        Fields: {
-          "content-type": mimeType,
-        },
-        Conditions: [["content-length-range", 0, maxSizeMB * 1024 * 1024]],
+      const maxSizeKiB = 50 * 1024 // 50 MiB
+
+      return await createS3PresignedPost(s3Client, {
+        bucket: s3BucketName,
+        key,
+        maxSizeKiB,
+        contentType,
+        createdByUserId,
       })
     },
   }

@@ -1,3 +1,4 @@
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import {
   AttendanceWriteSchema,
   CompanySchema,
@@ -290,4 +291,18 @@ export const eventRouter = t.router({
       }
     })
   }),
+
+  createFileUpload: staffProcedure
+    .input(
+      z.object({
+        filename: z.string(),
+        contentType: z.string(),
+      })
+    )
+    .output(z.custom<PresignedPost>())
+    .mutation(async ({ ctx, input }) => {
+      return ctx.executeTransaction(async (handle) => {
+        return ctx.eventService.createFileUpload(handle, input.filename, input.contentType, ctx.principal.subject)
+      })
+    }),
 })

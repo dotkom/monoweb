@@ -1,7 +1,8 @@
+import { useArticleFileUploadMutation } from "@/app/(internal)/article/mutations"
 import { useTagsAllQuery } from "@/app/(internal)/article/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
-import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
+import { createImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
@@ -27,6 +28,9 @@ export const useArticleWriteForm = ({
   defaultValues = ARTICLE_FORM_DEFAULT_VALUES,
 }: UseArticleWriteFormProps) => {
   const { tags } = useTagsAllQuery()
+
+  const fileUpload = useArticleFileUploadMutation()
+
   return useFormBuilder({
     schema: ArticleWriteFormSchema,
     defaultValues,
@@ -48,10 +52,11 @@ export const useArticleWriteForm = ({
         placeholder: "Jahn Teigen",
         required: true,
       }),
-      imageUrl: createFileInput({
+      imageUrl: createImageInput({
         label: "Cover bilde",
         placeholder: "Last opp",
         required: true,
+        onFileUpload: fileUpload,
       }),
       vimeoId: createTextInput({
         label: "Vimeo id",

@@ -1,3 +1,5 @@
+import type { S3Client } from "@aws-sdk/client-s3"
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type Group,
@@ -14,7 +16,7 @@ import {
   type UserId,
   getDefaultGroupMemberRoles,
 } from "@dotkomonline/types"
-import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
 import invariant from "tiny-invariant"
@@ -60,9 +62,20 @@ export interface GroupService {
   ): Promise<GroupMembership>
   createRole(handle: DBHandle, data: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, id: GroupRoleId, role: GroupRoleWrite): Promise<GroupRole>
+  createFileUpload(
+    handle: DBHandle,
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId
+  ): Promise<PresignedPost>
 }
 
-export function getGroupService(groupRepository: GroupRepository, userService: UserService): GroupService {
+export function getGroupService(
+  groupRepository: GroupRepository,
+  userService: UserService,
+  s3Client: S3Client,
+  s3BucketName: string
+): GroupService {
   return {
     async findById(handle, groupId) {
       return groupRepository.getById(handle, groupId)
@@ -247,6 +260,20 @@ export function getGroupService(groupRepository: GroupRepository, userService: U
     },
     async updateRole(handle, id, role) {
       return await groupRepository.updateRole(handle, id, role)
+    },
+    async createFileUpload(handle, filename, contentType, createdByUserId) {
+      const uuid = crypto.randomUUID()
+      const key = `group/${Date.now()}-${uuid}-${filename}`
+
+      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
+
+      return await createS3PresignedPost(s3Client, {
+        bucket: s3BucketName,
+        key,
+        maxSizeKiB,
+        contentType,
+        createdByUserId,
+      })
     },
   }
 }

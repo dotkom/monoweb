@@ -1,3 +1,4 @@
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
@@ -107,5 +108,24 @@ export const articleRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeAuditedTransaction(async (handle) => ctx.articleService.removeTag(handle, input.id, input.tag))
+    }),
+
+  createFileUpload: staffProcedure
+    .input(
+      z.object({
+        filename: z.string(),
+        contentType: z.string(),
+      })
+    )
+    .output(z.custom<PresignedPost>())
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        return await ctx.articleService.createFileUpload(
+          handle,
+          input.filename,
+          input.contentType,
+          ctx.principal.subject
+        )
+      })
     }),
 })
