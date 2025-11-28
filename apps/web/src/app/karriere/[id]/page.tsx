@@ -1,6 +1,8 @@
+import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import type { Company, JobListing, JobListingEmployment } from "@dotkomonline/types"
 import { Button, RichText, Text, Title } from "@dotkomonline/ui"
+import { richTextToPlainText } from "@dotkomonline/utils"
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -10,6 +12,7 @@ import {
   IconWorld,
 } from "@tabler/icons-react"
 import { formatDate } from "date-fns"
+import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
@@ -183,6 +186,47 @@ const ApplyButton = ({ jobListing }: ApplyButtonProps) => {
       Søk
     </Button>
   )
+}
+
+export async function generateMetadata({ params }: Pick<JobListingProps, "params">): Promise<Metadata> {
+  const { id } = await params
+
+  const jobListing = await server.jobListing.find.query(id)
+
+  if (!jobListing || jobListing.hidden) {
+    return {
+      title: "Jobbannonse ikke funnet | Linjeforeningen Online",
+      description: "Jobbannonsen finnes ikke eller er slettet.",
+    }
+  }
+
+  const description = richTextToPlainText(jobListing.shortDescription || jobListing.description)
+  const jobListingPageUrl = `${env.NEXT_PUBLIC_ORIGIN}/karriere/${jobListing.id}`
+
+  return {
+    title: jobListing.title,
+    description,
+    openGraph: {
+      title: jobListing.title,
+      description,
+      url: jobListingPageUrl,
+      siteName: "Linjeforeningen Online",
+      images: jobListing.company.imageUrl
+        ? [
+            {
+              url: jobListing.company.imageUrl,
+              alt: `Logo for ${jobListing.company.name}`,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: jobListing.title,
+      description,
+      images: jobListing.company.imageUrl ? [jobListing.company.imageUrl] : undefined,
+    },
+  }
 }
 
 export default JobListingPage

@@ -57,6 +57,12 @@ export const articleRouter = t.router({
       }
     }),
 
+  find: procedure
+    .input(ArticleSchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.articleService.findById(handle, input))
+    ),
+
   get: procedure
     .input(ArticleSchema.shape.id)
     .query(async ({ input, ctx }) =>

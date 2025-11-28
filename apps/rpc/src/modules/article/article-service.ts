@@ -25,6 +25,8 @@ export interface ArticleService {
   update(handle: DBHandle, articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
   getAll(handle: DBHandle, page: Pageable): Promise<Article[]>
   getAllByTags(handle: DBHandle, tags: ArticleTagName[]): Promise<Article[]>
+  findById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
+  // TODO: make this return non-nullable
   getById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
   getBySlug(handle: DBHandle, slug: ArticleSlug): Promise<Article | null>
   findMany(handle: DBHandle, query: ArticleFilterQuery, page: Pageable): Promise<Article[]>
@@ -78,8 +80,12 @@ export function getArticleService(
     async getAllByTags(handle, tags) {
       return await articleRepository.getByTags(handle, tags)
     },
-    async getById(handle, articleId) {
+    async findById(handle, articleId) {
       return await articleRepository.getById(handle, articleId)
+    },
+    async getById(handle, articleId) {
+      const article = await this.findById(handle, articleId)
+      return article
     },
     async getBySlug(handle, slug) {
       return await articleRepository.getBySlug(handle, slug)
