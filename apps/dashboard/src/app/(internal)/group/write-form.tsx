@@ -126,6 +126,11 @@ export const useGroupWriteForm = ({
           label: getGroupTypeName(groupType),
         })),
       }),
+      hasApplications: createCheckboxInput({
+        label: "Har opptak",
+        description: "Har denne gruppen ordinært opptak ved høsten eller våren?",
+        defaultChecked: defaultValues?.hasApplications,
+      }),
       isActive: createCheckboxInput({
         label: "Aktiv",
         defaultChecked: !defaultValues?.deactivatedAt,

@@ -42,6 +42,7 @@ export const GroupWriteSchema = GroupSchema.pick({
   memberVisibility: true,
   deactivatedAt: true,
   workspaceGroupId: true,
+  hasApplications: true,
 }).partial({
   slug: true,
 })

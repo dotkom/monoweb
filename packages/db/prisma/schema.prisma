@@ -143,6 +143,7 @@ model Group {
   deactivatedAt       DateTime?
   workspaceGroupId    String?               @unique
   memberVisibility    GroupMemberVisibility @default(ALL_MEMBERS)
+  hasApplications     Boolean               @default(false)
 
   events      EventHostingGroup[]
   type        GroupType
