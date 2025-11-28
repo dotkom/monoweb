@@ -1,32 +1,44 @@
-import { FileInput, type FileInputProps } from "@mantine/core"
+import { Button, FileInput, type FileInputProps, Stack } from "@mantine/core"
+import { IconX } from "@tabler/icons-react"
 import { Controller, type FieldValues } from "react-hook-form"
-
-import { useS3UploadFile } from "@/app/(internal)/offline/use-s3-upload-file"
 import type { InputProducerResult } from "./types"
 
-export function createFileInput<F extends FieldValues>({
-  ...props
-}: Omit<FileInputProps, "error"> & {
-  existingFileUrl?: string
-}): InputProducerResult<F> {
+export function createFileInput<F extends FieldValues>(
+  props: Omit<FileInputProps, "error"> & {
+    onFileUpload: (file: File) => Promise<string>
+    existingFileUrl?: string
+  }
+): InputProducerResult<F> {
   return function FormFileInput({ name, control }) {
-    const upload = useS3UploadFile()
     return (
       <Controller
         control={control}
         name={name}
         render={({ field }) => (
-          <FileInput
-            {...props}
-            placeholder={field.value ?? props.existingFileUrl ?? "Klikk for å velge fil"}
-            onChange={async (file) => {
-              if (file === null) {
-                return
-              }
-              const result = await upload(file)
-              field.onChange(result)
-            }}
-          />
+          <Stack gap="0.5rem">
+            <FileInput
+              {...props}
+              placeholder={field.value ?? props.existingFileUrl ?? "Klikk for å velge fil"}
+              onChange={async (file) => {
+                if (file === null) {
+                  return
+                }
+                const result = await props.onFileUpload(file)
+                field.onChange(result)
+              }}
+            />
+            <Button
+              w="fit-content"
+              color="gray"
+              size="compact-xs"
+              variant="subtle"
+              onClick={() => field.onChange(null)}
+              leftSection={<IconX size="1rem" />}
+              styles={{ section: { marginRight: "0.35rem" } }}
+            >
+              Fjern fil
+            </Button>
+          </Stack>
         )}
       />
     )

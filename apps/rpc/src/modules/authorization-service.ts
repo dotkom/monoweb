@@ -26,6 +26,8 @@ export const Affiliation = {
 } as const
 export type Affiliation = (typeof Affiliation)[keyof typeof Affiliation]
 
+export const ADMIN_AFFILIATIONS = ["dotkom", "hs"] as const satisfies Affiliation[]
+
 export const isAffiliation = (groupSlug: string): groupSlug is Affiliation => {
   const affiliations = Object.values(Affiliation) as string[]
 

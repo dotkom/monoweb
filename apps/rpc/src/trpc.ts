@@ -21,7 +21,12 @@ import {
   ResourceExhaustedError,
   UnimplementedError,
 } from "./error"
-import { type Affiliation, type AffiliationSet, isAffiliation } from "./modules/authorization-service"
+import {
+  ADMIN_AFFILIATIONS,
+  type Affiliation,
+  type AffiliationSet,
+  isAffiliation,
+} from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
 
 export type Principal = {
@@ -42,6 +47,8 @@ const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
   const requireMeOrAffiliation = getRequireMeOrAffiliation(principal, requireSignIn, requireAffiliation)
 
   return {
+    ADMIN_AFFILIATIONS,
+
     require,
     requireSignIn,
     requireAffiliation: localDevelopment ? localDevelopmentRequireAffiliation : requireAffiliation,

@@ -1,3 +1,4 @@
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../query"
@@ -38,4 +39,18 @@ export const companyRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.companyService.getCompanyBySlug(handle, input))
     ),
+
+  createFileUpload: staffProcedure
+    .input(
+      z.object({
+        filename: z.string(),
+        contentType: z.string(),
+      })
+    )
+    .output(z.custom<PresignedPost>())
+    .mutation(async ({ ctx, input }) => {
+      return ctx.executeTransaction(async (handle) => {
+        return ctx.companyService.createFileUpload(handle, input.filename, input.contentType, ctx.principal.subject)
+      })
+    }),
 })

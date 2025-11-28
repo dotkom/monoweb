@@ -1,3 +1,4 @@
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import {
   GroupMembershipSchema,
   GroupMembershipWriteSchema,
@@ -116,4 +117,17 @@ export const groupRouter = t.router({
     .mutation(async ({ input, ctx }) =>
       ctx.executeAuditedTransaction(async (handle) => ctx.groupService.updateRole(handle, input.id, input.role))
     ),
+  createFileUpload: staffProcedure
+    .input(
+      z.object({
+        filename: z.string(),
+        contentType: z.string(),
+      })
+    )
+    .output(z.custom<PresignedPost>())
+    .mutation(async ({ input, ctx }) => {
+      return ctx.executeTransaction(async (handle) => {
+        return ctx.groupService.createFileUpload(handle, input.filename, input.contentType, ctx.principal.subject)
+      })
+    }),
 })

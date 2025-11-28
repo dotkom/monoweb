@@ -1,3 +1,5 @@
+import type { S3Client } from "@aws-sdk/client-s3"
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import type {
   Article,
@@ -7,7 +9,9 @@ import type {
   ArticleTag,
   ArticleTagName,
   ArticleWrite,
+  UserId,
 } from "@dotkomonline/types"
+import { createS3PresignedPost } from "@dotkomonline/utils"
 import { compareAsc, compareDesc } from "date-fns"
 import { AlreadyExistsError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
@@ -50,12 +54,20 @@ export interface ArticleService {
   removeTag(handle: DBHandle, articleId: ArticleId, tag: ArticleTagName): Promise<void>
   setTags(handle: DBHandle, articleId: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
   findTagsOrderedByPopularity(handle: DBHandle): Promise<ArticleTag[]>
+  createFileUpload(
+    handle: DBHandle,
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId
+  ): Promise<PresignedPost>
 }
 
 export function getArticleService(
   articleRepository: ArticleRepository,
   articleTagRepository: ArticleTagRepository,
-  articleTagLinkRepository: ArticleTagLinkRepository
+  articleTagLinkRepository: ArticleTagLinkRepository,
+  s3Client: S3Client,
+  s3BucketName: string
 ): ArticleService {
   return {
     async create(handle, input) {
@@ -168,6 +180,20 @@ export function getArticleService(
     },
     async findTagsOrderedByPopularity(handle) {
       return articleRepository.findTagsOrderedByPopularity(handle, 30)
+    },
+    async createFileUpload(handle, filename, contentType, createdByUserId) {
+      const uuid = crypto.randomUUID()
+      const key = `article/${Date.now()}-${uuid}-${filename}`
+
+      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
+
+      return await createS3PresignedPost(s3Client, {
+        bucket: s3BucketName,
+        key,
+        maxSizeKiB,
+        contentType,
+        createdByUserId,
+      })
     },
   }
 }

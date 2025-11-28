@@ -1,3 +1,4 @@
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import {
   MembershipSchema,
   MembershipWriteSchema,
@@ -39,15 +40,31 @@ export const userRouter = t.router({
   ),
   /**
    * Create a presigned AWS S3 URL for uploading an avatar image to our S3 bucket.
-   *
-   * NOTE: At the moment, this is only used for a user's own avatar. It might be beneficial to allow administrators to
-   * modify other users' avatar in the future.
    */
-  createAvatarUploadURL: authenticatedProcedure.mutation(async ({ ctx }) =>
-    ctx.executeAuditedTransaction(async (handle) => {
-      return await ctx.userService.createAvatarUploadURL(handle, ctx.principal.subject)
-    })
-  ),
+  createFileUpload: authenticatedProcedure
+    .input(
+      z.object({
+        filename: z.string(),
+        contentType: z.string(),
+        userId: UserSchema.shape.id.optional(),
+      })
+    )
+    .output(z.custom<PresignedPost>())
+    .mutation(async ({ input, ctx }) => {
+      const userId = input?.userId ?? ctx.principal.subject
+
+      ctx.authorize.requireMeOrAffiliation(userId, ctx.authorize.ADMIN_AFFILIATIONS)
+
+      return ctx.executeAuditedTransaction(async (handle) => {
+        return await ctx.userService.createFileUpload(
+          handle,
+          input.filename,
+          input.contentType,
+          userId,
+          ctx.principal.subject
+        )
+      })
+    }),
   register: procedure.input(UserSchema.shape.id).mutation(async ({ input, ctx }) =>
     ctx.executeTransaction(async (handle) => {
       return ctx.userService.register(handle, input)
@@ -84,7 +101,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation("dotkom", "hs")
+      ctx.authorize.requireAffiliation(...ctx.authorize.ADMIN_AFFILIATIONS)
       return ctx.executeAuditedTransaction(async (handle) => {
         return ctx.userService.deleteMembership(handle, input.membershipId)
       })
@@ -110,7 +127,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireMeOrAffiliation(input.id, ["dotkom", "hs"])
+      ctx.authorize.requireMeOrAffiliation(input.id, ctx.authorize.ADMIN_AFFILIATIONS)
 
       let { name, ...data } = input.input
 
@@ -133,7 +150,7 @@ export const userRouter = t.router({
   }),
   isAdmin: procedure.query(async ({ ctx }) => {
     try {
-      ctx.authorize.requireAffiliation("dotkom", "hs")
+      ctx.authorize.requireAffiliation(...ctx.authorize.ADMIN_AFFILIATIONS)
       return true
     } catch {
       return false

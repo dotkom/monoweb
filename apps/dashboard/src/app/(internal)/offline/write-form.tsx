@@ -1,6 +1,8 @@
+import { useOfflineFileUploadMutation } from "@/app/(internal)/offline/mutations/use-offline-file-upload-mutation"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
+import { createImageInput } from "@/components/forms/ImageInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { OfflineWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
@@ -14,8 +16,10 @@ interface UseOfflineWriteFormProps {
   label?: string
 }
 
-export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValues }: UseOfflineWriteFormProps) =>
-  useFormBuilder({
+export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValues }: UseOfflineWriteFormProps) => {
+  const fileUpload = useOfflineFileUploadMutation()
+
+  return useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
     onSubmit,
@@ -34,11 +38,14 @@ export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValu
         label: "Fil",
         placeholder: "Last opp",
         required: true,
+        onFileUpload: fileUpload,
       }),
-      imageUrl: createFileInput({
+      imageUrl: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
         required: true,
+        onFileUpload: fileUpload,
       }),
     },
   })
+}

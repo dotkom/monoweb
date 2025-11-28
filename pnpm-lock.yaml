@@ -1282,6 +1282,9 @@ importers:
 
   packages/utils:
     dependencies:
+      '@aws-sdk/s3-presigned-post':
+        specifier: ^3.908.0
+        version: 3.908.0
       '@date-fns/tz':
         specifier: ^1.2.0
         version: 1.4.1
@@ -1295,6 +1298,9 @@ importers:
         specifier: ^1.6.6
         version: 1.6.6
     devDependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.908.0
+        version: 3.908.0
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4

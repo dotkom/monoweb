@@ -1,6 +1,7 @@
+import { useGroupFileUploadMutation } from "@/app/(internal)/group/mutations"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
-import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
+import { createImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
@@ -56,6 +57,8 @@ export const useGroupWriteForm = ({
     [existingGroupSlugs, defaultValues]
   )
 
+  const fileUpload = useGroupFileUploadMutation()
+
   return useFormBuilder({
     schema: validationSchema,
     defaultValues,
@@ -108,9 +111,10 @@ export const useGroupWriteForm = ({
       contactUrl: createTextInput({
         label: "Kontakt-lenke",
       }),
-      imageUrl: createFileInput({
+      imageUrl: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
+        onFileUpload: fileUpload,
       }),
       type: createSelectInput({
         label: "Type",

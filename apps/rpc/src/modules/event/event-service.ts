@@ -1,4 +1,7 @@
+import type { S3Client } from "@aws-sdk/client-s3"
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
+import { getLogger } from "@dotkomonline/logger"
 import type {
   AttendanceId,
   CompanyId,
@@ -12,6 +15,7 @@ import type {
   GroupId,
   UserId,
 } from "@dotkomonline/types"
+import { createS3PresignedPost } from "@dotkomonline/utils"
 import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { EventRepository } from "./event-repository"
@@ -48,12 +52,23 @@ export interface EventService {
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
   getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event>
-
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
+  createFileUpload(
+    handle: DBHandle,
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId
+  ): Promise<PresignedPost>
 }
 
-export function getEventService(eventRepository: EventRepository): EventService {
+export function getEventService(
+  eventRepository: EventRepository,
+  s3Client: S3Client,
+  s3BucketName: string
+): EventService {
+  const logger = getLogger("EventService")
+
   return {
     async createEvent(handle, eventCreate) {
       return await eventRepository.create(handle, eventCreate)
@@ -135,6 +150,20 @@ export function getEventService(eventRepository: EventRepository): EventService 
     },
     async findManyDeregisterReasonsWithEvent(handle, page) {
       return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
+    },
+    async createFileUpload(filename, contentType, createdByUserId) {
+      const uuid = crypto.randomUUID()
+      const key = `event/${Date.now()}-${uuid}-${filename}`
+
+      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
+
+      return await createS3PresignedPost(s3Client, {
+        bucket: s3BucketName,
+        key,
+        maxSizeKiB,
+        contentType,
+        createdByUserId,
+      })
     },
   }
 }
