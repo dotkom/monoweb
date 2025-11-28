@@ -48,7 +48,6 @@ export const GroupEditCard: FC = () => {
         id: group.slug,
         values: data,
       })
-      router.push("/group/")
     },
     defaultValues: group,
   })
