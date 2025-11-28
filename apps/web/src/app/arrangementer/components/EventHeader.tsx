@@ -16,23 +16,27 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
 
   return (
     <section className="flex flex-col gap-8">
-      <Tilt scale={1} tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} glareMaxOpacity={0.1}>
-        {event.imageUrl ? (
-          <img
-            src={event.imageUrl}
-            alt={event.title}
-            className="rounded-xl object-cover aspect-[16/9] md:aspect-[24/9]"
-          />
-        ) : (
-          <div className="rounded-xl w-full bg-gray-100 dark:bg-stone-800 object-cover overflow-hidden aspect-[16/9] md:aspect-[24/9]">
-            <PlaceHolderImage
-              width={16}
-              height={9}
-              variant={event.type}
-              className="scale-160 md:scale-180 md:object-contain"
-            />
-          </div>
-        )}
+      <Tilt
+        scale={1}
+        tiltMaxAngleX={0.25}
+        tiltMaxAngleY={0.25}
+        glareMaxOpacity={0.1}
+        className="rounded-xl bg-gray-100 dark:bg-stone-800"
+      >
+        <div className="flex items-center justify-center aspect-[16/9] md:aspect-[24/9] w-full">
+          {event.imageUrl ? (
+            <img src={event.imageUrl} alt={event.title} className="w-full h-full object-contain rounded-xl" />
+          ) : (
+            <div className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center">
+              <PlaceHolderImage
+                width={16}
+                height={9}
+                variant={event.type}
+                className="w-full h-full object-contain rounded-xl"
+              />
+            </div>
+          )}
+        </div>
       </Tilt>
 
       <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:items-center">
