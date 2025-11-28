@@ -188,7 +188,7 @@ const Tag: FC<TagProps> = ({ tag }: TagProps) => (
 export async function generateMetadata({ params }: Pick<ArticlePageProps, "params">): Promise<Metadata> {
   const { slug, id } = await params
 
-  const article = await server.article.findById.query(id)
+  const article = await server.article.find.query(id)
 
   if (!article) {
     return {
