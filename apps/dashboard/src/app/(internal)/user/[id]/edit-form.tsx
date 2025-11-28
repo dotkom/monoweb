@@ -56,6 +56,7 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       imageUrl: createImageInput({
         label: "Profilbilde",
         onFileUpload: fileUpload,
+        acceptGif: true,
       }),
     },
   })
