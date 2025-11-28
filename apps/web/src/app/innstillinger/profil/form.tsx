@@ -105,9 +105,9 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
       return
     }
 
-    await trigger("imageUrl")
-
     onChange(result)
+
+    await trigger("imageUrl")
   }
 
   return (
