@@ -260,7 +260,7 @@ export default function ProfilePage() {
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-row gap-4">
         <Avatar className="w-16 h-16 md:w-32 md:h-32">
-          <AvatarImage src={user.imageUrl ?? undefined} />
+          <AvatarImage src={user.imageUrl ?? undefined} className="object-cover" />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
             <IconUser width={64} height={64} />
           </AvatarFallback>

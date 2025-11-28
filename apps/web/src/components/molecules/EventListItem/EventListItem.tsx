@@ -26,7 +26,7 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
       href={createEventPageUrl(id, title)}
       className={cn(
         // [calc(100%+1rem)] is to offset the -mx-2
-        "group flex flex-row gap-3 w-[calc(100%+1rem)] rounded-xl p-2 -mx-2 last:-mb-2",
+        "group flex flex-row gap-3 sm:gap-4 w-[calc(100%+1rem)] rounded-xl p-2 -mx-2 last:-mb-2",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
         past && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300",
         className
@@ -36,7 +36,11 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
 
       <div className="flex flex-col gap-1">
         <div className="flex flex-row gap-1">
-          <Title element="h3" size="sm" className="font-normal text-base md:text-lg">
+          <Title
+            element="h3"
+            size="sm"
+            className="font-normal text-base md:text-lg line-clamp-1 sm:line-clamp-2 break-all"
+          >
             {title}
           </Title>
         </div>
@@ -54,7 +58,7 @@ export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userI
 export const EventListItemSkeleton: FC = () => {
   return (
     <div className="flex flex-row gap-4 w-full rounded-lg py-2">
-      <div className="aspect-[4/3] h-[6rem] bg-gray-300 dark:bg-stone-600 rounded-lg animate-pulse" />
+      <div className="aspect-[16/9] h-22 sm:h-28 bg-gray-300 dark:bg-stone-600 rounded-lg animate-pulse" />
 
       <div className="flex flex-col gap-4 w-full">
         <div className="max-w-64 h-6 bg-gray-300 dark:bg-stone-600 rounded-sm animate-pulse" />

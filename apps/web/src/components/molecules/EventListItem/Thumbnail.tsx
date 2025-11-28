@@ -10,7 +10,7 @@ const EVENTS = {
     backgroundColor: "blue",
   },
   GENERAL_ASSEMBLY: {
-    label: "Generalforsamling",
+    label: "Genfors",
     backgroundColor: "amber",
   },
   INTERNAL: {
@@ -48,7 +48,7 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, star
   return (
     <Tilt>
       <div className="relative w-max">
-        <div className="aspect-[4/3] h-[6rem] bg-gray-100 dark:bg-stone-800 rounded-lg overflow-hidden">
+        <div className="aspect-[16/9] h-22 sm:h-28 bg-gray-100 dark:bg-stone-800 rounded-lg overflow-hidden">
           {imageUrl ? (
             <Image
               src={imageUrl}
