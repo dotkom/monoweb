@@ -331,7 +331,7 @@ export function getUserService(
       const user = await this.getById(handle, userId)
 
       const uuid = crypto.randomUUID()
-      const key = `user/${user.id}/${Date.now()}-${uuid}-${filename}`
+      const key = `user/${user.id}/${Date.now()}-${uuid}-${slugify(filename)}`
 
       // Arbitrarily set max size. This value is referenced in innstillinger/profil/form.tsx
       const maxSizeKiB = 512 // 0.5 MiB

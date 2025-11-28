@@ -11,7 +11,7 @@ import type {
   ArticleWrite,
   UserId,
 } from "@dotkomonline/types"
-import { createS3PresignedPost } from "@dotkomonline/utils"
+import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { compareAsc, compareDesc } from "date-fns"
 import { AlreadyExistsError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
@@ -183,7 +183,7 @@ export function getArticleService(
     },
     async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
-      const key = `article/${Date.now()}-${uuid}-${filename}`
+      const key = `article/${Date.now()}-${uuid}-${slugify(filename)}`
 
       const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
 

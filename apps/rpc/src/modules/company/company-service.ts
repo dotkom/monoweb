@@ -2,7 +2,7 @@ import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import type { Company, CompanyId, CompanyWrite, UserId } from "@dotkomonline/types"
-import { createS3PresignedPost } from "@dotkomonline/utils"
+import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { CompanyRepository } from "./company-repository"
@@ -67,7 +67,7 @@ export function getCompanyService(
     },
     async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
-      const key = `company/${Date.now()}-${uuid}-${filename}`
+      const key = `company/${Date.now()}-${uuid}-${slugify(filename)}`
 
       const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
 
