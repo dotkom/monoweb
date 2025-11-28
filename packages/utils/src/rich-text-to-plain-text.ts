@@ -1,6 +1,6 @@
 export const richTextToPlainText = (html: string, maxLength = 160) => {
   const text = html
-    .replace(/<[^>]+>/g, " ")
+    .replace(/<+[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim()
 
