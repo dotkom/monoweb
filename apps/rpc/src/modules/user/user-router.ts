@@ -101,7 +101,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation("dotkom", "hs")
+      ctx.authorize.requireAffiliation(...ctx.authorize.ADMIN_AFFILIATIONS)
       return ctx.executeAuditedTransaction(async (handle) => {
         return ctx.userService.deleteMembership(handle, input.membershipId)
       })
@@ -127,7 +127,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireMeOrAffiliation(input.id, ["dotkom", "hs"])
+      ctx.authorize.requireMeOrAffiliation(input.id, ctx.authorize.ADMIN_AFFILIATIONS)
 
       let { name, ...data } = input.input
 
@@ -150,7 +150,7 @@ export const userRouter = t.router({
   }),
   isAdmin: procedure.query(async ({ ctx }) => {
     try {
-      ctx.authorize.requireAffiliation("dotkom", "hs")
+      ctx.authorize.requireAffiliation(...ctx.authorize.ADMIN_AFFILIATIONS)
       return true
     } catch {
       return false

@@ -1,4 +1,5 @@
 import { Button, FileInput, type FileInputProps, Group, Image, Stack, TextInput } from "@mantine/core"
+import { IconX } from "@tabler/icons-react"
 import { Controller, type FieldValues } from "react-hook-form"
 import type { InputProducerResult } from "./types"
 
@@ -35,6 +36,7 @@ export function createImageInput<F extends FieldValues>({
                     const result = await props.onFileUpload(file)
                     field.onChange(result)
                   }}
+                  flex="1"
                 />
                 <TextInput
                   // Margin is eyeballed to align with the FileInput height
@@ -45,7 +47,15 @@ export function createImageInput<F extends FieldValues>({
                   flex="1"
                 />
               </Group>
-              <Button w="fit-content" color="gray" size="xs" variant="outline" onClick={() => field.onChange(null)}>
+              <Button
+                w="fit-content"
+                color="gray"
+                size="compact-xs"
+                variant="subtle"
+                onClick={() => field.onChange(null)}
+                leftSection={<IconX size="1rem" />}
+                styles={{ section: { marginRight: "0.35rem" } }}
+              >
                 Fjern fil
               </Button>
             </Stack>

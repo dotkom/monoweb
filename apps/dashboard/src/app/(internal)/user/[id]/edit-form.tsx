@@ -14,7 +14,7 @@ interface UseUserProfileWriteFormProps {
 export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: UseUserProfileWriteFormProps) => {
   const fileUpload = useUserFileUploadMutation()
 
-  useFormBuilder({
+  return useFormBuilder({
     schema: UserWriteSchema,
     onSubmit,
     defaultValues,
