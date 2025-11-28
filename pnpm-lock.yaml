@@ -1288,6 +1288,9 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      html-to-text:
+        specifier: ^9.0.5
+        version: 9.0.5
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
@@ -1298,6 +1301,9 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../config
+      '@types/html-to-text':
+        specifier: ^9.0.4
+        version: 9.0.4
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -5189,6 +5195,9 @@ packages:
 
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
+
+  '@types/html-to-text@9.0.4':
+    resolution: {integrity: sha512-pUY3cKH/Nm2yYrEmDlPR1mR7yszjGx4DrwPjQ702C4/D5CwHuZTgZdIdwPkRbcuhs7BAh2L5rg3CL5cbRiGTCQ==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -13791,6 +13800,8 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
+  '@types/html-to-text@9.0.4': {}
+
   '@types/json-schema@7.0.15': {}
 
   '@types/linkify-it@5.0.0': {}
@@ -13979,7 +13990,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.14
       tinyrainbow: 2.0.0
-      vitest: 3.1.4(@types/debug@4.1.12)(@types/node@22.18.6)(@vitest/ui@3.1.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.2)(msw@2.7.0(@types/node@22.18.6)(typescript@5.9.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.0)
+      vitest: 3.1.4(@types/debug@4.1.12)(@types/node@22.18.6)(@vitest/ui@3.1.4)(jiti@2.6.1)(jsdom@27.2.0)(lightningcss@1.30.2)(msw@2.7.0(@types/node@22.18.6)(typescript@5.9.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.0)
 
   '@vitest/utils@3.1.4':
     dependencies:

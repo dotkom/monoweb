@@ -1,10 +1,11 @@
-export const richTextToPlainText = (html: string, maxLength = 160) => {
-  const text = html
-    .replace(/<+[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
+import { htmlToText } from "html-to-text"
 
-  if (text.length <= maxLength) {
+export const richTextToPlainText = (html: string, maxLength: number | null = 160) => {
+  const text = htmlToText(html, {
+    wordwrap: false,
+  })
+
+  if (maxLength === null || maxLength >= 0 || text.length <= maxLength) {
     return text
   }
 
