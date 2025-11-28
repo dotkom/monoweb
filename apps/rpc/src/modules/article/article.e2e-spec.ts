@@ -1,7 +1,9 @@
 import * as crypto from "node:crypto"
+import type { S3Client } from "@aws-sdk/client-s3"
 import type { ArticleWrite } from "@dotkomonline/types"
 import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
+import { mockDeep } from "vitest-mock-extended"
 import { dbClient } from "../../../vitest-integration.setup"
 import { AlreadyExistsError, NotFoundError } from "../../error"
 import { getArticleRepository } from "./article-repository"
@@ -25,10 +27,18 @@ function getMockArticle(input: Partial<ArticleWrite> = {}): ArticleWrite {
 }
 
 describe("article integration tests", () => {
+  const s3Client = mockDeep<S3Client>()
+
   const articleRepository = getArticleRepository()
   const articleTagRepository = getArticleTagRepository()
   const articleTagLinkRepository = getArticleTagLinkRepository()
-  const articleService = getArticleService(articleRepository, articleTagRepository, articleTagLinkRepository)
+  const articleService = getArticleService(
+    articleRepository,
+    articleTagRepository,
+    articleTagLinkRepository,
+    s3Client,
+    "fake-aws-bucket"
+  )
 
   it("should create a new article if the slug does not exist", async () => {
     const mock = getMockArticle()

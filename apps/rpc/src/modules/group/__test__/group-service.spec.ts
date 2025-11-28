@@ -30,7 +30,7 @@ describe("GroupService", () => {
   )
 
   const groupRepository = getGroupRepository()
-  const groupService = getGroupService(groupRepository, userService)
+  const groupService = getGroupService(groupRepository, userService, s3Client, "fake-aws-bucket")
 
   it("creates a new group", async () => {
     const group: Omit<Group, "id"> = {
