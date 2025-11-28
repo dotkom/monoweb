@@ -87,7 +87,11 @@ export const useEventEditForm = ({
       }),
       imageUrl: createImageInput({
         label: "Bilde",
-        placeholder: "Last opp",
+        description: (
+          <>
+            Bildet bør passe sideforholdene <strong>24:9</strong> (arrangementsiden) og 16:9 (alle andre sider).
+          </>
+        ),
       }),
       start: createDateTimeInput({
         label: "Starttidspunkt",
