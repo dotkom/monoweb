@@ -19,6 +19,7 @@ export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     memberVisibility: "ALL_MEMBERS",
     slug: "dotkom",
     showLeaderAsContact: false,
+    recruitmentMethod: "AUTUMN_APPLICATION",
     ...input,
   }
 }

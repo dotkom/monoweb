@@ -26,6 +26,9 @@ export type Group = z.infer<typeof GroupSchema>
 
 export type GroupType = z.infer<typeof GroupTypeSchema>
 
+export const GroupRecruitmentMethodSchema = schemas.GroupRecruitmentMethodSchema
+export type GroupRecruitmentMethod = z.output<typeof GroupRecruitmentMethodSchema>
+
 export const GroupMemberVisibilitySchema = schemas.GroupMemberVisibilitySchema
 export type GroupMemberVisibilityType = z.infer<typeof GroupMemberVisibilitySchema>
 
@@ -42,7 +45,7 @@ export const GroupWriteSchema = GroupSchema.pick({
   memberVisibility: true,
   deactivatedAt: true,
   workspaceGroupId: true,
-  hasApplications: true,
+  recruitmentMethod: true,
 }).partial({
   slug: true,
 })
@@ -158,4 +161,21 @@ export const getActiveGroupMembership = (member: GroupMember | null, groupSlug?:
   const sortedMemberships = member.groupMemberships.toSorted((a, b) => compareDesc(a.start, b.start))
 
   return sortedMemberships.find((membership) => membership.end === null && isGroup(membership.groupId)) ?? null
+}
+
+export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmentMethod): string => {
+  switch (recruitmentMethod) {
+    case "GENERAL_ASSEMBLY":
+      return "Generalforsamling"
+    case "AUTUMN_APPLICATION":
+      return "Opptak ved høsten"
+    case "NOMINATION":
+      return "Nominasjoner"
+    case "NONE":
+      return "Ingen opptak"
+    case "OTHER":
+      return "Annet ordinært opptak"
+    case "SPRING_APPLICATION":
+      return "Opptak ved våren"
+  }
 }

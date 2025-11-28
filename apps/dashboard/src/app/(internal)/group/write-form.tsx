@@ -8,10 +8,12 @@ import { createTextInput } from "@/components/forms/TextInput"
 import {
   type GroupId,
   GroupMemberVisibilitySchema,
+  GroupRecruitmentMethodSchema,
   GroupTypeSchema,
   type GroupWrite,
   GroupWriteSchema,
   getGroupMemberVisibilityName,
+  getGroupRecruitmentMethodName,
   getGroupTypeName,
 } from "@dotkomonline/types"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
@@ -30,6 +32,7 @@ type FormResult = z.infer<typeof FormSchema>
 
 const DEFAULT_VALUES: Partial<FormResult> = {
   imageUrl: null,
+  recruitmentMethod: "NONE",
 }
 
 interface UseGroupWriteFormProps {
@@ -126,10 +129,16 @@ export const useGroupWriteForm = ({
           label: getGroupTypeName(groupType),
         })),
       }),
-      hasApplications: createCheckboxInput({
-        label: "Har opptak",
-        description: "Har denne gruppen ordinært opptak ved høsten eller våren?",
-        defaultChecked: defaultValues?.hasApplications,
+      recruitmentMethod: createSelectInput({
+        label: "Opptaksmåte",
+        description: "Hvordan har denne gruppen ordinært opptak?",
+        placeholder: "Velg en",
+        withAsterisk: true,
+        required: true,
+        data: Object.values(GroupRecruitmentMethodSchema.Values).map((recruitmentMethod) => ({
+          value: recruitmentMethod,
+          label: getGroupRecruitmentMethodName(recruitmentMethod),
+        })),
       }),
       isActive: createCheckboxInput({
         label: "Aktiv",

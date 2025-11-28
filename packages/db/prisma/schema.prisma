@@ -129,8 +129,17 @@ enum GroupMemberVisibility {
   @@map("group_member_visibility")
 }
 
+enum GroupRecruitmentMethod {
+  NONE               @map("NONE")
+  SPRING_APPLICATION @map("SPRING_APPLICATION")
+  AUTUMN_APPLICATION @map("AUTUMN_APPLICATION")
+  GENERAL_ASSEMBLY   @map("GENERAL_ASSEMBLY")
+  NOMINATION         @map("NOMINATION")
+  OTHER              @map("OTHER")
+}
+
 model Group {
-  slug                String                @id @unique
+  slug                String                 @id @unique
   abbreviation        String
   name                String?
   shortDescription    String?
@@ -138,12 +147,12 @@ model Group {
   imageUrl            String?
   email               String?
   contactUrl          String?
-  showLeaderAsContact Boolean               @default(false)
-  createdAt           DateTime              @default(now()) @db.Timestamptz(3)
+  showLeaderAsContact Boolean                @default(false)
+  createdAt           DateTime               @default(now()) @db.Timestamptz(3)
   deactivatedAt       DateTime?
-  workspaceGroupId    String?               @unique
-  memberVisibility    GroupMemberVisibility @default(ALL_MEMBERS)
-  hasApplications     Boolean               @default(false)
+  workspaceGroupId    String?                @unique
+  memberVisibility    GroupMemberVisibility  @default(ALL_MEMBERS)
+  recruitmentMethod   GroupRecruitmentMethod @default(NONE)
 
   events      EventHostingGroup[]
   type        GroupType
