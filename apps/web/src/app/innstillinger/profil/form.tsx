@@ -1,6 +1,5 @@
 "use client"
-
-import { useCreateAvatarUploadURL } from "@/s3"
+import { useUserFileUploadMutation } from "@/app/innstillinger/mutations"
 import { useTRPC } from "@/utils/trpc/client"
 import { type User, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 import {
@@ -53,6 +52,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     control,
     reset,
     setError,
+    trigger,
     formState: { errors, isDirty },
     handleSubmit,
   } = useForm<FormUserWrite>({
@@ -75,7 +75,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     })
   )
 
-  const avatarUpload = useCreateAvatarUploadURL()
+  const fileUpload = useUserFileUploadMutation()
 
   // Clear the success/error message after x seconds
   useEffect(() => {
@@ -95,15 +95,17 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
       return
     }
 
-    const result = await avatarUpload(file).catch(() => null)
+    const result = await fileUpload(file).catch(() => null)
 
     if (!result) {
       setError("imageUrl", {
         type: "manual",
-        message: "Opplasting av profilbilde feilet. Maksstørrelse er 500 KB.",
+        message: "Opplasting av profilbilde feilet.",
       })
       return
     }
+
+    await trigger("imageUrl")
 
     onChange(result)
   }
@@ -174,6 +176,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
               <Label htmlFor="pfp" className="text-base">
                 Profilbilde
               </Label>
+              <Text className="text-xs text-gray-500 dark:text-stone-500">Maksstørrelse er 0,5 MiB.</Text>
               <input
                 id="pfp"
                 type="file"
