@@ -2,6 +2,7 @@ import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import type { Article, ArticleTagName, ArticleTag as ArticleTagType } from "@dotkomonline/types"
 import { Button, RichText, Text, Title, Video } from "@dotkomonline/ui"
+import { richTextToPlainText } from "@dotkomonline/utils"
 import clsx from "clsx"
 import { formatDate, isEqual } from "date-fns"
 import type { Metadata } from "next"
@@ -197,12 +198,7 @@ export async function generateMetadata({ params }: Pick<ArticlePageProps, "param
     }
   }
 
-  let description = article.excerpt || article.content
-
-  if (description.length > 160) {
-    description = `${description.slice(0, 160)}...`
-  }
-
+  const description = richTextToPlainText(article.excerpt || article.content)
   const eventUrl = `${env.NEXT_PUBLIC_ORIGIN}/artikler/${slug}/${id}`
 
   return {
