@@ -263,7 +263,7 @@ export function getGroupService(
     },
     async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
-      const key = `group/${Date.now()}-${uuid}-${filename}`
+      const key = `group/${Date.now()}-${uuid}-${slugify(filename)}`
 
       const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
 

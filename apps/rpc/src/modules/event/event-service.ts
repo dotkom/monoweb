@@ -15,7 +15,7 @@ import type {
   GroupId,
   UserId,
 } from "@dotkomonline/types"
-import { createS3PresignedPost } from "@dotkomonline/utils"
+import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { EventRepository } from "./event-repository"
@@ -151,9 +151,9 @@ export function getEventService(
     async findManyDeregisterReasonsWithEvent(handle, page) {
       return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
     },
-    async createFileUpload(filename, contentType, createdByUserId) {
+    async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
-      const key = `event/${Date.now()}-${uuid}-${filename}`
+      const key = `event/${Date.now()}-${uuid}-${slugify(filename)}`
 
       const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
 
