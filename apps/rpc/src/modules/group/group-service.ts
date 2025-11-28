@@ -23,6 +23,7 @@ import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
 
 export interface GroupService {
+  findById(handle: DBHandle, groupId: GroupId): Promise<Group | null>
   /**
    * Get a group by its id
    *
@@ -63,8 +64,11 @@ export interface GroupService {
 
 export function getGroupService(groupRepository: GroupRepository, userService: UserService): GroupService {
   return {
+    async findById(handle, groupId) {
+      return groupRepository.getById(handle, groupId)
+    },
     async getById(handle, groupId) {
-      const group = await groupRepository.getById(handle, groupId)
+      const group = await this.findById(handle, groupId)
       if (!group) throw new NotFoundError(`Group(ID=${groupId}) not found`)
       return group
     },

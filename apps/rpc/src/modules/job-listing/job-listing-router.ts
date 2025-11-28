@@ -60,6 +60,12 @@ export const jobListingRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => ctx.jobListingService.getById(handle, input))
     ),
+  find: procedure
+    .input(JobListingSchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.jobListingService.findById(handle, input))
+    ),
+
   getLocations: procedure.query(async ({ ctx }) =>
     ctx.executeTransaction(async (handle) => ctx.jobListingService.getLocations(handle))
   ),

@@ -14,6 +14,7 @@ import type { Pageable } from "../../query"
 import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {
+  findById(handle: DBHandle, id: JobListingId): Promise<JobListing | null>
   getById(handle: DBHandle, id: JobListingId): Promise<JobListing>
   getActive(handle: DBHandle, page: Pageable): Promise<JobListing[]>
   findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
@@ -35,8 +36,11 @@ export interface JobListingService {
 
 export function getJobListingService(jobListingRepository: JobListingRepository): JobListingService {
   return {
+    async findById(handle, id) {
+      return await jobListingRepository.getById(handle, id)
+    },
     async getById(handle, id) {
-      const jobListing = await jobListingRepository.getById(handle, id)
+      const jobListing = await this.findById(handle, id)
       if (jobListing === null) {
         throw new NotFoundError(`JobListing(ID=${id}) not found`)
       }

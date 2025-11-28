@@ -1,15 +1,24 @@
+import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import type { Article, ArticleTagName, ArticleTag as ArticleTagType } from "@dotkomonline/types"
 import { Button, RichText, Text, Title, Video } from "@dotkomonline/ui"
 import clsx from "clsx"
 import { formatDate, isEqual } from "date-fns"
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { FC } from "react"
 import { ArticleListItem } from "../../ArticleListItem"
 
-const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: string }> }) => {
+interface ArticlePageProps {
+  params: Promise<{
+    id: string
+    slug: string
+  }>
+}
+
+const ArticlePage = async ({ params }: ArticlePageProps) => {
   const { id } = await params
 
   const article = await server.article.get.query(id)
@@ -175,5 +184,51 @@ const Tag: FC<TagProps> = ({ tag }: TagProps) => (
     <Text className="bg-brand hover:bg-brand/80 py-1 px-3 rounded-full text-white font-semibold">{tag}</Text>
   </Link>
 )
+
+export async function generateMetadata({ params }: Pick<ArticlePageProps, "params">): Promise<Metadata> {
+  const { slug, id } = await params
+
+  const article = await server.article.findById.query(id)
+
+  if (!article) {
+    return {
+      title: "Artikkel ikke funnet | Linjeforeningen Online",
+      description: "Artikkelen finnes ikke eller er ikke offentlig tilgjengelig.",
+    }
+  }
+
+  let description = article.excerpt || article.content
+
+  if (description.length > 160) {
+    description = `${description.slice(0, 160)}...`
+  }
+
+  const eventUrl = `${env.NEXT_PUBLIC_ORIGIN}/artikler/${slug}/${id}`
+
+  return {
+    title: article.title,
+    description,
+    openGraph: {
+      title: article.title,
+      description,
+      url: eventUrl,
+      siteName: "Linjeforeningen Online",
+      images: article.imageUrl
+        ? [
+            {
+              url: article.imageUrl,
+              alt: `Banner for ${article.title}`,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description,
+      images: article.imageUrl ? [article.imageUrl] : undefined,
+    },
+  }
+}
 
 export default ArticlePage

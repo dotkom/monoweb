@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
+import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import {
   type Attendance,
@@ -12,9 +13,15 @@ import {
   createGroupPageUrl,
 } from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
-import { createEventPageUrl, createEventSlug } from "@dotkomonline/utils"
+import {
+  createAbsoluteEventPageUrl,
+  createEventPageUrl,
+  createEventSlug,
+  richTextToPlainText,
+} from "@dotkomonline/utils"
 import clsx from "clsx"
 import { isPast } from "date-fns"
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { RedirectType, notFound, permanentRedirect } from "next/navigation"
@@ -54,7 +61,12 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
   </Link>
 )
 
-const EventWithAttendancePage = async ({ params }: { params: Promise<{ slug: string; eventId: string }> }) => {
+interface EventPageParams {
+  slug: string
+  eventId: string
+}
+
+const EventWithAttendancePage = async ({ params }: { params: Promise<EventPageParams> }) => {
   const { slug, eventId } = await params
   const decodedSlug = decodeURIComponent(slug)
 
@@ -192,6 +204,47 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
       </div>
     </div>
   )
+}
+
+export async function generateMetadata({ params }: { params: Promise<EventPageParams> }): Promise<Metadata> {
+  const { eventId } = await params
+
+  const detail = await server.event.find.query(eventId)
+
+  if (!detail) {
+    return {
+      title: "Arrangement ikke funnet | Linjeforeningen Online",
+      description: "Arrangementet finnes ikke eller er ikke offentlig tilgjengelig.",
+    }
+  }
+
+  const description = richTextToPlainText(detail.event.description)
+  const eventUrl = createAbsoluteEventPageUrl(env.NEXT_PUBLIC_ORIGIN, eventId, detail.event.title)
+
+  return {
+    title: detail.event.title,
+    description,
+    openGraph: {
+      title: detail.event.title,
+      description,
+      url: eventUrl,
+      siteName: "Linjeforeningen Online",
+      images: detail.event.imageUrl
+        ? [
+            {
+              url: detail.event.imageUrl,
+              alt: `Banner for ${detail.event.title}`,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: detail.event.title,
+      description,
+      images: detail.event.imageUrl ? [detail.event.imageUrl] : undefined,
+    },
+  }
 }
 
 export default EventWithAttendancePage
