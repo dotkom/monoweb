@@ -101,7 +101,7 @@ describe("article integration tests", () => {
 
   it("should be able to find a featured article", async () => {
     const article = await articleService.create(dbClient, getMockArticle({ isFeatured: true }))
-    const featured = await articleService.getFeatured(dbClient)
+    const featured = await articleService.findFeatured(dbClient)
     expect(featured).toContainEqual(expect.objectContaining({ id: article.id }))
   })
 
@@ -115,7 +115,7 @@ describe("article integration tests", () => {
     const alphaWithTags = await articleService.getById(dbClient, alpha.id)
     expect(alphaWithTags).not.toBeNull()
     // biome-ignore lint/style/noNonNullAssertion: this has been asserted to not be null
-    const related = await articleService.getRelated(dbClient, alphaWithTags!)
+    const related = await articleService.findRelated(dbClient, alphaWithTags!)
     expect(related).toHaveLength(1)
     expect(related).toContainEqual(expect.objectContaining({ id: beta.id }))
   })
