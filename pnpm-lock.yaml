@@ -1299,7 +1299,7 @@ importers:
         version: 1.6.6
     devDependencies:
       '@aws-sdk/client-s3':
-        specifier: ^3.908.0
+        specifier: 3.908.0
         version: 3.908.0
       '@biomejs/biome':
         specifier: 1.9.4
@@ -1308,7 +1308,7 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@types/html-to-text':
-        specifier: ^9.0.4
+        specifier: 9.0.4
         version: 9.0.4
       typescript:
         specifier: 5.9.3
