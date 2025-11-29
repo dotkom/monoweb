@@ -1,28 +1,40 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
+import {
+  ArticleFilterQuerySchema,
+  ArticleSchema,
+  ArticleTagNameSchema,
+  ArticleTagSchema,
+  ArticleWriteSchema,
+} from "@dotkomonline/types"
 import { z } from "zod"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
-export const articleRouter = t.router({
-  create: staffProcedure
-    .input(
-      z.object({
-        article: ArticleWriteSchema,
-        tags: z.array(ArticleTagSchema.shape.name),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      return ctx.executeAuditedTransaction(async (handle) => {
-        const article = await ctx.articleService.create(handle, input.article)
-        const tags = await ctx.articleService.setTags(handle, article.id, input.tags)
-        return {
-          ...article,
-          tags,
-        }
-      })
-    }),
+const ArticleMessage = ArticleSchema.omit({})
+export type ArticleMessage = z.infer<typeof ArticleMessage>
 
+const ArticleCreateInput = z.object({
+  article: ArticleWriteSchema,
+  tags: ArticleTagNameSchema.array(),
+})
+export type ArticleCreateInput = z.infer<typeof ArticleCreateInput>
+
+const ArticleCreateOutput = ArticleMessage
+export type ArticleCreateOutput = z.infer<typeof ArticleCreateOutput>
+
+const articleCreate = staffProcedure
+  .input(ArticleCreateInput)
+  .output(ArticleCreateOutput.promise())
+  .mutation(async ({ input, ctx }) => {
+    return ctx.executeAuditedTransaction(async (handle) => {
+      const article = await ctx.articleService.create(handle, input.article)
+      await ctx.articleService.setTags(handle, article.id, input.tags)
+      return await ctx.articleService.getById(handle, article.id)
+    })
+  })
+
+export const articleRouter = t.router({
+  create: articleCreate,
   edit: staffProcedure
     .input(
       z.object({
