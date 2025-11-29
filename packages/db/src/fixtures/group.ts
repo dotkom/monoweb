@@ -15,6 +15,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/c3535390-05ed-40df-b155-8c4cade5ce47.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "arrkom",
@@ -27,6 +28,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/0954f3de-da25-44eb-b3a9-7dbba7e23f25.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "backlog",
@@ -41,6 +43,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/008459fe-272f-446c-b9c0-ef4a7cda9c16.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "bankom",
@@ -55,6 +58,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/07418449-a797-4f71-83c1-d66867f935b7.png",
       type: "COMMITTEE",
+      recruitmentMethod: "OTHER",
     },
     {
       slug: "bedkom",
@@ -67,6 +71,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/974b88bd-de01-4b59-856f-f53d9bb600a0.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "debug",
@@ -76,6 +81,7 @@ export const getGroupFixtures = () =>
       email: "debug@online.ntnu.no",
       createdAt: new Date("2021-10-31T20:37:31+01:00"),
       type: "COMMITTEE",
+      recruitmentMethod: "NOMINATION",
     },
     {
       slug: "dotdagene",
@@ -85,6 +91,7 @@ export const getGroupFixtures = () =>
         "Bli med og skap noe helt nytt!\r\nNeste semester lanserer vi Karrieredagene for Online, og vi søker deg som vil være med på å bygge dette prosjektet fra bunnen av! Karrieredagene skal bli en plattform som kobler studenter med bedrifter og karrieremuligheter. For å få dette til, trenger vi engasjerte og kreative hoder som brenner for å gjøre en forskjell.\r\n\r\nViktig å vite:\r\nKarrieredagene-komiteen er ikke en komité eller nodekomité under Online, men en komité under organisasjonen Ekskom, noe som betyr at du kan være med så lenge du ønsker og har kapasitet til å bidra. Vi ser etter studenter fra alle klassetrinn, så uansett om du går i første klasse eller nærmer deg slutten av studiene, er du velkommen til å søke!\r\n\r\nForeløpig ser vi for oss følgende roller:\r\n* Arrangementansvarlige: Har ansvar for logistikken rundt selve arrangementet, inkludert booking av lokaler, tidsplan og teknisk utstyr.\r\n* PR- og kommunikasjonsansvarlige: Sørger for promotering av arrangementet, utvikler markedsføringsmateriale og jobber med å nå ut til studenter og bedrifter.\r\n* Bedriftskoordinatorer: Jobber med å kontakte og følge opp bedrifter som ønsker å delta, og sørger for god kommunikasjon og samarbeid med dem. \r\n* Økonomiansvarlig: Holder oversikt over budsjettet, søker om midler og sørger for at komiteen holder seg innenfor økonomiske rammer.\r\n\r\nVi ser etter deg som:\r\n* Er strukturert og liker å organisere.\r\n* Har lyst til å ta ansvar og jobbe i team.\r\n* Vil være med på å forme et prosjekt med stort potensial.\r\n* Dette er en unik sjanse til å få verdifull erfaring og gjøre noe som kan ha stor betydning for både deg og dine medstudenter. Bli med og skap noe nytt!",
       email: null,
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "dotkom",
@@ -97,6 +104,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/0990ab67-0f5b-4c4d-95f1-50a5293335a5.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "ekskom",
@@ -110,6 +118,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/625ea6b5-3c6f-4f1e-9b90-d9e2706792a6.png",
       type: "NODE_COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "fagkom",
@@ -124,6 +133,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/7ab7419d-61c5-499f-87f3-ebbc2a5e6b1c.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "feminit",
@@ -138,6 +148,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/8c43581c-19da-48c2-8b96-75d09e12abae.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "hs",
@@ -147,6 +158,7 @@ export const getGroupFixtures = () =>
       description:
         "Hovedstyret velges av linjeforeningens medlemmer på generalforsamlingen i løpet av vårsemesteret og sitter ett år frem i tid. Styret består av leder, nestleder, økonomiansvarlig og alle styremedlemmene.\n\nHovedstyret er først og fremst en møteplass for koordinering av de forskjellige komiteene. Styret driver også med økonomistyring og annet administrativt arbeid.\n\nHovedstyret er også linjeforeningens ansikt utad, og opprettholder kontakten med fakultet, institutt og representerer Online ved forskjellige anledninger.",
       type: "COMMITTEE",
+      recruitmentMethod: "GENERAL_ASSEMBLY",
     },
     {
       slug: "jubkom",
@@ -173,6 +185,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/411fb970-1e76-4059-a874-8c45c4155947.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "output",
@@ -196,6 +209,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/f4aea8d0-a8b3-48aa-b49f-2f7aa2a1ad08.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "rfk",
@@ -224,6 +238,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/86b12d11-5326-48c9-bdd2-3830f8fa376b.png",
       type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
       slug: "velkom",
@@ -238,6 +253,7 @@ export const getGroupFixtures = () =>
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/625ea6b5-3c6f-4f1e-9b90-d9e2706792a6.png",
       type: "NODE_COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
     },
 
     // Interest groups
@@ -342,5 +358,10 @@ export const getGroupRoleFixtures = (groupInput: Prisma.GroupCreateInput) =>
       groupId: groupInput.slug,
       name: "Medlem",
       type: "COSMETIC",
+    },
+    {
+      groupId: groupInput.slug,
+      name: "E-postbruker",
+      type: "EMAIL_ONLY",
     },
   ] as const satisfies Prisma.GroupRoleCreateManyInput[]

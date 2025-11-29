@@ -49,6 +49,7 @@ describe("GroupService", () => {
       roles: [],
       workspaceGroupId: null,
       showLeaderAsContact: false,
+      recruitmentMethod: "AUTUMN_APPLICATION",
     }
     const id = randomUUID()
     vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ ...group })
