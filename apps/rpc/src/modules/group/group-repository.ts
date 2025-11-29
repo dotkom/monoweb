@@ -24,6 +24,8 @@ export interface GroupRepository {
   update(handle: DBHandle, groupId: GroupId, data: Partial<GroupWrite>): Promise<Group>
   delete(handle: DBHandle, groupId: GroupId): Promise<Group>
   getById(handle: DBHandle, groupId: GroupId): Promise<Group | null>
+  getByGroupRoleId(handle: DBHandle, groupRoleId: GroupRoleId): Promise<Group | null>
+  getByGroupMembershipId(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<Group | null>
   getMany(handle: DBHandle, groupIds: GroupId[]): Promise<Group[]>
   getAll(handle: DBHandle): Promise<Group[]>
   getAllByType(handle: DBHandle, type: GroupType): Promise<Group[]>
@@ -71,6 +73,32 @@ export function getGroupRepository(): GroupRepository {
         include: QUERY_WITH_ROLES,
       })
       return group ? parseOrReport(GroupSchema, group) : null
+    },
+    async getByGroupRoleId(handle, groupRoleId) {
+      const role = await handle.groupRole.findUnique({
+        where: {
+          id: groupRoleId,
+        },
+        include: {
+          group: {
+            include: QUERY_WITH_ROLES,
+          },
+        },
+      })
+      return role ? parseOrReport(GroupSchema.nullable(), role.group) : null
+    },
+    async getByGroupMembershipId(handle, groupMembershipId) {
+      const membership = await handle.groupMembership.findUnique({
+        where: {
+          id: groupMembershipId,
+        },
+        include: {
+          group: {
+            include: QUERY_WITH_ROLES,
+          },
+        },
+      })
+      return membership ? parseOrReport(GroupSchema.nullable(), membership.group) : null
     },
     async getMany(handle, groupIds) {
       const groups = await handle.group.findMany({

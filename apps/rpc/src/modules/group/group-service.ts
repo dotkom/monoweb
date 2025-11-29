@@ -6,6 +6,7 @@ import {
   type GroupId,
   type GroupMember,
   type GroupMembership,
+  type GroupMembershipId,
   type GroupMembershipWrite,
   type GroupRole,
   type GroupRoleId,
@@ -32,6 +33,8 @@ export interface GroupService {
    * @throws {NotFoundError} if the group does not exist
    */
   getById(handle: DBHandle, groupId: GroupId): Promise<Group>
+  getByGroupRoleId(handle: DBHandle, groupRoleId: GroupRoleId): Promise<Group>
+  getByGroupMembershipId(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<Group>
   getMany(handle: DBHandle, groupIds: GroupId[]): Promise<Group[]>
   getByIdAndType(handle: DBHandle, groupId: GroupId, groupType: GroupType): Promise<Group>
   getAll(handle: DBHandle): Promise<Group[]>
@@ -83,6 +86,20 @@ export function getGroupService(
     async getById(handle, groupId) {
       const group = await this.findById(handle, groupId)
       if (!group) throw new NotFoundError(`Group(ID=${groupId}) not found`)
+      return group
+    },
+    async getByGroupRoleId(handle, groupRoleId) {
+      const group = await groupRepository.getByGroupRoleId(handle, groupRoleId)
+      if (!group) {
+        throw new NotFoundError(`Group with GroupRole(ID=${groupRoleId}) not found`)
+      }
+      return group
+    },
+    async getByGroupMembershipId(handle, groupMembershipId) {
+      const group = await groupRepository.getByGroupMembershipId(handle, groupMembershipId)
+      if (!group) {
+        throw new NotFoundError(`Group with GroupMembership(ID=${groupMembershipId}) not found`)
+      }
       return group
     },
     async getByIdAndType(handle, groupId, groupType) {
