@@ -570,7 +570,7 @@ importers:
         version: 11.4.4(typescript@5.9.3)
       auth0:
         specifier: ^4.23.1
-        version: 4.33.0
+        version: 4.37.0
       commander:
         specifier: ^14.0.0
         version: 14.0.1
@@ -5582,8 +5582,8 @@ packages:
     resolution: {integrity: sha512-0bDNnY/u6pPwHDMoF0FieU354oBi0a8rD9FcsLwzcGWbc8KS8KPIi7y+s13OlVY+gMWc/9xEMUgNE6Qm8ZllYQ==}
     engines: {node: '>=4'}
 
-  auth0@4.33.0:
-    resolution: {integrity: sha512-+zRMFXakIpKudDJKGzwlsYp6LC91J9w7hMz9k9d/qRmGbfqkJeqp3wPmKV7GqAcprfUr9fWCJH3XFFxzJV2jow==}
+  auth0@4.37.0:
+    resolution: {integrity: sha512-+TqJRxh4QvbD4TQIYx1ak2vanykQkG/nIZLuR6o8LoQj425gjVG3tFuUbbOeh/nCpP1rnvU0CCV1ChZHYXLU/A==}
     engines: {node: '>=18'}
 
   avvio@9.1.0:
@@ -14265,7 +14265,7 @@ snapshots:
 
   attr-accept@2.2.5: {}
 
-  auth0@4.33.0:
+  auth0@4.37.0:
     dependencies:
       jose: 4.15.9
       undici-types: 6.21.0
@@ -16767,7 +16767,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      styled-jsx: 5.1.6(react@19.1.1)
+      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.1.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.4.7
       '@next/swc-darwin-x64': 15.4.7
@@ -18019,11 +18019,6 @@ snapshots:
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
-
-  styled-jsx@5.1.6(react@19.1.1):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.1.1
 
   sugarss@5.0.0(postcss@8.5.6):
     dependencies:
