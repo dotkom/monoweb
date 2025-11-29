@@ -4,7 +4,7 @@ import type { UserId } from "@dotkomonline/types"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { TRPCError, type TRPC_ERROR_CODE_KEY, initTRPC } from "@trpc/server"
-import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
+import type { MiddlewareResult, ProcedureResolverOptions } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
@@ -28,6 +28,7 @@ import {
   isAffiliation,
 } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
+import z from "zod"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */
@@ -315,4 +316,24 @@ function getRequireMeOrAffiliation(
       requireAffiliation(...affiliations)
     }
   }
+}
+
+export type ProcedureInput<T> = never
+export type ProcedureOutput<T> = never
+export type ProcedureOptions<I extends z.ZodType<any, any, any>, O extends z.ZodType<any, any, any>, TContext, TMeta, TContextOverrides = TContext> = {
+  input: I
+  output: O
+} & (
+  | {
+      query: (opts: ProcedureResolverOptions<TContext, TMeta, TContextOverrides, z.infer<I>>) => z.infer<O>
+    }
+  | {
+      mutation: (opts: ProcedureResolverOptions<TContext, TMeta, TContextOverrides, z.infer<I>>) => z.infer<O>
+    }
+)
+  
+export function defineProcedure<I extends z.ZodType<any, any, any>, O extends z.ZodType<any, any, any>, TContext = Context, TMeta = never>(
+  opts: ProcedureOptions<I, O, TContext, TMeta>
+) {
+  return
 }
