@@ -48,7 +48,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@dotkomonline/config": "workspace:*",
-    "@ladle/react": "5.1.0",
+    "@ladle/react": "5.1.1",
     "@tailwindcss/postcss": "4.1.16",
     "@types/react": "19.1.14",
     "postcss": "8.5.6",
