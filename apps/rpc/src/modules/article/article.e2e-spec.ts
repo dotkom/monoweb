@@ -72,7 +72,7 @@ describe("article integration tests", () => {
     const bySlug = await articleService.getBySlug(dbClient, article.slug)
     expect(bySlug).not.toBeNull()
     expect(bySlug?.id).toBe(article.id)
-    const byAll = await articleService.getAll(dbClient, { take: 10 })
+    const byAll = await articleService.findMany(dbClient, {}, { take: 10 })
     expect(byAll).toContainEqual(expect.objectContaining({ id: article.id }))
   })
 
@@ -83,7 +83,7 @@ describe("article integration tests", () => {
     const articleWithTag1 = await articleService.getById(dbClient, article.id)
     expect(articleWithTag1?.tags).toContainEqual(expect.objectContaining({ name: tag1 }))
     // It should now be able to find the article by tag
-    const articlesByTag1 = await articleService.getAllByTags(dbClient, [tag1])
+    const articlesByTag1 = await articleService.findManyByTags(dbClient, [tag1])
     expect(articlesByTag1).toContainEqual(expect.objectContaining({ id: article.id }))
     // Removing the tag should make it no longer findable by tag
     await articleService.removeTag(dbClient, article.id, tag1)
@@ -101,7 +101,7 @@ describe("article integration tests", () => {
 
   it("should be able to find a featured article", async () => {
     const article = await articleService.create(dbClient, getMockArticle({ isFeatured: true }))
-    const featured = await articleService.getFeatured(dbClient)
+    const featured = await articleService.findFeatured(dbClient)
     expect(featured).toContainEqual(expect.objectContaining({ id: article.id }))
   })
 
@@ -115,7 +115,7 @@ describe("article integration tests", () => {
     const alphaWithTags = await articleService.getById(dbClient, alpha.id)
     expect(alphaWithTags).not.toBeNull()
     // biome-ignore lint/style/noNonNullAssertion: this has been asserted to not be null
-    const related = await articleService.getRelated(dbClient, alphaWithTags!)
+    const related = await articleService.findRelated(dbClient, alphaWithTags!)
     expect(related).toHaveLength(1)
     expect(related).toContainEqual(expect.objectContaining({ id: beta.id }))
   })

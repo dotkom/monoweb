@@ -14,53 +14,49 @@ import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface ArticleRepository {
-  create(handle: DBHandle, input: ArticleWrite): Promise<Article>
-  update(handle: DBHandle, articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
-  getAll(handle: DBHandle, page: Pageable): Promise<Article[]>
-  getById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
-  getBySlug(handle: DBHandle, slug: ArticleSlug): Promise<Article | null>
-  getByTags(handle: DBHandle, tags: ArticleTagName[], page?: Pageable): Promise<Article[]>
+  create(handle: DBHandle, data: ArticleWrite): Promise<Article>
+  update(handle: DBHandle, articleId: ArticleId, data: Partial<ArticleWrite>): Promise<Article>
+  findById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
+  findBySlug(handle: DBHandle, articleSlug: ArticleSlug): Promise<Article | null>
   findMany(handle: DBHandle, query: ArticleFilterQuery, page: Pageable): Promise<Article[]>
-  getFeatured(handle: DBHandle): Promise<Article[]>
+  findManyByTags(handle: DBHandle, articleTags: ArticleTagName[], page?: Pageable): Promise<Article[]>
+  findFeatured(handle: DBHandle): Promise<Article[]>
   findTagsOrderedByPopularity(handle: DBHandle, take: number): Promise<ArticleTag[]>
 }
 
 export function getArticleRepository(): ArticleRepository {
   return {
-    async create(handle, input) {
-      const { tags, ...article } = await handle.article.create({ data: input, include: QUERY_WITH_TAGS })
+    async create(handle, data) {
+      const { tags, ...article } = await handle.article.create({ data, include: QUERY_WITH_TAGS })
       return mapArticle(article, tags)
     },
-    async update(handle, articleId, input) {
+
+    async update(handle, articleId, data) {
       const { tags, ...article } = await handle.article.update({
         where: { id: articleId },
-        data: input,
+        data,
         include: QUERY_WITH_TAGS,
       })
       return mapArticle(article, tags)
     },
-    async getAll(handle, page) {
-      const articles = await handle.article.findMany({
-        include: QUERY_WITH_TAGS,
-        ...pageQuery(page),
-      })
-      return articles.map((article) => mapArticle(article, article.tags))
-    },
-    async getById(handle, articleId) {
+
+    async findById(handle, articleId) {
       const article = await handle.article.findUnique({ where: { id: articleId }, include: QUERY_WITH_TAGS })
       return article ? mapArticle(article, article.tags) : null
     },
-    async getBySlug(handle, slug) {
-      const article = await handle.article.findUnique({ where: { slug }, include: QUERY_WITH_TAGS })
+
+    async findBySlug(handle, articleSlug) {
+      const article = await handle.article.findUnique({ where: { slug: articleSlug }, include: QUERY_WITH_TAGS })
       return article ? mapArticle(article, article.tags) : null
     },
-    async getByTags(handle, tags, page) {
+
+    async findManyByTags(handle, articleTags, page) {
       const articles = await handle.article.findMany({
         where: {
           tags: {
             some: {
               tagName: {
-                in: tags,
+                in: articleTags,
               },
             },
           },
@@ -70,6 +66,7 @@ export function getArticleRepository(): ArticleRepository {
       })
       return articles.map((article) => mapArticle(article, article.tags))
     },
+
     async findMany(handle, query, page) {
       const articles = await handle.article.findMany({
         where: {
@@ -99,7 +96,8 @@ export function getArticleRepository(): ArticleRepository {
 
       return articles.map((article) => mapArticle(article, article.tags))
     },
-    async getFeatured(handle) {
+
+    async findFeatured(handle) {
       const articles = await handle.article.findMany({
         where: {
           isFeatured: true,
@@ -108,6 +106,7 @@ export function getArticleRepository(): ArticleRepository {
       })
       return articles.map((article) => mapArticle(article, article.tags))
     },
+
     async findTagsOrderedByPopularity(handle, take) {
       const tags = await handle.articleTagLink.groupBy({
         by: "tagName",

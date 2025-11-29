@@ -20,25 +20,24 @@ import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
 import type { ArticleTagRepository } from "./article-tag-repository"
 
 export interface ArticleService {
-  create(handle: DBHandle, input: ArticleWrite): Promise<Article>
+  create(handle: DBHandle, data: ArticleWrite): Promise<Article>
   /**
    * Update an article by its id
    *
    * @throws {NotFoundError} if the article does not exist
    */
-  update(handle: DBHandle, articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
-  getAll(handle: DBHandle, page: Pageable): Promise<Article[]>
-  getAllByTags(handle: DBHandle, tags: ArticleTagName[]): Promise<Article[]>
+  update(handle: DBHandle, articleId: ArticleId, data: Partial<ArticleWrite>): Promise<Article>
   findById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
-  // TODO: make this return non-nullable
-  getById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
-  getBySlug(handle: DBHandle, slug: ArticleSlug): Promise<Article | null>
+  getById(handle: DBHandle, articleId: ArticleId): Promise<Article>
+  findBySlug(handle: DBHandle, articleSlug: ArticleSlug): Promise<Article | null>
+  getBySlug(handle: DBHandle, articleSlug: ArticleSlug): Promise<Article>
   findMany(handle: DBHandle, query: ArticleFilterQuery, page: Pageable): Promise<Article[]>
+  findManyByTags(handle: DBHandle, articleTags: ArticleTagName[]): Promise<Article[]>
   /**
    * Gets the top 10 related articles based on tags
    */
-  getRelated(handle: DBHandle, article: Article): Promise<Article[]>
-  getFeatured(handle: DBHandle): Promise<Article[]>
+  findRelated(handle: DBHandle, article: Article): Promise<Article[]>
+  findFeatured(handle: DBHandle): Promise<Article[]>
   getTags(handle: DBHandle): Promise<ArticleTag[]>
   /**
    * Add a tag to an article
@@ -69,48 +68,81 @@ export function getArticleService(
   s3Client: S3Client,
   s3BucketName: string
 ): ArticleService {
+  async function requireArticleExists(handle: DBHandle, articleId: ArticleId): Promise<boolean> {
+    const article = await articleRepository.findById(handle, articleId)
+
+    return Boolean(article)
+  }
+
   return {
-    async create(handle, input) {
-      if (await this.getBySlug(handle, input.slug)) {
-        throw new AlreadyExistsError(`Article(Slug=${input.slug}) already exists`)
+    async create(handle, data) {
+      const existingArticle = await this.findBySlug(handle, data.slug)
+
+      if (existingArticle) {
+        throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
       }
-      return await articleRepository.create(handle, input)
+
+      return await articleRepository.create(handle, data)
     },
-    async update(handle, articleId, input) {
-      const match = await articleRepository.getById(handle, articleId)
-      if (match === null) {
-        throw new NotFoundError(`Article(ID=${articleId}) not found`)
+
+    async update(handle, articleId, data) {
+      const article = await this.getById(handle, articleId)
+
+      if (data.slug && data.slug !== article.slug) {
+        const possibleDuplicate = await this.findBySlug(handle, data.slug)
+
+        if (possibleDuplicate) {
+          throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
+        }
       }
-      if (input.slug !== match.slug && input.slug && (await this.getBySlug(handle, input.slug))) {
-        throw new AlreadyExistsError(`Article(Slug=${input.slug}) already exists`)
-      }
-      return await articleRepository.update(handle, match.id, input)
+
+      return await articleRepository.update(handle, article.id, data)
     },
-    async getAll(handle, page) {
-      return await articleRepository.getAll(handle, page)
+
+    async findManyByTags(handle, articleTags) {
+      return await articleRepository.findManyByTags(handle, articleTags)
     },
-    async getAllByTags(handle, tags) {
-      return await articleRepository.getByTags(handle, tags)
-    },
+
     async findById(handle, articleId) {
-      return await articleRepository.getById(handle, articleId)
+      return await articleRepository.findById(handle, articleId)
     },
+
     async getById(handle, articleId) {
       const article = await this.findById(handle, articleId)
+
+      if (!article) {
+        throw new NotFoundError(`Article(ID=${articleId}) not found`)
+      }
+
       return article
     },
-    async getBySlug(handle, slug) {
-      return await articleRepository.getBySlug(handle, slug)
+
+    async findBySlug(handle, articleSlug) {
+      return await articleRepository.findBySlug(handle, articleSlug)
     },
+
+    async getBySlug(handle, articleSlug) {
+      const article = await this.findBySlug(handle, articleSlug)
+
+      if (!article) {
+        throw new NotFoundError(`Article(Slug=${articleSlug}) not found`)
+      }
+
+      return article
+    },
+
     async findMany(handle, query, page) {
       return articleRepository.findMany(handle, query, page)
     },
-    async getRelated(handle, article) {
+
+    async findRelated(handle, article) {
       const articleTags = new Set(article.tags)
-      const relatedArticles = await this.getAllByTags(
+
+      const relatedArticles = await this.findManyByTags(
         handle,
-        article.tags.map((tag) => tag.name)
+        [...articleTags].map((tag) => tag.name)
       )
+
       return relatedArticles
         .filter((related) => related.id !== article.id)
         .map((related) => {
@@ -137,50 +169,63 @@ export function getArticleService(
         .map(({ article }) => article)
         .slice(0, 10)
     },
-    async getFeatured(handle) {
-      const articles = await articleRepository.getFeatured(handle)
-      return articles.sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
+
+    async findFeatured(handle) {
+      const articles = await articleRepository.findFeatured(handle)
+      return articles.toSorted((a, b) => compareDesc(a.updatedAt, b.updatedAt))
     },
+
     async getTags(handle) {
-      const tags = await articleTagRepository.getAll(handle)
-      return tags.sort((a, b) => compareAsc(a.name, b.name))
+      const tags = await articleTagRepository.findMany(handle)
+      return tags.toSorted((a, b) => compareAsc(a.name, b.name))
     },
+
     async addTag(handle, articleId, tag) {
-      const match = await articleRepository.getById(handle, articleId)
-      if (!match) {
-        throw new NotFoundError(`Article(ID=${articleId}) not found`)
-      }
-      let name = await articleTagRepository.getByName(handle, tag)
+      await requireArticleExists(handle, articleId)
+
+      let name = await articleTagRepository.findByName(handle, tag)
       if (name === null) {
         name = await articleTagRepository.create(handle, tag)
       }
+
       return await articleTagLinkRepository.add(handle, articleId, name.name)
     },
+
     async removeTag(handle, articleId, tag) {
-      const match = await articleRepository.getById(handle, articleId)
-      if (!match) {
-        throw new NotFoundError(`Article(ID=${articleId}) not found`)
-      }
+      await requireArticleExists(handle, articleId)
+
       await articleTagLinkRepository.remove(handle, articleId, tag)
-      const articlesWithTag = await articleRepository.getByTags(handle, [tag])
+
+      const articlesWithTag = await articleRepository.findManyByTags(handle, [tag])
       const isTagStillInUse = articlesWithTag.length !== 0
+
       if (!isTagStillInUse) {
         await articleTagRepository.delete(handle, tag)
       }
     },
+
     async setTags(handle, articleId, tags) {
-      const currentTags = (await articleTagRepository.getAllByArticle(handle, articleId)).map((tag) => tag.name)
-      const tagsToAdd = tags.filter((tag) => !currentTags.includes(tag))
-      const tagsToRemove = currentTags.filter((tag) => !tags.includes(tag))
-      const removePromises = tagsToRemove.map(async (tag) => this.removeTag(handle, articleId, tag))
+      await requireArticleExists(handle, articleId)
+
+      const currentTags = await articleTagRepository.findManyByArticleId(handle, articleId)
+      const currentTagNames = currentTags.map((tag) => tag.name)
+
+      const tagsToAdd = tags.filter((tag) => !currentTagNames.includes(tag))
+      const tagsToRemove = currentTagNames.filter((tag) => !tags.includes(tag))
+
       const addPromises = tagsToAdd.map(async (tag) => this.addTag(handle, articleId, tag))
+      const removePromises = tagsToRemove.map(async (tag) => this.removeTag(handle, articleId, tag))
 
       await Promise.all([...removePromises, ...addPromises])
-      return currentTags.filter((tag) => !tagsToRemove.includes(tag)).concat(tagsToAdd)
+
+      return currentTagNames.filter((tag) => !tagsToRemove.includes(tag)).concat(tagsToAdd)
     },
+
     async findTagsOrderedByPopularity(handle) {
+      // magic number
       return articleRepository.findTagsOrderedByPopularity(handle, 30)
     },
+
     async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `article/${Date.now()}-${uuid}-${slugify(filename)}`
