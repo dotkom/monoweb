@@ -1256,8 +1256,8 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@ladle/react':
-        specifier: 5.1.0
-        version: 5.1.0(@swc/helpers@0.5.15)(@types/node@22.18.6)(@types/react@19.1.14)(acorn@8.15.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.0)
+        specifier: 5.1.1
+        version: 5.1.1(@swc/helpers@0.5.15)(@types/node@22.18.6)(@types/react@19.1.14)(acorn@8.15.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.0)
       '@tailwindcss/postcss':
         specifier: 4.1.16
         version: 4.1.16
@@ -2611,8 +2611,8 @@ packages:
       react: '>=16.14.0'
       react-dom: '>=16.14.0'
 
-  '@ladle/react@5.1.0':
-    resolution: {integrity: sha512-4krY6rg3PzhlOArU9HTnayKnJiZH9SpEK5pVMc0LJTbREWob+VBhkp1IaApcuI0m9C8YB+5nOdFB2RnnjyPcBw==}
+  '@ladle/react@5.1.1':
+    resolution: {integrity: sha512-HA3djOTK/CRWTdXzQ7sCu/6tmeYGZpRKTNH5hTvVqXH/Qxsnrguscz5uALWiGxcG8b/GAoU1HKbYTo5f53tTBw==}
     engines: {node: '>=20.0.0'}
     hasBin: true
     peerDependencies:
@@ -7041,9 +7041,6 @@ packages:
   koa-compose@4.1.0:
     resolution: {integrity: sha512-8ODW8TrDuMYvXRwra/Kh7/rJo9BtOfPc6qO8eAfC80CnCvSjSl0bkRM24X6/XBBEyj0v1nRUQ1LyOy3dbqOWXw==}
 
-  koa-connect@2.1.0:
-    resolution: {integrity: sha512-O9pcFafHk0oQsBevlbTBlB9co+2RUQJ4zCzu3qJPmGlGoeEZkne+7gWDkecqDPSbCtED6LmhlQladxs6NjOnMQ==}
-
   koa-convert@2.0.0:
     resolution: {integrity: sha512-asOvN6bFlSnxewce2e/DK3p4tltyfC4VM7ZwuTuepI7dEQVcvpyFuBcEARu1+Hxg8DIwytce2n7jrZtRlPrARA==}
     engines: {node: '>= 10'}
@@ -10190,7 +10187,7 @@ snapshots:
       '@babel/parser': 7.28.0
       '@babel/template': 7.27.2
       '@babel/types': 7.28.0
-      debug: 4.4.1
+      debug: 4.4.3
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -10203,7 +10200,7 @@ snapshots:
       '@babel/parser': 7.28.0
       '@babel/template': 7.27.2
       '@babel/types': 7.28.0
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -10916,7 +10913,7 @@ snapshots:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
 
-  '@ladle/react@5.1.0(@swc/helpers@0.5.15)(@types/node@22.18.6)(@types/react@19.1.14)(acorn@8.15.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.0)':
+  '@ladle/react@5.1.1(@swc/helpers@0.5.15)(@types/node@22.18.6)(@types/react@19.1.14)(acorn@8.15.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.0)':
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/core': 7.28.0
@@ -10936,12 +10933,11 @@ snapshots:
       classnames: 2.5.1
       commander: 12.1.0
       cross-spawn: 7.0.6
-      debug: 4.4.1
+      debug: 4.4.3
       get-port: 7.1.0
       globby: 14.0.2
       history: 5.3.0
       koa: 2.16.0
-      koa-connect: 2.1.0
       lodash.merge: 4.6.2
       msw: 2.7.0(@types/node@22.18.6)(typescript@5.9.3)
       open: 10.1.0
@@ -14780,7 +14776,7 @@ snapshots:
 
   docker-modem@5.0.6:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       readable-stream: 3.6.2
       split-ca: 1.0.1
       ssh2: 1.16.0
@@ -15897,8 +15893,6 @@ snapshots:
 
   koa-compose@4.1.0: {}
 
-  koa-connect@2.1.0: {}
-
   koa-convert@2.0.0:
     dependencies:
       co: 4.6.0
@@ -15911,7 +15905,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.4.1
+      debug: 4.4.3
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -18437,7 +18431,7 @@ snapshots:
 
   vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@6.4.1(@types/node@22.18.6)(jiti@2.6.1)(lightningcss@1.30.2)(sugarss@5.0.0(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.0)):
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.9.3)
     optionalDependencies:
