@@ -26,7 +26,9 @@ export const JubileumNotice = () => {
         <Text className="text-sm text-white dark:text-black">Online Jubileum</Text>
       </div>
 
-      <Text className="text-sm text-white dark:text-black tabular-nums">{countdown}</Text>
+      <Text className="text-sm text-white dark:text-black tabular-nums" suppressHydrationWarning>
+        {countdown}
+      </Text>
       <IconArrowUpRight className="text-white dark:text-black size-4" />
     </Link>
   )

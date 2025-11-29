@@ -34,7 +34,7 @@
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
     "jose": "^6.0.11",
-    "oauth4webapi": "^3.5.1",
+    "oauth4webapi": "^3.8.3",
     "zod": "^3.25.47"
   },
   "peerDependencies": {
