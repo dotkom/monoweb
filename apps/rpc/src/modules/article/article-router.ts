@@ -8,7 +8,7 @@ import {
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { defineProcedure, procedure, staffProcedure, t } from "../../trpc"
 
 const ArticleMessage = ArticleSchema.omit({})
 export type ArticleMessage = z.infer<typeof ArticleMessage>
@@ -22,16 +22,20 @@ export type ArticleCreateInput = z.infer<typeof ArticleCreateInput>
 const ArticleCreateOutput = ArticleMessage
 export type ArticleCreateOutput = z.infer<typeof ArticleCreateOutput>
 
-const articleCreate = staffProcedure
-  .input(ArticleCreateInput)
-  .output(ArticleCreateOutput.promise())
-  .mutation(async ({ input, ctx }) => {
+const articleCreate = defineProcedure({
+  input: z.object({
+    article: ArticleWriteSchema,
+    tags: ArticleTagNameSchema.array(),
+  }),
+  output: ArticleMessage.promise(),
+  mutation: async ({ input, ctx }) => {
     return ctx.executeAuditedTransaction(async (handle) => {
       const article = await ctx.articleService.create(handle, input.article)
       await ctx.articleService.setTags(handle, article.id, input.tags)
       return await ctx.articleService.getById(handle, article.id)
     })
-  })
+  }
+})
 
 export const articleRouter = t.router({
   create: articleCreate,
