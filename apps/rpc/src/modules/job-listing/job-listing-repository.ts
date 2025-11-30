@@ -14,31 +14,30 @@ import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface JobListingRepository {
-  getById(handle: DBHandle, jobListingId: JobListingId): Promise<JobListing | null>
-  findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
-  getActive(handle: DBHandle, page: Pageable): Promise<JobListing[]>
-  createJobListing(
+  create(
     handle: DBHandle,
-    data: JobListingWrite,
     companyId: CompanyId,
-    locationIds: JobListingLocationId[]
+    jobListingData: JobListingWrite,
+    locationIdsData: JobListingLocationId[]
   ): Promise<JobListing>
   update(
     handle: DBHandle,
     jobListingId: JobListingId,
-    data: Partial<JobListingWrite>,
-    companyId: CompanyId,
-    locationIds: JobListingLocationId[]
+    jobListingData: Partial<JobListingWrite>,
+    locationIdsData: JobListingLocationId[]
   ): Promise<JobListing>
-  getLocations(handle: DBHandle): Promise<JobListingLocation[]>
+  findById(handle: DBHandle, jobListingId: JobListingId): Promise<JobListing | null>
+  findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
+  findActiveJobListings(handle: DBHandle, page: Pageable): Promise<JobListing[]>
+  findJobListingLocations(handle: DBHandle): Promise<JobListingLocation[]>
 }
 
 export function getJobListingRepository(): JobListingRepository {
   return {
-    async createJobListing(handle, data, companyId, locationIds) {
+    async create(handle, companyId, jobListingData, locationIdsData) {
       const listing = await handle.jobListing.create({
         data: {
-          ...data,
+          ...jobListingData,
           company: {
             connect: {
               id: companyId,
@@ -46,7 +45,7 @@ export function getJobListingRepository(): JobListingRepository {
           },
           locations: {
             createMany: {
-              data: locationIds.map((locationId) => ({ name: locationId })),
+              data: locationIdsData.map((locationId) => ({ name: locationId })),
             },
           },
         },
@@ -55,15 +54,17 @@ export function getJobListingRepository(): JobListingRepository {
           locations: true,
         },
       })
+
       return parseOrReport(JobListingSchema, listing)
     },
-    async update(handle, jobListingId, data, companyId, locationIds) {
+
+    async update(handle, jobListingId, jobListingData, locationIdsData) {
       const listing = await handle.jobListing.update({
         where: { id: jobListingId },
         data: {
-          ...data,
+          ...jobListingData,
           locations: {
-            connectOrCreate: locationIds?.map((name) => ({
+            connectOrCreate: locationIdsData.map((name) => ({
               create: { name },
               where: { name_jobListingId: { name, jobListingId } },
             })),
@@ -74,7 +75,7 @@ export function getJobListingRepository(): JobListingRepository {
                 },
                 {
                   name: {
-                    notIn: locationIds,
+                    notIn: locationIdsData,
                   },
                 },
               ],
@@ -86,9 +87,11 @@ export function getJobListingRepository(): JobListingRepository {
           locations: true,
         },
       })
+
       return parseOrReport(JobListingSchema, listing)
     },
-    async getById(handle, jobListingId) {
+
+    async findById(handle, jobListingId) {
       const listing = await handle.jobListing.findUnique({
         where: { id: jobListingId },
         include: {
@@ -96,8 +99,10 @@ export function getJobListingRepository(): JobListingRepository {
           locations: true,
         },
       })
-      return listing ? parseOrReport(JobListingSchema, listing) : null
+
+      return parseOrReport(JobListingSchema.nullable(), listing)
     },
+
     async findMany(handle, query, page) {
       const jobListings = await handle.jobListing.findMany({
         ...pageQuery(page),
@@ -134,7 +139,8 @@ export function getJobListingRepository(): JobListingRepository {
         })
       )
     },
-    async getActive(handle, page) {
+
+    async findActiveJobListings(handle, page) {
       const listings = await handle.jobListing.findMany({
         where: {
           start: {
@@ -148,13 +154,16 @@ export function getJobListingRepository(): JobListingRepository {
         include: { company: true, locations: true },
         ...pageQuery(page),
       })
-      return listings.map((listing) => parseOrReport(JobListingSchema, listing))
+
+      return parseOrReport(JobListingSchema.array(), listings)
     },
-    async getLocations(handle) {
+
+    async findJobListingLocations(handle) {
       const locations = await handle.jobListingLocation.findMany({
         distinct: "name",
       })
-      return locations.map((location) => parseOrReport(JobListingLocationSchema, location))
+
+      return parseOrReport(JobListingLocationSchema.array(), locations)
     },
   }
 }
