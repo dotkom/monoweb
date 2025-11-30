@@ -1,33 +1,35 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
-import type { Company, CompanyId, CompanyWrite, UserId } from "@dotkomonline/types"
+import type { Company, CompanyId, CompanySlug, CompanyWrite, UserId } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {
+  findById(handle: DBHandle, companyId: CompanyId): Promise<Company | null>
   /**
    * Get a company by its id
    *
    * @throws {NotFoundError} if the company does not exist
    */
-  getCompanyById(handle: DBHandle, id: CompanyId): Promise<Company>
+  getById(handle: DBHandle, companyId: CompanyId): Promise<Company>
+  findBySlug(handle: DBHandle, companySlug: CompanySlug): Promise<Company | null>
   /**
    * Get a company by its slug
    *
    * @throws {NotFoundError} if the company does not exist
    */
-  getCompanyBySlug(handle: DBHandle, slug: string): Promise<Company>
-  getCompanies(handle: DBHandle, page: Pageable): Promise<Company[]>
-  createCompany(handle: DBHandle, payload: CompanyWrite): Promise<Company>
+  getBySlug(handle: DBHandle, companySlug: CompanySlug): Promise<Company>
+  findMany(handle: DBHandle, page: Pageable): Promise<Company[]>
+  create(handle: DBHandle, data: CompanyWrite): Promise<Company>
   /**
    * Update an existing company
    *
    * @throws {NotFoundError} if the company does not exist
    */
-  updateCompany(handle: DBHandle, id: CompanyId, payload: CompanyWrite): Promise<Company>
+  update(handle: DBHandle, companyId: CompanyId, data: Partial<CompanyWrite>): Promise<Company>
   createFileUpload(
     handle: DBHandle,
     filename: string,
@@ -42,29 +44,44 @@ export function getCompanyService(
   s3BucketName: string
 ): CompanyService {
   return {
-    async getCompanyById(handle, id) {
-      const company = await companyRepository.getById(handle, id)
+    async findById(handle, companyId) {
+      const company = await companyRepository.findById(handle, companyId)
+      return company
+    },
+
+    async getById(handle, companyId) {
+      const company = await this.findById(handle, companyId)
       if (!company) {
-        throw new NotFoundError(`Company(ID=${id}) not found`)
+        throw new NotFoundError(`Company(ID=${companyId}) not found`)
       }
       return company
     },
-    async getCompanyBySlug(handle, slug) {
-      const company = await companyRepository.getBySlug(handle, slug)
+
+    async findBySlug(handle, companySlug) {
+      const company = await companyRepository.findBySlug(handle, companySlug)
+      return company
+    },
+
+    async getBySlug(handle, companySlug) {
+      const company = await companyRepository.findBySlug(handle, companySlug)
       if (!company) {
-        throw new NotFoundError(`Company(Slug=${slug}) not found`)
+        throw new NotFoundError(`Company(Slug=${companySlug}) not found`)
       }
       return company
     },
-    async getCompanies(handle, page) {
-      return await companyRepository.getAll(handle, page)
+
+    async findMany(handle, page) {
+      return await companyRepository.findMany(handle, page)
     },
-    async createCompany(handle, payload) {
+
+    async create(handle, payload) {
       return await companyRepository.create(handle, payload)
     },
-    async updateCompany(handle, id, payload): Promise<Company> {
-      return await companyRepository.update(handle, id, payload)
+
+    async update(handle, companyId, payload): Promise<Company> {
+      return await companyRepository.update(handle, companyId, payload)
     },
+
     async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `company/${Date.now()}-${uuid}-${slugify(filename)}`

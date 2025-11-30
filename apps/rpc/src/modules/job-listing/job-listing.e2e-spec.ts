@@ -9,7 +9,7 @@ describe.skip("job-listings", async () => {
   let company: Company
 
   beforeEach(async () => {
-    company = await core.companyService.createCompany(dbClient, getCompanyMock())
+    company = await core.companyService.create(dbClient, getCompanyMock())
   })
 
   it("can create new job listings", async () => {
