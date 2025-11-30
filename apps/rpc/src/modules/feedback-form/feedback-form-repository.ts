@@ -5,37 +5,42 @@ import {
   type FeedbackFormId,
   FeedbackFormSchema,
   type FeedbackFormWrite,
+  FeedbackFromPublicResultsTokenSchema,
   type FeedbackPublicResultsToken,
   type FeedbackQuestionWrite,
 } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
 
 export interface FeedbackFormRepository {
-  create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>
+  create(
+    handle: DBHandle,
+    feedbackFormData: FeedbackFormWrite,
+    questionsData: FeedbackQuestionWrite[]
+  ): Promise<FeedbackForm>
   update(
     handle: DBHandle,
-    id: FeedbackFormId,
-    feedbackForm: FeedbackFormWrite,
-    questions: FeedbackQuestionWrite[]
+    feedbackFormId: FeedbackFormId,
+    feedbackFormData: FeedbackFormWrite,
+    questionsData: FeedbackQuestionWrite[]
   ): Promise<FeedbackForm>
-  delete(handle: DBHandle, id: FeedbackFormId): Promise<void>
-  getById(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackForm | null>
-  getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
-  getByPublicResultsToken(
+  delete(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<void>
+  findById(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<FeedbackForm | null>
+  findByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
+  findByPublicResultsToken(
     handle: DBHandle,
     publicResultsToken: FeedbackPublicResultsToken
   ): Promise<FeedbackForm | null>
-  getPublicResultsToken(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackPublicResultsToken | null>
+  findPublicResultsToken(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<FeedbackPublicResultsToken | null>
 }
 
 export function getFeedbackFormRepository(): FeedbackFormRepository {
   return {
-    async create(handle, feedbackForm, questions) {
+    async create(handle, feedbackFormData, questionsData) {
       const form = await handle.feedbackForm.create({
         data: {
-          ...feedbackForm,
+          ...feedbackFormData,
           questions: {
-            create: questions.map((question) => ({
+            create: questionsData.map((question) => ({
               label: question.label,
               order: question.order,
               type: question.type,
@@ -56,19 +61,20 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
 
       return parseOrReport(FeedbackFormSchema, form)
     },
-    async update(handle, id, feedbackForm, questions) {
+
+    async update(handle, feedbackFormId, feedbackFormData, questionsData) {
       const form = await handle.feedbackForm.update({
-        where: { id },
+        where: { id: feedbackFormId },
         data: {
-          ...feedbackForm,
+          ...feedbackFormData,
           questions: {
             deleteMany: {
-              feedbackFormId: id,
+              feedbackFormId,
               id: {
-                notIn: questions.map(({ id }) => id).filter((id) => id !== undefined),
+                notIn: questionsData.map(({ id }) => id).filter((id) => id !== undefined),
               },
             },
-            upsert: questions.map((q) => ({
+            upsert: questionsData.map((q) => ({
               where: { id: q.id ?? "" },
               create: {
                 label: q.label,
@@ -108,26 +114,30 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
 
       return parseOrReport(FeedbackFormSchema, form)
     },
-    async delete(handle, id) {
+
+    async delete(handle, feedbackFormId) {
       await handle.feedbackForm.delete({
         where: {
-          id: id,
+          id: feedbackFormId,
         },
       })
     },
-    async getById(handle, id) {
+
+    async findById(handle, feedbackFormId) {
       const form = await handle.feedbackForm.findUnique({
         where: {
-          id: id,
+          id: feedbackFormId,
         },
         include: QUERY_WITH_QUESTIONS,
         omit: {
           publicResultsToken: true,
         },
       })
-      return form ? parseOrReport(FeedbackFormSchema, form) : null
+
+      return parseOrReport(FeedbackFormSchema.nullable(), form)
     },
-    async getByEventId(handle, eventId) {
+
+    async findByEventId(handle, eventId) {
       const form = await handle.feedbackForm.findFirst({
         where: {
           eventId: eventId,
@@ -138,9 +148,10 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
         },
       })
 
-      return form ? parseOrReport(FeedbackFormSchema, form) : null
+      return parseOrReport(FeedbackFormSchema.nullable(), form)
     },
-    async getByPublicResultsToken(handle, publicResultsToken) {
+
+    async findByPublicResultsToken(handle, publicResultsToken) {
       const form = await handle.feedbackForm.findUnique({
         where: {
           publicResultsToken: publicResultsToken,
@@ -148,23 +159,28 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
         include: QUERY_WITH_QUESTIONS,
       })
 
-      return form ? parseOrReport(FeedbackFormSchema, form) : null
+      return parseOrReport(FeedbackFormSchema.nullable(), form)
     },
-    async getPublicResultsToken(handle, id) {
+
+    async findPublicResultsToken(handle, feedbackFormId) {
       const result = await handle.feedbackForm.findUnique({
         where: {
-          id: id,
+          id: feedbackFormId,
         },
         select: {
           publicResultsToken: true,
         },
       })
 
-      return result?.publicResultsToken ?? null
+      return parseOrReport(FeedbackFromPublicResultsTokenSchema, result).publicResultsToken
     },
   }
 }
 
 const QUERY_WITH_QUESTIONS = {
-  questions: { include: { options: true } },
-} as const
+  questions: {
+    include: {
+      options: true,
+    },
+  },
+} as const satisfies Prisma.FeedbackFormInclude

@@ -36,6 +36,8 @@ export const FeedbackFormSchema = schemas.FeedbackFormSchema.extend({
 })
 export type FeedbackForm = z.infer<typeof FeedbackFormSchema>
 
+export const FeedbackFromPublicResultsTokenSchema = schemas.FeedbackFormSchema.pick({ publicResultsToken: true })
+
 export const FeedbackQuestionAnswerSchema = schemas.FeedbackQuestionAnswerSchema.omit({
   value: true,
 }).extend({
@@ -43,6 +45,7 @@ export const FeedbackQuestionAnswerSchema = schemas.FeedbackQuestionAnswerSchema
   selectedOptions: FeedbackQuestionOptionSchema.array(),
 })
 export type FeedbackQuestionAnswer = z.infer<typeof FeedbackQuestionAnswerSchema>
+export type FeedbackQuestionAnswerId = FeedbackQuestionAnswer["id"]
 
 export const FeedbackQuestionAnswerWriteSchema = FeedbackQuestionAnswerSchema.omit({
   formAnswerId: true,

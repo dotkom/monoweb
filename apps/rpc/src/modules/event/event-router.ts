@@ -12,8 +12,8 @@ import {
 import { z } from "zod"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
+import { feedbackRouter } from "../feedback-form/feedback-router"
 import { attendanceRouter } from "./attendance-router"
-import { feedbackRouter } from "./feedback-router"
 
 export const eventRouter = t.router({
   attendance: attendanceRouter,

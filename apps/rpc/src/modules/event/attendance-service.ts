@@ -1220,7 +1220,7 @@ export function getAttendanceService(
         throw new Error("executeVerifyFeedbackAnsweredTask tried to run before end on event passed")
       }
 
-      const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
+      const answers = await feedbackAnswerService.findManyByFeedbackFormId(handle, feedbackForm.id)
 
       const attendeesWithoutAnswers = attendedAttendees.filter(
         (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
@@ -1272,7 +1272,7 @@ export function getAttendanceService(
         const attendees = attendance.attendees
         const attendedAttendees = attendees.filter((attendee) => Boolean(attendee.attendedAt))
 
-        const answers = await feedbackAnswerService.getAllAnswers(handle, feedbackForm.id)
+        const answers = await feedbackAnswerService.findManyByFeedbackFormId(handle, feedbackForm.id)
 
         const attendeesWithoutAnswers = attendedAttendees.filter(
           (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)

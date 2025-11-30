@@ -154,12 +154,14 @@ export const feedbackRouter = t.router({
   getAllAnswers: staffProcedure
     .input(FeedbackFormIdSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getAllAnswers(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.findManyByFeedbackFormId(handle, input))
     ),
   getPublicAnswers: procedure
     .input(FeedbackPublicResultsTokenSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.feedbackFormAnswerService.getPublicAnswers(handle, input))
+      ctx.executeTransaction(async (handle) =>
+        ctx.feedbackFormAnswerService.findManyByPublicResultsToken(handle, input)
+      )
     ),
   deleteQuestionAnswer: staffProcedure
     .input(FeedbackQuestionAnswerSchema.shape.id)
