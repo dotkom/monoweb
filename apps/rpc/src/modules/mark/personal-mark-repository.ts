@@ -8,30 +8,33 @@ import {
   PersonalMarkSchema,
   type UserId,
 } from "@dotkomonline/types"
-import z from "zod"
 import { parseOrReport } from "../../invariant"
 import { mapMark } from "./mark-repository"
 
 export interface PersonalMarkRepository {
-  getByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
-  getAllByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
-  getDetailsByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
-  getAllMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
-  addToUserId(handle: DBHandle, userId: UserId, markId: MarkId, givenByid?: UserId): Promise<PersonalMark>
-  removeFromUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
-  getByUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark | null>
+  create(handle: DBHandle, userId: UserId, markId: MarkId, givenByUserId?: UserId): Promise<PersonalMark>
+  delete(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
+  findByUserId(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark | null>
+  findManyByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
+  findManyByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
+  findDetailsByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
   countUsersByMarkId(handle: DBHandle, markId: MarkId): Promise<number>
+
+  /** Note that this is `Mark` and NOT `PersonalMark` */
+  findMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
 }
 
 export function getPersonalMarkRepository(): PersonalMarkRepository {
   return {
-    async getAllByUserId(handle, userId) {
+    async findManyByUserId(handle, userId) {
       const personalMarks = await handle.personalMark.findMany({
         where: { userId },
       })
-      return personalMarks.map((personalMark) => parseOrReport(PersonalMarkSchema, personalMark))
+
+      return parseOrReport(PersonalMarkSchema.array(), personalMarks)
     },
-    async getAllMarksByUserId(handle, userId) {
+
+    async findMarksByUserId(handle, userId) {
       const personalMarks = await handle.personalMark.findMany({
         where: { userId },
         include: {
@@ -50,9 +53,11 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
           },
         },
       })
+
       return personalMarks.map((personalMark) => mapMark(personalMark.mark, personalMark.mark.groups))
     },
-    async getDetailsByMarkId(handle, markId) {
+
+    async findDetailsByMarkId(handle, markId) {
       const personalMarks = await handle.personalMark.findMany({
         where: { markId },
         include: {
@@ -91,7 +96,7 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
       })
 
       return parseOrReport(
-        z.array(PersonalMarkDetailsSchema),
+        PersonalMarkDetailsSchema.array(),
         personalMarks.map(({ user, mark: { groups: givenByGroups }, givenBy, ...personalMark }) => ({
           personalMark,
           user,
@@ -100,30 +105,39 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
         }))
       )
     },
-    async getByMarkId(handle, markId) {
+
+    async findManyByMarkId(handle, markId) {
       const personalMarks = await handle.personalMark.findMany({
         where: { markId },
       })
-      return personalMarks.map((personalMark) => parseOrReport(PersonalMarkSchema, personalMark))
+
+      return parseOrReport(PersonalMarkSchema.array(), personalMarks)
     },
-    async addToUserId(handle, userId, markId, givenById) {
+
+    async create(handle, userId, markId, givenByUserId) {
       const personalMark = await handle.personalMark.create({
-        data: { userId, markId, givenById },
+        data: { userId, markId, givenById: givenByUserId },
       })
+
       return parseOrReport(PersonalMarkSchema, personalMark)
     },
-    async removeFromUserId(handle, userId, markId) {
+
+    async delete(handle, userId, markId) {
       const personalMark = await handle.personalMark.delete({
         where: { markId_userId: { userId, markId } },
       })
+
       return parseOrReport(PersonalMarkSchema, personalMark)
     },
-    async getByUserId(handle, userId, markId) {
+
+    async findByUserId(handle, userId, markId) {
       const personalMark = await handle.personalMark.findUnique({
         where: { markId_userId: { userId, markId } },
       })
-      return personalMark ? parseOrReport(PersonalMarkSchema, personalMark) : null
+
+      return parseOrReport(PersonalMarkSchema.nullable(), personalMark)
     },
+
     async countUsersByMarkId(handle, markId) {
       return await handle.personalMark.count({ where: { markId } })
     },

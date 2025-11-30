@@ -19,20 +19,23 @@ import type { MarkService } from "./mark-service"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
-  findPersonalMarksByMark(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
-  findPersonalMarkDetails(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
-  findMarksByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
-  findPersonalMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
-  addToUser(handle: DBHandle, userId: UserId, markId: MarkId, givenById?: UserId): Promise<PersonalMark>
+  findPersonalMarksByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
+  findMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
+  findPersonalMarksByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
+  addToUser(handle: DBHandle, userId: UserId, markId: MarkId, givenByUserId?: UserId): Promise<PersonalMark>
   /**
    * Remove a personal mark from a user
    *
    * @throws {NotFoundError} if the personal mark does not exist
    */
   removeFromUser(handle: DBHandle, userId: UserId, markId: MarkId): Promise<PersonalMark>
-  listVisibleInformationForUser(handle: DBHandle, userId: UserId): Promise<VisiblePersonalMarkDetails[]>
   countUsersByMarkId(handle: DBHandle, markId: MarkId): Promise<number>
+
+  findPersonalMarkDetails(handle: DBHandle, markId: MarkId): Promise<PersonalMarkDetails[]>
+  listVisibleInformationForUser(handle: DBHandle, userId: UserId): Promise<VisiblePersonalMarkDetails[]>
+
   findPunishmentByUserId(handle: DBHandle, userId: UserId): Promise<Punishment | null>
+
   sendReceivedMarkEmail(handle: DBHandle, personalMark: PersonalMark): Promise<void>
 }
 
@@ -45,28 +48,33 @@ export function getPersonalMarkService(
   const logger = getLogger("personal-mark-service")
 
   return {
-    async findPersonalMarksByMark(handle, markId) {
-      return await personalMarkRepository.getByMarkId(handle, markId)
+    async findPersonalMarksByMarkId(handle, markId) {
+      return await personalMarkRepository.findManyByMarkId(handle, markId)
     },
+
     async findPersonalMarkDetails(handle, markId) {
-      return await personalMarkRepository.getDetailsByMarkId(handle, markId)
+      return await personalMarkRepository.findDetailsByMarkId(handle, markId)
     },
+
     async findPersonalMarksByUserId(handle, userId) {
-      return await personalMarkRepository.getAllMarksByUserId(handle, userId)
+      return await personalMarkRepository.findManyByUserId(handle, userId)
     },
+
     async findMarksByUserId(handle, userId) {
-      return await personalMarkRepository.getAllByUserId(handle, userId)
+      return await personalMarkRepository.findMarksByUserId(handle, userId)
     },
-    async addToUser(handle, userId, markId, givenById) {
+
+    async addToUser(handle, userId, markId, givenByUserId) {
       const mark = await markService.getById(handle, markId)
-      const personalMark = await personalMarkRepository.addToUserId(handle, userId, mark.id, givenById)
+      const personalMark = await personalMarkRepository.create(handle, userId, mark.id, givenByUserId)
 
       await this.sendReceivedMarkEmail(handle, personalMark)
 
       return personalMark
     },
+
     async listVisibleInformationForUser(handle, userId) {
-      const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
+      const personalMarks = await personalMarkRepository.findManyByUserId(handle, userId)
       const marks = await markService.findMany(handle, {
         byId: personalMarks.map(({ markId }) => markId),
       })
@@ -84,18 +92,21 @@ export function getPersonalMarkService(
         }
       })
     },
+
     async removeFromUser(handle, userId, markId) {
-      const personalMark = await personalMarkRepository.removeFromUserId(handle, userId, markId)
+      const personalMark = await personalMarkRepository.delete(handle, userId, markId)
       if (!personalMark) {
         throw new NotFoundError(`PersonalMark(UserID=${userId}, MarkID=${markId}) not found`)
       }
       return personalMark
     },
+
     async countUsersByMarkId(handle, markId) {
       return await personalMarkRepository.countUsersByMarkId(handle, markId)
     },
+
     async findPunishmentByUserId(handle, userId) {
-      const personalMarks = await personalMarkRepository.getAllByUserId(handle, userId)
+      const personalMarks = await personalMarkRepository.findManyByUserId(handle, userId)
       const marks = await markService.findMany(handle, {
         byId: personalMarks.map((pm) => pm.markId),
       })
@@ -127,6 +138,7 @@ export function getPersonalMarkService(
 
       return null
     },
+
     async sendReceivedMarkEmail(handle, personalMark) {
       const user = await userService.getById(handle, personalMark.userId)
       if (!user) {
