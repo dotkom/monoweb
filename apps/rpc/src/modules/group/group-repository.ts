@@ -12,7 +12,6 @@ import {
   type GroupRoleWrite,
   GroupSchema,
   type GroupWrite,
-  type MembershipId,
   type UserId,
 } from "@dotkomonline/types"
 import type { GroupType } from "@prisma/client"
@@ -20,61 +19,79 @@ import z from "zod"
 import { parseOrReport } from "../../invariant"
 
 export interface GroupRepository {
-  create(handle: DBHandle, groupId: GroupId, data: GroupWrite): Promise<Group>
-  update(handle: DBHandle, groupId: GroupId, data: Partial<GroupWrite>): Promise<Group>
-  delete(handle: DBHandle, groupId: GroupId): Promise<Group>
-  getById(handle: DBHandle, groupId: GroupId): Promise<Group | null>
-  getByGroupRoleId(handle: DBHandle, groupRoleId: GroupRoleId): Promise<Group | null>
-  getByGroupMembershipId(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<Group | null>
-  getMany(handle: DBHandle, groupIds: GroupId[]): Promise<Group[]>
-  getAll(handle: DBHandle): Promise<Group[]>
-  getAllByType(handle: DBHandle, type: GroupType): Promise<Group[]>
-  getMembershipById(handle: DBHandle, id: MembershipId): Promise<GroupMembership | null>
-  getMemberships(handle: DBHandle, groupId: GroupId, userId?: UserId): Promise<GroupMembership[]>
-  getGroupsByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
-  createMembership(handle: DBHandle, data: GroupMembershipWrite, roleIds: Set<GroupRoleId>): Promise<GroupMembership>
-  updateMembership(
+  create(handle: DBHandle, groupSlug: GroupId, data: GroupWrite): Promise<Group>
+  update(handle: DBHandle, groupSlug: GroupId, data: Partial<GroupWrite>): Promise<Group>
+  delete(handle: DBHandle, groupSlug: GroupId): Promise<Group>
+  findBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Group | null>
+  findByGroupRoleId(handle: DBHandle, groupRoleId: GroupRoleId): Promise<Group | null>
+  findByGroupMembershipId(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<Group | null>
+  findMany(handle: DBHandle): Promise<Group[]>
+  findManyBySlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
+  findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
+  findManyByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
+
+  createGroupMembership(
     handle: DBHandle,
-    id: GroupMembershipId,
-    data: GroupMembershipWrite,
-    roleIds: Set<GroupRoleId>
+    groupMembershipData: GroupMembershipWrite,
+    groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
-  createRoles(handle: DBHandle, roles: GroupRoleWrite[]): Promise<GroupRole[]>
-  updateRole(handle: DBHandle, id: GroupRoleId, role: Partial<GroupRoleWrite>): Promise<GroupRole>
+  updateGroupMembership(
+    handle: DBHandle,
+    groupMembershipId: GroupMembershipId,
+    groupMembershipData: GroupMembershipWrite,
+    groupRoleIds: Set<GroupRoleId>
+  ): Promise<GroupMembership>
+  findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
+  findManyGroupMemberships(handle: DBHandle, groupSlug: GroupId, userId?: UserId): Promise<GroupMembership[]>
+
+  createGroupRoles(handle: DBHandle, groupRolesData: GroupRoleWrite[]): Promise<GroupRole[]>
+  updateGroupRole(
+    handle: DBHandle,
+    groupRoleId: GroupRoleId,
+    groupRoleData: Partial<GroupRoleWrite>
+  ): Promise<GroupRole>
 }
 
 export function getGroupRepository(): GroupRepository {
   return {
-    async create(handle, groupId, data) {
+    async create(handle, groupSlug, data) {
       const group = await handle.group.create({
-        data: { ...data, slug: groupId },
+        data: { ...data, slug: groupSlug },
         include: QUERY_WITH_ROLES,
       })
+
       return parseOrReport(GroupSchema, group)
     },
-    async update(handle, groupId, data) {
+
+    async update(handle, groupSlug, data) {
       const group = await handle.group.update({
-        where: { slug: groupId },
+        where: { slug: groupSlug },
         data,
         include: QUERY_WITH_ROLES,
       })
+
       return parseOrReport(GroupSchema, group)
     },
-    async delete(handle, groupId) {
+
+    async delete(handle, groupSlug) {
       const group = await handle.group.delete({
-        where: { slug: groupId },
+        where: { slug: groupSlug },
         include: QUERY_WITH_ROLES,
       })
+
       return parseOrReport(GroupSchema, group)
     },
-    async getById(handle, groupId) {
+
+    async findBySlug(handle, groupSlug) {
       const group = await handle.group.findUnique({
-        where: { slug: groupId },
+        where: { slug: groupSlug },
         include: QUERY_WITH_ROLES,
       })
+
       return group ? parseOrReport(GroupSchema, group) : null
     },
-    async getByGroupRoleId(handle, groupRoleId) {
+
+    async findByGroupRoleId(handle, groupRoleId) {
       const role = await handle.groupRole.findUnique({
         where: {
           id: groupRoleId,
@@ -85,9 +102,11 @@ export function getGroupRepository(): GroupRepository {
           },
         },
       })
+
       return role ? parseOrReport(GroupSchema.nullable(), role.group) : null
     },
-    async getByGroupMembershipId(handle, groupMembershipId) {
+
+    async findByGroupMembershipId(handle, groupMembershipId) {
       const membership = await handle.groupMembership.findUnique({
         where: {
           id: groupMembershipId,
@@ -98,70 +117,39 @@ export function getGroupRepository(): GroupRepository {
           },
         },
       })
+
       return membership ? parseOrReport(GroupSchema.nullable(), membership.group) : null
     },
-    async getMany(handle, groupIds) {
+
+    async findMany(handle) {
+      const groups = await handle.group.findMany({
+        include: QUERY_WITH_ROLES,
+      })
+
+      return groups.map((group) => parseOrReport(GroupSchema, group))
+    },
+
+    async findManyBySlugs(handle, groupSlugs) {
       const groups = await handle.group.findMany({
         where: {
-          slug: { in: groupIds },
+          slug: { in: groupSlugs },
         },
         include: QUERY_WITH_ROLES,
       })
 
       return parseOrReport(z.array(GroupSchema), groups)
     },
-    async getAll(handle) {
-      const groups = await handle.group.findMany({
-        include: QUERY_WITH_ROLES,
-      })
-      return groups.map((group) => parseOrReport(GroupSchema, group))
-    },
-    async getAllByType(handle, groupType) {
+
+    async findManyByType(handle, groupType) {
       const groups = await handle.group.findMany({
         where: { type: groupType },
         include: QUERY_WITH_ROLES,
       })
+
       return groups.map((group) => parseOrReport(GroupSchema, group))
     },
-    async getMembershipById(handle, id) {
-      const membership = await handle.groupMembership.findUnique({
-        where: { id },
-        include: {
-          roles: {
-            include: {
-              role: true,
-            },
-          },
-        },
-      })
 
-      return membership
-        ? parseOrReport(GroupMembershipSchema, {
-            ...membership,
-            roles: membership?.roles.map((role) => role.role),
-          })
-        : null
-    },
-    async getMemberships(handle, groupId, userId) {
-      const memberships = await handle.groupMembership.findMany({
-        where: { groupId, ...(userId ? { userId } : {}) },
-        include: {
-          roles: {
-            include: {
-              role: true,
-            },
-          },
-        },
-      })
-
-      return memberships.map(({ roles, ...membership }) =>
-        parseOrReport(GroupMembershipSchema, {
-          ...membership,
-          roles: roles.map((role) => role.role),
-        })
-      )
-    },
-    async getGroupsByUserId(handle, userId) {
+    async findManyByUserId(handle, userId) {
       const groups = await handle.group.findMany({
         where: {
           memberships: {
@@ -175,15 +163,17 @@ export function getGroupRepository(): GroupRepository {
           roles: true,
         },
       })
-      return groups.map((group) => parseOrReport(GroupSchema, group))
+
+      return parseOrReport(GroupSchema.array(), groups)
     },
-    async createMembership(handle, data, roleIds) {
+
+    async createGroupMembership(handle, groupMembershipData, groupRoleIds) {
       const membership = await handle.groupMembership.create({
         data: {
-          ...data,
+          ...groupMembershipData,
           roles: {
             createMany: {
-              data: Array.from(roleIds).map((roleId) => ({ roleId })),
+              data: Array.from(groupRoleIds).map((roleId) => ({ roleId })),
             },
           },
         },
@@ -201,23 +191,26 @@ export function getGroupRepository(): GroupRepository {
         roles: membership.roles.map((role) => role.role),
       })
     },
-    async updateMembership(handle, id, data, roleIds) {
+
+    async updateGroupMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds) {
       const membership = await handle.groupMembership.update({
         where: {
-          id: id,
+          id: groupMembershipId,
         },
         data: {
-          ...data,
+          ...groupMembershipData,
           roles: {
             deleteMany: {
-              membershipId: id,
+              membershipId: groupMembershipId,
               roleId: {
-                notIn: Array.from(roleIds),
+                notIn: Array.from(groupRoleIds),
               },
             },
-            connectOrCreate: Array.from(roleIds)?.map((roleId) => ({
+            connectOrCreate: Array.from(groupRoleIds)?.map((roleId) => ({
               create: { roleId },
-              where: { membershipId_roleId: { membershipId: id, roleId: roleId } },
+              where: {
+                membershipId_roleId: { membershipId: groupMembershipId, roleId: roleId },
+              },
             })),
           },
         },
@@ -235,19 +228,61 @@ export function getGroupRepository(): GroupRepository {
         roles: membership.roles.map((role) => role.role),
       })
     },
-    async createRoles(handle, roles) {
-      const rows = await handle.groupRole.createManyAndReturn({
-        data: roles,
+
+    async findGroupMembershipById(handle, groupMembershipId) {
+      const membership = await handle.groupMembership.findUnique({
+        where: { id: groupMembershipId },
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
       })
 
-      return parseOrReport(z.array(GroupRoleSchema), rows)
+      return membership
+        ? parseOrReport(GroupMembershipSchema, {
+            ...membership,
+            roles: membership?.roles.map((role) => role.role),
+          })
+        : null
     },
-    async updateRole(handle, id, role) {
+
+    async findManyGroupMemberships(handle, groupSlug, userId) {
+      const memberships = await handle.groupMembership.findMany({
+        where: { groupId: groupSlug, ...(userId ? { userId } : {}) },
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      })
+
+      return memberships.map(({ roles, ...membership }) =>
+        parseOrReport(GroupMembershipSchema, {
+          ...membership,
+          roles: roles.map((role) => role.role),
+        })
+      )
+    },
+
+    async createGroupRoles(handle, groupRoles) {
+      const rows = await handle.groupRole.createManyAndReturn({
+        data: groupRoles,
+      })
+
+      return parseOrReport(GroupRoleSchema.array(), rows)
+    },
+
+    async updateGroupRole(handle, groupRoleId, groupRole) {
       const row = await handle.groupRole.update({
         where: {
-          id,
+          id: groupRoleId,
         },
-        data: role,
+        data: groupRole,
       })
 
       return parseOrReport(GroupRoleSchema, row)

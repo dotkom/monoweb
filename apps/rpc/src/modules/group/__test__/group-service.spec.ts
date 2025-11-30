@@ -60,7 +60,7 @@ describe("GroupService", () => {
 
   it("does not find non-existent committees", async () => {
     const id = randomUUID()
-    vi.spyOn(groupRepository, "getById").mockResolvedValueOnce(null)
-    await expect(async () => groupService.getById(db, id)).rejects.toThrowError(NotFoundError)
+    vi.spyOn(groupRepository, "findBySlug").mockResolvedValueOnce(null)
+    await expect(async () => groupService.findBySlug(db, id)).rejects.toThrowError(NotFoundError)
   })
 })

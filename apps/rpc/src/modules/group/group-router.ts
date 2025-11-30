@@ -37,24 +37,26 @@ export const groupRouter = t.router({
     ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, input))
     return ctx.executeAuditedTransaction(async (handle) => ctx.groupService.create(handle, input))
   }),
-  all: procedure.query(async ({ ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.getAll(handle))),
+  all: procedure.query(async ({ ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.findMany(handle))),
   allByType: procedure
     .input(GroupSchema.shape.type)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.getAllByType(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.groupService.findManyByType(handle, input))
     ),
   find: procedure
     .input(GroupSchema.shape.slug)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.findById(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.groupService.findBySlug(handle, input))
     ),
   get: procedure
     .input(GroupSchema.shape.slug)
-    .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.getById(handle, input))),
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.groupService.getBySlug(handle, input))
+    ),
   getByType: procedure
     .input(z.object({ groupId: GroupSchema.shape.slug, type: GroupSchema.shape.type }))
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.getByIdAndType(handle, input.groupId, input.type))
+      ctx.executeTransaction(async (handle) => ctx.groupService.getBySlugAndType(handle, input.groupId, input.type))
     ),
   update: staffProcedure
     .input(
@@ -65,7 +67,7 @@ export const groupRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeAuditedTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.id)
+        const group = await ctx.groupService.getBySlug(handle, input.id)
 
         ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
 
@@ -74,7 +76,7 @@ export const groupRouter = t.router({
     }),
   delete: staffProcedure.input(GroupSchema.shape.slug).mutation(async ({ input, ctx }) => {
     return ctx.executeAuditedTransaction(async (handle) => {
-      const group = await ctx.groupService.getById(handle, input)
+      const group = await ctx.groupService.getBySlug(handle, input)
 
       ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group))
 
@@ -99,7 +101,7 @@ export const groupRouter = t.router({
   allByMember: procedure
     .input(GroupMembershipSchema.shape.userId)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.getAllByMember(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.groupService.findManyByMemberUserId(handle, input))
     ),
   startMembership: staffProcedure
     .input(
@@ -111,7 +113,7 @@ export const groupRouter = t.router({
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeAuditedTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.groupId)
+        const group = await ctx.groupService.getBySlug(handle, input.groupId)
 
         ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
 
@@ -122,7 +124,7 @@ export const groupRouter = t.router({
     .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
     .mutation(async ({ input, ctx }) =>
       ctx.executeAuditedTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.groupId)
+        const group = await ctx.groupService.getBySlug(handle, input.groupId)
 
         ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
 
@@ -148,7 +150,7 @@ export const groupRouter = t.router({
     ),
   createRole: staffProcedure.input(GroupRoleWriteSchema).mutation(async ({ input, ctx }) =>
     ctx.executeAuditedTransaction(async (handle) => {
-      const group = await ctx.groupService.getById(handle, input.groupId)
+      const group = await ctx.groupService.getBySlug(handle, input.groupId)
 
       ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
 

@@ -59,7 +59,7 @@ const existingMemberships = await prisma.groupMembership.findMany()
 const ow4memberships = await getPositions()
 const existingUsers = new Set((await prisma.user.findMany({ select: { id: true } })).map((user) => user.id))
 
-const groups = await serviceLayer.groupService.getAll(prisma)
+const groups = await serviceLayer.groupService.findMany(prisma)
 
 for (const ow4membership of ow4memberships) {
   if (isFuture(ow4membership.period_end)) {

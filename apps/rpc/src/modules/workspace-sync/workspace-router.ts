@@ -102,7 +102,7 @@ export const workspaceRouter = t.router({
       }
 
       return ctx.executeTransaction(async (handle) => {
-        const group = await ctx.groupService.getById(handle, input.groupSlug)
+        const group = await ctx.groupService.getBySlug(handle, input.groupSlug)
         const workspaceGroup = await workspaceService.getWorkspaceGroup(handle, input.groupSlug, input.customKey)
 
         return await ctx.groupService.update(handle, group.slug, { workspaceGroupId: workspaceGroup.id })
