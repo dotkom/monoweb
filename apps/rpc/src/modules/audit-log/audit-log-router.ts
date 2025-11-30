@@ -29,17 +29,23 @@ export const auditLogRouter = t.router({
 
   all: staffProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     ctx.authorize.requireAffiliation("dotkom", "hs")
-    return ctx.executeTransaction(async (handle) => ctx.auditLogService.getAuditLogs(handle, input))
+    return ctx.executeTransaction(async (handle) => ctx.auditLogService.findMany(handle, {}, input))
+  }),
+
+  findById: staffProcedure.input(AuditLogSchema.shape.id).query(async ({ input, ctx }) => {
+    ctx.authorize.requireAffiliation("dotkom", "hs")
+    return ctx.executeTransaction(async (handle) => ctx.auditLogService.findById(handle, input))
   }),
 
   getById: staffProcedure.input(AuditLogSchema.shape.id).query(async ({ input, ctx }) => {
     ctx.authorize.requireAffiliation("dotkom", "hs")
-    return ctx.executeTransaction(async (handle) => ctx.auditLogService.getAuditLogById(handle, input))
+    return ctx.executeTransaction(async (handle) => ctx.auditLogService.getById(handle, input))
   }),
+
   getByUserId: staffProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     ctx.authorize.requireAffiliation("dotkom", "hs")
     return ctx.executeTransaction(async (handle) =>
-      ctx.auditLogService.getAuditLogsByUserId(handle, ctx.principal.subject, input)
+      ctx.auditLogService.findManyByUserId(handle, ctx.principal.subject, input)
     )
   }),
 })
