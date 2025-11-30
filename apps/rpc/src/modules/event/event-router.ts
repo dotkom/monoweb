@@ -262,7 +262,9 @@ export const eventRouter = t.router({
     .input(UserSchema.shape.id)
     .output(EventSchema.array())
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => await ctx.eventService.findUnansweredByUser(handle, input))
+      ctx.executeTransaction(
+        async (handle) => await ctx.eventService.findEventsWithUnansweredFeedbackFormByUserId(handle, input)
+      )
     ),
 
   isOrganizer: authenticatedProcedure

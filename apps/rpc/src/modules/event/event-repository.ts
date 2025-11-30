@@ -16,19 +16,37 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
+import type { Prisma } from "@prisma/client"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
 
+const INCLUDE_COMPANY_AND_GROUPS = {
+  companies: {
+    include: {
+      company: true,
+    },
+  },
+  hostingGroups: {
+    include: {
+      group: {
+        include: {
+          roles: true,
+        },
+      },
+    },
+  },
+} as const satisfies Prisma.EventInclude
+
 export interface EventRepository {
   create(handle: DBHandle, data: EventWrite): Promise<Event>
-  update(handle: DBHandle, id: EventId, data: Partial<EventWrite>): Promise<Event>
+  update(handle: DBHandle, eventId: EventId, data: Partial<EventWrite>): Promise<Event>
   /**
    * Soft-delete an event by setting its status to "DELETED".
    */
-  delete(handle: DBHandle, id: EventId): Promise<Event>
-  findById(handle: DBHandle, id: string, options?: { includeDeleted?: boolean }): Promise<Event | null>
-  findByAttendanceId(handle: DBHandle, id: string): Promise<Event | null>
+  delete(handle: DBHandle, eventId: EventId): Promise<Event>
+  findById(handle: DBHandle, eventId: EventId, options?: { includeDeleted?: boolean }): Promise<Event | null>
+  findByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event | null>
   /**
    * Find events based on a set of search criteria.
    *
@@ -56,7 +74,12 @@ export interface EventRepository {
    * as such this query should be performant enough with good indexing.
    */
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
-  findByAttendingUserId(handle: DBHandle, userId: UserId, query: EventFilterQuery, page: Pageable): Promise<Event[]>
+  findByAttendingUserId(
+    handle: DBHandle,
+    attendingUserId: UserId,
+    query: EventFilterQuery,
+    page: Pageable
+  ): Promise<Event[]>
   findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
   addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   addEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
@@ -64,8 +87,7 @@ export interface EventRepository {
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
-  findUnansweredByUser(handle: DBHandle, userId: UserId): Promise<Event[]>
-
+  findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
 }
@@ -78,18 +100,27 @@ export function getEventRepository(): EventRepository {
       invariant(event !== null, "Event should exist within same transaction after creation")
       return event
     },
-    async update(handle, id, data) {
-      const row = await handle.event.update({ where: { id }, data })
+
+    async update(handle, eventId, data) {
+      const row = await handle.event.update({
+        where: { id: eventId },
+        data,
+      })
       const event = await this.findById(handle, row.id)
       invariant(event !== null, "Event should exist within same transaction after update")
       return event
     },
-    async delete(handle, id) {
-      const row = await handle.event.update({ where: { id }, data: { status: "DELETED" } })
+
+    async delete(handle, eventId) {
+      const row = await handle.event.update({
+        where: { id: eventId },
+        data: { status: "DELETED" },
+      })
       const event = await this.findById(handle, row.id, { includeDeleted: true })
       invariant(event !== null, "Event should exist within same transaction after deletion")
       return event
     },
+
     async findMany(handle, query, page) {
       const events = await handle.event.findMany({
         ...pageQuery(page),
@@ -171,23 +202,9 @@ export function getEventRepository(): EventRepository {
             },
           ],
         },
-        include: {
-          companies: {
-            include: {
-              company: true,
-            },
-          },
-          hostingGroups: {
-            include: {
-              group: {
-                include: {
-                  roles: true,
-                },
-              },
-            },
-          },
-        },
+        include: INCLUDE_COMPANY_AND_GROUPS,
       })
+
       return events.map((event) =>
         parseOrReport(EventSchema, {
           ...event,
@@ -196,6 +213,7 @@ export function getEventRepository(): EventRepository {
         })
       )
     },
+
     async findByParentEventId(handle, parentEventId) {
       const events = await handle.event.findMany({
         where: {
@@ -227,25 +245,14 @@ export function getEventRepository(): EventRepository {
         })
       )
     },
-    async findById(handle, id, { includeDeleted = false } = {}) {
+
+    async findById(handle, eventId, { includeDeleted = false } = {}) {
       const event = await handle.event.findUnique({
-        where: { id, status: includeDeleted ? undefined : { not: "DELETED" } },
-        include: {
-          companies: {
-            include: {
-              company: true,
-            },
-          },
-          hostingGroups: {
-            include: {
-              group: {
-                include: {
-                  roles: true,
-                },
-              },
-            },
-          },
+        where: {
+          id: eventId,
+          status: includeDeleted ? undefined : { not: "DELETED" },
         },
+        include: INCLUDE_COMPANY_AND_GROUPS,
       })
       if (event === null) {
         return null
@@ -256,25 +263,11 @@ export function getEventRepository(): EventRepository {
         hostingGroups: event?.hostingGroups.map((g) => g.group) ?? [],
       })
     },
+
     async findByAttendanceId(handle, attendanceId) {
       const event = await handle.event.findFirst({
         where: { attendanceId, status: { not: "DELETED" } },
-        include: {
-          companies: {
-            include: {
-              company: true,
-            },
-          },
-          hostingGroups: {
-            include: {
-              group: {
-                include: {
-                  roles: true,
-                },
-              },
-            },
-          },
-        },
+        include: INCLUDE_COMPANY_AND_GROUPS,
       })
       if (event === null) {
         return null
@@ -285,6 +278,7 @@ export function getEventRepository(): EventRepository {
         hostingGroups: event?.hostingGroups.map((g) => g.group) ?? [],
       })
     },
+
     async findByAttendingUserId(handle, userId, query, page) {
       const attendees = await handle.attendee.findMany({
         where: {
@@ -315,28 +309,25 @@ export function getEventRepository(): EventRepository {
         page
       )
     },
+
     async addEventHostingGroups(handle, eventId, hostingGroupIds) {
       await handle.eventHostingGroup.createMany({
         data: hostingGroupIds
           .values()
-          .map((groupId) => ({
-            eventId,
-            groupId,
-          }))
+          .map((groupId) => ({ eventId, groupId }))
           .toArray(),
       })
     },
+
     async addEventCompanies(handle, eventId, companyIds) {
       await handle.eventCompany.createMany({
         data: companyIds
           .values()
-          .map((companyId) => ({
-            eventId,
-            companyId,
-          }))
+          .map((companyId) => ({ eventId, companyId }))
           .toArray(),
       })
     },
+
     async deleteEventHostingGroups(handle, eventId, hostingGroupIds) {
       await handle.eventHostingGroup.deleteMany({
         where: {
@@ -345,6 +336,7 @@ export function getEventRepository(): EventRepository {
         },
       })
     },
+
     async deleteEventCompanies(handle, eventId, companyIds) {
       await handle.eventCompany.deleteMany({
         where: {
@@ -353,6 +345,7 @@ export function getEventRepository(): EventRepository {
         },
       })
     },
+
     async updateEventAttendance(handle, eventId, attendanceId) {
       const row = await handle.event.update({
         where: { id: eventId },
@@ -362,6 +355,7 @@ export function getEventRepository(): EventRepository {
       invariant(event !== null, "Event should exist within same transaction after updating attendance")
       return event
     },
+
     async updateEventParent(handle, eventId, parentEventId) {
       const row = await handle.event.update({
         where: { id: eventId },
@@ -371,7 +365,8 @@ export function getEventRepository(): EventRepository {
       invariant(event !== null, "Event should exist within same transaction after updating parent")
       return event
     },
-    async findUnansweredByUser(handle, userId) {
+
+    async findEventsWithUnansweredFeedbackFormByUserId(handle, userId) {
       const now = getCurrentUTC()
 
       const events = await handle.event.findMany({
@@ -408,22 +403,7 @@ export function getEventRepository(): EventRepository {
             },
           ],
         },
-        include: {
-          companies: {
-            include: {
-              company: true,
-            },
-          },
-          hostingGroups: {
-            include: {
-              group: {
-                include: {
-                  roles: true,
-                },
-              },
-            },
-          },
-        },
+        include: INCLUDE_COMPANY_AND_GROUPS,
       })
 
       return events.map((event) =>
@@ -434,6 +414,7 @@ export function getEventRepository(): EventRepository {
         })
       )
     },
+
     async createDeregisterReason(handle, data) {
       const row = await handle.deregisterReason.create({
         data,
@@ -441,28 +422,14 @@ export function getEventRepository(): EventRepository {
 
       return parseOrReport(DeregisterReasonSchema, row)
     },
+
     async findManyDeregisterReasonsWithEvent(handle, page) {
       const rows = await handle.deregisterReason.findMany({
         ...pageQuery(page),
         orderBy: { createdAt: "desc" },
         include: {
           event: {
-            include: {
-              companies: {
-                include: {
-                  company: true,
-                },
-              },
-              hostingGroups: {
-                include: {
-                  group: {
-                    include: {
-                      roles: true,
-                    },
-                  },
-                },
-              },
-            },
+            include: INCLUDE_COMPANY_AND_GROUPS,
           },
         },
       })
