@@ -22,14 +22,14 @@ describe("MarkService", () => {
     }
     const id = randomUUID()
     vi.spyOn(markRepository, "create").mockResolvedValueOnce({ id, ...mark })
-    await expect(markService.createMark(db, mark, [])).resolves.toEqual({ id, ...mark })
+    await expect(markService.create(db, mark, [])).resolves.toEqual({ id, ...mark })
     expect(markRepository.create).toHaveBeenCalledWith(db, mark)
   })
 
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
-    vi.spyOn(markRepository, "getById").mockResolvedValueOnce(null)
-    await expect(markService.getMark(db, unknownID)).rejects.toThrow(NotFoundError)
-    expect(markRepository.getById).toHaveBeenCalledWith(db, unknownID)
+    vi.spyOn(markRepository, "findById").mockResolvedValueOnce(null)
+    await expect(markService.getById(db, unknownID)).rejects.toThrow(NotFoundError)
+    expect(markRepository.findById).toHaveBeenCalledWith(db, unknownID)
   })
 })

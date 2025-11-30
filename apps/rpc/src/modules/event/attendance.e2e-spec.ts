@@ -237,7 +237,7 @@ describe("attendance integration tests", async () => {
     const userWithoutMembership = await core.userService.register(dbClient, subject)
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
     expect(findActiveMembership(user)).not.toBeNull()
-    const mark = await core.markService.createMark(
+    const mark = await core.markService.create(
       dbClient,
       {
         type: "MANUAL",
@@ -372,7 +372,7 @@ describe("attendance integration tests", async () => {
 
     // Create a mark that gives the user a reservation time
     const group = await core.groupService.create(dbClient, getMockGroup({ abbreviation: "Bedkom" }))
-    const mark = await core.markService.createMark(
+    const mark = await core.markService.create(
       dbClient,
       {
         type: "MANUAL",
