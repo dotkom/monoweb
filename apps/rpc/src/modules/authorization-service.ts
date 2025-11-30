@@ -23,14 +23,13 @@ export const Affiliation = {
   EKSKOM: "ekskom",
   ITEX: "ekskom",
   JUBKOM: "jubkom",
-} as const
+} as const satisfies Record<PropertyKey, GroupId>
 export type Affiliation = (typeof Affiliation)[keyof typeof Affiliation]
 
 export const ADMIN_AFFILIATIONS = ["dotkom", "hs"] as const satisfies Affiliation[]
 
 export const isAffiliation = (groupSlug: string): groupSlug is Affiliation => {
   const affiliations = Object.values(Affiliation) as string[]
-
   return affiliations.includes(groupSlug)
 }
 
