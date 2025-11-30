@@ -6,7 +6,9 @@ import { authenticatedProcedure, staffProcedure, t } from "../../trpc"
 export const personalMarkRouter = t.router({
   getByUser: authenticatedProcedure.input(z.object({ userId: UserSchema.shape.id })).query(async ({ input, ctx }) => {
     ctx.authorize.requireMeOrAffiliation(input.userId, [])
-    return ctx.executeTransaction(async (handle) => ctx.personalMarkService.findMarksByUserId(handle, input.userId))
+    return ctx.executeTransaction(async (handle) =>
+      ctx.personalMarkService.findPersonalMarksByUserId(handle, input.userId)
+    )
   }),
   getVisibleInformation: authenticatedProcedure
     .input(z.object({ userId: UserSchema.shape.id, paginate: PaginateInputSchema }))
@@ -20,7 +22,7 @@ export const personalMarkRouter = t.router({
     .input(z.object({ markId: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) =>
-        ctx.personalMarkService.findPersonalMarksByMark(handle, input.markId)
+        ctx.personalMarkService.findPersonalMarksByMarkId(handle, input.markId)
       )
     }),
   getPersonalMarkDetailsByMark: staffProcedure
