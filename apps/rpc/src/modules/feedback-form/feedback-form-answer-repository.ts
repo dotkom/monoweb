@@ -6,6 +6,7 @@ import {
   type FeedbackFormAnswerWrite,
   type FeedbackFormId,
   type FeedbackPublicResultsToken,
+  type FeedbackQuestionAnswerId,
   FeedbackQuestionAnswerSchema,
   type FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
@@ -15,30 +16,30 @@ import { parseOrReport } from "../../invariant"
 export interface FeedbackFormAnswerRepository {
   create(
     handle: DBHandle,
-    formAnswer: FeedbackFormAnswerWrite,
-    questionAnswers: FeedbackQuestionAnswerWrite[]
+    formAnswerData: FeedbackFormAnswerWrite,
+    questionAnswersData: FeedbackQuestionAnswerWrite[]
   ): Promise<FeedbackFormAnswer>
-  getAllAnswers(handle: DBHandle, formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
-  getAnswersByPublicResultsToken(
+  findManyByFeedbackFormId(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
+  findManyByPublicResultsToken(
     handle: DBHandle,
     publicResultsToken: FeedbackPublicResultsToken
   ): Promise<FeedbackFormAnswer[]>
   findAnswerByAttendee(
     handle: DBHandle,
-    formId: FeedbackFormId,
+    feedbackFormId: FeedbackFormId,
     attendeeId: AttendeeId
   ): Promise<FeedbackFormAnswer | null>
-  deleteQuestionAnswer(handle: DBHandle, id: FeedbackQuestionAnswer["id"]): Promise<void>
+  deleteQuestionAnswer(handle: DBHandle, feedbackQuestionAnswerId: FeedbackQuestionAnswerId): Promise<void>
 }
 
 export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository {
   return {
-    async create(handle, formAnswer, questionAnswers) {
+    async create(handle, formAnswerData, questionAnswersData) {
       const answer = await handle.feedbackFormAnswer.create({
         data: {
-          ...formAnswer,
+          ...formAnswerData,
           answers: {
-            create: questionAnswers.map((questionAnswer) => ({
+            create: questionAnswersData.map((questionAnswer) => ({
               value: questionAnswer.value ?? Prisma.JsonNull,
               question: {
                 connect: { id: questionAnswer.questionId },
@@ -62,17 +63,19 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
 
       return mapFormAnswer(answer, answer.answers)
     },
-    async getAllAnswers(handle, formId) {
+
+    async findManyByFeedbackFormId(handle, feedbackFormId) {
       const formAnswers = await handle.feedbackFormAnswer.findMany({
         where: {
-          feedbackFormId: formId,
+          feedbackFormId,
         },
         include: QUERY_WITH_ANSWERS,
       })
 
       return formAnswers.map((answer) => mapFormAnswer(answer, answer.answers))
     },
-    async getAnswersByPublicResultsToken(handle, publicResultsToken) {
+
+    async findManyByPublicResultsToken(handle, publicResultsToken) {
       const formAnswers = await handle.feedbackFormAnswer.findMany({
         where: {
           feedbackForm: {
@@ -84,10 +87,11 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
 
       return formAnswers.map((answer) => mapFormAnswer(answer, answer.answers))
     },
-    async findAnswerByAttendee(handle, formId, attendeeId) {
+
+    async findAnswerByAttendee(handle, feedbackFormId, attendeeId) {
       const answer = await handle.feedbackFormAnswer.findFirst({
         where: {
-          feedbackFormId: formId,
+          feedbackFormId,
           attendeeId: attendeeId,
         },
         include: QUERY_WITH_ANSWERS,
@@ -97,10 +101,11 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
 
       return mapFormAnswer(answer, answer.answers)
     },
-    async deleteQuestionAnswer(handle, id) {
+
+    async deleteQuestionAnswer(handle, feedbackQuestionAnswerId) {
       await handle.feedbackQuestionAnswer.delete({
         where: {
-          id: id,
+          id: feedbackQuestionAnswerId,
         },
       })
     },
@@ -143,4 +148,4 @@ const QUERY_WITH_ANSWERS = {
       },
     },
   },
-} as const
+} as const satisfies Prisma.FeedbackFormAnswerInclude

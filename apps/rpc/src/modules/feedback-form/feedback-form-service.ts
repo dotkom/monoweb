@@ -32,26 +32,29 @@ export type FeedbackEligibilitySuccess = {
 export type FeedbackEligibilityFailure = { cause: FeedbackRejectionCause; success: false }
 
 export interface FeedbackFormService {
+  create(
+    handle: DBHandle,
+    feedbackFormData: FeedbackFormWrite,
+    questionsData: FeedbackQuestionWrite[]
+  ): Promise<FeedbackForm>
+  createCopyFromEvent(handle: DBHandle, eventId: EventId, eventIdToCopyFrom: EventId): Promise<FeedbackForm>
+  update(
+    handle: DBHandle,
+    feedBackFormId: FeedbackFormId,
+    feedbackFormData: FeedbackFormWrite,
+    questionsData: FeedbackQuestionWrite[]
+  ): Promise<FeedbackForm>
+  delete(handle: DBHandle, feedBackFormId: FeedbackFormId): Promise<void>
+  getById(handle: DBHandle, feedBackFormId: FeedbackFormId): Promise<FeedbackForm>
+  findByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
+  getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm>
+  getPublicForm(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackForm>
+  getPublicResultsToken(handle: DBHandle, feedBackFormId: FeedbackFormId): Promise<FeedbackPublicResultsToken>
   getFeedbackEligibility(
     handle: DBHandle,
     feedbackFormId: FeedbackFormId,
     userId: UserId
   ): Promise<FeedbackEligibilityResult>
-
-  create(handle: DBHandle, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): Promise<FeedbackForm>
-  createCopyFromEvent(handle: DBHandle, eventId: EventId, eventIdToCopyFrom: EventId): Promise<FeedbackForm>
-  update(
-    handle: DBHandle,
-    id: FeedbackFormId,
-    feedbackForm: FeedbackFormWrite,
-    questions: FeedbackQuestionWrite[]
-  ): Promise<FeedbackForm>
-  delete(handle: DBHandle, id: FeedbackFormId): Promise<void>
-  getById(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackForm>
-  findByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
-  getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm>
-  getPublicForm(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackForm>
-  getPublicResultsToken(handle: DBHandle, id: FeedbackFormId): Promise<FeedbackPublicResultsToken>
 }
 
 export function getFeedbackFormService(
@@ -62,16 +65,133 @@ export function getFeedbackFormService(
   attendanceRepository: AttendanceRepository
 ): FeedbackFormService {
   return {
+    async create(handle, feedbackFormData, questionsData) {
+      const row = await formRepository.create(handle, feedbackFormData, questionsData)
+
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.VERIFY_FEEDBACK_ANSWERED,
+        { feedbackFormId: row.id },
+        new TZDate(row.answerDeadline)
+      )
+
+      return row
+    },
+
+    async createCopyFromEvent(handle, eventId, eventIdToCopyFrom) {
+      const formToCopy = await this.getByEventId(handle, eventIdToCopyFrom)
+      const event = await eventService.getEventById(handle, eventId)
+
+      const feedbackForm: FeedbackFormWrite = {
+        eventId,
+        answerDeadline: addWeeks(event.end, 1),
+      }
+      const questions = formToCopy.questions
+
+      return await this.create(handle, feedbackForm, questions)
+    },
+
+    async update(handle, feedbackFormId, feedbackFormData, questionsData) {
+      const previousRow = await this.getById(handle, feedbackFormId)
+      const task = await taskSchedulingService.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
+
+      if (task?.status === "COMPLETED" && !isEqual(previousRow.answerDeadline, feedbackFormData.answerDeadline)) {
+        throw new Error("Can't change answer deadline of a feedback form that has already given out marks")
+      }
+
+      const row = await formRepository.update(handle, feedbackFormId, feedbackFormData, questionsData)
+
+      if (task?.status === "COMPLETED") {
+        return row
+      }
+
+      let cancelled = false
+      if (task && !isEqual(task.scheduledAt, row.answerDeadline)) {
+        await taskSchedulingService.cancel(handle, task.id)
+        cancelled = true
+      }
+
+      if (!task || cancelled) {
+        await taskSchedulingService.scheduleAt(
+          handle,
+          tasks.VERIFY_FEEDBACK_ANSWERED,
+          { feedbackFormId: row.id },
+          new TZDate(row.answerDeadline)
+        )
+      }
+
+      return row
+    },
+
+    async delete(handle, feedbackFormId) {
+      await formRepository.delete(handle, feedbackFormId)
+
+      const task = await taskSchedulingService.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
+      if (task) {
+        await taskSchedulingService.cancel(handle, task.id)
+      }
+    },
+
+    async getById(handle, feedbackFormId) {
+      const feedbackForm = await formRepository.findById(handle, feedbackFormId)
+
+      if (!feedbackForm) {
+        throw new NotFoundError(`FeedbackForm(ID=${feedbackFormId}) not found`)
+      }
+
+      return feedbackForm
+    },
+
+    async findByEventId(handle, eventId) {
+      return await formRepository.findByEventId(handle, eventId)
+    },
+
+    async getByEventId(handle, eventId) {
+      const feedbackForm = await this.findByEventId(handle, eventId)
+
+      if (!feedbackForm) {
+        throw new NotFoundError(`FeedbackForm(EventID=${eventId}) not found`)
+      }
+
+      return feedbackForm
+    },
+
+    async getPublicForm(handle, publicResultsToken) {
+      const feedbackForm = await formRepository.findByPublicResultsToken(handle, publicResultsToken)
+
+      if (!feedbackForm) {
+        throw new NotFoundError(`FeedbackForm(PublicResultsToken=${publicResultsToken}) not found`)
+      }
+
+      const { questions, ...form } = feedbackForm
+      const publicQuestions = questions.filter((question) => question.showInPublicResults)
+
+      return {
+        ...form,
+        questions: publicQuestions,
+      }
+    },
+
+    async getPublicResultsToken(handle, feedbackFormId) {
+      const token = await formRepository.findPublicResultsToken(handle, feedbackFormId)
+
+      if (!token) {
+        throw new NotFoundError(`FeedbackForm(ID=${feedbackFormId}) not found`)
+      }
+
+      return token
+    },
+
     async getFeedbackEligibility(handle, feedbackFormId, userId) {
-      const feedbackForm = await formRepository.getById(handle, feedbackFormId)
+      const feedbackForm = await formRepository.findById(handle, feedbackFormId)
 
       if (!feedbackForm) {
         return { cause: "NO_FEEDBACK_FORM", success: false }
       }
 
-      const event = await eventService.getEventById(handle, feedbackForm.eventId)
+      const event = await eventService.findEventById(handle, feedbackForm.eventId)
 
-      if (!event.attendanceId) {
+      if (!event?.attendanceId) {
         return { cause: "NO_FEEDBACK_FORM", success: false }
       }
 
@@ -98,108 +218,6 @@ export function getFeedbackFormService(
       }
 
       return { success: true, event, feedbackForm, attendee }
-    },
-    async create(handle, feedbackForm, questions) {
-      const row = await formRepository.create(handle, feedbackForm, questions)
-
-      await taskSchedulingService.scheduleAt(
-        handle,
-        tasks.VERIFY_FEEDBACK_ANSWERED,
-        { feedbackFormId: row.id },
-        new TZDate(row.answerDeadline)
-      )
-
-      return row
-    },
-    async createCopyFromEvent(handle, eventId, eventIdToCopyFrom) {
-      const formToCopy = await this.getByEventId(handle, eventIdToCopyFrom)
-      const event = await eventService.getEventById(handle, eventId)
-
-      const feedbackForm: FeedbackFormWrite = {
-        eventId,
-        answerDeadline: addWeeks(event.end, 1),
-      }
-      const questions = formToCopy.questions
-
-      return await this.create(handle, feedbackForm, questions)
-    },
-    async update(handle, id, feedbackForm, questions) {
-      const previousRow = await this.getById(handle, id)
-      const task = await taskSchedulingService.findVerifyFeedbackAnsweredTask(handle, id)
-
-      if (task?.status === "COMPLETED" && !isEqual(previousRow.answerDeadline, feedbackForm.answerDeadline)) {
-        throw new Error("Can't change answer deadline of a feedback form that has already given out marks")
-      }
-
-      const row = await formRepository.update(handle, id, feedbackForm, questions)
-
-      if (task?.status === "COMPLETED") {
-        return row
-      }
-
-      let cancelled = false
-      if (task && !isEqual(task.scheduledAt, row.answerDeadline)) {
-        await taskSchedulingService.cancel(handle, task.id)
-        cancelled = true
-      }
-
-      if (!task || cancelled) {
-        await taskSchedulingService.scheduleAt(
-          handle,
-          tasks.VERIFY_FEEDBACK_ANSWERED,
-          { feedbackFormId: row.id },
-          new TZDate(row.answerDeadline)
-        )
-      }
-
-      return row
-    },
-    async delete(handle, id) {
-      await formRepository.delete(handle, id)
-
-      const task = await taskSchedulingService.findVerifyFeedbackAnsweredTask(handle, id)
-      if (task) taskSchedulingService.cancel(handle, task.id)
-    },
-    async getById(handle, id) {
-      const feedbackForm = await formRepository.getById(handle, id)
-      if (!feedbackForm) {
-        throw new NotFoundError(`FeedbackForm(ID=${id}) not found`)
-      }
-
-      return feedbackForm
-    },
-    async findByEventId(handle, eventId) {
-      return await formRepository.getByEventId(handle, eventId)
-    },
-    async getByEventId(handle, eventId) {
-      const feedbackForm = await formRepository.getByEventId(handle, eventId)
-      if (!feedbackForm) {
-        throw new NotFoundError(`FeedbackForm(EventID=${eventId}) not found`)
-      }
-
-      return feedbackForm
-    },
-    async getPublicForm(handle, publicResultsToken) {
-      const feedbackForm = await formRepository.getByPublicResultsToken(handle, publicResultsToken)
-      if (!feedbackForm) {
-        throw new NotFoundError(`FeedbackForm(PublicResultsToken=${publicResultsToken}) not found`)
-      }
-
-      const { questions, ...form } = feedbackForm
-      const publicQuestions = questions.filter((question) => question.showInPublicResults)
-
-      return {
-        ...form,
-        questions: publicQuestions,
-      }
-    },
-    async getPublicResultsToken(handle, id) {
-      const token = await formRepository.getPublicResultsToken(handle, id)
-      if (!token) {
-        throw new NotFoundError(`FeedbackForm(ID=${id}) not found`)
-      }
-
-      return token
     },
   }
 }

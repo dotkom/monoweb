@@ -5,7 +5,7 @@ import type {
   FeedbackFormAnswerWrite,
   FeedbackFormId,
   FeedbackPublicResultsToken,
-  FeedbackQuestionAnswer,
+  FeedbackQuestionAnswerId,
   FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
 import { NotFoundError } from "../../error"
@@ -15,17 +15,20 @@ import type { FeedbackFormService } from "./feedback-form-service"
 export interface FeedbackFormAnswerService {
   create(
     handle: DBHandle,
-    formAnswer: FeedbackFormAnswerWrite,
-    questionAnswers: FeedbackQuestionAnswerWrite[]
+    formAnswerData: FeedbackFormAnswerWrite,
+    questionAnswersData: FeedbackQuestionAnswerWrite[]
   ): Promise<FeedbackFormAnswer>
-  getAllAnswers(handle: DBHandle, formId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
-  getPublicAnswers(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackFormAnswer[]>
+  findManyByFeedbackFormId(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<FeedbackFormAnswer[]>
+  findManyByPublicResultsToken(
+    handle: DBHandle,
+    publicResultsToken: FeedbackPublicResultsToken
+  ): Promise<FeedbackFormAnswer[]>
   findAnswerByAttendee(
     handle: DBHandle,
-    formId: FeedbackFormId,
+    feedbackFormId: FeedbackFormId,
     attendeeId: AttendeeId
   ): Promise<FeedbackFormAnswer | null>
-  deleteQuestionAnswer(handle: DBHandle, id: FeedbackQuestionAnswer["id"]): Promise<void>
+  deleteQuestionAnswer(handle: DBHandle, feedbackQuestionAnswerId: FeedbackQuestionAnswerId): Promise<void>
 }
 
 export function getFeedbackFormAnswerService(
@@ -33,18 +36,20 @@ export function getFeedbackFormAnswerService(
   formService: FeedbackFormService
 ): FeedbackFormAnswerService {
   return {
-    async create(handle, formAnswer, questionAnswers) {
-      const validatedQuestionAnswers = questionAnswers.filter(
+    async create(handle, formAnswerData, questionAnswersData) {
+      const validatedQuestionAnswers = questionAnswersData.filter(
         (questionAnswer) => questionAnswer.value !== null || questionAnswer.selectedOptions.length > 0
       )
 
-      return await formAnswerRepository.create(handle, formAnswer, validatedQuestionAnswers)
+      return await formAnswerRepository.create(handle, formAnswerData, validatedQuestionAnswers)
     },
-    async getAllAnswers(handle, formId) {
-      return await formAnswerRepository.getAllAnswers(handle, formId)
+
+    async findManyByFeedbackFormId(handle, feedbackFormId) {
+      return await formAnswerRepository.findManyByFeedbackFormId(handle, feedbackFormId)
     },
-    async getPublicAnswers(handle, publicResultsToken) {
-      const answers = await formAnswerRepository.getAnswersByPublicResultsToken(handle, publicResultsToken)
+
+    async findManyByPublicResultsToken(handle, publicResultsToken) {
+      const answers = await formAnswerRepository.findManyByPublicResultsToken(handle, publicResultsToken)
       const form = await formService.getPublicForm(handle, publicResultsToken)
 
       if (!form) {
@@ -58,11 +63,13 @@ export function getFeedbackFormAnswerService(
         questionAnswers: formAnswer.questionAnswers.filter((qa) => publicQuestionIds.includes(qa.questionId)),
       }))
     },
-    async findAnswerByAttendee(handle, formId, attendeeId) {
-      return await formAnswerRepository.findAnswerByAttendee(handle, formId, attendeeId)
+
+    async findAnswerByAttendee(handle, feedbackFormId, attendeeId) {
+      return await formAnswerRepository.findAnswerByAttendee(handle, feedbackFormId, attendeeId)
     },
-    async deleteQuestionAnswer(handle, id) {
-      await formAnswerRepository.deleteQuestionAnswer(handle, id)
+
+    async deleteQuestionAnswer(handle, feedbackQuestionAnswerId) {
+      await formAnswerRepository.deleteQuestionAnswer(handle, feedbackQuestionAnswerId)
     },
   }
 }
