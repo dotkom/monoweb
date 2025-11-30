@@ -8,27 +8,46 @@ import {
 import { parseOrReport } from "../../invariant"
 
 export interface NotificationPermissionsRepository {
-  getByUserId(handle: DBHandle, id: UserId): Promise<NotificationPermissions | null>
   create(handle: DBHandle, userId: UserId, data: NotificationPermissionsWrite): Promise<NotificationPermissions>
   update(
     handle: DBHandle,
     userId: UserId,
     data: Partial<NotificationPermissionsWrite>
   ): Promise<NotificationPermissions>
+  findByUserId(handle: DBHandle, id: UserId): Promise<NotificationPermissions | null>
 }
 
 export function getNotificationPermissionsRepository(): NotificationPermissionsRepository {
   return {
-    async getByUserId(handle, userId) {
-      const permissions = await handle.notificationPermissions.findUnique({ where: { userId } })
-      return parseOrReport(NotificationPermissionsSchema, permissions)
-    },
     async create(handle, userId, data) {
-      const permissions = await handle.notificationPermissions.create({ data: { ...data, userId } })
+      const permissions = await handle.notificationPermissions.create({
+        data: {
+          ...data,
+          userId,
+        },
+      })
+
       return parseOrReport(NotificationPermissionsSchema, permissions)
     },
+
     async update(handle, userId, data) {
-      const permissions = await handle.notificationPermissions.update({ where: { userId }, data })
+      const permissions = await handle.notificationPermissions.update({
+        where: {
+          userId,
+        },
+        data,
+      })
+
+      return parseOrReport(NotificationPermissionsSchema, permissions)
+    },
+
+    async findByUserId(handle, userId) {
+      const permissions = await handle.notificationPermissions.findUnique({
+        where: {
+          userId,
+        },
+      })
+
       return parseOrReport(NotificationPermissionsSchema, permissions)
     },
   }

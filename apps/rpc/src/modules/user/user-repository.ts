@@ -20,15 +20,16 @@ import { type Pageable, pageQuery } from "../../query"
  * NOTE: The `userId` field in the table maps directly onto the OAuth2 subject claim.
  */
 export interface UserRepository {
-  findById(handle: DBHandle, userId: UserId): Promise<User | null>
-  findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
-  findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
-  update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
-  findMany(handle: DBHandle, query: UserFilterQuery, page: Pageable): Promise<User[]>
   /**
    * Register a new user to the database by their Auth0 subject claim.
    */
   register(handle: DBHandle, userId: UserId): Promise<User>
+  update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
+  findById(handle: DBHandle, userId: UserId): Promise<User | null>
+  findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
+  findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
+  findMany(handle: DBHandle, query: UserFilterQuery, page: Pageable): Promise<User[]>
+
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
@@ -38,38 +39,83 @@ export function getUserRepository(): UserRepository {
   return {
     async register(handle, subject) {
       const user = await handle.user.upsert({
-        where: { id: subject },
-        update: { id: subject },
-        create: { id: subject, profileSlug: randomUUID() },
+        where: {
+          id: subject,
+        },
+        update: {
+          id: subject,
+        },
+        create: {
+          id: subject,
+          profileSlug: randomUUID(),
+        },
         include: {
           memberships: true,
         },
       })
+
       return parseOrReport(UserSchema, user)
     },
+
+    async update(handle, userId, data) {
+      const row = await handle.user.update({
+        where: {
+          id: userId,
+        },
+        data,
+        select: {
+          id: true,
+        },
+      })
+
+      const user = await this.findById(handle, row.id)
+      invariant(user !== null, `User with id ${row.id} not found after update`)
+      return user
+    },
+
     async findById(handle, userId) {
       const user = await handle.user.findUnique({
-        where: { id: userId },
+        where: {
+          id: userId,
+        },
         include: {
           memberships: true,
         },
       })
+
       return parseOrReport(UserSchema.nullable(), user)
     },
+
     async findByProfileSlug(handle, profileSlug) {
-      const user = await handle.user.findUnique({ where: { profileSlug }, include: { memberships: true } })
+      const user = await handle.user.findUnique({
+        where: {
+          profileSlug,
+        },
+        include: {
+          memberships: true,
+        },
+      })
+
       if (!user) {
         return null
       }
+
       return parseOrReport(UserSchema.nullable(), user)
     },
+
     async findByWorkspaceUserIds(handle, workspaceUserIds) {
       const users = await handle.user.findMany({
-        where: { workspaceUserId: { in: workspaceUserIds } },
-        include: { memberships: true },
+        where: {
+          workspaceUserId: { in: workspaceUserIds },
+        },
+        include: {
+          memberships: true,
+        },
       })
-      return users.map((user) => parseOrReport(UserSchema, user))
+
+      return parseOrReport(UserSchema.array(), users)
     },
+
     async findMany(handle, query, page) {
       const or = [
         ...(query.byName?.trim() ? [{ name: { contains: query.byName, mode: "insensitive" as const } }] : []),
@@ -81,22 +127,14 @@ export function getUserRepository(): UserRepository {
       const users = await handle.user.findMany({
         ...pageQuery(page),
         where,
-        include: { memberships: true },
-      })
-      return users.map((user) => parseOrReport(UserSchema, user))
-    },
-    async update(handle, userId, data) {
-      const row = await handle.user.update({
-        where: { id: userId },
-        data,
-        select: {
-          id: true,
+        include: {
+          memberships: true,
         },
       })
-      const user = await this.findById(handle, row.id)
-      invariant(user !== null, `User with id ${row.id} not found after update`)
-      return user
+
+      return parseOrReport(UserSchema.array(), users)
     },
+
     async createMembership(handle, userId, membership) {
       await handle.membership.create({
         data: {
@@ -107,10 +145,12 @@ export function getUserRepository(): UserRepository {
           id: true,
         },
       })
+
       const user = await this.findById(handle, userId)
       invariant(user !== null, `User with id ${userId} not found after creating membership`)
       return user
     },
+
     async updateMembership(handle, membershipId, membership) {
       const row = await handle.membership.update({
         where: {
@@ -123,10 +163,12 @@ export function getUserRepository(): UserRepository {
           userId: true,
         },
       })
+
       const user = await this.findById(handle, row.userId)
       invariant(user !== null, `User with id ${row.userId} not found after updating membership`)
       return user
     },
+
     async deleteMembership(handle, membershipId) {
       const row = await handle.membership.delete({
         where: {
@@ -136,6 +178,7 @@ export function getUserRepository(): UserRepository {
           userId: true,
         },
       })
+
       const user = await this.findById(handle, row.userId)
       invariant(user !== null, `User with id ${row.userId} not found after deleting membership`)
       return user

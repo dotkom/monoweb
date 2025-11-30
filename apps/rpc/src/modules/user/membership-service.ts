@@ -1,5 +1,4 @@
 import { getAcademicStart, getNextAcademicStart } from "@dotkomonline/types"
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { differenceInMonths, subYears } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
@@ -67,7 +66,7 @@ export function getMembershipService(): MembershipService {
 
   function validateStudyPlanCourseSet(courseSet: StudyPlanCourseSet) {
     // If three semesters in a row do not have mandatory courses, the distance check will not be able to distinguish
-    // between a first and second grader, assuming semester [0, 1, 2] are all without mandatory courses.
+    // between a first and second-grader, assuming semester [0, 1, 2] are all without mandatory courses.
     let maxDistance = 0
     for (const semester of courseSet) {
       if (semester.courses.length === 0) {
@@ -95,6 +94,7 @@ export function getMembershipService(): MembershipService {
       // in the study plan, we cannot get any more information that could be used to increment `largestSemester`, so
       // we do not try.
       const isFirstYear = i === 0 || i === 1
+
       if (semester.courses.length === 0 && !isFirstYear) {
         const previousSemesters = courseSet.slice(0, i).filter((semester) => semester.courses.length !== 0)
         // By invariant that this is not the first year, and that there are maximum two semesters without mandatory
@@ -116,25 +116,25 @@ export function getMembershipService(): MembershipService {
           }
 
           // There is a scenario where a user failed a course in year 1, but passed in year 2. This is why we take the
-          // mean distance, which is later ceil()'d.
+          // mean distance, which is later ceiled.
           const previousSemesterDistances = previousSemester.courses.map((course) => {
             const studentCourse = studentCourses.find((studentCourse) => studentCourse.code === course)
-            // NOTE: -1 because length is 1-indexed
+
+            // -1 because length is 1-indexed
             const semesterDistanceFromEnd = courseSet.length - 1 - previousSemester.semester
             // If you were supposed to finish your degree this year, how far away would the semester in question be?
             // For example; if previousSemester=3 (algdat+itp+datdig), then the distance would be 2.
             const years = Math.ceil(semesterDistanceFromEnd / 2)
             const courseEndAssumingLastYearStudent = subYears(getNextAcademicStart(), years)
 
-            // INVARIANT: The course should join should exist, and it should be finished according to
-            // `hasPassedPreviousSemester`.
+            // INVARIANT: The course should exist, and it should be finished according to `hasPassedPreviousSemester`.
             invariant(studentCourse !== undefined && studentCourse.finished !== undefined)
-            const semestersSinceTaken = Math.floor(
-              differenceInMonths(getAcademicStart(getCurrentUTC()), studentCourse.finished) / 6
-            )
+            // We divide by six because we have two school semesters in a year, effectively turnings months in a year
+            // into semesters
             const distance = Math.floor(
               differenceInMonths(getAcademicStart(studentCourse.finished), courseEndAssumingLastYearStudent) / 6
             )
+
             return previousSemester.semester + (semesterDistanceFromEnd - distance)
           })
 
@@ -147,7 +147,7 @@ export function getMembershipService(): MembershipService {
         continue
       }
 
-      // If the user has all of the courses that are mandatory
+      // If the user has all the courses that are mandatory
       const isGroupMemberOfMandatoryCourses = semester.courses.every((course) =>
         studentCourses.some((studentCourse) => course === studentCourse.code)
       )
@@ -155,21 +155,22 @@ export function getMembershipService(): MembershipService {
       if (isGroupMemberOfMandatoryCourses) {
         largestSemester = semester.semester
       } else {
-        // If the user does not have all of the courses required for this semester, we would much rather prefer to give
-        // them a lower year than a higher one. Chances are a student would notify HS if they cannot attend events they
-        // should be able to, while someone might not notify HS about them being able to attend company events they are
-        // not supposed to be at.
+        // If the user does not have all the courses required for this semester, we would much rather prefer to give
+        // them a lower year than a higher one. Chances are a student would notify HS (basically our administration)
+        // if they cannot attend events they should be able to, while someone might not notify HS about them being able
+        // to attend company events they are not supposed to be at.
         break
       }
     }
 
-    // Give the value back in years
+    // Give the value back in years (two school semesters in a year).
     return Math.floor(largestSemester / 2)
   }
   return {
     findApproximateMasterStartYear(courses) {
       return findApproximateStartYear(courses, MASTER_STUDY_PLAN)
     },
+
     findApproximateBachelorStartYear(courses) {
       return findApproximateStartYear(courses, BACHELOR_STUDY_PLAN_COURSES)
     },

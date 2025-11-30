@@ -30,6 +30,8 @@ import type { MembershipService } from "./membership-service"
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
+  register(handle: DBHandle, subject: string): Promise<User>
+  update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   /**
    * Find a user by their ID, or null if not found.
    *
@@ -41,13 +43,24 @@ export interface UserService {
    * Feide APIs if the user does not have an active membership (transitive call to UserService#discoverMembership).
    */
   findById(handle: DBHandle, userId: UserId): Promise<User | null>
+  /**
+   * Get a user by their ID.
+   *
+   * This function will attempt to register the user if, and only if:
+   * 1. The user is not found in the local database
+   * 2. The user exists in Auth0's user directory.
+   *
+   * For this reason, the call might be slower than expected, as it makes network requests to Auth0 and potentially
+   * Feide APIs if the user does not have an active membership (transitive call to UserService#discoverMembership).
+   *
+   * @throws {NotFoundError} if the user is not found.
+   */
+  getById(handle: DBHandle, id: UserId): Promise<User>
   findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
+  getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findUsers(handle: DBHandle, query: UserFilterQuery, page?: Pageable): Promise<User[]>
-  getById(handle: DBHandle, id: UserId): Promise<User>
-  getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User>
-  update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
-  register(handle: DBHandle, subject: string): Promise<User>
+
   /**
    * Attempt to discover an automatically granted membership from FEIDE.
    *
@@ -60,13 +73,7 @@ export interface UserService {
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
-  createFileUpload(
-    handle: DBHandle,
-    filename: string,
-    contentType: string,
-    userId: UserId,
-    createdByUserId: UserId
-  ): Promise<PresignedPost>
+
   /**
    * Find the Feide federated access token for a user, if it exists.
    *
@@ -77,6 +84,14 @@ export interface UserService {
    * is opaque with format like `afd4988b-a205-49f9-b2e0-03e00bb4b8c0`.
    */
   findFeideAccessTokenByUserId(userId: UserId): Promise<string | null>
+
+  createFileUpload(
+    handle: DBHandle,
+    filename: string,
+    contentType: string,
+    userId: UserId,
+    createdByUserId: UserId
+  ): Promise<PresignedPost>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT", "MIT"]
@@ -91,6 +106,7 @@ export function getUserService(
   bucket: string
 ): UserService {
   const logger = getLogger("user-service")
+
   async function findApplicableMembership(
     studyProgrammes: NTNUGroup[],
     studySpecializations: NTNUGroup[],
@@ -150,34 +166,54 @@ export function getUserService(
   return {
     async findById(handle, userId) {
       const user = await userRepository.findById(handle, userId)
+
       if (user !== null) {
         return user
       }
+
       // If the user is not found, we will attempt to pull it from Auth0's user directory
       const response = await managementClient.users.get({ id: userId })
+
       if (response.status === 404) {
         return null
       }
+
       if (response.status !== 200) {
         logger.error(
-          "Received non-200 OR non-404 response from Auth0 when fetching single user: %s (%s)",
+          "Received non-200 OR non-404 response from Auth0 when fetching User(ID=%s): %s (%s)",
+          userId,
           response.statusText,
           response.status
         )
         // TODO: Maybe this should not silently fail?
         return null
       }
+
       return await this.register(handle, userId)
     },
+
+    async getById(handle, userId) {
+      const user = await this.findById(handle, userId)
+
+      if (!user) {
+        throw new NotFoundError(`User(ID=${userId}) not found`)
+      }
+
+      return user
+    },
+
     async findByProfileSlug(handle, profileSlug) {
       return await userRepository.findByProfileSlug(handle, profileSlug)
     },
+
     async findByWorkspaceUserIds(handle, workspaceUserIds) {
       return await userRepository.findByWorkspaceUserIds(handle, workspaceUserIds)
     },
+
     async findUsers(handle, query, page) {
       return await userRepository.findMany(handle, query, page ?? { take: 20 })
     },
+
     async register(handle, userId) {
       // NOTE: The register function here has a few responsibilities because of our data strategy:
       //
@@ -200,29 +236,37 @@ export function getUserService(
       // and we can early exit. This is the happiest and fastest path of this function.
       if (existingUser !== null) {
         const membership = findActiveMembership(existingUser)
+
         if (membership !== null) {
           return existingUser
         }
+
         // The membership of this user has expired since their last sign-in. Attempt to discover a need one.
         return this.discoverMembership(handle, userId)
       }
 
       logger.info("Detected first-time sign-in for User(ID=%s). Querying Auth0 for profile information", userId)
-      // profile from Auth0 and propagate the data to the database.
+
+      // Get the profile from Auth0 and propagate the data to the database.
       const response = await managementClient.users.get({ id: userId })
+
       if (response.status !== 200) {
         throw new IllegalStateError(
           `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
         )
       }
+
       await userRepository.register(handle, userId)
-      // Slugs are unique, so if somebody has already sniped the app metadata registered username, we give them a new
-      // random UUID for now. They can always update this later.
+
       const requestedSlug = UserWriteSchema.shape.profileSlug
         .catch(crypto.randomUUID())
         .parse(response.data.app_metadata?.username)
+
+      // Profile slugs are unique, so if somebody has already the requested slug as their profile slug, we change the
+      // requested slug to a new random UUID for now. The user can always update this later.
       const match = await this.findByProfileSlug(handle, requestedSlug)
       const slug = match !== null ? crypto.randomUUID() : requestedSlug
+
       const profile: UserWrite = {
         profileSlug: slug,
         name: response.data.name,
@@ -230,29 +274,28 @@ export function getUserService(
         imageUrl: response.data.picture,
         biography: response.data.app_metadata?.biography || null,
         phone: response.data.app_metadata?.phone || null,
-        // NOTE: This field was called `allergies` in OnlineWeb 4, but today its called `dietaryRestrictions`.
+        // This field was called `allergies` in OnlineWeb 4, but today it's called `dietaryRestrictions`.
         dietaryRestrictions: response.data.app_metadata?.allergies || null,
-        // Gender is a standard OIDC claim, so we fallback to it if the app_metadata does not contain it.
+        // Gender is a standard OIDC claim, so we fall back to it if the app_metadata does not contain it.
         gender: response.data.app_metadata?.gender || response.data.gender || null,
         workspaceUserId: null,
       }
+
       const firstSignInUser = await userRepository.update(handle, userId, profile)
+
       return this.discoverMembership(handle, firstSignInUser.id)
     },
-    async getById(handle, userId) {
-      const user = await this.findById(handle, userId)
-      if (!user) {
-        throw new NotFoundError(`User(ID=${userId}) not found`)
-      }
-      return user
-    },
+
     async getByProfileSlug(handle, profileSlug) {
       const user = await this.findByProfileSlug(handle, profileSlug)
+
       if (!user) {
         throw new NotFoundError(`User(ProfileSlug=${profileSlug}) not found`)
       }
+
       return user
     },
+
     async update(handle, userId, data) {
       const result = UserWriteSchema.partial().safeParse(data)
 
@@ -279,9 +322,11 @@ export function getUserService(
 
       return await userRepository.update(handle, userId, data)
     },
+
     async discoverMembership(handle, userId) {
       const accessToken = await this.findFeideAccessTokenByUserId(userId)
       const user = await this.getById(handle, userId)
+
       if (accessToken !== null) {
         // We spawn a separate OpenTelemetry span for the entire membership operation so that its easier to trace and
         // track the call stack and timings of the operation.
@@ -292,8 +337,10 @@ export function getUserService(
             // we should set the user.id attribute on the span to the user's ID. It makes it easier to trace them across
             // logs as well.
             span.setAttribute("user.id", user.id)
+
             try {
               const studentInformation = await feideGroupsRepository.getStudentInformation(accessToken)
+
               if (studentInformation !== null) {
                 const activeMembership = findActiveMembership(user)
                 const applicableMembership = await findApplicableMembership(
@@ -301,6 +348,7 @@ export function getUserService(
                   studentInformation.studySpecializations,
                   studentInformation.courses
                 )
+
                 // We can only replace memberships if there is a new applicable one for the user
                 if (
                   shouldReplaceMembership(user.memberships, activeMembership, applicableMembership) &&
@@ -315,18 +363,35 @@ export function getUserService(
             }
           })
       }
+
       return user
     },
+
     async createMembership(handle, userId, data) {
       const user = await this.getById(handle, userId)
+
       return await userRepository.createMembership(handle, user.id, data)
     },
+
     async updateMembership(handle, membershipId, membership) {
       return userRepository.updateMembership(handle, membershipId, membership)
     },
+
     async deleteMembership(handle, membershipId) {
       return userRepository.deleteMembership(handle, membershipId)
     },
+
+    async findFeideAccessTokenByUserId(userId) {
+      const response = await managementClient.users.get({ id: userId })
+      if (response.status !== 200) {
+        throw new IllegalStateError(
+          `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
+        )
+      }
+      const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
+      return identity?.access_token ?? null
+    },
+
     async createFileUpload(handle, filename, contentType, userId, createdByUserId) {
       const user = await this.getById(handle, userId)
 
@@ -344,16 +409,6 @@ export function getUserService(
         createdByUserId,
       })
     },
-    async findFeideAccessTokenByUserId(userId) {
-      const response = await managementClient.users.get({ id: userId })
-      if (response.status !== 200) {
-        throw new IllegalStateError(
-          `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
-        )
-      }
-      const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
-      return identity?.access_token ?? null
-    },
   }
 }
 
@@ -365,16 +420,20 @@ function shouldReplaceMembership(
   if (next === null) {
     return false
   }
+
   // Avoid creating duplicate memberships
   if (allMemberships.some((m) => areMembershipsEqual(m, next))) {
     return false
   }
+
   if (previous === null) {
     return true
   }
+
   if (previous.type === "BACHELOR_STUDENT" && next.type === "MASTER_STUDENT") {
     return true
   }
+
   return previous.type === "SOCIAL_MEMBER"
 }
 
