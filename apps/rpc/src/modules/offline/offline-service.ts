@@ -8,15 +8,17 @@ import type { Pageable } from "../../query"
 import type { OfflineRepository } from "./offline-repository"
 
 export interface OfflineService {
+  create(handle: DBHandle, data: OfflineWrite): Promise<Offline>
+  update(handle: DBHandle, offlineId: OfflineId, data: Partial<OfflineWrite>): Promise<Offline>
+  findById(handle: DBHandle, offlineId: OfflineId): Promise<Offline | null>
   /**
    * Get an offline by its id
    *
    * @throws {NotFoundError} if the offline does not exist
    */
   getById(handle: DBHandle, offlineId: OfflineId): Promise<Offline>
-  getAll(handle: DBHandle, page: Pageable): Promise<Offline[]>
-  create(handle: DBHandle, data: OfflineWrite): Promise<Offline>
-  update(handle: DBHandle, offlineId: OfflineId, data: Partial<OfflineWrite>): Promise<Offline>
+  findMany(handle: DBHandle, page: Pageable): Promise<Offline[]>
+
   createFileUpload(
     handle: DBHandle,
     filename: string,
@@ -31,22 +33,30 @@ export function getOfflineService(
   s3BucketName: string
 ): OfflineService {
   return {
+    async create(handle, data) {
+      return offlineRepository.create(handle, data)
+    },
+
+    async update(handle, id, data) {
+      return offlineRepository.update(handle, id, data)
+    },
+
+    async findById(handle, id) {
+      return offlineRepository.findById(handle, id)
+    },
+
     async getById(handle, id) {
-      const offline = await offlineRepository.getById(handle, id)
+      const offline = await this.findById(handle, id)
       if (!offline) {
         throw new NotFoundError(`Offline(ID=${id}) not found`)
       }
       return offline
     },
-    async getAll(handle, page) {
-      return offlineRepository.getAll(handle, page)
+
+    async findMany(handle, page) {
+      return offlineRepository.findMany(handle, page)
     },
-    async create(handle, data) {
-      return offlineRepository.create(handle, data)
-    },
-    async update(handle, id, data) {
-      return offlineRepository.update(handle, id, data)
-    },
+
     async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `offlines/${Date.now()}-${uuid}-${slugify(filename)}`

@@ -22,7 +22,12 @@ export const offlineRouter = t.router({
   all: procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.offlineService.getAll(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.offlineService.findMany(handle, input))
+    ),
+  find: procedure
+    .input(OfflineSchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.offlineService.findById(handle, input))
     ),
   get: procedure
     .input(OfflineSchema.shape.id)
