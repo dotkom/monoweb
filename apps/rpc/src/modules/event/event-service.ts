@@ -21,7 +21,7 @@ import type { Pageable } from "../../query"
 import type { EventRepository } from "./event-repository"
 
 export interface EventService {
-  createEvent(handle: DBHandle, eventCreate: EventWrite): Promise<Event>
+  createEvent(handle: DBHandle, data: EventWrite): Promise<Event>
   /**
    * Soft-delete an event by setting its status to `DELETED`.
    */
@@ -44,7 +44,7 @@ export interface EventService {
   ): Promise<Event[]>
   findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
   findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
-  findUnansweredByUser(handle: DBHandle, userId: UserId): Promise<Event[]>
+  findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
   /**
    * Get an event by its id
    *
@@ -70,27 +70,34 @@ export function getEventService(
   const logger = getLogger("EventService")
 
   return {
-    async createEvent(handle, eventCreate) {
-      return await eventRepository.create(handle, eventCreate)
+    async createEvent(handle, data) {
+      return await eventRepository.create(handle, data)
     },
+
     async deleteEvent(handle, eventId) {
       return await eventRepository.delete(handle, eventId)
     },
+
     async updateEvent(handle, eventId, data) {
       return await eventRepository.update(handle, eventId, data)
     },
+
     async findEvents(handle, query, page) {
       return await eventRepository.findMany(handle, query, page ?? { take: 20 })
     },
+
     async findByParentEventId(handle, parentEventId) {
       return await eventRepository.findByParentEventId(handle, parentEventId)
     },
+
     async findEventById(handle, eventId) {
       return await eventRepository.findById(handle, eventId)
     },
-    async findUnansweredByUser(handle, userId) {
-      return await eventRepository.findUnansweredByUser(handle, userId)
+
+    async findEventsWithUnansweredFeedbackFormByUserId(handle, userId) {
+      return await eventRepository.findEventsWithUnansweredFeedbackFormByUserId(handle, userId)
     },
+
     async getEventById(handle, eventId) {
       const event = await eventRepository.findById(handle, eventId)
       if (!event) {
@@ -98,6 +105,7 @@ export function getEventService(
       }
       return event
     },
+
     async getByAttendanceId(handle, attendanceId) {
       const event = await eventRepository.findByAttendanceId(handle, attendanceId)
       if (event === null) {
@@ -105,9 +113,11 @@ export function getEventService(
       }
       return event
     },
+
     async findEventsByAttendingUserId(handle, userId, query, page) {
       return await eventRepository.findByAttendingUserId(handle, userId, query, page ?? { take: 20 })
     },
+
     async updateEventOrganizers(handle, eventId, hostingGroups, companies) {
       const event = await this.getEventById(handle, eventId)
       // The easiest way to determine which elements to add and remove is to use basic set theory. The difference of a
@@ -122,10 +132,12 @@ export function getEventService(
 
       return await this.getEventById(handle, eventId)
     },
+
     async updateEventAttendance(handle, eventId, attendanceId) {
       const event = await this.getEventById(handle, eventId)
       return await eventRepository.updateEventAttendance(handle, event.id, attendanceId)
     },
+
     async updateEventParent(handle, eventId, parentEventId) {
       if (parentEventId === eventId) {
         throw new FailedPreconditionError(`Event(ID=${eventId}) cannot be assigned itself as a parent.`)
@@ -145,12 +157,15 @@ export function getEventService(
       }
       return await eventRepository.updateEventParent(handle, event.id, parentEvent.id)
     },
+
     async createDeregisterReason(handle, data) {
       return await eventRepository.createDeregisterReason(handle, data)
     },
+
     async findManyDeregisterReasonsWithEvent(handle, page) {
       return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
     },
+
     async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `event/${Date.now()}-${uuid}-${slugify(filename)}`
