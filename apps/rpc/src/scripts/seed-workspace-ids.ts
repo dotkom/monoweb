@@ -7,7 +7,7 @@ const dependencies = createThirdPartyClients(configuration)
 const serviceLayer = await createServiceLayer(dependencies, configuration)
 const prisma = serviceLayer.prisma
 
-const groups = await serviceLayer.groupService.getAll(prisma)
+const groups = await serviceLayer.groupService.findMany(prisma)
 
 const groupsToIgnore = ["itex"]
 const relevantGroups = groups.filter(

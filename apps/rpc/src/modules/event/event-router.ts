@@ -275,7 +275,7 @@ export const eventRouter = t.router({
     .query(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
         const event = await ctx.eventService.getEventById(handle, input.eventId)
-        const groups = await ctx.groupService.getAllByMember(handle, ctx.principal.subject)
+        const groups = await ctx.groupService.findManyByMemberUserId(handle, ctx.principal.subject)
 
         return groups.some((group) => event.hostingGroups.some((organizer) => organizer.slug === group.slug))
       })

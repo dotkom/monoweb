@@ -428,7 +428,7 @@ export function getWorkspaceService(
     },
 
     async addUserIntoWorkspaceGroup(handle, groupSlug, userId) {
-      const group = await groupService.getById(handle, groupSlug)
+      const group = await groupService.getBySlug(handle, groupSlug)
       const user = await userService.getById(handle, userId)
       const workspaceUser = await this.getWorkspaceUser(handle, userId)
 
@@ -447,15 +447,15 @@ export function getWorkspaceService(
       return res.data
     },
 
-    async removeUserFromWorkspaceGroup(handle, groupId, userId) {
-      const group = await groupService.getById(handle, groupId)
+    async removeUserFromWorkspaceGroup(handle, groupSlug, userId) {
+      const group = await groupService.getBySlug(handle, groupSlug)
       const user = await userService.getById(handle, userId)
 
       return await removeFromWorkspaceGroup(getKey(group), getKey(user))
     },
 
-    async createWorkspaceGroup(handle, groupId) {
-      const group = await groupService.getById(handle, groupId)
+    async createWorkspaceGroup(handle, groupSlug) {
+      const group = await groupService.getBySlug(handle, groupSlug)
 
       if (group.workspaceGroupId) {
         throw new Error("Group already has a workspace group ID")
@@ -481,8 +481,8 @@ export function getWorkspaceService(
       return { group: updatedGroup, workspaceGroup: data }
     },
 
-    async findWorkspaceGroup(handle, groupId, customKey) {
-      const group = await groupService.getById(handle, groupId)
+    async findWorkspaceGroup(handle, groupSlug, customKey) {
+      const group = await groupService.getBySlug(handle, groupSlug)
       const groupKey = customKey ? getKey(customKey) : getKey(group)
 
       try {
@@ -503,18 +503,18 @@ export function getWorkspaceService(
       }
     },
 
-    async getWorkspaceGroup(handle, groupId, customKey) {
-      const workspaceGroup = await this.findWorkspaceGroup(handle, groupId, customKey)
+    async getWorkspaceGroup(handle, groupSlug, customKey) {
+      const workspaceGroup = await this.findWorkspaceGroup(handle, groupSlug, customKey)
 
       if (!workspaceGroup) {
-        throw new NotFoundError(`Workspace Group for Group(ID=${groupId}) not found`)
+        throw new NotFoundError(`Workspace Group for Group(Slug=${groupSlug}) not found`)
       }
 
       return workspaceGroup
     },
 
-    async getMembersForGroup(handle, groupId) {
-      const group = await groupService.getById(handle, groupId)
+    async getMembersForGroup(handle, groupSlug) {
+      const group = await groupService.getBySlug(handle, groupSlug)
 
       const workspaceMembers: WorkspaceMemberLink[] = []
 
@@ -560,7 +560,7 @@ export function getWorkspaceService(
         })
 
         for (const workspaceGroup of data.groups ?? []) {
-          const group = await groupService.getById(handle, workspaceGroup.email?.split("@")[0] ?? "")
+          const group = await groupService.getBySlug(handle, workspaceGroup.email?.split("@")[0] ?? "")
           groups.push({ group, workspaceGroup })
         }
 
@@ -571,7 +571,7 @@ export function getWorkspaceService(
     },
 
     async synchronizeWorkspaceGroup(handle, groupSlug) {
-      const group = await groupService.getById(handle, groupSlug)
+      const group = await groupService.getBySlug(handle, groupSlug)
       const members = await this.getMembersForGroup(handle, groupSlug)
 
       const actions = members.map(async (member) => {

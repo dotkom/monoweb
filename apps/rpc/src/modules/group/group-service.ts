@@ -13,7 +13,6 @@ import {
   type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
-  type MembershipId,
   type UserId,
   getDefaultGroupMemberRoles,
 } from "@dotkomonline/types"
@@ -26,45 +25,55 @@ import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
 
 export interface GroupService {
-  findById(handle: DBHandle, groupId: GroupId): Promise<Group | null>
+  create(handle: DBHandle, data: GroupWrite): Promise<Group>
+  update(handle: DBHandle, groupSlug: GroupId, data: Partial<GroupWrite>): Promise<Group>
+  delete(handle: DBHandle, groupSlug: GroupId): Promise<Group>
+  findBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Group | null>
   /**
    * Get a group by its id
    *
    * @throws {NotFoundError} if the group does not exist
    */
-  getById(handle: DBHandle, groupId: GroupId): Promise<Group>
+  getBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Group>
   getByGroupRoleId(handle: DBHandle, groupRoleId: GroupRoleId): Promise<Group>
   getByGroupMembershipId(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<Group>
-  getMany(handle: DBHandle, groupIds: GroupId[]): Promise<Group[]>
-  getByIdAndType(handle: DBHandle, groupId: GroupId, groupType: GroupType): Promise<Group>
-  getAll(handle: DBHandle): Promise<Group[]>
   /**
-   * Get a group by its id and type
+   * Get a group by its slug and type
    *
    * @throws {NotFoundError} if the group does not exist
    */
-  getAllByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
-  create(handle: DBHandle, payload: GroupWrite): Promise<Group>
-  update(handle: DBHandle, groupId: GroupId, values: Partial<GroupWrite>): Promise<Group>
-  delete(handle: DBHandle, groupId: GroupId): Promise<Group>
-  getMembers(handle: DBHandle, groupId: GroupId): Promise<Map<UserId, GroupMember>>
-  getMember(handle: DBHandle, groupId: GroupId, userId: UserId): Promise<GroupMember>
-  getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
-  startMembership(handle: DBHandle, userId: UserId, groupId: GroupId, roleIds: Set<GroupRoleId>): Promise<GroupMember>
-  endMembership(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<GroupMembership[]>
+  getBySlugAndType(handle: DBHandle, groupSlug: GroupId, groupType: GroupType): Promise<Group>
+  findMany(handle: DBHandle): Promise<Group[]>
+  findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
+  findManyByGroupSlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
+  findManyByMemberUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
+
+  getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMember>
+  getMembers(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
+
+  startMembership(
+    handle: DBHandle,
+    userId: UserId,
+    groupSlug: GroupId,
+    groupRoleIds: Set<GroupRoleId>
+  ): Promise<GroupMember>
+  endMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership[]>
   /**
    * Attempts to update a membership if it doesn't overlap with existing memberships
    *
-   * @throws {NotFoundError} if the membership overlaps others
+   * @throws {NotFoundError} if the group membership does not exist
+   * @throws {FailedPreconditionError} if the membership overlaps others
    */
   updateMembership(
     handle: DBHandle,
-    id: MembershipId,
-    data: GroupMembershipWrite,
-    roleIds: Set<GroupRoleId>
+    groupMembershipId: GroupMembershipId,
+    groupMembershipData: GroupMembershipWrite,
+    groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
-  createRole(handle: DBHandle, data: GroupRoleWrite): Promise<GroupRole>
-  updateRole(handle: DBHandle, id: GroupRoleId, role: GroupRoleWrite): Promise<GroupRole>
+
+  createRole(handle: DBHandle, groupRoleData: GroupRoleWrite): Promise<GroupRole>
+  updateRole(handle: DBHandle, groupRoleId: GroupRoleId, groupRoleData: GroupRoleWrite): Promise<GroupRole>
+
   createFileUpload(
     handle: DBHandle,
     filename: string,
@@ -80,43 +89,85 @@ export function getGroupService(
   s3BucketName: string
 ): GroupService {
   return {
-    async findById(handle, groupId) {
-      return groupRepository.getById(handle, groupId)
+    async create(handle, data) {
+      let slug = slugify(data.abbreviation)
+      const inputSlug = data.slug?.trim()
+      if (inputSlug && inputSlug.length > 1) {
+        slug = slugify(inputSlug)
+      }
+
+      // We try to find an available slug. This should hopefully never run more than once, but maybe some future idiot
+      // is trying to break the authorization system by creating a group with a name that is already taken.
+      for (let i = 1; ; i++) {
+        const match = await groupRepository.findBySlug(handle, slug)
+        if (match === null) {
+          break
+        }
+        // If the id already exists, we try something like slug-1
+        slug = `${slugify(data.abbreviation)}-${i}`
+      }
+
+      await groupRepository.create(handle, slug, data)
+      await groupRepository.createGroupRoles(handle, getDefaultGroupMemberRoles(slug))
+
+      return await this.getBySlug(handle, slug)
     },
-    async getById(handle, groupId) {
-      const group = await this.findById(handle, groupId)
-      if (!group) throw new NotFoundError(`Group(ID=${groupId}) not found`)
+
+    async update(handle, groupSlug, data) {
+      const inputSlug = data.slug?.trim()
+      const slug = inputSlug && inputSlug.length > 1 ? slugify(inputSlug) : undefined
+
+      return groupRepository.update(handle, groupSlug, { ...data, slug })
+    },
+
+    async delete(handle, groupSlug) {
+      return await groupRepository.delete(handle, groupSlug)
+    },
+
+    async findBySlug(handle, groupSlug) {
+      return groupRepository.findBySlug(handle, groupSlug)
+    },
+
+    async getBySlug(handle, groupSlug) {
+      const group = await this.findBySlug(handle, groupSlug)
+      if (!group) throw new NotFoundError(`Group(ID=${groupSlug}) not found`)
       return group
     },
+
     async getByGroupRoleId(handle, groupRoleId) {
-      const group = await groupRepository.getByGroupRoleId(handle, groupRoleId)
+      const group = await groupRepository.findByGroupRoleId(handle, groupRoleId)
       if (!group) {
         throw new NotFoundError(`Group with GroupRole(ID=${groupRoleId}) not found`)
       }
       return group
     },
+
     async getByGroupMembershipId(handle, groupMembershipId) {
-      const group = await groupRepository.getByGroupMembershipId(handle, groupMembershipId)
+      const group = await groupRepository.findByGroupMembershipId(handle, groupMembershipId)
       if (!group) {
         throw new NotFoundError(`Group with GroupMembership(ID=${groupMembershipId}) not found`)
       }
       return group
     },
-    async getByIdAndType(handle, groupId, groupType) {
-      const group = await groupRepository.getById(handle, groupId)
+
+    async getBySlugAndType(handle, groupSlug, groupType) {
+      const group = await groupRepository.findBySlug(handle, groupSlug)
       if (!group || group.type !== groupType) {
-        throw new NotFoundError(`Group(ID=${groupId}, Type=${groupType}) not found`)
+        throw new NotFoundError(`Group(ID=${groupSlug}, Type=${groupType}) not found`)
       }
       return group
     },
-    async getAll(handle) {
-      return groupRepository.getAll(handle)
+
+    async findMany(handle) {
+      return groupRepository.findMany(handle)
     },
-    async getAllByType(handle, groupType) {
-      return groupRepository.getAllByType(handle, groupType)
+
+    async findManyByType(handle, groupType) {
+      return groupRepository.findManyByType(handle, groupType)
     },
-    async getMany(handle, groupSlugs) {
-      const groups = await groupRepository.getMany(handle, groupSlugs)
+
+    async findManyByGroupSlugs(handle, groupSlugs) {
+      const groups = await groupRepository.findManyBySlugs(handle, groupSlugs)
 
       if (groups.length < groupSlugs.length) {
         const missingGroupSlugs = groupSlugs.filter(
@@ -127,40 +178,29 @@ export function getGroupService(
 
       return groups
     },
-    async create(handle, payload) {
-      let id = slugify(payload.abbreviation)
-      const inputSlug = payload.slug?.trim()
-      if (inputSlug && inputSlug.length > 1) {
-        id = slugify(inputSlug)
+
+    async findManyByMemberUserId(handle, userId) {
+      return groupRepository.findManyByUserId(handle, userId)
+    },
+
+    async getMember(handle, groupSlug, userId) {
+      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId)
+
+      if (memberships.length === 0) {
+        throw new Error(`Member not found for user ${userId} in group ${groupSlug}`)
       }
 
-      // We try to find an available slug. This should hopefully never run more than once, but maybe some future idiot
-      // is trying to break the authorization system by creating a group with a name that is already taken.
-      for (let i = 1; ; i++) {
-        const match = await groupRepository.getById(handle, id)
-        if (match === null) {
-          break
-        }
-        // If the id already exists, we try something like slug-1
-        id = `${slugify(payload.abbreviation)}-${i}`
+      const user = await userService.getById(handle, userId)
+      const groupMemberships = memberships.sort((a, b) => compareDesc(a.start, b.start))
+
+      return {
+        ...user,
+        groupMemberships,
       }
-
-      await groupRepository.create(handle, id, payload)
-      await groupRepository.createRoles(handle, getDefaultGroupMemberRoles(id))
-
-      return await this.getById(handle, id)
     },
-    async update(handle, groupId, values) {
-      const inputSlug = values.slug?.trim()
-      const slug = inputSlug && inputSlug.length > 1 ? slugify(inputSlug) : undefined
 
-      return groupRepository.update(handle, groupId, { ...values, slug })
-    },
-    async delete(handle, groupId) {
-      return await groupRepository.delete(handle, groupId)
-    },
-    async getMembers(handle, groupId) {
-      const memberships = await groupRepository.getMemberships(handle, groupId)
+    async getMembers(handle, groupSlug) {
+      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug)
 
       if (!memberships) {
         return new Map()
@@ -178,7 +218,7 @@ export function getGroupService(
           .sort((a, b) => compareDesc(a.start, b.start))
 
         if (groupMemberships.length === 0) {
-          throw new Error(`Member not found for user ${user.id} in group ${groupId}`)
+          throw new Error(`Member not found for user ${user.id} in group ${groupSlug}`)
         }
 
         members.set(user.id, {
@@ -189,43 +229,27 @@ export function getGroupService(
 
       return members
     },
-    async getMember(handle, groupId, userId) {
-      const memberships = await groupRepository.getMemberships(handle, groupId, userId)
 
-      if (memberships.length === 0) {
-        throw new Error(`Member not found for user ${userId} in group ${groupId}`)
-      }
-
-      const user = await userService.getById(handle, userId)
-      const groupMemberships = memberships.sort((a, b) => compareDesc(a.start, b.start))
-
-      return {
-        ...user,
-        groupMemberships,
-      }
-    },
-    async getAllByMember(handle, userId) {
-      return groupRepository.getGroupsByUserId(handle, userId)
-    },
-    async startMembership(handle, userId, groupId, roleIds) {
-      await this.endMembership(handle, userId, groupId)
+    async startMembership(handle, userId, groupSlug, groupRoleIds) {
+      await this.endMembership(handle, userId, groupSlug)
 
       const data: GroupMembershipWrite = {
         userId,
-        groupId,
+        groupId: groupSlug,
         start: getCurrentUTC(),
         end: null,
       }
 
-      await groupRepository.createMembership(handle, data, roleIds)
-      return await this.getMember(handle, groupId, userId)
+      await groupRepository.createGroupMembership(handle, data, groupRoleIds)
+      return await this.getMember(handle, groupSlug, userId)
     },
-    async endMembership(handle, userId, groupId) {
-      const memberships = await groupRepository.getMemberships(handle, groupId, userId)
+
+    async endMembership(handle, userId, groupSlug) {
+      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId)
       const activeMemberships = memberships.filter((membership) => !membership.end)
 
       const endMembershipPromises = activeMemberships.map((membership) =>
-        groupRepository.updateMembership(
+        groupRepository.updateGroupMembership(
           handle,
           membership.id,
           {
@@ -238,46 +262,52 @@ export function getGroupService(
 
       return await Promise.all(endMembershipPromises)
     },
-    async updateMembership(handle, id, data, roleIds) {
-      const currentMembership = await groupRepository.getMembershipById(handle, id)
+
+    async updateMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds) {
+      const currentMembership = await groupRepository.findGroupMembershipById(handle, groupMembershipId)
       if (!currentMembership) {
-        throw new NotFoundError(`GroupMembership(ID=${id}) not found`)
+        throw new NotFoundError(`GroupMembership(ID=${groupMembershipId}) not found`)
       }
 
-      const memberships = await groupRepository.getMemberships(
+      const memberships = await groupRepository.findManyGroupMemberships(
         handle,
         currentMembership.groupId,
         currentMembership.userId
       )
 
       for (const membership of memberships) {
-        if (membership.id === id) continue
+        if (membership.id === groupMembershipId) continue
 
         const maxDate = new Date(maxTime)
 
         if (
           areIntervalsOverlapping(
             { start: membership.start, end: membership.end ?? maxDate },
-            { start: data.start, end: data.end ?? maxDate },
+            { start: groupMembershipData.start, end: groupMembershipData.end ?? maxDate },
             { inclusive: false }
           )
         ) {
-          throw new FailedPreconditionError(`GroupMembership(ID=${id}) overlaps with existing memberships`)
+          throw new FailedPreconditionError(
+            `GroupMembership(ID=${groupMembershipId}) overlaps with existing memberships`
+          )
         }
       }
 
-      return await groupRepository.updateMembership(handle, id, data, roleIds)
+      return await groupRepository.updateGroupMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds)
     },
-    async createRole(handle, data) {
-      const result = await groupRepository.createRoles(handle, [data])
+
+    async createRole(handle, groupRoleData) {
+      const result = await groupRepository.createGroupRoles(handle, [groupRoleData])
       const role = result.at(0)
       invariant(role !== undefined, "Role should exist after creation")
 
       return role
     },
-    async updateRole(handle, id, role) {
-      return await groupRepository.updateRole(handle, id, role)
+
+    async updateRole(handle, groupRoleId, groupRoleData) {
+      return await groupRepository.updateGroupRole(handle, groupRoleId, groupRoleData)
     },
+
     async createFileUpload(handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `group/${Date.now()}-${uuid}-${slugify(filename)}`
