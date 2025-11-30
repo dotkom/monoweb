@@ -79,7 +79,7 @@ type EventRegistrationOptions = {
   /** Should the user be immediately reserved? */
   immediateReservation: boolean
   /**
-   * Should the payment be scheduled with an immediate deadline? If not, a 24 hour window is given.
+   * Should the payment be scheduled with an immediate deadline? If not, a 24-hour window is given.
    */
   immediatePayment: boolean
   /**
@@ -188,8 +188,8 @@ export interface AttendanceService {
   ): Promise<AttendancePool>
   getRegistrationAvailability(
     handle: DBHandle,
-    attendaceId: AttendanceId,
-    user: UserId,
+    attendanceId: AttendanceId,
+    userId: UserId,
     options: EventRegistrationOptions
   ): Promise<RegistrationAvailabilityResult>
   /**
@@ -206,10 +206,10 @@ export interface AttendanceService {
   findChargeAttendeeScheduleDate(handle: DBHandle, attendeeId: AttendeeId): Promise<Date | null>
 
   updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
-  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, price: number | null): Promise<void>
+  updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, priceNok: number | null): Promise<void>
   deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
   executeChargeAttendeeTask(handle: DBHandle, task: InferTaskData<ChargeAttendeeTaskDefinition>): Promise<void>
-  startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, deadline: TZDate): Promise<Payment>
+  startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, paymentDeadline: TZDate): Promise<Payment>
   cancelAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
   completeAttendeePayment(handle: DBHandle, paymentId: string): Promise<void>
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
@@ -226,7 +226,7 @@ export interface AttendanceService {
    *
    * NOTE: Be careful of the difference between this and {@link registerAttendee}.
    */
-  registerAttendance(handle: DBHandle, attendee: AttendeeId, at: TZDate | null): Promise<void>
+  registerAttendance(handle: DBHandle, attendeeId: AttendeeId, registeredAt: TZDate | null): Promise<void>
   scheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, mergeTime: TZDate): Promise<TaskId | null>
   rescheduleMergeEventPoolsTask(
     handle: DBHandle,
@@ -253,11 +253,14 @@ export function getAttendanceService(
   emailService: EmailService
 ): AttendanceService {
   const logger = getLogger("attendance-service")
+
   function sendEventRegistrationEmail(event: Event, attendance: Attendance, attendee: Attendee) {
     if (attendee.user.email === null) {
       return
     }
+
     const organizerEmails = event.hostingGroups.map((g) => g.email).filter((email) => email !== null)
+
     // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
     void emailService.send(
@@ -281,41 +284,56 @@ export function getAttendanceService(
       validateAttendanceWrite(data)
       return await attendanceRepository.createAttendance(handle, data)
     },
+
     async findAttendanceById(handle, attendanceId) {
       return await attendanceRepository.findAttendanceById(handle, attendanceId)
     },
+
     async findAttendanceByPoolId(handle, attendancePoolId) {
       return await attendanceRepository.findAttendanceByPoolId(handle, attendancePoolId)
     },
+
     async findAttendanceByAttendeeId(handle, attendeeId) {
       return await attendanceRepository.findAttendanceByAttendeeId(handle, attendeeId)
     },
+
     async getAttendanceById(handle, attendanceId) {
       const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
+
       if (!attendance) {
         throw new NotFoundError(`Attendance(ID=${attendanceId}) not found`)
       }
+
       return attendance
     },
+
     async getAttendanceByPoolId(handle, attendancePoolId) {
       const attendance = await attendanceRepository.findAttendanceByPoolId(handle, attendancePoolId)
+
       if (!attendance) {
         throw new NotFoundError(`Attendance for AttendancePool(ID=${attendancePoolId}) not found`)
       }
+
       return attendance
     },
+
     async getAttendanceByAttendeeId(handle, attendeeId) {
       const attendance = await attendanceRepository.findAttendanceByAttendeeId(handle, attendeeId)
+
       if (!attendance) {
         throw new NotFoundError(`Attendance for Attendee(ID=${attendeeId}) not found`)
       }
+
       return attendance
     },
+
     async getAttendancesByIds(handle, attendanceIds) {
       return await attendanceRepository.findAttendancesByIds(handle, attendanceIds)
     },
+
     async updateAttendanceById(handle, attendanceId, data) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
+
       const input = AttendanceWriteSchema.parse({
         ...attendance,
         ...data,
@@ -329,6 +347,7 @@ export function getAttendanceService(
           const next = input.selections.find((s) => s.id === selection.id)
           return next !== undefined && !isSelectionEqual(next, selection)
         })
+
         // TODO: Simplify this using a map or another constant time lookup because this is O(n^2) in the worst case.
         const affectedAttendees = attendance.attendees
           .map((attendee) => {
@@ -339,6 +358,7 @@ export function getAttendanceService(
             return { isAffected, selectionsForUpdate: attendeeSelectionsForUpdate, attendee }
           })
           .filter((attendee) => attendee.isAffected)
+
         // TODO: Collapse this into a single update query
         for (const { selectionsForUpdate, attendee } of affectedAttendees) {
           await this.updateAttendeeById(handle, attendee.id, {
@@ -346,12 +366,16 @@ export function getAttendanceService(
           })
         }
       }
+
       return await attendanceRepository.updateAttendanceById(handle, attendanceId, input)
     },
+
     async createAttendancePool(handle, attendanceId, data) {
       validateAttendancePoolWrite(data)
+
       const attendance = await this.getAttendanceById(handle, attendanceId)
       validateAttendancePoolDisjunction(data.yearCriteria, attendance.pools)
+
       // If there are no years specified, we assume the pool is valid for all years not currently occupied by other
       // pools for the same attendance.
       if (data.yearCriteria.length === 0) {
@@ -363,11 +387,13 @@ export function getAttendanceService(
             }
           }
         }
+
         if (remaining.length === 0) {
           throw new FailedPreconditionError(
             `Cannot create new AttendancePool on Attendance(ID=${attendanceId}) as all years are occupied by other pools`
           )
         }
+
         data.yearCriteria = remaining
       }
 
@@ -382,8 +408,10 @@ export function getAttendanceService(
 
       return await attendanceRepository.createAttendancePool(handle, attendanceId, taskId, data)
     },
+
     async updateAttendancePool(handle, attendancePoolId, data) {
       validateAttendancePoolWrite(data)
+
       const attendance = await this.getAttendanceByPoolId(handle, attendancePoolId)
       const pool = attendance.pools.find((pool) => pool.id === attendancePoolId)
 
@@ -404,9 +432,11 @@ export function getAttendanceService(
 
       return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, taskId, data)
     },
+
     async deleteAttendancePool(handle, attendancePoolId) {
       await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
     },
+
     async getRegistrationAvailability(handle, attendanceId, userId, options) {
       // NOTE: There are a few optimizations on queries in this function, as we want to keep the performance if this
       // procedure high. In order to achieve this, we try to fetch as much data as possible in parallel, and we reduce
@@ -450,13 +480,15 @@ export function getAttendanceService(
           bypassedChecks.push("IGNORE_PARENT")
         } else {
           const parent = await attendanceRepository.findAttendanceByEventId(handle, event.parentId)
-          // SAFETY: This cannot fail as its enforced on database level through a foreign key
+          // SAFETY: This cannot fail as it's enforced on database level through a foreign key
           invariant(parent !== null)
 
           const attendee = parent.attendees.find((a) => a.userId === userId)
+
           if (attendee === undefined) {
             return { cause: "MISSING_PARENT_REGISTRATION", success: false }
           }
+
           if (!attendee.reserved) {
             return { cause: "MISSING_PARENT_RESERVATION", success: false }
           }
@@ -464,6 +496,7 @@ export function getAttendanceService(
       }
 
       const membership = findActiveMembership(user)
+
       if (membership === null) {
         return { cause: "MISSING_MEMBERSHIP", success: false }
       }
@@ -473,6 +506,7 @@ export function getAttendanceService(
       let applicablePool: AttendancePool | null = null
       if (options.overriddenAttendancePoolId !== null) {
         const pool = attendance.pools.find((p) => p.id === options.overriddenAttendancePoolId)
+
         if (pool === undefined) {
           // If this ever happens, there is either a malformed request by a third-party client, or a bug in the web or
           // dashboard code.
@@ -483,9 +517,11 @@ export function getAttendanceService(
             event.title,
             options.overriddenAttendancePoolId
           )
+
           // TODO: Maybe this should just be an invariant?
           return { cause: "NO_MATCHING_POOL", success: false }
         }
+
         applicablePool = pool
         bypassedChecks.push("OVERRIDDEN_POOL")
       } else {
@@ -500,6 +536,7 @@ export function getAttendanceService(
       // the sequence of checks we perform. It is better to reject users earlier so that this check does not need to
       // always run.
       const punishment = await personalMarkService.findPunishmentByUserId(handle, userId)
+
       if (punishment?.suspended === true) {
         return { cause: "SUSPENDED", success: false }
       }
@@ -524,6 +561,7 @@ export function getAttendanceService(
         success: true,
       }
     },
+
     async registerAttendee(
       handle,
       { user, event, attendance, pool, reservationActiveAt, bypassedChecks, membership, options, success }
@@ -547,6 +585,7 @@ export function getAttendanceService(
       const isImmediateReservation =
         (!isFuture(reservationActiveAt) && (pool.capacity === 0 || poolAttendees.length < pool.capacity)) ||
         options.immediateReservation
+
       const attendee = await attendanceRepository.createAttendee(
         handle,
         attendance.id,
@@ -568,10 +607,13 @@ export function getAttendanceService(
           const paymentDeadline = options.immediatePayment
             ? addHours(getCurrentUTC(), 1)
             : addHours(getCurrentUTC(), 24)
+
           const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
+
           attendee.paymentDeadline = paymentDeadline
           attendee.paymentId = payment.id
           attendee.paymentLink = payment.url
+
           logger.info(
             "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
             attendee.id,
@@ -609,25 +651,31 @@ export function getAttendanceService(
 
       return attendee
     },
+
     async getAttendeeById(handle, attendeeId) {
       const attendee = await attendanceRepository.findAttendeeById(handle, attendeeId)
+
       if (!attendee) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found`)
       }
 
       return attendee
     },
+
     async updateAttendeeById(handle, attendeeId, data) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
       invariant(attendee !== undefined)
+
       const input = AttendeeWriteSchema.parse({
         ...attendee,
         ...data,
       } satisfies AttendeeWrite)
       validateAttendeeWrite(input)
+
       return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
     },
+
     async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
@@ -677,9 +725,11 @@ export function getAttendanceService(
       if (attendance.attendancePrice !== null && attendance.attendancePrice !== 0 && !hasExistingPayment) {
         const paymentDeadline = addHours(getCurrentUTC(), 24)
         const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
+
         attendee.paymentDeadline = paymentDeadline
         attendee.paymentId = payment.id
         attendee.paymentLink = payment.url
+
         logger.info(
           "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
           attendee.id,
@@ -692,9 +742,11 @@ export function getAttendanceService(
 
       sendEventRegistrationEmail(event, attendance, attendee)
     },
+
     async deregisterAttendee(handle, attendeeId, options) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
@@ -717,6 +769,7 @@ export function getAttendanceService(
       if (attendee.paymentId !== null) {
         await paymentService.cancel(attendee.paymentId)
       }
+
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
@@ -780,6 +833,7 @@ export function getAttendanceService(
         attendee.id
       )
     },
+
     async findChargeAttendeeScheduleDate(handle, attendeeId) {
       const attendee = await this.getAttendeeById(handle, attendeeId)
 
@@ -795,6 +849,7 @@ export function getAttendanceService(
 
       return job.scheduledAt
     },
+
     async deleteAttendancePayment(handle, attendance: Attendance) {
       for (const attendee of attendance.attendees) {
         if (!attendee.paymentId) {
@@ -813,16 +868,20 @@ export function getAttendanceService(
       }
 
       const updatedAttendance = await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
+
       // TODO: N+1 Query
       const promises = updatedAttendance.attendees.map(async (attendee) => {
         return await taskSchedulingService.findChargeAttendeeTask(handle, attendee.id)
       })
+
       const tasks = await Promise.all(promises)
       const errors: Error[] = []
+
       for (const task of tasks) {
         if (task === null) {
           continue
         }
+
         // Run them in a try-catch block and optionally build an AggregateError to prevent one failed cancel to stop
         // all other tasks from being cancelled.
         try {
@@ -834,36 +893,45 @@ export function getAttendanceService(
           }
         }
       }
+
       if (errors.length !== 0) {
         throw new AggregateError(errors, "Failed to cancel one or more tasks")
       }
     },
-    async updateAttendancePaymentPrice(handle, attendanceId, price) {
-      if (price !== null && price < 0) {
-        throw new InvalidArgumentError(`Tried to set negative price (${price}) for Attendance(ID=${attendanceId})`)
+
+    async updateAttendancePaymentPrice(handle, attendanceId, priceNok) {
+      if (priceNok !== null && priceNok < 0) {
+        throw new InvalidArgumentError(
+          `Tried to set negative price (${priceNok} NOK) for Attendance(ID=${attendanceId})`
+        )
       }
+
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const isExistingProduct = attendance.attendancePrice !== null
 
-      await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, price)
+      await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, priceNok)
+
       // If we have set a price in the past, we just update it, otherwise we need to make a new Stripe product.
       if (isExistingProduct) {
         // TODO: Is this switch really needed? Maybe it should delete the product if the price is null?
-        if (price !== null) {
-          await paymentProductsService.updatePrice(attendanceId, price)
+        if (priceNok !== null) {
+          await paymentProductsService.updatePrice(attendanceId, priceNok)
         }
       } else {
         await this.updateAttendancePaymentProduct(handle, attendanceId)
       }
     },
+
     async updateAttendancePaymentProduct(handle, attendanceId) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
+
       if (!attendance.attendancePrice) {
         return
       }
+
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
-      const url = `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`
+      const url = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
       const groupsText = ogJoin(event.hostingGroups.map((group) => group.abbreviation))
 
       await paymentProductsService.createOrUpdate(attendance.id, {
@@ -878,6 +946,7 @@ export function getAttendanceService(
         url,
       })
     },
+
     async executeChargeAttendeeTask(handle, { attendeeId }) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((a) => a.id === attendeeId)
@@ -890,13 +959,16 @@ export function getAttendanceService(
 
       await this.createAttendeePaymentCharge(handle, attendee.id)
     },
-    async startAttendeePayment(handle, attendeeId, deadline): Promise<Payment> {
+
+    async startAttendeePayment(handle, attendeeId, paymentDeadline): Promise<Payment> {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+
       if (!attendance.attendancePrice) {
         throw new Error("Tried to create a payment for an attendance without a price")
       }
 
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+
       if (!attendee) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
@@ -919,15 +991,16 @@ export function getAttendanceService(
       )
 
       // This task has to be scheduled regardless, as the user still has the `deadline` time to make the payment
-      // regardless of whether its a charge or a reservation.
+      // regardless of whether it's a charge or a reservation.
       await taskSchedulingService.scheduleAt(
         handle,
         tasks.VERIFY_PAYMENT,
         {
           attendeeId,
         },
-        deadline
+        paymentDeadline
       )
+
       // We attempt to put a "hold" on the user's credit card for as long as possible. From experience, Visa and
       // MasterCard allow a hold to be kept on an account for 7 days. To allow for leeway and clock tolerance, we set
       // the limit to 5 days.
@@ -947,7 +1020,7 @@ export function getAttendanceService(
       }
 
       await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
-        paymentDeadline: deadline,
+        paymentDeadline,
         paymentId: payment.id,
         paymentLink: payment.url,
         paymentRefundedAt: null,
@@ -957,9 +1030,11 @@ export function getAttendanceService(
 
       return payment
     },
+
     async createAttendeePaymentCharge(handle, attendeeId) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
@@ -967,7 +1042,9 @@ export function getAttendanceService(
       if (!attendee.paymentId) {
         return
       }
+
       const payment = await paymentService.getById(attendee.paymentId)
+
       if (payment.status === "PAID") {
         return
       }
@@ -990,17 +1067,21 @@ export function getAttendanceService(
         }
       }
     },
+
     async cancelAttendeePayment(handle, attendeeId, refundedByUserId: UserId) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
+
       if (!attendee.paymentId) {
         throw new FailedPreconditionError(`Attendee(ID=${attendeeId}) has no payment to cancel`)
       }
 
       const payment = await paymentService.getById(attendee.paymentId)
+
       if (payment.status === "PAID") {
         await paymentService.refund(attendee.paymentId)
       } else if (payment.status === "RESERVED" || payment.status === "UNPAID") {
@@ -1008,6 +1089,7 @@ export function getAttendanceService(
       } else {
         throw new FailedPreconditionError(`Attendee(ID=${attendeeId}) has not paid`)
       }
+
       await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
         paymentChargedAt: null,
         paymentId: null,
@@ -1019,16 +1101,21 @@ export function getAttendanceService(
       })
 
       const task = await taskSchedulingService.findVerifyPaymentTask(handle, attendeeId)
+
       if (task) {
         await taskSchedulingService.cancel(handle, task.id)
       }
     },
+
     async completeAttendeePayment(handle, paymentId) {
       const attendance = await attendanceRepository.findAttendanceByAttendeePaymentId(handle, paymentId)
+
       if (attendance === null) {
         throw new NotFoundError(`Attendance for Payment(ID=${paymentId}) not found`)
       }
+
       const attendee = attendance.attendees.find((attendee) => attendee.paymentId === paymentId)
+
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee for Payment(ID=${paymentId}) not found in Attendance(ID=${attendance.id})`)
       }
@@ -1038,6 +1125,7 @@ export function getAttendanceService(
       }
 
       const payment = await paymentService.getById(paymentId)
+
       if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
         throw new IllegalStateError(`Got webhook about Payment(ID=${payment.id}) but API does not say so`)
       }
@@ -1049,10 +1137,12 @@ export function getAttendanceService(
         paymentLink: null,
       })
     },
+
     async executeVerifyPaymentTask(handle, { attendeeId }) {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+
       if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
@@ -1078,6 +1168,7 @@ export function getAttendanceService(
           },
           event.hostingGroups.map((g) => g.slug)
         )
+
         await personalMarkService.addToUser(handle, attendee.userId, mark.id)
         logger.info(
           "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
@@ -1100,6 +1191,7 @@ export function getAttendanceService(
         })
       }
     },
+
     async executeVerifyFeedbackAnsweredTask(handle, { feedbackFormId }) {
       const previousTask = await taskSchedulingService.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
 
@@ -1154,6 +1246,7 @@ export function getAttendanceService(
 
       await Promise.all([...personalMarkPromises])
     },
+
     async executeSendFeedbackFormLinkEmails(handle) {
       const eventsEndedYesterday = await eventService.findEvents(handle, {
         byHasFeedbackForm: true,
@@ -1169,6 +1262,7 @@ export function getAttendanceService(
         }
 
         const feedbackForm = await feedbackFormService.findByEventId(handle, event.id)
+
         if (!feedbackForm) {
           return
         }
@@ -1223,6 +1317,7 @@ export function getAttendanceService(
 
       await Promise.all(promises)
     },
+
     async executeVerifyAttendeeAttendedTask(handle) {
       const eventsEndedYesterday = await eventService.findEvents(handle, {
         byEndDate: {
@@ -1275,14 +1370,15 @@ export function getAttendanceService(
         throw new AggregateError(errors, "Failed to give marks to one or more attendees")
       }
     },
-    async registerAttendance(handle, attendeeId, at = getCurrentUTC()) {
-      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
-      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
-      if (attendee === undefined) {
-        throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+
+    async registerAttendance(handle, attendeeId, attendedAt = getCurrentUTC()) {
+      const attendee = await this.getAttendeeById(handle, attendeeId)
+
+      if (attendee === null) {
+        throw new NotFoundError(`Attendee(ID=${attendeeId}) not found`)
       }
 
-      if (attendee.attendedAt !== null && at !== null) {
+      if (attendee.attendedAt !== null && attendedAt !== null) {
         return
       }
 
@@ -1291,13 +1387,15 @@ export function getAttendanceService(
         attendeeId,
         AttendeeWriteSchema.parse({
           ...attendee,
-          attendedAt: at,
+          attendedAt,
         })
       )
     },
+
     async scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime) {
       return await taskSchedulingService.scheduleAt(handle, tasks.MERGE_ATTENDANCE_POOLS, { attendanceId }, mergeTime)
     },
+
     async rescheduleMergeEventPoolsTask(handle, attendanceId, existingTaskId, mergeTime) {
       if (existingTaskId) {
         await taskSchedulingService.cancel(handle, existingTaskId)
@@ -1309,6 +1407,7 @@ export function getAttendanceService(
 
       return await this.scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime)
     },
+
     async executeMergeEventPoolsTask(handle, { attendanceId }) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
 
@@ -1368,6 +1467,7 @@ function isSelectionEqual(left: AttendanceSelection, right: AttendanceSelection)
     const rOption = right.options.find((rOption) => rOption.id === lOption.id)
     return rOption?.name === lOption.name
   })
+
   return isWeaklyEqual && isOptionSetEqual
 }
 
@@ -1375,6 +1475,7 @@ function validateAttendanceWrite(data: AttendanceWrite) {
   if (isBefore(data.registerEnd, data.registerStart)) {
     throw new InvalidArgumentError("Cannot specify registration end before start")
   }
+
   if (Math.abs(differenceInHours(data.registerStart, data.registerEnd)) < 1) {
     throw new InvalidArgumentError("Registration time must be at least one hour long")
   }
@@ -1384,9 +1485,11 @@ function validateAttendancePoolWrite(data: AttendancePoolWrite) {
   if (data.mergeDelayHours !== null && (data.mergeDelayHours < 0 || data.mergeDelayHours > 48)) {
     throw new InvalidArgumentError("Merge delay for pool must be between 0 and 48 hours")
   }
+
   if (data.capacity < 0) {
     throw new InvalidArgumentError("Capacity for pool must be zero or positive")
   }
+
   if (data.yearCriteria.some((v) => v < 1 || v > 5)) {
     throw new InvalidArgumentError("Year criteria must be between 1 and 5")
   }
@@ -1402,6 +1505,7 @@ function validateAttendancePoolDisjunction(plan: number[], pools: AttendancePool
   }, new Set<number>())
 
   const isOverlapping = plan.some((y) => currentYearConstraints.has(y))
+
   if (isOverlapping) {
     throw new InvalidArgumentError("Planned years overlap with existing constrains defined in existing pools")
   }
@@ -1429,6 +1533,7 @@ function emitRegistrationAvailabilityDiagnostics(
           user.name
         )
         continue diag
+
       case "IGNORE_REGISTRATION_START":
         logger.info(
           "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) is permitted to ignore registration start requirement",
@@ -1438,6 +1543,7 @@ function emitRegistrationAvailabilityDiagnostics(
           user.name
         )
         continue diag
+
       case "IGNORE_REGISTRATION_END":
         logger.info(
           "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) is permitted to ignore registration end requirement",
@@ -1447,6 +1553,7 @@ function emitRegistrationAvailabilityDiagnostics(
           user.name
         )
         continue diag
+
       case "OVERRIDDEN_POOL":
         logger.info(
           "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) has chosen AttendancePool(ID=%s) as overriden attendance pool",
