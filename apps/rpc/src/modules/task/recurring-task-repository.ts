@@ -26,38 +26,48 @@ export function getRecurringTaskRepository(): RecurringTaskRepository {
     async create(handle, data, nextRunAt) {
       const payload = data.payload ?? undefined
       const recurringTask = await handle.recurringTask.create({ data: { ...data, payload, nextRunAt } })
+
       return parseOrReport(RecurringTaskSchema, recurringTask)
     },
+
     async update(handle, recurringTaskId, data, nextRunAt) {
       const payload = data.payload ?? undefined
       const recurringTask = await handle.recurringTask.update({
         where: { id: recurringTaskId },
         data: { ...data, payload, nextRunAt },
       })
+
       return parseOrReport(RecurringTaskSchema, recurringTask)
     },
+
     async delete(handle, recurringTaskId) {
       await handle.recurringTask.delete({
         where: { id: recurringTaskId },
       })
     },
+
     async getById(handle, recurringTaskId) {
       const recurringTask = await handle.recurringTask.findUnique({
         where: { id: recurringTaskId },
       })
-      return recurringTask ? parseOrReport(RecurringTaskSchema, recurringTask) : null
+
+      return parseOrReport(RecurringTaskSchema.nullable(), recurringTask)
     },
+
     async getAll(handle) {
       const recurringTasks = await handle.recurringTask.findMany()
-      return recurringTasks.map((recurringTask) => parseOrReport(RecurringTaskSchema, recurringTask))
+
+      return parseOrReport(RecurringTaskSchema.array(), recurringTasks)
     },
+
     async getPending(handle) {
       const recurringTasks = await handle.recurringTask.findMany({
         where: {
           nextRunAt: { lte: new Date() },
         },
       })
-      return recurringTasks.map((recurringTask) => parseOrReport(RecurringTaskSchema, recurringTask))
+
+      return parseOrReport(RecurringTaskSchema.array(), recurringTasks)
     },
   }
 }

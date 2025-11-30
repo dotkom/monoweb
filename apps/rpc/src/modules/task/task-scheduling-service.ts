@@ -37,12 +37,13 @@ export function getLocalTaskSchedulingService(
   taskService: TaskService
 ): TaskSchedulingService {
   const logger = getLogger("task-scheduling-service/local-backend")
-
   logger.warn("TaskSchedulingService started with local (postgres) backend")
+
   return {
     async scheduleAt(handle, task, data, executeAt, recurringTaskId) {
       logger.info("Scheduling task of TaskKind=%s with data: %o", task, data)
       const payload = taskService.parse(task, data) as JsonValue
+
       const scheduledTask = await taskRepository.create(handle, task.type, {
         payload,
         processedAt: null,
@@ -50,25 +51,33 @@ export function getLocalTaskSchedulingService(
         status: "PENDING",
         recurringTaskId: recurringTaskId ?? null,
       })
+
       return scheduledTask.id
     },
+
     async cancel(handle, id) {
       logger.info("Cancelling task with id: %s", id)
-      const task = await taskRepository.getById(handle, id)
+      const task = await taskRepository.findById(handle, id)
+
       if (task?.status !== "PENDING") {
         return
       }
+
       await taskRepository.update(handle, task.id, { status: "CANCELED" }, task.status)
     },
+
     async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
       return taskRepository.findReserveAttendeeTask(handle, attendeeId, attendanceId)
     },
+
     async findVerifyPaymentTask(handle, attendeeId) {
       return await taskRepository.findVerifyPaymentTask(handle, attendeeId)
     },
+
     async findChargeAttendeeTask(handle, attendeeId) {
       return await taskRepository.findChargeAttendeeTask(handle, attendeeId)
     },
+
     async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
       return await taskRepository.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
     },
@@ -77,27 +86,33 @@ export function getLocalTaskSchedulingService(
 
 export function getEventBridgeTaskSchedulingService(client: SchedulerClient): TaskSchedulingService {
   const logger = getLogger("task-scheduling-service/eventbridge-backend")
+
   return {
     // NOTE: The handle here is completely unused, but because the local backend needs to schedule within the caller
     // transaction, this one also needs to take a handle. Unfortunate but necessary.
     async scheduleAt(_, kind, data) {
       throw new UnimplementedError("EventBridgeSchedulingService#schedule")
     },
+
     async cancel(_, id) {
       throw new UnimplementedError("EventBridgeSchedulingService#cancel")
     },
+
     async findReserveAttendeeTask(_, attendeeId, attendanceId) {
       logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
       return null
     },
+
     async findVerifyPaymentTask(_, attendeeId) {
       logger.warn("findVerifyPaymentTask is not implemented in EventBridgeSchedulingService")
       return null
     },
+
     async findChargeAttendeeTask(_, attendeeId) {
       logger.warn("findChargeAttendancePaymentsTask is not implemented in EventBridgeSchedulingService")
       return null
     },
+
     async findVerifyFeedbackAnsweredTask(_, feedbackFormId) {
       logger.warn("findVerifyFeedbackAnsweredTask is not implemented in EventBridgeSchedulingService")
       return null

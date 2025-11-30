@@ -45,12 +45,15 @@ export function getLocalTaskExecutor(
 
   async function processTask(client: PrismaClient, task: Task): Promise<void> {
     let isError = false
+
     // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
     // as running regardless of whether the child transaction commits or rollbacks.
     await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
+
     return await tracer.startActiveSpan(`TaskExecutor/${task.type}`, { root: true }, async (span) => {
       span.setAttribute("rpc.service", "@dotkomonline/rpc")
       span.setAttribute("rpc.system", "trpc")
+
       try {
         // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
@@ -58,37 +61,45 @@ export function getLocalTaskExecutor(
         await client.$transaction(async (handle) => {
           const definition = getTaskDefinition(task.type)
           const payload = taskService.parse(definition, task.payload)
+
           switch (task.type) {
             case tasks.RESERVE_ATTENDEE.type:
               return await attendanceService.executeReserveAttendeeTask(
                 handle,
                 payload as InferTaskData<ReserveAttendeeTaskDefinition>
               )
+
             case tasks.MERGE_ATTENDANCE_POOLS.type:
               return await attendanceService.executeMergeEventPoolsTask(
                 handle,
                 payload as InferTaskData<MergeAttendancePoolsTaskDefinition>
               )
+
             case tasks.VERIFY_PAYMENT.type:
               return await attendanceService.executeVerifyPaymentTask(
                 handle,
                 payload as InferTaskData<VerifyPaymentTaskDefinition>
               )
+
             case tasks.CHARGE_ATTENDEE.type:
               return await attendanceService.executeChargeAttendeeTask(
                 handle,
                 payload as InferTaskData<ChargeAttendeeTaskDefinition>
               )
+
             case tasks.VERIFY_FEEDBACK_ANSWERED.type:
               return await attendanceService.executeVerifyFeedbackAnsweredTask(
                 handle,
                 payload as InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
               )
+
             case tasks.SEND_FEEDBACK_FORM_EMAILS.type:
               return await attendanceService.executeSendFeedbackFormLinkEmails(handle)
+
             case tasks.VERIFY_ATTENDEE_ATTENDED.type:
               return await attendanceService.executeVerifyAttendeeAttendedTask(handle)
           }
+
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
           // still keep this block here to prevent subtle bugs or missed cases in the future.
           throw new IllegalStateError(
@@ -97,6 +108,7 @@ export function getLocalTaskExecutor(
         })
       } catch (error: unknown) {
         isError = true
+
         // Mark the job as failed using the client, so that regardless of whether the child transaction commits or not,
         // status is updated accordingly.
         logger.error("Job with ID=%s failed with error: %o", task.id, error)
@@ -121,9 +133,11 @@ export function getLocalTaskExecutor(
       }
     })
   }
+
   return {
     startWorker(client, signal) {
       let interval: ReturnType<typeof setInterval> | null = null
+
       async function work() {
         await tracer.startActiveSpan("TaskExecutor/DiscoverTasks", { root: true }, async (span) => {
           try {
@@ -136,13 +150,17 @@ export function getLocalTaskExecutor(
 
             logger.debug("TaskExecutor discovering and scheduling recurring tasks")
             const recurringTasks = await taskDiscoveryService.discoverRecurringTasks()
+
             const now = getCurrentUTC()
+
             for (const recurringTask of recurringTasks) {
               const type = getTaskDefinition(recurringTask.type)
+
               logger.debug(`TaskExecutor scheduling task ${type} from recurring task ${recurringTask.id}`)
               await taskSchedulingService.scheduleAt(client, type, recurringTask.payload, now, recurringTask.id)
               await recurringTaskService.scheduleNextRun(client, recurringTask.id, now)
             }
+
             logger.debug("TaskExecutor performing discovery and execution of all pending tasks")
             const tasks = await taskDiscoveryService.discoverAll()
 

@@ -17,7 +17,7 @@ export type RecurringTaskService = {
   getById(handle: DBHandle, recurringTaskId: RecurringTaskId): Promise<RecurringTask>
   getAll(handle: DBHandle): Promise<RecurringTask[]>
   getPending(handle: DBHandle): Promise<RecurringTask[]>
-  scheduleNextRun(handle: DBHandle, recurringTaskid: RecurringTaskId, lastRunAt: Date): Promise<void>
+  scheduleNextRun(handle: DBHandle, recurringTaskId: RecurringTaskId, lastRunAt: Date): Promise<void>
 }
 
 export function getRecurringTaskService(recurringTaskRepository: RecurringTaskRepository): RecurringTaskService {
@@ -31,6 +31,7 @@ export function getRecurringTaskService(recurringTaskRepository: RecurringTaskRe
 
       return await recurringTaskRepository.create(handle, data, computedNextRunAt)
     },
+
     async update(handle, recurringTaskId, data, nextRunAt) {
       if (data.schedule && !validateCron(data.schedule)) {
         throw new InvalidArgumentError(`Cron expression (${data.schedule}) is invalid`)
@@ -38,9 +39,11 @@ export function getRecurringTaskService(recurringTaskRepository: RecurringTaskRe
 
       return await recurringTaskRepository.update(handle, recurringTaskId, data, nextRunAt)
     },
+
     async delete(handle, recurringTaskId) {
       return await recurringTaskRepository.delete(handle, recurringTaskId)
     },
+
     async getById(handle, recurringTaskId) {
       const recurringTask = await recurringTaskRepository.getById(handle, recurringTaskId)
       if (!recurringTask) {
@@ -49,12 +52,15 @@ export function getRecurringTaskService(recurringTaskRepository: RecurringTaskRe
 
       return recurringTask
     },
+
     async getAll(handle) {
       return await recurringTaskRepository.getAll(handle)
     },
+
     async getPending(handle) {
       return await recurringTaskRepository.getPending(handle)
     },
+
     async scheduleNextRun(handle, recurringTaskId, lastRunAt) {
       const recurringTask = await this.getById(handle, recurringTaskId)
 

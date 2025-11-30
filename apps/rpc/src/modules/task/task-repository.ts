@@ -17,9 +17,9 @@ export interface TaskRepository {
   create(handle: DBHandle, type: TaskType, data: TaskWrite): Promise<Task>
   update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState?: TaskStatus): Promise<Task | null>
   delete(handle: DBHandle, taskId: TaskId): Promise<void>
-  getById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
-  getAll(handle: DBHandle): Promise<Task[]>
-  getPendingTasks(handle: DBHandle, type: TaskType): Promise<Task[]>
+  findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
+  findMany(handle: DBHandle): Promise<Task[]>
+  findPendingTasks(handle: DBHandle, type: TaskType): Promise<Task[]>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
@@ -31,15 +31,30 @@ export function getTaskRepository(): TaskRepository {
   return {
     async create(handle, type, data) {
       const payload = data.payload ?? undefined
-      const task = await handle.task.create({ data: { ...data, payload, type } })
+      const task = await handle.task.create({
+        data: {
+          ...data,
+          payload,
+          type,
+        },
+      })
+
       return parseOrReport(TaskSchema, task)
     },
+
     async update(handle, taskId, data, oldStatus) {
       try {
         const task = await handle.task.update({
-          where: { id: taskId, status: oldStatus ? { equals: oldStatus } : undefined },
-          data: { ...data, payload: data.payload ?? undefined },
+          where: {
+            id: taskId,
+            status: oldStatus ? { equals: oldStatus } : undefined,
+          },
+          data: {
+            ...data,
+            payload: data.payload ?? undefined,
+          },
         })
+
         return parseOrReport(TaskSchema, task)
       } catch (e) {
         if (e instanceof PrismaClientKnownRequestError) {
@@ -51,22 +66,32 @@ export function getTaskRepository(): TaskRepository {
         throw e
       }
     },
+
     async delete(handle, taskId) {
       await handle.task.delete({
-        where: { id: taskId },
+        where: {
+          id: taskId,
+        },
       })
     },
-    async getById(handle, taskId) {
+
+    async findById(handle, taskId) {
       const task = await handle.task.findUnique({
-        where: { id: taskId },
+        where: {
+          id: taskId,
+        },
       })
-      return task ? parseOrReport(TaskSchema, task) : null
+
+      return parseOrReport(TaskSchema.nullable(), task)
     },
-    async getAll(handle) {
+
+    async findMany(handle) {
       const tasks = await handle.task.findMany()
-      return tasks.map((task) => parseOrReport(TaskSchema, task))
+
+      return parseOrReport(TaskSchema.array(), tasks)
     },
-    async getPendingTasks(handle, type) {
+
+    async findPendingTasks(handle, type) {
       const tasks = await handle.task.findMany({
         where: {
           scheduledAt: { lte: new Date() },
@@ -74,8 +99,11 @@ export function getTaskRepository(): TaskRepository {
           type,
         },
       })
-      return tasks.map((task) => parseOrReport(TaskSchema, task))
-    }, //TODO: replace the find methods with getall
+
+      return parseOrReport(TaskSchema.array(), tasks)
+    },
+
+    // TODO: replace the find methods with getall
     async findReserveAttendeeTask(handle, attendeeId, attendanceId) {
       const task = await handle.task.findFirst({
         where: {
@@ -99,6 +127,7 @@ export function getTaskRepository(): TaskRepository {
           createdAt: "desc",
         },
       })
+
       return parseOrReport(TaskSchema.nullable(), task)
     },
     async findVerifyPaymentTask(handle, attendeeId) {
@@ -114,8 +143,10 @@ export function getTaskRepository(): TaskRepository {
           createdAt: "desc",
         },
       })
+
       return parseOrReport(TaskSchema.nullable(), task)
     },
+
     async findChargeAttendeeTask(handle, attendeeId) {
       const task = await handle.task.findFirst({
         where: {
@@ -129,8 +160,10 @@ export function getTaskRepository(): TaskRepository {
           createdAt: "desc",
         },
       })
+
       return parseOrReport(TaskSchema.nullable(), task)
     },
+
     async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
       const task = await handle.task.findFirst({
         where: {
@@ -144,6 +177,7 @@ export function getTaskRepository(): TaskRepository {
           createdAt: "desc",
         },
       })
+
       return parseOrReport(TaskSchema.nullable(), task)
     },
   }

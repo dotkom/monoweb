@@ -25,8 +25,8 @@ export function getLocalTaskDiscoveryService(
   recurringTaskService: RecurringTaskService
 ): TaskDiscoveryService {
   const logger = getLogger("task-discovery-service/local-backend")
-
   logger.warn("TaskDiscoveryService started with local (postgres) backend")
+
   return {
     async discoverAll() {
       const discoveredTasks = await Promise.all([
@@ -40,9 +40,10 @@ export function getLocalTaskDiscoveryService(
       ])
       return discoveredTasks.flat()
     },
+
     async discover(kind) {
       logger.debug("Running task discovery for Kind=%s", kind)
-      const jobs = await taskService.getPendingTasks(client, kind)
+      const jobs = await taskService.findPendingTasks(client, kind)
 
       if (jobs.length > 0) {
         logger.info("Task discovery for Kind=%s yielded %d tasks", kind, jobs.length)
@@ -52,6 +53,7 @@ export function getLocalTaskDiscoveryService(
 
       return jobs
     },
+
     async discoverRecurringTasks() {
       return await recurringTaskService.getPending(client)
     },
@@ -69,10 +71,12 @@ export function getSQSTaskDiscoveryService(client: SQSClient): TaskDiscoveryServ
       logger.warn("discoverAll is not implemented for SQS TaskDiscoveryService")
       throw new UnimplementedError("SQSTaskDiscovery#discoverAll")
     },
+
     async discover(kind) {
       logger.warn("discover is not implemented for SQS TaskDiscoveryService")
       throw new UnimplementedError("SQSTaskDiscovery#discover")
     },
+
     async discoverRecurringTasks() {
       logger.warn("discoverRecurringTasks is not implemented for SQS TaskDiscoveryService")
       throw new UnimplementedError("SQSTaskDiscovery#discover")
