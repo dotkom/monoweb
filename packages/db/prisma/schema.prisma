@@ -291,6 +291,7 @@ model Attendee {
   paymentChargeDeadline DateTime?           @map("payment_charge_deadline")
   paymentChargedAt      DateTime?           @map("payment_charged_at")
   paymentRefundedAt     DateTime?           @map("payment_refunded_at")
+  paymentCheckoutUrl    String?             @map("payment_checkout_url")
 
   attendanceId        String         @map("attendance_id")
   userId              String         @map("user_id")

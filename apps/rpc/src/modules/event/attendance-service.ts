@@ -1,4 +1,3 @@
-import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { type Logger, getLogger } from "@dotkomonline/logger"
@@ -40,6 +39,7 @@ import {
   min,
   startOfYesterday,
 } from "date-fns"
+import type { EventEmitter } from "node:events"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import {
@@ -753,7 +753,8 @@ export function getAttendanceService(
 
       const hasPaid = hasAttendeePaid(attendance, attendee, { excludeReservation: true })
 
-      if (hasPaid) {
+      // If the attendee has paid and not been refunded, we cannot allow deregistration.
+      if (hasPaid && !attendee.paymentRefundedAt) {
         throw new FailedPreconditionError(
           `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) because payment has been completed`
         )
@@ -1042,6 +1043,7 @@ export function getAttendanceService(
         paymentRefundedAt: null,
         paymentRefundedById: null,
         paymentChargeDeadline: isImmediatePayment ? null : maximalChargeTime,
+        paymentCheckoutUrl: payment.checkoutUrl,
       })
 
       return payment
@@ -1112,8 +1114,9 @@ export function getAttendanceService(
         paymentDeadline: null,
         paymentLink: null,
         paymentReservedAt: null,
-        paymentRefundedAt: getCurrentUTC(),
+        paymentRefundedAt: payment.status === "PAID" ? getCurrentUTC() : null,
         paymentRefundedById: refundedByUserId,
+        paymentCheckoutUrl: payment.status === "PAID" ? payment.checkoutUrl : null,
       })
 
       const task = await taskSchedulingService.findVerifyPaymentTask(handle, attendeeId)
@@ -1151,6 +1154,7 @@ export function getAttendanceService(
         paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
         paymentDeadline: null,
         paymentLink: null,
+        paymentCheckoutUrl: payment.checkoutUrl,
       })
     },
 
@@ -1204,6 +1208,7 @@ export function getAttendanceService(
           paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
           paymentDeadline: null,
           paymentLink: null,
+          paymentCheckoutUrl: payment.checkoutUrl,
         })
       }
     },
