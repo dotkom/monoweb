@@ -66,7 +66,7 @@ describe("article integration tests", () => {
 
   it("should find an article by several criteria", async () => {
     const article = await articleService.create(dbClient, getMockArticle())
-    const byId = await articleService.getById(dbClient, article.id)
+    const byId = await articleService.findById(dbClient, article.id)
     expect(byId).not.toBeNull()
     expect(byId?.id).toBe(article.id)
     const bySlug = await articleService.getBySlug(dbClient, article.slug)
@@ -80,14 +80,14 @@ describe("article integration tests", () => {
     const article = await articleService.create(dbClient, getMockArticle())
     const tag1 = faker.lorem.word()
     await articleService.addTag(dbClient, article.id, tag1)
-    const articleWithTag1 = await articleService.getById(dbClient, article.id)
+    const articleWithTag1 = await articleService.findById(dbClient, article.id)
     expect(articleWithTag1?.tags).toContainEqual(expect.objectContaining({ name: tag1 }))
     // It should now be able to find the article by tag
     const articlesByTag1 = await articleService.getAllByTags(dbClient, [tag1])
     expect(articlesByTag1).toContainEqual(expect.objectContaining({ id: article.id }))
     // Removing the tag should make it no longer findable by tag
     await articleService.removeTag(dbClient, article.id, tag1)
-    const articleWithoutTag1 = await articleService.getById(dbClient, article.id)
+    const articleWithoutTag1 = await articleService.findById(dbClient, article.id)
     expect(articleWithoutTag1?.tags).not.toContainEqual(expect.objectContaining({ name: tag1 }))
   })
 
@@ -112,7 +112,7 @@ describe("article integration tests", () => {
     const beta = await articleService.create(dbClient, getMockArticle())
     await articleService.addTag(dbClient, beta.id, tag)
     // Alpha and beta are now related by tags
-    const alphaWithTags = await articleService.getById(dbClient, alpha.id)
+    const alphaWithTags = await articleService.findById(dbClient, alpha.id)
     expect(alphaWithTags).not.toBeNull()
     // biome-ignore lint/style/noNonNullAssertion: this has been asserted to not be null
     const related = await articleService.getRelated(dbClient, alphaWithTags!)

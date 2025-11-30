@@ -9,6 +9,7 @@ import {
   type ArticleTagName,
   ArticleTagSchema,
   type ArticleWrite,
+  type Unbranded,
 } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
@@ -131,7 +132,7 @@ export function getArticleRepository(): ArticleRepository {
   }
 }
 
-function mapArticle(article: Omit<Article, "tags">, tags: { tag: ArticleTag }[]): Article {
+function mapArticle(article: Omit<Unbranded<Article>, "tags">, tags: { tag: Unbranded<ArticleTag> }[]): Article {
   return parseOrReport(ArticleSchema, {
     ...article,
     tags: tags.map((link) => link.tag),

@@ -30,8 +30,7 @@ export interface ArticleService {
   getAll(handle: DBHandle, page: Pageable): Promise<Article[]>
   getAllByTags(handle: DBHandle, tags: ArticleTagName[]): Promise<Article[]>
   findById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
-  // TODO: make this return non-nullable
-  getById(handle: DBHandle, articleId: ArticleId): Promise<Article | null>
+  getById(handle: DBHandle, articleId: ArticleId): Promise<Article>
   getBySlug(handle: DBHandle, slug: ArticleSlug): Promise<Article | null>
   findMany(handle: DBHandle, query: ArticleFilterQuery, page: Pageable): Promise<Article[]>
   /**
@@ -97,6 +96,9 @@ export function getArticleService(
     },
     async getById(handle, articleId) {
       const article = await this.findById(handle, articleId)
+      if (article === null) {
+        throw new NotFoundError(`Article(ID=${articleId}) does not exist`)
+      }
       return article
     },
     async getBySlug(handle, slug) {
