@@ -58,7 +58,7 @@ export function getPersonalMarkService(
       return await personalMarkRepository.getAllByUserId(handle, userId)
     },
     async addToUser(handle, userId, markId, givenById) {
-      const mark = await markService.getMark(handle, markId)
+      const mark = await markService.getById(handle, markId)
       const personalMark = await personalMarkRepository.addToUserId(handle, userId, mark.id, givenById)
 
       await this.sendReceivedMarkEmail(handle, personalMark)
@@ -138,7 +138,7 @@ export function getPersonalMarkService(
         return
       }
 
-      const mark = await markService.getMark(handle, personalMark.markId)
+      const mark = await markService.getById(handle, personalMark.markId)
 
       const organizerEmails = mark.groups.map((g) => g.email).filter((email) => email !== null)
 

@@ -1065,7 +1065,7 @@ export function getAttendanceService(
 
       // Based on whether the deadline has passed, we either kick them off the event, or suspend them indefinitely
       if (payment.status === "UNPAID" && isPast(attendance.deregisterDeadline)) {
-        const mark = await markService.createMark(
+        const mark = await markService.create(
           handle,
           {
             details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
@@ -1136,7 +1136,7 @@ export function getAttendanceService(
 
       if (attendeesWithoutAnswers.length === 0) return
 
-      const mark = await markService.createMark(
+      const mark = await markService.create(
         handle,
         {
           title: `Manglende tilbakemelding på ${event.title}`,
@@ -1248,7 +1248,7 @@ export function getAttendanceService(
             continue
           }
 
-          const mark = await markService.createMark(
+          const mark = await markService.create(
             handle,
             {
               title: `Manglende oppmøte på ${event.title}`,

@@ -14,7 +14,7 @@ export const markRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.executeAuditedTransaction(async (handle) => ctx.markService.createMark(handle, input.data, input.groupIds))
+      ctx.executeAuditedTransaction(async (handle) => ctx.markService.create(handle, input.data, input.groupIds))
     ),
   edit: staffProcedure
     .input(
@@ -25,12 +25,12 @@ export const markRouter = t.router({
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeAuditedTransaction(async (handle) =>
-        ctx.markService.updateMark(handle, input.changes.id, input.changes, input.groupIds)
+        ctx.markService.update(handle, input.changes.id, input.changes, input.groupIds)
       )
     ),
   get: procedure
     .input(MarkSchema.shape.id)
-    .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.markService.getMark(handle, input))),
+    .query(async ({ input, ctx }) => ctx.executeTransaction(async (handle) => ctx.markService.getById(handle, input))),
   findMany: procedure
     .input(BasePaginateInputSchema.extend({ filter: MarkFilterQuerySchema.optional() }))
     .query(async ({ input, ctx }) => {
@@ -48,6 +48,6 @@ export const markRouter = t.router({
   delete: staffProcedure
     .input(MarkSchema.shape.id)
     .mutation(async ({ input, ctx }) =>
-      ctx.executeAuditedTransaction(async (handle) => ctx.markService.deleteMark(handle, input))
+      ctx.executeAuditedTransaction(async (handle) => ctx.markService.delete(handle, input))
     ),
 })
