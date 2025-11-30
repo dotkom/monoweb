@@ -6,7 +6,7 @@ import { procedure, staffProcedure, t } from "../../trpc"
 
 export const companyRouter = t.router({
   create: staffProcedure.input(CompanyWriteSchema).mutation(async ({ input, ctx }) => {
-    return ctx.executeAuditedTransaction(async (handle) => ctx.companyService.createCompany(handle, input))
+    return ctx.executeAuditedTransaction(async (handle) => ctx.companyService.create(handle, input))
   }),
 
   edit: staffProcedure
@@ -18,26 +18,38 @@ export const companyRouter = t.router({
     )
     .mutation(async ({ input: changes, ctx }) => {
       return ctx.executeAuditedTransaction(async (handle) =>
-        ctx.companyService.updateCompany(handle, changes.id, changes.input)
+        ctx.companyService.update(handle, changes.id, changes.input)
       )
     }),
 
   all: procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.companyService.getCompanies(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.companyService.findMany(handle, input))
+    ),
+
+  findById: procedure
+    .input(CompanySchema.shape.id)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.companyService.findById(handle, input))
     ),
 
   getById: procedure
     .input(CompanySchema.shape.id)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.companyService.getCompanyById(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.companyService.getById(handle, input))
+    ),
+
+  findBySlug: procedure
+    .input(CompanySchema.shape.slug)
+    .query(async ({ input, ctx }) =>
+      ctx.executeTransaction(async (handle) => ctx.companyService.findBySlug(handle, input))
     ),
 
   getBySlug: procedure
     .input(CompanySchema.shape.slug)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.companyService.getCompanyBySlug(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.companyService.getBySlug(handle, input))
     ),
 
   createFileUpload: staffProcedure
