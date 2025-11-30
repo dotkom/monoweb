@@ -20,7 +20,7 @@ export const jobListingRouter = t.router({
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeAuditedTransaction(async (handle) => {
-        return ctx.jobListingService.create(handle, input.input, input.companyId, input.locationIds)
+        return ctx.jobListingService.create(handle, input.companyId, input.input, input.locationIds)
       })
     ),
   edit: staffProcedure
@@ -34,7 +34,7 @@ export const jobListingRouter = t.router({
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeAuditedTransaction(async (handle) =>
-        ctx.jobListingService.update(handle, input.id, input.input, input.companyId, input.locationIds)
+        ctx.jobListingService.update(handle, input.id, input.input, input.locationIds)
       )
     ),
   findMany: procedure
@@ -53,7 +53,7 @@ export const jobListingRouter = t.router({
   active: procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.jobListingService.getActive(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.jobListingService.findActiveJobListings(handle, input))
     ),
   get: procedure
     .input(JobListingSchema.shape.id)
@@ -67,6 +67,6 @@ export const jobListingRouter = t.router({
     ),
 
   getLocations: procedure.query(async ({ ctx }) =>
-    ctx.executeTransaction(async (handle) => ctx.jobListingService.getLocations(handle))
+    ctx.executeTransaction(async (handle) => ctx.jobListingService.findJobListingLocations(handle))
   ),
 })

@@ -13,7 +13,7 @@ describe.skip("job-listings", async () => {
   })
 
   it("can create new job listings", async () => {
-    const jobListing = await core.jobListingService.create(dbClient, getJobListingMock(), company.id, [
+    const jobListing = await core.jobListingService.create(dbClient, company.id, getJobListingMock(), [
       "Oslo",
       "Trondheim",
     ])
@@ -25,52 +25,40 @@ describe.skip("job-listings", async () => {
     await expect(
       core.jobListingService.create(
         dbClient,
+        company.id,
         getJobListingMock({
           start: addDays(new Date(), 2),
           end: new Date(),
         }),
-        company.id,
         []
       )
     ).rejects.toThrow(InvalidArgumentError)
   })
 
   it("should be able to update locations by diffing", async () => {
-    const jobListing = await core.jobListingService.create(dbClient, getJobListingMock(), company.id, [
+    const jobListing = await core.jobListingService.create(dbClient, company.id, getJobListingMock(), [
       "Oslo",
       "Trondheim",
     ])
     const newLocations = ["Trondheim", "Bergen"]
-    const updated = await core.jobListingService.update(
-      dbClient,
-      jobListing.id,
-      getJobListingMock(),
-      company.id,
-      newLocations
-    )
+    const updated = await core.jobListingService.update(dbClient, jobListing.id, getJobListingMock(), newLocations)
 
     expect(updated.locations).not.toContain("Oslo")
     expect(updated.locations).toEqual(newLocations)
   })
 
   it("performing a diff which leaves a tag unused deletes the unused tag", async () => {
-    const jobListing = await core.jobListingService.create(dbClient, getJobListingMock(), company.id, [
+    const jobListing = await core.jobListingService.create(dbClient, company.id, getJobListingMock(), [
       "Oslo",
       "Trondheim",
     ])
 
-    const allLocations = await core.jobListingService.getLocations(dbClient)
+    const allLocations = await core.jobListingService.findJobListingLocations(dbClient)
     expect(allLocations).toContain("Oslo")
 
     const newLocations = ["Trondheim"]
-    const updated = await core.jobListingService.update(
-      dbClient,
-      jobListing.id,
-      getJobListingMock(),
-      company.id,
-      newLocations
-    )
-    const updatedAllLocations = await core.jobListingService.getLocations(dbClient)
+    const updated = await core.jobListingService.update(dbClient, jobListing.id, getJobListingMock(), newLocations)
+    const updatedAllLocations = await core.jobListingService.findJobListingLocations(dbClient)
     expect(updatedAllLocations).not.toContain("Oslo")
     expect(updatedAllLocations).toContain("Trondheim")
     expect(updated.locations).toEqual(newLocations)

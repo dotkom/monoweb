@@ -14,54 +14,59 @@ import type { Pageable } from "../../query"
 import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {
-  findById(handle: DBHandle, id: JobListingId): Promise<JobListing | null>
-  getById(handle: DBHandle, id: JobListingId): Promise<JobListing>
-  getActive(handle: DBHandle, page: Pageable): Promise<JobListing[]>
-  findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
   create(
     handle: DBHandle,
-    payload: JobListingWrite,
     companyId: CompanyId,
-    locationIds: JobListingLocationId[]
+    jobListingData: JobListingWrite,
+    locationIdsData: JobListingLocationId[]
   ): Promise<JobListing>
   update(
     handle: DBHandle,
-    id: JobListingId,
-    payload: Partial<JobListingWrite>,
-    companyId: CompanyId,
-    locationIds: JobListingLocationId[]
+    jobListingId: JobListingId,
+    jobListingData: Partial<JobListingWrite>,
+    locationIdsData: JobListingLocationId[]
   ): Promise<JobListing>
-  getLocations(handle: DBHandle): Promise<JobListingLocation[]>
+  findById(handle: DBHandle, jobListingId: JobListingId): Promise<JobListing | null>
+  getById(handle: DBHandle, jobListingId: JobListingId): Promise<JobListing>
+  findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
+  findActiveJobListings(handle: DBHandle, page: Pageable): Promise<JobListing[]>
+  findJobListingLocations(handle: DBHandle): Promise<JobListingLocation[]>
 }
 
 export function getJobListingService(jobListingRepository: JobListingRepository): JobListingService {
   return {
-    async findById(handle, id) {
-      return await jobListingRepository.getById(handle, id)
+    async create(handle, companyId, jobListingData, locationIdsData) {
+      validateJobListingWrite(jobListingData)
+      return await jobListingRepository.create(handle, companyId, jobListingData, locationIdsData)
     },
-    async getById(handle, id) {
-      const jobListing = await this.findById(handle, id)
+
+    async update(handle, jobListingId, jobListingData, locationIdsData) {
+      validateJobListingWrite(jobListingData)
+      return await jobListingRepository.update(handle, jobListingId, jobListingData, locationIdsData)
+    },
+
+    async findById(handle, jobListingId) {
+      return await jobListingRepository.findById(handle, jobListingId)
+    },
+
+    async getById(handle, jobListingId) {
+      const jobListing = await this.findById(handle, jobListingId)
       if (jobListing === null) {
-        throw new NotFoundError(`JobListing(ID=${id}) not found`)
+        throw new NotFoundError(`JobListing(ID=${jobListingId}) not found`)
       }
       return jobListing
     },
+
     async findMany(handle, query, page) {
       return await jobListingRepository.findMany(handle, query, page)
     },
-    async getActive(handle, page) {
-      return await jobListingRepository.getActive(handle, page)
+
+    async findActiveJobListings(handle, page) {
+      return await jobListingRepository.findActiveJobListings(handle, page)
     },
-    async create(handle, payload, companyId, locationIds) {
-      validateJobListingWrite(payload)
-      return await jobListingRepository.createJobListing(handle, payload, companyId, locationIds)
-    },
-    async update(handle, id, payload, companyId, locationIds) {
-      validateJobListingWrite(payload)
-      return await jobListingRepository.update(handle, id, payload, companyId, locationIds)
-    },
-    async getLocations(handle) {
-      return await jobListingRepository.getLocations(handle)
+
+    async findJobListingLocations(handle) {
+      return await jobListingRepository.findJobListingLocations(handle)
     },
   }
 }
