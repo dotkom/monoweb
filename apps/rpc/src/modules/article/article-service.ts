@@ -68,12 +68,6 @@ export function getArticleService(
   s3Client: S3Client,
   s3BucketName: string
 ): ArticleService {
-  async function requireArticleExists(handle: DBHandle, articleId: ArticleId): Promise<boolean> {
-    const article = await articleRepository.findById(handle, articleId)
-
-    return Boolean(article)
-  }
-
   return {
     async create(handle, data) {
       const existingArticle = await this.findBySlug(handle, data.slug)
@@ -181,7 +175,7 @@ export function getArticleService(
     },
 
     async addTag(handle, articleId, tag) {
-      await requireArticleExists(handle, articleId)
+      await this.getById(handle, articleId) // Verify the article exists
 
       let name = await articleTagRepository.findByName(handle, tag)
       if (name === null) {
@@ -192,7 +186,7 @@ export function getArticleService(
     },
 
     async removeTag(handle, articleId, tag) {
-      await requireArticleExists(handle, articleId)
+      await this.getById(handle, articleId) // Verify the article exists
 
       await articleTagLinkRepository.remove(handle, articleId, tag)
 
@@ -205,7 +199,7 @@ export function getArticleService(
     },
 
     async setTags(handle, articleId, tags) {
-      await requireArticleExists(handle, articleId)
+      await this.getById(handle, articleId) // Verify the article exists
 
       const currentTags = await articleTagRepository.findManyByArticleId(handle, articleId)
       const currentTagNames = currentTags.map((tag) => tag.name)
