@@ -52,6 +52,7 @@ export interface GroupService {
   getAllByMember(handle: DBHandle, userId: UserId): Promise<Group[]>
   startMembership(handle: DBHandle, userId: UserId, groupId: GroupId, roleIds: Set<GroupRoleId>): Promise<GroupMember>
   endMembership(handle: DBHandle, userId: UserId, groupId: GroupId): Promise<GroupMembership[]>
+  deleteMembership(handle: DBHandle, id: GroupMembershipId): Promise<void>
   /**
    * Attempts to update a membership if it doesn't overlap with existing memberships
    *
@@ -238,6 +239,20 @@ export function getGroupService(
 
       return await Promise.all(endMembershipPromises)
     },
+
+    async deleteMembership(handle, id) {
+      const membership = await groupRepository.getMembershipById(handle, id)
+      if (!membership) {
+        throw new NotFoundError(`GroupMembership(ID=${id}) not found`)
+      }
+
+      if (!membership.end) {
+        throw new FailedPreconditionError(`Cannot delete active GroupMembership(ID=${id})`)
+      }
+
+      return await groupRepository.deleteMembership(handle, id)
+    },
+
     async updateMembership(handle, id, data, roleIds) {
       const currentMembership = await groupRepository.getMembershipById(handle, id)
       if (!currentMembership) {

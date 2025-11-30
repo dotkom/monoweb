@@ -129,6 +129,13 @@ export const groupRouter = t.router({
         return ctx.groupService.endMembership(handle, input.userId, input.groupId)
       })
     ),
+
+  deleteMembership: staffProcedure
+    .input(GroupMembershipSchema.shape.id)
+    .mutation(async ({ input, ctx }) =>
+      ctx.executeAuditedTransaction(async (handle) => ctx.groupService.deleteMembership(handle, input))
+    ),
+
   updateMembership: staffProcedure
     .input(
       z.object({
