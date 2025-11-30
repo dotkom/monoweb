@@ -61,6 +61,7 @@ export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
   paymentReservedAt: true,
   paymentRefundedAt: true,
   paymentRefundedById: true,
+  paymentCheckoutUrl: true,
 })
 
 export type AttendancePoolId = AttendancePool["id"]

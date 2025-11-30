@@ -300,6 +300,7 @@ model Attendee {
   paymentRefundedAt     DateTime?
   paymentRefundedById   String?
   paymentRefundedBy     User?     @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
+  paymentCheckoutUrl    String?
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
