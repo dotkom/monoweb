@@ -17,13 +17,13 @@ type LoosePriceData = { currency: string; unit_amount: number | null }
 
 type PaymentProductId = PaymentProduct["id"]
 
-const getPriceData = (price: number) => ({ currency: "NOK" as const, unit_amount: price * 100 })
+const getPriceData = (priceNok: number) => ({ currency: "NOK" as const, unit_amount: priceNok * 100 })
 const priceDataEqual = (price_1: LoosePriceData, price_2: LoosePriceData) =>
   price_1.currency.toLowerCase() === price_2.currency.toLowerCase() && price_1.unit_amount === price_2.unit_amount
 
 export interface PaymentProductsService {
   createOrUpdate(productId: string, data: PaymentProductWrite): Promise<void>
-  updatePrice(productId: string, price: number): Promise<void>
+  updatePrice(productId: string, priceNok: number): Promise<void>
 }
 
 export function getPaymentProductsService(stripe: Stripe): PaymentProductsService {
@@ -83,9 +83,10 @@ export function getPaymentProductsService(stripe: Stripe): PaymentProductsServic
         await stripe.products.create({ ...payload, id: productId, default_price_data: priceData })
       }
     },
-    updatePrice: async (productId, price) => {
+
+    updatePrice: async (productId, priceNok) => {
       const product = await stripe.products.retrieve(productId)
-      await updatePrice(product, getPriceData(price))
+      await updatePrice(product, getPriceData(priceNok))
     },
   }
 }
