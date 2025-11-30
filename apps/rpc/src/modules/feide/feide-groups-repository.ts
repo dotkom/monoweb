@@ -18,13 +18,13 @@ export interface FeideGroupsRepository {
    *
    * @see https://docs.feide.no/reference/apis/groups_api/index.html
    */
-  getStudentInformation(accessToken: string): Promise<StudentInformation | null>
+  findStudentInformation(accessToken: string): Promise<StudentInformation | null>
 }
 
 export function getFeideGroupsRepository(): FeideGroupsRepository {
   const logger = getLogger("feide-groups-repository")
   return {
-    async getStudentInformation(accessToken) {
+    async findStudentInformation(accessToken) {
       const response = await fetch("https://groups-api.dataporten.no/groups/me/groups", {
         headers: {
           Authorization: `Bearer ${accessToken}`,

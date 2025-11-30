@@ -339,7 +339,7 @@ export function getUserService(
             span.setAttribute("user.id", user.id)
 
             try {
-              const studentInformation = await feideGroupsRepository.getStudentInformation(accessToken)
+              const studentInformation = await feideGroupsRepository.findStudentInformation(accessToken)
 
               if (studentInformation !== null) {
                 const activeMembership = findActiveMembership(user)
