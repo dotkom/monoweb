@@ -88,6 +88,7 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
       description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
+        onFileUpload: uploadFile,
       }),
       locationTitle: createTextInput({
         label: "Stedsnavn",

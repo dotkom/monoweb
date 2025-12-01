@@ -100,7 +100,7 @@ export function RichText({
     setIsExpanded((previous) => !previous)
   }
 
-  const sanitizedHTML = wrapTablesInDiv(DOMPurify.sanitize(content))
+  const sanitizedHTML = wrapOverflowingElements(DOMPurify.sanitize(content))
 
   // Prose docs:
   // https://github.com/tailwindlabs/tailwindcss-typography
@@ -118,9 +118,11 @@ export function RichText({
         "prose-pre:p-2.5 prose-code:rounded-md prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-100 prose-pre:dark:bg-stone-800 prose-pre:dark:border-stone-700",
         "prose-code:text-black prose-code:dark:text-white",
         "[&_.table-wrapper]:overflow-x-auto",
+        "[&_.image-wrapper]:overflow-x-auto",
         "prose-table:prose-sm",
-        "prose-th:p-2.5 prose-th:align-top prose-th:h-fit prose-th:border prose-th:border-[var(--tw-prose-td-borders)] ",
-        "prose-td:p-2.5 prose-td:align-top prose-td:h-fit prose-td:border prose-td:border-[var(--tw-prose-td-borders)]",
+        "prose-img:rounded-md prose-img:max-w-none",
+        "prose-th:p-2.5 prose-th:align-top prose-th:h-fit prose-th:border prose-th:border-(--tw-prose-td-borders) ",
+        "prose-td:p-2.5 prose-td:align-top prose-td:h-fit prose-td:border prose-td:border-(--tw-prose-td-borders)",
         "[&_li>p]:my-0 [&_th>p]:my-0 [&_td>p]:my-0",
         "[&_p:empty]:m-0 [&_p:empty]:before:content-[''] [&_p:empty]:before:block [&_p:empty]:before:h-3",
         className
@@ -156,7 +158,19 @@ export function RichText({
   )
 }
 
-/** This exists so the wrapper can be assigned overflow-x-auto whilst the table retains its original width */
-const wrapTablesInDiv = (sanitizedHtml: string) => {
-  return sanitizedHtml.replace(/<table/g, '<div class="table-wrapper"><table').replace(/<\/table>/g, "</table></div>")
+/**
+ * This exists so the wrapper can be assigned overflow-x-auto whilst the
+ * element retains its original width
+ */
+const wrapOverflowingElements = (sanitizedHtml: string) => {
+  return (
+    sanitizedHtml
+      // Wrap tables
+      .replace(/<table/g, '<div class="table-wrapper"><table')
+      .replace(/<\/table>/g, "</table></div>")
+      // Wrap images
+      // The regex is hard to read but it matches <img />, <img></img> and
+      // <img> (no closing tag, which is what Tiptap generates)
+      .replace(/<img\b([^>]*?)(?:\/>|>(?:\s*<\/img>)?)/g, '<div class="image-wrapper"><img$1 /></div>')
+  )
 }

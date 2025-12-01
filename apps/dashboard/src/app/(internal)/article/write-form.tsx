@@ -83,6 +83,7 @@ export const useArticleWriteForm = ({
       content: createRichTextInput({
         label: "Innhold",
         required: true,
+        onFileUpload: fileUpload,
       }),
     },
   })

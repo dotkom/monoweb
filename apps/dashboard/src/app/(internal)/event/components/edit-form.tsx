@@ -72,6 +72,7 @@ export const useEventEditForm = ({
       description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
+        onFileUpload: uploadFile,
       }),
       locationTitle: createTextInput({
         label: "Stedsnavn",

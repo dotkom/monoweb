@@ -1,0 +1,94 @@
+/* Base image (fallback / non-resizable) */
+.ProseMirror img {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--mantine-radius-sm);
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Hover cursor */
+.ProseMirror img:hover {
+  cursor: grab;
+}
+
+/* While dragging */
+.ProseMirror img:active {
+  cursor: grabbing;
+}
+
+/* Wrapper created by ResizableNodeView */
+.ProseMirror [data-resize-state] {
+  position: relative;
+  display: inline-block; /* shrink-wrap around image */
+  max-width: 100%;
+}
+
+/* Image inside resizable wrapper overrides generic rule */
+.ProseMirror [data-resize-state] > img {
+  display: block; /* wrapper matches image size */
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--mantine-radius-sm);
+}
+
+/* Show outline when the image node is selected */
+.ProseMirror .ProseMirror-selectednode img {
+  outline: 2px solid var(--mantine-color-blue-filled);
+}
+
+/* Handles – small blue squares on corners */
+.ProseMirror [data-resize-handle] {
+  position: absolute;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 9999px;
+  background: var(--mantine-color-blue-filled);
+  cursor: pointer;
+  opacity: 0;
+}
+
+/* Show handles when selected */
+.ProseMirror .ProseMirror-selectednode ~ [data-resize-handle],
+.ProseMirror .ProseMirror-selectednode [data-resize-handle] {
+  opacity: 1;
+}
+
+/* Corner positions */
+.ProseMirror [data-resize-handle="top-left"] {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  cursor: nwse-resize;
+}
+
+.ProseMirror [data-resize-handle="top-right"] {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  cursor: nesw-resize;
+}
+
+.ProseMirror [data-resize-handle="bottom-left"] {
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, -25%); /* no clue why -25 % works but -50 % is offset */
+  cursor: nesw-resize;
+}
+
+.ProseMirror [data-resize-handle="bottom-right"] {
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, -25%); /* no clue why -25 % works but -50 % is offset */
+  cursor: nwse-resize;
+}
+
+/* Keep grab cursor behavior for resizable images too */
+.ProseMirror [data-resize-state] > img:hover {
+  cursor: grab;
+}
+
+.ProseMirror [data-resize-state] > img:active {
+  cursor: grabbing;
+}

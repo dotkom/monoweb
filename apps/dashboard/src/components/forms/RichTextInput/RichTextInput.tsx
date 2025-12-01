@@ -1,5 +1,7 @@
 "use client"
 
+import { useUploadImageModal } from "@/components/ImageUploadModal"
+import { InsertImageButton } from "@/components/forms/RichTextInput/InsertImageButton"
 import {
   AddColumnAfter,
   AddRowAfter,
@@ -24,32 +26,42 @@ import TableRow from "@tiptap/extension-table-row"
 import Underline from "@tiptap/extension-underline"
 import { type Editor, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
+import { useRef } from "react"
 import { Controller, type FieldValues } from "react-hook-form"
 import type { InputProducerResult } from "../types"
 import "@mantine/tiptap/styles.css"
 import "./tiptap-table-styling.css"
-import { useUploadImageModal } from "@/components/ImageUploadModal"
-import { InsertImageButton } from "@/components/forms/RichTextInput/InsertImageButton"
-import { useRef } from "react"
+import "./tiptap-image-styling.css"
 
 export function createRichTextInput<F extends FieldValues>({
   onChange,
   required,
   label,
-  imageUploader,
+  onFileUpload,
   ...props
 }: Omit<RichTextEditorProps, "error" | "children" | "editor"> & {
   required: boolean
   label: string
-  imageUploader?: (file: File) => Promise<string>
+  onFileUpload?: (file: File) => Promise<string>
 }): InputProducerResult<F> {
   const editorRef = useRef<Editor | null>(null)
+  // This is needed to track the last selection before opening the image modal
+  const lastSelectionRef = useRef<{ from: number; to: number } | null>(null)
 
   const openImageUploadModal = useUploadImageModal({
+    onFileUpload,
     handleSubmit: async (imageUrl, alt, title) => {
-      editorRef.current?.chain().focus().setImage({ src: imageUrl, alt, title }).run()
+      const chain = editorRef.current?.chain()
+
+      // Reapply the last selection before inserting the image. If we don't do
+      // this, the image will be inserted at the first possible node at the
+      // start of the file
+      if (lastSelectionRef.current) {
+        chain?.setTextSelection(lastSelectionRef.current)
+      }
+
+      chain?.focus().setImage({ src: imageUrl, alt, title }).run()
     },
-    onFileUpload: imageUploader,
   })
 
   return function RichTextInput({ name, state, control }) {
@@ -77,8 +89,8 @@ export function createRichTextInput<F extends FieldValues>({
                   inline: false,
                   resize: {
                     enabled: true,
-                    minWidth: 50,
-                    minHeight: 50,
+                    minWidth: 25,
+                    minHeight: 25,
                     alwaysPreserveAspectRatio: true,
                   },
                 }),
@@ -86,6 +98,10 @@ export function createRichTextInput<F extends FieldValues>({
               content: field.value,
               immediatelyRender: false,
               onUpdate: (value) => field.onChange(value.editor.getHTML()),
+              onSelectionUpdate: ({ editor }) => {
+                const { from, to } = editor.state.selection
+                lastSelectionRef.current = { from, to }
+              },
             })
 
             editorRef.current = editor
@@ -98,7 +114,9 @@ export function createRichTextInput<F extends FieldValues>({
                     <RichTextEditor.Redo />
                     <RichTextEditor.ClearFormatting />
                   </RichTextEditor.ControlsGroup>
+
                   <Divider orientation="vertical" className="mx-0" />
+
                   <RichTextEditor.ControlsGroup>
                     <RichTextEditor.Bold />
                     <RichTextEditor.Italic />
@@ -108,7 +126,9 @@ export function createRichTextInput<F extends FieldValues>({
                     <RichTextEditor.Link />
                     <RichTextEditor.Unlink />
                   </RichTextEditor.ControlsGroup>
+
                   <Divider orientation="vertical" className="mx-0" />
+
                   <RichTextEditor.ControlsGroup>
                     <RichTextEditor.H2 />
                     <RichTextEditor.H3 />
@@ -117,15 +137,19 @@ export function createRichTextInput<F extends FieldValues>({
                     <RichTextEditor.OrderedList />
                     <RichTextEditor.Hr />
                   </RichTextEditor.ControlsGroup>
-                  {Boolean(imageUploader) && (
+
+                  {Boolean(onFileUpload) && (
                     <>
                       <Divider orientation="vertical" className="mx-0" />
+
                       <RichTextEditor.ControlsGroup>
                         <InsertImageButton onClick={openImageUploadModal} />
                       </RichTextEditor.ControlsGroup>
                     </>
                   )}
+
                   <Divider orientation="vertical" className="mx-0" />
+
                   <RichTextEditor.ControlsGroup>
                     <InsertTableControl />
                     <AddColumnAfter />

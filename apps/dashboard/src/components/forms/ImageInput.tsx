@@ -10,10 +10,12 @@ export function createImageInput<F extends FieldValues>({
   existingImageUrl?: string
   acceptGif?: boolean
 }): InputProducerResult<F> {
+  const { onFileUpload, existingImageUrl, acceptGif, ...fileInputProps } = props
+
   return function FormImageInput({ name, control }) {
     let accept = "image/png,image/jpeg,image/jpg"
 
-    if (props.acceptGif) {
+    if (acceptGif) {
       accept += ",image/gif"
     }
 
@@ -26,14 +28,14 @@ export function createImageInput<F extends FieldValues>({
             <Stack gap="0.5rem">
               <Group gap="xs">
                 <FileInput
-                  {...props}
+                  {...fileInputProps}
                   accept={accept}
-                  placeholder={field.value ?? props.existingImageUrl ?? "Klikk for å velge fil"}
+                  placeholder={field.value || existingImageUrl || "Klikk for å velge fil"}
                   onChange={async (file) => {
                     if (file === null) {
                       return
                     }
-                    const result = await props.onFileUpload(file)
+                    const result = await onFileUpload(file)
                     field.onChange(result)
                   }}
                   flex="1"
@@ -41,7 +43,7 @@ export function createImageInput<F extends FieldValues>({
                 <TextInput
                   // Margin is eyeballed to align with the FileInput height
                   mt="1.5rem"
-                  placeholder="https://..."
+                  placeholder="Legg inn URL direkte"
                   onChange={async (event) => field.onChange(event.target.value)}
                   value={field.value ?? ""}
                   flex="1"
@@ -59,8 +61,8 @@ export function createImageInput<F extends FieldValues>({
                 Fjern fil
               </Button>
             </Stack>
-            {(field.value ?? props.existingImageUrl) && (
-              <Image src={field.value ?? props.existingImageUrl} radius="md" maw="max(20dvw, 32rem)" />
+            {(field.value || props.existingImageUrl) && (
+              <Image src={field.value || props.existingImageUrl} radius="md" maw="max(20dvw, 32rem)" />
             )}
           </>
         )}
