@@ -63,11 +63,11 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
     if (subject === undefined) {
       return getContext(null, serviceLayer, configuration)
     }
-    const affiliations = await serviceLayer.authorizationService.getAffiliations(serviceLayer.prisma, subject)
+    const editorRoles = await serviceLayer.authorizationService.getEditorRoles(serviceLayer.prisma, subject)
     return getContext(
       {
         subject,
-        affiliations,
+        editorRoles,
       },
       serviceLayer,
       configuration

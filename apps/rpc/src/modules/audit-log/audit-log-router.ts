@@ -17,7 +17,7 @@ export const auditLogRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation("dotkom", "hs")
+      ctx.authorize.requireEditorRole("dotkom", "hs")
       const items = await ctx.executeTransaction(async (handle) =>
         ctx.auditLogService.findMany(handle, { ...input?.filter }, input)
       )
@@ -28,22 +28,17 @@ export const auditLogRouter = t.router({
     }),
 
   all: staffProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
-    ctx.authorize.requireAffiliation("dotkom", "hs")
+    ctx.authorize.requireEditorRole("dotkom", "hs")
     return ctx.executeTransaction(async (handle) => ctx.auditLogService.findMany(handle, {}, input))
   }),
 
-  findById: staffProcedure.input(AuditLogSchema.shape.id).query(async ({ input, ctx }) => {
-    ctx.authorize.requireAffiliation("dotkom", "hs")
-    return ctx.executeTransaction(async (handle) => ctx.auditLogService.findById(handle, input))
-  }),
-
   getById: staffProcedure.input(AuditLogSchema.shape.id).query(async ({ input, ctx }) => {
-    ctx.authorize.requireAffiliation("dotkom", "hs")
+    ctx.authorize.requireEditorRole("dotkom", "hs")
     return ctx.executeTransaction(async (handle) => ctx.auditLogService.getById(handle, input))
   }),
 
   getByUserId: staffProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
-    ctx.authorize.requireAffiliation("dotkom", "hs")
+    ctx.authorize.requireEditorRole("dotkom", "hs")
     return ctx.executeTransaction(async (handle) =>
       ctx.auditLogService.findManyByUserId(handle, ctx.principal.subject, input)
     )

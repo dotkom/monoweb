@@ -21,18 +21,13 @@ import {
   ResourceExhaustedError,
   UnimplementedError,
 } from "./error"
-import {
-  ADMIN_AFFILIATIONS,
-  type Affiliation,
-  type AffiliationSet,
-  isAffiliation,
-} from "./modules/authorization-service"
+import { ADMIN_EDITOR_ROLES, type EditorRole, type EditorRoleSet, isEditorRole } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */
   subject: UserId
-  affiliations: AffiliationSet
+  editorRoles: EditorRoleSet
 }
 
 type AuthorizeOptions = { localDevelopment: boolean }
@@ -41,19 +36,19 @@ type AuthorizeProps = AuthorizeOptions & { principal: Principal | null }
 const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
   const require = getRequire(principal)
   const requireSignIn = getRequireSignIn(principal, require)
-  const requireAffiliation = getRequireAffiliation(principal, require, requireSignIn)
-  const localDevelopmentRequireAffiliation = getDevelopmentRequireAffiliation(requireSignIn)
+  const requireEditorRole = getRequireEditorRole(principal, require, requireSignIn)
+  const localDevelopmentRequireEditorRole = getDevelopmentRequireEditorRole(requireSignIn)
   const requireMe = getRequireMe(principal, require, requireSignIn)
-  const requireMeOrAffiliation = getRequireMeOrAffiliation(principal, requireSignIn, requireAffiliation)
+  const requireMeOrEditorRole = getRequireMeOrEditorRole(principal, requireSignIn, requireEditorRole)
 
   return {
-    ADMIN_AFFILIATIONS,
+    ADMIN_EDITOR_ROLES,
 
     require,
     requireSignIn,
-    requireAffiliation: localDevelopment ? localDevelopmentRequireAffiliation : requireAffiliation,
+    requireEditorRole: localDevelopment ? localDevelopmentRequireEditorRole : requireEditorRole,
     requireMe,
-    requireMeOrAffiliation,
+    requireMeOrEditorRole: requireMeOrEditorRole,
   }
 }
 
@@ -217,7 +212,7 @@ export const authenticatedProcedure = procedure.use(({ ctx, next }) => {
 })
 
 export const staffProcedure = procedure.use(({ ctx, next }) => {
-  ctx.authorize.requireAffiliation()
+  ctx.authorize.requireEditorRole()
   return next({
     ctx: {
       ...ctx,
@@ -246,38 +241,38 @@ function getRequireSignIn(principal: Principal | null, require: Require) {
 }
 type RequireSignIn = ReturnType<typeof getRequireSignIn>
 
-function getRequireAffiliation(principal: Principal | null, require: Require, requireSignIn: RequireSignIn) {
+function getRequireEditorRole(principal: Principal | null, require: Require, requireSignIn: RequireSignIn) {
   /**
    * Require that the user is a member of at least one of the provided groups.
    *
-   * If the provided list is empty, we assume permission for any group affiliation is sufficient.
+   * If the provided list is empty, we assume permission for any group editor role is sufficient.
    */
-  return (...affiliations: Affiliation[]) => {
+  return (...editorRoles: EditorRole[]) => {
     requireSignIn()
 
     invariant(principal !== null)
-    require(principal.affiliations.size > 0)
-    for (const affiliation of affiliations) {
-      if (isAffiliation(affiliation) && principal.affiliations.has(affiliation)) {
+    require(principal.editorRoles.size > 0)
+    for (const editorRole of editorRoles) {
+      if (isEditorRole(editorRole) && principal.editorRoles.has(editorRole)) {
         return
       }
     }
-    // This is fine if no affiliations were required
-    require(affiliations.length === 0)
+    // This is fine if no editor roles were required
+    require(editorRoles.length === 0)
   }
 }
-type RequireAffiliation = ReturnType<typeof getRequireAffiliation>
+type RequireEditorRole = ReturnType<typeof getRequireEditorRole>
 
-function getDevelopmentRequireAffiliation(requireSignIn: RequireSignIn): RequireAffiliation {
+function getDevelopmentRequireEditorRole(requireSignIn: RequireSignIn): RequireEditorRole {
   /**
    * Require that the user is a member of at least one of the provided groups.
    *
-   * If the provided list is empty, we assume permission for any group affiliation is sufficient.
+   * If the provided list is empty, we assume permission for any group editor role is sufficient.
    */
-  return (...affiliations: Affiliation[]) => {
+  return (...editorRoles: EditorRole[]) => {
     requireSignIn()
 
-    // For local development, you are always authorized regardless of affiliations
+    // For local development, you are always authorized regardless of editor roles
     return true
   }
 }
@@ -293,24 +288,24 @@ function getRequireMe(principal: Principal | null, require: Require, requireSign
   }
 }
 
-function getRequireMeOrAffiliation(
+function getRequireMeOrEditorRole(
   principal: Principal | null,
   requireSignIn: RequireSignIn,
-  requireAffiliation: RequireAffiliation
+  requireEditorRole: RequireEditorRole
 ) {
   /**
-   * Requires either `requireMe` or `requireAffiliation` to be true.
+   * Requires either `requireMe` or `requireEditorRole` to be true.
    *
    * One of the following must be true:
    * - The user is signed in and that the provided user id is the user's id.
    * - The user is a member of at least one of the provided groups (or any group if empty).
    */
-  return (userId: UserId, affiliations: Affiliation[]) => {
+  return (userId: UserId, editorRoles: EditorRole[]) => {
     requireSignIn()
 
     invariant(principal !== null)
     if (principal.subject !== userId) {
-      requireAffiliation(...affiliations)
+      requireEditorRole(...editorRoles)
     }
   }
 }

@@ -33,7 +33,7 @@
  * @packageDocumentation
  */
 
-import { ADMIN_AFFILIATIONS, type Affiliation } from "./modules/authorization-service"
+import { ADMIN_EDITOR_ROLES, type EditorRole } from "./modules/authorization-service"
 import type { Context, Principal } from "./trpc"
 
 export interface RuleContext<TInput> {
@@ -104,9 +104,9 @@ export function isAdministrator<TInput>(): Rule<TInput> {
       if (context.principal === null) {
         return false
       }
-      for (const affiliation of context.principal.affiliations) {
+      for (const editorRole of context.principal.editorRoles) {
         // biome-ignore lint/suspicious/noExplicitAny: Array#includes has terrible typing
-        if (ADMIN_AFFILIATIONS.includes(affiliation as any)) {
+        if (ADMIN_EDITOR_ROLES.includes(editorRole as any)) {
           return true
         }
       }
@@ -126,7 +126,7 @@ export function isEditor<TInput>(): Rule<TInput> {
       if (context.principal === null) {
         return false
       }
-      return context.principal.affiliations.size !== 0
+      return context.principal.editorRoles.size !== 0
     },
   }
 }
@@ -134,13 +134,13 @@ export function isEditor<TInput>(): Rule<TInput> {
 /**
  * Business rule that returns true if the user is a member of the given group
  */
-export function isGroupMember<TInput>(affiliation: Affiliation): Rule<TInput> {
+export function isGroupMember<TInput>(editorRole: EditorRole): Rule<TInput> {
   return {
     evaluate(context) {
       if (context.principal === null) {
         return false
       }
-      return context.principal.affiliations.has(affiliation)
+      return context.principal.editorRoles.has(editorRole)
     },
   }
 }
