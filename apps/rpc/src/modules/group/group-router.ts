@@ -10,31 +10,31 @@ import {
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { type Context, procedure, staffProcedure, t } from "../../trpc"
-import type { Affiliation } from "../authorization-service"
+import type { EditorRole } from "../authorization-service"
 
-const getRequiredAffiliations = (
+const getRequiredEditorRoles = (
   ctx: Context,
   group: Partial<Pick<Group, "slug" | "type">>,
   options?: { includeGroupSlug: boolean }
 ) => {
-  const requiredAffiliations: Affiliation[] = [...ctx.authorize.ADMIN_AFFILIATIONS]
+  const requiredEditorRoles: EditorRole[] = [...ctx.authorize.ADMIN_EDITOR_ROLES]
 
   if (options?.includeGroupSlug && group.slug) {
-    // We do not know that the slug is an affiliation but `requireAffiliation` ignores all invalid inputs
-    // For example, interest groups have slugs but are not affiliations, and will be ignored.
-    requiredAffiliations.push(group.slug as Affiliation)
+    // We do not know that the slug is an editor role but `requireEditorRoles` ignores all invalid inputs
+    // For example, interest groups have slugs but are not editor roles, and will be ignored.
+    requiredEditorRoles.push(group.slug as EditorRole)
   }
 
   if (group.type === "INTEREST_GROUP") {
-    requiredAffiliations.push("backlog")
+    requiredEditorRoles.push("backlog")
   }
 
-  return requiredAffiliations
+  return requiredEditorRoles
 }
 
 export const groupRouter = t.router({
   create: staffProcedure.input(GroupWriteSchema).mutation(async ({ input, ctx }) => {
-    ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, input))
+    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, input))
     return ctx.executeAuditedTransaction(async (handle) => ctx.groupService.create(handle, input))
   }),
   all: procedure.query(async ({ ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.findMany(handle))),
@@ -69,7 +69,7 @@ export const groupRouter = t.router({
       return ctx.executeAuditedTransaction(async (handle) => {
         const group = await ctx.groupService.getBySlug(handle, input.id)
 
-        ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
+        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
 
         return await ctx.groupService.update(handle, input.id, input.values)
       })
@@ -78,7 +78,7 @@ export const groupRouter = t.router({
     return ctx.executeAuditedTransaction(async (handle) => {
       const group = await ctx.groupService.getBySlug(handle, input)
 
-      ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group))
+      ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group))
 
       return await ctx.groupService.delete(handle, input)
     })
@@ -115,7 +115,7 @@ export const groupRouter = t.router({
       ctx.executeAuditedTransaction(async (handle) => {
         const group = await ctx.groupService.getBySlug(handle, input.groupId)
 
-        ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
+        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
 
         return ctx.groupService.startMembership(handle, input.userId, input.groupId, new Set(input.roleIds))
       })
@@ -126,7 +126,7 @@ export const groupRouter = t.router({
       ctx.executeAuditedTransaction(async (handle) => {
         const group = await ctx.groupService.getBySlug(handle, input.groupId)
 
-        ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
+        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
 
         return ctx.groupService.endMembership(handle, input.userId, input.groupId)
       })
@@ -143,7 +143,7 @@ export const groupRouter = t.router({
       ctx.executeAuditedTransaction(async (handle) => {
         const group = await ctx.groupService.getByGroupMembershipId(handle, input.id)
 
-        ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
+        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
 
         return ctx.groupService.updateMembership(handle, input.id, input.data, new Set(input.roleIds))
       })
@@ -152,7 +152,7 @@ export const groupRouter = t.router({
     ctx.executeAuditedTransaction(async (handle) => {
       const group = await ctx.groupService.getBySlug(handle, input.groupId)
 
-      ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
+      ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
 
       return ctx.groupService.createRole(handle, input)
     })
@@ -168,7 +168,7 @@ export const groupRouter = t.router({
       ctx.executeAuditedTransaction(async (handle) => {
         const group = await ctx.groupService.getByGroupRoleId(handle, input.id)
 
-        ctx.authorize.requireAffiliation(...getRequiredAffiliations(ctx, group, { includeGroupSlug: true }))
+        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
 
         return ctx.groupService.updateRole(handle, input.id, input.role)
       })

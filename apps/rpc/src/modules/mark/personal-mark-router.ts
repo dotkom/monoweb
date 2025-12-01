@@ -5,15 +5,13 @@ import { authenticatedProcedure, staffProcedure, t } from "../../trpc"
 
 export const personalMarkRouter = t.router({
   getByUser: authenticatedProcedure.input(z.object({ userId: UserSchema.shape.id })).query(async ({ input, ctx }) => {
-    ctx.authorize.requireMeOrAffiliation(input.userId, [])
-    return ctx.executeTransaction(async (handle) =>
-      ctx.personalMarkService.findPersonalMarksByUserId(handle, input.userId)
-    )
+    ctx.authorize.requireMeOrEditorRole(input.userId, [])
+    return ctx.executeTransaction(async (handle) => ctx.personalMarkService.findMarksByUserId(handle, input.userId))
   }),
   getVisibleInformation: authenticatedProcedure
     .input(z.object({ userId: UserSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ ctx, input }) => {
-      ctx.authorize.requireMeOrAffiliation(input.userId, [])
+      ctx.authorize.requireMeOrEditorRole(input.userId, [])
       return ctx.executeTransaction(async (handle) => {
         return ctx.personalMarkService.listVisibleInformationForUser(handle, ctx.principal.subject)
       })
@@ -52,7 +50,7 @@ export const personalMarkRouter = t.router({
   getExpiryDateForUser: authenticatedProcedure
     .input(z.object({ userId: UserSchema.shape.id }))
     .query(async ({ input, ctx }) => {
-      ctx.authorize.requireMeOrAffiliation(input.userId, [])
+      ctx.authorize.requireMeOrEditorRole(input.userId, [])
       return ctx.executeTransaction(async (handle) =>
         ctx.personalMarkService.findPunishmentByUserId(handle, input.userId)
       )

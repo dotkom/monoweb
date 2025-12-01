@@ -3,9 +3,9 @@ import type { GroupId, UserId } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import { LRUCache } from "lru-cache"
 
-export type AffiliationSet = Set<GroupId>
+export type EditorRoleSet = Set<GroupId>
 
-export const Affiliation = {
+export const EditorRole = {
   APPKOM: "appkom",
   ARRKOM: "arrkom",
   BACKLOG: "backlog",
@@ -24,34 +24,34 @@ export const Affiliation = {
   ITEX: "ekskom",
   JUBKOM: "jubkom",
 } as const satisfies Record<PropertyKey, GroupId>
-export type Affiliation = (typeof Affiliation)[keyof typeof Affiliation]
+export type EditorRole = (typeof EditorRole)[keyof typeof EditorRole]
 
-export const ADMIN_AFFILIATIONS = ["dotkom", "hs"] as const satisfies Affiliation[]
+export const ADMIN_EDITOR_ROLES = ["dotkom", "hs"] as const satisfies EditorRole[]
 
-export const isAffiliation = (groupSlug: string): groupSlug is Affiliation => {
-  const affiliations = Object.values(Affiliation) as string[]
-  return affiliations.includes(groupSlug)
+export const isEditorRole = (groupSlug: string): groupSlug is EditorRole => {
+  const editorRole = Object.values(EditorRole) as string[]
+  return editorRole.includes(groupSlug)
 }
 
 export interface AuthorizationService {
   /**
-   * Find the affiliations of a user.
+   * Find the editor roles of a user.
    *
-   * An affiliation is a group (committee, node committee, other group) or interest group membership that can be used to
+   * An editor role is a group (committee, node committee, other group) or interest group membership that can be used to
    * authorize access to resources in the system.
    */
-  getAffiliations(handle: DBHandle, userId: UserId): Promise<AffiliationSet>
+  getEditorRoles(handle: DBHandle, userId: UserId): Promise<EditorRoleSet>
 }
 
 export function getAuthorizationService(): AuthorizationService {
-  const cache = new LRUCache<UserId, AffiliationSet>({
+  const cache = new LRUCache<UserId, EditorRoleSet>({
     max: 1000,
     // We are tolerant with up to five minutes of cache staleness here as the system rarely ever has changes to the user
-    // affiliations, and there is minimal risk of abuse of the system.
+    // edit roles, and there is minimal risk of abuse of the system.
     ttl: minutesToMilliseconds(1),
   })
   return {
-    async getAffiliations(handle, userId) {
+    async getEditorRoles(handle, userId) {
       const match = cache.get(userId)
       if (match !== undefined) {
         return match
@@ -72,9 +72,9 @@ export function getAuthorizationService(): AuthorizationService {
         },
       })
       const memberGroupSlugs = memberGroups.map((m) => m.slug)
-      const affiliations = new Set(memberGroupSlugs)
-      cache.set(userId, affiliations)
-      return affiliations
+      const editorRoles = new Set(memberGroupSlugs)
+      cache.set(userId, editorRoles)
+      return editorRoles
     },
   }
 }

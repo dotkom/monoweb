@@ -9,7 +9,7 @@ import {
 import invariant from "tiny-invariant"
 import z from "zod"
 import { staffProcedure, t } from "../../trpc"
-import type { Affiliation } from "../authorization-service"
+import type { EditorRole } from "../authorization-service"
 
 export const workspaceRouter = t.router({
   createUser: staffProcedure
@@ -26,7 +26,7 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
         return await workspaceService.createWorkspaceUser(handle, input.userId)
@@ -45,12 +45,12 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      // If the user inputs a custom key, we do not allow the userId as affiliation because customKey will take
+      // If the user inputs a custom key, we do not allow the userId as editor role because customKey will take
       // precedence and thus the user could potentially input any user.
       if (input.customKey) {
-        ctx.authorize.requireAffiliation("dotkom", "hs")
+        ctx.authorize.requireEditorRole("dotkom", "hs")
       } else {
-        ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+        ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
       }
 
       return ctx.executeTransaction(async (handle) => {
@@ -70,7 +70,7 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireAffiliation("dotkom", "hs")
+      ctx.authorize.requireEditorRole("dotkom", "hs")
 
       return ctx.executeTransaction(async (handle) => {
         const user = await ctx.userService.getById(handle, input.userId)
@@ -92,13 +92,13 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      // If the user inputs a custom key, we do not allow the groupSlug as affiliation because customKey will take
+      // If the user inputs a custom key, we do not allow the groupSlug as editor role because customKey will take
       // precedence and thus the user could potentially input any group.
       if (input.customKey) {
-        ctx.authorize.requireAffiliation("dotkom", "hs")
+        ctx.authorize.requireEditorRole("dotkom", "hs")
       } else {
-        // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
-        ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
+        // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
+        ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
       }
 
       return ctx.executeTransaction(async (handle) => {
@@ -127,7 +127,7 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
         return await workspaceService.resetWorkspaceUserPassword(handle, input.userId)
@@ -145,7 +145,7 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireAffiliation("dotkom", "hs")
+      ctx.authorize.requireEditorRole("dotkom", "hs")
 
       return ctx.executeTransaction(async (handle) => {
         return await workspaceService.createWorkspaceGroup(handle, input.groupSlug)
@@ -164,13 +164,13 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      // If the user inputs a custom key, we do not allow the groupSlug as affiliation because customKey will take
+      // If the user inputs a custom key, we do not allow the groupSlug as editor role because customKey will take
       // precedence and thus the user could potentially input any group.
       if (input.customKey) {
-        ctx.authorize.requireAffiliation("dotkom", "hs")
+        ctx.authorize.requireEditorRole("dotkom", "hs")
       } else {
-        // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
-        ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
+        // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
+        ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
       }
       return ctx.executeTransaction(async (handle) => {
         return await workspaceService.findWorkspaceGroup(handle, input.groupSlug, input.customKey)
@@ -188,7 +188,7 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
+      ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
 
       return ctx.executeTransaction(async (handle) => {
         return await workspaceService.synchronizeWorkspaceGroup(handle, input.groupSlug)
@@ -206,8 +206,8 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      // input.groupSlug is not necessarily an affiliation, but requireAffiliation will ignore it if not
-      ctx.authorize.requireAffiliation("dotkom", "hs", input.groupSlug as Affiliation)
+      // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
+      ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
 
       return ctx.executeTransaction(async (handle) => {
         return await workspaceService.getMembersForGroup(handle, input.groupSlug)
@@ -225,7 +225,7 @@ export const workspaceRouter = t.router({
       const workspaceService = ctx.workspaceService
       invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireMeOrAffiliation(input.userId, ["dotkom", "hs"])
+      ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
 
       return ctx.executeTransaction(async (handle) => {
         return await workspaceService.getWorkspaceGroupsForWorkspaceUser(handle, input.userId)

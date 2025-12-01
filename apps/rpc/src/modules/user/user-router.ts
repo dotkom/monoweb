@@ -53,7 +53,7 @@ export const userRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       const userId = input?.userId ?? ctx.principal.subject
 
-      ctx.authorize.requireMeOrAffiliation(userId, ctx.authorize.ADMIN_AFFILIATIONS)
+      ctx.authorize.requireMeOrEditorRole(userId, ctx.authorize.ADMIN_EDITOR_ROLES)
 
       return ctx.executeAuditedTransaction(async (handle) => {
         return await ctx.userService.createFileUpload(
@@ -101,7 +101,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireAffiliation(...ctx.authorize.ADMIN_AFFILIATIONS)
+      ctx.authorize.requireEditorRole(...ctx.authorize.ADMIN_EDITOR_ROLES)
       return ctx.executeAuditedTransaction(async (handle) => {
         return ctx.userService.deleteMembership(handle, input.membershipId)
       })
@@ -127,12 +127,12 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      ctx.authorize.requireMeOrAffiliation(input.id, ctx.authorize.ADMIN_AFFILIATIONS)
+      ctx.authorize.requireMeOrEditorRole(input.id, ctx.authorize.ADMIN_EDITOR_ROLES)
 
       let { name, ...data } = input.input
 
       // Only admins can change the name field
-      if (!ctx.principal.affiliations.has("dotkom") && !ctx.principal.affiliations.has("hs")) {
+      if (!ctx.principal.editorRoles.has("dotkom") && !ctx.principal.editorRoles.has("hs")) {
         name = undefined
       }
 
@@ -142,7 +142,7 @@ export const userRouter = t.router({
     }),
   isStaff: procedure.query(async ({ ctx }) => {
     try {
-      ctx.authorize.requireAffiliation()
+      ctx.authorize.requireEditorRole()
       return true
     } catch {
       return false
@@ -150,7 +150,7 @@ export const userRouter = t.router({
   }),
   isAdmin: procedure.query(async ({ ctx }) => {
     try {
-      ctx.authorize.requireAffiliation(...ctx.authorize.ADMIN_AFFILIATIONS)
+      ctx.authorize.requireEditorRole(...ctx.authorize.ADMIN_EDITOR_ROLES)
       return true
     } catch {
       return false
