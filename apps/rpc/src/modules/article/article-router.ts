@@ -1,26 +1,29 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
+import { authenticated, hasEditorRole, withAuditLogEntry, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
 export const articleRouter = t.router({
-  create: staffProcedure
+  create: procedure
     .input(
       z.object({
         article: ArticleWriteSchema,
         tags: z.array(ArticleTagSchema.shape.name),
       })
     )
+    .use(authenticated())
+    .use(hasEditorRole())
+    .use(withDatabaseTransaction())
+    .use(withAuditLogEntry())
     .mutation(async ({ input, ctx }) => {
-      return ctx.executeAuditedTransaction(async (handle) => {
-        const article = await ctx.articleService.create(handle, input.article)
-        const tags = await ctx.articleService.setTags(handle, article.id, input.tags)
-        return {
-          ...article,
-          tags,
-        }
-      })
+      const article = await ctx.articleService.create(ctx.handle, input.article)
+      const tags = await ctx.articleService.setTags(ctx.handle, article.id, input.tags)
+      return {
+        ...article,
+        tags,
+      }
     }),
 
   edit: staffProcedure

@@ -99,8 +99,6 @@ export const t = initTRPC.context<Context>().create({
   },
 })
 
-export const router = t.router
-
 /**
  * Create a procedure builder that can be used to create procedures.
  *
