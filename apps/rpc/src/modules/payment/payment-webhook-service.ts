@@ -36,6 +36,7 @@ export function getPaymentWebhookService(stripe: Stripe): PaymentWebhookService 
       webhookSecret = endpoint.secret ?? null
       logger.info(`Set up webhook with id ${endpoint.id}`)
     },
+
     constructEvent: async (body, signature, webhookSecretOverride) => {
       const secret = webhookSecretOverride ?? webhookSecret
       if (secret === null) {

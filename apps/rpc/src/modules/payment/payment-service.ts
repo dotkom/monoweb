@@ -25,9 +25,9 @@ type PaymentId = string
 export interface PaymentService {
   create(productId: PaymentId, user: User, chargeMode?: ChargeMode): Promise<Payment>
   cancel(paymentId: PaymentId): Promise<void>
-  refund(paymentId: PaymentId): Promise<void>
-  charge(paymentId: PaymentId): Promise<void>
   getById(paymentId: PaymentId): Promise<Payment>
+  charge(paymentId: PaymentId): Promise<void>
+  refund(paymentId: PaymentId): Promise<void>
 }
 
 export function getPaymentService(stripe: Stripe): PaymentService {
@@ -45,6 +45,46 @@ export function getPaymentService(stripe: Stripe): PaymentService {
   }
 
   return {
+    async create(productId, user, chargeMode = "RESERVE") {
+      const product = await stripe.products.retrieve(productId)
+      if (!product.default_price) {
+        throw new IllegalStateError(`Product of Payment(ProductID: ${productId}) does not have a default price`)
+      }
+      const defaultPrice = typeof product.default_price === "string" ? product.default_price : product.default_price.id
+
+      const session = await stripe.checkout.sessions.create({
+        line_items: [{ quantity: 1, price: defaultPrice }],
+        success_url: product.url ?? undefined,
+        cancel_url: product.url ?? undefined,
+        mode: "payment",
+        ...(chargeMode === "CHARGE" ? {} : { payment_intent_data: { capture_method: "manual" } }),
+        customer_email: user.email || "dotkom+stripe-no-customer-email@online.ntnu.no",
+      })
+
+      return {
+        status: "UNPAID",
+        url: session.url,
+        id: session.id,
+        paymentIntentId: null,
+      }
+    },
+
+    async cancel(paymentId): Promise<void> {
+      const payment = await this.getById(paymentId)
+
+      if (payment.status === "PAID") {
+        throw new ResourceExhaustedError(`Payment(ID=${paymentId}) has already been paid and cannot be cancelled`)
+      }
+
+      if (payment.status === "CANCELLED") {
+        return
+      }
+
+      if (payment.status === "RESERVED") {
+        await stripe.paymentIntents.cancel(payment.paymentIntentId)
+      }
+    },
+
     async getById(paymentId): Promise<Payment> {
       const session = await stripe.checkout.sessions.retrieve(paymentId)
       invariant(session.payment_intent === null || typeof session.payment_intent === "string")
@@ -73,44 +113,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         paymentIntentId: paymentIntent.id,
       }
     },
-    async create(productId, user, chargeMode = "RESERVE") {
-      const product = await stripe.products.retrieve(productId)
-      if (!product.default_price) {
-        throw new IllegalStateError(`Product of Payment(ProductID: ${productId}) does not have a default price`)
-      }
-      const defaultPrice = typeof product.default_price === "string" ? product.default_price : product.default_price.id
 
-      const session = await stripe.checkout.sessions.create({
-        line_items: [{ quantity: 1, price: defaultPrice }],
-        success_url: product.url ?? undefined,
-        cancel_url: product.url ?? undefined,
-        mode: "payment",
-        ...(chargeMode === "CHARGE" ? {} : { payment_intent_data: { capture_method: "manual" } }),
-        customer_email: user.email || "dotkom+stripe-no-customer-email@online.ntnu.no",
-      })
-
-      return {
-        status: "UNPAID",
-        url: session.url,
-        id: session.id,
-        paymentIntentId: null,
-      }
-    },
-    async cancel(paymentId): Promise<void> {
-      const payment = await this.getById(paymentId)
-
-      if (payment.status === "PAID") {
-        throw new ResourceExhaustedError(`Payment(ID=${paymentId}) has already been paid and cannot be cancelled`)
-      }
-
-      if (payment.status === "CANCELLED") {
-        return
-      }
-
-      if (payment.status === "RESERVED") {
-        await stripe.paymentIntents.cancel(payment.paymentIntentId)
-      }
-    },
     async charge(paymentId) {
       const payment = await this.getById(paymentId)
 
@@ -127,6 +130,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
           throw new Error("This should be unreachable")
       }
     },
+
     async refund(paymentId) {
       const payment = await this.getById(paymentId)
 
