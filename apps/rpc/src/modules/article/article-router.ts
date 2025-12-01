@@ -1,7 +1,8 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { authenticated, hasEditorRole, withAuditLogEntry, withDatabaseTransaction } from "../../middlewares"
+import { isEditor } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, staffProcedure, t } from "../../trpc"
 
@@ -13,8 +14,8 @@ export const articleRouter = t.router({
         tags: z.array(ArticleTagSchema.shape.name),
       })
     )
-    .use(authenticated())
-    .use(hasEditorRole())
+    .use(withAuthentication())
+    .use(withAuthorization(isEditor()))
     .use(withDatabaseTransaction())
     .use(withAuditLogEntry())
     .mutation(async ({ input, ctx }) => {
