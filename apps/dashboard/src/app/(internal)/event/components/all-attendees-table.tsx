@@ -4,16 +4,15 @@ import {
   type Attendee,
   type AttendeeSelectionResponse,
   type FeedbackFormAnswer,
-  hasAttendeePaid,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   ActionIcon,
   Anchor,
   Badge,
+  BadgeProps,
   Button,
   Checkbox,
-  Group,
   Popover,
   PopoverDropdown,
   PopoverTarget,
@@ -189,21 +188,19 @@ export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: Al
             return null
           }
 
-          const wasRefunded = Boolean(attendee.paymentRefundedById)
-          const hasPaid = hasAttendeePaid(attendance, attendee) ?? false
+          let badge: BadgeProps = {}
 
-          return hasPaid ? (
-            <Checkbox color="green" readOnly checked />
-          ) : wasRefunded ? (
-            <Group gap={4}>
-              <Checkbox color="gray" indeterminate readOnly />
-              <Text size="xs" c="gray">
-                Refundert
-              </Text>
-            </Group>
-          ) : (
-            <Checkbox icon={({ className }) => <IconX className={className} />} color="red" checked readOnly />
-          )
+          if (attendee.paymentChargedAt) {
+            badge = { color: "green", children: "Betalt" }
+          } else if (attendee.paymentReservedAt) {
+            badge = { color: "blue", children: "Reservert" }
+          } else if (attendee.paymentRefundedAt) {
+            badge = { color: "gray", children: "Refundert" }
+          } else {
+            badge = { color: "red", children: "Ikke betalt" }
+          }
+
+          return <Badge size="sm" {...badge} />
         },
       }),
       columnHelper.accessor((attendee) => attendee, {

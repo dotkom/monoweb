@@ -1,8 +1,10 @@
 import { GenericTable } from "@/components/GenericTable"
-import type { Attendee } from "@dotkomonline/types"
-import { Badge, Box, Button, Group, Input, Stack, Title } from "@mantine/core"
+import { type Attendee } from "@dotkomonline/types"
+import { Badge, BadgeProps, Box, Button, Group, Input, Stack, Title } from "@mantine/core"
+import { IconExternalLink } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { type FC, useMemo, useRef } from "react"
+import Link from "next/link"
+import { useMemo, useRef, type FC } from "react"
 import {
   useCreateAttendeePaymentAttendeeMutation,
   useRefundAttendeeMutation,
@@ -56,20 +58,43 @@ export const PaymentPage: FC = () => {
         cell: (info) => {
           const value = info.getValue()
 
+          let badge: BadgeProps = {}
+
           if (value.paymentChargedAt) {
-            return <Badge color="green">Betalt</Badge>
-          }
-          if (value.paymentReservedAt) {
-            return <Badge color="blue">Betaling reservert</Badge>
-          }
-          if (value.paymentRefundedAt) {
-            return <Badge color="indigo">Betaling refundert</Badge>
-          }
-          if (value.paymentId) {
-            return <Badge color="yellow">Venter på betaling</Badge>
+            badge = { color: "green", children: "Betalt" }
+          } else if (value.paymentReservedAt) {
+            badge = { color: "blue", children: "Reservert" }
+          } else if (value.paymentRefundedAt) {
+            badge = { color: "gray", children: "Refundert" }
+          } else if (!value.paymentRefundedAt && value.paymentRefundedById) {
+            badge = { color: "gray", children: "Kansellert" }
+          } else if (value.paymentDeadline) {
+            badge = { color: "red", children: "Ikke betalt" }
+          } else {
+            badge = { color: "gray", children: "Ingen betaling" }
           }
 
-          return <Badge color="gray">Ingen betaling</Badge>
+          return <Badge {...badge} />
+        },
+      }),
+      columnHelper.accessor((attendee) => attendee.paymentCheckoutUrl, {
+        header: "Betalingslenke",
+        cell: (info) => {
+          const value = info.getValue()
+
+          if (!value) return
+
+          return (
+            <Link
+              href={value}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "flex", alignItems: "center", gap: "4px" }}
+            >
+              Åpne i Stripe
+              <IconExternalLink size="16" />
+            </Link>
+          )
         },
       }),
       columnHelper.accessor((attendee) => attendee, {
