@@ -6,229 +6,268 @@ import {
   WorkspaceMemberLinkSchema,
   WorkspaceUserSchema,
 } from "@dotkomonline/types"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import invariant from "tiny-invariant"
 import z from "zod"
+import { isAdministrator } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { staffProcedure, t } from "../../trpc"
 import type { EditorRole } from "../authorization-service"
 
-export const workspaceRouter = t.router({
-  createUser: staffProcedure
-    .input(z.object({ userId: UserSchema.shape.id }))
-    .output(
-      z.object({
-        user: UserSchema,
-        workspaceUser: WorkspaceUserSchema,
-        recoveryCodes: z.array(z.string()).nullable(),
-        password: z.string(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
+export type CreateWorkspaceUserInput = inferProcedureInput<typeof createWorkspaceUserProcedure>
+export type CreateWorkspaceUserOutput = inferProcedureOutput<typeof createWorkspaceUserProcedure>
+const createWorkspaceUserProcedure = staffProcedure
+  .input(z.object({ userId: UserSchema.shape.id }))
+  .output(
+    z.object({
+      user: UserSchema,
+      workspaceUser: WorkspaceUserSchema,
+      recoveryCodes: z.array(z.string()).nullable(),
+      password: z.string(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
 
-      ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
+    ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
 
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.createWorkspaceUser(handle, input.userId)
-      })
-    }),
+    return await workspaceService.createWorkspaceUser(ctx.handle, input.userId)
+  })
 
-  findUser: staffProcedure
-    .input(
-      z.object({
-        userId: UserSchema.shape.id,
-        customKey: z.string().optional(),
-      })
-    )
-    .output(WorkspaceUserSchema.nullable())
-    .query(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
+export type FindWorkspaceUserInput = inferProcedureInput<typeof findWorkspaceUserProcedure>
+export type FindWorkspaceUserOutput = inferProcedureOutput<typeof findWorkspaceUserProcedure>
+const findWorkspaceUserProcedure = staffProcedure
+  .input(
+    z.object({
+      userId: UserSchema.shape.id,
+      customKey: z.string().optional(),
+    })
+  )
+  .output(WorkspaceUserSchema.nullable())
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .query(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
 
-      // If the user inputs a custom key, we do not allow the userId as editor role because customKey will take
-      // precedence and thus the user could potentially input any user.
-      if (input.customKey) {
-        ctx.authorize.requireEditorRole("dotkom", "hs")
-      } else {
-        ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
-      }
-
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.findWorkspaceUser(handle, input.userId, input.customKey)
-      })
-    }),
-
-  linkUser: staffProcedure
-    .input(
-      z.object({
-        userId: UserSchema.shape.id,
-        customKey: z.string().optional(),
-      })
-    )
-    .output(UserSchema)
-    .mutation(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
-
+    // If the user inputs a custom key, we do not allow the userId as editor role because customKey will take
+    // precedence and thus the user could potentially input any user.
+    if (input.customKey) {
       ctx.authorize.requireEditorRole("dotkom", "hs")
-
-      return ctx.executeTransaction(async (handle) => {
-        const user = await ctx.userService.getById(handle, input.userId)
-        const workspaceUser = await workspaceService.getWorkspaceUser(handle, input.userId, input.customKey)
-
-        return await ctx.userService.update(handle, user.id, { workspaceUserId: workspaceUser.id })
-      })
-    }),
-
-  linkGroup: staffProcedure
-    .input(
-      z.object({
-        groupSlug: GroupSchema.shape.slug,
-        customKey: z.string().optional(),
-      })
-    )
-    .output(GroupSchema)
-    .mutation(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
-
-      // If the user inputs a custom key, we do not allow the groupSlug as editor role because customKey will take
-      // precedence and thus the user could potentially input any group.
-      if (input.customKey) {
-        ctx.authorize.requireEditorRole("dotkom", "hs")
-      } else {
-        // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
-        ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
-      }
-
-      return ctx.executeTransaction(async (handle) => {
-        const group = await ctx.groupService.getBySlug(handle, input.groupSlug)
-        const workspaceGroup = await workspaceService.getWorkspaceGroup(handle, input.groupSlug, input.customKey)
-
-        return await ctx.groupService.update(handle, group.slug, { workspaceGroupId: workspaceGroup.id })
-      })
-    }),
-
-  resetPassword: staffProcedure
-    .input(
-      z.object({
-        userId: UserSchema.shape.id,
-      })
-    )
-    .output(
-      z.object({
-        user: UserSchema,
-        workspaceUser: WorkspaceUserSchema,
-        recoveryCodes: z.array(z.string()).nullable(),
-        password: z.string(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
-
+    } else {
       ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
+    }
 
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.resetWorkspaceUserPassword(handle, input.userId)
-      })
-    }),
+    return await workspaceService.findWorkspaceUser(ctx.handle, input.userId, input.customKey)
+  })
 
-  createGroup: staffProcedure
-    .input(
-      z.object({
-        groupSlug: GroupSchema.shape.slug,
-      })
-    )
-    .output(WorkspaceGroupLinkSchema)
-    .mutation(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
+export type LinkWorkspaceUserInput = inferProcedureInput<typeof linkWorkspaceUserProcedure>
+export type LinkWorkspaceUserOutput = inferProcedureOutput<typeof linkWorkspaceUserProcedure>
+const linkWorkspaceUserProcedure = staffProcedure
+  .input(
+    z.object({
+      userId: UserSchema.shape.id,
+      customKey: z.string().optional(),
+    })
+  )
+  .output(UserSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
 
+    const user = await ctx.userService.getById(ctx.handle, input.userId)
+    const workspaceUser = await workspaceService.getWorkspaceUser(ctx.handle, input.userId, input.customKey)
+
+    return await ctx.userService.update(ctx.handle, user.id, { workspaceUserId: workspaceUser.id })
+  })
+
+export type LinkWorkspaceGroupInput = inferProcedureInput<typeof linkWorkspaceGroupProcedure>
+export type LinkWorkspaceGroupOutput = inferProcedureOutput<typeof linkWorkspaceGroupProcedure>
+const linkWorkspaceGroupProcedure = staffProcedure
+  .input(
+    z.object({
+      groupSlug: GroupSchema.shape.slug,
+      customKey: z.string().optional(),
+    })
+  )
+  .output(GroupSchema)
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
+
+    // If the user inputs a custom key, we do not allow the groupSlug as editor role because customKey will take
+    // precedence and thus the user could potentially input any group.
+    if (input.customKey) {
       ctx.authorize.requireEditorRole("dotkom", "hs")
-
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.createWorkspaceGroup(handle, input.groupSlug)
-      })
-    }),
-
-  findGroup: staffProcedure
-    .input(
-      z.object({
-        groupSlug: GroupSchema.shape.slug,
-        customKey: z.string().optional(),
-      })
-    )
-    .output(WorkspaceGroupSchema.nullable())
-    .query(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
-
-      // If the user inputs a custom key, we do not allow the groupSlug as editor role because customKey will take
-      // precedence and thus the user could potentially input any group.
-      if (input.customKey) {
-        ctx.authorize.requireEditorRole("dotkom", "hs")
-      } else {
-        // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
-        ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
-      }
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.findWorkspaceGroup(handle, input.groupSlug, input.customKey)
-      })
-    }),
-
-  synchronizeGroup: staffProcedure
-    .input(
-      z.object({
-        groupSlug: GroupSchema.shape.slug,
-      })
-    )
-    .output(z.boolean())
-    .mutation(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
-
-      ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
-
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.synchronizeWorkspaceGroup(handle, input.groupSlug)
-      })
-    }),
-
-  getMembersForGroup: staffProcedure
-    .input(
-      z.object({
-        groupSlug: GroupSchema.shape.slug,
-      })
-    )
-    .output(WorkspaceMemberLinkSchema.array())
-    .query(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
-
+    } else {
       // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
       ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
+    }
 
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.getMembersForGroup(handle, input.groupSlug)
-      })
-    }),
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.groupSlug)
+    const workspaceGroup = await workspaceService.getWorkspaceGroup(ctx.handle, input.groupSlug, input.customKey)
 
-  getGroupsForUser: staffProcedure
-    .input(
-      z.object({
-        userId: UserSchema.shape.id,
-      })
-    )
-    .output(WorkspaceGroupLinkSchema.array())
-    .query(async ({ input, ctx }) => {
-      const workspaceService = ctx.workspaceService
-      invariant(workspaceService, "Workspace service is not available")
+    return await ctx.groupService.update(ctx.handle, group.slug, { workspaceGroupId: workspaceGroup.id })
+  })
 
-      ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
+export type ResetWorkspaceUserPasswordInput = inferProcedureInput<typeof resetWorkspaceUserPasswordProcedure>
+export type ResetWorkspaceUserPasswordOutput = inferProcedureOutput<typeof resetWorkspaceUserPasswordProcedure>
+const resetWorkspaceUserPasswordProcedure = staffProcedure
+  .input(
+    z.object({
+      userId: UserSchema.shape.id,
+    })
+  )
+  .output(
+    z.object({
+      user: UserSchema,
+      workspaceUser: WorkspaceUserSchema,
+      recoveryCodes: z.array(z.string()).nullable(),
+      password: z.string(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
 
-      return ctx.executeTransaction(async (handle) => {
-        return await workspaceService.getWorkspaceGroupsForWorkspaceUser(handle, input.userId)
-      })
-    }),
+    ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
+
+    return await workspaceService.resetWorkspaceUserPassword(ctx.handle, input.userId)
+  })
+
+export type CreateWorkspaceGroupInput = inferProcedureInput<typeof createWorkspaceGroupProcedure>
+export type CreateWorkspaceGroupOutput = inferProcedureOutput<typeof createWorkspaceGroupProcedure>
+const createWorkspaceGroupProcedure = staffProcedure
+  .input(
+    z.object({
+      groupSlug: GroupSchema.shape.slug,
+    })
+  )
+  .output(WorkspaceGroupLinkSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
+
+    return await workspaceService.createWorkspaceGroup(ctx.handle, input.groupSlug)
+  })
+
+export type FindWorkspaceGroupInput = inferProcedureInput<typeof findWorkspaceGroupProcedure>
+export type FindWorkspaceGroupOutput = inferProcedureOutput<typeof findWorkspaceGroupProcedure>
+const findWorkspaceGroupProcedure = staffProcedure
+  .input(
+    z.object({
+      groupSlug: GroupSchema.shape.slug,
+      customKey: z.string().optional(),
+    })
+  )
+  .output(WorkspaceGroupSchema.nullable())
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .query(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
+
+    // If the user inputs a custom key, we do not allow the groupSlug as editor role because customKey will take
+    // precedence and thus the user could potentially input any group.
+    if (input.customKey) {
+      ctx.authorize.requireEditorRole("dotkom", "hs")
+    } else {
+      // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
+      ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
+    }
+    return await workspaceService.findWorkspaceGroup(ctx.handle, input.groupSlug, input.customKey)
+  })
+
+export type SynchronizeWorkspaceGroupInput = inferProcedureInput<typeof synchronizeWorkspaceGroupProcedure>
+export type SynchronizeWorkspaceGroupOutput = inferProcedureOutput<typeof synchronizeWorkspaceGroupProcedure>
+const synchronizeWorkspaceGroupProcedure = staffProcedure
+  .input(
+    z.object({
+      groupSlug: GroupSchema.shape.slug,
+    })
+  )
+  .output(z.boolean())
+  .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
+
+    return await workspaceService.synchronizeWorkspaceGroup(ctx.handle, input.groupSlug)
+  })
+
+export type GetMembersForWorkspaceGroupInput = inferProcedureInput<typeof getMembersForWorkspaceGroupProcedure>
+export type GetMembersForWorkspaceGroupOutput = inferProcedureOutput<typeof getMembersForWorkspaceGroupProcedure>
+const getMembersForWorkspaceGroupProcedure = staffProcedure
+  .input(
+    z.object({
+      groupSlug: GroupSchema.shape.slug,
+    })
+  )
+  .output(WorkspaceMemberLinkSchema.array())
+  .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .query(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
+
+    return await workspaceService.getMembersForGroup(ctx.handle, input.groupSlug)
+  })
+
+export type GetGroupsForWorkspaceUserInput = inferProcedureInput<typeof getGroupsForUserWorkspaceProcedure>
+export type GetGroupsForWorkspaceUserOutput = inferProcedureOutput<typeof getGroupsForUserWorkspaceProcedure>
+const getGroupsForUserWorkspaceProcedure = staffProcedure
+  .input(
+    z.object({
+      userId: UserSchema.shape.id,
+    })
+  )
+  .output(WorkspaceGroupLinkSchema.array())
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .query(async ({ input, ctx }) => {
+    const workspaceService = ctx.workspaceService
+    invariant(workspaceService, "Workspace service is not available")
+
+    ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
+
+    return await workspaceService.getWorkspaceGroupsForWorkspaceUser(ctx.handle, input.userId)
+  })
+
+export const workspaceRouter = t.router({
+  createUser: createWorkspaceUserProcedure,
+  findUser: findWorkspaceUserProcedure,
+  linkUser: linkWorkspaceUserProcedure,
+  linkGroup: linkWorkspaceGroupProcedure,
+  resetPassword: resetWorkspaceUserPasswordProcedure,
+  createGroup: createWorkspaceGroupProcedure,
+  findGroup: findWorkspaceGroupProcedure,
+  synchronizeGroup: synchronizeWorkspaceGroupProcedure,
+  getMembersForGroup: getMembersForWorkspaceGroupProcedure,
+  getGroupsForUser: getGroupsForUserWorkspaceProcedure,
 })
