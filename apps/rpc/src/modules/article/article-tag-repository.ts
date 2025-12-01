@@ -3,34 +3,51 @@ import { type ArticleId, type ArticleTag, type ArticleTagName, ArticleTagSchema 
 import { parseOrReport } from "../../invariant"
 
 export interface ArticleTagRepository {
-  getAll(handle: DBHandle): Promise<ArticleTag[]>
-  create(handle: DBHandle, tagName: ArticleTagName): Promise<ArticleTag>
-  delete(handle: DBHandle, tagName: ArticleTagName): Promise<ArticleTag>
-  getByName(handle: DBHandle, tagName: ArticleTagName): Promise<ArticleTag | null>
-  getAllByArticle(handle: DBHandle, articleId: ArticleId): Promise<ArticleTag[]>
+  findByName(handle: DBHandle, articleTagName: ArticleTagName): Promise<ArticleTag | null>
+  findMany(handle: DBHandle): Promise<ArticleTag[]>
+  findManyByArticleId(handle: DBHandle, articleId: ArticleId): Promise<ArticleTag[]>
+  create(handle: DBHandle, articleTagName: ArticleTagName): Promise<ArticleTag>
+  delete(handle: DBHandle, articleTagName: ArticleTagName): Promise<ArticleTag>
 }
 
 export function getArticleTagRepository(): ArticleTagRepository {
   return {
-    async getAll(handle) {
-      const tags = await handle.articleTag.findMany()
-      return tags.map((tag) => parseOrReport(ArticleTagSchema, tag))
-    },
-    async create(handle, tagName) {
-      const tag = await handle.articleTag.create({
-        data: { name: tagName },
+    async findByName(handle, articleTagName) {
+      const tag = await handle.articleTag.findUnique({
+        where: {
+          name: articleTagName,
+        },
       })
+
+      return parseOrReport(ArticleTagSchema.nullable(), tag)
+    },
+
+    async findMany(handle) {
+      const tags = await handle.articleTag.findMany()
+      return parseOrReport(ArticleTagSchema.array(), tags)
+    },
+
+    async create(handle, articleTagName) {
+      const tag = await handle.articleTag.create({
+        data: {
+          name: articleTagName,
+        },
+      })
+
       return parseOrReport(ArticleTagSchema, tag)
     },
-    async delete(handle, tagName) {
-      const tag = await handle.articleTag.delete({ where: { name: tagName } })
+
+    async delete(handle, articleTagName) {
+      const tag = await handle.articleTag.delete({
+        where: {
+          name: articleTagName,
+        },
+      })
+
       return parseOrReport(ArticleTagSchema, tag)
     },
-    async getByName(handle, tagName) {
-      const tag = await handle.articleTag.findUnique({ where: { name: tagName } })
-      return tag ? parseOrReport(ArticleTagSchema, tag) : null
-    },
-    async getAllByArticle(handle, articleId) {
+
+    async findManyByArticleId(handle, articleId) {
       const tags = await handle.articleTag.findMany({
         where: {
           articles: {
@@ -42,7 +59,8 @@ export function getArticleTagRepository(): ArticleTagRepository {
           },
         },
       })
-      return tags.map((tag) => parseOrReport(ArticleTagSchema, tag))
+
+      return parseOrReport(ArticleTagSchema.array(), tags)
     },
   }
 }

@@ -42,7 +42,7 @@ export const articleRouter = t.router({
   all: procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.articleService.getAll(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.articleService.findMany(handle, {}, input))
     ),
 
   findArticles: procedure
@@ -73,11 +73,11 @@ export const articleRouter = t.router({
   related: procedure
     .input(ArticleSchema)
     .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.articleService.getRelated(handle, input))
+      ctx.executeTransaction(async (handle) => ctx.articleService.findRelated(handle, input))
     ),
 
   featured: procedure.query(async ({ ctx }) =>
-    ctx.executeTransaction(async (handle) => ctx.articleService.getFeatured(handle))
+    ctx.executeTransaction(async (handle) => ctx.articleService.findFeatured(handle))
   ),
 
   getTags: procedure.query(async ({ ctx }) =>
