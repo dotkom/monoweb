@@ -101,6 +101,7 @@ const createUserMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -117,6 +118,7 @@ const updateUserMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
