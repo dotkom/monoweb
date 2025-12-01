@@ -94,6 +94,7 @@ export const useGroupWriteForm = ({
       description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
+        onFileUpload: fileUpload,
       }),
       email: createTextInput({
         label: "Kontakt-e-post",

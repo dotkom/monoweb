@@ -19,6 +19,7 @@ import { CreateMarkModal } from "@/app/(internal)/punishment/modals/create-mark-
 import { CreateSuspensionModal } from "@/app/(internal)/punishment/modals/create-suspension-modal"
 import { CreateMembershipModal } from "@/app/(internal)/user/components/create-membership-modal"
 import { EditMembershipModal } from "@/app/(internal)/user/components/edit-membership-modal"
+import { UploadImageModal } from "@/components/ImageUploadModal"
 import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
 import { QRCodeScannedModal } from "./(internal)/event/components/qr-code-scanned-modal"
@@ -46,6 +47,7 @@ const modals = {
   "punishment/suspension/create": CreateSuspensionModal,
   "user/membership/create": CreateMembershipModal,
   "user/membership/update": EditMembershipModal,
+  "image/upload": UploadImageModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

@@ -9,6 +9,8 @@ export function createFileInput<F extends FieldValues>(
     existingFileUrl?: string
   }
 ): InputProducerResult<F> {
+  const { onFileUpload, existingFileUrl, ...fileInputProps } = props
+
   return function FormFileInput({ name, control }) {
     return (
       <Controller
@@ -17,13 +19,13 @@ export function createFileInput<F extends FieldValues>(
         render={({ field }) => (
           <Stack gap="0.5rem">
             <FileInput
-              {...props}
-              placeholder={field.value ?? props.existingFileUrl ?? "Klikk for å velge fil"}
+              {...fileInputProps}
+              placeholder={field.value ?? existingFileUrl ?? "Klikk for å velge fil"}
               onChange={async (file) => {
                 if (file === null) {
                   return
                 }
-                const result = await props.onFileUpload(file)
+                const result = await onFileUpload(file)
                 field.onChange(result)
               }}
             />

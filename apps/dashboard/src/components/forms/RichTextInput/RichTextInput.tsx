@@ -1,5 +1,7 @@
 "use client"
 
+import { useUploadImageModal } from "@/components/ImageUploadModal"
+import { InsertImageButton } from "@/components/forms/RichTextInput/InsertImageButton"
 import {
   AddColumnAfter,
   AddRowAfter,
@@ -15,28 +17,53 @@ import {
 import { ErrorMessage } from "@hookform/error-message"
 import { Divider, Input } from "@mantine/core"
 import { RichTextEditor, type RichTextEditorProps } from "@mantine/tiptap"
+import Image from "@tiptap/extension-image"
 import Link from "@tiptap/extension-link"
 import { TableKit } from "@tiptap/extension-table"
 import TableCell from "@tiptap/extension-table-cell"
 import TableHeader from "@tiptap/extension-table-header"
 import TableRow from "@tiptap/extension-table-row"
 import Underline from "@tiptap/extension-underline"
-import { useEditor } from "@tiptap/react"
+import { type Editor, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
+import { useRef } from "react"
 import { Controller, type FieldValues } from "react-hook-form"
 import type { InputProducerResult } from "../types"
 import "@mantine/tiptap/styles.css"
 import "./tiptap-table-styling.css"
+import "./tiptap-image-styling.css"
 
 export function createRichTextInput<F extends FieldValues>({
   onChange,
   required,
   label,
+  onFileUpload,
   ...props
 }: Omit<RichTextEditorProps, "error" | "children" | "editor"> & {
   required: boolean
   label: string
+  onFileUpload?: (file: File) => Promise<string>
 }): InputProducerResult<F> {
+  const editorRef = useRef<Editor | null>(null)
+  // This is needed to track the last selection before opening the image modal
+  const lastSelectionRef = useRef<{ from: number; to: number } | null>(null)
+
+  const openImageUploadModal = useUploadImageModal({
+    onFileUpload,
+    handleSubmit: async (imageUrl, alt, title) => {
+      const chain = editorRef.current?.chain()
+
+      // Reapply the last selection before inserting the image. If we don't do
+      // this, the image will be inserted at the first possible node at the
+      // start of the file
+      if (lastSelectionRef.current) {
+        chain?.setTextSelection(lastSelectionRef.current)
+      }
+
+      chain?.focus().setImage({ src: imageUrl, alt, title }).run()
+    },
+  })
+
   return function RichTextInput({ name, state, control }) {
     return (
       <Input.Wrapper error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}>
@@ -58,11 +85,26 @@ export function createRichTextInput<F extends FieldValues>({
                 TableRow,
                 TableHeader,
                 TableCell,
+                Image.configure({
+                  inline: false,
+                  resize: {
+                    enabled: true,
+                    minWidth: 25,
+                    minHeight: 25,
+                    alwaysPreserveAspectRatio: true,
+                  },
+                }),
               ],
               content: field.value,
               immediatelyRender: false,
               onUpdate: (value) => field.onChange(value.editor.getHTML()),
+              onSelectionUpdate: ({ editor }) => {
+                const { from, to } = editor.state.selection
+                lastSelectionRef.current = { from, to }
+              },
             })
+
+            editorRef.current = editor
 
             return (
               <RichTextEditor {...props} editor={editor} variant="subtle">
@@ -95,6 +137,16 @@ export function createRichTextInput<F extends FieldValues>({
                     <RichTextEditor.OrderedList />
                     <RichTextEditor.Hr />
                   </RichTextEditor.ControlsGroup>
+
+                  {Boolean(onFileUpload) && (
+                    <>
+                      <Divider orientation="vertical" className="mx-0" />
+
+                      <RichTextEditor.ControlsGroup>
+                        <InsertImageButton onClick={openImageUploadModal} />
+                      </RichTextEditor.ControlsGroup>
+                    </>
+                  )}
 
                   <Divider orientation="vertical" className="mx-0" />
 
