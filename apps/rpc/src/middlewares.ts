@@ -1,6 +1,8 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type * as trpc from "@trpc/server/unstable-core-do-not-import"
 import invariant from "tiny-invariant"
+import type { Rule, RuleContext } from "./authorization"
+import { ForbiddenError } from "./error"
 import type { Context } from "./trpc"
 
 type MiddlewareFunction<TContextIn, TContextOut, TInputOut> = trpc.MiddlewareFunction<
@@ -57,6 +59,8 @@ export function withAuditLogEntry<TInput>() {
       // `audit_log` table upon change. This trigger reads the configuration parameter.
       //
       // See https://www.postgresql.org/docs/9.3/functions-admin.html for details
+      //
+      // The PostgreSQL trigger is found inside the migrations folder in /packages/db.
       await ctx.handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal.subject}, true)`
     }
     return await next({ ctx })
@@ -65,7 +69,7 @@ export function withAuditLogEntry<TInput>() {
 }
 
 /** tRPC Middleware to ensure the caller is signed in */
-export function authenticated<TInput>() {
+export function withAuthentication<TInput>() {
   const handler: MiddlewareFunction<Context, ContextWithPrincipal, TInput> = async ({ ctx, next }) => {
     ctx.authorize.requireSignIn()
     // SAFETY: the above call should ensure this.
@@ -80,28 +84,27 @@ export function authenticated<TInput>() {
 }
 
 /**
- * tRPC Middleware to require the caller to have an editorial role
+ * tRPC Middleware to evaluate the principal against the given authorization rules.
  *
- * We consider a user to have an editor role if they are a committee member. More specifically, you have to be a member
- * of any of the committess in `AFFILIATIONS` from /src/modules/authorization-service.ts.
+ * See file /src/authorization.ts for more details on the authorization system.
  */
-export function hasEditorRole<TInput>() {
-  const handler: MiddlewareFunction<ContextWithPrincipal, ContextWithPrincipal, TInput> = async ({ ctx, next }) => {
-    ctx.authorize.requireAffiliation()
-    return next({ ctx })
-  }
-  return handler
-}
-
-/**
- * tRPC Middleware to require the caller to have an administrator role
- *
- * We consider a user to have an administrator role if they are a member of HS (Hovedstyret) or Dotkom.
- */
-export function hasAdministratorRole<TInput>() {
-  const handler: MiddlewareFunction<ContextWithPrincipal, ContextWithPrincipal, TInput> = async ({ ctx, next }) => {
-    ctx.authorize.requireAffiliation(...ctx.authorize.ADMIN_AFFILIATIONS)
-    return next({ ctx })
+export function withAuthorization<TInput>(rule: Rule<TInput>) {
+  const handler: MiddlewareFunction<Context, Context, TInput> = async ({ ctx, next, input }) => {
+    async function evaluate<TRuleInput>(rule: Rule<TRuleInput>, context: RuleContext<TRuleInput>): Promise<boolean> {
+      return await rule.evaluate(context)
+    }
+    const decision = evaluate(rule, {
+      ctx,
+      evaluate,
+      input,
+      principal: ctx.principal,
+    })
+    if (!decision) {
+      throw new ForbiddenError(
+        `Principal(ID=${ctx.principal?.subject ?? "<anonymous>"}) is not permitted to perform this operation`
+      )
+    }
+    return await next({ ctx })
   }
   return handler
 }
