@@ -9,14 +9,14 @@ import {
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import invariant from "tiny-invariant"
 import z from "zod"
-import { isAdministrator } from "../../authorization"
+import { isAdministrator, isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { staffProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 import type { EditorRole } from "../authorization-service"
 
 export type CreateWorkspaceUserInput = inferProcedureInput<typeof createWorkspaceUserProcedure>
 export type CreateWorkspaceUserOutput = inferProcedureOutput<typeof createWorkspaceUserProcedure>
-const createWorkspaceUserProcedure = staffProcedure
+const createWorkspaceUserProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .output(
     z.object({
@@ -27,6 +27,7 @@ const createWorkspaceUserProcedure = staffProcedure
     })
   )
   .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -40,7 +41,7 @@ const createWorkspaceUserProcedure = staffProcedure
 
 export type FindWorkspaceUserInput = inferProcedureInput<typeof findWorkspaceUserProcedure>
 export type FindWorkspaceUserOutput = inferProcedureOutput<typeof findWorkspaceUserProcedure>
-const findWorkspaceUserProcedure = staffProcedure
+const findWorkspaceUserProcedure = procedure
   .input(
     z.object({
       userId: UserSchema.shape.id,
@@ -49,7 +50,9 @@ const findWorkspaceUserProcedure = staffProcedure
   )
   .output(WorkspaceUserSchema.nullable())
   .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
@@ -67,7 +70,7 @@ const findWorkspaceUserProcedure = staffProcedure
 
 export type LinkWorkspaceUserInput = inferProcedureInput<typeof linkWorkspaceUserProcedure>
 export type LinkWorkspaceUserOutput = inferProcedureOutput<typeof linkWorkspaceUserProcedure>
-const linkWorkspaceUserProcedure = staffProcedure
+const linkWorkspaceUserProcedure = procedure
   .input(
     z.object({
       userId: UserSchema.shape.id,
@@ -91,7 +94,7 @@ const linkWorkspaceUserProcedure = staffProcedure
 
 export type LinkWorkspaceGroupInput = inferProcedureInput<typeof linkWorkspaceGroupProcedure>
 export type LinkWorkspaceGroupOutput = inferProcedureOutput<typeof linkWorkspaceGroupProcedure>
-const linkWorkspaceGroupProcedure = staffProcedure
+const linkWorkspaceGroupProcedure = procedure
   .input(
     z.object({
       groupSlug: GroupSchema.shape.slug,
@@ -100,6 +103,7 @@ const linkWorkspaceGroupProcedure = staffProcedure
   )
   .output(GroupSchema)
   .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -123,7 +127,7 @@ const linkWorkspaceGroupProcedure = staffProcedure
 
 export type ResetWorkspaceUserPasswordInput = inferProcedureInput<typeof resetWorkspaceUserPasswordProcedure>
 export type ResetWorkspaceUserPasswordOutput = inferProcedureOutput<typeof resetWorkspaceUserPasswordProcedure>
-const resetWorkspaceUserPasswordProcedure = staffProcedure
+const resetWorkspaceUserPasswordProcedure = procedure
   .input(
     z.object({
       userId: UserSchema.shape.id,
@@ -138,6 +142,7 @@ const resetWorkspaceUserPasswordProcedure = staffProcedure
     })
   )
   .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -151,7 +156,7 @@ const resetWorkspaceUserPasswordProcedure = staffProcedure
 
 export type CreateWorkspaceGroupInput = inferProcedureInput<typeof createWorkspaceGroupProcedure>
 export type CreateWorkspaceGroupOutput = inferProcedureOutput<typeof createWorkspaceGroupProcedure>
-const createWorkspaceGroupProcedure = staffProcedure
+const createWorkspaceGroupProcedure = procedure
   .input(
     z.object({
       groupSlug: GroupSchema.shape.slug,
@@ -171,7 +176,7 @@ const createWorkspaceGroupProcedure = staffProcedure
 
 export type FindWorkspaceGroupInput = inferProcedureInput<typeof findWorkspaceGroupProcedure>
 export type FindWorkspaceGroupOutput = inferProcedureOutput<typeof findWorkspaceGroupProcedure>
-const findWorkspaceGroupProcedure = staffProcedure
+const findWorkspaceGroupProcedure = procedure
   .input(
     z.object({
       groupSlug: GroupSchema.shape.slug,
@@ -180,7 +185,9 @@ const findWorkspaceGroupProcedure = staffProcedure
   )
   .output(WorkspaceGroupSchema.nullable())
   .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
@@ -198,7 +205,7 @@ const findWorkspaceGroupProcedure = staffProcedure
 
 export type SynchronizeWorkspaceGroupInput = inferProcedureInput<typeof synchronizeWorkspaceGroupProcedure>
 export type SynchronizeWorkspaceGroupOutput = inferProcedureOutput<typeof synchronizeWorkspaceGroupProcedure>
-const synchronizeWorkspaceGroupProcedure = staffProcedure
+const synchronizeWorkspaceGroupProcedure = procedure
   .input(
     z.object({
       groupSlug: GroupSchema.shape.slug,
@@ -218,7 +225,7 @@ const synchronizeWorkspaceGroupProcedure = staffProcedure
 
 export type GetMembersForWorkspaceGroupInput = inferProcedureInput<typeof getMembersForWorkspaceGroupProcedure>
 export type GetMembersForWorkspaceGroupOutput = inferProcedureOutput<typeof getMembersForWorkspaceGroupProcedure>
-const getMembersForWorkspaceGroupProcedure = staffProcedure
+const getMembersForWorkspaceGroupProcedure = procedure
   .input(
     z.object({
       groupSlug: GroupSchema.shape.slug,
@@ -226,18 +233,20 @@ const getMembersForWorkspaceGroupProcedure = staffProcedure
   )
   .output(WorkspaceMemberLinkSchema.array())
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
+
+    ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
 
     return await workspaceService.getMembersForGroup(ctx.handle, input.groupSlug)
   })
 
 export type GetGroupsForWorkspaceUserInput = inferProcedureInput<typeof getGroupsForUserWorkspaceProcedure>
 export type GetGroupsForWorkspaceUserOutput = inferProcedureOutput<typeof getGroupsForUserWorkspaceProcedure>
-const getGroupsForUserWorkspaceProcedure = staffProcedure
+const getGroupsForUserWorkspaceProcedure = procedure
   .input(
     z.object({
       userId: UserSchema.shape.id,
@@ -245,6 +254,7 @@ const getGroupsForUserWorkspaceProcedure = staffProcedure
   )
   .output(WorkspaceGroupLinkSchema.array())
   .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
