@@ -18,7 +18,6 @@ export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
 const allUsersProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: UserFilterQuerySchema.optional() }))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const items = await ctx.userService.findUsers(ctx.handle, { ...input.filter }, input)
     return {
@@ -32,7 +31,6 @@ export type GetUserOutput = inferProcedureOutput<typeof getUserProcedure>
 const getUserProcedure = procedure
   .input(UserSchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.userService.getById(ctx.handle, input)
   })
@@ -42,7 +40,6 @@ export type GetUserByProfileSlugOutput = inferProcedureOutput<typeof getUserByPr
 const getUserByProfileSlugProcedure = procedure
   .input(UserSchema.shape.profileSlug)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.userService.getByProfileSlug(ctx.handle, input)
   })
@@ -52,7 +49,6 @@ export type FindUserByProfileSlugOutput = inferProcedureOutput<typeof findUserBy
 const findUserByProfileSlugProcedure = procedure
   .input(UserSchema.shape.profileSlug)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.userService.findByProfileSlug(ctx.handle, input)
   })
@@ -148,7 +144,6 @@ export type GetMeOutput = inferProcedureOutput<typeof getMeProcedure>
 const getMeProcedure = authenticatedProcedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx }) => {
     return ctx.userService.getById(ctx.handle, ctx.principal.subject)
   })
@@ -157,7 +152,6 @@ export type FindMeInput = inferProcedureInput<typeof findMeProcedure>
 export type FindMeOutput = inferProcedureOutput<typeof findMeProcedure>
 const findMeProcedure = procedure
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx }) => {
     if (!ctx?.principal?.subject) {
       return null
@@ -194,7 +188,6 @@ export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
 export type IsStaffOutput = inferProcedureOutput<typeof isStaffProcedure>
 const isStaffProcedure = procedure
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx }) => {
     try {
       ctx.authorize.requireEditorRole()
@@ -208,7 +201,6 @@ export type IsAdminInput = inferProcedureInput<typeof isAdminProcedure>
 export type IsAdminOutput = inferProcedureOutput<typeof isAdminProcedure>
 const isAdminProcedure = procedure
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx }) => {
     try {
       ctx.authorize.requireEditorRole(...ctx.authorize.ADMIN_EDITOR_ROLES)
