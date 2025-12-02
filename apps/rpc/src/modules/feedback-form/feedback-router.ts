@@ -11,7 +11,7 @@ import {
 } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isEditor, isSameSubject } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
@@ -153,7 +153,11 @@ const createAnswerProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.formAnswer.attendeeId)
-    ctx.authorize.requireMe(attendee.userId)
+    // Allow users to create answers if they are the attendee.
+    await ctx.addAuthorizationGuard(
+      isSameSubject(() => attendee.userId),
+      input
+    )
 
     const answerEligibility = await ctx.feedbackFormService.getFeedbackEligibility(
       ctx.handle,
@@ -196,7 +200,11 @@ const findOwnAnswerByAttendeeProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    ctx.authorize.requireMe(attendee.userId)
+    // Allow users to view answers if they are the attendee.
+    await ctx.addAuthorizationGuard(
+      isSameSubject(() => attendee.userId),
+      input
+    )
 
     return ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.handle, input.formId, input.attendeeId)
   })
