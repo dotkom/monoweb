@@ -1,5 +1,5 @@
 import { createSecretKey } from "node:crypto"
-import { SignJWT, jwtVerify } from "jose"
+import { jwtVerify, SignJWT } from "jose"
 import { z } from "zod"
 import { Auth0Profile, defaultSessionLengthSeconds } from "./authentication"
 

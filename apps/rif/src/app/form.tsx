@@ -1,6 +1,6 @@
 "use client"
 
-import { Checkbox, Label, Text, TextInput, Textarea, Title } from "@dotkomonline/ui"
+import { Checkbox, Label, Text, Textarea, TextInput, Title } from "@dotkomonline/ui"
 import { ErrorMessage } from "@hookform/error-message"
 import type { FC } from "react"
 import { Controller, useFormContext } from "react-hook-form"

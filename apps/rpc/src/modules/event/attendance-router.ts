@@ -12,8 +12,8 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { TRPCError } from "@trpc/server"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { TRPCError } from "@trpc/server"
 import { addHours, max } from "date-fns"
 import { z } from "zod"
 import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"

@@ -3,8 +3,8 @@ import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension
 import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { type OAuth2Service, type OAuthScope, defaultSessionLengthSeconds } from "./authentication"
-import { type Session, createSession, getSession } from "./session"
+import { defaultSessionLengthSeconds, type OAuth2Service, type OAuthScope } from "./authentication"
+import { createSession, getSession, type Session } from "./session"
 
 /**
  * Create a short-lived cookie intended to hold state/verifier/nonce values

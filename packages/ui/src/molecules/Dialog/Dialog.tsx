@@ -1,7 +1,7 @@
 "use client"
 
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
-import type { ComponentPropsWithRef, ComponentPropsWithoutRef, FC } from "react"
+import type { ComponentPropsWithoutRef, ComponentPropsWithRef, FC } from "react"
 import { Button, type ButtonProps } from "../../atoms/Button/Button"
 import { cn } from "../../utils"
 

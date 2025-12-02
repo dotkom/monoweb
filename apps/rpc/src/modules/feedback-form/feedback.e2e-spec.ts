@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto"
+import type { AttendanceId, EventId, UserId } from "@dotkomonline/types"
 import {
   type EventWrite,
   type FeedbackFormWrite,
@@ -6,13 +7,11 @@ import {
   type FeedbackQuestionWrite,
   FeedbackRejectionCause,
 } from "@dotkomonline/types"
-import type { AttendanceId, EventId, UserId } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { faker } from "@faker-js/faker"
 import { addDays } from "date-fns"
 import invariant from "tiny-invariant"
-import { describe, expect, it } from "vitest"
-import { vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
 import {
   getMockAttendance,

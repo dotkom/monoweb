@@ -1,7 +1,7 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { compareAsc } from "date-fns"
 import { z } from "zod"
-import { type User, UserSchema, findActiveMembership, getMembershipGrade } from "./user"
+import { findActiveMembership, getMembershipGrade, type User, UserSchema } from "./user"
 
 // TODO: Where on earth does this come from?
 export type AttendanceStatus = "NotOpened" | "Open" | "Closed"

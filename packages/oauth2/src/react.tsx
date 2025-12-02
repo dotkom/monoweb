@@ -1,6 +1,6 @@
 "use client"
 
-import { type FC, type PropsWithChildren, createContext, useContext } from "react"
+import { createContext, type FC, type PropsWithChildren, useContext } from "react"
 import type { Session } from "./session"
 
 export const SessionContext = createContext<Session | null>(null)

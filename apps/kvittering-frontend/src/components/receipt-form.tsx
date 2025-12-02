@@ -1,4 +1,13 @@
 "use client"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as Sentry from "@sentry/react"
+import clsx from "clsx"
+import { CloudUpload, Paperclip } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import useFormPersist from "react-hook-form-persist"
+import { toast } from "sonner"
+import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import {
   FileInput,
@@ -11,15 +20,6 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as Sentry from "@sentry/react"
-import clsx from "clsx"
-import { CloudUpload, Paperclip } from "lucide-react"
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import useFormPersist from "react-hook-form-persist"
-import { toast } from "sonner"
-import * as z from "zod"
 import { alertFormSubmission } from "../lib/alert"
 import type { ApiFormData } from "../lib/api"
 
@@ -95,6 +95,13 @@ function formIsEmpty(values: z.infer<typeof formSchema>) {
 
 export function ReceiptForm() {
   const isTestMode = window.location.pathname.includes("test")
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  })
+  const testFile: UploadedFile = {
+    file: new File(["test content"], "bilde.png", { type: "image/png" }),
+    url: "https://s3.eu-north-1.amazonaws.com/receipt-archive.online.ntnu.no/bilde.png",
+  }
 
   useEffect(() => {
     if (!isTestMode) {
@@ -124,13 +131,7 @@ export function ReceiptForm() {
     form.setValue("intent", testData.intent)
     form.setValue("comments", testData.comments)
     form.setValue("attachments", testData.attachments)
-  }, [isTestMode])
-
-  const testFile: UploadedFile = {
-    file: new File(["test content"], "bilde.png", { type: "image/png" }),
-    url: "https://s3.eu-north-1.amazonaws.com/receipt-archive.online.ntnu.no/bilde.png",
-  }
-
+  }, [isTestMode, form.setValue, testFile.url])
   const [files, setFiles] = useState<UploadedFile[] | null>(isTestMode ? [testFile] : null)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
 
@@ -139,11 +140,6 @@ export function ReceiptForm() {
     maxSize: 1024 * 1024 * 50,
     multiple: true,
   }
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  })
-
   useFormPersist("storageKey", {
     watch: form.watch,
     setValue: form.setValue,
@@ -237,7 +233,7 @@ export function ReceiptForm() {
 
       console.log("emailPromise", emailPromise)
       await emailPromise.unwrap()
-    } catch (error) {
+    } catch (_error) {
       Sentry.captureMessage("An error ocurred in onSubmit", "error")
     }
   }

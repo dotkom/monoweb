@@ -58,7 +58,7 @@ export const Intermediate = () => {
             label={item.label}
             checked={values[index]}
             id={item.id}
-            onCheckedChange={(e) => {
+            onCheckedChange={() => {
               setValues((values) => {
                 const newValues = [...values]
                 newValues[index] = !newValues[index]

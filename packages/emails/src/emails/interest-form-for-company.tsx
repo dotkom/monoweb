@@ -2,7 +2,7 @@ import { Body, Column, Container, Head, Heading, Html, Preview, Row, Section, Te
 import { Tailwind } from "@react-email/tailwind"
 import type { FC } from "react"
 import { z } from "zod"
-import { type TemplateProps, createTemplate } from "../template.js"
+import { createTemplate, type TemplateProps } from "../template.js"
 
 const Props = z.object({
   companyName: z.string().min(1).max(140),

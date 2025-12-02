@@ -1,5 +1,5 @@
 import { IconAlertCircle, IconAlertTriangle, IconCircleCheck, IconError404, IconInfoCircle } from "@tabler/icons-react"
-import { type VariantProps, cva } from "cva"
+import { cva, type VariantProps } from "cva"
 import type { FC } from "react"
 import { cn } from "../../utils"
 

@@ -3,7 +3,7 @@ import { getLogger } from "@dotkomonline/logger"
 import type { Task, TaskId, TaskStatus, TaskType, TaskWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
-import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
+import { getTaskDefinition, type InferTaskData, type TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 
 export type TaskService = {
