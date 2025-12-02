@@ -8,8 +8,11 @@ import {
   GroupSchema,
   GroupWriteSchema,
 } from "@dotkomonline/types"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { type Context, procedure, staffProcedure, t } from "../../trpc"
+import { isEditor } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { type Context, procedure, t } from "../../trpc"
 import type { EditorRole } from "../authorization-service"
 
 const getRequiredEditorRoles = (
@@ -32,158 +35,247 @@ const getRequiredEditorRoles = (
   return requiredEditorRoles
 }
 
-export const groupRouter = t.router({
-  create: staffProcedure.input(GroupWriteSchema).mutation(async ({ input, ctx }) => {
+export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
+export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
+const createGroupProcedure = procedure
+  .input(GroupWriteSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
     ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, input))
-    return ctx.executeAuditedTransaction(async (handle) => ctx.groupService.create(handle, input))
-  }),
-  all: procedure.query(async ({ ctx }) => ctx.executeTransaction(async (handle) => ctx.groupService.findMany(handle))),
-  allByType: procedure
-    .input(GroupSchema.shape.type)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.findManyByType(handle, input))
-    ),
-  find: procedure
-    .input(GroupSchema.shape.slug)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.findBySlug(handle, input))
-    ),
-  get: procedure
-    .input(GroupSchema.shape.slug)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.getBySlug(handle, input))
-    ),
-  getByType: procedure
-    .input(z.object({ groupId: GroupSchema.shape.slug, type: GroupSchema.shape.type }))
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.getBySlugAndType(handle, input.groupId, input.type))
-    ),
-  update: staffProcedure
-    .input(
-      z.object({
-        id: GroupSchema.shape.slug,
-        values: GroupWriteSchema,
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      return ctx.executeAuditedTransaction(async (handle) => {
-        const group = await ctx.groupService.getBySlug(handle, input.id)
+    return ctx.groupService.create(ctx.handle, input)
+  })
 
-        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+export type AllGroupsInput = inferProcedureInput<typeof allGroupsProcedure>
+export type AllGroupsOutput = inferProcedureOutput<typeof allGroupsProcedure>
+const allGroupsProcedure = procedure
+  .use(withDatabaseTransaction())
+  .query(async ({ ctx }) => ctx.groupService.findMany(ctx.handle))
 
-        return await ctx.groupService.update(handle, input.id, input.values)
-      })
-    }),
-  delete: staffProcedure.input(GroupSchema.shape.slug).mutation(async ({ input, ctx }) => {
-    return ctx.executeAuditedTransaction(async (handle) => {
-      const group = await ctx.groupService.getBySlug(handle, input)
+export type AllGroupsByTypeInput = inferProcedureInput<typeof allByTypeProcedure>
+export type AllGroupsByTypeOutput = inferProcedureOutput<typeof allByTypeProcedure>
+const allByTypeProcedure = procedure
+  .input(GroupSchema.shape.type)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.groupService.findManyByType(ctx.handle, input))
 
-      ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group))
+export type FindGroupInput = inferProcedureInput<typeof findGroupProcedure>
+export type FindGroupOutput = inferProcedureOutput<typeof findGroupProcedure>
+const findGroupProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.groupService.findBySlug(ctx.handle, input))
 
-      return await ctx.groupService.delete(handle, input)
+export type GetGroupInput = inferProcedureInput<typeof getGroupProcedure>
+export type GetGroupOutput = inferProcedureOutput<typeof getGroupProcedure>
+const getGroupProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.groupService.getBySlug(ctx.handle, input))
+
+export type GetByTypeInput = inferProcedureInput<typeof getByTypeProcedure>
+export type GetByTypeOutput = inferProcedureOutput<typeof getByTypeProcedure>
+const getByTypeProcedure = procedure
+  .input(z.object({ groupId: GroupSchema.shape.slug, type: GroupSchema.shape.type }))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.groupService.getBySlugAndType(ctx.handle, input.groupId, input.type))
+
+export type UpdateGroupInput = inferProcedureInput<typeof updateGroupProcedure>
+export type UpdateGroupOutput = inferProcedureOutput<typeof updateGroupProcedure>
+const updateGroupProcedure = procedure
+  .input(
+    z.object({
+      id: GroupSchema.shape.slug,
+      values: GroupWriteSchema,
     })
-  }),
-  getMembers: procedure
-    .input(GroupSchema.shape.slug)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.getMembers(handle, input))
-    ),
-  getMember: procedure
-    .input(
-      z.object({
-        groupId: GroupSchema.shape.slug,
-        userId: GroupMembershipSchema.shape.userId,
-      })
-    )
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.getMember(handle, input.groupId, input.userId))
-    ),
-  allByMember: procedure
-    .input(GroupMembershipSchema.shape.userId)
-    .query(async ({ input, ctx }) =>
-      ctx.executeTransaction(async (handle) => ctx.groupService.findManyByMemberUserId(handle, input))
-    ),
-  startMembership: staffProcedure
-    .input(
-      z.object({
-        userId: GroupMembershipSchema.shape.userId,
-        groupId: GroupMembershipSchema.shape.groupId,
-        roleIds: GroupRoleSchema.shape.id.array(),
-      })
-    )
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeAuditedTransaction(async (handle) => {
-        const group = await ctx.groupService.getBySlug(handle, input.groupId)
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.id)
 
-        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
 
-        return ctx.groupService.startMembership(handle, input.userId, input.groupId, new Set(input.roleIds))
-      })
-    ),
-  endMembership: staffProcedure
-    .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeAuditedTransaction(async (handle) => {
-        const group = await ctx.groupService.getBySlug(handle, input.groupId)
+    return ctx.groupService.update(ctx.handle, input.id, input.values)
+  })
 
-        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+export type DeleteGroupInput = inferProcedureInput<typeof deleteGroupProcedure>
+export type DeleteGroupOutput = inferProcedureOutput<typeof deleteGroupProcedure>
+const deleteGroupProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input)
 
-        return ctx.groupService.endMembership(handle, input.userId, input.groupId)
-      })
-    ),
-  updateMembership: staffProcedure
-    .input(
-      z.object({
-        id: GroupMembershipSchema.shape.id,
-        data: GroupMembershipWriteSchema,
-        roleIds: GroupRoleSchema.shape.id.array(),
-      })
-    )
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeAuditedTransaction(async (handle) => {
-        const group = await ctx.groupService.getByGroupMembershipId(handle, input.id)
+    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group))
 
-        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+    return ctx.groupService.delete(ctx.handle, input)
+  })
 
-        return ctx.groupService.updateMembership(handle, input.id, input.data, new Set(input.roleIds))
-      })
-    ),
-  createRole: staffProcedure.input(GroupRoleWriteSchema).mutation(async ({ input, ctx }) =>
-    ctx.executeAuditedTransaction(async (handle) => {
-      const group = await ctx.groupService.getBySlug(handle, input.groupId)
+export type GetMembersInput = inferProcedureInput<typeof getMembersProcedure>
+export type GetMembersOutput = inferProcedureOutput<typeof getMembersProcedure>
+const getMembersProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.groupService.getMembers(ctx.handle, input))
 
-      ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
-
-      return ctx.groupService.createRole(handle, input)
+export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>
+export type GetMemberOutput = inferProcedureOutput<typeof getMemberProcedure>
+const getMemberProcedure = procedure
+  .input(
+    z.object({
+      groupId: GroupSchema.shape.slug,
+      userId: GroupMembershipSchema.shape.userId,
     })
-  ),
-  updateRole: staffProcedure
-    .input(
-      z.object({
-        id: GroupRoleSchema.shape.id,
-        role: GroupRoleWriteSchema,
-      })
-    )
-    .mutation(async ({ input, ctx }) =>
-      ctx.executeAuditedTransaction(async (handle) => {
-        const group = await ctx.groupService.getByGroupRoleId(handle, input.id)
+  )
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.groupService.getMember(ctx.handle, input.groupId, input.userId))
 
-        ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+export type AllByMemberInput = inferProcedureInput<typeof allByMemberProcedure>
+export type AllByMemberOutput = inferProcedureOutput<typeof allByMemberProcedure>
+const allByMemberProcedure = procedure
+  .input(GroupMembershipSchema.shape.userId)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.groupService.findManyByMemberUserId(ctx.handle, input))
 
-        return ctx.groupService.updateRole(handle, input.id, input.role)
-      })
-    ),
-  createFileUpload: staffProcedure
-    .input(
-      z.object({
-        filename: z.string(),
-        contentType: z.string(),
-      })
-    )
-    .output(z.custom<PresignedPost>())
-    .mutation(async ({ input, ctx }) => {
-      return ctx.executeTransaction(async (handle) => {
-        return ctx.groupService.createFileUpload(handle, input.filename, input.contentType, ctx.principal.subject)
-      })
-    }),
+export type StartMembershipInput = inferProcedureInput<typeof startMembershipProcedure>
+export type StartMembershipOutput = inferProcedureOutput<typeof startMembershipProcedure>
+const startMembershipProcedure = procedure
+  .input(
+    z.object({
+      userId: GroupMembershipSchema.shape.userId,
+      groupId: GroupMembershipSchema.shape.groupId,
+      roleIds: GroupRoleSchema.shape.id.array(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
+
+    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+
+    return ctx.groupService.startMembership(ctx.handle, input.userId, input.groupId, new Set(input.roleIds))
+  })
+
+export type EndMembershipInput = inferProcedureInput<typeof endMembershipProcedure>
+export type EndMembershipOutput = inferProcedureOutput<typeof endMembershipProcedure>
+const endMembershipProcedure = procedure
+  .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
+
+    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+
+    return ctx.groupService.endMembership(ctx.handle, input.userId, input.groupId)
+  })
+
+export type UpdateMembershipInput = inferProcedureInput<typeof updateMembershipProcedure>
+export type UpdateMembershipOutput = inferProcedureOutput<typeof updateMembershipProcedure>
+const updateMembershipProcedure = procedure
+  .input(
+    z.object({
+      id: GroupMembershipSchema.shape.id,
+      data: GroupMembershipWriteSchema,
+      roleIds: GroupRoleSchema.shape.id.array(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getByGroupMembershipId(ctx.handle, input.id)
+
+    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+
+    return ctx.groupService.updateMembership(ctx.handle, input.id, input.data, new Set(input.roleIds))
+  })
+
+export type CreateRoleInput = inferProcedureInput<typeof createRoleProcedure>
+export type CreateRoleOutput = inferProcedureOutput<typeof createRoleProcedure>
+const createRoleProcedure = procedure
+  .input(GroupRoleWriteSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
+
+    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+
+    return ctx.groupService.createRole(ctx.handle, input)
+  })
+
+export type UpdateRoleInput = inferProcedureInput<typeof updateRoleProcedure>
+export type UpdateRoleOutput = inferProcedureOutput<typeof updateRoleProcedure>
+const updateRoleProcedure = procedure
+  .input(
+    z.object({
+      id: GroupRoleSchema.shape.id,
+      role: GroupRoleWriteSchema,
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getByGroupRoleId(ctx.handle, input.id)
+
+    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+
+    return ctx.groupService.updateRole(ctx.handle, input.id, input.role)
+  })
+
+export type CreateFileUploadInput = inferProcedureInput<typeof createFileUploadProcedure>
+export type CreateFileUploadOutput = inferProcedureOutput<typeof createFileUploadProcedure>
+const createFileUploadProcedure = procedure
+  .input(
+    z.object({
+      filename: z.string(),
+      contentType: z.string(),
+    })
+  )
+  .output(z.custom<PresignedPost>())
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    return ctx.groupService.createFileUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
+  })
+
+export const groupRouter = t.router({
+  create: createGroupProcedure,
+  all: allGroupsProcedure,
+  allByType: allByTypeProcedure,
+  find: findGroupProcedure,
+  get: getGroupProcedure,
+  getByType: getByTypeProcedure,
+  update: updateGroupProcedure,
+  delete: deleteGroupProcedure,
+  getMembers: getMembersProcedure,
+  getMember: getMemberProcedure,
+  allByMember: allByMemberProcedure,
+  startMembership: startMembershipProcedure,
+  endMembership: endMembershipProcedure,
+  updateMembership: updateMembershipProcedure,
+  createRole: createRoleProcedure,
+  updateRole: updateRoleProcedure,
+  createFileUpload: createFileUploadProcedure,
 })
