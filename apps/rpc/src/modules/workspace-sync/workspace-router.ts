@@ -50,7 +50,6 @@ const findWorkspaceUserProcedure = staffProcedure
   .output(WorkspaceUserSchema.nullable())
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
@@ -182,7 +181,6 @@ const findWorkspaceGroupProcedure = staffProcedure
   .output(WorkspaceGroupSchema.nullable())
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
@@ -230,7 +228,6 @@ const getMembersForWorkspaceGroupProcedure = staffProcedure
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
@@ -249,7 +246,6 @@ const getGroupsForUserWorkspaceProcedure = staffProcedure
   .output(WorkspaceGroupLinkSchema.array())
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
