@@ -297,10 +297,8 @@ const createFileUploadProcedure = procedure
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .mutation(async ({ ctx, input }) => {
-    return ctx.eventService.createFileUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
+    return ctx.eventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 
 export const eventRouter = t.router({

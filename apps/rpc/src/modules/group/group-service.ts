@@ -74,12 +74,7 @@ export interface GroupService {
   createRole(handle: DBHandle, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, groupRoleId: GroupRoleId, groupRoleData: GroupRoleWrite): Promise<GroupRole>
 
-  createFileUpload(
-    handle: DBHandle,
-    filename: string,
-    contentType: string,
-    createdByUserId: UserId
-  ): Promise<PresignedPost>
+  createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
 
 export function getGroupService(
@@ -308,7 +303,7 @@ export function getGroupService(
       return await groupRepository.updateGroupRole(handle, groupRoleId, groupRoleData)
     },
 
-    async createFileUpload(handle, filename, contentType, createdByUserId) {
+    async createFileUpload(filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `group/${Date.now()}-${uuid}-${slugify(filename)}`
 
