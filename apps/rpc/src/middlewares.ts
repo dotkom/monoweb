@@ -30,7 +30,7 @@ type WithTransaction = {
 export function withDatabaseTransaction<TContext extends Context, TInput>(
   isolationLevel: Prisma.TransactionIsolationLevel = "ReadCommitted"
 ) {
-  const handler: MiddlewareFunction<TContext, WithTransaction, TInput> = async ({ ctx, next }) => {
+  const handler: MiddlewareFunction<TContext, TContext & WithTransaction, TInput> = async ({ ctx, next }) => {
     return await ctx.prisma.$transaction(
       async (handle) => {
         return await next({
