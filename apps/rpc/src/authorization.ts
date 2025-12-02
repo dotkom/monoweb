@@ -144,3 +144,11 @@ export function isGroupMember<TInput>(editorRole: EditorRole): Rule<TInput> {
     },
   }
 }
+
+/**
+ * Business rule that returns true if the user is a member of any of the given groups
+ */
+export function isGroupMemberOfAny<TInput>(editorRoles: [EditorRole, ...EditorRole[]]): Rule<TInput> {
+  const [role, ...roles] = editorRoles
+  return or(isGroupMember(role), ...roles.map(isGroupMember))
+}
