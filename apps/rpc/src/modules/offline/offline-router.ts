@@ -4,11 +4,11 @@ import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export type CreateOfflineInput = inferProcedureInput<typeof createOfflineProcedure>
 export type CreateOfflineOutput = inferProcedureOutput<typeof createOfflineProcedure>
-const createOfflineProcedure = staffProcedure
+const createOfflineProcedure = procedure
   .input(OfflineWriteSchema)
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -20,7 +20,7 @@ const createOfflineProcedure = staffProcedure
 
 export type EditOfflineInput = inferProcedureInput<typeof editOfflineProcedure>
 export type EditOfflineOutput = inferProcedureOutput<typeof editOfflineProcedure>
-const editOfflineProcedure = staffProcedure
+const editOfflineProcedure = procedure
   .input(
     z.object({
       id: OfflineSchema.shape.id,
@@ -64,7 +64,7 @@ const getOfflineProcedure = procedure
 
 export type CreateOfflineFileUploadInput = inferProcedureInput<typeof createOfflineFileUploadProcedure>
 export type CreateOfflineFileUploadOutput = inferProcedureOutput<typeof createOfflineFileUploadProcedure>
-const createOfflineFileUploadProcedure = staffProcedure
+const createOfflineFileUploadProcedure = procedure
   .input(
     z.object({
       filename: z.string(),
