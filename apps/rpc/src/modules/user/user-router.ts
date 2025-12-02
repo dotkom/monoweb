@@ -11,7 +11,7 @@ import { z } from "zod"
 import { isAdministrator } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, staffProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, t } from "../../trpc"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
@@ -83,17 +83,17 @@ const createUserFileUploadProcedure = authenticatedProcedure
 
 export type RegisterUserInput = inferProcedureInput<typeof registerUserProcedure>
 export type RegisterUserOutput = inferProcedureOutput<typeof registerUserProcedure>
+// NOTE: This procedure has no audit log entries, because the procedure is anonymous.
 const registerUserProcedure = procedure
   .input(UserSchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     return ctx.userService.register(ctx.handle, input)
   })
 
 export type CreateUserMembershipInput = inferProcedureInput<typeof createUserMembershipProcedure>
 export type CreateUserMembershipOutput = inferProcedureOutput<typeof createUserMembershipProcedure>
-const createUserMembershipProcedure = staffProcedure
+const createUserMembershipProcedure = procedure
   .input(
     z.object({
       userId: UserSchema.shape.id,
@@ -109,7 +109,7 @@ const createUserMembershipProcedure = staffProcedure
 
 export type UpdateUserMembershipInput = inferProcedureInput<typeof updateUserMembershipProcedure>
 export type UpdateUserMembershipOutput = inferProcedureOutput<typeof updateUserMembershipProcedure>
-const updateUserMembershipProcedure = staffProcedure
+const updateUserMembershipProcedure = procedure
   .input(
     z.object({
       membershipId: MembershipSchema.shape.id,
@@ -125,7 +125,7 @@ const updateUserMembershipProcedure = staffProcedure
 
 export type DeleteUserMembershipInput = inferProcedureInput<typeof deleteUserMembershipProcedure>
 export type DeleteUserMembershipOutput = inferProcedureOutput<typeof deleteUserMembershipProcedure>
-const deleteUserMembershipProcedure = staffProcedure
+const deleteUserMembershipProcedure = procedure
   .input(
     z.object({
       membershipId: MembershipSchema.shape.id,
