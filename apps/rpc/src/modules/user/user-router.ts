@@ -150,14 +150,12 @@ const getMeProcedure = authenticatedProcedure
 
 export type FindMeInput = inferProcedureInput<typeof findMeProcedure>
 export type FindMeOutput = inferProcedureOutput<typeof findMeProcedure>
-const findMeProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    if (!ctx?.principal?.subject) {
-      return null
-    }
-    return ctx.userService.findById(ctx.handle, ctx.principal.subject)
-  })
+const findMeProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+  if (!ctx?.principal?.subject) {
+    return null
+  }
+  return ctx.userService.findById(ctx.handle, ctx.principal.subject)
+})
 
 export type UpdateUserInput = inferProcedureInput<typeof updateUserProcedure>
 export type UpdateUserOutput = inferProcedureOutput<typeof updateUserProcedure>
@@ -186,29 +184,25 @@ const updateUserProcedure = authenticatedProcedure
 
 export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
 export type IsStaffOutput = inferProcedureOutput<typeof isStaffProcedure>
-const isStaffProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    try {
-      ctx.authorize.requireEditorRole()
-      return true
-    } catch {
-      return false
-    }
-  })
+const isStaffProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+  try {
+    ctx.authorize.requireEditorRole()
+    return true
+  } catch {
+    return false
+  }
+})
 
 export type IsAdminInput = inferProcedureInput<typeof isAdminProcedure>
 export type IsAdminOutput = inferProcedureOutput<typeof isAdminProcedure>
-const isAdminProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    try {
-      ctx.authorize.requireEditorRole(...ctx.authorize.ADMIN_EDITOR_ROLES)
-      return true
-    } catch {
-      return false
-    }
-  })
+const isAdminProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+  try {
+    ctx.authorize.requireEditorRole(...ctx.authorize.ADMIN_EDITOR_ROLES)
+    return true
+  } catch {
+    return false
+  }
+})
 
 export const userRouter = t.router({
   all: allUsersProcedure,
