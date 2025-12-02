@@ -111,6 +111,17 @@ server.register(fastifyTRPCPlugin, {
 registerObservabilityProbeRoutes(server)
 registerStripeWebhookRoutes(server, serviceLayer)
 
+// You can disable the entire authorization system with UNSAFE_DISABLE_AUTHORIZATION. This checks ensures this is NOT
+// disabled in production-like environments.
+const isOverridingAuthorization = process.env.UNSAFE_DISABLE_AUTHORIZATION === "true"
+if (isOverridingAuthorization) {
+  logger.warn("Authorization framework has been disabled. This is extremely unsafe and should only be done locally")
+  if (["production", "staging"].includes(process.env.NODE_ENV ?? "")) {
+    logger.error("Application has been configured to disable authorization in non-local development")
+    process.exit(1)
+  }
+}
+
 await identifyCallerIAMIdentity(configuration)
 await server.listen({ port: 4444, host: "0.0.0.0" })
 
