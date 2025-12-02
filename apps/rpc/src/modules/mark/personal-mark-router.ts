@@ -12,7 +12,6 @@ const getPersonalMarksByUserProcedure = authenticatedProcedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     ctx.authorize.requireMeOrEditorRole(input.userId, [])
     return ctx.personalMarkService.findMarksByUserId(ctx.handle, input.userId)
@@ -24,7 +23,6 @@ const getVisibleInformationProcedure = authenticatedProcedure
   .input(z.object({ userId: UserSchema.shape.id, paginate: PaginateInputSchema }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx, input }) => {
     ctx.authorize.requireMeOrEditorRole(input.userId, [])
     return ctx.personalMarkService.listVisibleInformationForUser(ctx.handle, ctx.principal.subject)
@@ -37,7 +35,6 @@ const getPersonalMarksByMarkProcedure = staffProcedure
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.personalMarkService.findPersonalMarksByMarkId(ctx.handle, input.markId)
   })
@@ -49,7 +46,6 @@ const getPersonalMarkDetailsByMarkProcedure = staffProcedure
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.personalMarkService.findPersonalMarkDetails(ctx.handle, input.markId)
   })
@@ -73,7 +69,6 @@ const countUsersWithMarkProcedure = staffProcedure
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.personalMarkService.countUsersByMarkId(ctx.handle, input.markId)
   })
@@ -96,7 +91,6 @@ const getExpiryDateForUserProcedure = authenticatedProcedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     ctx.authorize.requireMeOrEditorRole(input.userId, [])
     return ctx.personalMarkService.findPunishmentByUserId(ctx.handle, input.userId)
