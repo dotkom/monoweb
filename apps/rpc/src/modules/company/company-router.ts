@@ -5,11 +5,11 @@ import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export type CreateCompanyInput = inferProcedureInput<typeof createCompanyProcedure>
 export type CreateCompanyOutput = inferProcedureOutput<typeof createCompanyProcedure>
-const createCompanyProcedure = staffProcedure
+const createCompanyProcedure = procedure
   .input(CompanyWriteSchema)
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -21,7 +21,7 @@ const createCompanyProcedure = staffProcedure
 
 export type EditCompanyInput = inferProcedureInput<typeof editCompanyProcedure>
 export type EditCompanyOutput = inferProcedureOutput<typeof editCompanyProcedure>
-const editCompanyProcedure = staffProcedure
+const editCompanyProcedure = procedure
   .input(
     z.object({
       id: CompanySchema.shape.id,
@@ -73,7 +73,7 @@ const getCompanyBySlugProcedure = procedure
 
 export type CreateCompanyFileUploadInput = inferProcedureInput<typeof createCompanyFileUploadProcedure>
 export type CreateCompanyFileUploadOutput = inferProcedureOutput<typeof createCompanyFileUploadProcedure>
-const createCompanyFileUploadProcedure = staffProcedure
+const createCompanyFileUploadProcedure = procedure
   .input(
     z.object({
       filename: z.string(),
