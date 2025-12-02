@@ -101,7 +101,12 @@ export function withAuthorization<TContext extends Context, TInput>(rule: Rule<T
       input,
       principal: ctx.principal,
     })
-    if (!decision) {
+    // IMPORTANT: We allow overriding all authorization decisions with the local environment variable
+    // UNSAFE_DISABLE_AUTHORIZATION. We have additional checks in the code to prevent this to be set to true in
+    // production environments
+    const isOverridingAuthorization = process.env.UNSAFE_DISABLE_AUTHORIZATION === "true"
+
+    if (!decision && !isOverridingAuthorization) {
       throw new ForbiddenError(
         `Principal(ID=${ctx.principal?.subject ?? "<anonymous>"}) is not permitted to perform this operation`
       )
