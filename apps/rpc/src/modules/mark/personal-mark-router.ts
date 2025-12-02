@@ -4,7 +4,7 @@ import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "../../query"
-import { authenticatedProcedure, staffProcedure, t } from "../../trpc"
+import { authenticatedProcedure, procedure, t } from "../../trpc"
 
 export type GetPersonalMarksByUserInput = inferProcedureInput<typeof getPersonalMarksByUserProcedure>
 export type GetPersonalMarksByUserOutput = inferProcedureOutput<typeof getPersonalMarksByUserProcedure>
@@ -13,7 +13,7 @@ const getPersonalMarksByUserProcedure = authenticatedProcedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    ctx.authorize.requireMeOrEditorRole(input.userId, [])
+    ctx.authorize.requireMe(input.userId)
     return ctx.personalMarkService.findMarksByUserId(ctx.handle, input.userId)
   })
 
@@ -24,13 +24,13 @@ const getVisibleInformationProcedure = authenticatedProcedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ ctx, input }) => {
-    ctx.authorize.requireMeOrEditorRole(input.userId, [])
+    ctx.authorize.requireMe(input.userId)
     return ctx.personalMarkService.listVisibleInformationForUser(ctx.handle, ctx.principal.subject)
   })
 
 export type GetPersonalMarksByMarkInput = inferProcedureInput<typeof getPersonalMarksByMarkProcedure>
 export type GetPersonalMarksByMarkOutput = inferProcedureOutput<typeof getPersonalMarksByMarkProcedure>
-const getPersonalMarksByMarkProcedure = staffProcedure
+const getPersonalMarksByMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -41,7 +41,7 @@ const getPersonalMarksByMarkProcedure = staffProcedure
 
 export type GetPersonalMarkDetailsByMarkInput = inferProcedureInput<typeof getPersonalMarkDetailsByMarkProcedure>
 export type GetPersonalMarkDetailsByMarkOutput = inferProcedureOutput<typeof getPersonalMarkDetailsByMarkProcedure>
-const getPersonalMarkDetailsByMarkProcedure = staffProcedure
+const getPersonalMarkDetailsByMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -52,7 +52,7 @@ const getPersonalMarkDetailsByMarkProcedure = staffProcedure
 
 export type AddPersonalMarkToUserInput = inferProcedureInput<typeof addPersonalMarkToUserProcedure>
 export type AddPersonalMarkToUserOutput = inferProcedureOutput<typeof addPersonalMarkToUserProcedure>
-const addPersonalMarkToUserProcedure = staffProcedure
+const addPersonalMarkToUserProcedure = procedure
   .input(CreatePersonalMarkSchema)
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -64,7 +64,7 @@ const addPersonalMarkToUserProcedure = staffProcedure
 
 export type CountUsersWithMarkInput = inferProcedureInput<typeof countUsersWithMarkProcedure>
 export type CountUsersWithMarkOutput = inferProcedureOutput<typeof countUsersWithMarkProcedure>
-const countUsersWithMarkProcedure = staffProcedure
+const countUsersWithMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId }))
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -75,7 +75,7 @@ const countUsersWithMarkProcedure = staffProcedure
 
 export type RemovePersonalMarkFromUserInput = inferProcedureInput<typeof removePersonalMarkFromUserProcedure>
 export type RemovePersonalMarkFromUserOutput = inferProcedureOutput<typeof removePersonalMarkFromUserProcedure>
-const removePersonalMarkFromUserProcedure = staffProcedure
+const removePersonalMarkFromUserProcedure = procedure
   .input(PersonalMarkSchema.pick({ userId: true, markId: true }))
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -92,7 +92,7 @@ const getExpiryDateForUserProcedure = authenticatedProcedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    ctx.authorize.requireMeOrEditorRole(input.userId, [])
+    ctx.authorize.requireMe(input.userId)
     return ctx.personalMarkService.findPunishmentByUserId(ctx.handle, input.userId)
   })
 
