@@ -464,7 +464,7 @@ export function ProfilePage() {
                     <IconPhoto width={32} height={32} />
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col gap-0.5 grow min-w-0">
                   <Text className="text-lg">{group.name}</Text>
                   <RichText maxLines={3} className="line-clamp-2" hideToggleButton={true} content={group.description} />
                 </div>
