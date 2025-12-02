@@ -4,12 +4,12 @@ import z from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 import { personalMarkRouter } from "./personal-mark-router"
 
 export type CreateMarkInput = inferProcedureInput<typeof createMarkProcedure>
 export type CreateMarkOutput = inferProcedureOutput<typeof createMarkProcedure>
-const createMarkProcedure = staffProcedure
+const createMarkProcedure = procedure
   .input(
     z.object({
       data: MarkWriteSchema,
@@ -24,7 +24,7 @@ const createMarkProcedure = staffProcedure
 
 export type EditMarkInput = inferProcedureInput<typeof editMarkProcedure>
 export type EditMarkOutput = inferProcedureOutput<typeof editMarkProcedure>
-const editMarkProcedure = staffProcedure
+const editMarkProcedure = procedure
   .input(
     z.object({
       changes: MarkWriteSchema.required({ id: true }),
@@ -64,7 +64,7 @@ const findManyProcedure = procedure
 
 export type DeleteMarkInput = inferProcedureInput<typeof deleteMarkProcedure>
 export type DeleteMarkOutput = inferProcedureOutput<typeof deleteMarkProcedure>
-const deleteMarkProcedure = staffProcedure
+const deleteMarkProcedure = procedure
   .input(MarkSchema.shape.id)
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
