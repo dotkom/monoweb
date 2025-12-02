@@ -2,7 +2,7 @@ generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
 
-  previewFeatures = ["relationJoins"]
+  previewFeatures = ["relationJoins", "typedSql"]
 }
 
 generator zod {
