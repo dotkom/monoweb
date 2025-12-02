@@ -4,6 +4,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type {
   AttendanceId,
+  BaseEvent,
   CompanyId,
   DeregisterReason,
   DeregisterReasonWithEvent,
@@ -45,6 +46,7 @@ export interface EventService {
   findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
   findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
   findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
+  findFeaturedEvents(handle: DBHandle, offset: number, limit: number): Promise<BaseEvent[]>
   /**
    * Get an event by its id
    *
@@ -91,6 +93,10 @@ export function getEventService(
 
     async findEventsWithUnansweredFeedbackFormByUserId(handle, userId) {
       return await eventRepository.findEventsWithUnansweredFeedbackFormByUserId(handle, userId)
+    },
+
+    async findFeaturedEvents(handle, offset, limit) {
+      return await eventRepository.findFeaturedEvents(handle, offset, limit)
     },
 
     async getEventById(handle, eventId) {

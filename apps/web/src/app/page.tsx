@@ -10,7 +10,7 @@ import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonli
 import { RichText, cn } from "@dotkomonline/ui"
 import { Text, Tilt, Title } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
-import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { slugify } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -20,17 +20,8 @@ import type { FC } from "react"
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
 
-  const { items: events } = await server.event.all.query({
-    take: 3,
-    filter: {
-      byEndDate: {
-        max: null,
-        min: getCurrentUTC(),
-      },
-      excludingOrganizingGroup: ["velkom"],
-      excludingType: isStaff ? [] : undefined,
-      orderBy: "asc",
-    },
+  const events = await server.event.findFeaturedEvents.query({
+    limit: 3,
   })
 
   const featuredEvent = events[0] ?? null
