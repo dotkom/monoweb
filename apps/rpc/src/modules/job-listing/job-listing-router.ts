@@ -54,7 +54,6 @@ export type FindManyJobListingsOutput = inferProcedureOutput<typeof findManyJobL
 const findManyJobListingsProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: JobListingFilterQuerySchema.optional() }).default({}))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
     const jobListings = await ctx.jobListingService.findMany(ctx.handle, { ...filter }, page)
@@ -70,7 +69,6 @@ export type ActiveJobListingsOutput = inferProcedureOutput<typeof activeJobListi
 const activeJobListingsProcedure = procedure
   .input(PaginateInputSchema)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.jobListingService.findActiveJobListings(ctx.handle, input)
   })
@@ -80,7 +78,6 @@ export type GetJobListingOutput = inferProcedureOutput<typeof getJobListingProce
 const getJobListingProcedure = procedure
   .input(JobListingSchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.jobListingService.getById(ctx.handle, input)
   })
@@ -90,7 +87,6 @@ export type FindJobListingOutput = inferProcedureOutput<typeof findJobListingPro
 const findJobListingProcedure = procedure
   .input(JobListingSchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.jobListingService.findById(ctx.handle, input)
   })
@@ -99,7 +95,6 @@ export type GetJobListingLocationsInput = inferProcedureInput<typeof getJobListi
 export type GetJobListingLocationsOutput = inferProcedureOutput<typeof getJobListingLocationsProcedure>
 const getJobListingLocationsProcedure = procedure
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx }) => {
     return ctx.jobListingService.findJobListingLocations(ctx.handle)
   })
