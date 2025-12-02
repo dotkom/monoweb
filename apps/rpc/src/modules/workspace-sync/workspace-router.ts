@@ -9,10 +9,9 @@ import {
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import invariant from "tiny-invariant"
 import z from "zod"
-import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
+import { isAdministrator, isGroupMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import type { EditorRole } from "../authorization-service"
 
 export type CreateWorkspaceUserInput = inferProcedureInput<typeof createWorkspaceUserProcedure>
 export type CreateWorkspaceUserOutput = inferProcedureOutput<typeof createWorkspaceUserProcedure>
@@ -112,7 +111,14 @@ const linkWorkspaceGroupProcedure = procedure
   )
   .output(GroupSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember((i) => i.groupSlug)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -122,10 +128,7 @@ const linkWorkspaceGroupProcedure = procedure
     // If the user inputs a custom key, we do not allow the groupSlug as editor role because customKey will take
     // precedence and thus the user could potentially input any group.
     if (input.customKey) {
-      ctx.authorize.requireEditorRole("dotkom", "hs")
-    } else {
-      // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
-      ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
+      await ctx.addAuthorizationGuard(isAdministrator(), input)
     }
 
     const group = await ctx.groupService.getBySlug(ctx.handle, input.groupSlug)
@@ -198,7 +201,14 @@ const findWorkspaceGroupProcedure = procedure
   )
   .output(WorkspaceGroupSchema.nullable())
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember((i) => i.groupSlug)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
@@ -208,10 +218,7 @@ const findWorkspaceGroupProcedure = procedure
     // If the user inputs a custom key, we do not allow the groupSlug as editor role because customKey will take
     // precedence and thus the user could potentially input any group.
     if (input.customKey) {
-      ctx.authorize.requireEditorRole("dotkom", "hs")
-    } else {
-      // input.groupSlug is not necessarily an editor role, but requireEditorRole will ignore it if not
-      ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
+      await ctx.addAuthorizationGuard(isAdministrator(), input)
     }
     return await workspaceService.findWorkspaceGroup(ctx.handle, input.groupSlug, input.customKey)
   })
@@ -246,13 +253,18 @@ const getMembersForWorkspaceGroupProcedure = procedure
   )
   .output(WorkspaceMemberLinkSchema.array())
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember((i) => i.groupSlug)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
-
-    ctx.authorize.requireEditorRole("dotkom", "hs", input.groupSlug as EditorRole)
 
     return await workspaceService.getMembersForGroup(ctx.handle, input.groupSlug)
   })
