@@ -1,6 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import {
-  type Group,
   GroupMembershipSchema,
   GroupMembershipWriteSchema,
   GroupRoleSchema,
@@ -10,41 +9,20 @@ import {
 } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isAdministrator, isEditor, isGroupMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { type Context, procedure, t } from "../../trpc"
-import type { EditorRole } from "../authorization-service"
-
-const getRequiredEditorRoles = (
-  ctx: Context,
-  group: Partial<Pick<Group, "slug" | "type">>,
-  options?: { includeGroupSlug: boolean }
-) => {
-  const requiredEditorRoles: EditorRole[] = [...ctx.authorize.ADMIN_EDITOR_ROLES]
-
-  if (options?.includeGroupSlug && group.slug) {
-    // We do not know that the slug is an editor role but `requireEditorRoles` ignores all invalid inputs
-    // For example, interest groups have slugs but are not editor roles, and will be ignored.
-    requiredEditorRoles.push(group.slug as EditorRole)
-  }
-
-  if (group.type === "INTEREST_GROUP") {
-    requiredEditorRoles.push("backlog")
-  }
-
-  return requiredEditorRoles
-}
+import { procedure, t } from "../../trpc"
+import { EditorRole } from "../authorization-service"
 
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
 export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
 const createGroupProcedure = procedure
   .input(GroupWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(or(isAdministrator(), isGroupMember(EditorRole.BACKLOG))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, input))
     return ctx.groupService.create(ctx.handle, input)
   })
 
@@ -92,13 +70,30 @@ const updateGroupProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember((i) => i.id)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input.id)
 
-    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+    // If this is not an interest group, deny Backlog from modifying
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          isGroupMember(() => group.slug)
+        ),
+        input
+      )
+    }
 
     return ctx.groupService.update(ctx.handle, input.id, input.values)
   })
@@ -108,13 +103,30 @@ export type DeleteGroupOutput = inferProcedureOutput<typeof deleteGroupProcedure
 const deleteGroupProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember((i) => i)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input)
 
-    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group))
+    // If this is not an interest group, deny Backlog from modifying
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          isGroupMember(() => group.slug)
+        ),
+        input
+      )
+    }
 
     return ctx.groupService.delete(ctx.handle, input)
   })
@@ -156,13 +168,30 @@ const startMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember((i) => i.groupId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
 
-    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+    // If this is not an interest group, deny Backlog from modifying
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          isGroupMember(() => group.slug)
+        ),
+        input
+      )
+    }
 
     return ctx.groupService.startMembership(ctx.handle, input.userId, input.groupId, new Set(input.roleIds))
   })
@@ -172,13 +201,30 @@ export type EndMembershipOutput = inferProcedureOutput<typeof endMembershipProce
 const endMembershipProcedure = procedure
   .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember((i) => i.groupId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
 
-    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+    // If this is not an interest group, deny Backlog from modifying
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          isGroupMember(() => group.slug)
+        ),
+        input
+      )
+    }
 
     return ctx.groupService.endMembership(ctx.handle, input.userId, input.groupId)
   })
@@ -194,13 +240,30 @@ const updateMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember((i) => i.id)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getByGroupMembershipId(ctx.handle, input.id)
 
-    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+    // If this is not an interest group, deny Backlog from modifying
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          isGroupMember(() => group.slug)
+        ),
+        input
+      )
+    }
 
     return ctx.groupService.updateMembership(ctx.handle, input.id, input.data, new Set(input.roleIds))
   })
@@ -210,13 +273,30 @@ export type CreateRoleOutput = inferProcedureOutput<typeof createRoleProcedure>
 const createRoleProcedure = procedure
   .input(GroupRoleWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember((i) => i.groupId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
 
-    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+    // If this is not an interest group, deny Backlog from modifying
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          isGroupMember(() => group.slug)
+        ),
+        input
+      )
+    }
 
     return ctx.groupService.createRole(ctx.handle, input)
   })
@@ -231,13 +311,30 @@ const updateRoleProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember((i) => i.id)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getByGroupRoleId(ctx.handle, input.id)
 
-    ctx.authorize.requireEditorRole(...getRequiredEditorRoles(ctx, group, { includeGroupSlug: true }))
+    // If this is not an interest group, deny Backlog from modifying
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          isGroupMember(() => group.slug)
+        ),
+        input
+      )
+    }
 
     return ctx.groupService.updateRole(ctx.handle, input.id, input.role)
   })

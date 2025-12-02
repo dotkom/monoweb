@@ -35,13 +35,13 @@
 
 import type { GroupId, UserId } from "@dotkomonline/types"
 import { ADMIN_EDITOR_ROLES, type EditorRole } from "./modules/authorization-service"
-import type { Context, Principal } from "./trpc"
+import type { Principal, TRPCContext } from "./trpc"
 
 export interface RuleContext<TInput> {
   input: TInput
   /** The rule context does not make any assumptions on the availability of a Principal */
   principal: Principal | null
-  ctx: Context
+  ctx: TRPCContext
   /**
    * Evaluate another rule.
    *
@@ -72,6 +72,16 @@ export function and<TInput>(rule: Rule<TInput>, ...rules: Rule<TInput>[]): Rule<
       const children = [rule, ...rules]
       const decisions = await Promise.all(children.map((rule) => context.evaluate(rule, context)))
       return decisions.every((v) => v)
+    },
+  }
+}
+
+/** Combinator rule that inverts the input rule's decision */
+export function not<TInput>(rule: Rule<TInput>): Rule<TInput> {
+  return {
+    async evaluate(context) {
+      const decision = await context.evaluate(rule, context)
+      return !decision
     },
   }
 }
