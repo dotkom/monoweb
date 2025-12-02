@@ -23,7 +23,6 @@ const findAuditLogsProcedure = staffProcedure
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const items = await ctx.auditLogService.findMany(ctx.handle, { ...input?.filter }, input)
     return {
@@ -39,7 +38,6 @@ const allAuditLogsProcedure = staffProcedure
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.auditLogService.findMany(ctx.handle, {}, input)
   })
@@ -51,7 +49,6 @@ const getAuditLogByIdProcedure = staffProcedure
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.auditLogService.getById(ctx.handle, input)
   })
@@ -63,7 +60,6 @@ const getAuditLogsByUserIdProcedure = staffProcedure
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.auditLogService.findManyByUserId(ctx.handle, ctx.principal.subject, input)
   })
