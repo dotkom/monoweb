@@ -301,10 +301,12 @@ export type FindFeaturedEventsInput = inferProcedureInput<typeof findFeaturedEve
 export type FindFeaturedEventsOutput = inferProcedureOutput<typeof findFeaturedEventsProcedure>
 const findFeaturedEventsProcedure = procedure
   .input(
-    z.object({
-      offset: z.number().min(0).default(0),
-      limit: z.number().min(1).max(100).default(10),
-    })
+    z
+      .object({
+        offset: z.number().min(0).default(0),
+        limit: z.number().min(1).max(100).default(10),
+      })
+      .default({ offset: 0, limit: 1 })
   )
   .output(z.object({ event: BaseEventSchema, attendance: AttendanceSchema.nullable() }).array())
   .use(withDatabaseTransaction())
@@ -355,4 +357,5 @@ export const eventRouter = t.router({
   isOrganizer: isOrganizerProcedure,
   findManyDeregisterReasonsWithEvent: findManyDeregisterReasonsWithEventProcedure,
   createFileUpload: createFileUploadProcedure,
+  findFeaturedEvents: findFeaturedEventsProcedure,
 })
