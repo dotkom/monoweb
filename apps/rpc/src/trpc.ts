@@ -7,6 +7,7 @@ import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
 import invariant from "tiny-invariant"
+import type { Rule, RuleContext } from "./authorization"
 import type { Configuration } from "./configuration"
 import {
   AlreadyExistsError,
@@ -55,13 +56,38 @@ const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
 const getCreateContext = (authorizeOptions: AuthorizeOptions) => {
   return async (principal: Principal | null, context: ServiceLayer, configuration: Configuration) => {
     const authorize = getAuthorize({ principal, ...authorizeOptions })
-
-    return {
+    const trpcContext = {
       ...context,
       principal,
       /** Authorization middlewares that each procedure can use to enforce access control */
       authorize,
+      addAuthorizationGuard,
     }
+
+    /**
+     * Add a guard clause (rule) that has to evaluate to true, otherwise exit the procedure with a ForbiddenError.
+     */
+    async function addAuthorizationGuard<TRuleInput>(rule: Rule<TRuleInput>, input: TRuleInput): Promise<void> {
+      async function evaluate<TRuleInput>(
+        rule: Rule<TRuleInput>,
+        ruleContext: RuleContext<TRuleInput>
+      ): Promise<boolean> {
+        return await rule.evaluate(ruleContext)
+      }
+      const decision = await evaluate(rule, {
+        ctx: trpcContext,
+        evaluate,
+        input,
+        principal: trpcContext.principal,
+      })
+      if (!decision) {
+        throw new ForbiddenError(
+          `Principal(ID=${trpcContext.principal?.subject ?? "<anonymous>"}) is not permitted to perform this operation`
+        )
+      }
+    }
+
+    return trpcContext
   }
 }
 

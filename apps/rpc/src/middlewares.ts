@@ -1,7 +1,7 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type * as trpc from "@trpc/server/unstable-core-do-not-import"
-import type { Rule, RuleContext } from "./authorization"
-import { ForbiddenError, UnauthorizedError } from "./error"
+import type { Rule } from "./authorization"
+import { UnauthorizedError } from "./error"
 import type { Context } from "./trpc"
 
 type MiddlewareFunction<TContextIn, TContextOut, TInputOut> = trpc.MiddlewareFunction<
@@ -91,25 +91,7 @@ export function withAuthentication<TContext extends Context, TInput>() {
  */
 export function withAuthorization<TContext extends Context, TInput>(rule: Rule<TInput>) {
   const handler: MiddlewareFunction<TContext, TContext, TInput> = async ({ ctx, next, input }) => {
-    async function evaluate<TRuleInput>(rule: Rule<TRuleInput>, context: RuleContext<TRuleInput>): Promise<boolean> {
-      return await rule.evaluate(context)
-    }
-    const decision = evaluate(rule, {
-      ctx,
-      evaluate,
-      input,
-      principal: ctx.principal,
-    })
-    // IMPORTANT: We allow overriding all authorization decisions with the local environment variable
-    // UNSAFE_DISABLE_AUTHORIZATION. We have additional checks in the code to prevent this to be set to true in
-    // production environments
-    const isOverridingAuthorization = process.env.UNSAFE_DISABLE_AUTHORIZATION === "true"
-
-    if (!decision && !isOverridingAuthorization) {
-      throw new ForbiddenError(
-        `Principal(ID=${ctx.principal?.subject ?? "<anonymous>"}) is not permitted to perform this operation`
-      )
-    }
+    await ctx.addAuthorizationGuard(rule, input)
     return await next({ ctx })
   }
   return handler
