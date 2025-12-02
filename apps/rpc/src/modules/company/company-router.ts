@@ -41,7 +41,6 @@ export type AllCompaniesOutput = inferProcedureOutput<typeof allCompaniesProcedu
 const allCompaniesProcedure = procedure
   .input(PaginateInputSchema)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.companyService.findMany(ctx.handle, input))
 
 export type FindCompanyByIdInput = inferProcedureInput<typeof findCompanyByIdProcedure>
@@ -49,7 +48,6 @@ export type FindCompanyByIdOutput = inferProcedureOutput<typeof findCompanyByIdP
 const findCompanyByIdProcedure = procedure
   .input(CompanySchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.companyService.findById(ctx.handle, input))
 
 export type GetCompanyByIdInput = inferProcedureInput<typeof getCompanyByIdProcedure>
@@ -57,7 +55,6 @@ export type GetCompanyByIdOutput = inferProcedureOutput<typeof getCompanyByIdPro
 const getCompanyByIdProcedure = procedure
   .input(CompanySchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.companyService.getById(ctx.handle, input))
 
 export type FindCompanyBySlugInput = inferProcedureInput<typeof findCompanyBySlugProcedure>
@@ -65,7 +62,6 @@ export type FindCompanyBySlugOutput = inferProcedureOutput<typeof findCompanyByS
 const findCompanyBySlugProcedure = procedure
   .input(CompanySchema.shape.slug)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.companyService.findBySlug(ctx.handle, input))
 
 export type GetCompanyBySlugInput = inferProcedureInput<typeof getCompanyBySlugProcedure>
@@ -73,7 +69,6 @@ export type GetCompanyBySlugOutput = inferProcedureOutput<typeof getCompanyBySlu
 const getCompanyBySlugProcedure = procedure
   .input(CompanySchema.shape.slug)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.companyService.getBySlug(ctx.handle, input))
 
 export type CreateCompanyFileUploadInput = inferProcedureInput<typeof createCompanyFileUploadProcedure>
