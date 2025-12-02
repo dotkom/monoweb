@@ -40,7 +40,6 @@ export type AllOfflineOutput = inferProcedureOutput<typeof allOfflineProcedure>
 const allOfflineProcedure = procedure
   .input(PaginateInputSchema)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.offlineService.findMany(ctx.handle, input)
   })
@@ -50,7 +49,6 @@ export type FindOfflineOutput = inferProcedureOutput<typeof findOfflineProcedure
 const findOfflineProcedure = procedure
   .input(OfflineSchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.offlineService.findById(ctx.handle, input)
   })
@@ -60,7 +58,6 @@ export type GetOfflineOutput = inferProcedureOutput<typeof getOfflineProcedure>
 const getOfflineProcedure = procedure
   .input(OfflineSchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     return ctx.offlineService.getById(ctx.handle, input)
   })
