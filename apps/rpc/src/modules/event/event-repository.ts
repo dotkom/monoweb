@@ -1,4 +1,4 @@
-import type { DBHandle, Prisma, findFeaturedEvents } from "@dotkomonline/db"
+import { type DBHandle, type Prisma, sql } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type BaseEvent,
@@ -433,7 +433,7 @@ export function getEventRepository(): EventRepository {
         Past events are not featured. We would rather have no featured events than "stale" events.
        */
 
-      const events = await handle.$queryRawTyped(findFeaturedEvents(offset, limit))
+      const events = await handle.$queryRawTyped(sql.findFeaturedEvents(offset, limit))
 
       return parseOrReport(
         z.preprocess((data) => snakeCaseToCamelCase(data), BaseEventSchema.array()),
