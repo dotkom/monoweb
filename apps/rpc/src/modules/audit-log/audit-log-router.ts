@@ -4,11 +4,11 @@ import z from "zod"
 import { isAdministrator } from "../../authorization"
 import { withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
-import { staffProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export type FindAuditLogsInput = inferProcedureInput<typeof findAuditLogsProcedure>
 export type FindAuditLogsOutput = inferProcedureOutput<typeof findAuditLogsProcedure>
-const findAuditLogsProcedure = staffProcedure
+const findAuditLogsProcedure = procedure
   .input(
     BasePaginateInputSchema.extend({
       filter: AuditLogFilterQuerySchema,
@@ -33,7 +33,7 @@ const findAuditLogsProcedure = staffProcedure
 
 export type AllAuditLogsInput = inferProcedureInput<typeof allAuditLogsProcedure>
 export type AllAuditLogsOutput = inferProcedureOutput<typeof allAuditLogsProcedure>
-const allAuditLogsProcedure = staffProcedure
+const allAuditLogsProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
@@ -44,7 +44,7 @@ const allAuditLogsProcedure = staffProcedure
 
 export type GetAuditLogByIdInput = inferProcedureInput<typeof getAuditLogByIdProcedure>
 export type GetAuditLogByIdOutput = inferProcedureOutput<typeof getAuditLogByIdProcedure>
-const getAuditLogByIdProcedure = staffProcedure
+const getAuditLogByIdProcedure = procedure
   .input(AuditLogSchema.shape.id)
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
@@ -55,7 +55,7 @@ const getAuditLogByIdProcedure = staffProcedure
 
 export type GetAuditLogsByUserIdInput = inferProcedureInput<typeof getAuditLogsByUserIdProcedure>
 export type GetAuditLogsByUserIdOutput = inferProcedureOutput<typeof getAuditLogsByUserIdProcedure>
-const getAuditLogsByUserIdProcedure = staffProcedure
+const getAuditLogsByUserIdProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
