@@ -10,11 +10,11 @@ import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
-import { procedure, staffProcedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export type CreateJobListingInput = inferProcedureInput<typeof createJobListingProcedure>
 export type CreateJobListingOutput = inferProcedureOutput<typeof createJobListingProcedure>
-const createJobListingProcedure = staffProcedure
+const createJobListingProcedure = procedure
   .input(
     z.object({
       input: JobListingWriteSchema,
@@ -32,7 +32,7 @@ const createJobListingProcedure = staffProcedure
 
 export type EditJobListingInput = inferProcedureInput<typeof editJobListingProcedure>
 export type EditJobListingOutput = inferProcedureOutput<typeof editJobListingProcedure>
-const editJobListingProcedure = staffProcedure
+const editJobListingProcedure = procedure
   .input(
     z.object({
       id: JobListingSchema.shape.id,
@@ -93,11 +93,9 @@ const findJobListingProcedure = procedure
 
 export type GetJobListingLocationsInput = inferProcedureInput<typeof getJobListingLocationsProcedure>
 export type GetJobListingLocationsOutput = inferProcedureOutput<typeof getJobListingLocationsProcedure>
-const getJobListingLocationsProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    return ctx.jobListingService.findJobListingLocations(ctx.handle)
-  })
+const getJobListingLocationsProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+  return ctx.jobListingService.findJobListingLocations(ctx.handle)
+})
 
 export const jobListingRouter = t.router({
   create: createJobListingProcedure,
