@@ -56,7 +56,6 @@ export type AllArticlesOutput = inferProcedureOutput<typeof allArticlesProcedure
 const allArticlesProcedure = procedure
   .input(PaginateInputSchema)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.articleService.findMany(ctx.handle, {}, input))
 
 export type FindArticlesInput = inferProcedureInput<typeof findArticlesProcedure>
@@ -64,7 +63,6 @@ export type FindArticlesOutput = inferProcedureOutput<typeof findArticlesProcedu
 const findArticlesProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filters: ArticleFilterQuerySchema }))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const items = await ctx.articleService.findMany(ctx.handle, input.filters, input)
 
@@ -79,7 +77,6 @@ export type FindArticleOutput = inferProcedureOutput<typeof findArticleProcedure
 const findArticleProcedure = procedure
   .input(ArticleSchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.articleService.findById(ctx.handle, input))
 
 export type GetArticleInput = inferProcedureInput<typeof getArticleProcedure>
@@ -87,7 +84,6 @@ export type GetArticleOutput = inferProcedureOutput<typeof getArticleProcedure>
 const getArticleProcedure = procedure
   .input(ArticleSchema.shape.id)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.articleService.getById(ctx.handle, input))
 
 export type FindRelatedArticlesInput = inferProcedureInput<typeof findRelatedArticlesProcedure>
@@ -95,21 +91,18 @@ export type FindRelatedArticlesOutput = inferProcedureOutput<typeof findRelatedA
 const findRelatedArticlesProcedure = procedure
   .input(ArticleSchema)
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => ctx.articleService.findRelated(ctx.handle, input))
 
 export type FindFeaturedArticlesInput = inferProcedureInput<typeof findFeaturedArticlesProcedure>
 export type FindFeaturedArticlesOutput = inferProcedureOutput<typeof findFeaturedArticlesProcedure>
 const findFeaturedArticlesProcedure = procedure
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx }) => ctx.articleService.findFeatured(ctx.handle))
 
 export type GetArticleTagsInput = inferProcedureInput<typeof getArticleTagsProcedure>
 export type GetArticleTagsOutput = inferProcedureOutput<typeof getArticleTagsProcedure>
 const getArticleTagsProcedure = procedure
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx }) => ctx.articleService.getTags(ctx.handle))
 
 export type FindArticleTagsOrderedByPopularityInput = inferProcedureInput<
@@ -120,7 +113,6 @@ export type FindArticleTagsOrderedByPopularityOutput = inferProcedureOutput<
 >
 const findArticleTagsOrderedByPopularityProcedure = procedure
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ ctx }) => ctx.articleService.findTagsOrderedByPopularity(ctx.handle))
 
 export type AddArticleTagInput = inferProcedureInput<typeof addArticleTagProcedure>
