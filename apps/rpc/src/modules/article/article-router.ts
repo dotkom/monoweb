@@ -44,11 +44,9 @@ const editArticleProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.executeAuditedTransaction(async (handle) => {
-      const article = await ctx.articleService.update(handle, input.id, input.input)
-      const tags = await ctx.articleService.setTags(handle, input.id, input.tags)
-      return { ...article, tags }
-    })
+    const article = await ctx.articleService.update(ctx.handle, input.id, input.input)
+    const tags = await ctx.articleService.setTags(ctx.handle, input.id, input.tags)
+    return { ...article, tags }
   })
 
 export type AllArticlesInput = inferProcedureInput<typeof allArticlesProcedure>
@@ -129,7 +127,7 @@ const addArticleTagProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.executeAuditedTransaction(async (handle) => ctx.articleService.addTag(handle, input.id, input.tag))
+    return ctx.articleService.addTag(ctx.handle, input.id, input.tag)
   })
 
 export type RemoveArticleTagInput = inferProcedureInput<typeof removeArticleTagProcedure>
@@ -146,7 +144,7 @@ const removeArticleTagProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.executeAuditedTransaction(async (handle) => ctx.articleService.removeTag(handle, input.id, input.tag))
+    return ctx.articleService.removeTag(ctx.handle, input.id, input.tag)
   })
 
 export type CreateArticleFileUploadInput = inferProcedureInput<typeof createArticleFileUploadProcedure>
