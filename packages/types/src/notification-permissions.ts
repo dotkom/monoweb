@@ -1,6 +1,5 @@
-import type { z } from "zod"
-
 import { schemas } from "@dotkomonline/db/schemas"
+import type { z } from "zod"
 
 export const NotificationPermissionsSchema = schemas.NotificationPermissionsSchema.extend({})
 

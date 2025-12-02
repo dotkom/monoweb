@@ -1,5 +1,5 @@
-import { cva } from "cva"
 import type { VariantProps } from "cva"
+import { cva } from "cva"
 import type { FC, PropsWithChildren } from "react"
 import { cn } from "../../utils"
 

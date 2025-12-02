@@ -12,13 +12,13 @@ import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
 import {
   type ChargeAttendeeTaskDefinition,
+  getTaskDefinition,
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
+  tasks,
   type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyPaymentTaskDefinition,
-  getTaskDefinition,
-  tasks,
 } from "./task-definition"
 import type { TaskDiscoveryService } from "./task-discovery-service"
 import type { TaskSchedulingService } from "./task-scheduling-service"

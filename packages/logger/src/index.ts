@@ -5,7 +5,7 @@ import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto"
 import { WinstonInstrumentation } from "@opentelemetry/instrumentation-winston"
 import { awsEcsDetector } from "@opentelemetry/resource-detector-aws"
 import { containerDetector } from "@opentelemetry/resource-detector-container"
-import { type Resource, detectResources, resourceFromAttributes } from "@opentelemetry/resources"
+import { detectResources, type Resource, resourceFromAttributes } from "@opentelemetry/resources"
 import { BatchLogRecordProcessor, LoggerProvider } from "@opentelemetry/sdk-logs"
 import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics"
 import { NodeSDK } from "@opentelemetry/sdk-node"
@@ -71,7 +71,7 @@ interface Message {
 }
 
 function padWithColor(str: string, desiredLength: number) {
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: this is used to match ansi codes
   const ansiEscapeCodes = /\x1b\[[0-9;]*m/g // Regex to match ANSI escape codes
   const visibleLength = str.replace(ansiEscapeCodes, "").length // Length of string without ANSI codes
   const paddingLength = desiredLength - visibleLength // Calculate how much padding is needed

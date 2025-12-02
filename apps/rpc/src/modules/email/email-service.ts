@@ -1,16 +1,20 @@
-import { SendEmailCommand } from "@aws-sdk/client-ses"
 import type { SESClient } from "@aws-sdk/client-ses"
-import { DeleteMessageCommand, type Message, ReceiveMessageCommand } from "@aws-sdk/client-sqs"
-import { type SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
+import { SendEmailCommand } from "@aws-sdk/client-ses"
+import {
+  DeleteMessageCommand,
+  type Message,
+  ReceiveMessageCommand,
+  SendMessageCommand,
+  type SQSClient,
+} from "@aws-sdk/client-sqs"
 import { getLogger } from "@dotkomonline/logger"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import mustache from "mustache"
 import z from "zod"
 import type { ConfigurationWithAmazonSesEmail } from "../../configuration"
-import { IllegalStateError } from "../../error"
-import { InvalidArgumentError } from "../../error"
-import { emails } from "./email-template"
+import { IllegalStateError, InvalidArgumentError } from "../../error"
 import type { EmailTemplate, EmailType, InferEmailData } from "./email-template"
+import { emails } from "./email-template"
 
 const EmailMessageSchema = z.object({
   source: z.string().email(),

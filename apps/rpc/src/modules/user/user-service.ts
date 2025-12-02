@@ -4,6 +4,9 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
+  findActiveMembership,
+  getAcademicStart,
+  getNextAcademicStart,
   type Membership,
   type MembershipId,
   type MembershipSpecialization,
@@ -15,9 +18,6 @@ import {
   type UserProfileSlug,
   type UserWrite,
   UserWriteSchema,
-  findActiveMembership,
-  getAcademicStart,
-  getNextAcademicStart,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"

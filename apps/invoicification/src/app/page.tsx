@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react"
 import { FormProvider, useForm } from "react-hook-form"
 import { Section } from "../components/section"
 import { Form } from "./form"
-import { DeliveryMethod, type FormSchema, InvoiceRelation, formSchema } from "./form-schema"
+import { DeliveryMethod, type FormSchema, formSchema, InvoiceRelation } from "./form-schema"
 import { useSubmitMutation } from "./mutation"
 
 export default function Page() {

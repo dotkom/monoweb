@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto"
 import {
   type AttendancePoolWrite,
   type AttendanceWrite,
-  type MembershipWrite,
   findActiveMembership,
+  type MembershipWrite,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { faker } from "@faker-js/faker"
