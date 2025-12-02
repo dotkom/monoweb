@@ -1,6 +1,6 @@
-export { createTemplate, InvalidTemplateArguments } from "./template.js"
-export type { Template, TemplateProps } from "./template.js"
 export { Template as HelloWorldTemplate } from "./emails/hello-world.js"
 export { Template as InterestFormForBedkomTemplate } from "./emails/interest-form-for-bedkom.js"
 export { Template as InterestFormForCompanyTemplate } from "./emails/interest-form-for-company.js"
 export { Template as InvoiceFormForBedKomTemplate } from "./emails/invoice-form-for-bedkom.js"
+export type { Template, TemplateProps } from "./template.js"
+export { createTemplate, InvalidTemplateArguments } from "./template.js"

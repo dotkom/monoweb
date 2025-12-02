@@ -1,7 +1,7 @@
 import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
-import { type Logger, getLogger } from "@dotkomonline/logger"
+import { getLogger, type Logger } from "@dotkomonline/logger"
 import {
   type Attendance,
   type AttendanceId,
@@ -17,15 +17,15 @@ import {
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
   type Event,
+  findActiveMembership,
   type GroupType,
+  getMembershipGrade,
+  hasAttendeePaid,
+  isAttendable,
   type Membership,
   type TaskId,
   type User,
   type UserId,
-  findActiveMembership,
-  getMembershipGrade,
-  hasAttendeePaid,
-  isAttendable,
 } from "@dotkomonline/types"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import {
@@ -62,9 +62,9 @@ import {
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
+  tasks,
   type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyPaymentTaskDefinition,
-  tasks,
 } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"

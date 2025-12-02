@@ -1,7 +1,6 @@
-import type { z } from "zod"
-
 import { schemas } from "@dotkomonline/db/schemas"
 import { compareDesc } from "date-fns"
+import type { z } from "zod"
 import { UserSchema } from "./user"
 
 export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})

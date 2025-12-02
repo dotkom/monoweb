@@ -20,9 +20,8 @@ export interface EmailTemplate<TData, TType extends EmailType> {
 }
 
 export type InferEmailData<TDef> = TDef extends EmailTemplate<infer TData, infer TType> ? TData : never
-export type InferEmailType<TDef> = TDef extends EmailTemplate<infer TData, infer TType extends EmailType>
-  ? TType
-  : never
+export type InferEmailType<TDef> =
+  TDef extends EmailTemplate<infer TData, infer TType extends EmailType> ? TType : never
 
 export type CompanyCollaborationReceiptEmailTemplate = typeof emails.COMPANY_COLLABORATION_RECEIPT
 export type CompanyCollaborationNotificationEmailTemplate = typeof emails.COMPANY_COLLABORATION_NOTIFICATION

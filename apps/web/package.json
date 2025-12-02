@@ -66,7 +66,7 @@
     "zod": "^3.25.47"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.3.8",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/rpc": "workspace:*",
@@ -82,7 +82,10 @@
     "typescript": "5.9.3"
   },
   "browserslist": {
-    "production": ["defaults", "ios_saf >= 10"],
+    "production": [
+      "defaults",
+      "ios_saf >= 10"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

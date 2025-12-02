@@ -6,6 +6,7 @@ import {
   type Group,
   type GroupId,
   type GroupMember,
+  getActiveGroupMembership,
   type User,
   type UserId,
   type WorkspaceGroup,
@@ -14,7 +15,6 @@ import {
   type WorkspaceMemberLink,
   type WorkspaceMemberSyncState,
   type WorkspaceUser,
-  getActiveGroupMembership,
 } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import { isAfter } from "date-fns"
@@ -518,7 +518,7 @@ export function getWorkspaceService(
 
       const workspaceMembers: WorkspaceMemberLink[] = []
 
-      let pageToken: string | undefined = undefined
+      let pageToken: string | undefined
 
       do {
         const response: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$Members> = await directory.members.list({
@@ -551,7 +551,7 @@ export function getWorkspaceService(
       const user = await userService.getById(handle, userId)
 
       const groups: WorkspaceGroupLink[] = []
-      let pageToken: string | undefined = undefined
+      let pageToken: string | undefined
 
       do {
         const { data }: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$Groups> = await directory.groups.list({

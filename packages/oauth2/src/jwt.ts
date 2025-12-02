@@ -1,8 +1,8 @@
 import {
+  createRemoteJWKSet,
   type FlattenedJWSInput,
   type GetKeyFunction,
   type JWTHeaderParameters,
-  createRemoteJWKSet,
   jwtVerify,
 } from "jose"
 

@@ -5,6 +5,7 @@ import { secondsToMilliseconds } from "date-fns"
 
 const require = createRequire(import.meta.url)
 const { Prisma: _Prisma, PrismaClient: _PrismaClient } = require("@prisma/client")
+
 export type * from "@prisma/client"
 
 export const PrismaRuntime = _Prisma

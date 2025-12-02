@@ -89,7 +89,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .animate-stripes {
-    animation: none !important;
+    animation: none;
   }
   .stripes-mask {
     will-change: auto;

@@ -1,5 +1,4 @@
-import type { ComponentPropsWithRef, FC } from "react"
-import type { ReactNode } from "react"
+import type { ComponentPropsWithRef, FC, ReactNode } from "react"
 import { cn } from "../../utils"
 import { Text } from "../Typography/Text"
 
