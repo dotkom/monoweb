@@ -2,7 +2,7 @@ import { AuditLogFilterQuerySchema, AuditLogSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { isAdministrator } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { staffProcedure, t } from "../../trpc"
 
