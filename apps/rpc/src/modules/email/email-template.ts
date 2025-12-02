@@ -102,8 +102,12 @@ export const emails = {
         eventName: z.string(),
         eventLink: z.string().url(),
         feedbackLink: z.string().url(),
-        eventStart: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM", { locale: nb })),
-        feedbackDeadline: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM HH:mm", { locale: nb })),
+        eventStart: z
+          .string()
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
+        feedbackDeadline: z
+          .string()
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
         organizerEmail: z.string().email(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "feedback_form_link.mustache"), "utf-8"),
@@ -114,7 +118,9 @@ export const emails = {
       z.object({
         eventName: z.string(),
         eventLink: z.string().url(),
-        deregistrationDeadline: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM", { locale: nb })),
+        deregistrationDeadline: z
+          .string()
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
   }),
@@ -125,7 +131,7 @@ export const emails = {
         title: z.string(),
         details: z.string().nullable(),
         weight: z.number(),
-        endsAt: z.string().transform((d) => formatDate(new TZDate(d), "eeee dd. MMMM", { locale: nb })),
+        endsAt: z.string().transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
   }),
