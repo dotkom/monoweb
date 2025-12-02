@@ -144,3 +144,18 @@ export function isGroupMember<TInput>(editorRole: EditorRole): Rule<TInput> {
     },
   }
 }
+
+/**
+ * Business rule that returns true if the user is a member of the given group
+ */
+export function isGroupMemberOfAny<TInput>(editorRoles: EditorRole[]): Rule<TInput> {
+  return {
+    evaluate(context) {
+      if (context.principal === null) {
+        return false
+      }
+      return editorRoles.some((editorRole) => context.principal.editorRoles.has(editorRole))
+    },
+  }
+}
+
