@@ -14,11 +14,11 @@ type MiddlewareFunction<TContextIn, TContextOut, TInputOut> = trpc.MiddlewareFun
   TInputOut
 >
 
-type ContextWithPrincipal = Context & {
+type WithPrincipal = {
   principal: Exclude<Context["principal"], null>
 }
 
-type ContextWithTransaction = Context & {
+type WithTransaction = {
   handle: DBHandle
 }
 
@@ -27,8 +27,10 @@ type ContextWithTransaction = Context & {
  *
  * Optionally, specify the transaction isolation level, which defaults to read-commited (default in PostgreSQL).
  */
-export function withDatabaseTransaction<TInput>(isolationLevel: Prisma.TransactionIsolationLevel = "ReadCommitted") {
-  const handler: MiddlewareFunction<Context, ContextWithTransaction, TInput> = async ({ ctx, next }) => {
+export function withDatabaseTransaction<TContext extends Context, TInput>(
+  isolationLevel: Prisma.TransactionIsolationLevel = "ReadCommitted"
+) {
+  const handler: MiddlewareFunction<TContext, TContext & WithTransaction, TInput> = async ({ ctx, next }) => {
     return await ctx.prisma.$transaction(
       async (handle) => {
         return await next({
@@ -51,8 +53,8 @@ export function withDatabaseTransaction<TInput>(isolationLevel: Prisma.Transacti
  * Audit log entries are stored in the database for most mutations. We use the audit log to keep track of changes to
  * the application.
  */
-export function withAuditLogEntry<TInput>() {
-  const handler: MiddlewareFunction<ContextWithTransaction, ContextWithTransaction, TInput> = async ({ ctx, next }) => {
+export function withAuditLogEntry<TContext extends Context & WithTransaction, TInput>() {
+  const handler: MiddlewareFunction<TContext, TContext & WithTransaction, TInput> = async ({ ctx, next }) => {
     if (ctx.principal !== null) {
       // We use a PostgreSQL configuration parameter, isolated to the current transaction to tell which user is
       // performing a change. Additionally, we have a PostgreSQL trigger on most tables to insert entries into the
@@ -69,8 +71,8 @@ export function withAuditLogEntry<TInput>() {
 }
 
 /** tRPC Middleware to ensure the caller is signed in */
-export function withAuthentication<TInput>() {
-  const handler: MiddlewareFunction<Context, ContextWithPrincipal, TInput> = async ({ ctx, next }) => {
+export function withAuthentication<TContext extends Context, TInput>() {
+  const handler: MiddlewareFunction<TContext, TContext & WithPrincipal, TInput> = async ({ ctx, next }) => {
     ctx.authorize.requireSignIn()
     // SAFETY: the above call should ensure this.
     invariant(ctx.principal === null)
@@ -88,8 +90,8 @@ export function withAuthentication<TInput>() {
  *
  * See file /src/authorization.ts for more details on the authorization system.
  */
-export function withAuthorization<TInput>(rule: Rule<TInput>) {
-  const handler: MiddlewareFunction<Context, Context, TInput> = async ({ ctx, next, input }) => {
+export function withAuthorization<TContext extends Context, TInput>(rule: Rule<TInput>) {
+  const handler: MiddlewareFunction<TContext, TContext, TInput> = async ({ ctx, next, input }) => {
     async function evaluate<TRuleInput>(rule: Rule<TRuleInput>, context: RuleContext<TRuleInput>): Promise<boolean> {
       return await rule.evaluate(context)
     }
