@@ -8,10 +8,11 @@ import {
 } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator } from "../../authorization"
+import { isAdministrator, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema } from "../../query"
 import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { ADMIN_EDITOR_ROLES, EditorRole } from "../authorization-service"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
@@ -65,13 +66,18 @@ const createUserFileUploadProcedure = authenticatedProcedure
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.userId ?? null)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const userId = input?.userId ?? ctx.principal.subject
-
-    ctx.authorize.requireMeOrEditorRole(userId, ctx.authorize.ADMIN_EDITOR_ROLES)
-
     return await ctx.userService.createFileUpload(
       ctx.handle,
       input.filename,
@@ -169,11 +175,17 @@ const updateUserProcedure = authenticatedProcedure
     })
   )
   .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.id)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    ctx.authorize.requireMeOrEditorRole(input.id, ctx.authorize.ADMIN_EDITOR_ROLES)
-
     let { name, ...data } = input.input
 
     // Only admins can change the name field
@@ -187,23 +199,21 @@ const updateUserProcedure = authenticatedProcedure
 export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
 export type IsStaffOutput = inferProcedureOutput<typeof isStaffProcedure>
 const isStaffProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
-  try {
-    ctx.authorize.requireEditorRole()
-    return true
-  } catch {
+  const principal = ctx.principal
+  if (principal === null) {
     return false
   }
+  return Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
 })
 
 export type IsAdminInput = inferProcedureInput<typeof isAdminProcedure>
 export type IsAdminOutput = inferProcedureOutput<typeof isAdminProcedure>
 const isAdminProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
-  try {
-    ctx.authorize.requireEditorRole(...ctx.authorize.ADMIN_EDITOR_ROLES)
-    return true
-  } catch {
+  const principal = ctx.principal
+  if (principal === null) {
     return false
   }
+  return ADMIN_EDITOR_ROLES.some((role) => principal.editorRoles.has(role))
 })
 
 export const userRouter = t.router({
