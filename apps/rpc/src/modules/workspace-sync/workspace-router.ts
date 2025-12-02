@@ -9,7 +9,7 @@ import {
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import invariant from "tiny-invariant"
 import z from "zod"
-import { isAdministrator, isEditor } from "../../authorization"
+import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import type { EditorRole } from "../authorization-service"
@@ -27,15 +27,19 @@ const createWorkspaceUserProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.userId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
-
-    ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
-
     return await workspaceService.createWorkspaceUser(ctx.handle, input.userId)
   })
 
@@ -50,7 +54,14 @@ const findWorkspaceUserProcedure = procedure
   )
   .output(WorkspaceUserSchema.nullable())
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.userId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
@@ -60,9 +71,7 @@ const findWorkspaceUserProcedure = procedure
     // If the user inputs a custom key, we do not allow the userId as editor role because customKey will take
     // precedence and thus the user could potentially input any user.
     if (input.customKey) {
-      ctx.authorize.requireEditorRole("dotkom", "hs")
-    } else {
-      ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
+      await ctx.addAuthorizationGuard(isAdministrator(), input)
     }
 
     return await workspaceService.findWorkspaceUser(ctx.handle, input.userId, input.customKey)
@@ -142,15 +151,19 @@ const resetWorkspaceUserPasswordProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.userId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
-
-    ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
-
     return await workspaceService.resetWorkspaceUserPassword(ctx.handle, input.userId)
   })
 
@@ -254,13 +267,18 @@ const getGroupsForUserWorkspaceProcedure = procedure
   )
   .output(WorkspaceGroupLinkSchema.array())
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.userId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
-
-    ctx.authorize.requireMeOrEditorRole(input.userId, ["dotkom", "hs"])
 
     return await workspaceService.getWorkspaceGroupsForWorkspaceUser(ctx.handle, input.userId)
   })

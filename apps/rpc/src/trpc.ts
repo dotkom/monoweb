@@ -40,8 +40,6 @@ const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
   const requireEditorRole = getRequireEditorRole(principal, require, requireSignIn)
   const localDevelopmentRequireEditorRole = getDevelopmentRequireEditorRole(requireSignIn)
   const requireMe = getRequireMe(principal, require, requireSignIn)
-  const requireMeOrEditorRole = getRequireMeOrEditorRole(principal, requireSignIn, requireEditorRole)
-
   return {
     ADMIN_EDITOR_ROLES,
 
@@ -49,7 +47,6 @@ const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
     requireSignIn,
     requireEditorRole: localDevelopment ? localDevelopmentRequireEditorRole : requireEditorRole,
     requireMe,
-    requireMeOrEditorRole: requireMeOrEditorRole,
   }
 }
 
