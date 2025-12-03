@@ -1,4 +1,4 @@
-import type { DBHandle, FeedbackQuestionAnswer, FeedbackQuestionOption } from "@dotkomonline/db"
+import { type DBHandle, type FeedbackQuestionAnswer, type FeedbackQuestionOption, Prisma } from "@dotkomonline/db"
 import {
   type AttendeeId,
   type FeedbackFormAnswer,
@@ -10,7 +10,6 @@ import {
   FeedbackQuestionAnswerSchema,
   type FeedbackQuestionAnswerWrite,
 } from "@dotkomonline/types"
-import { Prisma } from "@prisma/client"
 import { parseOrReport } from "../../invariant"
 
 export interface FeedbackFormAnswerRepository {

@@ -1,4 +1,4 @@
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, Prisma } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type CompanyId,
@@ -16,7 +16,6 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import type { Prisma } from "@prisma/client"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"

@@ -2,10 +2,10 @@
   "root": false,
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "formatter": {
-    "includes": ["**", "!**/src/schemas/**/*"]
+    "includes": ["**", "!**/generated/**/*"]
   },
   "files": {
-    "includes": ["**", "!**/src/schemas/**/*"]
+    "includes": ["**", "!**/generated/**/*"]
   },
   "extends": "//"
 }
