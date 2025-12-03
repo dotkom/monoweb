@@ -1,5 +1,5 @@
-import type { Prisma } from "@prisma/client"
 import { addYears, roundToNearestHours, subYears } from "date-fns"
+import type { Prisma } from "../"
 
 const employments = {
   fulltime: "FULLTIME",
