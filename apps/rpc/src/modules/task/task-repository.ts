@@ -1,4 +1,5 @@
 import type { DBHandle, TaskStatus } from "@dotkomonline/db"
+import { Prisma } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendeeId,
@@ -9,7 +10,6 @@ import {
   type TaskType,
   type TaskWrite,
 } from "@dotkomonline/types"
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { parseOrReport } from "../../invariant"
 import { tasks } from "./task-definition"
 
@@ -57,7 +57,7 @@ export function getTaskRepository(): TaskRepository {
 
         return parseOrReport(TaskSchema, task)
       } catch (e) {
-        if (e instanceof PrismaClientKnownRequestError) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
           // "An operation failed because it depends on one or more records that were required but not found. {cause}"
           if (e.code === "P2025") {
             return null

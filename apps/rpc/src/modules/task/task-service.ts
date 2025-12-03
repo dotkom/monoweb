@@ -1,7 +1,6 @@
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, Prisma } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task, TaskId, TaskStatus, TaskWrite } from "@dotkomonline/types"
-import type { JsonValue } from "@prisma/client/runtime/library"
+import type { Task, TaskId, TaskStatus, TaskType, TaskWrite } from "@dotkomonline/types"
 import { IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
@@ -25,7 +24,7 @@ export type TaskService = {
   // biome-ignore lint/suspicious/noExplicitAny: these are used in inference position
   parse<const TTaskDef extends TaskDefinition<any, any>>(
     taskDefinition: TTaskDef,
-    payload: JsonValue
+    payload: Prisma.JsonValue
   ): InferTaskData<TTaskDef>
 }
 
@@ -44,7 +43,7 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
       let newPayload = requestedTask.payload
       if (data.payload) {
         const definition = getTaskDefinition(requestedTask.type)
-        newPayload = this.parse(definition, data.payload) as JsonValue
+        newPayload = this.parse(definition, data.payload) as Prisma.JsonValue
       }
 
       // Update the task with the new data and the updated and validated payload.
