@@ -1,4 +1,3 @@
-import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { UserId } from "@dotkomonline/types"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
@@ -54,18 +53,11 @@ const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
 
 const getCreateContext = (authorizeOptions: AuthorizeOptions) => {
   return async (principal: Principal | null, context: ServiceLayer, configuration: Configuration) => {
-    function executeAuditedTransaction<T>(call: (tx: DBHandle) => Promise<T>): Promise<T> {
-      return context.executeAuditedTransaction(call, principal?.subject || null)
-    }
-
     const authorize = getAuthorize({ principal, ...authorizeOptions })
 
     return {
       ...context,
       principal,
-
-      executeAuditedTransaction,
-
       /** Authorization middlewares that each procedure can use to enforce access control */
       authorize,
     }
