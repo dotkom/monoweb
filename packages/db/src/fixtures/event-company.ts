@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client"
+import type { Prisma } from "../"
 
 export const getEventCompany: (event_ids: string[], company_ids: string[]) => Prisma.EventCompanyCreateManyInput[] = (
   event_ids,
