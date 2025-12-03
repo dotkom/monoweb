@@ -1,5 +1,5 @@
-import type { Prisma } from "@prisma/client"
 import { getCurrentSemesterStart, getNextSemesterStart, isSpringSemester } from "@dotkomonline/utils"
+import type { Prisma } from "../"
 
 const isSpring = isSpringSemester()
 const start = getCurrentSemesterStart()
