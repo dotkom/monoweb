@@ -1,6 +1,6 @@
 import fs from "node:fs/promises"
 import path from "node:path"
-import type { EventType, Prisma } from "@prisma/client"
+import type { EventType, Prisma } from "@dotkomonline/db"
 import { Command } from "commander"
 import { marked } from "marked"
 import { createServiceLayer, createThirdPartyClients } from "src/modules/core"
