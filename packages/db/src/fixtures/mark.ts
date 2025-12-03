@@ -1,5 +1,5 @@
-import type { Prisma } from "@prisma/client"
 import { roundToNearestHours } from "date-fns"
+import type { Prisma } from "../"
 
 const now = roundToNearestHours(new Date(), { roundingMethod: "floor" })
 
