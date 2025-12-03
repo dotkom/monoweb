@@ -1,0 +1,10 @@
+{
+  "mode": "full",
+  "useMultipleFiles": false,
+  "singleFileName": "index.ts",
+  "optionalFieldBehavior": "nullable",
+  "naming": {
+    "preset": "zod-prisma-types"
+  },
+  "pureModels": true
+}
