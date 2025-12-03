@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client"
+import type { Prisma } from "../"
 
 export const getEventHostingGroupFixtures: (eventIds: string[]) => Prisma.EventHostingGroupCreateManyInput[] = (
   eventIds
