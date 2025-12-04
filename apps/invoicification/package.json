@@ -19,9 +19,9 @@
     "@iconify/react": "^5.2.1",
     "@tanstack/react-query": "^5.79.0",
     "clsx": "^2.0.0",
-    "next": "^15.3.5",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "next": "^15.3.6",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "react-hook-form": "^7.57.0",
     "zod": "^3.25.47"
   },
