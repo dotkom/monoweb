@@ -75,7 +75,7 @@ export function withAuthentication<TContext extends Context, TInput>() {
   const handler: MiddlewareFunction<TContext, TContext & WithPrincipal, TInput> = async ({ ctx, next }) => {
     ctx.authorize.requireSignIn()
     // SAFETY: the above call should ensure this.
-    invariant(ctx.principal === null)
+    invariant(ctx.principal !== null)
     return next({
       ctx: Object.assign(ctx, {
         principal: ctx.principal,
