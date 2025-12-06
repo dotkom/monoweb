@@ -16,7 +16,7 @@ import { TRPCError } from "@trpc/server"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { addHours, max } from "date-fns"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
@@ -394,8 +394,14 @@ const findChargeAttendeeScheduleDateProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-
-    ctx.authorize.requireMeOrEditorRole(attendee.userId, ["dotkom", "hs"])
+    // Allow users to find their own charge date
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        isSameSubject(() => attendee.userId)
+      ),
+      input
+    )
 
     return await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.handle, attendee.id)
   })
