@@ -33,6 +33,7 @@
  * @packageDocumentation
  */
 
+import type { UserId } from "@dotkomonline/types"
 import { ADMIN_EDITOR_ROLES, type EditorRole } from "./modules/authorization-service"
 import type { Context, Principal } from "./trpc"
 
@@ -141,6 +142,26 @@ export function isGroupMember<TInput>(editorRole: EditorRole): Rule<TInput> {
         return false
       }
       return context.principal.editorRoles.has(editorRole)
+    },
+  }
+}
+
+/**
+ * Business rule to check if the provided user ID (based on the procedure input) is equal to the principal performing
+ * the request.
+ *
+ * NOTE: A subject is the "correct" name for the ID of a user.
+ */
+export function isSameSubject<TInput>(
+  selector: (input: TInput) => (UserId | null) | Promise<UserId | null>
+): Rule<TInput> {
+  return {
+    async evaluate(context) {
+      if (context.principal === null) {
+        return false
+      }
+      const selectedPrincipal = await selector(context.input)
+      return selectedPrincipal === context.principal.subject
     },
   }
 }
