@@ -18,6 +18,7 @@ import {
   InvalidArgumentError,
   NotFoundError,
   ResourceExhaustedError,
+  UnauthorizedError,
   UnimplementedError,
 } from "./error"
 import { ADMIN_EDITOR_ROLES, type EditorRole, type EditorRoleSet, isEditorRole } from "./modules/authorization-service"
@@ -142,8 +143,10 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
         span.recordException(error)
         span.setStatus({ code: SpanStatusCode.ERROR })
 
-        // NOTE: We do not bother reporting authorization errors to sentry, as they are a client fault.
-        if (!(error.cause instanceof ForbiddenError)) {
+        // NOTE: We do not bother reporting authentication or authorization errors to sentry, as they are a client
+        // fault.
+        const isClientError = error.cause instanceof ForbiddenError || error.cause instanceof UnauthorizedError
+        if (!isClientError) {
           captureException(error)
         }
 
@@ -188,31 +191,12 @@ function getTRPCErrorCode(error: ApplicationError): TRPC_ERROR_CODE_KEY {
   if (error instanceof ForbiddenError) {
     return "FORBIDDEN"
   }
+  if (error instanceof UnauthorizedError) {
+    return "UNAUTHORIZED"
+  }
   // Safely presume everything else is an internal server error
   return "INTERNAL_SERVER_ERROR"
 }
-
-export const authenticatedProcedure = procedure.use(({ ctx, next }) => {
-  ctx.authorize.requireSignIn()
-  return next({
-    ctx: {
-      ...ctx,
-      // biome-ignore lint/style/noNonNullAssertion: the above assertion ensures ctx.principal is not null
-      principal: ctx.principal!,
-    },
-  })
-})
-
-export const staffProcedure = procedure.use(({ ctx, next }) => {
-  ctx.authorize.requireEditorRole()
-  return next({
-    ctx: {
-      ...ctx,
-      // biome-ignore lint/style/noNonNullAssertion: the above assertion ensures ctx.principal is not null
-      principal: ctx.principal!,
-    },
-  })
-})
 
 function getRequire(principal: Principal | null) {
   return (condition: boolean): asserts condition => {

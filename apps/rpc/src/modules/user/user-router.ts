@@ -11,7 +11,7 @@ import { z } from "zod"
 import { isAdministrator, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 import { ADMIN_EDITOR_ROLES, EditorRole } from "../authorization-service"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
@@ -56,7 +56,7 @@ const findUserByProfileSlugProcedure = procedure
 
 export type CreateUserFileUploadInput = inferProcedureInput<typeof createUserFileUploadProcedure>
 export type CreateUserFileUploadOutput = inferProcedureOutput<typeof createUserFileUploadProcedure>
-const createUserFileUploadProcedure = authenticatedProcedure
+const createUserFileUploadProcedure = procedure
   .input(
     z.object({
       filename: z.string(),
@@ -149,7 +149,7 @@ const deleteUserMembershipProcedure = procedure
 
 export type GetMeInput = inferProcedureInput<typeof getMeProcedure>
 export type GetMeOutput = inferProcedureOutput<typeof getMeProcedure>
-const getMeProcedure = authenticatedProcedure
+const getMeProcedure = procedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ ctx }) => {
@@ -167,7 +167,7 @@ const findMeProcedure = procedure.use(withDatabaseTransaction()).query(async ({ 
 
 export type UpdateUserInput = inferProcedureInput<typeof updateUserProcedure>
 export type UpdateUserOutput = inferProcedureOutput<typeof updateUserProcedure>
-const updateUserProcedure = authenticatedProcedure
+const updateUserProcedure = procedure
   .input(
     z.object({
       id: UserSchema.shape.id,

@@ -14,11 +14,11 @@ import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export type GetFeedbackEligibilityInput = inferProcedureInput<typeof getFeedbackEligibilityProcedure>
 export type GetFeedbackEligibilityOutput = inferProcedureOutput<typeof getFeedbackEligibilityProcedure>
-const getFeedbackEligibilityProcedure = authenticatedProcedure
+const getFeedbackEligibilityProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
   .use(withDatabaseTransaction())
@@ -185,7 +185,7 @@ const findAnswerByAttendeeProcedure = procedure
 
 export type FindOwnAnswerByAttendeeInput = inferProcedureInput<typeof findOwnAnswerByAttendeeProcedure>
 export type FindOwnAnswerByAttendeeOutput = inferProcedureOutput<typeof findOwnAnswerByAttendeeProcedure>
-const findOwnAnswerByAttendeeProcedure = authenticatedProcedure
+const findOwnAnswerByAttendeeProcedure = procedure
   .input(
     z.object({
       formId: FeedbackFormIdSchema,

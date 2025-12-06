@@ -1,8 +1,7 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type * as trpc from "@trpc/server/unstable-core-do-not-import"
-import invariant from "tiny-invariant"
 import type { Rule, RuleContext } from "./authorization"
-import { ForbiddenError } from "./error"
+import { ForbiddenError, UnauthorizedError } from "./error"
 import type { Context } from "./trpc"
 
 type MiddlewareFunction<TContextIn, TContextOut, TInputOut> = trpc.MiddlewareFunction<
@@ -73,9 +72,9 @@ export function withAuditLogEntry<TContext extends Context & WithTransaction, TI
 /** tRPC Middleware to ensure the caller is signed in */
 export function withAuthentication<TContext extends Context, TInput>() {
   const handler: MiddlewareFunction<TContext, TContext & WithPrincipal, TInput> = async ({ ctx, next }) => {
-    ctx.authorize.requireSignIn()
-    // SAFETY: the above call should ensure this.
-    invariant(ctx.principal !== null)
+    if (ctx.principal === null) {
+      throw new UnauthorizedError("Invalid or missing credentials")
+    }
     return next({
       ctx: Object.assign(ctx, {
         principal: ctx.principal,

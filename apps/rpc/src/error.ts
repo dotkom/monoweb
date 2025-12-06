@@ -23,6 +23,12 @@ export class AlreadyExistsError extends ApplicationError {}
 export class FailedPreconditionError extends ApplicationError {}
 export class ResourceExhaustedError extends ApplicationError {}
 export class ForbiddenError extends ApplicationError {}
+/**
+ * This should probably have been called UnauthenticatedError, but this follows tRPC Error code naming scheme.
+ *
+ * See https://trpc.io/docs/server/error-handling#error-codes
+ */
+export class UnauthorizedError extends ApplicationError {}
 
 export function assert(condition: unknown, error: Error): asserts condition {
   if (!condition) {

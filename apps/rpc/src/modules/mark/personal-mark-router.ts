@@ -4,11 +4,11 @@ import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "../../query"
-import { authenticatedProcedure, procedure, t } from "../../trpc"
+import { procedure, t } from "../../trpc"
 
 export type GetPersonalMarksByUserInput = inferProcedureInput<typeof getPersonalMarksByUserProcedure>
 export type GetPersonalMarksByUserOutput = inferProcedureOutput<typeof getPersonalMarksByUserProcedure>
-const getPersonalMarksByUserProcedure = authenticatedProcedure
+const getPersonalMarksByUserProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
@@ -19,7 +19,7 @@ const getPersonalMarksByUserProcedure = authenticatedProcedure
 
 export type GetVisibleInformationInput = inferProcedureInput<typeof getVisibleInformationProcedure>
 export type GetVisibleInformationOutput = inferProcedureOutput<typeof getVisibleInformationProcedure>
-const getVisibleInformationProcedure = authenticatedProcedure
+const getVisibleInformationProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id, paginate: PaginateInputSchema }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
@@ -87,7 +87,7 @@ const removePersonalMarkFromUserProcedure = procedure
 
 export type GetExpiryDateForUserInput = inferProcedureInput<typeof getExpiryDateForUserProcedure>
 export type GetExpiryDateForUserOutput = inferProcedureOutput<typeof getExpiryDateForUserProcedure>
-const getExpiryDateForUserProcedure = authenticatedProcedure
+const getExpiryDateForUserProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
