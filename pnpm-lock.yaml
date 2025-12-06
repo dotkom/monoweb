@@ -706,7 +706,7 @@ importers:
         version: 4.1.3(react-hook-form@7.62.0(react@19.2.1))
       '@next/env':
         specifier: ^15.3.5
-        version: 15.5.6
+        version: 15.5.7
       '@radix-ui/react-avatar':
         specifier: ^1.1.10
         version: 1.1.11(@types/react-dom@19.1.9(@types/react@19.1.14))(@types/react@19.1.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -2788,8 +2788,8 @@ packages:
   '@next/env@15.4.8':
     resolution: {integrity: sha512-LydLa2MDI1NMrOFSkO54mTc8iIHSttj6R6dthITky9ylXV2gCGi0bHQjVCtLGRshdRPjyh2kXbxJukDtBWQZtQ==}
 
-  '@next/env@15.5.6':
-    resolution: {integrity: sha512-3qBGRW+sCGzgbpc5TS1a0p7eNxnOarGVQhZxfvTdnV0gFI61lX7QNtQ4V1TSREctXzYn5NetbUsLvyqwLFJM6Q==}
+  '@next/env@15.5.7':
+    resolution: {integrity: sha512-4h6Y2NyEkIEN7Z8YxkA27pq6zTkS09bUSYC0xjd0NpwFxjnIKeZEeH591o5WECSmjpUhLn3H2QLJcDye3Uzcvg==}
 
   '@next/swc-darwin-arm64@15.1.2':
     resolution: {integrity: sha512-b9TN7q+j5/7+rGLhFAVZiKJGIASuo8tWvInGfAd8wsULjB1uNGRCj1z1WZwwPWzVQbIKWFYqc+9L7W09qwt52w==}
@@ -11246,7 +11246,7 @@ snapshots:
 
   '@next/env@15.4.8': {}
 
-  '@next/env@15.5.6': {}
+  '@next/env@15.5.7': {}
 
   '@next/swc-darwin-arm64@15.1.2':
     optional: true
