@@ -30,12 +30,7 @@ export interface CompanyService {
    * @throws {NotFoundError} if the company does not exist
    */
   update(handle: DBHandle, companyId: CompanyId, data: Partial<CompanyWrite>): Promise<Company>
-  createFileUpload(
-    handle: DBHandle,
-    filename: string,
-    contentType: string,
-    createdByUserId: UserId
-  ): Promise<PresignedPost>
+  createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
 
 export function getCompanyService(
@@ -82,7 +77,7 @@ export function getCompanyService(
       return await companyRepository.update(handle, companyId, payload)
     },
 
-    async createFileUpload(handle, filename, contentType, createdByUserId) {
+    async createFileUpload(filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `company/${Date.now()}-${uuid}-${slugify(filename)}`
 

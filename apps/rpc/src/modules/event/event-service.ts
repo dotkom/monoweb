@@ -54,12 +54,7 @@ export interface EventService {
   getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event>
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
-  createFileUpload(
-    handle: DBHandle,
-    filename: string,
-    contentType: string,
-    createdByUserId: UserId
-  ): Promise<PresignedPost>
+  createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
 
 export function getEventService(
@@ -166,7 +161,7 @@ export function getEventService(
       return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
     },
 
-    async createFileUpload(handle, filename, contentType, createdByUserId) {
+    async createFileUpload(filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `event/${Date.now()}-${uuid}-${slugify(filename)}`
 

@@ -53,12 +53,7 @@ export interface ArticleService {
   removeTag(handle: DBHandle, articleId: ArticleId, tag: ArticleTagName): Promise<void>
   setTags(handle: DBHandle, articleId: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
   findTagsOrderedByPopularity(handle: DBHandle): Promise<ArticleTag[]>
-  createFileUpload(
-    handle: DBHandle,
-    filename: string,
-    contentType: string,
-    createdByUserId: UserId
-  ): Promise<PresignedPost>
+  createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
 
 export function getArticleService(
@@ -220,7 +215,7 @@ export function getArticleService(
       return articleRepository.findTagsOrderedByPopularity(handle, 30)
     },
 
-    async createFileUpload(handle, filename, contentType, createdByUserId) {
+    async createFileUpload(filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `article/${Date.now()}-${uuid}-${slugify(filename)}`
 
