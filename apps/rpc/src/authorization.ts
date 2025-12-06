@@ -33,7 +33,7 @@
  * @packageDocumentation
  */
 
-import type { UserId } from "@dotkomonline/types"
+import type { GroupId, UserId } from "@dotkomonline/types"
 import { ADMIN_EDITOR_ROLES, type EditorRole } from "./modules/authorization-service"
 import type { Context, Principal } from "./trpc"
 
@@ -132,13 +132,30 @@ export function isEditor<TInput>(): Rule<TInput> {
   }
 }
 
+type IsGroupMemberSelector<TInput> = (input: TInput) => EditorRole | GroupId | null
 /**
  * Business rule that returns true if the user is a member of the given group
+ *
+ * This function supports either grabbing the group from the input, or a hard-coded group.
+ *
+ *
+ * @example
+ * ```
+ * isGroupMember(EditorRole.DOTKOM)
+ * isGroupMember(i => i.groupSlug)
+ * ```
  */
-export function isGroupMember<TInput>(editorRole: EditorRole): Rule<TInput> {
+export function isGroupMember<TInput>(selector: IsGroupMemberSelector<TInput>): Rule<TInput>
+export function isGroupMember<TInput>(editorRole: EditorRole): Rule<TInput>
+
+export function isGroupMember<TInput>(selectorOrRole: EditorRole | IsGroupMemberSelector<TInput>): Rule<TInput> {
   return {
     evaluate(context) {
       if (context.principal === null) {
+        return false
+      }
+      const editorRole = selectorOrRole instanceof Function ? selectorOrRole(context.input) : selectorOrRole
+      if (editorRole === null) {
         return false
       }
       return context.principal.editorRoles.has(editorRole)
@@ -146,21 +163,20 @@ export function isGroupMember<TInput>(editorRole: EditorRole): Rule<TInput> {
   }
 }
 
+type IsSameSubjectSelector<TInput> = (input: TInput) => UserId | null
 /**
  * Business rule to check if the provided user ID (based on the procedure input) is equal to the principal performing
  * the request.
  *
  * NOTE: A subject is the "correct" name for the ID of a user.
  */
-export function isSameSubject<TInput>(
-  selector: (input: TInput) => (UserId | null) | Promise<UserId | null>
-): Rule<TInput> {
+export function isSameSubject<TInput>(selector: IsSameSubjectSelector<TInput>): Rule<TInput> {
   return {
-    async evaluate(context) {
+    evaluate(context) {
       if (context.principal === null) {
         return false
       }
-      const selectedPrincipal = await selector(context.input)
+      const selectedPrincipal = selector(context.input)
       return selectedPrincipal === context.principal.subject
     },
   }
