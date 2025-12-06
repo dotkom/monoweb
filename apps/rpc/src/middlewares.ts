@@ -2,10 +2,10 @@ import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type * as trpc from "@trpc/server/unstable-core-do-not-import"
 import type { Rule } from "./authorization"
 import { UnauthorizedError } from "./error"
-import type { Context } from "./trpc"
+import type { TRPCContext } from "./trpc"
 
 type MiddlewareFunction<TContextIn, TContextOut, TInputOut> = trpc.MiddlewareFunction<
-  Context,
+  TRPCContext,
   // Our procedure chain has no metadata
   Record<never, never>,
   TContextIn,
@@ -14,7 +14,7 @@ type MiddlewareFunction<TContextIn, TContextOut, TInputOut> = trpc.MiddlewareFun
 >
 
 type WithPrincipal = {
-  principal: Exclude<Context["principal"], null>
+  principal: Exclude<TRPCContext["principal"], null>
 }
 
 type WithTransaction = {
@@ -26,7 +26,7 @@ type WithTransaction = {
  *
  * Optionally, specify the transaction isolation level, which defaults to read-commited (default in PostgreSQL).
  */
-export function withDatabaseTransaction<TContext extends Context, TInput>(
+export function withDatabaseTransaction<TContext extends TRPCContext, TInput>(
   isolationLevel: Prisma.TransactionIsolationLevel = "ReadCommitted"
 ) {
   const handler: MiddlewareFunction<TContext, TContext & WithTransaction, TInput> = async ({ ctx, next }) => {
@@ -52,7 +52,7 @@ export function withDatabaseTransaction<TContext extends Context, TInput>(
  * Audit log entries are stored in the database for most mutations. We use the audit log to keep track of changes to
  * the application.
  */
-export function withAuditLogEntry<TContext extends Context & WithTransaction, TInput>() {
+export function withAuditLogEntry<TContext extends TRPCContext & WithTransaction, TInput>() {
   const handler: MiddlewareFunction<TContext, TContext & WithTransaction, TInput> = async ({ ctx, next }) => {
     if (ctx.principal !== null) {
       // We use a PostgreSQL configuration parameter, isolated to the current transaction to tell which user is
@@ -70,7 +70,7 @@ export function withAuditLogEntry<TContext extends Context & WithTransaction, TI
 }
 
 /** tRPC Middleware to ensure the caller is signed in */
-export function withAuthentication<TContext extends Context, TInput>() {
+export function withAuthentication<TContext extends TRPCContext, TInput>() {
   const handler: MiddlewareFunction<TContext, TContext & WithPrincipal, TInput> = async ({ ctx, next }) => {
     if (ctx.principal === null) {
       throw new UnauthorizedError("Invalid or missing credentials")
@@ -89,7 +89,7 @@ export function withAuthentication<TContext extends Context, TInput>() {
  *
  * See file /src/authorization.ts for more details on the authorization system.
  */
-export function withAuthorization<TContext extends Context, TInput>(rule: Rule<TInput>) {
+export function withAuthorization<TContext extends TRPCContext, TInput>(rule: Rule<TInput>) {
   const handler: MiddlewareFunction<TContext, TContext, TInput> = async ({ ctx, next, input }) => {
     await ctx.addAuthorizationGuard(rule, input)
     return await next({ ctx })

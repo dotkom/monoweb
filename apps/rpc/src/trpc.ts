@@ -6,9 +6,7 @@ import { TRPCError, type TRPC_ERROR_CODE_KEY, initTRPC } from "@trpc/server"
 import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
 import superjson from "superjson"
-import invariant from "tiny-invariant"
 import type { Rule, RuleContext } from "./authorization"
-import type { Configuration } from "./configuration"
 import {
   AlreadyExistsError,
   ApplicationError,
@@ -22,7 +20,7 @@ import {
   UnauthorizedError,
   UnimplementedError,
 } from "./error"
-import { ADMIN_EDITOR_ROLES, type EditorRole, type EditorRoleSet, isEditorRole } from "./modules/authorization-service"
+import type { EditorRoleSet } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
 
 export type Principal = {
@@ -31,67 +29,41 @@ export type Principal = {
   editorRoles: EditorRoleSet
 }
 
-type AuthorizeOptions = { localDevelopment: boolean }
-type AuthorizeProps = AuthorizeOptions & { principal: Principal | null }
-
-const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
-  const require = getRequire(principal)
-  const requireSignIn = getRequireSignIn(principal, require)
-  const requireEditorRole = getRequireEditorRole(principal, require, requireSignIn)
-  const localDevelopmentRequireEditorRole = getDevelopmentRequireEditorRole(requireSignIn)
-  return {
-    ADMIN_EDITOR_ROLES,
-
-    require,
-    requireSignIn,
-    requireEditorRole: localDevelopment ? localDevelopmentRequireEditorRole : requireEditorRole,
+export const createTrpcContext = async (principal: Principal | null, context: ServiceLayer) => {
+  const trpcContext = {
+    ...context,
+    principal,
+    addAuthorizationGuard,
   }
-}
 
-const getCreateContext = (authorizeOptions: AuthorizeOptions) => {
-  return async (principal: Principal | null, context: ServiceLayer, configuration: Configuration) => {
-    const authorize = getAuthorize({ principal, ...authorizeOptions })
-    const trpcContext = {
-      ...context,
-      principal,
-      /** Authorization middlewares that each procedure can use to enforce access control */
-      authorize,
-      addAuthorizationGuard,
+  /**
+   * Add a guard clause (rule) that has to evaluate to true, otherwise exit the procedure with a ForbiddenError.
+   */
+  async function addAuthorizationGuard<TRuleInput>(rule: Rule<TRuleInput>, input: TRuleInput): Promise<void> {
+    async function evaluate<TRuleInput>(
+      rule: Rule<TRuleInput>,
+      ruleContext: RuleContext<TRuleInput>
+    ): Promise<boolean> {
+      return await rule.evaluate(ruleContext)
     }
-
-    /**
-     * Add a guard clause (rule) that has to evaluate to true, otherwise exit the procedure with a ForbiddenError.
-     */
-    async function addAuthorizationGuard<TRuleInput>(rule: Rule<TRuleInput>, input: TRuleInput): Promise<void> {
-      async function evaluate<TRuleInput>(
-        rule: Rule<TRuleInput>,
-        ruleContext: RuleContext<TRuleInput>
-      ): Promise<boolean> {
-        return await rule.evaluate(ruleContext)
-      }
-      const decision = await evaluate(rule, {
-        ctx: trpcContext,
-        evaluate,
-        input,
-        principal: trpcContext.principal,
-      })
-      if (!decision) {
-        throw new ForbiddenError(
-          `Principal(ID=${trpcContext.principal?.subject ?? "<anonymous>"}) is not permitted to perform this operation`
-        )
-      }
+    const decision = await evaluate(rule, {
+      ctx: trpcContext,
+      evaluate,
+      input,
+      principal: trpcContext.principal,
+    })
+    if (!decision) {
+      throw new ForbiddenError(
+        `Principal(ID=${trpcContext.principal?.subject ?? "<anonymous>"}) is not permitted to perform this operation`
+      )
     }
-
-    return trpcContext
   }
+
+  return trpcContext
 }
+export type TRPCContext = Awaited<ReturnType<typeof createTrpcContext>>
 
-export const createContext = getCreateContext({ localDevelopment: false })
-export const createLocalDevelopmentContext = getCreateContext({ localDevelopment: true })
-
-export type Context = Awaited<ReturnType<typeof createContext>>
-
-export const t = initTRPC.context<Context>().create({
+export const t = initTRPC.context<TRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape }) {
     return shape
@@ -224,52 +196,5 @@ function getRequire(principal: Principal | null) {
     if (!condition) {
       throw new ForbiddenError(`Principal(ID=${principal ?? "<anonymous>"}) is not permitted to perform this operation`)
     }
-  }
-}
-type Require = ReturnType<typeof getRequire>
-
-function getRequireSignIn(principal: Principal | null, require: Require) {
-  /**
-   * Require that the user is signed in (i.e., the principal is not null).
-   */
-  return () => {
-    require(principal !== null)
-  }
-}
-type RequireSignIn = ReturnType<typeof getRequireSignIn>
-
-function getRequireEditorRole(principal: Principal | null, require: Require, requireSignIn: RequireSignIn) {
-  /**
-   * Require that the user is a member of at least one of the provided groups.
-   *
-   * If the provided list is empty, we assume permission for any group editor role is sufficient.
-   */
-  return (...editorRoles: EditorRole[]) => {
-    requireSignIn()
-
-    invariant(principal !== null)
-    require(principal.editorRoles.size > 0)
-    for (const editorRole of editorRoles) {
-      if (isEditorRole(editorRole) && principal.editorRoles.has(editorRole)) {
-        return
-      }
-    }
-    // This is fine if no editor roles were required
-    require(editorRoles.length === 0)
-  }
-}
-type RequireEditorRole = ReturnType<typeof getRequireEditorRole>
-
-function getDevelopmentRequireEditorRole(requireSignIn: RequireSignIn): RequireEditorRole {
-  /**
-   * Require that the user is a member of at least one of the provided groups.
-   *
-   * If the provided list is empty, we assume permission for any group editor role is sufficient.
-   */
-  return (...editorRoles: EditorRole[]) => {
-    requireSignIn()
-
-    // For local development, you are always authorized regardless of editor roles
-    return true
   }
 }
