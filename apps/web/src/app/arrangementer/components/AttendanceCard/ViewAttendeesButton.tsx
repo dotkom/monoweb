@@ -158,6 +158,10 @@ const getAttendeeListEntryComponent = (attendee: Attendee) => {
     return VerifiedAttendeeListUser
   }
 
+  if (attendee.user.flags.includes("VANITY_THE_THINKER")) {
+    return TheThinkerAttendeeListUser
+  }
+
   return GenericAttendeeListEntry
 }
 
@@ -253,4 +257,26 @@ const VerifiedAttendeeListUser = ({ attendee, user }: AttendeeListEntryProps) =>
       </div>
     </Link>
   )
+}
+
+const TheThinkerAttendeeListUser = ({ attendee, user }: AttendeeListEntryProps) => {
+  const userSection = (
+    <div className="flex flex-col gap-0.5 grow min-w-0">
+      <div className="flex items-center gap-2 overflow-x-auto">
+        <Text className="text-sm text-nowrap">{attendee.user.name}</Text>
+        <Tooltip delayDuration={100}>
+          <TooltipTrigger asChild>
+            <img alt="TheThinker" src="https://i.imgur.com/M2sXd7p.png" className="size-4 rounded-xs" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <Text>"inshallah hehehe suiii" - TheThinker</Text>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+
+      <Text className="text-xs truncate">{attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}</Text>
+    </div>
+  )
+
+  return <GenericAttendeeListEntry attendee={attendee} user={user} userSection={userSection} />
 }
