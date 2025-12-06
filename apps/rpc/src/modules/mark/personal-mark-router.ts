@@ -1,7 +1,7 @@
 import { CreatePersonalMarkSchema, PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "../../query"
 import { procedure, t } from "../../trpc"
@@ -11,9 +11,16 @@ export type GetPersonalMarksByUserOutput = inferProcedureOutput<typeof getPerson
 const getPersonalMarksByUserProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.userId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    ctx.authorize.requireMe(input.userId)
     return ctx.personalMarkService.findMarksByUserId(ctx.handle, input.userId)
   })
 
@@ -22,10 +29,17 @@ export type GetVisibleInformationOutput = inferProcedureOutput<typeof getVisible
 const getVisibleInformationProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id, paginate: PaginateInputSchema }))
   .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.userId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .query(async ({ ctx, input }) => {
-    ctx.authorize.requireMe(input.userId)
-    return ctx.personalMarkService.listVisibleInformationForUser(ctx.handle, ctx.principal.subject)
+    return ctx.personalMarkService.listVisibleInformationForUser(ctx.handle, input.userId)
   })
 
 export type GetPersonalMarksByMarkInput = inferProcedureInput<typeof getPersonalMarksByMarkProcedure>
@@ -90,9 +104,16 @@ export type GetExpiryDateForUserOutput = inferProcedureOutput<typeof getExpiryDa
 const getExpiryDateForUserProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isSameSubject((i) => i.userId)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    ctx.authorize.requireMe(input.userId)
     return ctx.personalMarkService.findPunishmentByUserId(ctx.handle, input.userId)
   })
 

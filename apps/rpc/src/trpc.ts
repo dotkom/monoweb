@@ -39,14 +39,12 @@ const getAuthorize = ({ principal, localDevelopment }: AuthorizeProps) => {
   const requireSignIn = getRequireSignIn(principal, require)
   const requireEditorRole = getRequireEditorRole(principal, require, requireSignIn)
   const localDevelopmentRequireEditorRole = getDevelopmentRequireEditorRole(requireSignIn)
-  const requireMe = getRequireMe(principal, require, requireSignIn)
   return {
     ADMIN_EDITOR_ROLES,
 
     require,
     requireSignIn,
     requireEditorRole: localDevelopment ? localDevelopmentRequireEditorRole : requireEditorRole,
-    requireMe,
   }
 }
 
@@ -273,38 +271,5 @@ function getDevelopmentRequireEditorRole(requireSignIn: RequireSignIn): RequireE
 
     // For local development, you are always authorized regardless of editor roles
     return true
-  }
-}
-
-function getRequireMe(principal: Principal | null, require: Require, requireSignIn: RequireSignIn) {
-  /**
-   * Require that the user is signed in and that the provided user id is the user's id.
-   */
-  return (userId: UserId) => {
-    requireSignIn()
-    invariant(principal !== null)
-    require(principal.subject === userId)
-  }
-}
-
-function getRequireMeOrEditorRole(
-  principal: Principal | null,
-  requireSignIn: RequireSignIn,
-  requireEditorRole: RequireEditorRole
-) {
-  /**
-   * Requires either `requireMe` or `requireEditorRole` to be true.
-   *
-   * One of the following must be true:
-   * - The user is signed in and that the provided user id is the user's id.
-   * - The user is a member of at least one of the provided groups (or any group if empty).
-   */
-  return (userId: UserId, editorRoles: EditorRole[]) => {
-    requireSignIn()
-
-    invariant(principal !== null)
-    if (principal.subject !== userId) {
-      requireEditorRole(...editorRoles)
-    }
   }
 }
