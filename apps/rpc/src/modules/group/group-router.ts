@@ -23,6 +23,10 @@ const createGroupProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    // Backlog is only permitted to create interest groups
+    if (input.type !== "INTEREST_GROUP") {
+      ctx.addAuthorizationGuard(isAdministrator(), input)
+    }
     return ctx.groupService.create(ctx.handle, input)
   })
 
@@ -75,7 +79,7 @@ const updateGroupProcedure = procedure
       or(
         isAdministrator(),
         isGroupMember(EditorRole.BACKLOG),
-        isGroupMember((i) => i.id)
+        isGroupMember((input) => input.id)
       )
     )
   )
@@ -108,7 +112,7 @@ const deleteGroupProcedure = procedure
       or(
         isAdministrator(),
         isGroupMember(EditorRole.BACKLOG),
-        isGroupMember((i) => i)
+        isGroupMember((input) => input)
       )
     )
   )
@@ -173,7 +177,7 @@ const startMembershipProcedure = procedure
       or(
         isAdministrator(),
         isGroupMember(EditorRole.BACKLOG),
-        isGroupMember((i) => i.groupId)
+        isGroupMember((input) => input.groupId)
       )
     )
   )
@@ -206,7 +210,7 @@ const endMembershipProcedure = procedure
       or(
         isAdministrator(),
         isGroupMember(EditorRole.BACKLOG),
-        isGroupMember((i) => i.groupId)
+        isGroupMember((input) => input.groupId)
       )
     )
   )
@@ -245,7 +249,7 @@ const updateMembershipProcedure = procedure
       or(
         isAdministrator(),
         isGroupMember(EditorRole.BACKLOG),
-        isGroupMember((i) => i.id)
+        isGroupMember((input) => input.id)
       )
     )
   )
@@ -278,7 +282,7 @@ const createRoleProcedure = procedure
       or(
         isAdministrator(),
         isGroupMember(EditorRole.BACKLOG),
-        isGroupMember((i) => i.groupId)
+        isGroupMember((input) => input.groupId)
       )
     )
   )
@@ -316,7 +320,7 @@ const updateRoleProcedure = procedure
       or(
         isAdministrator(),
         isGroupMember(EditorRole.BACKLOG),
-        isGroupMember((i) => i.id)
+        isGroupMember((input) => input.id)
       )
     )
   )
