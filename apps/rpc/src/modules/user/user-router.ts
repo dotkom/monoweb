@@ -198,7 +198,7 @@ const updateUserProcedure = procedure
 
 export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
 export type IsStaffOutput = inferProcedureOutput<typeof isStaffProcedure>
-const isStaffProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+const isStaffProcedure = procedure.query(async ({ ctx }) => {
   const principal = ctx.principal
   if (principal === null) {
     return false
@@ -208,7 +208,7 @@ const isStaffProcedure = procedure.use(withDatabaseTransaction()).query(async ({
 
 export type IsAdminInput = inferProcedureInput<typeof isAdminProcedure>
 export type IsAdminOutput = inferProcedureOutput<typeof isAdminProcedure>
-const isAdminProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+const isAdminProcedure = procedure.query(async ({ ctx }) => {
   const principal = ctx.principal
   if (principal === null) {
     return false
