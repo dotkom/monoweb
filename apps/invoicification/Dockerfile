@@ -12,7 +12,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --ignore-scripts
 RUN pnpm run -r --filter @dotkomonline/invoicification build
 
-RUN pnpm install --prod --ignore-scripts
+RUN pnpm install --prod --ignore-scripts --config.confirmModulesPurge=false
 
 FROM base AS runner
 WORKDIR /app

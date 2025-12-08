@@ -72,7 +72,7 @@ RUN pnpm run generate
 WORKDIR /app
 
 # We can now install the actual production dependencies.
-RUN pnpm install --frozen-lockfile --ignore-scripts --prod
+RUN pnpm install --frozen-lockfile --ignore-scripts --prod --config.confirmModulesPurge=false
 
 # Step 3: Run the actual application and finalize the image.
 FROM base AS runner
