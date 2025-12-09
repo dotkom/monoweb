@@ -73,14 +73,20 @@
 .ProseMirror [data-resize-handle="bottom-left"] {
   bottom: 0;
   left: 0;
-  transform: translate(-50%, -25%); /* no clue why -25 % works but -50 % is offset */
+  transform: translate(
+    -50%,
+    -25%
+  ); /* no clue why -25 % works but -50 % is offset */
   cursor: nesw-resize;
 }
 
 .ProseMirror [data-resize-handle="bottom-right"] {
   bottom: 0;
   right: 0;
-  transform: translate(50%, -25%); /* no clue why -25 % works but -50 % is offset */
+  transform: translate(
+    50%,
+    -25%
+  ); /* no clue why -25 % works but -50 % is offset */
   cursor: nwse-resize;
 }
 

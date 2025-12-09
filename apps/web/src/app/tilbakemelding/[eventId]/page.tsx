@@ -21,7 +21,10 @@ function getFailureMessage(cause: FeedbackRejectionCause) {
 const EventFeedbackPage = async ({
   params,
   searchParams,
-}: { params: Promise<{ eventId: string }>; searchParams: Promise<{ preview: string }> }) => {
+}: {
+  params: Promise<{ eventId: string }>
+  searchParams: Promise<{ preview: string }>
+}) => {
   const { eventId } = await params
   const { preview } = await searchParams
   const isPreview = preview === "true"

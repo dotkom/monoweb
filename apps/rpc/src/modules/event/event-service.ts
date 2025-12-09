@@ -62,7 +62,7 @@ export function getEventService(
   s3Client: S3Client,
   s3BucketName: string
 ): EventService {
-  const logger = getLogger("EventService")
+  const _logger = getLogger("EventService")
 
   return {
     async createEvent(handle, data) {

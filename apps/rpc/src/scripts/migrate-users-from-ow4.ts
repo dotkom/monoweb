@@ -163,7 +163,7 @@ async function getAuth0User(
     }
 
     return user
-  } catch (err) {
+  } catch (_err) {
     return null
   }
 }

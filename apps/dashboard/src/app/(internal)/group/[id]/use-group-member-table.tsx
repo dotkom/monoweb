@@ -138,7 +138,10 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
 const SyncStateIndicator = ({
   syncState,
   inMemberList,
-}: { syncState: WorkspaceMemberSyncState; inMemberList: boolean }) => {
+}: {
+  syncState: WorkspaceMemberSyncState
+  inMemberList: boolean
+}) => {
   switch (syncState) {
     case "PENDING_ADD": {
       return (

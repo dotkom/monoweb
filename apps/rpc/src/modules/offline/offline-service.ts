@@ -57,7 +57,7 @@ export function getOfflineService(
       return offlineRepository.findMany(handle, page)
     },
 
-    async createFileUpload(handle, filename, contentType, createdByUserId) {
+    async createFileUpload(_handle, filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `offlines/${Date.now()}-${uuid}-${slugify(filename)}`
 

@@ -184,7 +184,7 @@ export const AttendanceCard = ({
   if (isBefore(getCurrentUTC(), attendance.registerStart)) {
     setTimeout(() => {
       setAttendanceStatus("Open")
-    }, attendance.registerStart.getTime() - new Date().getTime())
+    }, attendance.registerStart.getTime() - Date.now())
   }
 
   return (

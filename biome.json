@@ -1,16 +1,22 @@
 {
   "$schema": "packages/config/node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "ignore": [
-      "**/node_modules/**",
-      "**/build/**",
-      "**/coverage/**",
-      "**/dist/**",
-      "**/out/**",
-      "**/.next/**",
-      "**/.react-email/**",
-      "**/db.generated.d.ts"
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/build",
+      "!**/coverage",
+      "!**/dist",
+      "!**/out",
+      "!**/.next",
+      "!**/.react-email",
+      "!**/db.generated.d.ts"
     ]
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
   },
   "formatter": {
     "indentStyle": "space",
@@ -42,7 +48,7 @@
   },
   "overrides": [
     {
-      "include": ["src/index.ts"],
+      "includes": ["**/src/index.ts"],
       "linter": {
         "rules": {
           "performance": {
@@ -52,23 +58,23 @@
       }
     },
     {
-      "include": [
-        "default.tsx",
-        "error.tsx",
-        "forbidden.tsx",
-        "global-error.tsx",
-        "layout.tsx",
-        "loading.tsx",
-        "not-found.tsx",
-        "page.tsx",
-        "route.tsx",
-        "template.tsx",
-        "unauthorized.tsx",
-        "*.stories.tsx",
-        ".ladle",
-        "*.config.ts",
-        "*.config.js",
-        "*.config.mjs"
+      "includes": [
+        "**/default.tsx",
+        "**/error.tsx",
+        "**/forbidden.tsx",
+        "**/global-error.tsx",
+        "**/layout.tsx",
+        "**/loading.tsx",
+        "**/not-found.tsx",
+        "**/page.tsx",
+        "**/route.tsx",
+        "**/template.tsx",
+        "**/unauthorized.tsx",
+        "**/*.stories.tsx",
+        "**/.ladle/**",
+        "**/*.config.ts",
+        "**/*.config.js",
+        "**/*.config.mjs"
       ],
       "linter": {
         "rules": {
@@ -78,5 +84,12 @@
         }
       }
     }
-  ]
+  ],
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "off"
+      }
+    }
+  }
 }

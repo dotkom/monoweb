@@ -140,12 +140,14 @@ describe("feedback integration tests", () => {
     expect(copiedForm.questions).toEqual(
       expect.arrayContaining(
         originalForm.questions.map((question) => {
+          // biome-ignore lint/correctness/noUnusedVariables: object property picking
           const { createdAt, updatedAt, id, feedbackFormId, options, ...questionRest } = question
 
           return expect.objectContaining({
             ...questionRest,
             options: expect.arrayContaining(
               question.options.map((option) => {
+                // biome-ignore lint/correctness/noUnusedVariables: object property picking
                 const { id, questionId, ...optionRest } = option
 
                 return expect.objectContaining(optionRest)

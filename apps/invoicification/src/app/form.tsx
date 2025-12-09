@@ -125,7 +125,7 @@ export const Form: FC = () => {
             control={control}
             name="preferredDeliveryMethod"
             placeholder="Velg leveringsmetode"
-            options={Object.entries(DeliveryMethod).map(([key, value]) => ({
+            options={Object.entries(DeliveryMethod).map(([_key, value]) => ({
               value,
               children: value,
             }))}

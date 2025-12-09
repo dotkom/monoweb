@@ -272,7 +272,7 @@ export const useUpdateEventAttendanceMutation = () => {
           message: "Brukerens oppmøte blir oppdatert.",
         })
       },
-      onSuccess: async (data) => {
+      onSuccess: async (_data) => {
         notification.complete({
           title: "Oppmøte oppdatert",
           message: "Oppmøte er registrert",

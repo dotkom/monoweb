@@ -22,7 +22,7 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { IconCheck, IconChevronDown, IconSearch } from "@tabler/icons-react"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { type EventListViewMode, EventListViewModeSchema } from "./EventList"
@@ -53,20 +53,22 @@ export const EventFilters = ({ onChange, groups, typeFilters, groupFilters, view
     },
   })
   const data = useWatch({ control: form.control }) as FormValues
+  const handleSubmit = useCallback(
+    (values: FormValues) => {
+      onChange(
+        {
+          byType: values.byType.length > 0 ? values.byType : undefined,
+          byOrganizingGroup: values.byOrganizingGroup.length > 0 ? values.byOrganizingGroup : undefined,
+        },
+        values.viewMode
+      )
+    },
+    [onChange]
+  )
 
   useEffect(() => {
     handleSubmit(data)
-  }, [data])
-
-  const handleSubmit = (values: FormValues) => {
-    onChange(
-      {
-        byType: values.byType.length > 0 ? values.byType : undefined,
-        byOrganizingGroup: values.byOrganizingGroup.length > 0 ? values.byOrganizingGroup : undefined,
-      },
-      values.viewMode
-    )
-  }
+  }, [data, handleSubmit])
 
   const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.Values)
     .filter((type) => isStaff || type !== "INTERNAL")

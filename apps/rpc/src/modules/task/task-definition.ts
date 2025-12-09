@@ -7,8 +7,8 @@ export interface TaskDefinition<TData, TType extends TaskType> {
   type: TType
 }
 
-export type InferTaskData<TDef> = TDef extends TaskDefinition<infer TData, infer TType> ? TData : never
-export type InferTaskType<TDef> = TDef extends TaskDefinition<infer TData, infer TType extends TaskType> ? TType : never
+export type InferTaskData<TDef> = TDef extends TaskDefinition<infer TData, infer _> ? TData : never
+export type InferTaskType<TDef> = TDef extends TaskDefinition<infer _, infer TType extends TaskType> ? TType : never
 
 export function createTaskDefinition<const TData, const TType extends TaskType>(
   definition: TaskDefinition<TData, TType>
