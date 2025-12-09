@@ -39,7 +39,7 @@ export const PaymentPage: FC = () => {
   }
 
   const removePayment = async () => {
-    updateAttendancePayment.mutate({ id: attendance?.id, price: null })
+    updateAttendancePayment.mutate({ id: attendance!.id, price: null })
   }
 
   const columnHelper = createColumnHelper<Attendee>()
