@@ -1,7 +1,7 @@
-import { createDateTimeInput } from "@/components/forms/DateTimeInput"
-import { useFormBuilder } from "@/components/forms/Form"
 import { AttendanceWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
+import { createDateTimeInput } from "@/components/forms/DateTimeInput"
+import { useFormBuilder } from "@/components/forms/Form"
 
 // Define the schema without the omitted fields
 const AttendanceFormSchema = AttendanceWriteSchema.superRefine((val, ctx) => {

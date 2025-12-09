@@ -1,7 +1,5 @@
 "use client"
 
-import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
-import { useCountdown } from "@/utils/use-countdown"
 import {
   type Attendance,
   type Attendee,
@@ -9,12 +7,13 @@ import {
   getReservedAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/types"
-import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { cn, Text, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
-import { interval, isWithinInterval } from "date-fns"
-import { formatDistanceToNowStrict, isFuture } from "date-fns"
+import { formatDistanceToNowStrict, interval, isFuture, isWithinInterval } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
+import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
+import { useCountdown } from "@/utils/use-countdown"
 
 interface EventListItemAttendanceStatusProps {
   attendance: Attendance

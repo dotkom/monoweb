@@ -1,9 +1,9 @@
+import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 import { useCompanyFileUploadMutation } from "@/app/(internal)/company/mutations"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   imageUrl: null,

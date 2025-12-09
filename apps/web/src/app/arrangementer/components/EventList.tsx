@@ -1,6 +1,5 @@
 "use client"
 
-import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
@@ -9,6 +8,7 @@ import { IconMoodConfuzed } from "@tabler/icons-react"
 import { compareAsc, interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
 import { type FC, useEffect, useRef } from "react"
 import z from "zod"
+import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 
 const OPENING_SOON_DAYS_THRESHOLD = 7 as const
 

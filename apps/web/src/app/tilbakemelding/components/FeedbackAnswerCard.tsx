@@ -1,6 +1,8 @@
 "use client"
 
 import type { FeedbackFormAnswer, FeedbackQuestion, FeedbackQuestionAnswer } from "@dotkomonline/types"
+import { Button, Text, Title } from "@dotkomonline/ui"
+import { IconTrash } from "@tabler/icons-react"
 import {
   Bar,
   BarChart,
@@ -14,9 +16,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-
-import { Button, Text, Title } from "@dotkomonline/ui"
-import { IconTrash } from "@tabler/icons-react"
 import type { Payload } from "recharts/types/component/DefaultTooltipContent"
 import { useDeleteFeedbackQuestionAnswerMutation } from "../mutations"
 

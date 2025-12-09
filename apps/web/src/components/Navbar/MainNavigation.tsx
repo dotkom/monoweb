@@ -1,10 +1,10 @@
 "use client"
 
-import type { MenuLink } from "@/components/Navbar/Navbar"
 import { Text } from "@dotkomonline/ui"
 import { IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
+import type { MenuLink } from "@/components/Navbar/Navbar"
 import { isExternal } from "../../utils/is-link-external"
 import {
   NavigationMenu,

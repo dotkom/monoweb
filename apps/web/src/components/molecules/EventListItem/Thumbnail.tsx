@@ -1,5 +1,5 @@
 import type { EventType } from "@dotkomonline/types"
-import { Badge, Tilt, cn } from "@dotkomonline/ui"
+import { Badge, cn, Tilt } from "@dotkomonline/ui"
 import Image from "next/image.js"
 import type { FC } from "react"
 import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"

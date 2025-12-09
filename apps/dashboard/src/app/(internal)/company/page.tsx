@@ -1,8 +1,8 @@
 "use client"
 
-import { GenericTable } from "@/components/GenericTable"
 import { Box, Button, Skeleton, Stack } from "@mantine/core"
 import Link from "next/link"
+import { GenericTable } from "@/components/GenericTable"
 import { useCompanyTable } from "./components/use-company-table"
 import { useCompanyAllQuery } from "./queries"
 

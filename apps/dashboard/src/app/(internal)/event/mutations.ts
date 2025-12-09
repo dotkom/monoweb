@@ -1,9 +1,9 @@
-import { env } from "@/lib/env"
-import { useQueryGenericMutationNotification, useQueryNotification } from "@/lib/notifications"
-import { useTRPC } from "@/lib/trpc-client"
 import { uploadFileToS3PresignedPost } from "@dotkomonline/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
+import { env } from "@/lib/env"
+import { useQueryGenericMutationNotification, useQueryNotification } from "@/lib/notifications"
+import { useTRPC } from "@/lib/trpc-client"
 
 export const useCreateEventMutation = () => {
   const trpc = useTRPC()
@@ -272,7 +272,7 @@ export const useUpdateEventAttendanceMutation = () => {
           message: "Brukerens oppmøte blir oppdatert.",
         })
       },
-      onSuccess: async (data) => {
+      onSuccess: async (_data) => {
         notification.complete({
           title: "Oppmøte oppdatert",
           message: "Oppmøte er registrert",

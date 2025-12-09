@@ -1,5 +1,3 @@
-import { GenericTable } from "@/components/GenericTable"
-import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import {
   Button,
   Divider,
@@ -18,6 +16,8 @@ import { differenceInHours, formatDate, formatDistanceToNowStrict } from "date-f
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 import type { FC } from "react"
+import { GenericTable } from "@/components/GenericTable"
+import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import { useGroupMemberForm } from "../../group-member-form"
 import { useEndGroupMembershipMutation, useStartGroupMembershipMutation } from "../../mutations"
 import { useGroupDetailsContext } from "../provider"

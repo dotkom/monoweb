@@ -1,8 +1,7 @@
-import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
-import { useTRPC } from "@/utils/trpc/client"
 import { useSession } from "@dotkomonline/oauth2/react"
-
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useTRPC } from "@/utils/trpc/client"
+import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 
 export const useDeregisterMutation = () => {
   const trpc = useTRPC()

@@ -1,9 +1,9 @@
 "use client"
-import { DateTooltip } from "@/components/DateTooltip"
 import type { GroupMember, GroupMembership } from "@dotkomonline/types"
 import { Button } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
+import { DateTooltip } from "@/components/DateTooltip"
 import { useEditGroupMembershipModal } from "../../modals/edit-group-membership-modal"
 
 interface Props {

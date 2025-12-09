@@ -1,6 +1,5 @@
 "use client"
 
-import { env } from "@/lib/env"
 import { createAbsoluteEventPageUrl } from "@dotkomonline/utils"
 import { Box, Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
@@ -18,6 +17,7 @@ import {
   IconUser,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { env } from "@/lib/env"
 import { useDeleteEventMutation } from "../mutations"
 import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"

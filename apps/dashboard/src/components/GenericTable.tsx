@@ -1,7 +1,7 @@
 import { Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core"
 import { useInViewport } from "@mantine/hooks"
 import { IconCaretDownFilled, IconCaretUpDownFilled, IconCaretUpFilled } from "@tabler/icons-react"
-import { type Table as ReactTable, flexRender } from "@tanstack/react-table"
+import { flexRender, type Table as ReactTable } from "@tanstack/react-table"
 import { useEffect } from "react"
 
 export interface GenericTableProps<T> {

@@ -1,4 +1,3 @@
-import { PenaltyRules } from "@/utils/penalty-rules"
 import {
   Accordion,
   AccordionContent,
@@ -10,11 +9,12 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Text,
   cn,
+  Text,
 } from "@dotkomonline/ui"
 import { IconBook2 } from "@tabler/icons-react"
 import { useState } from "react"
+import { PenaltyRules } from "@/utils/penalty-rules"
 
 interface EventRulesProps {
   className?: string

@@ -1,5 +1,7 @@
 "use client"
 
+import { ModalsProvider } from "@mantine/modals"
+import type { FC, PropsWithChildren } from "react"
 import { CreateArticleModal } from "@/app/(internal)/article/modals/create-article"
 import { AttendanceRegisteredModal } from "@/app/(internal)/event/components/attendance-registered-modal"
 import { CreateAttendanceSelectionsModal } from "@/app/(internal)/event/components/create-event-selections-modal"
@@ -20,8 +22,6 @@ import { CreateSuspensionModal } from "@/app/(internal)/punishment/modals/create
 import { CreateMembershipModal } from "@/app/(internal)/user/components/create-membership-modal"
 import { EditMembershipModal } from "@/app/(internal)/user/components/edit-membership-modal"
 import { UploadImageModal } from "@/components/ImageUploadModal"
-import { ModalsProvider } from "@mantine/modals"
-import type { FC, PropsWithChildren } from "react"
 import { QRCodeScannedModal } from "./(internal)/event/components/qr-code-scanned-modal"
 import { CreateGroupMemberModal } from "./(internal)/group/modals/create-group-member-modal"
 

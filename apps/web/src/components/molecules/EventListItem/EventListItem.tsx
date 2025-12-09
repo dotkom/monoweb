@@ -1,5 +1,5 @@
 import type { Attendance, Event } from "@dotkomonline/types"
-import { Title, cn } from "@dotkomonline/ui"
+import { cn, Title } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import Link from "next/link"

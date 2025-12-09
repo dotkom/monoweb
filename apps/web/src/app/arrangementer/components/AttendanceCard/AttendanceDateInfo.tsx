@@ -1,5 +1,5 @@
 import { type Attendance, type Attendee, hasAttendeePaid } from "@dotkomonline/types"
-import { Text, cn } from "@dotkomonline/ui"
+import { cn, Text } from "@dotkomonline/ui"
 import { IconLock, IconLockOpen2, IconSquareX } from "@tabler/icons-react"
 import { format as formatDate, isEqual, isPast, isThisYear, min } from "date-fns"
 import { nb } from "date-fns/locale"

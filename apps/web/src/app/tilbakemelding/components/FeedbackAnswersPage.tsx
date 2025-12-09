@@ -1,6 +1,6 @@
+import type { EventId, FeedbackPublicResultsToken } from "@dotkomonline/types"
 import { FeedbackResults } from "@/app/tilbakemelding/components/FeedbackResults"
 import { server } from "@/utils/trpc/server"
-import type { EventId, FeedbackPublicResultsToken } from "@dotkomonline/types"
 
 interface Props {
   eventId: EventId

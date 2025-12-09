@@ -1,26 +1,21 @@
 "use client"
 
-import { EventList } from "@/app/arrangementer/components/EventList"
-import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
-import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
-import { useTRPC } from "@/utils/trpc/client"
-import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
-  type Membership,
-  type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   findActiveMembership,
   getMembershipGrade,
   getMembershipTypeName,
   getSpecializationName,
+  type Membership,
+  type VisiblePersonalMarkDetails,
 } from "@dotkomonline/types"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Button,
+  cn,
   RadialProgress,
   ReadMore,
   RichText,
@@ -29,7 +24,6 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  cn,
 } from "@dotkomonline/ui"
 import { capitalizeFirstLetter, createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import {
@@ -52,6 +46,12 @@ import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { notFound, useParams, useSearchParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
+import { EventList } from "@/app/arrangementer/components/EventList"
+import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
 

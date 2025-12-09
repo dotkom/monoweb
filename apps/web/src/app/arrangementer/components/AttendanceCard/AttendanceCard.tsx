@@ -1,17 +1,14 @@
 "use client"
 
-import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
-import { useTRPC } from "@/utils/trpc/client"
-import { useFullPathname } from "@/utils/use-full-pathname"
 import {
   type Attendance,
   type AttendanceSelectionResponse,
   type Event,
+  getAttendee,
   type Punishment,
   type User,
-  getAttendee,
 } from "@dotkomonline/types"
-import { Text, Title, cn } from "@dotkomonline/ui"
+import { cn, Text, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconEdit } from "@tabler/icons-react"
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -19,8 +16,11 @@ import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import type { DeregisterReasonFormResult } from "../DeregisterModal"
+import { useTRPC } from "@/utils/trpc/client"
+import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { getAttendanceStatus } from "../attendanceStatus"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { EventRules } from "./EventRules"
@@ -184,7 +184,7 @@ export const AttendanceCard = ({
   if (isBefore(getCurrentUTC(), attendance.registerStart)) {
     setTimeout(() => {
       setAttendanceStatus("Open")
-    }, attendance.registerStart.getTime() - new Date().getTime())
+    }, attendance.registerStart.getTime() - Date.now())
   }
 
   return (

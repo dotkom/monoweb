@@ -429,7 +429,6 @@ export function getWorkspaceService(
 
     async addUserIntoWorkspaceGroup(handle, groupSlug, userId) {
       const group = await groupService.getBySlug(handle, groupSlug)
-      const user = await userService.getById(handle, userId)
       const workspaceUser = await this.getWorkspaceUser(handle, userId)
 
       if (!workspaceUser.primaryEmail) {

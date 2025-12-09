@@ -1,9 +1,9 @@
-import { useFormBuilder } from "@/components/forms/Form"
-import { createSelectInput } from "@/components/forms/SelectInput"
-import { notifyFail } from "@/lib/notifications"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { z } from "zod"
+import { useFormBuilder } from "@/components/forms/Form"
+import { createSelectInput } from "@/components/forms/SelectInput"
+import { notifyFail } from "@/lib/notifications"
 import { useAdminForEventMutation as useAdminRegisterForEventMutation } from "../mutations"
 import { useAttendanceGetQuery } from "../queries"
 

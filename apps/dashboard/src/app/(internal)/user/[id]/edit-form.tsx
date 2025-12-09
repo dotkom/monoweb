@@ -1,9 +1,9 @@
+import { type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 import { useUserFileUploadMutation } from "@/app/(internal)/user/mutations"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 
 interface UseUserProfileWriteFormProps {
   onSubmit(data: UserWrite): void

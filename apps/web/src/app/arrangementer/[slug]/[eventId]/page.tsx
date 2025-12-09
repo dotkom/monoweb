@@ -1,16 +1,12 @@
-import { auth } from "@/auth"
-import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
-import { env } from "@/env"
-import { server } from "@/utils/trpc/server"
 import {
   type Attendance,
   type Company,
+  createGroupPageUrl,
   type Event,
   type Group,
   type GroupType,
   type Punishment,
   type User,
-  createGroupPageUrl,
 } from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import {
@@ -24,7 +20,11 @@ import { isPast } from "date-fns"
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { RedirectType, notFound, permanentRedirect } from "next/navigation"
+import { notFound, permanentRedirect, RedirectType } from "next/navigation"
+import { auth } from "@/auth"
+import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
+import { env } from "@/env"
+import { server } from "@/utils/trpc/server"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
 import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"

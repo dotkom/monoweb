@@ -1,5 +1,6 @@
 import type { Attendance, AttendanceSelectionResponse, Attendee } from "@dotkomonline/types"
 import {
+  cn,
   Select,
   SelectContent,
   SelectGroup,
@@ -8,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
   Text,
-  cn,
 } from "@dotkomonline/ui"
 import { useEffect } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"

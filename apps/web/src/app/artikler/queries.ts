@@ -1,8 +1,7 @@
-import { useTRPC } from "@/utils/trpc/client"
 import type { ArticleFilterQuery } from "@dotkomonline/types"
-
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
+import { useTRPC } from "@/utils/trpc/client"
 
 export const useArticleAllQuery = () => {
   const trpc = useTRPC()

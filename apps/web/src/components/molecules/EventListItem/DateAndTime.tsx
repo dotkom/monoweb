@@ -1,6 +1,6 @@
 "use client"
 
-import { Text, cn } from "@dotkomonline/ui"
+import { cn, Text } from "@dotkomonline/ui"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { differenceInDays, formatDate, isPast, isSameDay, isSameYear, isThisYear } from "date-fns"
 import { nb } from "date-fns/locale"

@@ -1,10 +1,10 @@
-import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { server } from "@/utils/trpc/server"
 import type { Group } from "@dotkomonline/types"
 import { RichText, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { server } from "@/utils/trpc/server"
 
 export default async function AboutOnlinePage() {
   const nodeCommittees = await server.group.allByType.query("NODE_COMMITTEE")

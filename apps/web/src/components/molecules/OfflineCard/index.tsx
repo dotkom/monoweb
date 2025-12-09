@@ -1,5 +1,5 @@
 import type { Offline } from "@dotkomonline/types"
-import { Text, cn } from "@dotkomonline/ui"
+import { cn, Text } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 

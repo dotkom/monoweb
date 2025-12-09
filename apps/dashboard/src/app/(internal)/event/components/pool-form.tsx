@@ -1,7 +1,3 @@
-import { createLabelledCheckboxGroupInput } from "@/components/forms/CheckboxGroup"
-import { createNumberInput } from "@/components/forms/NumberInput"
-import { createTextInput } from "@/components/forms/TextInput"
-import { notifyFail } from "@/lib/notifications"
 import { createPoolName } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ActionIcon, Box, Button, Flex, Stack } from "@mantine/core"
@@ -9,6 +5,10 @@ import { IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { createLabelledCheckboxGroupInput } from "@/components/forms/CheckboxGroup"
+import { createNumberInput } from "@/components/forms/NumberInput"
+import { createTextInput } from "@/components/forms/TextInput"
+import { notifyFail } from "@/lib/notifications"
 
 const yearEntries = [
   { label: "1. klasse", key: 1 },

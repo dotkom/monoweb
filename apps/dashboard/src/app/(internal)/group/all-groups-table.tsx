@@ -1,11 +1,11 @@
 "use client"
 
-import { FilterableTable } from "@/components/molecules/FilterableTable/FilterableTable"
 import { type Group, GroupTypeSchema, getGroupTypeName } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
+import { FilterableTable } from "@/components/molecules/FilterableTable/FilterableTable"
 
 interface Props {
   groups: Group[]

@@ -1,7 +1,5 @@
 "use client"
 
-import { useEventAllQuery } from "@/app/arrangementer/components/queries"
-import { useTRPC } from "@/utils/trpc/client"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendance } from "@dotkomonline/types"
@@ -10,6 +8,8 @@ import { IconLoader2 } from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
 import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
 import type { FC } from "react"
+import { useEventAllQuery } from "@/app/arrangementer/components/queries"
+import { useTRPC } from "@/utils/trpc/client"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { eventCategories } from "./eventTypeConfig"
 import { getCalendarArray } from "./getCalendarArray"
@@ -61,7 +61,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   })
 
   const eventDetails = futureEventWithAttendances
-  const userId = session?.sub
+  const _userId = session?.sub
 
   const cal = getCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails)

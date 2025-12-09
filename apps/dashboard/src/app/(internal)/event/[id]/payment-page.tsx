@@ -1,8 +1,8 @@
-import { GenericTable } from "@/components/GenericTable"
 import type { Attendee } from "@dotkomonline/types"
 import { Badge, Box, Button, Group, Input, Stack, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { type FC, useMemo, useRef } from "react"
+import { GenericTable } from "@/components/GenericTable"
 import {
   useCreateAttendeePaymentAttendeeMutation,
   useRefundAttendeeMutation,
@@ -12,14 +12,6 @@ import { useEventContext } from "./provider"
 
 export const PaymentPage: FC = () => {
   const { attendance } = useEventContext()
-
-  if (!attendance) {
-    return (
-      <Box>
-        <Title>Lag en påmelding for å opprette betaling</Title>
-      </Box>
-    )
-  }
 
   const updateAttendancePayment = useUpdateAttendancePaymentMutation()
   const reservedAttendees = useMemo(
@@ -38,7 +30,7 @@ export const PaymentPage: FC = () => {
       throw new Error("Tried to create payment without an attendance")
     }
 
-    const newPrice = inputRef.current ? Number.parseInt(inputRef.current.value) : null
+    const newPrice = inputRef.current ? Number.parseInt(inputRef.current.value, 10) : null
     if (!newPrice) {
       return
     }
@@ -47,7 +39,7 @@ export const PaymentPage: FC = () => {
   }
 
   const removePayment = async () => {
-    updateAttendancePayment.mutate({ id: attendance.id, price: null })
+    updateAttendancePayment.mutate({ id: attendance?.id, price: null })
   }
 
   const columnHelper = createColumnHelper<Attendee>()

@@ -6,7 +6,7 @@ export function filterJobListings(
   chosenLocation: string,
   chosenEmployments: EmploymentCheckbox[],
   searchName: string,
-  chosenSort: SortOption
+  _chosenSort: SortOption
 ) {
   return (
     filterLocation(jobListing, chosenLocation) &&

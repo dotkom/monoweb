@@ -1,6 +1,6 @@
 "use client"
 
-import { type Membership, type UserId, getMembershipTypeName, getSpecializationName } from "@dotkomonline/types"
+import { getMembershipTypeName, getSpecializationName, type Membership, type UserId } from "@dotkomonline/types"
 import { Button } from "@mantine/core"
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -15,7 +15,7 @@ interface Props {
   userId: UserId
 }
 
-export const useMembershipTable = ({ data, userId }: Props) => {
+export const useMembershipTable = ({ data }: Props) => {
   const { isAdmin } = useIsAdminQuery()
   const columnHelper = createColumnHelper<Membership>()
   const openEditMembershipModal = useEditMembershipModal()

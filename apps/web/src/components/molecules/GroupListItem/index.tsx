@@ -1,10 +1,10 @@
-import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { type Group, createGroupPageUrl, getGroupTypeName } from "@dotkomonline/types"
-import { Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
+import { createGroupPageUrl, type Group, getGroupTypeName } from "@dotkomonline/types"
+import { Badge, cn, RichText, Text, Title } from "@dotkomonline/ui"
 import { IconMoonFilled } from "@tabler/icons-react"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 
 export interface GroupListItemProps {
   group: Group

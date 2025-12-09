@@ -1,12 +1,12 @@
 import { createSecretKey } from "node:crypto"
-import { CALENDAR_ISSUER, createCalendarEvent } from "@/app/api/calendar/ical"
-import { env } from "@/env"
-import { server } from "@/utils/trpc/server"
 import { getLogger } from "@dotkomonline/logger"
 import ical from "ical-generator"
 import { jwtVerify } from "jose"
 import { JWTClaimValidationFailed, JWTInvalid } from "jose/errors"
 import { type NextRequest, NextResponse } from "next/server"
+import { CALENDAR_ISSUER, createCalendarEvent } from "@/app/api/calendar/ical"
+import { env } from "@/env"
+import { server } from "@/utils/trpc/server"
 
 const logger = getLogger("web/calendar")
 

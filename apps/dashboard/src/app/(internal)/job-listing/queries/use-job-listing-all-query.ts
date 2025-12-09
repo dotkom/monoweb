@@ -1,8 +1,8 @@
-import { useTRPC } from "@/lib/trpc-client"
 import type { JobListingFilterQuery } from "@dotkomonline/types"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
 import { useMemo } from "react"
+import { useTRPC } from "@/lib/trpc-client"
 
 interface UseJobListingAllProps {
   filter: JobListingFilterQuery

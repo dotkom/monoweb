@@ -1,7 +1,7 @@
-import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import type { ICalEventData } from "ical-generator"
+import { env } from "@/env"
 
 /** Map a domain Event to an icalendar event */
 export function createCalendarEvent(event: Event) {

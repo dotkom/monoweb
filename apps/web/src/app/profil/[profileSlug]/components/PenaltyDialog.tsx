@@ -1,4 +1,3 @@
-import { PenaltyRules } from "@/utils/penalty-rules"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,6 +8,7 @@ import {
 } from "@dotkomonline/ui"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useState } from "react"
+import { PenaltyRules } from "@/utils/penalty-rules"
 
 export const PenaltyDialog = () => {
   const [open, setOpen] = useState(false)

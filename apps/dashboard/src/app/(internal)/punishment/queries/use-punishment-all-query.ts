@@ -1,9 +1,8 @@
-import { useTRPC } from "@/lib/trpc-client"
 import type { Pageable } from "@dotkomonline/rpc"
 import type { MarkFilterQuery } from "@dotkomonline/types"
-
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
+import { useTRPC } from "@/lib/trpc-client"
 
 export const usePunishmentAllInfiniteQuery = (filter?: MarkFilterQuery, page?: Pageable) => {
   const trpc = useTRPC()

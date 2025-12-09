@@ -1,3 +1,12 @@
+import { TZDate } from "@date-fns/tz"
+import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
+import { Button, cn, RichText, Text, Tilt, Title } from "@dotkomonline/ui"
+import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
+import { formatDate } from "date-fns"
+import { nb } from "date-fns/locale"
+import Link from "next/link"
+import type { FC } from "react"
 import { auth } from "@/auth"
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
@@ -5,17 +14,6 @@ import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { JubileumNotice } from "@/components/notices/jubileum-notice"
 import { SmallerCommitteeApplicationsNotice } from "@/components/notices/smaller-committee-applications-notice"
 import { server } from "@/utils/trpc/server"
-import { TZDate } from "@date-fns/tz"
-import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
-import { RichText, cn } from "@dotkomonline/ui"
-import { Text, Tilt, Title } from "@dotkomonline/ui"
-import { Button } from "@dotkomonline/ui"
-import { getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
-import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
-import Link from "next/link"
-import type { FC } from "react"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
@@ -133,7 +131,7 @@ interface BigEventCardProps {
 }
 
 const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, className }) => {
-  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+  const _reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
   return (
     <Link
@@ -186,7 +184,7 @@ interface ComingEventProps {
 }
 
 const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className }) => {
-  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+  const _reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
   return (
     <Link
@@ -225,10 +223,13 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
   )
 }
 
-function AttendancePaymentOopsNotice({
+function _AttendancePaymentOopsNotice({
   userId,
   eventWithAttendance,
-}: { userId: UserId | null; eventWithAttendance: EventWithAttendance }) {
+}: {
+  userId: UserId | null
+  eventWithAttendance: EventWithAttendance
+}) {
   return (
     <div className="w-full p-6 text-white bg-red-600 rounded-2xl">
       <div className="flex flex-col gap-4 w-fit">

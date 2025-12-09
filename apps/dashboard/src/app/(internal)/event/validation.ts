@@ -19,7 +19,7 @@ const isValidMapUrl = (value: string | null) => {
       url.hostname === "maps.app.goo.gl" ||
       (url.href.startsWith("https://www.google.") && url.pathname.startsWith("/maps/place/"))
     )
-  } catch (e) {
+  } catch (_e) {
     return false
   }
 }

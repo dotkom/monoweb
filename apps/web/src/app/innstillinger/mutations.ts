@@ -1,7 +1,7 @@
-import { env } from "@/env"
-import { useTRPC } from "@/utils/trpc/client"
 import { uploadFileToS3PresignedPost } from "@dotkomonline/utils"
 import { useMutation } from "@tanstack/react-query"
+import { env } from "@/env"
+import { useTRPC } from "@/utils/trpc/client"
 
 /**
  * Create a presigned S3 URL for uploading user-related files, namely user avatar images.

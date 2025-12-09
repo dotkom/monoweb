@@ -1,5 +1,5 @@
-import { MobileProfileNavigationMenu } from "@/app/innstillinger/components/mobile-navigation-menu"
 import type { PropsWithChildren } from "react"
+import { MobileProfileNavigationMenu } from "@/app/innstillinger/components/mobile-navigation-menu"
 import { ProfileNavigationMenu } from "./components/navigation-menu"
 
 export default function SettingsPageLayout({ children }: PropsWithChildren) {

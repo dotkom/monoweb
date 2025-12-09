@@ -1,8 +1,8 @@
-import { GroupList } from "@/components/organisms/GroupList"
-import { server } from "@/utils/trpc/server"
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import { IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"
+import { GroupList } from "@/components/organisms/GroupList"
+import { server } from "@/utils/trpc/server"
 
 const CommitteePage = async () => {
   const [committees, nodeCommittees, associatedGroups] = await Promise.all([

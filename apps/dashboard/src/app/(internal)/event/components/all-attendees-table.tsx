@@ -26,9 +26,9 @@ import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore }
 import { nb } from "date-fns/locale"
 import { useMemo } from "react"
 import {
-  FilterableTable,
   arrayOrEqualsFilter,
   dateSort,
+  FilterableTable,
 } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useUpdateAttendeeReservedMutation, useUpdateEventAttendanceMutation } from "../mutations"
 import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"

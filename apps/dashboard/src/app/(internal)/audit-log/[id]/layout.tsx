@@ -1,9 +1,9 @@
 "use client"
 
-import { useTRPC } from "@/lib/trpc-client"
 import { Loader } from "@mantine/core"
 import { useQuery } from "@tanstack/react-query"
 import { type PropsWithChildren, use, useMemo } from "react"
+import { useTRPC } from "@/lib/trpc-client"
 import { AuditLogDetailsContext } from "./provider"
 
 export default function AuditLogDetailsLayout({

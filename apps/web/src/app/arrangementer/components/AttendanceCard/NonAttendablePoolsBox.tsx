@@ -1,11 +1,11 @@
 import {
   type Attendance,
   type AttendancePool,
-  type User,
   getAttendablePool,
   getNonAttendablePools,
   getReservedAttendeeCount,
   getUnreservedAttendeeCount,
+  type User,
 } from "@dotkomonline/types"
 import {
   Collapsible,

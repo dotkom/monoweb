@@ -1,7 +1,6 @@
-import { useTRPC } from "@/lib/trpc-client"
 import type { GroupId, UserId } from "@dotkomonline/types"
-
 import { useQuery } from "@tanstack/react-query"
+import { useTRPC } from "@/lib/trpc-client"
 
 export const useGroupAllQuery = () => {
   const trpc = useTRPC()

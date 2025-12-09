@@ -1,8 +1,8 @@
-import { GroupPage } from "@/app/grupper/components/GroupPage"
-import { server } from "@/utils/trpc/server"
 import { createGroupPageUrl } from "@dotkomonline/types"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import type { Metadata } from "next"
+import { GroupPage } from "@/app/grupper/components/GroupPage"
+import { server } from "@/utils/trpc/server"
 
 interface InterestGroupPageProps {
   params: Promise<{ slug: string }>

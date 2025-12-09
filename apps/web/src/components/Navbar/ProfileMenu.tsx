@@ -1,8 +1,5 @@
 "use client"
 
-import { env } from "@/env"
-import { useTRPC } from "@/utils/trpc/client"
-import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   Avatar,
@@ -38,9 +35,12 @@ import {
   IconUser,
 } from "@tabler/icons-react"
 import { skipToken, useQueries, useQuery } from "@tanstack/react-query"
-import { useTheme } from "next-themes"
 import Link from "next/link"
+import { useTheme } from "next-themes"
 import { type FC, Fragment, useEffect, useState } from "react"
+import { env } from "@/env"
+import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { ThemeToggle } from "./ThemeToggle"
 
 const DEBUG_CONTACT_URL =

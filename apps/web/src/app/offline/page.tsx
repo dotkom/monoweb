@@ -1,7 +1,7 @@
-import { OfflineCard } from "@/components/molecules/OfflineCard"
-import { server } from "@/utils/trpc/server"
 import type { Offline } from "@dotkomonline/types"
 import { Text, Title } from "@dotkomonline/ui"
+import { OfflineCard } from "@/components/molecules/OfflineCard"
+import { server } from "@/utils/trpc/server"
 
 const OfflinePage = async () => {
   const offlines = await server.offline.all.query({ take: 1000 })

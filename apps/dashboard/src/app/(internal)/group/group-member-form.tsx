@@ -1,7 +1,7 @@
-import { useFormBuilder } from "@/components/forms/Form"
-import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { type GroupId, GroupRoleSchema } from "@dotkomonline/types"
 import z from "zod"
+import { useFormBuilder } from "@/components/forms/Form"
+import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { useGroupGetQuery } from "./queries"
 
 const FormSchema = z.object({

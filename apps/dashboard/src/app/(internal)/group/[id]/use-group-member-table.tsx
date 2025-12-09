@@ -1,19 +1,19 @@
 "use client"
 
-import { DateTooltip } from "@/components/DateTooltip"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   type GroupId,
   type GroupMembership,
+  getActiveGroupMembership,
   type WorkspaceMemberLink,
   type WorkspaceMemberSyncState,
-  getActiveGroupMembership,
 } from "@dotkomonline/types"
 import { Anchor, Group, Stack, Text, Tooltip } from "@mantine/core"
 import { IconAlertTriangleFilled, IconSquareCheckFilled } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
+import { DateTooltip } from "@/components/DateTooltip"
 
 interface Props {
   showWorkspaceColumns: boolean
@@ -138,7 +138,10 @@ export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Pro
 const SyncStateIndicator = ({
   syncState,
   inMemberList,
-}: { syncState: WorkspaceMemberSyncState; inMemberList: boolean }) => {
+}: {
+  syncState: WorkspaceMemberSyncState
+  inMemberList: boolean
+}) => {
   switch (syncState) {
     case "PENDING_ADD": {
       return (

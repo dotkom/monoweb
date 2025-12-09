@@ -1,7 +1,7 @@
-import { useTRPC } from "@/lib/trpc-client"
 import type { Company, CompanyId, CompanySlug } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
+import { useTRPC } from "@/lib/trpc-client"
 
 export const useCompanyAllQuery = () => {
   const trpc = useTRPC()

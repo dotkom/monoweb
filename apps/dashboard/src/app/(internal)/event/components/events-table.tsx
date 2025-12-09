@@ -1,10 +1,10 @@
-import { DateTooltip } from "@/components/DateTooltip"
-import { GenericTable } from "@/components/GenericTable"
 import { type EventWithAttendance, mapEventStatusToLabel, mapEventTypeToLabel } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
+import { DateTooltip } from "@/components/DateTooltip"
+import { GenericTable } from "@/components/GenericTable"
 import { EventHostingGroupList } from "./event-hosting-group-list"
 
 interface Props {

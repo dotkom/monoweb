@@ -1,6 +1,6 @@
-import { GenericSearch } from "@/components/GenericSearch"
 import type { User } from "@dotkomonline/types"
 import { type FC, useState } from "react"
+import { GenericSearch } from "@/components/GenericSearch"
 import { useUserAllQuery } from "../queries"
 
 interface UserSearchProps {

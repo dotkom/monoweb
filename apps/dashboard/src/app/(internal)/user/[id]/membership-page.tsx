@@ -1,7 +1,7 @@
-import { GenericTable } from "@/components/GenericTable"
 import { Box, Button, Stack, Text, Title } from "@mantine/core"
 import { compareDesc } from "date-fns"
 import { type FC, useMemo } from "react"
+import { GenericTable } from "@/components/GenericTable"
 import { useCreateMembershipModal } from "../components/create-membership-modal"
 import { useMembershipTable } from "../components/use-membership-table"
 import { useUserDetailsContext } from "./provider"

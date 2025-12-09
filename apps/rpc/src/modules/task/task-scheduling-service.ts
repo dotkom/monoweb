@@ -84,36 +84,36 @@ export function getLocalTaskSchedulingService(
   }
 }
 
-export function getEventBridgeTaskSchedulingService(client: SchedulerClient): TaskSchedulingService {
+export function getEventBridgeTaskSchedulingService(_client: SchedulerClient): TaskSchedulingService {
   const logger = getLogger("task-scheduling-service/eventbridge-backend")
 
   return {
     // NOTE: The handle here is completely unused, but because the local backend needs to schedule within the caller
     // transaction, this one also needs to take a handle. Unfortunate but necessary.
-    async scheduleAt(_, kind, data) {
+    async scheduleAt(_, _kind, _data) {
       throw new UnimplementedError("EventBridgeSchedulingService#schedule")
     },
 
-    async cancel(_, id) {
+    async cancel(_, _id) {
       throw new UnimplementedError("EventBridgeSchedulingService#cancel")
     },
 
-    async findReserveAttendeeTask(_, attendeeId, attendanceId) {
+    async findReserveAttendeeTask(_, _attendeeId, _attendanceId) {
       logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
       return null
     },
 
-    async findVerifyPaymentTask(_, attendeeId) {
+    async findVerifyPaymentTask(_, _attendeeId) {
       logger.warn("findVerifyPaymentTask is not implemented in EventBridgeSchedulingService")
       return null
     },
 
-    async findChargeAttendeeTask(_, attendeeId) {
+    async findChargeAttendeeTask(_, _attendeeId) {
       logger.warn("findChargeAttendancePaymentsTask is not implemented in EventBridgeSchedulingService")
       return null
     },
 
-    async findVerifyFeedbackAnsweredTask(_, feedbackFormId) {
+    async findVerifyFeedbackAnsweredTask(_, _feedbackFormId) {
       logger.warn("findVerifyFeedbackAnsweredTask is not implemented in EventBridgeSchedulingService")
       return null
     },

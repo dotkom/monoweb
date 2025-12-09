@@ -1,7 +1,7 @@
-import { createCalendarEvent } from "@/app/api/calendar/ical"
-import { server } from "@/utils/trpc/server"
 import ical from "ical-generator"
 import { type NextRequest, NextResponse } from "next/server"
+import { createCalendarEvent } from "@/app/api/calendar/ical"
+import { server } from "@/utils/trpc/server"
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   // TODO: Support paginating through the results

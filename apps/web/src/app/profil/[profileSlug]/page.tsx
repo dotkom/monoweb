@@ -1,7 +1,7 @@
+import type { Metadata } from "next"
 import { ProfilePage } from "@/app/profil/[profileSlug]/ProfilePage"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
-import type { Metadata } from "next"
 
 interface ProfilePageProps {
   params: Promise<{

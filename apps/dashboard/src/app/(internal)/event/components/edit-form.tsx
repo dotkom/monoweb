@@ -1,3 +1,12 @@
+import {
+  type Company,
+  EventSchema,
+  type EventStatus,
+  EventTypeSchema,
+  type Group,
+  mapEventTypeToLabel,
+} from "@dotkomonline/types"
+import { z } from "zod"
 import { useEventFileUploadMutation } from "@/app/(internal)/event/mutations"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
@@ -8,15 +17,6 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import {
-  type Company,
-  EventSchema,
-  type EventStatus,
-  EventTypeSchema,
-  type Group,
-  mapEventTypeToLabel,
-} from "@dotkomonline/types"
-import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
 const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.Values).map((type) => ({

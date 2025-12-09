@@ -1,19 +1,19 @@
 "use client"
 
-import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   Button,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   Text,
-  cn,
 } from "@dotkomonline/ui"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 import * as ScrollArea from "@radix-ui/react-scroll-area"
 import { IconArrowUpRight, IconChevronDown, IconHome, IconLogin2 } from "@tabler/icons-react"
 import Link from "next/link"
@@ -21,7 +21,7 @@ import { type FC, useEffect, useRef, useState } from "react"
 
 import type { MenuItem, MenuLink } from "@/components/Navbar/Navbar"
 import { env } from "@/env"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { isExternal } from "../../utils/is-link-external"
 import { Hamburger } from "./Hamburger"
 import { MobileMenuCard } from "./MobileMenuCard"

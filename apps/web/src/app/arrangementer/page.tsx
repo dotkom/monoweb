@@ -1,11 +1,9 @@
 "use client"
 
-import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
-import { EventCalendar } from "@/components/organisms/EventCalendar/EventCalendar"
-import { useTRPC } from "@/utils/trpc/client"
 import { type EventFilterQuery, EventTypeSchema } from "@dotkomonline/types"
 import {
   Button,
+  cn,
   Drawer,
   DrawerContent,
   DrawerHeader,
@@ -16,20 +14,21 @@ import {
   TabsList,
   TabsTrigger,
   Title,
-  cn,
 } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
+import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
+import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
+import { EventCalendar } from "@/components/organisms/EventCalendar/EventCalendar"
+import { useTRPC } from "@/utils/trpc/client"
 import { EventFilters } from "./components/EventFilters"
 import { EventList, EventListSkeleton, type EventListViewMode } from "./components/EventList"
 import { FilterChips } from "./components/FilterChips"
-import { SearchInput } from "./components/SearchInput"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
-
-import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
+import { SearchInput } from "./components/SearchInput"
 
 type FilterType = "search" | "type" | "group" | "sort"
 
@@ -42,8 +41,8 @@ const EventPage = () => {
 
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const view = searchParams.get("view") || "list"
-  const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString())
-  const month = Number.parseInt(searchParams.get("m") || (now.getMonth() + 1).toString()) - 1 // convert to 0-based month
+  const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString(), 10)
+  const month = Number.parseInt(searchParams.get("m") || (now.getMonth() + 1).toString(), 10) - 1 // convert to 0-based month
 
   const trpc = useTRPC()
   const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())

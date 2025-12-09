@@ -1,6 +1,6 @@
 "use client"
-import { type Attendance, type User, getAttendee } from "@dotkomonline/types"
-import { Stripes, Text, cn } from "@dotkomonline/ui"
+import { type Attendance, getAttendee, type User } from "@dotkomonline/types"
+import { cn, Stripes, Text } from "@dotkomonline/ui"
 import { IconCreditCard } from "@tabler/icons-react"
 import Link from "next/link"
 

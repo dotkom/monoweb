@@ -1,10 +1,8 @@
-import { useTRPC } from "@/utils/trpc/client"
 import type { EventFilterQuery, UserId } from "@dotkomonline/types"
-import { useInfiniteQuery } from "@tanstack/react-query"
-
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
 import { useMemo } from "react"
+import { useTRPC } from "@/utils/trpc/client"
 
 interface UseEventAllQueryProps {
   filter: EventFilterQuery

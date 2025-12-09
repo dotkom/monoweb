@@ -1,10 +1,10 @@
 "use client"
-import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { formatNumericalTimeLeft, useCountdown } from "@/utils/use-countdown"
 import { TZDate } from "@date-fns/tz"
 import { Text } from "@dotkomonline/ui"
 import { IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { formatNumericalTimeLeft, useCountdown } from "@/utils/use-countdown"
 
 export const JubileumNotice = () => {
   const jubileumDate = TZDate.tz("Europe/Oslo", 2026, 1, 16, 12, 0, 0)

@@ -1,6 +1,6 @@
-import { GroupListItem } from "@/components/molecules/GroupListItem"
 import type { Group } from "@dotkomonline/types"
 import type { FC } from "react"
+import { GroupListItem } from "@/components/molecules/GroupListItem"
 
 interface GroupListProps {
   groups: Group[]

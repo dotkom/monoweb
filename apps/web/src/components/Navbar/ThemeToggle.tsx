@@ -1,7 +1,6 @@
-import { cn } from "@dotkomonline/ui"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
-import { IconDeviceDesktop, IconMoon, IconSun } from "@tabler/icons-react"
+import { cn, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import type { Icon } from "@tabler/icons-react"
+import { IconDeviceDesktop, IconMoon, IconSun } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 
 interface ThemeToggleProps {

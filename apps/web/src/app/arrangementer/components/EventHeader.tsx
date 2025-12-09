@@ -1,10 +1,10 @@
-import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
-import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
 import { Button, Text, Tilt, Title } from "@dotkomonline/ui"
 import { IconEdit } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
+import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
+import { env } from "@/env"
 
 interface Props {
   event: Event

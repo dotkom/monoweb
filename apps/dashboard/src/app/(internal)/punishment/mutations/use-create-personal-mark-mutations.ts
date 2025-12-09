@@ -1,6 +1,6 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useQueryNotification } from "@/lib/notifications"
 import { useTRPC } from "@/lib/trpc-client"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useCreatePersonalMarkMutation = () => {
   const trpc = useTRPC()
@@ -15,7 +15,7 @@ export const useCreatePersonalMarkMutation = () => {
           message: "Vellykket opprettelse. Du blir sendt til ressursen.",
         })
       },
-      onSuccess: async (data) => {
+      onSuccess: async (_data) => {
         notification.complete({
           title: "Opprettet",
           message: "Prikken har blitt gitt.",

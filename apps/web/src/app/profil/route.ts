@@ -1,8 +1,8 @@
-import { auth } from "@/auth"
-import { server } from "@/utils/trpc/server"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { redirect } from "next/navigation"
 import type { NextRequest } from "next/server"
+import { auth } from "@/auth"
+import { server } from "@/utils/trpc/server"
 
 export async function GET(req: NextRequest) {
   const session = await auth.getServerSession()

@@ -1,19 +1,5 @@
 "use client"
 
-import { useUploadImageModal } from "@/components/ImageUploadModal"
-import { InsertImageButton } from "@/components/forms/RichTextInput/InsertImageButton"
-import {
-  AddColumnAfter,
-  AddRowAfter,
-  DeleteColumn,
-  DeleteRow,
-  DeleteTable,
-  InsertTableControl,
-  MergeCells,
-  SplitCell,
-  ToggleHeaderColumn,
-  ToggleHeaderRow,
-} from "@/components/forms/RichTextInput/TableActionButtons"
 import { ErrorMessage } from "@hookform/error-message"
 import { Divider, Input } from "@mantine/core"
 import { RichTextEditor, type RichTextEditorProps } from "@mantine/tiptap"
@@ -28,6 +14,20 @@ import { type Editor, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { useRef } from "react"
 import { Controller, type FieldValues } from "react-hook-form"
+import { InsertImageButton } from "@/components/forms/RichTextInput/InsertImageButton"
+import {
+  AddColumnAfter,
+  AddRowAfter,
+  DeleteColumn,
+  DeleteRow,
+  DeleteTable,
+  InsertTableControl,
+  MergeCells,
+  SplitCell,
+  ToggleHeaderColumn,
+  ToggleHeaderRow,
+} from "@/components/forms/RichTextInput/TableActionButtons"
+import { useUploadImageModal } from "@/components/ImageUploadModal"
 import type { InputProducerResult } from "../types"
 import "@mantine/tiptap/styles.css"
 import "./tiptap-table-styling.css"

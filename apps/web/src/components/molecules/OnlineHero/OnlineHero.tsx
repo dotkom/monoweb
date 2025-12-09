@@ -1,11 +1,10 @@
 "use client"
 
-import { Button, Text, cn } from "@dotkomonline/ui"
-import { Title } from "@dotkomonline/ui"
+import { Button, cn, Text, Title } from "@dotkomonline/ui"
 import Spline from "@splinetool/react-spline"
 import { IconArrowUpRight, IconBriefcase } from "@tabler/icons-react"
-import { useTheme } from "next-themes"
 import Link from "next/link"
+import { useTheme } from "next-themes"
 import type { FC } from "react"
 import { useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
@@ -32,23 +31,17 @@ export const OnlineHero: FC = () => {
     themeState.current = resolvedTheme
 
     if (splineRef.current?.setVariable && mounted) {
-      updateSplineDarkMode(resolvedTheme === "dark")
+      splineRef.current.setVariable("darkmode", darkModeValue)
     }
   }, [resolvedTheme, mounted])
 
   const onSplineLoad = (spline: SplineInstance) => {
     splineRef.current = spline
     // Initialize Spline with current theme
-    if (mounted) {
-      updateSplineDarkMode(resolvedTheme === "dark")
-    }
-    setIsLoading(false)
-  }
-
-  const updateSplineDarkMode = (darkModeValue: boolean) => {
-    if (splineRef.current?.setVariable) {
+    if (splineRef.current?.setVariable && mounted) {
       splineRef.current.setVariable("darkmode", darkModeValue)
     }
+    setIsLoading(false)
   }
 
   const lightSwitch = () => {

@@ -1,8 +1,8 @@
 "use client"
 
-import { useMarkWriteForm } from "@/app/(internal)/punishment/write-form"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
+import { useMarkWriteForm } from "@/app/(internal)/punishment/write-form"
 import { useCreateMarkMutation } from "../mutations/use-create-mark-mutations"
 
 export const CreateSuspensionModal: FC<ContextModalProps> = ({ context, id }) => {

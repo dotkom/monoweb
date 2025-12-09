@@ -1,11 +1,11 @@
 import { Card, Group, MultiSelect, TextInput } from "@mantine/core"
 import {
   type FilterFn,
+  getFilteredRowModel,
+  getSortedRowModel,
   type SortingFn,
   type SortingState,
   type TableOptions,
-  getFilteredRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
 import { useState } from "react"

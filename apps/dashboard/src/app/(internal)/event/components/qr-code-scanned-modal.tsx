@@ -2,11 +2,11 @@
 import {
   type Attendance,
   type AttendeeId,
-  type User,
   findActiveMembership,
   getAttendeeQueuePosition,
   getMembershipGrade,
   getUnreservedAttendeeCount,
+  type User,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { Button, Flex, Group, Image, Stack, Text, Title, useComputedColorScheme } from "@mantine/core"

@@ -1,7 +1,7 @@
-import { server } from "@/utils/trpc/server"
 import { createGroupPageUrl } from "@dotkomonline/types"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import type { Metadata } from "next"
+import { server } from "@/utils/trpc/server"
 import { GroupPage } from "../components/GroupPage"
 
 interface GroupPageProps {

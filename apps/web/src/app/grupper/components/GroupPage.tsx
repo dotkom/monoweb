@@ -1,8 +1,5 @@
-import { EventList } from "@/app/arrangementer/components/EventList"
-import { auth } from "@/auth"
-import { server } from "@/utils/trpc/server"
-import { type GroupMember, type GroupRole, type UserId, getGroupTypeName } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
+import { type GroupMember, type GroupRole, getGroupTypeName, type UserId } from "@dotkomonline/types"
+import { Avatar, AvatarFallback, AvatarImage, Badge, cn, RichText, Text, Title } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconArrowUpRight,
@@ -14,6 +11,9 @@ import {
 } from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
+import { EventList } from "@/app/arrangementer/components/EventList"
+import { auth } from "@/auth"
+import { server } from "@/utils/trpc/server"
 
 interface CommitteePageProps {
   params: Promise<{ slug: string }>

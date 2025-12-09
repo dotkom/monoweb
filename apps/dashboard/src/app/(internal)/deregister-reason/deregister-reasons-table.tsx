@@ -1,10 +1,10 @@
-import { GenericTable } from "@/components/GenericTable"
 import { type DeregisterReasonWithEvent, mapDeregisterReasonTypeToLabel } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import Link from "next/link"
 import { useMemo } from "react"
+import { GenericTable } from "@/components/GenericTable"
 
 interface Props {
   data: DeregisterReasonWithEvent[]

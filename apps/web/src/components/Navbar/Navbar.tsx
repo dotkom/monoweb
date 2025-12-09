@@ -1,7 +1,5 @@
 "use client"
 
-import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { env } from "@/env"
 import type { Icon } from "@tabler/icons-react"
 import {
   IconArticle,
@@ -17,6 +15,8 @@ import {
 } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { env } from "@/env"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"

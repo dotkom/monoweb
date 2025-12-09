@@ -1,5 +1,3 @@
-import { env } from "@/env"
-import { server } from "@/utils/trpc/server"
 import type { Company, JobListing, JobListingEmployment } from "@dotkomonline/types"
 import { Button, RichText, Text, Title } from "@dotkomonline/ui"
 import { richTextToPlainText } from "@dotkomonline/utils"
@@ -15,6 +13,8 @@ import { formatDate } from "date-fns"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { env } from "@/env"
+import { server } from "@/utils/trpc/server"
 
 interface JobListingProps {
   params: Promise<{

@@ -1,10 +1,10 @@
-import { useFormBuilder } from "@/components/forms/Form"
-import { createImageInput } from "@/components/forms/ImageInput"
-import { createTextInput } from "@/components/forms/TextInput"
 import { Stack, Text } from "@mantine/core"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { z } from "zod"
+import { useFormBuilder } from "@/components/forms/Form"
+import { createImageInput } from "@/components/forms/ImageInput"
+import { createTextInput } from "@/components/forms/TextInput"
 
 const validationSchema = z.object({
   title: z.string().max(255).optional(),

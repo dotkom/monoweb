@@ -1,8 +1,6 @@
 "use client"
-import { filterJobListings, sortDates } from "@/app/karriere/filter-functions"
-import { useTRPC } from "@/utils/trpc/client"
 import type { JobListing } from "@dotkomonline/types"
-import { Badge, Text, Title, cn } from "@dotkomonline/ui"
+import { Badge, cn, Text, Title } from "@dotkomonline/ui"
 import { IconCalendarDown, IconClockHour3, IconMapPin } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { formatDistanceToNowStrict } from "date-fns"
@@ -10,6 +8,8 @@ import { nb } from "date-fns/locale"
 import Image from "next/image"
 import Link from "next/link"
 import { type FC, useMemo, useState } from "react"
+import { filterJobListings, sortDates } from "@/app/karriere/filter-functions"
+import { useTRPC } from "@/utils/trpc/client"
 import { JobListingSkeletonList } from "./[id]/JobListingSkeletonList"
 import {
   CompanyFiltersContainer,

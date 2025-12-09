@@ -1,7 +1,7 @@
 "use client"
 
-import { GenericTable } from "@/components/GenericTable"
 import { Box, Button, Skeleton, Stack } from "@mantine/core"
+import { GenericTable } from "@/components/GenericTable"
 import { useCreateOfflineModal } from "./modals/create-offline-modal"
 import { useOfflineAllQuery } from "./queries/use-offlines-all-query"
 import { useOfflineTable } from "./use-offline-table"

@@ -1,8 +1,8 @@
-import { auth } from "@/lib/auth"
-import { env } from "@/lib/env"
 import type { AppRouter } from "@dotkomonline/rpc"
 import * as trpc from "@trpc/client"
 import superjson from "superjson"
+import { auth } from "@/lib/auth"
+import { env } from "@/lib/env"
 
 export const server = trpc.createTRPCProxyClient<AppRouter>({
   links: [

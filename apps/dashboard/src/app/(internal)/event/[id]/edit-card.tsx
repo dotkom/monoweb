@@ -1,5 +1,5 @@
-import { useGroupAllQuery } from "@/app/(internal)/group/queries"
 import type { FC } from "react"
+import { useGroupAllQuery } from "@/app/(internal)/group/queries"
 import { useCompanyAllQuery } from "../../company/queries"
 import { useEventEditForm } from "../components/edit-form"
 

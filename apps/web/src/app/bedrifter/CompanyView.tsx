@@ -1,8 +1,5 @@
 "use client"
 
-import { EventList, EventListSkeleton } from "@/app/arrangementer/components/EventList"
-import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
-import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import type { Company } from "@dotkomonline/types"
 import { RichText, Text, Title } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -10,6 +7,9 @@ import { IconMail, IconMapPin, IconPhone, IconWorld } from "@tabler/icons-react"
 import { roundToNearestMinutes } from "date-fns"
 import Image from "next/image"
 import type { FC } from "react"
+import { EventList, EventListSkeleton } from "@/app/arrangementer/components/EventList"
+import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
+import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 
 interface CompanyViewProps {
   company: Company

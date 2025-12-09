@@ -1,7 +1,7 @@
-import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
-import { server } from "@/utils/trpc/server"
 import type { Attendee, Event, FeedbackForm, FeedbackRejectionCause } from "@dotkomonline/types"
 import { Text, Title } from "@dotkomonline/ui"
+import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
+import { server } from "@/utils/trpc/server"
 
 function getFailureMessage(cause: FeedbackRejectionCause) {
   switch (cause) {
@@ -21,7 +21,10 @@ function getFailureMessage(cause: FeedbackRejectionCause) {
 const EventFeedbackPage = async ({
   params,
   searchParams,
-}: { params: Promise<{ eventId: string }>; searchParams: Promise<{ preview: string }> }) => {
+}: {
+  params: Promise<{ eventId: string }>
+  searchParams: Promise<{ preview: string }>
+}) => {
   const { eventId } = await params
   const { preview } = await searchParams
   const isPreview = preview === "true"

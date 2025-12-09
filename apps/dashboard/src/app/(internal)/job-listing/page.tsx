@@ -1,9 +1,9 @@
 "use client"
 
-import { GenericTable } from "@/components/GenericTable"
 import type { JobListingFilterQuery } from "@dotkomonline/types"
 import { Box, Button, Group, Skeleton, Stack } from "@mantine/core"
 import { useState } from "react"
+import { GenericTable } from "@/components/GenericTable"
 import { JobListingFilters } from "./components/job-listing-filter"
 import { useCreateJobListingModal } from "./modals/create-job-listing-modal"
 import { useJobListingAllQuery } from "./queries/use-job-listing-all-query"

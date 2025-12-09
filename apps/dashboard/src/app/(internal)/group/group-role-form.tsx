@@ -1,8 +1,8 @@
+import { GroupRoleTypeSchema, GroupRoleWriteSchema, getGroupRoleTypeName } from "@dotkomonline/types"
+import type z from "zod"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { GroupRoleTypeSchema, GroupRoleWriteSchema, getGroupRoleTypeName } from "@dotkomonline/types"
-import type z from "zod"
 
 const FormSchema = GroupRoleWriteSchema.omit({
   groupId: true,

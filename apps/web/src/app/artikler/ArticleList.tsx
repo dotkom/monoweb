@@ -1,10 +1,10 @@
 "use client"
 
-import { ArticleFilters } from "@/app/artikler/ArticleFilters"
-import { useArticleFilterQuery } from "@/app/artikler/queries"
 import type { ArticleFilterQuery, ArticleTag } from "@dotkomonline/types"
 import { useSearchParams } from "next/navigation"
 import { type FC, useEffect, useRef, useState } from "react"
+import { ArticleFilters } from "@/app/artikler/ArticleFilters"
+import { useArticleFilterQuery } from "@/app/artikler/queries"
 import { ArticleListItem } from "./ArticleListItem"
 
 interface ArticleListProps {

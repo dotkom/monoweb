@@ -45,7 +45,7 @@ export default function AuditLogDetailsPage() {
 
   const changed_fields =
     auditLog.rowData &&
-    Object.entries(auditLog.rowData).map(([field, change], index) => {
+    Object.entries(auditLog.rowData).map(([field, change], _index) => {
       return (
         <Accordion.Item key={field} value={field}>
           <Accordion.Control>
@@ -85,12 +85,10 @@ export default function AuditLogDetailsPage() {
       </Text>
       {auditLog.tableName in tableNameMap && (
         <Text size="sm" mt="md">
-          <>
-            Gå til endret {auditLog.tableName}{" "}
-            <Anchor component={Link} href={`/${getTableNamePath(auditLog.tableName)}/${auditLog.rowId}`}>
-              her
-            </Anchor>
-          </>
+          Gå til endret {auditLog.tableName}{" "}
+          <Anchor component={Link} href={`/${getTableNamePath(auditLog.tableName)}/${auditLog.rowId}`}>
+            her
+          </Anchor>
         </Text>
       )}
 

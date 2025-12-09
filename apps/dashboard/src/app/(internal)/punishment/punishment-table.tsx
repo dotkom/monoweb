@@ -1,11 +1,11 @@
 "use client"
 
-import { DateTooltip } from "@/components/DateTooltip"
-import { GenericTable } from "@/components/GenericTable"
 import type { Mark } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
+import { DateTooltip } from "@/components/DateTooltip"
+import { GenericTable } from "@/components/GenericTable"
 
 interface Props {
   marks: Mark[]

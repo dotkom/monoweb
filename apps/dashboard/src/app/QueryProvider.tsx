@@ -1,13 +1,13 @@
 "use client"
 
-import { env } from "@/lib/env"
-import { TRPCProvider } from "@/lib/trpc-client"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { AppRouter } from "@dotkomonline/rpc"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { type CreateTRPCClientOptions, createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { type PropsWithChildren, useState } from "react"
 import superjson from "superjson"
+import { env } from "@/lib/env"
+import { TRPCProvider } from "@/lib/trpc-client"
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()

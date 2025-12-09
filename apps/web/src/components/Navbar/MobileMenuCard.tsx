@@ -1,4 +1,4 @@
-import { DropdownMenuItem, cn } from "@dotkomonline/ui"
+import { cn, DropdownMenuItem } from "@dotkomonline/ui"
 import type { Icon } from "@tabler/icons-react"
 import { IconChevronRight } from "@tabler/icons-react"
 import Link from "next/link"

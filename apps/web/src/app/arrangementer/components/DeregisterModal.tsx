@@ -12,6 +12,7 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
   Button,
+  cn,
   Label,
   Select,
   SelectContent,
@@ -21,7 +22,6 @@ import {
   SelectValue,
   Text,
   Textarea,
-  cn,
 } from "@dotkomonline/ui"
 import { IconUserMinus } from "@tabler/icons-react"
 import { useEffect } from "react"

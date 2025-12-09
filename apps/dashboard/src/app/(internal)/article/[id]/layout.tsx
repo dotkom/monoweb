@@ -1,10 +1,10 @@
 "use client"
 import { Loader } from "@mantine/core"
+import { useQuery } from "@tanstack/react-query"
 import { type PropsWithChildren, use, useMemo } from "react"
-import { ArticleDetailsContext } from "./provider"
 
 import { useTRPC } from "@/lib/trpc-client"
-import { useQuery } from "@tanstack/react-query"
+import { ArticleDetailsContext } from "./provider"
 
 export default function ArticleDetailsLayout({
   children,

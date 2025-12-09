@@ -1,9 +1,9 @@
+import { cn, Text } from "@dotkomonline/ui"
+import Link from "next/link"
 import { FacebookIcon } from "@/components/icons/FacebookIcon"
 import { GitHubIcon } from "@/components/icons/GitHubIcon"
 import { InstagramIcon } from "@/components/icons/InstagramIcon"
 import { SlackIcon } from "@/components/icons/SlackIcon"
-import { Text, cn } from "@dotkomonline/ui"
-import Link from "next/link"
 
 interface SocialSectionProps {
   fill: `#${string}`

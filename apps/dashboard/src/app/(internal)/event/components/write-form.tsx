@@ -1,3 +1,12 @@
+import {
+  EventSchema,
+  type EventStatus,
+  EventTypeSchema,
+  EventWriteSchema,
+  mapEventTypeToLabel,
+} from "@dotkomonline/types"
+import { addHours, roundToNearestHours } from "date-fns"
+import { z } from "zod"
 import { useEventFileUploadMutation } from "@/app/(internal)/event/mutations"
 import { useGroupAllQuery } from "@/app/(internal)/group/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
@@ -9,15 +18,6 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import {
-  EventSchema,
-  type EventStatus,
-  EventTypeSchema,
-  EventWriteSchema,
-  mapEventTypeToLabel,
-} from "@dotkomonline/types"
-import { addHours, roundToNearestHours } from "date-fns"
-import { z } from "zod"
 import { useCompanyAllQuery } from "../../company/queries"
 import { validateEventWrite } from "../validation"
 

@@ -1,10 +1,3 @@
-import { useGroupFileUploadMutation } from "@/app/(internal)/group/mutations"
-import { createCheckboxInput } from "@/components/forms/CheckboxInput"
-import { useFormBuilder } from "@/components/forms/Form"
-import { createImageInput } from "@/components/forms/ImageInput"
-import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
-import { createSelectInput } from "@/components/forms/SelectInput"
-import { createTextInput } from "@/components/forms/TextInput"
 import {
   type GroupId,
   GroupMemberVisibilitySchema,
@@ -19,6 +12,13 @@ import {
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { useMemo } from "react"
 import z from "zod"
+import { useGroupFileUploadMutation } from "@/app/(internal)/group/mutations"
+import { createCheckboxInput } from "@/components/forms/CheckboxInput"
+import { useFormBuilder } from "@/components/forms/Form"
+import { createImageInput } from "@/components/forms/ImageInput"
+import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { createSelectInput } from "@/components/forms/SelectInput"
+import { createTextInput } from "@/components/forms/TextInput"
 import { useGroupAllQuery } from "./queries"
 
 const FormSchema = GroupWriteSchema.omit({

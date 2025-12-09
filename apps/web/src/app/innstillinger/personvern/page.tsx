@@ -1,7 +1,7 @@
-import { auth } from "@/auth"
 import { Text, Title, Toggle } from "@dotkomonline/ui"
 import { redirect } from "next/navigation"
 import type { FC, ReactNode } from "react"
+import { auth } from "@/auth"
 
 const toggleItems = [
   {
@@ -30,7 +30,7 @@ const PrivacyOption: FC<{ children?: ReactNode }> = ({ children }) => (
   </div>
 )
 
-function PrivacyModule() {
+function _PrivacyModule() {
   return (
     <div className="divide-gray-600 my-5 flex w-full flex-col divide-y">
       {toggleItems.map((item) => (

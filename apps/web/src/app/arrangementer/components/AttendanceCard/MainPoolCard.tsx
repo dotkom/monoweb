@@ -1,8 +1,6 @@
-import { useCountdown } from "@/utils/use-countdown"
 import {
   type Attendance,
   type Attendee,
-  type User,
   findActiveMembership,
   getAttendablePool,
   getAttendee,
@@ -10,8 +8,9 @@ import {
   getReservedAttendeeCount,
   getUnreservedAttendeeCount,
   hasAttendeePaid,
+  type User,
 } from "@dotkomonline/types"
-import { Stripes, Text, Title, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { cn, Stripes, Text, Title, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import {
   IconArrowForward,
   IconArrowUpRight,
@@ -34,6 +33,7 @@ import {
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC } from "react"
+import { useCountdown } from "@/utils/use-countdown"
 
 interface MainPoolCardProps {
   attendance: Attendance

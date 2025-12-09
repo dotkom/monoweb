@@ -5,21 +5,20 @@ import {
   type AttendanceStatus,
   type Attendee,
   type Event,
-  type Punishment,
-  type User,
   findActiveMembership,
   getAttendablePool,
   getAttendee,
   getReservedAttendeeCount,
+  type Punishment,
+  type User,
 } from "@dotkomonline/types"
-import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
+import { Button, cn, Text, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconLoader2, IconLock, IconUserMinus, IconUserPlus } from "@tabler/icons-react"
-import { isFuture } from "date-fns"
-import { min } from "date-fns"
+import { isFuture, min } from "date-fns"
 import { type FC, useState } from "react"
-import { DeregisterModal } from "../DeregisterModal"
-import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
+import { DeregisterModal } from "../DeregisterModal"
 
 const getButtonColor = (
   disabled: boolean,

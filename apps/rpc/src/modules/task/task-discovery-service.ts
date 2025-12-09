@@ -64,7 +64,7 @@ export function getLocalTaskDiscoveryService(
  * An SQS-backed TaskDiscoveryService that polls multiple SQS queues for tasks to execute. The tasks used in the queues
  * on SQS are scheduled by AWS EventBridge.
  */
-export function getSQSTaskDiscoveryService(client: SQSClient): TaskDiscoveryService {
+export function getSQSTaskDiscoveryService(_client: SQSClient): TaskDiscoveryService {
   const logger = getLogger("task-discovery-service/sqs-backend")
   return {
     async discoverAll() {
@@ -72,7 +72,7 @@ export function getSQSTaskDiscoveryService(client: SQSClient): TaskDiscoveryServ
       throw new UnimplementedError("SQSTaskDiscovery#discoverAll")
     },
 
-    async discover(kind) {
+    async discover(_kind) {
       logger.warn("discover is not implemented for SQS TaskDiscoveryService")
       throw new UnimplementedError("SQSTaskDiscovery#discover")
     },

@@ -1,9 +1,9 @@
 "use client"
 
-import { GenericTable } from "@/components/GenericTable"
 import type { UserFilterQuery } from "@dotkomonline/types"
 import { Group, Skeleton, Stack } from "@mantine/core"
 import { useState } from "react"
+import { GenericTable } from "@/components/GenericTable"
 import { UserFilters } from "./components/user-filters"
 import { useUserAllInfiniteQuery } from "./queries"
 import { useUserTable } from "./use-user-table"

@@ -1,8 +1,8 @@
-import { GroupList } from "@/components/organisms/GroupList"
-import { server } from "@/utils/trpc/server"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { IconCoins, IconUsersPlus } from "@tabler/icons-react"
 import Link from "next/link"
+import { GroupList } from "@/components/organisms/GroupList"
+import { server } from "@/utils/trpc/server"
 
 export default async function InterestGroupPage() {
   const interestGroups = await server.group.allByType.query("INTEREST_GROUP")

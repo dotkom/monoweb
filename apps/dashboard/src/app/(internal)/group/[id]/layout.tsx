@@ -1,10 +1,9 @@
 "use client"
-import { useTRPC } from "@/lib/trpc-client"
 import { Loader } from "@mantine/core"
-import { type PropsWithChildren, use, useMemo } from "react"
-import { GroupDetailsContext } from "./provider"
-
 import { useQuery } from "@tanstack/react-query"
+import { type PropsWithChildren, use, useMemo } from "react"
+import { useTRPC } from "@/lib/trpc-client"
+import { GroupDetailsContext } from "./provider"
 
 export default function GroupDetailsLayout({
   children,

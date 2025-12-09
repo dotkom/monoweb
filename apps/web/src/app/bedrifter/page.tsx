@@ -1,5 +1,5 @@
-import { server } from "@/utils/trpc/server"
 import Link from "next/link"
+import { server } from "@/utils/trpc/server"
 
 const CompanyPage = async () => {
   const data = await server.company.all.query()

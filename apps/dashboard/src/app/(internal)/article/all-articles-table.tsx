@@ -1,9 +1,9 @@
-import { FilterableTable, arrayOrEqualsFilter } from "@/components/molecules/FilterableTable/FilterableTable"
 import type { Article } from "@dotkomonline/types"
 import { Anchor, Group } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
+import { arrayOrEqualsFilter, FilterableTable } from "@/components/molecules/FilterableTable/FilterableTable"
 
 interface AllArticlesTableProps {
   articles: Article[]

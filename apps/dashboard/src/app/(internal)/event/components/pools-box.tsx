@@ -1,4 +1,3 @@
-import { notifyFail } from "@/lib/notifications"
 import {
   type Attendance,
   type AttendancePool,
@@ -7,6 +6,7 @@ import {
 } from "@dotkomonline/types"
 import { Box, Button, Card, Flex, Group, Space, Text, Title } from "@mantine/core"
 import type { FC } from "react"
+import { notifyFail } from "@/lib/notifications"
 import { useDeletePoolMutation } from "../mutations"
 import { openEditPoolModal } from "./edit-pool-modal"
 import { formatPoolYearCriterias } from "./utils"

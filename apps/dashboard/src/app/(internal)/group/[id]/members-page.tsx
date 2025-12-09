@@ -1,10 +1,9 @@
-import { UserSearch } from "@/app/(internal)/user/components/user-search"
 import {
   type GroupId,
   type GroupMember,
+  getActiveGroupMembership,
   type WorkspaceMemberLink,
   type WorkspaceMemberSyncState,
-  getActiveGroupMembership,
 } from "@dotkomonline/types"
 import {
   Box,
@@ -14,6 +13,7 @@ import {
   Group,
   List,
   ListItem,
+  Loader,
   Popover,
   PopoverDropdown,
   PopoverTarget,
@@ -27,11 +27,11 @@ import {
   Text,
   Title,
 } from "@mantine/core"
-import { Loader } from "@mantine/core"
 import { IconAlertTriangleFilled } from "@tabler/icons-react"
 import { flexRender } from "@tanstack/react-table"
 import { compareDesc } from "date-fns"
 import { type FC, useMemo } from "react"
+import { UserSearch } from "@/app/(internal)/user/components/user-search"
 import { useCreateGroupMemberModal } from "../modals/create-group-member-modal"
 import { useSyncWorkspaceGroupMutation } from "../mutations"
 import { useGroupMembersAllQuery, useWorkspaceMembersAllQuery } from "../queries"

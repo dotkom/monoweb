@@ -162,7 +162,7 @@ async function getAuth0User(
     }
 
     return user
-  } catch (err) {
+  } catch {
     return null
   }
 }

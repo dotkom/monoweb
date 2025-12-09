@@ -1,7 +1,5 @@
 "use client"
 
-import { useTRPC } from "@/utils/trpc/client"
-import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import type { UserWrite } from "@dotkomonline/types"
 import { Button, Title } from "@dotkomonline/ui"
@@ -10,6 +8,8 @@ import { IconArrowLeft } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { ProfileForm } from "./form"
 import SkeletonProfileForm from "./loading"
 

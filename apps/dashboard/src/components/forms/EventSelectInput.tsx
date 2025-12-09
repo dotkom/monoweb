@@ -1,10 +1,10 @@
-import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@/app/(internal)/event/queries"
 import type { EventId } from "@dotkomonline/types"
 import { ErrorMessage } from "@hookform/error-message"
 import { Select, type SelectProps } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useState } from "react"
 import { Controller, type FieldValues, useController } from "react-hook-form"
+import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@/app/(internal)/event/queries"
 import type { InputProducerResult } from "./types"
 
 interface Props extends Omit<SelectProps, "error"> {
