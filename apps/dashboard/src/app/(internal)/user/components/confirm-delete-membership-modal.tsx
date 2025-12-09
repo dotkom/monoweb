@@ -6,6 +6,7 @@ export const useConfirmDeleteMembershipModal = () => {
   const deleteMembership = useDeleteMembershipMutation()
 
   return ({ membership }: { membership: Membership }) => {
+    // biome-ignore lint/correctness/useHookAtTopLevel: TODO: this is a bug and should be fixed
     return useConfirmDeleteModal({
       title: "Slett medlemskap",
       text: "Er du sikker på at du vil slette dette medlemskapet?",

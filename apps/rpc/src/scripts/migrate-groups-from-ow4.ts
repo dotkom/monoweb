@@ -211,20 +211,16 @@ async function insertDump() {
   const other = groups.filter((item) => item.group_type === "other")
 
   console.log("\nCOMMITEES: ")
-  // biome-ignore lint/complexity/noForEach: <explanation>
-  committees.forEach((item) => console.log(item.name_short))
+  committees.forEach((item) => void console.log(item.name_short))
 
   console.log("\nNODE COMMITTEES: ")
-  // biome-ignore lint/complexity/noForEach: <explanation>
-  nodeCommittees.forEach((item) => console.log(item.name_short))
+  nodeCommittees.forEach((item) => void console.log(item.name_short))
 
   console.log("\nOTHER: ")
-  // biome-ignore lint/complexity/noForEach: <explanation>
-  other.forEach((item) => console.log(item.name_short))
+  other.forEach((item) => void console.log(item.name_short))
 
   console.log("\nINTEREST GROUPS: ")
-  // biome-ignore lint/complexity/noForEach: <explanation>
-  interestGroups.forEach((item) => console.log(item.title))
+  interestGroups.forEach((item) => void console.log(item.title))
 
   console.log("\n\nInserting interest groups:")
   for (const item of interestGroups) {

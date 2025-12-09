@@ -69,7 +69,6 @@ export function RadialProgress({
       aria-valuenow={percentage}
       aria-valuemin={0}
       aria-valuemax={100}
-      tabIndex={0}
       className={cn(hideText ? "inline-flex" : "relative inline-flex")}
     >
       {circle}

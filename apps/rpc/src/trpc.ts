@@ -191,7 +191,7 @@ function getTRPCErrorCode(error: ApplicationError): TRPC_ERROR_CODE_KEY {
   return "INTERNAL_SERVER_ERROR"
 }
 
-function getRequire(principal: Principal | null) {
+function _getRequire(principal: Principal | null) {
   return (condition: boolean): asserts condition => {
     if (!condition) {
       throw new ForbiddenError(`Principal(ID=${principal ?? "<anonymous>"}) is not permitted to perform this operation`)

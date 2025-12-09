@@ -429,7 +429,7 @@ export function getWorkspaceService(
 
     async addUserIntoWorkspaceGroup(handle, groupSlug, userId) {
       const group = await groupService.getBySlug(handle, groupSlug)
-      const user = await userService.getById(handle, userId)
+      const _user = await userService.getById(handle, userId)
       const workspaceUser = await this.getWorkspaceUser(handle, userId)
 
       if (!workspaceUser.primaryEmail) {
@@ -518,7 +518,7 @@ export function getWorkspaceService(
 
       const workspaceMembers: WorkspaceMemberLink[] = []
 
-      let pageToken: string | undefined = undefined
+      let pageToken: string | undefined
 
       do {
         const response: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$Members> = await directory.members.list({
@@ -551,7 +551,7 @@ export function getWorkspaceService(
       const user = await userService.getById(handle, userId)
 
       const groups: WorkspaceGroupLink[] = []
-      let pageToken: string | undefined = undefined
+      let pageToken: string | undefined
 
       do {
         const { data }: GaxiosResponseWithHTTP2<admin_directory_v1.Schema$Groups> = await directory.groups.list({

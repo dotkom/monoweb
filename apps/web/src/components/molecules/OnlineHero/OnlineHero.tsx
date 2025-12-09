@@ -7,7 +7,7 @@ import { IconArrowUpRight, IconBriefcase } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import type { FC } from "react"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
 
 interface SplineInstance {
@@ -24,6 +24,12 @@ export const OnlineHero: FC = () => {
   const themeState = useRef<string | undefined>(resolvedTheme)
   const splineRef = useRef<SplineInstance | null>(null)
 
+  const updateSplineDarkMode = useCallback((darkModeValue: boolean) => {
+    if (splineRef.current?.setVariable) {
+      splineRef.current.setVariable("darkmode", darkModeValue)
+    }
+  }, [])
+
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -34,7 +40,7 @@ export const OnlineHero: FC = () => {
     if (splineRef.current?.setVariable && mounted) {
       updateSplineDarkMode(resolvedTheme === "dark")
     }
-  }, [resolvedTheme, mounted])
+  }, [resolvedTheme, mounted, updateSplineDarkMode])
 
   const onSplineLoad = (spline: SplineInstance) => {
     splineRef.current = spline
@@ -43,12 +49,6 @@ export const OnlineHero: FC = () => {
       updateSplineDarkMode(resolvedTheme === "dark")
     }
     setIsLoading(false)
-  }
-
-  const updateSplineDarkMode = (darkModeValue: boolean) => {
-    if (splineRef.current?.setVariable) {
-      splineRef.current.setVariable("darkmode", darkModeValue)
-    }
   }
 
   const lightSwitch = () => {

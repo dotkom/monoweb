@@ -13,20 +13,12 @@ import { useEventContext } from "./provider"
 export const PaymentPage: FC = () => {
   const { attendance } = useEventContext()
 
-  if (!attendance) {
-    return (
-      <Box>
-        <Title>Lag en påmelding for å opprette betaling</Title>
-      </Box>
-    )
-  }
-
   const updateAttendancePayment = useUpdateAttendancePaymentMutation()
   const reservedAttendees = useMemo(
     () => attendance?.attendees.filter((attendee) => attendee.reserved) ?? [],
     [attendance]
   )
-  const hasPayment = Boolean(attendance?.attendancePrice)
+  const hasPayment = Boolean(attendance!.attendancePrice)
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -38,16 +30,16 @@ export const PaymentPage: FC = () => {
       throw new Error("Tried to create payment without an attendance")
     }
 
-    const newPrice = inputRef.current ? Number.parseInt(inputRef.current.value) : null
+    const newPrice = inputRef.current ? Number.parseInt(inputRef.current.value, 10) : null
     if (!newPrice) {
       return
     }
 
-    updateAttendancePayment.mutate({ id: attendance.id, price: newPrice })
+    updateAttendancePayment.mutate({ id: attendance!.id, price: newPrice })
   }
 
   const removePayment = async () => {
-    updateAttendancePayment.mutate({ id: attendance.id, price: null })
+    updateAttendancePayment.mutate({ id: attendance!.id, price: null })
   }
 
   const columnHelper = createColumnHelper<Attendee>()

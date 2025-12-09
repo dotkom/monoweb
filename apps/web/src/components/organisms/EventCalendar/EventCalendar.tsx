@@ -61,7 +61,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   })
 
   const eventDetails = futureEventWithAttendances
-  const userId = session?.sub
+  const _userId = session?.sub
 
   const cal = getCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails)

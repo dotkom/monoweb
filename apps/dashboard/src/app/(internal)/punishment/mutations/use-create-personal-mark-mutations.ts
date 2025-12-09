@@ -15,7 +15,7 @@ export const useCreatePersonalMarkMutation = () => {
           message: "Vellykket opprettelse. Du blir sendt til ressursen.",
         })
       },
-      onSuccess: async (data) => {
+      onSuccess: async (_data) => {
         notification.complete({
           title: "Opprettet",
           message: "Prikken har blitt gitt.",

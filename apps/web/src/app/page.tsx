@@ -133,7 +133,7 @@ interface BigEventCardProps {
 }
 
 const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, className }) => {
-  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+  const _reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
   return (
     <Link
@@ -186,7 +186,7 @@ interface ComingEventProps {
 }
 
 const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className }) => {
-  const reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+  const _reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
 
   return (
     <Link
@@ -225,10 +225,13 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
   )
 }
 
-function AttendancePaymentOopsNotice({
+function _AttendancePaymentOopsNotice({
   userId,
   eventWithAttendance,
-}: { userId: UserId | null; eventWithAttendance: EventWithAttendance }) {
+}: {
+  userId: UserId | null
+  eventWithAttendance: EventWithAttendance
+}) {
   return (
     <div className="w-full p-6 text-white bg-red-600 rounded-2xl">
       <div className="flex flex-col gap-4 w-fit">

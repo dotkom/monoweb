@@ -21,7 +21,7 @@ export function createIntegerSelectInput<F extends FieldValues>({
               value: item.value.toString(),
             }))}
             value={field.value?.toString() ?? ""}
-            onChange={(value) => field.onChange(value !== null ? Number.parseInt(value) : null)}
+            onChange={(value) => field.onChange(value !== null ? Number.parseInt(value, 10) : null)}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
           />
         )}

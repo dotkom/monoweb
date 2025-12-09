@@ -42,8 +42,8 @@ const EventPage = () => {
 
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const view = searchParams.get("view") || "list"
-  const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString())
-  const month = Number.parseInt(searchParams.get("m") || (now.getMonth() + 1).toString()) - 1 // convert to 0-based month
+  const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString(), 10)
+  const month = Number.parseInt(searchParams.get("m") || (now.getMonth() + 1).toString(), 10) - 1 // convert to 0-based month
 
   const trpc = useTRPC()
   const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
