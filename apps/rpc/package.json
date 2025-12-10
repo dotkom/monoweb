@@ -36,6 +36,7 @@
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/oauth2": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
+    "@dotkomonline/types": "workspace:*",
     "@fastify/cors": "^11.0.0",
     "@opentelemetry/api": "^1.9.0",
     "@prisma/client": "^6.8.2",
@@ -62,7 +63,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
     "@dotkomonline/config": "workspace:*",
-    "@dotkomonline/types": "workspace:*",
     "@faker-js/faker": "9.9.0",
     "@testcontainers/postgresql": "11.9.0",
     "@types/mustache": "4.2.6",

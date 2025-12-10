@@ -559,6 +559,9 @@ importers:
       '@dotkomonline/oauth2':
         specifier: workspace:*
         version: link:../../packages/oauth2
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -635,9 +638,6 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@faker-js/faker':
         specifier: 9.9.0
         version: 9.9.0
