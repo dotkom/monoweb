@@ -601,6 +601,9 @@ importers:
       googleapis:
         specifier: ^159.0.0
         version: 159.0.0
+      googleapis-common:
+        specifier: 8.0.1
+        version: 8.0.1
       import-in-the-middle:
         specifier: ^1.15.0
         version: 1.15.0
@@ -662,9 +665,6 @@ importers:
       dotenv-cli:
         specifier: 8.0.0
         version: 8.0.0
-      googleapis-common:
-        specifier: 8.0.1
-        version: 8.0.1
       tslib:
         specifier: 2.8.1
         version: 2.8.1
@@ -695,6 +695,9 @@ importers:
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
       '@dotkomonline/oauth2':
         specifier: workspace:*
         version: link:../../packages/oauth2
@@ -843,9 +846,6 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@dotkomonline/logger':
-        specifier: workspace:*
-        version: link:../../packages/logger
       '@dotkomonline/rpc':
         specifier: workspace:*
         version: link:../rpc

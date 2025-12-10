@@ -21,6 +21,7 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
+    "@dotkomonline/logger": "workspace:*",
     "@hookform/resolvers": "^4.0.0",
     "@next/env": "^15.3.5",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -68,7 +69,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
     "@dotkomonline/config": "workspace:*",
-    "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/rpc": "workspace:*",
     "@tailwindcss/postcss": "4.1.17",
     "@types/cors": "2.8.19",
