@@ -1,5 +1,4 @@
 import "../instrumentation"
-
 import { getLogger } from "@dotkomonline/logger"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
 import fastifyCors from "@fastify/cors"
@@ -10,13 +9,27 @@ import fastify from "fastify"
 import rawBody from "fastify-raw-body"
 import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
-import { createConfiguration } from "../configuration"
+import { createConfiguration, isAuthorizationUnsafelyDisabled, isDevelopmentEnvironment } from "../configuration"
 import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
 import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createTrpcContext } from "../trpc"
+import { ADMIN_EDITOR_ROLES } from "../modules/authorization-service"
 
 const logger = getLogger("rpc")
+
+// You can disable the entire authorization system with UNSAFE_DISABLE_AUTHORIZATION. This checks ensures this is NOT
+// disabled in production-like environments.
+//
+// The implementation happens in trpc.ts#addAuthorizationGuard and createFastifyContext in this file.
+if (isAuthorizationUnsafelyDisabled) {
+  logger.warn("Authorization framework will be disabled due to `UNSAFE_DISABLE_AUTHORIZATION` flag being set.")
+  if (!isDevelopmentEnvironment) {
+    logger.error("Application has been configured to disable authorization in non-local development context.")
+    process.exit(1)
+  }
+}
+
 const configuration = createConfiguration()
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
@@ -51,7 +64,15 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
     if (subject === undefined) {
       return createTrpcContext(null, serviceLayer)
     }
-    const editorRoles = await serviceLayer.authorizationService.getEditorRoles(serviceLayer.prisma, subject)
+
+    // User routes `isStaff` (~isEditor) and `isAdmin` rely on the editor roles set here to determine admin or staff
+    // status. Therefore, if `isAuthorizationUnsafelyDisabled === true`, we assign their principal admin permissions
+    // regardless of their actual roles, in addition to disabling all authorization checks further downstream (see
+    // comment atop this file). This ternary serves no greater purpose than overriding permissions for the two routes.
+    const editorRoles = isAuthorizationUnsafelyDisabled
+      ? new Set(ADMIN_EDITOR_ROLES)
+      : await serviceLayer.authorizationService.getEditorRoles(serviceLayer.prisma, subject)
+
     return createTrpcContext(
       {
         subject,
@@ -65,7 +86,9 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
 }
 
 const server = fastify({
-  maxParamLength: 5000,
+  routerOptions: {
+    maxParamLength: 5000,
+  },
 })
 await server.register(rawBody, {
   field: "rawBody",
@@ -97,17 +120,6 @@ server.register(fastifyTRPCPlugin, {
 
 registerObservabilityProbeRoutes(server)
 registerStripeWebhookRoutes(server, serviceLayer)
-
-// You can disable the entire authorization system with UNSAFE_DISABLE_AUTHORIZATION. This checks ensures this is NOT
-// disabled in production-like environments.
-const isOverridingAuthorization = process.env.UNSAFE_DISABLE_AUTHORIZATION === "true"
-if (isOverridingAuthorization) {
-  logger.warn("Authorization framework has been disabled. This is extremely unsafe and should only be done locally")
-  if (["production", "staging"].includes(process.env.NODE_ENV ?? "")) {
-    logger.error("Application has been configured to disable authorization in non-local development")
-    process.exit(1)
-  }
-}
 
 await identifyCallerIAMIdentity(configuration)
 await server.listen({ port: 4444, host: "0.0.0.0" })
