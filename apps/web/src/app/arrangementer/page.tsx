@@ -113,8 +113,15 @@ const EventPage = () => {
       params.delete("view")
     }
 
-    const queryString = params.toString()
-    router.replace(queryString ? `/arrangementer?${queryString}` : "/arrangementer", { scroll: false })
+    const nextQuery = params.toString()
+    const currentQuery = searchParams.toString()
+
+    // Prevent updating route if nothing has changed
+    if (nextQuery === currentQuery) {
+      return
+    }
+
+    router.replace(nextQuery ? `/arrangementer?${nextQuery}` : "/arrangementer", { scroll: false })
   }
 
   const handleSearchChange = (value: string) => {
