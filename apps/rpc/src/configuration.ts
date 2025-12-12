@@ -85,7 +85,9 @@ export function isAmazonSesEmailFeatureEnabled(
   return configuration.email.awsSqsQueueUrl !== null
 }
 
-// We do not set NODE_ENV to development in our containers, so we just check that it's not staging or production
-// This should be safe enough with Dopplers own environment as well.
+export const isAuthorizationUnsafelyDisabled = config(process.env.UNSAFE_DISABLE_AUTHORIZATION, "false") === "true"
+
+// We do not set NODE_ENV to anything but `production` in our Docker containers (see apps/rpc/Dockerfile), so we just
+// check that its value is not production. This should be accurate with Doppler's own environment as well.
 export const isDevelopmentEnvironment =
-  process.env.DOPPLER_ENVIRONMENT === "dev" && process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test"
+  process.env.DOPPLER_ENVIRONMENT === "dev" && process.env.NODE_ENV !== "production"

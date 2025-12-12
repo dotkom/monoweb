@@ -22,6 +22,7 @@ import {
 } from "./error"
 import type { EditorRoleSet } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
+import { isAuthorizationUnsafelyDisabled } from "./configuration"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */
@@ -38,6 +39,9 @@ export const createTrpcContext = async (principal: Principal | null, context: Se
 
   /**
    * Add a guard clause (rule) that has to evaluate to true, otherwise exit the procedure with a ForbiddenError.
+   *
+   * If the env flag `UNSAFE_DISABLE_AUTHORIZATION` equals `true`, this will never throw a ForbiddenError, and permit
+   * the rule for any input.
    */
   async function addAuthorizationGuard<TRuleInput>(rule: Rule<TRuleInput>, input: TRuleInput): Promise<void> {
     async function evaluate<TRuleInput>(
@@ -46,13 +50,17 @@ export const createTrpcContext = async (principal: Principal | null, context: Se
     ): Promise<boolean> {
       return await rule.evaluate(ruleContext)
     }
+
     const decision = await evaluate(rule, {
       ctx: trpcContext,
       evaluate,
       input,
       principal: trpcContext.principal,
     })
-    if (!decision) {
+
+    // We do not throw ForbiddenError if authorization is disabled. This effectively disables all authorization checks,
+    // and will give every request access as if it was from an administrator.
+    if (!decision && !isAuthorizationUnsafelyDisabled) {
       throw new ForbiddenError(
         `Principal(ID=${trpcContext.principal?.subject ?? "<anonymous>"}) is not permitted to perform this operation`
       )
