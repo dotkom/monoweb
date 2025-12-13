@@ -1,19 +1,15 @@
 import { PenaltyRules } from "@/utils/penalty-rules"
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogTitle,
   AlertDialogTrigger,
   Text,
+  Title,
   cn,
 } from "@dotkomonline/ui"
-import { IconBook2 } from "@tabler/icons-react"
+import { IconBook2, IconX } from "@tabler/icons-react"
 import { useState } from "react"
 
 interface EventRulesProps {
@@ -25,32 +21,29 @@ export const EventRules = ({ className }: EventRulesProps) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger>
-        <div className={cn("text-sm flex flex-row gap-1 items-center cursor-pointer", className)}>
+        <div className={cn("flex flex-row gap-2 items-center cursor-pointer", className)}>
           <IconBook2 className="size-[1.25em]" />
-          <Text>Arrangementregler</Text>
+          <Text className="text-sm">Arrangementregler</Text>
         </div>
       </AlertDialogTrigger>
-      <AlertDialogContent
-        className="relative flex flex-col overflow-hidden max-h-[90vh]"
-        onOutsideClick={() => setOpen(false)}
-      >
-        <AlertDialogTitle className="text-2xl font-bold mb-1">Arrangementregler</AlertDialogTitle>
-        <AlertDialogDescription>
-          Ved påmelding av dette arrangementet godtar du å følge Onlines arrangementregler beskrevet under.
-        </AlertDialogDescription>
-        <section className="overflow-hidden">
-          <Accordion type="single" collapsible>
-            <AccordionItem value="eventRules">
-              <AccordionTrigger>Prikkeregler</AccordionTrigger>
-              <AccordionContent className="grow overflow-y-auto p-4 max-h-[300px]">
-                <PenaltyRules />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </section>
-        <AlertDialogCancel variant={"solid"} color="brand" className="w-fit mx-auto">
-          Jeg er inneforstått med reglene
-        </AlertDialogCancel>
+      <AlertDialogContent onOutsideClick={() => setOpen(false)}>
+        <div className="flex flex-row gap-4 justify-between">
+          <AlertDialogTitle asChild>
+            <Title element="h1" size="lg">
+              Arrangementregler
+            </Title>
+          </AlertDialogTitle>
+
+          <AlertDialogCancel>
+            <IconX className="size-[1.25em]" />
+          </AlertDialogCancel>
+        </div>
+
+        <div className="flex flex-col gap-8 rounded-lg min-h-[25dvh] max-h-[75dvh] overflow-y-auto pr-4 -mr-4">
+          <Text>Ved påmelding av dette arrangementet godtar du å følge Onlines arrangementregler beskrevet under.</Text>
+
+          <PenaltyRules small />
+        </div>
       </AlertDialogContent>
     </AlertDialog>
   )
