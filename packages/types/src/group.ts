@@ -144,7 +144,7 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
     case "TREASURER":
       return "Økonomiansvarlig"
     case "EMAIL_ONLY":
-      return "Epost-bruker"
+      return "E-postbruker"
     default:
       return "Ukjent type"
   }

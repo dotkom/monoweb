@@ -53,31 +53,34 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     }),
   ])
 
+  // We do not show members for ASSOCIATED types because they often have members outside Online, meaning the member list
+  // would be incomplete.
   const showMembers = group.type !== "ASSOCIATED" && group.memberVisibility !== "NONE"
 
-  // We do not show members for ASSOCIATED types because they often have members outside of Online
-  // meaning the member list would be incomplete.
   const members = showMembers ? await server.group.getMembers.query(slug) : new Map<UserId, GroupMember>()
 
   const hasContactInfo = group.email || group.contactUrl
 
   const membersToShow = [...members.values()].filter((member) => {
+    const membership = getLatestActiveMembership(member)
+
+    const isEmailOnly = membership?.roles.every((r) => r.type === "EMAIL_ONLY")
+    const isMe = member.id === session?.sub
+
+    if (group.memberVisibility === "NONE" || (isEmailOnly && !isMe)) {
+      return false
+    }
+
     if (group.memberVisibility === "ALL_MEMBERS") {
       return true
     }
 
     if (group.memberVisibility === "LEADER") {
-      const membership = getLatestActiveMembership(member)
       return membership?.roles.some((r) => r.type === "LEADER")
     }
 
-    if (group.memberVisibility === "NONE") {
-      return false
-    }
-
     if (group.memberVisibility === "WITH_ROLES") {
-      const membership = getLatestActiveMembership(member)
-      return membership?.roles.some((r) => r.type !== "COSMETIC")
+      return membership?.roles.some((r) => r.type !== "COSMETIC" && r.type !== "EMAIL_ONLY")
     }
 
     return false
@@ -294,16 +297,18 @@ function getLatestActiveMembership(member: GroupMember) {
 function getRolePriority(role: GroupRole) {
   switch (role.type) {
     case "LEADER":
-      return 6
+      return 7
     case "DEPUTY_LEADER":
-      return 5
+      return 6
     case "TREASURER":
-      return 4
+      return 5
     case "TRUSTEE":
-      return 3
+      return 4
     case "PUNISHER":
-      return 2
+      return 3
     case "COSMETIC":
+      return 2
+    case "EMAIL_ONLY":
       return 1
     default:
       return 0
