@@ -95,7 +95,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
         <OnlineIcon width={82} height={82} />
       )}
 
-      <div className="flex flex-col">
+      <div className="flex flex-col grow min-w-0">
         <Title className="text-xl">{group.abbreviation}</Title>
         <RichText content={group.description} maxLines={2} hideToggleButton />
       </div>

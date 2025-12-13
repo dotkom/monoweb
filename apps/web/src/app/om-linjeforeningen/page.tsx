@@ -123,7 +123,7 @@ const Card: FC<CardProps> = ({ imageUrl, title, description }: CardProps) => {
           <OnlineIcon width={150} height={150} />
         )}
       </div>
-      <div className="flex-1">
+      <div className="grow min-w-0">
         <Title>{title}</Title>
         <RichText maxLines={5} className="line-clamp-4" content={description} hideToggleButton={true} />
       </div>
