@@ -645,8 +645,8 @@ importers:
         specifier: 9.9.0
         version: 9.9.0
       '@testcontainers/postgresql':
-        specifier: 11.9.0
-        version: 11.9.0
+        specifier: 11.10.0
+        version: 11.10.0
       '@types/mustache':
         specifier: 4.2.6
         version: 4.2.6
@@ -923,7 +923,7 @@ importers:
         version: 6.8.2(prisma@6.8.2(typescript@5.9.3))(typescript@5.9.3)
       '@testcontainers/postgresql':
         specifier: ^11.5.1
-        version: 11.9.0
+        version: 11.10.0
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -2169,8 +2169,8 @@ packages:
     resolution: {integrity: sha512-GsFaMXCkMqkKIvwCQjCrwH+GHbPKBjhwo/8ZuUkWHqbI73Kky9I+pQltrlT0+MWpedCoosda53lgjYfyEPgxBg==}
     engines: {node: '>=12.10.0'}
 
-  '@grpc/grpc-js@1.14.2':
-    resolution: {integrity: sha512-QzVUtEFyu05UNx2xr0fCQmStUO17uVQhGNowtxs00IgTZT6/W2PBLfUkj30s0FKJ29VtTa3ArVNIhNP6akQhqA==}
+  '@grpc/grpc-js@1.14.3':
+    resolution: {integrity: sha512-Iq8QQQ/7X3Sac15oB6p0FmUg/klxQvXLeileoqrTRGJYLV+/9tubbr9ipz0GKHjmXVsgFPo/+W+2cA8eNcR+XA==}
     engines: {node: '>=12.10.0'}
 
   '@grpc/proto-loader@0.7.15':
@@ -4965,8 +4965,8 @@ packages:
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
 
-  '@testcontainers/postgresql@11.9.0':
-    resolution: {integrity: sha512-beLyLdLygFllktviM132Xd6tQ4i5FnuyZP+4BQEjUb5sJYHYnIrV/ZBzRRflIlF8gugt1GXgudkmr/HxM9vtKw==}
+  '@testcontainers/postgresql@11.10.0':
+    resolution: {integrity: sha512-d6QeN3KkXLJBdt0T6X3KKtdkHbaZdzCRPo133FSG8yOoGofQAYghtau39iUdeF9GAN8UTWZAxio40uYKBSV7xw==}
 
   '@tiptap/core@3.11.1':
     resolution: {integrity: sha512-q7uzYrCq40JOIi6lceWe2HuA8tSr97iPwP/xtJd0bZjyL1rWhUyqxMb7y+aq4RcELrx/aNRa2JIvLtRRdy02Dg==}
@@ -8753,8 +8753,8 @@ packages:
     resolution: {integrity: sha512-pFYqmTw68LXVjeWJMST4+borgQP2AyMNbg1BpZh9LbyhUeNkeaPF9gzfPGUAnSMV3qPYdWUwDIjjCLiSDOl7vg==}
     engines: {node: '>=18'}
 
-  testcontainers@11.9.0:
-    resolution: {integrity: sha512-SQ6OqQUig7HcGVF72i+ZVIMvxPSpEz8cgC/B63ekqMzgf98DnveoBbOmqux/Wa5wQAQCt4mEPNMa/Jz7vMg9fQ==}
+  testcontainers@11.10.0:
+    resolution: {integrity: sha512-8hwK2EnrOZfrHPpDC7CPe03q7H8Vv8j3aXdcmFFyNV8dzpBzgZYmqyDtduJ8YQ5kbzj+A+jUXMQ6zI8B5U3z+g==}
 
   text-decoder@1.2.3:
     resolution: {integrity: sha512-3/o9z3X0X0fTupwsYvR03pJ/DjWuqqrfwBgTQzdWDiQSm9KitAyz/9WqsT2JQW7KV2m+bC2ol/zqpW37NHxLaA==}
@@ -10625,7 +10625,7 @@ snapshots:
       '@grpc/proto-loader': 0.7.15
       '@js-sdsl/ordered-map': 4.4.2
 
-  '@grpc/grpc-js@1.14.2':
+  '@grpc/grpc-js@1.14.3':
     dependencies:
       '@grpc/proto-loader': 0.8.0
       '@js-sdsl/ordered-map': 4.4.2
@@ -10634,7 +10634,7 @@ snapshots:
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.3.2
-      protobufjs: 7.5.3
+      protobufjs: 7.5.4
       yargs: 17.7.2
 
   '@grpc/proto-loader@0.8.0':
@@ -13598,9 +13598,9 @@ snapshots:
 
   '@tanstack/table-core@8.21.3': {}
 
-  '@testcontainers/postgresql@11.9.0':
+  '@testcontainers/postgresql@11.10.0':
     dependencies:
-      testcontainers: 11.9.0
+      testcontainers: 11.10.0
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -14932,7 +14932,7 @@ snapshots:
   dockerode@4.0.9:
     dependencies:
       '@balena/dockerignore': 1.0.2
-      '@grpc/grpc-js': 1.14.2
+      '@grpc/grpc-js': 1.14.3
       '@grpc/proto-loader': 0.7.15
       docker-modem: 5.0.6
       protobufjs: 7.5.4
@@ -18222,7 +18222,7 @@ snapshots:
       glob: 10.4.5
       minimatch: 9.0.5
 
-  testcontainers@11.9.0:
+  testcontainers@11.10.0:
     dependencies:
       '@balena/dockerignore': 1.0.2
       '@types/dockerode': 3.3.47
