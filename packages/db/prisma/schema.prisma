@@ -45,7 +45,7 @@ enum MembershipSpecialization {
 
 model Membership {
   id             String                    @id @default(uuid())
-  userId         String
+  userId         String                    @map("user_id")
   user           User                      @relation(fields: [userId], references: [id])
   type           MembershipType
   specialization MembershipSpecialization? @default(UNKNOWN)
@@ -58,26 +58,24 @@ model Membership {
 model User {
   /// OpenID Connect Subject claim - for this reason there is no @default(uuid()) here.
   id                  String   @id
-  profileSlug         String   @unique
+  profileSlug         String   @unique @map("username")
   name                String?
   email               String?
-  imageUrl            String?
+  imageUrl            String?  @map("image_url")
   biography           String?
   phone               String?
   gender              String?
-  dietaryRestrictions String?
-  ntnuUsername        String?
+  dietaryRestrictions String?  @map("dietary_restrictions")
+  ntnuUsername        String?  @map("ntnu_username")
   flags               String[]
   /// Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
-  workspaceUserId     String?  @unique
+  workspaceUserId     String?  @unique @map("workspace_user_id")
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-
-  privacyPermissionsId String?             @unique
-  privacyPermissions   PrivacyPermissions?
-
-  notificationPermissionsId String?                  @unique
+  privacyPermissionsId      String?                  @unique @map("privacy_permissions_id")
+  privacyPermissions        PrivacyPermissions?
+  notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
   attendee          Attendee[]
@@ -101,9 +99,9 @@ model Company {
   email       String?
   website     String
   location    String?
-  imageUrl    String?
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  imageUrl    String?  @map("image_url")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   events     EventCompany[]
   JobListing JobListing[]
@@ -142,17 +140,17 @@ model Group {
   slug                String                 @id @unique
   abbreviation        String
   name                String?
-  shortDescription    String?
+  shortDescription    String?                @map("short_description")
   description         String
-  imageUrl            String?
+  imageUrl            String?                @map("image_url")
   email               String?
-  contactUrl          String?
-  showLeaderAsContact Boolean                @default(false)
-  createdAt           DateTime               @default(now()) @db.Timestamptz(3)
-  deactivatedAt       DateTime?
-  workspaceGroupId    String?                @unique
-  memberVisibility    GroupMemberVisibility  @default(ALL_MEMBERS)
-  recruitmentMethod   GroupRecruitmentMethod @default(NONE)
+  contactUrl          String?                @map("contact_url")
+  showLeaderAsContact Boolean                @default(false) @map("show_leader_as_contact")
+  createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  deactivatedAt       DateTime?              @map("deactivated_at")
+  workspaceGroupId    String?                @unique @map("workspace_group_id")
+  memberVisibility    GroupMemberVisibility  @default(ALL_MEMBERS) @map("member_visibility")
+  recruitmentMethod   GroupRecruitmentMethod @default(NONE) @map("recruitment_method")
 
   events      EventHostingGroup[]
   type        GroupType
@@ -165,14 +163,15 @@ model Group {
 
 model GroupMembership {
   id        String    @id @default(uuid())
-  groupId   String
-  group     Group     @relation(fields: [groupId], references: [slug], onDelete: Cascade)
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   start     DateTime  @db.Timestamptz(3)
   end       DateTime? @db.Timestamptz(3)
-  createdAt DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  groupId String @map("group_id")
+  userId  String @map("user_id")
+  group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   roles GroupMembershipRole[]
 
@@ -180,9 +179,9 @@ model GroupMembership {
 }
 
 model GroupMembershipRole {
-  membershipId String
+  membershipId String          @map("membership_id")
+  roleId       String          @map("role_id")
   membership   GroupMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
-  roleId       String
   role         GroupRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@id([membershipId, roleId])
@@ -202,11 +201,12 @@ enum GroupRoleType {
 }
 
 model GroupRole {
-  id      String        @id @default(uuid())
-  groupId String
-  group   Group         @relation(fields: [groupId], references: [slug], onDelete: Cascade)
-  name    String
-  type    GroupRoleType @default(COSMETIC)
+  id   String        @id @default(uuid())
+  name String
+  type GroupRoleType @default(COSMETIC)
+
+  groupId String @map("group_id")
+  group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)
 
   groupMembershipRoles GroupMembershipRole[]
 
@@ -237,14 +237,14 @@ enum EventType {
 
 model Attendance {
   id                 String   @id @default(uuid())
-  registerStart      DateTime @db.Timestamptz(3)
-  registerEnd        DateTime @db.Timestamptz(3)
-  deregisterDeadline DateTime @db.Timestamptz(3)
+  registerStart      DateTime @map("register_start") @db.Timestamptz(3)
+  registerEnd        DateTime @map("register_end") @db.Timestamptz(3)
+  deregisterDeadline DateTime @map("deregister_deadline") @db.Timestamptz(3)
   selections         Json     @default("[]")
-  createdAt          DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-
-  attendancePrice Int?
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// The price as a whole integer in NOK (value 100 means NOK100.00)
+  attendancePrice    Int?     @map("attendance_price")
 
   pools     AttendancePool[]
   attendees Attendee[]
@@ -256,15 +256,15 @@ model Attendance {
 model AttendancePool {
   id              String   @id @default(uuid())
   title           String
-  mergeDelayHours Int?
-  yearCriteria    Json
+  mergeDelayHours Int?     @map("merge_delay_hours")
+  yearCriteria    Json     @map("year_criteria")
   capacity        Int
-  createdAt       DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  attendanceId String
+  attendanceId String     @map("attendance_id")
+  taskId       String?    @map("task_id")
   attendance   Attendance @relation(fields: [attendanceId], references: [id])
-  taskId       String?
   task         Task?      @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   attendees Attendee[]
@@ -274,32 +274,32 @@ model AttendancePool {
 
 model Attendee {
   id                    String              @id @default(uuid())
-  attendance            Attendance          @relation(fields: [attendanceId], references: [id])
-  attendanceId          String
-  user                  User                @relation(fields: [userId], references: [id])
-  userId                String
   /// To preserve the user's grade at the time of registration
-  userGrade             Int?
-  attendancePool        AttendancePool      @relation(fields: [attendancePoolId], references: [id])
-  attendancePoolId      String
+  userGrade             Int?                @map("user_grade")
   feedbackFormAnswer    FeedbackFormAnswer?
   /// Which options the user has selected from the Attendance selections
   selections            Json                @default("[]")
   reserved              Boolean
-  earliestReservationAt DateTime            @db.Timestamptz(3)
-  attendedAt            DateTime?           @db.Timestamptz(3)
-  createdAt             DateTime            @default(now()) @db.Timestamptz(3)
-  updatedAt             DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
+  earliestReservationAt DateTime            @map("earliest_reservation_at") @db.Timestamptz(3)
+  attendedAt            DateTime?           @map("attended_at") @db.Timestamptz(3)
+  createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  paymentDeadline       DateTime?           @map("payment_deadline")
+  paymentLink           String?             @map("payment_link")
+  paymentId             String?             @map("payment_id")
+  paymentReservedAt     DateTime?           @map("payment_reserved_at")
+  paymentChargeDeadline DateTime?           @map("payment_charge_deadline")
+  paymentChargedAt      DateTime?           @map("payment_charged_at")
+  paymentRefundedAt     DateTime?           @map("payment_refunded_at")
 
-  paymentDeadline       DateTime?
-  paymentLink           String?
-  paymentId             String?
-  paymentReservedAt     DateTime?
-  paymentChargeDeadline DateTime?
-  paymentChargedAt      DateTime?
-  paymentRefundedAt     DateTime?
-  paymentRefundedById   String?
-  paymentRefundedBy     User?     @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
+  attendanceId        String         @map("attendance_id")
+  userId              String         @map("user_id")
+  attendancePoolId    String         @map("attendance_pool_id")
+  paymentRefundedById String?        @map("payment_refunded_by_id")
+  attendance          Attendance     @relation(fields: [attendanceId], references: [id])
+  user                User           @relation(fields: [userId], references: [id])
+  attendancePool      AttendancePool @relation(fields: [attendancePoolId], references: [id])
+  paymentRefundedBy   User?          @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
@@ -312,35 +312,37 @@ model Event {
   end                     DateTime      @db.Timestamptz(3)
   status                  EventStatus
   description             String
-  shortDescription        String?
-  imageUrl                String?
-  locationTitle           String?
-  locationAddress         String?
-  locationLink            String?
-  attendance              Attendance?   @relation(fields: [attendanceId], references: [id])
-  attendanceId            String?
+  shortDescription        String?       @map("short_description")
+  imageUrl                String?       @map("image_url")
+  locationTitle           String?       @map("location_title")
+  locationAddress         String?       @map("location_address")
+  locationLink            String?       @map("location_link")
   type                    EventType
   feedbackForm            FeedbackForm?
-  markForMissedAttendance Boolean       @default(true)
-  createdAt               DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt               DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
+  markForMissedAttendance Boolean       @default(true) @map("mark_for_missed_attendance")
+  createdAt               DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  parentId String?
-  parent   Event?  @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
-  children Event[] @relation("children")
+  attendanceId String?     @map("attendance_id")
+  parentId     String?     @map("parent_id")
+  attendance   Attendance? @relation(fields: [attendanceId], references: [id])
+  parent       Event?      @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
+  children     Event[]     @relation("children")
 
   companies         EventCompany[]
   hostingGroups     EventHostingGroup[]
   deregisterReasons DeregisterReason[]
 
-  metadataImportId Int?
+  /// Historical metadata -- This is the id of the event in the previous version of OnlineWeb, if it was imported from
+  /// the previous version
+  metadataImportId Int? @map("metadata_import_id")
 
   @@map("event")
 }
 
 model EventCompany {
-  eventId   String
-  companyId String
+  eventId   String  @map("event_id")
+  companyId String  @map("company_id")
   event     Event   @relation(fields: [eventId], references: [id])
   company   Company @relation(fields: [companyId], references: [id])
 
@@ -357,16 +359,15 @@ enum MarkType {
 }
 
 model Mark {
-  id       String   @id @default(uuid())
-  title    String
-  details  String?
+  id        String   @id @default(uuid())
+  title     String
+  details   String?
   /// Duration in days
-  duration Int
-  weight   Int
-  type     MarkType @default(MANUAL)
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  duration  Int
+  weight    Int
+  type      MarkType @default(MANUAL)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   users  PersonalMark[]
   groups MarkGroup[]
@@ -375,8 +376,8 @@ model Mark {
 }
 
 model MarkGroup {
-  markId  String
-  groupId String
+  markId  String @map("mark_id")
+  groupId String @map("group_id")
   mark    Mark   @relation(fields: [markId], references: [id])
   group   Group  @relation(fields: [groupId], references: [slug])
 
@@ -385,15 +386,14 @@ model MarkGroup {
 }
 
 model PersonalMark {
-  mark   Mark   @relation(fields: [markId], references: [id])
-  markId String
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
 
+  markId    String  @map("mark_id")
+  userId    String  @map("user_id")
+  givenById String? @map("given_by_id")
+  mark      Mark    @relation(fields: [markId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
   givenBy   User?   @relation("GivenBy", fields: [givenById], references: [id])
-  givenById String?
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
   @@id([markId, userId])
   @@map("personal_mark")
@@ -402,15 +402,18 @@ model PersonalMark {
 model PrivacyPermissions {
   id                String   @id @default(uuid())
   user              User     @relation(fields: [userId], references: [id])
-  userId            String   @unique
-  profileVisible    Boolean  @default(true)
-  usernameVisible   Boolean  @default(true)
-  emailVisible      Boolean  @default(false)
-  phoneVisible      Boolean  @default(false)
-  addressVisible    Boolean  @default(false)
-  attendanceVisible Boolean  @default(false)
-  createdAt         DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt         DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  userId            String   @unique @map("user_id")
+  // TODO: rename to ~"privateProfile" and require authentication to view profile if true
+  profileVisible    Boolean  @default(true) @map("profile_visible")
+  usernameVisible   Boolean  @default(true) @map("username_visible")
+  emailVisible      Boolean  @default(false) @map("email_visible")
+  phoneVisible      Boolean  @default(false) @map("phone_visible")
+  // TODO: delete this prop -- we do not have an address field on User
+  addressVisible    Boolean  @default(false) @map("address_visible")
+  // TODO: default to true
+  attendanceVisible Boolean  @default(false) @map("attendance_visible")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@map("privacy_permissions")
 }
@@ -418,24 +421,24 @@ model PrivacyPermissions {
 model NotificationPermissions {
   id                          String   @id @default(uuid())
   user                        User     @relation(fields: [userId], references: [id])
-  userId                      String   @unique
+  userId                      String   @unique @map("user_id")
   applications                Boolean  @default(true)
-  newArticles                 Boolean  @default(true)
-  standardNotifications       Boolean  @default(true)
-  groupMessages               Boolean  @default(true)
-  markRulesUpdates            Boolean  @default(true)
+  newArticles                 Boolean  @default(true) @map("new_articles")
+  standardNotifications       Boolean  @default(true) @map("standard_notifications")
+  groupMessages               Boolean  @default(true) @map("group_messages")
+  markRulesUpdates            Boolean  @default(true) @map("mark_rules_updates")
   receipts                    Boolean  @default(true)
-  registrationByAdministrator Boolean  @default(true)
-  registrationStart           Boolean  @default(true)
-  createdAt                   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt                   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  registrationByAdministrator Boolean  @default(true) @map("registration_by_administrator")
+  registrationStart           Boolean  @default(true) @map("registration_start")
+  createdAt                   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@map("notification_permissions")
 }
 
 model EventHostingGroup {
-  groupId String
-  eventId String
+  groupId String @map("group_id")
+  eventId String @map("event_id")
   group   Group  @relation(fields: [groupId], references: [slug])
   event   Event  @relation(fields: [eventId], references: [id])
 
@@ -454,24 +457,24 @@ enum EmploymentType {
 
 model JobListing {
   id               String         @id @default(uuid())
-  companyId        String
-  company          Company        @relation(fields: [companyId], references: [id])
   title            String
   description      String
-  shortDescription String?
+  shortDescription String?        @map("short_description")
   start            DateTime       @db.Timestamptz(3)
   end              DateTime       @db.Timestamptz(3)
   featured         Boolean
   hidden           Boolean
   deadline         DateTime?      @db.Timestamptz(3)
   employment       EmploymentType
-  applicationLink  String?
-  applicationEmail String?
+  applicationLink  String?        @map("application_link")
+  applicationEmail String?        @map("application_email")
   ///Applications are reviewed as soon as they are submitted
-  rollingAdmission Boolean
+  rollingAdmission Boolean        @map("rolling_admission")
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id])
 
   locations JobListingLocation[]
 
@@ -479,10 +482,11 @@ model JobListing {
 }
 
 model JobListingLocation {
-  name         String
-  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  name      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  jobListingId String     @map("job_listing_id")
   jobListing   JobListing @relation(fields: [jobListingId], references: [id])
-  jobListingId String
 
   @@id([name, jobListingId])
   @@map("job_listing_location")
@@ -491,29 +495,28 @@ model JobListingLocation {
 model Offline {
   id          String   @id @default(uuid())
   title       String
-  fileUrl     String?
-  imageUrl    String?
-  publishedAt DateTime @db.Timestamptz(3)
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  fileUrl     String?  @map("file_url")
+  imageUrl    String?  @map("image_url")
+  publishedAt DateTime @map("published_at") @db.Timestamptz(3)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@map("offline")
 }
 
 model Article {
-  id           String  @id @default(uuid())
+  id           String   @id @default(uuid())
+  slug         String   @unique
   title        String
   author       String
   photographer String
-  imageUrl     String
-  slug         String  @unique
+  imageUrl     String   @map("image_url")
   excerpt      String
   content      String
-  isFeatured   Boolean @default(false)
-  vimeoId      String?
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  isFeatured   Boolean  @default(false) @map("is_featured")
+  vimeoId      String?  @map("vimeo_id")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   tags ArticleTagLink[]
 
@@ -529,10 +532,10 @@ model ArticleTag {
 }
 
 model ArticleTagLink {
+  articleId String     @map("article_id")
+  tagName   String     @map("tag_name")
   article   Article    @relation(fields: [articleId], references: [id])
-  articleId String
   tag       ArticleTag @relation(fields: [tagName], references: [name])
-  tagName   String
 
   @@id([articleId, tagName])
   @@map("article_tag_link")
@@ -561,15 +564,16 @@ enum TaskStatus {
 }
 
 model Task {
-  id              String         @id @default(uuid())
-  type            TaskType
-  status          TaskStatus     @default(PENDING)
-  payload         Json           @default("{}")
-  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  scheduledAt     DateTime       @db.Timestamptz(3)
-  processedAt     DateTime?      @db.Timestamptz(3)
+  id          String     @id @default(uuid())
+  type        TaskType
+  status      TaskStatus @default(PENDING)
+  payload     Json       @default("{}")
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  scheduledAt DateTime   @map("scheduled_at") @db.Timestamptz(3)
+  processedAt DateTime?  @map("processed_at") @db.Timestamptz(3)
+
+  recurringTaskId String?        @map("recurring_task_id")
   recurringTask   RecurringTask? @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
-  recurringTaskId String?
 
   attendancePools AttendancePool[]
 
@@ -581,10 +585,10 @@ model RecurringTask {
   id        String    @id @default(uuid())
   type      TaskType
   payload   Json      @default("{}")
-  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   schedule  String
-  lastRunAt DateTime? @db.Timestamptz(3)
-  nextRunAt DateTime  @db.Timestamptz(3)
+  lastRunAt DateTime? @map("last_run_at") @db.Timestamptz(3)
+  nextRunAt DateTime  @map("next_run_at") @db.Timestamptz(3)
 
   tasks Task[]
 
@@ -617,12 +621,13 @@ enum DeregisterReasonType {
 
 model FeedbackForm {
   id                 String   @id @default(uuid())
-  eventId            String   @unique
-  event              Event    @relation(fields: [eventId], references: [id])
-  publicResultsToken String   @unique @default(uuid())
-  createdAt          DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt          DateTime @default(now()) @updatedAt @db.Timestamptz(3)
-  answerDeadline     DateTime @db.Timestamptz(3)
+  publicResultsToken String   @unique @default(uuid()) @map("public_results_token")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  answerDeadline     DateTime @map("answer_deadline") @db.Timestamptz(3)
+
+  eventId String @unique @map("event_id")
+  event   Event  @relation(fields: [eventId], references: [id])
 
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
@@ -632,15 +637,16 @@ model FeedbackForm {
 
 model FeedbackQuestion {
   id                  String               @id @default(uuid())
-  feedbackFormId      String
-  feedbackForm        FeedbackForm         @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
   label               String
   required            Boolean              @default(false)
-  showInPublicResults Boolean              @default(true)
+  showInPublicResults Boolean              @default(true) @map("show_in_public_results")
   type                FeedbackQuestionType
   order               Int
-  createdAt           DateTime             @default(now()) @db.Timestamptz(3)
-  updatedAt           DateTime             @default(now()) @updatedAt @db.Timestamptz(3)
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  feedbackFormId String       @map("feedback_form_id")
+  feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
 
   options FeedbackQuestionOption[]
   answers FeedbackQuestionAnswer[] @relation("QuestionAnswers")
@@ -649,9 +655,10 @@ model FeedbackQuestion {
 }
 
 model FeedbackQuestionOption {
-  id         String           @id @default(uuid())
-  name       String
-  questionId String
+  id   String @id @default(uuid())
+  name String
+
+  questionId String           @map("question_id")
   question   FeedbackQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   selectedInAnswers FeedbackQuestionAnswerOptionLink[]
@@ -661,12 +668,13 @@ model FeedbackQuestionOption {
 }
 
 model FeedbackQuestionAnswer {
-  id           String             @id @default(uuid())
-  questionId   String
+  id    String @id @default(uuid())
+  value Json?
+
+  questionId   String             @map("question_id")
+  formAnswerId String             @map("form_answer_id")
   question     FeedbackQuestion   @relation("QuestionAnswers", fields: [questionId], references: [id])
-  formAnswerId String
   formAnswer   FeedbackFormAnswer @relation("FormAnswers", fields: [formAnswerId], references: [id], onDelete: Cascade)
-  value        Json?
 
   selectedOptions FeedbackQuestionAnswerOptionLink[]
 
@@ -674,23 +682,24 @@ model FeedbackQuestionAnswer {
 }
 
 model FeedbackQuestionAnswerOptionLink {
+  feedbackQuestionOptionId String                 @map("feedback_question_option_id")
+  feedbackQuestionAnswerId String                 @map("feedback_question_answer_id")
   feedbackQuestionOption   FeedbackQuestionOption @relation(fields: [feedbackQuestionOptionId], references: [id])
-  feedbackQuestionOptionId String
   feedbackQuestionAnswer   FeedbackQuestionAnswer @relation(fields: [feedbackQuestionAnswerId], references: [id], onDelete: Cascade)
-  feedbackQuestionAnswerId String
 
   @@id([feedbackQuestionOptionId, feedbackQuestionAnswerId])
   @@map("feedback_answer_option_link")
 }
 
 model FeedbackFormAnswer {
-  id             String       @id @default(uuid())
-  feedbackFormId String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  feedbackFormId String       @map("feedback_form_id")
+  attendeeId     String       @unique @map("attendee_id")
   feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id])
-  attendeeId     String       @unique
   attendee       Attendee     @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
-  createdAt      DateTime     @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
 
   answers FeedbackQuestionAnswer[] @relation("FormAnswers")
 
@@ -698,36 +707,35 @@ model FeedbackFormAnswer {
 }
 
 model AuditLog {
-  id String @id @default(uuid())
+  id            String   @id @default(uuid())
+  tableName     String   @map("table_name")
+  rowId         String?  @map("row_id")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  operation     String
+  rowData       Json     @map("row_data")
+  /// Database transaction id
+  transactionId BigInt   @map("transaction_id")
 
-  tableName String
-  rowId     String?
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-
-  // Optional relation to User, some time operations are performed by the system instead
+  /// User relation is optional because the system can execute operations without a user to link it to. For example with
+  /// recurring tasks.
   user   User?   @relation(fields: [userId], references: [id])
-  userId String?
-
-  operation String
-  rowData   Json
-
-  // Adds transaction context
-  transactionId BigInt
+  userId String? @map("user_id")
 
   @@map("audit_log")
 }
 
 model DeregisterReason {
   id           String               @id @default(uuid())
-  createdAt    DateTime             @default(now()) @db.Timestamptz(3)
-  registeredAt DateTime             @db.Timestamptz(3)
+  createdAt    DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  registeredAt DateTime             @map("registered_at") @db.Timestamptz(3)
   type         DeregisterReasonType
   details      String?
-  userGrade    Int?
-  userId       String
-  user         User                 @relation(fields: [userId], references: [id])
-  eventId      String
-  event        Event                @relation(fields: [eventId], references: [id])
+  userGrade    Int?                 @map("user_grade")
+
+  userId  String @map("user_id")
+  eventId String @map("event_id")
+  user    User   @relation(fields: [userId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id])
 
   @@map("deregister_reason")
 }
