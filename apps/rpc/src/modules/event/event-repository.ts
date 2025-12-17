@@ -1,6 +1,8 @@
-import type { DBHandle, Prisma } from "@dotkomonline/db"
+import { type DBHandle, type Prisma, sql } from "@dotkomonline/db"
 import {
   type AttendanceId,
+  type BaseEvent,
+  BaseEventSchema,
   type CompanyId,
   type DeregisterReason,
   DeregisterReasonSchema,
@@ -40,6 +42,8 @@ const INCLUDE_COMPANY_AND_GROUPS = {
 export interface EventRepository {
   create(handle: DBHandle, data: EventWrite): Promise<Event>
   update(handle: DBHandle, eventId: EventId, data: Partial<EventWrite>): Promise<Event>
+  updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
+  updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
   /**
    * Soft-delete an event by setting its status to "DELETED".
    */
@@ -80,15 +84,17 @@ export interface EventRepository {
     page: Pageable
   ): Promise<Event[]>
   findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
-  addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
-  addEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
-  deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
-  deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
-  updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
-  updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
   findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
-  createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
+  // This cannot use `Pageable` due to raw query needing numerical offset and not cursor based pagination
+  findFeaturedEvents(handle: DBHandle, offset: number, limit: number): Promise<BaseEvent[]>
+
+  addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
+  deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
+  addEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
+  deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
+
+  createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
 }
 
 export function getEventRepository(): EventRepository {
@@ -307,6 +313,25 @@ export function getEventRepository(): EventRepository {
         },
         page
       )
+    },
+
+    async findFeaturedEvents(handle, offset, limit) {
+      // Events will primarily be ranked by their type in the following order (lower number is higher ranking):
+      // 1. GENERAL_ASSEMBLY
+      // 2. COMPANY, ACADEMIC
+      // 3. SOCIAL, INTERNAL, OTHER, WELCOME
+      //
+      // Within each bucket they will be ranked like this:
+      // 1. Event in future, registration open and not full AND attendance capacity is limited (>0)
+      // 2. Event in future, registration not started yet (attendance capacity does not matter)
+      // 3. Event in future, no attendance registration OR attendance capacity is unlimited (=0)
+      // 4. Event in future, registration full (registration status does not matter)
+      //
+      // Past events are not featured. We would rather have no featured events than "stale" events.
+
+      const events = await handle.$queryRawTyped(sql.findFeaturedEvents(offset, limit))
+
+      return parseOrReport(BaseEventSchema.array(), events)
     },
 
     async addEventHostingGroups(handle, eventId, hostingGroupIds) {

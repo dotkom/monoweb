@@ -1,6 +1,8 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import {
+  AttendanceSchema,
   AttendanceWriteSchema,
+  BaseEventSchema,
   CompanySchema,
   EventFilterQuerySchema,
   EventSchema,
@@ -153,7 +155,12 @@ const allEventsProcedure = procedure
 export type AllByAttendingUserIdInput = inferProcedureInput<typeof allByAttendingUserIdProcedure>
 export type AllByAttendingUserIdOutput = inferProcedureOutput<typeof allByAttendingUserIdProcedure>
 const allByAttendingUserIdProcedure = procedure
-  .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional(), id: UserSchema.shape.id }))
+  .input(
+    BasePaginateInputSchema.extend({
+      filter: EventFilterQuerySchema.optional(),
+      id: UserSchema.shape.id,
+    })
+  )
   .output(
     z.object({
       items: EventWithAttendanceSchema.array(),
@@ -172,7 +179,7 @@ const allByAttendingUserIdProcedure = procedure
 
     const eventsWithAttendance = events.map((event) => ({
       event,
-      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
+      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) ?? null,
     }))
 
     return {
@@ -244,7 +251,7 @@ const findChildEventsProcedure = procedure
     )
     return events.map((event) => ({
       event,
-      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
+      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) ?? null,
     }))
   })
 
@@ -290,6 +297,35 @@ const findManyDeregisterReasonsWithEventProcedure = procedure
     }
   })
 
+export type FindFeaturedEventsInput = inferProcedureInput<typeof findFeaturedEventsProcedure>
+export type FindFeaturedEventsOutput = inferProcedureOutput<typeof findFeaturedEventsProcedure>
+const findFeaturedEventsProcedure = procedure
+  .input(
+    z
+      .object({
+        offset: z.number().min(0).default(0),
+        limit: z.number().min(1).max(100).default(10),
+      })
+      .default({ offset: 0, limit: 1 })
+  )
+  .output(z.object({ event: BaseEventSchema, attendance: AttendanceSchema.nullable() }).array())
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const events = await ctx.eventService.findFeaturedEvents(ctx.handle, input.offset, input.limit)
+
+    const attendances = await ctx.attendanceService.getAttendancesByIds(
+      ctx.handle,
+      events.map((item) => item.attendanceId).filter((id) => id !== null)
+    )
+
+    const eventsWithAttendance = events.map((event) => ({
+      event,
+      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) ?? null,
+    }))
+
+    return eventsWithAttendance
+  })
+
 export type CreateFileUploadInput = inferProcedureInput<typeof createFileUploadProcedure>
 export type CreateFileUploadOutput = inferProcedureOutput<typeof createFileUploadProcedure>
 const createFileUploadProcedure = procedure
@@ -319,4 +355,5 @@ export const eventRouter = t.router({
   isOrganizer: isOrganizerProcedure,
   findManyDeregisterReasonsWithEvent: findManyDeregisterReasonsWithEventProcedure,
   createFileUpload: createFileUploadProcedure,
+  findFeaturedEvents: findFeaturedEventsProcedure,
 })
