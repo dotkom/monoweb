@@ -9,7 +9,7 @@ const config = {
     return [
       {
         source: "/",
-        destination: "/event",
+        destination: "/arrangementer",
         permanent: false,
       },
     ]

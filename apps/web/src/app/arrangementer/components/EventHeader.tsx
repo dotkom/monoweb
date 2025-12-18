@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
-  const dashboardUrl = new URL(`/event/${event.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
+  const dashboardUrl = new URL(`/arrangementer/${event.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
   return (
     <section className="flex flex-col gap-8">
