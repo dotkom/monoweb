@@ -38,32 +38,32 @@ const navigations = [
   {
     label: "Arrangementer",
     icon: IconWheelchair,
-    href: "/event",
+    href: "/arrangementer",
   },
   {
     label: "Prikker & Suspensjoner",
     icon: IconExclamationMark,
-    href: "/punishment",
+    href: "/prikker",
   },
   {
     label: "Bedrifter",
     icon: IconMoneybag,
-    href: "/company",
+    href: "/bedrifter",
   },
   {
     label: "Utlysninger",
     icon: IconBriefcase,
-    href: "/job-listing",
+    href: "/karriere",
   },
   {
     label: "Grupper",
     icon: IconCampfire,
-    href: "/group",
+    href: "/grupper",
   },
   {
     label: "Artikler",
     icon: IconPhoto,
-    href: "/article",
+    href: "/artikler",
   },
   {
     label: "Offline",
@@ -73,7 +73,7 @@ const navigations = [
   {
     label: "Brukere",
     icon: IconUsersGroup,
-    href: "/user",
+    href: "/brukere",
   },
   {
     label: "Plakatbestilling",
@@ -84,12 +84,12 @@ const navigations = [
   {
     label: "Avmeldingsgrunner",
     icon: IconUserMinus,
-    href: "/deregister-reason",
+    href: "/avmeldingsgrunner",
   },
   {
     label: "Hendelseslogg",
     icon: IconClipboardList,
-    href: "/audit-log",
+    href: "/logg",
     isAdmin: true,
   },
 ] satisfies {

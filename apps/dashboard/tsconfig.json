@@ -1,11 +1,11 @@
 {
   "extends": "../../packages/config/tsconfig.json",
   "include": [
-    "next-env.d.ts",
-    "./**/*.ts",
-    "./**/*.tsx",
     "./**/*.cjs",
     "./**/*.mjs",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [],
@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "strictNullChecks": true,
     "allowJs": true,

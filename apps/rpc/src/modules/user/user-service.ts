@@ -35,7 +35,7 @@ export interface UserService {
   /**
    * Find a user by their ID, or null if not found.
    *
-   * This function will attempt to register the user if, and only if:
+   * This function will attempt to registrer the user if, and only if:
    * 1. The user is not found in the local database
    * 2. The user exists in Auth0's user directory.
    *
@@ -46,7 +46,7 @@ export interface UserService {
   /**
    * Get a user by their ID.
    *
-   * This function will attempt to register the user if, and only if:
+   * This function will attempt to registrer the user if, and only if:
    * 1. The user is not found in the local database
    * 2. The user exists in Auth0's user directory.
    *
@@ -67,7 +67,7 @@ export interface UserService {
    * This function is only able to detect memberships if there is an active FEIDE access token available through a
    * federated FEIDE connection on the Auth0 user.
    *
-   * This function should only be called if you actually want to register an automatically discovered membership.
+   * This function should only be called if you actually want to registrer an automatically discovered membership.
    */
   discoverMembership(handle: DBHandle, userId: UserId): Promise<User>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
@@ -215,7 +215,7 @@ export function getUserService(
     },
 
     async register(handle, userId) {
-      // NOTE: The register function here has a few responsibilities because of our data strategy:
+      // NOTE: The registrer function here has a few responsibilities because of our data strategy:
       //
       // 1. The database is the source of truth, and is ALWAYS intended to be as such.
       // 2. Unfortunately, there was a period in time where Auth0 was the source of truth, most notably right after we
