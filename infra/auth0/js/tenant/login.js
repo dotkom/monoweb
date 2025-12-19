@@ -41,7 +41,8 @@ function login(email, password, callback) {
   //
   //    https://tehsis.github.io/webtaskio-canirequire/
 
-  const msg = 'Please implement the Login script for this database connection ' +
-    'at https://manage.auth0.com/#/connections/database';
-  return callback(new Error(msg));
+  const msg =
+    "Please implement the Login script for this database connection " +
+    "at https://manage.auth0.com/#/connections/database"
+  return callback(new Error(msg))
 }

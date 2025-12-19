@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IconAlertTriangle, IconCheck, IconLoader, IconX } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { secondsToMilliseconds } from "date-fns"
+import Image from "next/image"
 import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
@@ -191,7 +192,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 </Text>
               )}
               {value && (
-                <img
+                <Image
                   src={value}
                   alt="Profilbilde"
                   className="mt-2 min-w-24 w-72 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-600"

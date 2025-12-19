@@ -22,7 +22,8 @@ function create(user, callback) {
   // 3. Something went wrong while trying to reach your database
   //     callback(new Error("my error message"));
 
-  const msg = 'Please implement the Create script for this database connection ' +
-    'at https://manage.auth0.com/#/connections/database';
-  return callback(new Error(msg));
+  const msg =
+    "Please implement the Create script for this database connection " +
+    "at https://manage.auth0.com/#/connections/database"
+  return callback(new Error(msg))
 }

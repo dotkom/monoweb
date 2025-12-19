@@ -2,6 +2,7 @@
 
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { IconArrowUpRight, IconX } from "@tabler/icons-react"
+import Image from "next/image"
 import { useState } from "react"
 
 export const ConstructionNotice = () => {
@@ -35,7 +36,7 @@ export const ConstructionNotice = () => {
         <span className="inline-flex flex-row items-center gap-1">
           <Text>
             Vi jobber med å oppdatere{" "}
-            <img
+            <Image
               src="/online-logo-o.svg"
               alt="Logo Online Linjeforening NTNU Trondheim"
               className="h-[1.75ch] w-[1.75ch] inline-block align-text-bottom"
