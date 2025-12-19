@@ -196,6 +196,8 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                   src={value}
                   alt="Profilbilde"
                   className="mt-2 min-w-24 w-72 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-600"
+                  width={0}
+                  height={0}
                 />
               )}
             </div>

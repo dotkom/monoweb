@@ -312,7 +312,6 @@ interface PaymentStatusProps {
 
 const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStatusProps) => {
   const hasPaid = hasAttendeePaid(attendance, attendee)
-  const MAX_REFUND_PROCESSING_DAYS = 10
 
   if (!attendance.attendancePrice || hasPaid === null) {
     return null
@@ -388,6 +387,10 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
 interface PunishmentStatusProps {
   attendee: Attendee
 }
+// Stripe's refund processing time is maximum 10 business days, we therefore
+// add 2 days to the processing time to account for weekends
+// See https://support.stripe.com/questions/where-is-my-customers-refund
+const MAX_REFUND_PROCESSING_DAYS = 12
 
 const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
   return (

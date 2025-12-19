@@ -111,7 +111,7 @@ const CompanyBox = ({ company }: CompanyBoxProps) => {
       <div className="flex flex-col gap-2 pt-6 px-6 pb-2 rounded-t-2xl bg-gray-100 dark:bg-stone-700">
         {company.imageUrl ? (
           <div className="p-2 bg-white rounded-md w-fit">
-            <Image src={company.imageUrl} alt="Company logo" className="h-16 rounded-sm" />
+            <Image src={company.imageUrl} alt="Company logo" className="w-full h-16 rounded-sm" width={0} height={0} />
           </div>
         ) : (
           <Title size="xl">{company.name}</Title>

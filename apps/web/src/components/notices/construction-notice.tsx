@@ -40,6 +40,8 @@ export const ConstructionNotice = () => {
               src="/online-logo-o.svg"
               alt="Logo Online Linjeforening NTNU Trondheim"
               className="h-[1.75ch] w-[1.75ch] inline-block align-text-bottom"
+              width={0}
+              height={0}
             />{" "}
             OnlineWeb til en ny og bedre versjon. Det vil komme flere oppdateringer fremover, så følg med!
           </Text>
