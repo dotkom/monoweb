@@ -1,14 +1,14 @@
 {
   "extends": "../../packages/config/tsconfig.json",
   "include": [
-    "next-env.d.ts",
-    "./**/*.ts",
-    "./**/*.tsx",
     "./**/*.cjs",
     "./**/*.mjs",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
-  "exclude": [],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "preserve",
