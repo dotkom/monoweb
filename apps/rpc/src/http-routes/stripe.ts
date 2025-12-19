@@ -1,3 +1,4 @@
+import { getLogger } from "@dotkomonline/logger"
 import type { FastifyInstance } from "fastify"
 import type { ServiceLayer } from "../modules/core"
 
@@ -21,8 +22,23 @@ export function registerStripeWebhookRoutes(server: FastifyInstance, serviceLaye
       signature,
       process.env.LOCAL_STRIPE_WEBHOOK_SECRET
     )
-    if (event.type === "checkout.session.completed") {
-      await serviceLayer.attendanceService.completeAttendeePayment(serviceLayer.prisma, event.data.object.id)
+
+    const eventType = event.type
+    if (
+      eventType === "checkout.session.completed" ||
+      eventType === "charge.updated" ||
+      eventType === "charge.refunded" ||
+      eventType === "charge.captured" ||
+      eventType === "payment_intent.canceled"
+    ) {
+      const attendeeId = event.data.object.metadata?.attendeeId
+      if (!attendeeId) {
+        const logger = getLogger("stripe-webhook")
+        logger.info("No attendeeId found in metadata from Stripe, not processing payment")
+        return res.status(400)
+      }
+
+      await serviceLayer.attendanceService.syncAttendeePayment(serviceLayer.prisma, attendeeId)
     }
   })
 }

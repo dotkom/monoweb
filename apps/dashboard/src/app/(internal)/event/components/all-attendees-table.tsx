@@ -1,16 +1,16 @@
-import {
-  type Attendance,
-  type AttendancePool,
-  type Attendee,
-  type AttendeeSelectionResponse,
-  type FeedbackFormAnswer,
+import type {
+  Attendance,
+  AttendancePool,
+  Attendee,
+  AttendeeSelectionResponse,
+  FeedbackFormAnswer,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   ActionIcon,
   Anchor,
   Badge,
-  BadgeProps,
+  type BadgeProps,
   Button,
   Checkbox,
   Popover,
@@ -190,12 +190,12 @@ export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: Al
 
           let badge: BadgeProps = {}
 
-          if (attendee.paymentChargedAt) {
+          if (attendee.paymentRefundedAt) {
+            badge = { color: "gray", children: "Refundert" }
+          } else if (attendee.paymentChargedAt) {
             badge = { color: "green", children: "Betalt" }
           } else if (attendee.paymentReservedAt) {
             badge = { color: "blue", children: "Reservert" }
-          } else if (attendee.paymentRefundedAt) {
-            badge = { color: "gray", children: "Refundert" }
           } else {
             badge = { color: "red", children: "Ikke betalt" }
           }

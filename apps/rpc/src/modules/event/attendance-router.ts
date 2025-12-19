@@ -12,9 +12,9 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { TRPCError } from "@trpc/server"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { addHours, max } from "date-fns"
+import { TRPCError } from "@trpc/server"
+import { addHours } from "date-fns"
 import { z } from "zod"
 import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
@@ -242,17 +242,7 @@ const startAttendeePaymentProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: { attendeeId }, ctx }) => {
-    let deadline = addHours(getCurrentUTC(), 24)
-
-    // DELETE THIS START
-    // turn deadline back to const after this is removed
-    const julebordAttendanceId = "b470eda0-4650-4dbd-bb6e-7bcf9c7757f9"
-    const arbitraryJulebordDeadline = new TZDate("2025-11-07T19:00:00Z") // this is 20:00 local time in norway
-    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, attendeeId)
-    if (attendee.attendanceId === julebordAttendanceId) {
-      deadline = max([arbitraryJulebordDeadline, deadline])
-    }
-    // DELETE THIS END
+    const deadline = addHours(getCurrentUTC(), 24)
 
     return ctx.attendanceService.startAttendeePayment(ctx.handle, attendeeId, deadline)
   })

@@ -12,8 +12,20 @@ import {
   getAttendee,
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
-import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { IconLoader2, IconLock, IconUserMinus, IconUserPlus } from "@tabler/icons-react"
+import {
+  Button,
+  Text,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  cn,
+} from "@dotkomonline/ui"
+import {
+  IconLoader2,
+  IconLock,
+  IconUserMinus,
+  IconUserPlus,
+} from "@tabler/icons-react"
 import { isFuture } from "date-fns"
 import { min } from "date-fns"
 import { type FC, useState } from "react"
@@ -28,8 +40,10 @@ const getButtonColor = (
   hasPunishment: boolean,
   hasMergeDelay: boolean
 ) => {
-  if (disabled) return "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"
-  if (attendee) return "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
+  if (disabled)
+    return "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"
+  if (attendee)
+    return "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
   if (isPoolFull || hasPunishment || hasMergeDelay)
     return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
 
@@ -90,7 +104,9 @@ const getDisabledText = (
 
 interface RegistrationButtonProps {
   registerForAttendance: () => void
-  unregisterForAttendance: (deregisterReason: DeregisterReasonFormResult) => void
+  unregisterForAttendance: (
+    deregisterReason: DeregisterReasonFormResult
+  ) => void
   attendance: Attendance
   parentAttendance: Attendance | null
   punishment: Punishment | null
@@ -128,12 +144,19 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const isSuspended = punishment?.suspended ?? false
   const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
   const isPoolFull = pool
-    ? pool.capacity !== 0 && getReservedAttendeeCount(attendance, pool?.id) >= pool.capacity
+    ? pool.capacity !== 0 &&
+      getReservedAttendeeCount(attendance, pool?.id) >= pool.capacity
     : false
 
-  const parentAttendanceAttendee = parentAttendance && getAttendee(parentAttendance, user)
-  const registeredToParentEvent = parentAttendance ? Boolean(parentAttendanceAttendee) : null
-  const reservedToParentEvent = parentAttendance && parentAttendanceAttendee ? parentAttendanceAttendee.reserved : null
+  const parentAttendanceAttendee =
+    parentAttendance && getAttendee(parentAttendance, user)
+  const registeredToParentEvent = parentAttendance
+    ? Boolean(parentAttendanceAttendee)
+    : null
+  const reservedToParentEvent =
+    parentAttendance && parentAttendanceAttendee
+      ? parentAttendanceAttendee.reserved
+      : null
 
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
@@ -142,7 +165,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     attendanceStatus,
     attendee,
     Boolean(pool),
-    Boolean(attendee?.paymentChargedAt),
+    Boolean(attendee?.paymentChargedAt && !attendee.paymentRefundedAt),
     isPastDeregisterDeadline,
     Boolean(user),
     hasMembership,
@@ -158,7 +181,9 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     <div
       className={cn(
         "flex flex-row gap-2 items-center",
-        disabled ? "text-gray-800 dark:text-stone-300" : "text-black dark:text-white"
+        disabled
+          ? "text-gray-800 dark:text-stone-300"
+          : "text-black dark:text-white"
       )}
     >
       {disabled ? (
@@ -174,12 +199,20 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
 
   const registrationButton = (
     <Button
-      onClick={attendee ? () => setDeregisterModalOpen(true) : registerForAttendance}
+      onClick={
+        attendee ? () => setDeregisterModalOpen(true) : registerForAttendance
+      }
       disabled={disabled}
       icon={buttonIcon}
       className={cn(
         "rounded-lg h-fit min-h-[4rem] flex-col gap-1",
-        getButtonColor(disabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
+        getButtonColor(
+          disabled,
+          Boolean(attendee),
+          isPoolFull,
+          hasPunishment,
+          hasMergeDelay
+        )
       )}
     >
       {buttonContent}

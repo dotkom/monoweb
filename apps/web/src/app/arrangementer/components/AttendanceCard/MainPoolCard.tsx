@@ -23,6 +23,7 @@ import {
   IconX,
 } from "@tabler/icons-react"
 import {
+  addDays,
   formatDate,
   formatDistanceToNowStrict,
   interval,
@@ -311,6 +312,7 @@ interface PaymentStatusProps {
 
 const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStatusProps) => {
   const hasPaid = hasAttendeePaid(attendance, attendee)
+  const MAX_REFUND_PROCESSING_DAYS = 10
 
   if (!attendance.attendancePrice || hasPaid === null) {
     return null
@@ -331,6 +333,24 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
         <IconX className="size-[1.25em] text-red-700 dark:text-red-400" />
         <Text>{attendance.attendancePrice} kr ubetalt</Text>
       </div>
+    )
+  }
+  if (attendee.paymentRefundedAt) {
+    return (
+      <>
+        <div className="flex flex-row items-center gap-2">
+          <IconArrowForward className="size-[1.25em]" />
+          <Text>Du er refundert {attendance.attendancePrice} kr</Text>
+        </div>
+        <Text className="text-xs">
+          Pengene ankommer senest{" "}
+          {formatDate(
+            roundToNearestHours(addDays(attendee.paymentRefundedAt, MAX_REFUND_PROCESSING_DAYS)),
+            "dd. MMM 'kl.' HH",
+            { locale: nb }
+          )}{" "}
+        </Text>
+      </>
     )
   }
 
@@ -362,15 +382,6 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
     )
   }
 
-  if (attendee.paymentRefundedAt) {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <IconArrowForward className="size-[1.25em]" />
-        <Text>Du er refundert {attendance.attendancePrice} kr</Text>
-      </div>
-    )
-  }
-
   return null
 }
 
@@ -384,7 +395,12 @@ const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
       <TooltipTrigger asChild>
         <div className="flex flex-row gap-2 items-center">
           <IconClockHour2 className="size-[1.25em]" />
-          <Text>{formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse</Text>
+          <Text>
+            {formatDistanceToNowStrict(attendee.earliestReservationAt, {
+              locale: nb,
+            })}{" "}
+            utsettelse
+          </Text>
         </div>
       </TooltipTrigger>
       <TooltipContent className="font-normal">

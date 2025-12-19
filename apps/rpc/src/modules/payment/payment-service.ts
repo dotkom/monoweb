@@ -26,7 +26,7 @@ export type Payment =
 type PaymentId = string
 
 export interface PaymentService {
-  create(productId: PaymentId, user: User, chargeMode?: ChargeMode): Promise<Payment>
+  create(productId: PaymentId, user: User, metadata?: Record<string, string>, chargeMode?: ChargeMode): Promise<Payment>
   cancel(paymentId: PaymentId): Promise<void>
   getById(paymentId: PaymentId): Promise<Payment>
   charge(paymentId: PaymentId): Promise<void>
@@ -48,42 +48,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
   }
 
   return {
-    async getById(paymentId): Promise<Payment> {
-      const session = await stripe.checkout.sessions.retrieve(paymentId)
-      invariant(session.payment_intent === null || typeof session.payment_intent === "string")
-      const paymentIntent = session.payment_intent
-        ? await stripe.paymentIntents.retrieve(session.payment_intent, {
-            expand: ["latest_charge"],
-          })
-        : null
-      invariant(typeof paymentIntent?.latest_charge !== "string")
-
-      if (!paymentIntent) {
-        return { status: "UNPAID", url: null, id: session.id, paymentIntentId: null, checkoutUrl: null }
-      }
-      if (paymentIntent.latest_charge?.refunded) {
-        return {
-          status: "REFUNDED",
-          url: null,
-          id: paymentId,
-          paymentIntentId: paymentIntent.id,
-          checkoutUrl: STRIPE_URL_PREFIX + paymentIntent.id,
-        }
-      }
-      const status = paymentIntentStatus(paymentIntent.status)
-      if (status === "UNPAID" || status === "CANCELLED") {
-        return { status, url: null, id: paymentId, paymentIntentId: null, checkoutUrl: null }
-      }
-
-      return {
-        status,
-        url: session.url,
-        id: session.id,
-        paymentIntentId: paymentIntent.id,
-        checkoutUrl: STRIPE_URL_PREFIX + paymentIntent.id,
-      }
-    },
-    async create(productId, user, chargeMode = "RESERVE") {
+    async create(productId, user, metadata, chargeMode = "RESERVE") {
       const product = await stripe.products.retrieve(productId)
       if (!product.default_price) {
         throw new IllegalStateError(`Product of Payment(ProductID: ${productId}) does not have a default price`)
@@ -95,11 +60,13 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         success_url: product.url ?? undefined,
         cancel_url: product.url ?? undefined,
         mode: "payment",
-        ...(chargeMode === "CHARGE" ? {} : { payment_intent_data: { capture_method: "manual" } }),
         customer_email: user.email || "dotkom+stripe-no-customer-email@online.ntnu.no",
         payment_intent_data: {
           description: product.name,
+          metadata,
+          capture_method: chargeMode === "CHARGE" ? "automatic" : "manual",
         },
+        metadata,
       })
 
       return {
@@ -129,6 +96,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
 
     async getById(paymentId): Promise<Payment> {
       const session = await stripe.checkout.sessions.retrieve(paymentId)
+
       invariant(session.payment_intent === null || typeof session.payment_intent === "string")
       const paymentIntent = session.payment_intent
         ? await stripe.paymentIntents.retrieve(session.payment_intent, {
@@ -138,14 +106,32 @@ export function getPaymentService(stripe: Stripe): PaymentService {
       invariant(typeof paymentIntent?.latest_charge !== "string")
 
       if (!paymentIntent) {
-        return { status: "UNPAID", url: null, id: session.id, paymentIntentId: null }
+        return {
+          status: "UNPAID",
+          url: null,
+          id: session.id,
+          paymentIntentId: null,
+          checkoutUrl: null,
+        }
       }
       if (paymentIntent.latest_charge?.refunded) {
-        return { status: "REFUNDED", url: null, id: paymentId, paymentIntentId: paymentIntent.id }
+        return {
+          status: "REFUNDED",
+          url: null,
+          id: paymentId,
+          paymentIntentId: paymentIntent.id,
+          checkoutUrl: STRIPE_URL_PREFIX + paymentIntent.id,
+        }
       }
       const status = paymentIntentStatus(paymentIntent.status)
       if (status === "UNPAID" || status === "CANCELLED") {
-        return { status, url: null, id: paymentId, paymentIntentId: null }
+        return {
+          status,
+          url: null,
+          id: paymentId,
+          paymentIntentId: null,
+          checkoutUrl: null,
+        }
       }
 
       return {
@@ -153,6 +139,7 @@ export function getPaymentService(stripe: Stripe): PaymentService {
         url: session.url,
         id: session.id,
         paymentIntentId: paymentIntent.id,
+        checkoutUrl: STRIPE_URL_PREFIX + paymentIntent.id,
       }
     },
 

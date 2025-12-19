@@ -1,10 +1,10 @@
 import { GenericTable } from "@/components/GenericTable"
-import { type Attendee } from "@dotkomonline/types"
-import { Badge, BadgeProps, Box, Button, Group, Input, Stack, Title } from "@mantine/core"
+import type { Attendee } from "@dotkomonline/types"
+import { Badge, type BadgeProps, Box, Button, Group, Input, Stack, Title } from "@mantine/core"
 import { IconExternalLink } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
-import { useMemo, useRef, type FC } from "react"
+import { type FC, useMemo, useRef } from "react"
 import {
   useCreateAttendeePaymentAttendeeMutation,
   useRefundAttendeeMutation,
@@ -60,12 +60,12 @@ export const PaymentPage: FC = () => {
 
           let badge: BadgeProps = {}
 
-          if (value.paymentChargedAt) {
+          if (value.paymentRefundedAt) {
+            badge = { color: "gray", children: "Refundert" }
+          } else if (value.paymentChargedAt) {
             badge = { color: "green", children: "Betalt" }
           } else if (value.paymentReservedAt) {
             badge = { color: "blue", children: "Reservert" }
-          } else if (value.paymentRefundedAt) {
-            badge = { color: "gray", children: "Refundert" }
           } else if (!value.paymentRefundedAt && value.paymentRefundedById) {
             badge = { color: "gray", children: "Kansellert" }
           } else if (value.paymentDeadline) {
@@ -102,7 +102,7 @@ export const PaymentPage: FC = () => {
         cell: (info) => {
           const attendee = info.getValue()
 
-          if (attendee.paymentChargedAt) {
+          if (attendee.paymentChargedAt && !attendee.paymentRefundedAt) {
             return (
               <Button
                 size="xs"
@@ -113,12 +113,16 @@ export const PaymentPage: FC = () => {
               </Button>
             )
           }
-          if (attendee.paymentId === null) {
+          if (attendee.paymentId === null || attendee.paymentRefundedAt) {
             return (
               <Button
                 size="xs"
                 color="orange"
-                onClick={() => createAttendeePaymentMutation.mutate({ attendeeId: attendee.id })}
+                onClick={() =>
+                  createAttendeePaymentMutation.mutate({
+                    attendeeId: attendee.id,
+                  })
+                }
               >
                 Ny betaling
               </Button>
