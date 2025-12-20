@@ -742,10 +742,10 @@ importers:
         version: 9.35.0(@opentelemetry/context-async-hooks@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.204.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))(next@15.4.10(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react@19.2.1)(webpack@5.99.9)
       '@splinetool/react-spline':
         specifier: ^4.0.0
-        version: 4.1.0(@splinetool/runtime@1.12.6)(next@15.4.10(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        version: 4.1.0(@splinetool/runtime@1.12.21)(next@15.4.10(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@splinetool/runtime':
         specifier: ^1.9.98
-        version: 1.12.6
+        version: 1.12.21
       '@tabler/icons-react':
         specifier: ^3.35.0
         version: 3.35.0(react@19.2.1)
@@ -4757,8 +4757,8 @@ packages:
       next:
         optional: true
 
-  '@splinetool/runtime@1.12.6':
-    resolution: {integrity: sha512-oBybkcit6Ythcyq9XzdQ1KSSJ8E6sqFBjt2SxociOE/A3hWv/k25ESy4LolahF2g48yl/XiLK8kS1EGbh5Bbhw==}
+  '@splinetool/runtime@1.12.21':
+    resolution: {integrity: sha512-Rsxk1JwqE+hQNfA0ag/x2YohBprMcMjvsF6g3gVKUSqXpOeE51+VKJF9g8e1yEVhgY5xOdL3EGzowNcYZpxDJg==}
 
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
@@ -13371,9 +13371,9 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.6)(next@15.4.10(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.21)(next@15.4.10(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
-      '@splinetool/runtime': 1.12.6
+      '@splinetool/runtime': 1.12.21
       blurhash: 2.0.5
       lodash.debounce: 4.0.8
       react: 19.2.1
@@ -13383,7 +13383,7 @@ snapshots:
     optionalDependencies:
       next: 15.4.10(@opentelemetry/api@1.9.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
 
-  '@splinetool/runtime@1.12.6':
+  '@splinetool/runtime@1.12.21':
     dependencies:
       on-change: 4.0.2
       semver-compare: 1.0.0
