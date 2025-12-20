@@ -142,7 +142,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     attendanceStatus,
     attendee,
     Boolean(pool),
-    Boolean(attendee?.paymentChargedAt),
+    Boolean(attendee?.paymentChargedAt && !attendee.paymentRefundedAt),
     isPastDeregisterDeadline,
     Boolean(user),
     hasMembership,

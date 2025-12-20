@@ -3,6 +3,7 @@
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react"
+import Image from "next/image"
 import { FormProvider, useForm } from "react-hook-form"
 import { Section } from "../components/section"
 import { Form } from "./form"
@@ -26,7 +27,7 @@ export default function Page() {
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-12 px-3 py-12">
       <Section>
-        <img src="/Online_bla.svg" alt="Online logo" />
+        <Image src="/Online_bla.svg" alt="Online logo" width={0} height={0} className="w-full" />
         <Title element="h1">Fakturaskjema for bedrifter</Title>
         <Text>
           Denne blanketten bør helst fylles ut av <strong>økonomiavdelingen</strong>. Informasjonen forsikrer at det

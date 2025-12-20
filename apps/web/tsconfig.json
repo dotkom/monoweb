@@ -6,7 +6,7 @@
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
-  "exclude": [],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "preserve",

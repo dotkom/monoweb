@@ -19,7 +19,8 @@ function verify(email, callback) {
   // https://example.com would redirect to the following URL:
   //     https://example.com?email=alice%40example.com&message=error&success=false
 
-  const msg = 'Please implement the Verify script for this database connection ' +
-    'at https://manage.auth0.com/#/connections/database';
-  return callback(new Error(msg));
+  const msg =
+    "Please implement the Verify script for this database connection " +
+    "at https://manage.auth0.com/#/connections/database"
+  return callback(new Error(msg))
 }

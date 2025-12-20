@@ -7,13 +7,12 @@ import { SmallerCommitteeApplicationsNotice } from "@/components/notices/smaller
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
 import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
-import { RichText, cn } from "@dotkomonline/ui"
-import { Text, Tilt, Title } from "@dotkomonline/ui"
-import { Button } from "@dotkomonline/ui"
+import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
+import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -147,10 +146,12 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         {event.imageUrl ? (
-          <img
+          <Image
             src={event.imageUrl}
             alt={event.title}
-            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video"
+            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video w-full"
+            width={0}
+            height={0}
           />
         ) : (
           <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
@@ -200,10 +201,12 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         {event.imageUrl ? (
-          <img
+          <Image
             src={event.imageUrl}
             alt={event.title}
-            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video"
+            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video w-full"
+            width={0}
+            height={0}
           />
         ) : (
           <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">

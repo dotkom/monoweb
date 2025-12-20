@@ -3,6 +3,7 @@ import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
 import { Button, Text, Tilt, Title } from "@dotkomonline/ui"
 import { IconEdit } from "@tabler/icons-react"
+import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -25,7 +26,13 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
       >
         <div className="flex items-center justify-center aspect-[16/9] md:aspect-[24/9] w-full">
           {event.imageUrl ? (
-            <img src={event.imageUrl} alt={event.title} className="w-full h-full object-contain rounded-xl" />
+            <Image
+              src={event.imageUrl}
+              alt={event.title}
+              className="w-full h-full object-contain rounded-xl"
+              width={0}
+              height={0}
+            />
           ) : (
             <div className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center">
               <PlaceHolderImage

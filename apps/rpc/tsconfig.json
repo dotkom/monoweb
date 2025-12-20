@@ -1,7 +1,7 @@
 {
   "extends": "../../packages/config/tsconfig.json",
   "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": [],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable"],
     "baseUrl": ".",

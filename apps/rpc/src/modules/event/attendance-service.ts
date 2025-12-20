@@ -1,4 +1,3 @@
-import type { EventEmitter } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { type Logger, getLogger } from "@dotkomonline/logger"
@@ -13,6 +12,7 @@ import {
   AttendanceWriteSchema,
   type Attendee,
   type AttendeeId,
+  type AttendeePaymentWrite,
   type AttendeeWrite,
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
@@ -40,6 +40,7 @@ import {
   min,
   startOfYesterday,
 } from "date-fns"
+import type { EventEmitter } from "node:events"
 import invariant from "tiny-invariant"
 import type { Configuration } from "../../configuration"
 import {
@@ -147,7 +148,10 @@ export type RegistrationAvailabilitySuccess = {
   options: EventRegistrationOptions
   success: true
 }
-export type RegistrationAvailabilityFailure = { cause: RegistrationRejectionCause; success: false }
+export type RegistrationAvailabilityFailure = {
+  cause: RegistrationRejectionCause
+  success: false
+}
 
 /**
  * Service for managing attendance, attendance pools, and the attendees that are attending an event.
@@ -211,7 +215,11 @@ export interface AttendanceService {
   executeChargeAttendeeTask(handle: DBHandle, task: InferTaskData<ChargeAttendeeTaskDefinition>): Promise<void>
   startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, paymentDeadline: TZDate): Promise<Payment>
   cancelAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
-  completeAttendeePayment(handle: DBHandle, paymentId: string): Promise<void>
+  /**
+   * Sync the payment status of an attendee with the status of the payment in the payment service.
+   * This used if payments are altered manually in the payment service's own dashboard.
+   */
+  syncAttendeePayment(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   executeVerifyPaymentTask(handle: DBHandle, task: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
   executeVerifyFeedbackAnsweredTask(
@@ -355,7 +363,11 @@ export function getAttendanceService(
               return selectionsForUpdate.some((s) => s.id === selection.selectionId)
             })
             const isAffected = attendeeSelectionsForUpdate.length > 0
-            return { isAffected, selectionsForUpdate: attendeeSelectionsForUpdate, attendee }
+            return {
+              isAffected,
+              selectionsForUpdate: attendeeSelectionsForUpdate,
+              attendee,
+            }
           })
           .filter((attendee) => attendee.isAffected)
 
@@ -637,7 +649,10 @@ export function getAttendanceService(
         )
       }
 
-      eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
+      eventEmitter.emit("attendance:register-change", {
+        attendee,
+        status: "registered",
+      })
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has registered (effective %s) for Event(ID=%s) named %s with options: %o",
         attendee.id,
@@ -751,9 +766,12 @@ export function getAttendanceService(
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      const hasPaid = hasAttendeePaid(attendance, attendee, { excludeReservation: true })
+      const hasPaid = hasAttendeePaid(attendance, attendee, {
+        excludeReservation: true,
+      })
 
-      if (hasPaid) {
+      // If the attendee has paid and not been refunded, we cannot allow deregistration.
+      if (hasPaid && !attendee.paymentRefundedAt) {
         throw new FailedPreconditionError(
           `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) because payment has been completed`
         )
@@ -773,7 +791,10 @@ export function getAttendanceService(
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
-      eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
+      eventEmitter.emit("attendance:register-change", {
+        attendee,
+        status: "deregistered",
+      })
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s with options: %o",
         attendee.id,
@@ -992,7 +1013,7 @@ export function getAttendanceService(
       if (attendee.paymentId) {
         const existingPayment = await paymentService.getById(attendee.paymentId)
 
-        if (existingPayment.status !== "CANCELLED") {
+        if (existingPayment.status !== "CANCELLED" && existingPayment.status !== "REFUNDED") {
           throw new IllegalStateError(
             `Tried to create new payment for Attendee(ID=${attendeeId}) but existing Payment(ID=${existingPayment.id} is still active`
           )
@@ -1003,6 +1024,9 @@ export function getAttendanceService(
       const payment = await paymentService.create(
         attendance.id,
         attendee.user,
+        {
+          attendeeId,
+        },
         isImmediatePayment ? "CHARGE" : "RESERVE"
       )
 
@@ -1041,7 +1065,10 @@ export function getAttendanceService(
         paymentLink: payment.url,
         paymentRefundedAt: null,
         paymentRefundedById: null,
+        paymentChargedAt: null,
+        paymentReservedAt: null,
         paymentChargeDeadline: isImmediatePayment ? null : maximalChargeTime,
+        paymentCheckoutUrl: null,
       })
 
       return payment
@@ -1102,6 +1129,8 @@ export function getAttendanceService(
         await paymentService.refund(attendee.paymentId)
       } else if (payment.status === "RESERVED" || payment.status === "UNPAID") {
         await paymentService.cancel(attendee.paymentId)
+      } else if (payment.status === "REFUNDED") {
+        throw new FailedPreconditionError(`Attendee(ID=${attendeeId}) has already been refunded`)
       } else {
         throw new FailedPreconditionError(`Attendee(ID=${attendeeId}) has not paid`)
       }
@@ -1112,7 +1141,7 @@ export function getAttendanceService(
         paymentDeadline: null,
         paymentLink: null,
         paymentReservedAt: null,
-        paymentRefundedAt: getCurrentUTC(),
+        paymentRefundedAt: payment.status === "PAID" ? getCurrentUTC() : null,
         paymentRefundedById: refundedByUserId,
       })
 
@@ -1123,35 +1152,76 @@ export function getAttendanceService(
       }
     },
 
-    async completeAttendeePayment(handle, paymentId) {
-      const attendance = await attendanceRepository.findAttendanceByAttendeePaymentId(handle, paymentId)
+    async syncAttendeePayment(handle, attendeeId) {
+      const attendance = await attendanceRepository.findAttendanceByAttendeeId(handle, attendeeId)
 
       if (attendance === null) {
-        throw new NotFoundError(`Attendance for Payment(ID=${paymentId}) not found`)
+        throw new NotFoundError(`No Attendance found for Attendee(ID=${attendeeId})`)
       }
 
-      const attendee = attendance.attendees.find((attendee) => attendee.paymentId === paymentId)
+      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
 
       if (attendee === undefined) {
-        throw new NotFoundError(`Attendee for Payment(ID=${paymentId}) not found in Attendance(ID=${attendance.id})`)
+        throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      if (attendee.paymentReservedAt || !attendee.paymentDeadline) {
+      if (!attendee.paymentId) {
         return
       }
 
-      const payment = await paymentService.getById(paymentId)
-
-      if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
-        throw new IllegalStateError(`Got webhook about Payment(ID=${payment.id}) but API does not say so`)
+      const payment = await paymentService.getById(attendee.paymentId)
+      const now = getCurrentUTC()
+      let updatedPayment: Partial<AttendeePaymentWrite> = {
+        paymentCheckoutUrl: payment.checkoutUrl,
       }
 
-      await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
-        paymentReservedAt: getCurrentUTC(),
-        paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
-        paymentDeadline: null,
-        paymentLink: null,
-      })
+      if (payment.status === "PAID") {
+        updatedPayment = {
+          ...updatedPayment,
+          paymentReservedAt: attendee.paymentReservedAt ? attendee.paymentReservedAt : now,
+          paymentChargedAt: attendee.paymentChargedAt ? attendee.paymentChargedAt : now,
+        }
+      } else if (payment.status === "RESERVED") {
+        updatedPayment = {
+          ...updatedPayment,
+          paymentReservedAt: attendee.paymentReservedAt ? attendee.paymentReservedAt : now,
+        }
+      } else if (payment.status === "REFUNDED") {
+        updatedPayment = {
+          ...updatedPayment,
+          paymentRefundedAt: now,
+          // This is set to null for now when the payment is refunded manually from the Stripe dashboard,
+          // Optional TODO: Create a user for the Stripe dashboard
+          paymentRefundedById: attendee.paymentRefundedById ?? null,
+        }
+      } else if (payment.status === "CANCELLED" || payment.status === "UNPAID") {
+        updatedPayment = {
+          ...updatedPayment,
+          paymentReservedAt: null,
+          paymentChargedAt: null,
+          paymentId: null,
+          paymentDeadline: payment.status === "UNPAID" ? attendee.paymentDeadline : null,
+          paymentLink: null,
+          paymentCheckoutUrl: payment.status === "UNPAID" ? null : payment.checkoutUrl,
+        }
+      } else {
+        throw new FailedPreconditionError(`Payment(ID=${attendee.paymentId}) has an unknown status: ${payment.status}`)
+      }
+      await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, updatedPayment)
+
+      if (payment.status === "UNPAID") {
+        return
+      }
+
+      // If the payment was manully altered to something other than reserved,
+      // cancel the verify payment task as it is no longer needed
+      if (payment.status !== "RESERVED") {
+        const task = await taskSchedulingService.findVerifyPaymentTask(handle, attendeeId)
+
+        if (task) {
+          await taskSchedulingService.cancel(handle, task.id)
+        }
+      }
     },
 
     async executeVerifyPaymentTask(handle, { attendeeId }) {

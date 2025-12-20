@@ -23,6 +23,7 @@ import {
   IconX,
 } from "@tabler/icons-react"
 import {
+  addDays,
   formatDate,
   formatDistanceToNowStrict,
   interval,
@@ -333,6 +334,24 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
       </div>
     )
   }
+  if (attendee.paymentRefundedAt) {
+    return (
+      <>
+        <div className="flex flex-row items-center gap-2">
+          <IconArrowForward className="size-[1.25em]" />
+          <Text>Du er refundert {attendance.attendancePrice} kr</Text>
+        </div>
+        <Text className="text-xs">
+          Pengene ankommer senest{" "}
+          {formatDate(
+            roundToNearestHours(addDays(attendee.paymentRefundedAt, MAX_REFUND_PROCESSING_DAYS)),
+            "dd. MMM 'kl.' HH",
+            { locale: nb }
+          )}{" "}
+        </Text>
+      </>
+    )
+  }
 
   if (attendee.paymentChargedAt) {
     return (
@@ -362,21 +381,16 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
     )
   }
 
-  if (attendee.paymentRefundedAt) {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <IconArrowForward className="size-[1.25em]" />
-        <Text>Du er refundert {attendance.attendancePrice} kr</Text>
-      </div>
-    )
-  }
-
   return null
 }
 
 interface PunishmentStatusProps {
   attendee: Attendee
 }
+// Stripe's refund processing time is maximum 10 business days, we therefore
+// add 2 days to the processing time to account for weekends
+// See https://support.stripe.com/questions/where-is-my-customers-refund
+const MAX_REFUND_PROCESSING_DAYS = 12
 
 const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
   return (
@@ -384,7 +398,12 @@ const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
       <TooltipTrigger asChild>
         <div className="flex flex-row gap-2 items-center">
           <IconClockHour2 className="size-[1.25em]" />
-          <Text>{formatDistanceToNowStrict(attendee.earliestReservationAt, { locale: nb })} utsettelse</Text>
+          <Text>
+            {formatDistanceToNowStrict(attendee.earliestReservationAt, {
+              locale: nb,
+            })}{" "}
+            utsettelse
+          </Text>
         </div>
       </TooltipTrigger>
       <TooltipContent className="font-normal">

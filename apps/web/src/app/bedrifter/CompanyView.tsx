@@ -25,10 +25,15 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
     { icon: IconPhone, text: phone, href: `tel:${phone}` },
   ]
 
-  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
+  const now = roundToNearestMinutes(getCurrentUTC(), {
+    roundingMethod: "floor",
+  })
 
   const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
-    filter: { byOrganizingCompany: [company.id], byStartDate: { min: now, max: null } },
+    filter: {
+      byOrganizingCompany: [company.id],
+      byStartDate: { min: now, max: null },
+    },
   })
 
   const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
@@ -48,7 +53,15 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
           {imageUrl && (
             <div className="relative mb-4 h-64 w-full overflow-hidden rounded-lg bg-[#fff]">
               <a href={website} target="_blank" rel="noreferrer">
-                <Image src={imageUrl} alt="Company logo" fill style={{ objectFit: "contain" }} className="w-full" />
+                <Image
+                  src={imageUrl}
+                  alt="Company logo"
+                  fill
+                  style={{ objectFit: "contain" }}
+                  className="w-full"
+                  width={0}
+                  height={0}
+                />
               </a>
             </div>
           )}
