@@ -7,7 +7,7 @@ import type { PropsWithChildren } from "react"
 export default async function Layout({ children }: PropsWithChildren) {
   const session = await auth.getServerSession()
   if (session === null) {
-    return redirect("/auth/login")
+    return redirect("/login")
   }
 
   const isStaff = await server.user.isStaff.query()

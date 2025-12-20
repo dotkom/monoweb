@@ -1,4 +1,4 @@
-import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@/app/(internal)/event/queries"
+import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@/app/(internal)/arrangementer/queries"
 import type { EventId } from "@dotkomonline/types"
 import { ErrorMessage } from "@hookform/error-message"
 import { Select, type SelectProps } from "@mantine/core"

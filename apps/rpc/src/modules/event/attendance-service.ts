@@ -85,7 +85,7 @@ type EventRegistrationOptions = {
   /**
    * Should the user be forced into a specific pool?
    *
-   * If this field is set, the logic for determining which pool to register the user for is ignored, and the year
+   * If this field is set, the logic for determining which pool to registrer the user for is ignored, and the year
    * constraints for the pool are ignored.
    *
    * NOTE: This flag should PROBABLY only be used if you are calling registerAttendee as a system administrator.
@@ -193,7 +193,7 @@ export interface AttendanceService {
     options: EventRegistrationOptions
   ): Promise<RegistrationAvailabilityResult>
   /**
-   * Attempt to register an attendee for an event.
+   * Attempt to registrer an attendee for an event.
    *
    * NOTE: This function only does potential scheduling of associated tasks and other direct writes. The business
    * logic for checking attendance requirements are given by `getRegistrationAvailability`
@@ -637,7 +637,7 @@ export function getAttendanceService(
         )
       }
 
-      eventEmitter.emit("attendance:register-change", { attendee, status: "registered" })
+      eventEmitter.emit("attendance:registrer-change", { attendee, status: "registered" })
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has registered (effective %s) for Event(ID=%s) named %s with options: %o",
         attendee.id,
@@ -773,7 +773,7 @@ export function getAttendanceService(
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
-      eventEmitter.emit("attendance:register-change", { attendee, status: "deregistered" })
+      eventEmitter.emit("attendance:registrer-change", { attendee, status: "deregistered" })
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s with options: %o",
         attendee.id,

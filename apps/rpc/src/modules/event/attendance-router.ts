@@ -210,7 +210,7 @@ const onRegisterChangeProcedure = procedure
   .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
   .use(withDatabaseTransaction())
   .subscription(async function* ({ input, ctx, signal }) {
-    for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
+    for await (const [data] of on(ctx.eventEmitter, "attendance:registrer-change", { signal })) {
       const attendeeUpdateData = data as { attendee: Attendee; status: "registered" | "deregistered" }
 
       if (attendeeUpdateData.attendee.attendanceId !== input.attendanceId) {

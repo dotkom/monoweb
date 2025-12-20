@@ -546,7 +546,7 @@ resource "auth0_client" "monoweb_web" {
   allowed_clients   = []
   allowed_origins   = []
   app_type          = "regular_web"
-  # you go here if you decline an auth grant, cannot be http
+  # you go here if you decline an (auth) grant, cannot be http
   initiate_login_uri = {
     "dev" = null
     "stg" = "https://staging.online.ntnu.no/api/auth/callback/auth0"
