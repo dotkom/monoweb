@@ -21,6 +21,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.9",
     "@dotkomonline/config": "workspace:*",
-    "@types/node": "22.19.2"
+    "@types/node": "22.19.3"
   }
 }
