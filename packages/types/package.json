@@ -17,7 +17,7 @@
     "zod": "^3.25.47"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.9",
+    "@biomejs/biome": "2.3.10",
     "@dotkomonline/config": "workspace:*",
     "@types/node": "22.19.3",
     "googleapis": "159.0.0",
