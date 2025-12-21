@@ -8,7 +8,7 @@ import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
 import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
-import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -136,7 +136,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
 
   return (
     <Link
-      href={`/arrangementer/${slugify(event.title)}/${event.id}`}
+      href={createEventPageUrl(event.id, event.title)}
       className={cn(
         "flex flex-col w-full gap-5 p-6 rounded-2xl border transition-colors",
         "border-gray-100 bg-gray-50 hover:bg-transparent",
@@ -191,7 +191,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
 
   return (
     <Link
-      href={`/arrangementer/${slugify(event.title)}/${event.id}`}
+      href={createEventPageUrl(event.id, event.title)}
       className={cn(
         "flex flex-col w-full h-fit gap-3 p-3 rounded-2xl border transition-colors",
         "border-gray-100 bg-gray-50 hover:bg-transparent",
