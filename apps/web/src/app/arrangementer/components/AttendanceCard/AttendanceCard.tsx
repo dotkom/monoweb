@@ -244,15 +244,15 @@ export const AttendanceCard = ({
         chargeScheduleDate={chargeScheduleDate ?? null}
       />
 
-      <div className="flex flex-row flex-wrap gap-4">
-        <EventRules className="text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />
+      <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
+        <EventRules className="text-gray-700 hover:text-black dark:text-stone-300 dark:hover:text-stone-100 transition-colors" />
 
         <Link
           href="/innstillinger/profil"
-          className="flex flex-row gap-1 text-sm items-center text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+          className="flex flex-row gap-2 items-center text-gray-700 hover:text-black dark:text-stone-300 dark:hover:text-stone-100 transition-colors"
         >
           <IconEdit className="size-[1.25em]" />
-          <Text>Oppdater matallergier</Text>
+          <Text className="text-sm">Oppdater matpreferanser</Text>
         </Link>
 
         {attendance.attendancePrice && <PaymentExplanationDialog />}
