@@ -1,10 +1,12 @@
+import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useTRPC } from "@/lib/trpc-client"
-import type { Attendance } from "@dotkomonline/types"
-import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
+import { type Attendance,type AttendanceWrite,AttendanceWriteSchema } from "@dotkomonline/types"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { ActionIcon, Box, Button, Divider, Group, Paper, Table, Title } from "@mantine/core"
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import type { FC } from "react"
-import { useAttendanceForm } from "../components/attendance-form"
+import { useForm } from "react-hook-form"
 import { useCreateAttendanceSelectionsModal } from "../components/create-event-selections-modal"
 import { useEditSelectionsModal } from "../components/edit-event-selections-modal"
 import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
@@ -22,23 +24,48 @@ export const SelectionsPage: FC = () => {
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
   const mutation = useAddAttendanceMutation()
 
-  const AttendanceForm = useAttendanceForm({
-    label: "Opprett",
+  const form = useForm<AttendanceWrite>({
+    resolver: zodResolver(AttendanceWriteSchema),
+    mode: "onBlur",
     defaultValues: {
       registerStart: new Date(),
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
-      selections: [],
-    },
-    onSubmit: (values) => {
-      mutation.mutate({ eventId, values })
     },
   })
+
+  const Lol = createDateTimeInput<AttendanceWrite>({ label: "Påmeldingsstart" })
+  const x = <Lol
+        defaultValue={form.formState.defaultValues?.["registerStart"] ?? new Date()}
+        key={"registerStart"}
+        name={"registerStart"}
+        register={form.register}
+        control={form.control}
+        state={form.formState}
+      />
 
   return (
     <Box>
       <Title order={5}>Ingen påmelding</Title>
-      <AttendanceForm />
+      
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          return form.handleSubmit((values) => {
+            return onSubmit(values, form)
+          })(e)
+        }}
+      >
+        <Group gap="md">
+          {x}
+          
+          <div>
+            <Button type="submit" disabled={disabled}>
+              {label}
+            </Button>
+          </div>
+        </Group>
+      </form>
     </Box>
   )
 }
