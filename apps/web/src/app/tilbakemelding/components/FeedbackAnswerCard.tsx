@@ -14,19 +14,33 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { IconTrash } from "@tabler/icons-react"
 import type { Payload } from "recharts/types/component/DefaultTooltipContent"
 import { useDeleteFeedbackQuestionAnswerMutation } from "../mutations"
 
-const CHART_COLORS: string[] = ["#2b7fff", "#00bc7d", "#fd9a00", "#fb2c36", "#8e51ff", "#f6339a"] as const
+export interface ChartDataPoint {
+  name: string
+  value: number
+}
+
+export type ChartDataPointInput = ChartDataPoint & { id: string }
+
+export interface ChartProps {
+  data: ChartDataPoint[]
+}
+
+export interface ChartInputProps {
+  data: ChartDataPointInput[]
+}
 
 interface FeedbackQuestionAnswerCardProps {
   question: FeedbackQuestion
   answers: FeedbackFormAnswer[]
   canDelete: boolean
 }
+
+const CHART_COLORS: string[] = ["#2b7fff", "#00bc7d", "#fd9a00", "#fb2c36", "#8e51ff", "#f6339a"] as const
 
 export const FeedbackAnswerCard = ({ question, answers, canDelete }: FeedbackQuestionAnswerCardProps) => {
   const questionAnswers = answers.flatMap((a) => a.questionAnswers).filter((qa) => qa.questionId === question.id)
@@ -48,16 +62,16 @@ export const FeedbackAnswerCard = ({ question, answers, canDelete }: FeedbackQue
       case "CHECKBOX": {
         const checkedCount = questionAnswers.filter((qa) => qa.value === true).length
 
-        const data: ChartValue[] = [
+        const data: ChartDataPointInput[] = [
           {
             name: "Ja",
             value: checkedCount,
-            id: "yes",
+            id: `${question.id}-yes`,
           },
           {
             name: "Nei",
             value: questionAnswers.length - checkedCount,
-            id: "no",
+            id: `${question.id}-no`,
           },
         ]
 
@@ -65,7 +79,7 @@ export const FeedbackAnswerCard = ({ question, answers, canDelete }: FeedbackQue
       }
       case "SELECT":
       case "MULTISELECT": {
-        const data: ChartValue[] = question.options.map((option) => ({
+        const data: ChartDataPointInput[] = question.options.map((option) => ({
           name: option.name,
           value: selectedOptions.filter((selectedOption) => selectedOption.id === option.id).length,
           id: option.id,
@@ -74,7 +88,7 @@ export const FeedbackAnswerCard = ({ question, answers, canDelete }: FeedbackQue
         return <QuestionPieChart data={data} />
       }
       case "RATING": {
-        const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => {
+        const data: ChartDataPointInput[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => {
           const count = questionAnswers.filter((qa) => qa.value === n).length
           return { name: n.toString(), value: count, id: n.toString() }
         })
@@ -94,18 +108,9 @@ export const FeedbackAnswerCard = ({ question, answers, canDelete }: FeedbackQue
   )
 }
 
-export interface ChartValue {
-  name: string
-  value: number
-  id: string
-}
-
-export interface ChartProps {
-  data: ChartValue[]
-}
-
-export const QuestionPieChart = ({ data }: ChartProps) => {
+export const QuestionPieChart = ({ data }: ChartInputProps) => {
   const filteredData = data.filter((d) => d.value > 0)
+  const dataPoints = filteredData.map(({ name, value }) => ({ name, value }))
 
   return (
     <div className="w-full h-80 [&_svg]:outline-none [&_g]:outline-none">
@@ -114,7 +119,7 @@ export const QuestionPieChart = ({ data }: ChartProps) => {
           <Pie
             dataKey="value"
             isAnimationActive={false}
-            data={filteredData}
+            data={dataPoints}
             nameKey="name"
             labelLine={false}
             className="outline-none"
