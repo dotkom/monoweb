@@ -8,11 +8,10 @@ import type {
   FeedbackPublicResultsToken,
   FeedbackQuestion,
 } from "@dotkomonline/types"
-
 import { Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
 import { IconCalendarEvent, IconSchool } from "@tabler/icons-react"
 import { formatDate, isSameDay } from "date-fns"
-import { type ChartValue, FeedbackAnswerCard, QuestionPieChart } from "./FeedbackAnswerCard"
+import { type ChartDataPointInput, FeedbackAnswerCard, QuestionPieChart } from "./FeedbackAnswerCard"
 
 const formatPoolYears = (yearCriterias: number[][]): string => {
   const flat = yearCriterias.flat().toSorted((a, b) => a - b)
@@ -118,7 +117,7 @@ const Statistics = ({ answers, attendees }: { answers: FeedbackFormAnswer[]; att
   const gradeLevels = attendees.map((attendee) => attendee.userGrade).filter((gradelevel) => gradelevel !== null)
   const uniqueGradeLevels = Array.from(new Set(gradeLevels))
 
-  const data: ChartValue[] = uniqueGradeLevels.map((gradeLevel) => ({
+  const data: ChartDataPointInput[] = uniqueGradeLevels.map((gradeLevel) => ({
     name: `${gradeLevel}. klasse`,
     value: gradeLevels.filter((gl) => gl === gradeLevel).length,
     id: `${gradeLevel}`,
