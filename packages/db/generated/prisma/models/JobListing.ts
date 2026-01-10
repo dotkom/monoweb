@@ -26,7 +26,6 @@ export type AggregateJobListing = {
 
 export type JobListingMinAggregateOutputType = {
   id: string | null
-  companyId: string | null
   title: string | null
   description: string | null
   shortDescription: string | null
@@ -41,11 +40,11 @@ export type JobListingMinAggregateOutputType = {
   rollingAdmission: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  companyId: string | null
 }
 
 export type JobListingMaxAggregateOutputType = {
   id: string | null
-  companyId: string | null
   title: string | null
   description: string | null
   shortDescription: string | null
@@ -60,11 +59,11 @@ export type JobListingMaxAggregateOutputType = {
   rollingAdmission: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  companyId: string | null
 }
 
 export type JobListingCountAggregateOutputType = {
   id: number
-  companyId: number
   title: number
   description: number
   shortDescription: number
@@ -79,13 +78,13 @@ export type JobListingCountAggregateOutputType = {
   rollingAdmission: number
   createdAt: number
   updatedAt: number
+  companyId: number
   _all: number
 }
 
 
 export type JobListingMinAggregateInputType = {
   id?: true
-  companyId?: true
   title?: true
   description?: true
   shortDescription?: true
@@ -100,11 +99,11 @@ export type JobListingMinAggregateInputType = {
   rollingAdmission?: true
   createdAt?: true
   updatedAt?: true
+  companyId?: true
 }
 
 export type JobListingMaxAggregateInputType = {
   id?: true
-  companyId?: true
   title?: true
   description?: true
   shortDescription?: true
@@ -119,11 +118,11 @@ export type JobListingMaxAggregateInputType = {
   rollingAdmission?: true
   createdAt?: true
   updatedAt?: true
+  companyId?: true
 }
 
 export type JobListingCountAggregateInputType = {
   id?: true
-  companyId?: true
   title?: true
   description?: true
   shortDescription?: true
@@ -138,6 +137,7 @@ export type JobListingCountAggregateInputType = {
   rollingAdmission?: true
   createdAt?: true
   updatedAt?: true
+  companyId?: true
   _all?: true
 }
 
@@ -215,7 +215,6 @@ export type JobListingGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type JobListingGroupByOutputType = {
   id: string
-  companyId: string
   title: string
   description: string
   shortDescription: string | null
@@ -230,6 +229,7 @@ export type JobListingGroupByOutputType = {
   rollingAdmission: boolean
   createdAt: Date
   updatedAt: Date
+  companyId: string
   _count: JobListingCountAggregateOutputType | null
   _min: JobListingMinAggregateOutputType | null
   _max: JobListingMaxAggregateOutputType | null
@@ -255,7 +255,6 @@ export type JobListingWhereInput = {
   OR?: Prisma.JobListingWhereInput[]
   NOT?: Prisma.JobListingWhereInput | Prisma.JobListingWhereInput[]
   id?: Prisma.StringFilter<"JobListing"> | string
-  companyId?: Prisma.StringFilter<"JobListing"> | string
   title?: Prisma.StringFilter<"JobListing"> | string
   description?: Prisma.StringFilter<"JobListing"> | string
   shortDescription?: Prisma.StringNullableFilter<"JobListing"> | string | null
@@ -270,13 +269,13 @@ export type JobListingWhereInput = {
   rollingAdmission?: Prisma.BoolFilter<"JobListing"> | boolean
   createdAt?: Prisma.DateTimeFilter<"JobListing"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobListing"> | Date | string
+  companyId?: Prisma.StringFilter<"JobListing"> | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   locations?: Prisma.JobListingLocationListRelationFilter
 }
 
 export type JobListingOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -291,6 +290,7 @@ export type JobListingOrderByWithRelationInput = {
   rollingAdmission?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
   locations?: Prisma.JobListingLocationOrderByRelationAggregateInput
 }
@@ -300,7 +300,6 @@ export type JobListingWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.JobListingWhereInput | Prisma.JobListingWhereInput[]
   OR?: Prisma.JobListingWhereInput[]
   NOT?: Prisma.JobListingWhereInput | Prisma.JobListingWhereInput[]
-  companyId?: Prisma.StringFilter<"JobListing"> | string
   title?: Prisma.StringFilter<"JobListing"> | string
   description?: Prisma.StringFilter<"JobListing"> | string
   shortDescription?: Prisma.StringNullableFilter<"JobListing"> | string | null
@@ -315,13 +314,13 @@ export type JobListingWhereUniqueInput = Prisma.AtLeast<{
   rollingAdmission?: Prisma.BoolFilter<"JobListing"> | boolean
   createdAt?: Prisma.DateTimeFilter<"JobListing"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobListing"> | Date | string
+  companyId?: Prisma.StringFilter<"JobListing"> | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   locations?: Prisma.JobListingLocationListRelationFilter
 }, "id">
 
 export type JobListingOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -336,6 +335,7 @@ export type JobListingOrderByWithAggregationInput = {
   rollingAdmission?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
   _count?: Prisma.JobListingCountOrderByAggregateInput
   _max?: Prisma.JobListingMaxOrderByAggregateInput
   _min?: Prisma.JobListingMinOrderByAggregateInput
@@ -346,7 +346,6 @@ export type JobListingScalarWhereWithAggregatesInput = {
   OR?: Prisma.JobListingScalarWhereWithAggregatesInput[]
   NOT?: Prisma.JobListingScalarWhereWithAggregatesInput | Prisma.JobListingScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"JobListing"> | string
-  companyId?: Prisma.StringWithAggregatesFilter<"JobListing"> | string
   title?: Prisma.StringWithAggregatesFilter<"JobListing"> | string
   description?: Prisma.StringWithAggregatesFilter<"JobListing"> | string
   shortDescription?: Prisma.StringNullableWithAggregatesFilter<"JobListing"> | string | null
@@ -361,6 +360,7 @@ export type JobListingScalarWhereWithAggregatesInput = {
   rollingAdmission?: Prisma.BoolWithAggregatesFilter<"JobListing"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"JobListing"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"JobListing"> | Date | string
+  companyId?: Prisma.StringWithAggregatesFilter<"JobListing"> | string
 }
 
 export type JobListingCreateInput = {
@@ -385,7 +385,6 @@ export type JobListingCreateInput = {
 
 export type JobListingUncheckedCreateInput = {
   id?: string
-  companyId: string
   title: string
   description: string
   shortDescription?: string | null
@@ -400,6 +399,7 @@ export type JobListingUncheckedCreateInput = {
   rollingAdmission: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  companyId: string
   locations?: Prisma.JobListingLocationUncheckedCreateNestedManyWithoutJobListingInput
 }
 
@@ -425,7 +425,6 @@ export type JobListingUpdateInput = {
 
 export type JobListingUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -440,12 +439,12 @@ export type JobListingUncheckedUpdateInput = {
   rollingAdmission?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
   locations?: Prisma.JobListingLocationUncheckedUpdateManyWithoutJobListingNestedInput
 }
 
 export type JobListingCreateManyInput = {
   id?: string
-  companyId: string
   title: string
   description: string
   shortDescription?: string | null
@@ -460,6 +459,7 @@ export type JobListingCreateManyInput = {
   rollingAdmission: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  companyId: string
 }
 
 export type JobListingUpdateManyMutationInput = {
@@ -482,7 +482,6 @@ export type JobListingUpdateManyMutationInput = {
 
 export type JobListingUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -497,6 +496,7 @@ export type JobListingUncheckedUpdateManyInput = {
   rollingAdmission?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type JobListingListRelationFilter = {
@@ -511,7 +511,6 @@ export type JobListingOrderByRelationAggregateInput = {
 
 export type JobListingCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrder
@@ -526,11 +525,11 @@ export type JobListingCountOrderByAggregateInput = {
   rollingAdmission?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
 }
 
 export type JobListingMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrder
@@ -545,11 +544,11 @@ export type JobListingMaxOrderByAggregateInput = {
   rollingAdmission?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
 }
 
 export type JobListingMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrder
@@ -564,6 +563,7 @@ export type JobListingMinOrderByAggregateInput = {
   rollingAdmission?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
 }
 
 export type JobListingScalarRelationFilter = {
@@ -700,7 +700,6 @@ export type JobListingScalarWhereInput = {
   OR?: Prisma.JobListingScalarWhereInput[]
   NOT?: Prisma.JobListingScalarWhereInput | Prisma.JobListingScalarWhereInput[]
   id?: Prisma.StringFilter<"JobListing"> | string
-  companyId?: Prisma.StringFilter<"JobListing"> | string
   title?: Prisma.StringFilter<"JobListing"> | string
   description?: Prisma.StringFilter<"JobListing"> | string
   shortDescription?: Prisma.StringNullableFilter<"JobListing"> | string | null
@@ -715,6 +714,7 @@ export type JobListingScalarWhereInput = {
   rollingAdmission?: Prisma.BoolFilter<"JobListing"> | boolean
   createdAt?: Prisma.DateTimeFilter<"JobListing"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobListing"> | Date | string
+  companyId?: Prisma.StringFilter<"JobListing"> | string
 }
 
 export type JobListingCreateWithoutLocationsInput = {
@@ -738,7 +738,6 @@ export type JobListingCreateWithoutLocationsInput = {
 
 export type JobListingUncheckedCreateWithoutLocationsInput = {
   id?: string
-  companyId: string
   title: string
   description: string
   shortDescription?: string | null
@@ -753,6 +752,7 @@ export type JobListingUncheckedCreateWithoutLocationsInput = {
   rollingAdmission: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  companyId: string
 }
 
 export type JobListingCreateOrConnectWithoutLocationsInput = {
@@ -792,7 +792,6 @@ export type JobListingUpdateWithoutLocationsInput = {
 
 export type JobListingUncheckedUpdateWithoutLocationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -807,6 +806,7 @@ export type JobListingUncheckedUpdateWithoutLocationsInput = {
   rollingAdmission?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type JobListingCreateManyCompanyInput = {
@@ -916,7 +916,6 @@ export type JobListingCountOutputTypeCountLocationsArgs<ExtArgs extends runtime.
 
 export type JobListingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  companyId?: boolean
   title?: boolean
   description?: boolean
   shortDescription?: boolean
@@ -931,6 +930,7 @@ export type JobListingSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   rollingAdmission?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  companyId?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   locations?: boolean | Prisma.JobListing$locationsArgs<ExtArgs>
   _count?: boolean | Prisma.JobListingCountOutputTypeDefaultArgs<ExtArgs>
@@ -938,7 +938,6 @@ export type JobListingSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type JobListingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  companyId?: boolean
   title?: boolean
   description?: boolean
   shortDescription?: boolean
@@ -953,12 +952,12 @@ export type JobListingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   rollingAdmission?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  companyId?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["jobListing"]>
 
 export type JobListingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  companyId?: boolean
   title?: boolean
   description?: boolean
   shortDescription?: boolean
@@ -973,12 +972,12 @@ export type JobListingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   rollingAdmission?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  companyId?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["jobListing"]>
 
 export type JobListingSelectScalar = {
   id?: boolean
-  companyId?: boolean
   title?: boolean
   description?: boolean
   shortDescription?: boolean
@@ -993,9 +992,10 @@ export type JobListingSelectScalar = {
   rollingAdmission?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  companyId?: boolean
 }
 
-export type JobListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "title" | "description" | "shortDescription" | "start" | "end" | "featured" | "hidden" | "deadline" | "employment" | "applicationLink" | "applicationEmail" | "rollingAdmission" | "createdAt" | "updatedAt", ExtArgs["result"]["jobListing"]>
+export type JobListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "shortDescription" | "start" | "end" | "featured" | "hidden" | "deadline" | "employment" | "applicationLink" | "applicationEmail" | "rollingAdmission" | "createdAt" | "updatedAt" | "companyId", ExtArgs["result"]["jobListing"]>
 export type JobListingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   locations?: boolean | Prisma.JobListing$locationsArgs<ExtArgs>
@@ -1016,7 +1016,6 @@ export type $JobListingPayload<ExtArgs extends runtime.Types.Extensions.Internal
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    companyId: string
     title: string
     description: string
     shortDescription: string | null
@@ -1034,6 +1033,7 @@ export type $JobListingPayload<ExtArgs extends runtime.Types.Extensions.Internal
     rollingAdmission: boolean
     createdAt: Date
     updatedAt: Date
+    companyId: string
   }, ExtArgs["result"]["jobListing"]>
   composites: {}
 }
@@ -1460,7 +1460,6 @@ export interface Prisma__JobListingClient<T, Null = never, ExtArgs extends runti
  */
 export interface JobListingFieldRefs {
   readonly id: Prisma.FieldRef<"JobListing", 'String'>
-  readonly companyId: Prisma.FieldRef<"JobListing", 'String'>
   readonly title: Prisma.FieldRef<"JobListing", 'String'>
   readonly description: Prisma.FieldRef<"JobListing", 'String'>
   readonly shortDescription: Prisma.FieldRef<"JobListing", 'String'>
@@ -1475,6 +1474,7 @@ export interface JobListingFieldRefs {
   readonly rollingAdmission: Prisma.FieldRef<"JobListing", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"JobListing", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"JobListing", 'DateTime'>
+  readonly companyId: Prisma.FieldRef<"JobListing", 'String'>
 }
     
 
