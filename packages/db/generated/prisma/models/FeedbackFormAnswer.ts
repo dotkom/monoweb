@@ -26,52 +26,52 @@ export type AggregateFeedbackFormAnswer = {
 
 export type FeedbackFormAnswerMinAggregateOutputType = {
   id: string | null
-  feedbackFormId: string | null
-  attendeeId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  feedbackFormId: string | null
+  attendeeId: string | null
 }
 
 export type FeedbackFormAnswerMaxAggregateOutputType = {
   id: string | null
-  feedbackFormId: string | null
-  attendeeId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  feedbackFormId: string | null
+  attendeeId: string | null
 }
 
 export type FeedbackFormAnswerCountAggregateOutputType = {
   id: number
-  feedbackFormId: number
-  attendeeId: number
   createdAt: number
   updatedAt: number
+  feedbackFormId: number
+  attendeeId: number
   _all: number
 }
 
 
 export type FeedbackFormAnswerMinAggregateInputType = {
   id?: true
-  feedbackFormId?: true
-  attendeeId?: true
   createdAt?: true
   updatedAt?: true
+  feedbackFormId?: true
+  attendeeId?: true
 }
 
 export type FeedbackFormAnswerMaxAggregateInputType = {
   id?: true
-  feedbackFormId?: true
-  attendeeId?: true
   createdAt?: true
   updatedAt?: true
+  feedbackFormId?: true
+  attendeeId?: true
 }
 
 export type FeedbackFormAnswerCountAggregateInputType = {
   id?: true
-  feedbackFormId?: true
-  attendeeId?: true
   createdAt?: true
   updatedAt?: true
+  feedbackFormId?: true
+  attendeeId?: true
   _all?: true
 }
 
@@ -149,10 +149,10 @@ export type FeedbackFormAnswerGroupByArgs<ExtArgs extends runtime.Types.Extensio
 
 export type FeedbackFormAnswerGroupByOutputType = {
   id: string
-  feedbackFormId: string
-  attendeeId: string
   createdAt: Date
   updatedAt: Date
+  feedbackFormId: string
+  attendeeId: string
   _count: FeedbackFormAnswerCountAggregateOutputType | null
   _min: FeedbackFormAnswerMinAggregateOutputType | null
   _max: FeedbackFormAnswerMaxAggregateOutputType | null
@@ -178,10 +178,10 @@ export type FeedbackFormAnswerWhereInput = {
   OR?: Prisma.FeedbackFormAnswerWhereInput[]
   NOT?: Prisma.FeedbackFormAnswerWhereInput | Prisma.FeedbackFormAnswerWhereInput[]
   id?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
-  feedbackFormId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
-  attendeeId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
   createdAt?: Prisma.DateTimeFilter<"FeedbackFormAnswer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"FeedbackFormAnswer"> | Date | string
+  feedbackFormId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
+  attendeeId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
   feedbackForm?: Prisma.XOR<Prisma.FeedbackFormScalarRelationFilter, Prisma.FeedbackFormWhereInput>
   attendee?: Prisma.XOR<Prisma.AttendeeScalarRelationFilter, Prisma.AttendeeWhereInput>
   answers?: Prisma.FeedbackQuestionAnswerListRelationFilter
@@ -189,10 +189,10 @@ export type FeedbackFormAnswerWhereInput = {
 
 export type FeedbackFormAnswerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  feedbackFormId?: Prisma.SortOrder
-  attendeeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  feedbackFormId?: Prisma.SortOrder
+  attendeeId?: Prisma.SortOrder
   feedbackForm?: Prisma.FeedbackFormOrderByWithRelationInput
   attendee?: Prisma.AttendeeOrderByWithRelationInput
   answers?: Prisma.FeedbackQuestionAnswerOrderByRelationAggregateInput
@@ -204,9 +204,9 @@ export type FeedbackFormAnswerWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.FeedbackFormAnswerWhereInput | Prisma.FeedbackFormAnswerWhereInput[]
   OR?: Prisma.FeedbackFormAnswerWhereInput[]
   NOT?: Prisma.FeedbackFormAnswerWhereInput | Prisma.FeedbackFormAnswerWhereInput[]
-  feedbackFormId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
   createdAt?: Prisma.DateTimeFilter<"FeedbackFormAnswer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"FeedbackFormAnswer"> | Date | string
+  feedbackFormId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
   feedbackForm?: Prisma.XOR<Prisma.FeedbackFormScalarRelationFilter, Prisma.FeedbackFormWhereInput>
   attendee?: Prisma.XOR<Prisma.AttendeeScalarRelationFilter, Prisma.AttendeeWhereInput>
   answers?: Prisma.FeedbackQuestionAnswerListRelationFilter
@@ -214,10 +214,10 @@ export type FeedbackFormAnswerWhereUniqueInput = Prisma.AtLeast<{
 
 export type FeedbackFormAnswerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  feedbackFormId?: Prisma.SortOrder
-  attendeeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  feedbackFormId?: Prisma.SortOrder
+  attendeeId?: Prisma.SortOrder
   _count?: Prisma.FeedbackFormAnswerCountOrderByAggregateInput
   _max?: Prisma.FeedbackFormAnswerMaxOrderByAggregateInput
   _min?: Prisma.FeedbackFormAnswerMinOrderByAggregateInput
@@ -228,10 +228,10 @@ export type FeedbackFormAnswerScalarWhereWithAggregatesInput = {
   OR?: Prisma.FeedbackFormAnswerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FeedbackFormAnswerScalarWhereWithAggregatesInput | Prisma.FeedbackFormAnswerScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"FeedbackFormAnswer"> | string
-  feedbackFormId?: Prisma.StringWithAggregatesFilter<"FeedbackFormAnswer"> | string
-  attendeeId?: Prisma.StringWithAggregatesFilter<"FeedbackFormAnswer"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"FeedbackFormAnswer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"FeedbackFormAnswer"> | Date | string
+  feedbackFormId?: Prisma.StringWithAggregatesFilter<"FeedbackFormAnswer"> | string
+  attendeeId?: Prisma.StringWithAggregatesFilter<"FeedbackFormAnswer"> | string
 }
 
 export type FeedbackFormAnswerCreateInput = {
@@ -245,10 +245,10 @@ export type FeedbackFormAnswerCreateInput = {
 
 export type FeedbackFormAnswerUncheckedCreateInput = {
   id?: string
-  feedbackFormId: string
-  attendeeId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  feedbackFormId: string
+  attendeeId: string
   answers?: Prisma.FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutFormAnswerInput
 }
 
@@ -263,19 +263,19 @@ export type FeedbackFormAnswerUpdateInput = {
 
 export type FeedbackFormAnswerUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  feedbackFormId?: Prisma.StringFieldUpdateOperationsInput | string
-  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  feedbackFormId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
   answers?: Prisma.FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerNestedInput
 }
 
 export type FeedbackFormAnswerCreateManyInput = {
   id?: string
-  feedbackFormId: string
-  attendeeId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  feedbackFormId: string
+  attendeeId: string
 }
 
 export type FeedbackFormAnswerUpdateManyMutationInput = {
@@ -286,10 +286,10 @@ export type FeedbackFormAnswerUpdateManyMutationInput = {
 
 export type FeedbackFormAnswerUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  feedbackFormId?: Prisma.StringFieldUpdateOperationsInput | string
-  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  feedbackFormId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type FeedbackFormAnswerNullableScalarRelationFilter = {
@@ -314,26 +314,26 @@ export type FeedbackFormAnswerScalarRelationFilter = {
 
 export type FeedbackFormAnswerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  feedbackFormId?: Prisma.SortOrder
-  attendeeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  feedbackFormId?: Prisma.SortOrder
+  attendeeId?: Prisma.SortOrder
 }
 
 export type FeedbackFormAnswerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  feedbackFormId?: Prisma.SortOrder
-  attendeeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  feedbackFormId?: Prisma.SortOrder
+  attendeeId?: Prisma.SortOrder
 }
 
 export type FeedbackFormAnswerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  feedbackFormId?: Prisma.SortOrder
-  attendeeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  feedbackFormId?: Prisma.SortOrder
+  attendeeId?: Prisma.SortOrder
 }
 
 export type FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput = {
@@ -434,9 +434,9 @@ export type FeedbackFormAnswerCreateWithoutAttendeeInput = {
 
 export type FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput = {
   id?: string
-  feedbackFormId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  feedbackFormId: string
   answers?: Prisma.FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutFormAnswerInput
 }
 
@@ -466,9 +466,9 @@ export type FeedbackFormAnswerUpdateWithoutAttendeeInput = {
 
 export type FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  feedbackFormId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  feedbackFormId?: Prisma.StringFieldUpdateOperationsInput | string
   answers?: Prisma.FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerNestedInput
 }
 
@@ -482,9 +482,9 @@ export type FeedbackFormAnswerCreateWithoutFeedbackFormInput = {
 
 export type FeedbackFormAnswerUncheckedCreateWithoutFeedbackFormInput = {
   id?: string
-  attendeeId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  attendeeId: string
   answers?: Prisma.FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutFormAnswerInput
 }
 
@@ -519,10 +519,10 @@ export type FeedbackFormAnswerScalarWhereInput = {
   OR?: Prisma.FeedbackFormAnswerScalarWhereInput[]
   NOT?: Prisma.FeedbackFormAnswerScalarWhereInput | Prisma.FeedbackFormAnswerScalarWhereInput[]
   id?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
-  feedbackFormId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
-  attendeeId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
   createdAt?: Prisma.DateTimeFilter<"FeedbackFormAnswer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"FeedbackFormAnswer"> | Date | string
+  feedbackFormId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
+  attendeeId?: Prisma.StringFilter<"FeedbackFormAnswer"> | string
 }
 
 export type FeedbackFormAnswerCreateWithoutAnswersInput = {
@@ -535,10 +535,10 @@ export type FeedbackFormAnswerCreateWithoutAnswersInput = {
 
 export type FeedbackFormAnswerUncheckedCreateWithoutAnswersInput = {
   id?: string
-  feedbackFormId: string
-  attendeeId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  feedbackFormId: string
+  attendeeId: string
 }
 
 export type FeedbackFormAnswerCreateOrConnectWithoutAnswersInput = {
@@ -567,17 +567,17 @@ export type FeedbackFormAnswerUpdateWithoutAnswersInput = {
 
 export type FeedbackFormAnswerUncheckedUpdateWithoutAnswersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  feedbackFormId?: Prisma.StringFieldUpdateOperationsInput | string
-  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  feedbackFormId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type FeedbackFormAnswerCreateManyFeedbackFormInput = {
   id?: string
-  attendeeId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  attendeeId: string
 }
 
 export type FeedbackFormAnswerUpdateWithoutFeedbackFormInput = {
@@ -590,17 +590,17 @@ export type FeedbackFormAnswerUpdateWithoutFeedbackFormInput = {
 
 export type FeedbackFormAnswerUncheckedUpdateWithoutFeedbackFormInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
   answers?: Prisma.FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerNestedInput
 }
 
 export type FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attendeeId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -636,10 +636,10 @@ export type FeedbackFormAnswerCountOutputTypeCountAnswersArgs<ExtArgs extends ru
 
 export type FeedbackFormAnswerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  feedbackFormId?: boolean
-  attendeeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  feedbackFormId?: boolean
+  attendeeId?: boolean
   feedbackForm?: boolean | Prisma.FeedbackFormDefaultArgs<ExtArgs>
   attendee?: boolean | Prisma.AttendeeDefaultArgs<ExtArgs>
   answers?: boolean | Prisma.FeedbackFormAnswer$answersArgs<ExtArgs>
@@ -648,33 +648,33 @@ export type FeedbackFormAnswerSelect<ExtArgs extends runtime.Types.Extensions.In
 
 export type FeedbackFormAnswerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  feedbackFormId?: boolean
-  attendeeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  feedbackFormId?: boolean
+  attendeeId?: boolean
   feedbackForm?: boolean | Prisma.FeedbackFormDefaultArgs<ExtArgs>
   attendee?: boolean | Prisma.AttendeeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackFormAnswer"]>
 
 export type FeedbackFormAnswerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  feedbackFormId?: boolean
-  attendeeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  feedbackFormId?: boolean
+  attendeeId?: boolean
   feedbackForm?: boolean | Prisma.FeedbackFormDefaultArgs<ExtArgs>
   attendee?: boolean | Prisma.AttendeeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackFormAnswer"]>
 
 export type FeedbackFormAnswerSelectScalar = {
   id?: boolean
-  feedbackFormId?: boolean
-  attendeeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  feedbackFormId?: boolean
+  attendeeId?: boolean
 }
 
-export type FeedbackFormAnswerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "feedbackFormId" | "attendeeId" | "createdAt" | "updatedAt", ExtArgs["result"]["feedbackFormAnswer"]>
+export type FeedbackFormAnswerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "feedbackFormId" | "attendeeId", ExtArgs["result"]["feedbackFormAnswer"]>
 export type FeedbackFormAnswerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   feedbackForm?: boolean | Prisma.FeedbackFormDefaultArgs<ExtArgs>
   attendee?: boolean | Prisma.AttendeeDefaultArgs<ExtArgs>
@@ -699,10 +699,10 @@ export type $FeedbackFormAnswerPayload<ExtArgs extends runtime.Types.Extensions.
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    feedbackFormId: string
-    attendeeId: string
     createdAt: Date
     updatedAt: Date
+    feedbackFormId: string
+    attendeeId: string
   }, ExtArgs["result"]["feedbackFormAnswer"]>
   composites: {}
 }
@@ -1130,10 +1130,10 @@ export interface Prisma__FeedbackFormAnswerClient<T, Null = never, ExtArgs exten
  */
 export interface FeedbackFormAnswerFieldRefs {
   readonly id: Prisma.FieldRef<"FeedbackFormAnswer", 'String'>
-  readonly feedbackFormId: Prisma.FieldRef<"FeedbackFormAnswer", 'String'>
-  readonly attendeeId: Prisma.FieldRef<"FeedbackFormAnswer", 'String'>
   readonly createdAt: Prisma.FieldRef<"FeedbackFormAnswer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"FeedbackFormAnswer", 'DateTime'>
+  readonly feedbackFormId: Prisma.FieldRef<"FeedbackFormAnswer", 'String'>
+  readonly attendeeId: Prisma.FieldRef<"FeedbackFormAnswer", 'String'>
 }
     
 

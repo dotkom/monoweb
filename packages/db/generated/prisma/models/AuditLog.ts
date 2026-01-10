@@ -39,9 +39,9 @@ export type AuditLogMinAggregateOutputType = {
   tableName: string | null
   rowId: string | null
   createdAt: Date | null
-  userId: string | null
   operation: string | null
   transactionId: bigint | null
+  userId: string | null
 }
 
 export type AuditLogMaxAggregateOutputType = {
@@ -49,9 +49,9 @@ export type AuditLogMaxAggregateOutputType = {
   tableName: string | null
   rowId: string | null
   createdAt: Date | null
-  userId: string | null
   operation: string | null
   transactionId: bigint | null
+  userId: string | null
 }
 
 export type AuditLogCountAggregateOutputType = {
@@ -59,10 +59,10 @@ export type AuditLogCountAggregateOutputType = {
   tableName: number
   rowId: number
   createdAt: number
-  userId: number
   operation: number
   rowData: number
   transactionId: number
+  userId: number
   _all: number
 }
 
@@ -80,9 +80,9 @@ export type AuditLogMinAggregateInputType = {
   tableName?: true
   rowId?: true
   createdAt?: true
-  userId?: true
   operation?: true
   transactionId?: true
+  userId?: true
 }
 
 export type AuditLogMaxAggregateInputType = {
@@ -90,9 +90,9 @@ export type AuditLogMaxAggregateInputType = {
   tableName?: true
   rowId?: true
   createdAt?: true
-  userId?: true
   operation?: true
   transactionId?: true
+  userId?: true
 }
 
 export type AuditLogCountAggregateInputType = {
@@ -100,10 +100,10 @@ export type AuditLogCountAggregateInputType = {
   tableName?: true
   rowId?: true
   createdAt?: true
-  userId?: true
   operation?: true
   rowData?: true
   transactionId?: true
+  userId?: true
   _all?: true
 }
 
@@ -198,10 +198,10 @@ export type AuditLogGroupByOutputType = {
   tableName: string
   rowId: string | null
   createdAt: Date
-  userId: string | null
   operation: string
   rowData: runtime.JsonValue
   transactionId: bigint
+  userId: string | null
   _count: AuditLogCountAggregateOutputType | null
   _avg: AuditLogAvgAggregateOutputType | null
   _sum: AuditLogSumAggregateOutputType | null
@@ -232,10 +232,10 @@ export type AuditLogWhereInput = {
   tableName?: Prisma.StringFilter<"AuditLog"> | string
   rowId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
-  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   operation?: Prisma.StringFilter<"AuditLog"> | string
   rowData?: Prisma.JsonFilter<"AuditLog">
   transactionId?: Prisma.BigIntFilter<"AuditLog"> | bigint | number
+  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
@@ -244,10 +244,10 @@ export type AuditLogOrderByWithRelationInput = {
   tableName?: Prisma.SortOrder
   rowId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   operation?: Prisma.SortOrder
   rowData?: Prisma.SortOrder
   transactionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -259,10 +259,10 @@ export type AuditLogWhereUniqueInput = Prisma.AtLeast<{
   tableName?: Prisma.StringFilter<"AuditLog"> | string
   rowId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
-  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   operation?: Prisma.StringFilter<"AuditLog"> | string
   rowData?: Prisma.JsonFilter<"AuditLog">
   transactionId?: Prisma.BigIntFilter<"AuditLog"> | bigint | number
+  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
@@ -271,10 +271,10 @@ export type AuditLogOrderByWithAggregationInput = {
   tableName?: Prisma.SortOrder
   rowId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   operation?: Prisma.SortOrder
   rowData?: Prisma.SortOrder
   transactionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AuditLogCountOrderByAggregateInput
   _avg?: Prisma.AuditLogAvgOrderByAggregateInput
   _max?: Prisma.AuditLogMaxOrderByAggregateInput
@@ -290,10 +290,10 @@ export type AuditLogScalarWhereWithAggregatesInput = {
   tableName?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
   rowId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
-  userId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   operation?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
   rowData?: Prisma.JsonWithAggregatesFilter<"AuditLog">
   transactionId?: Prisma.BigIntWithAggregatesFilter<"AuditLog"> | bigint | number
+  userId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
 }
 
 export type AuditLogCreateInput = {
@@ -312,10 +312,10 @@ export type AuditLogUncheckedCreateInput = {
   tableName: string
   rowId?: string | null
   createdAt?: Date | string
-  userId?: string | null
   operation: string
   rowData: Prisma.JsonNullValueInput | runtime.InputJsonValue
   transactionId: bigint | number
+  userId?: string | null
 }
 
 export type AuditLogUpdateInput = {
@@ -334,10 +334,10 @@ export type AuditLogUncheckedUpdateInput = {
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   rowId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   transactionId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AuditLogCreateManyInput = {
@@ -345,10 +345,10 @@ export type AuditLogCreateManyInput = {
   tableName: string
   rowId?: string | null
   createdAt?: Date | string
-  userId?: string | null
   operation: string
   rowData: Prisma.JsonNullValueInput | runtime.InputJsonValue
   transactionId: bigint | number
+  userId?: string | null
 }
 
 export type AuditLogUpdateManyMutationInput = {
@@ -366,10 +366,10 @@ export type AuditLogUncheckedUpdateManyInput = {
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   rowId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   transactionId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AuditLogListRelationFilter = {
@@ -387,10 +387,10 @@ export type AuditLogCountOrderByAggregateInput = {
   tableName?: Prisma.SortOrder
   rowId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   rowData?: Prisma.SortOrder
   transactionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type AuditLogAvgOrderByAggregateInput = {
@@ -402,9 +402,9 @@ export type AuditLogMaxOrderByAggregateInput = {
   tableName?: Prisma.SortOrder
   rowId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   transactionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type AuditLogMinOrderByAggregateInput = {
@@ -412,9 +412,9 @@ export type AuditLogMinOrderByAggregateInput = {
   tableName?: Prisma.SortOrder
   rowId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   transactionId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type AuditLogSumOrderByAggregateInput = {
@@ -525,10 +525,10 @@ export type AuditLogScalarWhereInput = {
   tableName?: Prisma.StringFilter<"AuditLog"> | string
   rowId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
-  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   operation?: Prisma.StringFilter<"AuditLog"> | string
   rowData?: Prisma.JsonFilter<"AuditLog">
   transactionId?: Prisma.BigIntFilter<"AuditLog"> | bigint | number
+  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
 }
 
 export type AuditLogCreateManyUserInput = {
@@ -578,10 +578,10 @@ export type AuditLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   tableName?: boolean
   rowId?: boolean
   createdAt?: boolean
-  userId?: boolean
   operation?: boolean
   rowData?: boolean
   transactionId?: boolean
+  userId?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
 
@@ -590,10 +590,10 @@ export type AuditLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   tableName?: boolean
   rowId?: boolean
   createdAt?: boolean
-  userId?: boolean
   operation?: boolean
   rowData?: boolean
   transactionId?: boolean
+  userId?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
 
@@ -602,10 +602,10 @@ export type AuditLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   tableName?: boolean
   rowId?: boolean
   createdAt?: boolean
-  userId?: boolean
   operation?: boolean
   rowData?: boolean
   transactionId?: boolean
+  userId?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
 
@@ -614,13 +614,13 @@ export type AuditLogSelectScalar = {
   tableName?: boolean
   rowId?: boolean
   createdAt?: boolean
-  userId?: boolean
   operation?: boolean
   rowData?: boolean
   transactionId?: boolean
+  userId?: boolean
 }
 
-export type AuditLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tableName" | "rowId" | "createdAt" | "userId" | "operation" | "rowData" | "transactionId", ExtArgs["result"]["auditLog"]>
+export type AuditLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tableName" | "rowId" | "createdAt" | "operation" | "rowData" | "transactionId" | "userId", ExtArgs["result"]["auditLog"]>
 export type AuditLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }
@@ -634,6 +634,10 @@ export type AuditLogIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type $AuditLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AuditLog"
   objects: {
+    /**
+     * User relation is optional because the system can execute operations without a user to link it to. For example with
+     * recurring tasks.
+     */
     user: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -641,10 +645,13 @@ export type $AuditLogPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     tableName: string
     rowId: string | null
     createdAt: Date
-    userId: string | null
     operation: string
     rowData: runtime.JsonValue
+    /**
+     * Database transaction id
+     */
     transactionId: bigint
+    userId: string | null
   }, ExtArgs["result"]["auditLog"]>
   composites: {}
 }
@@ -1073,10 +1080,10 @@ export interface AuditLogFieldRefs {
   readonly tableName: Prisma.FieldRef<"AuditLog", 'String'>
   readonly rowId: Prisma.FieldRef<"AuditLog", 'String'>
   readonly createdAt: Prisma.FieldRef<"AuditLog", 'DateTime'>
-  readonly userId: Prisma.FieldRef<"AuditLog", 'String'>
   readonly operation: Prisma.FieldRef<"AuditLog", 'String'>
   readonly rowData: Prisma.FieldRef<"AuditLog", 'Json'>
   readonly transactionId: Prisma.FieldRef<"AuditLog", 'BigInt'>
+  readonly userId: Prisma.FieldRef<"AuditLog", 'String'>
 }
     
 

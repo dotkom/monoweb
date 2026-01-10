@@ -26,11 +26,11 @@ export type AggregateArticle = {
 
 export type ArticleMinAggregateOutputType = {
   id: string | null
+  slug: string | null
   title: string | null
   author: string | null
   photographer: string | null
   imageUrl: string | null
-  slug: string | null
   excerpt: string | null
   content: string | null
   isFeatured: boolean | null
@@ -41,11 +41,11 @@ export type ArticleMinAggregateOutputType = {
 
 export type ArticleMaxAggregateOutputType = {
   id: string | null
+  slug: string | null
   title: string | null
   author: string | null
   photographer: string | null
   imageUrl: string | null
-  slug: string | null
   excerpt: string | null
   content: string | null
   isFeatured: boolean | null
@@ -56,11 +56,11 @@ export type ArticleMaxAggregateOutputType = {
 
 export type ArticleCountAggregateOutputType = {
   id: number
+  slug: number
   title: number
   author: number
   photographer: number
   imageUrl: number
-  slug: number
   excerpt: number
   content: number
   isFeatured: number
@@ -73,11 +73,11 @@ export type ArticleCountAggregateOutputType = {
 
 export type ArticleMinAggregateInputType = {
   id?: true
+  slug?: true
   title?: true
   author?: true
   photographer?: true
   imageUrl?: true
-  slug?: true
   excerpt?: true
   content?: true
   isFeatured?: true
@@ -88,11 +88,11 @@ export type ArticleMinAggregateInputType = {
 
 export type ArticleMaxAggregateInputType = {
   id?: true
+  slug?: true
   title?: true
   author?: true
   photographer?: true
   imageUrl?: true
-  slug?: true
   excerpt?: true
   content?: true
   isFeatured?: true
@@ -103,11 +103,11 @@ export type ArticleMaxAggregateInputType = {
 
 export type ArticleCountAggregateInputType = {
   id?: true
+  slug?: true
   title?: true
   author?: true
   photographer?: true
   imageUrl?: true
-  slug?: true
   excerpt?: true
   content?: true
   isFeatured?: true
@@ -191,11 +191,11 @@ export type ArticleGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type ArticleGroupByOutputType = {
   id: string
+  slug: string
   title: string
   author: string
   photographer: string
   imageUrl: string
-  slug: string
   excerpt: string
   content: string
   isFeatured: boolean
@@ -227,11 +227,11 @@ export type ArticleWhereInput = {
   OR?: Prisma.ArticleWhereInput[]
   NOT?: Prisma.ArticleWhereInput | Prisma.ArticleWhereInput[]
   id?: Prisma.StringFilter<"Article"> | string
+  slug?: Prisma.StringFilter<"Article"> | string
   title?: Prisma.StringFilter<"Article"> | string
   author?: Prisma.StringFilter<"Article"> | string
   photographer?: Prisma.StringFilter<"Article"> | string
   imageUrl?: Prisma.StringFilter<"Article"> | string
-  slug?: Prisma.StringFilter<"Article"> | string
   excerpt?: Prisma.StringFilter<"Article"> | string
   content?: Prisma.StringFilter<"Article"> | string
   isFeatured?: Prisma.BoolFilter<"Article"> | boolean
@@ -243,11 +243,11 @@ export type ArticleWhereInput = {
 
 export type ArticleOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
   photographer?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -278,11 +278,11 @@ export type ArticleWhereUniqueInput = Prisma.AtLeast<{
 
 export type ArticleOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
   photographer?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -299,11 +299,11 @@ export type ArticleScalarWhereWithAggregatesInput = {
   OR?: Prisma.ArticleScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ArticleScalarWhereWithAggregatesInput | Prisma.ArticleScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Article"> | string
+  slug?: Prisma.StringWithAggregatesFilter<"Article"> | string
   title?: Prisma.StringWithAggregatesFilter<"Article"> | string
   author?: Prisma.StringWithAggregatesFilter<"Article"> | string
   photographer?: Prisma.StringWithAggregatesFilter<"Article"> | string
   imageUrl?: Prisma.StringWithAggregatesFilter<"Article"> | string
-  slug?: Prisma.StringWithAggregatesFilter<"Article"> | string
   excerpt?: Prisma.StringWithAggregatesFilter<"Article"> | string
   content?: Prisma.StringWithAggregatesFilter<"Article"> | string
   isFeatured?: Prisma.BoolWithAggregatesFilter<"Article"> | boolean
@@ -314,11 +314,11 @@ export type ArticleScalarWhereWithAggregatesInput = {
 
 export type ArticleCreateInput = {
   id?: string
+  slug: string
   title: string
   author: string
   photographer: string
   imageUrl: string
-  slug: string
   excerpt: string
   content: string
   isFeatured?: boolean
@@ -330,11 +330,11 @@ export type ArticleCreateInput = {
 
 export type ArticleUncheckedCreateInput = {
   id?: string
+  slug: string
   title: string
   author: string
   photographer: string
   imageUrl: string
-  slug: string
   excerpt: string
   content: string
   isFeatured?: boolean
@@ -346,11 +346,11 @@ export type ArticleUncheckedCreateInput = {
 
 export type ArticleUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
   photographer?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -362,11 +362,11 @@ export type ArticleUpdateInput = {
 
 export type ArticleUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
   photographer?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -378,11 +378,11 @@ export type ArticleUncheckedUpdateInput = {
 
 export type ArticleCreateManyInput = {
   id?: string
+  slug: string
   title: string
   author: string
   photographer: string
   imageUrl: string
-  slug: string
   excerpt: string
   content: string
   isFeatured?: boolean
@@ -393,11 +393,11 @@ export type ArticleCreateManyInput = {
 
 export type ArticleUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
   photographer?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -408,11 +408,11 @@ export type ArticleUpdateManyMutationInput = {
 
 export type ArticleUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
   photographer?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -423,11 +423,11 @@ export type ArticleUncheckedUpdateManyInput = {
 
 export type ArticleCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
   photographer?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -438,11 +438,11 @@ export type ArticleCountOrderByAggregateInput = {
 
 export type ArticleMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
   photographer?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -453,11 +453,11 @@ export type ArticleMaxOrderByAggregateInput = {
 
 export type ArticleMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
   photographer?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -487,11 +487,11 @@ export type ArticleUpdateOneRequiredWithoutTagsNestedInput = {
 
 export type ArticleCreateWithoutTagsInput = {
   id?: string
+  slug: string
   title: string
   author: string
   photographer: string
   imageUrl: string
-  slug: string
   excerpt: string
   content: string
   isFeatured?: boolean
@@ -502,11 +502,11 @@ export type ArticleCreateWithoutTagsInput = {
 
 export type ArticleUncheckedCreateWithoutTagsInput = {
   id?: string
+  slug: string
   title: string
   author: string
   photographer: string
   imageUrl: string
-  slug: string
   excerpt: string
   content: string
   isFeatured?: boolean
@@ -533,11 +533,11 @@ export type ArticleUpdateToOneWithWhereWithoutTagsInput = {
 
 export type ArticleUpdateWithoutTagsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
   photographer?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -548,11 +548,11 @@ export type ArticleUpdateWithoutTagsInput = {
 
 export type ArticleUncheckedUpdateWithoutTagsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
   photographer?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -594,11 +594,11 @@ export type ArticleCountOutputTypeCountTagsArgs<ExtArgs extends runtime.Types.Ex
 
 export type ArticleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  slug?: boolean
   title?: boolean
   author?: boolean
   photographer?: boolean
   imageUrl?: boolean
-  slug?: boolean
   excerpt?: boolean
   content?: boolean
   isFeatured?: boolean
@@ -611,11 +611,11 @@ export type ArticleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 
 export type ArticleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  slug?: boolean
   title?: boolean
   author?: boolean
   photographer?: boolean
   imageUrl?: boolean
-  slug?: boolean
   excerpt?: boolean
   content?: boolean
   isFeatured?: boolean
@@ -626,11 +626,11 @@ export type ArticleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 
 export type ArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  slug?: boolean
   title?: boolean
   author?: boolean
   photographer?: boolean
   imageUrl?: boolean
-  slug?: boolean
   excerpt?: boolean
   content?: boolean
   isFeatured?: boolean
@@ -641,11 +641,11 @@ export type ArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 
 export type ArticleSelectScalar = {
   id?: boolean
+  slug?: boolean
   title?: boolean
   author?: boolean
   photographer?: boolean
   imageUrl?: boolean
-  slug?: boolean
   excerpt?: boolean
   content?: boolean
   isFeatured?: boolean
@@ -654,7 +654,7 @@ export type ArticleSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "author" | "photographer" | "imageUrl" | "slug" | "excerpt" | "content" | "isFeatured" | "vimeoId" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
+export type ArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "author" | "photographer" | "imageUrl" | "excerpt" | "content" | "isFeatured" | "vimeoId" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
 export type ArticleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tags?: boolean | Prisma.Article$tagsArgs<ExtArgs>
   _count?: boolean | Prisma.ArticleCountOutputTypeDefaultArgs<ExtArgs>
@@ -669,11 +669,11 @@ export type $ArticlePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    slug: string
     title: string
     author: string
     photographer: string
     imageUrl: string
-    slug: string
     excerpt: string
     content: string
     isFeatured: boolean
@@ -1105,11 +1105,11 @@ export interface Prisma__ArticleClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface ArticleFieldRefs {
   readonly id: Prisma.FieldRef<"Article", 'String'>
+  readonly slug: Prisma.FieldRef<"Article", 'String'>
   readonly title: Prisma.FieldRef<"Article", 'String'>
   readonly author: Prisma.FieldRef<"Article", 'String'>
   readonly photographer: Prisma.FieldRef<"Article", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Article", 'String'>
-  readonly slug: Prisma.FieldRef<"Article", 'String'>
   readonly excerpt: Prisma.FieldRef<"Article", 'String'>
   readonly content: Prisma.FieldRef<"Article", 'String'>
   readonly isFeatured: Prisma.FieldRef<"Article", 'Boolean'>
