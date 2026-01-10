@@ -87,10 +87,10 @@ export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
 
 
 export const EventType = {
-  SOCIAL: 'SOCIAL',
-  ACADEMIC: 'ACADEMIC',
-  COMPANY: 'COMPANY',
   GENERAL_ASSEMBLY: 'GENERAL_ASSEMBLY',
+  COMPANY: 'COMPANY',
+  ACADEMIC: 'ACADEMIC',
+  SOCIAL: 'SOCIAL',
   INTERNAL: 'INTERNAL',
   OTHER: 'OTHER',
   WELCOME: 'WELCOME'

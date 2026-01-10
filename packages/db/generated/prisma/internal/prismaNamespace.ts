@@ -3074,12 +3074,12 @@ export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof Gr
 
 export const GroupMembershipScalarFieldEnum = {
   id: 'id',
-  groupId: 'groupId',
-  userId: 'userId',
   start: 'start',
   end: 'end',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  groupId: 'groupId',
+  userId: 'userId'
 } as const
 
 export type GroupMembershipScalarFieldEnum = (typeof GroupMembershipScalarFieldEnum)[keyof typeof GroupMembershipScalarFieldEnum]
@@ -3095,9 +3095,9 @@ export type GroupMembershipRoleScalarFieldEnum = (typeof GroupMembershipRoleScal
 
 export const GroupRoleScalarFieldEnum = {
   id: 'id',
-  groupId: 'groupId',
   name: 'name',
-  type: 'type'
+  type: 'type',
+  groupId: 'groupId'
 } as const
 
 export type GroupRoleScalarFieldEnum = (typeof GroupRoleScalarFieldEnum)[keyof typeof GroupRoleScalarFieldEnum]
@@ -3134,10 +3134,7 @@ export type AttendancePoolScalarFieldEnum = (typeof AttendancePoolScalarFieldEnu
 
 export const AttendeeScalarFieldEnum = {
   id: 'id',
-  attendanceId: 'attendanceId',
-  userId: 'userId',
   userGrade: 'userGrade',
-  attendancePoolId: 'attendancePoolId',
   selections: 'selections',
   reserved: 'reserved',
   earliestReservationAt: 'earliestReservationAt',
@@ -3151,6 +3148,10 @@ export const AttendeeScalarFieldEnum = {
   paymentChargeDeadline: 'paymentChargeDeadline',
   paymentChargedAt: 'paymentChargedAt',
   paymentRefundedAt: 'paymentRefundedAt',
+  paymentCheckoutUrl: 'paymentCheckoutUrl',
+  attendanceId: 'attendanceId',
+  userId: 'userId',
+  attendancePoolId: 'attendancePoolId',
   paymentRefundedById: 'paymentRefundedById'
 } as const
 
@@ -3169,11 +3170,11 @@ export const EventScalarFieldEnum = {
   locationTitle: 'locationTitle',
   locationAddress: 'locationAddress',
   locationLink: 'locationLink',
-  attendanceId: 'attendanceId',
   type: 'type',
   markForMissedAttendance: 'markForMissedAttendance',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  attendanceId: 'attendanceId',
   parentId: 'parentId',
   metadataImportId: 'metadataImportId'
 } as const
@@ -3212,10 +3213,10 @@ export type MarkGroupScalarFieldEnum = (typeof MarkGroupScalarFieldEnum)[keyof t
 
 
 export const PersonalMarkScalarFieldEnum = {
+  createdAt: 'createdAt',
   markId: 'markId',
   userId: 'userId',
-  givenById: 'givenById',
-  createdAt: 'createdAt'
+  givenById: 'givenById'
 } as const
 
 export type PersonalMarkScalarFieldEnum = (typeof PersonalMarkScalarFieldEnum)[keyof typeof PersonalMarkScalarFieldEnum]
@@ -3265,7 +3266,6 @@ export type EventHostingGroupScalarFieldEnum = (typeof EventHostingGroupScalarFi
 
 export const JobListingScalarFieldEnum = {
   id: 'id',
-  companyId: 'companyId',
   title: 'title',
   description: 'description',
   shortDescription: 'shortDescription',
@@ -3279,7 +3279,8 @@ export const JobListingScalarFieldEnum = {
   applicationEmail: 'applicationEmail',
   rollingAdmission: 'rollingAdmission',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  companyId: 'companyId'
 } as const
 
 export type JobListingScalarFieldEnum = (typeof JobListingScalarFieldEnum)[keyof typeof JobListingScalarFieldEnum]
@@ -3309,11 +3310,11 @@ export type OfflineScalarFieldEnum = (typeof OfflineScalarFieldEnum)[keyof typeo
 
 export const ArticleScalarFieldEnum = {
   id: 'id',
+  slug: 'slug',
   title: 'title',
   author: 'author',
   photographer: 'photographer',
   imageUrl: 'imageUrl',
-  slug: 'slug',
   excerpt: 'excerpt',
   content: 'content',
   isFeatured: 'isFeatured',
@@ -3369,11 +3370,11 @@ export type RecurringTaskScalarFieldEnum = (typeof RecurringTaskScalarFieldEnum)
 
 export const FeedbackFormScalarFieldEnum = {
   id: 'id',
-  eventId: 'eventId',
   publicResultsToken: 'publicResultsToken',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  answerDeadline: 'answerDeadline'
+  answerDeadline: 'answerDeadline',
+  eventId: 'eventId'
 } as const
 
 export type FeedbackFormScalarFieldEnum = (typeof FeedbackFormScalarFieldEnum)[keyof typeof FeedbackFormScalarFieldEnum]
@@ -3381,14 +3382,14 @@ export type FeedbackFormScalarFieldEnum = (typeof FeedbackFormScalarFieldEnum)[k
 
 export const FeedbackQuestionScalarFieldEnum = {
   id: 'id',
-  feedbackFormId: 'feedbackFormId',
   label: 'label',
   required: 'required',
   showInPublicResults: 'showInPublicResults',
   type: 'type',
   order: 'order',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  feedbackFormId: 'feedbackFormId'
 } as const
 
 export type FeedbackQuestionScalarFieldEnum = (typeof FeedbackQuestionScalarFieldEnum)[keyof typeof FeedbackQuestionScalarFieldEnum]
@@ -3405,9 +3406,9 @@ export type FeedbackQuestionOptionScalarFieldEnum = (typeof FeedbackQuestionOpti
 
 export const FeedbackQuestionAnswerScalarFieldEnum = {
   id: 'id',
+  value: 'value',
   questionId: 'questionId',
-  formAnswerId: 'formAnswerId',
-  value: 'value'
+  formAnswerId: 'formAnswerId'
 } as const
 
 export type FeedbackQuestionAnswerScalarFieldEnum = (typeof FeedbackQuestionAnswerScalarFieldEnum)[keyof typeof FeedbackQuestionAnswerScalarFieldEnum]
@@ -3423,10 +3424,10 @@ export type FeedbackQuestionAnswerOptionLinkScalarFieldEnum = (typeof FeedbackQu
 
 export const FeedbackFormAnswerScalarFieldEnum = {
   id: 'id',
-  feedbackFormId: 'feedbackFormId',
-  attendeeId: 'attendeeId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  feedbackFormId: 'feedbackFormId',
+  attendeeId: 'attendeeId'
 } as const
 
 export type FeedbackFormAnswerScalarFieldEnum = (typeof FeedbackFormAnswerScalarFieldEnum)[keyof typeof FeedbackFormAnswerScalarFieldEnum]
@@ -3437,10 +3438,10 @@ export const AuditLogScalarFieldEnum = {
   tableName: 'tableName',
   rowId: 'rowId',
   createdAt: 'createdAt',
-  userId: 'userId',
   operation: 'operation',
   rowData: 'rowData',
-  transactionId: 'transactionId'
+  transactionId: 'transactionId',
+  userId: 'userId'
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
