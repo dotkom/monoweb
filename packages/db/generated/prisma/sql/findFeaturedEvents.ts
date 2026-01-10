@@ -10,7 +10,7 @@ import { type $DbEnums } from "./$DbEnums"
  * @param offset
  * @param limit
  */
-export const findFeaturedEvents = $runtime.makeTypedQueryFactory("\n\n\n\nWITH\ncapacities AS (\nSELECT\n\"attendanceId\",\nSUM(\"capacity\") AS sum\nFROM \"attendance_pool\"\nGROUP BY \"attendanceId\"\n),\n\nattendees AS (\nSELECT\n\"attendanceId\",\nCOUNT(*) AS count\nFROM \"attendee\"\nGROUP BY \"attendanceId\"\n)\n\nSELECT\n\"event\".*,\nCOALESCE(capacities.sum, 0) AS \"totalCapacity\",\nCOALESCE(attendees.count, 0) AS \"attendeeCount\",\n\nCASE \"event\".\"type\"\nWHEN 'GENERAL_ASSEMBLY' THEN 1\nWHEN 'COMPANY'          THEN 2\nWHEN 'ACADEMIC'         THEN 2\nELSE 3\nEND AS \"typeRank\",\n\nCASE\nWHEN \"event\".\"attendanceId\" IS NOT NULL\nAND NOW() BETWEEN attendance.\"registerStart\" AND attendance.\"registerEnd\"\nAND COALESCE(capacities.sum, 0) > 0\nAND COALESCE(attendees.count, 0) < COALESCE(capacities.sum, 0)\nTHEN 1\n\nWHEN \"event\".\"attendanceId\" IS NOT NULL\nAND NOW() < attendance.\"registerStart\"\nTHEN 2\n\nWHEN \"event\".\"attendanceId\" IS NULL\nOR COALESCE(capacities.sum, 0) = 0\nTHEN 3\n\nWHEN \"event\".\"attendanceId\" IS NOT NULL\nAND COALESCE(capacities.sum, 0) > 0\nAND COALESCE(attendees.count, 0) >= COALESCE(capacities.sum, 0)\nTHEN 4\n\nELSE 4\nEND AS \"registrationBucket\"\n\nFROM \"event\"\nLEFT JOIN \"attendance\"\nON \"attendance\".\"id\" = \"event\".\"attendanceId\"\nLEFT JOIN capacities\nON capacities.\"attendanceId\" = \"event\".\"attendanceId\"\nLEFT JOIN attendees\nON attendees.\"attendanceId\" = \"event\".\"attendanceId\"\n\nWHERE\n\"event\".\"status\" = 'PUBLIC'\nAND \"event\".\"start\" > NOW()\n\nORDER BY\n\"typeRank\" ASC,\n\"registrationBucket\" ASC,\n\"event\".\"start\" ASC\n\nOFFSET $1\nLIMIT $2;") as (offset: number, limit: number) => $runtime.TypedSql<findFeaturedEvents.Parameters, findFeaturedEvents.Result>
+export const findFeaturedEvents = $runtime.makeTypedQueryFactory("\n\n\n\nWITH\ncapacities AS (\nSELECT\nattendance_id,\nSUM(\"capacity\") AS sum\nFROM attendance_pool\nGROUP BY attendance_id\n),\n\nattendees AS (\nSELECT\nattendance_id,\nCOUNT(*) AS count\nFROM attendee\nGROUP BY attendance_id\n)\n\nSELECT\nevent.*,\nCOALESCE(capacities.sum, 0) AS total_capacity,\nCOALESCE(attendees.count, 0) AS attendee_count,\n\nCASE event.\"type\"\nWHEN 'GENERAL_ASSEMBLY' THEN 1\nWHEN 'COMPANY'          THEN 2\nWHEN 'ACADEMIC'         THEN 2\nELSE 3\nEND AS type_rank,\n\nCASE\nWHEN event.attendance_id IS NOT NULL\nAND NOW() BETWEEN attendance.register_start AND attendance.register_end\nAND COALESCE(capacities.sum, 0) > 0\nAND COALESCE(attendees.count, 0) < COALESCE(capacities.sum, 0)\nTHEN 1\n\nWHEN event.attendance_id IS NOT NULL\nAND NOW() < attendance.register_start\nTHEN 2\n\nWHEN event.attendance_id IS NULL\nOR COALESCE(capacities.sum, 0) = 0\nTHEN 3\n\nWHEN event.attendance_id IS NOT NULL\nAND COALESCE(capacities.sum, 0) > 0\nAND COALESCE(attendees.count, 0) >= COALESCE(capacities.sum, 0)\nTHEN 4\n\nELSE 4\nEND AS registration_bucket\n\nFROM event\nLEFT JOIN \"attendance\"\nON \"attendance\".\"id\" = event.attendance_id\nLEFT JOIN capacities\nON capacities.attendance_id = event.attendance_id\nLEFT JOIN attendees\nON attendees.attendance_id = event.attendance_id\n\nWHERE\nevent.status = 'PUBLIC'\nAND event.start > NOW()\n\nORDER BY\ntype_rank ASC,\nregistration_bucket ASC,\nevent.\"start\" ASC\n\nOFFSET $1\nLIMIT $2;") as (offset: number, limit: number) => $runtime.TypedSql<findFeaturedEvents.Parameters, findFeaturedEvents.Result>
 
 export namespace findFeaturedEvents {
   export type Parameters = [offset: number, limit: number]
@@ -21,21 +21,21 @@ export namespace findFeaturedEvents {
     end: Date
     status: $DbEnums["event_status"]
     description: string
-    shortDescription: string | null
-    imageUrl: string | null
-    locationTitle: string | null
-    locationAddress: string | null
-    locationLink: string | null
-    attendanceId: string | null
+    short_description: string | null
+    image_url: string | null
+    location_title: string | null
+    location_address: string | null
+    location_link: string | null
+    attendance_id: string | null
     type: $DbEnums["event_type"]
-    createdAt: Date
-    updatedAt: Date
-    metadataImportId: number | null
-    parentId: string | null
-    markForMissedAttendance: boolean
-    totalCapacity: bigint | null
-    attendeeCount: bigint | null
-    typeRank: number | null
-    registrationBucket: number | null
+    created_at: Date
+    updated_at: Date
+    metadata_import_id: number | null
+    parent_id: string | null
+    mark_for_missed_attendance: boolean
+    total_capacity: bigint | null
+    attendee_count: bigint | null
+    type_rank: number | null
+    registration_bucket: number | null
   }
 }
