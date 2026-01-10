@@ -36,10 +36,7 @@ export type AttendeeSumAggregateOutputType = {
 
 export type AttendeeMinAggregateOutputType = {
   id: string | null
-  attendanceId: string | null
-  userId: string | null
   userGrade: number | null
-  attendancePoolId: string | null
   reserved: boolean | null
   earliestReservationAt: Date | null
   attendedAt: Date | null
@@ -52,15 +49,16 @@ export type AttendeeMinAggregateOutputType = {
   paymentChargeDeadline: Date | null
   paymentChargedAt: Date | null
   paymentRefundedAt: Date | null
+  paymentCheckoutUrl: string | null
+  attendanceId: string | null
+  userId: string | null
+  attendancePoolId: string | null
   paymentRefundedById: string | null
 }
 
 export type AttendeeMaxAggregateOutputType = {
   id: string | null
-  attendanceId: string | null
-  userId: string | null
   userGrade: number | null
-  attendancePoolId: string | null
   reserved: boolean | null
   earliestReservationAt: Date | null
   attendedAt: Date | null
@@ -73,15 +71,16 @@ export type AttendeeMaxAggregateOutputType = {
   paymentChargeDeadline: Date | null
   paymentChargedAt: Date | null
   paymentRefundedAt: Date | null
+  paymentCheckoutUrl: string | null
+  attendanceId: string | null
+  userId: string | null
+  attendancePoolId: string | null
   paymentRefundedById: string | null
 }
 
 export type AttendeeCountAggregateOutputType = {
   id: number
-  attendanceId: number
-  userId: number
   userGrade: number
-  attendancePoolId: number
   selections: number
   reserved: number
   earliestReservationAt: number
@@ -95,6 +94,10 @@ export type AttendeeCountAggregateOutputType = {
   paymentChargeDeadline: number
   paymentChargedAt: number
   paymentRefundedAt: number
+  paymentCheckoutUrl: number
+  attendanceId: number
+  userId: number
+  attendancePoolId: number
   paymentRefundedById: number
   _all: number
 }
@@ -110,10 +113,7 @@ export type AttendeeSumAggregateInputType = {
 
 export type AttendeeMinAggregateInputType = {
   id?: true
-  attendanceId?: true
-  userId?: true
   userGrade?: true
-  attendancePoolId?: true
   reserved?: true
   earliestReservationAt?: true
   attendedAt?: true
@@ -126,15 +126,16 @@ export type AttendeeMinAggregateInputType = {
   paymentChargeDeadline?: true
   paymentChargedAt?: true
   paymentRefundedAt?: true
+  paymentCheckoutUrl?: true
+  attendanceId?: true
+  userId?: true
+  attendancePoolId?: true
   paymentRefundedById?: true
 }
 
 export type AttendeeMaxAggregateInputType = {
   id?: true
-  attendanceId?: true
-  userId?: true
   userGrade?: true
-  attendancePoolId?: true
   reserved?: true
   earliestReservationAt?: true
   attendedAt?: true
@@ -147,15 +148,16 @@ export type AttendeeMaxAggregateInputType = {
   paymentChargeDeadline?: true
   paymentChargedAt?: true
   paymentRefundedAt?: true
+  paymentCheckoutUrl?: true
+  attendanceId?: true
+  userId?: true
+  attendancePoolId?: true
   paymentRefundedById?: true
 }
 
 export type AttendeeCountAggregateInputType = {
   id?: true
-  attendanceId?: true
-  userId?: true
   userGrade?: true
-  attendancePoolId?: true
   selections?: true
   reserved?: true
   earliestReservationAt?: true
@@ -169,6 +171,10 @@ export type AttendeeCountAggregateInputType = {
   paymentChargeDeadline?: true
   paymentChargedAt?: true
   paymentRefundedAt?: true
+  paymentCheckoutUrl?: true
+  attendanceId?: true
+  userId?: true
+  attendancePoolId?: true
   paymentRefundedById?: true
   _all?: true
 }
@@ -261,10 +267,7 @@ export type AttendeeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type AttendeeGroupByOutputType = {
   id: string
-  attendanceId: string
-  userId: string
   userGrade: number | null
-  attendancePoolId: string
   selections: runtime.JsonValue
   reserved: boolean
   earliestReservationAt: Date
@@ -278,6 +281,10 @@ export type AttendeeGroupByOutputType = {
   paymentChargeDeadline: Date | null
   paymentChargedAt: Date | null
   paymentRefundedAt: Date | null
+  paymentCheckoutUrl: string | null
+  attendanceId: string
+  userId: string
+  attendancePoolId: string
   paymentRefundedById: string | null
   _count: AttendeeCountAggregateOutputType | null
   _avg: AttendeeAvgAggregateOutputType | null
@@ -306,10 +313,7 @@ export type AttendeeWhereInput = {
   OR?: Prisma.AttendeeWhereInput[]
   NOT?: Prisma.AttendeeWhereInput | Prisma.AttendeeWhereInput[]
   id?: Prisma.StringFilter<"Attendee"> | string
-  attendanceId?: Prisma.StringFilter<"Attendee"> | string
-  userId?: Prisma.StringFilter<"Attendee"> | string
   userGrade?: Prisma.IntNullableFilter<"Attendee"> | number | null
-  attendancePoolId?: Prisma.StringFilter<"Attendee"> | string
   selections?: Prisma.JsonFilter<"Attendee">
   reserved?: Prisma.BoolFilter<"Attendee"> | boolean
   earliestReservationAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
@@ -323,20 +327,21 @@ export type AttendeeWhereInput = {
   paymentChargeDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentChargedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentRefundedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
+  paymentCheckoutUrl?: Prisma.StringNullableFilter<"Attendee"> | string | null
+  attendanceId?: Prisma.StringFilter<"Attendee"> | string
+  userId?: Prisma.StringFilter<"Attendee"> | string
+  attendancePoolId?: Prisma.StringFilter<"Attendee"> | string
   paymentRefundedById?: Prisma.StringNullableFilter<"Attendee"> | string | null
+  feedbackFormAnswer?: Prisma.XOR<Prisma.FeedbackFormAnswerNullableScalarRelationFilter, Prisma.FeedbackFormAnswerWhereInput> | null
   attendance?: Prisma.XOR<Prisma.AttendanceScalarRelationFilter, Prisma.AttendanceWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   attendancePool?: Prisma.XOR<Prisma.AttendancePoolScalarRelationFilter, Prisma.AttendancePoolWhereInput>
-  feedbackFormAnswer?: Prisma.XOR<Prisma.FeedbackFormAnswerNullableScalarRelationFilter, Prisma.FeedbackFormAnswerWhereInput> | null
   paymentRefundedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type AttendeeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  attendanceId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   userGrade?: Prisma.SortOrderInput | Prisma.SortOrder
-  attendancePoolId?: Prisma.SortOrder
   selections?: Prisma.SortOrder
   reserved?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
@@ -350,11 +355,15 @@ export type AttendeeOrderByWithRelationInput = {
   paymentChargeDeadline?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentChargedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentRefundedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentCheckoutUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  attendanceId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  attendancePoolId?: Prisma.SortOrder
   paymentRefundedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerOrderByWithRelationInput
   attendance?: Prisma.AttendanceOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   attendancePool?: Prisma.AttendancePoolOrderByWithRelationInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerOrderByWithRelationInput
   paymentRefundedBy?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -364,10 +373,7 @@ export type AttendeeWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.AttendeeWhereInput | Prisma.AttendeeWhereInput[]
   OR?: Prisma.AttendeeWhereInput[]
   NOT?: Prisma.AttendeeWhereInput | Prisma.AttendeeWhereInput[]
-  attendanceId?: Prisma.StringFilter<"Attendee"> | string
-  userId?: Prisma.StringFilter<"Attendee"> | string
   userGrade?: Prisma.IntNullableFilter<"Attendee"> | number | null
-  attendancePoolId?: Prisma.StringFilter<"Attendee"> | string
   selections?: Prisma.JsonFilter<"Attendee">
   reserved?: Prisma.BoolFilter<"Attendee"> | boolean
   earliestReservationAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
@@ -381,20 +387,21 @@ export type AttendeeWhereUniqueInput = Prisma.AtLeast<{
   paymentChargeDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentChargedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentRefundedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
+  paymentCheckoutUrl?: Prisma.StringNullableFilter<"Attendee"> | string | null
+  attendanceId?: Prisma.StringFilter<"Attendee"> | string
+  userId?: Prisma.StringFilter<"Attendee"> | string
+  attendancePoolId?: Prisma.StringFilter<"Attendee"> | string
   paymentRefundedById?: Prisma.StringNullableFilter<"Attendee"> | string | null
+  feedbackFormAnswer?: Prisma.XOR<Prisma.FeedbackFormAnswerNullableScalarRelationFilter, Prisma.FeedbackFormAnswerWhereInput> | null
   attendance?: Prisma.XOR<Prisma.AttendanceScalarRelationFilter, Prisma.AttendanceWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   attendancePool?: Prisma.XOR<Prisma.AttendancePoolScalarRelationFilter, Prisma.AttendancePoolWhereInput>
-  feedbackFormAnswer?: Prisma.XOR<Prisma.FeedbackFormAnswerNullableScalarRelationFilter, Prisma.FeedbackFormAnswerWhereInput> | null
   paymentRefundedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id" | "attendee_unique">
 
 export type AttendeeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  attendanceId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   userGrade?: Prisma.SortOrderInput | Prisma.SortOrder
-  attendancePoolId?: Prisma.SortOrder
   selections?: Prisma.SortOrder
   reserved?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
@@ -408,6 +415,10 @@ export type AttendeeOrderByWithAggregationInput = {
   paymentChargeDeadline?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentChargedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentRefundedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentCheckoutUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  attendanceId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  attendancePoolId?: Prisma.SortOrder
   paymentRefundedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AttendeeCountOrderByAggregateInput
   _avg?: Prisma.AttendeeAvgOrderByAggregateInput
@@ -421,10 +432,7 @@ export type AttendeeScalarWhereWithAggregatesInput = {
   OR?: Prisma.AttendeeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AttendeeScalarWhereWithAggregatesInput | Prisma.AttendeeScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Attendee"> | string
-  attendanceId?: Prisma.StringWithAggregatesFilter<"Attendee"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"Attendee"> | string
   userGrade?: Prisma.IntNullableWithAggregatesFilter<"Attendee"> | number | null
-  attendancePoolId?: Prisma.StringWithAggregatesFilter<"Attendee"> | string
   selections?: Prisma.JsonWithAggregatesFilter<"Attendee">
   reserved?: Prisma.BoolWithAggregatesFilter<"Attendee"> | boolean
   earliestReservationAt?: Prisma.DateTimeWithAggregatesFilter<"Attendee"> | Date | string
@@ -438,6 +446,10 @@ export type AttendeeScalarWhereWithAggregatesInput = {
   paymentChargeDeadline?: Prisma.DateTimeNullableWithAggregatesFilter<"Attendee"> | Date | string | null
   paymentChargedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Attendee"> | Date | string | null
   paymentRefundedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Attendee"> | Date | string | null
+  paymentCheckoutUrl?: Prisma.StringNullableWithAggregatesFilter<"Attendee"> | string | null
+  attendanceId?: Prisma.StringWithAggregatesFilter<"Attendee"> | string
+  userId?: Prisma.StringWithAggregatesFilter<"Attendee"> | string
+  attendancePoolId?: Prisma.StringWithAggregatesFilter<"Attendee"> | string
   paymentRefundedById?: Prisma.StringNullableWithAggregatesFilter<"Attendee"> | string | null
 }
 
@@ -457,19 +469,17 @@ export type AttendeeCreateInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   attendance: Prisma.AttendanceCreateNestedOneWithoutAttendeesInput
   user: Prisma.UserCreateNestedOneWithoutAttendeeInput
   attendancePool: Prisma.AttendancePoolCreateNestedOneWithoutAttendeesInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   paymentRefundedBy?: Prisma.UserCreateNestedOneWithoutAttendeesRefundedInput
 }
 
 export type AttendeeUncheckedCreateInput = {
   id?: string
-  attendanceId: string
-  userId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -483,6 +493,10 @@ export type AttendeeUncheckedCreateInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  userId: string
+  attendancePoolId: string
   paymentRefundedById?: string | null
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput
 }
@@ -503,19 +517,17 @@ export type AttendeeUpdateInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   attendance?: Prisma.AttendanceUpdateOneRequiredWithoutAttendeesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutAttendeeNestedInput
   attendancePool?: Prisma.AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   paymentRefundedBy?: Prisma.UserUpdateOneWithoutAttendeesRefundedNestedInput
 }
 
 export type AttendeeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -529,16 +541,17 @@ export type AttendeeUncheckedUpdateInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInput
 }
 
 export type AttendeeCreateManyInput = {
   id?: string
-  attendanceId: string
-  userId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -552,6 +565,10 @@ export type AttendeeCreateManyInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  userId: string
+  attendancePoolId: string
   paymentRefundedById?: string | null
 }
 
@@ -571,14 +588,12 @@ export type AttendeeUpdateManyMutationInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AttendeeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -592,6 +607,10 @@ export type AttendeeUncheckedUpdateManyInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -612,10 +631,7 @@ export type AttendeeAttendee_uniqueCompoundUniqueInput = {
 
 export type AttendeeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  attendanceId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   userGrade?: Prisma.SortOrder
-  attendancePoolId?: Prisma.SortOrder
   selections?: Prisma.SortOrder
   reserved?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
@@ -629,6 +645,10 @@ export type AttendeeCountOrderByAggregateInput = {
   paymentChargeDeadline?: Prisma.SortOrder
   paymentChargedAt?: Prisma.SortOrder
   paymentRefundedAt?: Prisma.SortOrder
+  paymentCheckoutUrl?: Prisma.SortOrder
+  attendanceId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  attendancePoolId?: Prisma.SortOrder
   paymentRefundedById?: Prisma.SortOrder
 }
 
@@ -638,10 +658,7 @@ export type AttendeeAvgOrderByAggregateInput = {
 
 export type AttendeeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  attendanceId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   userGrade?: Prisma.SortOrder
-  attendancePoolId?: Prisma.SortOrder
   reserved?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
   attendedAt?: Prisma.SortOrder
@@ -654,15 +671,16 @@ export type AttendeeMaxOrderByAggregateInput = {
   paymentChargeDeadline?: Prisma.SortOrder
   paymentChargedAt?: Prisma.SortOrder
   paymentRefundedAt?: Prisma.SortOrder
+  paymentCheckoutUrl?: Prisma.SortOrder
+  attendanceId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  attendancePoolId?: Prisma.SortOrder
   paymentRefundedById?: Prisma.SortOrder
 }
 
 export type AttendeeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  attendanceId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   userGrade?: Prisma.SortOrder
-  attendancePoolId?: Prisma.SortOrder
   reserved?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
   attendedAt?: Prisma.SortOrder
@@ -675,6 +693,10 @@ export type AttendeeMinOrderByAggregateInput = {
   paymentChargeDeadline?: Prisma.SortOrder
   paymentChargedAt?: Prisma.SortOrder
   paymentRefundedAt?: Prisma.SortOrder
+  paymentCheckoutUrl?: Prisma.SortOrder
+  attendanceId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  attendancePoolId?: Prisma.SortOrder
   paymentRefundedById?: Prisma.SortOrder
 }
 
@@ -885,17 +907,16 @@ export type AttendeeCreateWithoutUserInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   attendance: Prisma.AttendanceCreateNestedOneWithoutAttendeesInput
   attendancePool: Prisma.AttendancePoolCreateNestedOneWithoutAttendeesInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   paymentRefundedBy?: Prisma.UserCreateNestedOneWithoutAttendeesRefundedInput
 }
 
 export type AttendeeUncheckedCreateWithoutUserInput = {
   id?: string
-  attendanceId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -909,6 +930,9 @@ export type AttendeeUncheckedCreateWithoutUserInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  attendancePoolId: string
   paymentRefundedById?: string | null
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput
 }
@@ -939,18 +963,16 @@ export type AttendeeCreateWithoutPaymentRefundedByInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   attendance: Prisma.AttendanceCreateNestedOneWithoutAttendeesInput
   user: Prisma.UserCreateNestedOneWithoutAttendeeInput
   attendancePool: Prisma.AttendancePoolCreateNestedOneWithoutAttendeesInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
 }
 
 export type AttendeeUncheckedCreateWithoutPaymentRefundedByInput = {
   id?: string
-  attendanceId: string
-  userId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -964,6 +986,10 @@ export type AttendeeUncheckedCreateWithoutPaymentRefundedByInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  userId: string
+  attendancePoolId: string
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput
 }
 
@@ -998,10 +1024,7 @@ export type AttendeeScalarWhereInput = {
   OR?: Prisma.AttendeeScalarWhereInput[]
   NOT?: Prisma.AttendeeScalarWhereInput | Prisma.AttendeeScalarWhereInput[]
   id?: Prisma.StringFilter<"Attendee"> | string
-  attendanceId?: Prisma.StringFilter<"Attendee"> | string
-  userId?: Prisma.StringFilter<"Attendee"> | string
   userGrade?: Prisma.IntNullableFilter<"Attendee"> | number | null
-  attendancePoolId?: Prisma.StringFilter<"Attendee"> | string
   selections?: Prisma.JsonFilter<"Attendee">
   reserved?: Prisma.BoolFilter<"Attendee"> | boolean
   earliestReservationAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
@@ -1015,6 +1038,10 @@ export type AttendeeScalarWhereInput = {
   paymentChargeDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentChargedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentRefundedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
+  paymentCheckoutUrl?: Prisma.StringNullableFilter<"Attendee"> | string | null
+  attendanceId?: Prisma.StringFilter<"Attendee"> | string
+  userId?: Prisma.StringFilter<"Attendee"> | string
+  attendancePoolId?: Prisma.StringFilter<"Attendee"> | string
   paymentRefundedById?: Prisma.StringNullableFilter<"Attendee"> | string | null
 }
 
@@ -1050,17 +1077,16 @@ export type AttendeeCreateWithoutAttendanceInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   user: Prisma.UserCreateNestedOneWithoutAttendeeInput
   attendancePool: Prisma.AttendancePoolCreateNestedOneWithoutAttendeesInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   paymentRefundedBy?: Prisma.UserCreateNestedOneWithoutAttendeesRefundedInput
 }
 
 export type AttendeeUncheckedCreateWithoutAttendanceInput = {
   id?: string
-  userId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -1074,6 +1100,9 @@ export type AttendeeUncheckedCreateWithoutAttendanceInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  userId: string
+  attendancePoolId: string
   paymentRefundedById?: string | null
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput
 }
@@ -1120,16 +1149,15 @@ export type AttendeeCreateWithoutAttendancePoolInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   attendance: Prisma.AttendanceCreateNestedOneWithoutAttendeesInput
   user: Prisma.UserCreateNestedOneWithoutAttendeeInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput
   paymentRefundedBy?: Prisma.UserCreateNestedOneWithoutAttendeesRefundedInput
 }
 
 export type AttendeeUncheckedCreateWithoutAttendancePoolInput = {
   id?: string
-  attendanceId: string
-  userId: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
@@ -1144,6 +1172,9 @@ export type AttendeeUncheckedCreateWithoutAttendancePoolInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  userId: string
   paymentRefundedById?: string | null
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput
 }
@@ -1190,6 +1221,7 @@ export type AttendeeCreateWithoutFeedbackFormAnswerInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
   attendance: Prisma.AttendanceCreateNestedOneWithoutAttendeesInput
   user: Prisma.UserCreateNestedOneWithoutAttendeeInput
   attendancePool: Prisma.AttendancePoolCreateNestedOneWithoutAttendeesInput
@@ -1198,10 +1230,7 @@ export type AttendeeCreateWithoutFeedbackFormAnswerInput = {
 
 export type AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput = {
   id?: string
-  attendanceId: string
-  userId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -1215,6 +1244,10 @@ export type AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  userId: string
+  attendancePoolId: string
   paymentRefundedById?: string | null
 }
 
@@ -1250,6 +1283,7 @@ export type AttendeeUpdateWithoutFeedbackFormAnswerInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendance?: Prisma.AttendanceUpdateOneRequiredWithoutAttendeesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutAttendeeNestedInput
   attendancePool?: Prisma.AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInput
@@ -1258,10 +1292,7 @@ export type AttendeeUpdateWithoutFeedbackFormAnswerInput = {
 
 export type AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1275,14 +1306,16 @@ export type AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AttendeeCreateManyUserInput = {
   id?: string
-  attendanceId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -1296,15 +1329,15 @@ export type AttendeeCreateManyUserInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  attendancePoolId: string
   paymentRefundedById?: string | null
 }
 
 export type AttendeeCreateManyPaymentRefundedByInput = {
   id?: string
-  attendanceId: string
-  userId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -1318,6 +1351,10 @@ export type AttendeeCreateManyPaymentRefundedByInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  userId: string
+  attendancePoolId: string
 }
 
 export type AttendeeUpdateWithoutUserInput = {
@@ -1336,17 +1373,16 @@ export type AttendeeUpdateWithoutUserInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   attendance?: Prisma.AttendanceUpdateOneRequiredWithoutAttendeesNestedInput
   attendancePool?: Prisma.AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   paymentRefundedBy?: Prisma.UserUpdateOneWithoutAttendeesRefundedNestedInput
 }
 
 export type AttendeeUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1360,15 +1396,16 @@ export type AttendeeUncheckedUpdateWithoutUserInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInput
 }
 
 export type AttendeeUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1382,6 +1419,9 @@ export type AttendeeUncheckedUpdateManyWithoutUserInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -1401,18 +1441,16 @@ export type AttendeeUpdateWithoutPaymentRefundedByInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   attendance?: Prisma.AttendanceUpdateOneRequiredWithoutAttendeesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutAttendeeNestedInput
   attendancePool?: Prisma.AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
 }
 
 export type AttendeeUncheckedUpdateWithoutPaymentRefundedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1426,15 +1464,16 @@ export type AttendeeUncheckedUpdateWithoutPaymentRefundedByInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInput
 }
 
 export type AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1448,13 +1487,15 @@ export type AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AttendeeCreateManyAttendanceInput = {
   id?: string
-  userId: string
   userGrade?: number | null
-  attendancePoolId: string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
   earliestReservationAt: Date | string
@@ -1468,6 +1509,9 @@ export type AttendeeCreateManyAttendanceInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  userId: string
+  attendancePoolId: string
   paymentRefundedById?: string | null
 }
 
@@ -1487,17 +1531,16 @@ export type AttendeeUpdateWithoutAttendanceInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutAttendeeNestedInput
   attendancePool?: Prisma.AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   paymentRefundedBy?: Prisma.UserUpdateOneWithoutAttendeesRefundedNestedInput
 }
 
 export type AttendeeUncheckedUpdateWithoutAttendanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1511,15 +1554,16 @@ export type AttendeeUncheckedUpdateWithoutAttendanceInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInput
 }
 
 export type AttendeeUncheckedUpdateManyWithoutAttendanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1533,13 +1577,14 @@ export type AttendeeUncheckedUpdateManyWithoutAttendanceInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePoolId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AttendeeCreateManyAttendancePoolInput = {
   id?: string
-  attendanceId: string
-  userId: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved: boolean
@@ -1554,6 +1599,9 @@ export type AttendeeCreateManyAttendancePoolInput = {
   paymentChargeDeadline?: Date | string | null
   paymentChargedAt?: Date | string | null
   paymentRefundedAt?: Date | string | null
+  paymentCheckoutUrl?: string | null
+  attendanceId: string
+  userId: string
   paymentRefundedById?: string | null
 }
 
@@ -1573,16 +1621,15 @@ export type AttendeeUpdateWithoutAttendancePoolInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   attendance?: Prisma.AttendanceUpdateOneRequiredWithoutAttendeesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutAttendeeNestedInput
-  feedbackFormAnswer?: Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput
   paymentRefundedBy?: Prisma.UserUpdateOneWithoutAttendeesRefundedNestedInput
 }
 
 export type AttendeeUncheckedUpdateWithoutAttendancePoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1597,14 +1644,15 @@ export type AttendeeUncheckedUpdateWithoutAttendancePoolInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInput
 }
 
 export type AttendeeUncheckedUpdateManyWithoutAttendancePoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1619,6 +1667,9 @@ export type AttendeeUncheckedUpdateManyWithoutAttendancePoolInput = {
   paymentChargeDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentChargedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentCheckoutUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attendanceId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRefundedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -1626,10 +1677,7 @@ export type AttendeeUncheckedUpdateManyWithoutAttendancePoolInput = {
 
 export type AttendeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  attendanceId?: boolean
-  userId?: boolean
   userGrade?: boolean
-  attendancePoolId?: boolean
   selections?: boolean
   reserved?: boolean
   earliestReservationAt?: boolean
@@ -1643,20 +1691,21 @@ export type AttendeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   paymentChargeDeadline?: boolean
   paymentChargedAt?: boolean
   paymentRefundedAt?: boolean
+  paymentCheckoutUrl?: boolean
+  attendanceId?: boolean
+  userId?: boolean
+  attendancePoolId?: boolean
   paymentRefundedById?: boolean
+  feedbackFormAnswer?: boolean | Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs>
   attendance?: boolean | Prisma.AttendanceDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   attendancePool?: boolean | Prisma.AttendancePoolDefaultArgs<ExtArgs>
-  feedbackFormAnswer?: boolean | Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs>
   paymentRefundedBy?: boolean | Prisma.Attendee$paymentRefundedByArgs<ExtArgs>
 }, ExtArgs["result"]["attendee"]>
 
 export type AttendeeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  attendanceId?: boolean
-  userId?: boolean
   userGrade?: boolean
-  attendancePoolId?: boolean
   selections?: boolean
   reserved?: boolean
   earliestReservationAt?: boolean
@@ -1670,6 +1719,10 @@ export type AttendeeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   paymentChargeDeadline?: boolean
   paymentChargedAt?: boolean
   paymentRefundedAt?: boolean
+  paymentCheckoutUrl?: boolean
+  attendanceId?: boolean
+  userId?: boolean
+  attendancePoolId?: boolean
   paymentRefundedById?: boolean
   attendance?: boolean | Prisma.AttendanceDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1679,10 +1732,7 @@ export type AttendeeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
 
 export type AttendeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  attendanceId?: boolean
-  userId?: boolean
   userGrade?: boolean
-  attendancePoolId?: boolean
   selections?: boolean
   reserved?: boolean
   earliestReservationAt?: boolean
@@ -1696,6 +1746,10 @@ export type AttendeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   paymentChargeDeadline?: boolean
   paymentChargedAt?: boolean
   paymentRefundedAt?: boolean
+  paymentCheckoutUrl?: boolean
+  attendanceId?: boolean
+  userId?: boolean
+  attendancePoolId?: boolean
   paymentRefundedById?: boolean
   attendance?: boolean | Prisma.AttendanceDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1705,10 +1759,7 @@ export type AttendeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 
 export type AttendeeSelectScalar = {
   id?: boolean
-  attendanceId?: boolean
-  userId?: boolean
   userGrade?: boolean
-  attendancePoolId?: boolean
   selections?: boolean
   reserved?: boolean
   earliestReservationAt?: boolean
@@ -1722,15 +1773,19 @@ export type AttendeeSelectScalar = {
   paymentChargeDeadline?: boolean
   paymentChargedAt?: boolean
   paymentRefundedAt?: boolean
+  paymentCheckoutUrl?: boolean
+  attendanceId?: boolean
+  userId?: boolean
+  attendancePoolId?: boolean
   paymentRefundedById?: boolean
 }
 
-export type AttendeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "attendanceId" | "userId" | "userGrade" | "attendancePoolId" | "selections" | "reserved" | "earliestReservationAt" | "attendedAt" | "createdAt" | "updatedAt" | "paymentDeadline" | "paymentLink" | "paymentId" | "paymentReservedAt" | "paymentChargeDeadline" | "paymentChargedAt" | "paymentRefundedAt" | "paymentRefundedById", ExtArgs["result"]["attendee"]>
+export type AttendeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userGrade" | "selections" | "reserved" | "earliestReservationAt" | "attendedAt" | "createdAt" | "updatedAt" | "paymentDeadline" | "paymentLink" | "paymentId" | "paymentReservedAt" | "paymentChargeDeadline" | "paymentChargedAt" | "paymentRefundedAt" | "paymentCheckoutUrl" | "attendanceId" | "userId" | "attendancePoolId" | "paymentRefundedById", ExtArgs["result"]["attendee"]>
 export type AttendeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  feedbackFormAnswer?: boolean | Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs>
   attendance?: boolean | Prisma.AttendanceDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   attendancePool?: boolean | Prisma.AttendancePoolDefaultArgs<ExtArgs>
-  feedbackFormAnswer?: boolean | Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs>
   paymentRefundedBy?: boolean | Prisma.Attendee$paymentRefundedByArgs<ExtArgs>
 }
 export type AttendeeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1749,21 +1804,18 @@ export type AttendeeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type $AttendeePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Attendee"
   objects: {
+    feedbackFormAnswer: Prisma.$FeedbackFormAnswerPayload<ExtArgs> | null
     attendance: Prisma.$AttendancePayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
     attendancePool: Prisma.$AttendancePoolPayload<ExtArgs>
-    feedbackFormAnswer: Prisma.$FeedbackFormAnswerPayload<ExtArgs> | null
     paymentRefundedBy: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    attendanceId: string
-    userId: string
     /**
      * To preserve the user's grade at the time of registration
      */
     userGrade: number | null
-    attendancePoolId: string
     /**
      * Which options the user has selected from the Attendance selections
      */
@@ -1780,6 +1832,10 @@ export type $AttendeePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     paymentChargeDeadline: Date | null
     paymentChargedAt: Date | null
     paymentRefundedAt: Date | null
+    paymentCheckoutUrl: string | null
+    attendanceId: string
+    userId: string
+    attendancePoolId: string
     paymentRefundedById: string | null
   }, ExtArgs["result"]["attendee"]>
   composites: {}
@@ -2175,10 +2231,10 @@ readonly fields: AttendeeFieldRefs;
  */
 export interface Prisma__AttendeeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  feedbackFormAnswer<T extends Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs>>): Prisma.Prisma__FeedbackFormAnswerClient<runtime.Types.Result.GetResult<Prisma.$FeedbackFormAnswerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   attendance<T extends Prisma.AttendanceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceDefaultArgs<ExtArgs>>): Prisma.Prisma__AttendanceClient<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   attendancePool<T extends Prisma.AttendancePoolDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendancePoolDefaultArgs<ExtArgs>>): Prisma.Prisma__AttendancePoolClient<runtime.Types.Result.GetResult<Prisma.$AttendancePoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  feedbackFormAnswer<T extends Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs>>): Prisma.Prisma__FeedbackFormAnswerClient<runtime.Types.Result.GetResult<Prisma.$FeedbackFormAnswerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   paymentRefundedBy<T extends Prisma.Attendee$paymentRefundedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Attendee$paymentRefundedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2210,10 +2266,7 @@ export interface Prisma__AttendeeClient<T, Null = never, ExtArgs extends runtime
  */
 export interface AttendeeFieldRefs {
   readonly id: Prisma.FieldRef<"Attendee", 'String'>
-  readonly attendanceId: Prisma.FieldRef<"Attendee", 'String'>
-  readonly userId: Prisma.FieldRef<"Attendee", 'String'>
   readonly userGrade: Prisma.FieldRef<"Attendee", 'Int'>
-  readonly attendancePoolId: Prisma.FieldRef<"Attendee", 'String'>
   readonly selections: Prisma.FieldRef<"Attendee", 'Json'>
   readonly reserved: Prisma.FieldRef<"Attendee", 'Boolean'>
   readonly earliestReservationAt: Prisma.FieldRef<"Attendee", 'DateTime'>
@@ -2227,6 +2280,10 @@ export interface AttendeeFieldRefs {
   readonly paymentChargeDeadline: Prisma.FieldRef<"Attendee", 'DateTime'>
   readonly paymentChargedAt: Prisma.FieldRef<"Attendee", 'DateTime'>
   readonly paymentRefundedAt: Prisma.FieldRef<"Attendee", 'DateTime'>
+  readonly paymentCheckoutUrl: Prisma.FieldRef<"Attendee", 'String'>
+  readonly attendanceId: Prisma.FieldRef<"Attendee", 'String'>
+  readonly userId: Prisma.FieldRef<"Attendee", 'String'>
+  readonly attendancePoolId: Prisma.FieldRef<"Attendee", 'String'>
   readonly paymentRefundedById: Prisma.FieldRef<"Attendee", 'String'>
 }
     

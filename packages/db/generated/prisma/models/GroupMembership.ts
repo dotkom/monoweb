@@ -26,64 +26,64 @@ export type AggregateGroupMembership = {
 
 export type GroupMembershipMinAggregateOutputType = {
   id: string | null
-  groupId: string | null
-  userId: string | null
   start: Date | null
   end: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  groupId: string | null
+  userId: string | null
 }
 
 export type GroupMembershipMaxAggregateOutputType = {
   id: string | null
-  groupId: string | null
-  userId: string | null
   start: Date | null
   end: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  groupId: string | null
+  userId: string | null
 }
 
 export type GroupMembershipCountAggregateOutputType = {
   id: number
-  groupId: number
-  userId: number
   start: number
   end: number
   createdAt: number
   updatedAt: number
+  groupId: number
+  userId: number
   _all: number
 }
 
 
 export type GroupMembershipMinAggregateInputType = {
   id?: true
-  groupId?: true
-  userId?: true
   start?: true
   end?: true
   createdAt?: true
   updatedAt?: true
+  groupId?: true
+  userId?: true
 }
 
 export type GroupMembershipMaxAggregateInputType = {
   id?: true
-  groupId?: true
-  userId?: true
   start?: true
   end?: true
   createdAt?: true
   updatedAt?: true
+  groupId?: true
+  userId?: true
 }
 
 export type GroupMembershipCountAggregateInputType = {
   id?: true
-  groupId?: true
-  userId?: true
   start?: true
   end?: true
   createdAt?: true
   updatedAt?: true
+  groupId?: true
+  userId?: true
   _all?: true
 }
 
@@ -161,12 +161,12 @@ export type GroupMembershipGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type GroupMembershipGroupByOutputType = {
   id: string
-  groupId: string
-  userId: string
   start: Date
   end: Date | null
   createdAt: Date
   updatedAt: Date
+  groupId: string
+  userId: string
   _count: GroupMembershipCountAggregateOutputType | null
   _min: GroupMembershipMinAggregateOutputType | null
   _max: GroupMembershipMaxAggregateOutputType | null
@@ -192,12 +192,12 @@ export type GroupMembershipWhereInput = {
   OR?: Prisma.GroupMembershipWhereInput[]
   NOT?: Prisma.GroupMembershipWhereInput | Prisma.GroupMembershipWhereInput[]
   id?: Prisma.StringFilter<"GroupMembership"> | string
-  groupId?: Prisma.StringFilter<"GroupMembership"> | string
-  userId?: Prisma.StringFilter<"GroupMembership"> | string
   start?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   end?: Prisma.DateTimeNullableFilter<"GroupMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
+  groupId?: Prisma.StringFilter<"GroupMembership"> | string
+  userId?: Prisma.StringFilter<"GroupMembership"> | string
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   roles?: Prisma.GroupMembershipRoleListRelationFilter
@@ -205,12 +205,12 @@ export type GroupMembershipWhereInput = {
 
 export type GroupMembershipOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  groupId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   group?: Prisma.GroupOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   roles?: Prisma.GroupMembershipRoleOrderByRelationAggregateInput
@@ -221,12 +221,12 @@ export type GroupMembershipWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.GroupMembershipWhereInput | Prisma.GroupMembershipWhereInput[]
   OR?: Prisma.GroupMembershipWhereInput[]
   NOT?: Prisma.GroupMembershipWhereInput | Prisma.GroupMembershipWhereInput[]
-  groupId?: Prisma.StringFilter<"GroupMembership"> | string
-  userId?: Prisma.StringFilter<"GroupMembership"> | string
   start?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   end?: Prisma.DateTimeNullableFilter<"GroupMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
+  groupId?: Prisma.StringFilter<"GroupMembership"> | string
+  userId?: Prisma.StringFilter<"GroupMembership"> | string
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   roles?: Prisma.GroupMembershipRoleListRelationFilter
@@ -234,12 +234,12 @@ export type GroupMembershipWhereUniqueInput = Prisma.AtLeast<{
 
 export type GroupMembershipOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  groupId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   _count?: Prisma.GroupMembershipCountOrderByAggregateInput
   _max?: Prisma.GroupMembershipMaxOrderByAggregateInput
   _min?: Prisma.GroupMembershipMinOrderByAggregateInput
@@ -250,12 +250,12 @@ export type GroupMembershipScalarWhereWithAggregatesInput = {
   OR?: Prisma.GroupMembershipScalarWhereWithAggregatesInput[]
   NOT?: Prisma.GroupMembershipScalarWhereWithAggregatesInput | Prisma.GroupMembershipScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"GroupMembership"> | string
-  groupId?: Prisma.StringWithAggregatesFilter<"GroupMembership"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"GroupMembership"> | string
   start?: Prisma.DateTimeWithAggregatesFilter<"GroupMembership"> | Date | string
   end?: Prisma.DateTimeNullableWithAggregatesFilter<"GroupMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"GroupMembership"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"GroupMembership"> | Date | string
+  groupId?: Prisma.StringWithAggregatesFilter<"GroupMembership"> | string
+  userId?: Prisma.StringWithAggregatesFilter<"GroupMembership"> | string
 }
 
 export type GroupMembershipCreateInput = {
@@ -271,12 +271,12 @@ export type GroupMembershipCreateInput = {
 
 export type GroupMembershipUncheckedCreateInput = {
   id?: string
-  groupId: string
-  userId: string
   start: Date | string
   end?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId: string
+  userId: string
   roles?: Prisma.GroupMembershipRoleUncheckedCreateNestedManyWithoutMembershipInput
 }
 
@@ -293,23 +293,23 @@ export type GroupMembershipUpdateInput = {
 
 export type GroupMembershipUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  groupId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   roles?: Prisma.GroupMembershipRoleUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipCreateManyInput = {
   id?: string
-  groupId: string
-  userId: string
   start: Date | string
   end?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId: string
+  userId: string
 }
 
 export type GroupMembershipUpdateManyMutationInput = {
@@ -322,12 +322,12 @@ export type GroupMembershipUpdateManyMutationInput = {
 
 export type GroupMembershipUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  groupId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type GroupMembershipListRelationFilter = {
@@ -342,32 +342,32 @@ export type GroupMembershipOrderByRelationAggregateInput = {
 
 export type GroupMembershipCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  groupId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type GroupMembershipMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  groupId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type GroupMembershipMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  groupId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type GroupMembershipScalarRelationFilter = {
@@ -485,11 +485,11 @@ export type GroupMembershipCreateWithoutUserInput = {
 
 export type GroupMembershipUncheckedCreateWithoutUserInput = {
   id?: string
-  groupId: string
   start: Date | string
   end?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId: string
   roles?: Prisma.GroupMembershipRoleUncheckedCreateNestedManyWithoutMembershipInput
 }
 
@@ -524,12 +524,12 @@ export type GroupMembershipScalarWhereInput = {
   OR?: Prisma.GroupMembershipScalarWhereInput[]
   NOT?: Prisma.GroupMembershipScalarWhereInput | Prisma.GroupMembershipScalarWhereInput[]
   id?: Prisma.StringFilter<"GroupMembership"> | string
-  groupId?: Prisma.StringFilter<"GroupMembership"> | string
-  userId?: Prisma.StringFilter<"GroupMembership"> | string
   start?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   end?: Prisma.DateTimeNullableFilter<"GroupMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
+  groupId?: Prisma.StringFilter<"GroupMembership"> | string
+  userId?: Prisma.StringFilter<"GroupMembership"> | string
 }
 
 export type GroupMembershipCreateWithoutGroupInput = {
@@ -544,11 +544,11 @@ export type GroupMembershipCreateWithoutGroupInput = {
 
 export type GroupMembershipUncheckedCreateWithoutGroupInput = {
   id?: string
-  userId: string
   start: Date | string
   end?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  userId: string
   roles?: Prisma.GroupMembershipRoleUncheckedCreateNestedManyWithoutMembershipInput
 }
 
@@ -590,12 +590,12 @@ export type GroupMembershipCreateWithoutRolesInput = {
 
 export type GroupMembershipUncheckedCreateWithoutRolesInput = {
   id?: string
-  groupId: string
-  userId: string
   start: Date | string
   end?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId: string
+  userId: string
 }
 
 export type GroupMembershipCreateOrConnectWithoutRolesInput = {
@@ -626,21 +626,21 @@ export type GroupMembershipUpdateWithoutRolesInput = {
 
 export type GroupMembershipUncheckedUpdateWithoutRolesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  groupId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type GroupMembershipCreateManyUserInput = {
   id?: string
-  groupId: string
   start: Date | string
   end?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId: string
 }
 
 export type GroupMembershipUpdateWithoutUserInput = {
@@ -655,30 +655,30 @@ export type GroupMembershipUpdateWithoutUserInput = {
 
 export type GroupMembershipUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  groupId?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
   roles?: Prisma.GroupMembershipRoleUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  groupId?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type GroupMembershipCreateManyGroupInput = {
   id?: string
-  userId: string
   start: Date | string
   end?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  userId: string
 }
 
 export type GroupMembershipUpdateWithoutGroupInput = {
@@ -693,21 +693,21 @@ export type GroupMembershipUpdateWithoutGroupInput = {
 
 export type GroupMembershipUncheckedUpdateWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   roles?: Prisma.GroupMembershipRoleUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateManyWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -743,12 +743,12 @@ export type GroupMembershipCountOutputTypeCountRolesArgs<ExtArgs extends runtime
 
 export type GroupMembershipSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  groupId?: boolean
-  userId?: boolean
   start?: boolean
   end?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  groupId?: boolean
+  userId?: boolean
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   roles?: boolean | Prisma.GroupMembership$rolesArgs<ExtArgs>
@@ -757,39 +757,39 @@ export type GroupMembershipSelect<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type GroupMembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  groupId?: boolean
-  userId?: boolean
   start?: boolean
   end?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  groupId?: boolean
+  userId?: boolean
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["groupMembership"]>
 
 export type GroupMembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  groupId?: boolean
-  userId?: boolean
   start?: boolean
   end?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  groupId?: boolean
+  userId?: boolean
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["groupMembership"]>
 
 export type GroupMembershipSelectScalar = {
   id?: boolean
-  groupId?: boolean
-  userId?: boolean
   start?: boolean
   end?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  groupId?: boolean
+  userId?: boolean
 }
 
-export type GroupMembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "userId" | "start" | "end" | "createdAt" | "updatedAt", ExtArgs["result"]["groupMembership"]>
+export type GroupMembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "start" | "end" | "createdAt" | "updatedAt" | "groupId" | "userId", ExtArgs["result"]["groupMembership"]>
 export type GroupMembershipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -814,12 +814,12 @@ export type $GroupMembershipPayload<ExtArgs extends runtime.Types.Extensions.Int
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    groupId: string
-    userId: string
     start: Date
     end: Date | null
     createdAt: Date
     updatedAt: Date
+    groupId: string
+    userId: string
   }, ExtArgs["result"]["groupMembership"]>
   composites: {}
 }
@@ -1247,12 +1247,12 @@ export interface Prisma__GroupMembershipClient<T, Null = never, ExtArgs extends 
  */
 export interface GroupMembershipFieldRefs {
   readonly id: Prisma.FieldRef<"GroupMembership", 'String'>
-  readonly groupId: Prisma.FieldRef<"GroupMembership", 'String'>
-  readonly userId: Prisma.FieldRef<"GroupMembership", 'String'>
   readonly start: Prisma.FieldRef<"GroupMembership", 'DateTime'>
   readonly end: Prisma.FieldRef<"GroupMembership", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"GroupMembership", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"GroupMembership", 'DateTime'>
+  readonly groupId: Prisma.FieldRef<"GroupMembership", 'String'>
+  readonly userId: Prisma.FieldRef<"GroupMembership", 'String'>
 }
     
 

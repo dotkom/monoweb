@@ -55,7 +55,7 @@ export type GroupScalarFieldEnum = z.infer<typeof GroupScalarFieldEnumSchema>;
 
 // File: GroupMembershipScalarFieldEnum.schema.ts
 
-export const GroupMembershipScalarFieldEnumSchema = z.enum(['id', 'groupId', 'userId', 'start', 'end', 'createdAt', 'updatedAt'])
+export const GroupMembershipScalarFieldEnumSchema = z.enum(['id', 'start', 'end', 'createdAt', 'updatedAt', 'groupId', 'userId'])
 
 export type GroupMembershipScalarFieldEnum = z.infer<typeof GroupMembershipScalarFieldEnumSchema>;
 
@@ -67,7 +67,7 @@ export type GroupMembershipRoleScalarFieldEnum = z.infer<typeof GroupMembershipR
 
 // File: GroupRoleScalarFieldEnum.schema.ts
 
-export const GroupRoleScalarFieldEnumSchema = z.enum(['id', 'groupId', 'name', 'type'])
+export const GroupRoleScalarFieldEnumSchema = z.enum(['id', 'name', 'type', 'groupId'])
 
 export type GroupRoleScalarFieldEnum = z.infer<typeof GroupRoleScalarFieldEnumSchema>;
 
@@ -85,13 +85,13 @@ export type AttendancePoolScalarFieldEnum = z.infer<typeof AttendancePoolScalarF
 
 // File: AttendeeScalarFieldEnum.schema.ts
 
-export const AttendeeScalarFieldEnumSchema = z.enum(['id', 'attendanceId', 'userId', 'userGrade', 'attendancePoolId', 'selections', 'reserved', 'earliestReservationAt', 'attendedAt', 'createdAt', 'updatedAt', 'paymentDeadline', 'paymentLink', 'paymentId', 'paymentReservedAt', 'paymentChargeDeadline', 'paymentChargedAt', 'paymentRefundedAt', 'paymentRefundedById'])
+export const AttendeeScalarFieldEnumSchema = z.enum(['id', 'userGrade', 'selections', 'reserved', 'earliestReservationAt', 'attendedAt', 'createdAt', 'updatedAt', 'paymentDeadline', 'paymentLink', 'paymentId', 'paymentReservedAt', 'paymentChargeDeadline', 'paymentChargedAt', 'paymentRefundedAt', 'paymentCheckoutUrl', 'attendanceId', 'userId', 'attendancePoolId', 'paymentRefundedById'])
 
 export type AttendeeScalarFieldEnum = z.infer<typeof AttendeeScalarFieldEnumSchema>;
 
 // File: EventScalarFieldEnum.schema.ts
 
-export const EventScalarFieldEnumSchema = z.enum(['id', 'title', 'start', 'end', 'status', 'description', 'shortDescription', 'imageUrl', 'locationTitle', 'locationAddress', 'locationLink', 'attendanceId', 'type', 'markForMissedAttendance', 'createdAt', 'updatedAt', 'parentId', 'metadataImportId'])
+export const EventScalarFieldEnumSchema = z.enum(['id', 'title', 'start', 'end', 'status', 'description', 'shortDescription', 'imageUrl', 'locationTitle', 'locationAddress', 'locationLink', 'type', 'markForMissedAttendance', 'createdAt', 'updatedAt', 'attendanceId', 'parentId', 'metadataImportId'])
 
 export type EventScalarFieldEnum = z.infer<typeof EventScalarFieldEnumSchema>;
 
@@ -115,7 +115,7 @@ export type MarkGroupScalarFieldEnum = z.infer<typeof MarkGroupScalarFieldEnumSc
 
 // File: PersonalMarkScalarFieldEnum.schema.ts
 
-export const PersonalMarkScalarFieldEnumSchema = z.enum(['markId', 'userId', 'givenById', 'createdAt'])
+export const PersonalMarkScalarFieldEnumSchema = z.enum(['createdAt', 'markId', 'userId', 'givenById'])
 
 export type PersonalMarkScalarFieldEnum = z.infer<typeof PersonalMarkScalarFieldEnumSchema>;
 
@@ -139,7 +139,7 @@ export type EventHostingGroupScalarFieldEnum = z.infer<typeof EventHostingGroupS
 
 // File: JobListingScalarFieldEnum.schema.ts
 
-export const JobListingScalarFieldEnumSchema = z.enum(['id', 'companyId', 'title', 'description', 'shortDescription', 'start', 'end', 'featured', 'hidden', 'deadline', 'employment', 'applicationLink', 'applicationEmail', 'rollingAdmission', 'createdAt', 'updatedAt'])
+export const JobListingScalarFieldEnumSchema = z.enum(['id', 'title', 'description', 'shortDescription', 'start', 'end', 'featured', 'hidden', 'deadline', 'employment', 'applicationLink', 'applicationEmail', 'rollingAdmission', 'createdAt', 'updatedAt', 'companyId'])
 
 export type JobListingScalarFieldEnum = z.infer<typeof JobListingScalarFieldEnumSchema>;
 
@@ -157,7 +157,7 @@ export type OfflineScalarFieldEnum = z.infer<typeof OfflineScalarFieldEnumSchema
 
 // File: ArticleScalarFieldEnum.schema.ts
 
-export const ArticleScalarFieldEnumSchema = z.enum(['id', 'title', 'author', 'photographer', 'imageUrl', 'slug', 'excerpt', 'content', 'isFeatured', 'vimeoId', 'createdAt', 'updatedAt'])
+export const ArticleScalarFieldEnumSchema = z.enum(['id', 'slug', 'title', 'author', 'photographer', 'imageUrl', 'excerpt', 'content', 'isFeatured', 'vimeoId', 'createdAt', 'updatedAt'])
 
 export type ArticleScalarFieldEnum = z.infer<typeof ArticleScalarFieldEnumSchema>;
 
@@ -187,13 +187,13 @@ export type RecurringTaskScalarFieldEnum = z.infer<typeof RecurringTaskScalarFie
 
 // File: FeedbackFormScalarFieldEnum.schema.ts
 
-export const FeedbackFormScalarFieldEnumSchema = z.enum(['id', 'eventId', 'publicResultsToken', 'createdAt', 'updatedAt', 'answerDeadline'])
+export const FeedbackFormScalarFieldEnumSchema = z.enum(['id', 'publicResultsToken', 'createdAt', 'updatedAt', 'answerDeadline', 'eventId'])
 
 export type FeedbackFormScalarFieldEnum = z.infer<typeof FeedbackFormScalarFieldEnumSchema>;
 
 // File: FeedbackQuestionScalarFieldEnum.schema.ts
 
-export const FeedbackQuestionScalarFieldEnumSchema = z.enum(['id', 'feedbackFormId', 'label', 'required', 'showInPublicResults', 'type', 'order', 'createdAt', 'updatedAt'])
+export const FeedbackQuestionScalarFieldEnumSchema = z.enum(['id', 'label', 'required', 'showInPublicResults', 'type', 'order', 'createdAt', 'updatedAt', 'feedbackFormId'])
 
 export type FeedbackQuestionScalarFieldEnum = z.infer<typeof FeedbackQuestionScalarFieldEnumSchema>;
 
@@ -205,7 +205,7 @@ export type FeedbackQuestionOptionScalarFieldEnum = z.infer<typeof FeedbackQuest
 
 // File: FeedbackQuestionAnswerScalarFieldEnum.schema.ts
 
-export const FeedbackQuestionAnswerScalarFieldEnumSchema = z.enum(['id', 'questionId', 'formAnswerId', 'value'])
+export const FeedbackQuestionAnswerScalarFieldEnumSchema = z.enum(['id', 'value', 'questionId', 'formAnswerId'])
 
 export type FeedbackQuestionAnswerScalarFieldEnum = z.infer<typeof FeedbackQuestionAnswerScalarFieldEnumSchema>;
 
@@ -217,13 +217,13 @@ export type FeedbackQuestionAnswerOptionLinkScalarFieldEnum = z.infer<typeof Fee
 
 // File: FeedbackFormAnswerScalarFieldEnum.schema.ts
 
-export const FeedbackFormAnswerScalarFieldEnumSchema = z.enum(['id', 'feedbackFormId', 'attendeeId', 'createdAt', 'updatedAt'])
+export const FeedbackFormAnswerScalarFieldEnumSchema = z.enum(['id', 'createdAt', 'updatedAt', 'feedbackFormId', 'attendeeId'])
 
 export type FeedbackFormAnswerScalarFieldEnum = z.infer<typeof FeedbackFormAnswerScalarFieldEnumSchema>;
 
 // File: AuditLogScalarFieldEnum.schema.ts
 
-export const AuditLogScalarFieldEnumSchema = z.enum(['id', 'tableName', 'rowId', 'createdAt', 'userId', 'operation', 'rowData', 'transactionId'])
+export const AuditLogScalarFieldEnumSchema = z.enum(['id', 'tableName', 'rowId', 'createdAt', 'operation', 'rowData', 'transactionId', 'userId'])
 
 export type AuditLogScalarFieldEnum = z.infer<typeof AuditLogScalarFieldEnumSchema>;
 
@@ -313,7 +313,7 @@ export type EventStatus = z.infer<typeof EventStatusSchema>;
 
 // File: EventType.schema.ts
 
-export const EventTypeSchema = z.enum(['SOCIAL', 'ACADEMIC', 'COMPANY', 'GENERAL_ASSEMBLY', 'INTERNAL', 'OTHER', 'WELCOME'])
+export const EventTypeSchema = z.enum(['GENERAL_ASSEMBLY', 'COMPANY', 'ACADEMIC', 'SOCIAL', 'INTERNAL', 'OTHER', 'WELCOME'])
 
 export type EventType = z.infer<typeof EventTypeSchema>;
 
@@ -780,12 +780,12 @@ const groupmembershipwhereinputSchema = z.object({
   OR: z.lazy(() => GroupMembershipWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => GroupMembershipWhereInputObjectSchema), z.lazy(() => GroupMembershipWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  groupId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   start: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   end: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  groupId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   group: z.union([z.lazy(() => GroupScalarRelationFilterObjectSchema), z.lazy(() => GroupWhereInputObjectSchema)]).optional(),
   user: z.union([z.lazy(() => UserScalarRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional(),
   roles: z.lazy(() => GroupMembershipRoleListRelationFilterObjectSchema).optional()
@@ -797,12 +797,12 @@ export const GroupMembershipWhereInputObjectZodSchema = groupmembershipwhereinpu
 // File: GroupMembershipOrderByWithRelationInput.schema.ts
 const __makeSchema_GroupMembershipOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   start: SortOrderSchema.optional(),
   end: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
   group: z.lazy(() => GroupOrderByWithRelationInputObjectSchema).optional(),
   user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
   roles: z.lazy(() => GroupMembershipRoleOrderByRelationAggregateInputObjectSchema).optional()
@@ -822,12 +822,12 @@ export const GroupMembershipWhereUniqueInputObjectZodSchema = __makeSchema_Group
 // File: GroupMembershipOrderByWithAggregationInput.schema.ts
 const __makeSchema_GroupMembershipOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   start: SortOrderSchema.optional(),
   end: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
   _count: z.lazy(() => GroupMembershipCountOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => GroupMembershipMaxOrderByAggregateInputObjectSchema).optional(),
   _min: z.lazy(() => GroupMembershipMinOrderByAggregateInputObjectSchema).optional()
@@ -843,12 +843,12 @@ const groupmembershipscalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => GroupMembershipScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => GroupMembershipScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => GroupMembershipScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  groupId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   start: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
   end: z.union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
-  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional()
+  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  groupId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const GroupMembershipScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.GroupMembershipScalarWhereWithAggregatesInput> = groupmembershipscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.GroupMembershipScalarWhereWithAggregatesInput>;
 export const GroupMembershipScalarWhereWithAggregatesInputObjectZodSchema = groupmembershipscalarwherewithaggregatesinputSchema;
@@ -920,9 +920,9 @@ const grouprolewhereinputSchema = z.object({
   OR: z.lazy(() => GroupRoleWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => GroupRoleWhereInputObjectSchema), z.lazy(() => GroupRoleWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  groupId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   name: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   type: z.union([z.lazy(() => EnumGroupRoleTypeFilterObjectSchema), GroupRoleTypeSchema]).optional(),
+  groupId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   group: z.union([z.lazy(() => GroupScalarRelationFilterObjectSchema), z.lazy(() => GroupWhereInputObjectSchema)]).optional(),
   groupMembershipRoles: z.lazy(() => GroupMembershipRoleListRelationFilterObjectSchema).optional()
 }).strict();
@@ -933,9 +933,9 @@ export const GroupRoleWhereInputObjectZodSchema = grouprolewhereinputSchema;
 // File: GroupRoleOrderByWithRelationInput.schema.ts
 const __makeSchema_GroupRoleOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional(),
   group: z.lazy(() => GroupOrderByWithRelationInputObjectSchema).optional(),
   groupMembershipRoles: z.lazy(() => GroupMembershipRoleOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
@@ -955,9 +955,9 @@ export const GroupRoleWhereUniqueInputObjectZodSchema = __makeSchema_GroupRoleWh
 // File: GroupRoleOrderByWithAggregationInput.schema.ts
 const __makeSchema_GroupRoleOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional(),
   _count: z.lazy(() => GroupRoleCountOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => GroupRoleMaxOrderByAggregateInputObjectSchema).optional(),
   _min: z.lazy(() => GroupRoleMinOrderByAggregateInputObjectSchema).optional()
@@ -973,9 +973,9 @@ const grouprolescalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => GroupRoleScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => GroupRoleScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => GroupRoleScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  groupId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   name: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  type: z.union([z.lazy(() => EnumGroupRoleTypeWithAggregatesFilterObjectSchema), GroupRoleTypeSchema]).optional()
+  type: z.union([z.lazy(() => EnumGroupRoleTypeWithAggregatesFilterObjectSchema), GroupRoleTypeSchema]).optional(),
+  groupId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const GroupRoleScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.GroupRoleScalarWhereWithAggregatesInput> = grouprolescalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.GroupRoleScalarWhereWithAggregatesInput>;
 export const GroupRoleScalarWhereWithAggregatesInputObjectZodSchema = grouprolescalarwherewithaggregatesinputSchema;
@@ -1166,10 +1166,7 @@ const attendeewhereinputSchema = z.object({
   OR: z.lazy(() => AttendeeWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => AttendeeWhereInputObjectSchema), z.lazy(() => AttendeeWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  attendanceId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   userGrade: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
-  attendancePoolId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   selections: z.lazy(() => JsonFilterObjectSchema).optional(),
   reserved: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   earliestReservationAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
@@ -1183,11 +1180,15 @@ const attendeewhereinputSchema = z.object({
   paymentChargeDeadline: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   paymentChargedAt: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   paymentRefundedAt: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  attendanceId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  attendancePoolId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   paymentRefundedById: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  feedbackFormAnswer: z.union([z.lazy(() => FeedbackFormAnswerNullableScalarRelationFilterObjectSchema), z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema)]).optional(),
   attendance: z.union([z.lazy(() => AttendanceScalarRelationFilterObjectSchema), z.lazy(() => AttendanceWhereInputObjectSchema)]).optional(),
   user: z.union([z.lazy(() => UserScalarRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional(),
   attendancePool: z.union([z.lazy(() => AttendancePoolScalarRelationFilterObjectSchema), z.lazy(() => AttendancePoolWhereInputObjectSchema)]).optional(),
-  feedbackFormAnswer: z.union([z.lazy(() => FeedbackFormAnswerNullableScalarRelationFilterObjectSchema), z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema)]).optional(),
   paymentRefundedBy: z.union([z.lazy(() => UserNullableScalarRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional()
 }).strict();
 export const AttendeeWhereInputObjectSchema: z.ZodType<Prisma.AttendeeWhereInput> = attendeewhereinputSchema as unknown as z.ZodType<Prisma.AttendeeWhereInput>;
@@ -1197,10 +1198,7 @@ export const AttendeeWhereInputObjectZodSchema = attendeewhereinputSchema;
 // File: AttendeeOrderByWithRelationInput.schema.ts
 const __makeSchema_AttendeeOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  attendanceId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   userGrade: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  attendancePoolId: SortOrderSchema.optional(),
   selections: SortOrderSchema.optional(),
   reserved: SortOrderSchema.optional(),
   earliestReservationAt: SortOrderSchema.optional(),
@@ -1214,11 +1212,15 @@ const __makeSchema_AttendeeOrderByWithRelationInput_schema = () => z.object({
   paymentChargeDeadline: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   paymentChargedAt: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   paymentRefundedAt: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  paymentCheckoutUrl: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  attendanceId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
+  attendancePoolId: SortOrderSchema.optional(),
   paymentRefundedById: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerOrderByWithRelationInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceOrderByWithRelationInputObjectSchema).optional(),
   user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
   attendancePool: z.lazy(() => AttendancePoolOrderByWithRelationInputObjectSchema).optional(),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerOrderByWithRelationInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional()
 }).strict();
 export const AttendeeOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.AttendeeOrderByWithRelationInput> = __makeSchema_AttendeeOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.AttendeeOrderByWithRelationInput>;
@@ -1237,10 +1239,7 @@ export const AttendeeWhereUniqueInputObjectZodSchema = __makeSchema_AttendeeWher
 // File: AttendeeOrderByWithAggregationInput.schema.ts
 const __makeSchema_AttendeeOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  attendanceId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   userGrade: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  attendancePoolId: SortOrderSchema.optional(),
   selections: SortOrderSchema.optional(),
   reserved: SortOrderSchema.optional(),
   earliestReservationAt: SortOrderSchema.optional(),
@@ -1254,6 +1253,10 @@ const __makeSchema_AttendeeOrderByWithAggregationInput_schema = () => z.object({
   paymentChargeDeadline: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   paymentChargedAt: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   paymentRefundedAt: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  paymentCheckoutUrl: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  attendanceId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
+  attendancePoolId: SortOrderSchema.optional(),
   paymentRefundedById: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   _count: z.lazy(() => AttendeeCountOrderByAggregateInputObjectSchema).optional(),
   _avg: z.lazy(() => AttendeeAvgOrderByAggregateInputObjectSchema).optional(),
@@ -1272,10 +1275,7 @@ const attendeescalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => AttendeeScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => AttendeeScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => AttendeeScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  attendanceId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   userGrade: z.union([z.lazy(() => IntNullableWithAggregatesFilterObjectSchema), z.number().int()]).optional().nullable(),
-  attendancePoolId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   selections: z.lazy(() => JsonWithAggregatesFilterObjectSchema).optional(),
   reserved: z.union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()]).optional(),
   earliestReservationAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
@@ -1289,6 +1289,10 @@ const attendeescalarwherewithaggregatesinputSchema = z.object({
   paymentChargeDeadline: z.union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   paymentChargedAt: z.union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   paymentRefundedAt: z.union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
+  attendanceId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  attendancePoolId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   paymentRefundedById: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable()
 }).strict();
 export const AttendeeScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.AttendeeScalarWhereWithAggregatesInput> = attendeescalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.AttendeeScalarWhereWithAggregatesInput>;
@@ -1312,15 +1316,15 @@ const eventwhereinputSchema = z.object({
   locationTitle: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   locationAddress: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   locationLink: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
-  attendanceId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   type: z.union([z.lazy(() => EnumEventTypeFilterObjectSchema), EventTypeSchema]).optional(),
   markForMissedAttendance: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  attendanceId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   parentId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   metadataImportId: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
-  attendance: z.union([z.lazy(() => AttendanceNullableScalarRelationFilterObjectSchema), z.lazy(() => AttendanceWhereInputObjectSchema)]).optional(),
   feedbackForm: z.union([z.lazy(() => FeedbackFormNullableScalarRelationFilterObjectSchema), z.lazy(() => FeedbackFormWhereInputObjectSchema)]).optional(),
+  attendance: z.union([z.lazy(() => AttendanceNullableScalarRelationFilterObjectSchema), z.lazy(() => AttendanceWhereInputObjectSchema)]).optional(),
   parent: z.union([z.lazy(() => EventNullableScalarRelationFilterObjectSchema), z.lazy(() => EventWhereInputObjectSchema)]).optional(),
   children: z.lazy(() => EventListRelationFilterObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyListRelationFilterObjectSchema).optional(),
@@ -1345,15 +1349,15 @@ const eventorderbywithrelationinputSchema = z.object({
   locationTitle: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   locationAddress: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   locationLink: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  attendanceId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   type: SortOrderSchema.optional(),
   markForMissedAttendance: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  attendanceId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   parentId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   metadataImportId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  attendance: z.lazy(() => AttendanceOrderByWithRelationInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormOrderByWithRelationInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceOrderByWithRelationInputObjectSchema).optional(),
   parent: z.lazy(() => EventOrderByWithRelationInputObjectSchema).optional(),
   children: z.lazy(() => EventOrderByRelationAggregateInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyOrderByRelationAggregateInputObjectSchema).optional(),
@@ -1385,11 +1389,11 @@ const __makeSchema_EventOrderByWithAggregationInput_schema = () => z.object({
   locationTitle: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   locationAddress: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   locationLink: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  attendanceId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   type: SortOrderSchema.optional(),
   markForMissedAttendance: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  attendanceId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   parentId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   metadataImportId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   _count: z.lazy(() => EventCountOrderByAggregateInputObjectSchema).optional(),
@@ -1419,11 +1423,11 @@ const eventscalarwherewithaggregatesinputSchema = z.object({
   locationTitle: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   locationAddress: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   locationLink: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
-  attendanceId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   type: z.union([z.lazy(() => EnumEventTypeWithAggregatesFilterObjectSchema), EventTypeSchema]).optional(),
   markForMissedAttendance: z.union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  attendanceId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   parentId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   metadataImportId: z.union([z.lazy(() => IntNullableWithAggregatesFilterObjectSchema), z.number().int()]).optional().nullable()
 }).strict();
@@ -1640,10 +1644,10 @@ const personalmarkwhereinputSchema = z.object({
   AND: z.union([z.lazy(() => PersonalMarkWhereInputObjectSchema), z.lazy(() => PersonalMarkWhereInputObjectSchema).array()]).optional(),
   OR: z.lazy(() => PersonalMarkWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => PersonalMarkWhereInputObjectSchema), z.lazy(() => PersonalMarkWhereInputObjectSchema).array()]).optional(),
+  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   markId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   givenById: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
-  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   mark: z.union([z.lazy(() => MarkScalarRelationFilterObjectSchema), z.lazy(() => MarkWhereInputObjectSchema)]).optional(),
   user: z.union([z.lazy(() => UserScalarRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional(),
   givenBy: z.union([z.lazy(() => UserNullableScalarRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional()
@@ -1654,10 +1658,10 @@ export const PersonalMarkWhereInputObjectZodSchema = personalmarkwhereinputSchem
 
 // File: PersonalMarkOrderByWithRelationInput.schema.ts
 const __makeSchema_PersonalMarkOrderByWithRelationInput_schema = () => z.object({
+  createdAt: SortOrderSchema.optional(),
   markId: SortOrderSchema.optional(),
   userId: SortOrderSchema.optional(),
   givenById: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  createdAt: SortOrderSchema.optional(),
   mark: z.lazy(() => MarkOrderByWithRelationInputObjectSchema).optional(),
   user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
   givenBy: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional()
@@ -1676,10 +1680,10 @@ export const PersonalMarkWhereUniqueInputObjectZodSchema = __makeSchema_Personal
 
 // File: PersonalMarkOrderByWithAggregationInput.schema.ts
 const __makeSchema_PersonalMarkOrderByWithAggregationInput_schema = () => z.object({
+  createdAt: SortOrderSchema.optional(),
   markId: SortOrderSchema.optional(),
   userId: SortOrderSchema.optional(),
   givenById: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  createdAt: SortOrderSchema.optional(),
   _count: z.lazy(() => PersonalMarkCountOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => PersonalMarkMaxOrderByAggregateInputObjectSchema).optional(),
   _min: z.lazy(() => PersonalMarkMinOrderByAggregateInputObjectSchema).optional()
@@ -1694,10 +1698,10 @@ const personalmarkscalarwherewithaggregatesinputSchema = z.object({
   AND: z.union([z.lazy(() => PersonalMarkScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => PersonalMarkScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   OR: z.lazy(() => PersonalMarkScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => PersonalMarkScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => PersonalMarkScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
   markId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  givenById: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
-  createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional()
+  givenById: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable()
 }).strict();
 export const PersonalMarkScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.PersonalMarkScalarWhereWithAggregatesInput> = personalmarkscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.PersonalMarkScalarWhereWithAggregatesInput>;
 export const PersonalMarkScalarWhereWithAggregatesInputObjectZodSchema = personalmarkscalarwherewithaggregatesinputSchema;
@@ -1957,7 +1961,6 @@ const joblistingwhereinputSchema = z.object({
   OR: z.lazy(() => JobListingWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => JobListingWhereInputObjectSchema), z.lazy(() => JobListingWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  companyId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   title: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   description: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   shortDescription: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
@@ -1972,6 +1975,7 @@ const joblistingwhereinputSchema = z.object({
   rollingAdmission: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  companyId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   company: z.union([z.lazy(() => CompanyScalarRelationFilterObjectSchema), z.lazy(() => CompanyWhereInputObjectSchema)]).optional(),
   locations: z.lazy(() => JobListingLocationListRelationFilterObjectSchema).optional()
 }).strict();
@@ -1982,7 +1986,6 @@ export const JobListingWhereInputObjectZodSchema = joblistingwhereinputSchema;
 // File: JobListingOrderByWithRelationInput.schema.ts
 const __makeSchema_JobListingOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  companyId: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   description: SortOrderSchema.optional(),
   shortDescription: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
@@ -1997,6 +2000,7 @@ const __makeSchema_JobListingOrderByWithRelationInput_schema = () => z.object({
   rollingAdmission: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  companyId: SortOrderSchema.optional(),
   company: z.lazy(() => CompanyOrderByWithRelationInputObjectSchema).optional(),
   locations: z.lazy(() => JobListingLocationOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
@@ -2015,7 +2019,6 @@ export const JobListingWhereUniqueInputObjectZodSchema = __makeSchema_JobListing
 // File: JobListingOrderByWithAggregationInput.schema.ts
 const __makeSchema_JobListingOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  companyId: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   description: SortOrderSchema.optional(),
   shortDescription: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
@@ -2030,6 +2033,7 @@ const __makeSchema_JobListingOrderByWithAggregationInput_schema = () => z.object
   rollingAdmission: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  companyId: SortOrderSchema.optional(),
   _count: z.lazy(() => JobListingCountOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => JobListingMaxOrderByAggregateInputObjectSchema).optional(),
   _min: z.lazy(() => JobListingMinOrderByAggregateInputObjectSchema).optional()
@@ -2045,7 +2049,6 @@ const joblistingscalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => JobListingScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => JobListingScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => JobListingScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  companyId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   title: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   description: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   shortDescription: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
@@ -2059,7 +2062,8 @@ const joblistingscalarwherewithaggregatesinputSchema = z.object({
   applicationEmail: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   rollingAdmission: z.union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
-  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional()
+  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  companyId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const JobListingScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.JobListingScalarWhereWithAggregatesInput> = joblistingscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.JobListingScalarWhereWithAggregatesInput>;
 export const JobListingScalarWhereWithAggregatesInputObjectZodSchema = joblistingscalarwherewithaggregatesinputSchema;
@@ -2208,11 +2212,11 @@ const articlewhereinputSchema = z.object({
   OR: z.lazy(() => ArticleWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => ArticleWhereInputObjectSchema), z.lazy(() => ArticleWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  slug: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   title: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   author: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   photographer: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   imageUrl: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  slug: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   excerpt: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   content: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   isFeatured: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
@@ -2228,11 +2232,11 @@ export const ArticleWhereInputObjectZodSchema = articlewhereinputSchema;
 // File: ArticleOrderByWithRelationInput.schema.ts
 const __makeSchema_ArticleOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
+  slug: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   author: SortOrderSchema.optional(),
   photographer: SortOrderSchema.optional(),
   imageUrl: SortOrderSchema.optional(),
-  slug: SortOrderSchema.optional(),
   excerpt: SortOrderSchema.optional(),
   content: SortOrderSchema.optional(),
   isFeatured: SortOrderSchema.optional(),
@@ -2257,11 +2261,11 @@ export const ArticleWhereUniqueInputObjectZodSchema = __makeSchema_ArticleWhereU
 // File: ArticleOrderByWithAggregationInput.schema.ts
 const __makeSchema_ArticleOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
+  slug: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   author: SortOrderSchema.optional(),
   photographer: SortOrderSchema.optional(),
   imageUrl: SortOrderSchema.optional(),
-  slug: SortOrderSchema.optional(),
   excerpt: SortOrderSchema.optional(),
   content: SortOrderSchema.optional(),
   isFeatured: SortOrderSchema.optional(),
@@ -2283,11 +2287,11 @@ const articlescalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => ArticleScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => ArticleScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => ArticleScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  slug: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   title: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   author: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   photographer: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   imageUrl: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  slug: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   excerpt: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   content: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   isFeatured: z.union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()]).optional(),
@@ -2578,11 +2582,11 @@ const feedbackformwhereinputSchema = z.object({
   OR: z.lazy(() => FeedbackFormWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackFormWhereInputObjectSchema), z.lazy(() => FeedbackFormWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  eventId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   publicResultsToken: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   answerDeadline: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  eventId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   event: z.union([z.lazy(() => EventScalarRelationFilterObjectSchema), z.lazy(() => EventWhereInputObjectSchema)]).optional(),
   questions: z.lazy(() => FeedbackQuestionListRelationFilterObjectSchema).optional(),
   answers: z.lazy(() => FeedbackFormAnswerListRelationFilterObjectSchema).optional()
@@ -2594,11 +2598,11 @@ export const FeedbackFormWhereInputObjectZodSchema = feedbackformwhereinputSchem
 // File: FeedbackFormOrderByWithRelationInput.schema.ts
 const __makeSchema_FeedbackFormOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  eventId: SortOrderSchema.optional(),
   publicResultsToken: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
   answerDeadline: SortOrderSchema.optional(),
+  eventId: SortOrderSchema.optional(),
   event: z.lazy(() => EventOrderByWithRelationInputObjectSchema).optional(),
   questions: z.lazy(() => FeedbackQuestionOrderByRelationAggregateInputObjectSchema).optional(),
   answers: z.lazy(() => FeedbackFormAnswerOrderByRelationAggregateInputObjectSchema).optional()
@@ -2610,8 +2614,8 @@ export const FeedbackFormOrderByWithRelationInputObjectZodSchema = __makeSchema_
 // File: FeedbackFormWhereUniqueInput.schema.ts
 const __makeSchema_FeedbackFormWhereUniqueInput_schema = () => z.object({
   id: z.string().optional(),
-  eventId: z.string().optional(),
-  publicResultsToken: z.string().optional()
+  publicResultsToken: z.string().optional(),
+  eventId: z.string().optional()
 }).strict();
 export const FeedbackFormWhereUniqueInputObjectSchema: z.ZodType<Prisma.FeedbackFormWhereUniqueInput> = __makeSchema_FeedbackFormWhereUniqueInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormWhereUniqueInput>;
 export const FeedbackFormWhereUniqueInputObjectZodSchema = __makeSchema_FeedbackFormWhereUniqueInput_schema();
@@ -2620,11 +2624,11 @@ export const FeedbackFormWhereUniqueInputObjectZodSchema = __makeSchema_Feedback
 // File: FeedbackFormOrderByWithAggregationInput.schema.ts
 const __makeSchema_FeedbackFormOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  eventId: SortOrderSchema.optional(),
   publicResultsToken: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
   answerDeadline: SortOrderSchema.optional(),
+  eventId: SortOrderSchema.optional(),
   _count: z.lazy(() => FeedbackFormCountOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => FeedbackFormMaxOrderByAggregateInputObjectSchema).optional(),
   _min: z.lazy(() => FeedbackFormMinOrderByAggregateInputObjectSchema).optional()
@@ -2640,11 +2644,11 @@ const feedbackformscalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => FeedbackFormScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackFormScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => FeedbackFormScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  eventId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   publicResultsToken: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
-  answerDeadline: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional()
+  answerDeadline: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  eventId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const FeedbackFormScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.FeedbackFormScalarWhereWithAggregatesInput> = feedbackformscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.FeedbackFormScalarWhereWithAggregatesInput>;
 export const FeedbackFormScalarWhereWithAggregatesInputObjectZodSchema = feedbackformscalarwherewithaggregatesinputSchema;
@@ -2657,7 +2661,6 @@ const feedbackquestionwhereinputSchema = z.object({
   OR: z.lazy(() => FeedbackQuestionWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackQuestionWhereInputObjectSchema), z.lazy(() => FeedbackQuestionWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  feedbackFormId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   label: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   required: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   showInPublicResults: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
@@ -2665,6 +2668,7 @@ const feedbackquestionwhereinputSchema = z.object({
   order: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  feedbackFormId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   feedbackForm: z.union([z.lazy(() => FeedbackFormScalarRelationFilterObjectSchema), z.lazy(() => FeedbackFormWhereInputObjectSchema)]).optional(),
   options: z.lazy(() => FeedbackQuestionOptionListRelationFilterObjectSchema).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerListRelationFilterObjectSchema).optional()
@@ -2676,7 +2680,6 @@ export const FeedbackQuestionWhereInputObjectZodSchema = feedbackquestionwherein
 // File: FeedbackQuestionOrderByWithRelationInput.schema.ts
 const __makeSchema_FeedbackQuestionOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
   label: SortOrderSchema.optional(),
   required: SortOrderSchema.optional(),
   showInPublicResults: SortOrderSchema.optional(),
@@ -2684,6 +2687,7 @@ const __makeSchema_FeedbackQuestionOrderByWithRelationInput_schema = () => z.obj
   order: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional(),
   feedbackForm: z.lazy(() => FeedbackFormOrderByWithRelationInputObjectSchema).optional(),
   options: z.lazy(() => FeedbackQuestionOptionOrderByRelationAggregateInputObjectSchema).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerOrderByRelationAggregateInputObjectSchema).optional()
@@ -2703,7 +2707,6 @@ export const FeedbackQuestionWhereUniqueInputObjectZodSchema = __makeSchema_Feed
 // File: FeedbackQuestionOrderByWithAggregationInput.schema.ts
 const __makeSchema_FeedbackQuestionOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
   label: SortOrderSchema.optional(),
   required: SortOrderSchema.optional(),
   showInPublicResults: SortOrderSchema.optional(),
@@ -2711,6 +2714,7 @@ const __makeSchema_FeedbackQuestionOrderByWithAggregationInput_schema = () => z.
   order: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional(),
   _count: z.lazy(() => FeedbackQuestionCountOrderByAggregateInputObjectSchema).optional(),
   _avg: z.lazy(() => FeedbackQuestionAvgOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => FeedbackQuestionMaxOrderByAggregateInputObjectSchema).optional(),
@@ -2728,14 +2732,14 @@ const feedbackquestionscalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => FeedbackQuestionScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackQuestionScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => FeedbackQuestionScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  feedbackFormId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   label: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   required: z.union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()]).optional(),
   showInPublicResults: z.union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()]).optional(),
   type: z.union([z.lazy(() => EnumFeedbackQuestionTypeWithAggregatesFilterObjectSchema), FeedbackQuestionTypeSchema]).optional(),
   order: z.union([z.lazy(() => IntWithAggregatesFilterObjectSchema), z.number().int()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
-  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional()
+  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  feedbackFormId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const FeedbackQuestionScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionScalarWhereWithAggregatesInput> = feedbackquestionscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.FeedbackQuestionScalarWhereWithAggregatesInput>;
 export const FeedbackQuestionScalarWhereWithAggregatesInputObjectZodSchema = feedbackquestionscalarwherewithaggregatesinputSchema;
@@ -2812,9 +2816,9 @@ const feedbackquestionanswerwhereinputSchema = z.object({
   OR: z.lazy(() => FeedbackQuestionAnswerWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackQuestionAnswerWhereInputObjectSchema), z.lazy(() => FeedbackQuestionAnswerWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  value: z.lazy(() => JsonNullableFilterObjectSchema).optional(),
   questionId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   formAnswerId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  value: z.lazy(() => JsonNullableFilterObjectSchema).optional(),
   question: z.union([z.lazy(() => FeedbackQuestionScalarRelationFilterObjectSchema), z.lazy(() => FeedbackQuestionWhereInputObjectSchema)]).optional(),
   formAnswer: z.union([z.lazy(() => FeedbackFormAnswerScalarRelationFilterObjectSchema), z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema)]).optional(),
   selectedOptions: z.lazy(() => FeedbackQuestionAnswerOptionLinkListRelationFilterObjectSchema).optional()
@@ -2826,9 +2830,9 @@ export const FeedbackQuestionAnswerWhereInputObjectZodSchema = feedbackquestiona
 // File: FeedbackQuestionAnswerOrderByWithRelationInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
+  value: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   questionId: SortOrderSchema.optional(),
   formAnswerId: SortOrderSchema.optional(),
-  value: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   question: z.lazy(() => FeedbackQuestionOrderByWithRelationInputObjectSchema).optional(),
   formAnswer: z.lazy(() => FeedbackFormAnswerOrderByWithRelationInputObjectSchema).optional(),
   selectedOptions: z.lazy(() => FeedbackQuestionAnswerOptionLinkOrderByRelationAggregateInputObjectSchema).optional()
@@ -2848,9 +2852,9 @@ export const FeedbackQuestionAnswerWhereUniqueInputObjectZodSchema = __makeSchem
 // File: FeedbackQuestionAnswerOrderByWithAggregationInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
+  value: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   questionId: SortOrderSchema.optional(),
   formAnswerId: SortOrderSchema.optional(),
-  value: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   _count: z.lazy(() => FeedbackQuestionAnswerCountOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => FeedbackQuestionAnswerMaxOrderByAggregateInputObjectSchema).optional(),
   _min: z.lazy(() => FeedbackQuestionAnswerMinOrderByAggregateInputObjectSchema).optional()
@@ -2866,9 +2870,9 @@ const feedbackquestionanswerscalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => FeedbackQuestionAnswerScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackQuestionAnswerScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => FeedbackQuestionAnswerScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  value: z.lazy(() => JsonNullableWithAggregatesFilterObjectSchema).optional(),
   questionId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  formAnswerId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  value: z.lazy(() => JsonNullableWithAggregatesFilterObjectSchema).optional()
+  formAnswerId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const FeedbackQuestionAnswerScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerScalarWhereWithAggregatesInput> = feedbackquestionanswerscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerScalarWhereWithAggregatesInput>;
 export const FeedbackQuestionAnswerScalarWhereWithAggregatesInputObjectZodSchema = feedbackquestionanswerscalarwherewithaggregatesinputSchema;
@@ -2940,10 +2944,10 @@ const feedbackformanswerwhereinputSchema = z.object({
   OR: z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema), z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  feedbackFormId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  attendeeId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  feedbackFormId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  attendeeId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   feedbackForm: z.union([z.lazy(() => FeedbackFormScalarRelationFilterObjectSchema), z.lazy(() => FeedbackFormWhereInputObjectSchema)]).optional(),
   attendee: z.union([z.lazy(() => AttendeeScalarRelationFilterObjectSchema), z.lazy(() => AttendeeWhereInputObjectSchema)]).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerListRelationFilterObjectSchema).optional()
@@ -2955,10 +2959,10 @@ export const FeedbackFormAnswerWhereInputObjectZodSchema = feedbackformanswerwhe
 // File: FeedbackFormAnswerOrderByWithRelationInput.schema.ts
 const __makeSchema_FeedbackFormAnswerOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
-  attendeeId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional(),
+  attendeeId: SortOrderSchema.optional(),
   feedbackForm: z.lazy(() => FeedbackFormOrderByWithRelationInputObjectSchema).optional(),
   attendee: z.lazy(() => AttendeeOrderByWithRelationInputObjectSchema).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerOrderByRelationAggregateInputObjectSchema).optional()
@@ -2979,10 +2983,10 @@ export const FeedbackFormAnswerWhereUniqueInputObjectZodSchema = __makeSchema_Fe
 // File: FeedbackFormAnswerOrderByWithAggregationInput.schema.ts
 const __makeSchema_FeedbackFormAnswerOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
-  attendeeId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional(),
+  attendeeId: SortOrderSchema.optional(),
   _count: z.lazy(() => FeedbackFormAnswerCountOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => FeedbackFormAnswerMaxOrderByAggregateInputObjectSchema).optional(),
   _min: z.lazy(() => FeedbackFormAnswerMinOrderByAggregateInputObjectSchema).optional()
@@ -2998,10 +3002,10 @@ const feedbackformanswerscalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => FeedbackFormAnswerScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackFormAnswerScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => FeedbackFormAnswerScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  feedbackFormId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  attendeeId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
-  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional()
+  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  feedbackFormId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  attendeeId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const FeedbackFormAnswerScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerScalarWhereWithAggregatesInput> = feedbackformanswerscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.FeedbackFormAnswerScalarWhereWithAggregatesInput>;
 export const FeedbackFormAnswerScalarWhereWithAggregatesInputObjectZodSchema = feedbackformanswerscalarwherewithaggregatesinputSchema;
@@ -3017,10 +3021,10 @@ const auditlogwhereinputSchema = z.object({
   tableName: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   rowId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-  userId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   operation: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   rowData: z.lazy(() => JsonFilterObjectSchema).optional(),
   transactionId: z.union([z.lazy(() => BigIntFilterObjectSchema), z.bigint()]).optional(),
+  userId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   user: z.union([z.lazy(() => UserNullableScalarRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional()
 }).strict();
 export const AuditLogWhereInputObjectSchema: z.ZodType<Prisma.AuditLogWhereInput> = auditlogwhereinputSchema as unknown as z.ZodType<Prisma.AuditLogWhereInput>;
@@ -3033,10 +3037,10 @@ const __makeSchema_AuditLogOrderByWithRelationInput_schema = () => z.object({
   tableName: SortOrderSchema.optional(),
   rowId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   createdAt: SortOrderSchema.optional(),
-  userId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   operation: SortOrderSchema.optional(),
   rowData: SortOrderSchema.optional(),
   transactionId: SortOrderSchema.optional(),
+  userId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional()
 }).strict();
 export const AuditLogOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.AuditLogOrderByWithRelationInput> = __makeSchema_AuditLogOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.AuditLogOrderByWithRelationInput>;
@@ -3057,10 +3061,10 @@ const __makeSchema_AuditLogOrderByWithAggregationInput_schema = () => z.object({
   tableName: SortOrderSchema.optional(),
   rowId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   createdAt: SortOrderSchema.optional(),
-  userId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   operation: SortOrderSchema.optional(),
   rowData: SortOrderSchema.optional(),
   transactionId: SortOrderSchema.optional(),
+  userId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   _count: z.lazy(() => AuditLogCountOrderByAggregateInputObjectSchema).optional(),
   _avg: z.lazy(() => AuditLogAvgOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => AuditLogMaxOrderByAggregateInputObjectSchema).optional(),
@@ -3081,10 +3085,10 @@ const auditlogscalarwherewithaggregatesinputSchema = z.object({
   tableName: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   rowId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
-  userId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   operation: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   rowData: z.lazy(() => JsonWithAggregatesFilterObjectSchema).optional(),
-  transactionId: z.union([z.lazy(() => BigIntWithAggregatesFilterObjectSchema), z.bigint()]).optional()
+  transactionId: z.union([z.lazy(() => BigIntWithAggregatesFilterObjectSchema), z.bigint()]).optional(),
+  userId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable()
 }).strict();
 export const AuditLogScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.AuditLogScalarWhereWithAggregatesInput> = auditlogscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.AuditLogScalarWhereWithAggregatesInput>;
 export const AuditLogScalarWhereWithAggregatesInputObjectZodSchema = auditlogscalarwherewithaggregatesinputSchema;
@@ -3783,11 +3787,11 @@ export const GroupMembershipCreateInputObjectZodSchema = __makeSchema_GroupMembe
 // File: GroupMembershipUncheckedCreateInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
-  groupId: z.string(),
-  userId: z.string(),
   start: z.coerce.date(),
   end: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
+  groupId: z.string(),
+  userId: z.string(),
   roles: z.lazy(() => GroupMembershipRoleUncheckedCreateNestedManyWithoutMembershipInputObjectSchema).optional()
 }).strict();
 export const GroupMembershipUncheckedCreateInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedCreateInput> = __makeSchema_GroupMembershipUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedCreateInput>;
@@ -3812,12 +3816,12 @@ export const GroupMembershipUpdateInputObjectZodSchema = __makeSchema_GroupMembe
 // File: GroupMembershipUncheckedUpdateInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   start: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   end: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   roles: z.lazy(() => GroupMembershipRoleUncheckedUpdateManyWithoutMembershipNestedInputObjectSchema).optional()
 }).strict();
 export const GroupMembershipUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedUpdateInput> = __makeSchema_GroupMembershipUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedUpdateInput>;
@@ -3827,12 +3831,12 @@ export const GroupMembershipUncheckedUpdateInputObjectZodSchema = __makeSchema_G
 // File: GroupMembershipCreateManyInput.schema.ts
 const __makeSchema_GroupMembershipCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
-  groupId: z.string(),
-  userId: z.string(),
   start: z.coerce.date(),
   end: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  groupId: z.string(),
+  userId: z.string()
 }).strict();
 export const GroupMembershipCreateManyInputObjectSchema: z.ZodType<Prisma.GroupMembershipCreateManyInput> = __makeSchema_GroupMembershipCreateManyInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipCreateManyInput>;
 export const GroupMembershipCreateManyInputObjectZodSchema = __makeSchema_GroupMembershipCreateManyInput_schema();
@@ -3853,12 +3857,12 @@ export const GroupMembershipUpdateManyMutationInputObjectZodSchema = __makeSchem
 // File: GroupMembershipUncheckedUpdateManyInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   start: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   end: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const GroupMembershipUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedUpdateManyInput> = __makeSchema_GroupMembershipUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedUpdateManyInput>;
 export const GroupMembershipUncheckedUpdateManyInputObjectZodSchema = __makeSchema_GroupMembershipUncheckedUpdateManyInput_schema();
@@ -3941,9 +3945,9 @@ export const GroupRoleCreateInputObjectZodSchema = __makeSchema_GroupRoleCreateI
 // File: GroupRoleUncheckedCreateInput.schema.ts
 const __makeSchema_GroupRoleUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
-  groupId: z.string(),
   name: z.string(),
   type: GroupRoleTypeSchema.optional(),
+  groupId: z.string(),
   groupMembershipRoles: z.lazy(() => GroupMembershipRoleUncheckedCreateNestedManyWithoutRoleInputObjectSchema).optional()
 }).strict();
 export const GroupRoleUncheckedCreateInputObjectSchema: z.ZodType<Prisma.GroupRoleUncheckedCreateInput> = __makeSchema_GroupRoleUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.GroupRoleUncheckedCreateInput>;
@@ -3965,9 +3969,9 @@ export const GroupRoleUpdateInputObjectZodSchema = __makeSchema_GroupRoleUpdateI
 // File: GroupRoleUncheckedUpdateInput.schema.ts
 const __makeSchema_GroupRoleUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupRoleTypeSchema, z.lazy(() => EnumGroupRoleTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   groupMembershipRoles: z.lazy(() => GroupMembershipRoleUncheckedUpdateManyWithoutRoleNestedInputObjectSchema).optional()
 }).strict();
 export const GroupRoleUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.GroupRoleUncheckedUpdateInput> = __makeSchema_GroupRoleUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.GroupRoleUncheckedUpdateInput>;
@@ -3977,9 +3981,9 @@ export const GroupRoleUncheckedUpdateInputObjectZodSchema = __makeSchema_GroupRo
 // File: GroupRoleCreateManyInput.schema.ts
 const __makeSchema_GroupRoleCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
-  groupId: z.string(),
   name: z.string(),
-  type: GroupRoleTypeSchema.optional()
+  type: GroupRoleTypeSchema.optional(),
+  groupId: z.string()
 }).strict();
 export const GroupRoleCreateManyInputObjectSchema: z.ZodType<Prisma.GroupRoleCreateManyInput> = __makeSchema_GroupRoleCreateManyInput_schema() as unknown as z.ZodType<Prisma.GroupRoleCreateManyInput>;
 export const GroupRoleCreateManyInputObjectZodSchema = __makeSchema_GroupRoleCreateManyInput_schema();
@@ -3998,9 +4002,9 @@ export const GroupRoleUpdateManyMutationInputObjectZodSchema = __makeSchema_Grou
 // File: GroupRoleUncheckedUpdateManyInput.schema.ts
 const __makeSchema_GroupRoleUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  type: z.union([GroupRoleTypeSchema, z.lazy(() => EnumGroupRoleTypeFieldUpdateOperationsInputObjectSchema)]).optional()
+  type: z.union([GroupRoleTypeSchema, z.lazy(() => EnumGroupRoleTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const GroupRoleUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.GroupRoleUncheckedUpdateManyInput> = __makeSchema_GroupRoleUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.GroupRoleUncheckedUpdateManyInput>;
 export const GroupRoleUncheckedUpdateManyInputObjectZodSchema = __makeSchema_GroupRoleUncheckedUpdateManyInput_schema();
@@ -4249,10 +4253,11 @@ const __makeSchema_AttendeeCreateInput_schema = () => z.object({
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceCreateNestedOneWithoutAttendeesInputObjectSchema),
   user: z.lazy(() => UserCreateNestedOneWithoutAttendeeInputObjectSchema),
   attendancePool: z.lazy(() => AttendancePoolCreateNestedOneWithoutAttendeesInputObjectSchema),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserCreateNestedOneWithoutAttendeesRefundedInputObjectSchema).optional()
 }).strict();
 export const AttendeeCreateInputObjectSchema: z.ZodType<Prisma.AttendeeCreateInput> = __makeSchema_AttendeeCreateInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateInput>;
@@ -4262,10 +4267,7 @@ export const AttendeeCreateInputObjectZodSchema = __makeSchema_AttendeeCreateInp
 // File: AttendeeUncheckedCreateInput.schema.ts
 const __makeSchema_AttendeeUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -4278,6 +4280,10 @@ const __makeSchema_AttendeeUncheckedCreateInput_schema = () => z.object({
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional().nullable(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInputObjectSchema).optional()
 }).strict();
@@ -4302,10 +4308,11 @@ const __makeSchema_AttendeeUpdateInput_schema = () => z.object({
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutAttendeeNestedInputObjectSchema).optional(),
   attendancePool: z.lazy(() => AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserUpdateOneWithoutAttendeesRefundedNestedInputObjectSchema).optional()
 }).strict();
 export const AttendeeUpdateInputObjectSchema: z.ZodType<Prisma.AttendeeUpdateInput> = __makeSchema_AttendeeUpdateInput_schema() as unknown as z.ZodType<Prisma.AttendeeUpdateInput>;
@@ -4315,10 +4322,7 @@ export const AttendeeUpdateInputObjectZodSchema = __makeSchema_AttendeeUpdateInp
 // File: AttendeeUncheckedUpdateInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -4332,6 +4336,10 @@ const __makeSchema_AttendeeUncheckedUpdateInput_schema = () => z.object({
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInputObjectSchema).optional()
 }).strict();
@@ -4342,10 +4350,7 @@ export const AttendeeUncheckedUpdateInputObjectZodSchema = __makeSchema_Attendee
 // File: AttendeeCreateManyInput.schema.ts
 const __makeSchema_AttendeeCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -4359,6 +4364,10 @@ const __makeSchema_AttendeeCreateManyInput_schema = () => z.object({
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional().nullable()
 }).strict();
 export const AttendeeCreateManyInputObjectSchema: z.ZodType<Prisma.AttendeeCreateManyInput> = __makeSchema_AttendeeCreateManyInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateManyInput>;
@@ -4381,7 +4390,8 @@ const __makeSchema_AttendeeUpdateManyMutationInput_schema = () => z.object({
   paymentReservedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+  paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const AttendeeUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.AttendeeUpdateManyMutationInput> = __makeSchema_AttendeeUpdateManyMutationInput_schema() as unknown as z.ZodType<Prisma.AttendeeUpdateManyMutationInput>;
 export const AttendeeUpdateManyMutationInputObjectZodSchema = __makeSchema_AttendeeUpdateManyMutationInput_schema();
@@ -4390,10 +4400,7 @@ export const AttendeeUpdateManyMutationInputObjectZodSchema = __makeSchema_Atten
 // File: AttendeeUncheckedUpdateManyInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -4407,6 +4414,10 @@ const __makeSchema_AttendeeUncheckedUpdateManyInput_schema = () => z.object({
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const AttendeeUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedUpdateManyInput> = __makeSchema_AttendeeUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedUpdateManyInput>;
@@ -4430,8 +4441,8 @@ const __makeSchema_EventCreateInput_schema = () => z.object({
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   metadataImportId: z.number().int().optional().nullable(),
-  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormCreateNestedOneWithoutEventInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   parent: z.lazy(() => EventCreateNestedOneWithoutChildrenInputObjectSchema).optional(),
   children: z.lazy(() => EventCreateNestedManyWithoutParentInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyCreateNestedManyWithoutEventInputObjectSchema).optional(),
@@ -4455,10 +4466,10 @@ const __makeSchema_EventUncheckedCreateInput_schema = () => z.object({
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   parentId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedCreateNestedOneWithoutEventInputObjectSchema).optional(),
@@ -4489,8 +4500,8 @@ const __makeSchema_EventUpdateInput_schema = () => z.object({
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormUpdateOneWithoutEventNestedInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   parent: z.lazy(() => EventUpdateOneWithoutChildrenNestedInputObjectSchema).optional(),
   children: z.lazy(() => EventUpdateManyWithoutParentNestedInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyUpdateManyWithoutEventNestedInputObjectSchema).optional(),
@@ -4514,11 +4525,11 @@ const __makeSchema_EventUncheckedUpdateInput_schema = () => z.object({
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   parentId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedUpdateOneWithoutEventNestedInputObjectSchema).optional(),
@@ -4544,11 +4555,11 @@ const __makeSchema_EventCreateManyInput_schema = () => z.object({
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   parentId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable()
 }).strict();
@@ -4592,11 +4603,11 @@ const __makeSchema_EventUncheckedUpdateManyInput_schema = () => z.object({
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   parentId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
@@ -4852,10 +4863,10 @@ export const PersonalMarkCreateInputObjectZodSchema = __makeSchema_PersonalMarkC
 
 // File: PersonalMarkUncheckedCreateInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedCreateInput_schema = () => z.object({
+  createdAt: z.coerce.date().optional(),
   markId: z.string(),
   userId: z.string(),
-  givenById: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional()
+  givenById: z.string().optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedCreateInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedCreateInput> = __makeSchema_PersonalMarkUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedCreateInput>;
 export const PersonalMarkUncheckedCreateInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedCreateInput_schema();
@@ -4874,10 +4885,10 @@ export const PersonalMarkUpdateInputObjectZodSchema = __makeSchema_PersonalMarkU
 
 // File: PersonalMarkUncheckedUpdateInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedUpdateInput_schema = () => z.object({
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedUpdateInput> = __makeSchema_PersonalMarkUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedUpdateInput>;
 export const PersonalMarkUncheckedUpdateInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedUpdateInput_schema();
@@ -4885,10 +4896,10 @@ export const PersonalMarkUncheckedUpdateInputObjectZodSchema = __makeSchema_Pers
 
 // File: PersonalMarkCreateManyInput.schema.ts
 const __makeSchema_PersonalMarkCreateManyInput_schema = () => z.object({
+  createdAt: z.coerce.date().optional(),
   markId: z.string(),
   userId: z.string(),
-  givenById: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional()
+  givenById: z.string().optional().nullable()
 }).strict();
 export const PersonalMarkCreateManyInputObjectSchema: z.ZodType<Prisma.PersonalMarkCreateManyInput> = __makeSchema_PersonalMarkCreateManyInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkCreateManyInput>;
 export const PersonalMarkCreateManyInputObjectZodSchema = __makeSchema_PersonalMarkCreateManyInput_schema();
@@ -4904,10 +4915,10 @@ export const PersonalMarkUpdateManyMutationInputObjectZodSchema = __makeSchema_P
 
 // File: PersonalMarkUncheckedUpdateManyInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedUpdateManyInput_schema = () => z.object({
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedUpdateManyInput> = __makeSchema_PersonalMarkUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedUpdateManyInput>;
 export const PersonalMarkUncheckedUpdateManyInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedUpdateManyInput_schema();
@@ -5247,7 +5258,6 @@ export const JobListingCreateInputObjectZodSchema = __makeSchema_JobListingCreat
 // File: JobListingUncheckedCreateInput.schema.ts
 const __makeSchema_JobListingUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
-  companyId: z.string(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional().nullable(),
@@ -5261,6 +5271,7 @@ const __makeSchema_JobListingUncheckedCreateInput_schema = () => z.object({
   applicationEmail: z.string().optional().nullable(),
   rollingAdmission: z.boolean(),
   createdAt: z.coerce.date().optional(),
+  companyId: z.string(),
   locations: z.lazy(() => JobListingLocationUncheckedCreateNestedManyWithoutJobListingInputObjectSchema).optional()
 }).strict();
 export const JobListingUncheckedCreateInputObjectSchema: z.ZodType<Prisma.JobListingUncheckedCreateInput> = __makeSchema_JobListingUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.JobListingUncheckedCreateInput>;
@@ -5294,7 +5305,6 @@ export const JobListingUpdateInputObjectZodSchema = __makeSchema_JobListingUpdat
 // File: JobListingUncheckedUpdateInput.schema.ts
 const __makeSchema_JobListingUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  companyId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -5309,6 +5319,7 @@ const __makeSchema_JobListingUncheckedUpdateInput_schema = () => z.object({
   rollingAdmission: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  companyId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   locations: z.lazy(() => JobListingLocationUncheckedUpdateManyWithoutJobListingNestedInputObjectSchema).optional()
 }).strict();
 export const JobListingUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.JobListingUncheckedUpdateInput> = __makeSchema_JobListingUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.JobListingUncheckedUpdateInput>;
@@ -5318,7 +5329,6 @@ export const JobListingUncheckedUpdateInputObjectZodSchema = __makeSchema_JobLis
 // File: JobListingCreateManyInput.schema.ts
 const __makeSchema_JobListingCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
-  companyId: z.string(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional().nullable(),
@@ -5332,7 +5342,8 @@ const __makeSchema_JobListingCreateManyInput_schema = () => z.object({
   applicationEmail: z.string().optional().nullable(),
   rollingAdmission: z.boolean(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  companyId: z.string()
 }).strict();
 export const JobListingCreateManyInputObjectSchema: z.ZodType<Prisma.JobListingCreateManyInput> = __makeSchema_JobListingCreateManyInput_schema() as unknown as z.ZodType<Prisma.JobListingCreateManyInput>;
 export const JobListingCreateManyInputObjectZodSchema = __makeSchema_JobListingCreateManyInput_schema();
@@ -5363,7 +5374,6 @@ export const JobListingUpdateManyMutationInputObjectZodSchema = __makeSchema_Job
 // File: JobListingUncheckedUpdateManyInput.schema.ts
 const __makeSchema_JobListingUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  companyId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -5377,7 +5387,8 @@ const __makeSchema_JobListingUncheckedUpdateManyInput_schema = () => z.object({
   applicationEmail: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   rollingAdmission: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  companyId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const JobListingUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.JobListingUncheckedUpdateManyInput> = __makeSchema_JobListingUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.JobListingUncheckedUpdateManyInput>;
 export const JobListingUncheckedUpdateManyInputObjectZodSchema = __makeSchema_JobListingUncheckedUpdateManyInput_schema();
@@ -5551,11 +5562,11 @@ export const OfflineUncheckedUpdateManyInputObjectZodSchema = __makeSchema_Offli
 // File: ArticleCreateInput.schema.ts
 const __makeSchema_ArticleCreateInput_schema = () => z.object({
   id: z.string().optional(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean().optional(),
@@ -5570,11 +5581,11 @@ export const ArticleCreateInputObjectZodSchema = __makeSchema_ArticleCreateInput
 // File: ArticleUncheckedCreateInput.schema.ts
 const __makeSchema_ArticleUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean().optional(),
@@ -5589,11 +5600,11 @@ export const ArticleUncheckedCreateInputObjectZodSchema = __makeSchema_ArticleUn
 // File: ArticleUpdateInput.schema.ts
 const __makeSchema_ArticleUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   author: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   photographer: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   excerpt: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   content: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   isFeatured: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -5609,11 +5620,11 @@ export const ArticleUpdateInputObjectZodSchema = __makeSchema_ArticleUpdateInput
 // File: ArticleUncheckedUpdateInput.schema.ts
 const __makeSchema_ArticleUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   author: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   photographer: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   excerpt: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   content: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   isFeatured: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -5629,11 +5640,11 @@ export const ArticleUncheckedUpdateInputObjectZodSchema = __makeSchema_ArticleUn
 // File: ArticleCreateManyInput.schema.ts
 const __makeSchema_ArticleCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean().optional(),
@@ -5648,11 +5659,11 @@ export const ArticleCreateManyInputObjectZodSchema = __makeSchema_ArticleCreateM
 // File: ArticleUpdateManyMutationInput.schema.ts
 const __makeSchema_ArticleUpdateManyMutationInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   author: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   photographer: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   excerpt: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   content: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   isFeatured: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -5667,11 +5678,11 @@ export const ArticleUpdateManyMutationInputObjectZodSchema = __makeSchema_Articl
 // File: ArticleUncheckedUpdateManyInput.schema.ts
 const __makeSchema_ArticleUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   author: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   photographer: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   excerpt: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   content: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   isFeatured: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -6032,10 +6043,10 @@ export const FeedbackFormCreateInputObjectZodSchema = __makeSchema_FeedbackFormC
 // File: FeedbackFormUncheckedCreateInput.schema.ts
 const __makeSchema_FeedbackFormUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
-  eventId: z.string(),
   publicResultsToken: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   answerDeadline: z.coerce.date(),
+  eventId: z.string(),
   questions: z.lazy(() => FeedbackQuestionUncheckedCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional(),
   answers: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional()
 }).strict();
@@ -6061,11 +6072,11 @@ export const FeedbackFormUpdateInputObjectZodSchema = __makeSchema_FeedbackFormU
 // File: FeedbackFormUncheckedUpdateInput.schema.ts
 const __makeSchema_FeedbackFormUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  eventId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   publicResultsToken: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  eventId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   questions: z.lazy(() => FeedbackQuestionUncheckedUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional(),
   answers: z.lazy(() => FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional()
 }).strict();
@@ -6076,11 +6087,11 @@ export const FeedbackFormUncheckedUpdateInputObjectZodSchema = __makeSchema_Feed
 // File: FeedbackFormCreateManyInput.schema.ts
 const __makeSchema_FeedbackFormCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
-  eventId: z.string(),
   publicResultsToken: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  answerDeadline: z.coerce.date()
+  answerDeadline: z.coerce.date(),
+  eventId: z.string()
 }).strict();
 export const FeedbackFormCreateManyInputObjectSchema: z.ZodType<Prisma.FeedbackFormCreateManyInput> = __makeSchema_FeedbackFormCreateManyInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormCreateManyInput>;
 export const FeedbackFormCreateManyInputObjectZodSchema = __makeSchema_FeedbackFormCreateManyInput_schema();
@@ -6101,11 +6112,11 @@ export const FeedbackFormUpdateManyMutationInputObjectZodSchema = __makeSchema_F
 // File: FeedbackFormUncheckedUpdateManyInput.schema.ts
 const __makeSchema_FeedbackFormUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  eventId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   publicResultsToken: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  eventId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackFormUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedUpdateManyInput> = __makeSchema_FeedbackFormUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedUpdateManyInput>;
 export const FeedbackFormUncheckedUpdateManyInputObjectZodSchema = __makeSchema_FeedbackFormUncheckedUpdateManyInput_schema();
@@ -6131,13 +6142,13 @@ export const FeedbackQuestionCreateInputObjectZodSchema = __makeSchema_FeedbackQ
 // File: FeedbackQuestionUncheckedCreateInput.schema.ts
 const __makeSchema_FeedbackQuestionUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
-  feedbackFormId: z.string(),
   label: z.string(),
   required: z.boolean().optional(),
   showInPublicResults: z.boolean().optional(),
   type: FeedbackQuestionTypeSchema,
   order: z.number().int(),
   createdAt: z.coerce.date().optional(),
+  feedbackFormId: z.string(),
   options: z.lazy(() => FeedbackQuestionOptionUncheckedCreateNestedManyWithoutQuestionInputObjectSchema).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutQuestionInputObjectSchema).optional()
 }).strict();
@@ -6166,7 +6177,6 @@ export const FeedbackQuestionUpdateInputObjectZodSchema = __makeSchema_FeedbackQ
 // File: FeedbackQuestionUncheckedUpdateInput.schema.ts
 const __makeSchema_FeedbackQuestionUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   label: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   required: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   showInPublicResults: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -6174,6 +6184,7 @@ const __makeSchema_FeedbackQuestionUncheckedUpdateInput_schema = () => z.object(
   order: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   options: z.lazy(() => FeedbackQuestionOptionUncheckedUpdateManyWithoutQuestionNestedInputObjectSchema).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionNestedInputObjectSchema).optional()
 }).strict();
@@ -6184,14 +6195,14 @@ export const FeedbackQuestionUncheckedUpdateInputObjectZodSchema = __makeSchema_
 // File: FeedbackQuestionCreateManyInput.schema.ts
 const __makeSchema_FeedbackQuestionCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
-  feedbackFormId: z.string(),
   label: z.string(),
   required: z.boolean().optional(),
   showInPublicResults: z.boolean().optional(),
   type: FeedbackQuestionTypeSchema,
   order: z.number().int(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  feedbackFormId: z.string()
 }).strict();
 export const FeedbackQuestionCreateManyInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionCreateManyInput> = __makeSchema_FeedbackQuestionCreateManyInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionCreateManyInput>;
 export const FeedbackQuestionCreateManyInputObjectZodSchema = __makeSchema_FeedbackQuestionCreateManyInput_schema();
@@ -6215,14 +6226,14 @@ export const FeedbackQuestionUpdateManyMutationInputObjectZodSchema = __makeSche
 // File: FeedbackQuestionUncheckedUpdateManyInput.schema.ts
 const __makeSchema_FeedbackQuestionUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   label: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   required: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   showInPublicResults: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([FeedbackQuestionTypeSchema, z.lazy(() => EnumFeedbackQuestionTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   order: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackQuestionUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionUncheckedUpdateManyInput> = __makeSchema_FeedbackQuestionUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionUncheckedUpdateManyInput>;
 export const FeedbackQuestionUncheckedUpdateManyInputObjectZodSchema = __makeSchema_FeedbackQuestionUncheckedUpdateManyInput_schema();
@@ -6316,9 +6327,9 @@ export const FeedbackQuestionAnswerCreateInputObjectZodSchema = __makeSchema_Fee
 // File: FeedbackQuestionAnswerUncheckedCreateInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   questionId: z.string(),
   formAnswerId: z.string(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   selectedOptions: z.lazy(() => FeedbackQuestionAnswerOptionLinkUncheckedCreateNestedManyWithoutFeedbackQuestionAnswerInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedCreateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedCreateInput> = __makeSchema_FeedbackQuestionAnswerUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedCreateInput>;
@@ -6340,9 +6351,9 @@ export const FeedbackQuestionAnswerUpdateInputObjectZodSchema = __makeSchema_Fee
 // File: FeedbackQuestionAnswerUncheckedUpdateInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   questionId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   selectedOptions: z.lazy(() => FeedbackQuestionAnswerOptionLinkUncheckedUpdateManyWithoutFeedbackQuestionAnswerNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateInput> = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateInput>;
@@ -6352,9 +6363,9 @@ export const FeedbackQuestionAnswerUncheckedUpdateInputObjectZodSchema = __makeS
 // File: FeedbackQuestionAnswerCreateManyInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   questionId: z.string(),
-  formAnswerId: z.string(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional()
+  formAnswerId: z.string()
 }).strict();
 export const FeedbackQuestionAnswerCreateManyInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerCreateManyInput> = __makeSchema_FeedbackQuestionAnswerCreateManyInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerCreateManyInput>;
 export const FeedbackQuestionAnswerCreateManyInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerCreateManyInput_schema();
@@ -6372,9 +6383,9 @@ export const FeedbackQuestionAnswerUpdateManyMutationInputObjectZodSchema = __ma
 // File: FeedbackQuestionAnswerUncheckedUpdateManyInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   questionId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional()
+  formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateManyInput> = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateManyInput>;
 export const FeedbackQuestionAnswerUncheckedUpdateManyInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyInput_schema();
@@ -6457,9 +6468,9 @@ export const FeedbackFormAnswerCreateInputObjectZodSchema = __makeSchema_Feedbac
 // File: FeedbackFormAnswerUncheckedCreateInput.schema.ts
 const __makeSchema_FeedbackFormAnswerUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
+  createdAt: z.coerce.date().optional(),
   feedbackFormId: z.string(),
   attendeeId: z.string(),
-  createdAt: z.coerce.date().optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutFormAnswerInputObjectSchema).optional()
 }).strict();
 export const FeedbackFormAnswerUncheckedCreateInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateInput> = __makeSchema_FeedbackFormAnswerUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateInput>;
@@ -6482,10 +6493,10 @@ export const FeedbackFormAnswerUpdateInputObjectZodSchema = __makeSchema_Feedbac
 // File: FeedbackFormAnswerUncheckedUpdateInput.schema.ts
 const __makeSchema_FeedbackFormAnswerUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackFormAnswerUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateInput> = __makeSchema_FeedbackFormAnswerUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateInput>;
@@ -6495,10 +6506,10 @@ export const FeedbackFormAnswerUncheckedUpdateInputObjectZodSchema = __makeSchem
 // File: FeedbackFormAnswerCreateManyInput.schema.ts
 const __makeSchema_FeedbackFormAnswerCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
-  feedbackFormId: z.string(),
-  attendeeId: z.string(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string()
 }).strict();
 export const FeedbackFormAnswerCreateManyInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCreateManyInput> = __makeSchema_FeedbackFormAnswerCreateManyInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCreateManyInput>;
 export const FeedbackFormAnswerCreateManyInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCreateManyInput_schema();
@@ -6517,10 +6528,10 @@ export const FeedbackFormAnswerUpdateManyMutationInputObjectZodSchema = __makeSc
 // File: FeedbackFormAnswerUncheckedUpdateManyInput.schema.ts
 const __makeSchema_FeedbackFormAnswerUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackFormAnswerUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateManyInput> = __makeSchema_FeedbackFormAnswerUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateManyInput>;
 export const FeedbackFormAnswerUncheckedUpdateManyInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedUpdateManyInput_schema();
@@ -6547,10 +6558,10 @@ const __makeSchema_AuditLogUncheckedCreateInput_schema = () => z.object({
   tableName: z.string(),
   rowId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  userId: z.string().optional().nullable(),
   operation: z.string(),
   rowData: z.union([JsonNullValueInputSchema, jsonSchema]),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  userId: z.string().optional().nullable()
 }).strict();
 export const AuditLogUncheckedCreateInputObjectSchema: z.ZodType<Prisma.AuditLogUncheckedCreateInput> = __makeSchema_AuditLogUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.AuditLogUncheckedCreateInput>;
 export const AuditLogUncheckedCreateInputObjectZodSchema = __makeSchema_AuditLogUncheckedCreateInput_schema();
@@ -6577,10 +6588,10 @@ const __makeSchema_AuditLogUncheckedUpdateInput_schema = () => z.object({
   tableName: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   rowId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   operation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   rowData: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
-  transactionId: z.union([z.bigint(), z.lazy(() => BigIntFieldUpdateOperationsInputObjectSchema)]).optional()
+  transactionId: z.union([z.bigint(), z.lazy(() => BigIntFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const AuditLogUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.AuditLogUncheckedUpdateInput> = __makeSchema_AuditLogUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.AuditLogUncheckedUpdateInput>;
 export const AuditLogUncheckedUpdateInputObjectZodSchema = __makeSchema_AuditLogUncheckedUpdateInput_schema();
@@ -6592,10 +6603,10 @@ const __makeSchema_AuditLogCreateManyInput_schema = () => z.object({
   tableName: z.string(),
   rowId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  userId: z.string().optional().nullable(),
   operation: z.string(),
   rowData: z.union([JsonNullValueInputSchema, jsonSchema]),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  userId: z.string().optional().nullable()
 }).strict();
 export const AuditLogCreateManyInputObjectSchema: z.ZodType<Prisma.AuditLogCreateManyInput> = __makeSchema_AuditLogCreateManyInput_schema() as unknown as z.ZodType<Prisma.AuditLogCreateManyInput>;
 export const AuditLogCreateManyInputObjectZodSchema = __makeSchema_AuditLogCreateManyInput_schema();
@@ -6621,10 +6632,10 @@ const __makeSchema_AuditLogUncheckedUpdateManyInput_schema = () => z.object({
   tableName: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   rowId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   operation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   rowData: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
-  transactionId: z.union([z.bigint(), z.lazy(() => BigIntFieldUpdateOperationsInputObjectSchema)]).optional()
+  transactionId: z.union([z.bigint(), z.lazy(() => BigIntFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const AuditLogUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.AuditLogUncheckedUpdateManyInput> = __makeSchema_AuditLogUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.AuditLogUncheckedUpdateManyInput>;
 export const AuditLogUncheckedUpdateManyInputObjectZodSchema = __makeSchema_AuditLogUncheckedUpdateManyInput_schema();
@@ -7529,12 +7540,12 @@ export const GroupMembershipRoleOrderByRelationAggregateInputObjectZodSchema = _
 // File: GroupMembershipCountOrderByAggregateInput.schema.ts
 const __makeSchema_GroupMembershipCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   start: SortOrderSchema.optional(),
   end: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
 }).strict();
 export const GroupMembershipCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.GroupMembershipCountOrderByAggregateInput> = __makeSchema_GroupMembershipCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipCountOrderByAggregateInput>;
 export const GroupMembershipCountOrderByAggregateInputObjectZodSchema = __makeSchema_GroupMembershipCountOrderByAggregateInput_schema();
@@ -7543,12 +7554,12 @@ export const GroupMembershipCountOrderByAggregateInputObjectZodSchema = __makeSc
 // File: GroupMembershipMaxOrderByAggregateInput.schema.ts
 const __makeSchema_GroupMembershipMaxOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   start: SortOrderSchema.optional(),
   end: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
 }).strict();
 export const GroupMembershipMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.GroupMembershipMaxOrderByAggregateInput> = __makeSchema_GroupMembershipMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipMaxOrderByAggregateInput>;
 export const GroupMembershipMaxOrderByAggregateInputObjectZodSchema = __makeSchema_GroupMembershipMaxOrderByAggregateInput_schema();
@@ -7557,12 +7568,12 @@ export const GroupMembershipMaxOrderByAggregateInputObjectZodSchema = __makeSche
 // File: GroupMembershipMinOrderByAggregateInput.schema.ts
 const __makeSchema_GroupMembershipMinOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   start: SortOrderSchema.optional(),
   end: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
 }).strict();
 export const GroupMembershipMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.GroupMembershipMinOrderByAggregateInput> = __makeSchema_GroupMembershipMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipMinOrderByAggregateInput>;
 export const GroupMembershipMinOrderByAggregateInputObjectZodSchema = __makeSchema_GroupMembershipMinOrderByAggregateInput_schema();
@@ -7645,9 +7656,9 @@ export const GroupRoleGroupIdNameCompoundUniqueInputObjectZodSchema = __makeSche
 // File: GroupRoleCountOrderByAggregateInput.schema.ts
 const __makeSchema_GroupRoleCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
-  type: SortOrderSchema.optional()
+  type: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional()
 }).strict();
 export const GroupRoleCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.GroupRoleCountOrderByAggregateInput> = __makeSchema_GroupRoleCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupRoleCountOrderByAggregateInput>;
 export const GroupRoleCountOrderByAggregateInputObjectZodSchema = __makeSchema_GroupRoleCountOrderByAggregateInput_schema();
@@ -7656,9 +7667,9 @@ export const GroupRoleCountOrderByAggregateInputObjectZodSchema = __makeSchema_G
 // File: GroupRoleMaxOrderByAggregateInput.schema.ts
 const __makeSchema_GroupRoleMaxOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
-  type: SortOrderSchema.optional()
+  type: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional()
 }).strict();
 export const GroupRoleMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.GroupRoleMaxOrderByAggregateInput> = __makeSchema_GroupRoleMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupRoleMaxOrderByAggregateInput>;
 export const GroupRoleMaxOrderByAggregateInputObjectZodSchema = __makeSchema_GroupRoleMaxOrderByAggregateInput_schema();
@@ -7667,9 +7678,9 @@ export const GroupRoleMaxOrderByAggregateInputObjectZodSchema = __makeSchema_Gro
 // File: GroupRoleMinOrderByAggregateInput.schema.ts
 const __makeSchema_GroupRoleMinOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  groupId: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
-  type: SortOrderSchema.optional()
+  type: SortOrderSchema.optional(),
+  groupId: SortOrderSchema.optional()
 }).strict();
 export const GroupRoleMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.GroupRoleMinOrderByAggregateInput> = __makeSchema_GroupRoleMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupRoleMinOrderByAggregateInput>;
 export const GroupRoleMinOrderByAggregateInputObjectZodSchema = __makeSchema_GroupRoleMinOrderByAggregateInput_schema();
@@ -7981,15 +7992,6 @@ export const IntWithAggregatesFilterObjectSchema: z.ZodType<Prisma.IntWithAggreg
 export const IntWithAggregatesFilterObjectZodSchema = __makeSchema_IntWithAggregatesFilter_schema();
 
 
-// File: AttendancePoolScalarRelationFilter.schema.ts
-const __makeSchema_AttendancePoolScalarRelationFilter_schema = () => z.object({
-  is: z.lazy(() => AttendancePoolWhereInputObjectSchema).optional(),
-  isNot: z.lazy(() => AttendancePoolWhereInputObjectSchema).optional()
-}).strict();
-export const AttendancePoolScalarRelationFilterObjectSchema: z.ZodType<Prisma.AttendancePoolScalarRelationFilter> = __makeSchema_AttendancePoolScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.AttendancePoolScalarRelationFilter>;
-export const AttendancePoolScalarRelationFilterObjectZodSchema = __makeSchema_AttendancePoolScalarRelationFilter_schema();
-
-
 // File: FeedbackFormAnswerNullableScalarRelationFilter.schema.ts
 const __makeSchema_FeedbackFormAnswerNullableScalarRelationFilter_schema = () => z.object({
   is: z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema).optional().nullable(),
@@ -7997,6 +7999,15 @@ const __makeSchema_FeedbackFormAnswerNullableScalarRelationFilter_schema = () =>
 }).strict();
 export const FeedbackFormAnswerNullableScalarRelationFilterObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerNullableScalarRelationFilter> = __makeSchema_FeedbackFormAnswerNullableScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerNullableScalarRelationFilter>;
 export const FeedbackFormAnswerNullableScalarRelationFilterObjectZodSchema = __makeSchema_FeedbackFormAnswerNullableScalarRelationFilter_schema();
+
+
+// File: AttendancePoolScalarRelationFilter.schema.ts
+const __makeSchema_AttendancePoolScalarRelationFilter_schema = () => z.object({
+  is: z.lazy(() => AttendancePoolWhereInputObjectSchema).optional(),
+  isNot: z.lazy(() => AttendancePoolWhereInputObjectSchema).optional()
+}).strict();
+export const AttendancePoolScalarRelationFilterObjectSchema: z.ZodType<Prisma.AttendancePoolScalarRelationFilter> = __makeSchema_AttendancePoolScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.AttendancePoolScalarRelationFilter>;
+export const AttendancePoolScalarRelationFilterObjectZodSchema = __makeSchema_AttendancePoolScalarRelationFilter_schema();
 
 
 // File: UserNullableScalarRelationFilter.schema.ts
@@ -8020,10 +8031,7 @@ export const AttendeeAttendee_uniqueCompoundUniqueInputObjectZodSchema = __makeS
 // File: AttendeeCountOrderByAggregateInput.schema.ts
 const __makeSchema_AttendeeCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  attendanceId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   userGrade: SortOrderSchema.optional(),
-  attendancePoolId: SortOrderSchema.optional(),
   selections: SortOrderSchema.optional(),
   reserved: SortOrderSchema.optional(),
   earliestReservationAt: SortOrderSchema.optional(),
@@ -8037,6 +8045,10 @@ const __makeSchema_AttendeeCountOrderByAggregateInput_schema = () => z.object({
   paymentChargeDeadline: SortOrderSchema.optional(),
   paymentChargedAt: SortOrderSchema.optional(),
   paymentRefundedAt: SortOrderSchema.optional(),
+  paymentCheckoutUrl: SortOrderSchema.optional(),
+  attendanceId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
+  attendancePoolId: SortOrderSchema.optional(),
   paymentRefundedById: SortOrderSchema.optional()
 }).strict();
 export const AttendeeCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.AttendeeCountOrderByAggregateInput> = __makeSchema_AttendeeCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.AttendeeCountOrderByAggregateInput>;
@@ -8054,10 +8066,7 @@ export const AttendeeAvgOrderByAggregateInputObjectZodSchema = __makeSchema_Atte
 // File: AttendeeMaxOrderByAggregateInput.schema.ts
 const __makeSchema_AttendeeMaxOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  attendanceId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   userGrade: SortOrderSchema.optional(),
-  attendancePoolId: SortOrderSchema.optional(),
   reserved: SortOrderSchema.optional(),
   earliestReservationAt: SortOrderSchema.optional(),
   attendedAt: SortOrderSchema.optional(),
@@ -8070,6 +8079,10 @@ const __makeSchema_AttendeeMaxOrderByAggregateInput_schema = () => z.object({
   paymentChargeDeadline: SortOrderSchema.optional(),
   paymentChargedAt: SortOrderSchema.optional(),
   paymentRefundedAt: SortOrderSchema.optional(),
+  paymentCheckoutUrl: SortOrderSchema.optional(),
+  attendanceId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
+  attendancePoolId: SortOrderSchema.optional(),
   paymentRefundedById: SortOrderSchema.optional()
 }).strict();
 export const AttendeeMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.AttendeeMaxOrderByAggregateInput> = __makeSchema_AttendeeMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.AttendeeMaxOrderByAggregateInput>;
@@ -8079,10 +8092,7 @@ export const AttendeeMaxOrderByAggregateInputObjectZodSchema = __makeSchema_Atte
 // File: AttendeeMinOrderByAggregateInput.schema.ts
 const __makeSchema_AttendeeMinOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  attendanceId: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   userGrade: SortOrderSchema.optional(),
-  attendancePoolId: SortOrderSchema.optional(),
   reserved: SortOrderSchema.optional(),
   earliestReservationAt: SortOrderSchema.optional(),
   attendedAt: SortOrderSchema.optional(),
@@ -8095,6 +8105,10 @@ const __makeSchema_AttendeeMinOrderByAggregateInput_schema = () => z.object({
   paymentChargeDeadline: SortOrderSchema.optional(),
   paymentChargedAt: SortOrderSchema.optional(),
   paymentRefundedAt: SortOrderSchema.optional(),
+  paymentCheckoutUrl: SortOrderSchema.optional(),
+  attendanceId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
+  attendancePoolId: SortOrderSchema.optional(),
   paymentRefundedById: SortOrderSchema.optional()
 }).strict();
 export const AttendeeMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.AttendeeMinOrderByAggregateInput> = __makeSchema_AttendeeMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.AttendeeMinOrderByAggregateInput>;
@@ -8131,15 +8145,6 @@ export const EnumEventTypeFilterObjectSchema: z.ZodType<Prisma.EnumEventTypeFilt
 export const EnumEventTypeFilterObjectZodSchema = __makeSchema_EnumEventTypeFilter_schema();
 
 
-// File: AttendanceNullableScalarRelationFilter.schema.ts
-const __makeSchema_AttendanceNullableScalarRelationFilter_schema = () => z.object({
-  is: z.lazy(() => AttendanceWhereInputObjectSchema).optional().nullable(),
-  isNot: z.lazy(() => AttendanceWhereInputObjectSchema).optional().nullable()
-}).strict();
-export const AttendanceNullableScalarRelationFilterObjectSchema: z.ZodType<Prisma.AttendanceNullableScalarRelationFilter> = __makeSchema_AttendanceNullableScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.AttendanceNullableScalarRelationFilter>;
-export const AttendanceNullableScalarRelationFilterObjectZodSchema = __makeSchema_AttendanceNullableScalarRelationFilter_schema();
-
-
 // File: FeedbackFormNullableScalarRelationFilter.schema.ts
 const __makeSchema_FeedbackFormNullableScalarRelationFilter_schema = () => z.object({
   is: z.lazy(() => FeedbackFormWhereInputObjectSchema).optional().nullable(),
@@ -8147,6 +8152,15 @@ const __makeSchema_FeedbackFormNullableScalarRelationFilter_schema = () => z.obj
 }).strict();
 export const FeedbackFormNullableScalarRelationFilterObjectSchema: z.ZodType<Prisma.FeedbackFormNullableScalarRelationFilter> = __makeSchema_FeedbackFormNullableScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.FeedbackFormNullableScalarRelationFilter>;
 export const FeedbackFormNullableScalarRelationFilterObjectZodSchema = __makeSchema_FeedbackFormNullableScalarRelationFilter_schema();
+
+
+// File: AttendanceNullableScalarRelationFilter.schema.ts
+const __makeSchema_AttendanceNullableScalarRelationFilter_schema = () => z.object({
+  is: z.lazy(() => AttendanceWhereInputObjectSchema).optional().nullable(),
+  isNot: z.lazy(() => AttendanceWhereInputObjectSchema).optional().nullable()
+}).strict();
+export const AttendanceNullableScalarRelationFilterObjectSchema: z.ZodType<Prisma.AttendanceNullableScalarRelationFilter> = __makeSchema_AttendanceNullableScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.AttendanceNullableScalarRelationFilter>;
+export const AttendanceNullableScalarRelationFilterObjectZodSchema = __makeSchema_AttendanceNullableScalarRelationFilter_schema();
 
 
 // File: EventNullableScalarRelationFilter.schema.ts
@@ -8171,11 +8185,11 @@ const __makeSchema_EventCountOrderByAggregateInput_schema = () => z.object({
   locationTitle: SortOrderSchema.optional(),
   locationAddress: SortOrderSchema.optional(),
   locationLink: SortOrderSchema.optional(),
-  attendanceId: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
   markForMissedAttendance: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  attendanceId: SortOrderSchema.optional(),
   parentId: SortOrderSchema.optional(),
   metadataImportId: SortOrderSchema.optional()
 }).strict();
@@ -8204,11 +8218,11 @@ const __makeSchema_EventMaxOrderByAggregateInput_schema = () => z.object({
   locationTitle: SortOrderSchema.optional(),
   locationAddress: SortOrderSchema.optional(),
   locationLink: SortOrderSchema.optional(),
-  attendanceId: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
   markForMissedAttendance: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  attendanceId: SortOrderSchema.optional(),
   parentId: SortOrderSchema.optional(),
   metadataImportId: SortOrderSchema.optional()
 }).strict();
@@ -8229,11 +8243,11 @@ const __makeSchema_EventMinOrderByAggregateInput_schema = () => z.object({
   locationTitle: SortOrderSchema.optional(),
   locationAddress: SortOrderSchema.optional(),
   locationLink: SortOrderSchema.optional(),
-  attendanceId: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
   markForMissedAttendance: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
+  attendanceId: SortOrderSchema.optional(),
   parentId: SortOrderSchema.optional(),
   metadataImportId: SortOrderSchema.optional()
 }).strict();
@@ -8475,10 +8489,10 @@ export const PersonalMarkMarkIdUserIdCompoundUniqueInputObjectZodSchema = __make
 
 // File: PersonalMarkCountOrderByAggregateInput.schema.ts
 const __makeSchema_PersonalMarkCountOrderByAggregateInput_schema = () => z.object({
+  createdAt: SortOrderSchema.optional(),
   markId: SortOrderSchema.optional(),
   userId: SortOrderSchema.optional(),
-  givenById: SortOrderSchema.optional(),
-  createdAt: SortOrderSchema.optional()
+  givenById: SortOrderSchema.optional()
 }).strict();
 export const PersonalMarkCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.PersonalMarkCountOrderByAggregateInput> = __makeSchema_PersonalMarkCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkCountOrderByAggregateInput>;
 export const PersonalMarkCountOrderByAggregateInputObjectZodSchema = __makeSchema_PersonalMarkCountOrderByAggregateInput_schema();
@@ -8486,10 +8500,10 @@ export const PersonalMarkCountOrderByAggregateInputObjectZodSchema = __makeSchem
 
 // File: PersonalMarkMaxOrderByAggregateInput.schema.ts
 const __makeSchema_PersonalMarkMaxOrderByAggregateInput_schema = () => z.object({
+  createdAt: SortOrderSchema.optional(),
   markId: SortOrderSchema.optional(),
   userId: SortOrderSchema.optional(),
-  givenById: SortOrderSchema.optional(),
-  createdAt: SortOrderSchema.optional()
+  givenById: SortOrderSchema.optional()
 }).strict();
 export const PersonalMarkMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.PersonalMarkMaxOrderByAggregateInput> = __makeSchema_PersonalMarkMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkMaxOrderByAggregateInput>;
 export const PersonalMarkMaxOrderByAggregateInputObjectZodSchema = __makeSchema_PersonalMarkMaxOrderByAggregateInput_schema();
@@ -8497,10 +8511,10 @@ export const PersonalMarkMaxOrderByAggregateInputObjectZodSchema = __makeSchema_
 
 // File: PersonalMarkMinOrderByAggregateInput.schema.ts
 const __makeSchema_PersonalMarkMinOrderByAggregateInput_schema = () => z.object({
+  createdAt: SortOrderSchema.optional(),
   markId: SortOrderSchema.optional(),
   userId: SortOrderSchema.optional(),
-  givenById: SortOrderSchema.optional(),
-  createdAt: SortOrderSchema.optional()
+  givenById: SortOrderSchema.optional()
 }).strict();
 export const PersonalMarkMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.PersonalMarkMinOrderByAggregateInput> = __makeSchema_PersonalMarkMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkMinOrderByAggregateInput>;
 export const PersonalMarkMinOrderByAggregateInputObjectZodSchema = __makeSchema_PersonalMarkMinOrderByAggregateInput_schema();
@@ -8682,7 +8696,6 @@ export const JobListingLocationOrderByRelationAggregateInputObjectZodSchema = __
 // File: JobListingCountOrderByAggregateInput.schema.ts
 const __makeSchema_JobListingCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  companyId: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   description: SortOrderSchema.optional(),
   shortDescription: SortOrderSchema.optional(),
@@ -8696,7 +8709,8 @@ const __makeSchema_JobListingCountOrderByAggregateInput_schema = () => z.object(
   applicationEmail: SortOrderSchema.optional(),
   rollingAdmission: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  companyId: SortOrderSchema.optional()
 }).strict();
 export const JobListingCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.JobListingCountOrderByAggregateInput> = __makeSchema_JobListingCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.JobListingCountOrderByAggregateInput>;
 export const JobListingCountOrderByAggregateInputObjectZodSchema = __makeSchema_JobListingCountOrderByAggregateInput_schema();
@@ -8705,7 +8719,6 @@ export const JobListingCountOrderByAggregateInputObjectZodSchema = __makeSchema_
 // File: JobListingMaxOrderByAggregateInput.schema.ts
 const __makeSchema_JobListingMaxOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  companyId: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   description: SortOrderSchema.optional(),
   shortDescription: SortOrderSchema.optional(),
@@ -8719,7 +8732,8 @@ const __makeSchema_JobListingMaxOrderByAggregateInput_schema = () => z.object({
   applicationEmail: SortOrderSchema.optional(),
   rollingAdmission: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  companyId: SortOrderSchema.optional()
 }).strict();
 export const JobListingMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.JobListingMaxOrderByAggregateInput> = __makeSchema_JobListingMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.JobListingMaxOrderByAggregateInput>;
 export const JobListingMaxOrderByAggregateInputObjectZodSchema = __makeSchema_JobListingMaxOrderByAggregateInput_schema();
@@ -8728,7 +8742,6 @@ export const JobListingMaxOrderByAggregateInputObjectZodSchema = __makeSchema_Jo
 // File: JobListingMinOrderByAggregateInput.schema.ts
 const __makeSchema_JobListingMinOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  companyId: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   description: SortOrderSchema.optional(),
   shortDescription: SortOrderSchema.optional(),
@@ -8742,7 +8755,8 @@ const __makeSchema_JobListingMinOrderByAggregateInput_schema = () => z.object({
   applicationEmail: SortOrderSchema.optional(),
   rollingAdmission: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  companyId: SortOrderSchema.optional()
 }).strict();
 export const JobListingMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.JobListingMinOrderByAggregateInput> = __makeSchema_JobListingMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.JobListingMinOrderByAggregateInput>;
 export const JobListingMinOrderByAggregateInputObjectZodSchema = __makeSchema_JobListingMinOrderByAggregateInput_schema();
@@ -8873,11 +8887,11 @@ export const ArticleTagLinkOrderByRelationAggregateInputObjectZodSchema = __make
 // File: ArticleCountOrderByAggregateInput.schema.ts
 const __makeSchema_ArticleCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
+  slug: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   author: SortOrderSchema.optional(),
   photographer: SortOrderSchema.optional(),
   imageUrl: SortOrderSchema.optional(),
-  slug: SortOrderSchema.optional(),
   excerpt: SortOrderSchema.optional(),
   content: SortOrderSchema.optional(),
   isFeatured: SortOrderSchema.optional(),
@@ -8892,11 +8906,11 @@ export const ArticleCountOrderByAggregateInputObjectZodSchema = __makeSchema_Art
 // File: ArticleMaxOrderByAggregateInput.schema.ts
 const __makeSchema_ArticleMaxOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
+  slug: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   author: SortOrderSchema.optional(),
   photographer: SortOrderSchema.optional(),
   imageUrl: SortOrderSchema.optional(),
-  slug: SortOrderSchema.optional(),
   excerpt: SortOrderSchema.optional(),
   content: SortOrderSchema.optional(),
   isFeatured: SortOrderSchema.optional(),
@@ -8911,11 +8925,11 @@ export const ArticleMaxOrderByAggregateInputObjectZodSchema = __makeSchema_Artic
 // File: ArticleMinOrderByAggregateInput.schema.ts
 const __makeSchema_ArticleMinOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
+  slug: SortOrderSchema.optional(),
   title: SortOrderSchema.optional(),
   author: SortOrderSchema.optional(),
   photographer: SortOrderSchema.optional(),
   imageUrl: SortOrderSchema.optional(),
-  slug: SortOrderSchema.optional(),
   excerpt: SortOrderSchema.optional(),
   content: SortOrderSchema.optional(),
   isFeatured: SortOrderSchema.optional(),
@@ -9204,11 +9218,11 @@ export const FeedbackFormAnswerOrderByRelationAggregateInputObjectZodSchema = __
 // File: FeedbackFormCountOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackFormCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  eventId: SortOrderSchema.optional(),
   publicResultsToken: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
-  answerDeadline: SortOrderSchema.optional()
+  answerDeadline: SortOrderSchema.optional(),
+  eventId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackFormCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormCountOrderByAggregateInput> = __makeSchema_FeedbackFormCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormCountOrderByAggregateInput>;
 export const FeedbackFormCountOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackFormCountOrderByAggregateInput_schema();
@@ -9217,11 +9231,11 @@ export const FeedbackFormCountOrderByAggregateInputObjectZodSchema = __makeSchem
 // File: FeedbackFormMaxOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackFormMaxOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  eventId: SortOrderSchema.optional(),
   publicResultsToken: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
-  answerDeadline: SortOrderSchema.optional()
+  answerDeadline: SortOrderSchema.optional(),
+  eventId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackFormMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormMaxOrderByAggregateInput> = __makeSchema_FeedbackFormMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormMaxOrderByAggregateInput>;
 export const FeedbackFormMaxOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackFormMaxOrderByAggregateInput_schema();
@@ -9230,11 +9244,11 @@ export const FeedbackFormMaxOrderByAggregateInputObjectZodSchema = __makeSchema_
 // File: FeedbackFormMinOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackFormMinOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  eventId: SortOrderSchema.optional(),
   publicResultsToken: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
-  answerDeadline: SortOrderSchema.optional()
+  answerDeadline: SortOrderSchema.optional(),
+  eventId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackFormMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormMinOrderByAggregateInput> = __makeSchema_FeedbackFormMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormMinOrderByAggregateInput>;
 export const FeedbackFormMinOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackFormMinOrderByAggregateInput_schema();
@@ -9299,14 +9313,14 @@ export const FeedbackQuestionAnswerOrderByRelationAggregateInputObjectZodSchema 
 // File: FeedbackQuestionCountOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackQuestionCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
   label: SortOrderSchema.optional(),
   required: SortOrderSchema.optional(),
   showInPublicResults: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
   order: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackQuestionCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionCountOrderByAggregateInput> = __makeSchema_FeedbackQuestionCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionCountOrderByAggregateInput>;
 export const FeedbackQuestionCountOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackQuestionCountOrderByAggregateInput_schema();
@@ -9323,14 +9337,14 @@ export const FeedbackQuestionAvgOrderByAggregateInputObjectZodSchema = __makeSch
 // File: FeedbackQuestionMaxOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackQuestionMaxOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
   label: SortOrderSchema.optional(),
   required: SortOrderSchema.optional(),
   showInPublicResults: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
   order: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackQuestionMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionMaxOrderByAggregateInput> = __makeSchema_FeedbackQuestionMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionMaxOrderByAggregateInput>;
 export const FeedbackQuestionMaxOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackQuestionMaxOrderByAggregateInput_schema();
@@ -9339,14 +9353,14 @@ export const FeedbackQuestionMaxOrderByAggregateInputObjectZodSchema = __makeSch
 // File: FeedbackQuestionMinOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackQuestionMinOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
   label: SortOrderSchema.optional(),
   required: SortOrderSchema.optional(),
   showInPublicResults: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
   order: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackQuestionMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionMinOrderByAggregateInput> = __makeSchema_FeedbackQuestionMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionMinOrderByAggregateInput>;
 export const FeedbackQuestionMinOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackQuestionMinOrderByAggregateInput_schema();
@@ -9473,9 +9487,9 @@ export const FeedbackFormAnswerScalarRelationFilterObjectZodSchema = __makeSchem
 // File: FeedbackQuestionAnswerCountOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
+  value: SortOrderSchema.optional(),
   questionId: SortOrderSchema.optional(),
-  formAnswerId: SortOrderSchema.optional(),
-  value: SortOrderSchema.optional()
+  formAnswerId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackQuestionAnswerCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerCountOrderByAggregateInput> = __makeSchema_FeedbackQuestionAnswerCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerCountOrderByAggregateInput>;
 export const FeedbackQuestionAnswerCountOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerCountOrderByAggregateInput_schema();
@@ -9591,10 +9605,10 @@ export const AttendeeScalarRelationFilterObjectZodSchema = __makeSchema_Attendee
 // File: FeedbackFormAnswerCountOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackFormAnswerCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
-  attendeeId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional(),
+  attendeeId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackFormAnswerCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCountOrderByAggregateInput> = __makeSchema_FeedbackFormAnswerCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCountOrderByAggregateInput>;
 export const FeedbackFormAnswerCountOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCountOrderByAggregateInput_schema();
@@ -9603,10 +9617,10 @@ export const FeedbackFormAnswerCountOrderByAggregateInputObjectZodSchema = __mak
 // File: FeedbackFormAnswerMaxOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackFormAnswerMaxOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
-  attendeeId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional(),
+  attendeeId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackFormAnswerMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerMaxOrderByAggregateInput> = __makeSchema_FeedbackFormAnswerMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerMaxOrderByAggregateInput>;
 export const FeedbackFormAnswerMaxOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackFormAnswerMaxOrderByAggregateInput_schema();
@@ -9615,10 +9629,10 @@ export const FeedbackFormAnswerMaxOrderByAggregateInputObjectZodSchema = __makeS
 // File: FeedbackFormAnswerMinOrderByAggregateInput.schema.ts
 const __makeSchema_FeedbackFormAnswerMinOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  feedbackFormId: SortOrderSchema.optional(),
-  attendeeId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  updatedAt: SortOrderSchema.optional()
+  updatedAt: SortOrderSchema.optional(),
+  feedbackFormId: SortOrderSchema.optional(),
+  attendeeId: SortOrderSchema.optional()
 }).strict();
 export const FeedbackFormAnswerMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerMinOrderByAggregateInput> = __makeSchema_FeedbackFormAnswerMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerMinOrderByAggregateInput>;
 export const FeedbackFormAnswerMinOrderByAggregateInputObjectZodSchema = __makeSchema_FeedbackFormAnswerMinOrderByAggregateInput_schema();
@@ -9645,10 +9659,10 @@ const __makeSchema_AuditLogCountOrderByAggregateInput_schema = () => z.object({
   tableName: SortOrderSchema.optional(),
   rowId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   operation: SortOrderSchema.optional(),
   rowData: SortOrderSchema.optional(),
-  transactionId: SortOrderSchema.optional()
+  transactionId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
 }).strict();
 export const AuditLogCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.AuditLogCountOrderByAggregateInput> = __makeSchema_AuditLogCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.AuditLogCountOrderByAggregateInput>;
 export const AuditLogCountOrderByAggregateInputObjectZodSchema = __makeSchema_AuditLogCountOrderByAggregateInput_schema();
@@ -9668,9 +9682,9 @@ const __makeSchema_AuditLogMaxOrderByAggregateInput_schema = () => z.object({
   tableName: SortOrderSchema.optional(),
   rowId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   operation: SortOrderSchema.optional(),
-  transactionId: SortOrderSchema.optional()
+  transactionId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
 }).strict();
 export const AuditLogMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.AuditLogMaxOrderByAggregateInput> = __makeSchema_AuditLogMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.AuditLogMaxOrderByAggregateInput>;
 export const AuditLogMaxOrderByAggregateInputObjectZodSchema = __makeSchema_AuditLogMaxOrderByAggregateInput_schema();
@@ -9682,9 +9696,9 @@ const __makeSchema_AuditLogMinOrderByAggregateInput_schema = () => z.object({
   tableName: SortOrderSchema.optional(),
   rowId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
-  userId: SortOrderSchema.optional(),
   operation: SortOrderSchema.optional(),
-  transactionId: SortOrderSchema.optional()
+  transactionId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
 }).strict();
 export const AuditLogMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.AuditLogMinOrderByAggregateInput> = __makeSchema_AuditLogMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.AuditLogMinOrderByAggregateInput>;
 export const AuditLogMinOrderByAggregateInputObjectZodSchema = __makeSchema_AuditLogMinOrderByAggregateInput_schema();
@@ -11367,6 +11381,16 @@ export const AttendeeUncheckedUpdateManyWithoutAttendancePoolNestedInputObjectSc
 export const AttendeeUncheckedUpdateManyWithoutAttendancePoolNestedInputObjectZodSchema = __makeSchema_AttendeeUncheckedUpdateManyWithoutAttendancePoolNestedInput_schema();
 
 
+// File: FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput.schema.ts
+const __makeSchema_FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput_schema = () => z.object({
+  create: z.union([z.lazy(() => FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => FeedbackFormAnswerCreateOrConnectWithoutAttendeeInputObjectSchema).optional(),
+  connect: z.lazy(() => FeedbackFormAnswerWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput>;
+export const FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput_schema();
+
+
 // File: AttendanceCreateNestedOneWithoutAttendeesInput.schema.ts
 const __makeSchema_AttendanceCreateNestedOneWithoutAttendeesInput_schema = () => z.object({
   create: z.union([z.lazy(() => AttendanceCreateWithoutAttendeesInputObjectSchema), z.lazy(() => AttendanceUncheckedCreateWithoutAttendeesInputObjectSchema)]).optional(),
@@ -11397,16 +11421,6 @@ export const AttendancePoolCreateNestedOneWithoutAttendeesInputObjectSchema: z.Z
 export const AttendancePoolCreateNestedOneWithoutAttendeesInputObjectZodSchema = __makeSchema_AttendancePoolCreateNestedOneWithoutAttendeesInput_schema();
 
 
-// File: FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput.schema.ts
-const __makeSchema_FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput_schema = () => z.object({
-  create: z.union([z.lazy(() => FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema)]).optional(),
-  connectOrCreate: z.lazy(() => FeedbackFormAnswerCreateOrConnectWithoutAttendeeInputObjectSchema).optional(),
-  connect: z.lazy(() => FeedbackFormAnswerWhereUniqueInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput>;
-export const FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCreateNestedOneWithoutAttendeeInput_schema();
-
-
 // File: UserCreateNestedOneWithoutAttendeesRefundedInput.schema.ts
 const __makeSchema_UserCreateNestedOneWithoutAttendeesRefundedInput_schema = () => z.object({
   create: z.union([z.lazy(() => UserCreateWithoutAttendeesRefundedInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutAttendeesRefundedInputObjectSchema)]).optional(),
@@ -11425,6 +11439,20 @@ const __makeSchema_FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInpu
 }).strict();
 export const FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput>;
 export const FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInput_schema();
+
+
+// File: FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput.schema.ts
+const __makeSchema_FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => FeedbackFormAnswerCreateOrConnectWithoutAttendeeInputObjectSchema).optional(),
+  upsert: z.lazy(() => FeedbackFormAnswerUpsertWithoutAttendeeInputObjectSchema).optional(),
+  disconnect: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema)]).optional(),
+  delete: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema)]).optional(),
+  connect: z.lazy(() => FeedbackFormAnswerWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUpdateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectSchema)]).optional()
+}).strict();
+export const FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput> = __makeSchema_FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput>;
+export const FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput_schema();
 
 
 // File: AttendanceUpdateOneRequiredWithoutAttendeesNestedInput.schema.ts
@@ -11463,20 +11491,6 @@ export const AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInputObjectSch
 export const AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInputObjectZodSchema = __makeSchema_AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInput_schema();
 
 
-// File: FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput.schema.ts
-const __makeSchema_FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput_schema = () => z.object({
-  create: z.union([z.lazy(() => FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema)]).optional(),
-  connectOrCreate: z.lazy(() => FeedbackFormAnswerCreateOrConnectWithoutAttendeeInputObjectSchema).optional(),
-  upsert: z.lazy(() => FeedbackFormAnswerUpsertWithoutAttendeeInputObjectSchema).optional(),
-  disconnect: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema)]).optional(),
-  delete: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema)]).optional(),
-  connect: z.lazy(() => FeedbackFormAnswerWhereUniqueInputObjectSchema).optional(),
-  update: z.union([z.lazy(() => FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUpdateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectSchema)]).optional()
-}).strict();
-export const FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput> = __makeSchema_FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput>;
-export const FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInput_schema();
-
-
 // File: UserUpdateOneWithoutAttendeesRefundedNestedInput.schema.ts
 const __makeSchema_UserUpdateOneWithoutAttendeesRefundedNestedInput_schema = () => z.object({
   create: z.union([z.lazy(() => UserCreateWithoutAttendeesRefundedInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutAttendeesRefundedInputObjectSchema)]).optional(),
@@ -11505,16 +11519,6 @@ export const FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInputObjec
 export const FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInput_schema();
 
 
-// File: AttendanceCreateNestedOneWithoutEventsInput.schema.ts
-const __makeSchema_AttendanceCreateNestedOneWithoutEventsInput_schema = () => z.object({
-  create: z.union([z.lazy(() => AttendanceCreateWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUncheckedCreateWithoutEventsInputObjectSchema)]).optional(),
-  connectOrCreate: z.lazy(() => AttendanceCreateOrConnectWithoutEventsInputObjectSchema).optional(),
-  connect: z.lazy(() => AttendanceWhereUniqueInputObjectSchema).optional()
-}).strict();
-export const AttendanceCreateNestedOneWithoutEventsInputObjectSchema: z.ZodType<Prisma.AttendanceCreateNestedOneWithoutEventsInput> = __makeSchema_AttendanceCreateNestedOneWithoutEventsInput_schema() as unknown as z.ZodType<Prisma.AttendanceCreateNestedOneWithoutEventsInput>;
-export const AttendanceCreateNestedOneWithoutEventsInputObjectZodSchema = __makeSchema_AttendanceCreateNestedOneWithoutEventsInput_schema();
-
-
 // File: FeedbackFormCreateNestedOneWithoutEventInput.schema.ts
 const __makeSchema_FeedbackFormCreateNestedOneWithoutEventInput_schema = () => z.object({
   create: z.union([z.lazy(() => FeedbackFormCreateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedCreateWithoutEventInputObjectSchema)]).optional(),
@@ -11523,6 +11527,16 @@ const __makeSchema_FeedbackFormCreateNestedOneWithoutEventInput_schema = () => z
 }).strict();
 export const FeedbackFormCreateNestedOneWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormCreateNestedOneWithoutEventInput> = __makeSchema_FeedbackFormCreateNestedOneWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormCreateNestedOneWithoutEventInput>;
 export const FeedbackFormCreateNestedOneWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormCreateNestedOneWithoutEventInput_schema();
+
+
+// File: AttendanceCreateNestedOneWithoutEventsInput.schema.ts
+const __makeSchema_AttendanceCreateNestedOneWithoutEventsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => AttendanceCreateWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUncheckedCreateWithoutEventsInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => AttendanceCreateOrConnectWithoutEventsInputObjectSchema).optional(),
+  connect: z.lazy(() => AttendanceWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const AttendanceCreateNestedOneWithoutEventsInputObjectSchema: z.ZodType<Prisma.AttendanceCreateNestedOneWithoutEventsInput> = __makeSchema_AttendanceCreateNestedOneWithoutEventsInput_schema() as unknown as z.ZodType<Prisma.AttendanceCreateNestedOneWithoutEventsInput>;
+export const AttendanceCreateNestedOneWithoutEventsInputObjectZodSchema = __makeSchema_AttendanceCreateNestedOneWithoutEventsInput_schema();
 
 
 // File: EventCreateNestedOneWithoutChildrenInput.schema.ts
@@ -11649,20 +11663,6 @@ export const EnumEventTypeFieldUpdateOperationsInputObjectSchema: z.ZodType<Pris
 export const EnumEventTypeFieldUpdateOperationsInputObjectZodSchema = __makeSchema_EnumEventTypeFieldUpdateOperationsInput_schema();
 
 
-// File: AttendanceUpdateOneWithoutEventsNestedInput.schema.ts
-const __makeSchema_AttendanceUpdateOneWithoutEventsNestedInput_schema = () => z.object({
-  create: z.union([z.lazy(() => AttendanceCreateWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUncheckedCreateWithoutEventsInputObjectSchema)]).optional(),
-  connectOrCreate: z.lazy(() => AttendanceCreateOrConnectWithoutEventsInputObjectSchema).optional(),
-  upsert: z.lazy(() => AttendanceUpsertWithoutEventsInputObjectSchema).optional(),
-  disconnect: z.union([z.boolean(), z.lazy(() => AttendanceWhereInputObjectSchema)]).optional(),
-  delete: z.union([z.boolean(), z.lazy(() => AttendanceWhereInputObjectSchema)]).optional(),
-  connect: z.lazy(() => AttendanceWhereUniqueInputObjectSchema).optional(),
-  update: z.union([z.lazy(() => AttendanceUpdateToOneWithWhereWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUpdateWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUncheckedUpdateWithoutEventsInputObjectSchema)]).optional()
-}).strict();
-export const AttendanceUpdateOneWithoutEventsNestedInputObjectSchema: z.ZodType<Prisma.AttendanceUpdateOneWithoutEventsNestedInput> = __makeSchema_AttendanceUpdateOneWithoutEventsNestedInput_schema() as unknown as z.ZodType<Prisma.AttendanceUpdateOneWithoutEventsNestedInput>;
-export const AttendanceUpdateOneWithoutEventsNestedInputObjectZodSchema = __makeSchema_AttendanceUpdateOneWithoutEventsNestedInput_schema();
-
-
 // File: FeedbackFormUpdateOneWithoutEventNestedInput.schema.ts
 const __makeSchema_FeedbackFormUpdateOneWithoutEventNestedInput_schema = () => z.object({
   create: z.union([z.lazy(() => FeedbackFormCreateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedCreateWithoutEventInputObjectSchema)]).optional(),
@@ -11675,6 +11675,20 @@ const __makeSchema_FeedbackFormUpdateOneWithoutEventNestedInput_schema = () => z
 }).strict();
 export const FeedbackFormUpdateOneWithoutEventNestedInputObjectSchema: z.ZodType<Prisma.FeedbackFormUpdateOneWithoutEventNestedInput> = __makeSchema_FeedbackFormUpdateOneWithoutEventNestedInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUpdateOneWithoutEventNestedInput>;
 export const FeedbackFormUpdateOneWithoutEventNestedInputObjectZodSchema = __makeSchema_FeedbackFormUpdateOneWithoutEventNestedInput_schema();
+
+
+// File: AttendanceUpdateOneWithoutEventsNestedInput.schema.ts
+const __makeSchema_AttendanceUpdateOneWithoutEventsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => AttendanceCreateWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUncheckedCreateWithoutEventsInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => AttendanceCreateOrConnectWithoutEventsInputObjectSchema).optional(),
+  upsert: z.lazy(() => AttendanceUpsertWithoutEventsInputObjectSchema).optional(),
+  disconnect: z.union([z.boolean(), z.lazy(() => AttendanceWhereInputObjectSchema)]).optional(),
+  delete: z.union([z.boolean(), z.lazy(() => AttendanceWhereInputObjectSchema)]).optional(),
+  connect: z.lazy(() => AttendanceWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => AttendanceUpdateToOneWithWhereWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUpdateWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUncheckedUpdateWithoutEventsInputObjectSchema)]).optional()
+}).strict();
+export const AttendanceUpdateOneWithoutEventsNestedInputObjectSchema: z.ZodType<Prisma.AttendanceUpdateOneWithoutEventsNestedInput> = __makeSchema_AttendanceUpdateOneWithoutEventsNestedInput_schema() as unknown as z.ZodType<Prisma.AttendanceUpdateOneWithoutEventsNestedInput>;
+export const AttendanceUpdateOneWithoutEventsNestedInputObjectZodSchema = __makeSchema_AttendanceUpdateOneWithoutEventsNestedInput_schema();
 
 
 // File: EventUpdateOneWithoutChildrenNestedInput.schema.ts
@@ -14350,9 +14364,10 @@ const __makeSchema_AttendeeCreateWithoutUserInput_schema = () => z.object({
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceCreateNestedOneWithoutAttendeesInputObjectSchema),
   attendancePool: z.lazy(() => AttendancePoolCreateNestedOneWithoutAttendeesInputObjectSchema),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserCreateNestedOneWithoutAttendeesRefundedInputObjectSchema).optional()
 }).strict();
 export const AttendeeCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.AttendeeCreateWithoutUserInput> = __makeSchema_AttendeeCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateWithoutUserInput>;
@@ -14362,9 +14377,7 @@ export const AttendeeCreateWithoutUserInputObjectZodSchema = __makeSchema_Attend
 // File: AttendeeUncheckedCreateWithoutUserInput.schema.ts
 const __makeSchema_AttendeeUncheckedCreateWithoutUserInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -14378,6 +14391,9 @@ const __makeSchema_AttendeeUncheckedCreateWithoutUserInput_schema = () => z.obje
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional().nullable(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInputObjectSchema).optional()
 }).strict();
@@ -14415,9 +14431,9 @@ export const PersonalMarkCreateWithoutUserInputObjectZodSchema = __makeSchema_Pe
 
 // File: PersonalMarkUncheckedCreateWithoutUserInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedCreateWithoutUserInput_schema = () => z.object({
+  createdAt: z.coerce.date().optional(),
   markId: z.string(),
-  givenById: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional()
+  givenById: z.string().optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedCreateWithoutUserInput> = __makeSchema_PersonalMarkUncheckedCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedCreateWithoutUserInput>;
 export const PersonalMarkUncheckedCreateWithoutUserInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedCreateWithoutUserInput_schema();
@@ -14458,11 +14474,11 @@ export const GroupMembershipCreateWithoutUserInputObjectZodSchema = __makeSchema
 // File: GroupMembershipUncheckedCreateWithoutUserInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedCreateWithoutUserInput_schema = () => z.object({
   id: z.string().optional(),
-  groupId: z.string(),
   start: z.coerce.date(),
   end: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  groupId: z.string(),
   roles: z.lazy(() => GroupMembershipRoleUncheckedCreateNestedManyWithoutMembershipInputObjectSchema).optional()
 }).strict();
 export const GroupMembershipUncheckedCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedCreateWithoutUserInput> = __makeSchema_GroupMembershipUncheckedCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedCreateWithoutUserInput>;
@@ -14541,9 +14557,9 @@ export const PersonalMarkCreateWithoutGivenByInputObjectZodSchema = __makeSchema
 
 // File: PersonalMarkUncheckedCreateWithoutGivenByInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedCreateWithoutGivenByInput_schema = () => z.object({
+  createdAt: z.coerce.date().optional(),
   markId: z.string(),
-  userId: z.string(),
-  createdAt: z.coerce.date().optional()
+  userId: z.string()
 }).strict();
 export const PersonalMarkUncheckedCreateWithoutGivenByInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedCreateWithoutGivenByInput> = __makeSchema_PersonalMarkUncheckedCreateWithoutGivenByInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedCreateWithoutGivenByInput>;
 export const PersonalMarkUncheckedCreateWithoutGivenByInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedCreateWithoutGivenByInput_schema();
@@ -14584,10 +14600,11 @@ const __makeSchema_AttendeeCreateWithoutPaymentRefundedByInput_schema = () => z.
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceCreateNestedOneWithoutAttendeesInputObjectSchema),
   user: z.lazy(() => UserCreateNestedOneWithoutAttendeeInputObjectSchema),
-  attendancePool: z.lazy(() => AttendancePoolCreateNestedOneWithoutAttendeesInputObjectSchema),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional()
+  attendancePool: z.lazy(() => AttendancePoolCreateNestedOneWithoutAttendeesInputObjectSchema)
 }).strict();
 export const AttendeeCreateWithoutPaymentRefundedByInputObjectSchema: z.ZodType<Prisma.AttendeeCreateWithoutPaymentRefundedByInput> = __makeSchema_AttendeeCreateWithoutPaymentRefundedByInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateWithoutPaymentRefundedByInput>;
 export const AttendeeCreateWithoutPaymentRefundedByInputObjectZodSchema = __makeSchema_AttendeeCreateWithoutPaymentRefundedByInput_schema();
@@ -14596,10 +14613,7 @@ export const AttendeeCreateWithoutPaymentRefundedByInputObjectZodSchema = __make
 // File: AttendeeUncheckedCreateWithoutPaymentRefundedByInput.schema.ts
 const __makeSchema_AttendeeUncheckedCreateWithoutPaymentRefundedByInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -14613,6 +14627,10 @@ const __makeSchema_AttendeeUncheckedCreateWithoutPaymentRefundedByInput_schema =
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInputObjectSchema).optional()
 }).strict();
 export const AttendeeUncheckedCreateWithoutPaymentRefundedByInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedCreateWithoutPaymentRefundedByInput> = __makeSchema_AttendeeUncheckedCreateWithoutPaymentRefundedByInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedCreateWithoutPaymentRefundedByInput>;
@@ -14870,10 +14888,7 @@ const attendeescalarwhereinputSchema = z.object({
   OR: z.lazy(() => AttendeeScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => AttendeeScalarWhereInputObjectSchema), z.lazy(() => AttendeeScalarWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  attendanceId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   userGrade: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
-  attendancePoolId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   selections: z.lazy(() => JsonFilterObjectSchema).optional(),
   reserved: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   earliestReservationAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
@@ -14887,6 +14902,10 @@ const attendeescalarwhereinputSchema = z.object({
   paymentChargeDeadline: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   paymentChargedAt: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   paymentRefundedAt: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  attendanceId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  attendancePoolId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   paymentRefundedById: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable()
 }).strict();
 export const AttendeeScalarWhereInputObjectSchema: z.ZodType<Prisma.AttendeeScalarWhereInput> = attendeescalarwhereinputSchema as unknown as z.ZodType<Prisma.AttendeeScalarWhereInput>;
@@ -14927,10 +14946,10 @@ const personalmarkscalarwhereinputSchema = z.object({
   AND: z.union([z.lazy(() => PersonalMarkScalarWhereInputObjectSchema), z.lazy(() => PersonalMarkScalarWhereInputObjectSchema).array()]).optional(),
   OR: z.lazy(() => PersonalMarkScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => PersonalMarkScalarWhereInputObjectSchema), z.lazy(() => PersonalMarkScalarWhereInputObjectSchema).array()]).optional(),
+  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   markId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  givenById: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
-  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional()
+  givenById: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable()
 }).strict();
 export const PersonalMarkScalarWhereInputObjectSchema: z.ZodType<Prisma.PersonalMarkScalarWhereInput> = personalmarkscalarwhereinputSchema as unknown as z.ZodType<Prisma.PersonalMarkScalarWhereInput>;
 export const PersonalMarkScalarWhereInputObjectZodSchema = personalmarkscalarwhereinputSchema;
@@ -14971,12 +14990,12 @@ const groupmembershipscalarwhereinputSchema = z.object({
   OR: z.lazy(() => GroupMembershipScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => GroupMembershipScalarWhereInputObjectSchema), z.lazy(() => GroupMembershipScalarWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  groupId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   start: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   end: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional()
+  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  groupId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const GroupMembershipScalarWhereInputObjectSchema: z.ZodType<Prisma.GroupMembershipScalarWhereInput> = groupmembershipscalarwhereinputSchema as unknown as z.ZodType<Prisma.GroupMembershipScalarWhereInput>;
 export const GroupMembershipScalarWhereInputObjectZodSchema = groupmembershipscalarwhereinputSchema;
@@ -15121,10 +15140,10 @@ const auditlogscalarwhereinputSchema = z.object({
   tableName: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   rowId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-  userId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   operation: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   rowData: z.lazy(() => JsonFilterObjectSchema).optional(),
-  transactionId: z.union([z.lazy(() => BigIntFilterObjectSchema), z.bigint()]).optional()
+  transactionId: z.union([z.lazy(() => BigIntFilterObjectSchema), z.bigint()]).optional(),
+  userId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable()
 }).strict();
 export const AuditLogScalarWhereInputObjectSchema: z.ZodType<Prisma.AuditLogScalarWhereInput> = auditlogscalarwhereinputSchema as unknown as z.ZodType<Prisma.AuditLogScalarWhereInput>;
 export const AuditLogScalarWhereInputObjectZodSchema = auditlogscalarwhereinputSchema;
@@ -15351,7 +15370,6 @@ const joblistingscalarwhereinputSchema = z.object({
   OR: z.lazy(() => JobListingScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => JobListingScalarWhereInputObjectSchema), z.lazy(() => JobListingScalarWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  companyId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   title: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   description: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   shortDescription: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
@@ -15365,7 +15383,8 @@ const joblistingscalarwhereinputSchema = z.object({
   applicationEmail: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   rollingAdmission: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional()
+  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  companyId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const JobListingScalarWhereInputObjectSchema: z.ZodType<Prisma.JobListingScalarWhereInput> = joblistingscalarwhereinputSchema as unknown as z.ZodType<Prisma.JobListingScalarWhereInput>;
 export const JobListingScalarWhereInputObjectZodSchema = joblistingscalarwhereinputSchema;
@@ -15422,11 +15441,11 @@ export const GroupMembershipCreateWithoutGroupInputObjectZodSchema = __makeSchem
 // File: GroupMembershipUncheckedCreateWithoutGroupInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedCreateWithoutGroupInput_schema = () => z.object({
   id: z.string().optional(),
-  userId: z.string(),
   start: z.coerce.date(),
   end: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  userId: z.string(),
   roles: z.lazy(() => GroupMembershipRoleUncheckedCreateNestedManyWithoutMembershipInputObjectSchema).optional()
 }).strict();
 export const GroupMembershipUncheckedCreateWithoutGroupInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedCreateWithoutGroupInput> = __makeSchema_GroupMembershipUncheckedCreateWithoutGroupInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedCreateWithoutGroupInput>;
@@ -15670,9 +15689,9 @@ const grouprolescalarwhereinputSchema = z.object({
   OR: z.lazy(() => GroupRoleScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => GroupRoleScalarWhereInputObjectSchema), z.lazy(() => GroupRoleScalarWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  groupId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   name: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  type: z.union([z.lazy(() => EnumGroupRoleTypeFilterObjectSchema), GroupRoleTypeSchema]).optional()
+  type: z.union([z.lazy(() => EnumGroupRoleTypeFilterObjectSchema), GroupRoleTypeSchema]).optional(),
+  groupId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const GroupRoleScalarWhereInputObjectSchema: z.ZodType<Prisma.GroupRoleScalarWhereInput> = grouprolescalarwhereinputSchema as unknown as z.ZodType<Prisma.GroupRoleScalarWhereInput>;
 export const GroupRoleScalarWhereInputObjectZodSchema = grouprolescalarwhereinputSchema;
@@ -16054,12 +16073,12 @@ export const GroupMembershipCreateWithoutRolesInputObjectZodSchema = __makeSchem
 // File: GroupMembershipUncheckedCreateWithoutRolesInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedCreateWithoutRolesInput_schema = () => z.object({
   id: z.string().optional(),
-  groupId: z.string(),
-  userId: z.string(),
   start: z.coerce.date(),
   end: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  groupId: z.string(),
+  userId: z.string()
 }).strict();
 export const GroupMembershipUncheckedCreateWithoutRolesInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedCreateWithoutRolesInput> = __makeSchema_GroupMembershipUncheckedCreateWithoutRolesInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedCreateWithoutRolesInput>;
 export const GroupMembershipUncheckedCreateWithoutRolesInputObjectZodSchema = __makeSchema_GroupMembershipUncheckedCreateWithoutRolesInput_schema();
@@ -16088,9 +16107,9 @@ export const GroupRoleCreateWithoutGroupMembershipRolesInputObjectZodSchema = __
 // File: GroupRoleUncheckedCreateWithoutGroupMembershipRolesInput.schema.ts
 const __makeSchema_GroupRoleUncheckedCreateWithoutGroupMembershipRolesInput_schema = () => z.object({
   id: z.string().optional(),
-  groupId: z.string(),
   name: z.string(),
-  type: GroupRoleTypeSchema.optional()
+  type: GroupRoleTypeSchema.optional(),
+  groupId: z.string()
 }).strict();
 export const GroupRoleUncheckedCreateWithoutGroupMembershipRolesInputObjectSchema: z.ZodType<Prisma.GroupRoleUncheckedCreateWithoutGroupMembershipRolesInput> = __makeSchema_GroupRoleUncheckedCreateWithoutGroupMembershipRolesInput_schema() as unknown as z.ZodType<Prisma.GroupRoleUncheckedCreateWithoutGroupMembershipRolesInput>;
 export const GroupRoleUncheckedCreateWithoutGroupMembershipRolesInputObjectZodSchema = __makeSchema_GroupRoleUncheckedCreateWithoutGroupMembershipRolesInput_schema();
@@ -16141,12 +16160,12 @@ export const GroupMembershipUpdateWithoutRolesInputObjectZodSchema = __makeSchem
 // File: GroupMembershipUncheckedUpdateWithoutRolesInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedUpdateWithoutRolesInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   start: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   end: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const GroupMembershipUncheckedUpdateWithoutRolesInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedUpdateWithoutRolesInput> = __makeSchema_GroupMembershipUncheckedUpdateWithoutRolesInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedUpdateWithoutRolesInput>;
 export const GroupMembershipUncheckedUpdateWithoutRolesInputObjectZodSchema = __makeSchema_GroupMembershipUncheckedUpdateWithoutRolesInput_schema();
@@ -16185,9 +16204,9 @@ export const GroupRoleUpdateWithoutGroupMembershipRolesInputObjectZodSchema = __
 // File: GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInput.schema.ts
 const __makeSchema_GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  type: z.union([GroupRoleTypeSchema, z.lazy(() => EnumGroupRoleTypeFieldUpdateOperationsInputObjectSchema)]).optional()
+  type: z.union([GroupRoleTypeSchema, z.lazy(() => EnumGroupRoleTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInputObjectSchema: z.ZodType<Prisma.GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInput> = __makeSchema_GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInput_schema() as unknown as z.ZodType<Prisma.GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInput>;
 export const GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInputObjectZodSchema = __makeSchema_GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInput_schema();
@@ -16450,9 +16469,10 @@ const __makeSchema_AttendeeCreateWithoutAttendanceInput_schema = () => z.object(
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutAttendeeInputObjectSchema),
   attendancePool: z.lazy(() => AttendancePoolCreateNestedOneWithoutAttendeesInputObjectSchema),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserCreateNestedOneWithoutAttendeesRefundedInputObjectSchema).optional()
 }).strict();
 export const AttendeeCreateWithoutAttendanceInputObjectSchema: z.ZodType<Prisma.AttendeeCreateWithoutAttendanceInput> = __makeSchema_AttendeeCreateWithoutAttendanceInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateWithoutAttendanceInput>;
@@ -16462,9 +16482,7 @@ export const AttendeeCreateWithoutAttendanceInputObjectZodSchema = __makeSchema_
 // File: AttendeeUncheckedCreateWithoutAttendanceInput.schema.ts
 const __makeSchema_AttendeeUncheckedCreateWithoutAttendanceInput_schema = () => z.object({
   id: z.string().optional(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -16478,6 +16496,9 @@ const __makeSchema_AttendeeUncheckedCreateWithoutAttendanceInput_schema = () => 
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional().nullable(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInputObjectSchema).optional()
 }).strict();
@@ -16700,11 +16721,11 @@ const eventscalarwhereinputSchema = z.object({
   locationTitle: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   locationAddress: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   locationLink: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
-  attendanceId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   type: z.union([z.lazy(() => EnumEventTypeFilterObjectSchema), EventTypeSchema]).optional(),
   markForMissedAttendance: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  attendanceId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   parentId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   metadataImportId: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable()
 }).strict();
@@ -16811,9 +16832,10 @@ const __makeSchema_AttendeeCreateWithoutAttendancePoolInput_schema = () => z.obj
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceCreateNestedOneWithoutAttendeesInputObjectSchema),
   user: z.lazy(() => UserCreateNestedOneWithoutAttendeeInputObjectSchema),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerCreateNestedOneWithoutAttendeeInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserCreateNestedOneWithoutAttendeesRefundedInputObjectSchema).optional()
 }).strict();
 export const AttendeeCreateWithoutAttendancePoolInputObjectSchema: z.ZodType<Prisma.AttendeeCreateWithoutAttendancePoolInput> = __makeSchema_AttendeeCreateWithoutAttendancePoolInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateWithoutAttendancePoolInput>;
@@ -16823,8 +16845,6 @@ export const AttendeeCreateWithoutAttendancePoolInputObjectZodSchema = __makeSch
 // File: AttendeeUncheckedCreateWithoutAttendancePoolInput.schema.ts
 const __makeSchema_AttendeeUncheckedCreateWithoutAttendancePoolInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
@@ -16839,6 +16859,9 @@ const __makeSchema_AttendeeUncheckedCreateWithoutAttendancePoolInput_schema = ()
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
   paymentRefundedById: z.string().optional().nullable(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedOneWithoutAttendeeInputObjectSchema).optional()
 }).strict();
@@ -16992,6 +17015,39 @@ const __makeSchema_AttendeeUpdateManyWithWhereWithoutAttendancePoolInput_schema 
 }).strict();
 export const AttendeeUpdateManyWithWhereWithoutAttendancePoolInputObjectSchema: z.ZodType<Prisma.AttendeeUpdateManyWithWhereWithoutAttendancePoolInput> = __makeSchema_AttendeeUpdateManyWithWhereWithoutAttendancePoolInput_schema() as unknown as z.ZodType<Prisma.AttendeeUpdateManyWithWhereWithoutAttendancePoolInput>;
 export const AttendeeUpdateManyWithWhereWithoutAttendancePoolInputObjectZodSchema = __makeSchema_AttendeeUpdateManyWithWhereWithoutAttendancePoolInput_schema();
+
+
+// File: FeedbackFormAnswerCreateWithoutAttendeeInput.schema.ts
+const __makeSchema_FeedbackFormAnswerCreateWithoutAttendeeInput_schema = () => z.object({
+  id: z.string().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  feedbackForm: z.lazy(() => FeedbackFormCreateNestedOneWithoutAnswersInputObjectSchema),
+  answers: z.lazy(() => FeedbackQuestionAnswerCreateNestedManyWithoutFormAnswerInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCreateWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerCreateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCreateWithoutAttendeeInput>;
+export const FeedbackFormAnswerCreateWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCreateWithoutAttendeeInput_schema();
+
+
+// File: FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput.schema.ts
+const __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput_schema = () => z.object({
+  id: z.string().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  feedbackFormId: z.string(),
+  answers: z.lazy(() => FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutFormAnswerInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput>;
+export const FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput_schema();
+
+
+// File: FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput.schema.ts
+const __makeSchema_FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput_schema = () => z.object({
+  where: z.lazy(() => FeedbackFormAnswerWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema)])
+}).strict();
+export const FeedbackFormAnswerCreateOrConnectWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput>;
+export const FeedbackFormAnswerCreateOrConnectWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput_schema();
 
 
 // File: AttendanceCreateWithoutAttendeesInput.schema.ts
@@ -17151,39 +17207,6 @@ export const AttendancePoolCreateOrConnectWithoutAttendeesInputObjectSchema: z.Z
 export const AttendancePoolCreateOrConnectWithoutAttendeesInputObjectZodSchema = __makeSchema_AttendancePoolCreateOrConnectWithoutAttendeesInput_schema();
 
 
-// File: FeedbackFormAnswerCreateWithoutAttendeeInput.schema.ts
-const __makeSchema_FeedbackFormAnswerCreateWithoutAttendeeInput_schema = () => z.object({
-  id: z.string().optional(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  feedbackForm: z.lazy(() => FeedbackFormCreateNestedOneWithoutAnswersInputObjectSchema),
-  answers: z.lazy(() => FeedbackQuestionAnswerCreateNestedManyWithoutFormAnswerInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCreateWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerCreateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCreateWithoutAttendeeInput>;
-export const FeedbackFormAnswerCreateWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCreateWithoutAttendeeInput_schema();
-
-
-// File: FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput.schema.ts
-const __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput_schema = () => z.object({
-  id: z.string().optional(),
-  feedbackFormId: z.string(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  answers: z.lazy(() => FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutFormAnswerInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput>;
-export const FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAttendeeInput_schema();
-
-
-// File: FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput.schema.ts
-const __makeSchema_FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput_schema = () => z.object({
-  where: z.lazy(() => FeedbackFormAnswerWhereUniqueInputObjectSchema),
-  create: z.union([z.lazy(() => FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema)])
-}).strict();
-export const FeedbackFormAnswerCreateOrConnectWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput>;
-export const FeedbackFormAnswerCreateOrConnectWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCreateOrConnectWithoutAttendeeInput_schema();
-
-
 // File: UserCreateWithoutAttendeesRefundedInput.schema.ts
 const __makeSchema_UserCreateWithoutAttendeesRefundedInput_schema = () => z.object({
   id: z.string(),
@@ -17255,6 +17278,49 @@ const __makeSchema_UserCreateOrConnectWithoutAttendeesRefundedInput_schema = () 
 }).strict();
 export const UserCreateOrConnectWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutAttendeesRefundedInput> = __makeSchema_UserCreateOrConnectWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserCreateOrConnectWithoutAttendeesRefundedInput>;
 export const UserCreateOrConnectWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserCreateOrConnectWithoutAttendeesRefundedInput_schema();
+
+
+// File: FeedbackFormAnswerUpsertWithoutAttendeeInput.schema.ts
+const __makeSchema_FeedbackFormAnswerUpsertWithoutAttendeeInput_schema = () => z.object({
+  update: z.union([z.lazy(() => FeedbackFormAnswerUpdateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectSchema)]),
+  create: z.union([z.lazy(() => FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema)]),
+  where: z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormAnswerUpsertWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUpsertWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUpsertWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUpsertWithoutAttendeeInput>;
+export const FeedbackFormAnswerUpsertWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUpsertWithoutAttendeeInput_schema();
+
+
+// File: FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput.schema.ts
+const __makeSchema_FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput_schema = () => z.object({
+  where: z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => FeedbackFormAnswerUpdateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectSchema)])
+}).strict();
+export const FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput>;
+export const FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput_schema();
+
+
+// File: FeedbackFormAnswerUpdateWithoutAttendeeInput.schema.ts
+const __makeSchema_FeedbackFormAnswerUpdateWithoutAttendeeInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackForm: z.lazy(() => FeedbackFormUpdateOneRequiredWithoutAnswersNestedInputObjectSchema).optional(),
+  answers: z.lazy(() => FeedbackQuestionAnswerUpdateManyWithoutFormAnswerNestedInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormAnswerUpdateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUpdateWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUpdateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUpdateWithoutAttendeeInput>;
+export const FeedbackFormAnswerUpdateWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUpdateWithoutAttendeeInput_schema();
+
+
+// File: FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput.schema.ts
+const __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  answers: z.lazy(() => FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerNestedInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput>;
+export const FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput_schema();
 
 
 // File: AttendanceUpsertWithoutAttendeesInput.schema.ts
@@ -17444,49 +17510,6 @@ export const AttendancePoolUncheckedUpdateWithoutAttendeesInputObjectSchema: z.Z
 export const AttendancePoolUncheckedUpdateWithoutAttendeesInputObjectZodSchema = __makeSchema_AttendancePoolUncheckedUpdateWithoutAttendeesInput_schema();
 
 
-// File: FeedbackFormAnswerUpsertWithoutAttendeeInput.schema.ts
-const __makeSchema_FeedbackFormAnswerUpsertWithoutAttendeeInput_schema = () => z.object({
-  update: z.union([z.lazy(() => FeedbackFormAnswerUpdateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectSchema)]),
-  create: z.union([z.lazy(() => FeedbackFormAnswerCreateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedCreateWithoutAttendeeInputObjectSchema)]),
-  where: z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormAnswerUpsertWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUpsertWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUpsertWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUpsertWithoutAttendeeInput>;
-export const FeedbackFormAnswerUpsertWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUpsertWithoutAttendeeInput_schema();
-
-
-// File: FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput.schema.ts
-const __makeSchema_FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput_schema = () => z.object({
-  where: z.lazy(() => FeedbackFormAnswerWhereInputObjectSchema).optional(),
-  data: z.union([z.lazy(() => FeedbackFormAnswerUpdateWithoutAttendeeInputObjectSchema), z.lazy(() => FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectSchema)])
-}).strict();
-export const FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput>;
-export const FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUpdateToOneWithWhereWithoutAttendeeInput_schema();
-
-
-// File: FeedbackFormAnswerUpdateWithoutAttendeeInput.schema.ts
-const __makeSchema_FeedbackFormAnswerUpdateWithoutAttendeeInput_schema = () => z.object({
-  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackForm: z.lazy(() => FeedbackFormUpdateOneRequiredWithoutAnswersNestedInputObjectSchema).optional(),
-  answers: z.lazy(() => FeedbackQuestionAnswerUpdateManyWithoutFormAnswerNestedInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormAnswerUpdateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUpdateWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUpdateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUpdateWithoutAttendeeInput>;
-export const FeedbackFormAnswerUpdateWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUpdateWithoutAttendeeInput_schema();
-
-
-// File: FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput.schema.ts
-const __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput_schema = () => z.object({
-  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  answers: z.lazy(() => FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerNestedInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput> = __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput>;
-export const FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAttendeeInput_schema();
-
-
 // File: UserUpsertWithoutAttendeesRefundedInput.schema.ts
 const __makeSchema_UserUpsertWithoutAttendeesRefundedInput_schema = () => z.object({
   update: z.union([z.lazy(() => UserUpdateWithoutAttendeesRefundedInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutAttendeesRefundedInputObjectSchema)]),
@@ -17570,6 +17593,43 @@ export const UserUncheckedUpdateWithoutAttendeesRefundedInputObjectSchema: z.Zod
 export const UserUncheckedUpdateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutAttendeesRefundedInput_schema();
 
 
+// File: FeedbackFormCreateWithoutEventInput.schema.ts
+const __makeSchema_FeedbackFormCreateWithoutEventInput_schema = () => z.object({
+  id: z.string().optional(),
+  publicResultsToken: z.string().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  answerDeadline: z.coerce.date(),
+  questions: z.lazy(() => FeedbackQuestionCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional(),
+  answers: z.lazy(() => FeedbackFormAnswerCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormCreateWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormCreateWithoutEventInput> = __makeSchema_FeedbackFormCreateWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormCreateWithoutEventInput>;
+export const FeedbackFormCreateWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormCreateWithoutEventInput_schema();
+
+
+// File: FeedbackFormUncheckedCreateWithoutEventInput.schema.ts
+const __makeSchema_FeedbackFormUncheckedCreateWithoutEventInput_schema = () => z.object({
+  id: z.string().optional(),
+  publicResultsToken: z.string().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  answerDeadline: z.coerce.date(),
+  questions: z.lazy(() => FeedbackQuestionUncheckedCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional(),
+  answers: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormUncheckedCreateWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedCreateWithoutEventInput> = __makeSchema_FeedbackFormUncheckedCreateWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedCreateWithoutEventInput>;
+export const FeedbackFormUncheckedCreateWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUncheckedCreateWithoutEventInput_schema();
+
+
+// File: FeedbackFormCreateOrConnectWithoutEventInput.schema.ts
+const __makeSchema_FeedbackFormCreateOrConnectWithoutEventInput_schema = () => z.object({
+  where: z.lazy(() => FeedbackFormWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => FeedbackFormCreateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedCreateWithoutEventInputObjectSchema)])
+}).strict();
+export const FeedbackFormCreateOrConnectWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormCreateOrConnectWithoutEventInput> = __makeSchema_FeedbackFormCreateOrConnectWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormCreateOrConnectWithoutEventInput>;
+export const FeedbackFormCreateOrConnectWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormCreateOrConnectWithoutEventInput_schema();
+
+
 // File: AttendanceCreateWithoutEventsInput.schema.ts
 const __makeSchema_AttendanceCreateWithoutEventsInput_schema = () => z.object({
   id: z.string().optional(),
@@ -17613,43 +17673,6 @@ export const AttendanceCreateOrConnectWithoutEventsInputObjectSchema: z.ZodType<
 export const AttendanceCreateOrConnectWithoutEventsInputObjectZodSchema = __makeSchema_AttendanceCreateOrConnectWithoutEventsInput_schema();
 
 
-// File: FeedbackFormCreateWithoutEventInput.schema.ts
-const __makeSchema_FeedbackFormCreateWithoutEventInput_schema = () => z.object({
-  id: z.string().optional(),
-  publicResultsToken: z.string().optional(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  answerDeadline: z.coerce.date(),
-  questions: z.lazy(() => FeedbackQuestionCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional(),
-  answers: z.lazy(() => FeedbackFormAnswerCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormCreateWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormCreateWithoutEventInput> = __makeSchema_FeedbackFormCreateWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormCreateWithoutEventInput>;
-export const FeedbackFormCreateWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormCreateWithoutEventInput_schema();
-
-
-// File: FeedbackFormUncheckedCreateWithoutEventInput.schema.ts
-const __makeSchema_FeedbackFormUncheckedCreateWithoutEventInput_schema = () => z.object({
-  id: z.string().optional(),
-  publicResultsToken: z.string().optional(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-  answerDeadline: z.coerce.date(),
-  questions: z.lazy(() => FeedbackQuestionUncheckedCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional(),
-  answers: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormUncheckedCreateWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedCreateWithoutEventInput> = __makeSchema_FeedbackFormUncheckedCreateWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedCreateWithoutEventInput>;
-export const FeedbackFormUncheckedCreateWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUncheckedCreateWithoutEventInput_schema();
-
-
-// File: FeedbackFormCreateOrConnectWithoutEventInput.schema.ts
-const __makeSchema_FeedbackFormCreateOrConnectWithoutEventInput_schema = () => z.object({
-  where: z.lazy(() => FeedbackFormWhereUniqueInputObjectSchema),
-  create: z.union([z.lazy(() => FeedbackFormCreateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedCreateWithoutEventInputObjectSchema)])
-}).strict();
-export const FeedbackFormCreateOrConnectWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormCreateOrConnectWithoutEventInput> = __makeSchema_FeedbackFormCreateOrConnectWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormCreateOrConnectWithoutEventInput>;
-export const FeedbackFormCreateOrConnectWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormCreateOrConnectWithoutEventInput_schema();
-
-
 // File: EventCreateWithoutChildrenInput.schema.ts
 const __makeSchema_EventCreateWithoutChildrenInput_schema = () => z.object({
   id: z.string().optional(),
@@ -17668,8 +17691,8 @@ const __makeSchema_EventCreateWithoutChildrenInput_schema = () => z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   metadataImportId: z.number().int().optional().nullable(),
-  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormCreateNestedOneWithoutEventInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   parent: z.lazy(() => EventCreateNestedOneWithoutChildrenInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyCreateNestedManyWithoutEventInputObjectSchema).optional(),
   hostingGroups: z.lazy(() => EventHostingGroupCreateNestedManyWithoutEventInputObjectSchema).optional(),
@@ -17692,11 +17715,11 @@ const __makeSchema_EventUncheckedCreateWithoutChildrenInput_schema = () => z.obj
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   parentId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedCreateNestedOneWithoutEventInputObjectSchema).optional(),
@@ -17735,8 +17758,8 @@ const __makeSchema_EventCreateWithoutParentInput_schema = () => z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   metadataImportId: z.number().int().optional().nullable(),
-  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormCreateNestedOneWithoutEventInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   children: z.lazy(() => EventCreateNestedManyWithoutParentInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyCreateNestedManyWithoutEventInputObjectSchema).optional(),
   hostingGroups: z.lazy(() => EventHostingGroupCreateNestedManyWithoutEventInputObjectSchema).optional(),
@@ -17759,11 +17782,11 @@ const __makeSchema_EventUncheckedCreateWithoutParentInput_schema = () => z.objec
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedCreateNestedOneWithoutEventInputObjectSchema).optional(),
   children: z.lazy(() => EventUncheckedCreateNestedManyWithoutParentInputObjectSchema).optional(),
@@ -17907,6 +17930,53 @@ export const DeregisterReasonCreateManyEventInputEnvelopeObjectSchema: z.ZodType
 export const DeregisterReasonCreateManyEventInputEnvelopeObjectZodSchema = __makeSchema_DeregisterReasonCreateManyEventInputEnvelope_schema();
 
 
+// File: FeedbackFormUpsertWithoutEventInput.schema.ts
+const __makeSchema_FeedbackFormUpsertWithoutEventInput_schema = () => z.object({
+  update: z.union([z.lazy(() => FeedbackFormUpdateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedUpdateWithoutEventInputObjectSchema)]),
+  create: z.union([z.lazy(() => FeedbackFormCreateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedCreateWithoutEventInputObjectSchema)]),
+  where: z.lazy(() => FeedbackFormWhereInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormUpsertWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUpsertWithoutEventInput> = __makeSchema_FeedbackFormUpsertWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUpsertWithoutEventInput>;
+export const FeedbackFormUpsertWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUpsertWithoutEventInput_schema();
+
+
+// File: FeedbackFormUpdateToOneWithWhereWithoutEventInput.schema.ts
+const __makeSchema_FeedbackFormUpdateToOneWithWhereWithoutEventInput_schema = () => z.object({
+  where: z.lazy(() => FeedbackFormWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => FeedbackFormUpdateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedUpdateWithoutEventInputObjectSchema)])
+}).strict();
+export const FeedbackFormUpdateToOneWithWhereWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUpdateToOneWithWhereWithoutEventInput> = __makeSchema_FeedbackFormUpdateToOneWithWhereWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUpdateToOneWithWhereWithoutEventInput>;
+export const FeedbackFormUpdateToOneWithWhereWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUpdateToOneWithWhereWithoutEventInput_schema();
+
+
+// File: FeedbackFormUpdateWithoutEventInput.schema.ts
+const __makeSchema_FeedbackFormUpdateWithoutEventInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  publicResultsToken: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  questions: z.lazy(() => FeedbackQuestionUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional(),
+  answers: z.lazy(() => FeedbackFormAnswerUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormUpdateWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUpdateWithoutEventInput> = __makeSchema_FeedbackFormUpdateWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUpdateWithoutEventInput>;
+export const FeedbackFormUpdateWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUpdateWithoutEventInput_schema();
+
+
+// File: FeedbackFormUncheckedUpdateWithoutEventInput.schema.ts
+const __makeSchema_FeedbackFormUncheckedUpdateWithoutEventInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  publicResultsToken: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  questions: z.lazy(() => FeedbackQuestionUncheckedUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional(),
+  answers: z.lazy(() => FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional()
+}).strict();
+export const FeedbackFormUncheckedUpdateWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedUpdateWithoutEventInput> = __makeSchema_FeedbackFormUncheckedUpdateWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedUpdateWithoutEventInput>;
+export const FeedbackFormUncheckedUpdateWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUncheckedUpdateWithoutEventInput_schema();
+
+
 // File: AttendanceUpsertWithoutEventsInput.schema.ts
 const __makeSchema_AttendanceUpsertWithoutEventsInput_schema = () => z.object({
   update: z.union([z.lazy(() => AttendanceUpdateWithoutEventsInputObjectSchema), z.lazy(() => AttendanceUncheckedUpdateWithoutEventsInputObjectSchema)]),
@@ -17960,53 +18030,6 @@ export const AttendanceUncheckedUpdateWithoutEventsInputObjectSchema: z.ZodType<
 export const AttendanceUncheckedUpdateWithoutEventsInputObjectZodSchema = __makeSchema_AttendanceUncheckedUpdateWithoutEventsInput_schema();
 
 
-// File: FeedbackFormUpsertWithoutEventInput.schema.ts
-const __makeSchema_FeedbackFormUpsertWithoutEventInput_schema = () => z.object({
-  update: z.union([z.lazy(() => FeedbackFormUpdateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedUpdateWithoutEventInputObjectSchema)]),
-  create: z.union([z.lazy(() => FeedbackFormCreateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedCreateWithoutEventInputObjectSchema)]),
-  where: z.lazy(() => FeedbackFormWhereInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormUpsertWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUpsertWithoutEventInput> = __makeSchema_FeedbackFormUpsertWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUpsertWithoutEventInput>;
-export const FeedbackFormUpsertWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUpsertWithoutEventInput_schema();
-
-
-// File: FeedbackFormUpdateToOneWithWhereWithoutEventInput.schema.ts
-const __makeSchema_FeedbackFormUpdateToOneWithWhereWithoutEventInput_schema = () => z.object({
-  where: z.lazy(() => FeedbackFormWhereInputObjectSchema).optional(),
-  data: z.union([z.lazy(() => FeedbackFormUpdateWithoutEventInputObjectSchema), z.lazy(() => FeedbackFormUncheckedUpdateWithoutEventInputObjectSchema)])
-}).strict();
-export const FeedbackFormUpdateToOneWithWhereWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUpdateToOneWithWhereWithoutEventInput> = __makeSchema_FeedbackFormUpdateToOneWithWhereWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUpdateToOneWithWhereWithoutEventInput>;
-export const FeedbackFormUpdateToOneWithWhereWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUpdateToOneWithWhereWithoutEventInput_schema();
-
-
-// File: FeedbackFormUpdateWithoutEventInput.schema.ts
-const __makeSchema_FeedbackFormUpdateWithoutEventInput_schema = () => z.object({
-  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  publicResultsToken: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  questions: z.lazy(() => FeedbackQuestionUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional(),
-  answers: z.lazy(() => FeedbackFormAnswerUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormUpdateWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUpdateWithoutEventInput> = __makeSchema_FeedbackFormUpdateWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUpdateWithoutEventInput>;
-export const FeedbackFormUpdateWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUpdateWithoutEventInput_schema();
-
-
-// File: FeedbackFormUncheckedUpdateWithoutEventInput.schema.ts
-const __makeSchema_FeedbackFormUncheckedUpdateWithoutEventInput_schema = () => z.object({
-  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  publicResultsToken: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  questions: z.lazy(() => FeedbackQuestionUncheckedUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional(),
-  answers: z.lazy(() => FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional()
-}).strict();
-export const FeedbackFormUncheckedUpdateWithoutEventInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedUpdateWithoutEventInput> = __makeSchema_FeedbackFormUncheckedUpdateWithoutEventInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedUpdateWithoutEventInput>;
-export const FeedbackFormUncheckedUpdateWithoutEventInputObjectZodSchema = __makeSchema_FeedbackFormUncheckedUpdateWithoutEventInput_schema();
-
-
 // File: EventUpsertWithoutChildrenInput.schema.ts
 const __makeSchema_EventUpsertWithoutChildrenInput_schema = () => z.object({
   update: z.union([z.lazy(() => EventUpdateWithoutChildrenInputObjectSchema), z.lazy(() => EventUncheckedUpdateWithoutChildrenInputObjectSchema)]),
@@ -18044,8 +18067,8 @@ const __makeSchema_EventUpdateWithoutChildrenInput_schema = () => z.object({
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormUpdateOneWithoutEventNestedInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   parent: z.lazy(() => EventUpdateOneWithoutChildrenNestedInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyUpdateManyWithoutEventNestedInputObjectSchema).optional(),
   hostingGroups: z.lazy(() => EventHostingGroupUpdateManyWithoutEventNestedInputObjectSchema).optional(),
@@ -18068,11 +18091,11 @@ const __makeSchema_EventUncheckedUpdateWithoutChildrenInput_schema = () => z.obj
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   parentId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedUpdateOneWithoutEventNestedInputObjectSchema).optional(),
@@ -18214,8 +18237,8 @@ const __makeSchema_EventCreateWithoutCompaniesInput_schema = () => z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   metadataImportId: z.number().int().optional().nullable(),
-  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormCreateNestedOneWithoutEventInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   parent: z.lazy(() => EventCreateNestedOneWithoutChildrenInputObjectSchema).optional(),
   children: z.lazy(() => EventCreateNestedManyWithoutParentInputObjectSchema).optional(),
   hostingGroups: z.lazy(() => EventHostingGroupCreateNestedManyWithoutEventInputObjectSchema).optional(),
@@ -18238,11 +18261,11 @@ const __makeSchema_EventUncheckedCreateWithoutCompaniesInput_schema = () => z.ob
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   parentId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedCreateNestedOneWithoutEventInputObjectSchema).optional(),
@@ -18347,8 +18370,8 @@ const __makeSchema_EventUpdateWithoutCompaniesInput_schema = () => z.object({
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormUpdateOneWithoutEventNestedInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   parent: z.lazy(() => EventUpdateOneWithoutChildrenNestedInputObjectSchema).optional(),
   children: z.lazy(() => EventUpdateManyWithoutParentNestedInputObjectSchema).optional(),
   hostingGroups: z.lazy(() => EventHostingGroupUpdateManyWithoutEventNestedInputObjectSchema).optional(),
@@ -18371,11 +18394,11 @@ const __makeSchema_EventUncheckedUpdateWithoutCompaniesInput_schema = () => z.ob
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   parentId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedUpdateOneWithoutEventNestedInputObjectSchema).optional(),
@@ -18456,9 +18479,9 @@ export const PersonalMarkCreateWithoutMarkInputObjectZodSchema = __makeSchema_Pe
 
 // File: PersonalMarkUncheckedCreateWithoutMarkInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedCreateWithoutMarkInput_schema = () => z.object({
+  createdAt: z.coerce.date().optional(),
   userId: z.string(),
-  givenById: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional()
+  givenById: z.string().optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedCreateWithoutMarkInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedCreateWithoutMarkInput> = __makeSchema_PersonalMarkUncheckedCreateWithoutMarkInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedCreateWithoutMarkInput>;
 export const PersonalMarkUncheckedCreateWithoutMarkInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedCreateWithoutMarkInput_schema();
@@ -19585,8 +19608,8 @@ const __makeSchema_EventCreateWithoutHostingGroupsInput_schema = () => z.object(
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   metadataImportId: z.number().int().optional().nullable(),
-  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormCreateNestedOneWithoutEventInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   parent: z.lazy(() => EventCreateNestedOneWithoutChildrenInputObjectSchema).optional(),
   children: z.lazy(() => EventCreateNestedManyWithoutParentInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyCreateNestedManyWithoutEventInputObjectSchema).optional(),
@@ -19609,11 +19632,11 @@ const __makeSchema_EventUncheckedCreateWithoutHostingGroupsInput_schema = () => 
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   parentId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedCreateNestedOneWithoutEventInputObjectSchema).optional(),
@@ -19740,8 +19763,8 @@ const __makeSchema_EventUpdateWithoutHostingGroupsInput_schema = () => z.object(
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormUpdateOneWithoutEventNestedInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   parent: z.lazy(() => EventUpdateOneWithoutChildrenNestedInputObjectSchema).optional(),
   children: z.lazy(() => EventUpdateManyWithoutParentNestedInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyUpdateManyWithoutEventNestedInputObjectSchema).optional(),
@@ -19764,11 +19787,11 @@ const __makeSchema_EventUncheckedUpdateWithoutHostingGroupsInput_schema = () => 
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   parentId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedUpdateOneWithoutEventNestedInputObjectSchema).optional(),
@@ -19988,7 +20011,6 @@ export const JobListingCreateWithoutLocationsInputObjectZodSchema = __makeSchema
 // File: JobListingUncheckedCreateWithoutLocationsInput.schema.ts
 const __makeSchema_JobListingUncheckedCreateWithoutLocationsInput_schema = () => z.object({
   id: z.string().optional(),
-  companyId: z.string(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional().nullable(),
@@ -20002,7 +20024,8 @@ const __makeSchema_JobListingUncheckedCreateWithoutLocationsInput_schema = () =>
   applicationEmail: z.string().optional().nullable(),
   rollingAdmission: z.boolean(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  companyId: z.string()
 }).strict();
 export const JobListingUncheckedCreateWithoutLocationsInputObjectSchema: z.ZodType<Prisma.JobListingUncheckedCreateWithoutLocationsInput> = __makeSchema_JobListingUncheckedCreateWithoutLocationsInput_schema() as unknown as z.ZodType<Prisma.JobListingUncheckedCreateWithoutLocationsInput>;
 export const JobListingUncheckedCreateWithoutLocationsInputObjectZodSchema = __makeSchema_JobListingUncheckedCreateWithoutLocationsInput_schema();
@@ -20062,7 +20085,6 @@ export const JobListingUpdateWithoutLocationsInputObjectZodSchema = __makeSchema
 // File: JobListingUncheckedUpdateWithoutLocationsInput.schema.ts
 const __makeSchema_JobListingUncheckedUpdateWithoutLocationsInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  companyId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -20076,7 +20098,8 @@ const __makeSchema_JobListingUncheckedUpdateWithoutLocationsInput_schema = () =>
   applicationEmail: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   rollingAdmission: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  companyId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const JobListingUncheckedUpdateWithoutLocationsInputObjectSchema: z.ZodType<Prisma.JobListingUncheckedUpdateWithoutLocationsInput> = __makeSchema_JobListingUncheckedUpdateWithoutLocationsInput_schema() as unknown as z.ZodType<Prisma.JobListingUncheckedUpdateWithoutLocationsInput>;
 export const JobListingUncheckedUpdateWithoutLocationsInputObjectZodSchema = __makeSchema_JobListingUncheckedUpdateWithoutLocationsInput_schema();
@@ -20222,11 +20245,11 @@ export const ArticleTagLinkUpdateManyWithWhereWithoutTagInputObjectZodSchema = _
 // File: ArticleCreateWithoutTagsInput.schema.ts
 const __makeSchema_ArticleCreateWithoutTagsInput_schema = () => z.object({
   id: z.string().optional(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean().optional(),
@@ -20241,11 +20264,11 @@ export const ArticleCreateWithoutTagsInputObjectZodSchema = __makeSchema_Article
 // File: ArticleUncheckedCreateWithoutTagsInput.schema.ts
 const __makeSchema_ArticleUncheckedCreateWithoutTagsInput_schema = () => z.object({
   id: z.string().optional(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean().optional(),
@@ -20313,11 +20336,11 @@ export const ArticleUpdateToOneWithWhereWithoutTagsInputObjectZodSchema = __make
 // File: ArticleUpdateWithoutTagsInput.schema.ts
 const __makeSchema_ArticleUpdateWithoutTagsInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   author: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   photographer: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   excerpt: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   content: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   isFeatured: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -20332,11 +20355,11 @@ export const ArticleUpdateWithoutTagsInputObjectZodSchema = __makeSchema_Article
 // File: ArticleUncheckedUpdateWithoutTagsInput.schema.ts
 const __makeSchema_ArticleUncheckedUpdateWithoutTagsInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   title: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   author: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   photographer: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   excerpt: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   content: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   isFeatured: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -20682,11 +20705,11 @@ const __makeSchema_EventUncheckedCreateWithoutFeedbackFormInput_schema = () => z
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   parentId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable(),
   children: z.lazy(() => EventUncheckedCreateNestedManyWithoutParentInputObjectSchema).optional(),
@@ -20774,9 +20797,9 @@ export const FeedbackFormAnswerCreateWithoutFeedbackFormInputObjectZodSchema = _
 // File: FeedbackFormAnswerUncheckedCreateWithoutFeedbackFormInput.schema.ts
 const __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutFeedbackFormInput_schema = () => z.object({
   id: z.string().optional(),
-  attendeeId: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendeeId: z.string(),
   answers: z.lazy(() => FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutFormAnswerInputObjectSchema).optional()
 }).strict();
 export const FeedbackFormAnswerUncheckedCreateWithoutFeedbackFormInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateWithoutFeedbackFormInput> = __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutFeedbackFormInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateWithoutFeedbackFormInput>;
@@ -20862,11 +20885,11 @@ const __makeSchema_EventUncheckedUpdateWithoutFeedbackFormInput_schema = () => z
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   parentId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   children: z.lazy(() => EventUncheckedUpdateManyWithoutParentNestedInputObjectSchema).optional(),
@@ -20913,14 +20936,14 @@ const feedbackquestionscalarwhereinputSchema = z.object({
   OR: z.lazy(() => FeedbackQuestionScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackQuestionScalarWhereInputObjectSchema), z.lazy(() => FeedbackQuestionScalarWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  feedbackFormId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   label: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   required: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   showInPublicResults: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   type: z.union([z.lazy(() => EnumFeedbackQuestionTypeFilterObjectSchema), FeedbackQuestionTypeSchema]).optional(),
   order: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional()
+  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  feedbackFormId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const FeedbackQuestionScalarWhereInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionScalarWhereInput> = feedbackquestionscalarwhereinputSchema as unknown as z.ZodType<Prisma.FeedbackQuestionScalarWhereInput>;
 export const FeedbackQuestionScalarWhereInputObjectZodSchema = feedbackquestionscalarwhereinputSchema;
@@ -20961,10 +20984,10 @@ const feedbackformanswerscalarwhereinputSchema = z.object({
   OR: z.lazy(() => FeedbackFormAnswerScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackFormAnswerScalarWhereInputObjectSchema), z.lazy(() => FeedbackFormAnswerScalarWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  feedbackFormId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  attendeeId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional()
+  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  feedbackFormId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  attendeeId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const FeedbackFormAnswerScalarWhereInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerScalarWhereInput> = feedbackformanswerscalarwhereinputSchema as unknown as z.ZodType<Prisma.FeedbackFormAnswerScalarWhereInput>;
 export const FeedbackFormAnswerScalarWhereInputObjectZodSchema = feedbackformanswerscalarwhereinputSchema;
@@ -20987,11 +21010,11 @@ export const FeedbackFormCreateWithoutQuestionsInputObjectZodSchema = __makeSche
 // File: FeedbackFormUncheckedCreateWithoutQuestionsInput.schema.ts
 const __makeSchema_FeedbackFormUncheckedCreateWithoutQuestionsInput_schema = () => z.object({
   id: z.string().optional(),
-  eventId: z.string(),
   publicResultsToken: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   answerDeadline: z.coerce.date(),
+  eventId: z.string(),
   answers: z.lazy(() => FeedbackFormAnswerUncheckedCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional()
 }).strict();
 export const FeedbackFormUncheckedCreateWithoutQuestionsInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedCreateWithoutQuestionsInput> = __makeSchema_FeedbackFormUncheckedCreateWithoutQuestionsInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedCreateWithoutQuestionsInput>;
@@ -21059,8 +21082,8 @@ export const FeedbackQuestionAnswerCreateWithoutQuestionInputObjectZodSchema = _
 // File: FeedbackQuestionAnswerUncheckedCreateWithoutQuestionInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedCreateWithoutQuestionInput_schema = () => z.object({
   id: z.string().optional(),
-  formAnswerId: z.string(),
   value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  formAnswerId: z.string(),
   selectedOptions: z.lazy(() => FeedbackQuestionAnswerOptionLinkUncheckedCreateNestedManyWithoutFeedbackQuestionAnswerInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedCreateWithoutQuestionInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedCreateWithoutQuestionInput> = __makeSchema_FeedbackQuestionAnswerUncheckedCreateWithoutQuestionInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedCreateWithoutQuestionInput>;
@@ -21121,11 +21144,11 @@ export const FeedbackFormUpdateWithoutQuestionsInputObjectZodSchema = __makeSche
 // File: FeedbackFormUncheckedUpdateWithoutQuestionsInput.schema.ts
 const __makeSchema_FeedbackFormUncheckedUpdateWithoutQuestionsInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  eventId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   publicResultsToken: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  eventId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   answers: z.lazy(() => FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackFormUncheckedUpdateWithoutQuestionsInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedUpdateWithoutQuestionsInput> = __makeSchema_FeedbackFormUncheckedUpdateWithoutQuestionsInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedUpdateWithoutQuestionsInput>;
@@ -21209,9 +21232,9 @@ const feedbackquestionanswerscalarwhereinputSchema = z.object({
   OR: z.lazy(() => FeedbackQuestionAnswerScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => FeedbackQuestionAnswerScalarWhereInputObjectSchema), z.lazy(() => FeedbackQuestionAnswerScalarWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  value: z.lazy(() => JsonNullableFilterObjectSchema).optional(),
   questionId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  formAnswerId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  value: z.lazy(() => JsonNullableFilterObjectSchema).optional()
+  formAnswerId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const FeedbackQuestionAnswerScalarWhereInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerScalarWhereInput> = feedbackquestionanswerscalarwhereinputSchema as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerScalarWhereInput>;
 export const FeedbackQuestionAnswerScalarWhereInputObjectZodSchema = feedbackquestionanswerscalarwhereinputSchema;
@@ -21237,7 +21260,6 @@ export const FeedbackQuestionCreateWithoutOptionsInputObjectZodSchema = __makeSc
 // File: FeedbackQuestionUncheckedCreateWithoutOptionsInput.schema.ts
 const __makeSchema_FeedbackQuestionUncheckedCreateWithoutOptionsInput_schema = () => z.object({
   id: z.string().optional(),
-  feedbackFormId: z.string(),
   label: z.string(),
   required: z.boolean().optional(),
   showInPublicResults: z.boolean().optional(),
@@ -21245,6 +21267,7 @@ const __makeSchema_FeedbackQuestionUncheckedCreateWithoutOptionsInput_schema = (
   order: z.number().int(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  feedbackFormId: z.string(),
   answers: z.lazy(() => FeedbackQuestionAnswerUncheckedCreateNestedManyWithoutQuestionInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionUncheckedCreateWithoutOptionsInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionUncheckedCreateWithoutOptionsInput> = __makeSchema_FeedbackQuestionUncheckedCreateWithoutOptionsInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionUncheckedCreateWithoutOptionsInput>;
@@ -21333,7 +21356,6 @@ export const FeedbackQuestionUpdateWithoutOptionsInputObjectZodSchema = __makeSc
 // File: FeedbackQuestionUncheckedUpdateWithoutOptionsInput.schema.ts
 const __makeSchema_FeedbackQuestionUncheckedUpdateWithoutOptionsInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   label: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   required: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   showInPublicResults: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -21341,6 +21363,7 @@ const __makeSchema_FeedbackQuestionUncheckedUpdateWithoutOptionsInput_schema = (
   order: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionUncheckedUpdateWithoutOptionsInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionUncheckedUpdateWithoutOptionsInput> = __makeSchema_FeedbackQuestionUncheckedUpdateWithoutOptionsInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionUncheckedUpdateWithoutOptionsInput>;
@@ -21408,7 +21431,6 @@ export const FeedbackQuestionCreateWithoutAnswersInputObjectZodSchema = __makeSc
 // File: FeedbackQuestionUncheckedCreateWithoutAnswersInput.schema.ts
 const __makeSchema_FeedbackQuestionUncheckedCreateWithoutAnswersInput_schema = () => z.object({
   id: z.string().optional(),
-  feedbackFormId: z.string(),
   label: z.string(),
   required: z.boolean().optional(),
   showInPublicResults: z.boolean().optional(),
@@ -21416,6 +21438,7 @@ const __makeSchema_FeedbackQuestionUncheckedCreateWithoutAnswersInput_schema = (
   order: z.number().int(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  feedbackFormId: z.string(),
   options: z.lazy(() => FeedbackQuestionOptionUncheckedCreateNestedManyWithoutQuestionInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionUncheckedCreateWithoutAnswersInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionUncheckedCreateWithoutAnswersInput> = __makeSchema_FeedbackQuestionUncheckedCreateWithoutAnswersInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionUncheckedCreateWithoutAnswersInput>;
@@ -21446,10 +21469,10 @@ export const FeedbackFormAnswerCreateWithoutAnswersInputObjectZodSchema = __make
 // File: FeedbackFormAnswerUncheckedCreateWithoutAnswersInput.schema.ts
 const __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAnswersInput_schema = () => z.object({
   id: z.string().optional(),
-  feedbackFormId: z.string(),
-  attendeeId: z.string(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string()
 }).strict();
 export const FeedbackFormAnswerUncheckedCreateWithoutAnswersInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateWithoutAnswersInput> = __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAnswersInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedCreateWithoutAnswersInput>;
 export const FeedbackFormAnswerUncheckedCreateWithoutAnswersInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedCreateWithoutAnswersInput_schema();
@@ -21537,7 +21560,6 @@ export const FeedbackQuestionUpdateWithoutAnswersInputObjectZodSchema = __makeSc
 // File: FeedbackQuestionUncheckedUpdateWithoutAnswersInput.schema.ts
 const __makeSchema_FeedbackQuestionUncheckedUpdateWithoutAnswersInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   label: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   required: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   showInPublicResults: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -21545,6 +21567,7 @@ const __makeSchema_FeedbackQuestionUncheckedUpdateWithoutAnswersInput_schema = (
   order: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   options: z.lazy(() => FeedbackQuestionOptionUncheckedUpdateManyWithoutQuestionNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionUncheckedUpdateWithoutAnswersInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionUncheckedUpdateWithoutAnswersInput> = __makeSchema_FeedbackQuestionUncheckedUpdateWithoutAnswersInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionUncheckedUpdateWithoutAnswersInput>;
@@ -21585,10 +21608,10 @@ export const FeedbackFormAnswerUpdateWithoutAnswersInputObjectZodSchema = __make
 // File: FeedbackFormAnswerUncheckedUpdateWithoutAnswersInput.schema.ts
 const __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAnswersInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  feedbackFormId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackFormAnswerUncheckedUpdateWithoutAnswersInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateWithoutAnswersInput> = __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAnswersInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateWithoutAnswersInput>;
 export const FeedbackFormAnswerUncheckedUpdateWithoutAnswersInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutAnswersInput_schema();
@@ -21665,9 +21688,9 @@ export const FeedbackQuestionAnswerCreateWithoutSelectedOptionsInputObjectZodSch
 // File: FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInput_schema = () => z.object({
   id: z.string().optional(),
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   questionId: z.string(),
-  formAnswerId: z.string(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional()
+  formAnswerId: z.string()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInput> = __makeSchema_FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInput>;
 export const FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInput_schema();
@@ -21754,9 +21777,9 @@ export const FeedbackQuestionAnswerUpdateWithoutSelectedOptionsInputObjectZodSch
 // File: FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   questionId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional()
+  formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInput> = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInput>;
 export const FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInput_schema();
@@ -21779,11 +21802,11 @@ export const FeedbackFormCreateWithoutAnswersInputObjectZodSchema = __makeSchema
 // File: FeedbackFormUncheckedCreateWithoutAnswersInput.schema.ts
 const __makeSchema_FeedbackFormUncheckedCreateWithoutAnswersInput_schema = () => z.object({
   id: z.string().optional(),
-  eventId: z.string(),
   publicResultsToken: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   answerDeadline: z.coerce.date(),
+  eventId: z.string(),
   questions: z.lazy(() => FeedbackQuestionUncheckedCreateNestedManyWithoutFeedbackFormInputObjectSchema).optional()
 }).strict();
 export const FeedbackFormUncheckedCreateWithoutAnswersInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedCreateWithoutAnswersInput> = __makeSchema_FeedbackFormUncheckedCreateWithoutAnswersInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedCreateWithoutAnswersInput>;
@@ -21816,6 +21839,7 @@ const __makeSchema_AttendeeCreateWithoutFeedbackFormAnswerInput_schema = () => z
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
   attendance: z.lazy(() => AttendanceCreateNestedOneWithoutAttendeesInputObjectSchema),
   user: z.lazy(() => UserCreateNestedOneWithoutAttendeeInputObjectSchema),
   attendancePool: z.lazy(() => AttendancePoolCreateNestedOneWithoutAttendeesInputObjectSchema),
@@ -21828,10 +21852,7 @@ export const AttendeeCreateWithoutFeedbackFormAnswerInputObjectZodSchema = __mak
 // File: AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput.schema.ts
 const __makeSchema_AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -21845,6 +21866,10 @@ const __makeSchema_AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput_schema 
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional().nullable()
 }).strict();
 export const AttendeeUncheckedCreateWithoutFeedbackFormAnswerInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput> = __makeSchema_AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput>;
@@ -21874,8 +21899,8 @@ export const FeedbackQuestionAnswerCreateWithoutFormAnswerInputObjectZodSchema =
 // File: FeedbackQuestionAnswerUncheckedCreateWithoutFormAnswerInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedCreateWithoutFormAnswerInput_schema = () => z.object({
   id: z.string().optional(),
-  questionId: z.string(),
   value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  questionId: z.string(),
   selectedOptions: z.lazy(() => FeedbackQuestionAnswerOptionLinkUncheckedCreateNestedManyWithoutFeedbackQuestionAnswerInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedCreateWithoutFormAnswerInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedCreateWithoutFormAnswerInput> = __makeSchema_FeedbackQuestionAnswerUncheckedCreateWithoutFormAnswerInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedCreateWithoutFormAnswerInput>;
@@ -21936,11 +21961,11 @@ export const FeedbackFormUpdateWithoutAnswersInputObjectZodSchema = __makeSchema
 // File: FeedbackFormUncheckedUpdateWithoutAnswersInput.schema.ts
 const __makeSchema_FeedbackFormUncheckedUpdateWithoutAnswersInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  eventId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   publicResultsToken: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   answerDeadline: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  eventId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   questions: z.lazy(() => FeedbackQuestionUncheckedUpdateManyWithoutFeedbackFormNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackFormUncheckedUpdateWithoutAnswersInputObjectSchema: z.ZodType<Prisma.FeedbackFormUncheckedUpdateWithoutAnswersInput> = __makeSchema_FeedbackFormUncheckedUpdateWithoutAnswersInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormUncheckedUpdateWithoutAnswersInput>;
@@ -21983,6 +22008,7 @@ const __makeSchema_AttendeeUpdateWithoutFeedbackFormAnswerInput_schema = () => z
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   attendance: z.lazy(() => AttendanceUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutAttendeeNestedInputObjectSchema).optional(),
   attendancePool: z.lazy(() => AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
@@ -21995,10 +22021,7 @@ export const AttendeeUpdateWithoutFeedbackFormAnswerInputObjectZodSchema = __mak
 // File: AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22012,6 +22035,10 @@ const __makeSchema_AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput_schema 
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput> = __makeSchema_AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput>;
@@ -22293,8 +22320,8 @@ const __makeSchema_EventCreateWithoutDeregisterReasonsInput_schema = () => z.obj
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   metadataImportId: z.number().int().optional().nullable(),
-  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormCreateNestedOneWithoutEventInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceCreateNestedOneWithoutEventsInputObjectSchema).optional(),
   parent: z.lazy(() => EventCreateNestedOneWithoutChildrenInputObjectSchema).optional(),
   children: z.lazy(() => EventCreateNestedManyWithoutParentInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyCreateNestedManyWithoutEventInputObjectSchema).optional(),
@@ -22317,11 +22344,11 @@ const __makeSchema_EventUncheckedCreateWithoutDeregisterReasonsInput_schema = ()
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   parentId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedCreateNestedOneWithoutEventInputObjectSchema).optional(),
@@ -22462,8 +22489,8 @@ const __makeSchema_EventUpdateWithoutDeregisterReasonsInput_schema = () => z.obj
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormUpdateOneWithoutEventNestedInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   parent: z.lazy(() => EventUpdateOneWithoutChildrenNestedInputObjectSchema).optional(),
   children: z.lazy(() => EventUpdateManyWithoutParentNestedInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyUpdateManyWithoutEventNestedInputObjectSchema).optional(),
@@ -22486,11 +22513,11 @@ const __makeSchema_EventUncheckedUpdateWithoutDeregisterReasonsInput_schema = ()
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   parentId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedUpdateOneWithoutEventNestedInputObjectSchema).optional(),
@@ -22505,9 +22532,7 @@ export const EventUncheckedUpdateWithoutDeregisterReasonsInputObjectZodSchema = 
 // File: AttendeeCreateManyUserInput.schema.ts
 const __makeSchema_AttendeeCreateManyUserInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -22521,6 +22546,9 @@ const __makeSchema_AttendeeCreateManyUserInput_schema = () => z.object({
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional().nullable()
 }).strict();
 export const AttendeeCreateManyUserInputObjectSchema: z.ZodType<Prisma.AttendeeCreateManyUserInput> = __makeSchema_AttendeeCreateManyUserInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateManyUserInput>;
@@ -22529,9 +22557,9 @@ export const AttendeeCreateManyUserInputObjectZodSchema = __makeSchema_AttendeeC
 
 // File: PersonalMarkCreateManyUserInput.schema.ts
 const __makeSchema_PersonalMarkCreateManyUserInput_schema = () => z.object({
+  createdAt: z.coerce.date().optional(),
   markId: z.string(),
-  givenById: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional()
+  givenById: z.string().optional().nullable()
 }).strict();
 export const PersonalMarkCreateManyUserInputObjectSchema: z.ZodType<Prisma.PersonalMarkCreateManyUserInput> = __makeSchema_PersonalMarkCreateManyUserInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkCreateManyUserInput>;
 export const PersonalMarkCreateManyUserInputObjectZodSchema = __makeSchema_PersonalMarkCreateManyUserInput_schema();
@@ -22540,11 +22568,11 @@ export const PersonalMarkCreateManyUserInputObjectZodSchema = __makeSchema_Perso
 // File: GroupMembershipCreateManyUserInput.schema.ts
 const __makeSchema_GroupMembershipCreateManyUserInput_schema = () => z.object({
   id: z.string().optional(),
-  groupId: z.string(),
   start: z.coerce.date(),
   end: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  groupId: z.string()
 }).strict();
 export const GroupMembershipCreateManyUserInputObjectSchema: z.ZodType<Prisma.GroupMembershipCreateManyUserInput> = __makeSchema_GroupMembershipCreateManyUserInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipCreateManyUserInput>;
 export const GroupMembershipCreateManyUserInputObjectZodSchema = __makeSchema_GroupMembershipCreateManyUserInput_schema();
@@ -22564,9 +22592,9 @@ export const MembershipCreateManyUserInputObjectZodSchema = __makeSchema_Members
 
 // File: PersonalMarkCreateManyGivenByInput.schema.ts
 const __makeSchema_PersonalMarkCreateManyGivenByInput_schema = () => z.object({
+  createdAt: z.coerce.date().optional(),
   markId: z.string(),
-  userId: z.string(),
-  createdAt: z.coerce.date().optional()
+  userId: z.string()
 }).strict();
 export const PersonalMarkCreateManyGivenByInputObjectSchema: z.ZodType<Prisma.PersonalMarkCreateManyGivenByInput> = __makeSchema_PersonalMarkCreateManyGivenByInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkCreateManyGivenByInput>;
 export const PersonalMarkCreateManyGivenByInputObjectZodSchema = __makeSchema_PersonalMarkCreateManyGivenByInput_schema();
@@ -22575,10 +22603,7 @@ export const PersonalMarkCreateManyGivenByInputObjectZodSchema = __makeSchema_Pe
 // File: AttendeeCreateManyPaymentRefundedByInput.schema.ts
 const __makeSchema_AttendeeCreateManyPaymentRefundedByInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -22591,7 +22616,11 @@ const __makeSchema_AttendeeCreateManyPaymentRefundedByInput_schema = () => z.obj
   paymentReservedAt: z.coerce.date().optional().nullable(),
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
-  paymentRefundedAt: z.coerce.date().optional().nullable()
+  paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string()
 }).strict();
 export const AttendeeCreateManyPaymentRefundedByInputObjectSchema: z.ZodType<Prisma.AttendeeCreateManyPaymentRefundedByInput> = __makeSchema_AttendeeCreateManyPaymentRefundedByInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateManyPaymentRefundedByInput>;
 export const AttendeeCreateManyPaymentRefundedByInputObjectZodSchema = __makeSchema_AttendeeCreateManyPaymentRefundedByInput_schema();
@@ -22642,9 +22671,10 @@ const __makeSchema_AttendeeUpdateWithoutUserInput_schema = () => z.object({
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
   attendancePool: z.lazy(() => AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserUpdateOneWithoutAttendeesRefundedNestedInputObjectSchema).optional()
 }).strict();
 export const AttendeeUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.AttendeeUpdateWithoutUserInput> = __makeSchema_AttendeeUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.AttendeeUpdateWithoutUserInput>;
@@ -22654,9 +22684,7 @@ export const AttendeeUpdateWithoutUserInputObjectZodSchema = __makeSchema_Attend
 // File: AttendeeUncheckedUpdateWithoutUserInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateWithoutUserInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22670,6 +22698,9 @@ const __makeSchema_AttendeeUncheckedUpdateWithoutUserInput_schema = () => z.obje
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInputObjectSchema).optional()
 }).strict();
@@ -22680,9 +22711,7 @@ export const AttendeeUncheckedUpdateWithoutUserInputObjectZodSchema = __makeSche
 // File: AttendeeUncheckedUpdateManyWithoutUserInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateManyWithoutUserInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22696,6 +22725,9 @@ const __makeSchema_AttendeeUncheckedUpdateManyWithoutUserInput_schema = () => z.
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const AttendeeUncheckedUpdateManyWithoutUserInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedUpdateManyWithoutUserInput> = __makeSchema_AttendeeUncheckedUpdateManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedUpdateManyWithoutUserInput>;
@@ -22714,9 +22746,9 @@ export const PersonalMarkUpdateWithoutUserInputObjectZodSchema = __makeSchema_Pe
 
 // File: PersonalMarkUncheckedUpdateWithoutUserInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedUpdateWithoutUserInput_schema = () => z.object({
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedUpdateWithoutUserInput> = __makeSchema_PersonalMarkUncheckedUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedUpdateWithoutUserInput>;
 export const PersonalMarkUncheckedUpdateWithoutUserInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedUpdateWithoutUserInput_schema();
@@ -22724,9 +22756,9 @@ export const PersonalMarkUncheckedUpdateWithoutUserInputObjectZodSchema = __make
 
 // File: PersonalMarkUncheckedUpdateManyWithoutUserInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedUpdateManyWithoutUserInput_schema = () => z.object({
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedUpdateManyWithoutUserInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedUpdateManyWithoutUserInput> = __makeSchema_PersonalMarkUncheckedUpdateManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedUpdateManyWithoutUserInput>;
 export const PersonalMarkUncheckedUpdateManyWithoutUserInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedUpdateManyWithoutUserInput_schema();
@@ -22749,11 +22781,11 @@ export const GroupMembershipUpdateWithoutUserInputObjectZodSchema = __makeSchema
 // File: GroupMembershipUncheckedUpdateWithoutUserInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedUpdateWithoutUserInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   start: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   end: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   roles: z.lazy(() => GroupMembershipRoleUncheckedUpdateManyWithoutMembershipNestedInputObjectSchema).optional()
 }).strict();
 export const GroupMembershipUncheckedUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedUpdateWithoutUserInput> = __makeSchema_GroupMembershipUncheckedUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedUpdateWithoutUserInput>;
@@ -22763,11 +22795,11 @@ export const GroupMembershipUncheckedUpdateWithoutUserInputObjectZodSchema = __m
 // File: GroupMembershipUncheckedUpdateManyWithoutUserInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedUpdateManyWithoutUserInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   start: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   end: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  groupId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const GroupMembershipUncheckedUpdateManyWithoutUserInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedUpdateManyWithoutUserInput> = __makeSchema_GroupMembershipUncheckedUpdateManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedUpdateManyWithoutUserInput>;
 export const GroupMembershipUncheckedUpdateManyWithoutUserInputObjectZodSchema = __makeSchema_GroupMembershipUncheckedUpdateManyWithoutUserInput_schema();
@@ -22821,9 +22853,9 @@ export const PersonalMarkUpdateWithoutGivenByInputObjectZodSchema = __makeSchema
 
 // File: PersonalMarkUncheckedUpdateWithoutGivenByInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedUpdateWithoutGivenByInput_schema = () => z.object({
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const PersonalMarkUncheckedUpdateWithoutGivenByInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedUpdateWithoutGivenByInput> = __makeSchema_PersonalMarkUncheckedUpdateWithoutGivenByInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedUpdateWithoutGivenByInput>;
 export const PersonalMarkUncheckedUpdateWithoutGivenByInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedUpdateWithoutGivenByInput_schema();
@@ -22831,9 +22863,9 @@ export const PersonalMarkUncheckedUpdateWithoutGivenByInputObjectZodSchema = __m
 
 // File: PersonalMarkUncheckedUpdateManyWithoutGivenByInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedUpdateManyWithoutGivenByInput_schema = () => z.object({
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const PersonalMarkUncheckedUpdateManyWithoutGivenByInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByInput> = __makeSchema_PersonalMarkUncheckedUpdateManyWithoutGivenByInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByInput>;
 export const PersonalMarkUncheckedUpdateManyWithoutGivenByInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedUpdateManyWithoutGivenByInput_schema();
@@ -22856,10 +22888,11 @@ const __makeSchema_AttendeeUpdateWithoutPaymentRefundedByInput_schema = () => z.
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutAttendeeNestedInputObjectSchema).optional(),
-  attendancePool: z.lazy(() => AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional()
+  attendancePool: z.lazy(() => AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional()
 }).strict();
 export const AttendeeUpdateWithoutPaymentRefundedByInputObjectSchema: z.ZodType<Prisma.AttendeeUpdateWithoutPaymentRefundedByInput> = __makeSchema_AttendeeUpdateWithoutPaymentRefundedByInput_schema() as unknown as z.ZodType<Prisma.AttendeeUpdateWithoutPaymentRefundedByInput>;
 export const AttendeeUpdateWithoutPaymentRefundedByInputObjectZodSchema = __makeSchema_AttendeeUpdateWithoutPaymentRefundedByInput_schema();
@@ -22868,10 +22901,7 @@ export const AttendeeUpdateWithoutPaymentRefundedByInputObjectZodSchema = __make
 // File: AttendeeUncheckedUpdateWithoutPaymentRefundedByInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateWithoutPaymentRefundedByInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22885,6 +22915,10 @@ const __makeSchema_AttendeeUncheckedUpdateWithoutPaymentRefundedByInput_schema =
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInputObjectSchema).optional()
 }).strict();
 export const AttendeeUncheckedUpdateWithoutPaymentRefundedByInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedUpdateWithoutPaymentRefundedByInput> = __makeSchema_AttendeeUncheckedUpdateWithoutPaymentRefundedByInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedUpdateWithoutPaymentRefundedByInput>;
@@ -22894,10 +22928,7 @@ export const AttendeeUncheckedUpdateWithoutPaymentRefundedByInputObjectZodSchema
 // File: AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22910,7 +22941,11 @@ const __makeSchema_AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput_sche
   paymentReservedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+  paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput> = __makeSchema_AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput>;
 export const AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInputObjectZodSchema = __makeSchema_AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput_schema();
@@ -23133,11 +23168,11 @@ export const EventHostingGroupCreateManyGroupInputObjectZodSchema = __makeSchema
 // File: GroupMembershipCreateManyGroupInput.schema.ts
 const __makeSchema_GroupMembershipCreateManyGroupInput_schema = () => z.object({
   id: z.string().optional(),
-  userId: z.string(),
   start: z.coerce.date(),
   end: z.coerce.date().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  userId: z.string()
 }).strict();
 export const GroupMembershipCreateManyGroupInputObjectSchema: z.ZodType<Prisma.GroupMembershipCreateManyGroupInput> = __makeSchema_GroupMembershipCreateManyGroupInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipCreateManyGroupInput>;
 export const GroupMembershipCreateManyGroupInputObjectZodSchema = __makeSchema_GroupMembershipCreateManyGroupInput_schema();
@@ -23202,11 +23237,11 @@ export const GroupMembershipUpdateWithoutGroupInputObjectZodSchema = __makeSchem
 // File: GroupMembershipUncheckedUpdateWithoutGroupInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedUpdateWithoutGroupInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   start: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   end: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   roles: z.lazy(() => GroupMembershipRoleUncheckedUpdateManyWithoutMembershipNestedInputObjectSchema).optional()
 }).strict();
 export const GroupMembershipUncheckedUpdateWithoutGroupInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedUpdateWithoutGroupInput> = __makeSchema_GroupMembershipUncheckedUpdateWithoutGroupInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedUpdateWithoutGroupInput>;
@@ -23216,11 +23251,11 @@ export const GroupMembershipUncheckedUpdateWithoutGroupInputObjectZodSchema = __
 // File: GroupMembershipUncheckedUpdateManyWithoutGroupInput.schema.ts
 const __makeSchema_GroupMembershipUncheckedUpdateManyWithoutGroupInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   start: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   end: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const GroupMembershipUncheckedUpdateManyWithoutGroupInputObjectSchema: z.ZodType<Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupInput> = __makeSchema_GroupMembershipUncheckedUpdateManyWithoutGroupInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupInput>;
 export const GroupMembershipUncheckedUpdateManyWithoutGroupInputObjectZodSchema = __makeSchema_GroupMembershipUncheckedUpdateManyWithoutGroupInput_schema();
@@ -23364,9 +23399,7 @@ export const AttendancePoolCreateManyAttendanceInputObjectZodSchema = __makeSche
 // File: AttendeeCreateManyAttendanceInput.schema.ts
 const __makeSchema_AttendeeCreateManyAttendanceInput_schema = () => z.object({
   id: z.string().optional(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
-  attendancePoolId: z.string(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
   earliestReservationAt: z.coerce.date(),
@@ -23380,6 +23413,9 @@ const __makeSchema_AttendeeCreateManyAttendanceInput_schema = () => z.object({
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional().nullable()
 }).strict();
 export const AttendeeCreateManyAttendanceInputObjectSchema: z.ZodType<Prisma.AttendeeCreateManyAttendanceInput> = __makeSchema_AttendeeCreateManyAttendanceInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateManyAttendanceInput>;
@@ -23474,9 +23510,10 @@ const __makeSchema_AttendeeUpdateWithoutAttendanceInput_schema = () => z.object(
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutAttendeeNestedInputObjectSchema).optional(),
   attendancePool: z.lazy(() => AttendancePoolUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserUpdateOneWithoutAttendeesRefundedNestedInputObjectSchema).optional()
 }).strict();
 export const AttendeeUpdateWithoutAttendanceInputObjectSchema: z.ZodType<Prisma.AttendeeUpdateWithoutAttendanceInput> = __makeSchema_AttendeeUpdateWithoutAttendanceInput_schema() as unknown as z.ZodType<Prisma.AttendeeUpdateWithoutAttendanceInput>;
@@ -23486,9 +23523,7 @@ export const AttendeeUpdateWithoutAttendanceInputObjectZodSchema = __makeSchema_
 // File: AttendeeUncheckedUpdateWithoutAttendanceInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateWithoutAttendanceInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -23502,6 +23537,9 @@ const __makeSchema_AttendeeUncheckedUpdateWithoutAttendanceInput_schema = () => 
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInputObjectSchema).optional()
 }).strict();
@@ -23512,9 +23550,7 @@ export const AttendeeUncheckedUpdateWithoutAttendanceInputObjectZodSchema = __ma
 // File: AttendeeUncheckedUpdateManyWithoutAttendanceInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateManyWithoutAttendanceInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   earliestReservationAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -23528,6 +23564,9 @@ const __makeSchema_AttendeeUncheckedUpdateManyWithoutAttendanceInput_schema = ()
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendancePoolId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const AttendeeUncheckedUpdateManyWithoutAttendanceInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedUpdateManyWithoutAttendanceInput> = __makeSchema_AttendeeUncheckedUpdateManyWithoutAttendanceInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedUpdateManyWithoutAttendanceInput>;
@@ -23619,8 +23658,6 @@ export const EventUncheckedUpdateManyWithoutAttendanceInputObjectZodSchema = __m
 // File: AttendeeCreateManyAttendancePoolInput.schema.ts
 const __makeSchema_AttendeeCreateManyAttendancePoolInput_schema = () => z.object({
   id: z.string().optional(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int().optional().nullable(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.boolean(),
@@ -23635,6 +23672,9 @@ const __makeSchema_AttendeeCreateManyAttendancePoolInput_schema = () => z.object
   paymentChargeDeadline: z.coerce.date().optional().nullable(),
   paymentChargedAt: z.coerce.date().optional().nullable(),
   paymentRefundedAt: z.coerce.date().optional().nullable(),
+  paymentCheckoutUrl: z.string().optional().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
   paymentRefundedById: z.string().optional().nullable()
 }).strict();
 export const AttendeeCreateManyAttendancePoolInputObjectSchema: z.ZodType<Prisma.AttendeeCreateManyAttendancePoolInput> = __makeSchema_AttendeeCreateManyAttendancePoolInput_schema() as unknown as z.ZodType<Prisma.AttendeeCreateManyAttendancePoolInput>;
@@ -23658,9 +23698,10 @@ const __makeSchema_AttendeeUpdateWithoutAttendancePoolInput_schema = () => z.obj
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   attendance: z.lazy(() => AttendanceUpdateOneRequiredWithoutAttendeesNestedInputObjectSchema).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutAttendeeNestedInputObjectSchema).optional(),
-  feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUpdateOneWithoutAttendeeNestedInputObjectSchema).optional(),
   paymentRefundedBy: z.lazy(() => UserUpdateOneWithoutAttendeesRefundedNestedInputObjectSchema).optional()
 }).strict();
 export const AttendeeUpdateWithoutAttendancePoolInputObjectSchema: z.ZodType<Prisma.AttendeeUpdateWithoutAttendancePoolInput> = __makeSchema_AttendeeUpdateWithoutAttendancePoolInput_schema() as unknown as z.ZodType<Prisma.AttendeeUpdateWithoutAttendancePoolInput>;
@@ -23670,8 +23711,6 @@ export const AttendeeUpdateWithoutAttendancePoolInputObjectZodSchema = __makeSch
 // File: AttendeeUncheckedUpdateWithoutAttendancePoolInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateWithoutAttendancePoolInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -23686,6 +23725,9 @@ const __makeSchema_AttendeeUncheckedUpdateWithoutAttendancePoolInput_schema = ()
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackFormAnswer: z.lazy(() => FeedbackFormAnswerUncheckedUpdateOneWithoutAttendeeNestedInputObjectSchema).optional()
 }).strict();
@@ -23696,8 +23738,6 @@ export const AttendeeUncheckedUpdateWithoutAttendancePoolInputObjectZodSchema = 
 // File: AttendeeUncheckedUpdateManyWithoutAttendancePoolInput.schema.ts
 const __makeSchema_AttendeeUncheckedUpdateManyWithoutAttendancePoolInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userGrade: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   selections: z.union([JsonNullValueInputSchema, jsonSchema]).optional(),
   reserved: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -23712,6 +23752,9 @@ const __makeSchema_AttendeeUncheckedUpdateManyWithoutAttendancePoolInput_schema 
   paymentChargeDeadline: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentChargedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   paymentRefundedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  paymentCheckoutUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attendanceId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   paymentRefundedById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const AttendeeUncheckedUpdateManyWithoutAttendancePoolInputObjectSchema: z.ZodType<Prisma.AttendeeUncheckedUpdateManyWithoutAttendancePoolInput> = __makeSchema_AttendeeUncheckedUpdateManyWithoutAttendancePoolInput_schema() as unknown as z.ZodType<Prisma.AttendeeUncheckedUpdateManyWithoutAttendancePoolInput>;
@@ -23731,11 +23774,11 @@ const __makeSchema_EventCreateManyParentInput_schema = () => z.object({
   locationTitle: z.string().optional().nullable(),
   locationAddress: z.string().optional().nullable(),
   locationLink: z.string().optional().nullable(),
-  attendanceId: z.string().optional().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  attendanceId: z.string().optional().nullable(),
   metadataImportId: z.number().int().optional().nullable()
 }).strict();
 export const EventCreateManyParentInputObjectSchema: z.ZodType<Prisma.EventCreateManyParentInput> = __makeSchema_EventCreateManyParentInput_schema() as unknown as z.ZodType<Prisma.EventCreateManyParentInput>;
@@ -23790,8 +23833,8 @@ const __makeSchema_EventUpdateWithoutParentInput_schema = () => z.object({
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   feedbackForm: z.lazy(() => FeedbackFormUpdateOneWithoutEventNestedInputObjectSchema).optional(),
+  attendance: z.lazy(() => AttendanceUpdateOneWithoutEventsNestedInputObjectSchema).optional(),
   children: z.lazy(() => EventUpdateManyWithoutParentNestedInputObjectSchema).optional(),
   companies: z.lazy(() => EventCompanyUpdateManyWithoutEventNestedInputObjectSchema).optional(),
   hostingGroups: z.lazy(() => EventHostingGroupUpdateManyWithoutEventNestedInputObjectSchema).optional(),
@@ -23814,11 +23857,11 @@ const __makeSchema_EventUncheckedUpdateWithoutParentInput_schema = () => z.objec
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   feedbackForm: z.lazy(() => FeedbackFormUncheckedUpdateOneWithoutEventNestedInputObjectSchema).optional(),
   children: z.lazy(() => EventUncheckedUpdateManyWithoutParentNestedInputObjectSchema).optional(),
@@ -23843,11 +23886,11 @@ const __makeSchema_EventUncheckedUpdateManyWithoutParentInput_schema = () => z.o
   locationTitle: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   locationLink: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   type: z.union([EventTypeSchema, z.lazy(() => EnumEventTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   markForMissedAttendance: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendanceId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   metadataImportId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const EventUncheckedUpdateManyWithoutParentInputObjectSchema: z.ZodType<Prisma.EventUncheckedUpdateManyWithoutParentInput> = __makeSchema_EventUncheckedUpdateManyWithoutParentInput_schema() as unknown as z.ZodType<Prisma.EventUncheckedUpdateManyWithoutParentInput>;
@@ -23946,9 +23989,9 @@ export const DeregisterReasonUncheckedUpdateManyWithoutEventInputObjectZodSchema
 
 // File: PersonalMarkCreateManyMarkInput.schema.ts
 const __makeSchema_PersonalMarkCreateManyMarkInput_schema = () => z.object({
+  createdAt: z.coerce.date().optional(),
   userId: z.string(),
-  givenById: z.string().optional().nullable(),
-  createdAt: z.coerce.date().optional()
+  givenById: z.string().optional().nullable()
 }).strict();
 export const PersonalMarkCreateManyMarkInputObjectSchema: z.ZodType<Prisma.PersonalMarkCreateManyMarkInput> = __makeSchema_PersonalMarkCreateManyMarkInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkCreateManyMarkInput>;
 export const PersonalMarkCreateManyMarkInputObjectZodSchema = __makeSchema_PersonalMarkCreateManyMarkInput_schema();
@@ -23974,9 +24017,9 @@ export const PersonalMarkUpdateWithoutMarkInputObjectZodSchema = __makeSchema_Pe
 
 // File: PersonalMarkUncheckedUpdateWithoutMarkInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedUpdateWithoutMarkInput_schema = () => z.object({
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedUpdateWithoutMarkInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedUpdateWithoutMarkInput> = __makeSchema_PersonalMarkUncheckedUpdateWithoutMarkInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedUpdateWithoutMarkInput>;
 export const PersonalMarkUncheckedUpdateWithoutMarkInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedUpdateWithoutMarkInput_schema();
@@ -23984,9 +24027,9 @@ export const PersonalMarkUncheckedUpdateWithoutMarkInputObjectZodSchema = __make
 
 // File: PersonalMarkUncheckedUpdateManyWithoutMarkInput.schema.ts
 const __makeSchema_PersonalMarkUncheckedUpdateManyWithoutMarkInput_schema = () => z.object({
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  givenById: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const PersonalMarkUncheckedUpdateManyWithoutMarkInputObjectSchema: z.ZodType<Prisma.PersonalMarkUncheckedUpdateManyWithoutMarkInput> = __makeSchema_PersonalMarkUncheckedUpdateManyWithoutMarkInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkUncheckedUpdateManyWithoutMarkInput>;
 export const PersonalMarkUncheckedUpdateManyWithoutMarkInputObjectZodSchema = __makeSchema_PersonalMarkUncheckedUpdateManyWithoutMarkInput_schema();
@@ -24254,9 +24297,9 @@ export const FeedbackQuestionCreateManyFeedbackFormInputObjectZodSchema = __make
 // File: FeedbackFormAnswerCreateManyFeedbackFormInput.schema.ts
 const __makeSchema_FeedbackFormAnswerCreateManyFeedbackFormInput_schema = () => z.object({
   id: z.string().optional(),
-  attendeeId: z.string(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  attendeeId: z.string()
 }).strict();
 export const FeedbackFormAnswerCreateManyFeedbackFormInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCreateManyFeedbackFormInput> = __makeSchema_FeedbackFormAnswerCreateManyFeedbackFormInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCreateManyFeedbackFormInput>;
 export const FeedbackFormAnswerCreateManyFeedbackFormInputObjectZodSchema = __makeSchema_FeedbackFormAnswerCreateManyFeedbackFormInput_schema();
@@ -24326,9 +24369,9 @@ export const FeedbackFormAnswerUpdateWithoutFeedbackFormInputObjectZodSchema = _
 // File: FeedbackFormAnswerUncheckedUpdateWithoutFeedbackFormInput.schema.ts
 const __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutFeedbackFormInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   answers: z.lazy(() => FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackFormAnswerUncheckedUpdateWithoutFeedbackFormInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateWithoutFeedbackFormInput> = __makeSchema_FeedbackFormAnswerUncheckedUpdateWithoutFeedbackFormInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateWithoutFeedbackFormInput>;
@@ -24338,9 +24381,9 @@ export const FeedbackFormAnswerUncheckedUpdateWithoutFeedbackFormInputObjectZodS
 // File: FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInput.schema.ts
 const __makeSchema_FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  attendeeId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInput> = __makeSchema_FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInput>;
 export const FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInputObjectZodSchema = __makeSchema_FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormInput_schema();
@@ -24358,8 +24401,8 @@ export const FeedbackQuestionOptionCreateManyQuestionInputObjectZodSchema = __ma
 // File: FeedbackQuestionAnswerCreateManyQuestionInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerCreateManyQuestionInput_schema = () => z.object({
   id: z.string().optional(),
-  formAnswerId: z.string(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional()
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  formAnswerId: z.string()
 }).strict();
 export const FeedbackQuestionAnswerCreateManyQuestionInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerCreateManyQuestionInput> = __makeSchema_FeedbackQuestionAnswerCreateManyQuestionInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerCreateManyQuestionInput>;
 export const FeedbackQuestionAnswerCreateManyQuestionInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerCreateManyQuestionInput_schema();
@@ -24408,8 +24451,8 @@ export const FeedbackQuestionAnswerUpdateWithoutQuestionInputObjectZodSchema = _
 // File: FeedbackQuestionAnswerUncheckedUpdateWithoutQuestionInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedUpdateWithoutQuestionInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selectedOptions: z.lazy(() => FeedbackQuestionAnswerOptionLinkUncheckedUpdateManyWithoutFeedbackQuestionAnswerNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedUpdateWithoutQuestionInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateWithoutQuestionInput> = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateWithoutQuestionInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateWithoutQuestionInput>;
@@ -24419,8 +24462,8 @@ export const FeedbackQuestionAnswerUncheckedUpdateWithoutQuestionInputObjectZodS
 // File: FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional()
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  formAnswerId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInput> = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInput>;
 export const FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInput_schema();
@@ -24493,8 +24536,8 @@ export const FeedbackQuestionAnswerOptionLinkUncheckedUpdateManyWithoutFeedbackQ
 // File: FeedbackQuestionAnswerCreateManyFormAnswerInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerCreateManyFormAnswerInput_schema = () => z.object({
   id: z.string().optional(),
-  questionId: z.string(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional()
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  questionId: z.string()
 }).strict();
 export const FeedbackQuestionAnswerCreateManyFormAnswerInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerCreateManyFormAnswerInput> = __makeSchema_FeedbackQuestionAnswerCreateManyFormAnswerInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerCreateManyFormAnswerInput>;
 export const FeedbackQuestionAnswerCreateManyFormAnswerInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerCreateManyFormAnswerInput_schema();
@@ -24514,8 +24557,8 @@ export const FeedbackQuestionAnswerUpdateWithoutFormAnswerInputObjectZodSchema =
 // File: FeedbackQuestionAnswerUncheckedUpdateWithoutFormAnswerInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedUpdateWithoutFormAnswerInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  questionId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  questionId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   selectedOptions: z.lazy(() => FeedbackQuestionAnswerOptionLinkUncheckedUpdateManyWithoutFeedbackQuestionAnswerNestedInputObjectSchema).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedUpdateWithoutFormAnswerInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateWithoutFormAnswerInput> = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateWithoutFormAnswerInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateWithoutFormAnswerInput>;
@@ -24525,8 +24568,8 @@ export const FeedbackQuestionAnswerUncheckedUpdateWithoutFormAnswerInputObjectZo
 // File: FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  questionId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional()
+  value: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  questionId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInput> = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInput>;
 export const FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInputObjectZodSchema = __makeSchema_FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInput_schema();
@@ -24765,12 +24808,12 @@ export const GroupMaxAggregateInputObjectZodSchema = __makeSchema_GroupMaxAggreg
 // File: GroupMembershipCountAggregateInput.schema.ts
 const __makeSchema_GroupMembershipCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  groupId: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   start: z.literal(true).optional(),
   end: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
+  groupId: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const GroupMembershipCountAggregateInputObjectSchema: z.ZodType<Prisma.GroupMembershipCountAggregateInputType> = __makeSchema_GroupMembershipCountAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipCountAggregateInputType>;
@@ -24780,12 +24823,12 @@ export const GroupMembershipCountAggregateInputObjectZodSchema = __makeSchema_Gr
 // File: GroupMembershipMinAggregateInput.schema.ts
 const __makeSchema_GroupMembershipMinAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  groupId: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   start: z.literal(true).optional(),
   end: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  updatedAt: z.literal(true).optional()
+  updatedAt: z.literal(true).optional(),
+  groupId: z.literal(true).optional(),
+  userId: z.literal(true).optional()
 }).strict();
 export const GroupMembershipMinAggregateInputObjectSchema: z.ZodType<Prisma.GroupMembershipMinAggregateInputType> = __makeSchema_GroupMembershipMinAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipMinAggregateInputType>;
 export const GroupMembershipMinAggregateInputObjectZodSchema = __makeSchema_GroupMembershipMinAggregateInput_schema();
@@ -24794,12 +24837,12 @@ export const GroupMembershipMinAggregateInputObjectZodSchema = __makeSchema_Grou
 // File: GroupMembershipMaxAggregateInput.schema.ts
 const __makeSchema_GroupMembershipMaxAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  groupId: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   start: z.literal(true).optional(),
   end: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  updatedAt: z.literal(true).optional()
+  updatedAt: z.literal(true).optional(),
+  groupId: z.literal(true).optional(),
+  userId: z.literal(true).optional()
 }).strict();
 export const GroupMembershipMaxAggregateInputObjectSchema: z.ZodType<Prisma.GroupMembershipMaxAggregateInputType> = __makeSchema_GroupMembershipMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupMembershipMaxAggregateInputType>;
 export const GroupMembershipMaxAggregateInputObjectZodSchema = __makeSchema_GroupMembershipMaxAggregateInput_schema();
@@ -24836,9 +24879,9 @@ export const GroupMembershipRoleMaxAggregateInputObjectZodSchema = __makeSchema_
 // File: GroupRoleCountAggregateInput.schema.ts
 const __makeSchema_GroupRoleCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  groupId: z.literal(true).optional(),
   name: z.literal(true).optional(),
   type: z.literal(true).optional(),
+  groupId: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const GroupRoleCountAggregateInputObjectSchema: z.ZodType<Prisma.GroupRoleCountAggregateInputType> = __makeSchema_GroupRoleCountAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupRoleCountAggregateInputType>;
@@ -24848,9 +24891,9 @@ export const GroupRoleCountAggregateInputObjectZodSchema = __makeSchema_GroupRol
 // File: GroupRoleMinAggregateInput.schema.ts
 const __makeSchema_GroupRoleMinAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  groupId: z.literal(true).optional(),
   name: z.literal(true).optional(),
-  type: z.literal(true).optional()
+  type: z.literal(true).optional(),
+  groupId: z.literal(true).optional()
 }).strict();
 export const GroupRoleMinAggregateInputObjectSchema: z.ZodType<Prisma.GroupRoleMinAggregateInputType> = __makeSchema_GroupRoleMinAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupRoleMinAggregateInputType>;
 export const GroupRoleMinAggregateInputObjectZodSchema = __makeSchema_GroupRoleMinAggregateInput_schema();
@@ -24859,9 +24902,9 @@ export const GroupRoleMinAggregateInputObjectZodSchema = __makeSchema_GroupRoleM
 // File: GroupRoleMaxAggregateInput.schema.ts
 const __makeSchema_GroupRoleMaxAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  groupId: z.literal(true).optional(),
   name: z.literal(true).optional(),
-  type: z.literal(true).optional()
+  type: z.literal(true).optional(),
+  groupId: z.literal(true).optional()
 }).strict();
 export const GroupRoleMaxAggregateInputObjectSchema: z.ZodType<Prisma.GroupRoleMaxAggregateInputType> = __makeSchema_GroupRoleMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupRoleMaxAggregateInputType>;
 export const GroupRoleMaxAggregateInputObjectZodSchema = __makeSchema_GroupRoleMaxAggregateInput_schema();
@@ -24995,10 +25038,7 @@ export const AttendancePoolMaxAggregateInputObjectZodSchema = __makeSchema_Atten
 // File: AttendeeCountAggregateInput.schema.ts
 const __makeSchema_AttendeeCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  attendanceId: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   userGrade: z.literal(true).optional(),
-  attendancePoolId: z.literal(true).optional(),
   selections: z.literal(true).optional(),
   reserved: z.literal(true).optional(),
   earliestReservationAt: z.literal(true).optional(),
@@ -25012,6 +25052,10 @@ const __makeSchema_AttendeeCountAggregateInput_schema = () => z.object({
   paymentChargeDeadline: z.literal(true).optional(),
   paymentChargedAt: z.literal(true).optional(),
   paymentRefundedAt: z.literal(true).optional(),
+  paymentCheckoutUrl: z.literal(true).optional(),
+  attendanceId: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
+  attendancePoolId: z.literal(true).optional(),
   paymentRefundedById: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
@@ -25038,10 +25082,7 @@ export const AttendeeSumAggregateInputObjectZodSchema = __makeSchema_AttendeeSum
 // File: AttendeeMinAggregateInput.schema.ts
 const __makeSchema_AttendeeMinAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  attendanceId: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   userGrade: z.literal(true).optional(),
-  attendancePoolId: z.literal(true).optional(),
   reserved: z.literal(true).optional(),
   earliestReservationAt: z.literal(true).optional(),
   attendedAt: z.literal(true).optional(),
@@ -25054,6 +25095,10 @@ const __makeSchema_AttendeeMinAggregateInput_schema = () => z.object({
   paymentChargeDeadline: z.literal(true).optional(),
   paymentChargedAt: z.literal(true).optional(),
   paymentRefundedAt: z.literal(true).optional(),
+  paymentCheckoutUrl: z.literal(true).optional(),
+  attendanceId: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
+  attendancePoolId: z.literal(true).optional(),
   paymentRefundedById: z.literal(true).optional()
 }).strict();
 export const AttendeeMinAggregateInputObjectSchema: z.ZodType<Prisma.AttendeeMinAggregateInputType> = __makeSchema_AttendeeMinAggregateInput_schema() as unknown as z.ZodType<Prisma.AttendeeMinAggregateInputType>;
@@ -25063,10 +25108,7 @@ export const AttendeeMinAggregateInputObjectZodSchema = __makeSchema_AttendeeMin
 // File: AttendeeMaxAggregateInput.schema.ts
 const __makeSchema_AttendeeMaxAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  attendanceId: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   userGrade: z.literal(true).optional(),
-  attendancePoolId: z.literal(true).optional(),
   reserved: z.literal(true).optional(),
   earliestReservationAt: z.literal(true).optional(),
   attendedAt: z.literal(true).optional(),
@@ -25079,6 +25121,10 @@ const __makeSchema_AttendeeMaxAggregateInput_schema = () => z.object({
   paymentChargeDeadline: z.literal(true).optional(),
   paymentChargedAt: z.literal(true).optional(),
   paymentRefundedAt: z.literal(true).optional(),
+  paymentCheckoutUrl: z.literal(true).optional(),
+  attendanceId: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
+  attendancePoolId: z.literal(true).optional(),
   paymentRefundedById: z.literal(true).optional()
 }).strict();
 export const AttendeeMaxAggregateInputObjectSchema: z.ZodType<Prisma.AttendeeMaxAggregateInputType> = __makeSchema_AttendeeMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.AttendeeMaxAggregateInputType>;
@@ -25098,11 +25144,11 @@ const __makeSchema_EventCountAggregateInput_schema = () => z.object({
   locationTitle: z.literal(true).optional(),
   locationAddress: z.literal(true).optional(),
   locationLink: z.literal(true).optional(),
-  attendanceId: z.literal(true).optional(),
   type: z.literal(true).optional(),
   markForMissedAttendance: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
+  attendanceId: z.literal(true).optional(),
   parentId: z.literal(true).optional(),
   metadataImportId: z.literal(true).optional(),
   _all: z.literal(true).optional()
@@ -25140,11 +25186,11 @@ const __makeSchema_EventMinAggregateInput_schema = () => z.object({
   locationTitle: z.literal(true).optional(),
   locationAddress: z.literal(true).optional(),
   locationLink: z.literal(true).optional(),
-  attendanceId: z.literal(true).optional(),
   type: z.literal(true).optional(),
   markForMissedAttendance: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
+  attendanceId: z.literal(true).optional(),
   parentId: z.literal(true).optional(),
   metadataImportId: z.literal(true).optional()
 }).strict();
@@ -25165,11 +25211,11 @@ const __makeSchema_EventMaxAggregateInput_schema = () => z.object({
   locationTitle: z.literal(true).optional(),
   locationAddress: z.literal(true).optional(),
   locationLink: z.literal(true).optional(),
-  attendanceId: z.literal(true).optional(),
   type: z.literal(true).optional(),
   markForMissedAttendance: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
+  attendanceId: z.literal(true).optional(),
   parentId: z.literal(true).optional(),
   metadataImportId: z.literal(true).optional()
 }).strict();
@@ -25299,10 +25345,10 @@ export const MarkGroupMaxAggregateInputObjectZodSchema = __makeSchema_MarkGroupM
 
 // File: PersonalMarkCountAggregateInput.schema.ts
 const __makeSchema_PersonalMarkCountAggregateInput_schema = () => z.object({
+  createdAt: z.literal(true).optional(),
   markId: z.literal(true).optional(),
   userId: z.literal(true).optional(),
   givenById: z.literal(true).optional(),
-  createdAt: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const PersonalMarkCountAggregateInputObjectSchema: z.ZodType<Prisma.PersonalMarkCountAggregateInputType> = __makeSchema_PersonalMarkCountAggregateInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkCountAggregateInputType>;
@@ -25311,10 +25357,10 @@ export const PersonalMarkCountAggregateInputObjectZodSchema = __makeSchema_Perso
 
 // File: PersonalMarkMinAggregateInput.schema.ts
 const __makeSchema_PersonalMarkMinAggregateInput_schema = () => z.object({
+  createdAt: z.literal(true).optional(),
   markId: z.literal(true).optional(),
   userId: z.literal(true).optional(),
-  givenById: z.literal(true).optional(),
-  createdAt: z.literal(true).optional()
+  givenById: z.literal(true).optional()
 }).strict();
 export const PersonalMarkMinAggregateInputObjectSchema: z.ZodType<Prisma.PersonalMarkMinAggregateInputType> = __makeSchema_PersonalMarkMinAggregateInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkMinAggregateInputType>;
 export const PersonalMarkMinAggregateInputObjectZodSchema = __makeSchema_PersonalMarkMinAggregateInput_schema();
@@ -25322,10 +25368,10 @@ export const PersonalMarkMinAggregateInputObjectZodSchema = __makeSchema_Persona
 
 // File: PersonalMarkMaxAggregateInput.schema.ts
 const __makeSchema_PersonalMarkMaxAggregateInput_schema = () => z.object({
+  createdAt: z.literal(true).optional(),
   markId: z.literal(true).optional(),
   userId: z.literal(true).optional(),
-  givenById: z.literal(true).optional(),
-  createdAt: z.literal(true).optional()
+  givenById: z.literal(true).optional()
 }).strict();
 export const PersonalMarkMaxAggregateInputObjectSchema: z.ZodType<Prisma.PersonalMarkMaxAggregateInputType> = __makeSchema_PersonalMarkMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.PersonalMarkMaxAggregateInputType>;
 export const PersonalMarkMaxAggregateInputObjectZodSchema = __makeSchema_PersonalMarkMaxAggregateInput_schema();
@@ -25472,7 +25518,6 @@ export const EventHostingGroupMaxAggregateInputObjectZodSchema = __makeSchema_Ev
 // File: JobListingCountAggregateInput.schema.ts
 const __makeSchema_JobListingCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  companyId: z.literal(true).optional(),
   title: z.literal(true).optional(),
   description: z.literal(true).optional(),
   shortDescription: z.literal(true).optional(),
@@ -25487,6 +25532,7 @@ const __makeSchema_JobListingCountAggregateInput_schema = () => z.object({
   rollingAdmission: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
+  companyId: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const JobListingCountAggregateInputObjectSchema: z.ZodType<Prisma.JobListingCountAggregateInputType> = __makeSchema_JobListingCountAggregateInput_schema() as unknown as z.ZodType<Prisma.JobListingCountAggregateInputType>;
@@ -25496,7 +25542,6 @@ export const JobListingCountAggregateInputObjectZodSchema = __makeSchema_JobList
 // File: JobListingMinAggregateInput.schema.ts
 const __makeSchema_JobListingMinAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  companyId: z.literal(true).optional(),
   title: z.literal(true).optional(),
   description: z.literal(true).optional(),
   shortDescription: z.literal(true).optional(),
@@ -25510,7 +25555,8 @@ const __makeSchema_JobListingMinAggregateInput_schema = () => z.object({
   applicationEmail: z.literal(true).optional(),
   rollingAdmission: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  updatedAt: z.literal(true).optional()
+  updatedAt: z.literal(true).optional(),
+  companyId: z.literal(true).optional()
 }).strict();
 export const JobListingMinAggregateInputObjectSchema: z.ZodType<Prisma.JobListingMinAggregateInputType> = __makeSchema_JobListingMinAggregateInput_schema() as unknown as z.ZodType<Prisma.JobListingMinAggregateInputType>;
 export const JobListingMinAggregateInputObjectZodSchema = __makeSchema_JobListingMinAggregateInput_schema();
@@ -25519,7 +25565,6 @@ export const JobListingMinAggregateInputObjectZodSchema = __makeSchema_JobListin
 // File: JobListingMaxAggregateInput.schema.ts
 const __makeSchema_JobListingMaxAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  companyId: z.literal(true).optional(),
   title: z.literal(true).optional(),
   description: z.literal(true).optional(),
   shortDescription: z.literal(true).optional(),
@@ -25533,7 +25578,8 @@ const __makeSchema_JobListingMaxAggregateInput_schema = () => z.object({
   applicationEmail: z.literal(true).optional(),
   rollingAdmission: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  updatedAt: z.literal(true).optional()
+  updatedAt: z.literal(true).optional(),
+  companyId: z.literal(true).optional()
 }).strict();
 export const JobListingMaxAggregateInputObjectSchema: z.ZodType<Prisma.JobListingMaxAggregateInputType> = __makeSchema_JobListingMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.JobListingMaxAggregateInputType>;
 export const JobListingMaxAggregateInputObjectZodSchema = __makeSchema_JobListingMaxAggregateInput_schema();
@@ -25616,11 +25662,11 @@ export const OfflineMaxAggregateInputObjectZodSchema = __makeSchema_OfflineMaxAg
 // File: ArticleCountAggregateInput.schema.ts
 const __makeSchema_ArticleCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
+  slug: z.literal(true).optional(),
   title: z.literal(true).optional(),
   author: z.literal(true).optional(),
   photographer: z.literal(true).optional(),
   imageUrl: z.literal(true).optional(),
-  slug: z.literal(true).optional(),
   excerpt: z.literal(true).optional(),
   content: z.literal(true).optional(),
   isFeatured: z.literal(true).optional(),
@@ -25636,11 +25682,11 @@ export const ArticleCountAggregateInputObjectZodSchema = __makeSchema_ArticleCou
 // File: ArticleMinAggregateInput.schema.ts
 const __makeSchema_ArticleMinAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
+  slug: z.literal(true).optional(),
   title: z.literal(true).optional(),
   author: z.literal(true).optional(),
   photographer: z.literal(true).optional(),
   imageUrl: z.literal(true).optional(),
-  slug: z.literal(true).optional(),
   excerpt: z.literal(true).optional(),
   content: z.literal(true).optional(),
   isFeatured: z.literal(true).optional(),
@@ -25655,11 +25701,11 @@ export const ArticleMinAggregateInputObjectZodSchema = __makeSchema_ArticleMinAg
 // File: ArticleMaxAggregateInput.schema.ts
 const __makeSchema_ArticleMaxAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
+  slug: z.literal(true).optional(),
   title: z.literal(true).optional(),
   author: z.literal(true).optional(),
   photographer: z.literal(true).optional(),
   imageUrl: z.literal(true).optional(),
-  slug: z.literal(true).optional(),
   excerpt: z.literal(true).optional(),
   content: z.literal(true).optional(),
   isFeatured: z.literal(true).optional(),
@@ -25812,11 +25858,11 @@ export const RecurringTaskMaxAggregateInputObjectZodSchema = __makeSchema_Recurr
 // File: FeedbackFormCountAggregateInput.schema.ts
 const __makeSchema_FeedbackFormCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  eventId: z.literal(true).optional(),
   publicResultsToken: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
   answerDeadline: z.literal(true).optional(),
+  eventId: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const FeedbackFormCountAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormCountAggregateInputType> = __makeSchema_FeedbackFormCountAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormCountAggregateInputType>;
@@ -25826,11 +25872,11 @@ export const FeedbackFormCountAggregateInputObjectZodSchema = __makeSchema_Feedb
 // File: FeedbackFormMinAggregateInput.schema.ts
 const __makeSchema_FeedbackFormMinAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  eventId: z.literal(true).optional(),
   publicResultsToken: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
-  answerDeadline: z.literal(true).optional()
+  answerDeadline: z.literal(true).optional(),
+  eventId: z.literal(true).optional()
 }).strict();
 export const FeedbackFormMinAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormMinAggregateInputType> = __makeSchema_FeedbackFormMinAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormMinAggregateInputType>;
 export const FeedbackFormMinAggregateInputObjectZodSchema = __makeSchema_FeedbackFormMinAggregateInput_schema();
@@ -25839,11 +25885,11 @@ export const FeedbackFormMinAggregateInputObjectZodSchema = __makeSchema_Feedbac
 // File: FeedbackFormMaxAggregateInput.schema.ts
 const __makeSchema_FeedbackFormMaxAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  eventId: z.literal(true).optional(),
   publicResultsToken: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
-  answerDeadline: z.literal(true).optional()
+  answerDeadline: z.literal(true).optional(),
+  eventId: z.literal(true).optional()
 }).strict();
 export const FeedbackFormMaxAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormMaxAggregateInputType> = __makeSchema_FeedbackFormMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormMaxAggregateInputType>;
 export const FeedbackFormMaxAggregateInputObjectZodSchema = __makeSchema_FeedbackFormMaxAggregateInput_schema();
@@ -25852,7 +25898,6 @@ export const FeedbackFormMaxAggregateInputObjectZodSchema = __makeSchema_Feedbac
 // File: FeedbackQuestionCountAggregateInput.schema.ts
 const __makeSchema_FeedbackQuestionCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  feedbackFormId: z.literal(true).optional(),
   label: z.literal(true).optional(),
   required: z.literal(true).optional(),
   showInPublicResults: z.literal(true).optional(),
@@ -25860,6 +25905,7 @@ const __makeSchema_FeedbackQuestionCountAggregateInput_schema = () => z.object({
   order: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
+  feedbackFormId: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const FeedbackQuestionCountAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionCountAggregateInputType> = __makeSchema_FeedbackQuestionCountAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionCountAggregateInputType>;
@@ -25885,14 +25931,14 @@ export const FeedbackQuestionSumAggregateInputObjectZodSchema = __makeSchema_Fee
 // File: FeedbackQuestionMinAggregateInput.schema.ts
 const __makeSchema_FeedbackQuestionMinAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  feedbackFormId: z.literal(true).optional(),
   label: z.literal(true).optional(),
   required: z.literal(true).optional(),
   showInPublicResults: z.literal(true).optional(),
   type: z.literal(true).optional(),
   order: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  updatedAt: z.literal(true).optional()
+  updatedAt: z.literal(true).optional(),
+  feedbackFormId: z.literal(true).optional()
 }).strict();
 export const FeedbackQuestionMinAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionMinAggregateInputType> = __makeSchema_FeedbackQuestionMinAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionMinAggregateInputType>;
 export const FeedbackQuestionMinAggregateInputObjectZodSchema = __makeSchema_FeedbackQuestionMinAggregateInput_schema();
@@ -25901,14 +25947,14 @@ export const FeedbackQuestionMinAggregateInputObjectZodSchema = __makeSchema_Fee
 // File: FeedbackQuestionMaxAggregateInput.schema.ts
 const __makeSchema_FeedbackQuestionMaxAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  feedbackFormId: z.literal(true).optional(),
   label: z.literal(true).optional(),
   required: z.literal(true).optional(),
   showInPublicResults: z.literal(true).optional(),
   type: z.literal(true).optional(),
   order: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  updatedAt: z.literal(true).optional()
+  updatedAt: z.literal(true).optional(),
+  feedbackFormId: z.literal(true).optional()
 }).strict();
 export const FeedbackQuestionMaxAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionMaxAggregateInputType> = __makeSchema_FeedbackQuestionMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionMaxAggregateInputType>;
 export const FeedbackQuestionMaxAggregateInputObjectZodSchema = __makeSchema_FeedbackQuestionMaxAggregateInput_schema();
@@ -25948,9 +25994,9 @@ export const FeedbackQuestionOptionMaxAggregateInputObjectZodSchema = __makeSche
 // File: FeedbackQuestionAnswerCountAggregateInput.schema.ts
 const __makeSchema_FeedbackQuestionAnswerCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
+  value: z.literal(true).optional(),
   questionId: z.literal(true).optional(),
   formAnswerId: z.literal(true).optional(),
-  value: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const FeedbackQuestionAnswerCountAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerCountAggregateInputType> = __makeSchema_FeedbackQuestionAnswerCountAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerCountAggregateInputType>;
@@ -26008,10 +26054,10 @@ export const FeedbackQuestionAnswerOptionLinkMaxAggregateInputObjectZodSchema = 
 // File: FeedbackFormAnswerCountAggregateInput.schema.ts
 const __makeSchema_FeedbackFormAnswerCountAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  feedbackFormId: z.literal(true).optional(),
-  attendeeId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
+  feedbackFormId: z.literal(true).optional(),
+  attendeeId: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const FeedbackFormAnswerCountAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerCountAggregateInputType> = __makeSchema_FeedbackFormAnswerCountAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerCountAggregateInputType>;
@@ -26021,10 +26067,10 @@ export const FeedbackFormAnswerCountAggregateInputObjectZodSchema = __makeSchema
 // File: FeedbackFormAnswerMinAggregateInput.schema.ts
 const __makeSchema_FeedbackFormAnswerMinAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  feedbackFormId: z.literal(true).optional(),
-  attendeeId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  updatedAt: z.literal(true).optional()
+  updatedAt: z.literal(true).optional(),
+  feedbackFormId: z.literal(true).optional(),
+  attendeeId: z.literal(true).optional()
 }).strict();
 export const FeedbackFormAnswerMinAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerMinAggregateInputType> = __makeSchema_FeedbackFormAnswerMinAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerMinAggregateInputType>;
 export const FeedbackFormAnswerMinAggregateInputObjectZodSchema = __makeSchema_FeedbackFormAnswerMinAggregateInput_schema();
@@ -26033,10 +26079,10 @@ export const FeedbackFormAnswerMinAggregateInputObjectZodSchema = __makeSchema_F
 // File: FeedbackFormAnswerMaxAggregateInput.schema.ts
 const __makeSchema_FeedbackFormAnswerMaxAggregateInput_schema = () => z.object({
   id: z.literal(true).optional(),
-  feedbackFormId: z.literal(true).optional(),
-  attendeeId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  updatedAt: z.literal(true).optional()
+  updatedAt: z.literal(true).optional(),
+  feedbackFormId: z.literal(true).optional(),
+  attendeeId: z.literal(true).optional()
 }).strict();
 export const FeedbackFormAnswerMaxAggregateInputObjectSchema: z.ZodType<Prisma.FeedbackFormAnswerMaxAggregateInputType> = __makeSchema_FeedbackFormAnswerMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.FeedbackFormAnswerMaxAggregateInputType>;
 export const FeedbackFormAnswerMaxAggregateInputObjectZodSchema = __makeSchema_FeedbackFormAnswerMaxAggregateInput_schema();
@@ -26048,10 +26094,10 @@ const __makeSchema_AuditLogCountAggregateInput_schema = () => z.object({
   tableName: z.literal(true).optional(),
   rowId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   operation: z.literal(true).optional(),
   rowData: z.literal(true).optional(),
   transactionId: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const AuditLogCountAggregateInputObjectSchema: z.ZodType<Prisma.AuditLogCountAggregateInputType> = __makeSchema_AuditLogCountAggregateInput_schema() as unknown as z.ZodType<Prisma.AuditLogCountAggregateInputType>;
@@ -26080,9 +26126,9 @@ const __makeSchema_AuditLogMinAggregateInput_schema = () => z.object({
   tableName: z.literal(true).optional(),
   rowId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   operation: z.literal(true).optional(),
-  transactionId: z.literal(true).optional()
+  transactionId: z.literal(true).optional(),
+  userId: z.literal(true).optional()
 }).strict();
 export const AuditLogMinAggregateInputObjectSchema: z.ZodType<Prisma.AuditLogMinAggregateInputType> = __makeSchema_AuditLogMinAggregateInput_schema() as unknown as z.ZodType<Prisma.AuditLogMinAggregateInputType>;
 export const AuditLogMinAggregateInputObjectZodSchema = __makeSchema_AuditLogMinAggregateInput_schema();
@@ -26094,9 +26140,9 @@ const __makeSchema_AuditLogMaxAggregateInput_schema = () => z.object({
   tableName: z.literal(true).optional(),
   rowId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
-  userId: z.literal(true).optional(),
   operation: z.literal(true).optional(),
-  transactionId: z.literal(true).optional()
+  transactionId: z.literal(true).optional(),
+  userId: z.literal(true).optional()
 }).strict();
 export const AuditLogMaxAggregateInputObjectSchema: z.ZodType<Prisma.AuditLogMaxAggregateInputType> = __makeSchema_AuditLogMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.AuditLogMaxAggregateInputType>;
 export const AuditLogMaxAggregateInputObjectZodSchema = __makeSchema_AuditLogMaxAggregateInput_schema();
@@ -26890,14 +26936,14 @@ export const GroupSelectObjectZodSchema = __makeSchema_GroupSelect_schema();
 // File: GroupMembershipSelect.schema.ts
 const __makeSchema_GroupMembershipSelect_schema = () => z.object({
   id: z.boolean().optional(),
-  groupId: z.boolean().optional(),
-  group: z.union([z.boolean(), z.lazy(() => GroupArgsObjectSchema)]).optional(),
-  userId: z.boolean().optional(),
-  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
   start: z.boolean().optional(),
   end: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
+  groupId: z.boolean().optional(),
+  userId: z.boolean().optional(),
+  group: z.union([z.boolean(), z.lazy(() => GroupArgsObjectSchema)]).optional(),
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
   roles: z.union([z.boolean(), z.lazy(() => GroupMembershipRoleFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => GroupMembershipCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
@@ -26908,8 +26954,8 @@ export const GroupMembershipSelectObjectZodSchema = __makeSchema_GroupMembership
 // File: GroupMembershipRoleSelect.schema.ts
 const __makeSchema_GroupMembershipRoleSelect_schema = () => z.object({
   membershipId: z.boolean().optional(),
-  membership: z.union([z.boolean(), z.lazy(() => GroupMembershipArgsObjectSchema)]).optional(),
   roleId: z.boolean().optional(),
+  membership: z.union([z.boolean(), z.lazy(() => GroupMembershipArgsObjectSchema)]).optional(),
   role: z.union([z.boolean(), z.lazy(() => GroupRoleArgsObjectSchema)]).optional()
 }).strict();
 export const GroupMembershipRoleSelectObjectSchema: z.ZodType<Prisma.GroupMembershipRoleSelect> = __makeSchema_GroupMembershipRoleSelect_schema() as unknown as z.ZodType<Prisma.GroupMembershipRoleSelect>;
@@ -26919,10 +26965,10 @@ export const GroupMembershipRoleSelectObjectZodSchema = __makeSchema_GroupMember
 // File: GroupRoleSelect.schema.ts
 const __makeSchema_GroupRoleSelect_schema = () => z.object({
   id: z.boolean().optional(),
-  groupId: z.boolean().optional(),
-  group: z.union([z.boolean(), z.lazy(() => GroupArgsObjectSchema)]).optional(),
   name: z.boolean().optional(),
   type: z.boolean().optional(),
+  groupId: z.boolean().optional(),
+  group: z.union([z.boolean(), z.lazy(() => GroupArgsObjectSchema)]).optional(),
   groupMembershipRoles: z.union([z.boolean(), z.lazy(() => GroupMembershipRoleFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => GroupRoleCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
@@ -26959,8 +27005,8 @@ const __makeSchema_AttendancePoolSelect_schema = () => z.object({
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   attendanceId: z.boolean().optional(),
-  attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
   taskId: z.boolean().optional(),
+  attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
   task: z.union([z.boolean(), z.lazy(() => TaskArgsObjectSchema)]).optional(),
   attendees: z.union([z.boolean(), z.lazy(() => AttendeeFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => AttendancePoolCountOutputTypeArgsObjectSchema)]).optional()
@@ -26972,13 +27018,7 @@ export const AttendancePoolSelectObjectZodSchema = __makeSchema_AttendancePoolSe
 // File: AttendeeSelect.schema.ts
 const __makeSchema_AttendeeSelect_schema = () => z.object({
   id: z.boolean().optional(),
-  attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
-  attendanceId: z.boolean().optional(),
-  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
-  userId: z.boolean().optional(),
   userGrade: z.boolean().optional(),
-  attendancePool: z.union([z.boolean(), z.lazy(() => AttendancePoolArgsObjectSchema)]).optional(),
-  attendancePoolId: z.boolean().optional(),
   feedbackFormAnswer: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerArgsObjectSchema)]).optional(),
   selections: z.boolean().optional(),
   reserved: z.boolean().optional(),
@@ -26993,7 +27033,14 @@ const __makeSchema_AttendeeSelect_schema = () => z.object({
   paymentChargeDeadline: z.boolean().optional(),
   paymentChargedAt: z.boolean().optional(),
   paymentRefundedAt: z.boolean().optional(),
+  paymentCheckoutUrl: z.boolean().optional(),
+  attendanceId: z.boolean().optional(),
+  userId: z.boolean().optional(),
+  attendancePoolId: z.boolean().optional(),
   paymentRefundedById: z.boolean().optional(),
+  attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+  attendancePool: z.union([z.boolean(), z.lazy(() => AttendancePoolArgsObjectSchema)]).optional(),
   paymentRefundedBy: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional()
 }).strict();
 export const AttendeeSelectObjectSchema: z.ZodType<Prisma.AttendeeSelect> = __makeSchema_AttendeeSelect_schema() as unknown as z.ZodType<Prisma.AttendeeSelect>;
@@ -27013,14 +27060,14 @@ const __makeSchema_EventSelect_schema = () => z.object({
   locationTitle: z.boolean().optional(),
   locationAddress: z.boolean().optional(),
   locationLink: z.boolean().optional(),
-  attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
-  attendanceId: z.boolean().optional(),
   type: z.boolean().optional(),
   feedbackForm: z.union([z.boolean(), z.lazy(() => FeedbackFormArgsObjectSchema)]).optional(),
   markForMissedAttendance: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
+  attendanceId: z.boolean().optional(),
   parentId: z.boolean().optional(),
+  attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
   parent: z.union([z.boolean(), z.lazy(() => EventArgsObjectSchema)]).optional(),
   children: z.union([z.boolean(), z.lazy(() => EventFindManySchema)]).optional(),
   companies: z.union([z.boolean(), z.lazy(() => EventCompanyFindManySchema)]).optional(),
@@ -27075,13 +27122,13 @@ export const MarkGroupSelectObjectZodSchema = __makeSchema_MarkGroupSelect_schem
 
 // File: PersonalMarkSelect.schema.ts
 const __makeSchema_PersonalMarkSelect_schema = () => z.object({
-  mark: z.union([z.boolean(), z.lazy(() => MarkArgsObjectSchema)]).optional(),
+  createdAt: z.boolean().optional(),
   markId: z.boolean().optional(),
-  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
   userId: z.boolean().optional(),
-  givenBy: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
   givenById: z.boolean().optional(),
-  createdAt: z.boolean().optional()
+  mark: z.union([z.boolean(), z.lazy(() => MarkArgsObjectSchema)]).optional(),
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+  givenBy: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional()
 }).strict();
 export const PersonalMarkSelectObjectSchema: z.ZodType<Prisma.PersonalMarkSelect> = __makeSchema_PersonalMarkSelect_schema() as unknown as z.ZodType<Prisma.PersonalMarkSelect>;
 export const PersonalMarkSelectObjectZodSchema = __makeSchema_PersonalMarkSelect_schema();
@@ -27139,8 +27186,6 @@ export const EventHostingGroupSelectObjectZodSchema = __makeSchema_EventHostingG
 // File: JobListingSelect.schema.ts
 const __makeSchema_JobListingSelect_schema = () => z.object({
   id: z.boolean().optional(),
-  companyId: z.boolean().optional(),
-  company: z.union([z.boolean(), z.lazy(() => CompanyArgsObjectSchema)]).optional(),
   title: z.boolean().optional(),
   description: z.boolean().optional(),
   shortDescription: z.boolean().optional(),
@@ -27155,6 +27200,8 @@ const __makeSchema_JobListingSelect_schema = () => z.object({
   rollingAdmission: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
+  companyId: z.boolean().optional(),
+  company: z.union([z.boolean(), z.lazy(() => CompanyArgsObjectSchema)]).optional(),
   locations: z.union([z.boolean(), z.lazy(() => JobListingLocationFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => JobListingCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
@@ -27166,8 +27213,8 @@ export const JobListingSelectObjectZodSchema = __makeSchema_JobListingSelect_sch
 const __makeSchema_JobListingLocationSelect_schema = () => z.object({
   name: z.boolean().optional(),
   createdAt: z.boolean().optional(),
-  jobListing: z.union([z.boolean(), z.lazy(() => JobListingArgsObjectSchema)]).optional(),
-  jobListingId: z.boolean().optional()
+  jobListingId: z.boolean().optional(),
+  jobListing: z.union([z.boolean(), z.lazy(() => JobListingArgsObjectSchema)]).optional()
 }).strict();
 export const JobListingLocationSelectObjectSchema: z.ZodType<Prisma.JobListingLocationSelect> = __makeSchema_JobListingLocationSelect_schema() as unknown as z.ZodType<Prisma.JobListingLocationSelect>;
 export const JobListingLocationSelectObjectZodSchema = __makeSchema_JobListingLocationSelect_schema();
@@ -27190,11 +27237,11 @@ export const OfflineSelectObjectZodSchema = __makeSchema_OfflineSelect_schema();
 // File: ArticleSelect.schema.ts
 const __makeSchema_ArticleSelect_schema = () => z.object({
   id: z.boolean().optional(),
+  slug: z.boolean().optional(),
   title: z.boolean().optional(),
   author: z.boolean().optional(),
   photographer: z.boolean().optional(),
   imageUrl: z.boolean().optional(),
-  slug: z.boolean().optional(),
   excerpt: z.boolean().optional(),
   content: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
@@ -27220,10 +27267,10 @@ export const ArticleTagSelectObjectZodSchema = __makeSchema_ArticleTagSelect_sch
 
 // File: ArticleTagLinkSelect.schema.ts
 const __makeSchema_ArticleTagLinkSelect_schema = () => z.object({
-  article: z.union([z.boolean(), z.lazy(() => ArticleArgsObjectSchema)]).optional(),
   articleId: z.boolean().optional(),
-  tag: z.union([z.boolean(), z.lazy(() => ArticleTagArgsObjectSchema)]).optional(),
-  tagName: z.boolean().optional()
+  tagName: z.boolean().optional(),
+  article: z.union([z.boolean(), z.lazy(() => ArticleArgsObjectSchema)]).optional(),
+  tag: z.union([z.boolean(), z.lazy(() => ArticleTagArgsObjectSchema)]).optional()
 }).strict();
 export const ArticleTagLinkSelectObjectSchema: z.ZodType<Prisma.ArticleTagLinkSelect> = __makeSchema_ArticleTagLinkSelect_schema() as unknown as z.ZodType<Prisma.ArticleTagLinkSelect>;
 export const ArticleTagLinkSelectObjectZodSchema = __makeSchema_ArticleTagLinkSelect_schema();
@@ -27238,8 +27285,8 @@ const __makeSchema_TaskSelect_schema = () => z.object({
   createdAt: z.boolean().optional(),
   scheduledAt: z.boolean().optional(),
   processedAt: z.boolean().optional(),
-  recurringTask: z.union([z.boolean(), z.lazy(() => RecurringTaskArgsObjectSchema)]).optional(),
   recurringTaskId: z.boolean().optional(),
+  recurringTask: z.union([z.boolean(), z.lazy(() => RecurringTaskArgsObjectSchema)]).optional(),
   attendancePools: z.union([z.boolean(), z.lazy(() => AttendancePoolFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => TaskCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
@@ -27266,12 +27313,12 @@ export const RecurringTaskSelectObjectZodSchema = __makeSchema_RecurringTaskSele
 // File: FeedbackFormSelect.schema.ts
 const __makeSchema_FeedbackFormSelect_schema = () => z.object({
   id: z.boolean().optional(),
-  eventId: z.boolean().optional(),
-  event: z.union([z.boolean(), z.lazy(() => EventArgsObjectSchema)]).optional(),
   publicResultsToken: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   answerDeadline: z.boolean().optional(),
+  eventId: z.boolean().optional(),
+  event: z.union([z.boolean(), z.lazy(() => EventArgsObjectSchema)]).optional(),
   questions: z.union([z.boolean(), z.lazy(() => FeedbackQuestionFindManySchema)]).optional(),
   answers: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => FeedbackFormCountOutputTypeArgsObjectSchema)]).optional()
@@ -27283,8 +27330,6 @@ export const FeedbackFormSelectObjectZodSchema = __makeSchema_FeedbackFormSelect
 // File: FeedbackQuestionSelect.schema.ts
 const __makeSchema_FeedbackQuestionSelect_schema = () => z.object({
   id: z.boolean().optional(),
-  feedbackFormId: z.boolean().optional(),
-  feedbackForm: z.union([z.boolean(), z.lazy(() => FeedbackFormArgsObjectSchema)]).optional(),
   label: z.boolean().optional(),
   required: z.boolean().optional(),
   showInPublicResults: z.boolean().optional(),
@@ -27292,6 +27337,8 @@ const __makeSchema_FeedbackQuestionSelect_schema = () => z.object({
   order: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
+  feedbackFormId: z.boolean().optional(),
+  feedbackForm: z.union([z.boolean(), z.lazy(() => FeedbackFormArgsObjectSchema)]).optional(),
   options: z.union([z.boolean(), z.lazy(() => FeedbackQuestionOptionFindManySchema)]).optional(),
   answers: z.union([z.boolean(), z.lazy(() => FeedbackQuestionAnswerFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => FeedbackQuestionCountOutputTypeArgsObjectSchema)]).optional()
@@ -27316,11 +27363,11 @@ export const FeedbackQuestionOptionSelectObjectZodSchema = __makeSchema_Feedback
 // File: FeedbackQuestionAnswerSelect.schema.ts
 const __makeSchema_FeedbackQuestionAnswerSelect_schema = () => z.object({
   id: z.boolean().optional(),
-  questionId: z.boolean().optional(),
-  question: z.union([z.boolean(), z.lazy(() => FeedbackQuestionArgsObjectSchema)]).optional(),
-  formAnswerId: z.boolean().optional(),
-  formAnswer: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerArgsObjectSchema)]).optional(),
   value: z.boolean().optional(),
+  questionId: z.boolean().optional(),
+  formAnswerId: z.boolean().optional(),
+  question: z.union([z.boolean(), z.lazy(() => FeedbackQuestionArgsObjectSchema)]).optional(),
+  formAnswer: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerArgsObjectSchema)]).optional(),
   selectedOptions: z.union([z.boolean(), z.lazy(() => FeedbackQuestionAnswerOptionLinkFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => FeedbackQuestionAnswerCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
@@ -27330,10 +27377,10 @@ export const FeedbackQuestionAnswerSelectObjectZodSchema = __makeSchema_Feedback
 
 // File: FeedbackQuestionAnswerOptionLinkSelect.schema.ts
 const __makeSchema_FeedbackQuestionAnswerOptionLinkSelect_schema = () => z.object({
-  feedbackQuestionOption: z.union([z.boolean(), z.lazy(() => FeedbackQuestionOptionArgsObjectSchema)]).optional(),
   feedbackQuestionOptionId: z.boolean().optional(),
-  feedbackQuestionAnswer: z.union([z.boolean(), z.lazy(() => FeedbackQuestionAnswerArgsObjectSchema)]).optional(),
-  feedbackQuestionAnswerId: z.boolean().optional()
+  feedbackQuestionAnswerId: z.boolean().optional(),
+  feedbackQuestionOption: z.union([z.boolean(), z.lazy(() => FeedbackQuestionOptionArgsObjectSchema)]).optional(),
+  feedbackQuestionAnswer: z.union([z.boolean(), z.lazy(() => FeedbackQuestionAnswerArgsObjectSchema)]).optional()
 }).strict();
 export const FeedbackQuestionAnswerOptionLinkSelectObjectSchema: z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkSelect> = __makeSchema_FeedbackQuestionAnswerOptionLinkSelect_schema() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkSelect>;
 export const FeedbackQuestionAnswerOptionLinkSelectObjectZodSchema = __makeSchema_FeedbackQuestionAnswerOptionLinkSelect_schema();
@@ -27342,12 +27389,12 @@ export const FeedbackQuestionAnswerOptionLinkSelectObjectZodSchema = __makeSchem
 // File: FeedbackFormAnswerSelect.schema.ts
 const __makeSchema_FeedbackFormAnswerSelect_schema = () => z.object({
   id: z.boolean().optional(),
-  feedbackFormId: z.boolean().optional(),
-  feedbackForm: z.union([z.boolean(), z.lazy(() => FeedbackFormArgsObjectSchema)]).optional(),
-  attendeeId: z.boolean().optional(),
-  attendee: z.union([z.boolean(), z.lazy(() => AttendeeArgsObjectSchema)]).optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
+  feedbackFormId: z.boolean().optional(),
+  attendeeId: z.boolean().optional(),
+  feedbackForm: z.union([z.boolean(), z.lazy(() => FeedbackFormArgsObjectSchema)]).optional(),
+  attendee: z.union([z.boolean(), z.lazy(() => AttendeeArgsObjectSchema)]).optional(),
   answers: z.union([z.boolean(), z.lazy(() => FeedbackQuestionAnswerFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
@@ -27361,11 +27408,11 @@ const __makeSchema_AuditLogSelect_schema = () => z.object({
   tableName: z.boolean().optional(),
   rowId: z.boolean().optional(),
   createdAt: z.boolean().optional(),
-  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
-  userId: z.boolean().optional(),
   operation: z.boolean().optional(),
   rowData: z.boolean().optional(),
-  transactionId: z.boolean().optional()
+  transactionId: z.boolean().optional(),
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+  userId: z.boolean().optional()
 }).strict();
 export const AuditLogSelectObjectSchema: z.ZodType<Prisma.AuditLogSelect> = __makeSchema_AuditLogSelect_schema() as unknown as z.ZodType<Prisma.AuditLogSelect>;
 export const AuditLogSelectObjectZodSchema = __makeSchema_AuditLogSelect_schema();
@@ -27380,8 +27427,8 @@ const __makeSchema_DeregisterReasonSelect_schema = () => z.object({
   details: z.boolean().optional(),
   userGrade: z.boolean().optional(),
   userId: z.boolean().optional(),
-  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
   eventId: z.boolean().optional(),
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
   event: z.union([z.boolean(), z.lazy(() => EventArgsObjectSchema)]).optional()
 }).strict();
 export const DeregisterReasonSelectObjectSchema: z.ZodType<Prisma.DeregisterReasonSelect> = __makeSchema_DeregisterReasonSelect_schema() as unknown as z.ZodType<Prisma.DeregisterReasonSelect>;
@@ -27795,10 +27842,10 @@ export const AttendancePoolIncludeObjectZodSchema = __makeSchema_AttendancePoolI
 
 // File: AttendeeInclude.schema.ts
 const __makeSchema_AttendeeInclude_schema = () => z.object({
+  feedbackFormAnswer: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerArgsObjectSchema)]).optional(),
   attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
   user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
   attendancePool: z.union([z.boolean(), z.lazy(() => AttendancePoolArgsObjectSchema)]).optional(),
-  feedbackFormAnswer: z.union([z.boolean(), z.lazy(() => FeedbackFormAnswerArgsObjectSchema)]).optional(),
   paymentRefundedBy: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional()
 }).strict();
 export const AttendeeIncludeObjectSchema: z.ZodType<Prisma.AttendeeInclude> = __makeSchema_AttendeeInclude_schema() as unknown as z.ZodType<Prisma.AttendeeInclude>;
@@ -27807,8 +27854,8 @@ export const AttendeeIncludeObjectZodSchema = __makeSchema_AttendeeInclude_schem
 
 // File: EventInclude.schema.ts
 const __makeSchema_EventInclude_schema = () => z.object({
-  attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
   feedbackForm: z.union([z.boolean(), z.lazy(() => FeedbackFormArgsObjectSchema)]).optional(),
+  attendance: z.union([z.boolean(), z.lazy(() => AttendanceArgsObjectSchema)]).optional(),
   parent: z.union([z.boolean(), z.lazy(() => EventArgsObjectSchema)]).optional(),
   children: z.union([z.boolean(), z.lazy(() => EventFindManySchema)]).optional(),
   companies: z.union([z.boolean(), z.lazy(() => EventCompanyFindManySchema)]).optional(),
@@ -28970,28 +29017,28 @@ export const GroupMembershipFindUniqueOrThrowZodSchema = z.object({ select: Grou
 
 export const GroupMembershipFindFirstSelectSchema__findFirstGroupMembership_schema: z.ZodType<Prisma.GroupMembershipSelect> = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
-    userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     start: z.boolean().optional(),
     end: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    group: z.boolean().optional(),
+    user: z.boolean().optional(),
     roles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupMembershipSelect>;
 
 export const GroupMembershipFindFirstSelectZodSchema__findFirstGroupMembership_schema = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
-    userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     start: z.boolean().optional(),
     end: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    group: z.boolean().optional(),
+    user: z.boolean().optional(),
     roles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -29007,28 +29054,28 @@ export const GroupMembershipFindFirstZodSchema = z.object({ select: GroupMembers
 
 export const GroupMembershipFindFirstOrThrowSelectSchema__findFirstOrThrowGroupMembership_schema: z.ZodType<Prisma.GroupMembershipSelect> = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
-    userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     start: z.boolean().optional(),
     end: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    group: z.boolean().optional(),
+    user: z.boolean().optional(),
     roles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupMembershipSelect>;
 
 export const GroupMembershipFindFirstOrThrowSelectZodSchema__findFirstOrThrowGroupMembership_schema = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
-    userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     start: z.boolean().optional(),
     end: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    group: z.boolean().optional(),
+    user: z.boolean().optional(),
     roles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -29044,28 +29091,28 @@ export const GroupMembershipFindFirstOrThrowZodSchema = z.object({ select: Group
 
 export const GroupMembershipFindManySelectSchema__findManyGroupMembership_schema: z.ZodType<Prisma.GroupMembershipSelect> = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
-    userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     start: z.boolean().optional(),
     end: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    group: z.boolean().optional(),
+    user: z.boolean().optional(),
     roles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupMembershipSelect>;
 
 export const GroupMembershipFindManySelectZodSchema__findManyGroupMembership_schema = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
-    userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     start: z.boolean().optional(),
     end: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    group: z.boolean().optional(),
+    user: z.boolean().optional(),
     roles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -29165,15 +29212,15 @@ export const GroupMembershipRoleFindUniqueOrThrowZodSchema = z.object({ select: 
 
 export const GroupMembershipRoleFindFirstSelectSchema__findFirstGroupMembershipRole_schema: z.ZodType<Prisma.GroupMembershipRoleSelect> = z.object({
     membershipId: z.boolean().optional(),
-    membership: z.boolean().optional(),
     roleId: z.boolean().optional(),
+    membership: z.boolean().optional(),
     role: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupMembershipRoleSelect>;
 
 export const GroupMembershipRoleFindFirstSelectZodSchema__findFirstGroupMembershipRole_schema = z.object({
     membershipId: z.boolean().optional(),
-    membership: z.boolean().optional(),
     roleId: z.boolean().optional(),
+    membership: z.boolean().optional(),
     role: z.boolean().optional()
   }).strict();
 
@@ -29188,15 +29235,15 @@ export const GroupMembershipRoleFindFirstZodSchema = z.object({ select: GroupMem
 
 export const GroupMembershipRoleFindFirstOrThrowSelectSchema__findFirstOrThrowGroupMembershipRole_schema: z.ZodType<Prisma.GroupMembershipRoleSelect> = z.object({
     membershipId: z.boolean().optional(),
-    membership: z.boolean().optional(),
     roleId: z.boolean().optional(),
+    membership: z.boolean().optional(),
     role: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupMembershipRoleSelect>;
 
 export const GroupMembershipRoleFindFirstOrThrowSelectZodSchema__findFirstOrThrowGroupMembershipRole_schema = z.object({
     membershipId: z.boolean().optional(),
-    membership: z.boolean().optional(),
     roleId: z.boolean().optional(),
+    membership: z.boolean().optional(),
     role: z.boolean().optional()
   }).strict();
 
@@ -29211,15 +29258,15 @@ export const GroupMembershipRoleFindFirstOrThrowZodSchema = z.object({ select: G
 
 export const GroupMembershipRoleFindManySelectSchema__findManyGroupMembershipRole_schema: z.ZodType<Prisma.GroupMembershipRoleSelect> = z.object({
     membershipId: z.boolean().optional(),
-    membership: z.boolean().optional(),
     roleId: z.boolean().optional(),
+    membership: z.boolean().optional(),
     role: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupMembershipRoleSelect>;
 
 export const GroupMembershipRoleFindManySelectZodSchema__findManyGroupMembershipRole_schema = z.object({
     membershipId: z.boolean().optional(),
-    membership: z.boolean().optional(),
     roleId: z.boolean().optional(),
+    membership: z.boolean().optional(),
     role: z.boolean().optional()
   }).strict();
 
@@ -29318,20 +29365,20 @@ export const GroupRoleFindUniqueOrThrowZodSchema = z.object({ select: GroupRoleS
 
 export const GroupRoleFindFirstSelectSchema__findFirstGroupRole_schema: z.ZodType<Prisma.GroupRoleSelect> = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
     name: z.boolean().optional(),
     type: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    group: z.boolean().optional(),
     groupMembershipRoles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupRoleSelect>;
 
 export const GroupRoleFindFirstSelectZodSchema__findFirstGroupRole_schema = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
     name: z.boolean().optional(),
     type: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    group: z.boolean().optional(),
     groupMembershipRoles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -29347,20 +29394,20 @@ export const GroupRoleFindFirstZodSchema = z.object({ select: GroupRoleFindFirst
 
 export const GroupRoleFindFirstOrThrowSelectSchema__findFirstOrThrowGroupRole_schema: z.ZodType<Prisma.GroupRoleSelect> = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
     name: z.boolean().optional(),
     type: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    group: z.boolean().optional(),
     groupMembershipRoles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupRoleSelect>;
 
 export const GroupRoleFindFirstOrThrowSelectZodSchema__findFirstOrThrowGroupRole_schema = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
     name: z.boolean().optional(),
     type: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    group: z.boolean().optional(),
     groupMembershipRoles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -29376,20 +29423,20 @@ export const GroupRoleFindFirstOrThrowZodSchema = z.object({ select: GroupRoleFi
 
 export const GroupRoleFindManySelectSchema__findManyGroupRole_schema: z.ZodType<Prisma.GroupRoleSelect> = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
     name: z.boolean().optional(),
     type: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    group: z.boolean().optional(),
     groupMembershipRoles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.GroupRoleSelect>;
 
 export const GroupRoleFindManySelectZodSchema__findManyGroupRole_schema = z.object({
     id: z.boolean().optional(),
-    groupId: z.boolean().optional(),
-    group: z.boolean().optional(),
     name: z.boolean().optional(),
     type: z.boolean().optional(),
+    groupId: z.boolean().optional(),
+    group: z.boolean().optional(),
     groupMembershipRoles: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -29697,8 +29744,8 @@ export const AttendancePoolFindFirstSelectSchema__findFirstAttendancePool_schema
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     attendanceId: z.boolean().optional(),
-    attendance: z.boolean().optional(),
     taskId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     task: z.boolean().optional(),
     attendees: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -29713,8 +29760,8 @@ export const AttendancePoolFindFirstSelectZodSchema__findFirstAttendancePool_sch
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     attendanceId: z.boolean().optional(),
-    attendance: z.boolean().optional(),
     taskId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     task: z.boolean().optional(),
     attendees: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -29738,8 +29785,8 @@ export const AttendancePoolFindFirstOrThrowSelectSchema__findFirstOrThrowAttenda
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     attendanceId: z.boolean().optional(),
-    attendance: z.boolean().optional(),
     taskId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     task: z.boolean().optional(),
     attendees: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -29754,8 +29801,8 @@ export const AttendancePoolFindFirstOrThrowSelectZodSchema__findFirstOrThrowAtte
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     attendanceId: z.boolean().optional(),
-    attendance: z.boolean().optional(),
     taskId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     task: z.boolean().optional(),
     attendees: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -29779,8 +29826,8 @@ export const AttendancePoolFindManySelectSchema__findManyAttendancePool_schema: 
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     attendanceId: z.boolean().optional(),
-    attendance: z.boolean().optional(),
     taskId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     task: z.boolean().optional(),
     attendees: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -29795,8 +29842,8 @@ export const AttendancePoolFindManySelectZodSchema__findManyAttendancePool_schem
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     attendanceId: z.boolean().optional(),
-    attendance: z.boolean().optional(),
     taskId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     task: z.boolean().optional(),
     attendees: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -29897,13 +29944,7 @@ export const AttendeeFindUniqueOrThrowZodSchema = z.object({ select: AttendeeSel
 
 export const AttendeeFindFirstSelectSchema__findFirstAttendee_schema: z.ZodType<Prisma.AttendeeSelect> = z.object({
     id: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     userGrade: z.boolean().optional(),
-    attendancePool: z.boolean().optional(),
-    attendancePoolId: z.boolean().optional(),
     feedbackFormAnswer: z.boolean().optional(),
     selections: z.boolean().optional(),
     reserved: z.boolean().optional(),
@@ -29918,19 +29959,20 @@ export const AttendeeFindFirstSelectSchema__findFirstAttendee_schema: z.ZodType<
     paymentChargeDeadline: z.boolean().optional(),
     paymentChargedAt: z.boolean().optional(),
     paymentRefundedAt: z.boolean().optional(),
+    paymentCheckoutUrl: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    attendancePoolId: z.boolean().optional(),
     paymentRefundedById: z.boolean().optional(),
+    attendance: z.boolean().optional(),
+    user: z.boolean().optional(),
+    attendancePool: z.boolean().optional(),
     paymentRefundedBy: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.AttendeeSelect>;
 
 export const AttendeeFindFirstSelectZodSchema__findFirstAttendee_schema = z.object({
     id: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     userGrade: z.boolean().optional(),
-    attendancePool: z.boolean().optional(),
-    attendancePoolId: z.boolean().optional(),
     feedbackFormAnswer: z.boolean().optional(),
     selections: z.boolean().optional(),
     reserved: z.boolean().optional(),
@@ -29945,7 +29987,14 @@ export const AttendeeFindFirstSelectZodSchema__findFirstAttendee_schema = z.obje
     paymentChargeDeadline: z.boolean().optional(),
     paymentChargedAt: z.boolean().optional(),
     paymentRefundedAt: z.boolean().optional(),
+    paymentCheckoutUrl: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    attendancePoolId: z.boolean().optional(),
     paymentRefundedById: z.boolean().optional(),
+    attendance: z.boolean().optional(),
+    user: z.boolean().optional(),
+    attendancePool: z.boolean().optional(),
     paymentRefundedBy: z.boolean().optional()
   }).strict();
 
@@ -29960,13 +30009,7 @@ export const AttendeeFindFirstZodSchema = z.object({ select: AttendeeFindFirstSe
 
 export const AttendeeFindFirstOrThrowSelectSchema__findFirstOrThrowAttendee_schema: z.ZodType<Prisma.AttendeeSelect> = z.object({
     id: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     userGrade: z.boolean().optional(),
-    attendancePool: z.boolean().optional(),
-    attendancePoolId: z.boolean().optional(),
     feedbackFormAnswer: z.boolean().optional(),
     selections: z.boolean().optional(),
     reserved: z.boolean().optional(),
@@ -29981,19 +30024,20 @@ export const AttendeeFindFirstOrThrowSelectSchema__findFirstOrThrowAttendee_sche
     paymentChargeDeadline: z.boolean().optional(),
     paymentChargedAt: z.boolean().optional(),
     paymentRefundedAt: z.boolean().optional(),
+    paymentCheckoutUrl: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    attendancePoolId: z.boolean().optional(),
     paymentRefundedById: z.boolean().optional(),
+    attendance: z.boolean().optional(),
+    user: z.boolean().optional(),
+    attendancePool: z.boolean().optional(),
     paymentRefundedBy: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.AttendeeSelect>;
 
 export const AttendeeFindFirstOrThrowSelectZodSchema__findFirstOrThrowAttendee_schema = z.object({
     id: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     userGrade: z.boolean().optional(),
-    attendancePool: z.boolean().optional(),
-    attendancePoolId: z.boolean().optional(),
     feedbackFormAnswer: z.boolean().optional(),
     selections: z.boolean().optional(),
     reserved: z.boolean().optional(),
@@ -30008,7 +30052,14 @@ export const AttendeeFindFirstOrThrowSelectZodSchema__findFirstOrThrowAttendee_s
     paymentChargeDeadline: z.boolean().optional(),
     paymentChargedAt: z.boolean().optional(),
     paymentRefundedAt: z.boolean().optional(),
+    paymentCheckoutUrl: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    attendancePoolId: z.boolean().optional(),
     paymentRefundedById: z.boolean().optional(),
+    attendance: z.boolean().optional(),
+    user: z.boolean().optional(),
+    attendancePool: z.boolean().optional(),
     paymentRefundedBy: z.boolean().optional()
   }).strict();
 
@@ -30023,13 +30074,7 @@ export const AttendeeFindFirstOrThrowZodSchema = z.object({ select: AttendeeFind
 
 export const AttendeeFindManySelectSchema__findManyAttendee_schema: z.ZodType<Prisma.AttendeeSelect> = z.object({
     id: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     userGrade: z.boolean().optional(),
-    attendancePool: z.boolean().optional(),
-    attendancePoolId: z.boolean().optional(),
     feedbackFormAnswer: z.boolean().optional(),
     selections: z.boolean().optional(),
     reserved: z.boolean().optional(),
@@ -30044,19 +30089,20 @@ export const AttendeeFindManySelectSchema__findManyAttendee_schema: z.ZodType<Pr
     paymentChargeDeadline: z.boolean().optional(),
     paymentChargedAt: z.boolean().optional(),
     paymentRefundedAt: z.boolean().optional(),
+    paymentCheckoutUrl: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    attendancePoolId: z.boolean().optional(),
     paymentRefundedById: z.boolean().optional(),
+    attendance: z.boolean().optional(),
+    user: z.boolean().optional(),
+    attendancePool: z.boolean().optional(),
     paymentRefundedBy: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.AttendeeSelect>;
 
 export const AttendeeFindManySelectZodSchema__findManyAttendee_schema = z.object({
     id: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     userGrade: z.boolean().optional(),
-    attendancePool: z.boolean().optional(),
-    attendancePoolId: z.boolean().optional(),
     feedbackFormAnswer: z.boolean().optional(),
     selections: z.boolean().optional(),
     reserved: z.boolean().optional(),
@@ -30071,7 +30117,14 @@ export const AttendeeFindManySelectZodSchema__findManyAttendee_schema = z.object
     paymentChargeDeadline: z.boolean().optional(),
     paymentChargedAt: z.boolean().optional(),
     paymentRefundedAt: z.boolean().optional(),
+    paymentCheckoutUrl: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    attendancePoolId: z.boolean().optional(),
     paymentRefundedById: z.boolean().optional(),
+    attendance: z.boolean().optional(),
+    user: z.boolean().optional(),
+    attendancePool: z.boolean().optional(),
     paymentRefundedBy: z.boolean().optional()
   }).strict();
 
@@ -30180,14 +30233,14 @@ export const EventFindFirstSelectSchema__findFirstEvent_schema: z.ZodType<Prisma
     locationTitle: z.boolean().optional(),
     locationAddress: z.boolean().optional(),
     locationLink: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
     type: z.boolean().optional(),
     feedbackForm: z.boolean().optional(),
     markForMissedAttendance: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
     parentId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     parent: z.boolean().optional(),
     children: z.boolean().optional(),
     companies: z.boolean().optional(),
@@ -30209,14 +30262,14 @@ export const EventFindFirstSelectZodSchema__findFirstEvent_schema = z.object({
     locationTitle: z.boolean().optional(),
     locationAddress: z.boolean().optional(),
     locationLink: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
     type: z.boolean().optional(),
     feedbackForm: z.boolean().optional(),
     markForMissedAttendance: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
     parentId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     parent: z.boolean().optional(),
     children: z.boolean().optional(),
     companies: z.boolean().optional(),
@@ -30247,14 +30300,14 @@ export const EventFindFirstOrThrowSelectSchema__findFirstOrThrowEvent_schema: z.
     locationTitle: z.boolean().optional(),
     locationAddress: z.boolean().optional(),
     locationLink: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
     type: z.boolean().optional(),
     feedbackForm: z.boolean().optional(),
     markForMissedAttendance: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
     parentId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     parent: z.boolean().optional(),
     children: z.boolean().optional(),
     companies: z.boolean().optional(),
@@ -30276,14 +30329,14 @@ export const EventFindFirstOrThrowSelectZodSchema__findFirstOrThrowEvent_schema 
     locationTitle: z.boolean().optional(),
     locationAddress: z.boolean().optional(),
     locationLink: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
     type: z.boolean().optional(),
     feedbackForm: z.boolean().optional(),
     markForMissedAttendance: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
     parentId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     parent: z.boolean().optional(),
     children: z.boolean().optional(),
     companies: z.boolean().optional(),
@@ -30314,14 +30367,14 @@ export const EventFindManySelectSchema__findManyEvent_schema: z.ZodType<Prisma.E
     locationTitle: z.boolean().optional(),
     locationAddress: z.boolean().optional(),
     locationLink: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
     type: z.boolean().optional(),
     feedbackForm: z.boolean().optional(),
     markForMissedAttendance: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
     parentId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     parent: z.boolean().optional(),
     children: z.boolean().optional(),
     companies: z.boolean().optional(),
@@ -30343,14 +30396,14 @@ export const EventFindManySelectZodSchema__findManyEvent_schema = z.object({
     locationTitle: z.boolean().optional(),
     locationAddress: z.boolean().optional(),
     locationLink: z.boolean().optional(),
-    attendance: z.boolean().optional(),
-    attendanceId: z.boolean().optional(),
     type: z.boolean().optional(),
     feedbackForm: z.boolean().optional(),
     markForMissedAttendance: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    attendanceId: z.boolean().optional(),
     parentId: z.boolean().optional(),
+    attendance: z.boolean().optional(),
     parent: z.boolean().optional(),
     children: z.boolean().optional(),
     companies: z.boolean().optional(),
@@ -30955,23 +31008,23 @@ export const PersonalMarkFindUniqueOrThrowZodSchema = z.object({ select: Persona
 //------------------------------------------------------
 
 export const PersonalMarkFindFirstSelectSchema__findFirstPersonalMark_schema: z.ZodType<Prisma.PersonalMarkSelect> = z.object({
-    mark: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
     markId: z.boolean().optional(),
-    user: z.boolean().optional(),
     userId: z.boolean().optional(),
-    givenBy: z.boolean().optional(),
     givenById: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    mark: z.boolean().optional(),
+    user: z.boolean().optional(),
+    givenBy: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.PersonalMarkSelect>;
 
 export const PersonalMarkFindFirstSelectZodSchema__findFirstPersonalMark_schema = z.object({
-    mark: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
     markId: z.boolean().optional(),
-    user: z.boolean().optional(),
     userId: z.boolean().optional(),
-    givenBy: z.boolean().optional(),
     givenById: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    mark: z.boolean().optional(),
+    user: z.boolean().optional(),
+    givenBy: z.boolean().optional()
   }).strict();
 
 export const PersonalMarkFindFirstSchema: z.ZodType<Prisma.PersonalMarkFindFirstArgs> = z.object({ select: PersonalMarkFindFirstSelectSchema__findFirstPersonalMark_schema.optional(), include: z.lazy(() => PersonalMarkIncludeObjectSchema.optional()), orderBy: z.union([PersonalMarkOrderByWithRelationInputObjectSchema, PersonalMarkOrderByWithRelationInputObjectSchema.array()]).optional(), where: PersonalMarkWhereInputObjectSchema.optional(), cursor: PersonalMarkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([PersonalMarkScalarFieldEnumSchema, PersonalMarkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.PersonalMarkFindFirstArgs>;
@@ -30984,23 +31037,23 @@ export const PersonalMarkFindFirstZodSchema = z.object({ select: PersonalMarkFin
 //------------------------------------------------------
 
 export const PersonalMarkFindFirstOrThrowSelectSchema__findFirstOrThrowPersonalMark_schema: z.ZodType<Prisma.PersonalMarkSelect> = z.object({
-    mark: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
     markId: z.boolean().optional(),
-    user: z.boolean().optional(),
     userId: z.boolean().optional(),
-    givenBy: z.boolean().optional(),
     givenById: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    mark: z.boolean().optional(),
+    user: z.boolean().optional(),
+    givenBy: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.PersonalMarkSelect>;
 
 export const PersonalMarkFindFirstOrThrowSelectZodSchema__findFirstOrThrowPersonalMark_schema = z.object({
-    mark: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
     markId: z.boolean().optional(),
-    user: z.boolean().optional(),
     userId: z.boolean().optional(),
-    givenBy: z.boolean().optional(),
     givenById: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    mark: z.boolean().optional(),
+    user: z.boolean().optional(),
+    givenBy: z.boolean().optional()
   }).strict();
 
 export const PersonalMarkFindFirstOrThrowSchema: z.ZodType<Prisma.PersonalMarkFindFirstOrThrowArgs> = z.object({ select: PersonalMarkFindFirstOrThrowSelectSchema__findFirstOrThrowPersonalMark_schema.optional(), include: z.lazy(() => PersonalMarkIncludeObjectSchema.optional()), orderBy: z.union([PersonalMarkOrderByWithRelationInputObjectSchema, PersonalMarkOrderByWithRelationInputObjectSchema.array()]).optional(), where: PersonalMarkWhereInputObjectSchema.optional(), cursor: PersonalMarkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([PersonalMarkScalarFieldEnumSchema, PersonalMarkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.PersonalMarkFindFirstOrThrowArgs>;
@@ -31013,23 +31066,23 @@ export const PersonalMarkFindFirstOrThrowZodSchema = z.object({ select: Personal
 //------------------------------------------------------
 
 export const PersonalMarkFindManySelectSchema__findManyPersonalMark_schema: z.ZodType<Prisma.PersonalMarkSelect> = z.object({
-    mark: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
     markId: z.boolean().optional(),
-    user: z.boolean().optional(),
     userId: z.boolean().optional(),
-    givenBy: z.boolean().optional(),
     givenById: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    mark: z.boolean().optional(),
+    user: z.boolean().optional(),
+    givenBy: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.PersonalMarkSelect>;
 
 export const PersonalMarkFindManySelectZodSchema__findManyPersonalMark_schema = z.object({
-    mark: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
     markId: z.boolean().optional(),
-    user: z.boolean().optional(),
     userId: z.boolean().optional(),
-    givenBy: z.boolean().optional(),
     givenById: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    mark: z.boolean().optional(),
+    user: z.boolean().optional(),
+    givenBy: z.boolean().optional()
   }).strict();
 
 export const PersonalMarkFindManySchema: z.ZodType<Prisma.PersonalMarkFindManyArgs> = z.object({ select: PersonalMarkFindManySelectSchema__findManyPersonalMark_schema.optional(), include: z.lazy(() => PersonalMarkIncludeObjectSchema.optional()), orderBy: z.union([PersonalMarkOrderByWithRelationInputObjectSchema, PersonalMarkOrderByWithRelationInputObjectSchema.array()]).optional(), where: PersonalMarkWhereInputObjectSchema.optional(), cursor: PersonalMarkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([PersonalMarkScalarFieldEnumSchema, PersonalMarkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.PersonalMarkFindManyArgs>;
@@ -31682,8 +31735,6 @@ export const JobListingFindUniqueOrThrowZodSchema = z.object({ select: JobListin
 
 export const JobListingFindFirstSelectSchema__findFirstJobListing_schema: z.ZodType<Prisma.JobListingSelect> = z.object({
     id: z.boolean().optional(),
-    companyId: z.boolean().optional(),
-    company: z.boolean().optional(),
     title: z.boolean().optional(),
     description: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
@@ -31698,14 +31749,14 @@ export const JobListingFindFirstSelectSchema__findFirstJobListing_schema: z.ZodT
     rollingAdmission: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    companyId: z.boolean().optional(),
+    company: z.boolean().optional(),
     locations: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.JobListingSelect>;
 
 export const JobListingFindFirstSelectZodSchema__findFirstJobListing_schema = z.object({
     id: z.boolean().optional(),
-    companyId: z.boolean().optional(),
-    company: z.boolean().optional(),
     title: z.boolean().optional(),
     description: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
@@ -31720,6 +31771,8 @@ export const JobListingFindFirstSelectZodSchema__findFirstJobListing_schema = z.
     rollingAdmission: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    companyId: z.boolean().optional(),
+    company: z.boolean().optional(),
     locations: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -31735,8 +31788,6 @@ export const JobListingFindFirstZodSchema = z.object({ select: JobListingFindFir
 
 export const JobListingFindFirstOrThrowSelectSchema__findFirstOrThrowJobListing_schema: z.ZodType<Prisma.JobListingSelect> = z.object({
     id: z.boolean().optional(),
-    companyId: z.boolean().optional(),
-    company: z.boolean().optional(),
     title: z.boolean().optional(),
     description: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
@@ -31751,14 +31802,14 @@ export const JobListingFindFirstOrThrowSelectSchema__findFirstOrThrowJobListing_
     rollingAdmission: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    companyId: z.boolean().optional(),
+    company: z.boolean().optional(),
     locations: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.JobListingSelect>;
 
 export const JobListingFindFirstOrThrowSelectZodSchema__findFirstOrThrowJobListing_schema = z.object({
     id: z.boolean().optional(),
-    companyId: z.boolean().optional(),
-    company: z.boolean().optional(),
     title: z.boolean().optional(),
     description: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
@@ -31773,6 +31824,8 @@ export const JobListingFindFirstOrThrowSelectZodSchema__findFirstOrThrowJobListi
     rollingAdmission: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    companyId: z.boolean().optional(),
+    company: z.boolean().optional(),
     locations: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -31788,8 +31841,6 @@ export const JobListingFindFirstOrThrowZodSchema = z.object({ select: JobListing
 
 export const JobListingFindManySelectSchema__findManyJobListing_schema: z.ZodType<Prisma.JobListingSelect> = z.object({
     id: z.boolean().optional(),
-    companyId: z.boolean().optional(),
-    company: z.boolean().optional(),
     title: z.boolean().optional(),
     description: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
@@ -31804,14 +31855,14 @@ export const JobListingFindManySelectSchema__findManyJobListing_schema: z.ZodTyp
     rollingAdmission: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    companyId: z.boolean().optional(),
+    company: z.boolean().optional(),
     locations: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.JobListingSelect>;
 
 export const JobListingFindManySelectZodSchema__findManyJobListing_schema = z.object({
     id: z.boolean().optional(),
-    companyId: z.boolean().optional(),
-    company: z.boolean().optional(),
     title: z.boolean().optional(),
     description: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
@@ -31826,6 +31877,8 @@ export const JobListingFindManySelectZodSchema__findManyJobListing_schema = z.ob
     rollingAdmission: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    companyId: z.boolean().optional(),
+    company: z.boolean().optional(),
     locations: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -31926,15 +31979,15 @@ export const JobListingLocationFindUniqueOrThrowZodSchema = z.object({ select: J
 export const JobListingLocationFindFirstSelectSchema__findFirstJobListingLocation_schema: z.ZodType<Prisma.JobListingLocationSelect> = z.object({
     name: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    jobListing: z.boolean().optional(),
-    jobListingId: z.boolean().optional()
+    jobListingId: z.boolean().optional(),
+    jobListing: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.JobListingLocationSelect>;
 
 export const JobListingLocationFindFirstSelectZodSchema__findFirstJobListingLocation_schema = z.object({
     name: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    jobListing: z.boolean().optional(),
-    jobListingId: z.boolean().optional()
+    jobListingId: z.boolean().optional(),
+    jobListing: z.boolean().optional()
   }).strict();
 
 export const JobListingLocationFindFirstSchema: z.ZodType<Prisma.JobListingLocationFindFirstArgs> = z.object({ select: JobListingLocationFindFirstSelectSchema__findFirstJobListingLocation_schema.optional(), include: z.lazy(() => JobListingLocationIncludeObjectSchema.optional()), orderBy: z.union([JobListingLocationOrderByWithRelationInputObjectSchema, JobListingLocationOrderByWithRelationInputObjectSchema.array()]).optional(), where: JobListingLocationWhereInputObjectSchema.optional(), cursor: JobListingLocationWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([JobListingLocationScalarFieldEnumSchema, JobListingLocationScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.JobListingLocationFindFirstArgs>;
@@ -31949,15 +32002,15 @@ export const JobListingLocationFindFirstZodSchema = z.object({ select: JobListin
 export const JobListingLocationFindFirstOrThrowSelectSchema__findFirstOrThrowJobListingLocation_schema: z.ZodType<Prisma.JobListingLocationSelect> = z.object({
     name: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    jobListing: z.boolean().optional(),
-    jobListingId: z.boolean().optional()
+    jobListingId: z.boolean().optional(),
+    jobListing: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.JobListingLocationSelect>;
 
 export const JobListingLocationFindFirstOrThrowSelectZodSchema__findFirstOrThrowJobListingLocation_schema = z.object({
     name: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    jobListing: z.boolean().optional(),
-    jobListingId: z.boolean().optional()
+    jobListingId: z.boolean().optional(),
+    jobListing: z.boolean().optional()
   }).strict();
 
 export const JobListingLocationFindFirstOrThrowSchema: z.ZodType<Prisma.JobListingLocationFindFirstOrThrowArgs> = z.object({ select: JobListingLocationFindFirstOrThrowSelectSchema__findFirstOrThrowJobListingLocation_schema.optional(), include: z.lazy(() => JobListingLocationIncludeObjectSchema.optional()), orderBy: z.union([JobListingLocationOrderByWithRelationInputObjectSchema, JobListingLocationOrderByWithRelationInputObjectSchema.array()]).optional(), where: JobListingLocationWhereInputObjectSchema.optional(), cursor: JobListingLocationWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([JobListingLocationScalarFieldEnumSchema, JobListingLocationScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.JobListingLocationFindFirstOrThrowArgs>;
@@ -31972,15 +32025,15 @@ export const JobListingLocationFindFirstOrThrowZodSchema = z.object({ select: Jo
 export const JobListingLocationFindManySelectSchema__findManyJobListingLocation_schema: z.ZodType<Prisma.JobListingLocationSelect> = z.object({
     name: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    jobListing: z.boolean().optional(),
-    jobListingId: z.boolean().optional()
+    jobListingId: z.boolean().optional(),
+    jobListing: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.JobListingLocationSelect>;
 
 export const JobListingLocationFindManySelectZodSchema__findManyJobListingLocation_schema = z.object({
     name: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    jobListing: z.boolean().optional(),
-    jobListingId: z.boolean().optional()
+    jobListingId: z.boolean().optional(),
+    jobListing: z.boolean().optional()
   }).strict();
 
 export const JobListingLocationFindManySchema: z.ZodType<Prisma.JobListingLocationFindManyArgs> = z.object({ select: JobListingLocationFindManySelectSchema__findManyJobListingLocation_schema.optional(), include: z.lazy(() => JobListingLocationIncludeObjectSchema.optional()), orderBy: z.union([JobListingLocationOrderByWithRelationInputObjectSchema, JobListingLocationOrderByWithRelationInputObjectSchema.array()]).optional(), where: JobListingLocationWhereInputObjectSchema.optional(), cursor: JobListingLocationWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([JobListingLocationScalarFieldEnumSchema, JobListingLocationScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.JobListingLocationFindManyArgs>;
@@ -32249,11 +32302,11 @@ export const ArticleFindUniqueOrThrowZodSchema = z.object({ select: ArticleSelec
 
 export const ArticleFindFirstSelectSchema__findFirstArticle_schema: z.ZodType<Prisma.ArticleSelect> = z.object({
     id: z.boolean().optional(),
+    slug: z.boolean().optional(),
     title: z.boolean().optional(),
     author: z.boolean().optional(),
     photographer: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
-    slug: z.boolean().optional(),
     excerpt: z.boolean().optional(),
     content: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
@@ -32266,11 +32319,11 @@ export const ArticleFindFirstSelectSchema__findFirstArticle_schema: z.ZodType<Pr
 
 export const ArticleFindFirstSelectZodSchema__findFirstArticle_schema = z.object({
     id: z.boolean().optional(),
+    slug: z.boolean().optional(),
     title: z.boolean().optional(),
     author: z.boolean().optional(),
     photographer: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
-    slug: z.boolean().optional(),
     excerpt: z.boolean().optional(),
     content: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
@@ -32292,11 +32345,11 @@ export const ArticleFindFirstZodSchema = z.object({ select: ArticleFindFirstSele
 
 export const ArticleFindFirstOrThrowSelectSchema__findFirstOrThrowArticle_schema: z.ZodType<Prisma.ArticleSelect> = z.object({
     id: z.boolean().optional(),
+    slug: z.boolean().optional(),
     title: z.boolean().optional(),
     author: z.boolean().optional(),
     photographer: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
-    slug: z.boolean().optional(),
     excerpt: z.boolean().optional(),
     content: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
@@ -32309,11 +32362,11 @@ export const ArticleFindFirstOrThrowSelectSchema__findFirstOrThrowArticle_schema
 
 export const ArticleFindFirstOrThrowSelectZodSchema__findFirstOrThrowArticle_schema = z.object({
     id: z.boolean().optional(),
+    slug: z.boolean().optional(),
     title: z.boolean().optional(),
     author: z.boolean().optional(),
     photographer: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
-    slug: z.boolean().optional(),
     excerpt: z.boolean().optional(),
     content: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
@@ -32335,11 +32388,11 @@ export const ArticleFindFirstOrThrowZodSchema = z.object({ select: ArticleFindFi
 
 export const ArticleFindManySelectSchema__findManyArticle_schema: z.ZodType<Prisma.ArticleSelect> = z.object({
     id: z.boolean().optional(),
+    slug: z.boolean().optional(),
     title: z.boolean().optional(),
     author: z.boolean().optional(),
     photographer: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
-    slug: z.boolean().optional(),
     excerpt: z.boolean().optional(),
     content: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
@@ -32352,11 +32405,11 @@ export const ArticleFindManySelectSchema__findManyArticle_schema: z.ZodType<Pris
 
 export const ArticleFindManySelectZodSchema__findManyArticle_schema = z.object({
     id: z.boolean().optional(),
+    slug: z.boolean().optional(),
     title: z.boolean().optional(),
     author: z.boolean().optional(),
     photographer: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
-    slug: z.boolean().optional(),
     excerpt: z.boolean().optional(),
     content: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
@@ -32608,17 +32661,17 @@ export const ArticleTagLinkFindUniqueOrThrowZodSchema = z.object({ select: Artic
 //------------------------------------------------------
 
 export const ArticleTagLinkFindFirstSelectSchema__findFirstArticleTagLink_schema: z.ZodType<Prisma.ArticleTagLinkSelect> = z.object({
-    article: z.boolean().optional(),
     articleId: z.boolean().optional(),
-    tag: z.boolean().optional(),
-    tagName: z.boolean().optional()
+    tagName: z.boolean().optional(),
+    article: z.boolean().optional(),
+    tag: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.ArticleTagLinkSelect>;
 
 export const ArticleTagLinkFindFirstSelectZodSchema__findFirstArticleTagLink_schema = z.object({
-    article: z.boolean().optional(),
     articleId: z.boolean().optional(),
-    tag: z.boolean().optional(),
-    tagName: z.boolean().optional()
+    tagName: z.boolean().optional(),
+    article: z.boolean().optional(),
+    tag: z.boolean().optional()
   }).strict();
 
 export const ArticleTagLinkFindFirstSchema: z.ZodType<Prisma.ArticleTagLinkFindFirstArgs> = z.object({ select: ArticleTagLinkFindFirstSelectSchema__findFirstArticleTagLink_schema.optional(), include: z.lazy(() => ArticleTagLinkIncludeObjectSchema.optional()), orderBy: z.union([ArticleTagLinkOrderByWithRelationInputObjectSchema, ArticleTagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: ArticleTagLinkWhereInputObjectSchema.optional(), cursor: ArticleTagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ArticleTagLinkScalarFieldEnumSchema, ArticleTagLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ArticleTagLinkFindFirstArgs>;
@@ -32631,17 +32684,17 @@ export const ArticleTagLinkFindFirstZodSchema = z.object({ select: ArticleTagLin
 //------------------------------------------------------
 
 export const ArticleTagLinkFindFirstOrThrowSelectSchema__findFirstOrThrowArticleTagLink_schema: z.ZodType<Prisma.ArticleTagLinkSelect> = z.object({
-    article: z.boolean().optional(),
     articleId: z.boolean().optional(),
-    tag: z.boolean().optional(),
-    tagName: z.boolean().optional()
+    tagName: z.boolean().optional(),
+    article: z.boolean().optional(),
+    tag: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.ArticleTagLinkSelect>;
 
 export const ArticleTagLinkFindFirstOrThrowSelectZodSchema__findFirstOrThrowArticleTagLink_schema = z.object({
-    article: z.boolean().optional(),
     articleId: z.boolean().optional(),
-    tag: z.boolean().optional(),
-    tagName: z.boolean().optional()
+    tagName: z.boolean().optional(),
+    article: z.boolean().optional(),
+    tag: z.boolean().optional()
   }).strict();
 
 export const ArticleTagLinkFindFirstOrThrowSchema: z.ZodType<Prisma.ArticleTagLinkFindFirstOrThrowArgs> = z.object({ select: ArticleTagLinkFindFirstOrThrowSelectSchema__findFirstOrThrowArticleTagLink_schema.optional(), include: z.lazy(() => ArticleTagLinkIncludeObjectSchema.optional()), orderBy: z.union([ArticleTagLinkOrderByWithRelationInputObjectSchema, ArticleTagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: ArticleTagLinkWhereInputObjectSchema.optional(), cursor: ArticleTagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ArticleTagLinkScalarFieldEnumSchema, ArticleTagLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ArticleTagLinkFindFirstOrThrowArgs>;
@@ -32654,17 +32707,17 @@ export const ArticleTagLinkFindFirstOrThrowZodSchema = z.object({ select: Articl
 //------------------------------------------------------
 
 export const ArticleTagLinkFindManySelectSchema__findManyArticleTagLink_schema: z.ZodType<Prisma.ArticleTagLinkSelect> = z.object({
-    article: z.boolean().optional(),
     articleId: z.boolean().optional(),
-    tag: z.boolean().optional(),
-    tagName: z.boolean().optional()
+    tagName: z.boolean().optional(),
+    article: z.boolean().optional(),
+    tag: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.ArticleTagLinkSelect>;
 
 export const ArticleTagLinkFindManySelectZodSchema__findManyArticleTagLink_schema = z.object({
-    article: z.boolean().optional(),
     articleId: z.boolean().optional(),
-    tag: z.boolean().optional(),
-    tagName: z.boolean().optional()
+    tagName: z.boolean().optional(),
+    article: z.boolean().optional(),
+    tag: z.boolean().optional()
   }).strict();
 
 export const ArticleTagLinkFindManySchema: z.ZodType<Prisma.ArticleTagLinkFindManyArgs> = z.object({ select: ArticleTagLinkFindManySelectSchema__findManyArticleTagLink_schema.optional(), include: z.lazy(() => ArticleTagLinkIncludeObjectSchema.optional()), orderBy: z.union([ArticleTagLinkOrderByWithRelationInputObjectSchema, ArticleTagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: ArticleTagLinkWhereInputObjectSchema.optional(), cursor: ArticleTagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ArticleTagLinkScalarFieldEnumSchema, ArticleTagLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ArticleTagLinkFindManyArgs>;
@@ -32768,8 +32821,8 @@ export const TaskFindFirstSelectSchema__findFirstTask_schema: z.ZodType<Prisma.T
     createdAt: z.boolean().optional(),
     scheduledAt: z.boolean().optional(),
     processedAt: z.boolean().optional(),
-    recurringTask: z.boolean().optional(),
     recurringTaskId: z.boolean().optional(),
+    recurringTask: z.boolean().optional(),
     attendancePools: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.TaskSelect>;
@@ -32782,8 +32835,8 @@ export const TaskFindFirstSelectZodSchema__findFirstTask_schema = z.object({
     createdAt: z.boolean().optional(),
     scheduledAt: z.boolean().optional(),
     processedAt: z.boolean().optional(),
-    recurringTask: z.boolean().optional(),
     recurringTaskId: z.boolean().optional(),
+    recurringTask: z.boolean().optional(),
     attendancePools: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -32805,8 +32858,8 @@ export const TaskFindFirstOrThrowSelectSchema__findFirstOrThrowTask_schema: z.Zo
     createdAt: z.boolean().optional(),
     scheduledAt: z.boolean().optional(),
     processedAt: z.boolean().optional(),
-    recurringTask: z.boolean().optional(),
     recurringTaskId: z.boolean().optional(),
+    recurringTask: z.boolean().optional(),
     attendancePools: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.TaskSelect>;
@@ -32819,8 +32872,8 @@ export const TaskFindFirstOrThrowSelectZodSchema__findFirstOrThrowTask_schema = 
     createdAt: z.boolean().optional(),
     scheduledAt: z.boolean().optional(),
     processedAt: z.boolean().optional(),
-    recurringTask: z.boolean().optional(),
     recurringTaskId: z.boolean().optional(),
+    recurringTask: z.boolean().optional(),
     attendancePools: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -32842,8 +32895,8 @@ export const TaskFindManySelectSchema__findManyTask_schema: z.ZodType<Prisma.Tas
     createdAt: z.boolean().optional(),
     scheduledAt: z.boolean().optional(),
     processedAt: z.boolean().optional(),
-    recurringTask: z.boolean().optional(),
     recurringTaskId: z.boolean().optional(),
+    recurringTask: z.boolean().optional(),
     attendancePools: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.TaskSelect>;
@@ -32856,8 +32909,8 @@ export const TaskFindManySelectZodSchema__findManyTask_schema = z.object({
     createdAt: z.boolean().optional(),
     scheduledAt: z.boolean().optional(),
     processedAt: z.boolean().optional(),
-    recurringTask: z.boolean().optional(),
     recurringTaskId: z.boolean().optional(),
+    recurringTask: z.boolean().optional(),
     attendancePools: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -33140,12 +33193,12 @@ export const FeedbackFormFindUniqueOrThrowZodSchema = z.object({ select: Feedbac
 
 export const FeedbackFormFindFirstSelectSchema__findFirstFeedbackForm_schema: z.ZodType<Prisma.FeedbackFormSelect> = z.object({
     id: z.boolean().optional(),
-    eventId: z.boolean().optional(),
-    event: z.boolean().optional(),
     publicResultsToken: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     answerDeadline: z.boolean().optional(),
+    eventId: z.boolean().optional(),
+    event: z.boolean().optional(),
     questions: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33153,12 +33206,12 @@ export const FeedbackFormFindFirstSelectSchema__findFirstFeedbackForm_schema: z.
 
 export const FeedbackFormFindFirstSelectZodSchema__findFirstFeedbackForm_schema = z.object({
     id: z.boolean().optional(),
-    eventId: z.boolean().optional(),
-    event: z.boolean().optional(),
     publicResultsToken: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     answerDeadline: z.boolean().optional(),
+    eventId: z.boolean().optional(),
+    event: z.boolean().optional(),
     questions: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33175,12 +33228,12 @@ export const FeedbackFormFindFirstZodSchema = z.object({ select: FeedbackFormFin
 
 export const FeedbackFormFindFirstOrThrowSelectSchema__findFirstOrThrowFeedbackForm_schema: z.ZodType<Prisma.FeedbackFormSelect> = z.object({
     id: z.boolean().optional(),
-    eventId: z.boolean().optional(),
-    event: z.boolean().optional(),
     publicResultsToken: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     answerDeadline: z.boolean().optional(),
+    eventId: z.boolean().optional(),
+    event: z.boolean().optional(),
     questions: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33188,12 +33241,12 @@ export const FeedbackFormFindFirstOrThrowSelectSchema__findFirstOrThrowFeedbackF
 
 export const FeedbackFormFindFirstOrThrowSelectZodSchema__findFirstOrThrowFeedbackForm_schema = z.object({
     id: z.boolean().optional(),
-    eventId: z.boolean().optional(),
-    event: z.boolean().optional(),
     publicResultsToken: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     answerDeadline: z.boolean().optional(),
+    eventId: z.boolean().optional(),
+    event: z.boolean().optional(),
     questions: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33210,12 +33263,12 @@ export const FeedbackFormFindFirstOrThrowZodSchema = z.object({ select: Feedback
 
 export const FeedbackFormFindManySelectSchema__findManyFeedbackForm_schema: z.ZodType<Prisma.FeedbackFormSelect> = z.object({
     id: z.boolean().optional(),
-    eventId: z.boolean().optional(),
-    event: z.boolean().optional(),
     publicResultsToken: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     answerDeadline: z.boolean().optional(),
+    eventId: z.boolean().optional(),
+    event: z.boolean().optional(),
     questions: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33223,12 +33276,12 @@ export const FeedbackFormFindManySelectSchema__findManyFeedbackForm_schema: z.Zo
 
 export const FeedbackFormFindManySelectZodSchema__findManyFeedbackForm_schema = z.object({
     id: z.boolean().optional(),
-    eventId: z.boolean().optional(),
-    event: z.boolean().optional(),
     publicResultsToken: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
     answerDeadline: z.boolean().optional(),
+    eventId: z.boolean().optional(),
+    event: z.boolean().optional(),
     questions: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33329,8 +33382,6 @@ export const FeedbackQuestionFindUniqueOrThrowZodSchema = z.object({ select: Fee
 
 export const FeedbackQuestionFindFirstSelectSchema__findFirstFeedbackQuestion_schema: z.ZodType<Prisma.FeedbackQuestionSelect> = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
     label: z.boolean().optional(),
     required: z.boolean().optional(),
     showInPublicResults: z.boolean().optional(),
@@ -33338,6 +33389,8 @@ export const FeedbackQuestionFindFirstSelectSchema__findFirstFeedbackQuestion_sc
     order: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
     options: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33345,8 +33398,6 @@ export const FeedbackQuestionFindFirstSelectSchema__findFirstFeedbackQuestion_sc
 
 export const FeedbackQuestionFindFirstSelectZodSchema__findFirstFeedbackQuestion_schema = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
     label: z.boolean().optional(),
     required: z.boolean().optional(),
     showInPublicResults: z.boolean().optional(),
@@ -33354,6 +33405,8 @@ export const FeedbackQuestionFindFirstSelectZodSchema__findFirstFeedbackQuestion
     order: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
     options: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33370,8 +33423,6 @@ export const FeedbackQuestionFindFirstZodSchema = z.object({ select: FeedbackQue
 
 export const FeedbackQuestionFindFirstOrThrowSelectSchema__findFirstOrThrowFeedbackQuestion_schema: z.ZodType<Prisma.FeedbackQuestionSelect> = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
     label: z.boolean().optional(),
     required: z.boolean().optional(),
     showInPublicResults: z.boolean().optional(),
@@ -33379,6 +33430,8 @@ export const FeedbackQuestionFindFirstOrThrowSelectSchema__findFirstOrThrowFeedb
     order: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
     options: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33386,8 +33439,6 @@ export const FeedbackQuestionFindFirstOrThrowSelectSchema__findFirstOrThrowFeedb
 
 export const FeedbackQuestionFindFirstOrThrowSelectZodSchema__findFirstOrThrowFeedbackQuestion_schema = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
     label: z.boolean().optional(),
     required: z.boolean().optional(),
     showInPublicResults: z.boolean().optional(),
@@ -33395,6 +33446,8 @@ export const FeedbackQuestionFindFirstOrThrowSelectZodSchema__findFirstOrThrowFe
     order: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
     options: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33411,8 +33464,6 @@ export const FeedbackQuestionFindFirstOrThrowZodSchema = z.object({ select: Feed
 
 export const FeedbackQuestionFindManySelectSchema__findManyFeedbackQuestion_schema: z.ZodType<Prisma.FeedbackQuestionSelect> = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
     label: z.boolean().optional(),
     required: z.boolean().optional(),
     showInPublicResults: z.boolean().optional(),
@@ -33420,6 +33471,8 @@ export const FeedbackQuestionFindManySelectSchema__findManyFeedbackQuestion_sche
     order: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
     options: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33427,8 +33480,6 @@ export const FeedbackQuestionFindManySelectSchema__findManyFeedbackQuestion_sche
 
 export const FeedbackQuestionFindManySelectZodSchema__findManyFeedbackQuestion_schema = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
     label: z.boolean().optional(),
     required: z.boolean().optional(),
     showInPublicResults: z.boolean().optional(),
@@ -33436,6 +33487,8 @@ export const FeedbackQuestionFindManySelectZodSchema__findManyFeedbackQuestion_s
     order: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
     options: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -33701,22 +33754,22 @@ export const FeedbackQuestionAnswerFindUniqueOrThrowZodSchema = z.object({ selec
 
 export const FeedbackQuestionAnswerFindFirstSelectSchema__findFirstFeedbackQuestionAnswer_schema: z.ZodType<Prisma.FeedbackQuestionAnswerSelect> = z.object({
     id: z.boolean().optional(),
-    questionId: z.boolean().optional(),
-    question: z.boolean().optional(),
-    formAnswerId: z.boolean().optional(),
-    formAnswer: z.boolean().optional(),
     value: z.boolean().optional(),
+    questionId: z.boolean().optional(),
+    formAnswerId: z.boolean().optional(),
+    question: z.boolean().optional(),
+    formAnswer: z.boolean().optional(),
     selectedOptions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerSelect>;
 
 export const FeedbackQuestionAnswerFindFirstSelectZodSchema__findFirstFeedbackQuestionAnswer_schema = z.object({
     id: z.boolean().optional(),
-    questionId: z.boolean().optional(),
-    question: z.boolean().optional(),
-    formAnswerId: z.boolean().optional(),
-    formAnswer: z.boolean().optional(),
     value: z.boolean().optional(),
+    questionId: z.boolean().optional(),
+    formAnswerId: z.boolean().optional(),
+    question: z.boolean().optional(),
+    formAnswer: z.boolean().optional(),
     selectedOptions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -33732,22 +33785,22 @@ export const FeedbackQuestionAnswerFindFirstZodSchema = z.object({ select: Feedb
 
 export const FeedbackQuestionAnswerFindFirstOrThrowSelectSchema__findFirstOrThrowFeedbackQuestionAnswer_schema: z.ZodType<Prisma.FeedbackQuestionAnswerSelect> = z.object({
     id: z.boolean().optional(),
-    questionId: z.boolean().optional(),
-    question: z.boolean().optional(),
-    formAnswerId: z.boolean().optional(),
-    formAnswer: z.boolean().optional(),
     value: z.boolean().optional(),
+    questionId: z.boolean().optional(),
+    formAnswerId: z.boolean().optional(),
+    question: z.boolean().optional(),
+    formAnswer: z.boolean().optional(),
     selectedOptions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerSelect>;
 
 export const FeedbackQuestionAnswerFindFirstOrThrowSelectZodSchema__findFirstOrThrowFeedbackQuestionAnswer_schema = z.object({
     id: z.boolean().optional(),
-    questionId: z.boolean().optional(),
-    question: z.boolean().optional(),
-    formAnswerId: z.boolean().optional(),
-    formAnswer: z.boolean().optional(),
     value: z.boolean().optional(),
+    questionId: z.boolean().optional(),
+    formAnswerId: z.boolean().optional(),
+    question: z.boolean().optional(),
+    formAnswer: z.boolean().optional(),
     selectedOptions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -33763,22 +33816,22 @@ export const FeedbackQuestionAnswerFindFirstOrThrowZodSchema = z.object({ select
 
 export const FeedbackQuestionAnswerFindManySelectSchema__findManyFeedbackQuestionAnswer_schema: z.ZodType<Prisma.FeedbackQuestionAnswerSelect> = z.object({
     id: z.boolean().optional(),
-    questionId: z.boolean().optional(),
-    question: z.boolean().optional(),
-    formAnswerId: z.boolean().optional(),
-    formAnswer: z.boolean().optional(),
     value: z.boolean().optional(),
+    questionId: z.boolean().optional(),
+    formAnswerId: z.boolean().optional(),
+    question: z.boolean().optional(),
+    formAnswer: z.boolean().optional(),
     selectedOptions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerSelect>;
 
 export const FeedbackQuestionAnswerFindManySelectZodSchema__findManyFeedbackQuestionAnswer_schema = z.object({
     id: z.boolean().optional(),
-    questionId: z.boolean().optional(),
-    question: z.boolean().optional(),
-    formAnswerId: z.boolean().optional(),
-    formAnswer: z.boolean().optional(),
     value: z.boolean().optional(),
+    questionId: z.boolean().optional(),
+    formAnswerId: z.boolean().optional(),
+    question: z.boolean().optional(),
+    formAnswer: z.boolean().optional(),
     selectedOptions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -33877,17 +33930,17 @@ export const FeedbackQuestionAnswerOptionLinkFindUniqueOrThrowZodSchema = z.obje
 //------------------------------------------------------
 
 export const FeedbackQuestionAnswerOptionLinkFindFirstSelectSchema__findFirstFeedbackQuestionAnswerOptionLink_schema: z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkSelect> = z.object({
-    feedbackQuestionOption: z.boolean().optional(),
     feedbackQuestionOptionId: z.boolean().optional(),
-    feedbackQuestionAnswer: z.boolean().optional(),
-    feedbackQuestionAnswerId: z.boolean().optional()
+    feedbackQuestionAnswerId: z.boolean().optional(),
+    feedbackQuestionOption: z.boolean().optional(),
+    feedbackQuestionAnswer: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkSelect>;
 
 export const FeedbackQuestionAnswerOptionLinkFindFirstSelectZodSchema__findFirstFeedbackQuestionAnswerOptionLink_schema = z.object({
-    feedbackQuestionOption: z.boolean().optional(),
     feedbackQuestionOptionId: z.boolean().optional(),
-    feedbackQuestionAnswer: z.boolean().optional(),
-    feedbackQuestionAnswerId: z.boolean().optional()
+    feedbackQuestionAnswerId: z.boolean().optional(),
+    feedbackQuestionOption: z.boolean().optional(),
+    feedbackQuestionAnswer: z.boolean().optional()
   }).strict();
 
 export const FeedbackQuestionAnswerOptionLinkFindFirstSchema: z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkFindFirstArgs> = z.object({ select: FeedbackQuestionAnswerOptionLinkFindFirstSelectSchema__findFirstFeedbackQuestionAnswerOptionLink_schema.optional(), include: z.lazy(() => FeedbackQuestionAnswerOptionLinkIncludeObjectSchema.optional()), orderBy: z.union([FeedbackQuestionAnswerOptionLinkOrderByWithRelationInputObjectSchema, FeedbackQuestionAnswerOptionLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: FeedbackQuestionAnswerOptionLinkWhereInputObjectSchema.optional(), cursor: FeedbackQuestionAnswerOptionLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([FeedbackQuestionAnswerOptionLinkScalarFieldEnumSchema, FeedbackQuestionAnswerOptionLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkFindFirstArgs>;
@@ -33900,17 +33953,17 @@ export const FeedbackQuestionAnswerOptionLinkFindFirstZodSchema = z.object({ sel
 //------------------------------------------------------
 
 export const FeedbackQuestionAnswerOptionLinkFindFirstOrThrowSelectSchema__findFirstOrThrowFeedbackQuestionAnswerOptionLink_schema: z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkSelect> = z.object({
-    feedbackQuestionOption: z.boolean().optional(),
     feedbackQuestionOptionId: z.boolean().optional(),
-    feedbackQuestionAnswer: z.boolean().optional(),
-    feedbackQuestionAnswerId: z.boolean().optional()
+    feedbackQuestionAnswerId: z.boolean().optional(),
+    feedbackQuestionOption: z.boolean().optional(),
+    feedbackQuestionAnswer: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkSelect>;
 
 export const FeedbackQuestionAnswerOptionLinkFindFirstOrThrowSelectZodSchema__findFirstOrThrowFeedbackQuestionAnswerOptionLink_schema = z.object({
-    feedbackQuestionOption: z.boolean().optional(),
     feedbackQuestionOptionId: z.boolean().optional(),
-    feedbackQuestionAnswer: z.boolean().optional(),
-    feedbackQuestionAnswerId: z.boolean().optional()
+    feedbackQuestionAnswerId: z.boolean().optional(),
+    feedbackQuestionOption: z.boolean().optional(),
+    feedbackQuestionAnswer: z.boolean().optional()
   }).strict();
 
 export const FeedbackQuestionAnswerOptionLinkFindFirstOrThrowSchema: z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkFindFirstOrThrowArgs> = z.object({ select: FeedbackQuestionAnswerOptionLinkFindFirstOrThrowSelectSchema__findFirstOrThrowFeedbackQuestionAnswerOptionLink_schema.optional(), include: z.lazy(() => FeedbackQuestionAnswerOptionLinkIncludeObjectSchema.optional()), orderBy: z.union([FeedbackQuestionAnswerOptionLinkOrderByWithRelationInputObjectSchema, FeedbackQuestionAnswerOptionLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: FeedbackQuestionAnswerOptionLinkWhereInputObjectSchema.optional(), cursor: FeedbackQuestionAnswerOptionLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([FeedbackQuestionAnswerOptionLinkScalarFieldEnumSchema, FeedbackQuestionAnswerOptionLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkFindFirstOrThrowArgs>;
@@ -33923,17 +33976,17 @@ export const FeedbackQuestionAnswerOptionLinkFindFirstOrThrowZodSchema = z.objec
 //------------------------------------------------------
 
 export const FeedbackQuestionAnswerOptionLinkFindManySelectSchema__findManyFeedbackQuestionAnswerOptionLink_schema: z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkSelect> = z.object({
-    feedbackQuestionOption: z.boolean().optional(),
     feedbackQuestionOptionId: z.boolean().optional(),
-    feedbackQuestionAnswer: z.boolean().optional(),
-    feedbackQuestionAnswerId: z.boolean().optional()
+    feedbackQuestionAnswerId: z.boolean().optional(),
+    feedbackQuestionOption: z.boolean().optional(),
+    feedbackQuestionAnswer: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkSelect>;
 
 export const FeedbackQuestionAnswerOptionLinkFindManySelectZodSchema__findManyFeedbackQuestionAnswerOptionLink_schema = z.object({
-    feedbackQuestionOption: z.boolean().optional(),
     feedbackQuestionOptionId: z.boolean().optional(),
-    feedbackQuestionAnswer: z.boolean().optional(),
-    feedbackQuestionAnswerId: z.boolean().optional()
+    feedbackQuestionAnswerId: z.boolean().optional(),
+    feedbackQuestionOption: z.boolean().optional(),
+    feedbackQuestionAnswer: z.boolean().optional()
   }).strict();
 
 export const FeedbackQuestionAnswerOptionLinkFindManySchema: z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkFindManyArgs> = z.object({ select: FeedbackQuestionAnswerOptionLinkFindManySelectSchema__findManyFeedbackQuestionAnswerOptionLink_schema.optional(), include: z.lazy(() => FeedbackQuestionAnswerOptionLinkIncludeObjectSchema.optional()), orderBy: z.union([FeedbackQuestionAnswerOptionLinkOrderByWithRelationInputObjectSchema, FeedbackQuestionAnswerOptionLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: FeedbackQuestionAnswerOptionLinkWhereInputObjectSchema.optional(), cursor: FeedbackQuestionAnswerOptionLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([FeedbackQuestionAnswerOptionLinkScalarFieldEnumSchema, FeedbackQuestionAnswerOptionLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.FeedbackQuestionAnswerOptionLinkFindManyArgs>;
@@ -34031,24 +34084,24 @@ export const FeedbackFormAnswerFindUniqueOrThrowZodSchema = z.object({ select: F
 
 export const FeedbackFormAnswerFindFirstSelectSchema__findFirstFeedbackFormAnswer_schema: z.ZodType<Prisma.FeedbackFormAnswerSelect> = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
-    attendeeId: z.boolean().optional(),
-    attendee: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    attendeeId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
+    attendee: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackFormAnswerSelect>;
 
 export const FeedbackFormAnswerFindFirstSelectZodSchema__findFirstFeedbackFormAnswer_schema = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
-    attendeeId: z.boolean().optional(),
-    attendee: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    attendeeId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
+    attendee: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -34064,24 +34117,24 @@ export const FeedbackFormAnswerFindFirstZodSchema = z.object({ select: FeedbackF
 
 export const FeedbackFormAnswerFindFirstOrThrowSelectSchema__findFirstOrThrowFeedbackFormAnswer_schema: z.ZodType<Prisma.FeedbackFormAnswerSelect> = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
-    attendeeId: z.boolean().optional(),
-    attendee: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    attendeeId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
+    attendee: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackFormAnswerSelect>;
 
 export const FeedbackFormAnswerFindFirstOrThrowSelectZodSchema__findFirstOrThrowFeedbackFormAnswer_schema = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
-    attendeeId: z.boolean().optional(),
-    attendee: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    attendeeId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
+    attendee: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -34097,24 +34150,24 @@ export const FeedbackFormAnswerFindFirstOrThrowZodSchema = z.object({ select: Fe
 
 export const FeedbackFormAnswerFindManySelectSchema__findManyFeedbackFormAnswer_schema: z.ZodType<Prisma.FeedbackFormAnswerSelect> = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
-    attendeeId: z.boolean().optional(),
-    attendee: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    attendeeId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
+    attendee: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.FeedbackFormAnswerSelect>;
 
 export const FeedbackFormAnswerFindManySelectZodSchema__findManyFeedbackFormAnswer_schema = z.object({
     id: z.boolean().optional(),
-    feedbackFormId: z.boolean().optional(),
-    feedbackForm: z.boolean().optional(),
-    attendeeId: z.boolean().optional(),
-    attendee: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
+    feedbackFormId: z.boolean().optional(),
+    attendeeId: z.boolean().optional(),
+    feedbackForm: z.boolean().optional(),
+    attendee: z.boolean().optional(),
     answers: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
@@ -34217,11 +34270,11 @@ export const AuditLogFindFirstSelectSchema__findFirstAuditLog_schema: z.ZodType<
     tableName: z.boolean().optional(),
     rowId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     operation: z.boolean().optional(),
     rowData: z.boolean().optional(),
-    transactionId: z.boolean().optional()
+    transactionId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userId: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.AuditLogSelect>;
 
 export const AuditLogFindFirstSelectZodSchema__findFirstAuditLog_schema = z.object({
@@ -34229,11 +34282,11 @@ export const AuditLogFindFirstSelectZodSchema__findFirstAuditLog_schema = z.obje
     tableName: z.boolean().optional(),
     rowId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     operation: z.boolean().optional(),
     rowData: z.boolean().optional(),
-    transactionId: z.boolean().optional()
+    transactionId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userId: z.boolean().optional()
   }).strict();
 
 export const AuditLogFindFirstSchema: z.ZodType<Prisma.AuditLogFindFirstArgs> = z.object({ select: AuditLogFindFirstSelectSchema__findFirstAuditLog_schema.optional(), include: z.lazy(() => AuditLogIncludeObjectSchema.optional()), orderBy: z.union([AuditLogOrderByWithRelationInputObjectSchema, AuditLogOrderByWithRelationInputObjectSchema.array()]).optional(), where: AuditLogWhereInputObjectSchema.optional(), cursor: AuditLogWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([AuditLogScalarFieldEnumSchema, AuditLogScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.AuditLogFindFirstArgs>;
@@ -34250,11 +34303,11 @@ export const AuditLogFindFirstOrThrowSelectSchema__findFirstOrThrowAuditLog_sche
     tableName: z.boolean().optional(),
     rowId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     operation: z.boolean().optional(),
     rowData: z.boolean().optional(),
-    transactionId: z.boolean().optional()
+    transactionId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userId: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.AuditLogSelect>;
 
 export const AuditLogFindFirstOrThrowSelectZodSchema__findFirstOrThrowAuditLog_schema = z.object({
@@ -34262,11 +34315,11 @@ export const AuditLogFindFirstOrThrowSelectZodSchema__findFirstOrThrowAuditLog_s
     tableName: z.boolean().optional(),
     rowId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     operation: z.boolean().optional(),
     rowData: z.boolean().optional(),
-    transactionId: z.boolean().optional()
+    transactionId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userId: z.boolean().optional()
   }).strict();
 
 export const AuditLogFindFirstOrThrowSchema: z.ZodType<Prisma.AuditLogFindFirstOrThrowArgs> = z.object({ select: AuditLogFindFirstOrThrowSelectSchema__findFirstOrThrowAuditLog_schema.optional(), include: z.lazy(() => AuditLogIncludeObjectSchema.optional()), orderBy: z.union([AuditLogOrderByWithRelationInputObjectSchema, AuditLogOrderByWithRelationInputObjectSchema.array()]).optional(), where: AuditLogWhereInputObjectSchema.optional(), cursor: AuditLogWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([AuditLogScalarFieldEnumSchema, AuditLogScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.AuditLogFindFirstOrThrowArgs>;
@@ -34283,11 +34336,11 @@ export const AuditLogFindManySelectSchema__findManyAuditLog_schema: z.ZodType<Pr
     tableName: z.boolean().optional(),
     rowId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     operation: z.boolean().optional(),
     rowData: z.boolean().optional(),
-    transactionId: z.boolean().optional()
+    transactionId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userId: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.AuditLogSelect>;
 
 export const AuditLogFindManySelectZodSchema__findManyAuditLog_schema = z.object({
@@ -34295,11 +34348,11 @@ export const AuditLogFindManySelectZodSchema__findManyAuditLog_schema = z.object
     tableName: z.boolean().optional(),
     rowId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
-    user: z.boolean().optional(),
-    userId: z.boolean().optional(),
     operation: z.boolean().optional(),
     rowData: z.boolean().optional(),
-    transactionId: z.boolean().optional()
+    transactionId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userId: z.boolean().optional()
   }).strict();
 
 export const AuditLogFindManySchema: z.ZodType<Prisma.AuditLogFindManyArgs> = z.object({ select: AuditLogFindManySelectSchema__findManyAuditLog_schema.optional(), include: z.lazy(() => AuditLogIncludeObjectSchema.optional()), orderBy: z.union([AuditLogOrderByWithRelationInputObjectSchema, AuditLogOrderByWithRelationInputObjectSchema.array()]).optional(), where: AuditLogWhereInputObjectSchema.optional(), cursor: AuditLogWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([AuditLogScalarFieldEnumSchema, AuditLogScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.AuditLogFindManyArgs>;
@@ -34403,8 +34456,8 @@ export const DeregisterReasonFindFirstSelectSchema__findFirstDeregisterReason_sc
     details: z.boolean().optional(),
     userGrade: z.boolean().optional(),
     userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     eventId: z.boolean().optional(),
+    user: z.boolean().optional(),
     event: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.DeregisterReasonSelect>;
 
@@ -34416,8 +34469,8 @@ export const DeregisterReasonFindFirstSelectZodSchema__findFirstDeregisterReason
     details: z.boolean().optional(),
     userGrade: z.boolean().optional(),
     userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     eventId: z.boolean().optional(),
+    user: z.boolean().optional(),
     event: z.boolean().optional()
   }).strict();
 
@@ -34438,8 +34491,8 @@ export const DeregisterReasonFindFirstOrThrowSelectSchema__findFirstOrThrowDereg
     details: z.boolean().optional(),
     userGrade: z.boolean().optional(),
     userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     eventId: z.boolean().optional(),
+    user: z.boolean().optional(),
     event: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.DeregisterReasonSelect>;
 
@@ -34451,8 +34504,8 @@ export const DeregisterReasonFindFirstOrThrowSelectZodSchema__findFirstOrThrowDe
     details: z.boolean().optional(),
     userGrade: z.boolean().optional(),
     userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     eventId: z.boolean().optional(),
+    user: z.boolean().optional(),
     event: z.boolean().optional()
   }).strict();
 
@@ -34473,8 +34526,8 @@ export const DeregisterReasonFindManySelectSchema__findManyDeregisterReason_sche
     details: z.boolean().optional(),
     userGrade: z.boolean().optional(),
     userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     eventId: z.boolean().optional(),
+    user: z.boolean().optional(),
     event: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.DeregisterReasonSelect>;
 
@@ -34486,8 +34539,8 @@ export const DeregisterReasonFindManySelectZodSchema__findManyDeregisterReason_s
     details: z.boolean().optional(),
     userGrade: z.boolean().optional(),
     userId: z.boolean().optional(),
-    user: z.boolean().optional(),
     eventId: z.boolean().optional(),
+    user: z.boolean().optional(),
     event: z.boolean().optional()
   }).strict();
 
@@ -35662,28 +35715,28 @@ export const GroupCountResultSchema = z.number();
 // File: GroupMembershipFindUniqueResult.schema.ts
 export const GroupMembershipFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
-  userId: z.string(),
-  user: z.unknown(),
   start: z.date(),
   end: z.date().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
+  group: z.unknown(),
+  user: z.unknown(),
   roles: z.array(z.unknown())
 }));
 
 // File: GroupMembershipFindFirstResult.schema.ts
 export const GroupMembershipFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
-  userId: z.string(),
-  user: z.unknown(),
   start: z.date(),
   end: z.date().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
+  group: z.unknown(),
+  user: z.unknown(),
   roles: z.array(z.unknown())
 }));
 
@@ -35691,14 +35744,14 @@ export const GroupMembershipFindFirstResultSchema = z.nullable(z.object({
 export const GroupMembershipFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
-  userId: z.string(),
-  user: z.unknown(),
   start: z.date(),
   end: z.date().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
+  group: z.unknown(),
+  user: z.unknown(),
   roles: z.array(z.unknown())
 })),
   pagination: z.object({
@@ -35714,14 +35767,14 @@ export const GroupMembershipFindManyResultSchema = z.object({
 // File: GroupMembershipCreateResult.schema.ts
 export const GroupMembershipCreateResultSchema = z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
-  userId: z.string(),
-  user: z.unknown(),
   start: z.date(),
   end: z.date().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
+  group: z.unknown(),
+  user: z.unknown(),
   roles: z.array(z.unknown())
 });
 
@@ -35733,14 +35786,14 @@ export const GroupMembershipCreateManyResultSchema = z.object({
 // File: GroupMembershipUpdateResult.schema.ts
 export const GroupMembershipUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
-  userId: z.string(),
-  user: z.unknown(),
   start: z.date(),
   end: z.date().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
+  group: z.unknown(),
+  user: z.unknown(),
   roles: z.array(z.unknown())
 }));
 
@@ -35752,28 +35805,28 @@ export const GroupMembershipUpdateManyResultSchema = z.object({
 // File: GroupMembershipUpsertResult.schema.ts
 export const GroupMembershipUpsertResultSchema = z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
-  userId: z.string(),
-  user: z.unknown(),
   start: z.date(),
   end: z.date().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
+  group: z.unknown(),
+  user: z.unknown(),
   roles: z.array(z.unknown())
 });
 
 // File: GroupMembershipDeleteResult.schema.ts
 export const GroupMembershipDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
-  userId: z.string(),
-  user: z.unknown(),
   start: z.date(),
   end: z.date().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
+  group: z.unknown(),
+  user: z.unknown(),
   roles: z.array(z.unknown())
 }));
 
@@ -35785,73 +35838,73 @@ export const GroupMembershipDeleteManyResultSchema = z.object({
 // File: GroupMembershipAggregateResult.schema.ts
 export const GroupMembershipAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
-    groupId: z.number(),
-    group: z.number(),
-    userId: z.number(),
-    user: z.number(),
     start: z.number(),
     end: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    groupId: z.number(),
+    userId: z.number(),
+    group: z.number(),
+    user: z.number(),
     roles: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    groupId: z.string().nullable(),
-    userId: z.string().nullable(),
     start: z.date().nullable(),
     end: z.date().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    groupId: z.string().nullable(),
+    userId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    groupId: z.string().nullable(),
-    userId: z.string().nullable(),
     start: z.date().nullable(),
     end: z.date().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    groupId: z.string().nullable(),
+    userId: z.string().nullable()
   }).nullable().optional()});
 
 // File: GroupMembershipGroupByResult.schema.ts
 export const GroupMembershipGroupByResultSchema = z.array(z.object({
   id: z.string(),
-  groupId: z.string(),
-  userId: z.string(),
   start: z.date(),
   end: z.date(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
   _count: z.object({
     id: z.number(),
-    groupId: z.number(),
-    group: z.number(),
-    userId: z.number(),
-    user: z.number(),
     start: z.number(),
     end: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    groupId: z.number(),
+    userId: z.number(),
+    group: z.number(),
+    user: z.number(),
     roles: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    groupId: z.string().nullable(),
-    userId: z.string().nullable(),
     start: z.date().nullable(),
     end: z.date().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    groupId: z.string().nullable(),
+    userId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    groupId: z.string().nullable(),
-    userId: z.string().nullable(),
     start: z.date().nullable(),
     end: z.date().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    groupId: z.string().nullable(),
+    userId: z.string().nullable()
   }).nullable().optional()
 }));
 
@@ -35861,16 +35914,16 @@ export const GroupMembershipCountResultSchema = z.number();
 // File: GroupMembershipRoleFindUniqueResult.schema.ts
 export const GroupMembershipRoleFindUniqueResultSchema = z.nullable(z.object({
   membershipId: z.string(),
-  membership: z.unknown(),
   roleId: z.string(),
+  membership: z.unknown(),
   role: z.unknown()
 }));
 
 // File: GroupMembershipRoleFindFirstResult.schema.ts
 export const GroupMembershipRoleFindFirstResultSchema = z.nullable(z.object({
   membershipId: z.string(),
-  membership: z.unknown(),
   roleId: z.string(),
+  membership: z.unknown(),
   role: z.unknown()
 }));
 
@@ -35878,8 +35931,8 @@ export const GroupMembershipRoleFindFirstResultSchema = z.nullable(z.object({
 export const GroupMembershipRoleFindManyResultSchema = z.object({
   data: z.array(z.object({
   membershipId: z.string(),
-  membership: z.unknown(),
   roleId: z.string(),
+  membership: z.unknown(),
   role: z.unknown()
 })),
   pagination: z.object({
@@ -35895,8 +35948,8 @@ export const GroupMembershipRoleFindManyResultSchema = z.object({
 // File: GroupMembershipRoleCreateResult.schema.ts
 export const GroupMembershipRoleCreateResultSchema = z.object({
   membershipId: z.string(),
-  membership: z.unknown(),
   roleId: z.string(),
+  membership: z.unknown(),
   role: z.unknown()
 });
 
@@ -35908,8 +35961,8 @@ export const GroupMembershipRoleCreateManyResultSchema = z.object({
 // File: GroupMembershipRoleUpdateResult.schema.ts
 export const GroupMembershipRoleUpdateResultSchema = z.nullable(z.object({
   membershipId: z.string(),
-  membership: z.unknown(),
   roleId: z.string(),
+  membership: z.unknown(),
   role: z.unknown()
 }));
 
@@ -35921,16 +35974,16 @@ export const GroupMembershipRoleUpdateManyResultSchema = z.object({
 // File: GroupMembershipRoleUpsertResult.schema.ts
 export const GroupMembershipRoleUpsertResultSchema = z.object({
   membershipId: z.string(),
-  membership: z.unknown(),
   roleId: z.string(),
+  membership: z.unknown(),
   role: z.unknown()
 });
 
 // File: GroupMembershipRoleDeleteResult.schema.ts
 export const GroupMembershipRoleDeleteResultSchema = z.nullable(z.object({
   membershipId: z.string(),
-  membership: z.unknown(),
   roleId: z.string(),
+  membership: z.unknown(),
   role: z.unknown()
 }));
 
@@ -35942,8 +35995,8 @@ export const GroupMembershipRoleDeleteManyResultSchema = z.object({
 // File: GroupMembershipRoleAggregateResult.schema.ts
 export const GroupMembershipRoleAggregateResultSchema = z.object({  _count: z.object({
     membershipId: z.number(),
-    membership: z.number(),
     roleId: z.number(),
+    membership: z.number(),
     role: z.number()
   }).optional(),
   _min: z.object({
@@ -35961,8 +36014,8 @@ export const GroupMembershipRoleGroupByResultSchema = z.array(z.object({
   roleId: z.string(),
   _count: z.object({
     membershipId: z.number(),
-    membership: z.number(),
     roleId: z.number(),
+    membership: z.number(),
     role: z.number()
   }).optional(),
   _min: z.object({
@@ -35981,20 +36034,20 @@ export const GroupMembershipRoleCountResultSchema = z.number();
 // File: GroupRoleFindUniqueResult.schema.ts
 export const GroupRoleFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
   name: z.string(),
   type: z.unknown(),
+  groupId: z.string(),
+  group: z.unknown(),
   groupMembershipRoles: z.array(z.unknown())
 }));
 
 // File: GroupRoleFindFirstResult.schema.ts
 export const GroupRoleFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
   name: z.string(),
   type: z.unknown(),
+  groupId: z.string(),
+  group: z.unknown(),
   groupMembershipRoles: z.array(z.unknown())
 }));
 
@@ -36002,10 +36055,10 @@ export const GroupRoleFindFirstResultSchema = z.nullable(z.object({
 export const GroupRoleFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
   name: z.string(),
   type: z.unknown(),
+  groupId: z.string(),
+  group: z.unknown(),
   groupMembershipRoles: z.array(z.unknown())
 })),
   pagination: z.object({
@@ -36021,10 +36074,10 @@ export const GroupRoleFindManyResultSchema = z.object({
 // File: GroupRoleCreateResult.schema.ts
 export const GroupRoleCreateResultSchema = z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
   name: z.string(),
   type: z.unknown(),
+  groupId: z.string(),
+  group: z.unknown(),
   groupMembershipRoles: z.array(z.unknown())
 });
 
@@ -36036,10 +36089,10 @@ export const GroupRoleCreateManyResultSchema = z.object({
 // File: GroupRoleUpdateResult.schema.ts
 export const GroupRoleUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
   name: z.string(),
   type: z.unknown(),
+  groupId: z.string(),
+  group: z.unknown(),
   groupMembershipRoles: z.array(z.unknown())
 }));
 
@@ -36051,20 +36104,20 @@ export const GroupRoleUpdateManyResultSchema = z.object({
 // File: GroupRoleUpsertResult.schema.ts
 export const GroupRoleUpsertResultSchema = z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
   name: z.string(),
   type: z.unknown(),
+  groupId: z.string(),
+  group: z.unknown(),
   groupMembershipRoles: z.array(z.unknown())
 });
 
 // File: GroupRoleDeleteResult.schema.ts
 export const GroupRoleDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  groupId: z.string(),
-  group: z.unknown(),
   name: z.string(),
   type: z.unknown(),
+  groupId: z.string(),
+  group: z.unknown(),
   groupMembershipRoles: z.array(z.unknown())
 }));
 
@@ -36076,45 +36129,45 @@ export const GroupRoleDeleteManyResultSchema = z.object({
 // File: GroupRoleAggregateResult.schema.ts
 export const GroupRoleAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
-    groupId: z.number(),
-    group: z.number(),
     name: z.number(),
     type: z.number(),
+    groupId: z.number(),
+    group: z.number(),
     groupMembershipRoles: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    groupId: z.string().nullable(),
-    name: z.string().nullable()
+    name: z.string().nullable(),
+    groupId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    groupId: z.string().nullable(),
-    name: z.string().nullable()
+    name: z.string().nullable(),
+    groupId: z.string().nullable()
   }).nullable().optional()});
 
 // File: GroupRoleGroupByResult.schema.ts
 export const GroupRoleGroupByResultSchema = z.array(z.object({
   id: z.string(),
-  groupId: z.string(),
   name: z.string(),
+  groupId: z.string(),
   _count: z.object({
     id: z.number(),
-    groupId: z.number(),
-    group: z.number(),
     name: z.number(),
     type: z.number(),
+    groupId: z.number(),
+    group: z.number(),
     groupMembershipRoles: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    groupId: z.string().nullable(),
-    name: z.string().nullable()
+    name: z.string().nullable(),
+    groupId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    groupId: z.string().nullable(),
-    name: z.string().nullable()
+    name: z.string().nullable(),
+    groupId: z.string().nullable()
   }).nullable().optional()
 }));
 
@@ -36352,8 +36405,8 @@ export const AttendancePoolFindUniqueResultSchema = z.nullable(z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
-  attendance: z.unknown(),
   taskId: z.string().optional(),
+  attendance: z.unknown(),
   task: z.unknown().optional(),
   attendees: z.array(z.unknown())
 }));
@@ -36368,8 +36421,8 @@ export const AttendancePoolFindFirstResultSchema = z.nullable(z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
-  attendance: z.unknown(),
   taskId: z.string().optional(),
+  attendance: z.unknown(),
   task: z.unknown().optional(),
   attendees: z.array(z.unknown())
 }));
@@ -36385,8 +36438,8 @@ export const AttendancePoolFindManyResultSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
-  attendance: z.unknown(),
   taskId: z.string().optional(),
+  attendance: z.unknown(),
   task: z.unknown().optional(),
   attendees: z.array(z.unknown())
 })),
@@ -36410,8 +36463,8 @@ export const AttendancePoolCreateResultSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
-  attendance: z.unknown(),
   taskId: z.string().optional(),
+  attendance: z.unknown(),
   task: z.unknown().optional(),
   attendees: z.array(z.unknown())
 });
@@ -36431,8 +36484,8 @@ export const AttendancePoolUpdateResultSchema = z.nullable(z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
-  attendance: z.unknown(),
   taskId: z.string().optional(),
+  attendance: z.unknown(),
   task: z.unknown().optional(),
   attendees: z.array(z.unknown())
 }));
@@ -36452,8 +36505,8 @@ export const AttendancePoolUpsertResultSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
-  attendance: z.unknown(),
   taskId: z.string().optional(),
+  attendance: z.unknown(),
   task: z.unknown().optional(),
   attendees: z.array(z.unknown())
 });
@@ -36468,8 +36521,8 @@ export const AttendancePoolDeleteResultSchema = z.nullable(z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
-  attendance: z.unknown(),
   taskId: z.string().optional(),
+  attendance: z.unknown(),
   task: z.unknown().optional(),
   attendees: z.array(z.unknown())
 }));
@@ -36489,8 +36542,8 @@ export const AttendancePoolAggregateResultSchema = z.object({  _count: z.object(
     createdAt: z.number(),
     updatedAt: z.number(),
     attendanceId: z.number(),
-    attendance: z.number(),
     taskId: z.number(),
+    attendance: z.number(),
     task: z.number(),
     attendees: z.number()
   }).optional(),
@@ -36543,8 +36596,8 @@ export const AttendancePoolGroupByResultSchema = z.array(z.object({
     createdAt: z.number(),
     updatedAt: z.number(),
     attendanceId: z.number(),
-    attendance: z.number(),
     taskId: z.number(),
+    attendance: z.number(),
     task: z.number(),
     attendees: z.number()
   }).optional(),
@@ -36584,13 +36637,7 @@ export const AttendancePoolCountResultSchema = z.number();
 // File: AttendeeFindUniqueResult.schema.ts
 export const AttendeeFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  attendance: z.unknown(),
-  attendanceId: z.string(),
-  user: z.unknown(),
-  userId: z.string(),
   userGrade: z.number().int().optional(),
-  attendancePool: z.unknown(),
-  attendancePoolId: z.string(),
   feedbackFormAnswer: z.unknown().optional(),
   selections: z.unknown(),
   reserved: z.boolean(),
@@ -36605,20 +36652,21 @@ export const AttendeeFindUniqueResultSchema = z.nullable(z.object({
   paymentChargeDeadline: z.date().optional(),
   paymentChargedAt: z.date().optional(),
   paymentRefundedAt: z.date().optional(),
+  paymentCheckoutUrl: z.string().optional(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional(),
+  attendance: z.unknown(),
+  user: z.unknown(),
+  attendancePool: z.unknown(),
   paymentRefundedBy: z.unknown().optional()
 }));
 
 // File: AttendeeFindFirstResult.schema.ts
 export const AttendeeFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  attendance: z.unknown(),
-  attendanceId: z.string(),
-  user: z.unknown(),
-  userId: z.string(),
   userGrade: z.number().int().optional(),
-  attendancePool: z.unknown(),
-  attendancePoolId: z.string(),
   feedbackFormAnswer: z.unknown().optional(),
   selections: z.unknown(),
   reserved: z.boolean(),
@@ -36633,7 +36681,14 @@ export const AttendeeFindFirstResultSchema = z.nullable(z.object({
   paymentChargeDeadline: z.date().optional(),
   paymentChargedAt: z.date().optional(),
   paymentRefundedAt: z.date().optional(),
+  paymentCheckoutUrl: z.string().optional(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional(),
+  attendance: z.unknown(),
+  user: z.unknown(),
+  attendancePool: z.unknown(),
   paymentRefundedBy: z.unknown().optional()
 }));
 
@@ -36641,13 +36696,7 @@ export const AttendeeFindFirstResultSchema = z.nullable(z.object({
 export const AttendeeFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  attendance: z.unknown(),
-  attendanceId: z.string(),
-  user: z.unknown(),
-  userId: z.string(),
   userGrade: z.number().int().optional(),
-  attendancePool: z.unknown(),
-  attendancePoolId: z.string(),
   feedbackFormAnswer: z.unknown().optional(),
   selections: z.unknown(),
   reserved: z.boolean(),
@@ -36662,7 +36711,14 @@ export const AttendeeFindManyResultSchema = z.object({
   paymentChargeDeadline: z.date().optional(),
   paymentChargedAt: z.date().optional(),
   paymentRefundedAt: z.date().optional(),
+  paymentCheckoutUrl: z.string().optional(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional(),
+  attendance: z.unknown(),
+  user: z.unknown(),
+  attendancePool: z.unknown(),
   paymentRefundedBy: z.unknown().optional()
 })),
   pagination: z.object({
@@ -36678,13 +36734,7 @@ export const AttendeeFindManyResultSchema = z.object({
 // File: AttendeeCreateResult.schema.ts
 export const AttendeeCreateResultSchema = z.object({
   id: z.string(),
-  attendance: z.unknown(),
-  attendanceId: z.string(),
-  user: z.unknown(),
-  userId: z.string(),
   userGrade: z.number().int().optional(),
-  attendancePool: z.unknown(),
-  attendancePoolId: z.string(),
   feedbackFormAnswer: z.unknown().optional(),
   selections: z.unknown(),
   reserved: z.boolean(),
@@ -36699,7 +36749,14 @@ export const AttendeeCreateResultSchema = z.object({
   paymentChargeDeadline: z.date().optional(),
   paymentChargedAt: z.date().optional(),
   paymentRefundedAt: z.date().optional(),
+  paymentCheckoutUrl: z.string().optional(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional(),
+  attendance: z.unknown(),
+  user: z.unknown(),
+  attendancePool: z.unknown(),
   paymentRefundedBy: z.unknown().optional()
 });
 
@@ -36711,13 +36768,7 @@ export const AttendeeCreateManyResultSchema = z.object({
 // File: AttendeeUpdateResult.schema.ts
 export const AttendeeUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  attendance: z.unknown(),
-  attendanceId: z.string(),
-  user: z.unknown(),
-  userId: z.string(),
   userGrade: z.number().int().optional(),
-  attendancePool: z.unknown(),
-  attendancePoolId: z.string(),
   feedbackFormAnswer: z.unknown().optional(),
   selections: z.unknown(),
   reserved: z.boolean(),
@@ -36732,7 +36783,14 @@ export const AttendeeUpdateResultSchema = z.nullable(z.object({
   paymentChargeDeadline: z.date().optional(),
   paymentChargedAt: z.date().optional(),
   paymentRefundedAt: z.date().optional(),
+  paymentCheckoutUrl: z.string().optional(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional(),
+  attendance: z.unknown(),
+  user: z.unknown(),
+  attendancePool: z.unknown(),
   paymentRefundedBy: z.unknown().optional()
 }));
 
@@ -36744,13 +36802,7 @@ export const AttendeeUpdateManyResultSchema = z.object({
 // File: AttendeeUpsertResult.schema.ts
 export const AttendeeUpsertResultSchema = z.object({
   id: z.string(),
-  attendance: z.unknown(),
-  attendanceId: z.string(),
-  user: z.unknown(),
-  userId: z.string(),
   userGrade: z.number().int().optional(),
-  attendancePool: z.unknown(),
-  attendancePoolId: z.string(),
   feedbackFormAnswer: z.unknown().optional(),
   selections: z.unknown(),
   reserved: z.boolean(),
@@ -36765,20 +36817,21 @@ export const AttendeeUpsertResultSchema = z.object({
   paymentChargeDeadline: z.date().optional(),
   paymentChargedAt: z.date().optional(),
   paymentRefundedAt: z.date().optional(),
+  paymentCheckoutUrl: z.string().optional(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional(),
+  attendance: z.unknown(),
+  user: z.unknown(),
+  attendancePool: z.unknown(),
   paymentRefundedBy: z.unknown().optional()
 });
 
 // File: AttendeeDeleteResult.schema.ts
 export const AttendeeDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  attendance: z.unknown(),
-  attendanceId: z.string(),
-  user: z.unknown(),
-  userId: z.string(),
   userGrade: z.number().int().optional(),
-  attendancePool: z.unknown(),
-  attendancePoolId: z.string(),
   feedbackFormAnswer: z.unknown().optional(),
   selections: z.unknown(),
   reserved: z.boolean(),
@@ -36793,7 +36846,14 @@ export const AttendeeDeleteResultSchema = z.nullable(z.object({
   paymentChargeDeadline: z.date().optional(),
   paymentChargedAt: z.date().optional(),
   paymentRefundedAt: z.date().optional(),
+  paymentCheckoutUrl: z.string().optional(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().optional(),
+  attendance: z.unknown(),
+  user: z.unknown(),
+  attendancePool: z.unknown(),
   paymentRefundedBy: z.unknown().optional()
 }));
 
@@ -36805,13 +36865,7 @@ export const AttendeeDeleteManyResultSchema = z.object({
 // File: AttendeeAggregateResult.schema.ts
 export const AttendeeAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
-    attendance: z.number(),
-    attendanceId: z.number(),
-    user: z.number(),
-    userId: z.number(),
     userGrade: z.number(),
-    attendancePool: z.number(),
-    attendancePoolId: z.number(),
     feedbackFormAnswer: z.number(),
     selections: z.number(),
     reserved: z.number(),
@@ -36826,7 +36880,14 @@ export const AttendeeAggregateResultSchema = z.object({  _count: z.object({
     paymentChargeDeadline: z.number(),
     paymentChargedAt: z.number(),
     paymentRefundedAt: z.number(),
+    paymentCheckoutUrl: z.number(),
+    attendanceId: z.number(),
+    userId: z.number(),
+    attendancePoolId: z.number(),
     paymentRefundedById: z.number(),
+    attendance: z.number(),
+    user: z.number(),
+    attendancePool: z.number(),
     paymentRefundedBy: z.number()
   }).optional(),
   _sum: z.object({
@@ -36837,10 +36898,7 @@ export const AttendeeAggregateResultSchema = z.object({  _count: z.object({
   }).nullable().optional(),
   _min: z.object({
     id: z.string().nullable(),
-    attendanceId: z.string().nullable(),
-    userId: z.string().nullable(),
     userGrade: z.number().int().nullable(),
-    attendancePoolId: z.string().nullable(),
     earliestReservationAt: z.date().nullable(),
     attendedAt: z.date().nullable(),
     createdAt: z.date().nullable(),
@@ -36852,14 +36910,15 @@ export const AttendeeAggregateResultSchema = z.object({  _count: z.object({
     paymentChargeDeadline: z.date().nullable(),
     paymentChargedAt: z.date().nullable(),
     paymentRefundedAt: z.date().nullable(),
+    paymentCheckoutUrl: z.string().nullable(),
+    attendanceId: z.string().nullable(),
+    userId: z.string().nullable(),
+    attendancePoolId: z.string().nullable(),
     paymentRefundedById: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    attendanceId: z.string().nullable(),
-    userId: z.string().nullable(),
     userGrade: z.number().int().nullable(),
-    attendancePoolId: z.string().nullable(),
     earliestReservationAt: z.date().nullable(),
     attendedAt: z.date().nullable(),
     createdAt: z.date().nullable(),
@@ -36871,16 +36930,17 @@ export const AttendeeAggregateResultSchema = z.object({  _count: z.object({
     paymentChargeDeadline: z.date().nullable(),
     paymentChargedAt: z.date().nullable(),
     paymentRefundedAt: z.date().nullable(),
+    paymentCheckoutUrl: z.string().nullable(),
+    attendanceId: z.string().nullable(),
+    userId: z.string().nullable(),
+    attendancePoolId: z.string().nullable(),
     paymentRefundedById: z.string().nullable()
   }).nullable().optional()});
 
 // File: AttendeeGroupByResult.schema.ts
 export const AttendeeGroupByResultSchema = z.array(z.object({
   id: z.string(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int(),
-  attendancePoolId: z.string(),
   selections: z.unknown(),
   reserved: z.boolean(),
   earliestReservationAt: z.date(),
@@ -36894,16 +36954,14 @@ export const AttendeeGroupByResultSchema = z.array(z.object({
   paymentChargeDeadline: z.date(),
   paymentChargedAt: z.date(),
   paymentRefundedAt: z.date(),
+  paymentCheckoutUrl: z.string(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string(),
   _count: z.object({
     id: z.number(),
-    attendance: z.number(),
-    attendanceId: z.number(),
-    user: z.number(),
-    userId: z.number(),
     userGrade: z.number(),
-    attendancePool: z.number(),
-    attendancePoolId: z.number(),
     feedbackFormAnswer: z.number(),
     selections: z.number(),
     reserved: z.number(),
@@ -36918,7 +36976,14 @@ export const AttendeeGroupByResultSchema = z.array(z.object({
     paymentChargeDeadline: z.number(),
     paymentChargedAt: z.number(),
     paymentRefundedAt: z.number(),
+    paymentCheckoutUrl: z.number(),
+    attendanceId: z.number(),
+    userId: z.number(),
+    attendancePoolId: z.number(),
     paymentRefundedById: z.number(),
+    attendance: z.number(),
+    user: z.number(),
+    attendancePool: z.number(),
     paymentRefundedBy: z.number()
   }).optional(),
   _sum: z.object({
@@ -36929,10 +36994,7 @@ export const AttendeeGroupByResultSchema = z.array(z.object({
   }).nullable().optional(),
   _min: z.object({
     id: z.string().nullable(),
-    attendanceId: z.string().nullable(),
-    userId: z.string().nullable(),
     userGrade: z.number().int().nullable(),
-    attendancePoolId: z.string().nullable(),
     earliestReservationAt: z.date().nullable(),
     attendedAt: z.date().nullable(),
     createdAt: z.date().nullable(),
@@ -36944,14 +37006,15 @@ export const AttendeeGroupByResultSchema = z.array(z.object({
     paymentChargeDeadline: z.date().nullable(),
     paymentChargedAt: z.date().nullable(),
     paymentRefundedAt: z.date().nullable(),
+    paymentCheckoutUrl: z.string().nullable(),
+    attendanceId: z.string().nullable(),
+    userId: z.string().nullable(),
+    attendancePoolId: z.string().nullable(),
     paymentRefundedById: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    attendanceId: z.string().nullable(),
-    userId: z.string().nullable(),
     userGrade: z.number().int().nullable(),
-    attendancePoolId: z.string().nullable(),
     earliestReservationAt: z.date().nullable(),
     attendedAt: z.date().nullable(),
     createdAt: z.date().nullable(),
@@ -36963,6 +37026,10 @@ export const AttendeeGroupByResultSchema = z.array(z.object({
     paymentChargeDeadline: z.date().nullable(),
     paymentChargedAt: z.date().nullable(),
     paymentRefundedAt: z.date().nullable(),
+    paymentCheckoutUrl: z.string().nullable(),
+    attendanceId: z.string().nullable(),
+    userId: z.string().nullable(),
+    attendancePoolId: z.string().nullable(),
     paymentRefundedById: z.string().nullable()
   }).nullable().optional()
 }));
@@ -36983,14 +37050,14 @@ export const EventFindUniqueResultSchema = z.nullable(z.object({
   locationTitle: z.string().optional(),
   locationAddress: z.string().optional(),
   locationLink: z.string().optional(),
-  attendance: z.unknown().optional(),
-  attendanceId: z.string().optional(),
   type: z.unknown(),
   feedbackForm: z.unknown().optional(),
   markForMissedAttendance: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string().optional(),
   parentId: z.string().optional(),
+  attendance: z.unknown().optional(),
   parent: z.unknown().optional(),
   children: z.array(z.unknown()),
   companies: z.array(z.unknown()),
@@ -37012,14 +37079,14 @@ export const EventFindFirstResultSchema = z.nullable(z.object({
   locationTitle: z.string().optional(),
   locationAddress: z.string().optional(),
   locationLink: z.string().optional(),
-  attendance: z.unknown().optional(),
-  attendanceId: z.string().optional(),
   type: z.unknown(),
   feedbackForm: z.unknown().optional(),
   markForMissedAttendance: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string().optional(),
   parentId: z.string().optional(),
+  attendance: z.unknown().optional(),
   parent: z.unknown().optional(),
   children: z.array(z.unknown()),
   companies: z.array(z.unknown()),
@@ -37042,14 +37109,14 @@ export const EventFindManyResultSchema = z.object({
   locationTitle: z.string().optional(),
   locationAddress: z.string().optional(),
   locationLink: z.string().optional(),
-  attendance: z.unknown().optional(),
-  attendanceId: z.string().optional(),
   type: z.unknown(),
   feedbackForm: z.unknown().optional(),
   markForMissedAttendance: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string().optional(),
   parentId: z.string().optional(),
+  attendance: z.unknown().optional(),
   parent: z.unknown().optional(),
   children: z.array(z.unknown()),
   companies: z.array(z.unknown()),
@@ -37080,14 +37147,14 @@ export const EventCreateResultSchema = z.object({
   locationTitle: z.string().optional(),
   locationAddress: z.string().optional(),
   locationLink: z.string().optional(),
-  attendance: z.unknown().optional(),
-  attendanceId: z.string().optional(),
   type: z.unknown(),
   feedbackForm: z.unknown().optional(),
   markForMissedAttendance: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string().optional(),
   parentId: z.string().optional(),
+  attendance: z.unknown().optional(),
   parent: z.unknown().optional(),
   children: z.array(z.unknown()),
   companies: z.array(z.unknown()),
@@ -37114,14 +37181,14 @@ export const EventUpdateResultSchema = z.nullable(z.object({
   locationTitle: z.string().optional(),
   locationAddress: z.string().optional(),
   locationLink: z.string().optional(),
-  attendance: z.unknown().optional(),
-  attendanceId: z.string().optional(),
   type: z.unknown(),
   feedbackForm: z.unknown().optional(),
   markForMissedAttendance: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string().optional(),
   parentId: z.string().optional(),
+  attendance: z.unknown().optional(),
   parent: z.unknown().optional(),
   children: z.array(z.unknown()),
   companies: z.array(z.unknown()),
@@ -37148,14 +37215,14 @@ export const EventUpsertResultSchema = z.object({
   locationTitle: z.string().optional(),
   locationAddress: z.string().optional(),
   locationLink: z.string().optional(),
-  attendance: z.unknown().optional(),
-  attendanceId: z.string().optional(),
   type: z.unknown(),
   feedbackForm: z.unknown().optional(),
   markForMissedAttendance: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string().optional(),
   parentId: z.string().optional(),
+  attendance: z.unknown().optional(),
   parent: z.unknown().optional(),
   children: z.array(z.unknown()),
   companies: z.array(z.unknown()),
@@ -37177,14 +37244,14 @@ export const EventDeleteResultSchema = z.nullable(z.object({
   locationTitle: z.string().optional(),
   locationAddress: z.string().optional(),
   locationLink: z.string().optional(),
-  attendance: z.unknown().optional(),
-  attendanceId: z.string().optional(),
   type: z.unknown(),
   feedbackForm: z.unknown().optional(),
   markForMissedAttendance: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string().optional(),
   parentId: z.string().optional(),
+  attendance: z.unknown().optional(),
   parent: z.unknown().optional(),
   children: z.array(z.unknown()),
   companies: z.array(z.unknown()),
@@ -37211,14 +37278,14 @@ export const EventAggregateResultSchema = z.object({  _count: z.object({
     locationTitle: z.number(),
     locationAddress: z.number(),
     locationLink: z.number(),
-    attendance: z.number(),
-    attendanceId: z.number(),
     type: z.number(),
     feedbackForm: z.number(),
     markForMissedAttendance: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    attendanceId: z.number(),
     parentId: z.number(),
+    attendance: z.number(),
     parent: z.number(),
     children: z.number(),
     companies: z.number(),
@@ -37243,9 +37310,9 @@ export const EventAggregateResultSchema = z.object({  _count: z.object({
     locationTitle: z.string().nullable(),
     locationAddress: z.string().nullable(),
     locationLink: z.string().nullable(),
-    attendanceId: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
+    attendanceId: z.string().nullable(),
     parentId: z.string().nullable(),
     metadataImportId: z.number().int().nullable()
   }).nullable().optional(),
@@ -37260,9 +37327,9 @@ export const EventAggregateResultSchema = z.object({  _count: z.object({
     locationTitle: z.string().nullable(),
     locationAddress: z.string().nullable(),
     locationLink: z.string().nullable(),
-    attendanceId: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
+    attendanceId: z.string().nullable(),
     parentId: z.string().nullable(),
     metadataImportId: z.number().int().nullable()
   }).nullable().optional()});
@@ -37279,10 +37346,10 @@ export const EventGroupByResultSchema = z.array(z.object({
   locationTitle: z.string(),
   locationAddress: z.string(),
   locationLink: z.string(),
-  attendanceId: z.string(),
   markForMissedAttendance: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string(),
   parentId: z.string(),
   metadataImportId: z.number().int(),
   _count: z.object({
@@ -37297,14 +37364,14 @@ export const EventGroupByResultSchema = z.array(z.object({
     locationTitle: z.number(),
     locationAddress: z.number(),
     locationLink: z.number(),
-    attendance: z.number(),
-    attendanceId: z.number(),
     type: z.number(),
     feedbackForm: z.number(),
     markForMissedAttendance: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    attendanceId: z.number(),
     parentId: z.number(),
+    attendance: z.number(),
     parent: z.number(),
     children: z.number(),
     companies: z.number(),
@@ -37329,9 +37396,9 @@ export const EventGroupByResultSchema = z.array(z.object({
     locationTitle: z.string().nullable(),
     locationAddress: z.string().nullable(),
     locationLink: z.string().nullable(),
-    attendanceId: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
+    attendanceId: z.string().nullable(),
     parentId: z.string().nullable(),
     metadataImportId: z.number().int().nullable()
   }).nullable().optional(),
@@ -37346,9 +37413,9 @@ export const EventGroupByResultSchema = z.array(z.object({
     locationTitle: z.string().nullable(),
     locationAddress: z.string().nullable(),
     locationLink: z.string().nullable(),
-    attendanceId: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
+    attendanceId: z.string().nullable(),
     parentId: z.string().nullable(),
     metadataImportId: z.number().int().nullable()
   }).nullable().optional()
@@ -37814,36 +37881,36 @@ export const MarkGroupCountResultSchema = z.number();
 
 // File: PersonalMarkFindUniqueResult.schema.ts
 export const PersonalMarkFindUniqueResultSchema = z.nullable(z.object({
-  mark: z.unknown(),
+  createdAt: z.date(),
   markId: z.string(),
-  user: z.unknown(),
   userId: z.string(),
-  givenBy: z.unknown().optional(),
   givenById: z.string().optional(),
-  createdAt: z.date()
+  mark: z.unknown(),
+  user: z.unknown(),
+  givenBy: z.unknown().optional()
 }));
 
 // File: PersonalMarkFindFirstResult.schema.ts
 export const PersonalMarkFindFirstResultSchema = z.nullable(z.object({
-  mark: z.unknown(),
+  createdAt: z.date(),
   markId: z.string(),
-  user: z.unknown(),
   userId: z.string(),
-  givenBy: z.unknown().optional(),
   givenById: z.string().optional(),
-  createdAt: z.date()
+  mark: z.unknown(),
+  user: z.unknown(),
+  givenBy: z.unknown().optional()
 }));
 
 // File: PersonalMarkFindManyResult.schema.ts
 export const PersonalMarkFindManyResultSchema = z.object({
   data: z.array(z.object({
-  mark: z.unknown(),
+  createdAt: z.date(),
   markId: z.string(),
-  user: z.unknown(),
   userId: z.string(),
-  givenBy: z.unknown().optional(),
   givenById: z.string().optional(),
-  createdAt: z.date()
+  mark: z.unknown(),
+  user: z.unknown(),
+  givenBy: z.unknown().optional()
 })),
   pagination: z.object({
   page: z.number().int().min(1),
@@ -37857,13 +37924,13 @@ export const PersonalMarkFindManyResultSchema = z.object({
 
 // File: PersonalMarkCreateResult.schema.ts
 export const PersonalMarkCreateResultSchema = z.object({
-  mark: z.unknown(),
+  createdAt: z.date(),
   markId: z.string(),
-  user: z.unknown(),
   userId: z.string(),
-  givenBy: z.unknown().optional(),
   givenById: z.string().optional(),
-  createdAt: z.date()
+  mark: z.unknown(),
+  user: z.unknown(),
+  givenBy: z.unknown().optional()
 });
 
 // File: PersonalMarkCreateManyResult.schema.ts
@@ -37873,13 +37940,13 @@ export const PersonalMarkCreateManyResultSchema = z.object({
 
 // File: PersonalMarkUpdateResult.schema.ts
 export const PersonalMarkUpdateResultSchema = z.nullable(z.object({
-  mark: z.unknown(),
+  createdAt: z.date(),
   markId: z.string(),
-  user: z.unknown(),
   userId: z.string(),
-  givenBy: z.unknown().optional(),
   givenById: z.string().optional(),
-  createdAt: z.date()
+  mark: z.unknown(),
+  user: z.unknown(),
+  givenBy: z.unknown().optional()
 }));
 
 // File: PersonalMarkUpdateManyResult.schema.ts
@@ -37889,24 +37956,24 @@ export const PersonalMarkUpdateManyResultSchema = z.object({
 
 // File: PersonalMarkUpsertResult.schema.ts
 export const PersonalMarkUpsertResultSchema = z.object({
-  mark: z.unknown(),
+  createdAt: z.date(),
   markId: z.string(),
-  user: z.unknown(),
   userId: z.string(),
-  givenBy: z.unknown().optional(),
   givenById: z.string().optional(),
-  createdAt: z.date()
+  mark: z.unknown(),
+  user: z.unknown(),
+  givenBy: z.unknown().optional()
 });
 
 // File: PersonalMarkDeleteResult.schema.ts
 export const PersonalMarkDeleteResultSchema = z.nullable(z.object({
-  mark: z.unknown(),
+  createdAt: z.date(),
   markId: z.string(),
-  user: z.unknown(),
   userId: z.string(),
-  givenBy: z.unknown().optional(),
   givenById: z.string().optional(),
-  createdAt: z.date()
+  mark: z.unknown(),
+  user: z.unknown(),
+  givenBy: z.unknown().optional()
 }));
 
 // File: PersonalMarkDeleteManyResult.schema.ts
@@ -37916,53 +37983,53 @@ export const PersonalMarkDeleteManyResultSchema = z.object({
 
 // File: PersonalMarkAggregateResult.schema.ts
 export const PersonalMarkAggregateResultSchema = z.object({  _count: z.object({
-    mark: z.number(),
+    createdAt: z.number(),
     markId: z.number(),
-    user: z.number(),
     userId: z.number(),
-    givenBy: z.number(),
     givenById: z.number(),
-    createdAt: z.number()
+    mark: z.number(),
+    user: z.number(),
+    givenBy: z.number()
   }).optional(),
   _min: z.object({
+    createdAt: z.date().nullable(),
     markId: z.string().nullable(),
     userId: z.string().nullable(),
-    givenById: z.string().nullable(),
-    createdAt: z.date().nullable()
+    givenById: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
+    createdAt: z.date().nullable(),
     markId: z.string().nullable(),
     userId: z.string().nullable(),
-    givenById: z.string().nullable(),
-    createdAt: z.date().nullable()
+    givenById: z.string().nullable()
   }).nullable().optional()});
 
 // File: PersonalMarkGroupByResult.schema.ts
 export const PersonalMarkGroupByResultSchema = z.array(z.object({
+  createdAt: z.date(),
   markId: z.string(),
   userId: z.string(),
   givenById: z.string(),
-  createdAt: z.date(),
   _count: z.object({
-    mark: z.number(),
+    createdAt: z.number(),
     markId: z.number(),
-    user: z.number(),
     userId: z.number(),
-    givenBy: z.number(),
     givenById: z.number(),
-    createdAt: z.number()
+    mark: z.number(),
+    user: z.number(),
+    givenBy: z.number()
   }).optional(),
   _min: z.object({
+    createdAt: z.date().nullable(),
     markId: z.string().nullable(),
     userId: z.string().nullable(),
-    givenById: z.string().nullable(),
-    createdAt: z.date().nullable()
+    givenById: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
+    createdAt: z.date().nullable(),
     markId: z.string().nullable(),
     userId: z.string().nullable(),
-    givenById: z.string().nullable(),
-    createdAt: z.date().nullable()
+    givenById: z.string().nullable()
   }).nullable().optional()
 }));
 
@@ -38510,8 +38577,6 @@ export const EventHostingGroupCountResultSchema = z.number();
 // File: JobListingFindUniqueResult.schema.ts
 export const JobListingFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  companyId: z.string(),
-  company: z.unknown(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional(),
@@ -38526,14 +38591,14 @@ export const JobListingFindUniqueResultSchema = z.nullable(z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
+  company: z.unknown(),
   locations: z.array(z.unknown())
 }));
 
 // File: JobListingFindFirstResult.schema.ts
 export const JobListingFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  companyId: z.string(),
-  company: z.unknown(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional(),
@@ -38548,6 +38613,8 @@ export const JobListingFindFirstResultSchema = z.nullable(z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
+  company: z.unknown(),
   locations: z.array(z.unknown())
 }));
 
@@ -38555,8 +38622,6 @@ export const JobListingFindFirstResultSchema = z.nullable(z.object({
 export const JobListingFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  companyId: z.string(),
-  company: z.unknown(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional(),
@@ -38571,6 +38636,8 @@ export const JobListingFindManyResultSchema = z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
+  company: z.unknown(),
   locations: z.array(z.unknown())
 })),
   pagination: z.object({
@@ -38586,8 +38653,6 @@ export const JobListingFindManyResultSchema = z.object({
 // File: JobListingCreateResult.schema.ts
 export const JobListingCreateResultSchema = z.object({
   id: z.string(),
-  companyId: z.string(),
-  company: z.unknown(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional(),
@@ -38602,6 +38667,8 @@ export const JobListingCreateResultSchema = z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
+  company: z.unknown(),
   locations: z.array(z.unknown())
 });
 
@@ -38613,8 +38680,6 @@ export const JobListingCreateManyResultSchema = z.object({
 // File: JobListingUpdateResult.schema.ts
 export const JobListingUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  companyId: z.string(),
-  company: z.unknown(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional(),
@@ -38629,6 +38694,8 @@ export const JobListingUpdateResultSchema = z.nullable(z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
+  company: z.unknown(),
   locations: z.array(z.unknown())
 }));
 
@@ -38640,8 +38707,6 @@ export const JobListingUpdateManyResultSchema = z.object({
 // File: JobListingUpsertResult.schema.ts
 export const JobListingUpsertResultSchema = z.object({
   id: z.string(),
-  companyId: z.string(),
-  company: z.unknown(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional(),
@@ -38656,14 +38721,14 @@ export const JobListingUpsertResultSchema = z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
+  company: z.unknown(),
   locations: z.array(z.unknown())
 });
 
 // File: JobListingDeleteResult.schema.ts
 export const JobListingDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  companyId: z.string(),
-  company: z.unknown(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().optional(),
@@ -38678,6 +38743,8 @@ export const JobListingDeleteResultSchema = z.nullable(z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
+  company: z.unknown(),
   locations: z.array(z.unknown())
 }));
 
@@ -38689,8 +38756,6 @@ export const JobListingDeleteManyResultSchema = z.object({
 // File: JobListingAggregateResult.schema.ts
 export const JobListingAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
-    companyId: z.number(),
-    company: z.number(),
     title: z.number(),
     description: z.number(),
     shortDescription: z.number(),
@@ -38705,11 +38770,12 @@ export const JobListingAggregateResultSchema = z.object({  _count: z.object({
     rollingAdmission: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    companyId: z.number(),
+    company: z.number(),
     locations: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    companyId: z.string().nullable(),
     title: z.string().nullable(),
     description: z.string().nullable(),
     shortDescription: z.string().nullable(),
@@ -38719,11 +38785,11 @@ export const JobListingAggregateResultSchema = z.object({  _count: z.object({
     applicationLink: z.string().nullable(),
     applicationEmail: z.string().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    companyId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    companyId: z.string().nullable(),
     title: z.string().nullable(),
     description: z.string().nullable(),
     shortDescription: z.string().nullable(),
@@ -38733,13 +38799,13 @@ export const JobListingAggregateResultSchema = z.object({  _count: z.object({
     applicationLink: z.string().nullable(),
     applicationEmail: z.string().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    companyId: z.string().nullable()
   }).nullable().optional()});
 
 // File: JobListingGroupByResult.schema.ts
 export const JobListingGroupByResultSchema = z.array(z.object({
   id: z.string(),
-  companyId: z.string(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string(),
@@ -38753,10 +38819,9 @@ export const JobListingGroupByResultSchema = z.array(z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
   _count: z.object({
     id: z.number(),
-    companyId: z.number(),
-    company: z.number(),
     title: z.number(),
     description: z.number(),
     shortDescription: z.number(),
@@ -38771,11 +38836,12 @@ export const JobListingGroupByResultSchema = z.array(z.object({
     rollingAdmission: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    companyId: z.number(),
+    company: z.number(),
     locations: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    companyId: z.string().nullable(),
     title: z.string().nullable(),
     description: z.string().nullable(),
     shortDescription: z.string().nullable(),
@@ -38785,11 +38851,11 @@ export const JobListingGroupByResultSchema = z.array(z.object({
     applicationLink: z.string().nullable(),
     applicationEmail: z.string().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    companyId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    companyId: z.string().nullable(),
     title: z.string().nullable(),
     description: z.string().nullable(),
     shortDescription: z.string().nullable(),
@@ -38799,7 +38865,8 @@ export const JobListingGroupByResultSchema = z.array(z.object({
     applicationLink: z.string().nullable(),
     applicationEmail: z.string().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    companyId: z.string().nullable()
   }).nullable().optional()
 }));
 
@@ -38810,16 +38877,16 @@ export const JobListingCountResultSchema = z.number();
 export const JobListingLocationFindUniqueResultSchema = z.nullable(z.object({
   name: z.string(),
   createdAt: z.date(),
-  jobListing: z.unknown(),
-  jobListingId: z.string()
+  jobListingId: z.string(),
+  jobListing: z.unknown()
 }));
 
 // File: JobListingLocationFindFirstResult.schema.ts
 export const JobListingLocationFindFirstResultSchema = z.nullable(z.object({
   name: z.string(),
   createdAt: z.date(),
-  jobListing: z.unknown(),
-  jobListingId: z.string()
+  jobListingId: z.string(),
+  jobListing: z.unknown()
 }));
 
 // File: JobListingLocationFindManyResult.schema.ts
@@ -38827,8 +38894,8 @@ export const JobListingLocationFindManyResultSchema = z.object({
   data: z.array(z.object({
   name: z.string(),
   createdAt: z.date(),
-  jobListing: z.unknown(),
-  jobListingId: z.string()
+  jobListingId: z.string(),
+  jobListing: z.unknown()
 })),
   pagination: z.object({
   page: z.number().int().min(1),
@@ -38844,8 +38911,8 @@ export const JobListingLocationFindManyResultSchema = z.object({
 export const JobListingLocationCreateResultSchema = z.object({
   name: z.string(),
   createdAt: z.date(),
-  jobListing: z.unknown(),
-  jobListingId: z.string()
+  jobListingId: z.string(),
+  jobListing: z.unknown()
 });
 
 // File: JobListingLocationCreateManyResult.schema.ts
@@ -38857,8 +38924,8 @@ export const JobListingLocationCreateManyResultSchema = z.object({
 export const JobListingLocationUpdateResultSchema = z.nullable(z.object({
   name: z.string(),
   createdAt: z.date(),
-  jobListing: z.unknown(),
-  jobListingId: z.string()
+  jobListingId: z.string(),
+  jobListing: z.unknown()
 }));
 
 // File: JobListingLocationUpdateManyResult.schema.ts
@@ -38870,16 +38937,16 @@ export const JobListingLocationUpdateManyResultSchema = z.object({
 export const JobListingLocationUpsertResultSchema = z.object({
   name: z.string(),
   createdAt: z.date(),
-  jobListing: z.unknown(),
-  jobListingId: z.string()
+  jobListingId: z.string(),
+  jobListing: z.unknown()
 });
 
 // File: JobListingLocationDeleteResult.schema.ts
 export const JobListingLocationDeleteResultSchema = z.nullable(z.object({
   name: z.string(),
   createdAt: z.date(),
-  jobListing: z.unknown(),
-  jobListingId: z.string()
+  jobListingId: z.string(),
+  jobListing: z.unknown()
 }));
 
 // File: JobListingLocationDeleteManyResult.schema.ts
@@ -38891,8 +38958,8 @@ export const JobListingLocationDeleteManyResultSchema = z.object({
 export const JobListingLocationAggregateResultSchema = z.object({  _count: z.object({
     name: z.number(),
     createdAt: z.number(),
-    jobListing: z.number(),
-    jobListingId: z.number()
+    jobListingId: z.number(),
+    jobListing: z.number()
   }).optional(),
   _min: z.object({
     name: z.string().nullable(),
@@ -38913,8 +38980,8 @@ export const JobListingLocationGroupByResultSchema = z.array(z.object({
   _count: z.object({
     name: z.number(),
     createdAt: z.number(),
-    jobListing: z.number(),
-    jobListingId: z.number()
+    jobListingId: z.number(),
+    jobListing: z.number()
   }).optional(),
   _min: z.object({
     name: z.string().nullable(),
@@ -39106,11 +39173,11 @@ export const OfflineCountResultSchema = z.number();
 // File: ArticleFindUniqueResult.schema.ts
 export const ArticleFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -39123,11 +39190,11 @@ export const ArticleFindUniqueResultSchema = z.nullable(z.object({
 // File: ArticleFindFirstResult.schema.ts
 export const ArticleFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -39141,11 +39208,11 @@ export const ArticleFindFirstResultSchema = z.nullable(z.object({
 export const ArticleFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -39167,11 +39234,11 @@ export const ArticleFindManyResultSchema = z.object({
 // File: ArticleCreateResult.schema.ts
 export const ArticleCreateResultSchema = z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -39189,11 +39256,11 @@ export const ArticleCreateManyResultSchema = z.object({
 // File: ArticleUpdateResult.schema.ts
 export const ArticleUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -39211,11 +39278,11 @@ export const ArticleUpdateManyResultSchema = z.object({
 // File: ArticleUpsertResult.schema.ts
 export const ArticleUpsertResultSchema = z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -39228,11 +39295,11 @@ export const ArticleUpsertResultSchema = z.object({
 // File: ArticleDeleteResult.schema.ts
 export const ArticleDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -39250,11 +39317,11 @@ export const ArticleDeleteManyResultSchema = z.object({
 // File: ArticleAggregateResult.schema.ts
 export const ArticleAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
+    slug: z.number(),
     title: z.number(),
     author: z.number(),
     photographer: z.number(),
     imageUrl: z.number(),
-    slug: z.number(),
     excerpt: z.number(),
     content: z.number(),
     isFeatured: z.number(),
@@ -39265,11 +39332,11 @@ export const ArticleAggregateResultSchema = z.object({  _count: z.object({
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
+    slug: z.string().nullable(),
     title: z.string().nullable(),
     author: z.string().nullable(),
     photographer: z.string().nullable(),
     imageUrl: z.string().nullable(),
-    slug: z.string().nullable(),
     excerpt: z.string().nullable(),
     content: z.string().nullable(),
     vimeoId: z.string().nullable(),
@@ -39278,11 +39345,11 @@ export const ArticleAggregateResultSchema = z.object({  _count: z.object({
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
+    slug: z.string().nullable(),
     title: z.string().nullable(),
     author: z.string().nullable(),
     photographer: z.string().nullable(),
     imageUrl: z.string().nullable(),
-    slug: z.string().nullable(),
     excerpt: z.string().nullable(),
     content: z.string().nullable(),
     vimeoId: z.string().nullable(),
@@ -39293,11 +39360,11 @@ export const ArticleAggregateResultSchema = z.object({  _count: z.object({
 // File: ArticleGroupByResult.schema.ts
 export const ArticleGroupByResultSchema = z.array(z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -39306,11 +39373,11 @@ export const ArticleGroupByResultSchema = z.array(z.object({
   updatedAt: z.date(),
   _count: z.object({
     id: z.number(),
+    slug: z.number(),
     title: z.number(),
     author: z.number(),
     photographer: z.number(),
     imageUrl: z.number(),
-    slug: z.number(),
     excerpt: z.number(),
     content: z.number(),
     isFeatured: z.number(),
@@ -39321,11 +39388,11 @@ export const ArticleGroupByResultSchema = z.array(z.object({
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
+    slug: z.string().nullable(),
     title: z.string().nullable(),
     author: z.string().nullable(),
     photographer: z.string().nullable(),
     imageUrl: z.string().nullable(),
-    slug: z.string().nullable(),
     excerpt: z.string().nullable(),
     content: z.string().nullable(),
     vimeoId: z.string().nullable(),
@@ -39334,11 +39401,11 @@ export const ArticleGroupByResultSchema = z.array(z.object({
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
+    slug: z.string().nullable(),
     title: z.string().nullable(),
     author: z.string().nullable(),
     photographer: z.string().nullable(),
     imageUrl: z.string().nullable(),
-    slug: z.string().nullable(),
     excerpt: z.string().nullable(),
     content: z.string().nullable(),
     vimeoId: z.string().nullable(),
@@ -39449,27 +39516,27 @@ export const ArticleTagCountResultSchema = z.number();
 
 // File: ArticleTagLinkFindUniqueResult.schema.ts
 export const ArticleTagLinkFindUniqueResultSchema = z.nullable(z.object({
-  article: z.unknown(),
   articleId: z.string(),
-  tag: z.unknown(),
-  tagName: z.string()
+  tagName: z.string(),
+  article: z.unknown(),
+  tag: z.unknown()
 }));
 
 // File: ArticleTagLinkFindFirstResult.schema.ts
 export const ArticleTagLinkFindFirstResultSchema = z.nullable(z.object({
-  article: z.unknown(),
   articleId: z.string(),
-  tag: z.unknown(),
-  tagName: z.string()
+  tagName: z.string(),
+  article: z.unknown(),
+  tag: z.unknown()
 }));
 
 // File: ArticleTagLinkFindManyResult.schema.ts
 export const ArticleTagLinkFindManyResultSchema = z.object({
   data: z.array(z.object({
-  article: z.unknown(),
   articleId: z.string(),
-  tag: z.unknown(),
-  tagName: z.string()
+  tagName: z.string(),
+  article: z.unknown(),
+  tag: z.unknown()
 })),
   pagination: z.object({
   page: z.number().int().min(1),
@@ -39483,10 +39550,10 @@ export const ArticleTagLinkFindManyResultSchema = z.object({
 
 // File: ArticleTagLinkCreateResult.schema.ts
 export const ArticleTagLinkCreateResultSchema = z.object({
-  article: z.unknown(),
   articleId: z.string(),
-  tag: z.unknown(),
-  tagName: z.string()
+  tagName: z.string(),
+  article: z.unknown(),
+  tag: z.unknown()
 });
 
 // File: ArticleTagLinkCreateManyResult.schema.ts
@@ -39496,10 +39563,10 @@ export const ArticleTagLinkCreateManyResultSchema = z.object({
 
 // File: ArticleTagLinkUpdateResult.schema.ts
 export const ArticleTagLinkUpdateResultSchema = z.nullable(z.object({
-  article: z.unknown(),
   articleId: z.string(),
-  tag: z.unknown(),
-  tagName: z.string()
+  tagName: z.string(),
+  article: z.unknown(),
+  tag: z.unknown()
 }));
 
 // File: ArticleTagLinkUpdateManyResult.schema.ts
@@ -39509,18 +39576,18 @@ export const ArticleTagLinkUpdateManyResultSchema = z.object({
 
 // File: ArticleTagLinkUpsertResult.schema.ts
 export const ArticleTagLinkUpsertResultSchema = z.object({
-  article: z.unknown(),
   articleId: z.string(),
-  tag: z.unknown(),
-  tagName: z.string()
+  tagName: z.string(),
+  article: z.unknown(),
+  tag: z.unknown()
 });
 
 // File: ArticleTagLinkDeleteResult.schema.ts
 export const ArticleTagLinkDeleteResultSchema = z.nullable(z.object({
-  article: z.unknown(),
   articleId: z.string(),
-  tag: z.unknown(),
-  tagName: z.string()
+  tagName: z.string(),
+  article: z.unknown(),
+  tag: z.unknown()
 }));
 
 // File: ArticleTagLinkDeleteManyResult.schema.ts
@@ -39530,10 +39597,10 @@ export const ArticleTagLinkDeleteManyResultSchema = z.object({
 
 // File: ArticleTagLinkAggregateResult.schema.ts
 export const ArticleTagLinkAggregateResultSchema = z.object({  _count: z.object({
-    article: z.number(),
     articleId: z.number(),
-    tag: z.number(),
-    tagName: z.number()
+    tagName: z.number(),
+    article: z.number(),
+    tag: z.number()
   }).optional(),
   _min: z.object({
     articleId: z.string().nullable(),
@@ -39549,10 +39616,10 @@ export const ArticleTagLinkGroupByResultSchema = z.array(z.object({
   articleId: z.string(),
   tagName: z.string(),
   _count: z.object({
-    article: z.number(),
     articleId: z.number(),
-    tag: z.number(),
-    tagName: z.number()
+    tagName: z.number(),
+    article: z.number(),
+    tag: z.number()
   }).optional(),
   _min: z.object({
     articleId: z.string().nullable(),
@@ -39576,8 +39643,8 @@ export const TaskFindUniqueResultSchema = z.nullable(z.object({
   createdAt: z.date(),
   scheduledAt: z.date(),
   processedAt: z.date().optional(),
-  recurringTask: z.unknown().optional(),
   recurringTaskId: z.string().optional(),
+  recurringTask: z.unknown().optional(),
   attendancePools: z.array(z.unknown())
 }));
 
@@ -39590,8 +39657,8 @@ export const TaskFindFirstResultSchema = z.nullable(z.object({
   createdAt: z.date(),
   scheduledAt: z.date(),
   processedAt: z.date().optional(),
-  recurringTask: z.unknown().optional(),
   recurringTaskId: z.string().optional(),
+  recurringTask: z.unknown().optional(),
   attendancePools: z.array(z.unknown())
 }));
 
@@ -39605,8 +39672,8 @@ export const TaskFindManyResultSchema = z.object({
   createdAt: z.date(),
   scheduledAt: z.date(),
   processedAt: z.date().optional(),
-  recurringTask: z.unknown().optional(),
   recurringTaskId: z.string().optional(),
+  recurringTask: z.unknown().optional(),
   attendancePools: z.array(z.unknown())
 })),
   pagination: z.object({
@@ -39628,8 +39695,8 @@ export const TaskCreateResultSchema = z.object({
   createdAt: z.date(),
   scheduledAt: z.date(),
   processedAt: z.date().optional(),
-  recurringTask: z.unknown().optional(),
   recurringTaskId: z.string().optional(),
+  recurringTask: z.unknown().optional(),
   attendancePools: z.array(z.unknown())
 });
 
@@ -39647,8 +39714,8 @@ export const TaskUpdateResultSchema = z.nullable(z.object({
   createdAt: z.date(),
   scheduledAt: z.date(),
   processedAt: z.date().optional(),
-  recurringTask: z.unknown().optional(),
   recurringTaskId: z.string().optional(),
+  recurringTask: z.unknown().optional(),
   attendancePools: z.array(z.unknown())
 }));
 
@@ -39666,8 +39733,8 @@ export const TaskUpsertResultSchema = z.object({
   createdAt: z.date(),
   scheduledAt: z.date(),
   processedAt: z.date().optional(),
-  recurringTask: z.unknown().optional(),
   recurringTaskId: z.string().optional(),
+  recurringTask: z.unknown().optional(),
   attendancePools: z.array(z.unknown())
 });
 
@@ -39680,8 +39747,8 @@ export const TaskDeleteResultSchema = z.nullable(z.object({
   createdAt: z.date(),
   scheduledAt: z.date(),
   processedAt: z.date().optional(),
-  recurringTask: z.unknown().optional(),
   recurringTaskId: z.string().optional(),
+  recurringTask: z.unknown().optional(),
   attendancePools: z.array(z.unknown())
 }));
 
@@ -39699,8 +39766,8 @@ export const TaskAggregateResultSchema = z.object({  _count: z.object({
     createdAt: z.number(),
     scheduledAt: z.number(),
     processedAt: z.number(),
-    recurringTask: z.number(),
     recurringTaskId: z.number(),
+    recurringTask: z.number(),
     attendancePools: z.number()
   }).optional(),
   _min: z.object({
@@ -39734,8 +39801,8 @@ export const TaskGroupByResultSchema = z.array(z.object({
     createdAt: z.number(),
     scheduledAt: z.number(),
     processedAt: z.number(),
-    recurringTask: z.number(),
     recurringTaskId: z.number(),
+    recurringTask: z.number(),
     attendancePools: z.number()
   }).optional(),
   _min: z.object({
@@ -39932,12 +39999,12 @@ export const RecurringTaskCountResultSchema = z.number();
 // File: FeedbackFormFindUniqueResult.schema.ts
 export const FeedbackFormFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  eventId: z.string(),
-  event: z.unknown(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
+  event: z.unknown(),
   questions: z.array(z.unknown()),
   answers: z.array(z.unknown())
 }));
@@ -39945,12 +40012,12 @@ export const FeedbackFormFindUniqueResultSchema = z.nullable(z.object({
 // File: FeedbackFormFindFirstResult.schema.ts
 export const FeedbackFormFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  eventId: z.string(),
-  event: z.unknown(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
+  event: z.unknown(),
   questions: z.array(z.unknown()),
   answers: z.array(z.unknown())
 }));
@@ -39959,12 +40026,12 @@ export const FeedbackFormFindFirstResultSchema = z.nullable(z.object({
 export const FeedbackFormFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  eventId: z.string(),
-  event: z.unknown(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
+  event: z.unknown(),
   questions: z.array(z.unknown()),
   answers: z.array(z.unknown())
 })),
@@ -39981,12 +40048,12 @@ export const FeedbackFormFindManyResultSchema = z.object({
 // File: FeedbackFormCreateResult.schema.ts
 export const FeedbackFormCreateResultSchema = z.object({
   id: z.string(),
-  eventId: z.string(),
-  event: z.unknown(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
+  event: z.unknown(),
   questions: z.array(z.unknown()),
   answers: z.array(z.unknown())
 });
@@ -39999,12 +40066,12 @@ export const FeedbackFormCreateManyResultSchema = z.object({
 // File: FeedbackFormUpdateResult.schema.ts
 export const FeedbackFormUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  eventId: z.string(),
-  event: z.unknown(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
+  event: z.unknown(),
   questions: z.array(z.unknown()),
   answers: z.array(z.unknown())
 }));
@@ -40017,12 +40084,12 @@ export const FeedbackFormUpdateManyResultSchema = z.object({
 // File: FeedbackFormUpsertResult.schema.ts
 export const FeedbackFormUpsertResultSchema = z.object({
   id: z.string(),
-  eventId: z.string(),
-  event: z.unknown(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
+  event: z.unknown(),
   questions: z.array(z.unknown()),
   answers: z.array(z.unknown())
 });
@@ -40030,12 +40097,12 @@ export const FeedbackFormUpsertResultSchema = z.object({
 // File: FeedbackFormDeleteResult.schema.ts
 export const FeedbackFormDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  eventId: z.string(),
-  event: z.unknown(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
+  event: z.unknown(),
   questions: z.array(z.unknown()),
   answers: z.array(z.unknown())
 }));
@@ -40048,66 +40115,66 @@ export const FeedbackFormDeleteManyResultSchema = z.object({
 // File: FeedbackFormAggregateResult.schema.ts
 export const FeedbackFormAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
-    eventId: z.number(),
-    event: z.number(),
     publicResultsToken: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
     answerDeadline: z.number(),
+    eventId: z.number(),
+    event: z.number(),
     questions: z.number(),
     answers: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    eventId: z.string().nullable(),
     publicResultsToken: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
-    answerDeadline: z.date().nullable()
+    answerDeadline: z.date().nullable(),
+    eventId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    eventId: z.string().nullable(),
     publicResultsToken: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
-    answerDeadline: z.date().nullable()
+    answerDeadline: z.date().nullable(),
+    eventId: z.string().nullable()
   }).nullable().optional()});
 
 // File: FeedbackFormGroupByResult.schema.ts
 export const FeedbackFormGroupByResultSchema = z.array(z.object({
   id: z.string(),
-  eventId: z.string(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
   _count: z.object({
     id: z.number(),
-    eventId: z.number(),
-    event: z.number(),
     publicResultsToken: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
     answerDeadline: z.number(),
+    eventId: z.number(),
+    event: z.number(),
     questions: z.number(),
     answers: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    eventId: z.string().nullable(),
     publicResultsToken: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
-    answerDeadline: z.date().nullable()
+    answerDeadline: z.date().nullable(),
+    eventId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    eventId: z.string().nullable(),
     publicResultsToken: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
-    answerDeadline: z.date().nullable()
+    answerDeadline: z.date().nullable(),
+    eventId: z.string().nullable()
   }).nullable().optional()
 }));
 
@@ -40117,8 +40184,6 @@ export const FeedbackFormCountResultSchema = z.number();
 // File: FeedbackQuestionFindUniqueResult.schema.ts
 export const FeedbackQuestionFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean(),
@@ -40126,6 +40191,8 @@ export const FeedbackQuestionFindUniqueResultSchema = z.nullable(z.object({
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  feedbackForm: z.unknown(),
   options: z.array(z.unknown()),
   answers: z.array(z.unknown())
 }));
@@ -40133,8 +40200,6 @@ export const FeedbackQuestionFindUniqueResultSchema = z.nullable(z.object({
 // File: FeedbackQuestionFindFirstResult.schema.ts
 export const FeedbackQuestionFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean(),
@@ -40142,6 +40207,8 @@ export const FeedbackQuestionFindFirstResultSchema = z.nullable(z.object({
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  feedbackForm: z.unknown(),
   options: z.array(z.unknown()),
   answers: z.array(z.unknown())
 }));
@@ -40150,8 +40217,6 @@ export const FeedbackQuestionFindFirstResultSchema = z.nullable(z.object({
 export const FeedbackQuestionFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean(),
@@ -40159,6 +40224,8 @@ export const FeedbackQuestionFindManyResultSchema = z.object({
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  feedbackForm: z.unknown(),
   options: z.array(z.unknown()),
   answers: z.array(z.unknown())
 })),
@@ -40175,8 +40242,6 @@ export const FeedbackQuestionFindManyResultSchema = z.object({
 // File: FeedbackQuestionCreateResult.schema.ts
 export const FeedbackQuestionCreateResultSchema = z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean(),
@@ -40184,6 +40249,8 @@ export const FeedbackQuestionCreateResultSchema = z.object({
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  feedbackForm: z.unknown(),
   options: z.array(z.unknown()),
   answers: z.array(z.unknown())
 });
@@ -40196,8 +40263,6 @@ export const FeedbackQuestionCreateManyResultSchema = z.object({
 // File: FeedbackQuestionUpdateResult.schema.ts
 export const FeedbackQuestionUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean(),
@@ -40205,6 +40270,8 @@ export const FeedbackQuestionUpdateResultSchema = z.nullable(z.object({
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  feedbackForm: z.unknown(),
   options: z.array(z.unknown()),
   answers: z.array(z.unknown())
 }));
@@ -40217,8 +40284,6 @@ export const FeedbackQuestionUpdateManyResultSchema = z.object({
 // File: FeedbackQuestionUpsertResult.schema.ts
 export const FeedbackQuestionUpsertResultSchema = z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean(),
@@ -40226,6 +40291,8 @@ export const FeedbackQuestionUpsertResultSchema = z.object({
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  feedbackForm: z.unknown(),
   options: z.array(z.unknown()),
   answers: z.array(z.unknown())
 });
@@ -40233,8 +40300,6 @@ export const FeedbackQuestionUpsertResultSchema = z.object({
 // File: FeedbackQuestionDeleteResult.schema.ts
 export const FeedbackQuestionDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean(),
@@ -40242,6 +40307,8 @@ export const FeedbackQuestionDeleteResultSchema = z.nullable(z.object({
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  feedbackForm: z.unknown(),
   options: z.array(z.unknown()),
   answers: z.array(z.unknown())
 }));
@@ -40254,8 +40321,6 @@ export const FeedbackQuestionDeleteManyResultSchema = z.object({
 // File: FeedbackQuestionAggregateResult.schema.ts
 export const FeedbackQuestionAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
-    feedbackFormId: z.number(),
-    feedbackForm: z.number(),
     label: z.number(),
     required: z.number(),
     showInPublicResults: z.number(),
@@ -40263,6 +40328,8 @@ export const FeedbackQuestionAggregateResultSchema = z.object({  _count: z.objec
     order: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    feedbackFormId: z.number(),
+    feedbackForm: z.number(),
     options: z.number(),
     answers: z.number()
   }).optional(),
@@ -40274,35 +40341,33 @@ export const FeedbackQuestionAggregateResultSchema = z.object({  _count: z.objec
   }).nullable().optional(),
   _min: z.object({
     id: z.string().nullable(),
-    feedbackFormId: z.string().nullable(),
     label: z.string().nullable(),
     order: z.number().int().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    feedbackFormId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    feedbackFormId: z.string().nullable(),
     label: z.string().nullable(),
     order: z.number().int().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    feedbackFormId: z.string().nullable()
   }).nullable().optional()});
 
 // File: FeedbackQuestionGroupByResult.schema.ts
 export const FeedbackQuestionGroupByResultSchema = z.array(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean(),
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
   _count: z.object({
     id: z.number(),
-    feedbackFormId: z.number(),
-    feedbackForm: z.number(),
     label: z.number(),
     required: z.number(),
     showInPublicResults: z.number(),
@@ -40310,6 +40375,8 @@ export const FeedbackQuestionGroupByResultSchema = z.array(z.object({
     order: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    feedbackFormId: z.number(),
+    feedbackForm: z.number(),
     options: z.number(),
     answers: z.number()
   }).optional(),
@@ -40321,19 +40388,19 @@ export const FeedbackQuestionGroupByResultSchema = z.array(z.object({
   }).nullable().optional(),
   _min: z.object({
     id: z.string().nullable(),
-    feedbackFormId: z.string().nullable(),
     label: z.string().nullable(),
     order: z.number().int().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    feedbackFormId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    feedbackFormId: z.string().nullable(),
     label: z.string().nullable(),
     order: z.number().int().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    feedbackFormId: z.string().nullable()
   }).nullable().optional()
 }));
 
@@ -40477,22 +40544,22 @@ export const FeedbackQuestionOptionCountResultSchema = z.number();
 // File: FeedbackQuestionAnswerFindUniqueResult.schema.ts
 export const FeedbackQuestionAnswerFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  questionId: z.string(),
-  question: z.unknown(),
-  formAnswerId: z.string(),
-  formAnswer: z.unknown(),
   value: z.unknown().optional(),
+  questionId: z.string(),
+  formAnswerId: z.string(),
+  question: z.unknown(),
+  formAnswer: z.unknown(),
   selectedOptions: z.array(z.unknown())
 }));
 
 // File: FeedbackQuestionAnswerFindFirstResult.schema.ts
 export const FeedbackQuestionAnswerFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  questionId: z.string(),
-  question: z.unknown(),
-  formAnswerId: z.string(),
-  formAnswer: z.unknown(),
   value: z.unknown().optional(),
+  questionId: z.string(),
+  formAnswerId: z.string(),
+  question: z.unknown(),
+  formAnswer: z.unknown(),
   selectedOptions: z.array(z.unknown())
 }));
 
@@ -40500,11 +40567,11 @@ export const FeedbackQuestionAnswerFindFirstResultSchema = z.nullable(z.object({
 export const FeedbackQuestionAnswerFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  questionId: z.string(),
-  question: z.unknown(),
-  formAnswerId: z.string(),
-  formAnswer: z.unknown(),
   value: z.unknown().optional(),
+  questionId: z.string(),
+  formAnswerId: z.string(),
+  question: z.unknown(),
+  formAnswer: z.unknown(),
   selectedOptions: z.array(z.unknown())
 })),
   pagination: z.object({
@@ -40520,11 +40587,11 @@ export const FeedbackQuestionAnswerFindManyResultSchema = z.object({
 // File: FeedbackQuestionAnswerCreateResult.schema.ts
 export const FeedbackQuestionAnswerCreateResultSchema = z.object({
   id: z.string(),
-  questionId: z.string(),
-  question: z.unknown(),
-  formAnswerId: z.string(),
-  formAnswer: z.unknown(),
   value: z.unknown().optional(),
+  questionId: z.string(),
+  formAnswerId: z.string(),
+  question: z.unknown(),
+  formAnswer: z.unknown(),
   selectedOptions: z.array(z.unknown())
 });
 
@@ -40536,11 +40603,11 @@ export const FeedbackQuestionAnswerCreateManyResultSchema = z.object({
 // File: FeedbackQuestionAnswerUpdateResult.schema.ts
 export const FeedbackQuestionAnswerUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  questionId: z.string(),
-  question: z.unknown(),
-  formAnswerId: z.string(),
-  formAnswer: z.unknown(),
   value: z.unknown().optional(),
+  questionId: z.string(),
+  formAnswerId: z.string(),
+  question: z.unknown(),
+  formAnswer: z.unknown(),
   selectedOptions: z.array(z.unknown())
 }));
 
@@ -40552,22 +40619,22 @@ export const FeedbackQuestionAnswerUpdateManyResultSchema = z.object({
 // File: FeedbackQuestionAnswerUpsertResult.schema.ts
 export const FeedbackQuestionAnswerUpsertResultSchema = z.object({
   id: z.string(),
-  questionId: z.string(),
-  question: z.unknown(),
-  formAnswerId: z.string(),
-  formAnswer: z.unknown(),
   value: z.unknown().optional(),
+  questionId: z.string(),
+  formAnswerId: z.string(),
+  question: z.unknown(),
+  formAnswer: z.unknown(),
   selectedOptions: z.array(z.unknown())
 });
 
 // File: FeedbackQuestionAnswerDeleteResult.schema.ts
 export const FeedbackQuestionAnswerDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  questionId: z.string(),
-  question: z.unknown(),
-  formAnswerId: z.string(),
-  formAnswer: z.unknown(),
   value: z.unknown().optional(),
+  questionId: z.string(),
+  formAnswerId: z.string(),
+  question: z.unknown(),
+  formAnswer: z.unknown(),
   selectedOptions: z.array(z.unknown())
 }));
 
@@ -40579,11 +40646,11 @@ export const FeedbackQuestionAnswerDeleteManyResultSchema = z.object({
 // File: FeedbackQuestionAnswerAggregateResult.schema.ts
 export const FeedbackQuestionAnswerAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
-    questionId: z.number(),
-    question: z.number(),
-    formAnswerId: z.number(),
-    formAnswer: z.number(),
     value: z.number(),
+    questionId: z.number(),
+    formAnswerId: z.number(),
+    question: z.number(),
+    formAnswer: z.number(),
     selectedOptions: z.number()
   }).optional(),
   _min: z.object({
@@ -40600,16 +40667,16 @@ export const FeedbackQuestionAnswerAggregateResultSchema = z.object({  _count: z
 // File: FeedbackQuestionAnswerGroupByResult.schema.ts
 export const FeedbackQuestionAnswerGroupByResultSchema = z.array(z.object({
   id: z.string(),
+  value: z.unknown(),
   questionId: z.string(),
   formAnswerId: z.string(),
-  value: z.unknown(),
   _count: z.object({
     id: z.number(),
-    questionId: z.number(),
-    question: z.number(),
-    formAnswerId: z.number(),
-    formAnswer: z.number(),
     value: z.number(),
+    questionId: z.number(),
+    formAnswerId: z.number(),
+    question: z.number(),
+    formAnswer: z.number(),
     selectedOptions: z.number()
   }).optional(),
   _min: z.object({
@@ -40629,27 +40696,27 @@ export const FeedbackQuestionAnswerCountResultSchema = z.number();
 
 // File: FeedbackQuestionAnswerOptionLinkFindUniqueResult.schema.ts
 export const FeedbackQuestionAnswerOptionLinkFindUniqueResultSchema = z.nullable(z.object({
-  feedbackQuestionOption: z.unknown(),
   feedbackQuestionOptionId: z.string(),
-  feedbackQuestionAnswer: z.unknown(),
-  feedbackQuestionAnswerId: z.string()
+  feedbackQuestionAnswerId: z.string(),
+  feedbackQuestionOption: z.unknown(),
+  feedbackQuestionAnswer: z.unknown()
 }));
 
 // File: FeedbackQuestionAnswerOptionLinkFindFirstResult.schema.ts
 export const FeedbackQuestionAnswerOptionLinkFindFirstResultSchema = z.nullable(z.object({
-  feedbackQuestionOption: z.unknown(),
   feedbackQuestionOptionId: z.string(),
-  feedbackQuestionAnswer: z.unknown(),
-  feedbackQuestionAnswerId: z.string()
+  feedbackQuestionAnswerId: z.string(),
+  feedbackQuestionOption: z.unknown(),
+  feedbackQuestionAnswer: z.unknown()
 }));
 
 // File: FeedbackQuestionAnswerOptionLinkFindManyResult.schema.ts
 export const FeedbackQuestionAnswerOptionLinkFindManyResultSchema = z.object({
   data: z.array(z.object({
-  feedbackQuestionOption: z.unknown(),
   feedbackQuestionOptionId: z.string(),
-  feedbackQuestionAnswer: z.unknown(),
-  feedbackQuestionAnswerId: z.string()
+  feedbackQuestionAnswerId: z.string(),
+  feedbackQuestionOption: z.unknown(),
+  feedbackQuestionAnswer: z.unknown()
 })),
   pagination: z.object({
   page: z.number().int().min(1),
@@ -40663,10 +40730,10 @@ export const FeedbackQuestionAnswerOptionLinkFindManyResultSchema = z.object({
 
 // File: FeedbackQuestionAnswerOptionLinkCreateResult.schema.ts
 export const FeedbackQuestionAnswerOptionLinkCreateResultSchema = z.object({
-  feedbackQuestionOption: z.unknown(),
   feedbackQuestionOptionId: z.string(),
-  feedbackQuestionAnswer: z.unknown(),
-  feedbackQuestionAnswerId: z.string()
+  feedbackQuestionAnswerId: z.string(),
+  feedbackQuestionOption: z.unknown(),
+  feedbackQuestionAnswer: z.unknown()
 });
 
 // File: FeedbackQuestionAnswerOptionLinkCreateManyResult.schema.ts
@@ -40676,10 +40743,10 @@ export const FeedbackQuestionAnswerOptionLinkCreateManyResultSchema = z.object({
 
 // File: FeedbackQuestionAnswerOptionLinkUpdateResult.schema.ts
 export const FeedbackQuestionAnswerOptionLinkUpdateResultSchema = z.nullable(z.object({
-  feedbackQuestionOption: z.unknown(),
   feedbackQuestionOptionId: z.string(),
-  feedbackQuestionAnswer: z.unknown(),
-  feedbackQuestionAnswerId: z.string()
+  feedbackQuestionAnswerId: z.string(),
+  feedbackQuestionOption: z.unknown(),
+  feedbackQuestionAnswer: z.unknown()
 }));
 
 // File: FeedbackQuestionAnswerOptionLinkUpdateManyResult.schema.ts
@@ -40689,18 +40756,18 @@ export const FeedbackQuestionAnswerOptionLinkUpdateManyResultSchema = z.object({
 
 // File: FeedbackQuestionAnswerOptionLinkUpsertResult.schema.ts
 export const FeedbackQuestionAnswerOptionLinkUpsertResultSchema = z.object({
-  feedbackQuestionOption: z.unknown(),
   feedbackQuestionOptionId: z.string(),
-  feedbackQuestionAnswer: z.unknown(),
-  feedbackQuestionAnswerId: z.string()
+  feedbackQuestionAnswerId: z.string(),
+  feedbackQuestionOption: z.unknown(),
+  feedbackQuestionAnswer: z.unknown()
 });
 
 // File: FeedbackQuestionAnswerOptionLinkDeleteResult.schema.ts
 export const FeedbackQuestionAnswerOptionLinkDeleteResultSchema = z.nullable(z.object({
-  feedbackQuestionOption: z.unknown(),
   feedbackQuestionOptionId: z.string(),
-  feedbackQuestionAnswer: z.unknown(),
-  feedbackQuestionAnswerId: z.string()
+  feedbackQuestionAnswerId: z.string(),
+  feedbackQuestionOption: z.unknown(),
+  feedbackQuestionAnswer: z.unknown()
 }));
 
 // File: FeedbackQuestionAnswerOptionLinkDeleteManyResult.schema.ts
@@ -40710,10 +40777,10 @@ export const FeedbackQuestionAnswerOptionLinkDeleteManyResultSchema = z.object({
 
 // File: FeedbackQuestionAnswerOptionLinkAggregateResult.schema.ts
 export const FeedbackQuestionAnswerOptionLinkAggregateResultSchema = z.object({  _count: z.object({
-    feedbackQuestionOption: z.number(),
     feedbackQuestionOptionId: z.number(),
-    feedbackQuestionAnswer: z.number(),
-    feedbackQuestionAnswerId: z.number()
+    feedbackQuestionAnswerId: z.number(),
+    feedbackQuestionOption: z.number(),
+    feedbackQuestionAnswer: z.number()
   }).optional(),
   _min: z.object({
     feedbackQuestionOptionId: z.string().nullable(),
@@ -40729,10 +40796,10 @@ export const FeedbackQuestionAnswerOptionLinkGroupByResultSchema = z.array(z.obj
   feedbackQuestionOptionId: z.string(),
   feedbackQuestionAnswerId: z.string(),
   _count: z.object({
-    feedbackQuestionOption: z.number(),
     feedbackQuestionOptionId: z.number(),
-    feedbackQuestionAnswer: z.number(),
-    feedbackQuestionAnswerId: z.number()
+    feedbackQuestionAnswerId: z.number(),
+    feedbackQuestionOption: z.number(),
+    feedbackQuestionAnswer: z.number()
   }).optional(),
   _min: z.object({
     feedbackQuestionOptionId: z.string().nullable(),
@@ -40750,24 +40817,24 @@ export const FeedbackQuestionAnswerOptionLinkCountResultSchema = z.number();
 // File: FeedbackFormAnswerFindUniqueResult.schema.ts
 export const FeedbackFormAnswerFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
-  attendeeId: z.string(),
-  attendee: z.unknown(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
+  feedbackForm: z.unknown(),
+  attendee: z.unknown(),
   answers: z.array(z.unknown())
 }));
 
 // File: FeedbackFormAnswerFindFirstResult.schema.ts
 export const FeedbackFormAnswerFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
-  attendeeId: z.string(),
-  attendee: z.unknown(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
+  feedbackForm: z.unknown(),
+  attendee: z.unknown(),
   answers: z.array(z.unknown())
 }));
 
@@ -40775,12 +40842,12 @@ export const FeedbackFormAnswerFindFirstResultSchema = z.nullable(z.object({
 export const FeedbackFormAnswerFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
-  attendeeId: z.string(),
-  attendee: z.unknown(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
+  feedbackForm: z.unknown(),
+  attendee: z.unknown(),
   answers: z.array(z.unknown())
 })),
   pagination: z.object({
@@ -40796,12 +40863,12 @@ export const FeedbackFormAnswerFindManyResultSchema = z.object({
 // File: FeedbackFormAnswerCreateResult.schema.ts
 export const FeedbackFormAnswerCreateResultSchema = z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
-  attendeeId: z.string(),
-  attendee: z.unknown(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
+  feedbackForm: z.unknown(),
+  attendee: z.unknown(),
   answers: z.array(z.unknown())
 });
 
@@ -40813,12 +40880,12 @@ export const FeedbackFormAnswerCreateManyResultSchema = z.object({
 // File: FeedbackFormAnswerUpdateResult.schema.ts
 export const FeedbackFormAnswerUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
-  attendeeId: z.string(),
-  attendee: z.unknown(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
+  feedbackForm: z.unknown(),
+  attendee: z.unknown(),
   answers: z.array(z.unknown())
 }));
 
@@ -40830,24 +40897,24 @@ export const FeedbackFormAnswerUpdateManyResultSchema = z.object({
 // File: FeedbackFormAnswerUpsertResult.schema.ts
 export const FeedbackFormAnswerUpsertResultSchema = z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
-  attendeeId: z.string(),
-  attendee: z.unknown(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
+  feedbackForm: z.unknown(),
+  attendee: z.unknown(),
   answers: z.array(z.unknown())
 });
 
 // File: FeedbackFormAnswerDeleteResult.schema.ts
 export const FeedbackFormAnswerDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  feedbackForm: z.unknown(),
-  attendeeId: z.string(),
-  attendee: z.unknown(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
+  feedbackForm: z.unknown(),
+  attendee: z.unknown(),
   answers: z.array(z.unknown())
 }));
 
@@ -40859,59 +40926,59 @@ export const FeedbackFormAnswerDeleteManyResultSchema = z.object({
 // File: FeedbackFormAnswerAggregateResult.schema.ts
 export const FeedbackFormAnswerAggregateResultSchema = z.object({  _count: z.object({
     id: z.number(),
-    feedbackFormId: z.number(),
-    feedbackForm: z.number(),
-    attendeeId: z.number(),
-    attendee: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    feedbackFormId: z.number(),
+    attendeeId: z.number(),
+    feedbackForm: z.number(),
+    attendee: z.number(),
     answers: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    feedbackFormId: z.string().nullable(),
-    attendeeId: z.string().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    feedbackFormId: z.string().nullable(),
+    attendeeId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    feedbackFormId: z.string().nullable(),
-    attendeeId: z.string().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    feedbackFormId: z.string().nullable(),
+    attendeeId: z.string().nullable()
   }).nullable().optional()});
 
 // File: FeedbackFormAnswerGroupByResult.schema.ts
 export const FeedbackFormAnswerGroupByResultSchema = z.array(z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  attendeeId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
   _count: z.object({
     id: z.number(),
-    feedbackFormId: z.number(),
-    feedbackForm: z.number(),
-    attendeeId: z.number(),
-    attendee: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
+    feedbackFormId: z.number(),
+    attendeeId: z.number(),
+    feedbackForm: z.number(),
+    attendee: z.number(),
     answers: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
-    feedbackFormId: z.string().nullable(),
-    attendeeId: z.string().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    feedbackFormId: z.string().nullable(),
+    attendeeId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
-    feedbackFormId: z.string().nullable(),
-    attendeeId: z.string().nullable(),
     createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable()
+    updatedAt: z.date().nullable(),
+    feedbackFormId: z.string().nullable(),
+    attendeeId: z.string().nullable()
   }).nullable().optional()
 }));
 
@@ -40924,11 +40991,11 @@ export const AuditLogFindUniqueResultSchema = z.nullable(z.object({
   tableName: z.string(),
   rowId: z.string().optional(),
   createdAt: z.date(),
-  user: z.unknown().optional(),
-  userId: z.string().optional(),
   operation: z.string(),
   rowData: z.unknown(),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  user: z.unknown().optional(),
+  userId: z.string().optional()
 }));
 
 // File: AuditLogFindFirstResult.schema.ts
@@ -40937,11 +41004,11 @@ export const AuditLogFindFirstResultSchema = z.nullable(z.object({
   tableName: z.string(),
   rowId: z.string().optional(),
   createdAt: z.date(),
-  user: z.unknown().optional(),
-  userId: z.string().optional(),
   operation: z.string(),
   rowData: z.unknown(),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  user: z.unknown().optional(),
+  userId: z.string().optional()
 }));
 
 // File: AuditLogFindManyResult.schema.ts
@@ -40951,11 +41018,11 @@ export const AuditLogFindManyResultSchema = z.object({
   tableName: z.string(),
   rowId: z.string().optional(),
   createdAt: z.date(),
-  user: z.unknown().optional(),
-  userId: z.string().optional(),
   operation: z.string(),
   rowData: z.unknown(),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  user: z.unknown().optional(),
+  userId: z.string().optional()
 })),
   pagination: z.object({
   page: z.number().int().min(1),
@@ -40973,11 +41040,11 @@ export const AuditLogCreateResultSchema = z.object({
   tableName: z.string(),
   rowId: z.string().optional(),
   createdAt: z.date(),
-  user: z.unknown().optional(),
-  userId: z.string().optional(),
   operation: z.string(),
   rowData: z.unknown(),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  user: z.unknown().optional(),
+  userId: z.string().optional()
 });
 
 // File: AuditLogCreateManyResult.schema.ts
@@ -40991,11 +41058,11 @@ export const AuditLogUpdateResultSchema = z.nullable(z.object({
   tableName: z.string(),
   rowId: z.string().optional(),
   createdAt: z.date(),
-  user: z.unknown().optional(),
-  userId: z.string().optional(),
   operation: z.string(),
   rowData: z.unknown(),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  user: z.unknown().optional(),
+  userId: z.string().optional()
 }));
 
 // File: AuditLogUpdateManyResult.schema.ts
@@ -41009,11 +41076,11 @@ export const AuditLogUpsertResultSchema = z.object({
   tableName: z.string(),
   rowId: z.string().optional(),
   createdAt: z.date(),
-  user: z.unknown().optional(),
-  userId: z.string().optional(),
   operation: z.string(),
   rowData: z.unknown(),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  user: z.unknown().optional(),
+  userId: z.string().optional()
 });
 
 // File: AuditLogDeleteResult.schema.ts
@@ -41022,11 +41089,11 @@ export const AuditLogDeleteResultSchema = z.nullable(z.object({
   tableName: z.string(),
   rowId: z.string().optional(),
   createdAt: z.date(),
-  user: z.unknown().optional(),
-  userId: z.string().optional(),
   operation: z.string(),
   rowData: z.unknown(),
-  transactionId: z.bigint()
+  transactionId: z.bigint(),
+  user: z.unknown().optional(),
+  userId: z.string().optional()
 }));
 
 // File: AuditLogDeleteManyResult.schema.ts
@@ -41040,11 +41107,11 @@ export const AuditLogAggregateResultSchema = z.object({  _count: z.object({
     tableName: z.number(),
     rowId: z.number(),
     createdAt: z.number(),
-    user: z.number(),
-    userId: z.number(),
     operation: z.number(),
     rowData: z.number(),
-    transactionId: z.number()
+    transactionId: z.number(),
+    user: z.number(),
+    userId: z.number()
   }).optional(),
   _sum: z.object({
     transactionId: z.bigint().nullable()
@@ -41057,18 +41124,18 @@ export const AuditLogAggregateResultSchema = z.object({  _count: z.object({
     tableName: z.string().nullable(),
     rowId: z.string().nullable(),
     createdAt: z.date().nullable(),
-    userId: z.string().nullable(),
     operation: z.string().nullable(),
-    transactionId: z.bigint().nullable()
+    transactionId: z.bigint().nullable(),
+    userId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
     tableName: z.string().nullable(),
     rowId: z.string().nullable(),
     createdAt: z.date().nullable(),
-    userId: z.string().nullable(),
     operation: z.string().nullable(),
-    transactionId: z.bigint().nullable()
+    transactionId: z.bigint().nullable(),
+    userId: z.string().nullable()
   }).nullable().optional()});
 
 // File: AuditLogGroupByResult.schema.ts
@@ -41077,20 +41144,20 @@ export const AuditLogGroupByResultSchema = z.array(z.object({
   tableName: z.string(),
   rowId: z.string(),
   createdAt: z.date(),
-  userId: z.string(),
   operation: z.string(),
   rowData: z.unknown(),
   transactionId: z.bigint(),
+  userId: z.string(),
   _count: z.object({
     id: z.number(),
     tableName: z.number(),
     rowId: z.number(),
     createdAt: z.number(),
-    user: z.number(),
-    userId: z.number(),
     operation: z.number(),
     rowData: z.number(),
-    transactionId: z.number()
+    transactionId: z.number(),
+    user: z.number(),
+    userId: z.number()
   }).optional(),
   _sum: z.object({
     transactionId: z.bigint().nullable()
@@ -41103,18 +41170,18 @@ export const AuditLogGroupByResultSchema = z.array(z.object({
     tableName: z.string().nullable(),
     rowId: z.string().nullable(),
     createdAt: z.date().nullable(),
-    userId: z.string().nullable(),
     operation: z.string().nullable(),
-    transactionId: z.bigint().nullable()
+    transactionId: z.bigint().nullable(),
+    userId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
     tableName: z.string().nullable(),
     rowId: z.string().nullable(),
     createdAt: z.date().nullable(),
-    userId: z.string().nullable(),
     operation: z.string().nullable(),
-    transactionId: z.bigint().nullable()
+    transactionId: z.bigint().nullable(),
+    userId: z.string().nullable()
   }).nullable().optional()
 }));
 
@@ -41130,8 +41197,8 @@ export const DeregisterReasonFindUniqueResultSchema = z.nullable(z.object({
   details: z.string().optional(),
   userGrade: z.number().int().optional(),
   userId: z.string(),
-  user: z.unknown(),
   eventId: z.string(),
+  user: z.unknown(),
   event: z.unknown()
 }));
 
@@ -41144,8 +41211,8 @@ export const DeregisterReasonFindFirstResultSchema = z.nullable(z.object({
   details: z.string().optional(),
   userGrade: z.number().int().optional(),
   userId: z.string(),
-  user: z.unknown(),
   eventId: z.string(),
+  user: z.unknown(),
   event: z.unknown()
 }));
 
@@ -41159,8 +41226,8 @@ export const DeregisterReasonFindManyResultSchema = z.object({
   details: z.string().optional(),
   userGrade: z.number().int().optional(),
   userId: z.string(),
-  user: z.unknown(),
   eventId: z.string(),
+  user: z.unknown(),
   event: z.unknown()
 })),
   pagination: z.object({
@@ -41182,8 +41249,8 @@ export const DeregisterReasonCreateResultSchema = z.object({
   details: z.string().optional(),
   userGrade: z.number().int().optional(),
   userId: z.string(),
-  user: z.unknown(),
   eventId: z.string(),
+  user: z.unknown(),
   event: z.unknown()
 });
 
@@ -41201,8 +41268,8 @@ export const DeregisterReasonUpdateResultSchema = z.nullable(z.object({
   details: z.string().optional(),
   userGrade: z.number().int().optional(),
   userId: z.string(),
-  user: z.unknown(),
   eventId: z.string(),
+  user: z.unknown(),
   event: z.unknown()
 }));
 
@@ -41220,8 +41287,8 @@ export const DeregisterReasonUpsertResultSchema = z.object({
   details: z.string().optional(),
   userGrade: z.number().int().optional(),
   userId: z.string(),
-  user: z.unknown(),
   eventId: z.string(),
+  user: z.unknown(),
   event: z.unknown()
 });
 
@@ -41234,8 +41301,8 @@ export const DeregisterReasonDeleteResultSchema = z.nullable(z.object({
   details: z.string().optional(),
   userGrade: z.number().int().optional(),
   userId: z.string(),
-  user: z.unknown(),
   eventId: z.string(),
+  user: z.unknown(),
   event: z.unknown()
 }));
 
@@ -41253,8 +41320,8 @@ export const DeregisterReasonAggregateResultSchema = z.object({  _count: z.objec
     details: z.number(),
     userGrade: z.number(),
     userId: z.number(),
-    user: z.number(),
     eventId: z.number(),
+    user: z.number(),
     event: z.number()
   }).optional(),
   _sum: z.object({
@@ -41299,8 +41366,8 @@ export const DeregisterReasonGroupByResultSchema = z.array(z.object({
     details: z.number(),
     userGrade: z.number(),
     userId: z.number(),
-    user: z.number(),
     eventId: z.number(),
+    user: z.number(),
     event: z.number()
   }).optional(),
   _sum: z.object({
@@ -41434,12 +41501,12 @@ export type GroupModel = z.infer<typeof Group>;
 
 export const GroupMembership = z.object({
   id: z.string(),
-  groupId: z.string(),
-  userId: z.string(),
   start: z.date(),
   end: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  groupId: z.string(),
+  userId: z.string(),
 });
 
 export type GroupMembership = z.infer<typeof GroupMembership>;
@@ -41465,9 +41532,9 @@ export type GroupMembershipRoleType = z.infer<typeof GroupMembershipRole>;
 
 export const GroupRole = z.object({
   id: z.string(),
-  groupId: z.string(),
   name: z.string(),
   type: GroupRoleTypeSchema.default("COSMETIC"),
+  groupId: z.string(),
 });
 
 export type GroupRole = z.infer<typeof GroupRole>;
@@ -41519,10 +41586,7 @@ export type AttendancePoolType = z.infer<typeof AttendancePool>;
 
 export const Attendee = z.object({
   id: z.string(),
-  attendanceId: z.string(),
-  userId: z.string(),
   userGrade: z.number().int().nullable(),
-  attendancePoolId: z.string(),
   selections: z.unknown().refine((val) => { const getDepth = (obj: unknown, depth: number = 0): number => { if (depth > 10) return depth; if (obj === null || typeof obj !== 'object') return depth; const values = Object.values(obj as Record<string, unknown>); if (values.length === 0) return depth; return Math.max(...values.map(v => getDepth(v, depth + 1))); }; return getDepth(val) <= 10; }, "JSON nesting depth exceeds maximum of 10").default("[]"),
   reserved: z.boolean(),
   earliestReservationAt: z.date(),
@@ -41536,6 +41600,10 @@ export const Attendee = z.object({
   paymentChargeDeadline: z.date().nullable(),
   paymentChargedAt: z.date().nullable(),
   paymentRefundedAt: z.date().nullable(),
+  paymentCheckoutUrl: z.string().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
   paymentRefundedById: z.string().nullable(),
 });
 
@@ -41559,11 +41627,11 @@ export const Event = z.object({
   locationTitle: z.string().nullable(),
   locationAddress: z.string().nullable(),
   locationLink: z.string().nullable(),
-  attendanceId: z.string().nullable(),
   type: EventTypeSchema,
   markForMissedAttendance: z.boolean().default(true),
   createdAt: z.date(),
   updatedAt: z.date(),
+  attendanceId: z.string().nullable(),
   parentId: z.string().nullable(),
   metadataImportId: z.number().int().nullable(),
 });
@@ -41622,10 +41690,10 @@ export type MarkGroupType = z.infer<typeof MarkGroup>;
 // File: PersonalMark.schema.ts
 
 export const PersonalMark = z.object({
+  createdAt: z.date(),
   markId: z.string(),
   userId: z.string(),
   givenById: z.string().nullable(),
-  createdAt: z.date(),
 });
 
 export type PersonalMark = z.infer<typeof PersonalMark>;
@@ -41695,7 +41763,6 @@ export type EventHostingGroupType = z.infer<typeof EventHostingGroup>;
 
 export const JobListing = z.object({
   id: z.string(),
-  companyId: z.string(),
   title: z.string(),
   description: z.string(),
   shortDescription: z.string().nullable(),
@@ -41710,6 +41777,7 @@ export const JobListing = z.object({
   rollingAdmission: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  companyId: z.string(),
 });
 
 export type JobListing = z.infer<typeof JobListing>;
@@ -41754,11 +41822,11 @@ export type OfflineType = z.infer<typeof Offline>;
 
 export const Article = z.object({
   id: z.string(),
+  slug: z.string(),
   title: z.string(),
   author: z.string(),
   photographer: z.string(),
   imageUrl: z.string(),
-  slug: z.string(),
   excerpt: z.string(),
   content: z.string(),
   isFeatured: z.boolean(),
@@ -41839,11 +41907,11 @@ export type RecurringTaskType = z.infer<typeof RecurringTask>;
 
 export const FeedbackForm = z.object({
   id: z.string(),
-  eventId: z.string(),
   publicResultsToken: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   answerDeadline: z.date(),
+  eventId: z.string(),
 });
 
 export type FeedbackForm = z.infer<typeof FeedbackForm>;
@@ -41856,7 +41924,6 @@ export type FeedbackFormType = z.infer<typeof FeedbackForm>;
 
 export const FeedbackQuestion = z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
   label: z.string(),
   required: z.boolean(),
   showInPublicResults: z.boolean().default(true),
@@ -41864,6 +41931,7 @@ export const FeedbackQuestion = z.object({
   order: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
 });
 
 export type FeedbackQuestion = z.infer<typeof FeedbackQuestion>;
@@ -41890,9 +41958,9 @@ export type FeedbackQuestionOptionType = z.infer<typeof FeedbackQuestionOption>;
 
 export const FeedbackQuestionAnswer = z.object({
   id: z.string(),
+  value: z.unknown().refine((val) => { const getDepth = (obj: unknown, depth: number = 0): number => { if (depth > 10) return depth; if (obj === null || typeof obj !== 'object') return depth; const values = Object.values(obj as Record<string, unknown>); if (values.length === 0) return depth; return Math.max(...values.map(v => getDepth(v, depth + 1))); }; return getDepth(val) <= 10; }, "JSON nesting depth exceeds maximum of 10").nullable(),
   questionId: z.string(),
   formAnswerId: z.string(),
-  value: z.unknown().refine((val) => { const getDepth = (obj: unknown, depth: number = 0): number => { if (depth > 10) return depth; if (obj === null || typeof obj !== 'object') return depth; const values = Object.values(obj as Record<string, unknown>); if (values.length === 0) return depth; return Math.max(...values.map(v => getDepth(v, depth + 1))); }; return getDepth(val) <= 10; }, "JSON nesting depth exceeds maximum of 10").nullable(),
 });
 
 export type FeedbackQuestionAnswer = z.infer<typeof FeedbackQuestionAnswer>;
@@ -41918,10 +41986,10 @@ export type FeedbackQuestionAnswerOptionLinkType = z.infer<typeof FeedbackQuesti
 
 export const FeedbackFormAnswer = z.object({
   id: z.string(),
-  feedbackFormId: z.string(),
-  attendeeId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  feedbackFormId: z.string(),
+  attendeeId: z.string(),
 });
 
 export type FeedbackFormAnswer = z.infer<typeof FeedbackFormAnswer>;
@@ -41937,10 +42005,10 @@ export const AuditLog = z.object({
   tableName: z.string(),
   rowId: z.string().nullable(),
   createdAt: z.date(),
-  userId: z.string().nullable(),
   operation: z.string(),
   rowData: z.unknown().refine((val) => { const getDepth = (obj: unknown, depth: number = 0): number => { if (depth > 10) return depth; if (obj === null || typeof obj !== 'object') return depth; const values = Object.values(obj as Record<string, unknown>); if (values.length === 0) return depth; return Math.max(...values.map(v => getDepth(v, depth + 1))); }; return getDepth(val) <= 10; }, "JSON nesting depth exceeds maximum of 10"),
   transactionId: z.bigint(),
+  userId: z.string().nullable(),
 });
 
 export type AuditLog = z.infer<typeof AuditLog>;
