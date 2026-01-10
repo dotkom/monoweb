@@ -14,14 +14,17 @@ import { TZDate } from "@date-fns/tz"
  * companies, attendance pools, and attendees.
  */
 
-export type EventId = Event["id"]
-export type EventType = Event["type"]
-export type EventStatus = Event["status"]
+export type BaseEvent = z.infer<typeof BaseEventSchema>
+export const BaseEventSchema = schemas.EventSchema.extend({})
+
 export type Event = z.infer<typeof EventSchema>
-export const EventSchema = schemas.EventSchema.extend({
+export const EventSchema = BaseEventSchema.extend({
   companies: z.array(CompanySchema),
   hostingGroups: z.array(GroupSchema),
 })
+export type EventId = Event["id"]
+export type EventType = Event["type"]
+export type EventStatus = Event["status"]
 
 export const EventTypeSchema = schemas.EventTypeSchema
 export const EventStatusSchema = schemas.EventStatusSchema

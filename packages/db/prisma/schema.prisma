@@ -223,13 +223,23 @@ enum EventStatus {
 }
 
 enum EventType {
-  SOCIAL           @map("SOCIAL")
-  ACADEMIC         @map("ACADEMIC")
-  COMPANY          @map("COMPANY")
-  // This is called "Generalforsamling" in Norwegian and happens twice a year.
+  /// Generalforsamling
   GENERAL_ASSEMBLY @map("GENERAL_ASSEMBLY")
+  /// Bedriftspresentasjon
+  COMPANY          @map("COMPANY")
+  /// Kurs
+  ACADEMIC         @map("ACADEMIC")
+  /// Sosialt
+  SOCIAL           @map("SOCIAL")
+  // This type is for the rare occation we have an event that is only open to committee members.
+  /// Komitéarrangement
   INTERNAL         @map("INTERNAL")
   OTHER            @map("OTHER")
+  // This type is for a committe called "velkom" and are special social events for new students.
+  // These have a separate type because we have historically hid these from event lists to not
+  // spam students that are not new with these events. In older versions of OnlineWeb these
+  // were even treated as a completely separate event entity.
+  /// Velkom/Fadderukene
   WELCOME          @map("WELCOME")
 
   @@map("event_type")
