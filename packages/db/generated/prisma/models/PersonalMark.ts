@@ -25,47 +25,47 @@ export type AggregatePersonalMark = {
 }
 
 export type PersonalMarkMinAggregateOutputType = {
+  createdAt: Date | null
   markId: string | null
   userId: string | null
   givenById: string | null
-  createdAt: Date | null
 }
 
 export type PersonalMarkMaxAggregateOutputType = {
+  createdAt: Date | null
   markId: string | null
   userId: string | null
   givenById: string | null
-  createdAt: Date | null
 }
 
 export type PersonalMarkCountAggregateOutputType = {
+  createdAt: number
   markId: number
   userId: number
   givenById: number
-  createdAt: number
   _all: number
 }
 
 
 export type PersonalMarkMinAggregateInputType = {
+  createdAt?: true
   markId?: true
   userId?: true
   givenById?: true
-  createdAt?: true
 }
 
 export type PersonalMarkMaxAggregateInputType = {
+  createdAt?: true
   markId?: true
   userId?: true
   givenById?: true
-  createdAt?: true
 }
 
 export type PersonalMarkCountAggregateInputType = {
+  createdAt?: true
   markId?: true
   userId?: true
   givenById?: true
-  createdAt?: true
   _all?: true
 }
 
@@ -142,10 +142,10 @@ export type PersonalMarkGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 export type PersonalMarkGroupByOutputType = {
+  createdAt: Date
   markId: string
   userId: string
   givenById: string | null
-  createdAt: Date
   _count: PersonalMarkCountAggregateOutputType | null
   _min: PersonalMarkMinAggregateOutputType | null
   _max: PersonalMarkMaxAggregateOutputType | null
@@ -170,20 +170,20 @@ export type PersonalMarkWhereInput = {
   AND?: Prisma.PersonalMarkWhereInput | Prisma.PersonalMarkWhereInput[]
   OR?: Prisma.PersonalMarkWhereInput[]
   NOT?: Prisma.PersonalMarkWhereInput | Prisma.PersonalMarkWhereInput[]
+  createdAt?: Prisma.DateTimeFilter<"PersonalMark"> | Date | string
   markId?: Prisma.StringFilter<"PersonalMark"> | string
   userId?: Prisma.StringFilter<"PersonalMark"> | string
   givenById?: Prisma.StringNullableFilter<"PersonalMark"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"PersonalMark"> | Date | string
   mark?: Prisma.XOR<Prisma.MarkScalarRelationFilter, Prisma.MarkWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   givenBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type PersonalMarkOrderByWithRelationInput = {
+  createdAt?: Prisma.SortOrder
   markId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   givenById?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   mark?: Prisma.MarkOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   givenBy?: Prisma.UserOrderByWithRelationInput
@@ -194,20 +194,20 @@ export type PersonalMarkWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.PersonalMarkWhereInput | Prisma.PersonalMarkWhereInput[]
   OR?: Prisma.PersonalMarkWhereInput[]
   NOT?: Prisma.PersonalMarkWhereInput | Prisma.PersonalMarkWhereInput[]
+  createdAt?: Prisma.DateTimeFilter<"PersonalMark"> | Date | string
   markId?: Prisma.StringFilter<"PersonalMark"> | string
   userId?: Prisma.StringFilter<"PersonalMark"> | string
   givenById?: Prisma.StringNullableFilter<"PersonalMark"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"PersonalMark"> | Date | string
   mark?: Prisma.XOR<Prisma.MarkScalarRelationFilter, Prisma.MarkWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   givenBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "markId_userId">
 
 export type PersonalMarkOrderByWithAggregationInput = {
+  createdAt?: Prisma.SortOrder
   markId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   givenById?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   _count?: Prisma.PersonalMarkCountOrderByAggregateInput
   _max?: Prisma.PersonalMarkMaxOrderByAggregateInput
   _min?: Prisma.PersonalMarkMinOrderByAggregateInput
@@ -217,10 +217,10 @@ export type PersonalMarkScalarWhereWithAggregatesInput = {
   AND?: Prisma.PersonalMarkScalarWhereWithAggregatesInput | Prisma.PersonalMarkScalarWhereWithAggregatesInput[]
   OR?: Prisma.PersonalMarkScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PersonalMarkScalarWhereWithAggregatesInput | Prisma.PersonalMarkScalarWhereWithAggregatesInput[]
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"PersonalMark"> | Date | string
   markId?: Prisma.StringWithAggregatesFilter<"PersonalMark"> | string
   userId?: Prisma.StringWithAggregatesFilter<"PersonalMark"> | string
   givenById?: Prisma.StringNullableWithAggregatesFilter<"PersonalMark"> | string | null
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"PersonalMark"> | Date | string
 }
 
 export type PersonalMarkCreateInput = {
@@ -231,10 +231,10 @@ export type PersonalMarkCreateInput = {
 }
 
 export type PersonalMarkUncheckedCreateInput = {
+  createdAt?: Date | string
   markId: string
   userId: string
   givenById?: string | null
-  createdAt?: Date | string
 }
 
 export type PersonalMarkUpdateInput = {
@@ -245,17 +245,17 @@ export type PersonalMarkUpdateInput = {
 }
 
 export type PersonalMarkUncheckedUpdateInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   markId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   givenById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PersonalMarkCreateManyInput = {
+  createdAt?: Date | string
   markId: string
   userId: string
   givenById?: string | null
-  createdAt?: Date | string
 }
 
 export type PersonalMarkUpdateManyMutationInput = {
@@ -263,10 +263,10 @@ export type PersonalMarkUpdateManyMutationInput = {
 }
 
 export type PersonalMarkUncheckedUpdateManyInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   markId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   givenById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PersonalMarkListRelationFilter = {
@@ -285,24 +285,24 @@ export type PersonalMarkMarkIdUserIdCompoundUniqueInput = {
 }
 
 export type PersonalMarkCountOrderByAggregateInput = {
+  createdAt?: Prisma.SortOrder
   markId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   givenById?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
 }
 
 export type PersonalMarkMaxOrderByAggregateInput = {
+  createdAt?: Prisma.SortOrder
   markId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   givenById?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
 }
 
 export type PersonalMarkMinOrderByAggregateInput = {
+  createdAt?: Prisma.SortOrder
   markId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   givenById?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
 }
 
 export type PersonalMarkCreateNestedManyWithoutUserInput = {
@@ -438,9 +438,9 @@ export type PersonalMarkCreateWithoutUserInput = {
 }
 
 export type PersonalMarkUncheckedCreateWithoutUserInput = {
+  createdAt?: Date | string
   markId: string
   givenById?: string | null
-  createdAt?: Date | string
 }
 
 export type PersonalMarkCreateOrConnectWithoutUserInput = {
@@ -460,9 +460,9 @@ export type PersonalMarkCreateWithoutGivenByInput = {
 }
 
 export type PersonalMarkUncheckedCreateWithoutGivenByInput = {
+  createdAt?: Date | string
   markId: string
   userId: string
-  createdAt?: Date | string
 }
 
 export type PersonalMarkCreateOrConnectWithoutGivenByInput = {
@@ -495,10 +495,10 @@ export type PersonalMarkScalarWhereInput = {
   AND?: Prisma.PersonalMarkScalarWhereInput | Prisma.PersonalMarkScalarWhereInput[]
   OR?: Prisma.PersonalMarkScalarWhereInput[]
   NOT?: Prisma.PersonalMarkScalarWhereInput | Prisma.PersonalMarkScalarWhereInput[]
+  createdAt?: Prisma.DateTimeFilter<"PersonalMark"> | Date | string
   markId?: Prisma.StringFilter<"PersonalMark"> | string
   userId?: Prisma.StringFilter<"PersonalMark"> | string
   givenById?: Prisma.StringNullableFilter<"PersonalMark"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"PersonalMark"> | Date | string
 }
 
 export type PersonalMarkUpsertWithWhereUniqueWithoutGivenByInput = {
@@ -524,9 +524,9 @@ export type PersonalMarkCreateWithoutMarkInput = {
 }
 
 export type PersonalMarkUncheckedCreateWithoutMarkInput = {
+  createdAt?: Date | string
   userId: string
   givenById?: string | null
-  createdAt?: Date | string
 }
 
 export type PersonalMarkCreateOrConnectWithoutMarkInput = {
@@ -556,15 +556,15 @@ export type PersonalMarkUpdateManyWithWhereWithoutMarkInput = {
 }
 
 export type PersonalMarkCreateManyUserInput = {
+  createdAt?: Date | string
   markId: string
   givenById?: string | null
-  createdAt?: Date | string
 }
 
 export type PersonalMarkCreateManyGivenByInput = {
+  createdAt?: Date | string
   markId: string
   userId: string
-  createdAt?: Date | string
 }
 
 export type PersonalMarkUpdateWithoutUserInput = {
@@ -574,15 +574,15 @@ export type PersonalMarkUpdateWithoutUserInput = {
 }
 
 export type PersonalMarkUncheckedUpdateWithoutUserInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   markId?: Prisma.StringFieldUpdateOperationsInput | string
   givenById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PersonalMarkUncheckedUpdateManyWithoutUserInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   markId?: Prisma.StringFieldUpdateOperationsInput | string
   givenById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PersonalMarkUpdateWithoutGivenByInput = {
@@ -592,21 +592,21 @@ export type PersonalMarkUpdateWithoutGivenByInput = {
 }
 
 export type PersonalMarkUncheckedUpdateWithoutGivenByInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   markId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PersonalMarkUncheckedUpdateManyWithoutGivenByInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   markId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PersonalMarkCreateManyMarkInput = {
+  createdAt?: Date | string
   userId: string
   givenById?: string | null
-  createdAt?: Date | string
 }
 
 export type PersonalMarkUpdateWithoutMarkInput = {
@@ -616,57 +616,57 @@ export type PersonalMarkUpdateWithoutMarkInput = {
 }
 
 export type PersonalMarkUncheckedUpdateWithoutMarkInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   givenById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PersonalMarkUncheckedUpdateManyWithoutMarkInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   givenById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type PersonalMarkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  createdAt?: boolean
   markId?: boolean
   userId?: boolean
   givenById?: boolean
-  createdAt?: boolean
   mark?: boolean | Prisma.MarkDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   givenBy?: boolean | Prisma.PersonalMark$givenByArgs<ExtArgs>
 }, ExtArgs["result"]["personalMark"]>
 
 export type PersonalMarkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  createdAt?: boolean
   markId?: boolean
   userId?: boolean
   givenById?: boolean
-  createdAt?: boolean
   mark?: boolean | Prisma.MarkDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   givenBy?: boolean | Prisma.PersonalMark$givenByArgs<ExtArgs>
 }, ExtArgs["result"]["personalMark"]>
 
 export type PersonalMarkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  createdAt?: boolean
   markId?: boolean
   userId?: boolean
   givenById?: boolean
-  createdAt?: boolean
   mark?: boolean | Prisma.MarkDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   givenBy?: boolean | Prisma.PersonalMark$givenByArgs<ExtArgs>
 }, ExtArgs["result"]["personalMark"]>
 
 export type PersonalMarkSelectScalar = {
+  createdAt?: boolean
   markId?: boolean
   userId?: boolean
   givenById?: boolean
-  createdAt?: boolean
 }
 
-export type PersonalMarkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"markId" | "userId" | "givenById" | "createdAt", ExtArgs["result"]["personalMark"]>
+export type PersonalMarkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"createdAt" | "markId" | "userId" | "givenById", ExtArgs["result"]["personalMark"]>
 export type PersonalMarkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mark?: boolean | Prisma.MarkDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -691,10 +691,10 @@ export type $PersonalMarkPayload<ExtArgs extends runtime.Types.Extensions.Intern
     givenBy: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    createdAt: Date
     markId: string
     userId: string
     givenById: string | null
-    createdAt: Date
   }, ExtArgs["result"]["personalMark"]>
   composites: {}
 }
@@ -778,8 +778,8 @@ export interface PersonalMarkDelegate<ExtArgs extends runtime.Types.Extensions.I
    * // Get first 10 PersonalMarks
    * const personalMarks = await prisma.personalMark.findMany({ take: 10 })
    * 
-   * // Only select the `markId`
-   * const personalMarkWithMarkIdOnly = await prisma.personalMark.findMany({ select: { markId: true } })
+   * // Only select the `createdAt`
+   * const personalMarkWithCreatedAtOnly = await prisma.personalMark.findMany({ select: { createdAt: true } })
    * 
    */
   findMany<T extends PersonalMarkFindManyArgs>(args?: Prisma.SelectSubset<T, PersonalMarkFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonalMarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -823,9 +823,9 @@ export interface PersonalMarkDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Create many PersonalMarks and only return the `markId`
-   * const personalMarkWithMarkIdOnly = await prisma.personalMark.createManyAndReturn({
-   *   select: { markId: true },
+   * // Create many PersonalMarks and only return the `createdAt`
+   * const personalMarkWithCreatedAtOnly = await prisma.personalMark.createManyAndReturn({
+   *   select: { createdAt: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -914,9 +914,9 @@ export interface PersonalMarkDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Update zero or more PersonalMarks and only return the `markId`
-   * const personalMarkWithMarkIdOnly = await prisma.personalMark.updateManyAndReturn({
-   *   select: { markId: true },
+   * // Update zero or more PersonalMarks and only return the `createdAt`
+   * const personalMarkWithCreatedAtOnly = await prisma.personalMark.updateManyAndReturn({
+   *   select: { createdAt: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1121,10 +1121,10 @@ export interface Prisma__PersonalMarkClient<T, Null = never, ExtArgs extends run
  * Fields of the PersonalMark model
  */
 export interface PersonalMarkFieldRefs {
+  readonly createdAt: Prisma.FieldRef<"PersonalMark", 'DateTime'>
   readonly markId: Prisma.FieldRef<"PersonalMark", 'String'>
   readonly userId: Prisma.FieldRef<"PersonalMark", 'String'>
   readonly givenById: Prisma.FieldRef<"PersonalMark", 'String'>
-  readonly createdAt: Prisma.FieldRef<"PersonalMark", 'DateTime'>
 }
     
 

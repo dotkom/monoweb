@@ -38,9 +38,9 @@ export type FeedbackQuestionAnswerMaxAggregateOutputType = {
 
 export type FeedbackQuestionAnswerCountAggregateOutputType = {
   id: number
+  value: number
   questionId: number
   formAnswerId: number
-  value: number
   _all: number
 }
 
@@ -59,9 +59,9 @@ export type FeedbackQuestionAnswerMaxAggregateInputType = {
 
 export type FeedbackQuestionAnswerCountAggregateInputType = {
   id?: true
+  value?: true
   questionId?: true
   formAnswerId?: true
-  value?: true
   _all?: true
 }
 
@@ -139,9 +139,9 @@ export type FeedbackQuestionAnswerGroupByArgs<ExtArgs extends runtime.Types.Exte
 
 export type FeedbackQuestionAnswerGroupByOutputType = {
   id: string
+  value: runtime.JsonValue | null
   questionId: string
   formAnswerId: string
-  value: runtime.JsonValue | null
   _count: FeedbackQuestionAnswerCountAggregateOutputType | null
   _min: FeedbackQuestionAnswerMinAggregateOutputType | null
   _max: FeedbackQuestionAnswerMaxAggregateOutputType | null
@@ -167,9 +167,9 @@ export type FeedbackQuestionAnswerWhereInput = {
   OR?: Prisma.FeedbackQuestionAnswerWhereInput[]
   NOT?: Prisma.FeedbackQuestionAnswerWhereInput | Prisma.FeedbackQuestionAnswerWhereInput[]
   id?: Prisma.StringFilter<"FeedbackQuestionAnswer"> | string
+  value?: Prisma.JsonNullableFilter<"FeedbackQuestionAnswer">
   questionId?: Prisma.StringFilter<"FeedbackQuestionAnswer"> | string
   formAnswerId?: Prisma.StringFilter<"FeedbackQuestionAnswer"> | string
-  value?: Prisma.JsonNullableFilter<"FeedbackQuestionAnswer">
   question?: Prisma.XOR<Prisma.FeedbackQuestionScalarRelationFilter, Prisma.FeedbackQuestionWhereInput>
   formAnswer?: Prisma.XOR<Prisma.FeedbackFormAnswerScalarRelationFilter, Prisma.FeedbackFormAnswerWhereInput>
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkListRelationFilter
@@ -177,9 +177,9 @@ export type FeedbackQuestionAnswerWhereInput = {
 
 export type FeedbackQuestionAnswerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  value?: Prisma.SortOrderInput | Prisma.SortOrder
   questionId?: Prisma.SortOrder
   formAnswerId?: Prisma.SortOrder
-  value?: Prisma.SortOrderInput | Prisma.SortOrder
   question?: Prisma.FeedbackQuestionOrderByWithRelationInput
   formAnswer?: Prisma.FeedbackFormAnswerOrderByWithRelationInput
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkOrderByRelationAggregateInput
@@ -190,9 +190,9 @@ export type FeedbackQuestionAnswerWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.FeedbackQuestionAnswerWhereInput | Prisma.FeedbackQuestionAnswerWhereInput[]
   OR?: Prisma.FeedbackQuestionAnswerWhereInput[]
   NOT?: Prisma.FeedbackQuestionAnswerWhereInput | Prisma.FeedbackQuestionAnswerWhereInput[]
+  value?: Prisma.JsonNullableFilter<"FeedbackQuestionAnswer">
   questionId?: Prisma.StringFilter<"FeedbackQuestionAnswer"> | string
   formAnswerId?: Prisma.StringFilter<"FeedbackQuestionAnswer"> | string
-  value?: Prisma.JsonNullableFilter<"FeedbackQuestionAnswer">
   question?: Prisma.XOR<Prisma.FeedbackQuestionScalarRelationFilter, Prisma.FeedbackQuestionWhereInput>
   formAnswer?: Prisma.XOR<Prisma.FeedbackFormAnswerScalarRelationFilter, Prisma.FeedbackFormAnswerWhereInput>
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkListRelationFilter
@@ -200,9 +200,9 @@ export type FeedbackQuestionAnswerWhereUniqueInput = Prisma.AtLeast<{
 
 export type FeedbackQuestionAnswerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  value?: Prisma.SortOrderInput | Prisma.SortOrder
   questionId?: Prisma.SortOrder
   formAnswerId?: Prisma.SortOrder
-  value?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.FeedbackQuestionAnswerCountOrderByAggregateInput
   _max?: Prisma.FeedbackQuestionAnswerMaxOrderByAggregateInput
   _min?: Prisma.FeedbackQuestionAnswerMinOrderByAggregateInput
@@ -213,9 +213,9 @@ export type FeedbackQuestionAnswerScalarWhereWithAggregatesInput = {
   OR?: Prisma.FeedbackQuestionAnswerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FeedbackQuestionAnswerScalarWhereWithAggregatesInput | Prisma.FeedbackQuestionAnswerScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"FeedbackQuestionAnswer"> | string
+  value?: Prisma.JsonNullableWithAggregatesFilter<"FeedbackQuestionAnswer">
   questionId?: Prisma.StringWithAggregatesFilter<"FeedbackQuestionAnswer"> | string
   formAnswerId?: Prisma.StringWithAggregatesFilter<"FeedbackQuestionAnswer"> | string
-  value?: Prisma.JsonNullableWithAggregatesFilter<"FeedbackQuestionAnswer">
 }
 
 export type FeedbackQuestionAnswerCreateInput = {
@@ -228,9 +228,9 @@ export type FeedbackQuestionAnswerCreateInput = {
 
 export type FeedbackQuestionAnswerUncheckedCreateInput = {
   id?: string
+  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   questionId: string
   formAnswerId: string
-  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkUncheckedCreateNestedManyWithoutFeedbackQuestionAnswerInput
 }
 
@@ -244,17 +244,17 @@ export type FeedbackQuestionAnswerUpdateInput = {
 
 export type FeedbackQuestionAnswerUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   questionId?: Prisma.StringFieldUpdateOperationsInput | string
   formAnswerId?: Prisma.StringFieldUpdateOperationsInput | string
-  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkUncheckedUpdateManyWithoutFeedbackQuestionAnswerNestedInput
 }
 
 export type FeedbackQuestionAnswerCreateManyInput = {
   id?: string
+  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   questionId: string
   formAnswerId: string
-  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FeedbackQuestionAnswerUpdateManyMutationInput = {
@@ -264,9 +264,9 @@ export type FeedbackQuestionAnswerUpdateManyMutationInput = {
 
 export type FeedbackQuestionAnswerUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   questionId?: Prisma.StringFieldUpdateOperationsInput | string
   formAnswerId?: Prisma.StringFieldUpdateOperationsInput | string
-  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FeedbackQuestionAnswerListRelationFilter = {
@@ -281,9 +281,9 @@ export type FeedbackQuestionAnswerOrderByRelationAggregateInput = {
 
 export type FeedbackQuestionAnswerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  value?: Prisma.SortOrder
   questionId?: Prisma.SortOrder
   formAnswerId?: Prisma.SortOrder
-  value?: Prisma.SortOrder
 }
 
 export type FeedbackQuestionAnswerMaxOrderByAggregateInput = {
@@ -410,8 +410,8 @@ export type FeedbackQuestionAnswerCreateWithoutQuestionInput = {
 
 export type FeedbackQuestionAnswerUncheckedCreateWithoutQuestionInput = {
   id?: string
-  formAnswerId: string
   value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formAnswerId: string
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkUncheckedCreateNestedManyWithoutFeedbackQuestionAnswerInput
 }
 
@@ -446,9 +446,9 @@ export type FeedbackQuestionAnswerScalarWhereInput = {
   OR?: Prisma.FeedbackQuestionAnswerScalarWhereInput[]
   NOT?: Prisma.FeedbackQuestionAnswerScalarWhereInput | Prisma.FeedbackQuestionAnswerScalarWhereInput[]
   id?: Prisma.StringFilter<"FeedbackQuestionAnswer"> | string
+  value?: Prisma.JsonNullableFilter<"FeedbackQuestionAnswer">
   questionId?: Prisma.StringFilter<"FeedbackQuestionAnswer"> | string
   formAnswerId?: Prisma.StringFilter<"FeedbackQuestionAnswer"> | string
-  value?: Prisma.JsonNullableFilter<"FeedbackQuestionAnswer">
 }
 
 export type FeedbackQuestionAnswerCreateWithoutSelectedOptionsInput = {
@@ -460,9 +460,9 @@ export type FeedbackQuestionAnswerCreateWithoutSelectedOptionsInput = {
 
 export type FeedbackQuestionAnswerUncheckedCreateWithoutSelectedOptionsInput = {
   id?: string
+  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   questionId: string
   formAnswerId: string
-  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FeedbackQuestionAnswerCreateOrConnectWithoutSelectedOptionsInput = {
@@ -490,9 +490,9 @@ export type FeedbackQuestionAnswerUpdateWithoutSelectedOptionsInput = {
 
 export type FeedbackQuestionAnswerUncheckedUpdateWithoutSelectedOptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   questionId?: Prisma.StringFieldUpdateOperationsInput | string
   formAnswerId?: Prisma.StringFieldUpdateOperationsInput | string
-  value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FeedbackQuestionAnswerCreateWithoutFormAnswerInput = {
@@ -504,8 +504,8 @@ export type FeedbackQuestionAnswerCreateWithoutFormAnswerInput = {
 
 export type FeedbackQuestionAnswerUncheckedCreateWithoutFormAnswerInput = {
   id?: string
-  questionId: string
   value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  questionId: string
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkUncheckedCreateNestedManyWithoutFeedbackQuestionAnswerInput
 }
 
@@ -537,8 +537,8 @@ export type FeedbackQuestionAnswerUpdateManyWithWhereWithoutFormAnswerInput = {
 
 export type FeedbackQuestionAnswerCreateManyQuestionInput = {
   id?: string
-  formAnswerId: string
   value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formAnswerId: string
 }
 
 export type FeedbackQuestionAnswerUpdateWithoutQuestionInput = {
@@ -550,21 +550,21 @@ export type FeedbackQuestionAnswerUpdateWithoutQuestionInput = {
 
 export type FeedbackQuestionAnswerUncheckedUpdateWithoutQuestionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  formAnswerId?: Prisma.StringFieldUpdateOperationsInput | string
   value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formAnswerId?: Prisma.StringFieldUpdateOperationsInput | string
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkUncheckedUpdateManyWithoutFeedbackQuestionAnswerNestedInput
 }
 
 export type FeedbackQuestionAnswerUncheckedUpdateManyWithoutQuestionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  formAnswerId?: Prisma.StringFieldUpdateOperationsInput | string
   value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formAnswerId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type FeedbackQuestionAnswerCreateManyFormAnswerInput = {
   id?: string
-  questionId: string
   value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  questionId: string
 }
 
 export type FeedbackQuestionAnswerUpdateWithoutFormAnswerInput = {
@@ -576,15 +576,15 @@ export type FeedbackQuestionAnswerUpdateWithoutFormAnswerInput = {
 
 export type FeedbackQuestionAnswerUncheckedUpdateWithoutFormAnswerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  questionId?: Prisma.StringFieldUpdateOperationsInput | string
   value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  questionId?: Prisma.StringFieldUpdateOperationsInput | string
   selectedOptions?: Prisma.FeedbackQuestionAnswerOptionLinkUncheckedUpdateManyWithoutFeedbackQuestionAnswerNestedInput
 }
 
 export type FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  questionId?: Prisma.StringFieldUpdateOperationsInput | string
   value?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  questionId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -620,9 +620,9 @@ export type FeedbackQuestionAnswerCountOutputTypeCountSelectedOptionsArgs<ExtArg
 
 export type FeedbackQuestionAnswerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  value?: boolean
   questionId?: boolean
   formAnswerId?: boolean
-  value?: boolean
   question?: boolean | Prisma.FeedbackQuestionDefaultArgs<ExtArgs>
   formAnswer?: boolean | Prisma.FeedbackFormAnswerDefaultArgs<ExtArgs>
   selectedOptions?: boolean | Prisma.FeedbackQuestionAnswer$selectedOptionsArgs<ExtArgs>
@@ -631,30 +631,30 @@ export type FeedbackQuestionAnswerSelect<ExtArgs extends runtime.Types.Extension
 
 export type FeedbackQuestionAnswerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  value?: boolean
   questionId?: boolean
   formAnswerId?: boolean
-  value?: boolean
   question?: boolean | Prisma.FeedbackQuestionDefaultArgs<ExtArgs>
   formAnswer?: boolean | Prisma.FeedbackFormAnswerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackQuestionAnswer"]>
 
 export type FeedbackQuestionAnswerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  value?: boolean
   questionId?: boolean
   formAnswerId?: boolean
-  value?: boolean
   question?: boolean | Prisma.FeedbackQuestionDefaultArgs<ExtArgs>
   formAnswer?: boolean | Prisma.FeedbackFormAnswerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackQuestionAnswer"]>
 
 export type FeedbackQuestionAnswerSelectScalar = {
   id?: boolean
+  value?: boolean
   questionId?: boolean
   formAnswerId?: boolean
-  value?: boolean
 }
 
-export type FeedbackQuestionAnswerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "questionId" | "formAnswerId" | "value", ExtArgs["result"]["feedbackQuestionAnswer"]>
+export type FeedbackQuestionAnswerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "value" | "questionId" | "formAnswerId", ExtArgs["result"]["feedbackQuestionAnswer"]>
 export type FeedbackQuestionAnswerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   question?: boolean | Prisma.FeedbackQuestionDefaultArgs<ExtArgs>
   formAnswer?: boolean | Prisma.FeedbackFormAnswerDefaultArgs<ExtArgs>
@@ -679,9 +679,9 @@ export type $FeedbackQuestionAnswerPayload<ExtArgs extends runtime.Types.Extensi
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    value: runtime.JsonValue | null
     questionId: string
     formAnswerId: string
-    value: runtime.JsonValue | null
   }, ExtArgs["result"]["feedbackQuestionAnswer"]>
   composites: {}
 }
@@ -1109,9 +1109,9 @@ export interface Prisma__FeedbackQuestionAnswerClient<T, Null = never, ExtArgs e
  */
 export interface FeedbackQuestionAnswerFieldRefs {
   readonly id: Prisma.FieldRef<"FeedbackQuestionAnswer", 'String'>
+  readonly value: Prisma.FieldRef<"FeedbackQuestionAnswer", 'Json'>
   readonly questionId: Prisma.FieldRef<"FeedbackQuestionAnswer", 'String'>
   readonly formAnswerId: Prisma.FieldRef<"FeedbackQuestionAnswer", 'String'>
-  readonly value: Prisma.FieldRef<"FeedbackQuestionAnswer", 'Json'>
 }
     
 

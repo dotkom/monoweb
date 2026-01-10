@@ -26,58 +26,58 @@ export type AggregateFeedbackForm = {
 
 export type FeedbackFormMinAggregateOutputType = {
   id: string | null
-  eventId: string | null
   publicResultsToken: string | null
   createdAt: Date | null
   updatedAt: Date | null
   answerDeadline: Date | null
+  eventId: string | null
 }
 
 export type FeedbackFormMaxAggregateOutputType = {
   id: string | null
-  eventId: string | null
   publicResultsToken: string | null
   createdAt: Date | null
   updatedAt: Date | null
   answerDeadline: Date | null
+  eventId: string | null
 }
 
 export type FeedbackFormCountAggregateOutputType = {
   id: number
-  eventId: number
   publicResultsToken: number
   createdAt: number
   updatedAt: number
   answerDeadline: number
+  eventId: number
   _all: number
 }
 
 
 export type FeedbackFormMinAggregateInputType = {
   id?: true
-  eventId?: true
   publicResultsToken?: true
   createdAt?: true
   updatedAt?: true
   answerDeadline?: true
+  eventId?: true
 }
 
 export type FeedbackFormMaxAggregateInputType = {
   id?: true
-  eventId?: true
   publicResultsToken?: true
   createdAt?: true
   updatedAt?: true
   answerDeadline?: true
+  eventId?: true
 }
 
 export type FeedbackFormCountAggregateInputType = {
   id?: true
-  eventId?: true
   publicResultsToken?: true
   createdAt?: true
   updatedAt?: true
   answerDeadline?: true
+  eventId?: true
   _all?: true
 }
 
@@ -155,11 +155,11 @@ export type FeedbackFormGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type FeedbackFormGroupByOutputType = {
   id: string
-  eventId: string
   publicResultsToken: string
   createdAt: Date
   updatedAt: Date
   answerDeadline: Date
+  eventId: string
   _count: FeedbackFormCountAggregateOutputType | null
   _min: FeedbackFormMinAggregateOutputType | null
   _max: FeedbackFormMaxAggregateOutputType | null
@@ -185,11 +185,11 @@ export type FeedbackFormWhereInput = {
   OR?: Prisma.FeedbackFormWhereInput[]
   NOT?: Prisma.FeedbackFormWhereInput | Prisma.FeedbackFormWhereInput[]
   id?: Prisma.StringFilter<"FeedbackForm"> | string
-  eventId?: Prisma.StringFilter<"FeedbackForm"> | string
   publicResultsToken?: Prisma.StringFilter<"FeedbackForm"> | string
   createdAt?: Prisma.DateTimeFilter<"FeedbackForm"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"FeedbackForm"> | Date | string
   answerDeadline?: Prisma.DateTimeFilter<"FeedbackForm"> | Date | string
+  eventId?: Prisma.StringFilter<"FeedbackForm"> | string
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
   questions?: Prisma.FeedbackQuestionListRelationFilter
   answers?: Prisma.FeedbackFormAnswerListRelationFilter
@@ -197,11 +197,11 @@ export type FeedbackFormWhereInput = {
 
 export type FeedbackFormOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   publicResultsToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   answerDeadline?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
   event?: Prisma.EventOrderByWithRelationInput
   questions?: Prisma.FeedbackQuestionOrderByRelationAggregateInput
   answers?: Prisma.FeedbackFormAnswerOrderByRelationAggregateInput
@@ -209,8 +209,8 @@ export type FeedbackFormOrderByWithRelationInput = {
 
 export type FeedbackFormWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  eventId?: string
   publicResultsToken?: string
+  eventId?: string
   AND?: Prisma.FeedbackFormWhereInput | Prisma.FeedbackFormWhereInput[]
   OR?: Prisma.FeedbackFormWhereInput[]
   NOT?: Prisma.FeedbackFormWhereInput | Prisma.FeedbackFormWhereInput[]
@@ -220,15 +220,15 @@ export type FeedbackFormWhereUniqueInput = Prisma.AtLeast<{
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
   questions?: Prisma.FeedbackQuestionListRelationFilter
   answers?: Prisma.FeedbackFormAnswerListRelationFilter
-}, "id" | "eventId" | "publicResultsToken">
+}, "id" | "publicResultsToken" | "eventId">
 
 export type FeedbackFormOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   publicResultsToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   answerDeadline?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
   _count?: Prisma.FeedbackFormCountOrderByAggregateInput
   _max?: Prisma.FeedbackFormMaxOrderByAggregateInput
   _min?: Prisma.FeedbackFormMinOrderByAggregateInput
@@ -239,11 +239,11 @@ export type FeedbackFormScalarWhereWithAggregatesInput = {
   OR?: Prisma.FeedbackFormScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FeedbackFormScalarWhereWithAggregatesInput | Prisma.FeedbackFormScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"FeedbackForm"> | string
-  eventId?: Prisma.StringWithAggregatesFilter<"FeedbackForm"> | string
   publicResultsToken?: Prisma.StringWithAggregatesFilter<"FeedbackForm"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"FeedbackForm"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"FeedbackForm"> | Date | string
   answerDeadline?: Prisma.DateTimeWithAggregatesFilter<"FeedbackForm"> | Date | string
+  eventId?: Prisma.StringWithAggregatesFilter<"FeedbackForm"> | string
 }
 
 export type FeedbackFormCreateInput = {
@@ -259,11 +259,11 @@ export type FeedbackFormCreateInput = {
 
 export type FeedbackFormUncheckedCreateInput = {
   id?: string
-  eventId: string
   publicResultsToken?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   answerDeadline: Date | string
+  eventId: string
   questions?: Prisma.FeedbackQuestionUncheckedCreateNestedManyWithoutFeedbackFormInput
   answers?: Prisma.FeedbackFormAnswerUncheckedCreateNestedManyWithoutFeedbackFormInput
 }
@@ -281,22 +281,22 @@ export type FeedbackFormUpdateInput = {
 
 export type FeedbackFormUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   publicResultsToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answerDeadline?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   questions?: Prisma.FeedbackQuestionUncheckedUpdateManyWithoutFeedbackFormNestedInput
   answers?: Prisma.FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormNestedInput
 }
 
 export type FeedbackFormCreateManyInput = {
   id?: string
-  eventId: string
   publicResultsToken?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   answerDeadline: Date | string
+  eventId: string
 }
 
 export type FeedbackFormUpdateManyMutationInput = {
@@ -309,11 +309,11 @@ export type FeedbackFormUpdateManyMutationInput = {
 
 export type FeedbackFormUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   publicResultsToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answerDeadline?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type FeedbackFormNullableScalarRelationFilter = {
@@ -323,29 +323,29 @@ export type FeedbackFormNullableScalarRelationFilter = {
 
 export type FeedbackFormCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   publicResultsToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   answerDeadline?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
 }
 
 export type FeedbackFormMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   publicResultsToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   answerDeadline?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
 }
 
 export type FeedbackFormMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   publicResultsToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   answerDeadline?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
 }
 
 export type FeedbackFormScalarRelationFilter = {
@@ -481,11 +481,11 @@ export type FeedbackFormCreateWithoutQuestionsInput = {
 
 export type FeedbackFormUncheckedCreateWithoutQuestionsInput = {
   id?: string
-  eventId: string
   publicResultsToken?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   answerDeadline: Date | string
+  eventId: string
   answers?: Prisma.FeedbackFormAnswerUncheckedCreateNestedManyWithoutFeedbackFormInput
 }
 
@@ -517,11 +517,11 @@ export type FeedbackFormUpdateWithoutQuestionsInput = {
 
 export type FeedbackFormUncheckedUpdateWithoutQuestionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   publicResultsToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answerDeadline?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   answers?: Prisma.FeedbackFormAnswerUncheckedUpdateManyWithoutFeedbackFormNestedInput
 }
 
@@ -537,11 +537,11 @@ export type FeedbackFormCreateWithoutAnswersInput = {
 
 export type FeedbackFormUncheckedCreateWithoutAnswersInput = {
   id?: string
-  eventId: string
   publicResultsToken?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   answerDeadline: Date | string
+  eventId: string
   questions?: Prisma.FeedbackQuestionUncheckedCreateNestedManyWithoutFeedbackFormInput
 }
 
@@ -573,11 +573,11 @@ export type FeedbackFormUpdateWithoutAnswersInput = {
 
 export type FeedbackFormUncheckedUpdateWithoutAnswersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   publicResultsToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answerDeadline?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   questions?: Prisma.FeedbackQuestionUncheckedUpdateManyWithoutFeedbackFormNestedInput
 }
 
@@ -623,11 +623,11 @@ export type FeedbackFormCountOutputTypeCountAnswersArgs<ExtArgs extends runtime.
 
 export type FeedbackFormSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  eventId?: boolean
   publicResultsToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   answerDeadline?: boolean
+  eventId?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
   questions?: boolean | Prisma.FeedbackForm$questionsArgs<ExtArgs>
   answers?: boolean | Prisma.FeedbackForm$answersArgs<ExtArgs>
@@ -636,34 +636,34 @@ export type FeedbackFormSelect<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type FeedbackFormSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  eventId?: boolean
   publicResultsToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   answerDeadline?: boolean
+  eventId?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackForm"]>
 
 export type FeedbackFormSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  eventId?: boolean
   publicResultsToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   answerDeadline?: boolean
+  eventId?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackForm"]>
 
 export type FeedbackFormSelectScalar = {
   id?: boolean
-  eventId?: boolean
   publicResultsToken?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   answerDeadline?: boolean
+  eventId?: boolean
 }
 
-export type FeedbackFormOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "publicResultsToken" | "createdAt" | "updatedAt" | "answerDeadline", ExtArgs["result"]["feedbackForm"]>
+export type FeedbackFormOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicResultsToken" | "createdAt" | "updatedAt" | "answerDeadline" | "eventId", ExtArgs["result"]["feedbackForm"]>
 export type FeedbackFormInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
   questions?: boolean | Prisma.FeedbackForm$questionsArgs<ExtArgs>
@@ -686,11 +686,11 @@ export type $FeedbackFormPayload<ExtArgs extends runtime.Types.Extensions.Intern
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    eventId: string
     publicResultsToken: string
     createdAt: Date
     updatedAt: Date
     answerDeadline: Date
+    eventId: string
   }, ExtArgs["result"]["feedbackForm"]>
   composites: {}
 }
@@ -1118,11 +1118,11 @@ export interface Prisma__FeedbackFormClient<T, Null = never, ExtArgs extends run
  */
 export interface FeedbackFormFieldRefs {
   readonly id: Prisma.FieldRef<"FeedbackForm", 'String'>
-  readonly eventId: Prisma.FieldRef<"FeedbackForm", 'String'>
   readonly publicResultsToken: Prisma.FieldRef<"FeedbackForm", 'String'>
   readonly createdAt: Prisma.FieldRef<"FeedbackForm", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"FeedbackForm", 'DateTime'>
   readonly answerDeadline: Prisma.FieldRef<"FeedbackForm", 'DateTime'>
+  readonly eventId: Prisma.FieldRef<"FeedbackForm", 'String'>
 }
     
 
