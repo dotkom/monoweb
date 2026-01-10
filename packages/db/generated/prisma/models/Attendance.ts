@@ -818,6 +818,9 @@ export type $AttendancePayload<ExtArgs extends runtime.Types.Extensions.Internal
     selections: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
+    /**
+     * The price as a whole integer in NOK (value 100 means NOK100.00)
+     */
     attendancePrice: number | null
   }, ExtArgs["result"]["attendance"]>
   composites: {}
