@@ -65,8 +65,7 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
               </a>
             </div>
           )}
-
-          <div className="flex flex-col gap-y-2 px-1 text-lg">
+          <div className="flex flex-col gap-y-2 px-1 text-lg bg-gray-100 dark:bg-stone-700 rounded-2xl p-4 pl-6">
             {icons.map(({ icon: Icon, text, href }) => (
               <div key={`${text}-${href ?? "no-link"}`} className="flex items-center gap-x-2 dark:text-gray-100">
                 <Icon width={24} height={24} />
@@ -103,3 +102,5 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
     </EntryDetailLayout>
   )
 }
+
+
