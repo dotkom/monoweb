@@ -4,6 +4,8 @@ import { AttendanceSchema } from "./attendance"
 import { CompanySchema } from "./company"
 import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
 import { GroupSchema } from "./group"
+import { set, addWeeks } from "date-fns"
+import { TZDate } from "@date-fns/tz"
 
 /**
  * @packageDocumentation
@@ -137,4 +139,16 @@ export const mapDeregisterReasonTypeToLabel = (type: DeregisterReasonType) => {
     default:
       return "Ukjent"
   }
+}
+
+/** Adds one week and sets the time to 12:00:00 in Europe/Oslo timezone */
+export const getDefaultFeedbackAnswerDeadline = (eventEnd: Date, timezone: string = "Europe/Oslo"): TZDate => {
+  const date = new TZDate(eventEnd, timezone)
+
+  return set(addWeeks(date, 1), {
+    hours: 12,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  })
 }

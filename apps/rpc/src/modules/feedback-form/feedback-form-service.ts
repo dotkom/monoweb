@@ -1,18 +1,19 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Attendee,
-  Event,
-  EventId,
-  FeedbackForm,
-  FeedbackFormId,
-  FeedbackFormWrite,
-  FeedbackPublicResultsToken,
-  FeedbackQuestionWrite,
-  FeedbackRejectionCause,
-  UserId,
+import {
+  type Attendee,
+  type Event,
+  type EventId,
+  type FeedbackForm,
+  type FeedbackFormId,
+  type FeedbackFormWrite,
+  type FeedbackPublicResultsToken,
+  type FeedbackQuestionWrite,
+  type FeedbackRejectionCause,
+  type UserId,
+  getDefaultFeedbackAnswerDeadline,
 } from "@dotkomonline/types"
-import { addWeeks, isEqual, isFuture, isPast } from "date-fns"
+import { isEqual, isFuture, isPast } from "date-fns"
 import { NotFoundError } from "../../error"
 import type { AttendanceRepository } from "../event/attendance-repository"
 import type { EventService } from "../event/event-service"
@@ -84,7 +85,7 @@ export function getFeedbackFormService(
 
       const feedbackForm: FeedbackFormWrite = {
         eventId,
-        answerDeadline: addWeeks(event.end, 1),
+        answerDeadline: getDefaultFeedbackAnswerDeadline(event.end),
       }
       const questions = formToCopy.questions
 
