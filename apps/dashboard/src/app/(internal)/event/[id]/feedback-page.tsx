@@ -1,6 +1,11 @@
-import type { EventId, FeedbackFormId, FeedbackFormWrite, FeedbackQuestionWrite } from "@dotkomonline/types"
+import {
+  type EventId,
+  type FeedbackFormId,
+  type FeedbackFormWrite,
+  type FeedbackQuestionWrite,
+  getDefaultFeedbackAnswerDeadline,
+} from "@dotkomonline/types"
 import { Box, Button, Group, Select, Stack, Title } from "@mantine/core"
-import { addWeeks } from "date-fns"
 import type { FC } from "react"
 import { FeedbackFormEditForm } from "../components/feedback-form-edit-form"
 import {
@@ -22,6 +27,8 @@ export const FeedbackPage: FC = () => {
     filter: { byHasFeedbackForm: true },
   })
 
+  const defaultAnswerDeadline = getDefaultFeedbackAnswerDeadline(event.end)
+
   const onSubmit = (id: FeedbackFormId, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]) => {
     updateMutation.mutate({
       id,
@@ -34,7 +41,7 @@ export const FeedbackPage: FC = () => {
     createMutation.mutate({
       feedbackForm: {
         eventId: event.id,
-        answerDeadline: addWeeks(event.end, 1),
+        answerDeadline: defaultAnswerDeadline,
       },
       questions: [],
     })
@@ -50,7 +57,7 @@ export const FeedbackPage: FC = () => {
   const defaultValues = {
     feedbackForm: {
       eventId: event.id,
-      answerDeadline: feedbackFormQuery?.data?.answerDeadline ?? addWeeks(event.end, 1),
+      answerDeadline: feedbackFormQuery?.data?.answerDeadline ?? defaultAnswerDeadline,
     },
     questions: feedbackFormQuery?.data?.questions ?? [],
   }
