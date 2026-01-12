@@ -1,0 +1,3 @@
+# Prevent user profiles from being indexed by search engines
+User-agent: *
+Disallow: /profil/
