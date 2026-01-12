@@ -130,14 +130,14 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
       )}
     >
       <div className="flex flex-row items-center gap-8 w-full">
-        <div className="inline-block bg-white p-2 rounded-lg">
+        <div className="md:inline-block bg-white p-2 rounded-lg hidden">
           {jobListing.company.imageUrl && (
             <Image
               src={jobListing.company.imageUrl}
               width={168}
               height={96}
               alt={`${jobListing.company.name}'s job posting`}
-              className="hidden md:block rounded-sm"
+              className="block rounded-sm"
             />
           )}
         </div>
