@@ -53,6 +53,7 @@ export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: Comp
       {props.chosenEmployments.map((item) => (
         <Checkbox
           key={item.name}
+          id={item.name}
           label={translationJobTypes[item.name]}
           checked={item.checked}
           onCheckedChange={(checked) => {
