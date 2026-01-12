@@ -20,7 +20,7 @@ export const PaymentPage: FC = () => {
     () => attendance?.attendees.filter((attendee) => attendee.reserved) ?? [],
     [attendance]
   )
-  const hasPayment = Boolean(attendance!.attendancePrice)
+  const hasPayment = Boolean(attendance?.attendancePrice)
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -37,11 +37,11 @@ export const PaymentPage: FC = () => {
       return
     }
 
-    updateAttendancePayment.mutate({ id: attendance!.id, price: newPrice })
+    updateAttendancePayment.mutate({ id: attendance?.id, price: newPrice })
   }
 
   const removePayment = async () => {
-    updateAttendancePayment.mutate({ id: attendance!.id, price: null })
+    updateAttendancePayment.mutate({ id: attendance?.id, price: null })
   }
 
   const columnHelper = createColumnHelper<Attendee>()

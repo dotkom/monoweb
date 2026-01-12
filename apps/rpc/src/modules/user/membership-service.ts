@@ -2,7 +2,6 @@ import { getAcademicStart, getNextAcademicStart } from "@dotkomonline/types"
 import { differenceInMonths, subYears } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
-import { logger } from "@sentry/node"
 import { getLogger } from "@dotkomonline/logger"
 
 export interface MembershipService {
