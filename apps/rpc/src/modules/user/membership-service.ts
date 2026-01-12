@@ -2,6 +2,8 @@ import { getAcademicStart, getNextAcademicStart } from "@dotkomonline/types"
 import { differenceInMonths, subYears } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
+import { logger } from "@sentry/node"
+import { getLogger } from "@dotkomonline/logger"
 
 export interface MembershipService {
   findApproximateMasterStartYear(courses: NTNUGroup[]): number
@@ -59,6 +61,7 @@ const MASTER_STUDY_PLAN = [
 type StudyPlanCourseSet = typeof BACHELOR_STUDY_PLAN_COURSES | typeof MASTER_STUDY_PLAN
 
 export function getMembershipService(): MembershipService {
+  const logger = getLogger("membership-service")
   // The study plan course set makes some assumptions for the approximation code to work as expected. In order to make
   // it easier for future dotkom developers, the invariants are checked here.
   validateStudyPlanCourseSet(BACHELOR_STUDY_PLAN_COURSES)
@@ -85,6 +88,7 @@ export function getMembershipService(): MembershipService {
    * Find the approximate start year based on a student's courses against a hard-coded set of courses.
    */
   function findApproximateStartYear(studentCourses: NTNUGroup[], courseSet: StudyPlanCourseSet): number {
+    logger.info("Searching for applicable membership based on courses %o and study plan %o", studentCourses, courseSet)
     let largestSemester = 0
     for (let i = 0; i < courseSet.length; i++) {
       const semester = courseSet[i]
