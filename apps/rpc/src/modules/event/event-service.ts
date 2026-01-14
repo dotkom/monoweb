@@ -20,7 +20,7 @@ import {
   EVENT_IMAGE_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
-import { FailedPreconditionError, NotFoundError } from "../../error"
+import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { EventRepository } from "./event-repository"
 
@@ -158,6 +158,10 @@ export function getEventService(
     },
 
     async updateEventOrganizers(handle, eventId, hostingGroups, companies) {
+      if (hostingGroups.size === 0) {
+        throw new InvalidArgumentError(`Event(ID=${eventId}) must have at least one hosting group`)
+      }
+
       const event = await this.getEventById(handle, eventId)
       // The easiest way to determine which elements to add and remove is to use basic set theory. The difference of a
       // set A from B (A - B) is the set of elements that are in A, but not in B.
