@@ -738,7 +738,21 @@ export function getAttendanceService(
         attendee.paymentChargedAt !== null
 
       if (attendance.attendancePrice !== null && attendance.attendancePrice > 0 && !hasExistingPayment) {
-        const paymentDeadline = addHours(getCurrentUTC(), 24)
+        let paymentDeadline = addHours(getCurrentUTC(), 24)
+
+        // DELETE START: Temporary code to override Pubgolf payment deadline
+        // set the let above to const after deleting
+        const PUBGOLF_ATTENDANCE_ID = "bac685fb-53f8-4d41-ac58-24a74d160524"
+        if (attendance.id === PUBGOLF_ATTENDANCE_ID) {
+          paymentDeadline = set(addWeeks(TZDate.tz("Europe/Oslo"), 2), {
+            hours: 16,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+          })
+        }
+        // DELETE END
+
         const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
 
         attendee.paymentDeadline = paymentDeadline
