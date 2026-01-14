@@ -121,7 +121,7 @@ const deleteGroupProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input)
 
-    // If this is not an interest group, deny Backlog from modifying
+    // If this is not an interest group, remove the Backlog clause
     if (group.type !== "INTEREST_GROUP") {
       await ctx.addAuthorizationGuard(
         or(
