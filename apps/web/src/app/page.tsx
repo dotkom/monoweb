@@ -3,18 +3,25 @@ import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { JubileumNotice } from "@/components/notices/jubileum-notice"
-import { SmallerCommitteeApplicationsNotice } from "@/components/notices/smaller-committee-applications-notice"
+import { AttendancePaymentOopsNotice } from "@/components/notices/attendance-payment-oops-notice"
 import { server } from "@/utils/trpc/server"
-import { TZDate } from "@date-fns/tz"
-import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type Event,
+  type EventWithAttendance,
+  type UserId,
+  getAttendee,
+  hasAttendeePaid,
+} from "@dotkomonline/types"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
-import { formatDate } from "date-fns"
+import { formatDate, isFuture } from "date-fns"
 import { nb } from "date-fns/locale"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import { TZDate } from "@date-fns/tz"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
@@ -35,14 +42,23 @@ export default async function App() {
   const featuredEvent = events[0] ?? null
   const otherEvents = events.slice(1)
 
+  // DELETE START: fetch Pubgolf for attendance oops notice
+  const PUBGOLF_EVENT_ID = "23b9beb3-b1f9-4427-aeac-86cd92b137bb"
+  const pubgolf = session?.sub ? await server.event.find.query(PUBGOLF_EVENT_ID) : null
+  const pubgolfAttendee = session?.sub && pubgolf?.attendance && getAttendee(pubgolf.attendance, session.sub)
+  const hasPaidPubgolf =
+    pubgolfAttendee && pubgolf.attendance ? hasAttendeePaid(pubgolf.attendance, pubgolfAttendee) : false
+  const pubgolfNoticeForcedEndDate = TZDate.tz("Europe/Oslo", 2026, 1, 28, 16, 0, 0)
+  const isBeforePubgolfNoticeEndDate = isFuture(pubgolfNoticeForcedEndDate)
+  // DELETE END
+
   return (
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-6">
         <JubileumNotice />
-        <SmallerCommitteeApplicationsNotice
-          start={TZDate.tz("Europe/Oslo", 2025, 10, 20, 12, 0, 0)}
-          end={TZDate.tz("Europe/Oslo", 2025, 11, 1, 23, 59, 59)}
-        />
+        {pubgolf && isBeforePubgolfNoticeEndDate && pubgolfAttendee && !hasPaidPubgolf && (
+          <AttendancePaymentOopsNotice userId={session?.sub ?? null} eventWithAttendance={pubgolf} />
+        )}
         <OnlineHero />
       </div>
 

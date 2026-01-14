@@ -1,7 +1,7 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { compareAsc } from "date-fns"
 import { z } from "zod"
-import { type User, UserSchema, findActiveMembership, getMembershipGrade } from "./user"
+import { type User, type UserId, UserSchema, findActiveMembership, getMembershipGrade } from "./user"
 
 // TODO: Where on earth does this come from?
 export type AttendanceStatus = "NotOpened" | "Open" | "Closed"
@@ -138,12 +138,14 @@ export function isAttendable(user: User, pool: AttendancePool) {
   return pool.yearCriteria.includes(grade)
 }
 
-export const getAttendee = (attendance: Attendance | null, user: User | null) => {
+export const getAttendee = (attendance: Attendance | null, user: User | UserId | null) => {
   if (!attendance || !user) {
     return null
   }
 
-  return attendance.attendees?.find((attendee) => attendee.userId === user.id) ?? null
+  const userId = typeof user === "string" ? user : user.id
+
+  return attendance.attendees?.find((attendee) => attendee.userId === userId) ?? null
 }
 
 export const getAttendablePool = (attendance: Attendance, user: User | null) => {
