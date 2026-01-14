@@ -1036,12 +1036,17 @@ export function getAttendanceService(
         }
       }
 
+      const event = await eventService.getByAttendanceId(handle, attendance.id)
+
       const isImmediatePayment = isPast(attendance.deregisterDeadline)
       const payment = await paymentService.create(
         attendance.id,
         attendee.user,
         {
-          attendeeId,
+          attendee_id: attendeeId,
+          event_id: event.id,
+          attendance_id: attendance.id,
+          user_id: attendee.user.id,
         },
         isImmediatePayment ? "CHARGE" : "RESERVE"
       )
