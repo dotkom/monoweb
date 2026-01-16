@@ -199,7 +199,7 @@ const CollapsibleGroupSelect = ({
 
   return (
     <div className="flex flex-col gap-1">
-      <Collapsible className="w-full flex flex-col gap-2">
+      <Collapsible className="w-full flex flex-col gap-2" defaultOpen={true}>
         <CollapsibleTrigger
           className={cn(
             "cursor-pointer w-full flex items-center justify-between gap-2 py-1 font-medium text-gray-500",
