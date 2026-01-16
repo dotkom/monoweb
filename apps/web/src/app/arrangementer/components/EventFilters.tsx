@@ -184,9 +184,9 @@ const CollapsibleGroupSelect = ({
   const filtered = useMemo(() => {
     const searchValue = search.trim().toLowerCase()
 
-    return groups.filter(
-      (group) => value.includes(group.slug) || group.abbreviation.toLowerCase().includes(searchValue)
-    )
+    return groups
+      .filter((group) => value.includes(group.slug) || group.abbreviation.toLowerCase().includes(searchValue))
+      .toSorted((a, b) => a.abbreviation.localeCompare(b.abbreviation))
   }, [search, groups, value])
 
   const handleToggle = (slug: string) => {
