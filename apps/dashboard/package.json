@@ -70,7 +70,7 @@
     "@dotkomonline/rpc": "workspace:*",
     "@tailwindcss/postcss": "4.1.18",
     "@types/node": "22.19.6",
-    "@types/react": "19.2.7",
+    "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "open-color": "1.9.1",
     "postcss": "8.5.6",
