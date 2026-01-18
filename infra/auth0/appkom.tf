@@ -47,14 +47,22 @@ resource "auth0_client" "appkom_autobank" {
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000/"]
     "stg" = ["https://autobank-frontend.vercel.app/"]
-    "prd" = ["https://autobank-frontend.vercel.app/"]
+    "prd" = [
+        "https://autobank-frontend.vercel.app/",
+        "http://localhost:3000",
+        "https;//autobank.online.ntnu.no"
+    ]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "spa"
   callbacks = {
     "dev" = ["http://localhost:3000/authentication/callback"]
     "stg" = ["https://autobank-frontend.vercel.app/authentication/callback"]
-    "prd" = ["https://autobank-frontend.vercel.app/authentication/callback"]
+    "prd" = [
+        "https://autobank-frontend.vercel.app/authentication/callback",
+        "http://localhost:3000/authentication/callback",
+        "https;//autobank.online.ntnu.no/authentication/callback"
+    ]
   }[terraform.workspace]
   grant_types = ["authorization_code", "refresh_token"]
   name        = "Autobank${local.name_suffix[terraform.workspace]}"
