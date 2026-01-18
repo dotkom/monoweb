@@ -1,8 +1,16 @@
 import { getLogger } from "@dotkomonline/logger"
 import type { FastifyInstance } from "fastify"
 import type { ServiceLayer } from "../modules/core"
+import { z } from "zod"
 
 const logger = getLogger("stripe-webhook")
+
+const StripeMetadataSchema = z.object({
+  attendee_id: z.string(),
+  attendance_id: z.string(),
+  event_id: z.string(),
+  user_id: z.string(),
+})
 
 export function registerStripeWebhookRoutes(server: FastifyInstance, serviceLayer: ServiceLayer) {
   server.post("/webhook/stripe", { config: { rawBody: true } }, async (req, res) => {
@@ -33,9 +41,11 @@ export function registerStripeWebhookRoutes(server: FastifyInstance, serviceLaye
       eventType === "charge.captured" ||
       eventType === "payment_intent.canceled"
     ) {
-      const attendeeId = event.data.object.metadata?.attendeeId
+      const metadata = StripeMetadataSchema.safeParse(event.data.object.metadata)
+      const attendeeId = metadata.data?.attendee_id
+
       if (!attendeeId) {
-        logger.info("No attendeeId found in metadata from Stripe, not processing payment")
+        logger.info("Key `attendee_id` not found in metadata from Stripe event object. Not processing payment.")
         return res.status(400)
       }
 
