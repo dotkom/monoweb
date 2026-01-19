@@ -176,7 +176,7 @@ describe("attendance integration tests", async () => {
     ).resolves.toBeDefined()
   })
 
-  it("should fail to register if there is no applicable pool for a user", async () => {
+  it("should fail to registrer if there is no applicable pool for a user", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
@@ -288,7 +288,7 @@ describe("attendance integration tests", async () => {
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
     expect(findActiveMembership(user)).not.toBeNull()
 
-    // Attempt to register before the registration window opens
+    // Attempt to registrer before the registration window opens
     expect(
       await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
@@ -339,7 +339,7 @@ describe("attendance integration tests", async () => {
     invariant(result.success)
     await core.attendanceService.registerAttendee(dbClient, result)
 
-    // Attempt to register the same user again for the same attendance
+    // Attempt to registrer the same user again for the same attendance
     expect(
       await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
@@ -566,7 +566,7 @@ describe("attendance integration tests", async () => {
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
     expect(findActiveMembership(user)).not.toBeNull()
 
-    // If the user themselves attempt to register, it should fail because there is no applicable pool
+    // If the user themselves attempt to registrer, it should fail because there is no applicable pool
     expect(
       await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, user.id, {
         immediateReservation: false,
@@ -733,7 +733,7 @@ describe("attendance integration tests", async () => {
     expect(betaAttendanceUpdated?.reserved).toBe(false)
   })
 
-  it("should register the physical attendance of a user for an event", async () => {
+  it("should registrer the physical attendance of a user for an event", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
@@ -766,7 +766,7 @@ describe("attendance integration tests", async () => {
     ).resolves.toBeUndefined()
   })
 
-  it("should fail if you attempt to register physical attendance for a non-registered user", async () => {
+  it("should fail if you attempt to registrer physical attendance for a non-registered user", async () => {
     await expect(core.attendanceService.registerAttendance(dbClient, randomUUID(), getCurrentUTC())).rejects.toThrow(
       NotFoundError
     )
