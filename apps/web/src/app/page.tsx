@@ -13,6 +13,8 @@ import { nb } from "date-fns/locale"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import { CommitteeApplicationsNotice } from "@/components/notices/committee-applications-notice"
+import { TZDate } from "@date-fns/tz"
 
 export default async function App() {
   const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
@@ -37,6 +39,16 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-6">
         <JubileumNotice />
+        <CommitteeApplicationsNotice
+          start={TZDate.tz("Europe/Oslo", "2026-01-19T00:00:00.000Z")}
+          end={TZDate.tz("Europe/Oslo", "2026-01-26T23:59:00.000Z")}
+        >
+          <Title className="text-lg md:text-xl font-bold">Søk komité nå!</Title>
+          <Text>
+            Flere komiteer har våropptak, og de ser etter akkurat deg! <span className="font-semibold">Trykk her</span>{" "}
+            for å gå til opptakssiden (opptak.online.ntnu.no).
+          </Text>
+        </CommitteeApplicationsNotice>
         <OnlineHero />
       </div>
 
