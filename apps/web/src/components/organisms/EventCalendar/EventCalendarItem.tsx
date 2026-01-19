@@ -3,7 +3,7 @@ import { type EventWithAttendance, type User, getAttendee } from "@dotkomonline/
 import { Text, Title } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
-import { slugify } from "@dotkomonline/utils"
+import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconClock, IconMapPin } from "@tabler/icons-react"
 import Link from "next/link"
 import { eventCategories } from "./eventTypeConfig"
@@ -100,7 +100,7 @@ export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps }: Even
           cardClasses
         )}
       >
-        <Link href={`/arrangementer/${slugify(event.title)}/${event.id}`}>
+        <Link href={createEventPageUrl(event.id, event.title)}>
           <div className="p-4">
             <Title element="p" size="md" className="mb-2">
               {event.title}
