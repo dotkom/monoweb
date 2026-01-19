@@ -49,7 +49,6 @@ resource "auth0_client" "appkom_autobank" {
     "stg" = ["https://autobank-frontend.vercel.app/"]
     "prd" = [
         "https://autobank-frontend.vercel.app/",
-        "http://localhost:3000",
         "https://autobank.online.ntnu.no"
     ]
   }[terraform.workspace]
