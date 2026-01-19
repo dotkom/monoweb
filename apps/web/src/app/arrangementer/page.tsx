@@ -37,9 +37,6 @@ const EventPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [searchBarOpen, setSearchBarOpen] = useState(false)
-
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
   const view = searchParams.get("view") || "list"
   const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString(), 10)
@@ -59,6 +56,9 @@ const EventPage = () => {
 
   const parsedTypeFilterResult = EventTypeSchema.array().safeParse(typeFilters)
   const parsedTypeFilters = parsedTypeFilterResult.success ? parsedTypeFilterResult.data : []
+
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [searchBarOpen, setSearchBarOpen] = useState(searchTerm.length > 0)
 
   // build filter object from url params
   const filter: EventFilterQuery = useMemo(

@@ -184,9 +184,9 @@ const CollapsibleGroupSelect = ({
   const filtered = useMemo(() => {
     const searchValue = search.trim().toLowerCase()
 
-    return groups.filter(
-      (group) => value.includes(group.slug) || group.abbreviation.toLowerCase().includes(searchValue)
-    )
+    return groups
+      .filter((group) => value.includes(group.slug) || group.abbreviation.toLowerCase().includes(searchValue))
+      .toSorted((a, b) => a.abbreviation.localeCompare(b.abbreviation))
   }, [search, groups, value])
 
   const handleToggle = (slug: string) => {
@@ -199,7 +199,7 @@ const CollapsibleGroupSelect = ({
 
   return (
     <div className="flex flex-col gap-1">
-      <Collapsible className="w-full flex flex-col gap-2">
+      <Collapsible className="w-full flex flex-col gap-2" defaultOpen={true}>
         <CollapsibleTrigger
           className={cn(
             "cursor-pointer w-full flex items-center justify-between gap-2 py-1 font-medium text-gray-500",
