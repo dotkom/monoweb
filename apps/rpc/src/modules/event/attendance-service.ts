@@ -809,7 +809,9 @@ export function getAttendanceService(
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
 
-      const attendeeCount = attendance.attendees.filter((a) => a.attendancePoolId === pool.id).length
+      const remainingAttendees = attendance.attendees.filter((a) => a.id !== attendee.id)
+
+      const attendeeCount = remainingAttendees.filter((a) => a.attendancePoolId === pool.id).length
       if (pool.capacity !== 0 && (pool.capacity < 0 || attendeeCount >= pool.capacity)) {
         return
       }
@@ -820,7 +822,7 @@ export function getAttendanceService(
       // 1. The attendee must be in the same pool as the deregistered attendee
       // 2. The attendee must not already be reserved
       // 3. The attendee must have a reservation time not in the future
-      const firstUnreservedAdjacentAttendee = attendance.attendees
+      const firstUnreservedAdjacentAttendee = remainingAttendees
         .filter((a) => a.attendancePoolId === pool.id)
         .filter((a) => !a.reserved)
         .filter((a) => !isFuture(a.earliestReservationAt))
