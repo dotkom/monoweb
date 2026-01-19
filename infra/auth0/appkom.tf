@@ -61,7 +61,7 @@ resource "auth0_client" "appkom_autobank" {
     "prd" = [
         "https://autobank-frontend.vercel.app/authentication/callback",
         "http://localhost:3000/authentication/callback",
-        "https;//autobank.online.ntnu.no/authentication/callback"
+        "https://autobank.online.ntnu.no/authentication/callback"
     ]
   }[terraform.workspace]
   grant_types = ["authorization_code", "refresh_token"]
