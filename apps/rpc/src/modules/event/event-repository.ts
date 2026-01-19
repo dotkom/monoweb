@@ -15,10 +15,9 @@ import {
   EventSchema,
   type EventWrite,
   type GroupId,
-  snakeCaseToCamelCase,
   type UserId,
 } from "@dotkomonline/types"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { getCurrentUTC, snakeCaseToCamelCase } from "@dotkomonline/utils"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
