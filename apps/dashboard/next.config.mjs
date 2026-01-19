@@ -14,6 +14,17 @@ const config = {
       },
     ]
   },
+
+  // This is supposed to help with version mismatches for `import-in-the-middle` and `require-in-the-middle` in OTEL
+  // packages and Sentry
+  transpilePackages: [
+    "import-in-the-middle",
+    "require-in-the-middle",
+    "@opentelemetry/instrumentation",
+    "@sentry/node", // Add Sentry here so it uses the bundled version
+  ],
+  // Explicitly ensure the transpiled packages are NOT treated as external
+  serverExternalPackages: [],
 }
 
 export default withSentryConfig(config, {
