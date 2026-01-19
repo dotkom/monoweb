@@ -2,7 +2,7 @@
 
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { env } from "@/env"
-import type { Icon } from "@tabler/icons-react"
+import { type Icon, IconBuildingBank } from "@tabler/icons-react"
 import {
   IconArticle,
   IconBolt,
@@ -58,7 +58,7 @@ const links: MenuLink[] = [
         title: "Komiteer og grupper",
         href: "/grupper",
         icon: IconUsers,
-        description: "Informasjon om de ulike komiteene og gruppene i Online",
+        description: "Informasjon om de ulike komiteene og gruppene i Online.",
       },
       {
         title: "Interessegrupper",
@@ -76,7 +76,7 @@ const links: MenuLink[] = [
         title: "Wiki",
         href: "https://wiki.online.ntnu.no/",
         icon: IconBook2,
-        description: "Onlines Wiki, brukt av hele Trondheim",
+        description: "Onlines wiki, brukt av hele Trondheim.",
       },
     ],
   },
@@ -87,19 +87,25 @@ const links: MenuLink[] = [
         title: "Offline",
         href: "/offline",
         icon: IconNews,
-        description: "Onlines egne tidsskrift",
+        description: "Onlines egne tidsskrift.",
       },
       {
         title: "Artikler",
         href: "/artikler",
         icon: IconArticle,
-        description: "Artikler skrevet for og av studenter",
+        description: "Artikler skrevet for og av studenter.",
+      },
+      {
+        title: "Onlinefondet",
+        href: "https://onlinefondet.no",
+        icon: IconBuildingBank,
+        description: "Søk om økonomisk støtte fra Onlines egne fond.",
       },
       {
         title: "Kvitteringskjema",
         href: "https://kvittering.online.ntnu.no/",
         icon: IconReceipt,
-        description: "Har du lagt ut noe for linjeforeningen? Få refusjon her",
+        description: "Har du lagt ut noe for linjeforeningen? Få refusjon her.",
       },
     ],
   },
@@ -110,13 +116,13 @@ const links: MenuLink[] = [
         title: "Samarbeid med Online",
         href: "/for-bedrifter",
         icon: IconHeartHandshake,
-        description: "Utforsk linjeforeningens tilbud og ta kontakt",
+        description: "Utforsk linjeforeningens tilbud og ta kontakt.",
       },
       {
         title: "Fakturaskjema",
         href: "https://faktura.online.ntnu.no/",
         icon: IconReceipt,
-        description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt",
+        description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt.",
       },
       {
         title: "Interesseskjema",
