@@ -18,10 +18,10 @@ import {
 } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import {
+  IconBan,
   IconBriefcase,
   IconCampfire,
   IconClipboardList,
-  IconExclamationMark,
   IconMoneybag,
   IconPhoto,
   IconPhotoShare,
@@ -41,24 +41,19 @@ const navigations = [
     href: "/event",
   },
   {
-    label: "Prikker & Suspensjoner",
-    icon: IconExclamationMark,
-    href: "/punishment",
-  },
-  {
-    label: "Bedrifter",
-    icon: IconMoneybag,
-    href: "/company",
-  },
-  {
-    label: "Utlysninger",
-    icon: IconBriefcase,
-    href: "/job-listing",
-  },
-  {
     label: "Grupper",
     icon: IconCampfire,
     href: "/group",
+  },
+  {
+    label: "Prikker og suspensjoner",
+    icon: IconBan,
+    href: "/punishment",
+  },
+  {
+    label: "Jobbutlysninger",
+    icon: IconBriefcase,
+    href: "/job-listing",
   },
   {
     label: "Artikler",
@@ -71,6 +66,16 @@ const navigations = [
     href: "/offline",
   },
   {
+    label: "Bedrifter",
+    icon: IconMoneybag,
+    href: "/company",
+  },
+  {
+    label: "Avmeldingsgrunner",
+    icon: IconUserMinus,
+    href: "/deregister-reason",
+  },
+  {
     label: "Brukere",
     icon: IconUsersGroup,
     href: "/user",
@@ -80,11 +85,6 @@ const navigations = [
     icon: IconPhotoShare,
     href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
     openInNewTab: true,
-  },
-  {
-    label: "Avmeldingsgrunner",
-    icon: IconUserMinus,
-    href: "/deregister-reason",
   },
   {
     label: "Hendelseslogg",
