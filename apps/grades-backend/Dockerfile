@@ -7,7 +7,7 @@ COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --ignore-scripts
-RUN pnpm generate
+RUN pnpm generate:grades
 
 # Install for production
 RUN pnpm install --prod --ignore-scripts --config.confirmModulesPurge=false
