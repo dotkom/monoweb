@@ -4,11 +4,7 @@ export interface EntryDetailLayoutProps {
   title: string
 }
 
-export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = ({
-  children,
-  title
-}) => {
-
+export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = ({ children, title }) => {
   return (
     <div className="mx-auto mb-20 flex w-[90vw] max-w-screen-lg flex-col gap-y-16">
       <div className="flex flex-col gap-y-7">

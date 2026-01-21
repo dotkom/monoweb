@@ -102,5 +102,3 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
     </EntryDetailLayout>
   )
 }
-
-
