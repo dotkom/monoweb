@@ -137,7 +137,7 @@ importers:
         version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@sentry/nextjs':
         specifier: ^9.34.0
-        version: 9.47.1(@opentelemetry/context-async-hooks@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.0))(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(webpack@5.99.9)
+        version: 9.47.1(@opentelemetry/context-async-hooks@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.0))(next@15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(webpack@5.99.9)
       '@tabler/icons-react':
         specifier: ^3.34.1
         version: 3.36.1(react@19.2.3)
@@ -194,10 +194,10 @@ importers:
         version: 2.0.4
       next:
         specifier: ^15.3.6
-        version: 15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-plausible:
         specifier: ^3.12.4
-        version: 3.12.5(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 3.12.5(next@15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react:
         specifier: ^19.2.1
         version: 19.2.3
@@ -256,6 +256,230 @@ importers:
       postcss-simple-vars:
         specifier: 7.0.1
         version: 7.0.1(postcss@8.5.6)
+      tailwindcss:
+        specifier: 4.1.18
+        version: 4.1.18
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
+  apps/grades-backend:
+    dependencies:
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.4.1
+      '@dotkomonline/environment':
+        specifier: workspace:*
+        version: link:../../packages/environment
+      '@dotkomonline/grades-db':
+        specifier: workspace:*
+        version: link:../../packages/grades-db
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@fastify/cors':
+        specifier: ^11.0.0
+        version: 11.2.0
+      '@opentelemetry/api':
+        specifier: ^1.9.0
+        version: 1.9.0
+      '@prisma/client':
+        specifier: ^6.8.2
+        version: 6.19.1(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: 11.8.1
+        version: 11.8.1(typescript@5.9.3)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      fastify:
+        specifier: ^5.3.3
+        version: 5.6.2
+      fastify-raw-body:
+        specifier: ^5.0.0
+        version: 5.0.0
+      import-in-the-middle:
+        specifier: ^1.15.0
+        version: 1.15.0
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
+      superjson:
+        specifier: ^2.0.0
+        version: 2.2.6
+      tiny-invariant:
+        specifier: ^1.3.3
+        version: 1.3.3
+      zod:
+        specifier: ^3.25.47
+        version: 3.25.76
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.11
+        version: 2.3.11
+      '@dotkomonline/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@types/node':
+        specifier: 22.19.3
+        version: 22.19.3
+      dotenv-cli:
+        specifier: 8.0.0
+        version: 8.0.0
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      tsx:
+        specifier: 4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
+  apps/grades-frontend:
+    dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.821.0
+        version: 3.965.0
+      '@aws-sdk/s3-presigned-post':
+        specifier: ^3.821.0
+        version: 3.965.0
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.4.1
+      '@dotkomonline/environment':
+        specifier: workspace:*
+        version: link:../../packages/environment
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@dotkomonline/oauth2':
+        specifier: workspace:*
+        version: link:../../packages/oauth2
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@dotkomonline/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@next/env':
+        specifier: ^15.3.5
+        version: 15.5.9
+      '@tabler/icons-react':
+        specifier: ^3.35.0
+        version: 3.36.1(react@19.2.3)
+      '@tailwindcss/typography':
+        specifier: ^0.5.10
+        version: 0.5.19(tailwindcss@4.1.18)
+      '@tanstack/react-query':
+        specifier: ^5.79.0
+        version: 5.90.17(react@19.2.3)
+      '@trpc/client':
+        specifier: 11.8.1
+        version: 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/next':
+        specifier: 11.8.1
+        version: 11.8.1(@tanstack/react-query@5.90.17(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: 11.8.1
+        version: 11.8.1(@tanstack/react-query@5.90.17(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+      axios:
+        specifier: 1.13.2
+        version: 1.13.2
+      clsx:
+        specifier: ^2.0.0
+        version: 2.1.1
+      core-js:
+        specifier: ^3.45.1
+        version: 3.47.0
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.5
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      import-in-the-middle:
+        specifier: ^1.15.0
+        version: 1.15.0
+      jsdom:
+        specifier: 27.4.0
+        version: 27.4.0
+      next:
+        specifier: ^15.3.6
+        version: 15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-plausible:
+        specifier: ^3.12.4
+        version: 3.12.5(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-themes:
+        specifier: ^0.4.6
+        version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      react:
+        specifier: ^19.2.1
+        version: 19.2.3
+      react-dom:
+        specifier: ^19.2.1
+        version: 19.2.3(react@19.2.3)
+      remark-html:
+        specifier: ^16.0.1
+        version: 16.0.1
+      remark-parse:
+        specifier: ^11.0.0
+        version: 11.0.0
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
+      superjson:
+        specifier: ^2.0.0
+        version: 2.2.6
+      unified:
+        specifier: ^11.0.5
+        version: 11.0.5
+      use-debounce:
+        specifier: ^10.0.5
+        version: 10.0.6(react@19.2.3)
+      zod:
+        specifier: ^3.25.47
+        version: 3.25.76
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.11
+        version: 2.3.11
+      '@dotkomonline/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@dotkomonline/grades-backend':
+        specifier: workspace:*
+        version: link:../grades-backend
+      '@tailwindcss/postcss':
+        specifier: 4.1.18
+        version: 4.1.18
+      '@types/cors':
+        specifier: 2.8.19
+        version: 2.8.19
+      '@types/node':
+        specifier: 22.19.3
+        version: 22.19.3
+      '@types/react':
+        specifier: 19.2.7
+        version: 19.2.7
+      '@types/react-dom':
+        specifier: 19.2.3
+        version: 19.2.3(@types/react@19.2.7)
+      cva:
+        specifier: npm:class-variance-authority@0.7.1
+        version: class-variance-authority@0.7.1
+      postcss:
+        specifier: 8.5.6
+        version: 8.5.6
       tailwindcss:
         specifier: 4.1.18
         version: 4.1.18
@@ -739,10 +963,10 @@ importers:
         version: 1.2.10(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@sentry/nextjs':
         specifier: ^9.34.0
-        version: 9.47.1(@opentelemetry/context-async-hooks@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.0))(next@15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(webpack@5.99.9)
+        version: 9.47.1(@opentelemetry/context-async-hooks@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.0))(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(webpack@5.99.9)
       '@splinetool/react-spline':
         specifier: ^4.0.0
-        version: 4.1.0(@splinetool/runtime@1.12.35)(next@15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 4.1.0(@splinetool/runtime@1.12.35)(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@splinetool/runtime':
         specifier: ^1.9.98
         version: 1.12.35
@@ -760,7 +984,7 @@ importers:
         version: 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/next':
         specifier: 11.8.1
-        version: 11.8.1(@tanstack/react-query@5.90.17(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(next@15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+        version: 11.8.1(@tanstack/react-query@5.90.17(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       '@trpc/tanstack-react-query':
         specifier: 11.8.1
         version: 11.8.1(@tanstack/react-query@5.90.17(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
@@ -796,10 +1020,10 @@ importers:
         version: 27.4.0
       next:
         specifier: ^15.3.6
-        version: 15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-plausible:
         specifier: ^3.12.4
-        version: 3.12.5(next@15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 3.12.5(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1020,6 +1244,61 @@ importers:
       '@types/node':
         specifier: 22.19.6
         version: 22.19.6
+
+  packages/grades-db:
+    dependencies:
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../logger
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@prisma/client':
+        specifier: ^6.8.2
+        version: 6.19.1(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)
+      '@testcontainers/postgresql':
+        specifier: ^11.5.1
+        version: 11.11.0
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      pg:
+        specifier: ^8.16.0
+        version: 8.16.3
+      zod:
+        specifier: ^3.25.47
+        version: 3.25.76
+      zod-prisma-types:
+        specifier: ^3.2.4
+        version: 3.3.10(@prisma/client@6.19.1(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76)
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.11
+        version: 2.3.11
+      '@dotkomonline/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/common-tags':
+        specifier: 1.8.4
+        version: 1.8.4
+      '@types/node':
+        specifier: 22.19.3
+        version: 22.19.3
+      '@types/pg':
+        specifier: 8.16.0
+        version: 8.16.0
+      common-tags:
+        specifier: 1.8.2
+        version: 1.8.2
+      prisma:
+        specifier: 6.19.1
+        version: 6.19.1(magicast@0.3.5)(typescript@5.9.3)
+      tsx:
+        specifier: 4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
   packages/logger:
     dependencies:
@@ -5430,6 +5709,9 @@ packages:
   '@types/node@18.19.130':
     resolution: {integrity: sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==}
 
+  '@types/node@22.19.3':
+    resolution: {integrity: sha512-1N9SBnWYOJTrNZCdh/yJE+t910Y128BoyY+zBLWhL3r0TYzlTmFdXrPwHL9DyFZmlEXNQQolTZh3KHV31QDhyA==}
+
   '@types/node@22.19.6':
     resolution: {integrity: sha512-qm+G8HuG6hOHQigsi7VGuLjUVu6TtBo/F05zvX04Mw2uCg9Dv0Qxy3Qw7j41SidlTcl5D/5yg0SEZqOB+EqZnQ==}
 
@@ -5457,6 +5739,9 @@ packages:
 
   '@types/react@19.1.8':
     resolution: {integrity: sha512-AwAfQ2Wa5bCx9WP8nZL2uMZWod7J7/JSplxbTmBQ5ms6QpqNYm672H0Vu9ZVKVngQ+ii4R/byguVEUZQyeg44g==}
+
+  '@types/react@19.2.7':
+    resolution: {integrity: sha512-MWtvHrGZLFttgeEj28VXHxpmwYbor/ATPYbBfSFZEIRK0ecCFLl2Qo55z52Hss+UV9CRN7trSeq1zbgx7YDWWg==}
 
   '@types/react@19.2.8':
     resolution: {integrity: sha512-3MbSL37jEchWZz2p2mjntRZtPt837ij10ApxKfgmXCTuHWagYg7iA5bqPw6C8BMPfwidlvfPI/fxOc42HLhcyg==}
@@ -7663,9 +7948,6 @@ packages:
   micromark-util-symbol@2.0.1:
     resolution: {integrity: sha512-vs5t8Apaud9N28kgCrRUdEed4UJ+wWNvicHLPxCa9ENlYuAY31M0ETy5y1vA33YoNPDFTghEbnh6efaE8h4x0Q==}
 
-  micromark-util-types@2.0.1:
-    resolution: {integrity: sha512-534m2WhVTddrcKVepwmVEVnUAmtrx9bfIjNoQHRqfnvdaHQiFytEhJoTgpWJvDEXCO5gLTQh3wYC1PgOJA4NSQ==}
-
   micromark-util-types@2.0.2:
     resolution: {integrity: sha512-Yw0ECSpJoViF1qTU4DC6NwtC4aWGt1EkzaQB8KPPyCRR8z9TWeV0HbEFGTO+ZY1wB22zmxnJqhPyTpOVCpeHTA==}
 
@@ -9464,18 +9746,6 @@ packages:
 
   ws@8.17.1:
     resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
-  ws@8.18.3:
-    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -13686,7 +13956,7 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.35)(next@15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.35)(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@splinetool/runtime': 1.12.35
       blurhash: 2.0.5
@@ -13696,7 +13966,7 @@ snapshots:
       react-merge-refs: 2.1.1
       thumbhash: 0.1.1
     optionalDependencies:
-      next: 15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
   '@splinetool/runtime@1.12.35':
     dependencies:
@@ -14072,11 +14342,11 @@ snapshots:
       '@trpc/server': 11.8.1(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@trpc/next@11.8.1(@tanstack/react-query@5.90.17(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(next@15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)':
+  '@trpc/next@11.8.1(@tanstack/react-query@5.90.17(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(next@15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)':
     dependencies:
       '@trpc/client': 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server': 11.8.1(typescript@5.9.3)
-      next: 15.3.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 15.3.8(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       typescript: 5.9.3
@@ -14232,13 +14502,17 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
+  '@types/node@22.19.3':
+    dependencies:
+      undici-types: 6.21.0
+
   '@types/node@22.19.6':
     dependencies:
       undici-types: 6.21.0
 
   '@types/pg-pool@2.0.6':
     dependencies:
-      '@types/pg': 8.6.1
+      '@types/pg': 8.16.0
 
   '@types/pg@8.16.0':
     dependencies:
@@ -14258,6 +14532,10 @@ snapshots:
     dependencies:
       '@types/react': 19.1.8
 
+  '@types/react-dom@19.2.3(@types/react@19.2.7)':
+    dependencies:
+      '@types/react': 19.2.7
+
   '@types/react-dom@19.2.3(@types/react@19.2.8)':
     dependencies:
       '@types/react': 19.2.8
@@ -14265,6 +14543,10 @@ snapshots:
   '@types/react@19.1.8':
     dependencies:
       csstype: 3.1.3
+
+  '@types/react@19.2.7':
+    dependencies:
+      csstype: 3.2.3
 
   '@types/react@19.2.8':
     dependencies:
@@ -16311,7 +16593,7 @@ snapshots:
       webidl-conversions: 8.0.1
       whatwg-mimetype: 4.0.0
       whatwg-url: 15.1.0
-      ws: 8.18.3
+      ws: 8.19.0
       xml-name-validator: 5.0.0
     transitivePeerDependencies:
       - '@exodus/crypto'
@@ -16960,8 +17242,6 @@ snapshots:
 
   micromark-util-symbol@2.0.1: {}
 
-  micromark-util-types@2.0.1: {}
-
   micromark-util-types@2.0.2: {}
 
   micromark@4.0.2:
@@ -17168,7 +17448,7 @@ snapshots:
       '@swc/counter': 0.1.3
       '@swc/helpers': 0.5.15
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001763
+      caniuse-lite: 1.0.30001764
       postcss: 8.4.31
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
@@ -17194,7 +17474,7 @@ snapshots:
       '@swc/counter': 0.1.3
       '@swc/helpers': 0.5.15
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001763
+      caniuse-lite: 1.0.30001764
       postcss: 8.4.31
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
@@ -18006,7 +18286,7 @@ snapshots:
     dependencies:
       '@types/mdast': 4.0.4
       mdast-util-from-markdown: 2.0.2
-      micromark-util-types: 2.0.1
+      micromark-util-types: 2.0.2
       unified: 11.0.5
     transitivePeerDependencies:
       - supports-color
@@ -19138,8 +19418,6 @@ snapshots:
   wrappy@1.0.2: {}
 
   ws@8.17.1: {}
-
-  ws@8.18.3: {}
 
   ws@8.19.0: {}
 
