@@ -344,12 +344,6 @@ importers:
 
   apps/grades-frontend:
     dependencies:
-      '@aws-sdk/client-s3':
-        specifier: ^3.821.0
-        version: 3.965.0
-      '@aws-sdk/s3-presigned-post':
-        specifier: ^3.821.0
-        version: 3.965.0
       '@date-fns/tz':
         specifier: ^1.2.0
         version: 1.4.1
