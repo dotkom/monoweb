@@ -196,6 +196,7 @@ enum GroupRoleType {
   DEPUTY_LEADER @map("DEPUTY_LEADER")
   TRUSTEE       @map("TRUSTEE")
   EMAIL_ONLY    @map("EMAIL_ONLY")
+  TEMPORARILY_LEAVE @map("TEMPORARILY_LEAVE")
 
   @@map("group_role_type")
 }
