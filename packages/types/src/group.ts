@@ -84,6 +84,7 @@ export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
     { groupId, type: "TREASURER", name: "Økonomiansvarlig" },
     { groupId, type: "COSMETIC", name: "Medlem" },
     { groupId, type: "EMAIL_ONLY", name: "Epost-bruker" },
+    { groupId, type: "TEMPORARILY_LEAVE", name: "Permitert" },
   ] as const satisfies GroupRoleWrite[]
 
 export const createGroupPageUrl = (group: Group) => {
@@ -145,6 +146,8 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
       return "Økonomiansvarlig"
     case "EMAIL_ONLY":
       return "E-postbruker"
+    case "TEMPORARILY_LEAVE":
+      return "Permitert"
     default:
       return "Ukjent type"
   }
