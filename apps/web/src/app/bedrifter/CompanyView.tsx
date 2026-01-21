@@ -47,7 +47,7 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
   })
 
   return (
-    <EntryDetailLayout title={name} color={"BLUE"}>
+    <EntryDetailLayout title={name}>
       <div className="grid gap-x-12 gap-y-6 sm:grid-cols-[18rem_minmax(100px,_1fr)] md:grid-cols-[24rem_minmax(100px,_1fr)]">
         <div className="border-blue-600 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
           {imageUrl && (
