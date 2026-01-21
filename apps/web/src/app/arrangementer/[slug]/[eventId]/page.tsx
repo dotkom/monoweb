@@ -90,7 +90,8 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
     server.event.findParentEvent.query({ eventId }),
   ])
 
-  const isOrganizer = user ? await server.event.isOrganizer.query({ eventId }) : null
+  const isOrganizer = user ? await server.event.isOrganizer.query({ eventId }) : false
+  const isAdmin = user ? await server.user.isAdmin.query() : false
   const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
 
   const parentEvent = parentEventWithAttendance?.event ?? null
@@ -101,7 +102,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
 
   return (
     <div className="flex flex-col gap-8">
-      <EventHeader event={event} showDashboardLink={isOrganizer ?? false} />
+      <EventHeader event={event} showDashboardLink={isOrganizer || isAdmin} />
 
       {childEventWithAttendance.length > 0 ? (
         <Tabs defaultValue="description">
