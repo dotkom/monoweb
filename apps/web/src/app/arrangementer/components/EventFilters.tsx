@@ -114,8 +114,8 @@ export const EventFilters = ({ onChange, groups, typeFilters, groupFilters, view
                   "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
                 )}
               >
-                <div className="flex items-center gap-2">
-                  <Label>Kategori</Label>
+                <div className="flex items-center gap-2 h-5.5">
+                  <Label className="cursor-pointer">Kategori</Label>
                   {value.length > 0 && (
                     <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
                       {value.length}
@@ -207,8 +207,8 @@ const CollapsibleGroupSelect = ({
             "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
           )}
         >
-          <div className="flex items-center gap-2">
-            <Label>Arrangør</Label>
+          <div className="flex items-center gap-2 h-5.5">
+            <Label className="cursor-pointer">Arrangør</Label>
             {value.length > 0 && (
               <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
                 {value.length}
