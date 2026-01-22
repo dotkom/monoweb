@@ -3,7 +3,7 @@
 import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
 import { EventCalendar } from "@/components/organisms/EventCalendar/EventCalendar"
 import { useTRPC } from "@/utils/trpc/client"
-import { type EventFilterQuery, EventTypeSchema } from "@dotkomonline/types"
+import type { EventFilterQuery, EventType } from "@dotkomonline/types"
 import {
   Button,
   Drawer,
@@ -21,58 +21,41 @@ import {
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
-import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
-import { EventFilters } from "./components/EventFilters"
-import { EventList, EventListSkeleton, type EventListViewMode } from "./components/EventList"
-import { FilterChips } from "./components/FilterChips"
-import { SearchInput } from "./components/SearchInput"
+import { GroupFilter } from "./components/filters/GroupFilter"
+import { SortFilter } from "./components/filters/SortFilter"
+import { TypeFilter } from "./components/filters/TypeFilter"
+import { EventList, EventListSkeleton } from "./components/EventList"
+import { FilterChips } from "./components/filters/FilterChips"
+import { SearchInput } from "./components/filters/SearchInput"
 import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
+import { useEventFilters } from "./components/filters/useEventFilters"
 
 import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
 
-type FilterType = "search" | "type" | "group" | "sort"
-
 const EventPage = () => {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const { filters, updateFilters } = useEventFilters()
+  const trpc = useTRPC()
 
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
-  const view = searchParams.get("view") || "list"
-  const year = Number.parseInt(searchParams.get("y") || now.getFullYear().toString(), 10)
-  const month = Number.parseInt(searchParams.get("m") || (now.getMonth() + 1).toString(), 10) - 1 // convert to 0-based month
-
-  const trpc = useTRPC()
   const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
   const { data: groups } = useQuery(trpc.group.all.queryOptions())
 
-  // read filters from URL
-  const searchTerm = searchParams.get("search") || ""
-  const typeFiltersParam = searchParams.get("type") || ""
-  const typeFilters = typeFiltersParam ? typeFiltersParam.split(",") : []
-  const groupFiltersParam = searchParams.get("group") || ""
-  const groupFilters = groupFiltersParam ? groupFiltersParam.split(",") : []
-  const viewMode = (searchParams.get("sort") || "ATTENDANCE") as EventListViewMode
-
-  const parsedTypeFilterResult = EventTypeSchema.array().safeParse(typeFilters)
-  const parsedTypeFilters = parsedTypeFilterResult.success ? parsedTypeFilterResult.data : []
-
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [searchBarOpen, setSearchBarOpen] = useState(searchTerm.length > 0)
+  const [searchBarOpen, setSearchBarOpen] = useState(filters.search.length > 0)
 
-  // build filter object from url params
-  const filter: EventFilterQuery = useMemo(
+  const queryFilter: EventFilterQuery = useMemo(
     () => ({
-      bySearchTerm: searchTerm || undefined,
-      byType: parsedTypeFilters.length > 0 ? parsedTypeFilters : undefined,
-      byOrganizingGroup: groupFilters.length > 0 ? groupFilters : undefined,
+      bySearchTerm: filters.search || undefined,
+      byType: filters.types.length > 0 ? filters.types : undefined,
+      byOrganizingGroup: filters.groups.length > 0 ? filters.groups : undefined,
     }),
-    [searchTerm, parsedTypeFilters, groupFilters]
+    [filters.search, filters.types, filters.groups]
   )
 
   const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
     filter: {
-      ...filter,
+      ...queryFilter,
       byEndDate: {
         max: null,
         min: now,
@@ -87,7 +70,7 @@ const EventPage = () => {
 
   const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
     filter: {
-      ...filter,
+      ...queryFilter,
       byEndDate: {
         max: now,
         min: null,
@@ -97,111 +80,42 @@ const EventPage = () => {
     },
   })
 
-  const updateURLParams = (updates: Record<string, string | null>) => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    for (const [key, value] of Object.entries(updates)) {
-      if (value === null || value === "") {
-        params.delete(key)
-      } else {
-        params.set(key, value)
-      }
-    }
-
-    // remove view param if its "list" because its default
-    if (params.get("view") === "list") {
-      params.delete("view")
-    }
-
-    const nextQuery = params.toString()
-    const currentQuery = searchParams.toString()
-
-    // Prevent updating route if nothing has changed
-    if (nextQuery === currentQuery) {
-      return
-    }
-
-    router.replace(nextQuery ? `/arrangementer?${nextQuery}` : "/arrangementer", { scroll: false })
+  const handleTypeToggle = (type: EventType) => {
+    const newTypes = filters.types.includes(type) ? filters.types.filter((t) => t !== type) : [...filters.types, type]
+    updateFilters({ types: newTypes })
   }
 
-  const handleSearchChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (value) {
-      params.set("search", value)
-    } else {
-      params.delete("search")
-    }
-
-    if (params.get("view") === "list") {
-      params.delete("view")
-    }
-
-    const queryString = params.toString()
-    router.replace(queryString ? `/arrangementer?${queryString}` : "/arrangementer", { scroll: false })
+  const handleGroupToggle = (group: string) => {
+    const newGroups = filters.groups.includes(group)
+      ? filters.groups.filter((g) => g !== group)
+      : [...filters.groups, group]
+    updateFilters({ groups: newGroups })
   }
 
-  const handleFilterChange = (newFilter: EventFilterQuery, newViewMode: EventListViewMode) => {
-    updateURLParams({
-      type: newFilter.byType && newFilter.byType.length > 0 ? newFilter.byType.join(",") : null,
-      group:
-        newFilter.byOrganizingGroup && newFilter.byOrganizingGroup.length > 0
-          ? newFilter.byOrganizingGroup.join(",")
-          : null,
-      sort: newViewMode !== "ATTENDANCE" ? newViewMode : null,
-    })
+  const handleRemoveFilter = (filterType: string, value?: string) => {
+    switch (filterType) {
+      case "search":
+        updateFilters({ search: "" })
+        break
+      case "type":
+        if (value) handleTypeToggle(value as EventType)
+        break
+      case "group":
+        if (value) handleGroupToggle(value)
+        break
+      case "sort":
+        updateFilters({ viewMode: "ATTENDANCE" })
+        break
+    }
   }
 
   const handleResetFilters = () => {
-    updateURLParams({
-      search: null,
-      type: null,
-      group: null,
-      sort: null,
+    updateFilters({
+      search: "",
+      types: [],
+      groups: [],
+      viewMode: "ATTENDANCE",
     })
-  }
-
-  const handleRemoveFilter = (filterType: FilterType, value?: string) => {
-    if (filterType === "search") {
-      const params = new URLSearchParams(searchParams.toString())
-      params.delete("search")
-
-      if (params.get("view") === "list") {
-        params.delete("view")
-      }
-
-      const queryString = params.toString()
-      router.replace(queryString ? `/arrangementer?${queryString}` : "/arrangementer", { scroll: false })
-    } else if (filterType === "type" && value) {
-      const newTypes = typeFilters.filter((t) => t !== value)
-      updateURLParams({ type: newTypes.length > 0 ? newTypes.join(",") : null })
-    } else if (filterType === "group" && value) {
-      const newGroups = groupFilters.filter((g) => g !== value)
-      updateURLParams({ group: newGroups.length > 0 ? newGroups.join(",") : null })
-    } else {
-      updateURLParams({ [filterType]: null })
-    }
-  }
-
-  const handleViewChange = (newView: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (newView === "list") {
-      params.delete("view")
-    } else {
-      params.set("view", newView)
-    }
-
-    const queryString = params.toString()
-    router.replace(queryString ? `/arrangementer?${queryString}` : "/arrangementer")
-  }
-
-  const handleCalendarChange = (newYear: number, newMonth: number) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set("view", "cal")
-    params.set("y", newYear.toString())
-    params.set("m", (newMonth + 1).toString())
-    router.replace(`/arrangementer?${params.toString()}`)
   }
 
   const toggleSearchBar = () => {
@@ -209,15 +123,16 @@ const EventPage = () => {
   }
 
   const groupsMemo = useMemo(() => groups ?? [], [groups])
-  const hasActiveFilters = searchTerm || typeFilters.length > 0 || groupFilters.length > 0 || viewMode !== "ATTENDANCE"
+  const hasActiveFilters =
+    filters.search || filters.types.length > 0 || filters.groups.length > 0 || filters.viewMode !== "ATTENDANCE"
 
   const activeFilterCount = useMemo(() => {
     let count = 0
-    if (typeFilters.length > 0) count += typeFilters.length
-    if (groupFilters.length > 0) count += groupFilters.length
-    if (viewMode !== "ATTENDANCE") count++
+    if (filters.types.length > 0) count += filters.types.length
+    if (filters.groups.length > 0) count += filters.groups.length
+    if (filters.viewMode !== "ATTENDANCE") count++
     return count
-  }, [typeFilters.length, groupFilters.length, viewMode])
+  }, [filters.types.length, filters.groups.length, filters.viewMode])
 
   return (
     <div className="flex flex-col gap-4">
@@ -225,9 +140,9 @@ const EventPage = () => {
         Arrangementer
       </Title>
 
-      <Tabs value={view} onValueChange={handleViewChange} className="w-full">
+      <Tabs value={filters.view} onValueChange={(view) => updateFilters({ view })} className="w-full">
         <div className="flex flex-col flex-wrap sm:flex-row justify-between gap-4">
-          <div className={cn("flex gap-2 justify-between w-full", view === "cal" ? "sm:w-fit" : "")}>
+          <div className={cn("flex gap-2 justify-between w-full", filters.view === "cal" ? "sm:w-fit" : "")}>
             <TabsList className="dark:border-none shrink-0">
               <TabsTrigger value="list" className="px-3 w-fit min-w-0 min-h-0">
                 <IconLayoutList className="mr-2 size-5" />
@@ -239,7 +154,7 @@ const EventPage = () => {
               </TabsTrigger>
             </TabsList>
 
-            {view === "list" && (
+            {filters.view === "list" && (
               <div className="flex justify-end gap-2 w-full">
                 <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
                   <DrawerTrigger asChild className="md:hidden">
@@ -261,21 +176,31 @@ const EventPage = () => {
                   <DrawerContent>
                     <div className="px-4 overflow-y-auto max-h-[80dvh]">
                       <div className="max-w-sm mx-auto pb-6">
-                        <DrawerHeader className="">
+                        <DrawerHeader>
                           <DrawerTitle className="flex items-center gap-2">
                             <IconFilter2 className="size-[1.25em]" />
                             Filtrer arrangementer
                           </DrawerTitle>
                         </DrawerHeader>
                         <div className="px-4 pt-4 pb-20">
-                          <EventFilters
-                            onChange={handleFilterChange}
-                            groups={groupsMemo}
-                            typeFilters={parsedTypeFilters}
-                            groupFilters={groupFilters}
-                            viewMode={viewMode}
-                            isStaff={isStaff}
-                          />
+                          <div className="flex flex-col gap-2">
+                            <span className="font-medium text-gray-500 dark:text-stone-400 text-sm">Sorter</span>
+                            <SortFilter value={filters.viewMode} onChange={(viewMode) => updateFilters({ viewMode })} />
+                          </div>
+                          <div className="mt-6">
+                            <TypeFilter
+                              value={filters.types}
+                              onChange={(types) => updateFilters({ types })}
+                              isStaff={isStaff}
+                            />
+                          </div>
+                          <div className="mt-6">
+                            <GroupFilter
+                              value={filters.groups}
+                              onChange={(groups) => updateFilters({ groups })}
+                              groups={groupsMemo}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -294,50 +219,56 @@ const EventPage = () => {
                 </Button>
 
                 <SearchInput
-                  initialValue={searchTerm}
-                  onDebouncedChange={handleSearchChange}
+                  initialValue={filters.search}
+                  onDebouncedChange={(value) => updateFilters({ search: value })}
                   className="hidden relative sm:block w-full max-w-90"
                 />
+                <div className="hidden md:block">
+                  <SortFilter value={filters.viewMode} onChange={(viewMode) => updateFilters({ viewMode })} />
+                </div>
               </div>
             )}
           </div>
 
-          {view === "cal" && (
+          {filters.view === "cal" && (
             <CalendarNavigation
-              year={year}
-              month={month}
-              onNavigate={handleCalendarChange}
+              year={filters.year}
+              month={filters.month}
+              onNavigate={(year, month) => updateFilters({ view: "cal", year, month })}
               className="flex justify-between w-full sm:max-w-max"
             />
           )}
         </div>
 
-        {view === "list" && searchBarOpen && (
+        {filters.view === "list" && searchBarOpen && (
           <div className="sm:hidden mt-2 relative w-full">
-            <SearchInput initialValue={searchTerm} onDebouncedChange={handleSearchChange} />
+            <SearchInput
+              initialValue={filters.search}
+              onDebouncedChange={(value) => updateFilters({ search: value })}
+            />
           </div>
         )}
 
         <TabsContent value="list" className="md:grid md:grid-cols-[15rem_auto] md:gap-[3rem] lg:gap[4rem]">
           <div className="max-md:hidden w-full scroll mt-4">
             <div className="pl-1">
-              <EventFilters
-                onChange={handleFilterChange}
-                groups={groupsMemo}
-                typeFilters={parsedTypeFilters}
-                groupFilters={groupFilters}
-                viewMode={viewMode}
-                isStaff={isStaff}
-              />
+              <TypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
+              <div className="mt-6">
+                <GroupFilter
+                  value={filters.groups}
+                  onChange={(groups) => updateFilters({ groups })}
+                  groups={groupsMemo}
+                />
+              </div>
             </div>
           </div>
           <div className="mt-2">
             {hasActiveFilters && (
               <FilterChips
-                searchTerm={searchTerm}
-                typeFilter={typeFilters}
-                groupFilters={groupFilters}
-                viewMode={viewMode}
+                searchTerm={filters.search}
+                typeFilter={filters.types}
+                groupFilters={filters.groups}
+                viewMode={filters.viewMode}
                 groups={groups ?? []}
                 onRemoveFilter={handleRemoveFilter}
                 onResetAll={handleResetFilters}
@@ -349,7 +280,7 @@ const EventPage = () => {
                   futureEventWithAttendances={futureEventWithAttendances}
                   pastEventWithAttendances={pastEventWithAttendances}
                   onLoadMore={fetchNextPage}
-                  viewMode={viewMode}
+                  viewMode={filters.viewMode}
                 />
               )}
               {isLoading && <EventListSkeleton />}
@@ -358,7 +289,7 @@ const EventPage = () => {
         </TabsContent>
 
         <TabsContent value="cal">
-          <EventCalendar year={year} month={month} />
+          <EventCalendar year={filters.year} month={filters.month} />
         </TabsContent>
       </Tabs>
     </div>

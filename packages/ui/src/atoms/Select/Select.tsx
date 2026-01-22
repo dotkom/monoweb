@@ -17,7 +17,7 @@ export const SelectTrigger = ({ className, children, ref, ...props }: SelectTrig
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "font-body flex h-10 w-full items-center justify-between rounded-md border text-left",
+      "font-body flex h-10 w-full items-center justify-between rounded-md border text-left gap-2",
       "border-gray-200 px-3 py-2 text-sm ring-offset-background",
       "dark:border-stone-700 dark:bg-stone-800",
       "focus:outline-hidden focus:ring-2",
@@ -121,20 +121,17 @@ export const SelectItem = ({ className, children, ref, ...props }: SelectItemPro
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "font-body relative flex w-full cursor-default select-none items-center",
-      "rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden focus:bg-gray-100 dark:focus:bg-stone-700",
+      "font-body relative flex justify-between w-full cursor-pointer select-none items-center",
+      "rounded-xs px-2 py-1.5 text-sm outline-hidden focus:bg-gray-100 dark:focus:bg-stone-700",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}
   >
-    <span className="absolute left-2 top-1/2 transform -translate-y-1/2">
-      <SelectPrimitive.ItemIndicator>
-        <IconCheck />
-      </SelectPrimitive.ItemIndicator>
-    </span>
-
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    <SelectPrimitive.ItemIndicator>
+      <IconCheck className="size-4" />
+    </SelectPrimitive.ItemIndicator>
   </SelectPrimitive.Item>
 )
 SelectItem.displayName = SelectPrimitive.Item.displayName

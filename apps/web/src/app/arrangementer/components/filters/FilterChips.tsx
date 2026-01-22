@@ -4,7 +4,7 @@ import type { EventType, Group } from "@dotkomonline/types"
 import { mapEventTypeToLabel } from "@dotkomonline/types"
 import { Button, cn } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
-import type { EventListViewMode } from "./EventList"
+import type { EventListViewMode } from "../EventList"
 
 type FilterType = "search" | "type" | "group" | "sort"
 
