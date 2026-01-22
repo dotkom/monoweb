@@ -32,7 +32,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
       <Collapsible className="w-full flex flex-col gap-2" defaultOpen={true}>
         <CollapsibleTrigger
           className={cn(
-            "cursor-pointer w-full flex items-center justify-between gap-2 py-1 font-medium text-gray-500",
+            "cursor-pointer w-full flex items-center justify-between gap-2 font-medium text-gray-500",
             "[&[data-state=open]>svg]:rotate-180",
             "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
           )}

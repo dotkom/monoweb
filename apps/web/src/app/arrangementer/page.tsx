@@ -175,26 +175,28 @@ const EventPage = () => {
                   </DrawerTrigger>
                   <DrawerContent>
                     <div className="px-4 overflow-y-auto max-h-[80dvh]">
-                      <div className="max-w-sm mx-auto pb-6">
+                      <div className="mx-auto pb-6">
                         <DrawerHeader>
                           <DrawerTitle className="flex items-center gap-2">
                             <IconFilter2 className="size-[1.25em]" />
                             Filtrer arrangementer
                           </DrawerTitle>
                         </DrawerHeader>
-                        <div className="px-4 pt-4 pb-20">
-                          <div className="flex flex-col gap-2">
-                            <span className="font-medium text-gray-500 dark:text-stone-400 text-sm">Sorter</span>
-                            <SortFilter value={filters.viewMode} onChange={(viewMode) => updateFilters({ viewMode })} />
+                        <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
+                          <div>
+                            <div className="flex flex-col gap-2">
+                              <span className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">Sorter</span>
+                              <SortFilter value={filters.viewMode} onChange={(viewMode) => updateFilters({ viewMode })} />
+                            </div>
+                            <div className="mt-6">
+                              <TypeFilter
+                                value={filters.types}
+                                onChange={(types) => updateFilters({ types })}
+                                isStaff={isStaff}
+                              />
+                            </div>
                           </div>
-                          <div className="mt-6">
-                            <TypeFilter
-                              value={filters.types}
-                              onChange={(types) => updateFilters({ types })}
-                              isStaff={isStaff}
-                            />
-                          </div>
-                          <div className="mt-6">
+                          <div className="mt-6 sm:mt-0">
                             <GroupFilter
                               value={filters.groups}
                               onChange={(groups) => updateFilters({ groups })}
@@ -209,7 +211,7 @@ const EventPage = () => {
 
                 <Button
                   onClick={toggleSearchBar}
-                  className="sm:hidden w-[2.875rem] rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
+                  className="sm:hidden w-11.5 rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                 >
                   {searchBarOpen ? (
                     <IconX className="size-5 flex items-center justify-center" />
@@ -223,9 +225,11 @@ const EventPage = () => {
                   onDebouncedChange={(value) => updateFilters({ search: value })}
                   className="hidden relative sm:block w-full max-w-90"
                 />
-                <div className="hidden md:block">
-                  <SortFilter value={filters.viewMode} onChange={(viewMode) => updateFilters({ viewMode })} />
-                </div>
+                <SortFilter 
+                  value={filters.viewMode} 
+                  onChange={(viewMode) => updateFilters({ viewMode })} 
+                  className="hidden md:block"  
+                />
               </div>
             )}
           </div>
