@@ -215,7 +215,7 @@ export function getUserService(
     },
 
     async register(handle, userId) {
-      // NOTE: The registrer function here has a few responsibilities because of our data strategy:
+      // NOTE: The register function here has a few responsibilities because of our data strategy:
       //
       // 1. The database is the source of truth, and is ALWAYS intended to be as such.
       // 2. Unfortunately, there was a period in time where Auth0 was the source of truth, most notably right after we
