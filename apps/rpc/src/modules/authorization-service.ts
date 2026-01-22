@@ -20,6 +20,7 @@ export const EditorRole = {
   ONLINE_IL: "onlineil",
   FOND: "fond",
   PROKOM: "prokom",
+  TRIKOM: "trikom",
   EKSKOM: "ekskom",
   ITEX: "ekskom",
   JUBKOM: "jubkom",
