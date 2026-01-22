@@ -2,10 +2,29 @@ import { getMembershipService } from "./membership-service"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
 import { describe, expect, it } from "vitest"
 import { subYears } from "date-fns"
-import { getAcademicStart } from "@dotkomonline/types"
+import { getAcademicStart, getMembershipGrade, getNextAcademicStart, type Membership } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
+import { TZDate } from "@date-fns/tz"
+
+// This test data was gathered in 2026, so to be able to test membership we need a static date, since these dates are
+// relative to current date and would change with time. This only concerns the membership grade calculations. The year
+// calculations should remain constant throughout the years.
+const NOW = new TZDate(2026, 1, 23, 12, 0, 0, 0)
 
 const getYearFromDelta = (delta: number) => subYears(getAcademicStart(getCurrentUTC()), delta).getFullYear()
+
+const getMockMembershipFromDelta = (type: Membership["type"], delta: number): Membership => {
+  const start = subYears(getAcademicStart(NOW), delta)
+
+  return {
+    end: getNextAcademicStart(),
+    id: "123",
+    specialization: "UNKNOWN",
+    start,
+    type,
+    userId: "123",
+  }
+}
 
 describe("Membership integration tests", () => {
   const membershipService = getMembershipService()
@@ -13,37 +32,65 @@ describe("Membership integration tests", () => {
   it("bachelor example 1", async () => {
     const { goal, courses } = BACHELOR.EXAMPLE_1
     const delta = membershipService.findBachelorStartYearDelta(courses)
-    expect(getYearFromDelta(delta)).toBe(goal)
+
+    const year = getYearFromDelta(delta)
+    const membership = getMockMembershipFromDelta("BACHELOR_STUDENT", delta)
+
+    expect(year).toBe(goal.year)
+    expect(getMembershipGrade(membership)).toBe(goal.grade)
   })
 
   it("bachelor example 2", async () => {
     const { goal, courses } = BACHELOR.EXAMPLE_2
     const delta = membershipService.findBachelorStartYearDelta(courses)
-    expect(getYearFromDelta(delta)).toBe(goal)
+
+    const year = getYearFromDelta(delta)
+    const membership = getMockMembershipFromDelta("BACHELOR_STUDENT", delta)
+
+    expect(year).toBe(goal.year)
+    expect(getMembershipGrade(membership)).toBe(goal.grade)
   })
 
   it("bachelor example 3", async () => {
     const { goal, courses } = BACHELOR.EXAMPLE_3
     const delta = membershipService.findBachelorStartYearDelta(courses)
-    expect(getYearFromDelta(delta)).toBe(goal)
+
+    const year = getYearFromDelta(delta)
+    const membership = getMockMembershipFromDelta("BACHELOR_STUDENT", delta)
+
+    expect(year).toBe(goal.year)
+    expect(getMembershipGrade(membership)).toBe(goal.grade)
   })
 
   it("master example 1", async () => {
     const { goal, courses } = MASTER.EXAMPLE_1
     const delta = membershipService.findMasterStartYearDelta(courses)
-    expect(getYearFromDelta(delta)).toBe(goal)
+
+    const year = getYearFromDelta(delta)
+    const membership = getMockMembershipFromDelta("MASTER_STUDENT", delta)
+
+    expect(year).toBe(goal.year)
+    expect(getMembershipGrade(membership)).toBe(goal.grade)
   })
 
   it("master example 2", async () => {
     const { goal, courses } = MASTER.EXAMPLE_2
     const delta = membershipService.findMasterStartYearDelta(courses)
-    expect(getYearFromDelta(delta)).toBe(goal)
+
+    const year = getYearFromDelta(delta)
+    const membership = getMockMembershipFromDelta("MASTER_STUDENT", delta)
+
+    expect(year).toBe(goal.year)
+    expect(getMembershipGrade(membership)).toBe(goal.grade)
   })
 })
 
 const MASTER = {
   EXAMPLE_1: {
-    goal: 2024,
+    goal: {
+      year: 2024,
+      grade: 5,
+    },
     courses: [
       {
         code: "IT1901",
@@ -218,7 +265,10 @@ const MASTER = {
     ],
   },
   EXAMPLE_2: {
-    goal: 2025,
+    goal: {
+      year: 2025,
+      grade: 4,
+    },
     courses: [
       {
         code: "HMS0009",
@@ -372,11 +422,14 @@ const MASTER = {
       },
     ],
   },
-} as const satisfies Record<string, { goal: number; courses: NTNUGroup[] }>
+} as const satisfies Record<string, { goal: { year: number; grade: number }; courses: NTNUGroup[] }>
 
 const BACHELOR = {
   EXAMPLE_1: {
-    goal: 2023,
+    goal: {
+      year: 2023,
+      grade: 3,
+    },
     courses: [
       {
         code: "IT1901",
@@ -536,7 +589,10 @@ const BACHELOR = {
     ],
   },
   EXAMPLE_2: {
-    goal: 2023,
+    goal: {
+      year: 2023,
+      grade: 3,
+    },
     courses: [
       {
         code: "TDT4109",
@@ -646,7 +702,10 @@ const BACHELOR = {
     ],
   },
   EXAMPLE_3: {
-    goal: 2023,
+    goal: {
+      year: 2023,
+      grade: 3,
+    },
     courses: [
       {
         code: "IT1901",
@@ -847,4 +906,4 @@ const BACHELOR = {
       },
     ],
   },
-} as const satisfies Record<string, { goal: number; courses: NTNUGroup[] }>
+} as const satisfies Record<string, { goal: { year: number; grade: number }; courses: NTNUGroup[] }>
