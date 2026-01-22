@@ -1,63 +1,96 @@
-import { getAcademicStart, getNextAcademicStart } from "@dotkomonline/types"
-import { differenceInMonths, subYears } from "date-fns"
+import {
+  getAutumnSemesterStart,
+  isSpringSemester,
+  getSpringSemesterStart,
+  getSemesterDifference,
+} from "@dotkomonline/types"
+import { isWithinInterval } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
 import { getLogger } from "@dotkomonline/logger"
-import { getCurrentUTC } from "@dotkomonline/utils"
-import type { TZDate } from "@date-fns/tz"
 
 export interface MembershipService {
-  findEstimatedStudyStart(
-    study: "BACHELOR" | "MASTER",
-    courses: NTNUGroup[]
-  ): { start: TZDate; semester: number; grade: number }
+  /**
+   * Find the approximate semester based on a student's courses against a hard-coded set of courses.
+   *
+   * NOTE: The value is 0-indexed.
+   *
+   * Master studies begin at semester 6.
+   *
+   * @see getCourseStart(semester) in types package
+   * @see getStudyGrade(semester) in types package
+   *
+   * @example
+   * findEstimatedSemester(...) -> 0 // 1st semester Bachelor (Autumn)
+   * findEstimatedSemester(...) -> 1 // 2nd semester Bachelor (Spring)
+   * findEstimatedSemester(...) -> 2 // 3rd semester Bachelor
+   * findEstimatedSemester(...) -> 3 // 4th semester Bachelor
+   * findEstimatedSemester(...) -> 4 // 5th semester Bachelor
+   * findEstimatedSemester(...) -> 5 // 6th semester Bachelor
+   * findEstimatedSemester(...) -> 6 // 1st semester Master (regardless of prior Bachelor length)
+   * findEstimatedSemester(...) -> 7 // 2nd semester Master
+   * findEstimatedSemester(...) -> 8 // 3rd semester Master
+   * findEstimatedSemester(...) -> 9 // 4th semester Master
+   */
+  findEstimatedSemester(study: "BACHELOR" | "MASTER", courses: ReadonlyArray<NTNUGroup>): number
 }
 
 const BACHELOR_STUDY_PLAN = [
   {
     semester: 0,
-    courses: ["IT2805", "MA0001", "TDT4109"],
+    courses: ["IT2805", "MA0001", "TDT4109", "EXPH0300"],
+    minimumEnrolledCourses: 3,
   },
   {
     semester: 1,
     courses: ["MA0301", "TDT4100", "TDT4180", "TTM4100"],
+    minimumEnrolledCourses: 3,
   },
   {
     semester: 2,
     courses: ["IT1901", "TDT4120", "TDT4160"],
+    minimumEnrolledCourses: 3,
   },
   {
     semester: 3,
     courses: ["TDT4140", "TDT4145"],
+    minimumEnrolledCourses: 2,
   },
   {
     semester: 4,
     // Semester 1 in year 3 are all elective courses, so we do not use any of them to determine which year somebody
     // started studying
     courses: [],
+    minimumEnrolledCourses: 0,
   },
   {
     semester: 5,
     courses: ["IT2901"],
+    minimumEnrolledCourses: 1,
   },
 ] as const
 
+export const MASTER_SEMESTER_OFFSET = 6 as const
 const MASTER_STUDY_PLAN = [
   {
-    semester: 0,
+    semester: MASTER_SEMESTER_OFFSET + 0,
     courses: [],
+    minimumEnrolledCourses: 0,
   },
   {
-    semester: 1,
+    semester: MASTER_SEMESTER_OFFSET + 1,
     courses: [],
+    minimumEnrolledCourses: 0,
   },
   {
-    semester: 2,
+    semester: MASTER_SEMESTER_OFFSET + 2,
     courses: ["IT3915"],
+    minimumEnrolledCourses: 1,
   },
   {
-    semester: 3,
+    semester: MASTER_SEMESTER_OFFSET + 3,
     courses: ["IT3920"],
+    minimumEnrolledCourses: 1,
   },
 ] as const
 
@@ -90,119 +123,140 @@ export function getMembershipService(): MembershipService {
   /**
    * Find the approximate semester based on a student's courses against a hard-coded set of courses.
    */
-  function findEstimatedSemester(courseSet: StudyPlanCourseSet, studentCourses: NTNUGroup[]): number {
-    logger.info("Searching for applicable membership based on courses %o and study plan %o", studentCourses, courseSet)
-    let largestSemester = 0
+  function estimateSemester(
+    courseSet: StudyPlanCourseSet,
+    studentCourses: ReadonlyArray<NTNUGroup>,
+    semesterOffset: number
+  ): number {
+    let largestSemester = semesterOffset
+
     for (let i = 0; i < courseSet.length; i++) {
       const semester = courseSet[i]
 
-      // Semesters with zero mandatory courses possibly increment `largestSemester` by determining the number of
-      // years since the last mandatory courses. However, if the current semester we are iterating over is the first
-      // in the study plan, we cannot get any more information that could be used to increment `largestSemester`, so
-      // we do not try.
-      const isFirstYear = i === 0 || i === 1
+      // This semester has mandatory courses
+      if (semester.courses.length > 0) {
+        const mandatoryCoursesEnrolledIn = semester.courses.filter((course) =>
+          studentCourses.some((studentCourse) => course === studentCourse.code)
+        )
 
-      if (semester.courses.length === 0 && !isFirstYear) {
-        const previousSemesters = courseSet.slice(0, i).filter((semester) => semester.courses.length !== 0)
-        // By invariant that this is not the first year, and that there are maximum two semesters without mandatory
-        // courses, `previousSemesters` is guaranteed to have at least one element.
-        invariant(previousSemesters.length !== 0)
+        if (mandatoryCoursesEnrolledIn.length >= semester.minimumEnrolledCourses) {
+          largestSemester = semester.semester
+          continue
+        } else {
+          // If the user does not have all the courses required for this semester, we would much rather prefer to give
+          // them a lower year than a higher one. Chances are a student would notify HS (basically our administration)
+          // if they cannot attend events they should be able to, while someone might not notify HS about them being able
+          // to attend company events they are not supposed to be at.
+          break
+        }
+      }
 
-        // We take the ceil(mean(distances)) across all past semesters.
-        let largestLocalSemester = 0
-        for (const previousSemester of previousSemesters.toReversed()) {
-          // The criteria here is the same as below, except we also require the course to have a finished date.
-          const hasPassedPreviousSemester = previousSemester.courses.every((course) =>
-            studentCourses.some(
-              (studentCourse) => course === studentCourse.code && studentCourse.finished !== undefined
-            )
-          )
+      // Since there are no mandatory courses for this course set, we need to estimate from the previous course sets.
+      // To be able to determine this, there cannot be more than two semesters in a row without mandatory courses. This
+      // is validated in `validateStudyPlanCourseSet`.
 
-          if (!hasPassedPreviousSemester) {
-            continue
-          }
+      const earlierCourseSetsWithMandatoryCourses = courseSet
+        .slice(0, i)
+        .filter((semester) => semester.courses.length !== 0)
 
-          // There is a scenario where a user failed a course in year 1, but passed in year 2. This is why we take the
-          // mean distance, which is later ceiled.
-          const previousSemesterDistances = previousSemester.courses.map((course) => {
-            const studentCourse = studentCourses.find((studentCourse) => studentCourse.code === course)
+      const earlierMandatoryCoursesCount = earlierCourseSetsWithMandatoryCourses.reduce(
+        (acc, semester) => acc + semester.courses.length,
+        0
+      )
 
-            // -1 because length is 1-indexed
-            const semesterDistanceFromEnd = courseSet.length - 1 - previousSemester.semester
-            // If you were supposed to finish your degree this year, how far away would the semester in question be?
-            // For example; if previousSemester=3 (algdat+itp+datdig), then the distance would be 2.
-            const years = Math.ceil(semesterDistanceFromEnd / 2)
-            const courseEndAssumingLastYearStudent = subYears(getNextAcademicStart(), years)
+      // If it is the second semester, and the first semester had no mandatory courses, we cannot really make any real
+      // estimation. But we feel comfortable incrementing the semester by one, since it would still be the first year
+      // (relative to the semester offset).
+      if (earlierMandatoryCoursesCount === 0) {
+        // We need to determine if we are in spring or autumn semester to be able to increment correctly.
+        const isEvenOffset = semesterOffset % 2 === 0
+        const isSpring = isSpringSemester()
 
-            // INVARIANT: The course should exist, and it should be finished according to `hasPassedPreviousSemester`.
-            invariant(studentCourse !== undefined && studentCourse.finished !== undefined)
-            // We divide by six because we have two school semesters in a year, effectively turnings months in a year
-            // into semesters
-            const distance = Math.floor(
-              differenceInMonths(getAcademicStart(studentCourse.finished), courseEndAssumingLastYearStudent) / 6
-            )
-
-            return previousSemester.semester + (semesterDistanceFromEnd - distance)
-          })
-
-          // Take the mean distance for this semester
-          const sum = previousSemesterDistances.reduce((acc, curr) => acc + curr, 0)
-          const currentSemesterEstimate = Math.ceil(sum / previousSemesterDistances.length)
-
-          largestLocalSemester = Math.max(largestLocalSemester, currentSemesterEstimate)
+        // In practice, with the current (2026) Master study plan, the first two semesters have no mandatory courses,
+        // but we would still like them to be put into semester 6 and 7 respectively.
+        //   - If even offset (start autumn) we increment if it is currently spring.
+        //   - If odd offset (start spring) we increment if it is currently autumn.
+        //     NOTE: This scenario is not possible with the current study plans, but we keep it for future-proofing.
+        if (isEvenOffset === isSpring) {
+          largestSemester = semesterOffset + 1
+        } else {
+          largestSemester = semesterOffset
         }
 
-        largestSemester = Math.max(largestSemester, largestLocalSemester)
         continue
       }
 
-      // If the user has all the courses that are mandatory
-      const isGroupMemberOfMandatoryCourses = semester.courses.every((course) =>
-        studentCourses.some((studentCourse) => course === studentCourse.code)
-      )
+      // By invariant that this is not the first year, and that there are maximum two semesters without mandatory
+      // courses, `previousSemesters` is guaranteed to have at least one element.
+      invariant(earlierCourseSetsWithMandatoryCourses.length !== 0)
 
-      if (isGroupMemberOfMandatoryCourses) {
-        largestSemester = semester.semester
-      } else {
-        // If the user does not have all the courses required for this semester, we would much rather prefer to give
-        // them a lower year than a higher one. Chances are a student would notify HS (basically our administration)
-        // if they cannot attend events they should be able to, while someone might not notify HS about them being able
-        // to attend company events they are not supposed to be at.
-        break
+      // We take the ceil(mean(distances)) across all past semesters.
+      const largestLocalSemester = semesterOffset
+      for (const earlierSemester of earlierCourseSetsWithMandatoryCourses.toReversed()) {
+        // The criteria here is the same as below, except we also require the course to have a finished date.
+        const coursesPassedEarlierSemester = earlierSemester.courses.filter((course) =>
+          studentCourses.some((studentCourse) => course === studentCourse.code && studentCourse.finished !== undefined)
+        )
+
+        if (coursesPassedEarlierSemester.length < earlierSemester.minimumEnrolledCourses) {
+          continue
+        }
+
+        // 1. Determine the start of the current semester we are in right now.
+        const currentSemesterStart = isSpringSemester()
+          ? getSpringSemesterStart(new Date())
+          : getAutumnSemesterStart(new Date())
+
+        // We take the max of all estimates. If you took a 1st-year course 3 years ago,
+        // you are a 4th-year student, even if you retook a different 1st-year course yesterday.
+        let largestLocalSemester = semesterOffset
+
+        const earlierSemesterEstimates = earlierSemester.courses.map((course) => {
+          const studentCourse = studentCourses.find(
+            (studentCourse) => studentCourse.code === course && studentCourse.finished !== undefined
+          )
+
+          if (studentCourse === undefined || studentCourse.finished === undefined) {
+            return null
+          }
+
+          const aprilFirst = new Date(studentCourse.finished.getFullYear(), 3, 1)
+          const novemberFirst = new Date(studentCourse.finished.getFullYear(), 10, 1)
+
+          const isStudentCourseFinishedInSpringSemester = isWithinInterval(studentCourse.finished, {
+            start: aprilFirst,
+            end: novemberFirst,
+          })
+
+          const intervalMappedCourseFinished = isStudentCourseFinishedInSpringSemester
+            ? getSpringSemesterStart(studentCourse.finished)
+            : getAutumnSemesterStart(studentCourse.finished)
+
+          const semestersPassed = getSemesterDifference(intervalMappedCourseFinished, currentSemesterStart)
+
+          return earlierSemester.semester + semestersPassed
+        })
+
+        const estimates = earlierSemesterEstimates.filter((estimate): estimate is number => estimate !== null)
+
+        if (estimates.length > 0) {
+          const maxEstimate = Math.max(...estimates)
+          largestLocalSemester = Math.max(largestLocalSemester, maxEstimate)
+        }
       }
+
+      largestSemester = Math.max(largestSemester, largestLocalSemester)
     }
 
     return largestSemester
   }
 
   return {
-    findEstimatedStudyStart(study, courses) {
+    findEstimatedSemester(study, courses) {
       const studyPlan = study === "MASTER" ? MASTER_STUDY_PLAN : BACHELOR_STUDY_PLAN
-      const semester = findEstimatedSemester(studyPlan, courses)
+      const offset = study === "MASTER" ? MASTER_SEMESTER_OFFSET : 0
 
-      // We use Math#round because it will give us the correct year delta:
-      //   Year 1 autumn (value 0)  : round(0 / 2) = 0 (Start year = current year)
-      //   Year 1 spring (value 1): round(1 / 2) = 1 (Start year = current - 1, since spring is in the next calendar year)
-      //   Year 2 autumn (value 2)  : round(2 / 2) = 1 (Start year = current - 1)
-      //   Year 2 spring (value 3): round(3 / 2) = 2 (Start year = current - 2)
-      //   ...
-      const yearOffset = Math.round(semester / 2)
-      const start = subYears(getAcademicStart(getCurrentUTC()), yearOffset)
-
-      // A school year consists of two semesters (Autumn and Spring). So this formula will give us the year:
-      //   Year 1 autumn (value 0): floor(0 / 2) + 1 = 1 (Year 1)
-      //   Year 1 spring (value 1): floor(1 / 2) + 1 = 1 (Year 1)
-      //   Year 2 autumn (value 2): floor(2 / 2) + 1 = 2 (Year 2)
-      //   Year 2 spring (value 3): floor(3 / 2) + 1 = 2 (Year 2)
-      //   Year 3 autumn (value 4): floor(4 / 2) + 1 = 3 (Year 3)
-      //   ...
-      const grade = Math.floor(semester / 2) + 1
-
-      return {
-        semester,
-        start,
-        grade,
-      }
+      return estimateSemester(studyPlan, courses, offset)
     },
   }
 }
