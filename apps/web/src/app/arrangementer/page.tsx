@@ -185,8 +185,13 @@ const EventPage = () => {
                         <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
                           <div>
                             <div className="flex flex-col gap-2">
-                              <span className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">Sorter</span>
-                              <SortFilter value={filters.viewMode} onChange={(viewMode) => updateFilters({ viewMode })} />
+                              <span className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">
+                                Sorter
+                              </span>
+                              <SortFilter
+                                value={filters.viewMode}
+                                onChange={(viewMode) => updateFilters({ viewMode })}
+                              />
                             </div>
                             <div className="mt-6">
                               <TypeFilter
@@ -225,10 +230,10 @@ const EventPage = () => {
                   onDebouncedChange={(value) => updateFilters({ search: value })}
                   className="hidden relative sm:block w-full max-w-90"
                 />
-                <SortFilter 
-                  value={filters.viewMode} 
-                  onChange={(viewMode) => updateFilters({ viewMode })} 
-                  className="hidden md:block"  
+                <SortFilter
+                  value={filters.viewMode}
+                  onChange={(viewMode) => updateFilters({ viewMode })}
+                  className="hidden md:block"
                 />
               </div>
             )}
