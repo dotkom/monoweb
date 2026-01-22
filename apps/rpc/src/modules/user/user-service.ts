@@ -122,8 +122,8 @@ export function getUserService(
     // Master degree always takes precedence over bachelor every single time.
     const isMasterStudent = masterProgramme !== undefined
     const distanceFromStartInYears = isMasterStudent
-      ? membershipService.findApproximateMasterStartYear(courses)
-      : membershipService.findApproximateBachelorStartYear(courses)
+      ? membershipService.findMasterStartYearDelta(courses)
+      : membershipService.findBachelorStartYearDelta(courses)
     const estimatedStudyStart = subYears(getAcademicStart(getCurrentUTC()), distanceFromStartInYears)
 
     // NOTE: We grant memberships for at most one year at a time. If you are granted membership after new-years, you
