@@ -4,10 +4,10 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
+  isMembershipActive,
   type Membership,
   type MembershipId,
   type MembershipSpecialization,
-  MembershipSpecializationSchema,
   type MembershipWrite,
   type User,
   type UserFilterQuery,
@@ -16,14 +16,14 @@ import {
   type UserWrite,
   UserWriteSchema,
   findActiveMembership,
-  getAcademicStart,
-  getNextAcademicStart,
+  getNextSemesterStart,
+  getCurrentSemesterStart,
 } from "@dotkomonline/types"
-import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
-import { isSameDay, subYears } from "date-fns"
-import { isDevelopmentEnvironment } from "../../configuration"
+import { isDevelopmentEnvironment } from "../../configuration";
+import { isSameDay } from "date-fns"
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
@@ -120,22 +120,36 @@ export function getUserService(
       return null
     }
 
-    // Master degree always takes precedence over bachelor every single time.
-    const isMasterStudent = masterProgramme !== undefined
-    const distanceFromStartInYears = isMasterStudent
-      ? membershipService.findMasterStartYearDelta(courses)
-      : membershipService.findBachelorStartYearDelta(courses)
-    const estimatedStudyStart = subYears(getAcademicStart(getCurrentUTC()), distanceFromStartInYears)
+    // Master degree always takes precedence over bachelor.
+    const study = masterProgramme !== undefined ? "MASTER" : "BACHELOR"
+    const estimatedStudyStart = membershipService.findEstimatedStudyStart(study, courses)
 
-    // NOTE: We grant memberships for at most one year at a time. If you are granted membership after new-years, you
-    // will only keep the membership until the start of the next school year.
-    const endDate = getNextAcademicStart()
+    // We grant memberships for one semester at a time. This has some trade-offs, and natural alternative end dates are:
+    //   1. One semester (what we use)
+    //   2. School year (one or two semesters--until next Autumn semester, earlier referred to as the next
+    //      "academic start")
+    //   3. Entire degree (three years for Bachelor's and two years for Master's)
+    //
+    // The longer each membership lasts, the fewer times you need to calculate the grade and other information. This
+    // reduces the number of opportunities for wrong calculations, but also make the system less flexible. Sometimes
+    // students take a Bachelor's degree over a span of two years. Other times they change study. We choose the tradeoff
+    // where you have this flexibility, even though it costs us an increase in manual adjustments. You most often need
+    // to manually adjust someone's membership if someone:
+    //   a) Failed at least one of their courses a semester.
+    //   b) Has a very weird study plan due to previous studies.
+    //   c) Have been an exchange student and therefore not have done all their courses in the "correct" order
+    //      (according to our system anyway), where they have a "hole" in their course list exposed to us.
+    //
+    // We have decided it is best to manually adjust the membership in any nonlinear case, versus trying to correct for
+    // fairly common cases like exchange students automatically. We never want this heuristic to overestimate someone's
+    // grade. This is because we deem it generally less beneficial to be in a lower grade (because in practice the older
+    // students usually have priority for attendance), increasing their chances of reaching out to correct the error.
+    const endDate = getNextSemesterStart()
+    const startDate = getCurrentSemesterStart()
 
-    // Master's programme takes precedence over bachelor's programme.
-    if (masterProgramme !== undefined) {
-      const code = MembershipSpecializationSchema.catch("UNKNOWN").parse(
-        getSpecializationFromCode(studySpecializations?.[0].code)
-      )
+    if (study === "MASTER") {
+      const code = getSpecializationFromCode(studySpecializations?.[0].code)
+
       // If we have a new code that we have not seen, or for some other reason the code catches and returns UNKNOWN, we
       // emit a trace for it.
       if (code === "UNKNOWN") {
@@ -149,18 +163,20 @@ export function getUserService(
       logger.info("Estimated end date for the master's programme to be %s", endDate.toUTCString())
       return {
         type: "MASTER_STUDENT",
-        start: estimatedStudyStart,
+        start: startDate,
         end: endDate,
         specialization: code,
+        semester: estimatedStudyStart.semester,
       }
     }
 
     logger.info("Estimated end date for the bachelor's programme to be %s", endDate.toUTCString())
     return {
       type: "BACHELOR_STUDENT",
-      start: estimatedStudyStart,
+      start: startDate,
       end: endDate,
       specialization: null,
+      semester: estimatedStudyStart.semester,
     }
   }
 
@@ -238,7 +254,9 @@ export function getUserService(
       if (existingUser !== null) {
         const membership = findActiveMembership(existingUser)
 
-        if (membership !== null) {
+        // If the best active membership is KNIGHT, we attempt to discover a new membership for the user, in case they
+        // can find a "better" membership this way.
+        if (membership !== null && membership.type !== "KNIGHT") {
           return existingUser
         }
 
@@ -381,11 +399,21 @@ export function getUserService(
 
                 // We can only replace memberships if there is a new applicable one for the user
                 if (
-                  shouldReplaceMembership(user.memberships, activeMembership, applicableMembership) &&
-                  applicableMembership !== null
+                  applicableMembership !== null &&
+                  shouldReplaceMembership(user.memberships, activeMembership, applicableMembership)
                 ) {
-                  logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
-                  await userRepository.createMembership(handle, user.id, applicableMembership)
+                  // We make sure the membership is active before creating it. If it is not active, something has gone
+                  // wrong in our logic.
+                  if (isMembershipActive(applicableMembership)) {
+                    logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
+                    await userRepository.createMembership(handle, user.id, applicableMembership)
+                  } else {
+                    logger.warn(
+                      "Discovered and discarded invalid membership for user %s: %o",
+                      user.id,
+                      applicableMembership
+                    )
+                  }
                 }
               }
             } finally {
@@ -442,6 +470,15 @@ export function getUserService(
   }
 }
 
+/**
+ * Determine if we should replace a previous membership with a new one.
+ *
+ * This is true if:
+ * - There is no previous membership.
+ * - The membership is not a duplicate of an existing membership (active or inactive).
+ * - The previous membership is not active, and the next one is active.
+ * - The next membership has a semester greater than or equal to the previous one.
+ */
 function shouldReplaceMembership(
   allMemberships: Membership[],
   previous: Membership | null,
@@ -460,16 +497,20 @@ function shouldReplaceMembership(
     return true
   }
 
-  if (previous.type === "BACHELOR_STUDENT" && next.type === "MASTER_STUDENT") {
+  if (!isMembershipActive(previous) && isMembershipActive(next)) {
     return true
   }
 
-  return previous.type === "SOCIAL_MEMBER"
+  // Returns true if the next semester is greater than or equal to the previous semester
+  return (next.semester ?? -Infinity) - (previous.semester ?? -Infinity) >= 0
 }
 
 function areMembershipsEqual(a: Membership, b: MembershipWrite) {
+  const isSameStart = isSameDay(a.start, b.start)
+  const isSameEnd = (a.end === null && b.end === null) || (a.end !== null && b.end !== null && isSameDay(a.end, b.end))
+
   return (
-    isSameDay(a.start, b.start) && isSameDay(a.end, b.end) && a.specialization === b.specialization && a.type === b.type
+    isSameStart && isSameEnd && a.specialization === b.specialization && a.type === b.type && a.semester === b.semester
   )
 }
 
