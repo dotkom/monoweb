@@ -1,4 +1,4 @@
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, GroupType } from "@dotkomonline/db"
 import {
   type Group,
   type GroupId,
@@ -14,7 +14,6 @@ import {
   type GroupWrite,
   type UserId,
 } from "@dotkomonline/types"
-import type { GroupType } from "@prisma/client"
 import z from "zod"
 import { parseOrReport } from "../../invariant"
 
