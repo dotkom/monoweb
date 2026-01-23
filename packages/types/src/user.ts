@@ -1,7 +1,7 @@
 import type { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { addYears, differenceInYears, isAfter, isBefore, setMonth, startOfMonth } from "date-fns"
+import { addYears, isAfter, isBefore, setMonth, startOfMonth } from "date-fns"
 import { z } from "zod"
 import { buildSearchFilter } from "./filters"
 
@@ -31,7 +31,7 @@ export type UserId = User["id"]
 export type UserProfileSlug = User["profileSlug"]
 
 export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
-export const PHONE_REGEX = /^[0-9+-\s]*$/
+export const PHONE_REGEX = /^[0-9-+\s]*$/
 export const PROFILE_SLUG_REGEX = /^[a-z0-9-]+$/
 
 // These max and min values are arbitrary
@@ -93,25 +93,30 @@ export function findActiveMembership(user: User): Membership | null {
 }
 
 export function getMembershipGrade(membership: Membership): 1 | 2 | 3 | 4 | 5 | null {
-  // Take the difference, and add one because if `startYear == currentYear` they are in their first year
-  const delta = differenceInYears(getAcademicStart(getCurrentUTC()), getAcademicStart(membership.start)) + 1
+  const now = getCurrentUTC()
+
+  // Make sure we clamp the value to a minimum of 1
+  const delta = Math.max(1, getAcademicYearDelta(membership.start, now))
 
   switch (membership.type) {
     case "KNIGHT":
     case "PHD_STUDENT":
       return 5
+
     case "SOCIAL_MEMBER":
       return 1
+
     case "BACHELOR_STUDENT": {
       // Bachelor students are clamped at 1-3, regardless of how many years they used to take the degree.
-      return Math.max(1, Math.min(3, delta)) as 1 | 2 | 3
+      return Math.min(3, delta) as 1 | 2 | 3
     }
+
     case "MASTER_STUDENT": {
-      // Master students must be clamped at 4-5 because they can only be in their first or second year, but are always
-      // considered to have a bachelor's degree from beforehand.
-      const yearsGivenBachelors = delta + 3
-      return Math.max(4, Math.min(5, yearsGivenBachelors)) as 4 | 5
+      // Master students are clamped at 4-5, and are always considered to have a bachelor's degree from beforehand.
+      const yearsWithBachelors = delta + 3
+      return Math.min(5, yearsWithBachelors) as 4 | 5
     }
+
     case "OTHER":
       return null
   }
@@ -160,4 +165,26 @@ export function getNextAcademicStart(): TZDate {
   const firstAugust = getAcademicStart(getCurrentUTC())
   const isBeforeAugust = isBefore(now, firstAugust)
   return isBeforeAugust ? firstAugust : addYears(firstAugust, 1)
+}
+
+/**
+ * Calculates how many academic years have passed since the start date.
+ * If start is "last August" (current academic year), returns 1.
+ * If start was the August before that, returns 2.
+ */
+function getAcademicYearDelta(startDate: Date | TZDate, now: Date | TZDate = getCurrentUTC()): number {
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth() // 0-indexed (Jan=0, Aug=7)
+
+  // If we are in Jan-July (0-6), the academic year started in the PREVIOUS calendar year
+  // If we are in Aug-Dec (7-11), the academic year started in THIS calendar year
+  const academicYearCurrent = currentMonth >= 7 ? currentYear : currentYear - 1
+
+  // We do the same normalization for the membership start date
+  // (Handling cases where a member might join in Jan/Feb)
+  const startYear = startDate.getFullYear()
+  const startMonth = startDate.getMonth()
+  const academicYearStart = startMonth >= 7 ? startYear : startYear - 1
+
+  return academicYearCurrent - academicYearStart + 1
 }
