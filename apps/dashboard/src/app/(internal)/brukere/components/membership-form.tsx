@@ -8,13 +8,16 @@ import {
   MembershipWriteSchema,
   getMembershipTypeName,
   getSpecializationName,
+  getNextSemesterStart,
+  getCurrentSemesterStart,
 } from "@dotkomonline/types"
-import { getCurrentUTC } from "@dotkomonline/utils"
-import { addYears, isBefore } from "date-fns"
+import { isBefore } from "date-fns"
 import type { z } from "zod"
+import { createNumberInput } from "@/components/forms/NumberInput"
+import { Code, Stack, Text } from "@mantine/core"
 
 export const MembershipWriteFormSchema = MembershipWriteSchema.superRefine((data, ctx) => {
-  if (isBefore(data.end, data.start)) {
+  if (data.end && isBefore(data.end, data.start)) {
     ctx.addIssue({
       code: "custom",
       message: "Sluttdato må være etter startdato",
@@ -26,13 +29,14 @@ export const MembershipWriteFormSchema = MembershipWriteSchema.superRefine((data
 type MembershipWriteFormSchema = z.infer<typeof MembershipWriteFormSchema>
 
 const DEFAULT_VALUES: Partial<MembershipWriteFormSchema> = {
-  start: getCurrentUTC(),
-  end: addYears(getCurrentUTC(), 1),
+  start: getCurrentSemesterStart(),
+  end: getNextSemesterStart(),
   specialization: null,
+  semester: 0,
 }
 
 interface UseMembershipWriteFormProps {
-  onSubmit(data: z.infer<typeof MembershipWriteFormSchema>): void
+  onSubmit(data: MembershipWriteFormSchema): void
   defaultValues?: Partial<MembershipWrite>
   label?: string
 }
@@ -59,6 +63,7 @@ export const useMembershipWriteForm = ({
       }),
       specialization: createSelectInput({
         label: "Spesialisering",
+        description: "Masterspesialisering",
         required: false,
         clearable: true,
         placeholder: "Velg spesialisering",
@@ -68,6 +73,7 @@ export const useMembershipWriteForm = ({
             value: specialization,
             label: getSpecializationName(specialization) ?? specialization,
           })),
+        disabled: false,
       }),
       start: createDateTimeInput({
         label: "Startdato",
@@ -76,6 +82,40 @@ export const useMembershipWriteForm = ({
       end: createDateTimeInput({
         label: "Sluttdato",
         required: true,
+      }),
+      semester: createNumberInput({
+        label: "Semester",
+        description: (
+          <Stack gap="xs">
+            <Text size="xs" c="dimmed">
+              Hvilket semester medlemskapet innebærer. 0-indeksert.
+            </Text>
+            <Stack gap="0.25rem">
+              <Text size="xs" c="dimmed">
+                <Code>0</Code> → 1. semester (1. årstrinn)
+              </Text>
+              <Text size="xs" c="dimmed">
+                <Code>1</Code> → 2. semester (1. årstrinn)
+              </Text>
+              <Text size="xs" c="dimmed">
+                <Code>2</Code> → 3. semester (2. årstrinn)
+              </Text>
+              <Text size="xs" c="dimmed">
+                ...
+              </Text>
+              <Text size="xs" c="dimmed">
+                <Code>8</Code> → 9. semester (5. årstrinn)
+              </Text>
+              <Text size="xs" c="dimmed">
+                <Code>9</Code> → 10. semester (5. årstrinn)
+              </Text>
+            </Stack>
+          </Stack>
+        ),
+        required: false,
+        min: 0,
+        max: 9,
+        allowDecimal: false,
       }),
     },
   })
