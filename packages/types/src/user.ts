@@ -1,7 +1,7 @@
 import type { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { addYears, isAfter, isBefore, setMonth, startOfMonth } from "date-fns"
+import { isAfter, isBefore } from "date-fns"
 import { z } from "zod"
 import { buildSearchFilter } from "./filters"
 
@@ -20,6 +20,7 @@ export const MembershipWriteSchema = MembershipSchema.pick({
   start: true,
   end: true,
   specialization: true,
+  semester: true,
 })
 export type MembershipWrite = z.infer<typeof MembershipWriteSchema>
 
@@ -86,40 +87,47 @@ export const UserFilterQuerySchema = z
   .partial()
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
-/** Get the most relevant active membership for a user. */
-export function findActiveMembership(user: User): Membership | null {
-  const now = getCurrentUTC()
-  return user.memberships.findLast((membership) => isAfter(membership.end, now)) ?? null
+export function isMembershipActive(
+  membership: Membership | MembershipWrite,
+  now: TZDate | Date = getCurrentUTC()
+): boolean {
+  if (isAfter(membership.start, now)) {
+    return false
+  }
+
+  if (membership.end && isBefore(membership.end, now)) {
+    return false
+  }
+
+  return true
 }
 
-export function getMembershipGrade(membership: Membership): 1 | 2 | 3 | 4 | 5 | null {
+/**
+ * Get the most relevant active membership for a user. Most relevant is defined as the membership with the highest
+ * semester.
+ *
+ * This will always deprioritize KNIGHT (Ridder) memberships in favor of student or social memberships, because they are
+ * easier to work with for our attendance systems.
+ */
+export function findActiveMembership(user: User): Membership | null {
   const now = getCurrentUTC()
 
-  // Make sure we clamp the value to a minimum of 1
-  const delta = Math.max(1, getAcademicYearDelta(membership.start, now))
+  // This orders active memberships by semester descending with null values last
+  const orderedMemberships = user.memberships
+    .filter((membership) => isMembershipActive(membership, now))
+    .toSorted((a, b) => {
+      if (a.semester === null && b.semester === null) {
+        return 0
+      }
 
-  switch (membership.type) {
-    case "KNIGHT":
-    case "PHD_STUDENT":
-      return 5
+      if (a.semester !== null && b.semester !== null) {
+        return b.semester - a.semester
+      }
 
-    case "SOCIAL_MEMBER":
-      return 1
+      return b.semester !== null ? 1 : -1
+    })
 
-    case "BACHELOR_STUDENT": {
-      // Bachelor students are clamped at 1-3, regardless of how many years they used to take the degree.
-      return Math.min(3, delta) as 1 | 2 | 3
-    }
-
-    case "MASTER_STUDENT": {
-      // Master students are clamped at 4-5, and are always considered to have a bachelor's degree from beforehand.
-      const yearsWithBachelors = delta + 3
-      return Math.min(5, yearsWithBachelors) as 4 | 5
-    }
-
-    case "OTHER":
-      return null
-  }
+  return orderedMemberships.at(0) ?? null
 }
 
 export function getMembershipTypeName(type: MembershipType) {
@@ -132,10 +140,6 @@ export function getMembershipTypeName(type: MembershipType) {
       return "Sosialt medlem"
     case "KNIGHT":
       return "Ridder"
-    case "PHD_STUDENT":
-      return "PhD-student"
-    case "OTHER":
-      return "Annen"
   }
 }
 
@@ -152,41 +156,6 @@ export function getSpecializationName(specialization: MembershipSpecialization) 
     case "UNKNOWN":
       return "Ukjent spesialisering"
   }
-}
-
-/** Get the start of the academic year, which is by our convention August 1st. */
-export function getAcademicStart(date: TZDate | Date): TZDate {
-  // August is the 8th month, so we set the month to 7 (0-indexed)
-  return startOfMonth(setMonth(date, 7))
-}
-
-export function getNextAcademicStart(): TZDate {
-  const now = getCurrentUTC()
-  const firstAugust = getAcademicStart(getCurrentUTC())
-  const isBeforeAugust = isBefore(now, firstAugust)
-  return isBeforeAugust ? firstAugust : addYears(firstAugust, 1)
-}
-
-/**
- * Calculates how many academic years have passed since the start date.
- * If start is "last August" (current academic year), returns 1.
- * If start was the August before that, returns 2.
- */
-function getAcademicYearDelta(startDate: Date | TZDate, now: Date | TZDate = getCurrentUTC()): number {
-  const currentYear = now.getFullYear()
-  const currentMonth = now.getMonth() // 0-indexed (Jan=0, Aug=7)
-
-  // If we are in Jan-July (0-6), the academic year started in the PREVIOUS calendar year
-  // If we are in Aug-Dec (7-11), the academic year started in THIS calendar year
-  const academicYearCurrent = currentMonth >= 7 ? currentYear : currentYear - 1
-
-  // We do the same normalization for the membership start date
-  // (Handling cases where a member might join in Jan/Feb)
-  const startYear = startDate.getFullYear()
-  const startMonth = startDate.getMonth()
-  const academicYearStart = startMonth >= 7 ? startYear : startYear - 1
-
-  return academicYearCurrent - academicYearStart + 1
 }
 
 export const USER_IMAGE_MAX_SIZE_KIB = 512

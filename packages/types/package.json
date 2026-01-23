@@ -14,6 +14,7 @@
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
     "date-fns": "^4.1.0",
+    "tiny-invariant": "^1.3.3",
     "zod": "^3.25.47"
   },
   "devDependencies": {

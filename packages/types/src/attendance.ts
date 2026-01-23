@@ -1,7 +1,8 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { compareAsc } from "date-fns"
 import { z } from "zod"
-import { type User, type UserId, UserSchema, findActiveMembership, getMembershipGrade } from "./user"
+import { type User, type UserId, UserSchema, findActiveMembership } from "./user"
+import { getStudyGrade } from "@dotkomonline/utils"
 
 // TODO: Where on earth does this come from?
 export type AttendanceStatus = "NotOpened" | "Open" | "Closed"
@@ -129,11 +130,8 @@ export function getAttendanceCapacity(attendance: Attendance | AttendanceSummary
 
 export function isAttendable(user: User, pool: AttendancePool) {
   const membership = findActiveMembership(user)
-  if (membership === null) {
-    return false
-  }
+  const grade = membership?.semester != null ? getStudyGrade(membership.semester) : null
 
-  const grade = getMembershipGrade(membership)
   if (grade === null) {
     return false
   }

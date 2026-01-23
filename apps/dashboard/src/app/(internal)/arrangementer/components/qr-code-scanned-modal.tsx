@@ -5,10 +5,10 @@ import {
   type User,
   findActiveMembership,
   getAttendeeQueuePosition,
-  getMembershipGrade,
   getUnreservedAttendeeCount,
+  getMembershipTypeName,
 } from "@dotkomonline/types"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { getCurrentUTC, getStudyGrade } from "@dotkomonline/utils"
 import { Button, Flex, Group, Image, Stack, Text, Title, useComputedColorScheme } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
 import { type ContextModalProps, modals } from "@mantine/modals"
@@ -167,7 +167,8 @@ const UserBox = ({ user, isMobile }: UserBoxProps) => {
   const isLightMode = useComputedColorScheme() === "light"
 
   const membership = findActiveMembership(user)
-  const grade = membership ? getMembershipGrade(membership) : null
+  const grade = membership?.semester != null ? getStudyGrade(membership.semester) : null
+  const membershipType = membership && getMembershipTypeName(membership.type)
 
   return (
     <Stack>
@@ -183,7 +184,8 @@ const UserBox = ({ user, isMobile }: UserBoxProps) => {
         <Image src={user.imageUrl} alt={user.name ?? user.profileSlug} radius="md" w={100} h={100} />
         <Stack gap={2}>
           <Title order={4}>{user.name}</Title>
-          <Text size="sm">Klasse: {grade}</Text>
+          <Text size="sm">{membership ? `Medlemskap: ${membershipType}` : "Ingen aktivt medlemskap"}</Text>
+          <Text size="sm">{membership ? (grade ? `Klasse: ${grade}` : "Ingen klassetrinn") : "-"}</Text>
           <Text size="sm">Kjønn: {user.gender || "Ikke oppgitt"}</Text>
           <Text size="sm">Kostholdsrestriksjoner: {user.dietaryRestrictions || "Ingen"}</Text>
         </Stack>

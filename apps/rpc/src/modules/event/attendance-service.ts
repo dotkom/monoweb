@@ -23,12 +23,18 @@ import {
   type User,
   type UserId,
   findActiveMembership,
-  getMembershipGrade,
   hasAttendeePaid,
   isAttendable,
   findFirstHostingGroupEmail,
 } from "@dotkomonline/types"
-import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
+import {
+  createAbsoluteEventPageUrl,
+  createPoolName,
+  getCurrentUTC,
+  ogJoin,
+  slugify,
+  getStudyGrade,
+} from "@dotkomonline/utils"
 import {
   addDays,
   addHours,
@@ -656,6 +662,8 @@ export function getAttendanceService(
         (!isFuture(reservationActiveAt) && (pool.capacity === 0 || poolAttendees.length < pool.capacity)) ||
         options.immediateReservation
 
+      const userGrade = membership.semester != null ? getStudyGrade(membership.semester) : null
+
       const attendee = await attendanceRepository.createAttendee(
         handle,
         attendance.id,
@@ -666,7 +674,7 @@ export function getAttendanceService(
           earliestReservationAt: reservationActiveAt,
           reserved: isImmediateReservation,
           selections: [],
-          userGrade: getMembershipGrade(membership),
+          userGrade,
         } satisfies AttendeeWrite)
       )
 
