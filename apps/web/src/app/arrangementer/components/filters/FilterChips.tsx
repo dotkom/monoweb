@@ -60,7 +60,7 @@ export const FilterChips = ({
     })
   }
 
-  if (viewMode == "CHRONOLOGICAL") {
+  if (viewMode === "CHRONOLOGICAL") {
     chips.push({
       label: "Sorter kronologisk",
       value: viewMode,
