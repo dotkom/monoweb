@@ -19,7 +19,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
     "@dotkomonline/config": "workspace:*",
-    "@types/node": "22.19.6",
+    "@types/node": "22.19.7",
     "googleapis": "159.0.0",
     "typescript": "5.9.3"
   }
