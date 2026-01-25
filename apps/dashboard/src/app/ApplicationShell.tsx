@@ -175,9 +175,10 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
             .split("/")
             .map((part, index, parts) => {
               const href = `/${parts.slice(0, index + 1).join("/")}`
+              const decodedPart = decodeURIComponent(part)
               return (
                 <Anchor href={href} size="sm" key={`${index + 1}-${part}`}>
-                  {part || "-"}
+                  {decodedPart || "-"}
                 </Anchor>
               )
             })}

@@ -1,8 +1,15 @@
+import { env } from "@/lib/env"
 import { useSession } from "@dotkomonline/oauth2/react"
-import { UserWriteSchema, type WorkspaceUser } from "@dotkomonline/types"
+import {
+  UserWriteSchema,
+  type WorkspaceUser,
+  findActiveMembership,
+  getMembershipGrade,
+  getMembershipTypeName,
+} from "@dotkomonline/types"
 import { Button, Group, Loader, Stack, Text, TextInput, Title } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
-import { IconCheck, IconLink, IconUsersGroup, IconX } from "@tabler/icons-react"
+import { IconCheck, IconLink, IconUsersGroup, IconX, IconArrowUpRight } from "@tabler/icons-react"
 import { type FC, useEffect, useState } from "react"
 import { useLinkOwUserToWorkspaceUserMutation, useUpdateUserMutation } from "../mutations"
 import { useFindWorkspaceUserQuery, useGroupAllByMemberQuery, useIsAdminQuery } from "../queries"
@@ -16,7 +23,7 @@ export const UserEditCard: FC = () => {
   const [customKey, setCustomKey] = useState<string | undefined>(undefined)
 
   const { isAdmin } = useIsAdminQuery()
-  const groups = useGroupAllByMemberQuery(user.id)
+  const { groups } = useGroupAllByMemberQuery(user.id)
 
   const update = useUpdateUserMutation()
   const linkUserMutation = useLinkOwUserToWorkspaceUserMutation()
@@ -49,9 +56,30 @@ export const UserEditCard: FC = () => {
     defaultValues: { ...user },
   })
 
+  const activeMembership = findActiveMembership(user)
+  const grade = activeMembership ? getMembershipGrade(activeMembership) : null
+  const membershipType = activeMembership ? getMembershipTypeName(activeMembership.type) : null
+
   return (
     <Stack>
-      <Title order={2}>Profil</Title>
+      <Group>
+        <Title order={2}>Profil</Title>
+        <Button
+          variant="light"
+          rightSection={<IconArrowUpRight height={14} width={14} />}
+          component="a"
+          href={new URL(`profil/${user.profileSlug}`, env.NEXT_PUBLIC_WEB_URL).toString()}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Se brukerprofil
+        </Button>
+      </Group>
+      {grade && membershipType && (
+        <Text>
+          {grade}. klasse ({membershipType})
+        </Text>
+      )}
 
       <LinkUser
         showWorkspaceLink={showWorkspaceLink}

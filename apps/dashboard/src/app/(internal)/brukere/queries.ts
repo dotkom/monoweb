@@ -43,12 +43,12 @@ export const useUserAllInfiniteQuery = ({ filter, page }: UseUserAllQueryProps) 
 
 export const useGroupAllByMemberQuery = (userId: UserId) => {
   const trpc = useTRPC()
-  const { data: groups } = useQuery({
+  const { data: groups, isLoading } = useQuery({
     ...trpc.group.allByMember.queryOptions(userId),
     initialData: [],
   })
 
-  return groups
+  return { groups, isLoading }
 }
 
 export const useIsAdminQuery = () => {
