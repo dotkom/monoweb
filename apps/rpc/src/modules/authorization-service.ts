@@ -3,8 +3,6 @@ import type { GroupId, UserId } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import { LRUCache } from "lru-cache"
 
-export type EditorRoleSet = Set<GroupId>
-
 export const EditorRole = {
   APPKOM: "appkom",
   ARRKOM: "arrkom",
@@ -28,38 +26,78 @@ export const EditorRole = {
 } as const satisfies Record<PropertyKey, GroupId>
 export type EditorRole = (typeof EditorRole)[keyof typeof EditorRole]
 
+export const EDITOR_ROLES = Object.values(EditorRole)
 export const ADMIN_EDITOR_ROLES = ["dotkom", "hs"] as const satisfies EditorRole[]
+const EDITOR_ROLES_SET = new Set(EDITOR_ROLES)
 
 export const isEditorRole = (groupSlug: string): groupSlug is EditorRole => {
-  const editorRole = Object.values(EditorRole) as string[]
-  return editorRole.includes(groupSlug)
+  return (EDITOR_ROLES as string[]).includes(groupSlug)
 }
 
 export interface AuthorizationService {
   /**
    * Find the editor roles of a user.
    *
-   * An editor role is a group (committee, node committee, other group) or interest group membership that can be used to
-   * authorize access to resources in the system.
+   * An editor role is an affiliation with a group (committee, node committee, etc.) that has been given access to
+   * resources in the system.
+   *
+   * In practice this means that the user is affiliated with a committee (like Dotkom) or a node comittee (like Velkom).
+   *
+   * NOTE: Prefer to use {@link AuthorizationService#intersectEditorRoles} over manually checking affiliations, since
+   * this method will account for administrator permissions.
    */
-  getEditorRoles(handle: DBHandle, userId: UserId): Promise<EditorRoleSet>
+  getEditorRoles(handle: DBHandle, userId: UserId): Promise<Set<EditorRole>>
+
+  /**
+   * Find the slugs of all groups the user has an active membership in. These are not restricted to editor roles, and
+   * can for example include interest groups.
+   *
+   * NOTE: Prefer to use {@link AuthorizationService#intersectGroupAffiliations} over manually checking affiliations, since
+   * this method will account for administrator permissions.
+   */
+  getGroupAffiliations(handle: DBHandle, userId: UserId): Promise<Set<GroupId>>
+
+  /**
+   * Find the intersection of the user's editor roles and the given set of editor roles. Prefer to use this over
+   * manually checking affiliations, since this will account for administrator permissions.
+   *
+   * This is functionally equivalent to {@link AuthorizationService#intersectGroupAffiliations} but more strictly typed.
+   */
+  intersectEditorRoles(
+    handle: DBHandle,
+    userId: UserId,
+    editorRoleSet: Set<EditorRole> | Array<EditorRole>
+  ): Promise<Set<EditorRole>>
+
+  /**
+   * Find the intersection of the user's group affiliations and the given set of affiliations. Prefer to use this over
+   * manually checking affiliations, since this will account for administrator permissions.
+   *
+   * This is functionally equivalent to {@link AuthorizationService#intersectEditorRoles} but less strictly typed.
+   */
+  intersectGroupAffiliations(
+    handle: DBHandle,
+    userId: UserId,
+    groupAffiliationSet: Set<GroupId> | Array<GroupId>
+  ): Promise<Set<GroupId>>
 }
 
 export function getAuthorizationService(): AuthorizationService {
-  const cache = new LRUCache<UserId, EditorRoleSet>({
+  const cache = new LRUCache<UserId, Set<GroupId>>({
     max: 1000,
-    // We are tolerant with up to five minutes of cache staleness here as the system rarely ever has changes to the user
+    // We would be tolerant with a few minutes of cache staleness here as the system rarely ever has changes to the user
     // edit roles, and there is minimal risk of abuse of the system.
     ttl: minutesToMilliseconds(1),
   })
+
   return {
-    async getEditorRoles(handle, userId) {
+    async getGroupAffiliations(handle, userId) {
       const match = cache.get(userId)
+
       if (match !== undefined) {
         return match
       }
-      // We use a raw query here to avoid the disturbing amount of objects the Prisma client query would be constructed
-      // with. The query is simple enough that it is safe to use a raw query here.
+
       const memberGroups = await handle.group.findMany({
         where: {
           memberships: {
@@ -73,10 +111,45 @@ export function getAuthorizationService(): AuthorizationService {
           slug: true,
         },
       })
+
       const memberGroupSlugs = memberGroups.map((m) => m.slug)
       const editorRoles = new Set(memberGroupSlugs)
+
       cache.set(userId, editorRoles)
+
       return editorRoles
+    },
+
+    async getEditorRoles(handle, userId) {
+      const groupAffiliations = await this.getGroupAffiliations(handle, userId)
+
+      return groupAffiliations.intersection(EDITOR_ROLES_SET)
+    },
+
+    async intersectGroupAffiliations(handle, userId, otherGroupAffiliations) {
+      const otherGroupAffiliationsSet = Array.isArray(otherGroupAffiliations)
+        ? new Set(otherGroupAffiliations)
+        : otherGroupAffiliations
+
+      const groupAffiliations = await this.getGroupAffiliations(handle, userId)
+
+      if (ADMIN_EDITOR_ROLES.some((adminEditorRole) => groupAffiliations.has(adminEditorRole))) {
+        return otherGroupAffiliationsSet
+      }
+
+      return groupAffiliations.intersection(otherGroupAffiliationsSet)
+    },
+
+    async intersectEditorRoles(handle, userId, otherEditorRoles) {
+      const otherEditorRolesSet = Array.isArray(otherEditorRoles) ? new Set(otherEditorRoles) : otherEditorRoles
+
+      const editorRoles = await this.getEditorRoles(handle, userId)
+
+      if (ADMIN_EDITOR_ROLES.some((adminEditorRole) => editorRoles.has(adminEditorRole))) {
+        return otherEditorRolesSet
+      }
+
+      return editorRoles.intersection(otherEditorRolesSet)
     },
   }
 }
