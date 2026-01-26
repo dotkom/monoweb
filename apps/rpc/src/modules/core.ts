@@ -109,7 +109,7 @@ export function createThirdPartyClients(configuration: Configuration) {
     clientSecret: configuration.AUTH0_CLIENT_SECRET,
   })
   const stripe = new Stripe(configuration.STRIPE_SECRET_KEY, {
-    apiVersion: "2025-07-30.basil",
+    apiVersion: "2025-08-27.basil",
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
   const workspaceDirectory = isGoogleWorkspaceFeatureEnabled(configuration) ? getDirectory(configuration) : null
