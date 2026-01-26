@@ -2,27 +2,31 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useMemo } from "react"
-import type { EventType, GroupId } from "@dotkomonline/types"
-import type { EventListViewMode } from "../components/EventList"
+import { EventTypeSchema, GroupSchema } from "@dotkomonline/types"
+import { EventListViewModeSchema } from "../components/EventList"
+import { z } from "zod"
 
-export interface EventFilters {
-  search: string
-  types: EventType[]
-  groups: GroupId[]
-  viewMode: EventListViewMode
-}
+const EventFiltersSchema = z.object({
+  search: z.string(),
+  types: z.array(EventTypeSchema),
+  groups: z.array(GroupSchema.shape.slug),
+  viewModeSort: EventListViewModeSchema,
+})
+
+// Type inferred from schema
+type EventFilters = z.infer<typeof EventFiltersSchema>
 
 export const useEventFilters = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const filters: EventFilters = useMemo(() => {
-    return {
+    return EventFiltersSchema.parse({
       search: searchParams.get("q") ?? "",
-      types: (searchParams.getAll("type") as EventType[]) ?? [],
-      groups: (searchParams.getAll("group") as GroupId[]) ?? [],
-      viewMode: (searchParams.get("sort") as EventListViewMode) ?? "ATTENDANCE",
-    }
+      types: searchParams.getAll("type"),
+      groups: searchParams.getAll("group"),
+      viewModeSort: searchParams.get("sort") ?? "ATTENDANCE",
+    })
   }, [searchParams])
 
   const updateFilters = useCallback(

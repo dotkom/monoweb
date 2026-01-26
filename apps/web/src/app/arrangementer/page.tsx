@@ -98,9 +98,10 @@ const EventPage = () => {
   })
 
   const hasActiveFilters =
-    filters.search || filters.types.length > 0 || filters.groups.length > 0 || filters.viewMode !== "ATTENDANCE"
+    filters.search || filters.types.length > 0 || filters.groups.length > 0 || filters.viewModeSort !== "ATTENDANCE"
 
-  const activeFilterCount = filters.types.length + filters.groups.length + (filters.viewMode !== "ATTENDANCE" ? 1 : 0)
+  const activeFilterCount =
+    filters.types.length + filters.groups.length + (filters.viewModeSort !== "ATTENDANCE" ? 1 : 0)
 
   return (
     <div className="flex flex-col gap-4">
@@ -151,10 +152,11 @@ const EventPage = () => {
                       <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
                         <div>
                           <div className="flex flex-col gap-2">
-                            <span className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">
-                              Sorter
-                            </span>
-                            <SortFilter value={filters.viewMode} onChange={(viewMode) => updateFilters({ viewMode })} />
+                            <span className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">Sorter</span>
+                            <SortFilter
+                              value={filters.viewModeSort}
+                              onChange={(viewModeSort) => updateFilters({ viewModeSort })}
+                            />
                           </div>
                           <div className="mt-6">
                             <TypeFilter
@@ -191,8 +193,8 @@ const EventPage = () => {
                 />
 
                 <SortFilter
-                  value={filters.viewMode}
-                  onChange={(viewMode) => updateFilters({ viewMode })}
+                  value={filters.viewModeSort}
+                  onChange={(viewModeSort) => updateFilters({ viewModeSort })}
                   className="hidden md:block"
                 />
               </div>
@@ -236,7 +238,7 @@ const EventPage = () => {
                 searchTerm={filters.search}
                 typeFilter={filters.types}
                 groupFilters={filters.groups}
-                viewMode={filters.viewMode}
+                viewMode={filters.viewModeSort}
                 groups={groups ?? []}
                 onRemoveFilter={(type, value) => {
                   if (type === "search") updateFilters({ search: "" })
@@ -248,7 +250,7 @@ const EventPage = () => {
                     updateFilters({
                       groups: filters.groups.filter((g) => g !== value),
                     })
-                  if (type === "sort") updateFilters({ viewMode: "ATTENDANCE" })
+                  if (type === "sort") updateFilters({ viewModeSort: "ATTENDANCE" })
                 }}
                 onResetAll={resetFilters}
               />
@@ -260,7 +262,7 @@ const EventPage = () => {
                   futureEventWithAttendances={futureEventWithAttendances}
                   pastEventWithAttendances={pastEventWithAttendances}
                   onLoadMore={fetchNextPage}
-                  viewMode={filters.viewMode}
+                  viewMode={filters.viewModeSort}
                 />
               )}
               {isLoading && <EventListSkeleton />}
