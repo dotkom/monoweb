@@ -10,7 +10,8 @@ export type EmailType =
   | "COMPANY_COLLABORATION_NOTIFICATION"
   | "COMPANY_INVOICE_NOTIFICATION"
   | "FEEDBACK_FORM_LINK"
-  | "EVENT_ATTENDANCE"
+  | "EVENT_ATTENDANCE_REGISTER"
+  | "EVENT_ATTENDANCE_WAITLIST_BUMP"
   | "RECEIVED_MARK"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
@@ -112,8 +113,8 @@ export const emails = {
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "feedback_form_link.mustache"), "utf-8"),
   }),
-  EVENT_ATTENDANCE: createEmailTemplate({
-    type: "EVENT_ATTENDANCE",
+  EVENT_ATTENDANCE_REGISTER: createEmailTemplate({
+    type: "EVENT_ATTENDANCE_REGISTER",
     getSchema: () =>
       z.object({
         eventName: z.string(),
@@ -122,7 +123,19 @@ export const emails = {
           .string()
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
       }),
-    getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
+    getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance_register.mustache"), "utf-8"),
+  }),
+  EVENT_ATTENDANCE_WAITLIST_BUMP: createEmailTemplate({
+    type: "EVENT_ATTENDANCE_WAITLIST_BUMP",
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.string().url(),
+        deregistrationDeadline: z
+          .string()
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance_waitlist_bump.mustache"), "utf-8"),
   }),
   RECEIVED_MARK: createEmailTemplate({
     type: "RECEIVED_MARK",

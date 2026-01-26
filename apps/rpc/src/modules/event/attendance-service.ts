@@ -293,7 +293,7 @@ export function getAttendanceService(
       [],
       [],
       `Du er påmeldt ${event.title} hos Linjeforeningen Online`,
-      emails.EVENT_ATTENDANCE,
+      emails.EVENT_ATTENDANCE_REGISTER,
       {
         deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
         eventName: event.title,
