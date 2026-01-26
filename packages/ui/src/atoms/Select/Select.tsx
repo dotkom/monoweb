@@ -121,17 +121,17 @@ export const SelectItem = ({ className, children, ref, ...props }: SelectItemPro
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "font-body relative flex justify-between w-full cursor-pointer select-none items-center",
-      "rounded-xs px-2 py-1.5 text-sm outline-hidden focus:bg-gray-100 dark:focus:bg-stone-700",
+      "font-body relative flex w-full cursor-pointer select-none items-center",
+      "rounded-xs pr-2 pl-8 py-1.5 text-sm outline-hidden focus:bg-gray-100 dark:focus:bg-stone-700",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}
   >
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     <SelectPrimitive.ItemIndicator>
-      <IconCheck className="size-4" />
+      <IconCheck className="size-4 absolute left-2 top-1/2 -translate-y-1/2" />
     </SelectPrimitive.ItemIndicator>
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 )
 SelectItem.displayName = SelectPrimitive.Item.displayName

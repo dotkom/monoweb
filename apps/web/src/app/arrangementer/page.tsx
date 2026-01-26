@@ -1,9 +1,11 @@
 "use client"
 
-import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
-import { EventCalendar } from "@/components/organisms/EventCalendar/EventCalendar"
-import { useTRPC } from "@/utils/trpc/client"
-import type { EventFilterQuery, EventType } from "@dotkomonline/types"
+import { useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { roundToNearestMinutes } from "date-fns"
+
+import type { EventFilterQuery } from "@dotkomonline/types"
+
 import {
   Button,
   Drawer,
@@ -18,26 +20,41 @@ import {
   Title,
   cn,
 } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
-import { useQuery } from "@tanstack/react-query"
-import { roundToNearestMinutes } from "date-fns"
-import { useMemo, useState } from "react"
-import { GroupFilter } from "./components/filters/GroupFilter"
-import { SortFilter } from "./components/filters/SortFilter"
-import { TypeFilter } from "./components/filters/TypeFilter"
-import { EventList, EventListSkeleton } from "./components/EventList"
-import { FilterChips } from "./components/filters/FilterChips"
-import { SearchInput } from "./components/filters/SearchInput"
-import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
-import { useEventFilters } from "./components/filters/useEventFilters"
 
 import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
 
-const EventPage = () => {
-  const { filters, updateFilters } = useEventFilters()
-  const trpc = useTRPC()
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { useTRPC } from "@/utils/trpc/client"
 
+import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
+import { EventCalendar } from "@/components/organisms/EventCalendar/EventCalendar"
+
+import { GroupFilter } from "./components/filters/GroupFilter"
+import { SortFilter } from "./components/filters/SortFilter"
+import { TypeFilter } from "./components/filters/TypeFilter"
+import { FilterChips } from "./components/filters/FilterChips"
+import { SearchInput } from "./components/filters/SearchInput"
+
+import { EventList, EventListSkeleton } from "./components/EventList"
+import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
+
+import { useEventFilters } from "./hooks/useEventFilters"
+import { useEventsView } from "./hooks/useEventsView"
+import type { EventsView } from "./hooks/useEventsViewNavigation"
+import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
+import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
+
+const EventPage = () => {
+  const { view } = useEventsView()
+  const { navigateToView } = useEventsViewNavigation()
+
+  const isListView = view === "list"
+  const calendar = useCalendarNavigation()
+  const { filters, updateFilters, resetFilters } = useEventFilters()
+
+  const trpc = useTRPC()
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
+
   const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
   const { data: groups } = useQuery(trpc.group.all.queryOptions())
 
@@ -80,59 +97,10 @@ const EventPage = () => {
     },
   })
 
-  const handleTypeToggle = (type: EventType) => {
-    const newTypes = filters.types.includes(type) ? filters.types.filter((t) => t !== type) : [...filters.types, type]
-    updateFilters({ types: newTypes })
-  }
-
-  const handleGroupToggle = (group: string) => {
-    const newGroups = filters.groups.includes(group)
-      ? filters.groups.filter((g) => g !== group)
-      : [...filters.groups, group]
-    updateFilters({ groups: newGroups })
-  }
-
-  const handleRemoveFilter = (filterType: string, value?: string) => {
-    switch (filterType) {
-      case "search":
-        updateFilters({ search: "" })
-        break
-      case "type":
-        if (value) handleTypeToggle(value as EventType)
-        break
-      case "group":
-        if (value) handleGroupToggle(value)
-        break
-      case "sort":
-        updateFilters({ viewMode: "ATTENDANCE" })
-        break
-    }
-  }
-
-  const handleResetFilters = () => {
-    updateFilters({
-      search: "",
-      types: [],
-      groups: [],
-      viewMode: "ATTENDANCE",
-    })
-  }
-
-  const toggleSearchBar = () => {
-    setSearchBarOpen((prev) => !prev)
-  }
-
-  const groupsMemo = useMemo(() => groups ?? [], [groups])
   const hasActiveFilters =
     filters.search || filters.types.length > 0 || filters.groups.length > 0 || filters.viewMode !== "ATTENDANCE"
 
-  const activeFilterCount = useMemo(() => {
-    let count = 0
-    if (filters.types.length > 0) count += filters.types.length
-    if (filters.groups.length > 0) count += filters.groups.length
-    if (filters.viewMode !== "ATTENDANCE") count++
-    return count
-  }, [filters.types.length, filters.groups.length, filters.viewMode])
+  const activeFilterCount = filters.types.length + filters.groups.length + (filters.viewMode !== "ATTENDANCE" ? 1 : 0)
 
   return (
     <div className="flex flex-col gap-4">
@@ -140,9 +108,9 @@ const EventPage = () => {
         Arrangementer
       </Title>
 
-      <Tabs value={filters.view} onValueChange={(view) => updateFilters({ view })} className="w-full">
+      <Tabs value={view} onValueChange={(v) => navigateToView(v as EventsView)}>
         <div className="flex flex-col flex-wrap sm:flex-row justify-between gap-4">
-          <div className={cn("flex gap-2 justify-between w-full", filters.view === "cal" ? "sm:w-fit" : "")}>
+          <div className={cn("flex gap-2 justify-between w-full", view === "cal" ? "sm:w-fit" : "")}>
             <TabsList className="dark:border-none shrink-0">
               <TabsTrigger value="list" className="px-3 w-fit min-w-0 min-h-0">
                 <IconLayoutList className="mr-2 size-5" />
@@ -154,20 +122,18 @@ const EventPage = () => {
               </TabsTrigger>
             </TabsList>
 
-            {filters.view === "list" && (
+            {isListView && (
               <div className="flex justify-end gap-2 w-full">
                 <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
                   <DrawerTrigger asChild className="md:hidden">
                     <Button
                       variant="solid"
-                      className={cn(
-                        "relative sm:px-4 rounded-lg h-[2.875rem] w-[2.875rem] sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
-                      )}
+                      className="relative sm:px-4 rounded-lg h-11.5 w-11.5 sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                     >
                       <IconFilter2 className="size-5" />
-                      <span className="hidden sm:block text-sm">Filtrer</span>
+                      <span className="hidden sm:block text-sm pl-1">Filter</span>
                       {activeFilterCount > 0 && (
-                        <div className="flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full">
+                        <div className="absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
                           {activeFilterCount}
                         </div>
                       )}
@@ -175,39 +141,36 @@ const EventPage = () => {
                   </DrawerTrigger>
                   <DrawerContent>
                     <div className="px-4 overflow-y-auto max-h-[80dvh]">
-                      <div className="mx-auto pb-6">
-                        <DrawerHeader>
-                          <DrawerTitle className="flex items-center gap-2">
-                            <IconFilter2 className="size-[1.25em]" />
-                            Filtrer arrangementer
-                          </DrawerTitle>
-                        </DrawerHeader>
-                        <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
-                          <div>
-                            <div className="flex flex-col gap-2">
-                              <span className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">
-                                Sorter
-                              </span>
-                              <SortFilter
-                                value={filters.viewMode}
-                                onChange={(viewMode) => updateFilters({ viewMode })}
-                              />
-                            </div>
-                            <div className="mt-6">
-                              <TypeFilter
-                                value={filters.types}
-                                onChange={(types) => updateFilters({ types })}
-                                isStaff={isStaff}
-                              />
-                            </div>
+                      <DrawerHeader>
+                        <DrawerTitle className="flex items-center gap-2">
+                          <IconFilter2 className="size-[1.25em]" />
+                          Filtrer arrangementer
+                        </DrawerTitle>
+                      </DrawerHeader>
+
+                      <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
+                        <div>
+                          <div className="flex flex-col gap-2">
+                            <span className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">
+                              Sorter
+                            </span>
+                            <SortFilter value={filters.viewMode} onChange={(viewMode) => updateFilters({ viewMode })} />
                           </div>
-                          <div className="mt-6 sm:mt-0">
-                            <GroupFilter
-                              value={filters.groups}
-                              onChange={(groups) => updateFilters({ groups })}
-                              groups={groupsMemo}
+                          <div className="mt-6">
+                            <TypeFilter
+                              value={filters.types}
+                              onChange={(types) => updateFilters({ types })}
+                              isStaff={isStaff}
                             />
                           </div>
+                        </div>
+
+                        <div className="mt-6 sm:mt-0">
+                          <GroupFilter
+                            value={filters.groups}
+                            onChange={(groups) => updateFilters({ groups })}
+                            groups={groups ?? []}
+                          />
                         </div>
                       </div>
                     </div>
@@ -215,21 +178,18 @@ const EventPage = () => {
                 </Drawer>
 
                 <Button
-                  onClick={toggleSearchBar}
+                  onClick={() => setSearchBarOpen((v) => !v)}
                   className="sm:hidden w-11.5 rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
                 >
-                  {searchBarOpen ? (
-                    <IconX className="size-5 flex items-center justify-center" />
-                  ) : (
-                    <IconSearch className="size-5 flex items-center justify-center" />
-                  )}
+                  {searchBarOpen ? <IconX className="size-5" /> : <IconSearch className="size-5" />}
                 </Button>
 
                 <SearchInput
                   initialValue={filters.search}
                   onDebouncedChange={(value) => updateFilters({ search: value })}
-                  className="hidden relative sm:block w-full max-w-90"
+                  className="hidden sm:block w-full max-w-90"
                 />
+
                 <SortFilter
                   value={filters.viewMode}
                   onChange={(viewMode) => updateFilters({ viewMode })}
@@ -239,18 +199,18 @@ const EventPage = () => {
             )}
           </div>
 
-          {filters.view === "cal" && (
+          {view === "cal" && (
             <CalendarNavigation
-              year={filters.year}
-              month={filters.month}
-              onNavigate={(year, month) => updateFilters({ view: "cal", year, month })}
+              year={calendar.year}
+              month={calendar.month}
+              onNavigate={calendar.navigate}
               className="flex justify-between w-full sm:max-w-max"
             />
           )}
         </div>
 
-        {filters.view === "list" && searchBarOpen && (
-          <div className="sm:hidden mt-2 relative w-full">
+        {isListView && searchBarOpen && (
+          <div className="sm:hidden mt-2">
             <SearchInput
               initialValue={filters.search}
               onDebouncedChange={(value) => updateFilters({ search: value })}
@@ -258,19 +218,18 @@ const EventPage = () => {
           </div>
         )}
 
-        <TabsContent value="list" className="md:grid md:grid-cols-[15rem_auto] md:gap-[3rem] lg:gap[4rem]">
-          <div className="max-md:hidden w-full scroll mt-4">
-            <div className="pl-1">
-              <TypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
-              <div className="mt-6">
-                <GroupFilter
-                  value={filters.groups}
-                  onChange={(groups) => updateFilters({ groups })}
-                  groups={groupsMemo}
-                />
-              </div>
+        <TabsContent value="list" className="md:grid md:grid-cols-[15rem_auto] md:gap-12">
+          <div className="max-md:hidden mt-4">
+            <TypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
+            <div className="mt-6">
+              <GroupFilter
+                value={filters.groups}
+                onChange={(groups) => updateFilters({ groups })}
+                groups={groups ?? []}
+              />
             </div>
           </div>
+
           <div className="mt-2">
             {hasActiveFilters && (
               <FilterChips
@@ -279,10 +238,22 @@ const EventPage = () => {
                 groupFilters={filters.groups}
                 viewMode={filters.viewMode}
                 groups={groups ?? []}
-                onRemoveFilter={handleRemoveFilter}
-                onResetAll={handleResetFilters}
+                onRemoveFilter={(type, value) => {
+                  if (type === "search") updateFilters({ search: "" })
+                  if (type === "type")
+                    updateFilters({
+                      types: filters.types.filter((t) => t !== value),
+                    })
+                  if (type === "group")
+                    updateFilters({
+                      groups: filters.groups.filter((g) => g !== value),
+                    })
+                  if (type === "sort") updateFilters({ viewMode: "ATTENDANCE" })
+                }}
+                onResetAll={resetFilters}
               />
             )}
+
             <div className="mt-6">
               {!isLoading && (
                 <EventList
@@ -298,7 +269,7 @@ const EventPage = () => {
         </TabsContent>
 
         <TabsContent value="cal">
-          <EventCalendar year={filters.year} month={filters.month} />
+          <EventCalendar year={calendar.year} month={calendar.month} />
         </TabsContent>
       </Tabs>
     </div>
