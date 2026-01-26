@@ -13,7 +13,6 @@ const EventFiltersSchema = z.object({
   viewModeSort: EventListViewModeSchema,
 })
 
-// Type inferred from schema
 type EventFilters = z.infer<typeof EventFiltersSchema>
 
 export const useEventFilters = () => {
@@ -53,8 +52,8 @@ export const useEventFilters = () => {
 
       // sort
       params.delete("sort")
-      if (next.viewMode !== "ATTENDANCE") {
-        params.set("sort", next.viewMode)
+      if (next.viewModeSort !== "ATTENDANCE") {
+        params.set("sort", next.viewModeSort)
       }
 
       router.replace(`?${params.toString()}`, { scroll: false })
