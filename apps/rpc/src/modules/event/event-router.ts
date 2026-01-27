@@ -244,7 +244,7 @@ const findChildEventsProcedure = procedure
   .output(EventWithAttendanceSchema.array())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const events = await ctx.eventService.findByParentEventId(ctx.handle, input.eventId)
+    const events = await ctx.eventService.findByParentEventId(ctx.handle, input.eventId, { orderBy: "asc" })
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
