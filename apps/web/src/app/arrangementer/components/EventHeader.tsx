@@ -3,7 +3,7 @@
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
-import { Button, Text, Tilt, Title } from "@dotkomonline/ui"
+import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2, IconEdit } from "@tabler/icons-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -17,7 +17,7 @@ interface Props {
 
 export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
   const [showFullImage, setShowFullImage] = useState(false)
-  const [isFiveTwoAspect, setIsFiveTwoAspect] = useState<boolean | null>(null)
+  const [hasCorrectAspectRatio, setHasCorrectAspectRatio] = useState<boolean | null>(null)
   const dashboardUrl = new URL(`/arrangementer/${event.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
   return (
@@ -34,9 +34,10 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             <Image
               src={event.imageUrl}
               alt={event.title}
-              className={`w-full h-full rounded-xl will-change-transform transition-transform duration-500 ease-out ${
+              className={cn(
+                "w-full h-full rounded-xl will-change-transform transition-transform duration-500 ease-out",
                 showFullImage ? "object-contain" : "object-cover"
-              }`}
+              )}
               width={0}
               height={0}
               onLoad={(event) => {
@@ -44,7 +45,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
                 const ratio = img.naturalWidth / img.naturalHeight
                 const target = 5 / 2
                 const epsilon = 0.05
-                setIsFiveTwoAspect(Math.abs(ratio - target) < epsilon)
+                setHasCorrectAspectRatio(Math.abs(ratio - target) < epsilon)
               }}
             />
           ) : (
@@ -58,7 +59,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             </div>
           )}
 
-          {event.imageUrl && isFiveTwoAspect !== null && !isFiveTwoAspect && (
+          {event.imageUrl && hasCorrectAspectRatio !== null && !hasCorrectAspectRatio && (
             <div className="absolute right-3 top-3 z-10 hidden opacity-0 transition-opacity duration-200 md:block md:group-hover:opacity-100">
               <Button
                 variant="solid"
