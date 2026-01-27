@@ -1,11 +1,14 @@
+"use client"
+
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
 import { Button, Text, Tilt, Title } from "@dotkomonline/ui"
-import { IconEdit } from "@tabler/icons-react"
+import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2, IconEdit } from "@tabler/icons-react"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import { useState } from "react"
 
 interface Props {
   event: Event
@@ -13,6 +16,8 @@ interface Props {
 }
 
 export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
+  const [showFullImage, setShowFullImage] = useState(false)
+  const [isFiveTwoAspect, setIsFiveTwoAspect] = useState<boolean | null>(null)
   const dashboardUrl = new URL(`/arrangementer/${event.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
   return (
@@ -24,14 +29,23 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
         glareMaxOpacity={0.1}
         className="rounded-xl bg-gray-100 dark:bg-stone-800"
       >
-        <div className="flex items-center justify-center aspect-[16/9] md:aspect-[24/9] w-full">
+        <div className="group relative w-full aspect-video md:aspect-5/2 overflow-hidden rounded-xl">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
               alt={event.title}
-              className="w-full h-full object-contain rounded-xl"
+              className={`w-full h-full rounded-xl will-change-transform transition-transform duration-500 ease-out ${
+                showFullImage ? "object-contain" : "object-cover"
+              }`}
               width={0}
               height={0}
+              onLoad={(event) => {
+                const img = event.currentTarget
+                const ratio = img.naturalWidth / img.naturalHeight
+                const target = 5 / 2
+                const epsilon = 0.05
+                setIsFiveTwoAspect(Math.abs(ratio - target) < epsilon)
+              }}
             />
           ) : (
             <div className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center">
@@ -41,6 +55,23 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
                 variant={event.type}
                 className="w-full h-full object-contain rounded-xl"
               />
+            </div>
+          )}
+
+          {event.imageUrl && isFiveTwoAspect !== null && !isFiveTwoAspect && (
+            <div className="absolute right-3 top-3 z-10 hidden opacity-0 transition-opacity duration-200 md:block md:group-hover:opacity-100">
+              <Button
+                variant="solid"
+                className="p-2 rounded-md bg-black/40 text-white hover:bg-black/50 dark:bg-black/40 dark:hover:bg-black/50"
+                onClick={() => setShowFullImage((prev) => !prev)}
+                aria-label={showFullImage ? "Fyll rammen" : "Se hele bildet"}
+              >
+                {showFullImage ? (
+                  <IconArrowsDiagonalMinimize2 className="size-5" />
+                ) : (
+                  <IconArrowsDiagonal className="size-5" />
+                )}
+              </Button>
             </div>
           )}
         </div>
@@ -71,7 +102,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
 
 export const SkeletonEventHeader = () => (
   <div className="flex flex-col gap-8">
-    <div className="w-full rounded-xl aspect-[16/9] md:aspect-[24/9] bg-gray-300 dark:bg-stone-600 animate-pulse" />
+    <div className="w-full rounded-xl aspect-video md:aspect-24/9 bg-gray-300 dark:bg-stone-600 animate-pulse" />
     <div className="w-1/2 h-10 rounded-full bg-gray-300 dark:bg-stone-600 animate-pulse" />
   </div>
 )
