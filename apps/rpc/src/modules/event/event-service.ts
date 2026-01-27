@@ -43,7 +43,11 @@ export interface EventService {
     query: EventFilterQuery,
     page?: Pageable
   ): Promise<Event[]>
-  findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
+  findByParentEventId(
+    handle: DBHandle,
+    parentEventId: EventId,
+    query: Pick<EventFilterQuery, "orderBy">
+  ): Promise<Event[]>
   findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
   findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
   findFeaturedEvents(handle: DBHandle, offset: number, limit: number): Promise<BaseEvent[]>
@@ -83,8 +87,8 @@ export function getEventService(
       return await eventRepository.findMany(handle, query, page ?? { take: 20 })
     },
 
-    async findByParentEventId(handle, parentEventId) {
-      return await eventRepository.findByParentEventId(handle, parentEventId)
+    async findByParentEventId(handle, parentEventId, query) {
+      return await eventRepository.findByParentEventId(handle, parentEventId, query)
     },
 
     async findEventById(handle, eventId) {

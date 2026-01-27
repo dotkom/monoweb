@@ -84,7 +84,11 @@ export interface EventRepository {
     query: EventFilterQuery,
     page: Pageable
   ): Promise<Event[]>
-  findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
+  findByParentEventId(
+    handle: DBHandle,
+    parentEventId: EventId,
+    query: Pick<EventFilterQuery, "orderBy">
+  ): Promise<Event[]>
   findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
   // This cannot use `Pageable` due to raw query needing numerical offset and not cursor based pagination
@@ -130,7 +134,9 @@ export function getEventRepository(): EventRepository {
     async findMany(handle, query, page) {
       const events = await handle.event.findMany({
         ...pageQuery(page),
-        orderBy: { start: query.orderBy ?? "desc" },
+        orderBy: {
+          start: query.orderBy ?? "desc",
+        },
         where: {
           AND: [
             {
@@ -220,7 +226,7 @@ export function getEventRepository(): EventRepository {
       )
     },
 
-    async findByParentEventId(handle, parentEventId) {
+    async findByParentEventId(handle, parentEventId, query) {
       const events = await handle.event.findMany({
         where: {
           parentId: parentEventId,
@@ -241,6 +247,9 @@ export function getEventRepository(): EventRepository {
               },
             },
           },
+        },
+        orderBy: {
+          start: query.orderBy ?? "desc",
         },
       })
       return events.map((event) =>
@@ -503,6 +512,9 @@ export function getEventRepository(): EventRepository {
           ],
         },
         include: INCLUDE_COMPANY_AND_GROUPS,
+        orderBy: {
+          start: "asc",
+        },
       })
 
       return events.map((event) =>
@@ -525,7 +537,9 @@ export function getEventRepository(): EventRepository {
     async findManyDeregisterReasonsWithEvent(handle, page) {
       const rows = await handle.deregisterReason.findMany({
         ...pageQuery(page),
-        orderBy: { createdAt: "desc" },
+        orderBy: {
+          createdAt: "desc",
+        },
         include: {
           event: {
             include: INCLUDE_COMPANY_AND_GROUPS,
