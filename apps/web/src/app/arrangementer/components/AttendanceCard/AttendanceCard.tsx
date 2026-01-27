@@ -245,11 +245,11 @@ export const AttendanceCard = ({
       />
 
       <div className="flex flex-row flex-wrap gap-4">
-        <EventRules className="text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />
+        <EventRules className="text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />
 
         <Link
           href="/innstillinger/profil"
-          className="flex flex-row gap-1 text-sm items-center text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+          className="flex flex-row gap-1 text-sm items-center text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
         >
           <IconEdit className="size-[1.25em]" />
           <Text>Oppdater matallergier</Text>
