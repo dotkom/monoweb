@@ -20,7 +20,7 @@ export const Checkbox: FC<CheckboxProps> = ({ label, className, ref, ...props })
           "focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2",
           "data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-200",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          "dark:bg-stone-800 dark:border-stone-600 dark:hover:border-stone-400",
+          "dark:bg-stone-900 dark:border-stone-600 dark:hover:border-stone-400",
           "dark:data-[state=checked]:bg-sky-900 dark:data-[state=checked]:border-sky-900",
           "dark:focus-visible:ring-offset-stone-900",
           className

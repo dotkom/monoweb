@@ -4,7 +4,7 @@ import type { EventType, Group } from "@dotkomonline/types"
 import { mapEventTypeToLabel } from "@dotkomonline/types"
 import { Button, cn } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
-import type { EventListViewMode } from "./EventList"
+import type { EventListViewMode } from "../EventList"
 
 type FilterType = "search" | "type" | "group" | "sort"
 
@@ -60,9 +60,9 @@ export const FilterChips = ({
     })
   }
 
-  if (viewMode !== "ATTENDANCE") {
+  if (viewMode === "CHRONOLOGICAL") {
     chips.push({
-      label: viewMode === "CHRONOLOGICAL" ? "Sorter kronologisk" : "Sorter etter påmelding",
+      label: "Sorter kronologisk",
       value: viewMode,
       filterType: "sort",
     })

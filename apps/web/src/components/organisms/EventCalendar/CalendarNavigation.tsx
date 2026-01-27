@@ -27,17 +27,20 @@ const months = [
 ]
 
 export const CalendarNavigation: FC<CalendarNavigationProps> = ({ year, month, onNavigate, className }) => {
-  const prevMonth = (month + 11) % 12
-  const nextMonth = (month + 1) % 12
-  const prevYear = month === 0 ? year - 1 : year
-  const nextYear = month === 11 ? year + 1 : year
-
   const handlePreviousMonth = () => {
-    onNavigate(prevYear, prevMonth)
+    if (month === 0) {
+      onNavigate(year - 1, 11)
+    } else {
+      onNavigate(year, month - 1)
+    }
   }
 
   const handleNextMonth = () => {
-    onNavigate(nextYear, nextMonth)
+    if (month === 11) {
+      onNavigate(year + 1, 0)
+    } else {
+      onNavigate(year, month + 1)
+    }
   }
 
   return (
