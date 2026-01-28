@@ -29,8 +29,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/invoicification/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/invoicification/.next/static ./apps/invoicification/.next/static
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/invoicification/public ./apps/invoicification/public
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/node_modules ./node_modules
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/invoicification/node_modules ./apps/invoicification/node_modules
 
-CMD node apps/invoicification/server.js
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/invoicification/.next ./apps/invoicification/.next
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/invoicification/public ./apps/invoicification/public
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/invoicification/package.json ./apps/invoicification/package.json
+
+WORKDIR /app/apps/invoicification
+
+CMD ["npm", "run", "start"]

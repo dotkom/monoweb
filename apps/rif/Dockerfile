@@ -29,8 +29,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/rif/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/rif/.next/static ./apps/rif/.next/static
-COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/rif/public ./apps/rif/public
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/node_modules ./node_modules
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/rif/node_modules ./apps/rif/node_modules
 
-CMD node apps/rif/server.js
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/rif/.next ./apps/rif/.next
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/rif/public ./apps/rif/public
+COPY --from=builder --chown=nextjs:nodejs --chmod=755 /app/apps/rif/package.json ./apps/rif/package.json
+
+WORKDIR /app/apps/rif
+
+CMD ["npm", "run", "start"]
