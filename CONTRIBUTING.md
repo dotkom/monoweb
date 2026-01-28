@@ -16,6 +16,8 @@ architecture, the tools used, and the local development process.
     - [Integration tests](#integration-tests)
       - [Prerequisites](#prerequisites)
       - [How to run](#how-to-run)
+  - [Deployment](#deployment)
+    - [Database Migrations](#database-migrations)
 
 ## Architecture
 
@@ -142,3 +144,29 @@ For filtering test you can use the normal vitest filtering, see [Vitest document
 cd packages/core
 doppler run -- pnpm exec vitest run -c ./vitest-integration.config.ts user -t "can update users given their id"
 ```
+
+
+## Deployment
+
+To deploy to production:
+
+1. Go to the [Deploy to production](https://github.com/dotkom/monoweb/actions/workflows/release.yml) workflow in GitHub Actions
+2. Click "Run workflow" to start the deployment
+
+This will build and deploy all applications to production.
+
+### Database Migrations
+
+If you have made database schema changes, you need to run migrations manually. The timing is important for a seamless deployment:
+
+1. Start the "Deploy to production" workflow
+2. Wait for the `rpc` deployment to complete successfully
+3. Run the migration command locally **before** `web` finishes deploying:
+
+```bash
+doppler run --config prd --project monoweb-rpc -- pnpm run migrate:deploy
+```
+
+This ensures the database schema is updated after the new RPC code is deployed but before the web application starts using it.
+
+For future fixing, this proccess should be automated in the deployment pipeline.

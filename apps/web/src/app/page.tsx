@@ -4,32 +4,21 @@ import { EventListItem } from "@/components/molecules/EventListItem/EventListIte
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { JubileumNotice } from "@/components/notices/jubileum-notice"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, Event, EventWithAttendance, UserId } from "@dotkomonline/types"
+import type { Attendance, BaseEvent, EventWithAttendance, UserId } from "@dotkomonline/types"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
-import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
+import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
-import { CommitteeApplicationsNotice } from "@/components/notices/committee-applications-notice"
-import { TZDate } from "@date-fns/tz"
 
 export default async function App() {
-  const [session, isStaff] = await Promise.all([auth.getServerSession(), server.user.isStaff.query()])
+  const session = await auth.getServerSession()
 
-  const { items: events } = await server.event.all.query({
-    take: 3,
-    filter: {
-      byEndDate: {
-        max: null,
-        min: getCurrentUTC(),
-      },
-      excludingOrganizingGroup: ["velkom"],
-      excludingType: isStaff ? [] : undefined,
-      orderBy: "asc",
-    },
+  const events = await server.event.findFeaturedEvents.query({
+    limit: 3,
   })
 
   const featuredEvent = events[0] ?? null
@@ -39,16 +28,6 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-6">
         <JubileumNotice />
-        <CommitteeApplicationsNotice
-          start={TZDate.tz("Europe/Oslo", "2026-01-19T00:00:00.000Z")}
-          end={TZDate.tz("Europe/Oslo", "2026-01-26T23:59:00.000Z")}
-        >
-          <Title className="text-lg md:text-xl font-bold">Søk komité nå!</Title>
-          <Text>
-            Flere komiteer har våropptak, og de ser etter akkurat deg! <span className="font-semibold">Trykk her</span>{" "}
-            for å gå til opptakssiden (opptak.online.ntnu.no).
-          </Text>
-        </CommitteeApplicationsNotice>
         <OnlineHero />
       </div>
 
@@ -131,7 +110,7 @@ export default async function App() {
 }
 
 interface BigEventCardProps {
-  event: Event
+  event: BaseEvent
   attendance: Attendance | null
   userId: string | null
   className?: string
@@ -186,7 +165,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
 }
 
 interface ComingEventProps {
-  event: Event
+  event: BaseEvent
   attendance: Attendance | null
   userId: string | null
   className?: string

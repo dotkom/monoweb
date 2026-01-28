@@ -5,11 +5,11 @@ import type { NTNUGroup } from "../feide/feide-groups-repository"
 import { getLogger } from "@dotkomonline/logger"
 
 export interface MembershipService {
-  findApproximateMasterStartYear(courses: NTNUGroup[]): number
-  findApproximateBachelorStartYear(courses: NTNUGroup[]): number
+  findMasterStartYearDelta(courses: NTNUGroup[]): number
+  findBachelorStartYearDelta(courses: NTNUGroup[]): number
 }
 
-const BACHELOR_STUDY_PLAN_COURSES = [
+const BACHELOR_STUDY_PLAN = [
   {
     semester: 0,
     courses: ["IT2805", "MA0001", "TDT4109"],
@@ -28,7 +28,7 @@ const BACHELOR_STUDY_PLAN_COURSES = [
   },
   {
     semester: 4,
-    // NOTE: Semester 1 in Year 3 are all elective courses, so we do not use any of them to determine which year somebody
+    // Semester 1 in year 3 are all elective courses, so we do not use any of them to determine which year somebody
     // started studying
     courses: [],
   },
@@ -57,13 +57,13 @@ const MASTER_STUDY_PLAN = [
   },
 ] as const
 
-type StudyPlanCourseSet = typeof BACHELOR_STUDY_PLAN_COURSES | typeof MASTER_STUDY_PLAN
+type StudyPlanCourseSet = typeof BACHELOR_STUDY_PLAN | typeof MASTER_STUDY_PLAN
 
 export function getMembershipService(): MembershipService {
   const logger = getLogger("membership-service")
   // The study plan course set makes some assumptions for the approximation code to work as expected. In order to make
   // it easier for future dotkom developers, the invariants are checked here.
-  validateStudyPlanCourseSet(BACHELOR_STUDY_PLAN_COURSES)
+  validateStudyPlanCourseSet(BACHELOR_STUDY_PLAN)
   validateStudyPlanCourseSet(MASTER_STUDY_PLAN)
 
   function validateStudyPlanCourseSet(courseSet: StudyPlanCourseSet) {
@@ -143,7 +143,9 @@ export function getMembershipService(): MembershipService {
 
           // Take the mean distance for this semester
           const sum = previousSemesterDistances.reduce((acc, curr) => acc + curr, 0)
-          largestLocalSemester = Math.ceil(sum / previousSemesterDistances.length)
+          const currentSemesterEstimate = Math.ceil(sum / previousSemesterDistances.length)
+
+          largestLocalSemester = Math.max(largestLocalSemester, currentSemesterEstimate)
         }
 
         largestSemester = Math.max(largestSemester, largestLocalSemester)
@@ -167,15 +169,20 @@ export function getMembershipService(): MembershipService {
     }
 
     // Give the value back in years (two school semesters in a year).
-    return Math.floor(largestSemester / 2)
+    // We use Math#round because it will give us the correct year delta:
+    //   Year 1 fall (value 0)  : round(0 / 2) = 0 (Start year = current year)
+    //   Year 1 spring (value 1): round(1 / 2) = 1 (Start year = current - 1, since spring is in the next calendar year)
+    //   Year 2 fall (value 2)  : round(2 / 2) = 1 (Start year = current - 1)
+    //   Year 2 spring (value 3): round(3 / 2) = 2 (Start year = current - 2)
+    return Math.round(largestSemester / 2)
   }
   return {
-    findApproximateMasterStartYear(courses) {
+    findMasterStartYearDelta(courses) {
       return findApproximateStartYear(courses, MASTER_STUDY_PLAN)
     },
 
-    findApproximateBachelorStartYear(courses) {
-      return findApproximateStartYear(courses, BACHELOR_STUDY_PLAN_COURSES)
+    findBachelorStartYearDelta(courses) {
+      return findApproximateStartYear(courses, BACHELOR_STUDY_PLAN)
     },
   }
 }

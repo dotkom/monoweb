@@ -26,14 +26,14 @@ export default function AuditLogDetailsPage() {
 
   // need to map table names in the database to correct next js routes
   const tableNameMap = {
-    event: "event",
-    ow_user: "user",
-    job_listing: "job-listing",
-    mark: "punishment",
-    group: "group",
-    company: "company",
+    event: "arrangementer",
+    ow_user: "brukere",
+    job_listing: "karriere",
+    mark: "prikker",
+    group: "grupper",
+    company: "bedrifter",
     offline: "offline",
-    article: "article",
+    article: "artikler",
   }
 
   const getTableNamePath = (tableName: string) => {

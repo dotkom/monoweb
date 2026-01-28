@@ -297,18 +297,20 @@ function getLatestActiveMembership(member: GroupMember) {
 function getRolePriority(role: GroupRole) {
   switch (role.type) {
     case "LEADER":
-      return 7
+      return 8
     case "DEPUTY_LEADER":
-      return 6
+      return 7
     case "TREASURER":
-      return 5
+      return 6
     case "TRUSTEE":
-      return 4
+      return 5
     case "PUNISHER":
-      return 3
+      return 4
     case "COSMETIC":
-      return 2
+      return 3
     case "EMAIL_ONLY":
+      return 2
+    case "TEMPORARILY_LEAVE":
       return 1
     default:
       return 0
