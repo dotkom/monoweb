@@ -26,7 +26,7 @@ export default async function App() {
 
   return (
     <section className="flex flex-col gap-16 w-full">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         <JubileumNotice />
         <OnlineHero />
       </div>
