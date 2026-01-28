@@ -9,7 +9,7 @@ export const env = defineConfiguration({
   NEXT_PUBLIC_ORIGIN: config(process.env.NEXT_PUBLIC_ORIGIN, {
     prd: "https://grades.no",
     stg: "https://staging.grades.no",
-    dev: "http://localhost:5000",
+    dev: "http://localhost:5001",
   }),
   NEXT_PUBLIC_BACKEND_HOST: config(process.env.NEXT_PUBLIC_BACKEND_HOST, {
     prd: "https://api.grades.no",
