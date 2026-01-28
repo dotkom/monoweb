@@ -55,7 +55,7 @@ jobs:
       - uses: ./.github/actions/build-brevduen
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}
 
   build-dashboard:
@@ -73,7 +73,7 @@ jobs:
       - uses: ./.github/actions/build-dashboard
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}
   
   build-invoicification:
@@ -91,7 +91,7 @@ jobs:
       - uses: ./.github/actions/build-invoicification
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}
 
   build-rif:
@@ -109,7 +109,7 @@ jobs:
       - uses: ./.github/actions/build-rif
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}
 
   build-rpc:
@@ -127,7 +127,7 @@ jobs:
       - uses: ./.github/actions/build-rpc
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}
 
   build-web:
@@ -145,5 +145,5 @@ jobs:
       - uses: ./.github/actions/build-web
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}
