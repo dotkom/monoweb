@@ -68,9 +68,9 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
                 aria-label={showFullImage ? "Fyll rammen" : "Se hele bildet"}
               >
                 {showFullImage ? (
-                  <IconArrowsDiagonalMinimize2 className="size-5" />
-                ) : (
                   <IconArrowsDiagonal className="size-5" />
+                ) : (
+                  <IconArrowsDiagonalMinimize2 className="size-5" />
                 )}
               </Button>
             </div>
