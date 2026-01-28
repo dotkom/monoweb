@@ -1,6 +1,47 @@
 @import url("@dotkomonline/config/tailwind.css");
 
 @layer base {
+  :root {
+    /* Blue color scale (default - Tailwind's blue-*) */
+    --color-blue-50: 239 246 255;
+    --color-blue-100: 219 234 254;
+    --color-blue-200: 191 219 254;
+    --color-blue-300: 147 197 253;
+    --color-blue-400: 96 165 250;
+    --color-blue-500: 59 130 246;
+    --color-blue-600: 37 99 235;
+    --color-blue-700: 29 78 216;
+    --color-blue-800: 30 64 175;
+    --color-blue-900: 30 58 138;
+    --color-blue-950: 23 37 84;
+
+    /* Custom colors */
+    --color-brand: #0b5374;
+    --color-accent: #fab759;
+    --color-background: white;
+  }
+
+  /* Pink theme variant */
+  [data-theme="pink"] {
+    /* Pink color scale */
+    --color-blue-50: 253 242 248;
+    --color-blue-100: 252 231 243;
+    --color-blue-200: 251 207 232;
+    --color-blue-300: 249 168 212;
+    --color-blue-400: 244 114 182;
+    --color-blue-500: 236 72 153;
+    --color-blue-600: 219 39 119;
+    --color-blue-700: 190 24 93;
+    --color-blue-800: 157 23 77;
+    --color-blue-900: 131 24 67;
+    --color-blue-950: 80 7 36;
+
+    /* Custom colors */
+    --color-brand: #ec4899;
+    --color-accent: #f9a8d4;
+    --color-background: #ff5398; /* dark pink */
+  }
+  
   body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
