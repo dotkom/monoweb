@@ -266,6 +266,224 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  apps/grades-backend:
+    dependencies:
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.4.1
+      '@dotkomonline/environment':
+        specifier: workspace:*
+        version: link:../../packages/environment
+      '@dotkomonline/grades-db':
+        specifier: workspace:*
+        version: link:../../packages/grades-db
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@fastify/cors':
+        specifier: ^11.0.0
+        version: 11.2.0
+      '@opentelemetry/api':
+        specifier: ^1.9.0
+        version: 1.9.0
+      '@prisma/client':
+        specifier: ^6.8.2
+        version: 6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server':
+        specifier: 11.8.1
+        version: 11.8.1(typescript@5.9.3)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      fastify:
+        specifier: ^5.3.3
+        version: 5.7.1
+      fastify-raw-body:
+        specifier: ^5.0.0
+        version: 5.0.0
+      import-in-the-middle:
+        specifier: ^1.15.0
+        version: 1.15.0
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
+      superjson:
+        specifier: ^2.0.0
+        version: 2.2.6
+      tiny-invariant:
+        specifier: ^1.3.3
+        version: 1.3.3
+      zod:
+        specifier: ^3.25.47
+        version: 3.25.76
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.11
+        version: 2.3.11
+      '@dotkomonline/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@types/node':
+        specifier: 22.19.3
+        version: 22.19.3
+      dotenv-cli:
+        specifier: 8.0.0
+        version: 8.0.0
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      tsx:
+        specifier: 4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
+  apps/grades-frontend:
+    dependencies:
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.4.1
+      '@dotkomonline/environment':
+        specifier: workspace:*
+        version: link:../../packages/environment
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@dotkomonline/oauth2':
+        specifier: workspace:*
+        version: link:../../packages/oauth2
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@dotkomonline/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@next/env':
+        specifier: ^15.3.5
+        version: 15.5.9
+      '@tabler/icons-react':
+        specifier: ^3.35.0
+        version: 3.36.1(react@19.2.3)
+      '@tailwindcss/typography':
+        specifier: ^0.5.10
+        version: 0.5.19(tailwindcss@4.1.18)
+      '@tanstack/react-query':
+        specifier: ^5.79.0
+        version: 5.90.20(react@19.2.3)
+      '@trpc/client':
+        specifier: 11.8.1
+        version: 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/next':
+        specifier: 11.8.1
+        version: 11.8.1(@tanstack/react-query@5.90.20(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(next@15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+      '@trpc/tanstack-react-query':
+        specifier: 11.8.1
+        version: 11.8.1(@tanstack/react-query@5.90.20(react@19.2.3))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+      axios:
+        specifier: 1.13.2
+        version: 1.13.2
+      clsx:
+        specifier: ^2.0.0
+        version: 2.1.1
+      core-js:
+        specifier: ^3.45.1
+        version: 3.48.0
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.6
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      import-in-the-middle:
+        specifier: ^1.15.0
+        version: 1.15.0
+      jsdom:
+        specifier: 27.4.0
+        version: 27.4.0
+      next:
+        specifier: ^15.3.6
+        version: 15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-plausible:
+        specifier: ^3.12.4
+        version: 3.12.5(next@15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-themes:
+        specifier: ^0.4.6
+        version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      react:
+        specifier: ^19.2.1
+        version: 19.2.3
+      react-dom:
+        specifier: ^19.2.1
+        version: 19.2.3(react@19.2.3)
+      remark-html:
+        specifier: ^16.0.1
+        version: 16.0.1
+      remark-parse:
+        specifier: ^11.0.0
+        version: 11.0.0
+      require-in-the-middle:
+        specifier: ^7.5.2
+        version: 7.5.2
+      superjson:
+        specifier: ^2.0.0
+        version: 2.2.6
+      unified:
+        specifier: ^11.0.5
+        version: 11.0.5
+      use-debounce:
+        specifier: ^10.0.5
+        version: 10.1.0(react@19.2.3)
+      zod:
+        specifier: ^3.25.47
+        version: 3.25.76
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.11
+        version: 2.3.11
+      '@dotkomonline/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@dotkomonline/grades-backend':
+        specifier: workspace:*
+        version: link:../grades-backend
+      '@tailwindcss/postcss':
+        specifier: 4.1.18
+        version: 4.1.18
+      '@types/cors':
+        specifier: 2.8.19
+        version: 2.8.19
+      '@types/node':
+        specifier: 22.19.3
+        version: 22.19.3
+      '@types/react':
+        specifier: 19.2.7
+        version: 19.2.7
+      '@types/react-dom':
+        specifier: 19.2.3
+        version: 19.2.3(@types/react@19.2.7)
+      cva:
+        specifier: npm:class-variance-authority@0.7.1
+        version: class-variance-authority@0.7.1
+      postcss:
+        specifier: 8.5.6
+        version: 8.5.6
+      tailwindcss:
+        specifier: 4.1.18
+        version: 4.1.18
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   apps/invoicification:
     dependencies:
       '@dotkomonline/environment':
@@ -1023,6 +1241,61 @@ importers:
       '@types/node':
         specifier: 22.19.7
         version: 22.19.7
+
+  packages/grades-db:
+    dependencies:
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../logger
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@prisma/client':
+        specifier: ^6.8.2
+        version: 6.19.2(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)
+      '@testcontainers/postgresql':
+        specifier: ^11.5.1
+        version: 11.11.0
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      pg:
+        specifier: ^8.16.0
+        version: 8.17.2
+      zod:
+        specifier: ^3.25.47
+        version: 3.25.76
+      zod-prisma-types:
+        specifier: ^3.2.4
+        version: 3.3.10(@prisma/client@6.19.2(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76)
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.11
+        version: 2.3.11
+      '@dotkomonline/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/common-tags':
+        specifier: 1.8.4
+        version: 1.8.4
+      '@types/node':
+        specifier: 22.19.3
+        version: 22.19.3
+      '@types/pg':
+        specifier: 8.16.0
+        version: 8.16.0
+      common-tags:
+        specifier: 1.8.2
+        version: 1.8.2
+      prisma:
+        specifier: 6.19.1
+        version: 6.19.1(magicast@0.3.5)(typescript@5.9.3)
+      tsx:
+        specifier: 4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
   packages/logger:
     dependencies:
@@ -3415,8 +3688,14 @@ packages:
       typescript:
         optional: true
 
+  '@prisma/config@6.19.1':
+    resolution: {integrity: sha512-bUL/aYkGXLwxVGhJmQMtslLT7KPEfUqmRa919fKI4wQFX4bIFUKiY8Jmio/2waAjjPYrtuDHa7EsNCnJTXxiOw==}
+
   '@prisma/config@6.19.2':
     resolution: {integrity: sha512-kadBGDl+aUswv/zZMk9Mx0C8UZs1kjao8H9/JpI4Wh4SHZaM7zkTwiKn/iFLfRg+XtOAo/Z/c6pAYhijKl0nzQ==}
+
+  '@prisma/debug@6.19.1':
+    resolution: {integrity: sha512-h1JImhlAd/s5nhY/e9qkAzausWldbeT+e4nZF7A4zjDYBF4BZmKDt4y0jK7EZapqOm1kW7V0e9agV/iFDy3fWw==}
 
   '@prisma/debug@6.19.2':
     resolution: {integrity: sha512-lFnEZsLdFLmEVCVNdskLDCL8Uup41GDfU0LUfquw+ercJC8ODTuL0WNKgOKmYxCJVvFwf0OuZBzW99DuWmoH2A==}
@@ -3430,8 +3709,14 @@ packages:
   '@prisma/engines-version@7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7':
     resolution: {integrity: sha512-03bgb1VD5gvuumNf+7fVGBzfpJPjmqV423l/WxsWk2cNQ42JD0/SsFBPhN6z8iAvdHs07/7ei77SKu7aZfq8bA==}
 
+  '@prisma/engines@6.19.1':
+    resolution: {integrity: sha512-xy95dNJ7DiPf9IJ3oaVfX785nbFl7oNDzclUF+DIiJw6WdWCvPl0LPU0YqQLsrwv8N64uOQkH391ujo3wSo+Nw==}
+
   '@prisma/engines@6.19.2':
     resolution: {integrity: sha512-TTkJ8r+uk/uqczX40wb+ODG0E0icVsMgwCTyTHXehaEfb0uo80M9g1aW1tEJrxmFHeOZFXdI2sTA1j1AgcHi4A==}
+
+  '@prisma/fetch-engine@6.19.1':
+    resolution: {integrity: sha512-mmgcotdaq4VtAHO6keov3db+hqlBzQS6X7tR7dFCbvXjLVTxBYdSJFRWz+dq7F9p6dvWyy1X0v8BlfRixyQK6g==}
 
   '@prisma/fetch-engine@6.19.2':
     resolution: {integrity: sha512-h4Ff4Pho+SR1S8XerMCC12X//oY2bG3Iug/fUnudfcXEUnIeRiBdXHFdGlGOgQ3HqKgosTEhkZMvGM9tWtYC+Q==}
@@ -3441,6 +3726,9 @@ packages:
 
   '@prisma/generator@7.3.0':
     resolution: {integrity: sha512-PRjhVXu+oNLY2PDahZRRmOgctT17rtKCp9+2odfw2GIqHhdOTeGhX9scGNPsZujiGRz6txJwvor24FdxZfEWLw==}
+
+  '@prisma/get-platform@6.19.1':
+    resolution: {integrity: sha512-zsg44QUiQAnFUyh6Fbt7c9HjMXHwFTqtrgcX7DAZmRgnkPyYT7Sh8Mn8D5PuuDYNtMOYcpLGg576MLfIORsBYw==}
 
   '@prisma/get-platform@6.19.2':
     resolution: {integrity: sha512-PGLr06JUSTqIvztJtAzIxOwtWKtJm5WwOG6xpsgD37Rc84FpfUBGLKz65YpJBGtkRQGXTYEFie7pYALocC3MtA==}
@@ -5262,6 +5550,9 @@ packages:
   '@types/node@18.19.130':
     resolution: {integrity: sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==}
 
+  '@types/node@22.19.3':
+    resolution: {integrity: sha512-1N9SBnWYOJTrNZCdh/yJE+t910Y128BoyY+zBLWhL3r0TYzlTmFdXrPwHL9DyFZmlEXNQQolTZh3KHV31QDhyA==}
+
   '@types/node@22.19.7':
     resolution: {integrity: sha512-MciR4AKGHWl7xwxkBa6xUGxQJ4VBOmPTF7sL+iGzuahOFaO0jHCsuEfS80pan1ef4gWId1oWOweIhrDEYLuaOw==}
 
@@ -5281,6 +5572,9 @@ packages:
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
     peerDependencies:
       '@types/react': ^19.2.0
+
+  '@types/react@19.2.7':
+    resolution: {integrity: sha512-MWtvHrGZLFttgeEj28VXHxpmwYbor/ATPYbBfSFZEIRK0ecCFLl2Qo55z52Hss+UV9CRN7trSeq1zbgx7YDWWg==}
 
   '@types/react@19.2.9':
     resolution: {integrity: sha512-Lpo8kgb/igvMIPeNV2rsYKTgaORYdO1XGVZ4Qz3akwOj0ySGYMPlQWa8BaLn0G63D1aSaAQ5ldR06wCpChQCjA==}
@@ -7871,6 +8165,16 @@ packages:
     resolution: {integrity: sha512-ey8Ls/+Di31eqzUxC46h8MksNuGx/n0AAC8uKpwFau4RPDYLuE3EXTp8N8G2vX2N7UC/+IXeNUnlWBGGcAG+Ig==}
     peerDependencies:
       react: '>=16.0.0'
+
+  prisma@6.19.1:
+    resolution: {integrity: sha512-XRfmGzh6gtkc/Vq3LqZJcS2884dQQW3UhPo6jNRoiTW95FFQkXFg8vkYEy6og+Pyv0aY7zRQ7Wn1Cvr56XjhQQ==}
+    engines: {node: '>=18.18'}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=5.1.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   prisma@6.19.2:
     resolution: {integrity: sha512-XTKeKxtQElcq3U9/jHyxSPgiRgeYDKxWTPOf6NkXA0dNj5j40MfEsZkMbyNpwDWCUv7YBFUl7I2VK/6ALbmhEg==}
@@ -12020,10 +12324,24 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
+  '@prisma/client@6.19.2(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)':
+    optionalDependencies:
+      prisma: 6.19.1(magicast@0.3.5)(typescript@5.9.3)
+      typescript: 5.9.3
+
   '@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)':
     optionalDependencies:
       prisma: 6.19.2(magicast@0.3.5)(typescript@5.9.3)
       typescript: 5.9.3
+
+  '@prisma/config@6.19.1(magicast@0.3.5)':
+    dependencies:
+      c12: 3.1.0(magicast@0.3.5)
+      deepmerge-ts: 7.1.5
+      effect: 3.18.4
+      empathic: 2.0.0
+    transitivePeerDependencies:
+      - magicast
 
   '@prisma/config@6.19.2(magicast@0.3.5)':
     dependencies:
@@ -12034,6 +12352,8 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
+  '@prisma/debug@6.19.1': {}
+
   '@prisma/debug@6.19.2': {}
 
   '@prisma/debug@7.3.0': {}
@@ -12042,12 +12362,25 @@ snapshots:
 
   '@prisma/engines-version@7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7': {}
 
+  '@prisma/engines@6.19.1':
+    dependencies:
+      '@prisma/debug': 6.19.1
+      '@prisma/engines-version': 7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7
+      '@prisma/fetch-engine': 6.19.1
+      '@prisma/get-platform': 6.19.1
+
   '@prisma/engines@6.19.2':
     dependencies:
       '@prisma/debug': 6.19.2
       '@prisma/engines-version': 7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7
       '@prisma/fetch-engine': 6.19.2
       '@prisma/get-platform': 6.19.2
+
+  '@prisma/fetch-engine@6.19.1':
+    dependencies:
+      '@prisma/debug': 6.19.1
+      '@prisma/engines-version': 7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7
+      '@prisma/get-platform': 6.19.1
 
   '@prisma/fetch-engine@6.19.2':
     dependencies:
@@ -12062,6 +12395,10 @@ snapshots:
       '@prisma/generator': 7.3.0
 
   '@prisma/generator@7.3.0': {}
+
+  '@prisma/get-platform@6.19.1':
+    dependencies:
+      '@prisma/debug': 6.19.1
 
   '@prisma/get-platform@6.19.2':
     dependencies:
@@ -14052,6 +14389,10 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
+  '@types/node@22.19.3':
+    dependencies:
+      undici-types: 6.21.0
+
   '@types/node@22.19.7':
     dependencies:
       undici-types: 6.21.0
@@ -14074,9 +14415,17 @@ snapshots:
 
   '@types/prismjs@1.26.5': {}
 
+  '@types/react-dom@19.2.3(@types/react@19.2.7)':
+    dependencies:
+      '@types/react': 19.2.7
+
   '@types/react-dom@19.2.3(@types/react@19.2.9)':
     dependencies:
       '@types/react': 19.2.9
+
+  '@types/react@19.2.7':
+    dependencies:
+      csstype: 3.2.3
 
   '@types/react@19.2.9':
     dependencies:
@@ -17194,6 +17543,15 @@ snapshots:
       clsx: 2.1.1
       react: 19.2.3
 
+  prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3):
+    dependencies:
+      '@prisma/config': 6.19.1(magicast@0.3.5)
+      '@prisma/engines': 6.19.1
+    optionalDependencies:
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - magicast
+
   prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3):
     dependencies:
       '@prisma/config': 6.19.2(magicast@0.3.5)
@@ -18822,6 +19180,16 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.7.0
+
+  zod-prisma-types@3.3.10(@prisma/client@6.19.2(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76):
+    dependencies:
+      '@prisma/client': 6.19.2(prisma@6.19.1(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)
+      '@prisma/dmmf': 7.3.0
+      '@prisma/generator-helper': 7.3.0
+      code-block-writer: 13.0.3
+      lodash: 4.17.23
+      prisma: 6.19.1(magicast@0.3.5)(typescript@5.9.3)
+      zod: 3.25.76
 
   zod-prisma-types@3.3.10(@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76):
     dependencies:

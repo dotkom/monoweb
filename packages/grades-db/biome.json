@@ -1,0 +1,11 @@
+{
+  "root": false,
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "formatter": {
+    "includes": ["**", "!**/src/schemas/**/*", "!**/src/generated/**/*"]
+  },
+  "files": {
+    "includes": ["**", "!**/src/schemas/**/*", "!**/src/generated/**/*"]
+  },
+  "extends": "//"
+}

@@ -26,3 +26,9 @@ setup:
   - project: monoweb-web
     config: dev_personal
     path: packages/ui
+  - project: grades-backend
+    config: dev_personal
+    path: apps/grades-backend
+  - project: grades-frontend
+    config: dev_personal
+    path: apps/grades-frontend

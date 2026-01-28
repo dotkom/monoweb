@@ -1,0 +1,76 @@
+{
+  "name": "@dotkomonline/grades-frontend",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 5000 --turbopack",
+    "build": "next build",
+    "docker:build": "docker build -t grades-frontend:latest -f Dockerfile --progress plain ../..",
+    "start": "next start",
+    "lint": "biome check . --write",
+    "lint-check": "biome check .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@date-fns/tz": "^1.2.0",
+    "@dotkomonline/environment": "workspace:*",
+    "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/oauth2": "workspace:*",
+    "@dotkomonline/types": "workspace:*",
+    "@dotkomonline/ui": "workspace:*",
+    "@dotkomonline/utils": "workspace:*",
+    "@next/env": "^15.3.5",
+    "@tabler/icons-react": "^3.35.0",
+    "@tailwindcss/typography": "^0.5.10",
+    "@tanstack/react-query": "^5.79.0",
+    "@trpc/client": "11.8.1",
+    "@trpc/next": "11.8.1",
+    "@trpc/tanstack-react-query": "11.8.1",
+    "axios": "1.13.2",
+    "clsx": "^2.0.0",
+    "core-js": "^3.45.1",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "import-in-the-middle": "^1.15.0",
+    "jsdom": "27.4.0",
+    "next": "^15.3.6",
+    "next-plausible": "^3.12.4",
+    "next-themes": "^0.4.6",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "remark-html": "^16.0.1",
+    "remark-parse": "^11.0.0",
+    "require-in-the-middle": "^7.5.2",
+    "superjson": "^2.0.0",
+    "unified": "^11.0.5",
+    "use-debounce": "^10.0.5",
+    "zod": "^3.25.47"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.11",
+    "@dotkomonline/config": "workspace:*",
+    "@dotkomonline/grades-backend": "workspace:*",
+    "@tailwindcss/postcss": "4.1.18",
+    "@types/cors": "2.8.19",
+    "@types/node": "22.19.3",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "cva": "npm:class-variance-authority@0.7.1",
+    "postcss": "8.5.6",
+    "tailwindcss": "4.1.18",
+    "tslib": "2.8.1",
+    "typescript": "5.9.3"
+  },
+  "browserslist": {
+    "production": [
+      "defaults",
+      "ios_saf >= 10"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

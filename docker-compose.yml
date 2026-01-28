@@ -9,6 +9,16 @@ services:
       POSTGRES_DB: ow
     ports:
       - "4010:5432"
+  grades-db:
+    container_name: grades_db
+    image: postgres:16-alpine@sha256:a5074487380d4e686036ce61ed6f2d363939ae9a0c40123d1a9e3bb3a5f344b4
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: gradespassword123
+      POSTGRES_USER: grades
+      POSTGRES_DB: grades
+    ports:
+      - "5010:5432"
   jaeger:
     container_name: ow_jaeger
     image: jaegertracing/all-in-one:latest@sha256:ab6f1a1f0fb49ea08bcd19f6b84f6081d0d44b364b6de148e1798eb5816bacac
