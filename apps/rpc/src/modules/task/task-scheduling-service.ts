@@ -1,10 +1,8 @@
-import type { SchedulerClient } from "@aws-sdk/client-scheduler"
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { AttendanceId, AttendeeId, FeedbackFormId, RecurringTaskId, Task, TaskId } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import { UnimplementedError } from "../../error"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 import type { TaskService } from "./task-service"
@@ -80,42 +78,6 @@ export function getLocalTaskSchedulingService(
 
     async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
       return await taskRepository.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
-    },
-  }
-}
-
-export function getEventBridgeTaskSchedulingService(_client: SchedulerClient): TaskSchedulingService {
-  const logger = getLogger("task-scheduling-service/eventbridge-backend")
-
-  return {
-    // NOTE: The handle here is completely unused, but because the local backend needs to schedule within the caller
-    // transaction, this one also needs to take a handle. Unfortunate but necessary.
-    async scheduleAt(_, _kind, _data) {
-      throw new UnimplementedError("EventBridgeSchedulingService#schedule")
-    },
-
-    async cancel(_, _id) {
-      throw new UnimplementedError("EventBridgeSchedulingService#cancel")
-    },
-
-    async findReserveAttendeeTask(_, _attendeeId, _attendanceId) {
-      logger.warn("findReserveAttendeeTask is not implemented in EventBridgeSchedulingService")
-      return null
-    },
-
-    async findVerifyPaymentTask(_, _attendeeId) {
-      logger.warn("findVerifyPaymentTask is not implemented in EventBridgeSchedulingService")
-      return null
-    },
-
-    async findChargeAttendeeTask(_, _attendeeId) {
-      logger.warn("findChargeAttendancePaymentsTask is not implemented in EventBridgeSchedulingService")
-      return null
-    },
-
-    async findVerifyFeedbackAnsweredTask(_, _feedbackFormId) {
-      logger.warn("findVerifyFeedbackAnsweredTask is not implemented in EventBridgeSchedulingService")
-      return null
     },
   }
 }

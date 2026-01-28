@@ -141,7 +141,7 @@ export function getLocalTaskExecutor(
       queue.start()
       signal.addEventListener("abort", () => {
         if (queue.pending !== 0) {
-          logger.error("Worker aborted with %s tasks pending in queue", queue.pending)
+          logger.warn("Worker aborted with %s tasks pending in queue", queue.pending)
         }
       })
 
