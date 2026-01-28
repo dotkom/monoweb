@@ -1,8 +1,6 @@
-import type { SQSClient } from "@aws-sdk/client-sqs"
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { RecurringTask, Task } from "@dotkomonline/types"
-import { UnimplementedError } from "../../error"
 import type { RecurringTaskService } from "./recurring-task-service"
 import type { TaskService } from "./task-service"
 
@@ -32,25 +30,6 @@ export function getLocalTaskDiscoveryService(
 
     async querySchedulableRecurringTasks() {
       return await recurringTaskService.findSchedulableTasks(client)
-    },
-  }
-}
-
-/**
- * An SQS-backed TaskDiscoveryService that polls multiple SQS queues for tasks to execute. The tasks used in the queues
- * on SQS are scheduled by AWS EventBridge.
- */
-export function getSQSTaskDiscoveryService(_client: SQSClient): TaskDiscoveryService {
-  const logger = getLogger("task-discovery-service/sqs-backend")
-  return {
-    async queryNextTask() {
-      logger.warn("queryNextTask is not implemented for SQS TaskDiscoveryService")
-      throw new UnimplementedError("SQSTaskDiscovery#queryNextTask")
-    },
-
-    async querySchedulableRecurringTasks() {
-      logger.warn("querySchedulableRecurringTasks is not implemented for SQS TaskDiscoveryService")
-      throw new UnimplementedError("SQSTaskDiscovery#querySchedulableRecurringTasks")
     },
   }
 }

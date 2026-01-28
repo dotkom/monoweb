@@ -102,7 +102,7 @@ export function getTaskRepository(): TaskRepository {
         },
       })
 
-      return parseOrReport(TaskSchema, task)
+      return parseOrReport(TaskSchema.nullable(), task)
     },
 
     // TODO: replace the find methods with getall

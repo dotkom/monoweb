@@ -47,16 +47,6 @@ So the event system effectively has five components.
    database or polling an external queue to determine which tasks are ready for execution.
 4. The TaskExecutor receives the tasks from the discovery component and actually performs the jobs.
 
-## Supported Backends
-
-We have built two implementations of the task system. The reason is because we believe that production has significantly
-higher stakes, and we want to guarantee correctness. For this reason, we have the local Postgres database, which will be
-used for task execution when you run the application locally, when you're developing. And then we have the Amazon AWS
-EventBridge and SQS setup for production.
-
-- Scheduling and discovery through the local PostgreSQL database
-- Scheduling on AWS EventBridge Scheduler, and discovery through AWS SQS
-
 ### Local PostgreSQL Backend
 
 As seen in the diagram, the Postgres database is used by absolutely everything in the task system. Whenever the task
@@ -67,33 +57,3 @@ on the job outcome.
 
 ![Task Infrastructure on Local PostgreSQL](../attachments/postgres-task-system.png)
 
-### AWS EventBridge + SQS Backend
-
-In the case for the AWS backed system, we use two different services. I'll give a quick introduction to the services.
-But for a deeper understanding, I suggest you read upon each of the service individually on your own.
-
-EventBridge scheduler is an event-driven serverless service that allows you to schedule things to happen at either a
-given schedule,
-such as every Friday at five in the evening, or at a given point in time, like in two weeks and five hours from now.
-EventBridge is able to send the events when they trigger to other services within AWS.
-
-Amazon Simple Queue Service is a
-simple data buffer that acts like a queue. Consumers are able to push messages on to the queue. And then a single
-consumer will read each message, process it and acknowledge it. SQS comes in two flavors, standard and
-first-in-first-out. A guarantee with first-in-first-out queues on Amazon SQS is that each message is delivered exactly
-once. This is very crucial in our system, where we want a way to guarantee that a message is processed at least once,
-regardless of how bad our system is acting.
-
-As you can see in the diagram, when a scheduler is scheduling a new task, it
-sends an API call to Amazon EventBridge. When the task is supposed to be executed, Amazon EventBridge will send the
-message on to an Amazon SQS queue. The task discovery implementation for Amazon SQS will call the SQS queue for new
-messages. If any new messages are found, they're forwarded to the task executor, as we did in the local implementation
-as well.
-
-**NB:** An important detail when working with EventBridge is that your build for however many schedules are active on
-your account, which means that if we don't have persistent jobs, in other words, if we have one-time jobs, such as
-merging an event pool, it's important that we delete the EventBridge schedule after we've executed the task. Otherwise,
-we will just keep on getting build for that one job that has already finished. For this reason, the task executor will
-make a call to Amazon EventBridge and delete the schedule once everything is completed.
-
-![Task Infrastructure on EventBridge and SQS](../attachments/eventbridge-sqs-task-system.png)
