@@ -2,55 +2,55 @@ import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
   Text,
+  Title,
 } from "@dotkomonline/ui"
-import { IconInfoCircle, IconX } from "@tabler/icons-react"
+import { IconQuestionMark, IconX } from "@tabler/icons-react"
+import { useState } from "react"
 
 export const PaymentExplanationDialog = () => {
+  const [open, setOpen] = useState(false)
+
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger>
-        <div className="text-sm flex flex-row gap-1 items-center cursor-pointer text-slate-800 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
-          <IconInfoCircle className="size-[1.25em]" />
-          <Text>Hvordan fungerer betaling?</Text>
+        <div className="flex flex-row gap-2 items-center text-slate-700 hover:text-black dark:text-stone-300 dark:hover:text-stone-100 transition-colors">
+          <IconQuestionMark className="size-[1.25em]" />
+          <Text className="text-sm">Hvordan virker betaling?</Text>
         </div>
       </AlertDialogTrigger>
-
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle className="flex flex-row gap-2 items-center justify-between font-medium">
-            <span className="text-xl flex flex-row gap-2 items-center">
-              <IconInfoCircle className="size-[1.25em] text-blue-500 dark:text-stone-300" />
-              <Text>Betalingsinformasjon</Text>
-            </span>
-            <AlertDialogCancel>
-              <IconX className="size-[1.25em]" />
-            </AlertDialogCancel>
+      <AlertDialogContent onOutsideClick={() => setOpen(false)}>
+        <div className="flex flex-row gap-4 justify-between">
+          <AlertDialogTitle className="flex flex-row gap-2 items-center justify-between font-medium" asChild>
+            <Title element="h1" size="lg">
+              Betalingsinformasjon
+            </Title>
           </AlertDialogTitle>
-          <AlertDialogDescription className="flex flex-col gap-2">
-            <Text element="span" className="text-left">
-              Når du melder deg på et arrangement med betaling, aktiveres betalingsknappen. Den viser så en nedtelling
-              som indikerer hvor lenge du har på deg til å reservere en betaling.
-            </Text>
-            <Text element="span" className="border-l-2 border-brand pl-3 my-1 text-left">
-              <strong>Reservert betaling: </strong>
-              Beløpet holdes av på kontoen din og trekkes senest på den femte dagen, eller før dersom avmeldingsfristen
-              inntrer tidligere.
-            </Text>
-            <Text element="span" className="text-left">
-              Dersom ingen betaling er reservert innen nedtellingen er ferdig, vil du automatisk bli avmeldt
-              arrangementet.
-            </Text>
-            <Text element="span" className="text-left">
-              Du kan selv melde deg av når som helst før avmeldingsfristen. Da blir betalingsreservasjonen automatisk
-              kansellert i banken din.
-            </Text>
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+          <AlertDialogCancel>
+            <IconX className="size-[1.25em]" />
+          </AlertDialogCancel>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <Text className="text-sm">
+            Når du melder deg på et arrangement med betaling, aktiveres betalingsknappen. Den viser så en nedtelling som
+            indikerer hvor lenge du har på deg til å reservere en betaling.
+          </Text>
+          <Text className="text-sm">
+            Dersom ingen betaling er reservert innen nedtellingen er ferdig, vil du automatisk bli avmeldt
+            arrangementet. Etter avmeldingsfristen blir du i stedet suspendert inntil du har betalt.
+          </Text>
+          <Text className="text-sm">
+            Beløpet holdes av på kontoen din og trekkes senest på den femte dagen, eller før dersom avmeldingsfristen
+            inntrer tidligere. Etter avmeldingsfristen blir du i stedet trukket med en gang.
+          </Text>
+          <Text className="text-sm">
+            Du kan selv melde deg av når som helst før avmeldingsfristen. Da blir betalingsreservasjonen automatisk
+            kansellert i banken din.
+          </Text>
+        </div>
       </AlertDialogContent>
     </AlertDialog>
   )
