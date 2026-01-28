@@ -19,7 +19,7 @@ export interface TaskRepository {
   delete(handle: DBHandle, taskId: TaskId): Promise<void>
   findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
   findMany(handle: DBHandle): Promise<Task[]>
-  findPendingTasks(handle: DBHandle, type: TaskType): Promise<Task[]>
+  findNextPendingTask(handle: DBHandle): Promise<Task | null>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
@@ -91,16 +91,18 @@ export function getTaskRepository(): TaskRepository {
       return parseOrReport(TaskSchema.array(), tasks)
     },
 
-    async findPendingTasks(handle, type) {
-      const tasks = await handle.task.findMany({
+    async findNextPendingTask(handle) {
+      const task = await handle.task.findFirst({
         where: {
           scheduledAt: { lte: new Date() },
           status: "PENDING",
-          type,
+        },
+        orderBy: {
+          scheduledAt: "asc",
         },
       })
 
-      return parseOrReport(TaskSchema.array(), tasks)
+      return parseOrReport(TaskSchema, task)
     },
 
     // TODO: replace the find methods with getall

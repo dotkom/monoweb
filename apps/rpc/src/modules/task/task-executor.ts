@@ -1,3 +1,4 @@
+import PQueue from "p-queue"
 import { clearInterval, type setInterval } from "node:timers"
 import type { DBClient, PrismaClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
@@ -5,7 +6,6 @@ import type { Task } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
-import { compareAsc } from "date-fns"
 import type { Configuration } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
@@ -24,8 +24,6 @@ import type { TaskDiscoveryService } from "./task-discovery-service"
 import type { TaskSchedulingService } from "./task-scheduling-service"
 import type { TaskService } from "./task-service"
 
-const MAX_TASK_PROCESS_COUNT = 15
-
 export interface TaskExecutor {
   startWorker(client: DBClient, signal: AbortSignal): void
 }
@@ -40,6 +38,8 @@ export function getLocalTaskExecutor(
 ): TaskExecutor {
   const logger = getLogger("task-executor")
   const tracer = trace.getTracer("@dotkomonline/rpc/task-executor")
+  // Limited to one to avoid race conditions due to sloppy code in the service layer :^)
+  const queue = new PQueue({ concurrency: 1 })
 
   logger.warn("TaskExecutor started with local (postgres) backend")
 
@@ -138,6 +138,13 @@ export function getLocalTaskExecutor(
     startWorker(client, signal) {
       let interval: ReturnType<typeof setInterval> | null = null
 
+      queue.start()
+      signal.addEventListener("abort", () => {
+        if (queue.pending !== 0) {
+          logger.error("Worker aborted with %s tasks pending in queue", queue.pending)
+        }
+      })
+
       async function work() {
         await tracer.startActiveSpan("TaskExecutor/DiscoverTasks", { root: true }, async (span) => {
           try {
@@ -149,8 +156,7 @@ export function getLocalTaskExecutor(
             }
 
             logger.debug("TaskExecutor discovering and scheduling recurring tasks")
-            const recurringTasks = await taskDiscoveryService.discoverRecurringTasks()
-
+            const recurringTasks = await taskDiscoveryService.querySchedulableRecurringTasks()
             const now = getCurrentUTC()
 
             for (const recurringTask of recurringTasks) {
@@ -161,18 +167,9 @@ export function getLocalTaskExecutor(
               await recurringTaskService.scheduleNextRun(client, recurringTask.id, now)
             }
 
-            logger.debug("TaskExecutor performing discovery and execution of all pending tasks")
-            const tasks = await taskDiscoveryService.discoverAll()
-
-            // Limit the number of tasks per run to avoid exceeding database connections
-            const limitedTasks = tasks
-              .toSorted((a, b) => compareAsc(a.scheduledAt, b.scheduledAt))
-              .slice(0, MAX_TASK_PROCESS_COUNT)
-
-            for (const task of limitedTasks) {
-              // CORRECTNESS: Do not await here, as we would block the entire event loop on each task execution which is
-              // very slow for large task queues.
-              void processTask(client, task)
+            const task = await taskDiscoveryService.queryNextTask()
+            if (task !== null) {
+              queue.add(() => processTask(client, task))
             }
 
             enqueueWork()
