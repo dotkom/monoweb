@@ -6,7 +6,23 @@ module.exports = {
   // Relative to the project when the preset is loaded from a tailwind.config.js
   content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ui/src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    colors,
+    colors: {
+      ...colors,
+      // Override blue to use CSS variables for theme switching
+      blue: {
+        50: "rgb(var(--color-blue-50) / <alpha-value>)",
+        100: "rgb(var(--color-blue-100) / <alpha-value>)",
+        200: "rgb(var(--color-blue-200) / <alpha-value>)",
+        300: "rgb(var(--color-blue-300) / <alpha-value>)",
+        400: "rgb(var(--color-blue-400) / <alpha-value>)",
+        500: "rgb(var(--color-blue-500) / <alpha-value>)",
+        600: "rgb(var(--color-blue-600) / <alpha-value>)",
+        700: "rgb(var(--color-blue-700) / <alpha-value>)",
+        800: "rgb(var(--color-blue-800) / <alpha-value>)",
+        900: "rgb(var(--color-blue-900) / <alpha-value>)",
+        950: "rgb(var(--color-blue-950) / <alpha-value>)",
+      },
+    },
     extend: {
       fontFamily: {
         title: ["var(--font-title, 'Figtree')"],

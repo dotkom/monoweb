@@ -1,6 +1,11 @@
 import { cn } from "@dotkomonline/ui"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
-import { IconDeviceDesktop, IconMoon, IconSun } from "@tabler/icons-react"
+import {
+  IconDeviceDesktop,
+  IconMoon,
+  IconSun,
+  IconFlower,
+} from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 
@@ -12,9 +17,9 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const { setTheme, theme } = useTheme()
 
   const THEME_OPTIONS: Array<{
-    theme: "light" | "dark" | "system"
-    label: string
-    icon: Icon
+    theme: "light" | "dark" | "system" | "pink";
+    label: string;
+    icon: Icon;
   }> = [
     {
       theme: "light",
@@ -31,7 +36,12 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
       label: "Systempreferanse",
       icon: IconDeviceDesktop,
     },
-  ]
+    {
+      theme: "pink",
+      label: "Rosa tema",
+      icon: IconFlower,
+    },
+  ];
 
   return (
     <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
