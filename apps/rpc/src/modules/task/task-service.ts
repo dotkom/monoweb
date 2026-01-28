@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task, TaskId, TaskStatus, TaskType, TaskWrite } from "@dotkomonline/types"
+import type { Task, TaskId, TaskStatus, TaskWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
@@ -15,7 +15,7 @@ export type TaskService = {
   update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState: TaskStatus): Promise<Task>
   setTaskExecutionStatus(handle: DBHandle, taskId: TaskId, status: TaskStatus, oldStatus: TaskStatus): Promise<Task>
   findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
-  findPendingTasks(handle: DBHandle, kind: TaskType): Promise<Task[]>
+  findNextPendingTask(handle: DBHandle): Promise<Task | null>
 
   /**
    * Parse and validate the payload for a given task, given its specification.
@@ -76,8 +76,8 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
       return await taskRepository.findById(handle, taskId)
     },
 
-    async findPendingTasks(handle, kind) {
-      return await taskRepository.findPendingTasks(handle, kind)
+    async findNextPendingTask(handle) {
+      return await taskRepository.findNextPendingTask(handle)
     },
 
     parse(taskDefinition, payload) {
