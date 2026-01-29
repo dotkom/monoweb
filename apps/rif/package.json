@@ -24,7 +24,7 @@
     "google-auth-library": "^9.6.3",
     "google-spreadsheet": "^4.1.1",
     "jsdom": "27.4.0",
-    "next": "^15.3.6",
+    "next": "^16.0.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-hook-form": "^7.57.0",

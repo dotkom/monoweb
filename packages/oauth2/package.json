@@ -40,7 +40,7 @@
   "peerDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "next": "^15",
+    "next": "^16.0.10",
     "react": "^19",
     "react-dom": "^19"
   },
