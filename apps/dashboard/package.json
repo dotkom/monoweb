@@ -53,7 +53,7 @@
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "import-in-the-middle": "^2.0.4",
-    "next": "^15.3.6",
+    "next": "^16.0.0",
     "next-plausible": "^3.12.4",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
