@@ -8,6 +8,9 @@ const config = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    authInterrupts: true,
+  },
   async redirects() {
     return [
       {
