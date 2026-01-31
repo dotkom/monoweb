@@ -1,6 +1,6 @@
 "use client"
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, cn } from "@dotkomonline/ui"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@dotkomonline/ui"
 import type { EventListViewMode } from "../EventList"
 import { IconArrowsSort } from "@tabler/icons-react"
 
