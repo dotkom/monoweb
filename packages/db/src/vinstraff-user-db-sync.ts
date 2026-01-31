@@ -16,7 +16,9 @@ const PROD_DATABASE_URL = process.env.DATABASE_URL
 const LOCAL_DATABASE_URL = process.env.LOCAL_DATABASE_URL ?? "postgresql://ow:owpassword123@localhost:4010/ow"
 
 if (!PROD_DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set. Run this script with Doppler: doppler run --config prd --project monoweb-rpc -- pnpm vinstraff:user-db-sync")
+  throw new Error(
+    "DATABASE_URL is not set. Run this script with Doppler: doppler run --config prd --project monoweb-rpc -- pnpm vinstraff:user-db-sync"
+  )
 }
 
 if (PROD_DATABASE_URL === LOCAL_DATABASE_URL) {
@@ -24,7 +26,9 @@ if (PROD_DATABASE_URL === LOCAL_DATABASE_URL) {
 }
 
 if (!PROD_DATABASE_URL.includes("prod") && !PROD_DATABASE_URL.includes("prd")) {
-  console.warn("Warning: DATABASE_URL does not contain 'prod' or 'prd'. Make sure you're connecting to the right database.")
+  console.warn(
+    "Warning: DATABASE_URL does not contain 'prod' or 'prd'. Make sure you're connecting to the right database."
+  )
 }
 
 console.log("Connecting to production database...")
@@ -42,7 +46,9 @@ const [users, memberships, groups, groupRoles, groupMemberships, groupMembership
   prodDb.group.findMany(),
   prodDb.groupRole.findMany(),
   prodDb.groupMembership.findMany(),
-  prodDb.$queryRaw<Array<{ membership_id: string; role_id: string }>>`SELECT membership_id, role_id FROM group_membership_role`,
+  prodDb.$queryRaw<
+    Array<{ membership_id: string; role_id: string }>
+  >`SELECT membership_id, role_id FROM group_membership_role`,
 ])
 
 console.log(`Found ${users.length} users`)
