@@ -34,7 +34,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
 import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/EventMonthCalendar"
 
-import { CalendarWeekNavigation } from "./components/calendar//EventWeekCalendar/CalendarWeekNavigation"
+import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/CalendarWeekNavigation"
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 
 import { GroupFilter } from "./components/filters/GroupFilter"
