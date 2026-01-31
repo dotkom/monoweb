@@ -37,7 +37,7 @@ importers:
         version: 5.7.1
       import-in-the-middle:
         specifier: ^1.15.0
-        version: 1.15.0
+        version: 2.0.6
       require-in-the-middle:
         specifier: ^7.5.2
         version: 7.5.2
@@ -191,7 +191,7 @@ importers:
         version: 4.1.0
       import-in-the-middle:
         specifier: ^2.0.4
-        version: 2.0.4
+        version: 2.0.6
       next:
         specifier: ^15.3.6
         version: 15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -306,7 +306,7 @@ importers:
         version: 5.0.0
       import-in-the-middle:
         specifier: ^1.15.0
-        version: 1.15.0
+        version: 2.0.6
       require-in-the-middle:
         specifier: ^7.5.2
         version: 7.5.2
@@ -403,7 +403,7 @@ importers:
         version: 4.1.0
       import-in-the-middle:
         specifier: ^1.15.0
-        version: 1.15.0
+        version: 2.0.6
       jsdom:
         specifier: 27.4.0
         version: 27.4.0
@@ -824,7 +824,7 @@ importers:
         version: 8.0.1
       import-in-the-middle:
         specifier: ^1.15.0
-        version: 1.15.0
+        version: 2.0.6
       lru-cache:
         specifier: ^11.1.0
         version: 11.2.4
@@ -1005,7 +1005,7 @@ importers:
         version: 8.1.1(@types/node@22.19.7)(dayjs@1.11.19)(luxon@3.7.2)
       import-in-the-middle:
         specifier: ^2.0.4
-        version: 2.0.4
+        version: 2.0.6
       isomorphic-dompurify:
         specifier: ^2.31.0
         version: 2.35.0
@@ -7163,8 +7163,8 @@ packages:
   import-in-the-middle@1.15.0:
     resolution: {integrity: sha512-bpQy+CrsRmYmoPMAE/0G33iwRqwW4ouqdRg8jgbH3aKuCtOc8lxgmYXg2dMM92CRiGP660EtBcymH/eVUpCSaA==}
 
-  import-in-the-middle@2.0.4:
-    resolution: {integrity: sha512-Al0kMpa0BqfvDnxjxGlab9vdQ0vTDs82TBKrD59X9jReUoPAzSGBb6vGDzMUMFBGyyDF03RpLT4oxGn6BpASzQ==}
+  import-in-the-middle@2.0.6:
+    resolution: {integrity: sha512-3vZV3jX0XRFW3EJDTwzWoZa+RH1b8eTTx6YOCjglrLyPuepwoBti1k3L2dKwdCUrnVEfc5CuRuGstaC/uQJJaw==}
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -12173,7 +12173,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/api-logs': 0.210.0
-      import-in-the-middle: 2.0.4
+      import-in-the-middle: 2.0.6
       require-in-the-middle: 8.0.1
     transitivePeerDependencies:
       - supports-color
@@ -12182,7 +12182,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/api-logs': 0.211.0
-      import-in-the-middle: 2.0.4
+      import-in-the-middle: 2.0.6
       require-in-the-middle: 8.0.1
     transitivePeerDependencies:
       - supports-color
@@ -16271,7 +16271,7 @@ snapshots:
       cjs-module-lexer: 1.4.3
       module-details-from-path: 1.0.4
 
-  import-in-the-middle@2.0.4:
+  import-in-the-middle@2.0.6:
     dependencies:
       acorn: 8.15.0
       acorn-import-attributes: 1.9.5(acorn@8.15.0)
@@ -17262,7 +17262,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
-      styled-jsx: 5.1.6(react@19.2.3)
+      styled-jsx: 5.1.6(@babel/core@7.24.5)(react@19.2.3)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.7
       '@next/swc-darwin-x64': 15.5.7
@@ -18532,11 +18532,6 @@ snapshots:
       react: 19.2.3
     optionalDependencies:
       '@babel/core': 7.28.6
-
-  styled-jsx@5.1.6(react@19.2.3):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.2.3
 
   sugarss@5.0.1(postcss@8.5.6):
     dependencies:
