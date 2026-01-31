@@ -8,29 +8,24 @@ export const env = defineConfiguration({
   AUTH_SECRET: config(process.env.AUTH_SECRET),
   RPC_HOST: config(process.env.RPC_HOST, {
     prd: "https://rpc.online.ntnu.no",
-    stg: "https://staging.rpc.online.ntnu.no",
     dev: "http://localhost:4444",
   }),
   SIGNING_KEY: config(process.env.SIGNING_KEY),
   NEXT_PUBLIC_ORIGIN: config(process.env.NEXT_PUBLIC_ORIGIN, {
     prd: "https://online.ntnu.no",
-    stg: "https://staging.online.ntnu.no",
     dev: "http://localhost:3000",
   }),
   NEXT_PUBLIC_RPC_HOST: config(process.env.NEXT_PUBLIC_RPC_HOST, {
     prd: "https://rpc.online.ntnu.no",
-    stg: "https://staging.rpc.online.ntnu.no",
     dev: "http://localhost:4444",
   }),
   NEXT_PUBLIC_DASHBOARD_URL: config(process.env.NEXT_PUBLIC_DASHBOARD_URL, {
     prd: "https://dashboard.online.ntnu.no",
-    stg: "https://staging.dashboard.online.ntnu.no",
     dev: "http://localhost:3002",
   }),
   NEXT_PUBLIC_HOME_URL: config(process.env.NEXT_PUBLIC_HOME_URL, "/"),
   AWS_CLOUDFRONT_URL: config(process.env.AWS_CLOUDFRONT_URL, {
     prd: "https://cdn.online.ntnu.no",
-    stg: "https://cdn.staging.online.ntnu.no",
     dev: "https://cdn.staging.online.ntnu.no",
   }),
 })

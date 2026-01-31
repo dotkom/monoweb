@@ -2,7 +2,7 @@
 
 This document describes how to run the migrations for local or remote databases.
 
-The process is slightly different for the remote `staging` and `production`
+The process is slightly different for the remote `production`
 databases, because you credentials which are stored in Doppler.
 
 ## Running migrations for Local Development
@@ -20,7 +20,7 @@ pnpm migrate:dev
 pnpm migrate:dev-with-fixtures
 ```
 
-## Running migrations for Production or Staging
+## Running migrations for Production
 
 - Database credentials for the database in question. These are stored in Doppler
   if you are a Dotkom member. If you're not a member, you will have to wait for

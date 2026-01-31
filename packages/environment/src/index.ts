@@ -4,7 +4,6 @@ export type DefaultVariable<TSpec extends z.ZodSchema> =
   | z.infer<TSpec>
   | {
       prd: z.infer<TSpec>
-      stg: z.infer<TSpec>
       dev: z.infer<TSpec>
     }
 
@@ -41,7 +40,6 @@ export type DefaultEnvironmentValueSchema = z.ZodString
  *   process.env.OPTIONAL_ENV_DEFAULT,
  *   {
  *     prd: "production-default",
- *     stg: "staging-default",
  *     dev: "development-default",
  *   },
  * )

@@ -17,7 +17,7 @@ export const EditorRole = {
   FEMINIT: "feminit",
   HS: "hs",
   KOMITELEDERE: "komiteledere",
-  ONLINE_IL: "onlineil",
+  ONLINE_IL: "online-il",
   FOND: "fond",
   PROKOM: "prokom",
   TRIKOM: "trikom",

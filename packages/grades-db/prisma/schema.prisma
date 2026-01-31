@@ -1,0 +1,29 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/generated"
+  previewFeatures = ["relationJoins"]
+}
+
+generator zod {
+  provider         = "zod-prisma-types"
+  output           = "../src/schemas"
+  prismaClientPath = "../generated"
+
+  useMultipleFiles = false
+  createInputTypes = false
+  addIncludeType   = false
+  addSelectType    = false
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Course {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

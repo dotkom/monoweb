@@ -491,18 +491,20 @@ export function getAttendanceService(
         if (options.ignoreRegisteredToParent) {
           bypassedChecks.push("IGNORE_PARENT")
         } else {
-          const parent = await attendanceRepository.findAttendanceByEventId(handle, event.parentId)
-          // SAFETY: This cannot fail as it's enforced on database level through a foreign key
-          invariant(parent !== null)
+          // SAFETY: The event should always exist as it's enforced on database level through a foreign key
+          const parentAttendance = await attendanceRepository.findAttendanceByEventId(handle, event.parentId)
 
-          const attendee = parent.attendees.find((a) => a.userId === userId)
+          // We check that the event has an attendance
+          if (parentAttendance !== null) {
+            const attendee = parentAttendance.attendees.find((a) => a.userId === userId)
 
-          if (attendee === undefined) {
-            return { cause: "MISSING_PARENT_REGISTRATION", success: false }
-          }
+            if (attendee === undefined) {
+              return { cause: "MISSING_PARENT_REGISTRATION", success: false }
+            }
 
-          if (!attendee.reserved) {
-            return { cause: "MISSING_PARENT_RESERVATION", success: false }
+            if (!attendee.reserved) {
+              return { cause: "MISSING_PARENT_RESERVATION", success: false }
+            }
           }
         }
       }

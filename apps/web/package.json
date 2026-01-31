@@ -40,7 +40,7 @@
     "@trpc/client": "11.8.1",
     "@trpc/next": "11.8.1",
     "@trpc/tanstack-react-query": "11.8.1",
-    "axios": "1.13.2",
+    "axios": "1.13.4",
     "clsx": "^2.0.0",
     "core-js": "^3.45.1",
     "cors": "^2.8.5",
@@ -67,7 +67,7 @@
     "zod": "^3.25.47"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.11",
+    "@biomejs/biome": "2.3.13",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/rpc": "workspace:*",
     "@tailwindcss/postcss": "4.1.18",

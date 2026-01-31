@@ -13,12 +13,10 @@ export const createConfiguration = () =>
     WEB_PUBLIC_ORIGIN: config(process.env.WEB_PUBLIC_ORIGIN),
     ALLOWED_ORIGINS: config(process.env.ALLOWED_ORIGINS, {
       prd: "https://online.ntnu.no",
-      stg: "https://staging.online.ntnu.no",
       dev: "http://localhost:3000",
     }),
     STRIPE_WEBHOOK_IDENTIFIER: config(process.env.STRIPE_WEBHOOK_IDENTIFIER, {
       prd: "prd",
-      stg: "stg",
       dev: "dev",
     }),
     STRIPE_WEBHOOK_HOST: config(process.env.STRIPE_WEBHOOK_HOST, null),
