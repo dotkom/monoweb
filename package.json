@@ -38,7 +38,8 @@
     "type-check": "pnpm run -r type-check",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "shell": "pnpm -F @dotkomonline/rpc shell",
-    "receive-stripe-webhooks": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm receive-stripe-webhooks"
+    "receive-stripe-webhooks": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm receive-stripe-webhooks",
+    "vinstraff:user-db-sync": "doppler run --config prd --project monoweb-rpc -- pnpm -F @dotkomonline/db vinstraff:user-db-sync"
   },
   "workspaces": [
     "packages/*",
