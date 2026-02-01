@@ -12,6 +12,10 @@ import type { EventDisplayProps } from "./types"
 // helper functions so tailwind picks up the class names correctly
 function getColStartClass(startCol: number) {
   switch (startCol) {
+    case 1:
+      return "col-start-1"
+    case 2:
+      return "col-start-2"
     case 3:
       return "col-start-3"
     case 4:
@@ -57,7 +61,7 @@ interface EventCalendarItemProps {
   eventDisplayProps: EventDisplayProps
 }
 
-export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps }: EventCalendarItemProps) => {
+export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps, className }: EventCalendarItemProps) => {
   const { event, attendance } = eventDetail
   const isActive = new Date() < event.end
 
@@ -75,20 +79,21 @@ export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps }: Even
     <HoverCard>
       <HoverCardTrigger
         className={cn(
-          "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
+          "ml-[2px] mr-px my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
           isActive ? triggerClasses : "bg-gray-100 text-gray-500 dark:bg-stone-800 dark:text-stone-400",
           borderClasses,
-          getColStartClass(eventDisplayProps.startCol + 2),
+          getColStartClass(eventDisplayProps.startCol + 1),
           getColSpanClass(eventDisplayProps.span),
           eventDisplayProps.leftEdge && "sm:border-l-4 rounded-l-md",
-          eventDisplayProps.rightEdge && "rounded-r-md"
+          eventDisplayProps.rightEdge && "rounded-r-md",
+          className
         )}
       >
         <div className="relative">
           <span className="block text-nowrap text-clip font-semibold sm:font-medium leading-8">{event.title}</span>
           <div
             className={cn(
-              "absolute inset-y-0 right-0 w-5 bg-gradient-to-r from-transparent pointer-events-none",
+              "absolute inset-y-0 right-0 w-5 bg-linear-to-r from-transparent pointer-events-none",
               isActive ? fadeClasses : "to-gray-100 dark:to-stone-800"
             )}
           />

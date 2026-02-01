@@ -13,6 +13,11 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Tabs,
   TabsContent,
   TabsList,
@@ -26,8 +31,11 @@ import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } fro
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 
-import { CalendarNavigation } from "@/components/organisms/EventCalendar/CalendarNavigation"
-import { EventCalendar } from "@/components/organisms/EventCalendar/EventCalendar"
+import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
+import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/EventMonthCalendar"
+
+import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/CalendarWeekNavigation"
+import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 
 import { GroupFilter } from "./components/filters/GroupFilter"
 import { SortFilter } from "./components/filters/SortFilter"
@@ -45,11 +53,10 @@ import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
 
 const EventPage = () => {
-  const { view } = useEventsView()
+  const { view, isList, isCalendar } = useEventsView()
   const { navigateToView } = useEventsViewNavigation()
 
-  const isListView = view === "list"
-  const calendar = useCalendarNavigation()
+  const calendarNavigation = useCalendarNavigation()
   const { filters, updateFilters, resetFilters } = useEventFilters()
 
   const trpc = useTRPC()
@@ -103,15 +110,28 @@ const EventPage = () => {
   const activeFilterCount =
     filters.types.length + filters.groups.length + (filters.viewModeSort !== "ATTENDANCE" ? 1 : 0)
 
+  // main tab value is either "list" or "cal"
+  const mainTabValue = isCalendar ? "cal" : "list"
+
   return (
     <div className="flex flex-col gap-4">
       <Title element="h1" size="xl">
         Arrangementer
       </Title>
 
-      <Tabs value={view} onValueChange={(v) => navigateToView(v as EventsView)}>
-        <div className="flex flex-col flex-wrap sm:flex-row justify-between gap-4">
-          <div className={cn("flex gap-2 justify-between w-full", view === "cal" ? "sm:w-fit" : "")}>
+      <Tabs
+        value={mainTabValue}
+        onValueChange={(v) => {
+          // when switching to calendar, default to week view
+          if (v === "cal") {
+            navigateToView("week")
+          } else {
+            navigateToView(v as EventsView)
+          }
+        }}
+      >
+        <div className={cn("flex gap-2 justify-between w-full", isCalendar ? "flex-wrap" : "")}>
+          <div className={cn("flex gap-2", isList ? "w-full" : "")}>
             <TabsList className="dark:border-none shrink-0">
               <TabsTrigger value="list" className="px-3 w-fit min-w-0 min-h-0">
                 <IconLayoutList className="mr-2 size-5" />
@@ -123,7 +143,7 @@ const EventPage = () => {
               </TabsTrigger>
             </TabsList>
 
-            {isListView && (
+            {isList && (
               <div className="flex justify-end gap-2 w-full">
                 <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
                   <DrawerTrigger asChild className="md:hidden">
@@ -199,19 +219,74 @@ const EventPage = () => {
                 />
               </div>
             )}
+
+            {isCalendar && (
+              <>
+                <div className="hidden xs:flex gap-1 p-1.5 border border-gray-200 dark:border-none dark:bg-stone-800 rounded-lg shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => navigateToView("week")}
+                    className={cn(
+                      "px-3 py-1.5 rounded text-sm font-medium transition-colors",
+                      view === "week"
+                        ? "bg-gray-200 dark:bg-stone-600 cursor-default"
+                        : "hover:bg-gray-100 dark:hover:bg-stone-700"
+                    )}
+                  >
+                    Uke
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigateToView("month")}
+                    className={cn(
+                      "px-3 py-1.5 rounded text-sm font-medium transition-colors",
+                      view === "month"
+                        ? "bg-gray-200 dark:bg-stone-600 cursor-default"
+                        : "hover:bg-gray-100 dark:hover:bg-stone-700"
+                    )}
+                  >
+                    Måned
+                  </button>
+                </div>
+                <div className="xs:hidden">
+                  <Select value={view} onValueChange={(v) => navigateToView(v as EventsView)}>
+                    <SelectTrigger className="h-11.5 rounded-lg min-w-26 font-medium dark:border-none">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-lg -ml-[2px] py-[2px] md:dark:border-none shadow-none min-w-26">
+                      <SelectItem value="week" className="h-8 rounded-md">
+                        Uke
+                      </SelectItem>
+                      <SelectItem value="month" className="h-8 rounded-md">
+                        Måned
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
           </div>
 
-          {view === "cal" && (
-            <CalendarNavigation
-              year={calendar.year}
-              month={calendar.month}
-              onNavigate={calendar.navigate}
+          {view === "week" && (
+            <CalendarWeekNavigation
+              year={calendarNavigation.year}
+              weekNumber={calendarNavigation.week}
+              onNavigate={calendarNavigation.navigateWeek}
+              className="flex justify-between w-full sm:max-w-max"
+            />
+          )}
+
+          {view === "month" && (
+            <CalendarMonthNavigation
+              year={calendarNavigation.year}
+              month={calendarNavigation.month}
+              onNavigate={calendarNavigation.navigateMonth}
               className="flex justify-between w-full sm:max-w-max"
             />
           )}
         </div>
 
-        {isListView && searchBarOpen && (
+        {isList && searchBarOpen && (
           <div className="sm:hidden mt-2">
             <SearchInput
               initialValue={filters.search}
@@ -271,7 +346,12 @@ const EventPage = () => {
         </TabsContent>
 
         <TabsContent value="cal">
-          <EventCalendar year={calendar.year} month={calendar.month} />
+          <div className="mt-4">
+            {view === "week" && (
+              <EventWeekCalendar year={calendarNavigation.year} weekNumber={calendarNavigation.week} />
+            )}
+            {view === "month" && <EventMonthCalendar year={calendarNavigation.year} month={calendarNavigation.month} />}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
