@@ -8,7 +8,7 @@ import type { EventWithAttendance } from "@dotkomonline/types"
 import { cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
-import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
+import { endOfMonth, endOfWeek, getISOWeek, isThisISOWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "../EventCalendarItem"
 import { eventCategories } from "../eventTypeConfig"
@@ -97,15 +97,15 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
       </div>
 
       {cal.weeks.map((week, weekIndex) => (
-        <div className="relative min-h-24 sm:min-h-28" key={`week-${getWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
+        <div className="relative min-h-24 sm:min-h-28" key={`week-${getISOWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
           <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 absolute w-full h-full">
             <div
               className={cn(
                 "hidden sm:flex w-6 pr-2 items-center justify-center",
-                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-600 dark:text-stone-400 text-xs"
+                isThisISOWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-600 dark:text-stone-400 text-xs"
               )}
             >
-              {getWeek(week.dates[1])}
+              {getISOWeek(week.dates[1])}
             </div>
             {week.dates.map((day) => (
               <div
@@ -135,7 +135,7 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
             {week.eventDetails.map((row, rowIndex) => (
               <div
                 className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
-                key={`week-${getWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
+                key={`week-${getISOWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
               >
                 {row.map(({ event, attendance, eventDisplayProps }) => {
                   return (
