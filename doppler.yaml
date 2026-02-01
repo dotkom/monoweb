@@ -5,9 +5,6 @@ setup:
   - project: monoweb-dashboard
     config: dev_personal
     path: apps/dashboard
-  - project: monoweb-rif
-    config: dev_personal
-    path: apps/rif
   - project: monoweb-rpc
     config: dev_personal
     path: apps/rpc
