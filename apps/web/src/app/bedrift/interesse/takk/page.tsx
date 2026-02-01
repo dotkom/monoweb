@@ -1,7 +1,6 @@
 "use client"
 
 import { Text, Title } from "@dotkomonline/ui"
-import Image from "next/image"
 import { Section } from "../components/section"
 
 export default function TakkPage() {

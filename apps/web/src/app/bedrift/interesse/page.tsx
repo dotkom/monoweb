@@ -3,7 +3,6 @@
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
-import Image from "next/image"
 import { FormProvider, useForm } from "react-hook-form"
 import { InterestForm } from "./components/interest-form"
 import { type FormSchema, formSchema } from "./components/form-schema"
