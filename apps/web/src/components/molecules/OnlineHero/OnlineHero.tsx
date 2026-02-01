@@ -100,22 +100,24 @@ export const OnlineHero: FC = () => {
       </div>
 
       <div className="lg:-ml-8 relative w-full">
-        <div className="relative inset-0 max-w-[600px] aspect-[10/9] mx-auto lg:mx-0">
+        <div className="relative inset-0 max-w-[600px] aspect-10/9 mx-auto lg:mx-0">
           {(!mounted || isLoading) && (
             <div className="absolute inset-0 bg-gray-100 dark:bg-stone-800 rounded-xl animate-pulse w-[80%] h-[80%] m-auto" />
           )}
-
           {mounted && (
-            <div
-              className={cn(
-                "absolute inset-0 duration-700 transition-opacity",
-                isLoading ? "opacity-0" : "opacity-100"
-              )}
-            >
+            <div className="absolute inset-0 overflow-hidden rounded-[40%]">
               <Spline
                 scene="https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
                 onLoad={onSplineLoad}
                 onSplineMouseDown={lightSwitch}
+              />
+              <div
+                className={cn(
+                  "pointer-events-none absolute inset-0 rounded-[39%]",
+                  "shadow-[inset_0_0_20px_22px_#fff] transition-opacity duration-700",
+                  "dark:shadow-[inset_0_0_20px_22px_#1c1917]",
+                  isLoading ? "opacity-0" : "opacity-100"
+                )}
               />
             </div>
           )}
