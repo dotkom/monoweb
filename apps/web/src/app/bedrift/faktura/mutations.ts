@@ -3,7 +3,6 @@
 import { useTRPC } from "@/utils/trpc/client"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
-import type { FormSchema } from "./components/form-schema"
 
 export const useSubmitInvoiceMutation = () => {
   const router = useRouter()

@@ -3,7 +3,6 @@
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
-import Image from "next/image"
 import { FormProvider, useForm } from "react-hook-form"
 import { DeliveryMethod, type FormSchema, InvoiceRelation, formSchema } from "./components/form-schema"
 import { InvoiceForm } from "./components/invoice-form"
@@ -29,8 +28,8 @@ export default function InvoicificationPage() {
       <Section>
         <Title element="h1">Fakturaskjema for bedrifter</Title>
         <Text>
-          Denne blanketten bør helst fylles ut av <strong>økonomiavdelingen</strong>. Informasjonen forsikrer at det ikke
-          oppstår feil eller manglende informasjon ved fakturering og betaling.
+          Denne blanketten bør helst fylles ut av <strong>økonomiavdelingen</strong>. Informasjonen forsikrer at det
+          ikke oppstår feil eller manglende informasjon ved fakturering og betaling.
         </Text>
 
         <Text className="[&>a]:underline">
