@@ -51,13 +51,13 @@ const SHEET_HEADERS = [
   "contactName",
   "contactMail",
   "phone",
-  "bedpres", // Company presentation
-  "kurs", // Course
-  "pakkedeal", // Two-in-one deal (presentation + course)
-  "instagram", // Instagram takeover
-  "ekskursjonen", // IT excursion
-  "samarbeid", // Collaboration with other organizations
-  "feminit", // FeminIT collaboration
+  "bedpres",
+  "kurs",
+  "pakkedeal",
+  "instagram",
+  "ekskursjonen",
+  "samarbeid",
+  "feminit",
   "comment",
 ]
 
@@ -84,8 +84,6 @@ export const createSpreadsheetRow = async (form: InterestFormData, configuration
     logger.warn(
       "Google Sheets integration is not configured (missing RIF_SERVICE_ACCOUNT or RIF_SPREADSHEET_ID). Skipping spreadsheet row creation."
     )
-    // NOTE: In production, you may want to throw an error here instead of silently skipping.
-    // For now, we log a warning to allow the form to still send emails even if Sheets is not configured.
     return
   }
 
@@ -96,9 +94,6 @@ export const createSpreadsheetRow = async (form: InterestFormData, configuration
     throw new Error("Invalid service account credentials for Google Sheets integration")
   }
 
-  // NOTE: This authentication pattern could be replaced with a centralized
-  // Google service account management system in the future to reduce duplication
-  // across different integrations (e.g., Workspace sync, Sheets, etc.).
   const auth = new google.auth.JWT({
     email: result.data.client_email,
     key: result.data.private_key,
