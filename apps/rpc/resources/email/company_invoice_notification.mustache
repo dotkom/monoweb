@@ -23,11 +23,18 @@
         </tr>
 
         <tr style="width: 100%">
+          <h2>Anledning</h2>
+          <ul>
+            <li><strong>Fakturaen gjelder</strong>: {{ invoiceRelation }}</li>
+          </ul>
+        </tr>
+
+        <tr style="width: 100%">
           <h2>Regnskapsdetaljer</h2>
           <ul>
             <li><strong>Foretrukket ordrenummer</strong>: {{ preferredPurchaseOrderNumber }}</li>
-            <li><strong>Foretrukket forfallsdato</strong>: {{ preferredDueDateLength }}</li>
-            <li><strong>Foretrukket leveringsmetode</strong>: {{ invoiceRelation }}</li>
+            <li><strong>Foretrukket antall dager til forfallsdato</strong>: {{ preferredDueDateLength }}</li>
+            <li><strong>Foretrukket leveringsmetode</strong>: {{ preferredDeliveryMethod }}</li>
           </ul>
         </tr>
 
