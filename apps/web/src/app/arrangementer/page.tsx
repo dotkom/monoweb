@@ -56,7 +56,7 @@ const EventPage = () => {
   const { view, isList, isCalendar } = useEventsView()
   const { navigateToView } = useEventsViewNavigation()
 
-  const calendar = useCalendarNavigation()
+  const calendarNavigation = useCalendarNavigation()
   const { filters, updateFilters, resetFilters } = useEventFilters()
 
   const trpc = useTRPC()
@@ -269,18 +269,18 @@ const EventPage = () => {
 
           {view === "week" && (
             <CalendarWeekNavigation
-              year={calendar.year}
-              weekNumber={calendar.week}
-              onNavigate={calendar.navigateWeek}
+              year={calendarNavigation.year}
+              weekNumber={calendarNavigation.week}
+              onNavigate={calendarNavigation.navigateWeek}
               className="flex justify-between w-full sm:max-w-max"
             />
           )}
 
           {view === "month" && (
             <CalendarMonthNavigation
-              year={calendar.year}
-              month={calendar.month}
-              onNavigate={calendar.navigateMonth}
+              year={calendarNavigation.year}
+              month={calendarNavigation.month}
+              onNavigate={calendarNavigation.navigateMonth}
               className="flex justify-between w-full sm:max-w-max"
             />
           )}
@@ -347,8 +347,10 @@ const EventPage = () => {
 
         <TabsContent value="cal">
           <div className="mt-4">
-            {view === "week" && <EventWeekCalendar year={calendar.year} weekNumber={calendar.week} />}
-            {view === "month" && <EventMonthCalendar year={calendar.year} month={calendar.month} />}
+            {view === "week" && (
+              <EventWeekCalendar year={calendarNavigation.year} weekNumber={calendarNavigation.week} />
+            )}
+            {view === "month" && <EventMonthCalendar year={calendarNavigation.year} month={calendarNavigation.month} />}
           </div>
         </TabsContent>
       </Tabs>

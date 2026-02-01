@@ -97,7 +97,10 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
       </div>
 
       {cal.weeks.map((week, weekIndex) => (
-        <div className="relative min-h-24 sm:min-h-28" key={`week-${getISOWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
+        <div
+          className="relative min-h-24 sm:min-h-28"
+          key={`week-${getISOWeek(week.dates[1])}-${cal.year}-${cal.month}`}
+        >
           <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 absolute w-full h-full">
             <div
               className={cn(
