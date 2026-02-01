@@ -39,6 +39,7 @@ export function getWeekCalendarArray(year: number, weekNumber: number, events: E
         const startOfNextWeek = new Date(dates[6])
         startOfNextWeek.setDate(startOfNextWeek.getDate() + 1)
 
+        // Check if the current day falls within the event's date range
         if (event.start <= dayEnd && event.end >= day) {
           const span = event.end >= startOfNextWeek ? 7 - dayIndex : ((event.end.getDay() + 6) % 7) - dayIndex + 1
 
@@ -55,6 +56,7 @@ export function getWeekCalendarArray(year: number, weekNumber: number, events: E
           let row = 0
           let placed = false
 
+          // add new row if needed
           while (!placed) {
             if (row >= slotMatrix.length) {
               slotMatrix.push(Array(7).fill(null))
@@ -62,6 +64,8 @@ export function getWeekCalendarArray(year: number, weekNumber: number, events: E
             }
 
             let canPlaceEvent = true
+
+            // check if there is space for the event
             for (let i = eventDisplayProps.startCol; i < eventDisplayProps.startCol + eventDisplayProps.span; i++) {
               if (slotMatrix[row][i] !== null) {
                 canPlaceEvent = false
@@ -69,6 +73,7 @@ export function getWeekCalendarArray(year: number, weekNumber: number, events: E
               }
             }
 
+            // if there is space add the event and mark the slots as taken (1)
             if (canPlaceEvent) {
               for (let i = eventDisplayProps.startCol; i < eventDisplayProps.startCol + eventDisplayProps.span; i++) {
                 slotMatrix[row][i] = 1
@@ -77,6 +82,7 @@ export function getWeekCalendarArray(year: number, weekNumber: number, events: E
               completedEvents.push(event.id)
               placed = true
             } else {
+              // if the event could not be placed check next row
               row++
             }
           }
