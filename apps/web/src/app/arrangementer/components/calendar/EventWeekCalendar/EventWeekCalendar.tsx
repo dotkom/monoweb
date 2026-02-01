@@ -18,10 +18,10 @@ function getEventTypeGuide(events: EventWithAttendance[]) {
   const presentTypes = new Set(events.map((event) => event.event.type))
 
   return Array.from(presentTypes)
-    .filter((type) => eventCategories[type as keyof typeof eventCategories])
+    .filter((type) => eventCategories[type])
     .map((type) => ({
       type,
-      ...eventCategories[type as keyof typeof eventCategories],
+      ...eventCategories[type],
     }))
 }
 
