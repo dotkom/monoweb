@@ -812,7 +812,7 @@ export function getAttendanceService(
       invariant(pool !== undefined)
 
       const remainingAttendees = attendance.attendees.filter((a) => a.id !== attendee.id)
-      const reservedAttendeesCount = remainingAttendees.filter((a) => a.reserved).length
+      const reservedAttendeesCount = remainingAttendees.filter((a) => a.reserved && a.attendancePoolId === pool.id).length
 
       // If the pool is at capacity, we cannot reserve anyone new
       if (pool.capacity !== 0 && (pool.capacity < 0 || reservedAttendeesCount >= pool.capacity)) {
