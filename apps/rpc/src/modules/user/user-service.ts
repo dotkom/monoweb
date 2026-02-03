@@ -19,7 +19,7 @@ import {
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
-import type { ManagementClient } from "auth0"
+import type { ManagementClient, PostIdentitiesRequestProviderEnum } from "auth0"
 import * as crypto from "node:crypto"
 import { isDevelopmentEnvironment } from "../../configuration"
 import { isSameDay } from "date-fns"
@@ -34,6 +34,7 @@ import {
   type MembershipService,
 } from "./membership-service"
 import type { UserRepository } from "./user-repository"
+import { mergeUsers } from "./merge-users";
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
@@ -90,6 +91,32 @@ export interface UserService {
    * is opaque with format like `afd4988b-a205-49f9-b2e0-03e00bb4b8c0`.
    */
   findFeideAccessTokenByUserId(userId: UserId): Promise<string | null>
+
+  /**
+   * This is for manually linking two identities (login methods) to the same user. This happens in Auth0. All identities
+   * will be consolidated under the primary user.
+   *
+   * IMPORTANT: Be very careful with this function, as it would link a new login to an existing user, which could have
+   * security implications if used incorrectly. Always make sure to verify the ownership of both accounts before linking
+   * them.
+   *
+   * Both database users will still exist after this method is called. The secondary user will not be accessible by
+   * authentication, and should be merged into the primary user.
+   *
+   * @see UserService#mergeUsers for merging the database users after linking the Auth0 identities.
+   */
+  linkAuth0Idenitities(primaryUserId: UserId, secondaryUserId: UserId): Promise<void>
+  /**
+   * Merges two users into the survivor and consumes the consumer. The survivor's field values will take precedence over
+   * the consumed user's values, except for memberships and group memberships, where we will attempt to keep all unique
+   * non-duplicate memberships from both. If a field value is only present on the consumed user, it will be moved to the
+   * survivor.
+   *
+   * IMPORTANT: The consumed user will be deleted after the merge.
+   *
+   * @see UserService#linkAuth0Idenitities for linking the Auth0 identities before merging the database users.
+   */
+  mergeUsers(handle: DBHandle, survivorUserId: UserId, consumedUserId: UserId): Promise<User>
 
   createFileUpload(
     handle: DBHandle,
@@ -491,6 +518,59 @@ export function getUserService(
       }
       const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
       return identity?.access_token ?? null
+    },
+
+    async linkAuth0Idenitities(primaryUserId, secondaryUserId) {
+      logger.info(
+        "Linking authentication identities for survivor User(ID=%s) and consumed User(ID=%s)",
+        primaryUserId,
+        secondaryUserId
+      )
+
+      const primaryUser = await managementClient.users.get({ id: primaryUserId })
+      const secondaryUser = await managementClient.users.get({ id: secondaryUserId })
+
+      const secondaryIdentity =
+        secondaryUser.data.identities.find((identity) => secondaryUserId.endsWith(identity.user_id)) ||
+        secondaryUser.data.identities[0]
+
+      const secondaryIdentityProvider = secondaryIdentity.provider as PostIdentitiesRequestProviderEnum
+
+      await managementClient.users.link(
+        {
+          id: primaryUser.data.user_id,
+        },
+        {
+          provider: secondaryIdentityProvider, // usually "oauth2"
+          user_id: secondaryIdentity.user_id,
+          connection_id: secondaryIdentity.connection,
+        }
+      )
+
+      logger.info("Successfully linked identities for survivor User(ID=%s) and consumed User(ID=%s)")
+    },
+
+    async mergeUsers(handle, survivorUserId, consumedUserId) {
+      logger.info("Merging consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
+
+      const survivorUser = await this.getById(handle, survivorUserId)
+      const consumedUser = await this.getById(handle, consumedUserId)
+
+      if (!survivorUser) {
+        throw new NotFoundError(`Survivor User(ID=${survivorUserId}) not found`)
+      }
+
+      if (!consumedUser) {
+        throw new NotFoundError(`Consumed User(ID=${consumedUserId}) not found`)
+      }
+
+      await mergeUsers(handle, survivorUser, consumedUser)
+      
+      const mergedUser = await this.getById(handle, survivorUserId)
+
+      logger.info("Successfully merged consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
+
+      return mergedUser
     },
 
     async createFileUpload(handle, filename, contentType, userId, createdByUserId) {
