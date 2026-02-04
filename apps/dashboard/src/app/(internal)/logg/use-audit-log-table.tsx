@@ -1,5 +1,5 @@
 import { GenericTable } from "@/components/GenericTable"
-import type { AuditLog } from "@dotkomonline/types"
+import { mapAuditLogTableToLabel, type AuditLog } from "@dotkomonline/types"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
@@ -44,7 +44,7 @@ export const AuditLogsTable = ({ audit_logs, onLoadMore }: Props) => {
       columnHelper.accessor("tableName", {
         sortingFn: "alphanumeric",
         header: () => "Type",
-        cell: (info) => info.getValue(),
+        cell: (info) => mapAuditLogTableToLabel(info.getValue()),
       }),
 
       columnHelper.accessor("id", {

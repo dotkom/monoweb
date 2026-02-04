@@ -29,9 +29,9 @@ export const AuditLogFilters = ({ onChange }: Props) => {
               {...field}
               searchable
               placeholder="Filtrer etter type"
-              data={AuditLogTable.options.map((opt) => ({
-                label: mapAuditLogTableToLabel(opt),
-                value: `${opt}`,
+              data={AuditLogTable.options.map((option) => ({
+                label: mapAuditLogTableToLabel(option),
+                value: option,
               }))}
             />
           )}

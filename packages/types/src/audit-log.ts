@@ -52,7 +52,7 @@ export const AuditLogFilterQuerySchema = z
   })
   .partial()
 
-export const mapAuditLogTableToLabel = (table: AuditLogTable): string => {
+export const mapAuditLogTableToLabel = (table: string): string => {
   switch (table) {
     case "article":
       return "Artikkel"
