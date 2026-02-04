@@ -3,10 +3,14 @@ import { differenceInMonths, subYears } from "date-fns"
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
 import { getLogger } from "@dotkomonline/logger"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import type { TZDate } from "@date-fns/tz"
 
 export interface MembershipService {
-  findMasterStartYearDelta(courses: NTNUGroup[]): number
-  findBachelorStartYearDelta(courses: NTNUGroup[]): number
+  findEstimatedStudyStart(
+    study: "BACHELOR" | "MASTER",
+    courses: NTNUGroup[]
+  ): { start: TZDate; semester: number; grade: number }
 }
 
 const BACHELOR_STUDY_PLAN = [
@@ -84,9 +88,9 @@ export function getMembershipService(): MembershipService {
   }
 
   /**
-   * Find the approximate start year based on a student's courses against a hard-coded set of courses.
+   * Find the approximate semester based on a student's courses against a hard-coded set of courses.
    */
-  function findApproximateStartYear(studentCourses: NTNUGroup[], courseSet: StudyPlanCourseSet): number {
+  function findEstimatedSemester(courseSet: StudyPlanCourseSet, studentCourses: NTNUGroup[]): number {
     logger.info("Searching for applicable membership based on courses %o and study plan %o", studentCourses, courseSet)
     let largestSemester = 0
     for (let i = 0; i < courseSet.length; i++) {
@@ -168,21 +172,37 @@ export function getMembershipService(): MembershipService {
       }
     }
 
-    // Give the value back in years (two school semesters in a year).
-    // We use Math#round because it will give us the correct year delta:
-    //   Year 1 fall (value 0)  : round(0 / 2) = 0 (Start year = current year)
-    //   Year 1 spring (value 1): round(1 / 2) = 1 (Start year = current - 1, since spring is in the next calendar year)
-    //   Year 2 fall (value 2)  : round(2 / 2) = 1 (Start year = current - 1)
-    //   Year 2 spring (value 3): round(3 / 2) = 2 (Start year = current - 2)
-    return Math.round(largestSemester / 2)
+    return largestSemester
   }
-  return {
-    findMasterStartYearDelta(courses) {
-      return findApproximateStartYear(courses, MASTER_STUDY_PLAN)
-    },
 
-    findBachelorStartYearDelta(courses) {
-      return findApproximateStartYear(courses, BACHELOR_STUDY_PLAN)
+  return {
+    findEstimatedStudyStart(study, courses) {
+      const studyPlan = study === "MASTER" ? MASTER_STUDY_PLAN : BACHELOR_STUDY_PLAN
+      const semester = findEstimatedSemester(studyPlan, courses)
+
+      // We use Math#round because it will give us the correct year delta:
+      //   Year 1 autumn (value 0)  : round(0 / 2) = 0 (Start year = current year)
+      //   Year 1 spring (value 1): round(1 / 2) = 1 (Start year = current - 1, since spring is in the next calendar year)
+      //   Year 2 autumn (value 2)  : round(2 / 2) = 1 (Start year = current - 1)
+      //   Year 2 spring (value 3): round(3 / 2) = 2 (Start year = current - 2)
+      //   ...
+      const yearOffset = Math.round(semester / 2)
+      const start = subYears(getAcademicStart(getCurrentUTC()), yearOffset)
+
+      // A school year consists of two semesters (Autumn and Spring). So this formula will give us the year:
+      //   Year 1 autumn (value 0): floor(0 / 2) + 1 = 1 (Year 1)
+      //   Year 1 spring (value 1): floor(1 / 2) + 1 = 1 (Year 1)
+      //   Year 2 autumn (value 2): floor(2 / 2) + 1 = 2 (Year 2)
+      //   Year 2 spring (value 3): floor(3 / 2) + 1 = 2 (Year 2)
+      //   Year 3 autumn (value 4): floor(4 / 2) + 1 = 3 (Year 3)
+      //   ...
+      const grade = Math.floor(semester / 2) + 1
+
+      return {
+        semester,
+        start,
+        grade,
+      }
     },
   }
 }
