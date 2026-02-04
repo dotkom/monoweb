@@ -5,7 +5,7 @@ import {
   type FeedbackQuestionWrite,
   getDefaultFeedbackAnswerDeadline,
 } from "@dotkomonline/types"
-import { Box, Button, Group, Select, Stack, Title } from "@mantine/core"
+import { Box, Button, Group, Select, Stack, Title, Text } from "@mantine/core"
 import type { FC } from "react"
 import { FeedbackFormEditForm } from "../components/feedback-form-edit-form"
 import {
@@ -15,6 +15,7 @@ import {
 } from "../mutations"
 import { useEventAllQuery, useEventFeedbackFormGetQuery } from "../queries"
 import { useEventContext } from "./provider"
+import { getCurrentUTC } from "@dotkomonline/utils"
 
 export const FeedbackPage: FC = () => {
   const { event } = useEventContext()
@@ -62,6 +63,9 @@ export const FeedbackPage: FC = () => {
     questions: feedbackFormQuery?.data?.questions ?? [],
   }
 
+  const now = getCurrentUTC()
+  const canCreateFeedbackForm = event.end > now
+
   return (
     <Box>
       <Title order={3} mb={16}>
@@ -78,13 +82,26 @@ export const FeedbackPage: FC = () => {
           />
         ) : (
           <Stack>
-            <Title order={4}>Opprett blankt tilbakemeldingsskjema</Title>
+            {!canCreateFeedbackForm ? (
+              <Text mb={8} c="red">
+                Arrangementet er over. Det er ikke lenger mulig å opprette tilbakemeldingsskjema
+              </Text>
+            ) : (
+              <Text mb={8} c="red.3">
+                Det vil ikke være mulig å opprette tilbakemeldingsskjema etter arrangementet er over
+              </Text>
+            )}
+
+            <Title order={5}>Opprett blankt tilbakemeldingsskjema</Title>
             <Group>
-              <Button onClick={createEmptyFeedbackForm}>Opprett</Button>
+              <Button onClick={createEmptyFeedbackForm} disabled={!canCreateFeedbackForm}>
+                Opprett
+              </Button>
             </Group>
-            <Title order={4}>Opprett kopi av tilbakemeldingsskjema fra annet arrangement</Title>
+            <Title order={5}>Opprett kopi av tilbakemeldingsskjema fra annet arrangement</Title>
             <Group>
               <Select
+                disabled={!canCreateFeedbackForm}
                 searchable={true}
                 onChange={(data) => data && createFeedbackFormCopy(data)}
                 placeholder="Velg et arrangement..."

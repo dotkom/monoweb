@@ -1,7 +1,7 @@
 "use client"
 
 import { env } from "@/lib/env"
-import { createAbsoluteEventPageUrl } from "@dotkomonline/utils"
+import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { Box, Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import {
@@ -26,6 +26,7 @@ import { FeedbackPage } from "./feedback-page"
 import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
+import { useEventFeedbackFormGetQuery } from "../queries"
 
 const SIDEBAR_LINKS = [
   {
@@ -79,6 +80,13 @@ export default function EventWithAttendancesPage() {
   const hasAttendance = Boolean(attendance)
   const hasPools = Boolean(attendance?.pools && attendance.pools.length > 0)
 
+  const { data: feedbackForm } = useEventFeedbackFormGetQuery(event.id)
+
+  const now = getCurrentUTC()
+  const hasFeedbackForm = Boolean(feedbackForm)
+  const isCompanyEvent = event.type === "COMPANY"
+  const hasEventEnded = event.end < now
+
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
@@ -87,15 +95,9 @@ export default function EventWithAttendancesPage() {
 
   return (
     <Stack>
-      {hasAttendance && !hasPools && (
-        <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="red.7" mb="lg">
-          <Group p="md" gap="xs">
-            <IconAlertTriangleFilled color="white" size={24} />
-            <Text c="white" size="lg">
-              Påmeldingen har ingen påmeldingsgrupper
-            </Text>
-          </Group>
-        </Box>
+      {hasAttendance && !hasPools && <WarningBox content="Påmeldingen har ingen påmeldingsgrupper" />}
+      {isCompanyEvent && !hasFeedbackForm && !hasEventEnded && (
+        <WarningBox content="Arrangementet mangler tilbakemeldingsskjema. Det vil ikke være mulig å opprette tilbakemeldingsskjema etter arrangementet er over" />
       )}
 
       <Group align="center">
@@ -165,3 +167,14 @@ export default function EventWithAttendancesPage() {
     </Stack>
   )
 }
+
+const WarningBox = ({ content }: { content: string }) => (
+  <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="red.7" mb="lg">
+    <Group p="md" gap="xs">
+      <IconAlertTriangleFilled color="white" size={24} />
+      <Text c="white" size="lg">
+        {content}
+      </Text>
+    </Group>
+  </Box>
+)
