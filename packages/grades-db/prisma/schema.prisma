@@ -20,10 +20,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Semester {
+  SPRING
+  SUMMER
+  FALL
+
+  @@map("semester")
+}
+
 model Course {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  grades Grade[]
+}
+
+model Grade {
+  id           Int   @id @default(autoincrement())
+  averageGrade Float @map("average_grade")
+  passed       Int
+  a            Int
+  b            Int
+  c            Int
+  d            Int
+  e            Int
+  failed       Int
+
+  courseId Int    @map("course_id")
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  isDigitalExam Boolean  @map("is_digital_exam")
+  semester      Semester
+  year          Int
 }
