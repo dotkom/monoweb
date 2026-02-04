@@ -1,9 +1,7 @@
 import {
   AuditLogTable,
-  mapAuditLogTableToLabel,
   type AuditLogFilterQuery,
   AuditLogOperation,
-  mapAuditLogOperationToLabel,
 } from "@dotkomonline/types"
 import { Group, MultiSelect, TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
@@ -36,7 +34,7 @@ export const AuditLogFilters = ({ onChange }: Props) => {
               searchable
               placeholder="Filtrer etter type"
               data={AuditLogTable.options.map((option) => ({
-                label: mapAuditLogTableToLabel(option),
+                label: option,
                 value: option,
               }))}
             />
@@ -51,7 +49,7 @@ export const AuditLogFilters = ({ onChange }: Props) => {
               searchable
               placeholder="Filtrer etter handling"
               data={AuditLogOperation.options.map((option) => ({
-                label: mapAuditLogOperationToLabel(option),
+                label: option,
                 value: option,
               }))}
             />

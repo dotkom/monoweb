@@ -39,19 +39,6 @@ export const AuditLogTable = z.enum([
 
 export const AuditLogOperation = z.enum(["INSERT", "UPDATE", "DELETE"])
 
-export const mapAuditLogOperationToLabel = (operation: string): string => {
-  switch (operation) {
-    case "INSERT":
-      return "Opprettet"
-    case "UPDATE":
-      return "Endret"
-    case "DELETE":
-      return "Slettet"
-    default:
-      return operation
-  }
-}
-
 export const AuditLogSchema = schemas.AuditLogSchema.extend({
   user: schemas.UserSchema.nullable(),
 })
@@ -67,74 +54,5 @@ export const AuditLogFilterQuerySchema = z
     byOperation: z.array(AuditLogOperation).optional(),
   })
   .partial()
-
-export const mapAuditLogTableToLabel = (table: string): string => {
-  switch (table) {
-    case "article":
-      return "Artikkel"
-    case "attendee":
-      return "Attendee"
-    case "attendance_pool":
-      return "Påmeldingsgruppe"
-    case "attendance":
-      return "Påmelding"
-    case "company":
-      return "Bedrift"
-    case "event":
-      return "Arrangement"
-    case "event_hosting_group":
-      return "Arrangement - gruppe"
-    case "event_company":
-      return "Arrangement - bedrift"
-    case "feedback_form":
-      return "Tilbakemeldingsskjema"
-    case "feedback_form_answer":
-      return "Tilbakemeldingsskjema - svar"
-    case "feedback_question":
-      return "Tilbakemeldingsskjema - spørsmål"
-    case "feedback_question_answer":
-      return "Tilbakemeldingsskjema - spørsmål svar"
-    case "feedback_question_option":
-      return "Tilbakemeldingsskjema - spørsmål alternativ"
-    case "feedback_answer_option_link":
-      return "Tilbakemeldingsskjema - svar alternativ kobling"
-    case "group":
-      return "Gruppe"
-    case "group_membership":
-      return "Gruppemedlemskap"
-    case "group_membership_role":
-      return "Gruppemedlemskap - rolle"
-    case "group_role":
-      return "Grupperolle"
-    case "job_listing":
-      return "Jobbutlysning"
-    case "job_listing_location":
-      return "Jobbutlysning - lokasjon"
-    case "mark":
-      return "Prikk"
-    case "mark_group":
-      return "Prikk - gruppe"
-    case "membership":
-      return "Medlemskap"
-    case "notification_permissions":
-      return "Varslingstillatelser"
-    case "offline":
-      return "Offline"
-    case "ow_user":
-      return "Bruker"
-    case "personal_mark":
-      return "Prikk - bruker"
-    case "privacy_permissions":
-      return "Personverntillatelser"
-    case "article_tag":
-      return "Artikkel - tag"
-    case "article_tag_link":
-      return "Artikkel - tag kobling"
-    case "deregister_reason":
-      return "Avmeldingsårsak"
-    default:
-      return table
-  }
-}
 
 export type AuditLogTable = z.infer<typeof AuditLogTable>
