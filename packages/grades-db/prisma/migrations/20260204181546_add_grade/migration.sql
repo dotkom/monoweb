@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "semester" AS ENUM ('SPRING', 'FALL');
+CREATE TYPE "semester" AS ENUM ('SPRING', 'SUMMER', 'FALL');
 
 -- CreateTable
 CREATE TABLE "Grade" (
