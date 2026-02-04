@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import { type ArticleId, type ArticleTag, type ArticleTagName, ArticleTagSchema } from "@dotkomonline/types"
+import { type ArticleId, ArticleTag, type ArticleTagName } from "./article-types"
 import { parseOrReport } from "../../invariant"
 
 export interface ArticleTagRepository {
@@ -19,12 +19,12 @@ export function getArticleTagRepository(): ArticleTagRepository {
         },
       })
 
-      return parseOrReport(ArticleTagSchema.nullable(), tag)
+      return parseOrReport(ArticleTag.nullable(), tag)
     },
 
     async findMany(handle) {
       const tags = await handle.articleTag.findMany()
-      return parseOrReport(ArticleTagSchema.array(), tags)
+      return parseOrReport(ArticleTag.array(), tags)
     },
 
     async create(handle, articleTagName) {
@@ -34,7 +34,7 @@ export function getArticleTagRepository(): ArticleTagRepository {
         },
       })
 
-      return parseOrReport(ArticleTagSchema, tag)
+      return parseOrReport(ArticleTag, tag)
     },
 
     async delete(handle, articleTagName) {
@@ -44,7 +44,7 @@ export function getArticleTagRepository(): ArticleTagRepository {
         },
       })
 
-      return parseOrReport(ArticleTagSchema, tag)
+      return parseOrReport(ArticleTag, tag)
     },
 
     async findManyByArticleId(handle, articleId) {
@@ -60,7 +60,7 @@ export function getArticleTagRepository(): ArticleTagRepository {
         },
       })
 
-      return parseOrReport(ArticleTagSchema.array(), tags)
+      return parseOrReport(ArticleTag.array(), tags)
     },
   }
 }

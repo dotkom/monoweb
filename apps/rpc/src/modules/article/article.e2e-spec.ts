@@ -1,6 +1,6 @@
 import * as crypto from "node:crypto"
 import type { S3Client } from "@aws-sdk/client-s3"
-import type { ArticleWrite } from "@dotkomonline/types"
+import type { ArticleWrite } from "./article-types"
 import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
 import { mockDeep } from "vitest-mock-extended"

@@ -18,3 +18,16 @@ export function parseOrReport<T extends z.ZodSchema>(schema: T, value: z.infer<T
   }
   return result.data
 }
+
+export function parseOutputType<T extends z.ZodSchema>(schema: T, value: z.infer<T>): z.infer<T> {
+  const result = schema.safeParse(value)
+  if (!result.success) {
+    logger.error(
+      "Procedure handler failed to parse value into schema: %s emitted for object %o",
+      result.error.message,
+      value
+    )
+    throw new Error("Procedure handler returned value that does not conform to schema")
+  }
+  return result.data
+}
