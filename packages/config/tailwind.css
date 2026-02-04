@@ -101,11 +101,28 @@
   src: url("fonts/Glass_TTY_VT220.ttf");
 }
 
+/* Easter egg: Animated gold border - requires @property for angle animation */
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 @theme {
   --breakpoint-xs: 30rem;
   --font-glass: Glass, "sans-serif";
   --animate-flicker: flicker 0.25s infinite;
   --animate-scan: scan 0.2s linear infinite;
+
+  /* Easter egg colors */
+  --color-gold-light: #fef3c7;
+  --color-gold-mid: #fbbf24;
+  --color-gold-dark: #b45309;
+
+  /* Easter egg animations */
+  --animate-gold-border-spin: gold-border-spin 3s linear infinite;
+  --animate-coin-flip: coin-flip 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-coin-flip-in: coin-flip-in 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 
   @keyframes scan {
     0% {
@@ -124,5 +141,76 @@
     50% {
       opacity: 0.85;
     }
+  }
+
+  @keyframes gold-border-spin {
+    to {
+      --border-angle: 360deg;
+    }
+  }
+
+  @keyframes coin-flip {
+    from {
+      transform: perspective(400px) rotateY(0deg);
+    }
+    to {
+      transform: perspective(400px) rotateY(360deg);
+    }
+  }
+
+  @keyframes coin-flip-in {
+    0% {
+      transform: perspective(400px) rotateY(0deg) scale(0.8);
+      opacity: 0;
+    }
+    50% {
+      transform: perspective(400px) rotateY(180deg) scale(1.1);
+      opacity: 1;
+    }
+    100% {
+      transform: perspective(400px) rotateY(360deg) scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+@layer components {
+  .easter-egg-gold-border {
+    animation: gold-border-spin 3s linear infinite;
+    background:
+      padding-box linear-gradient(to bottom, var(--color-gold-light), var(--color-gold-mid)),
+      border-box
+        conic-gradient(
+          from var(--border-angle),
+          var(--color-gold-dark),
+          var(--color-gold-mid),
+          var(--color-gold-light),
+          var(--color-gold-mid),
+          var(--color-gold-dark)
+        );
+  }
+
+  .easter-egg-gold-border::before {
+    content: "";
+    position: absolute;
+    inset: -0.375rem;
+    border-radius: inherit;
+    filter: blur(16px);
+    z-index: -10;
+    animation: gold-border-spin 3s linear infinite;
+    background: conic-gradient(
+      from var(--border-angle),
+      transparent,
+      rgb(251 191 36 / 40%),
+      transparent,
+      rgb(251 191 36 / 40%),
+      transparent
+    );
+  }
+
+  .easter-egg-coin-flip {
+    animation:
+      coin-flip-in 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+      coin-flip 3s cubic-bezier(0.4, 0, 0.2, 1) 1.2s infinite;
   }
 }
