@@ -431,7 +431,7 @@ export function ProfilePage() {
                 <Link
                   key={event.id}
                   href={`/tilbakemelding/${event.id}`}
-                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
+                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
                 >
                   <div className="flex flex-col gap-0.5">
                     <Text className="text-lg">{event.title}</Text>
