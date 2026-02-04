@@ -431,13 +431,17 @@ export function ProfilePage() {
                 <Link
                   key={event.id}
                   href={`/tilbakemelding/${event.id}`}
-                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
+                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
                 >
                   <div className="flex flex-col gap-0.5">
                     <Text className="text-lg">{event.title}</Text>
                     <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
                       Gi tilbakemelding på {event.title} som du deltok på{" "}
                       {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
+                    </Text>
+                    <Text className="text-sm text-red-400">
+                      Fristen for å svare er{" "}
+                      {formatDate(event.feedbackForm.answerDeadline, "dd. MMM yyyy HH:mm", { locale: nb })}
                     </Text>
                   </div>
                 </Link>

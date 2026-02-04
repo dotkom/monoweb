@@ -13,6 +13,7 @@ import {
   type EventFilterQuery,
   type EventId,
   EventSchema,
+  EventWithFeedbackFormSchema,
   type EventWrite,
   type GroupId,
   type UserId,
@@ -89,7 +90,7 @@ export interface EventRepository {
     parentEventId: EventId,
     query: Pick<EventFilterQuery, "orderBy">
   ): Promise<Event[]>
-  findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
+  findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<EventWithFeedbackFormSchema[]>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
   // This cannot use `Pageable` due to raw query needing numerical offset and not cursor based pagination
   findFeaturedEvents(handle: DBHandle, offset: number, limit: number): Promise<BaseEvent[]>
@@ -511,17 +512,32 @@ export function getEventRepository(): EventRepository {
             },
           ],
         },
-        include: INCLUDE_COMPANY_AND_GROUPS,
+        include: {
+          ...INCLUDE_COMPANY_AND_GROUPS,
+          feedbackForm: {
+            include: {
+              questions: {
+                include: {
+                  options: true,
+                },
+              },
+            },
+            omit: {
+              publicResultsToken: true,
+            },
+          },
+        },
         orderBy: {
           start: "asc",
         },
       })
 
       return events.map((event) =>
-        parseOrReport(EventSchema, {
+        parseOrReport(EventWithFeedbackFormSchema, {
           ...event,
           companies: event.companies.map((c) => c.company),
           hostingGroups: event.hostingGroups.map((g) => g.group),
+          feedbackForm: event.feedbackForm,
         })
       )
     },
