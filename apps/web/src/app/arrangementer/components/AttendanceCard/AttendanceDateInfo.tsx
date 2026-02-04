@@ -11,23 +11,22 @@ const dateComponent = (label: string, date: Date, time: string, showNotice?: boo
 
   return (
     <div className="flex flex-col gap-0">
-      <div className="flex items-center sm:items-start gap-4 sm:gap-0">
-        <div className="sm:hidden pl-2 text-gray-600 dark:text-stone-400">{icon}</div>
+      <div className="flex items-center xs:items-start gap-4 xs:gap-0">
+        <div className="xs:hidden pl-2 text-gray-600 dark:text-stone-400">{icon}</div>
 
         <div className="flex flex-col">
           <Text
             className={cn(
-              "w-fit md:text-sm lg:text-base",
+              "w-fit font-medium xs:font-thin text-sm text-gray-600 dark:text-stone-400",
               showNotice && "px-0.5 rounded-sm bg-yellow-100 dark:bg-yellow-600/25"
             )}
           >
             {label}
           </Text>
 
-          <div className="flex flex-row gap-2 text-gray-700 dark:text-stone-300 sm:flex-col sm:gap-0 sm:text-sm">
-            <Text className="hidden md:hidden lg:inline">{longDateStr}</Text>
+          <div className="flex flex-row gap-2 xs:flex-col xs:gap-0">
+            <Text className="inline md:hidden lg:inline">{longDateStr}</Text>
             <Text className="hidden md:inline lg:hidden">{shortDateStr}</Text>
-            <Text className="inline md:hidden">{longDateStr}</Text>
             <Text>kl. {time}</Text>
           </div>
         </div>
@@ -91,12 +90,15 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
   const sortedElements = dateBlocks.toSorted((a, b) => a.date.getTime() - b.date.getTime())
 
   const element = (
-    <div className="flex flex-col justify-between space-y-4 sm:flex-row sm:space-x-4">
+    <div className="flex flex-col justify-between space-y-4 mb-4 xs:mb-2 xs:flex-row xs:space-y-0">
       {sortedElements.map(({ element, key }, index) => (
         <React.Fragment key={key}>
           {element}
           {index < sortedElements.length - 1 && (
-            <span className="self-center grow h-0.5 rounded-full bg-gray-600 dark:bg-stone-600 hidden sm:block" />
+            <>
+              <span className="self-center grow h-0.5 mx-4 rounded-full bg-gray-300 dark:bg-stone-700 hidden xs:block md:hidden"/>
+              <span className="self-center h-15 w-0.5 rounded-full bg-gray-300 dark:bg-stone-700 hidden md:block lg:hidden"/>
+            </>
           )}
         </React.Fragment>
       ))}
