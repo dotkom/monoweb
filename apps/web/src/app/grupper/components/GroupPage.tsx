@@ -1,9 +1,24 @@
-import { EventList } from "@/app/arrangementer/components/EventList"
-import { auth } from "@/auth"
-import { server } from "@/utils/trpc/server"
-import { type GroupMember, type GroupRole, type UserId, getGroupTypeName } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { EventList } from "@/app/arrangementer/components/EventList";
+import { auth } from "@/auth";
+import { server } from "@/utils/trpc/server";
+import {
+  GroupMember,
+  type GroupRole,
+  type UserId,
+  getGroupTypeName,
+} from "@dotkomonline/types";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
+  RichText,
+  Text,
+  Title,
+  cn,
+} from "@dotkomonline/ui";
+import { getCurrentUTC } from "@dotkomonline/utils";
 import {
   IconArrowUpRight,
   IconMail,
@@ -17,100 +32,111 @@ import Link from "next/link"
 import { getGroupEasterEgg } from "./easter-eggs"
 
 interface CommitteePageProps {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }
 
 export const GroupPage = async ({ params }: CommitteePageProps) => {
-  const { slug } = await params
+  const { slug } = await params;
 
-  const isStaff = await server.user.isStaff.query()
+  const isStaff = await server.user.isStaff.query();
 
-  const now = getCurrentUTC()
+  const now = getCurrentUTC();
 
-  const [session, group, futureEventWithAttendances, pastEventWithAttendances] = await Promise.all([
-    auth.getServerSession(),
-    server.group.get.query(slug),
-    server.event.all.query({
-      filter: {
-        byOrganizingGroup: [slug],
-        byEndDate: {
-          max: null,
-          min: now,
+  const [session, group, futureEventWithAttendances, pastEventWithAttendances] =
+    await Promise.all([
+      auth.getServerSession(),
+      server.group.get.query(slug),
+      server.event.all.query({
+        filter: {
+          byOrganizingGroup: [slug],
+          byEndDate: {
+            max: null,
+            min: now,
+          },
+          excludingType: isStaff ? [] : undefined,
+          orderBy: "asc",
         },
-        excludingType: isStaff ? [] : undefined,
-        orderBy: "asc",
-      },
-    }),
-    server.event.all.query({
-      filter: {
-        byEndDate: {
-          max: now,
-          min: null,
+      }),
+      server.event.all.query({
+        filter: {
+          byEndDate: {
+            max: now,
+            min: null,
+          },
+          byOrganizingGroup: [slug],
+          excludingType: isStaff ? [] : undefined,
+          orderBy: "desc",
         },
-        byOrganizingGroup: [slug],
-        excludingType: isStaff ? [] : undefined,
-        orderBy: "desc",
-      },
-    }),
-  ])
+      }),
+    ]);
 
   // We do not show members for ASSOCIATED types because they often have members outside Online, meaning the member list
   // would be incomplete.
-  const showMembers = group.type !== "ASSOCIATED" && group.memberVisibility !== "NONE"
+  const showMembers =
+    group.type !== "ASSOCIATED" && group.memberVisibility !== "NONE";
 
-  const members = showMembers ? await server.group.getMembers.query(slug) : new Map<UserId, GroupMember>()
+  const members = showMembers
+    ? await server.group.getMembers.query(slug)
+    : new Map<UserId, GroupMember>();
 
-  const hasContactInfo = group.email || group.contactUrl
+  const hasContactInfo = group.email || group.contactUrl;
 
   const membersToShow = [...members.values()].filter((member) => {
-    const membership = getLatestActiveMembership(member)
+    const membership = getLatestActiveMembership(member);
 
-    const isEmailOnly = membership?.roles.every((r) => r.type === "EMAIL_ONLY")
-    const isMe = member.id === session?.sub
+    const isEmailOnly = membership?.roles.every((r) => r.type === "EMAIL_ONLY");
+    const isMe = member.id === session?.sub;
 
     if (group.memberVisibility === "NONE" || (isEmailOnly && !isMe)) {
-      return false
+      return false;
     }
 
     if (group.memberVisibility === "ALL_MEMBERS") {
-      return true
+      return true;
     }
 
     if (group.memberVisibility === "LEADER") {
-      return membership?.roles.some((r) => r.type === "LEADER")
+      return membership?.roles.some((r) => r.type === "LEADER");
     }
 
     if (group.memberVisibility === "WITH_ROLES") {
-      return membership?.roles.some((r) => r.type !== "COSMETIC" && r.type !== "EMAIL_ONLY")
+      return membership?.roles.some(
+        (r) => r.type !== "COSMETIC" && r.type !== "EMAIL_ONLY"
+      );
     }
 
-    return false
-  })
+    return false;
+  });
 
   const activeMembers = [...membersToShow]
     .filter((member) => getLatestActiveMembership(member) !== undefined)
     .toSorted((leftMember, rightMember) => {
-      const left = getLatestActiveMembership(leftMember)
-      const right = getLatestActiveMembership(rightMember)
+      const left = getLatestActiveMembership(leftMember);
+      const right = getLatestActiveMembership(rightMember);
       // Sanity check
       if (left === undefined || right === undefined) {
-        return 0
+        return 0;
       }
-      const leftPriority = Math.max(...left.roles.map((role) => getRolePriority(role)))
-      const rightPriority = Math.max(...right.roles.map((role) => getRolePriority(role)))
+      const leftPriority = Math.max(
+        ...left.roles.map((role) => getRolePriority(role))
+      );
+      const rightPriority = Math.max(
+        ...right.roles.map((role) => getRolePriority(role))
+      );
 
       if (leftPriority !== rightPriority) {
-        return rightPriority - leftPriority
+        return rightPriority - leftPriority;
       }
 
-      return compareDesc(left.start, right.start)
-    })
+      return compareDesc(left.start, right.start);
+    });
+
   const leader = [...members.values()]
     .filter((member) => getLatestActiveMembership(member) !== undefined)
     .find((user) => {
-      const membership = getLatestActiveMembership(user)
-      return membership?.roles.some((r) => r.type === "LEADER")
-    })
+      const membership = getLatestActiveMembership(user);
+      return membership?.roles.some((r) => r.type === "LEADER");
+    });
 
   const name = group.name ?? group.abbreviation
   const easterEgg = getGroupEasterEgg(name)
@@ -132,7 +158,11 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 {group.abbreviation}
               </Title>
 
-              <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-400">
+              <Badge
+                color="slate"
+                variant="light"
+                className="bg-gray-100 text-gray-500 dark:text-stone-400"
+              >
                 {getGroupTypeName(group.type)}
               </Badge>
             </div>
@@ -198,8 +228,19 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                   <Text>{leader.name}</Text>
                 </Link>
               ) : (
-                <Text className="text-gray-500 dark:text-stone-400">Ingen kontaktinformasjon</Text>
+                <Text className="text-gray-500 dark:text-stone-400">
+                  Ingen kontaktinformasjon
+                </Text>
               ))}
+
+              
+
+            {group.type == "INTEREST_GROUP" &&
+              !activeMembers?.some((m) => m.id === session?.sub) && (
+                <Button element="a" color="brand" href="https://onlinentnu.slack.com/archives/C0601G1UC4R">
+                  Meld deg inn!
+                </Button>
+              )}
           </div>
         </div>
       </div>
@@ -209,7 +250,9 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
             {members.size > 0 && (
-              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.length})</Text>
+              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">
+                ({activeMembers.length})
+              </Text>
             )}
           </div>
 
@@ -217,44 +260,53 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
               {Array.from(
                 activeMembers.map((member) => (
-                  <GroupMemberEntry key={member.id} userId={session?.sub} member={member} />
+                  <GroupMemberEntry
+                    key={member.id}
+                    userId={session?.sub}
+                    member={member}
+                  />
                 ))
               )}
             </div>
           ) : (
-            <Text className="text-gray-500 dark:text-stone-400">Ingen aktive medlemmer</Text>
+            <Text className="text-gray-500 dark:text-stone-400">
+              Ingen aktive medlemmer
+            </Text>
           )}
         </div>
       )}
 
       <div className="flex flex-col gap-4">
-        <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
+        <Title>
+          {group.abbreviation ? `${group.abbreviation}s` : "Gruppens"}{" "}
+          arrangementer
+        </Title>
         <EventList
           futureEventWithAttendances={futureEventWithAttendances.items}
           pastEventWithAttendances={pastEventWithAttendances.items}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 interface GroupMemberEntryProps {
-  userId: UserId | null | undefined
-  member: GroupMember
+  userId: UserId | null | undefined;
+  member: GroupMember;
 }
 
 const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
-  const isVerified = member.flags.includes("VANITY_VERIFIED")
-  const isUser = userId === member.id
+  const isVerified = member.flags.includes("VANITY_VERIFIED");
+  const isUser = userId === member.id;
 
   // This requires periods to be sorted by startedAt in descending order
-  const firstActiveMembership = getLatestActiveMembership(member)
+  const firstActiveMembership = getLatestActiveMembership(member);
 
   const roles = firstActiveMembership?.roles.toSorted((a, b) => {
-    return getRolePriority(b) - getRolePriority(a)
-  })
+    return getRolePriority(b) - getRolePriority(a);
+  });
 
-  const roleNames = roles?.map(({ name }) => name).join(", ") || "Ingen roller"
+  const roleNames = roles?.map(({ name }) => name).join(", ") || "Ingen roller";
 
   return (
     <Link
@@ -262,8 +314,12 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
       href={`/profil/${member.profileSlug}`}
       className={cn(
         "flex flex-row items-center gap-3 p-2 rounded-lg transition-colors",
-        !isVerified && !isUser && "bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700",
-        isUser && !isVerified && "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900",
+        !isVerified &&
+          !isUser &&
+          "bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700",
+        isUser &&
+          !isVerified &&
+          "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900",
         isVerified && [
           "bg-gradient-to-r",
           "from-yellow-200 to-yellow-100 hover:from-yellow-300 hover:via-yellow-200 hover:to-yellow-200",
@@ -281,40 +337,46 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
         {isVerified ? (
           <div className="flex items-center gap-1">
             <Text className="text-lg/6 dark:text-black">{member.name}</Text>
-            <IconRosetteDiscountCheckFilled className="text-blue-600 dark:text-sky-700" width={16} height={16} />
+            <IconRosetteDiscountCheckFilled
+              className="text-blue-600 dark:text-sky-700"
+              width={16}
+              height={16}
+            />
           </div>
         ) : (
           <Text className="text-lg/6">{member.name}</Text>
         )}
-        <Text className={cn("text-sm", isVerified && "dark:text-black")}>{roleNames}</Text>
+        <Text className={cn("text-sm", isVerified && "dark:text-black")}>
+          {roleNames}
+        </Text>
       </div>
     </Link>
-  )
-}
+  );
+};
 
 function getLatestActiveMembership(member: GroupMember) {
-  return member.groupMemberships.find((m) => m.end === null)
+  return member.groupMemberships.find((m) => m.end === null);
 }
 
 function getRolePriority(role: GroupRole) {
   switch (role.type) {
     case "LEADER":
-      return 8
+      return 8;
     case "DEPUTY_LEADER":
-      return 7
+      return 7;
     case "TREASURER":
-      return 6
+      return 6;
     case "TRUSTEE":
-      return 5
+      return 5;
     case "PUNISHER":
-      return 4
+      return 4;
     case "COSMETIC":
-      return 3
+      return 3;
     case "EMAIL_ONLY":
-      return 2
+      return 2;
     case "TEMPORARILY_LEAVE":
-      return 1
+      return 1;
     default:
-      return 0
+      return 0;
   }
 }
