@@ -120,7 +120,7 @@ const links: MenuLink[] = [
       },
       {
         title: "Fakturaskjema",
-        href: "https://faktura.online.ntnu.no/",
+        href: "/bedrift/faktura",
         icon: IconReceipt,
         description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt.",
       },

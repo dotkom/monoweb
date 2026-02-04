@@ -1,3 +1,5 @@
+"use client"
+
 import { Text } from "@dotkomonline/ui"
 import type { FC } from "react"
 import type { Message } from "react-hook-form"

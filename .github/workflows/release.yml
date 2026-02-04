@@ -80,24 +80,6 @@ jobs:
           environment: prd
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
-  build-invoicification:
-    name: invoicification
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-invoicification
-        with:
-          deploy: true
-          environment: prd
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-  
   build-rif:
     name: rif
     runs-on: ubuntu-24.04-arm
@@ -158,7 +140,6 @@ jobs:
     needs:
       - build-brevduen
       - build-dashboard
-      - build-invoicification
       - build-rif
       - build-rpc
       - build-web

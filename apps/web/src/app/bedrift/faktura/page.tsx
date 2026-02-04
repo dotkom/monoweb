@@ -2,15 +2,14 @@
 
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Icon } from "@iconify/react"
-import Image from "next/image"
+import { IconLoader2 } from "@tabler/icons-react"
 import { FormProvider, useForm } from "react-hook-form"
-import { Section } from "../components/section"
-import { Form } from "./form"
-import { DeliveryMethod, type FormSchema, InvoiceRelation, formSchema } from "./form-schema"
-import { useSubmitMutation } from "./mutation"
+import { DeliveryMethod, type FormSchema, InvoiceRelation, formSchema } from "./components/form-schema"
+import { InvoiceForm } from "./components/invoice-form"
+import { Section } from "./components/section"
+import { useSubmitInvoiceMutation } from "./mutations"
 
-export default function Page() {
+export default function InvoicificationPage() {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -19,7 +18,7 @@ export default function Page() {
       preferredDueDateLength: 14,
     },
   })
-  const dispatch = useSubmitMutation()
+  const dispatch = useSubmitInvoiceMutation()
   const onSubmit = (data: FormSchema) => {
     dispatch.mutate(data)
   }
@@ -27,7 +26,6 @@ export default function Page() {
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-12 px-3 py-12">
       <Section>
-        <Image src="/Online_bla.svg" alt="Online logo" width={0} height={0} className="w-full" />
         <Title element="h1">Fakturaskjema for bedrifter</Title>
         <Text>
           Denne blanketten bør helst fylles ut av <strong>økonomiavdelingen</strong>. Informasjonen forsikrer at det
@@ -43,14 +41,10 @@ export default function Page() {
       </Section>
       <FormProvider {...form}>
         <Section as="form" onSubmit={form.handleSubmit(onSubmit)}>
-          <Form />
+          <InvoiceForm />
 
           <Button type="submit" disabled={dispatch.isPending}>
-            {dispatch.isPending ? (
-              <Icon className="animate-spin" icon="tabler:loader-2" />
-            ) : (
-              "Send inn fakturainformasjon"
-            )}
+            {dispatch.isPending ? <IconLoader2 className="animate-spin" /> : "Send inn fakturainformasjon"}
           </Button>
         </Section>
       </FormProvider>

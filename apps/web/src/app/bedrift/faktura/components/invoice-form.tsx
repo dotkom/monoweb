@@ -1,14 +1,16 @@
+"use client"
+
 import { Label, TextInput, Textarea, Title } from "@dotkomonline/ui"
 import { ErrorMessage } from "@hookform/error-message"
 import { type FC, useEffect } from "react"
 import { useFormContext } from "react-hook-form"
-import { Section } from "../components/section"
 import { ControlledSelect } from "./controlled-select"
 import { CustomErrorMessage } from "./custom-error-message"
 import { DeliveryMethod, type FormSchema, InvoiceRelation } from "./form-schema"
+import { Section } from "./section"
 import { useOrganization } from "./use-organization"
 
-export const Form: FC = () => {
+export const InvoiceForm: FC = () => {
   const { register, control, formState, watch, setValue, setError, clearErrors } = useFormContext<FormSchema>()
   const brreg = useOrganization((data) => {
     if ("status" in data && data.status === 400) {

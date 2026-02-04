@@ -22,6 +22,7 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
+    "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^4.0.0",
     "@next/env": "^15.3.5",
     "@radix-ui/react-avatar": "^1.1.10",
