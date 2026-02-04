@@ -75,6 +75,13 @@ export function getAuditLogRepository(): AuditLogRepository {
                   },
                 }
               : {},
+            query.byTableName && query.byTableName.length > 0
+              ? {
+                  tableName: {
+                    in: query.byTableName,
+                  },
+                }
+              : {},
           ],
         },
       })
