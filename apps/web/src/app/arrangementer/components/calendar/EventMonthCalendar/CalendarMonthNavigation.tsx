@@ -26,7 +26,7 @@ const months = [
   "Desember",
 ]
 
-export const CalendarNavigation: FC<CalendarNavigationProps> = ({ year, month, onNavigate, className }) => {
+export const CalendarMonthNavigation: FC<CalendarNavigationProps> = ({ year, month, onNavigate, className }) => {
   const handlePreviousMonth = () => {
     if (month === 0) {
       onNavigate(year - 1, 11)

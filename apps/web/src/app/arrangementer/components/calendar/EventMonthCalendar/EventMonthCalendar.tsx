@@ -8,20 +8,20 @@ import type { EventWithAttendance } from "@dotkomonline/types"
 import { cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
-import { endOfMonth, endOfWeek, getWeek, isThisWeek } from "date-fns"
+import { endOfMonth, endOfWeek, getISOWeek, isThisISOWeek } from "date-fns"
 import type { FC } from "react"
-import { EventCalendarItem } from "./EventCalendarItem"
-import { eventCategories } from "./eventTypeConfig"
-import { getCalendarArray } from "./getCalendarArray"
+import { EventCalendarItem } from "../EventCalendarItem"
+import { eventCategories } from "../eventTypeConfig"
+import { getMonthCalendarArray } from "./getMonthCalendarArray"
 
 function getEventTypeGuide(events: EventWithAttendance[]) {
   const presentTypes = new Set(events.map((event) => event.event.type))
 
   return Array.from(presentTypes)
-    .filter((type) => eventCategories[type as keyof typeof eventCategories])
+    .filter((type) => eventCategories[type])
     .map((type) => ({
       type,
-      ...eventCategories[type as keyof typeof eventCategories],
+      ...eventCategories[type],
     }))
 }
 
@@ -30,7 +30,7 @@ interface CalendarProps {
   month: number
 }
 
-export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
+export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
   const session = useSession()
 
   const trpc = useTRPC()
@@ -63,7 +63,7 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
   const eventDetails = futureEventWithAttendances
   const _userId = session?.sub
 
-  const cal = getCalendarArray(year, month, eventDetails)
+  const cal = getMonthCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails)
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
@@ -97,22 +97,25 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
       </div>
 
       {cal.weeks.map((week, weekIndex) => (
-        <div className="relative min-h-24 sm:min-h-28" key={`week-${getWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
+        <div
+          className="relative min-h-24 sm:min-h-28"
+          key={`week-${getISOWeek(week.dates[1])}-${cal.year}-${cal.month}`}
+        >
           <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr] bottom-0 top-0 absolute w-full h-full">
             <div
               className={cn(
                 "hidden sm:flex w-6 pr-2 items-center justify-center",
-                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-600 dark:text-stone-400 text-xs"
+                isThisISOWeek(week.dates[1]) ? "font-semibold text-sm" : "text-gray-600 dark:text-stone-400 text-xs"
               )}
             >
-              {getWeek(week.dates[1])}
+              {getISOWeek(week.dates[1])}
             </div>
             {week.dates.map((day) => (
               <div
                 key={new Date(day).toISOString()}
                 className={cn(
-                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-300 dark:border-stone-600 border-t-[1px] ",
-                  week.dates.indexOf(day) % 7 === 0 ? "pl-1 sm:p-l-[5px]" : "pl-1 sm:border-l-[1px]",
+                  "py-1 pr-1 relative flex flex-col items-center sm:items-end border-gray-200 dark:border-stone-700 border-t ",
+                  week.dates.indexOf(day) % 7 === 0 ? "pl-1 sm:p-l-[5px]" : "pl-1 sm:border-l",
                   weekIndex > 0 ? "" : "sm:border-t-0"
                 )}
               >
@@ -131,13 +134,12 @@ export const EventCalendar: FC<CalendarProps> = ({ year, month }) => {
             ))}
           </div>
 
-          <div className="relative pt-10 pb-1">
+          <div className="relative pt-10 pb-1 sm:pl-6">
             {week.eventDetails.map((row, rowIndex) => (
               <div
-                className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
-                key={`week-${getWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
+                className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
+                key={`week-${getISOWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
               >
-                <div className="w-0 sm:w-6 sm:pr-2" />
                 {row.map(({ event, attendance, eventDisplayProps }) => {
                   return (
                     <EventCalendarItem

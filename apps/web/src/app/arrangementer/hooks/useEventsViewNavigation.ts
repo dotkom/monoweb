@@ -3,7 +3,7 @@
 import { useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
-export type EventsView = "list" | "cal"
+export type EventsView = "list" | "month" | "week"
 
 export const useEventsViewNavigation = () => {
   const router = useRouter()
@@ -13,13 +13,23 @@ export const useEventsViewNavigation = () => {
     (nextView: EventsView) => {
       const params = new URLSearchParams(searchParams.toString())
 
-      if (nextView === "cal") {
-        params.set("view", "cal")
-        // let them default to current year and month
+      if (nextView === "month") {
+        params.set("view", "month")
+        // let y and m default to current year and month if not set
+        params.delete("week")
+
+        // clear list-specific filters
+        params.delete("q")
+        params.delete("type")
+        params.delete("group")
+        params.delete("sort")
+      } else if (nextView === "week") {
+        params.set("view", "week")
+        // let week default to current week if not set
         params.delete("y")
         params.delete("m")
 
-        // clear filters
+        // clear list-specific filters
         params.delete("q")
         params.delete("type")
         params.delete("group")
@@ -29,6 +39,7 @@ export const useEventsViewNavigation = () => {
         params.delete("view")
         params.delete("y")
         params.delete("m")
+        params.delete("week")
       }
 
       router.replace(`?${params.toString()}`, { scroll: false })
