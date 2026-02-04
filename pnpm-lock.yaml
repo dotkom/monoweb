@@ -34,7 +34,7 @@ importers:
         version: 9.47.1
       fastify:
         specifier: ^5.3.3
-        version: 5.7.2
+        version: 5.7.3
       import-in-the-middle:
         specifier: ^1.15.0
         version: 1.15.0
@@ -300,7 +300,7 @@ importers:
         version: 4.1.0
       fastify:
         specifier: ^5.3.3
-        version: 5.7.2
+        version: 5.7.3
       fastify-raw-body:
         specifier: ^5.0.0
         version: 5.0.0
@@ -654,7 +654,7 @@ importers:
         version: 4.1.0
       fastify:
         specifier: ^5.3.3
-        version: 5.7.2
+        version: 5.7.3
       fastify-raw-body:
         specifier: ^5.0.0
         version: 5.0.0
@@ -1001,7 +1001,7 @@ importers:
         version: 3.25.76
       zod-prisma-types:
         specifier: ^3.2.4
-        version: 3.3.11(@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76)
+        version: 3.3.10(@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76)
     devDependencies:
       '@biomejs/biome':
         specifier: 2.3.13
@@ -1112,7 +1112,7 @@ importers:
         version: 3.25.76
       zod-prisma-types:
         specifier: ^3.2.4
-        version: 3.3.11(@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76)
+        version: 3.3.10(@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76)
     devDependencies:
       '@biomejs/biome':
         specifier: 2.3.13
@@ -3563,9 +3563,6 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
-
-  '@prisma/client-runtime-utils@7.3.0':
-    resolution: {integrity: sha512-dG/ceD9c+tnXATPk8G+USxxYM9E6UdMTnQeQ+1SZUDxTz7SgQcfxEqafqIQHcjdlcNK/pvmmLfSwAs3s2gYwUw==}
 
   '@prisma/client@6.19.2':
     resolution: {integrity: sha512-gR2EMvfK/aTxsuooaDA32D8v+us/8AAet+C3J1cc04SW35FPdZYgLF+iN4NDLUgAaUGTKdAB0CYenu1TAgGdMg==}
@@ -6648,8 +6645,8 @@ packages:
     resolution: {integrity: sha512-2qfoaQ3BQDhZ1gtbkKZd6n0kKxJISJGM6u/skD9ljdWItAscjXrtZ1lnjr7PavmXX9j4EyCPmBDiIsLn07d5vA==}
     engines: {node: '>= 10'}
 
-  fastify@5.7.2:
-    resolution: {integrity: sha512-dBJolW+hm6N/yJVf6J5E1BxOBNkuXNl405nrfeR8SpvGWG3aCC2XDHyiFBdow8Win1kj7sjawQc257JlYY6M/A==}
+  fastify@5.7.3:
+    resolution: {integrity: sha512-QHzWSmTNUg9Ba8tNXzb92FTH77K+c8yeQPH80EeSIc9wyZj85jbPisMP0rwmyKv8oJwUFPe1UpN8HkNIXwCnUQ==}
 
   fastq@1.20.1:
     resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
@@ -9410,8 +9407,8 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod-prisma-types@3.3.11:
-    resolution: {integrity: sha512-fP00cL+MLPhG3GDNep3cro5iXWTaFUcOqWoGfNGFFmaIxHjKoViXGKpZGwFg8RdXZdng1i1/EIh/Pv5kGQeKNA==}
+  zod-prisma-types@3.3.10:
+    resolution: {integrity: sha512-JvgW7XhajDPhnq9yR7dZwPQvD8rdWX2JRNmSxaYghXBb5o2G1XIgayOjKTmxEsZ72bhXegpmca5dcWz9olzS7w==}
     hasBin: true
     peerDependencies:
       '@prisma/client': ^4.x.x || ^5.x.x || ^6.x.x || ^7.x.x
@@ -12179,8 +12176,6 @@ snapshots:
     optional: true
 
   '@polka/url@1.0.0-next.29': {}
-
-  '@prisma/client-runtime-utils@7.3.0': {}
 
   '@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)':
     optionalDependencies:
@@ -15503,7 +15498,7 @@ snapshots:
       raw-body: 3.0.2
       secure-json-parse: 2.7.0
 
-  fastify@5.7.2:
+  fastify@5.7.3:
     dependencies:
       '@fastify/ajv-compiler': 4.0.5
       '@fastify/error': 4.2.0
@@ -18926,10 +18921,9 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod-prisma-types@3.3.11(@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76):
+  zod-prisma-types@3.3.10(@prisma/client@6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(zod@3.25.76):
     dependencies:
       '@prisma/client': 6.19.2(prisma@6.19.2(magicast@0.3.5)(typescript@5.9.3))(typescript@5.9.3)
-      '@prisma/client-runtime-utils': 7.3.0
       '@prisma/dmmf': 7.3.0
       '@prisma/generator-helper': 7.3.0
       code-block-writer: 13.0.3

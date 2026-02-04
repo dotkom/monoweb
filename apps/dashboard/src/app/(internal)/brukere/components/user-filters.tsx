@@ -29,7 +29,7 @@ export const UserFilters = ({ onChange }: Props) => {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} autoComplete="off">
       <TextInput placeholder="Søk etter bruker..." {...form.register("search")} />
     </form>
   )

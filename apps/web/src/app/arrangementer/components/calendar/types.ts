@@ -20,3 +20,10 @@ export interface CalendarData {
   year: number
   month: number
 }
+
+export interface WeekData {
+  dates: Date[]
+  eventDetails: (EventWithAttendance & { eventDisplayProps: EventDisplayProps })[][]
+  year: number
+  weekNumber: number
+}

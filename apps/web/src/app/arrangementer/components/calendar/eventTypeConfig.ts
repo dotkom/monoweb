@@ -1,3 +1,5 @@
+import type { EventType } from "@dotkomonline/types"
+
 interface EventCategoryConfig {
   displayName: string
   classes: {
@@ -10,7 +12,7 @@ interface EventCategoryConfig {
   }
 }
 
-export const eventCategories: Record<string, EventCategoryConfig> = {
+export const eventCategories: Record<EventType, EventCategoryConfig> = {
   SOCIAL: {
     displayName: "Sosialt",
     classes: {
