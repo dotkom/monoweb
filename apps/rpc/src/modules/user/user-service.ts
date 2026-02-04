@@ -23,6 +23,7 @@ import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/uti
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import { isSameDay, subYears } from "date-fns"
+import { isDevelopmentEnvironment } from "../../configuration"
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
@@ -254,6 +255,35 @@ export function getUserService(
         throw new IllegalStateError(
           `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
         )
+      }
+
+      // Check if a user with the same email already exists (but with a different ID).
+      // This happens when syncing prod data locally - prod users have different Auth0 subject IDs
+      // than local Auth0 users with the same email. We handle this by updating the existing user's ID
+      // to match the new Auth0 subject, preserving all their data and memberships.
+      const email = response.data.email
+      if (email && isDevelopmentEnvironment) {
+        const existingUserByEmail = await handle.user.findFirst({
+          where: { email },
+          select: { id: true },
+        })
+
+        if (existingUserByEmail && existingUserByEmail.id !== userId) {
+          logger.info(
+            "Found existing user with same email but different ID. Updating User(ID=%s) to new ID=%s",
+            existingUserByEmail.id,
+            userId
+          )
+          // Update the user's ID directly. PostgreSQL will cascade this to all FK references
+          // because they all have ON UPDATE CASCADE.
+          await handle.$executeRaw`UPDATE ow_user SET id = ${userId} WHERE id = ${existingUserByEmail.id}`
+
+          // Return the user with the updated ID
+          const updatedUser = await userRepository.findById(handle, userId)
+          if (updatedUser !== null) {
+            return this.discoverMembership(handle, userId)
+          }
+        }
       }
 
       await userRepository.register(handle, userId)

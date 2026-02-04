@@ -25,7 +25,8 @@
     "migrate": "prisma migrate dev",
     "generate": "prisma generate",
     "postinstall": "prisma generate",
-    "apply-fixtures": "tsx src/fixtures.ts"
+    "apply-fixtures": "tsx src/fixtures.ts",
+    "vinstraff:user-db-sync": "tsx src/vinstraff-user-db-sync.ts"
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
