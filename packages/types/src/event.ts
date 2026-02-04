@@ -6,6 +6,7 @@ import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOr
 import { GroupSchema } from "./group"
 import { set, addWeeks } from "date-fns"
 import { TZDate } from "@date-fns/tz"
+import { FeedbackFormSchema } from "./feedback-form"
 
 /**
  * @packageDocumentation
@@ -67,6 +68,11 @@ export const EventWithAttendanceSchema = z.object({
   attendance: AttendanceSchema.nullable(),
 })
 export type EventWithAttendance = z.infer<typeof EventWithAttendanceSchema>
+
+export const EventWithFeedbackFormSchema = EventSchema.extend({
+  feedbackForm: FeedbackFormSchema,
+})
+export type EventWithFeedbackFormSchema = z.infer<typeof EventWithFeedbackFormSchema>
 
 export const mapEventTypeToLabel = (eventType: EventType) => {
   switch (eventType) {

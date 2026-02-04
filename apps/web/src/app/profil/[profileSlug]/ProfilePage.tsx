@@ -439,6 +439,10 @@ export function ProfilePage() {
                       Gi tilbakemelding på {event.title} som du deltok på{" "}
                       {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
                     </Text>
+                    <Text className="text-sm text-red-400">
+                      Fristen for å svare er{" "}
+                      {formatDate(event.feedbackForm.answerDeadline, "dd. MMM yyyy HH:mm", { locale: nb })}
+                    </Text>
                   </div>
                 </Link>
               )
