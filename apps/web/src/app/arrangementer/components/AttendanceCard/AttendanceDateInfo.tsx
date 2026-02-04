@@ -97,7 +97,7 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
           {index < sortedElements.length - 1 && (
             <>
               <span className="self-center grow h-0.5 mx-4 rounded-full bg-gray-300 dark:bg-stone-700 hidden xs:block md:hidden"/>
-              <span className="self-center h-15 w-0.5 rounded-full bg-gray-300 dark:bg-stone-700 hidden md:block lg:hidden"/>
+              <span className="self-center h-15 w-px rounded-full bg-gray-300 dark:bg-stone-700 hidden md:block"/>
             </>
           )}
         </React.Fragment>
