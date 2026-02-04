@@ -21,6 +21,7 @@ import { tasks } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
 import type { FeedbackFormRepository } from "./feedback-form-repository"
+import { getCurrentUTC } from "@dotkomonline/utils"
 
 export type FeedbackEligibilityResult = FeedbackEligibilitySuccess | FeedbackEligibilityFailure
 
@@ -67,6 +68,13 @@ export function getFeedbackFormService(
 ): FeedbackFormService {
   return {
     async create(handle, feedbackFormData, questionsData) {
+      const event = await eventService.getEventById(handle, feedbackFormData.eventId)
+      const now = getCurrentUTC()
+
+      if (event.end < now) {
+        throw new Error("Can't create feedback form for an event that has already ended")
+      }
+
       const row = await formRepository.create(handle, feedbackFormData, questionsData)
 
       await taskSchedulingService.scheduleAt(
