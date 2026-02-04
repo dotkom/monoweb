@@ -122,7 +122,8 @@
   /* Easter egg animations */
   --animate-gold-border-spin: gold-border-spin 3s linear infinite;
   --animate-coin-flip: coin-flip 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  --animate-coin-flip-in: coin-flip-in 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-coin-flip-in: coin-flip-in 1.2s cubic-bezier(0.4, 0, 0.2, 1)
+    forwards;
 
   @keyframes scan {
     0% {
@@ -178,16 +179,17 @@
   .easter-egg-gold-border {
     animation: gold-border-spin 3s linear infinite;
     background:
-      padding-box linear-gradient(to bottom, var(--color-gold-light), var(--color-gold-mid)),
+      padding-box
+      linear-gradient(to bottom, var(--color-gold-light), var(--color-gold-mid)),
       border-box
-        conic-gradient(
-          from var(--border-angle),
-          var(--color-gold-dark),
-          var(--color-gold-mid),
-          var(--color-gold-light),
-          var(--color-gold-mid),
-          var(--color-gold-dark)
-        );
+      conic-gradient(
+        from var(--border-angle),
+        var(--color-gold-dark),
+        var(--color-gold-mid),
+        var(--color-gold-light),
+        var(--color-gold-mid),
+        var(--color-gold-dark)
+      );
   }
 
   .easter-egg-gold-border::before {
