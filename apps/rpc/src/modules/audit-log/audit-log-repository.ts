@@ -82,6 +82,13 @@ export function getAuditLogRepository(): AuditLogRepository {
                   },
                 }
               : {},
+            query.byOperation && query.byOperation.length > 0
+              ? {
+                  operation: {
+                    in: query.byOperation,
+                  },
+                }
+              : {},
           ],
         },
       })

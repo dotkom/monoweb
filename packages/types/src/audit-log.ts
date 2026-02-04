@@ -37,6 +37,21 @@ export const AuditLogTable = z.enum([
   "event_company",
 ])
 
+export const AuditLogOperation = z.enum(["INSERT", "UPDATE", "DELETE"])
+
+export const mapAuditLogOperationToLabel = (operation: string): string => {
+  switch (operation) {
+    case "INSERT":
+      return "Opprettet"
+    case "UPDATE":
+      return "Endret"
+    case "DELETE":
+      return "Slettet"
+    default:
+      return operation
+  }
+}
+
 export const AuditLogSchema = schemas.AuditLogSchema.extend({
   user: schemas.UserSchema.nullable(),
 })
@@ -49,6 +64,7 @@ export const AuditLogFilterQuerySchema = z
     bySearchTerm: buildSearchFilter(),
     byUserId: z.array(UserSchema.shape.id).optional(),
     byTableName: z.array(AuditLogTable).optional(),
+    byOperation: z.array(AuditLogOperation).optional(),
   })
   .partial()
 
