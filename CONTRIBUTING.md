@@ -108,8 +108,6 @@ The following applications run on the following ports:
 
 - `/apps/web`: 3000
 - `/apps/dashboard`: 3002
-- `/apps/rif`: 3003
-- `/apps/invoicing`: 3004
 - `/apps/brevduen`: AWS Lambda only
 - `/packages/ui`: 61000 (ladle)
 

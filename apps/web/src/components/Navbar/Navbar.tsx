@@ -126,7 +126,7 @@ const links: MenuLink[] = [
       },
       {
         title: "Interesseskjema",
-        href: "https://interesse.online.ntnu.no/",
+        href: "/bedrift/interesse",
         icon: IconMessage,
         description: "Interessert i å vise bedriften din for studentene våre? Meld interesse!",
       },

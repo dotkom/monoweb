@@ -4,16 +4,16 @@ import { Checkbox, Label, Text, TextInput, Textarea, Title } from "@dotkomonline
 import { ErrorMessage } from "@hookform/error-message"
 import type { FC } from "react"
 import { Controller, useFormContext } from "react-hook-form"
-import { Section } from "../components/section"
-import { CheckboxWithTooltip } from "./checkbox"
+import { CheckboxWithTooltip } from "./checkbox-with-tooltip"
 import { CustomErrorMessage } from "./custom-error-message"
 import type { FormSchema } from "./form-schema"
+import { Section } from "./section"
 
 const instagramTakeoverTooltip = (
   <Section>
     <Text>
       En takeover på Onlines bedriftsinstagram (@onlinebedrift) gir anledning for å legge ut stories på brukeren gjennom
-      en hel dag.Dette gir god mulighet for å gi innblikk i bedriften og vise hva ansatte gjør i løpet av en dag, samt
+      en hel dag. Dette gir god mulighet for å gi innblikk i bedriften og vise hva ansatte gjør i løpet av en dag, samt
       interagere med studentene via spørsmålsrunder.
     </Text>
     <Text>
@@ -53,7 +53,7 @@ const femalesInTechTooltip = (
   </Section>
 )
 
-export const Form: FC = () => {
+export const InterestForm: FC = () => {
   const { register, control, formState } = useFormContext<FormSchema>()
 
   return (
@@ -170,7 +170,7 @@ export const Form: FC = () => {
 
       <Section as="fieldset">
         <legend>
-          <Title element="h3">Hva er dere interessert i?</Title>
+          <Title element="h3">Kommentarer</Title>
         </legend>
         <Text>
           Gjerne utdyp om dere har noen tanker om hvordan et arrangement kan se ut eller annet relevant. Still også

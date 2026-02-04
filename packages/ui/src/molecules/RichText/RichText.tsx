@@ -1,6 +1,6 @@
 "use client"
 
-import DOMPurify from "isomorphic-dompurify"
+import DOMPurify from "dompurify"
 import { useLayoutEffect, useRef, useState } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms/Collapsible/Collapsible"
 import { Text } from "../../atoms/Typography/Text"

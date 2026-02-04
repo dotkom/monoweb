@@ -2,26 +2,27 @@
 
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Icon } from "@iconify/react"
-import Image from "next/image"
+import { IconLoader2 } from "@tabler/icons-react"
 import { FormProvider, useForm } from "react-hook-form"
-import { Section } from "../components/section"
-import { Form } from "./form"
-import { type FormSchema, formSchema } from "./form-schema"
-import { useSubmitMutation } from "./mutation"
+import { InterestForm } from "./components/interest-form"
+import { type FormSchema, formSchema } from "./components/form-schema"
+import { Section } from "./components/section"
+import { useSubmitInterestMutation } from "./mutations"
 
-export default function Page() {
+export default function InterestFormPage() {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       requestsCompanyPresentation: false,
       requestsCourseEvent: false,
+      requestsTwoInOneDeal: false,
       requestsInstagramTakeover: false,
       requestsExcursionParticipation: false,
       requestsCollaborationEvent: false,
+      requestsFemalesInTechEvent: false,
     },
   })
-  const dispatch = useSubmitMutation()
+  const dispatch = useSubmitInterestMutation()
   const onSubmit = (data: FormSchema) => {
     dispatch.mutate(data)
   }
@@ -29,7 +30,6 @@ export default function Page() {
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-12 px-3 py-12">
       <Section>
-        <Image src="/Online_bla.svg" alt="Online logo" width={0} height={0} className="w-full" />
         <Title element="h1">Interesseskjema for bedrifter</Title>
         <Text>Dette skjemaet skal brukes til å melde interesse for samarbeid med Online.</Text>
 
@@ -45,16 +45,19 @@ export default function Page() {
         <Text>
           På våre nettsider har vi en karriereside, hvor vi publiserer stillingsannonser på vegne av bedrifter som
           ønsker å fremme ledige stillinger. Dersom dette er av interesse, ønsker vi gjerne å motta henvendelser via
-          e-post på <a href="mailto:bedriftskontakt@online.ntnu.no">bedriftskontakt@online.ntnu.no</a>. Eventuelle andre
-          henvendelser kan også rettes til samme e-postadresse.
+          e-post på{" "}
+          <a href="mailto:bedriftskontakt@online.ntnu.no" className="underline">
+            bedriftskontakt@online.ntnu.no
+          </a>
+          . Eventuelle andre henvendelser kan også rettes til samme e-postadresse.
         </Text>
       </Section>
       <FormProvider {...form}>
         <Section as="form" onSubmit={form.handleSubmit(onSubmit)}>
-          <Form />
+          <InterestForm />
 
           <Button type="submit" disabled={dispatch.isPending}>
-            {dispatch.isPending ? <Icon className="animate-spin" icon="tabler:loader-2" /> : "Meld interesse"}
+            {dispatch.isPending ? <IconLoader2 className="animate-spin" /> : "Meld interesse"}
           </Button>
         </Section>
       </FormProvider>

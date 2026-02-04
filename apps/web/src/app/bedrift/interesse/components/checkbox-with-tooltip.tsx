@@ -1,5 +1,7 @@
+"use client"
+
 import { Checkbox, Tooltip, TooltipArrow, TooltipContent, TooltipPortal, TooltipTrigger } from "@dotkomonline/ui"
-import { Icon } from "@iconify/react"
+import { IconInfoCircle } from "@tabler/icons-react"
 import type { FC, ReactNode } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import type { FormSchema } from "./form-schema"
@@ -22,7 +24,7 @@ export const CheckboxWithTooltip: FC<CheckboxWithTooltipProps> = ({ label, name,
           <Checkbox label={label} onCheckedChange={field.onChange} checked={field.value as boolean} />
           <Tooltip>
             <TooltipTrigger type="button">
-              <Icon icon="tabler:info-circle" />
+              <IconInfoCircle size={16} />
             </TooltipTrigger>
             <TooltipPortal>
               <TooltipContent
