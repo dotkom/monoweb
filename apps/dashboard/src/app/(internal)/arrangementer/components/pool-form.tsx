@@ -63,8 +63,8 @@ export const usePoolForm = (props: PoolFormProps) => {
 
   const generatedTitle = createPoolName(yearCriteria ?? [])
   const defaultTitle = form.formState.defaultValues?.title
-  const defaultTitleWasGenerated = defaultTitle === createPoolName(props.defaultValues.yearCriteria ?? [])
-  const titleIsDirty = Boolean(form.formState.dirtyFields.title)
+  const isDefaultGeneratedTitle = defaultTitle === createPoolName(props.defaultValues.yearCriteria ?? [])
+  const isTitleDirty = Boolean(form.formState.dirtyFields.title)
 
   const fields = useMemo(
     () =>
@@ -135,13 +135,13 @@ export const usePoolForm = (props: PoolFormProps) => {
   )
 
   useEffect(() => {
-    if (!yearCriteria || !defaultTitleWasGenerated || titleIsDirty) {
+    if (!yearCriteria || !isDefaultGeneratedTitle || isTitleDirty) {
       return
     }
 
     form.setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
     form.trigger("title")
-  }, [yearCriteria, generatedTitle, defaultTitleWasGenerated, titleIsDirty, form])
+  }, [yearCriteria, generatedTitle, isDefaultGeneratedTitle, isTitleDirty, form])
 
   const onSubmit = form.handleSubmit((values) => {
     form.resetField("yearCriteria")
