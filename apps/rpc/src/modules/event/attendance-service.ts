@@ -877,6 +877,8 @@ export function getAttendanceService(
         event.title,
         attendee.id
       )
+
+      sendEventRegistrationEmail(event, attendance, firstUnreservedAdjacentAttendee)
     },
 
     async findChargeAttendeeScheduleDate(handle, attendeeId) {

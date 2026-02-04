@@ -15,6 +15,7 @@ import type {
   EventWrite,
   GroupId,
   UserId,
+  EventWithFeedbackFormSchema,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, NotFoundError } from "../../error"
@@ -49,7 +50,7 @@ export interface EventService {
     query: Pick<EventFilterQuery, "orderBy">
   ): Promise<Event[]>
   findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
-  findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
+  findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<EventWithFeedbackFormSchema[]>
   findFeaturedEvents(handle: DBHandle, offset: number, limit: number): Promise<BaseEvent[]>
   /**
    * Get an event by its id

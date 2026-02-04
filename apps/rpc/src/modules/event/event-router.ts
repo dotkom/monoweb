@@ -7,6 +7,7 @@ import {
   EventFilterQuerySchema,
   EventSchema,
   EventWithAttendanceSchema,
+  EventWithFeedbackFormSchema,
   EventWriteSchema,
   GroupSchema,
   UserSchema,
@@ -259,7 +260,7 @@ export type FindUnansweredByUserInput = inferProcedureInput<typeof findUnanswere
 export type FindUnansweredByUserOutput = inferProcedureOutput<typeof findUnansweredByUserProcedure>
 const findUnansweredByUserProcedure = procedure
   .input(UserSchema.shape.id)
-  .output(EventSchema.array())
+  .output(EventWithFeedbackFormSchema.array())
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.eventService.findEventsWithUnansweredFeedbackFormByUserId(ctx.handle, input))

@@ -120,7 +120,7 @@ export const emails = {
         eventLink: z.string().url(),
         deregistrationDeadline: z
           .string()
-          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
   }),
@@ -131,7 +131,9 @@ export const emails = {
         title: z.string(),
         details: z.string().nullable(),
         weight: z.number(),
-        endsAt: z.string().transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
+        endsAt: z
+          .string()
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
   }),

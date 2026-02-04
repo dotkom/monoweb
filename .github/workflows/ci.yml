@@ -75,7 +75,6 @@ jobs:
           deploy: false
           environment: prd
           git-hash: ${{ github.sha }}
-  
   build-rpc:
     name: rpc
     runs-on: ubuntu-24.04-arm
