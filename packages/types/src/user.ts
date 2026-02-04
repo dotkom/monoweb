@@ -1,7 +1,7 @@
 import { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { addYears, isAfter, isBefore, isWithinInterval } from "date-fns"
+import { addYears, isAfter, isBefore, isWithinInterval, subYears } from "date-fns"
 import { z } from "zod"
 import { buildSearchFilter } from "./filters"
 import invariant from "tiny-invariant"
@@ -197,19 +197,40 @@ export function getSpecializationName(specialization: MembershipSpecialization) 
 
 const JANUARY = 0
 const AUGUST = 7
-const getSpringSemesterStart = (year: number) => new TZDate(year, JANUARY, 1)
-const getAutumnSemesterStart = (year: number) => new TZDate(year, AUGUST, 1)
 
-/** Get the start of the academic year, which is by our convention August 1st. */
-export function getAcademicStart(date: TZDate | Date): TZDate {
-  // August 1st -- <year>-08-01T00:00:00.000Z
-  return new TZDate(date.getFullYear(), AUGUST, 1)
+/**
+ * Get the start of the academic year, which is by our convention January 1st.
+ * `January 1st -- <year>-01-01T00:00:00.000Z`
+ */
+export const getSpringSemesterStart = (dateOrYear: TZDate | Date | number) => {
+  const year = typeof dateOrYear === "number" ? dateOrYear : dateOrYear.getFullYear()
+
+  return new TZDate(year, JANUARY, 1)
 }
 
-export function getNextAcademicStart(): TZDate {
+/**
+ * Get the start of the academic year, which is by our convention August 1st.
+ * `August 1st -- <year>-08-01T00:00:00.000Z`
+ */
+export const getAutumnSemesterStart = (dateOrYear: TZDate | Date | number) => {
+  const year = typeof dateOrYear === "number" ? dateOrYear : dateOrYear.getFullYear()
+
+  return new TZDate(year, AUGUST, 1)
+}
+
+export const isSpringSemester = (date: TZDate | Date = getCurrentUTC()): boolean => {
+  return isBefore(date, getAutumnSemesterStart(date.getFullYear()))
+}
+
+export const isAutumnSemester = (date: TZDate | Date = getCurrentUTC()): boolean => {
+  return !isSpringSemester(date)
+}
+
+export function getNextAutumnSemesterStart(): TZDate {
   const now = getCurrentUTC()
-  const firstAugust = getAcademicStart(getCurrentUTC())
+  const firstAugust = getAutumnSemesterStart(getCurrentUTC())
   const isBeforeAugust = isBefore(now, firstAugust)
+
   return isBeforeAugust ? firstAugust : addYears(firstAugust, 1)
 }
 
@@ -236,4 +257,26 @@ export function getNextSemesterStart(): TZDate {
   }
 
   return getSpringSemesterStart(addYears(now, 1).getFullYear())
+}
+
+export function getCourseStart(semester: number): TZDate {
+  // We use Math#round because it will give us the correct year delta:
+  //   Year 1 autumn (value 0)  : round(0 / 2) = 0 (Start year = current year)
+  //   Year 1 spring (value 1): round(1 / 2) = 1 (Start year = current - 1, since spring is in the next calendar year)
+  //   Year 2 autumn (value 2)  : round(2 / 2) = 1 (Start year = current - 1)
+  //   Year 2 spring (value 3): round(3 / 2) = 2 (Start year = current - 2)
+  //   ...
+  const yearOffset = Math.round(semester / 2)
+  return subYears(getAutumnSemesterStart(getCurrentUTC()), yearOffset)
+}
+
+export function getStudyGrade(semester: number): number {
+  // A school year consists of two semesters (Autumn and Spring). So this formula will give us the year:
+  //   Year 1 autumn (value 0): floor(0 / 2) + 1 = 1 (Year 1)
+  //   Year 1 spring (value 1): floor(1 / 2) + 1 = 1 (Year 1)
+  //   Year 2 autumn (value 2): floor(2 / 2) + 1 = 2 (Year 2)
+  //   Year 2 spring (value 3): floor(3 / 2) + 1 = 2 (Year 2)
+  //   Year 3 autumn (value 4): floor(4 / 2) + 1 = 3 (Year 3)
+  //   ...
+  return Math.floor(semester / 2) + 1
 }

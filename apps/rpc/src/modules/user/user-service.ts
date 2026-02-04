@@ -121,7 +121,7 @@ export function getUserService(
 
     // Master degree always takes precedence over bachelor.
     const study = masterProgramme !== undefined ? "MASTER" : "BACHELOR"
-    const estimatedStudyStart = membershipService.findEstimatedStudyStart(study, courses)
+    const estimatedSemester = membershipService.findEstimatedSemester(study, courses)
 
     // We grant memberships for one semester at a time. This has some trade-offs, and natural alternative end dates are:
     //   1. One semester (what we use)
@@ -165,7 +165,7 @@ export function getUserService(
         start: startDate,
         end: endDate,
         specialization: code,
-        semester: estimatedStudyStart.semester,
+        semester: estimatedSemester,
       }
     }
 
@@ -175,7 +175,7 @@ export function getUserService(
       start: startDate,
       end: endDate,
       specialization: null,
-      semester: estimatedStudyStart.semester,
+      semester: estimatedSemester,
     }
   }
 
