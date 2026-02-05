@@ -150,13 +150,13 @@ export const mapDeregisterReasonTypeToLabel = (type: DeregisterReasonType) => {
   }
 }
 
-/** Adds one week and sets the time to 12:00:00 in Europe/Oslo timezone */
+/** Adds one week and sets the time to 23:59:00 in Europe/Oslo timezone */
 export const getDefaultFeedbackAnswerDeadline = (eventEnd: Date, timezone: string = "Europe/Oslo"): TZDate => {
   const date = new TZDate(eventEnd, timezone)
 
   return set(addWeeks(date, 1), {
-    hours: 12,
-    minutes: 0,
+    hours: 23,
+    minutes: 59,
     seconds: 0,
     milliseconds: 0,
   })
