@@ -84,7 +84,9 @@ export const createSpreadsheetRow = async (form: InterestFormData, configuration
     logger.warn(
       "Google Sheets integration is not configured (missing RIF_SERVICE_ACCOUNT or RIF_SPREADSHEET_ID). Skipping spreadsheet row creation."
     )
-    return
+    throw new Error(
+      "Missing env for RIF_SERVICE_ACCOUNT or RIF_SPREADSHEET_ID - Contact bedriftskontakt@online.ntnu.no"
+    )
   }
 
   // Parse and validate service account credentials
