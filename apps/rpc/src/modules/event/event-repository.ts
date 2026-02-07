@@ -299,6 +299,7 @@ export function getEventRepository(): EventRepository {
       const attendees = await handle.attendee.findMany({
         where: {
           userId,
+          reserved: true,
         },
         include: {
           attendance: {
