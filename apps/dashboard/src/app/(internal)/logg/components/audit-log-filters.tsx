@@ -1,8 +1,8 @@
-import type { AuditLogFilterQuery } from "@dotkomonline/types"
-import { TextInput } from "@mantine/core"
+import { AuditLogTable, type AuditLogFilterQuery, AuditLogOperation } from "@dotkomonline/types"
+import { Group, MultiSelect, TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useEffect } from "react"
-import { useForm, useWatch } from "react-hook-form"
+import { Controller, useForm, useWatch } from "react-hook-form"
 
 interface Props {
   onChange(filters: AuditLogFilterQuery): void
@@ -19,7 +19,39 @@ export const AuditLogFilters = ({ onChange }: Props) => {
 
   return (
     <form>
-      <TextInput placeholder="Søk etter hendelse..." {...form.register("bySearchTerm")} />
+      <Group mb="xs" gap="xs">
+        <TextInput placeholder="Søk etter hendelse..." {...form.register("bySearchTerm")} autoComplete="search" />
+        <Controller
+          name="byTableName"
+          control={form.control}
+          render={({ field }) => (
+            <MultiSelect
+              {...field}
+              searchable
+              placeholder="Filtrer etter type"
+              data={AuditLogTable.options.map((option) => ({
+                label: option,
+                value: option,
+              }))}
+            />
+          )}
+        />
+        <Controller
+          name="byOperation"
+          control={form.control}
+          render={({ field }) => (
+            <MultiSelect
+              {...field}
+              searchable
+              placeholder="Filtrer etter handling"
+              data={AuditLogOperation.options.map((option) => ({
+                label: option,
+                value: option,
+              }))}
+            />
+          )}
+        />
+      </Group>
     </form>
   )
 }

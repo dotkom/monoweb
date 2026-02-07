@@ -1,7 +1,7 @@
 "use client"
 
 import type { AuditLogFilterQuery } from "@dotkomonline/types"
-import { Skeleton, Stack, Title } from "@mantine/core"
+import { Card, Skeleton, Stack, Title } from "@mantine/core"
 import { useState } from "react"
 import { AuditLogFilters } from "./components/audit-log-filters"
 import { useAuditLogSearchQuery } from "./queries"
@@ -14,10 +14,12 @@ export default function AuditLogDetailsPage() {
   return (
     <Stack>
       <Title>Hendelseslogg</Title>
-      <AuditLogFilters onChange={setFilter} />
-      <Skeleton visible={isAuditLogsLoading}>
-        <AuditLogsTable audit_logs={auditLogs} onLoadMore={fetchNextPage} />
-      </Skeleton>
+      <Card p={0} bg="inherit">
+        <AuditLogFilters onChange={setFilter} />
+        <Skeleton visible={isAuditLogsLoading}>
+          <AuditLogsTable audit_logs={auditLogs} onLoadMore={fetchNextPage} />
+        </Skeleton>
+      </Card>
     </Stack>
   )
 }
