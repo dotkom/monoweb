@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
-  const [showFullImage, setShowFullImage] = useState(false)
+  const [showFullImage, setShowFullImage] = useState(true)
   const [hasCorrectAspectRatio, setHasCorrectAspectRatio] = useState<boolean | null>(null)
   const dashboardUrl = new URL(`/arrangementer/${event.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
