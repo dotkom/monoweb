@@ -573,7 +573,7 @@ importers:
         version: 8.5.6
       tailwind-merge:
         specifier: 3.3.0
-        version: 2.6.1
+        version: 3.3.0
       tailwindcss:
         specifier: 4.1.18
         version: 4.1.18
@@ -808,10 +808,10 @@ importers:
         version: 9.47.1(@opentelemetry/context-async-hooks@2.5.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.5.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.5.0(@opentelemetry/api@1.9.0))(next@15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(webpack@5.104.1)
       '@splinetool/react-spline':
         specifier: ^4.0.0
-        version: 4.1.0(@splinetool/runtime@1.12.49)(next@15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 4.1.0(@splinetool/runtime@1.12.50)(next@15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@splinetool/runtime':
         specifier: ^1.9.98
-        version: 1.12.49
+        version: 1.12.50
       '@tabler/icons-react':
         specifier: ^3.35.0
         version: 3.36.1(react@19.2.3)
@@ -4889,8 +4889,8 @@ packages:
       next:
         optional: true
 
-  '@splinetool/runtime@1.12.49':
-    resolution: {integrity: sha512-6vt5s2NF85TQTiGfLjpzkFFUwPzIej5RwIksL00iJbJT0abtUXfsXChfYkD0IwpX2M9volcnwdilSmAXhq72xA==}
+  '@splinetool/runtime@1.12.50':
+    resolution: {integrity: sha512-tzdG3D03WgiFD7xP47OAv03OfJmyLa0WDBf4qmQKap+RjHQXz3Uqq7P6kHMg/XXqII2eIqoD8gDKiOvgMZ8B9A==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -8786,6 +8786,9 @@ packages:
 
   tailwind-merge@2.6.1:
     resolution: {integrity: sha512-Oo6tHdpZsGpkKG88HJ8RR1rg/RdnEkQEfMoEk2x1XRI3F1AxeU+ijRXpiVUF4UbLfcxxRGw6TbUINKYdWVsQTQ==}
+
+  tailwind-merge@3.3.0:
+    resolution: {integrity: sha512-fyW/pEfcQSiigd5SNn0nApUOxx0zB/dm6UDU/rEwc2c3sX2smWUNbapHv+QRqLGVp9GWX3THIa7MUGPo+YkDzQ==}
 
   tailwindcss-animate@1.0.7:
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
@@ -13659,9 +13662,9 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.49)(next@15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.50)(next@15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@splinetool/runtime': 1.12.49
+      '@splinetool/runtime': 1.12.50
       blurhash: 2.0.5
       lodash.debounce: 4.0.8
       react: 19.2.3
@@ -13671,7 +13674,7 @@ snapshots:
     optionalDependencies:
       next: 15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
-  '@splinetool/runtime@1.12.49':
+  '@splinetool/runtime@1.12.50':
     dependencies:
       on-change: 4.0.0
       semver-compare: 1.0.0
@@ -18292,6 +18295,8 @@ snapshots:
   tagged-tag@1.0.0: {}
 
   tailwind-merge@2.6.1: {}
+
+  tailwind-merge@3.3.0: {}
 
   tailwindcss-animate@1.0.7(tailwindcss@4.1.18):
     dependencies:
