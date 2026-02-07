@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { ArticleId, ArticleTagName } from "@dotkomonline/types"
+import type { ArticleId, ArticleTagName } from "./article-types"
 
 export interface ArticleTagLinkRepository {
   add(handle: DBHandle, articleId: ArticleId, articleTagName: ArticleTagName): Promise<void>

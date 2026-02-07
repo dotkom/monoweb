@@ -1,16 +1,14 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Article,
-  ArticleFilterQuery,
-  ArticleId,
-  ArticleSlug,
+import {
+  type Article,
+  type ArticleId,
+  type ArticleSlug,
   ArticleTag,
-  ArticleTagName,
-  ArticleWrite,
-  UserId,
-} from "@dotkomonline/types"
+  type ArticleTagName,
+  type ArticleWrite,
+} from "./article-types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { compareAsc, compareDesc } from "date-fns"
 import { AlreadyExistsError, NotFoundError } from "../../error"
@@ -18,6 +16,19 @@ import type { Pageable } from "../../query"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
 import type { ArticleTagRepository } from "./article-tag-repository"
+import z from "zod"
+import { buildAnyOfFilter, buildSearchFilter, type UserId } from "@dotkomonline/types"
+
+/**
+ * Filtering options available for Article
+ */
+export type ArticleFilterQuery = z.infer<typeof ArticleFilterQuery>
+export const ArticleFilterQuery = z
+  .object({
+    bySearchTerm: buildSearchFilter(),
+    byTags: buildAnyOfFilter(ArticleTag.shape.name),
+  })
+  .partial()
 
 export interface ArticleService {
   create(handle: DBHandle, data: ArticleWrite): Promise<Article>

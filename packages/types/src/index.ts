@@ -1,4 +1,3 @@
-export * from "./article"
 export * from "./attendance"
 export * from "./company"
 export * from "./event"

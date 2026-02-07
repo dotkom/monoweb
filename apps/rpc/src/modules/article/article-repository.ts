@@ -1,17 +1,15 @@
 import type { DBHandle } from "@dotkomonline/db"
 import {
-  type Article,
-  type ArticleFilterQuery,
+  Article,
   type ArticleId,
-  ArticleSchema,
   type ArticleSlug,
-  type ArticleTag,
+  ArticleTag,
   type ArticleTagName,
-  ArticleTagSchema,
   type ArticleWrite,
-} from "@dotkomonline/types"
+} from "./article-types"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
+import type { ArticleFilterQuery } from "./article-service"
 
 export interface ArticleRepository {
   create(handle: DBHandle, data: ArticleWrite): Promise<Article>
@@ -122,7 +120,7 @@ export function getArticleRepository(): ArticleRepository {
       })
 
       return tags.map((tag) =>
-        parseOrReport(ArticleTagSchema, {
+        parseOrReport(ArticleTag, {
           name: tag.tagName,
         })
       )
@@ -131,7 +129,7 @@ export function getArticleRepository(): ArticleRepository {
 }
 
 function mapArticle(article: Omit<Article, "tags">, tags: { tag: ArticleTag }[]): Article {
-  return parseOrReport(ArticleSchema, {
+  return parseOrReport(Article, {
     ...article,
     tags: tags.map((link) => link.tag),
   })
