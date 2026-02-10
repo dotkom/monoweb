@@ -15,7 +15,7 @@ interface Props {
   userId: UserId
 }
 
-export const useMembershipTable = ({ data, userId }: Props) => {
+export const useMembershipTable = ({ data }: Props) => {
   const { isAdmin } = useIsAdminQuery()
   const columnHelper = createColumnHelper<Membership>()
   const openEditMembershipModal = useEditMembershipModal()
@@ -33,7 +33,15 @@ export const useMembershipTable = ({ data, userId }: Props) => {
       }),
       columnHelper.accessor("end", {
         header: () => "Sluttdato",
-        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
+        cell: (info) => {
+          const endDate = info.getValue()
+
+          if (!endDate) {
+            return "-"
+          }
+
+          return formatDate(endDate, "dd.MM.yyyy")
+        },
       }),
       columnHelper.accessor("specialization", {
         header: () => "Spesialisering",
