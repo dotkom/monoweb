@@ -131,7 +131,7 @@ export function ReceiptForm() {
     form.setValue("intent", testData.intent)
     form.setValue("comments", testData.comments)
     form.setValue("attachments", testData.attachments)
-  }, [isTestMode, form.setValue, testFile.url])
+  }, [isTestMode, form, testFile.url])
   const [files, setFiles] = useState<UploadedFile[] | null>(isTestMode ? [testFile] : null)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
 
