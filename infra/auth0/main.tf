@@ -6,12 +6,12 @@ resource "auth0_tenant" "tenant" {
   default_redirection_uri                       = "https://online.ntnu.no"
   enabled_locales                               = ["nb", "en", "no", "nn"]
   friendly_name                                 = "Online, Linjeforeningen for informatikk"
-  idle_session_lifetime                         = 72
+  idle_session_lifetime                         = 360 # 15 days
   # TODO: make S3 bucket for this
   # this is just the O
   picture_url      = "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/679/"
   sandbox_version  = "18"
-  session_lifetime = 168
+  session_lifetime = 720 # 30 days
   support_email    = "dotkom@online.ntnu.no"
 }
 
@@ -573,6 +573,15 @@ resource "auth0_client" "monoweb_web" {
   refresh_token {
     rotation_type   = "rotating"
     expiration_type = "expiring"
+
+    # Absolute expiration
+    token_lifetime = 2592000 # 30 days
+    
+    # Idle expiration. If the user doesn't visit in this amount of time, they are logged out.
+    idle_token_lifetime = 1296000 # 15 days
+    
+    infinite_token_lifetime      = false
+    infinite_idle_token_lifetime = false
   }
 
   # organization_require_behavior is here since so that terraform does not attempt to apply it everytime
@@ -613,6 +622,15 @@ resource "auth0_client" "monoweb_dashboard" {
   refresh_token {
     rotation_type   = "rotating"
     expiration_type = "expiring"
+
+    # Absolute expiration
+    token_lifetime = 172800 # 2 days 
+    
+    # Idle expiration. If the user doesn't visit in this amount of time, they are logged out.
+    idle_token_lifetime = 43200 # 12 hours
+    
+    infinite_token_lifetime      = false
+    infinite_idle_token_lifetime = false
   }
 
   jwt_configuration {
