@@ -194,31 +194,27 @@ export function ProfilePage() {
   const isLoggedIn = Boolean(session)
   const isUser = user ? user.id === session?.sub : false
 
-  const [
-    { data: groups, isLoading: groupsLoading },
-    { data: futureEventWithAttendances, isLoading: futureEventWithAttendancesLoading },
-    { data: marks, isLoading: marksLoading },
-    { data: eventsMissingFeedback },
-  ] = useQueries({
-    queries: [
-      trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
-      trpc.event.allByAttendingUserId.queryOptions(
-        {
-          id: user?.id ?? "",
-          filter: {
-            byEndDate: {
-              min: now,
-              max: null,
+  const [{ data: groups }, { data: futureEventWithAttendances }, { data: marks }, { data: eventsMissingFeedback }] =
+    useQueries({
+      queries: [
+        trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
+        trpc.event.allByAttendingUserId.queryOptions(
+          {
+            id: user?.id ?? "",
+            filter: {
+              byEndDate: {
+                min: now,
+                max: null,
+              },
+              excludingType: isStaff ? [] : undefined,
             },
-            excludingType: isStaff ? [] : undefined,
           },
-        },
-        { enabled: isLoggedIn && Boolean(user?.id) }
-      ),
-      trpc.personalMark.getVisibleInformation.queryOptions({ userId: user?.id ?? "" }, { enabled: isUser }),
-      trpc.event.findUnansweredByUser.queryOptions(user?.id ?? "", { enabled: isUser }),
-    ],
-  })
+          { enabled: isLoggedIn && Boolean(user?.id) }
+        ),
+        trpc.personalMark.getVisibleInformation.queryOptions({ userId: user?.id ?? "" }, { enabled: isUser }),
+        trpc.event.findUnansweredByUser.queryOptions(user?.id ?? "", { enabled: isUser }),
+      ],
+    })
 
   const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllByAttendingUserIdInfiniteQuery({
     id: user?.id ?? "",

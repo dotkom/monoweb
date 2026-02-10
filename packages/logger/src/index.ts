@@ -71,7 +71,7 @@ interface Message {
 }
 
 function padWithColor(str: string, desiredLength: number) {
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: this needs it
   const ansiEscapeCodes = /\x1b\[[0-9;]*m/g // Regex to match ANSI escape codes
   const visibleLength = str.replace(ansiEscapeCodes, "").length // Length of string without ANSI codes
   const paddingLength = desiredLength - visibleLength // Calculate how much padding is needed
