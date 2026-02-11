@@ -36,7 +36,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
       {isSame ? (
         <div className="flex flex-col grow">
           <Text>{longDate(start)}</Text>
-          <Text>
+          <Text className="text-gray-600 dark:text-stone-400">
             kl. {formatDate(start, "HH:mm", { locale: nb })} - {formatDate(end, "HH:mm", { locale: nb })}
           </Text>
         </div>
@@ -44,14 +44,14 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
         <div className="flex flex-row grow gap-4 items-center">
           <div className="flex flex-col">
             <Text>{shortDate(start)}</Text>
-            <Text>kl. {formatDate(start, "HH:mm", { locale: nb })}</Text>
+            <Text className="text-gray-600 dark:text-stone-400">kl. {formatDate(start, "HH:mm", { locale: nb })}</Text>
           </div>
 
           <IconArrowRight className="size-6 shrink-0 text-gray-600 dark:text-stone-400" />
 
           <div className="flex flex-col">
             <Text>{shortDate(end)}</Text>
-            <Text>kl. {formatDate(end, "HH:mm", { locale: nb })}</Text>
+            <Text className="text-gray-600 dark:text-stone-400">kl. {formatDate(end, "HH:mm", { locale: nb })}</Text>
           </div>
         </div>
       )}
