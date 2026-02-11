@@ -1,180 +1,253 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { Article, ArticleTag, ArticleWrite } from "./article-types"
 import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, t } from "../../trpc"
+import { ArticleFilterQuery } from "./article-service"
+import { parseOutputType } from "../../invariant"
+import { inferProcedureInput } from "@trpc/server"
 
-export type CreateArticleInput = inferProcedureInput<typeof createArticleProcedure>
-export type CreateArticleOutput = inferProcedureOutput<typeof createArticleProcedure>
-const createArticleProcedure = procedure
-  .input(
-    z.object({
-      article: ArticleWriteSchema,
-      tags: z.array(ArticleTagSchema.shape.name),
+export const ArticleDTO = Article.pick({
+  id: true,
+  slug: true,
+  title: true,
+  author: true,
+  photographer: true,
+  imageUrl: true,
+  excerpt: true,
+  content: true,
+  isFeatured: true,
+  vimeoId: true,
+  createdAt: true,
+  updatedAt: true,
+  tags: true,
+})
+
+function buildCreateArticleProcedure() {
+  const inputSchema = z.object({
+    article: ArticleWrite,
+    tags: z.array(ArticleTag.shape.name),
+  })
+  const outputSchema = ArticleDTO
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withAuthentication())
+    .use(withAuthorization(isEditor()))
+    .use(withDatabaseTransaction())
+    .use(withAuditLogEntry())
+    .mutation(async ({ input, ctx }) => {
+      const { id } = await ctx.articleService.create(ctx.handle, input.article)
+      await ctx.articleService.setTags(ctx.handle, id, input.tags)
+      const article = await ctx.articleService.getById(ctx.handle, id)
+      return parseOutputType(outputSchema, article)
     })
-  )
-  .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    const article = await ctx.articleService.create(ctx.handle, input.article)
-    const tags = await ctx.articleService.setTags(ctx.handle, article.id, input.tags)
-    return {
-      ...article,
-      tags,
-    }
-  })
+}
 
-export type EditArticleInput = inferProcedureInput<typeof editArticleProcedure>
-export type EditArticleOutput = inferProcedureOutput<typeof editArticleProcedure>
-const editArticleProcedure = procedure
-  .input(
-    z.object({
-      id: ArticleSchema.shape.id,
-      input: ArticleWriteSchema.partial(),
-      tags: z.array(ArticleTagSchema.shape.name),
+function buildEditArticleProcedure() {
+  const inputSchema = z.object({
+    id: Article.shape.id,
+    input: ArticleWrite.partial(),
+    tags: z.array(ArticleTag.shape.name),
+  })
+  const outputSchema = ArticleDTO
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withAuthentication())
+    .use(withAuthorization(isEditor()))
+    .use(withDatabaseTransaction())
+    .use(withAuditLogEntry())
+    .mutation(async ({ input, ctx }) => {
+      const { id } = await ctx.articleService.update(ctx.handle, input.id, input.input)
+      await ctx.articleService.setTags(ctx.handle, input.id, input.tags)
+      const article = await ctx.articleService.getById(ctx.handle, id)
+      return parseOutputType(outputSchema, article)
     })
-  )
-  .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    const article = await ctx.articleService.update(ctx.handle, input.id, input.input)
-    const tags = await ctx.articleService.setTags(ctx.handle, input.id, input.tags)
-    return { ...article, tags }
+}
+
+function buildFindArticlesProcedure() {
+  const inputSchema = BasePaginateInputSchema.extend({ filters: ArticleFilterQuery })
+  const outputSchema = z.object({
+    items: ArticleDTO.array(),
+    nextCursor: Article.shape.id.optional(),
   })
 
-export type AllArticlesInput = inferProcedureInput<typeof allArticlesProcedure>
-export type AllArticlesOutput = inferProcedureOutput<typeof allArticlesProcedure>
-const allArticlesProcedure = procedure
-  .input(PaginateInputSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findMany(ctx.handle, {}, input))
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withDatabaseTransaction())
+    .query(async ({ input, ctx }) => {
+      const items = await ctx.articleService.findMany(ctx.handle, input.filters, input)
 
-export type FindArticlesInput = inferProcedureInput<typeof findArticlesProcedure>
-export type FindArticlesOutput = inferProcedureOutput<typeof findArticlesProcedure>
-const findArticlesProcedure = procedure
-  .input(BasePaginateInputSchema.extend({ filters: ArticleFilterQuerySchema }))
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    const items = await ctx.articleService.findMany(ctx.handle, input.filters, input)
-
-    return {
-      items,
-      nextCursor: items.at(-1)?.id,
-    }
-  })
-
-export type FindArticleInput = inferProcedureInput<typeof findArticleProcedure>
-export type FindArticleOutput = inferProcedureOutput<typeof findArticleProcedure>
-const findArticleProcedure = procedure
-  .input(ArticleSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findById(ctx.handle, input))
-
-export type GetArticleInput = inferProcedureInput<typeof getArticleProcedure>
-export type GetArticleOutput = inferProcedureOutput<typeof getArticleProcedure>
-const getArticleProcedure = procedure
-  .input(ArticleSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.getById(ctx.handle, input))
-
-export type FindRelatedArticlesInput = inferProcedureInput<typeof findRelatedArticlesProcedure>
-export type FindRelatedArticlesOutput = inferProcedureOutput<typeof findRelatedArticlesProcedure>
-const findRelatedArticlesProcedure = procedure
-  .input(ArticleSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findRelated(ctx.handle, input))
-
-export type FindFeaturedArticlesInput = inferProcedureInput<typeof findFeaturedArticlesProcedure>
-export type FindFeaturedArticlesOutput = inferProcedureOutput<typeof findFeaturedArticlesProcedure>
-const findFeaturedArticlesProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.findFeatured(ctx.handle))
-
-export type GetArticleTagsInput = inferProcedureInput<typeof getArticleTagsProcedure>
-export type GetArticleTagsOutput = inferProcedureOutput<typeof getArticleTagsProcedure>
-const getArticleTagsProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.getTags(ctx.handle))
-
-export type FindArticleTagsOrderedByPopularityInput = inferProcedureInput<
-  typeof findArticleTagsOrderedByPopularityProcedure
->
-export type FindArticleTagsOrderedByPopularityOutput = inferProcedureOutput<
-  typeof findArticleTagsOrderedByPopularityProcedure
->
-const findArticleTagsOrderedByPopularityProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.findTagsOrderedByPopularity(ctx.handle))
-
-export type AddArticleTagInput = inferProcedureInput<typeof addArticleTagProcedure>
-export type AddArticleTagOutput = inferProcedureOutput<typeof addArticleTagProcedure>
-const addArticleTagProcedure = procedure
-  .input(
-    z.object({
-      id: ArticleSchema.shape.id,
-      tag: ArticleTagSchema.shape.name,
+      return parseOutputType(outputSchema, {
+        items,
+        nextCursor: items.at(-1)?.id,
+      })
     })
-  )
-  .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    return ctx.articleService.addTag(ctx.handle, input.id, input.tag)
-  })
+}
 
-export type RemoveArticleTagInput = inferProcedureInput<typeof removeArticleTagProcedure>
-export type RemoveArticleTagOutput = inferProcedureOutput<typeof removeArticleTagProcedure>
-const removeArticleTagProcedure = procedure
-  .input(
-    z.object({
-      id: ArticleSchema.shape.id,
-      tag: ArticleTagSchema.shape.name,
-    })
-  )
-  .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    return ctx.articleService.removeTag(ctx.handle, input.id, input.tag)
-  })
+function buildFindArticleProcedure() {
+  const inputSchema = Article.shape.id
+  const outputSchema = ArticleDTO.nullable()
 
-export type CreateArticleFileUploadInput = inferProcedureInput<typeof createArticleFileUploadProcedure>
-export type CreateArticleFileUploadOutput = inferProcedureOutput<typeof createArticleFileUploadProcedure>
-const createArticleFileUploadProcedure = procedure
-  .input(
-    z.object({
-      filename: z.string(),
-      contentType: z.string(),
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withDatabaseTransaction())
+    .query(async ({ input, ctx }) => {
+      const article = await ctx.articleService.findById(ctx.handle, input)
+      return parseOutputType(outputSchema, article)
     })
+}
+
+function buildGetArticleProcedure() {
+  const inputSchema = Article.shape.id
+  const outputSchema = ArticleDTO
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withDatabaseTransaction())
+    .query(async ({ input, ctx }) => {
+      const article = await ctx.articleService.getById(ctx.handle, input)
+      return parseOutputType(outputSchema, article)
+    })
+}
+
+function buildFindRelatedArticlesProcedure() {
+  // TODO: take id here instead
+  const inputSchema = Article
+  const outputSchema = ArticleDTO.array()
+
+  return (
+    procedure
+      // TODO: Accept article id here instead
+      .input(inputSchema)
+      .output(outputSchema)
+      .use(withDatabaseTransaction())
+      .query(async ({ input, ctx }) => {
+        const articles = await ctx.articleService.findRelated(ctx.handle, input)
+        return parseOutputType(outputSchema, articles)
+      })
   )
-  .output(z.custom<PresignedPost>())
-  .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
-  .mutation(async ({ input, ctx }) => {
-    return await ctx.articleService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
+}
+
+function buildFindFeaturedArticlesProcedure() {
+  const inputSchema = z.void()
+  const outputSchema = ArticleDTO.array()
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withDatabaseTransaction())
+    .query(async ({ ctx }) => {
+      const result = await ctx.articleService.findFeatured(ctx.handle)
+      return parseOutputType(outputSchema, result)
+    })
+}
+
+function buildGetArticleTagsProcedure() {
+  const inputSchema = z.void()
+  const outputSchema = z.array(ArticleTag)
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withDatabaseTransaction())
+    .query(async ({ ctx }) => {
+      const result = await ctx.articleService.getTags(ctx.handle)
+      return parseOutputType(outputSchema, result)
+    })
+}
+
+function buildFindArticleTagsOrderedByPopularityProcedure() {
+  const inputSchema = z.void()
+  const outputSchema = z.array(ArticleTag)
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withDatabaseTransaction())
+    .query(async ({ ctx }) => {
+      const result = await ctx.articleService.findTagsOrderedByPopularity(ctx.handle)
+      return parseOutputType(outputSchema, result)
+    })
+}
+
+function buildAddArticleTagProcedure() {
+  const inputSchema = z.object({
+    id: Article.shape.id,
+    tag: ArticleTag.shape.name,
   })
+  const outputSchema = z.unknown()
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withAuthentication())
+    .use(withAuthorization(isEditor()))
+    .use(withDatabaseTransaction())
+    .use(withAuditLogEntry())
+    .mutation(async ({ input, ctx }) => {
+      const result = await ctx.articleService.addTag(ctx.handle, input.id, input.tag)
+      return parseOutputType(outputSchema, result)
+    })
+}
+
+function buildRemoveArticleTagProcedure() {
+  const inputSchema = z.object({
+    id: Article.shape.id,
+    tag: ArticleTag.shape.name,
+  })
+  const outputSchema = z.unknown()
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withAuthentication())
+    .use(withAuthorization(isEditor()))
+    .use(withDatabaseTransaction())
+    .use(withAuditLogEntry())
+    .mutation(async ({ input, ctx }) => {
+      const result = await ctx.articleService.removeTag(ctx.handle, input.id, input.tag)
+      return parseOutputType(outputSchema, result)
+    })
+}
+
+function buildCreateArticleFileUploadProcedure() {
+  const inputSchema = z.object({
+    filename: z.string(),
+    contentType: z.string(),
+  })
+  const outputSchema = z.custom<PresignedPost>()
+
+  return procedure
+    .input(inputSchema)
+    .output(outputSchema)
+    .use(withAuthentication())
+    .use(withAuthorization(isEditor()))
+    .mutation(async ({ input, ctx }) => {
+      const result = await ctx.articleService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
+      return parseOutputType(outputSchema, result)
+    })
+}
 
 export const articleRouter = t.router({
-  create: createArticleProcedure,
-  edit: editArticleProcedure,
-  all: allArticlesProcedure,
-  findArticles: findArticlesProcedure,
-  find: findArticleProcedure,
-  get: getArticleProcedure,
-  related: findRelatedArticlesProcedure,
-  featured: findFeaturedArticlesProcedure,
-  getTags: getArticleTagsProcedure,
-  findTagsOrderedByPopularity: findArticleTagsOrderedByPopularityProcedure,
-  addTag: addArticleTagProcedure,
-  removeTag: removeArticleTagProcedure,
-  createFileUpload: createArticleFileUploadProcedure,
+  create: buildCreateArticleProcedure(),
+  edit: buildEditArticleProcedure(),
+  findArticles: buildFindArticlesProcedure(),
+  find: buildFindArticleProcedure(),
+  get: buildGetArticleProcedure(),
+  related: buildFindRelatedArticlesProcedure(),
+  featured: buildFindFeaturedArticlesProcedure(),
+  getTags: buildGetArticleTagsProcedure(),
+  findTagsOrderedByPopularity: buildFindArticleTagsOrderedByPopularityProcedure(),
+  addTag: buildAddArticleTagProcedure(),
+  removeTag: buildRemoveArticleTagProcedure(),
+  createFileUpload: buildCreateArticleFileUploadProcedure(),
 })
