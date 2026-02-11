@@ -1,12 +1,58 @@
 "use client"
 
 import { Button, Text, Title } from "@dotkomonline/ui"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import type { FC, SVGProps } from "react"
 import Link from "next/link"
 
+/** Trigger all SMIL animate elements in the list */
+const beginAll = (refs: React.RefObject<SVGAnimateElement | null>[]) => {
+  for (const ref of refs) ref.current?.beginElement()
+}
+
 const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
-  const zapRef = useRef<SVGAnimateTransformElement>(null)
+  // Gradient fill-up animation: two stops animate in sync to create a hard edge
+  // that rises from bottom to top. Each stop needs its own ref because SMIL
+  // begin="id.begin" sync doesn't work reliably in React's DOM.
+  const fillRefs = [useRef<SVGAnimateElement>(null), useRef<SVGAnimateElement>(null)]
+  const resetRefs = [useRef<SVGAnimateElement>(null), useRef<SVGAnimateElement>(null)]
+  const holdingRef = useRef(false)
+  const boltRef = useRef<SVGPathElement>(null)
+  const shakeFrameRef = useRef<number | null>(null)
+
+  const startFill = () => {
+    holdingRef.current = true
+    beginAll(fillRefs)
+
+    const startTime = performance.now()
+    const shake = () => {
+      const elapsed = (performance.now() - startTime) / 1000
+      const intensity = Math.min(elapsed * 5, 3)
+      const x = (Math.random() - 0.5) * 2 * intensity
+      const y = (Math.random() - 0.5) * 2 * intensity
+      if (boltRef.current) {
+        boltRef.current.style.translate = `${x}px ${y}px`
+      }
+      shakeFrameRef.current = requestAnimationFrame(shake)
+    }
+    shakeFrameRef.current = requestAnimationFrame(shake)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (shakeFrameRef.current != null) cancelAnimationFrame(shakeFrameRef.current)
+    }
+  }, [])
+
+  const stopFill = () => {
+    if (!holdingRef.current) return
+    holdingRef.current = false
+    if (shakeFrameRef.current != null) cancelAnimationFrame(shakeFrameRef.current)
+    if (boltRef.current) {
+      boltRef.current.style.translate = ""
+    }
+    beginAll(resetRefs)
+  }
 
   return (
     <svg
@@ -26,15 +72,6 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
             25% { transform: translate(-1px, 0.5px); }
             50% { transform: translate(1px, -0.5px); }
             75% { transform: translate(-0.5px, -1px); }
-          }
-          @keyframes jolt {
-            0%, 100% { transform: translate(0, 0); }
-            15% { transform: translate(-1.5px, -1px); }
-            30% { transform: translate(1.5px, 1px); }
-            45% { transform: translate(-1px, 1.5px); }
-            60% { transform: translate(1px, -1px); }
-            75% { transform: translate(-1.5px, 0.5px); }
-            90% { transform: translate(1px, -1.5px); }
           }
           @keyframes sling {
             0%, 85%, 100% { transform: translate(0, 0) rotate(0deg); }
@@ -56,35 +93,26 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
           }
           .not-found-bolt:active {
             scale: 0.9;
-            animation: jolt 0.15s linear infinite;
+            animation: none;
           }
         `}</style>
-        <linearGradient
-          id="bolt-gradient"
-          gradientUnits="objectBoundingBox"
-          x1="0" y1="0" x2="0" y2="1"
-          gradientTransform="translate(0, -1)"
-        >
-          <stop offset="0%" stopColor="rgb(250, 183, 89)" />
-          <stop offset="30%" stopColor="rgb(250, 183, 89)" />
-          <stop offset="45%" stopColor="rgb(252, 198, 110)" />
-          <stop offset="55%" stopColor="rgb(252, 198, 110)" />
-          <stop offset="70%" stopColor="rgb(250, 183, 89)" />
-          <stop offset="100%" stopColor="rgb(250, 183, 89)" />
-          <animateTransform
-            ref={zapRef}
-            id="zap"
-            attributeName="gradientTransform"
-            type="translate"
-            values="0 -1; 0 -1; 0 1"
-            dur="0.8s"
-            keyTimes="0; 0.625; 1"
-            begin="indefinite"
-            repeatCount="indefinite"
-            calcMode="spline"
-            keySplines="0 0 1 1; 0.05 0 1 1"
-            fill="remove"
-          />
+        {/* Two stops at the same offset with different colors create a hard edge.
+            Animating both offsets from 1→0 makes the lighter color fill up from the bottom. */}
+        <linearGradient id="bolt-gradient" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="1" stopColor="rgb(250, 183, 89)">
+            <animate ref={fillRefs[0]} attributeName="offset"
+              values="1;0" dur="0.6s" begin="indefinite" fill="freeze"
+              calcMode="spline" keySplines="0.8 0 1 1" />
+            <animate ref={resetRefs[0]} attributeName="offset"
+              values="0;1" dur="0.001s" begin="indefinite" fill="freeze" />
+          </stop>
+          <stop offset="1" stopColor="rgb(252, 198, 110)">
+            <animate ref={fillRefs[1]} attributeName="offset"
+              values="1;0" dur="0.6s" begin="indefinite" fill="freeze"
+              calcMode="spline" keySplines="0.8 0 1 1" />
+            <animate ref={resetRefs[1]} attributeName="offset"
+              values="0;1" dur="0.001s" begin="indefinite" fill="freeze" />
+          </stop>
         </linearGradient>
       </defs>
       {/* Positioning and scaling the logo to fit the viewBox (exported from vector editor) */}
@@ -93,11 +121,16 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
           <g transform="matrix(2.83642,0,0,1.33333,914.268,-277.944)">
             <g transform="matrix(1,0,0,1,171.299,370.231)">
               <path
+                ref={boltRef}
                 d="M0,-101.72L-28.406,-59.668L-0.497,-59.312L-54.946,10.118L-33.175,-45.879L-60.813,-45.95L-29.288,-110.015C-29.288,-110.015 -21.027,-109.785 -13.921,-107.785C-6.834,-105.79 0,-101.72 0,-101.72Z"
                 fill="url(#bolt-gradient)"
                 className="not-found-bolt"
-                onMouseEnter={() => zapRef.current?.beginElement()}
-                onMouseLeave={() => zapRef.current?.endElement()}
+                onMouseDown={() => {
+                  startFill()
+                  window.scrollTo({ top: 0, behavior: "smooth" })
+                }}
+                onMouseUp={stopFill}
+                onMouseLeave={stopFill}
               />
             </g>
             <g transform="matrix(0.75,0,0,0.75,0,186.709)">
