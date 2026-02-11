@@ -8,8 +8,8 @@ export interface GradeService {
 
 export function getGradeService(courseRepository: GradeRepository): GradeService {
   return {
-    async findMany(handle, groupSlug) {
-      return courseRepository.findMany(handle, groupSlug)
+    async findMany(handle, gradeSlug) {
+      return courseRepository.findMany(handle, gradeSlug)
     },
   }
 }

@@ -2,7 +2,7 @@ import { server } from "@/utils/trpc/server"
 
 export default async function App() {
   const courses = await server.course.findCourses.query()
-  const grades = await server.grade.findGrades.query(courses[0].id)
+  const grades = await server.grade.findGrades.query(courses[0].code)
 
   return (
     <div>
