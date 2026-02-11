@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@dotkomonline/db"
 import { NotFoundError } from "../../../error"
 import { getMarkRepository } from "../mark-repository"
 import { getMarkService } from "../mark-service"
