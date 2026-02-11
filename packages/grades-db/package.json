@@ -20,7 +20,8 @@
     "prisma": "prisma",
     "migrate": "prisma migrate dev",
     "generate": "prisma generate",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "apply-fixtures": "tsx src/fixtures.ts"
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
