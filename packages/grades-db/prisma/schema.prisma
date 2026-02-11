@@ -28,19 +28,77 @@ enum Semester {
   @@map("semester")
 }
 
-model Course {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+enum StudyLevel {
+  FOUNDATION
+  INTERMEDIATE
+  BACHELOR_ADVANCED
+  MASTER
+  PHD
+  CONTINUING_EDUCATION
+  UNKNOWN
 
-  grades Grade[]
+  @@map("study_level")
+}
+
+enum GradeType {
+  PASS_FAIL
+  LETTER
+  UNKNOWN
+
+  @@map("grade_type")
+}
+
+enum Campus {
+  TRONDHEIM
+  GJOVIK
+  ALESUND
+
+  @@map("campus")
+}
+
+enum TeachingLanguage {
+  NORWEGIAN
+  ENGLISH
+
+  @@map("teaching_language")
+}
+
+model Course {
+  id              String     @id @default(uuid())
+  code            String     @unique
+  norwegianName   String     @map("norwegian_name")
+  englishName     String?    @map("english_name")
+  credits         Float
+  studyLevel      StudyLevel @map("study_level")
+  gradeType       GradeType  @map("grade_type")
+  firstYearTaught Int        @map("first_year_taught")
+  lastYearTaught  Int?       @map("last_year_taught")
+
+  content          String? @map("content")
+  teachingMethods  String? @map("teaching_methods")
+  learningOutcomes String? @map("learning_outcomes")
+  examType         String? @map("exam_type")
+
+  studentCount Int   @map("student_count")
+  averageGrade Float @map("average_grade")
+  passRate     Float @map("pass_rate")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  taughtSemesters   Semester[]         @default([]) @map("taught_semesters")
+  teachingLanguages TeachingLanguage[] @default([]) @map("teaching_languages")
+  campuses          Campus[]           @default([])
+  grades            Grade[]
+
+  @@index([norwegianName])
+  @@index([englishName])
+  @@map("course")
 }
 
 model Grade {
-  id           Int   @id @default(autoincrement())
-  averageGrade Float @map("average_grade")
+  id           String @id @default(uuid())
+  averageGrade Float  @map("average_grade")
   passed       Int
   a            Int
   b            Int
@@ -49,10 +107,17 @@ model Grade {
   e            Int
   failed       Int
 
-  courseId Int    @map("course_id")
+  courseId String @map("course_id")
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   isDigitalExam Boolean  @map("is_digital_exam")
   semester      Semester
   year          Int
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@unique([courseId, semester, year])
+  @@index([courseId])
+  @@map("grade")
 }
