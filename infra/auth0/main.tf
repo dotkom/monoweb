@@ -375,7 +375,8 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
     auth0_client.appkom_veldedighet.client_id,
-    auth0_client.voting.client_id
+    auth0_client.voting.client_id,
+    auth0_client.feide_account_linker.id
   ]
 }
 
@@ -576,10 +577,10 @@ resource "auth0_client" "monoweb_web" {
 
     # Absolute expiration
     token_lifetime = 2592000 # 30 days
-    
+
     # Idle expiration. If the user doesn't visit in this amount of time, they are logged out.
     idle_token_lifetime = 1296000 # 15 days
-    
+
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
   }
@@ -625,10 +626,10 @@ resource "auth0_client" "monoweb_dashboard" {
 
     # Absolute expiration
     token_lifetime = 172800 # 2 days 
-    
+
     # Idle expiration. If the user doesn't visit in this amount of time, they are logged out.
     idle_token_lifetime = 43200 # 12 hours
-    
+
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
   }
@@ -852,6 +853,7 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
 resource "auth0_client" "feide_account_linker" {
   name     = "Feide Account Linker"
   app_type = "non_interactive"
+  logo_uri = "https://nobirkenes.speedadmin.dk/Images/SSO/Feide-btn.png"
 
   grant_types = [
     "client_credentials"
