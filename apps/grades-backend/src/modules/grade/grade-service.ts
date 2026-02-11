@@ -1,15 +1,16 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
 import type { GradeRepository } from "./grade-repository"
-import type { Grade, GradeId } from "./grade"
+import type { Grade } from "./grade"
+import type { CourseCode } from "../course/course"
 
 export interface GradeService {
-  findMany(handle: DBHandle, groupSlug: GradeId): Promise<Grade[]>
+  findMany(handle: DBHandle, courseCode: CourseCode): Promise<Grade[]>
 }
 
-export function getGradeService(courseRepository: GradeRepository): GradeService {
+export function getGradeService(gradeRepository: GradeRepository): GradeService {
   return {
-    async findMany(handle, gradeSlug) {
-      return courseRepository.findMany(handle, gradeSlug)
+    async findMany(handle, courseCode) {
+      return gradeRepository.findMany(handle, courseCode)
     },
   }
 }
