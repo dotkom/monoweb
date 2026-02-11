@@ -4,6 +4,7 @@ import { EventList } from "@/app/arrangementer/components/EventList"
 import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
@@ -54,6 +55,7 @@ import { notFound, useParams, useSearchParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
+import { useIsAdminQuery } from "./queries"
 
 const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
   const Icon = props.icon
@@ -241,6 +243,8 @@ export function ProfilePage() {
     [groups]
   )
 
+  const { isAdmin } = useIsAdminQuery()
+
   if (user === undefined || userLoading) {
     return <SkeletonProfilePage />
   }
@@ -251,6 +255,8 @@ export function ProfilePage() {
 
   const activeMembership = findActiveMembership(user)
   const grade = activeMembership ? getMembershipGrade(activeMembership) : null
+
+  const dashboardUrl = new URL(`/brukere/${user.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -264,9 +270,25 @@ export function ProfilePage() {
 
         <div className="flex flex-col gap-2 grow">
           <div className="flex flex-row w-full justify-between">
-            <Title element="h1" className="font-semibold text-xl md:text-2xl">
-              {user.name}
-            </Title>
+            <div className="flex flex-row gap-4 items-center">
+              <Title element="h1" className="font-semibold text-xl md:text-2xl">
+                {user.name}
+              </Title>
+              {isAdmin && (
+                <Button
+                  element={Link}
+                  href={dashboardUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="unstyled"
+                  className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 gap-1.5"
+                  title="Rediger arrangement"
+                >
+                  <IconEdit className="size-[1.25em] md:w-6 md:h-6" />
+                  <Text className="md:hidden">Rediger</Text>
+                </Button>
+              )}
+            </div>
             {isUser && (
               <Button
                 element={Link}
