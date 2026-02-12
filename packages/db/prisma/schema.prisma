@@ -78,14 +78,16 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee          Attendee[]
-  personalMark      PersonalMark[]
-  groupMemberships  GroupMembership[]
-  memberships       Membership[]
-  givenMarks        PersonalMark[]     @relation("GivenBy")
-  attendeesRefunded Attendee[]         @relation(name: "RefundedBy")
-  auditLogs         AuditLog[]
-  deregisterReasons DeregisterReason[]
+  attendee              Attendee[]
+  personalMark          PersonalMark[]
+  groupMemberships      GroupMembership[]
+  memberships           Membership[]
+  givenMarks            PersonalMark[]          @relation("GivenBy")
+  attendeesRefunded     Attendee[]              @relation(name: "RefundedBy")
+  auditLogs             AuditLog[]
+  deregisterReasons     DeregisterReason[]
+  notificationsCreated  Notification[]
+  notificationsReceived NotificationRecipient[]
 
   @@map("ow_user")
 }
@@ -152,11 +154,12 @@ model Group {
   memberVisibility    GroupMemberVisibility  @default(ALL_MEMBERS) @map("member_visibility")
   recruitmentMethod   GroupRecruitmentMethod @default(NONE) @map("recruitment_method")
 
-  events      EventHostingGroup[]
-  type        GroupType
-  memberships GroupMembership[]
-  marks       MarkGroup[]
-  roles       GroupRole[]
+  events        EventHostingGroup[]
+  type          GroupType
+  memberships   GroupMembership[]
+  marks         MarkGroup[]
+  roles         GroupRole[]
+  notifications Notification[]
 
   @@map("group")
 }
@@ -189,13 +192,13 @@ model GroupMembershipRole {
 }
 
 enum GroupRoleType {
-  LEADER        @map("LEADER")
-  PUNISHER      @map("PUNISHER")
-  TREASURER     @map("TREASURER")
-  COSMETIC      @map("COSMETIC")
-  DEPUTY_LEADER @map("DEPUTY_LEADER")
-  TRUSTEE       @map("TRUSTEE")
-  EMAIL_ONLY    @map("EMAIL_ONLY")
+  LEADER            @map("LEADER")
+  PUNISHER          @map("PUNISHER")
+  TREASURER         @map("TREASURER")
+  COSMETIC          @map("COSMETIC")
+  DEPUTY_LEADER     @map("DEPUTY_LEADER")
+  TRUSTEE           @map("TRUSTEE")
+  EMAIL_ONLY        @map("EMAIL_ONLY")
   TEMPORARILY_LEAVE @map("TEMPORARILY_LEAVE")
 
   @@map("group_role_type")
@@ -588,6 +591,7 @@ model Task {
   recurringTask   RecurringTask? @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
 
   attendancePools AttendancePool[]
+  notifications   Notification[]
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("task")
@@ -750,4 +754,74 @@ model DeregisterReason {
   event   Event  @relation(fields: [eventId], references: [id])
 
   @@map("deregister_reason")
+}
+
+model NotificationRecipient {
+  id     String   @id @default(uuid())
+  readAt DateTime @map("read_at") @db.Timestamptz(3)
+
+  notificationId String       @map("notification_id")
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  userId         String       @map("user_id")
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationPayloadType {
+  URL         @map("URL")
+  EVENT       @map("EVENT")
+  ARTICLE     @map("ARTICLE")
+  GROUP       @map("GROUP")
+  USER        @map("USER")
+  OFFLINE     @map("OFFLINE")
+  JOB_LISTING @map("JOB_LISTING")
+  NONE        @map("NONE")
+}
+
+enum NotificationType {
+  BROADCAST            @map("BROADCAST")
+  BROADCAST_IMPORTANT  @map("BROADCAST_IMPORTANT")
+  EVENT_REGISTRATION   @map("EVENT_REGISTRATION")
+  EVENT_REMINDER       @map("EVENT_REMINDER")
+  EVENT_UPDATE         @map("EVENT_UPDATE")
+  JOB_LISTING_REMINDER @map("JOB_LISTING_REMINDER")
+  NEW_ARTICLE          @map("NEW_ARTICLE")
+  NEW_EVENT            @map("NEW_EVENT")
+  NEW_INTEREST_GROUP   @map("NEW_INTEREST_GROUP")
+  NEW_JOB_LISTING      @map("NEW_JOB_LISTING")
+  NEW_OFFLINE          @map("NEW_OFFLINE")
+  NEW_MARK             @map("NEW_MARK")
+  NEW_FEEDBACK_FORM    @map("NEW_FEEDBACK_FORM")
+}
+
+model Notification {
+  id               String                  @id @default(uuid())
+  createdAt        DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  title            String
+  /// A short description that can be used when showing a preview of the notification.
+  shortDescription String?                 @map("short_description")
+  /// The full rich text content of the notification.
+  content          String
+  type             NotificationType
+  /// Can be an ID or a URL depending on the payload type.
+  payload          String?
+  payloadType      NotificationPayloadType @map("payload_type")
+
+  /// The group that created the notification or the system created on behalf of.
+  actorGroupId    String  @map("actor_group_id")
+  actorGroup      Group   @relation(fields: [actorGroupId], references: [slug])
+  /// The specific user that created the notification. This is meant for logging purposes. Nullable because the system
+  /// can create notifications without a specific user to link it to, for example with recurring tasks.
+  createdById     String? @map("created_by_id")
+  createdBy       User?   @relation(fields: [createdById], references: [id])
+  lastUpdatedById String? @map("last_updated_by_id")
+  lastUpdatedBy   User?   @relation(fields: [lastUpdatedById], references: [id])
+  /// The task that created the notification. Useful for tracing and retrieving deadlines that could be useful for the
+  /// notification.
+  taskId          String? @map("task_id")
+  task            Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  recipients NotificationRecipient[]
+
+  @@map("notification")
 }
