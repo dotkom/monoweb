@@ -15,6 +15,7 @@ import {
   EventTypeSchema,
   type Group,
   mapEventTypeToLabel,
+  EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
@@ -91,9 +92,11 @@ export const useEventEditForm = ({
       }),
       imageUrl: createImageInput({
         label: "Bilde",
+        maxSizeKiB: EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
         description: (
           <>
             Bildet bør passe sideforholdene <strong>24:9</strong> (arrangementsiden) og 16:9 (alle andre sider).
+            Maksstørrelse er {EVENT_FILE_UPLOAD_MAX_SIZE_KIB / 1024} MiB.
           </>
         ),
         onFileUpload: uploadFile,

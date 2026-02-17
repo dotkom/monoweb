@@ -2,20 +2,21 @@ import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type {
-  AttendanceId,
-  BaseEvent,
-  CompanyId,
-  DeregisterReason,
-  DeregisterReasonWithEvent,
-  DeregisterReasonWrite,
-  Event,
-  EventFilterQuery,
-  EventId,
-  EventWrite,
-  GroupId,
-  UserId,
-  EventWithFeedbackFormSchema,
+import {
+  type AttendanceId,
+  type BaseEvent,
+  type CompanyId,
+  type DeregisterReason,
+  type DeregisterReasonWithEvent,
+  type DeregisterReasonWrite,
+  type Event,
+  type EventFilterQuery,
+  type EventId,
+  type EventWithFeedbackFormSchema,
+  type EventWrite,
+  type GroupId,
+  type UserId,
+  EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, NotFoundError } from "../../error"
@@ -176,12 +177,10 @@ export function getEventService(
       const uuid = crypto.randomUUID()
       const key = `event/${Date.now()}-${uuid}-${slugify(filename)}`
 
-      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
-
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        maxSizeKiB,
+        maxSizeKiB: EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       })

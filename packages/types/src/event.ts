@@ -1,12 +1,12 @@
+import { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
+import { addWeeks, set } from "date-fns"
 import { z } from "zod"
 import { AttendanceSchema } from "./attendance"
 import { CompanySchema } from "./company"
+import { FeedbackFormSchema } from "./feedback-form"
 import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
 import { GroupSchema } from "./group"
-import { set, addWeeks } from "date-fns"
-import { TZDate } from "@date-fns/tz"
-import { FeedbackFormSchema } from "./feedback-form"
 
 /**
  * @packageDocumentation
@@ -161,3 +161,6 @@ export const getDefaultFeedbackAnswerDeadline = (eventEnd: Date, timezone: strin
     milliseconds: 0,
   })
 }
+
+// 5 MiB, arbitrarily set
+export const EVENT_FILE_UPLOAD_MAX_SIZE_KIB = 5 * 1024
