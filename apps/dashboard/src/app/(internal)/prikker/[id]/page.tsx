@@ -26,7 +26,7 @@ export default function MarkEditCard() {
   const markQueryOptions = trpc.personalMark.getPersonalMarkDetailsByMark.queryOptions({
     markId: mark.id,
   })
-  const { data: personalMarks } = useQuery({ ...markQueryOptions, initialData: [] })
+  const { data: personalMarks, isLoading: isPersonalMarksLoading } = useQuery({ ...markQueryOptions, initialData: [] })
 
   const FormComponent = useMarkWriteForm({
     label: "Oppdater prikk",
@@ -102,7 +102,7 @@ export default function MarkEditCard() {
             })
           }}
         />
-        <GenericTable table={table} />
+        <GenericTable table={table} isLoading={isPersonalMarksLoading} />
       </Stack>
     </Box>
   )

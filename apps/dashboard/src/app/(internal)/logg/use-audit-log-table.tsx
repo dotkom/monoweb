@@ -9,9 +9,11 @@ import { useMemo } from "react"
 interface Props {
   audit_logs: AuditLog[]
   onLoadMore?(): void
+  isLoading: boolean
+  isLoadingMore?: boolean
 }
 
-export const AuditLogsTable = ({ audit_logs, onLoadMore }: Props) => {
+export const AuditLogsTable = ({ audit_logs, onLoadMore, isLoading, isLoadingMore }: Props) => {
   const columnHelper = createColumnHelper<AuditLog>()
   const columns = useMemo(
     () => [
@@ -68,5 +70,12 @@ export const AuditLogsTable = ({ audit_logs, onLoadMore }: Props) => {
     [audit_logs, columns]
   )
 
-  return <GenericTable table={useReactTable(tableOptions)} onLoadMore={onLoadMore} />
+  return (
+    <GenericTable
+      table={useReactTable(tableOptions)}
+      onLoadMore={onLoadMore}
+      isLoading={isLoading}
+      isLoadingMore={isLoadingMore}
+    />
+  )
 }

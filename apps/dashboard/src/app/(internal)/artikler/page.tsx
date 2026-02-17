@@ -15,7 +15,7 @@ export default function ArticlePage() {
         <Box>
           <Button onClick={open}>Opprett artikkel</Button>
         </Box>
-        <AllArticlesTable articles={articles} />
+        <AllArticlesTable articles={articles} isLoading={isArticlesLoading} />
       </Stack>
     </Skeleton>
   )

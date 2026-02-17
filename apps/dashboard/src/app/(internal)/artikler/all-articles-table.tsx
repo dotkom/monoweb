@@ -7,9 +7,10 @@ import { useMemo } from "react"
 
 interface AllArticlesTableProps {
   articles: Article[]
+  isLoading: boolean
 }
 
-export const AllArticlesTable = ({ articles }: AllArticlesTableProps) => {
+export const AllArticlesTable = ({ articles, isLoading }: AllArticlesTableProps) => {
   const columnHelper = createColumnHelper<Article>()
   const columns = useMemo(
     () => [
@@ -81,6 +82,7 @@ export const AllArticlesTable = ({ articles }: AllArticlesTableProps) => {
   return (
     <FilterableTable
       tableOptions={tableOptions}
+      isLoading={isLoading}
       filters={[
         { columnId: "isFeatured", label: "Fremhevet", value: true },
         { columnId: "isFeatured", label: "Ikke fremhevet", value: false },

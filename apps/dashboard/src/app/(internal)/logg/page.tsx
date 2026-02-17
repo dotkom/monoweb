@@ -9,7 +9,12 @@ import { AuditLogsTable } from "./use-audit-log-table"
 
 export default function AuditLogDetailsPage() {
   const [filter, setFilter] = useState<AuditLogFilterQuery>({})
-  const { auditLogs, isLoading: isAuditLogsLoading, fetchNextPage } = useAuditLogSearchQuery({ filter })
+  const {
+    auditLogs,
+    isLoading: isAuditLogsLoading,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useAuditLogSearchQuery({ filter })
 
   return (
     <Stack>
@@ -17,7 +22,12 @@ export default function AuditLogDetailsPage() {
       <Card p={0} bg="inherit">
         <AuditLogFilters onChange={setFilter} />
         <Skeleton visible={isAuditLogsLoading}>
-          <AuditLogsTable audit_logs={auditLogs} onLoadMore={fetchNextPage} />
+          <AuditLogsTable
+            audit_logs={auditLogs}
+            onLoadMore={fetchNextPage}
+            isLoading={isAuditLogsLoading}
+            isLoadingMore={isFetchingNextPage}
+          />
         </Skeleton>
       </Card>
     </Stack>

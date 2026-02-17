@@ -5,13 +5,19 @@ import { DeregisterReasonsTable } from "./deregister-reasons-table"
 import { useDeregisterReasonWithEventAllInfiniteQuery } from "./queries"
 
 export default function DeregisterReasonPage() {
-  const { deregisterReasons, isLoading, fetchNextPage } = useDeregisterReasonWithEventAllInfiniteQuery()
+  const { deregisterReasons, isLoading, fetchNextPage, isFetchingNextPage } =
+    useDeregisterReasonWithEventAllInfiniteQuery()
 
   return (
     <Stack>
       <Title>Avmeldingsgrunner</Title>
       <Skeleton visible={isLoading}>
-        <DeregisterReasonsTable data={deregisterReasons} onLoadMore={fetchNextPage} />
+        <DeregisterReasonsTable
+          data={deregisterReasons}
+          onLoadMore={fetchNextPage}
+          isLoading={isLoading}
+          isLoadingMore={isFetchingNextPage}
+        />
       </Skeleton>
     </Stack>
   )

@@ -9,9 +9,10 @@ import { useMemo } from "react"
 
 interface Props {
   groups: Group[]
+  isLoading: boolean
 }
 
-export const AllGroupsTable = ({ groups }: Props) => {
+export const AllGroupsTable = ({ groups, isLoading }: Props) => {
   const columnHelper = createColumnHelper<Group>()
 
   const columns = useMemo(
@@ -109,6 +110,7 @@ export const AllGroupsTable = ({ groups }: Props) => {
           }
         }),
       ]}
+      isLoading={isLoading}
     />
   )
 }

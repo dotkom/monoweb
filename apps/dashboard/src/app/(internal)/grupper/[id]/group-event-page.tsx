@@ -7,7 +7,7 @@ import { useGroupDetailsContext } from "./provider"
 export const GroupEventPage: FC = () => {
   const { group } = useGroupDetailsContext()
 
-  const { events, isLoading, fetchNextPage } = useEventAllInfiniteQuery({
+  const { events, isLoading, fetchNextPage, isFetchingNextPage } = useEventAllInfiniteQuery({
     filter: {
       byOrganizingGroup: [group.slug],
     },
@@ -15,7 +15,7 @@ export const GroupEventPage: FC = () => {
 
   return (
     <Skeleton visible={isLoading}>
-      <EventTable events={events} onLoadMore={fetchNextPage} />
+      <EventTable events={events} onLoadMore={fetchNextPage} isLoading={isLoading} isLoadingMore={isFetchingNextPage} />
     </Skeleton>
   )
 }

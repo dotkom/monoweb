@@ -14,6 +14,7 @@ export const UserAuditLogPage: FC = () => {
   const {
     auditLogs,
     isLoading: isAuditLogsLoading,
+    isFetchingNextPage,
     fetchNextPage,
   } = useAuditLogSearchQuery({
     filter: {
@@ -27,7 +28,12 @@ export const UserAuditLogPage: FC = () => {
       <Title order={2}>Hendelseslogg</Title>
       <AuditLogFilters onChange={setFilter} />
       <Skeleton visible={isAuditLogsLoading}>
-        <AuditLogsTable audit_logs={auditLogs} onLoadMore={fetchNextPage} />
+        <AuditLogsTable
+          audit_logs={auditLogs}
+          onLoadMore={fetchNextPage}
+          isLoading={isAuditLogsLoading}
+          isLoadingMore={isFetchingNextPage}
+        />
       </Skeleton>
     </Stack>
   )

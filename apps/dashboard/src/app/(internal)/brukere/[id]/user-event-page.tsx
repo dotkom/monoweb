@@ -7,13 +7,18 @@ import { useUserDetailsContext } from "./provider"
 export const UserEventPage: FC = () => {
   const { user } = useUserDetailsContext()
 
-  const { events, isLoading, fetchNextPage } = useEventAllByAttendingUserInfiniteQuery(user.id)
+  const { events, isLoading, fetchNextPage, isFetchingNextPage } = useEventAllByAttendingUserInfiniteQuery(user.id)
 
   return (
     <Stack>
       <Title order={2}>Arrangementer</Title>
       <Skeleton visible={isLoading}>
-        <EventTable events={events} onLoadMore={fetchNextPage} />
+        <EventTable
+          events={events}
+          onLoadMore={fetchNextPage}
+          isLoading={isLoading}
+          isLoadingMore={isFetchingNextPage}
+        />
       </Skeleton>
     </Stack>
   )

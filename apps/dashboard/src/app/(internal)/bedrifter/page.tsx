@@ -18,7 +18,7 @@ export default function CompanyPage() {
             Ny bedrift
           </Button>
         </Box>
-        <GenericTable table={table} />
+        <GenericTable table={table} isLoading={isCompaniesLoading} />
       </Stack>
     </Skeleton>
   )

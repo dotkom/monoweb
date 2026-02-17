@@ -11,7 +11,7 @@ import { useEventAllInfiniteQuery } from "./queries"
 
 export default function EventPage() {
   const [filter, setFilter] = useState<EventFilterQuery>({})
-  const { events, isLoading: isEventsLoading, fetchNextPage } = useEventAllInfiniteQuery({ filter })
+  const { events, isLoading: isEventsLoading, fetchNextPage, isFetchingNextPage } = useEventAllInfiniteQuery({ filter })
 
   return (
     <Stack>
@@ -28,7 +28,12 @@ export default function EventPage() {
       </Group>
 
       <Skeleton visible={isEventsLoading}>
-        <EventTable events={events} onLoadMore={fetchNextPage} />
+        <EventTable
+          events={events}
+          onLoadMore={fetchNextPage}
+          isLoadingMore={isFetchingNextPage}
+          isLoading={isEventsLoading}
+        />
       </Skeleton>
     </Stack>
   )

@@ -9,9 +9,11 @@ import { useMemo } from "react"
 interface Props {
   data: DeregisterReasonWithEvent[]
   onLoadMore: () => void
+  isLoading: boolean
+  isLoadingMore?: boolean
 }
 
-export const DeregisterReasonsTable = ({ data, onLoadMore }: Props) => {
+export const DeregisterReasonsTable = ({ data, onLoadMore, isLoading, isLoadingMore }: Props) => {
   const columnHelper = createColumnHelper<DeregisterReasonWithEvent>()
   const columns = useMemo(
     () => [
@@ -54,5 +56,5 @@ export const DeregisterReasonsTable = ({ data, onLoadMore }: Props) => {
     columns,
   })
 
-  return <GenericTable table={table} onLoadMore={onLoadMore} />
+  return <GenericTable table={table} onLoadMore={onLoadMore} isLoading={isLoading} isLoadingMore={isLoadingMore} />
 }

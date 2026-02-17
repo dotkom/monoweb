@@ -10,7 +10,7 @@ import { useUserTable } from "./use-user-table"
 
 export default function UserPage() {
   const [filter, setFilter] = useState<UserFilterQuery>({})
-  const { users, isLoading: isUsersLoading, fetchNextPage } = useUserAllInfiniteQuery({ filter })
+  const { users, isLoading: isUsersLoading, fetchNextPage, isFetchingNextPage } = useUserAllInfiniteQuery({ filter })
 
   const table = useUserTable({ data: users })
 
@@ -20,7 +20,12 @@ export default function UserPage() {
         <UserFilters onChange={setFilter} />
       </Group>
       <Skeleton visible={isUsersLoading}>
-        <GenericTable table={table} onLoadMore={fetchNextPage} />
+        <GenericTable
+          table={table}
+          onLoadMore={fetchNextPage}
+          isLoading={isUsersLoading}
+          isLoadingMore={isFetchingNextPage}
+        />
       </Skeleton>
     </Stack>
   )

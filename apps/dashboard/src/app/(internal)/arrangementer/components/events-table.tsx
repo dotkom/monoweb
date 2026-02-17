@@ -10,9 +10,11 @@ import { EventHostingGroupList } from "./event-hosting-group-list"
 interface Props {
   events: EventWithAttendance[]
   onLoadMore?(): void
+  isLoading: boolean
+  isLoadingMore?: boolean
 }
 
-export const EventTable = ({ events, onLoadMore }: Props) => {
+export const EventTable = ({ events, onLoadMore, isLoading, isLoadingMore }: Props) => {
   const columnHelper = createColumnHelper<EventWithAttendance>()
   const columns = useMemo(
     () => [
@@ -54,5 +56,5 @@ export const EventTable = ({ events, onLoadMore }: Props) => {
     columns,
   })
 
-  return <GenericTable table={table} onLoadMore={onLoadMore} />
+  return <GenericTable table={table} onLoadMore={onLoadMore} isLoadingMore={isLoadingMore} isLoading={isLoading} />
 }

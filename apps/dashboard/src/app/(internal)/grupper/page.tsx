@@ -14,7 +14,7 @@ const GroupPage = () => {
         <Box>
           <Button onClick={open}>Opprett gruppe</Button>
         </Box>
-        <AllGroupsTable groups={groups} />
+        <AllGroupsTable groups={groups} isLoading={isGroupsLoading} />
       </Stack>
     </Skeleton>
   )

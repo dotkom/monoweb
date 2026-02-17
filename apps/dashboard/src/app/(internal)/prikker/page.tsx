@@ -7,20 +7,25 @@ import { PunishmentTable } from "./punishment-table"
 import { usePunishmentAllInfiniteQuery } from "./queries/use-punishment-all-query"
 
 export default function MarkPage() {
-  const { marks, isLoading: isMarksLoading, fetchNextPage } = usePunishmentAllInfiniteQuery()
+  const { marks, isLoading: isMarksLoading, fetchNextPage, isFetchingNextPage } = usePunishmentAllInfiniteQuery()
 
   const openCreateMarkModal = useCreateMarkModal()
   const openCreateSuspensionModal = useCreateSuspensionModal()
 
   return (
-    <Skeleton visible={isMarksLoading}>
-      <Stack>
-        <Group>
-          <Button onClick={openCreateMarkModal}>Gi ny prikk</Button>
-          <Button onClick={openCreateSuspensionModal}>Gi ny suspensjon</Button>
-        </Group>
-        <PunishmentTable marks={marks} onLoadMore={fetchNextPage} />
-      </Stack>
-    </Skeleton>
+    <Stack>
+      <Group>
+        <Button onClick={openCreateMarkModal}>Gi ny prikk</Button>
+        <Button onClick={openCreateSuspensionModal}>Gi ny suspensjon</Button>
+      </Group>
+      <Skeleton visible={isMarksLoading}>
+        <PunishmentTable
+          marks={marks}
+          onLoadMore={fetchNextPage}
+          isLoading={isMarksLoading}
+          isLoadingMore={isFetchingNextPage}
+        />
+      </Skeleton>
+    </Stack>
   )
 }

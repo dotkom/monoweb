@@ -17,7 +17,7 @@ export default function OfflinePage() {
         <Box>
           <Button onClick={open}>Legg inn ny Offline</Button>
         </Box>
-        <GenericTable table={table} />
+        <GenericTable table={table} isLoading={isOfflinesLoading} />
       </Stack>
     </Skeleton>
   )

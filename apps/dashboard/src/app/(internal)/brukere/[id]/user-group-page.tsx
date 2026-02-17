@@ -13,7 +13,7 @@ export const UserGroupPage: FC = () => {
     <Stack>
       <Title order={2}>Grupper</Title>
       <Skeleton visible={isLoading}>
-        <AllGroupsTable groups={groups} />
+        <AllGroupsTable groups={groups} isLoading={isLoading} />
       </Skeleton>
     </Stack>
   )

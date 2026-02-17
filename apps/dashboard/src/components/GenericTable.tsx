@@ -1,4 +1,15 @@
-import { Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core"
+import {
+  Card,
+  Progress,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Transition,
+} from "@mantine/core"
 import { useInViewport } from "@mantine/hooks"
 import { IconCaretDownFilled, IconCaretUpDownFilled, IconCaretUpFilled } from "@tabler/icons-react"
 import { type Table as ReactTable, flexRender } from "@tanstack/react-table"
@@ -8,14 +19,15 @@ export interface GenericTableProps<T> {
   readonly table: ReactTable<T>
   filterable?: boolean
   onLoadMore?(): void
-  isLoading: boolean
+  isLoading?: boolean
+  isLoadingMore?: boolean
 }
 
-export function GenericTable<T>({ table, filterable, onLoadMore, isLoading }: GenericTableProps<T>) {
+export function GenericTable<T>({ table, filterable, onLoadMore, isLoading, isLoadingMore }: GenericTableProps<T>) {
   const { ref, inViewport } = useInViewport()
 
   useEffect(() => {
-    if (inViewport && !isLoading) {
+    if (inViewport && isLoading === false) {
       onLoadMore?.()
     }
   }, [inViewport, onLoadMore, isLoading])
@@ -72,6 +84,22 @@ export function GenericTable<T>({ table, filterable, onLoadMore, isLoading }: Ge
           </TableTbody>
         </Table>
         <div ref={ref} style={{ height: 1 }} />
+        <div
+          style={{
+            position: "sticky",
+            bottom: 0,
+            paddingTop: 4,
+            paddingBottom: 4,
+          }}
+        >
+          <Transition mounted={isLoadingMore ?? false} transition="fade" duration={200} timingFunction="ease">
+            {(styles) => (
+              <div style={styles}>
+                <Progress size="sm" value={100} animated radius={0} />
+              </div>
+            )}
+          </Transition>
+        </div>
       </Table.ScrollContainer>
     </Card>
   )

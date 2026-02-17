@@ -11,7 +11,12 @@ import { useJobListingTable } from "./use-job-listing-table"
 
 export default function JobListingPage() {
   const [filter, setFilter] = useState<JobListingFilterQuery>({})
-  const { jobListings, isLoading: isJobListingsLoading, fetchNextPage } = useJobListingAllQuery({ filter })
+  const {
+    jobListings,
+    isLoading: isJobListingsLoading,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useJobListingAllQuery({ filter })
   const open = useCreateJobListingModal()
   const table = useJobListingTable({ data: jobListings })
 
@@ -26,7 +31,12 @@ export default function JobListingPage() {
       </Group>
 
       <Skeleton visible={isJobListingsLoading}>
-        <GenericTable table={table} onLoadMore={fetchNextPage} />
+        <GenericTable
+          table={table}
+          onLoadMore={fetchNextPage}
+          isLoading={isJobListingsLoading}
+          isLoadingMore={isFetchingNextPage}
+        />
       </Skeleton>
     </Stack>
   )

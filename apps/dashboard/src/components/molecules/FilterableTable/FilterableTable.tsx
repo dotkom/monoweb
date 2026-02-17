@@ -20,9 +20,11 @@ type FilterOption = {
 type FilterableTableProps<T> = {
   tableOptions: TableOptions<T>
   filters: FilterOption[]
+  isLoading?: boolean
+  isLoadingMore?: boolean
 }
 
-export function FilterableTable<T>({ tableOptions, filters }: FilterableTableProps<T>) {
+export function FilterableTable<T>({ tableOptions, filters, isLoading, isLoadingMore }: FilterableTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("")
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -68,7 +70,7 @@ export function FilterableTable<T>({ tableOptions, filters }: FilterableTablePro
           }}
         />
       </Group>
-      <GenericTable table={table} filterable={true} />
+      <GenericTable table={table} filterable={true} isLoading={isLoading} isLoadingMore={isLoadingMore} />
     </Card>
   )
 }

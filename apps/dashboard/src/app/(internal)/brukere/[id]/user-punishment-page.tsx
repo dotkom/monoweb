@@ -7,7 +7,7 @@ import { Skeleton, Stack, Title } from "@mantine/core"
 export const UserPunishmentPage: FC = () => {
   const { user } = useUserDetailsContext()
 
-  const { marks, fetchNextPage, isLoading } = usePunishmentAllInfiniteQuery({
+  const { marks, fetchNextPage, isLoading, isFetchingNextPage } = usePunishmentAllInfiniteQuery({
     byGivenToUserId: [user.id],
   })
 
@@ -15,7 +15,12 @@ export const UserPunishmentPage: FC = () => {
     <Stack>
       <Title order={2}>Prikker</Title>
       <Skeleton visible={isLoading}>
-        <PunishmentTable marks={marks} onLoadMore={fetchNextPage} />
+        <PunishmentTable
+          marks={marks}
+          onLoadMore={fetchNextPage}
+          isLoading={isLoading}
+          isLoadingMore={isFetchingNextPage}
+        />
       </Skeleton>
     </Stack>
   )
