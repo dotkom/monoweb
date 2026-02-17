@@ -8,20 +8,21 @@ export interface GenericTableProps<T> {
   readonly table: ReactTable<T>
   filterable?: boolean
   onLoadMore?(): void
+  isLoading: boolean
 }
 
-export function GenericTable<T>({ table, filterable, onLoadMore }: GenericTableProps<T>) {
+export function GenericTable<T>({ table, filterable, onLoadMore, isLoading }: GenericTableProps<T>) {
   const { ref, inViewport } = useInViewport()
 
   useEffect(() => {
-    if (inViewport) {
+    if (inViewport && !isLoading) {
       onLoadMore?.()
     }
-  }, [inViewport, onLoadMore])
+  }, [inViewport, onLoadMore, isLoading])
 
   return (
     <Card withBorder p="xs">
-      <Table.ScrollContainer minWidth={600} maxHeight={400} type="native">
+      <Table.ScrollContainer minWidth={600} maxHeight={600} type="native">
         <Table striped stickyHeader>
           <TableThead>
             {table.getHeaderGroups().map((headerGroup) => (
