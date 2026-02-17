@@ -3,7 +3,7 @@ import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
+import { COMPANY_IMAGE_MAX_SIZE_KIB, type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   imageUrl: null,
@@ -66,6 +66,7 @@ export const useCompanyWriteForm = ({
       }),
       imageUrl: createImageInput({
         label: "Bilde",
+        maxSizeKiB: COMPANY_IMAGE_MAX_SIZE_KIB,
         placeholder: "Last opp",
         onFileUpload: fileUpload,
       }),

@@ -6,6 +6,7 @@ import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextIn
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import {
+  GROUP_IMAGE_MAX_SIZE_KIB,
   type GroupId,
   GroupMemberVisibilitySchema,
   GroupRecruitmentMethodSchema,
@@ -117,6 +118,7 @@ export const useGroupWriteForm = ({
       }),
       imageUrl: createImageInput({
         label: "Bilde",
+        maxSizeKiB: GROUP_IMAGE_MAX_SIZE_KIB,
         placeholder: "Last opp",
         onFileUpload: fileUpload,
       }),

@@ -7,24 +7,47 @@ export function createFileInput<F extends FieldValues>(
   props: Omit<FileInputProps, "error"> & {
     onFileUpload: (file: File) => Promise<string>
     existingFileUrl?: string
+    maxSizeKiB?: number
   }
 ): InputProducerResult<F> {
-  const { onFileUpload, existingFileUrl, ...fileInputProps } = props
+  const { onFileUpload, existingFileUrl, maxSizeKiB, ...fileInputProps } = props
 
-  return function FormFileInput({ name, control }) {
+  const maxSizeDescription = maxSizeKiB ? `Maks filstørrelse er ${maxSizeKiB / 1024} MiB` : undefined
+
+  const description = (
+    <>
+      {fileInputProps.description}
+      {maxSizeDescription && <> ({maxSizeDescription})</>}
+    </>
+  )
+
+  return function FormFileInput({ name, control, setError, clearErrors }) {
     return (
       <Controller
         control={control}
         name={name}
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <Stack gap="0.5rem">
             <FileInput
               {...fileInputProps}
+              description={description}
+              error={fieldState.error?.message}
               placeholder={field.value ?? existingFileUrl ?? "Klikk for å velge fil"}
               onChange={async (file) => {
                 if (file === null) {
                   return
                 }
+
+                if (maxSizeKiB && file.size > maxSizeKiB * 1024) {
+                  setError(name, {
+                    type: "manual",
+                    message: `Filen er for stor. ${maxSizeDescription}.`,
+                  })
+                  return
+                }
+
+                clearErrors(name)
+
                 const result = await onFileUpload(file)
                 field.onChange(result)
               }}

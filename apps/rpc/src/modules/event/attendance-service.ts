@@ -875,7 +875,7 @@ export function getAttendanceService(
         firstUnreservedAdjacentAttendee.user.name || "<missing name>",
         event.id,
         event.title,
-        attendee.id
+        attendee.user.id
       )
 
       sendEventRegistrationEmail(event, attendance, firstUnreservedAdjacentAttendee)

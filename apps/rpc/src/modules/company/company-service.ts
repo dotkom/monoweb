@@ -1,7 +1,14 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
-import type { Company, CompanyId, CompanySlug, CompanyWrite, UserId } from "@dotkomonline/types"
+import {
+  type Company,
+  type CompanyId,
+  type CompanySlug,
+  type CompanyWrite,
+  type UserId,
+  COMPANY_IMAGE_MAX_SIZE_KIB,
+} from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
@@ -81,12 +88,10 @@ export function getCompanyService(
       const uuid = crypto.randomUUID()
       const key = `company/${Date.now()}-${uuid}-${slugify(filename)}`
 
-      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
-
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        maxSizeKiB,
+        maxSizeKiB: COMPANY_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       })

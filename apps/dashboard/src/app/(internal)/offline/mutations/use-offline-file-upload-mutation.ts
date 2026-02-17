@@ -17,3 +17,18 @@ export const useOfflineFileUploadMutation = () => {
     return await uploadFileToS3PresignedPost(env.AWS_CLOUDFRONT_URL, presignedPost, file)
   }
 }
+
+export const useOfflineImageUploadMutation = () => {
+  const trpc = useTRPC()
+
+  const createImageUploadMutation = useMutation(trpc.offline.createImageUpload.mutationOptions())
+
+  return async (file: File) => {
+    const presignedPost = await createImageUploadMutation.mutateAsync({
+      filename: file.name,
+      contentType: file.type,
+    })
+
+    return await uploadFileToS3PresignedPost(env.AWS_CLOUDFRONT_URL, presignedPost, file)
+  }
+}

@@ -182,3 +182,5 @@ export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmen
       return "Opptak ved våren"
   }
 }
+
+export const GROUP_IMAGE_MAX_SIZE_KIB = 5 * 1024

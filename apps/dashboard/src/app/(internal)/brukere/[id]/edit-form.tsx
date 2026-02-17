@@ -3,7 +3,7 @@ import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { type UserWrite, UserWriteSchema } from "@dotkomonline/types"
+import { USER_IMAGE_MAX_SIZE_KIB, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 
 interface UseUserProfileWriteFormProps {
   onSubmit(data: UserWrite): void
@@ -55,6 +55,7 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       }),
       imageUrl: createImageInput({
         label: "Profilbilde",
+        maxSizeKiB: USER_IMAGE_MAX_SIZE_KIB,
         onFileUpload: fileUpload,
         acceptGif: true,
       }),
