@@ -168,6 +168,8 @@ export const usePoolForm = (props: PoolFormProps) => {
             register={form.register}
             control={form.control}
             state={form.formState}
+            setError={form.setError}
+            clearErrors={form.clearErrors}
           />
         ))}
         <Button type="submit">{props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe"}</Button>
