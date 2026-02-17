@@ -12,12 +12,12 @@ import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextIn
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import {
+  EVENT_IMAGE_MAX_SIZE_KIB,
   EventSchema,
   type EventStatus,
   EventTypeSchema,
   EventWriteSchema,
   mapEventTypeToLabel,
-  EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { addHours, roundToNearestHours } from "date-fns"
 import { z } from "zod"
@@ -108,11 +108,10 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
       }),
       imageUrl: createImageInput({
         label: "Bilde",
-        maxSizeKiB: EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
+        maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         description: (
           <>
             Bildet bør passe sideforholdene <strong>24:9</strong> (arrangementsiden) og 16:9 (alle andre sider).
-            Maksstørrelse er {EVENT_FILE_UPLOAD_MAX_SIZE_KIB / 1024} MiB.
           </>
         ),
         onFileUpload: uploadFile,

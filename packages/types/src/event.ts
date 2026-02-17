@@ -162,5 +162,4 @@ export const getDefaultFeedbackAnswerDeadline = (eventEnd: Date, timezone: strin
   })
 }
 
-// 5 MiB, arbitrarily set
-export const EVENT_FILE_UPLOAD_MAX_SIZE_KIB = 5 * 1024
+export const EVENT_IMAGE_MAX_SIZE_KIB = 5 * 1024

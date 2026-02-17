@@ -20,6 +20,15 @@ export function createImageInput<F extends FieldValues>({
       accept += ",image/gif"
     }
 
+    const maxSizeDescription = maxSizeKiB ? `Maks filstørrelse er ${maxSizeKiB / 1024} MiB` : undefined
+
+    const description = (
+      <>
+        {fileInputProps.description}
+        {maxSizeDescription && <> ({maxSizeDescription})</>}
+      </>
+    )
+
     return (
       <Controller
         control={control}
@@ -30,6 +39,7 @@ export function createImageInput<F extends FieldValues>({
               <Group gap="xs">
                 <FileInput
                   {...fileInputProps}
+                  description={description}
                   accept={accept}
                   error={fieldState.error?.message}
                   placeholder={field.value || existingImageUrl || "Klikk for å velge fil"}
@@ -41,7 +51,7 @@ export function createImageInput<F extends FieldValues>({
                     if (maxSizeKiB && file.size > maxSizeKiB * 1024) {
                       setError(name, {
                         type: "manual",
-                        message: `Filen er for stor. Maks størrelse er ${maxSizeKiB / 1024} MiB.`,
+                        message: `Filen er for stor. ${maxSizeDescription}.`,
                       })
                       return
                     }

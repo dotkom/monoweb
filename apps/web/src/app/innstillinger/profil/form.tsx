@@ -1,7 +1,7 @@
 "use client"
 import { useUserFileUploadMutation } from "@/app/innstillinger/mutations"
 import { useTRPC } from "@/utils/trpc/client"
-import { type User, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
+import { USER_IMAGE_MAX_SIZE_KIB, type User, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 import {
   Button,
   Label,
@@ -53,6 +53,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     control,
     reset,
     setError,
+    clearErrors,
     trigger,
     formState: { errors, isDirty },
     handleSubmit,
@@ -95,6 +96,16 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     if (!file) {
       return
     }
+
+    if (file.size > USER_IMAGE_MAX_SIZE_KIB * 1024) {
+      setError("imageUrl", {
+        type: "manual",
+        message: `Filen er for stor. Maks filstørrelse er ${USER_IMAGE_MAX_SIZE_KIB / 1024} MiB.`,
+      })
+      return
+    }
+
+    clearErrors("imageUrl")
 
     const result = await fileUpload(file).catch(() => null)
 
@@ -177,7 +188,9 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
               <Label htmlFor="pfp" className="text-base">
                 Profilbilde
               </Label>
-              <Text className="text-xs text-gray-500 dark:text-stone-500">Maksstørrelse er 0,5 MiB.</Text>
+              <Text className="text-xs text-gray-500 dark:text-stone-500">
+                Maksstørrelse er {USER_IMAGE_MAX_SIZE_KIB / 1024} MiB.
+              </Text>
               <input
                 id="pfp"
                 type="file"

@@ -16,7 +16,7 @@ import {
   type EventWrite,
   type GroupId,
   type UserId,
-  EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
+  EVENT_IMAGE_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, NotFoundError } from "../../error"
@@ -180,7 +180,7 @@ export function getEventService(
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        maxSizeKiB: EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
+        maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       })

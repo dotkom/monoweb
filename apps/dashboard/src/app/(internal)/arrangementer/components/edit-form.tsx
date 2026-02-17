@@ -10,12 +10,12 @@ import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import {
   type Company,
+  EVENT_IMAGE_MAX_SIZE_KIB,
   EventSchema,
   type EventStatus,
   EventTypeSchema,
   type Group,
   mapEventTypeToLabel,
-  EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
@@ -74,6 +74,7 @@ export const useEventEditForm = ({
         label: "Beskrivelse",
         required: true,
         onFileUpload: uploadFile,
+        maxFileSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
       }),
       locationTitle: createTextInput({
         label: "Stedsnavn",
@@ -92,11 +93,10 @@ export const useEventEditForm = ({
       }),
       imageUrl: createImageInput({
         label: "Bilde",
-        maxSizeKiB: EVENT_FILE_UPLOAD_MAX_SIZE_KIB,
+        maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         description: (
           <>
             Bildet bør passe sideforholdene <strong>24:9</strong> (arrangementsiden) og 16:9 (alle andre sider).
-            Maksstørrelse er {EVENT_FILE_UPLOAD_MAX_SIZE_KIB / 1024} MiB.
           </>
         ),
         onFileUpload: uploadFile,

@@ -1,4 +1,3 @@
-import * as crypto from "node:crypto"
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
@@ -9,6 +8,7 @@ import {
   type MembershipSpecialization,
   MembershipSpecializationSchema,
   type MembershipWrite,
+  USER_IMAGE_MAX_SIZE_KIB,
   type User,
   type UserFilterQuery,
   type UserId,
@@ -23,6 +23,7 @@ import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/uti
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import { isSameDay, subYears } from "date-fns"
+import * as crypto from "node:crypto"
 import { isDevelopmentEnvironment } from "../../configuration"
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
@@ -428,13 +429,10 @@ export function getUserService(
       const uuid = crypto.randomUUID()
       const key = `user/${user.id}/${Date.now()}-${uuid}-${slugify(filename)}`
 
-      // Arbitrarily set max size. This value is referenced in innstillinger/profil/form.tsx
-      const maxSizeKiB = 512 // 0.5 MiB
-
       return await createS3PresignedPost(client, {
         bucket,
         key,
-        maxSizeKiB,
+        maxSizeKiB: USER_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       })

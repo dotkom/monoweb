@@ -38,11 +38,13 @@ export function createRichTextInput<F extends FieldValues>({
   required,
   label,
   onFileUpload,
+  maxFileSizeKiB,
   ...props
 }: Omit<RichTextEditorProps, "error" | "children" | "editor"> & {
   required: boolean
   label: string
   onFileUpload?: (file: File) => Promise<string>
+  maxFileSizeKiB?: number
 }): InputProducerResult<F> {
   const editorRef = useRef<Editor | null>(null)
   // This is needed to track the last selection before opening the image modal
@@ -50,6 +52,7 @@ export function createRichTextInput<F extends FieldValues>({
 
   const openImageUploadModal = useUploadImageModal({
     onFileUpload,
+    maxSizeKiB: maxFileSizeKiB,
     handleSubmit: async (imageUrl, alt, title) => {
       const chain = editorRef.current?.chain()
 
