@@ -86,8 +86,9 @@ model User {
   attendeesRefunded     Attendee[]              @relation(name: "RefundedBy")
   auditLogs             AuditLog[]
   deregisterReasons     DeregisterReason[]
-  notificationsCreated  Notification[]
   notificationsReceived NotificationRecipient[]
+  notificationsCreated  Notification[]          @relation("created_by")
+  notificationsUpdated  Notification[]          @relation("last_updated_by")
 
   @@map("ow_user")
 }
@@ -813,9 +814,9 @@ model Notification {
   /// The specific user that created the notification. This is meant for logging purposes. Nullable because the system
   /// can create notifications without a specific user to link it to, for example with recurring tasks.
   createdById     String? @map("created_by_id")
-  createdBy       User?   @relation(fields: [createdById], references: [id])
+  createdBy       User?   @relation("created_by", fields: [createdById], references: [id])
   lastUpdatedById String? @map("last_updated_by_id")
-  lastUpdatedBy   User?   @relation(fields: [lastUpdatedById], references: [id])
+  lastUpdatedBy   User?   @relation("last_updated_by", fields: [lastUpdatedById], references: [id])
   /// The task that created the notification. Useful for tracing and retrieving deadlines that could be useful for the
   /// notification.
   taskId          String? @map("task_id")
