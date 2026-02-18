@@ -16,7 +16,7 @@ import {
   getGroupMemberVisibilityName,
   getGroupRecruitmentMethodName,
   getGroupTypeName,
-} from "@dotkomonline/types" 
+} from "@dotkomonline/types"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { useMemo } from "react"
 import z from "zod"
