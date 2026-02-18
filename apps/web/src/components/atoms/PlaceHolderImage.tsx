@@ -7,7 +7,7 @@ type PlaceHolderImageProps = Omit<ImageProps, "src" | "alt"> & {
   variant?: EventType
 }
 
-export const PlaceHolderImage: FC<PlaceHolderImageProps> = ({ className, variant = "OTHER", ...props }) => {
+export const PlaceHolderImage: FC<PlaceHolderImageProps> = ({ className, variant = "OTHER" }) => {
   const lightColorMap: Record<NonNullable<PlaceHolderImageProps["variant"]>, string> = {
     SOCIAL: "fill-[#A7D9B6] dark:fill-[#1f3d2a]", // muted green
     COMPANY: "fill-[#E6B5B5] dark:fill-[#4f2626]", // muted red

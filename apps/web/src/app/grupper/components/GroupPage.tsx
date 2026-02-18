@@ -14,6 +14,7 @@ import {
 } from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
+import { getGroupEasterEgg } from "./easter-eggs"
 
 interface CommitteePageProps {
   params: Promise<{ slug: string }>
@@ -112,11 +113,12 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     })
 
   const name = group.name ?? group.abbreviation
+  const easterEgg = getGroupEasterEgg(name)
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
-        <Avatar className="w-24 h-24 md:w-32 md:h-32">
+        <Avatar className={cn("w-24 h-24 md:w-32 md:h-32", easterEgg?.avatarClassName)}>
           <AvatarImage src={group.imageUrl ?? undefined} alt={name} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
             <IconUsers width={48} height={48} />

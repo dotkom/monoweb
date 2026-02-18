@@ -17,12 +17,12 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/rif -F @dotkomonline/emails build",
+    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/emails build",
     "lint": "pnpm run -r lint",
     "lint-check": "pnpm run -r lint-check",
     "test": "pnpm run -r test",
     "test:it": "pnpm run -r test:it",
-    "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
+    "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
     "dev:web": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
     "dev:grades": "pnpm -rc --parallel -F @dotkomonline/grades-backend -F @dotkomonline/grades-frontend exec doppler run --preserve-env pnpm run dev",
     "prisma": "pnpm -F @dotkomonline/db prisma",
@@ -34,11 +34,13 @@
     "migrate:deploy-with-fixtures": "pnpm -F @dotkomonline/db prisma migrate deploy && pnpm -F @dotkomonline/db apply-fixtures",
     "migrate:prod": "doppler run --config prd --project monoweb-rpc -- pnpm migrate:deploy",
     "migrate:dev-grades": "pnpm -F @dotkomonline/grades-db migrate",
+    "migrate:dev-grades-with-fixtures": "pnpm -F @dotkomonline/grades-db prisma migrate dev && pnpm -F @dotkomonline/grades-db apply-fixtures",
     "storybook": "pnpm run -r --filter=storybook storybook",
     "type-check": "pnpm run -r type-check",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "shell": "pnpm -F @dotkomonline/rpc shell",
-    "receive-stripe-webhooks": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm receive-stripe-webhooks"
+    "receive-stripe-webhooks": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm receive-stripe-webhooks",
+    "vinstraff:user-db-sync": "doppler run --config prd --project monoweb-rpc -- pnpm -F @dotkomonline/db vinstraff:user-db-sync"
   },
   "workspaces": [
     "packages/*",
@@ -50,7 +52,7 @@
     "pnpm": ">=10.15.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.13",
+    "@biomejs/biome": "2.3.14",
     "typescript": "5.9.3"
   }
 }

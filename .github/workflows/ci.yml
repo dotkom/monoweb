@@ -40,24 +40,6 @@ jobs:
       - run: pnpm type-check
         name: Run TypeScript type checker
 
-  build-brevduen:
-    name: brevduen
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-brevduen
-        with:
-          deploy: false
-          environment: prd
-          git-hash: ${{ github.sha }}
-
   build-dashboard:
     name: dashboard
     runs-on: ubuntu-24.04-arm
@@ -75,25 +57,6 @@ jobs:
           deploy: false
           environment: prd
           git-hash: ${{ github.sha }}
-  
-  build-rif:
-    name: rif
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-rif
-        with:
-          deploy: false
-          environment: prd
-          git-hash: ${{ github.sha }}
-
   build-rpc:
     name: rpc
     runs-on: ubuntu-24.04-arm

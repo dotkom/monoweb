@@ -47,6 +47,13 @@ export const createConfiguration = () =>
     tasks: {
       workerInterval: config(process.env.TASKS_WORKER_INTERVAL, 10000, z.coerce.number().int()),
     },
+    // RIF (Interest Form) configuration for Google Sheets integration.
+    // NOTE: This Google Sheets integration could be replaced with database storage
+    // and an admin dashboard in the future for better data management and analytics.
+    rif: {
+      serviceAccount: config(process.env.RIF_SERVICE_ACCOUNT, null),
+      spreadsheetId: config(process.env.RIF_SPREADSHEET_ID, null),
+    },
   })
 
 /** Type where config.googleWorkspace has no nullable keys */

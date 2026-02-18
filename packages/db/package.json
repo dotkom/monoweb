@@ -25,7 +25,8 @@
     "migrate": "prisma migrate dev",
     "generate": "prisma generate",
     "postinstall": "prisma generate",
-    "apply-fixtures": "tsx src/fixtures.ts"
+    "apply-fixtures": "tsx src/fixtures.ts",
+    "vinstraff:user-db-sync": "tsx src/vinstraff-user-db-sync.ts"
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
@@ -38,7 +39,7 @@
     "zod-prisma-types": "^3.2.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.13",
+    "@biomejs/biome": "2.3.14",
     "@dotkomonline/config": "workspace:*",
     "@types/common-tags": "1.8.4",
     "@types/node": "22.19.7",

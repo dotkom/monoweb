@@ -87,7 +87,7 @@ export const OnlineHero: FC = () => {
               variant="solid"
               color="brand"
               element="a"
-              href="https://interesse.online.ntnu.no"
+              href="/bedrift/interesse"
               iconRight={<IconArrowUpRight className="size-4" />}
             >
               Ta kontakt

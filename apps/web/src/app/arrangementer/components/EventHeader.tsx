@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
-  const [showFullImage, setShowFullImage] = useState(false)
+  const [showFullImage, setShowFullImage] = useState(true)
   const [hasCorrectAspectRatio, setHasCorrectAspectRatio] = useState<boolean | null>(null)
   const dashboardUrl = new URL(`/arrangementer/${event.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
@@ -29,7 +29,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
         glareMaxOpacity={0.1}
         className="rounded-xl bg-gray-100 dark:bg-stone-800"
       >
-        <div className="group relative w-full aspect-video md:aspect-5/2 overflow-hidden rounded-xl">
+        <div className="group relative w-full aspect-video md:aspect-24/9 overflow-hidden rounded-xl">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}

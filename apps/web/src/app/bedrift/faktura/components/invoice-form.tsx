@@ -25,12 +25,14 @@ export const InvoiceForm: FC = () => {
   })
   const organizationNumber = watch("organizationNumber")
 
+  const { mutate: brregMutate } = brreg
+
   useEffect(() => {
     if (organizationNumber?.length !== 9) {
       return
     }
-    brreg.mutate(organizationNumber)
-  }, [organizationNumber, brreg.mutate])
+    brregMutate(organizationNumber)
+  }, [organizationNumber, brregMutate])
 
   return (
     <Section as="fieldset">

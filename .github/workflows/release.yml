@@ -1,6 +1,4 @@
 # Perform a full release of the applications in the monorepo
-#
-# This does not account for splash/kvittering as these are deployed directly to prod on push
 
 name: Production Release
 on:
@@ -44,24 +42,6 @@ jobs:
       - run: pnpm type-check
         name: Run TypeScript type checker
 
-  build-brevduen:
-    name: brevduen
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-brevduen
-        with:
-          deploy: true
-          environment: prd
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
   build-dashboard:
     name: dashboard
     runs-on: ubuntu-24.04-arm
@@ -75,24 +55,6 @@ jobs:
           sparse-checkout: '.github'
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-dashboard
-        with:
-          deploy: true
-          environment: prd
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
-  build-rif:
-    name: rif
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-rif
         with:
           deploy: true
           environment: prd
@@ -138,9 +100,7 @@ jobs:
     name: Notify users about release
     runs-on: ubuntu-24.04
     needs:
-      - build-brevduen
       - build-dashboard
-      - build-rif
       - build-rpc
       - build-web
     steps:

@@ -188,3 +188,5 @@ function getAcademicYearDelta(startDate: Date | TZDate, now: Date | TZDate = get
 
   return academicYearCurrent - academicYearStart + 1
 }
+
+export const USER_IMAGE_MAX_SIZE_KIB = 512

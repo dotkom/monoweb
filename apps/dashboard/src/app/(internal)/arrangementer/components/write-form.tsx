@@ -1,4 +1,6 @@
 import { useEventFileUploadMutation } from "@/app/(internal)/arrangementer/mutations"
+import { validateEventWrite } from "@/app/(internal)/arrangementer/validation"
+import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
@@ -10,6 +12,7 @@ import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextIn
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import {
+  EVENT_IMAGE_MAX_SIZE_KIB,
   EventSchema,
   type EventStatus,
   EventTypeSchema,
@@ -18,8 +21,6 @@ import {
 } from "@dotkomonline/types"
 import { addHours, roundToNearestHours } from "date-fns"
 import { z } from "zod"
-import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
-import { validateEventWrite } from "@/app/(internal)/arrangementer/validation"
 
 const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.Values).map((type) => ({
   value: type,
@@ -107,6 +108,7 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
       }),
       imageUrl: createImageInput({
         label: "Bilde",
+        maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         description: (
           <>
             Bildet bør passe sideforholdene <strong>24:9</strong> (arrangementsiden) og 16:9 (alle andre sider).

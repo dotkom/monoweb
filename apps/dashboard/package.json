@@ -65,12 +65,12 @@
     "zod": "^3.25.47"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.13",
+    "@biomejs/biome": "2.3.14",
     "@dotkomonline/config": "workspace:^",
     "@dotkomonline/rpc": "workspace:*",
     "@tailwindcss/postcss": "4.1.18",
     "@types/node": "22.19.7",
-    "@types/react": "19.2.9",
+    "@types/react": "19.2.11",
     "@types/react-dom": "19.2.3",
     "open-color": "1.9.1",
     "postcss": "8.5.6",

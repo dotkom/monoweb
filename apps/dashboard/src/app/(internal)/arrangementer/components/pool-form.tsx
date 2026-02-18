@@ -66,6 +66,8 @@ export const usePoolForm = (props: PoolFormProps) => {
   const isDefaultGeneratedTitle = defaultTitle === createPoolName(props.defaultValues.yearCriteria ?? [])
   const isTitleDirty = Boolean(form.formState.dirtyFields.title)
 
+  const { resetField, setValue } = form
+
   const fields = useMemo(
     () =>
       [
@@ -87,8 +89,8 @@ export const usePoolForm = (props: PoolFormProps) => {
                 color="gray"
                 variant="subtle"
                 onClick={() => {
-                  form.resetField("title", { defaultValue: defaultTitle })
-                  form.setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
+                  resetField("title", { defaultValue: defaultTitle })
+                  setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
                 }}
               >
                 <IconX height={20} width={20} />
@@ -131,7 +133,7 @@ export const usePoolForm = (props: PoolFormProps) => {
           }),
         },
       ] as const,
-    [defaultTitle, generatedTitle, props.disabledYears, form.resetField, form.setValue, props.minCapacity]
+    [defaultTitle, generatedTitle, props.disabledYears, resetField, setValue, props.minCapacity]
   )
 
   useEffect(() => {
@@ -166,6 +168,8 @@ export const usePoolForm = (props: PoolFormProps) => {
             register={form.register}
             control={form.control}
             state={form.formState}
+            setError={form.setError}
+            clearErrors={form.clearErrors}
           />
         ))}
         <Button type="submit">{props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe"}</Button>

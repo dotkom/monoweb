@@ -250,5 +250,7 @@ export async function createServiceLayer(
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only
     prisma: clients.prisma,
+    // Expose configuration for modules that need direct access (e.g., RIF Google Sheets integration)
+    configuration,
   }
 }

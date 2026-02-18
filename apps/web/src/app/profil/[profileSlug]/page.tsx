@@ -9,7 +9,7 @@ interface ProfilePageProps {
   }>
 }
 
-export default function Page({ params }: ProfilePageProps) {
+export default function Page() {
   return <ProfilePage />
 }
 

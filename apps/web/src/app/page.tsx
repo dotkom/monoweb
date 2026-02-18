@@ -2,7 +2,6 @@ import { auth } from "@/auth"
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
-import { JubileumNotice } from "@/components/notices/jubileum-notice"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, BaseEvent, EventWithAttendance, UserId } from "@dotkomonline/types"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
@@ -27,7 +26,6 @@ export default async function App() {
   return (
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
-        <JubileumNotice />
         <OnlineHero />
       </div>
 
