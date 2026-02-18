@@ -31,10 +31,15 @@ const getDisabledText = (
   hasMembership: boolean,
   isSuspended: boolean,
   notRegisteredToParentEvent: boolean,
-  notReservedToParentEvent: boolean
+  notReservedToParentEvent: boolean,
+  hasTurnstileToken: boolean
 ) => {
   if (!isLoggedIn) {
     return "Du må være innlogget for å melde deg på"
+  }
+
+  if (!hasTurnstileToken) {
+    return "Du må bekrefte at du ikke er en robot"
   }
 
   if (attendee) {
@@ -81,6 +86,7 @@ interface RegistrationButtonProps {
   punishment: Punishment | null
   user: User | null
   isLoading: boolean
+  hasTurnstileToken: boolean
 }
 
 export const RegistrationButton: FC<RegistrationButtonProps> = ({
@@ -91,6 +97,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   punishment,
   user,
   isLoading,
+  hasTurnstileToken,
 }) => {
   const attendee = getAttendee(attendance, user)
   const pool = getAttendablePool(attendance, user)
@@ -119,7 +126,8 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     hasMembership,
     isSuspended,
     notRegisteredToParentEvent,
-    notReservedToParentEvent
+    notReservedToParentEvent,
+    hasTurnstileToken
   )
   const disabled = Boolean(disabledText)
 

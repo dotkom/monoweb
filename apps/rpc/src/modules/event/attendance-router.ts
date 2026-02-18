@@ -68,12 +68,13 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       return ctx.executeTransaction(async (handle) => {
-        return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, input.userId, {
+        return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, null, input.userId, {
           ignoreRegistrationWindow: true,
           immediateReservation: true,
           immediatePayment: false,
           forceAttendancePoolId: input.attendancePoolId,
           ignoreRegisteredToParent: true,
+          overrideTurnstileCheck: true,
         })
       })
     }),
@@ -127,17 +128,25 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
+        turnstileToken: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) =>
       ctx.executeTransaction(async (handle) => {
-        return await ctx.attendanceService.registerAttendee(handle, input.attendanceId, ctx.principal.subject, {
-          ignoreRegistrationWindow: false,
-          immediateReservation: false,
-          immediatePayment: true,
-          forceAttendancePoolId: null,
-          ignoreRegisteredToParent: false,
-        })
+        return await ctx.attendanceService.registerAttendee(
+          handle,
+          input.attendanceId,
+          input.turnstileToken,
+          ctx.principal.subject,
+          {
+            ignoreRegistrationWindow: false,
+            immediateReservation: false,
+            immediatePayment: true,
+            forceAttendancePoolId: null,
+            ignoreRegisteredToParent: false,
+            overrideTurnstileCheck: false,
+          }
+        )
       })
     ),
 

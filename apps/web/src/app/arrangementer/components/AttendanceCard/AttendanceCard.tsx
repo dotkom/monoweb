@@ -1,5 +1,6 @@
 "use client"
 
+import { env } from "@/env"
 import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
 import {
@@ -17,6 +18,7 @@ import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import Turnstile from "react-turnstile"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
@@ -51,6 +53,8 @@ export const AttendanceCard = ({
 
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
+  const [turnstileHasLoaded, setTurnstileHasLoaded] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const [attendanceResponse, punishmentResponse] = useQueries({
     queries: [
@@ -155,10 +159,23 @@ export const AttendanceCard = ({
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const registerForAttendance = () => {
-    registerMutation.mutate({ attendanceId: attendance.id })
+    if (!turnstileToken) {
+      console.error("No turnstile token, cannot register")
+      return
+    }
+    registerMutation.mutate({ attendanceId: attendance.id, turnstileToken })
   }
   const deregisterForAttendance = () => {
     deregisterMutation.mutate({ attendanceId: attendance.id })
+  }
+
+  const handleTurnstileVerify = (token: string) => {
+    setTurnstileToken(token)
+  }
+
+  const handleTurnstileError = (error: string) => {
+    console.error("Turnstile error:", error)
+    setTurnstileToken(null)
   }
 
   const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
@@ -200,6 +217,24 @@ export const AttendanceCard = ({
 
       <NonAttendablePoolsBox attendance={attendance} user={user} />
 
+      {!attendee && attendance.registerEnd > new Date() && (
+        <div className={cn({ hidden: Boolean(turnstileToken) }, "relative bg-gray-500")}>
+
+          <Turnstile
+            sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+            retry="auto"
+            refreshExpired="auto"
+            onError={handleTurnstileError}
+            onVerify={handleTurnstileVerify}
+            onExpire={() => setTurnstileToken(null)}
+            onLoad={() => setTurnstileHasLoaded(true)}
+            size="flexible"
+            className="h-[4.05rem]" // Without this a padding occurs below the widget
+          />
+          <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2 absolute top-0 right-0 translate-x-1/2" />
+        </div>
+      )}
+
       <div className="flex flex-col gap-4 sm:flex-row">
         {attendee?.reserved && <TicketButton attendee={attendee} />}
 
@@ -219,6 +254,7 @@ export const AttendanceCard = ({
         punishment={punishment}
         user={user}
         isLoading={isLoading}
+        hasTurnstileToken={Boolean(turnstileToken)}
       />
 
       <PaymentCard attendance={attendance} attendee={attendee} />

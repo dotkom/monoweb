@@ -48,6 +48,7 @@ import {
 } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { EventService } from "./event-service"
+import { validateTurnstileToken } from "src/turnstile"
 
 type EventRegistrationOptions = {
   /** Should the user be registered regardless of if registration is closed? */
@@ -69,6 +70,11 @@ type EventRegistrationOptions = {
    * NOTE: This flag should PROBABLY only be used if you are calling registerAttendee as a system administrator.
    */
   forceAttendancePoolId: AttendancePoolId | null
+  /**
+   * Should the turnstile check be disabled in the backend? Should only be set to true if you are calling
+   * registerAttendee as a system administrator.
+   */
+  overrideTurnstileCheck: boolean
 }
 
 type EventDeregistrationOptions = {
@@ -127,6 +133,7 @@ export interface AttendanceService {
   registerAttendee(
     handle: DBHandle,
     attendanceId: AttendanceId,
+    turnstileToken: string | null, // If null, overrideTurnstileCheck must be true
     user: UserId,
     options: EventRegistrationOptions
   ): Promise<Attendee>
@@ -281,7 +288,7 @@ export function getAttendanceService(
     async deleteAttendancePool(handle, attendancePoolId) {
       await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
     },
-    async registerAttendee(handle, attendanceId, userId, options) {
+    async registerAttendee(handle, attendanceId, turnstileToken, userId, options) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const event = await eventService.getByAttendance(handle, attendance.id)
       const user = await userService.getById(handle, userId)
@@ -289,6 +296,31 @@ export function getAttendanceService(
         throw new AttendanceValidationError(
           `User(ID=${userId}) is already registered for Attendance(ID=${attendanceId})`
         )
+      }
+
+      // Check turnstile
+      if (!options.overrideTurnstileCheck) {
+        if (!turnstileToken) {
+          throw new AttendanceValidationError("Turnstile token must be provided")
+        }
+
+        const validationResponse = await validateTurnstileToken({
+          token: turnstileToken,
+          secretKey: configuration.TURNSTILE_SECRET_KEY,
+          idempotencyKey: crypto.randomUUID(),
+        })
+
+        if (!validationResponse.success) {
+          logger.warn(
+            "Turnstile validation failed for User(ID=%s) registering for Attendance(ID=%s): %o",
+            userId,
+            attendanceId,
+            validationResponse.error_codes
+          )
+          throw new AttendanceValidationError(
+            `Turnstile validation failed for User(ID=${userId}) registering for Attendance(ID=${attendanceId})`
+          )
+        }
       }
 
       // Ensure the attempted registration is within the registration window.

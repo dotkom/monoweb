@@ -17,7 +17,9 @@
     "EMAIL_TOKEN",
     "EMAIL_ENDPOINT",
     "RPC_ALLOWED_ORIGINS",
-    "RPC_HOST"
+    "RPC_HOST",
+    "TURNSTILE_SITE_KEY",
+    "TURNSTILE_SECRET_KEY"
   ],
   "tasks": {
     "build": {

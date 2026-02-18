@@ -33,4 +33,7 @@ export const configuration = defineConfiguration({
   DATABASE_URL: config(process.env.DATABASE_URL),
 
   STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
+
+  TURNSTILE_SITE_KEY: config(process.env.TURNSTILE_SITE_KEY),
+  TURNSTILE_SECRET_KEY: config(process.env.TURNSTILE_SECRET_KEY),
 })
