@@ -1,9 +1,13 @@
 "use client"
 
 import { Button, Text, Title } from "@dotkomonline/ui"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import type { FC, SVGProps } from "react"
 import Link from "next/link"
+
+const NOT_FOUND_QUOTES = [
+  "Siden finnes ikke.",
+]
 
 /** Trigger all SMIL animate elements in the list */
 const beginAll = (refs: React.RefObject<SVGAnimateElement | null>[]) => {
@@ -20,9 +24,21 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
   const boltRef = useRef<SVGPathElement>(null)
   const shakeFrameRef = useRef<number | null>(null)
 
+  const stopFill = () => {
+    if (!holdingRef.current) return
+    holdingRef.current = false
+    window.removeEventListener("mouseup", stopFill)
+    if (shakeFrameRef.current != null) cancelAnimationFrame(shakeFrameRef.current)
+    if (boltRef.current) {
+      boltRef.current.style.translate = ""
+    }
+    beginAll(resetRefs)
+  }
+
   const startFill = () => {
     holdingRef.current = true
     beginAll(fillRefs)
+    window.addEventListener("mouseup", stopFill, { once: true })
 
     const startTime = performance.now()
     const shake = () => {
@@ -41,18 +57,9 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
   useEffect(() => {
     return () => {
       if (shakeFrameRef.current != null) cancelAnimationFrame(shakeFrameRef.current)
+      window.removeEventListener("mouseup", stopFill)
     }
   }, [])
-
-  const stopFill = () => {
-    if (!holdingRef.current) return
-    holdingRef.current = false
-    if (shakeFrameRef.current != null) cancelAnimationFrame(shakeFrameRef.current)
-    if (boltRef.current) {
-      boltRef.current.style.translate = ""
-    }
-    beginAll(resetRefs)
-  }
 
   return (
     <svg
@@ -67,12 +74,6 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
     >
       <defs>
         <style>{`
-          @keyframes sway {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(-1px, 0.5px); }
-            50% { transform: translate(1px, -0.5px); }
-            75% { transform: translate(-0.5px, -1px); }
-          }
           @keyframes sling {
             0%, 85%, 100% { transform: translate(0, 0) rotate(0deg); }
             89% { transform: translate(0.5px, -0.3px) rotate(1.5deg); }
@@ -85,11 +86,11 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
             transform-origin: center;
             transform-box: fill-box;
             animation: sling 4s ease-in-out infinite;
-            transition: scale 0.15s ease-out;
+            transition: scale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.75);
           }
           .not-found-bolt:hover {
-            scale: 1.15;
-            animation: sway 0.3s ease-in-out 0.2s infinite;
+            scale: 1.12;
+            animation: none;
           }
           .not-found-bolt:active {
             scale: 0.9;
@@ -129,8 +130,6 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
                   startFill()
                   window.scrollTo({ top: 0, behavior: "smooth" })
                 }}
-                onMouseUp={stopFill}
-                onMouseLeave={stopFill}
               />
             </g>
             <g transform="matrix(0.75,0,0,0.75,0,186.709)">
@@ -148,11 +147,13 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
 }
 
 const NotFound = () => {
+  const quote = useMemo(() => NOT_FOUND_QUOTES[Math.floor(Math.random() * NOT_FOUND_QUOTES.length)], [])
+
   return (
     <div className="flex flex-col items-center justify-center gap-8 min-h-[calc(100vh-5rem)]">
       <NotFoundLogo className="w-40 h-40" />
       <Title className="text-6xl">404</Title>
-      <Text className="text-lg text-slate-500 font-mono italic">throw new PageNotFoundException();</Text>
+      <Text className="text-lg text-slate-500 font-mono italic">{quote}</Text>
       <Button className="w-fit rounded-lg px-6 py-3" color="brand" element={Link} href="/">
         Gå til forsiden
       </Button>
