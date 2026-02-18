@@ -1,4 +1,4 @@
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle } from "@dotkomonline/db";
 import {
   type CompanyId,
   type JobListing,
@@ -9,27 +9,37 @@ import {
   JobListingLocationSchema,
   JobListingSchema,
   type JobListingWrite,
-} from "@dotkomonline/types"
-import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+} from "@dotkomonline/types";
+import { parseOrReport } from "../../invariant";
+import { type Pageable, pageQuery } from "../../query";
 
 export interface JobListingRepository {
   create(
     handle: DBHandle,
     companyId: CompanyId,
     jobListingData: JobListingWrite,
-    locationIdsData: JobListingLocationId[]
-  ): Promise<JobListing>
+    locationIdsData: JobListingLocationId[],
+  ): Promise<JobListing>;
   update(
     handle: DBHandle,
     jobListingId: JobListingId,
     jobListingData: Partial<JobListingWrite>,
-    locationIdsData: JobListingLocationId[]
-  ): Promise<JobListing>
-  findById(handle: DBHandle, jobListingId: JobListingId): Promise<JobListing | null>
-  findMany(handle: DBHandle, query: JobListingFilterQuery, page: Pageable): Promise<JobListing[]>
-  findActiveJobListings(handle: DBHandle, page: Pageable): Promise<JobListing[]>
-  findJobListingLocations(handle: DBHandle): Promise<JobListingLocation[]>
+    locationIdsData: JobListingLocationId[],
+  ): Promise<JobListing>;
+  findById(
+    handle: DBHandle,
+    jobListingId: JobListingId,
+  ): Promise<JobListing | null>;
+  findMany(
+    handle: DBHandle,
+    query: JobListingFilterQuery,
+    page: Pageable,
+  ): Promise<JobListing[]>;
+  findActiveJobListings(
+    handle: DBHandle,
+    page: Pageable,
+  ): Promise<JobListing[]>;
+  findJobListingLocations(handle: DBHandle): Promise<JobListingLocation[]>;
 }
 
 export function getJobListingRepository(): JobListingRepository {
@@ -53,9 +63,9 @@ export function getJobListingRepository(): JobListingRepository {
           company: true,
           locations: true,
         },
-      })
+      });
 
-      return parseOrReport(JobListingSchema, listing)
+      return parseOrReport(JobListingSchema, listing);
     },
 
     async update(handle, jobListingId, jobListingData, locationIdsData) {
@@ -86,9 +96,9 @@ export function getJobListingRepository(): JobListingRepository {
           company: true,
           locations: true,
         },
-      })
+      });
 
-      return parseOrReport(JobListingSchema, listing)
+      return parseOrReport(JobListingSchema, listing);
     },
 
     async findById(handle, jobListingId) {
@@ -98,9 +108,9 @@ export function getJobListingRepository(): JobListingRepository {
           company: true,
           locations: true,
         },
-      })
+      });
 
-      return parseOrReport(JobListingSchema.nullable(), listing)
+      return parseOrReport(JobListingSchema.nullable(), listing);
     },
 
     async findMany(handle, query, page) {
@@ -131,13 +141,13 @@ export function getJobListingRepository(): JobListingRepository {
           },
         },
         include: { company: true, locations: true },
-      })
+      });
 
       return jobListings.map((listing) =>
         parseOrReport(JobListingSchema, {
           ...listing,
-        })
-      )
+        }),
+      );
     },
 
     async findActiveJobListings(handle, page) {
@@ -153,17 +163,17 @@ export function getJobListingRepository(): JobListingRepository {
         },
         include: { company: true, locations: true },
         ...pageQuery(page),
-      })
+      });
 
-      return parseOrReport(JobListingSchema.array(), listings)
+      return parseOrReport(JobListingSchema.array(), listings);
     },
 
     async findJobListingLocations(handle) {
       const locations = await handle.jobListingLocation.findMany({
         distinct: "name",
-      })
+      });
 
-      return parseOrReport(JobListingLocationSchema.array(), locations)
+      return parseOrReport(JobListingLocationSchema.array(), locations);
     },
-  }
+  };
 }
