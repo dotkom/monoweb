@@ -103,7 +103,7 @@ const links: MenuLink[] = [
       },
       {
         title: "Kvitteringskjema",
-        href: "https://kvittering.online.ntnu.no/",
+        href: "https://autobank.online.ntnu.no/",
         icon: IconReceipt,
         description: "Har du lagt ut noe for linjeforeningen? Få refusjon her.",
       },
