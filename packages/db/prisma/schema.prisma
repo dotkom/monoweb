@@ -148,6 +148,7 @@ model Group {
   imageUrl            String?                @map("image_url")
   email               String?
   contactUrl          String?                @map("contact_url")
+  slackUrl            String?                @map("slack_url")
   showLeaderAsContact Boolean                @default(false) @map("show_leader_as_contact")
   createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
   deactivatedAt       DateTime?              @map("deactivated_at")

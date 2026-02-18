@@ -234,14 +234,14 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
               ))}
 
               
-
+          </div>
             {group.type == "INTEREST_GROUP" &&
-              !activeMembers?.some((m) => m.id === session?.sub) && (
-                <Button element="a" color="brand" href="https://onlinentnu.slack.com/archives/C0601G1UC4R">
+              !activeMembers?.some((m) => m.id === session?.sub) && group.slackUrl &&(
+                <Button element="a" color="brand" href={group.slackUrl} className="w-fit">
                   Meld deg inn!
                 </Button>
               )}
-          </div>
+          
         </div>
       </div>
 
