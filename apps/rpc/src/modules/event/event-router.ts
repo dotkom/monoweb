@@ -18,6 +18,7 @@ import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, t } from "../../trpc"
+import { EditorRole } from "../authorization-service"
 import { feedbackRouter } from "../feedback-form/feedback-router"
 import { attendanceRouter } from "./attendance-router"
 
@@ -136,7 +137,17 @@ const allEventsProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
-    const events = await ctx.eventService.findEvents(ctx.handle, { ...filter }, page)
+
+    const principal = ctx.principal
+    const isStaff = principal && Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+
+    // If the user is not staff, we exclude internal events
+    let excludingType = filter?.excludingType ?? []
+    if (!isStaff && !excludingType.includes("INTERNAL")) {
+      excludingType = [...excludingType, "INTERNAL"]
+    }
+
+    const events = await ctx.eventService.findEvents(ctx.handle, { ...filter, excludingType }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
@@ -172,7 +183,22 @@ const allByAttendingUserIdProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { id, filter, ...page } = input
-    const events = await ctx.eventService.findEventsByAttendingUserId(ctx.handle, id, { ...filter }, page)
+
+    const principal = ctx.principal
+    const isStaff = principal && Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+
+    // If the user is not staff, we exclude internal events
+    let excludingType = filter?.excludingType ?? []
+    if (!isStaff && !excludingType.includes("INTERNAL")) {
+      excludingType = [...excludingType, "INTERNAL"]
+    }
+
+    const events = await ctx.eventService.findEventsByAttendingUserId(
+      ctx.handle,
+      id,
+      { ...filter, excludingType },
+      page
+    )
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)

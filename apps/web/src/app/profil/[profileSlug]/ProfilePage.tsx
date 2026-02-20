@@ -184,12 +184,11 @@ export function ProfilePage() {
   const session = useSession()
   const fullPathname = useFullPathname()
 
-  const [userResult, isStaffResult] = useQueries({
-    queries: [trpc.user.findByProfileSlug.queryOptions(profileSlug), trpc.user.isStaff.queryOptions()],
+  const [userResult] = useQueries({
+    queries: [trpc.user.findByProfileSlug.queryOptions(profileSlug)],
   })
 
   const { data: user, isLoading: userLoading } = userResult
-  const { data: isStaff = false } = isStaffResult
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
@@ -208,7 +207,6 @@ export function ProfilePage() {
                 min: now,
                 max: null,
               },
-              excludingType: isStaff ? [] : undefined,
             },
           },
           { enabled: isLoggedIn && Boolean(user?.id) }
@@ -225,7 +223,6 @@ export function ProfilePage() {
         max: now,
         min: null,
       },
-      excludingType: isStaff ? [] : undefined,
     },
     enabled: isLoggedIn && Boolean(user?.id),
   })

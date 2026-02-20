@@ -34,12 +34,11 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
   const session = useSession()
 
   const trpc = useTRPC()
-  const [userResult, isStaffResult] = useQueries({
-    queries: [trpc.user.findMe.queryOptions(), trpc.user.isStaff.queryOptions()],
+  const [userResult] = useQueries({
+    queries: [trpc.user.findMe.queryOptions()],
   })
 
   const { data: user } = userResult
-  const { data: isStaff = false } = isStaffResult
 
   let weekDate = new Date()
   weekDate = setISOWeekYear(weekDate, year)
@@ -56,7 +55,6 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
         max: new TZDate(weekEnd),
       },
       orderBy: "asc",
-      excludingType: isStaff ? [] : undefined,
     },
     page: {
       take: 1000,

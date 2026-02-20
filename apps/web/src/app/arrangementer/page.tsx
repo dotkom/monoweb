@@ -84,7 +84,6 @@ const EventPage = () => {
         max: null,
         min: now,
       },
-      excludingType: isStaff ? [] : undefined,
       orderBy: "asc",
     },
     page: {
@@ -99,7 +98,6 @@ const EventPage = () => {
         max: now,
         min: null,
       },
-      excludingType: isStaff ? [] : undefined,
       orderBy: "desc",
     },
   })
