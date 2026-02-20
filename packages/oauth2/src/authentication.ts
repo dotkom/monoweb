@@ -2,8 +2,8 @@ import type { Logger } from "@dotkomonline/logger"
 import * as oauth from "oauth4webapi"
 import { z } from "zod"
 
-/** Default session length (access token validity) of one day */
-export const defaultSessionLengthSeconds = 60 * 60 * 24
+/** Default session length (access token validity) of one week */
+export const defaultSessionLengthSeconds = 60 * 60 * 24 * 7
 
 /**
  * Error type representing a client fault in the OAuth2 flow.
