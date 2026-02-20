@@ -23,8 +23,6 @@ interface CommitteePageProps {
 export const GroupPage = async ({ params }: CommitteePageProps) => {
   const { slug } = await params
 
-  const isStaff = await server.user.isStaff.query()
-
   const now = getCurrentUTC()
 
   const [session, group, futureEventWithAttendances, pastEventWithAttendances] = await Promise.all([
@@ -37,7 +35,6 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           max: null,
           min: now,
         },
-        excludingType: isStaff ? [] : undefined,
         orderBy: "asc",
       },
     }),
@@ -48,7 +45,6 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           min: null,
         },
         byOrganizingGroup: [slug],
-        excludingType: isStaff ? [] : undefined,
         orderBy: "desc",
       },
     }),

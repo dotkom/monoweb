@@ -34,12 +34,11 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
   const session = useSession()
 
   const trpc = useTRPC()
-  const [userResult, isStaffResult] = useQueries({
-    queries: [trpc.user.findMe.queryOptions(), trpc.user.isStaff.queryOptions()],
+  const [userResult] = useQueries({
+    queries: [trpc.user.findMe.queryOptions()],
   })
 
   const { data: user } = userResult
-  const { data: isStaff = false } = isStaffResult
 
   // fetch 10 days prior to first day of month as a buffer since fliter is by start date
   const calendarStart = new TZDate(year, month, 1 - 10)
@@ -53,7 +52,6 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
         max: calendarEnd,
       },
       orderBy: "asc",
-      excludingType: isStaff ? [] : undefined,
     },
     page: {
       take: 1000,
