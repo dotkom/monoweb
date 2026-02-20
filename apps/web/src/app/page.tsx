@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
+import { AuthNotice } from "@/components/notices/auth-notice"
 import { server } from "@/utils/trpc/server"
 import type { Attendance, BaseEvent, EventWithAttendance, UserId } from "@dotkomonline/types"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
@@ -15,7 +16,6 @@ import type { FC } from "react"
 
 export default async function App() {
   const session = await auth.getServerSession()
-
   const events = await server.event.findFeaturedEvents.query({
     limit: 3,
   })
@@ -26,6 +26,7 @@ export default async function App() {
   return (
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
+        <AuthNotice />
         <OnlineHero />
       </div>
 
