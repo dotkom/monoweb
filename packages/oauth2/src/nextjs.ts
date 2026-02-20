@@ -36,6 +36,8 @@ const CallbackEndpointInput = z.object({
 export type AuthenticationHandlerOptions = {
   /** The URL the user should be redirected to after a successful login */
   homeUrl: string
+  /** The URL the user should be redirected to with an ?error search parameter if callback failed */
+  errorUrl: string
   /** The OAuth2 redirect URL, where Auth0 will redirect after authorize */
   redirectUrl: string
   scopes: OAuthScope[]
@@ -43,7 +45,7 @@ export type AuthenticationHandlerOptions = {
   host: string
   signingKey: string
   logger: Logger
-  onSignIn?: (session: Session) => Awaited<void> | void
+  onSignIn?: (session: Session) => Promise<void> | void
 }
 
 /**
@@ -85,7 +87,9 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
           state: request.nextUrl.searchParams.get("state"),
         })
         if (!input.success) {
-          return NextResponse.json({ message: "Bad request, expected code and state" }, { status: 400 })
+          const url = new URL(opts.errorUrl)
+          url.searchParams.set("error", "bad request, missing code and/or state")
+          return NextResponse.redirect(url)
         }
         // Acquire the state cookie to match against the state value in the request.
         const expectedState = cookieHandle.get(service.getOAuth2StateCookieName())
@@ -93,7 +97,9 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
         // If the state cookie is not present, there is no reason to attempt to exchange the code for an access token, since
         // we cannot verify the state.
         if (expectedState === undefined || expectedState.value !== input.data.state) {
-          return NextResponse.json({ message: "OAuth 2 state mismatch" }, { status: 400 })
+          const url = new URL(opts.errorUrl)
+          url.searchParams.set("error", "mismatch between actual and expected oauth2 state")
+          return NextResponse.redirect(url)
         }
         // Acquire the verifier cookie to match against the verifier value in the request.
         const expectedVerifier = cookieHandle.get(service.getOAuth2VerifierCookieName())
@@ -101,7 +107,9 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
         // If the verifier cookie is not present, there is no reason to attempt to exchange the code for an access token, since
         // we cannot verify the verifier.
         if (expectedVerifier === undefined) {
-          return NextResponse.json({ message: "Missing OAuth 2 verifier" }, { status: 400 })
+          const url = new URL(opts.errorUrl)
+          url.searchParams.set("error", "missing oauth2 pkce verifier")
+          return NextResponse.redirect(url)
         }
         const tokenSet = await service.getTokenSet(opts.redirectUrl, input.data.code, expectedVerifier.value)
         const userInfo = await service.getUserInfo(tokenSet.accessToken)
