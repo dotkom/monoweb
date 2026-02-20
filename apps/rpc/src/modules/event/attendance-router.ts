@@ -1,4 +1,3 @@
-import { on } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import {
   AttendancePoolSchema,
@@ -15,6 +14,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { TRPCError } from "@trpc/server"
 import { addHours } from "date-fns"
+import { on } from "node:events"
 import { z } from "zod"
 import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
@@ -28,7 +28,7 @@ const createPoolProcedure = procedure
     z.object({
       id: AttendanceSchema.shape.id,
       input: AttendancePoolWriteSchema,
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -45,7 +45,7 @@ const updatePoolProcedure = procedure
     z.object({
       id: AttendancePoolSchema.shape.id,
       input: AttendancePoolWriteSchema.partial(),
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -66,7 +66,7 @@ const deletePoolProcedure = procedure
   .input(
     z.object({
       id: AttendancePoolSchema.shape.id,
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -84,7 +84,7 @@ const adminRegisterForEventProcedure = procedure
       attendanceId: AttendanceSchema.shape.id,
       attendancePoolId: AttendancePoolSchema.shape.id,
       userId: UserSchema.shape.id,
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -101,7 +101,7 @@ const adminRegisterForEventProcedure = procedure
         immediatePayment: false,
         overriddenAttendancePoolId: input.attendancePoolId,
         ignoreRegisteredToParent: true,
-      }
+      },
     )
     if (!result.success) {
       throw new FailedPreconditionError(`Failed to register: ${result.cause}`)
@@ -116,7 +116,7 @@ const updateAttendancePaymentProcedure = procedure
     z.object({
       id: AttendanceSchema.shape.id,
       price: z.number().int().nullable(),
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -174,7 +174,7 @@ const getRegistrationAvailabilityProcedure = procedure
         immediatePayment: true,
         overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
-      }
+      },
     )
   })
 
@@ -196,7 +196,7 @@ const registerForEventProcedure = procedure
         immediatePayment: true,
         overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
-      }
+      },
     )
     if (!result.success) {
       throw new FailedPreconditionError(`Failed to register: ${result.cause}`)
@@ -257,7 +257,7 @@ const deregisterForEventProcedure = procedure
         type: DeregisterReasonTypeSchema,
         details: z.string().nullable(),
       }),
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withDatabaseTransaction())
@@ -308,7 +308,7 @@ const adminUpdateAtteendeeReservedProcedure = procedure
     z.object({
       attendeeId: AttendeeSchema.shape.id,
       reserved: AttendeeSchema.shape.reserved,
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -325,7 +325,7 @@ const registerAttendanceProcedure = procedure
     z.object({
       id: AttendeeSchema.shape.id,
       at: z.coerce.date().nullable(),
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
@@ -342,7 +342,7 @@ const updateSelectionResponsesProcedure = procedure
     z.object({
       attendeeId: AttendeeSchema.shape.id,
       options: AttendeeSelectionResponseSchema.array(),
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withDatabaseTransaction())
@@ -365,14 +365,14 @@ const updateAttendanceProcedure = procedure
     z.object({
       id: AttendanceSchema.shape.id,
       attendance: AttendanceWriteSchema.partial(),
-    })
+    }),
   )
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) =>
-    ctx.attendanceService.updateAttendanceById(ctx.handle, input.id, input.attendance)
+    ctx.attendanceService.updateAttendanceById(ctx.handle, input.id, input.attendance),
   )
 
 export type FindChargeAttendeeScheduleDateInput = inferProcedureInput<typeof findChargeAttendeeScheduleDateProcedure>
@@ -388,9 +388,9 @@ const findChargeAttendeeScheduleDateProcedure = procedure
     await ctx.addAuthorizationGuard(
       or(
         isAdministrator(),
-        isSameSubject(() => attendee.userId)
+        isSameSubject(() => attendee.userId),
       ),
-      input
+      input,
     )
 
     return await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.handle, attendee.id)

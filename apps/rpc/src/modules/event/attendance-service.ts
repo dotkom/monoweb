@@ -24,7 +24,6 @@ import {
   type UserId,
   findActiveMembership,
   getMembershipGrade,
-  hasAttendeePaid,
   isAttendable,
 } from "@dotkomonline/types"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
@@ -170,7 +169,7 @@ export interface AttendanceService {
   updateAttendanceById(
     handle: DBHandle,
     attendanceId: AttendanceId,
-    data: Partial<AttendanceWrite>
+    data: Partial<AttendanceWrite>,
   ): Promise<Attendance>
 
   /**
@@ -188,14 +187,15 @@ export interface AttendanceService {
   updateAttendancePool(
     handle: DBHandle,
     attendancePoolId: AttendancePoolId,
-    data: AttendancePoolWrite
+    data: AttendancePoolWrite,
   ): Promise<AttendancePool>
   getRegistrationAvailability(
     handle: DBHandle,
     attendanceId: AttendanceId,
     userId: UserId,
-    options: EventRegistrationOptions
+    options: EventRegistrationOptions,
   ): Promise<RegistrationAvailabilityResult>
+  validateTurnstileToken(turnstileToken: string): Promise<boolean>
   /**
    * Attempt to register an attendee for an event.
    *
@@ -224,7 +224,7 @@ export interface AttendanceService {
   executeVerifyPaymentTask(handle: DBHandle, task: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
   executeVerifyFeedbackAnsweredTask(
     handle: DBHandle,
-    task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
+    task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>,
   ): Promise<void>
   executeSendFeedbackFormLinkEmails(handle: DBHandle): Promise<void>
   executeVerifyAttendeeAttendedTask(handle: DBHandle): Promise<void>
@@ -240,7 +240,7 @@ export interface AttendanceService {
     handle: DBHandle,
     attendanceId: AttendanceId,
     existingTaskId: TaskId | null,
-    mergeTime: TZDate | null
+    mergeTime: TZDate | null,
   ): Promise<TaskId | null>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
 }
@@ -258,7 +258,7 @@ export function getAttendanceService(
   feedbackFormService: FeedbackFormService,
   feedbackAnswerService: FeedbackFormAnswerService,
   configuration: Configuration,
-  emailService: EmailService
+  emailService: EmailService,
 ): AttendanceService {
   const logger = getLogger("attendance-service")
 
@@ -283,7 +283,7 @@ export function getAttendanceService(
         deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
-      }
+      },
     )
   }
 
@@ -402,7 +402,7 @@ export function getAttendanceService(
 
         if (remaining.length === 0) {
           throw new FailedPreconditionError(
-            `Cannot create new AttendancePool on Attendance(ID=${attendanceId}) as all years are occupied by other pools`
+            `Cannot create new AttendancePool on Attendance(ID=${attendanceId}) as all years are occupied by other pools`,
           )
         }
 
@@ -529,7 +529,7 @@ export function getAttendanceService(
             userId,
             event.id,
             event.title,
-            options.overriddenAttendancePoolId
+            options.overriddenAttendancePoolId,
           )
 
           // TODO: Maybe this should just be an invariant?
@@ -578,7 +578,7 @@ export function getAttendanceService(
 
     async registerAttendee(
       handle,
-      { user, event, attendance, pool, reservationActiveAt, bypassedChecks, membership, options, success }
+      { user, event, attendance, pool, reservationActiveAt, bypassedChecks, membership, options, success },
     ) {
       // Since the user is permitted to attend the event (as the input result is a success), we output some debug
       // diagnostics based on any potential checks passed. This is done in this function as to not pollute logs when a
@@ -611,7 +611,7 @@ export function getAttendanceService(
           reserved: isImmediateReservation,
           selections: [],
           userGrade: getMembershipGrade(membership),
-        } satisfies AttendeeWrite)
+        } satisfies AttendeeWrite),
       )
 
       // Immediate reservations go through right away, otherwise we schedule a task to handle the reservation at the
@@ -634,7 +634,7 @@ export function getAttendanceService(
             attendee.user.id,
             paymentDeadline.toUTCString(),
             event.id,
-            payment.url
+            payment.url,
           )
         }
 
@@ -647,7 +647,7 @@ export function getAttendanceService(
             attendeeId: attendee.id,
             attendanceId: attendance.id,
           },
-          reservationActiveAt
+          reservationActiveAt,
         )
       }
 
@@ -663,7 +663,7 @@ export function getAttendanceService(
         reservationActiveAt,
         event.id,
         event.title,
-        options
+        options,
       )
 
       return attendee
@@ -724,7 +724,7 @@ export function getAttendanceService(
         logger.warn(
           "ReserveAttendee task for Attendee(ID=%s) ran before earliestReservationAt %s.",
           attendee.id,
-          attendee.earliestReservationAt.toUTCString()
+          attendee.earliestReservationAt.toUTCString(),
         )
       }
 
@@ -754,7 +754,7 @@ export function getAttendanceService(
           attendee.user.id,
           paymentDeadline.toUTCString(),
           event.id,
-          payment.url
+          payment.url,
         )
       }
 
@@ -776,14 +776,14 @@ export function getAttendanceService(
       // If the attendee has paid and not been refunded, we cannot allow deregistration.
       if (hasPaid && !attendee.paymentRefundedAt) {
         throw new FailedPreconditionError(
-          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) because payment has been completed`
+          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) because payment has been completed`,
         )
       }
 
       // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.reserved`
       if (attendee.reserved && isPast(attendance.deregisterDeadline) && !options.ignoreDeregistrationWindow) {
         throw new FailedPreconditionError(
-          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) after registration end`
+          `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) after registration end`,
         )
       }
 
@@ -805,7 +805,7 @@ export function getAttendanceService(
         attendee.user.name || "<missing name>",
         event.id,
         event.title,
-        options
+        options,
       )
 
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
@@ -813,7 +813,7 @@ export function getAttendanceService(
 
       const remainingAttendees = attendance.attendees.filter((a) => a.id !== attendee.id)
       const reservedAttendeesCount = remainingAttendees.filter(
-        (a) => a.reserved && a.attendancePoolId === pool.id
+        (a) => a.reserved && a.attendancePoolId === pool.id,
       ).length
 
       // If the pool is at capacity, we cannot reserve anyone new
@@ -855,7 +855,7 @@ export function getAttendanceService(
           firstUnreservedAdjacentAttendee.user.id,
           paymentDeadline.toUTCString(),
           event.id,
-          payment.url
+          payment.url,
         )
       }
 
@@ -865,7 +865,7 @@ export function getAttendanceService(
         AttendeeWriteSchema.parse({
           ...firstUnreservedAdjacentAttendee,
           reserved: true,
-        })
+        }),
       )
 
       logger.info(
@@ -875,7 +875,7 @@ export function getAttendanceService(
         firstUnreservedAdjacentAttendee.user.name || "<missing name>",
         event.id,
         event.title,
-        attendee.user.id
+        attendee.user.id,
       )
 
       sendEventRegistrationEmail(event, attendance, firstUnreservedAdjacentAttendee)
@@ -910,7 +910,7 @@ export function getAttendanceService(
         }
 
         throw new ResourceExhaustedError(
-          `Cannot delete payment for Attendance(ID=${attendance.id}) as Attendee(ID=${attendee.id}) has an active payment`
+          `Cannot delete payment for Attendance(ID=${attendance.id}) as Attendee(ID=${attendee.id}) has an active payment`,
         )
       }
 
@@ -949,7 +949,7 @@ export function getAttendanceService(
     async updateAttendancePaymentPrice(handle, attendanceId, priceNok) {
       if (priceNok !== null && priceNok < 0) {
         throw new InvalidArgumentError(
-          `Tried to set negative price (${priceNok} NOK) for Attendance(ID=${attendanceId})`
+          `Tried to set negative price (${priceNok} NOK) for Attendance(ID=${attendanceId})`,
         )
       }
 
@@ -1025,7 +1025,7 @@ export function getAttendanceService(
 
         if (existingPayment.status !== "CANCELLED" && existingPayment.status !== "REFUNDED") {
           throw new IllegalStateError(
-            `Tried to create new payment for Attendee(ID=${attendeeId}) but existing Payment(ID=${existingPayment.id} is still active`
+            `Tried to create new payment for Attendee(ID=${attendeeId}) but existing Payment(ID=${existingPayment.id} is still active`,
           )
         }
       }
@@ -1042,7 +1042,7 @@ export function getAttendanceService(
           attendance_id: attendance.id,
           user_id: attendee.user.id,
         },
-        isImmediatePayment ? "CHARGE" : "RESERVE"
+        isImmediatePayment ? "CHARGE" : "RESERVE",
       )
 
       // This task has to be scheduled regardless, as the user still has the `deadline` time to make the payment
@@ -1053,7 +1053,7 @@ export function getAttendanceService(
         {
           attendeeId,
         },
-        paymentDeadline
+        paymentDeadline,
       )
 
       // We attempt to put a "hold" on the user's credit card for as long as possible. From experience, Visa and
@@ -1070,7 +1070,7 @@ export function getAttendanceService(
           handle,
           tasks.CHARGE_ATTENDEE,
           { attendeeId: attendee.id },
-          new TZDate(maximalChargeTime)
+          new TZDate(maximalChargeTime),
         )
       }
 
@@ -1267,7 +1267,7 @@ export function getAttendanceService(
             // Immediate suspension
             weight: 6,
           },
-          event.hostingGroups.map((g) => g.slug)
+          event.hostingGroups.map((g) => g.slug),
         )
 
         await personalMarkService.addToUser(handle, attendee.userId, mark.id)
@@ -1276,7 +1276,7 @@ export function getAttendanceService(
           attendee.userId,
           event.id,
           event.title,
-          attendance.deregisterDeadline
+          attendance.deregisterDeadline,
         )
       } else if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
         await this.deregisterAttendee(handle, attendeeId, {
@@ -1324,7 +1324,7 @@ export function getAttendanceService(
       const answers = await feedbackAnswerService.findManyByFeedbackFormId(handle, feedbackForm.id)
 
       const attendeesWithoutAnswers = attendedAttendees.filter(
-        (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
+        (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id),
       )
 
       if (attendeesWithoutAnswers.length === 0) return
@@ -1338,11 +1338,11 @@ export function getAttendanceService(
           weight: 2,
           details: null,
         },
-        event.hostingGroups.map((group) => group.slug)
+        event.hostingGroups.map((group) => group.slug),
       )
 
       const personalMarkPromises = attendeesWithoutAnswers.map(async (attendee) =>
-        personalMarkService.addToUser(handle, attendee.user.id, mark.id)
+        personalMarkService.addToUser(handle, attendee.user.id, mark.id),
       )
 
       await Promise.all([...personalMarkPromises])
@@ -1376,7 +1376,7 @@ export function getAttendanceService(
         const answers = await feedbackAnswerService.findManyByFeedbackFormId(handle, feedbackForm.id)
 
         const attendeesWithoutAnswers = attendedAttendees.filter(
-          (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
+          (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id),
         )
         const bcc = attendeesWithoutAnswers.map((a) => a.user.email).filter((email) => email !== null)
 
@@ -1394,7 +1394,7 @@ export function getAttendanceService(
           "Sending feedback form email for Event(ID=%s) to %d attendees from email %s",
           event.id,
           bcc.length,
-          hostingGroupEmail
+          hostingGroupEmail,
         )
 
         await emailService.send(
@@ -1412,7 +1412,7 @@ export function getAttendanceService(
             eventStart: event.start.toISOString(),
             feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
             organizerEmail: hostingGroupEmail,
-          }
+          },
         )
       })
 
@@ -1437,7 +1437,7 @@ export function getAttendanceService(
         try {
           const attendance = await this.getAttendanceById(handle, event.attendanceId)
           const attendeesNotAttended = attendance.attendees.filter(
-            (attendee) => attendee.reserved && !attendee.attendedAt
+            (attendee) => attendee.reserved && !attendee.attendedAt,
           )
 
           if (attendeesNotAttended.length === 0) {
@@ -1453,11 +1453,11 @@ export function getAttendanceService(
               weight: 3,
               details: null,
             },
-            event.hostingGroups.map((group) => group.slug)
+            event.hostingGroups.map((group) => group.slug),
           )
 
           await Promise.all(
-            attendeesNotAttended.map((attendee) => personalMarkService.addToUser(handle, attendee.user.id, mark.id))
+            attendeesNotAttended.map((attendee) => personalMarkService.addToUser(handle, attendee.user.id, mark.id)),
           )
         } catch (e) {
           logger.error("Received error when attempting to create marks: %o", e)
@@ -1489,7 +1489,7 @@ export function getAttendanceService(
         AttendeeWriteSchema.parse({
           ...attendee,
           attendedAt,
-        })
+        }),
       )
     },
 
@@ -1621,7 +1621,7 @@ function validateAttendeeWrite(data: AttendeeWrite) {
 
 function emitRegistrationAvailabilityDiagnostics(
   logger: Logger,
-  { user, event, pool, bypassedChecks }: RegistrationAvailabilitySuccess
+  { user, event, pool, bypassedChecks }: RegistrationAvailabilitySuccess,
 ) {
   diag: for (const check in bypassedChecks) {
     switch (check) {
@@ -1631,7 +1631,7 @@ function emitRegistrationAvailabilityDiagnostics(
           event.id,
           event.title,
           user.id,
-          user.name
+          user.name,
         )
         continue diag
 
@@ -1641,7 +1641,7 @@ function emitRegistrationAvailabilityDiagnostics(
           event.id,
           event.title,
           user.id,
-          user.name
+          user.name,
         )
         continue diag
 
@@ -1651,7 +1651,7 @@ function emitRegistrationAvailabilityDiagnostics(
           event.id,
           event.title,
           user.id,
-          user.name
+          user.name,
         )
         continue diag
 
@@ -1662,7 +1662,7 @@ function emitRegistrationAvailabilityDiagnostics(
           event.title,
           user.id,
           user.name,
-          pool.id
+          pool.id,
         )
         continue diag
     }

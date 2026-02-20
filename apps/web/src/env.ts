@@ -28,4 +28,5 @@ export const env = defineConfiguration({
     prd: "https://cdn.online.ntnu.no",
     dev: "https://cdn.staging.online.ntnu.no",
   }),
+  TURNSTILE_SITE_KEY: config(process.env.TURNSTILE_SITE_KEY),
 })
