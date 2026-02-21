@@ -1,4 +1,4 @@
-import type { Attendance, Event } from "@dotkomonline/types"
+import type { AttendanceSummary, EventSummary } from "@dotkomonline/types"
 import { Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
@@ -9,15 +9,14 @@ import { DateAndTime } from "./DateAndTime"
 import { Thumbnail } from "./Thumbnail"
 
 export interface EventListItemProps {
-  event: Event
-  attendance: Attendance | null
-  userId: string | null
+  event: EventSummary
+  attendance: AttendanceSummary | null
   className?: string
 }
 
-export const EventListItem: FC<EventListItemProps> = ({ event, attendance, userId, className }: EventListItemProps) => {
+export const EventListItem: FC<EventListItemProps> = ({ event, attendance, className }: EventListItemProps) => {
   const { id, title, type, imageUrl: customImageUrl } = event
-  const attendee = attendance?.attendees.find((attendee) => attendee.user.id === userId) ?? null
+  const attendee = attendance?.currentUserAttendee ?? null
 
   const past = isPast(event.end)
 

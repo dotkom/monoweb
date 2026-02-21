@@ -7,6 +7,7 @@ import {
   EventFilterQuerySchema,
   EventSchema,
   EventWithAttendanceSchema,
+  EventWithAttendanceSummarySchema,
   EventWithFeedbackFormSchema,
   EventWriteSchema,
   GroupSchema,
@@ -151,6 +152,47 @@ const allEventsProcedure = procedure
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
+    )
+
+    const eventsWithAttendance = events.map((event) => ({
+      event,
+      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
+    }))
+
+    return {
+      items: eventsWithAttendance,
+      nextCursor: events.at(-1)?.id,
+    }
+  })
+
+export type AllEventSummariesInput = inferProcedureInput<typeof allEventSummariesProcedure>
+export type AllEventSummariesOutput = inferProcedureOutput<typeof allEventSummariesProcedure>
+const allEventSummariesProcedure = procedure
+  .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).default({}))
+  .output(
+    z.object({
+      items: EventWithAttendanceSummarySchema.array(),
+      nextCursor: EventSchema.shape.id.optional(),
+    })
+  )
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const { filter, ...page } = input
+
+    const principal = ctx.principal
+    const isStaff = principal && Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+
+    // If the user is not staff, we exclude internal events
+    let excludingType = filter?.excludingType ?? []
+    if (!isStaff && !excludingType.includes("INTERNAL")) {
+      excludingType = [...excludingType, "INTERNAL"]
+    }
+
+    const events = await ctx.eventService.findEventSummaries(ctx.handle, { ...filter, excludingType }, page)
+    const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
+      ctx.handle,
+      events.map((item) => item.attendanceId).filter((id) => id !== null),
+      ctx.principal?.subject
     )
 
     const eventsWithAttendance = events.map((event) => ({

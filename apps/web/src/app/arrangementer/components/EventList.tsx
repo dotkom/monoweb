@@ -1,8 +1,7 @@
 "use client"
 
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
-import { useSession } from "@dotkomonline/oauth2/react"
-import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventWithAttendanceSummary } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconMoodConfuzed } from "@tabler/icons-react"
@@ -16,8 +15,8 @@ export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
 export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
 
 interface EventListProps {
-  futureEventWithAttendances: EventWithAttendance[]
-  pastEventWithAttendances: EventWithAttendance[]
+  futureEventWithAttendances: EventWithAttendanceSummary[]
+  pastEventWithAttendances: EventWithAttendanceSummary[]
   onLoadMore?(): void
   alwaysShowChildEvents?: boolean
   viewMode?: EventListViewMode
@@ -31,7 +30,6 @@ export const EventList: FC<EventListProps> = ({
   viewMode = "ATTENDANCE",
 }: EventListProps) => {
   const now = getCurrentUTC()
-  const session = useSession()
 
   const filteredFutureEvents = alwaysShowChildEvents
     ? futureEvents
@@ -47,7 +45,7 @@ export const EventList: FC<EventListProps> = ({
           return true
         }
 
-        return event.attendance.attendees.some((a) => a.user.id === session?.sub && a.reserved)
+        return event.attendance.currentUserAttendee?.reserved
       })
 
   const groupedEvents = Object.groupBy(filteredFutureEvents, (event) => {
@@ -55,7 +53,7 @@ export const EventList: FC<EventListProps> = ({
       return "otherFutureEvents"
     }
 
-    if (event.attendance.attendees.some((a) => a.user.id === session?.sub)) {
+    if (event.attendance.currentUserAttendee) {
       return "yourEvents"
     }
 
@@ -127,13 +125,13 @@ export const EventList: FC<EventListProps> = ({
         <>
           {futureEvents.length > 0 &&
             futureEvents.map(({ event, attendance }) => (
-              <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+              <EventListItem event={event} attendance={attendance} key={event.id} />
             ))}
           {pastEvents.length > 0 && (
             <>
               <Divider text="Tidligere arrangementer" />
               {pastEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+                <EventListItem event={event} attendance={attendance} key={event.id} />
               ))}
             </>
           )}
@@ -144,7 +142,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Dine arrangementer" />
               {yourEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+                <EventListItem event={event} attendance={attendance} key={event.id} />
               ))}
             </>
           )}
@@ -152,7 +150,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Åpne arrangementer" />
               {openEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+                <EventListItem event={event} attendance={attendance} key={event.id} />
               ))}
             </>
           )}
@@ -160,7 +158,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Åpner snart" />
               {openingSoonEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+                <EventListItem event={event} attendance={attendance} key={event.id} />
               ))}
             </>
           )}
@@ -168,7 +166,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Kommende arrangementer" />
               {otherFutureEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+                <EventListItem event={event} attendance={attendance} key={event.id} />
               ))}
             </>
           )}
@@ -176,7 +174,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Tidligere arrangementer" />
               {pastEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={session?.sub ?? null} key={event.id} />
+                <EventListItem event={event} attendance={attendance} key={event.id} />
               ))}
             </>
           )}
