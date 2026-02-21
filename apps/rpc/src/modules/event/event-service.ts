@@ -12,6 +12,7 @@ import {
   type Event,
   type EventFilterQuery,
   type EventId,
+  type EventSummary,
   type EventWithFeedbackFormSchema,
   type EventWrite,
   type GroupId,
@@ -39,6 +40,7 @@ export interface EventService {
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
   findEvents(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<Event[]>
+  findEventSummaries(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<EventSummary[]>
   findEventsByAttendingUserId(
     handle: DBHandle,
     userId: UserId,
@@ -87,6 +89,10 @@ export function getEventService(
 
     async findEvents(handle, query, page) {
       return await eventRepository.findMany(handle, query, page ?? { take: 20 })
+    },
+
+    async findEventSummaries(handle, query, page) {
+      return await eventRepository.findManySummary(handle, query, page ?? { take: 20 })
     },
 
     async findByParentEventId(handle, parentEventId, query) {
