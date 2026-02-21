@@ -100,6 +100,13 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   selections: true,
 })
 
+export const AttendanceSummarySchema = schemas.AttendanceSchema.extend({
+  currentUserAttendee: AttendeeSchema.nullable(),
+  pools: z.array(AttendancePoolSchema),
+  reservedAttendeeCount: z.number(),
+})
+export type AttendanceSummary = z.infer<typeof AttendanceSummarySchema>
+
 export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
   if (poolId) {
     return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.reserved).length
@@ -116,7 +123,7 @@ export function getUnreservedAttendeeCount(attendance: Attendance, poolId?: Atte
   return attendance.attendees.reduce((total, attendee) => total + (attendee.reserved ? 0 : 1), 0)
 }
 
-export function getAttendanceCapacity(attendance: Attendance): number {
+export function getAttendanceCapacity(attendance: Attendance | AttendanceSummary): number {
   return attendance.pools.reduce((total, pool) => total + pool.capacity, 0)
 }
 
@@ -200,7 +207,7 @@ export const getAttendeeQueuePosition = (attendance: Attendance, user: User | nu
 }
 
 export const hasAttendeePaid = (
-  attendance: Attendance,
+  attendance: Attendance | AttendanceSummary,
   attendee: Attendee | null,
   options?: { excludeReservation?: boolean }
 ): boolean | null => {
