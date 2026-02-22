@@ -2,7 +2,6 @@
 
 import { useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
-import { useSession } from "@dotkomonline/oauth2/react"
 import type { EventWithAttendanceSummary } from "@dotkomonline/types"
 import { cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
