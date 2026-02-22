@@ -1,20 +1,18 @@
 "use client"
 
-import { useEventAllQuery } from "@/app/arrangementer/components/queries"
-import { useTRPC } from "@/utils/trpc/client"
+import { useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventWithAttendanceSummary } from "@dotkomonline/types"
 import { cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
-import { useQueries } from "@tanstack/react-query"
 import { endOfMonth, endOfWeek, getISOWeek, isThisISOWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "../EventCalendarItem"
 import { eventCategories } from "../eventTypeConfig"
 import { getMonthCalendarArray } from "./getMonthCalendarArray"
 
-function getEventTypeGuide(events: EventWithAttendance[]) {
+function getEventTypeGuide(events: EventWithAttendanceSummary[]) {
   const presentTypes = new Set(events.map((event) => event.event.type))
 
   return Array.from(presentTypes)
@@ -33,19 +31,12 @@ interface CalendarProps {
 export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
   const session = useSession()
 
-  const trpc = useTRPC()
-  const [userResult] = useQueries({
-    queries: [trpc.user.findMe.queryOptions()],
-  })
-
-  const { data: user } = userResult
-
   // fetch 10 days prior to first day of month as a buffer since fliter is by start date
   const calendarStart = new TZDate(year, month, 1 - 10)
   const lastDayOfMonth = endOfMonth(new TZDate(year, month, 1))
   const calendarEnd = endOfWeek(lastDayOfMonth, { weekStartsOn: 1 })
 
-  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllSummariesQuery({
     filter: {
       byStartDate: {
         min: calendarStart,
@@ -59,7 +50,7 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
   })
 
   const eventDetails = futureEventWithAttendances
-  const _userId = session?.sub
+  const userId = session?.sub
 
   const cal = getMonthCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails)
@@ -144,7 +135,7 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
                       key={event.id}
                       eventDetail={{ event, attendance }}
                       eventDisplayProps={eventDisplayProps}
-                      user={user ?? null}
+                      userId={userId}
                     />
                   )
                 })}

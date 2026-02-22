@@ -47,6 +47,12 @@ export interface EventService {
     query: EventFilterQuery,
     page?: Pageable
   ): Promise<Event[]>
+  findEventSummariesByAttendingUserId(
+    handle: DBHandle,
+    userId: UserId,
+    query: EventFilterQuery,
+    page?: Pageable
+  ): Promise<EventSummary[]>
   findByParentEventId(
     handle: DBHandle,
     parentEventId: EventId,
@@ -128,7 +134,27 @@ export function getEventService(
     },
 
     async findEventsByAttendingUserId(handle, userId, query, page) {
-      return await eventRepository.findByAttendingUserId(handle, userId, query, page ?? { take: 20 })
+      const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+      return await eventRepository.findMany(
+        handle,
+        {
+          ...query,
+          byId: eventIds.concat(...(query.byId ?? [])),
+        },
+        page ?? { take: 20 }
+      )
+    },
+
+    async findEventSummariesByAttendingUserId(handle, userId, query, page) {
+      const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+      return await eventRepository.findManySummary(
+        handle,
+        {
+          ...query,
+          byId: eventIds.concat(...(query.byId ?? [])),
+        },
+        page ?? { take: 20 }
+      )
     },
 
     async updateEventOrganizers(handle, eventId, hostingGroups, companies) {

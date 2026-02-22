@@ -80,6 +80,7 @@ export const EventSummarySchema = EventSchema.pick({
   imageUrl: true,
   parentId: true,
   attendanceId: true,
+  locationTitle: true,
 })
 export type EventSummary = z.infer<typeof EventSummarySchema>
 

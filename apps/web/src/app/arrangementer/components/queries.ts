@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
 import { useMemo } from "react"
 
-interface UseEventAllQueryProps {
+interface UseEventAllSummariesQueryProps {
   filter: EventFilterQuery
   page?: Pageable
   enabled?: boolean
@@ -19,10 +19,10 @@ interface UseEventAllByAttendingUserIdQueryProps {
   enabled?: boolean
 }
 
-export const useEventAllQuery = ({ filter, page, enabled }: UseEventAllQueryProps) => {
+export const useEventAllSummariesQuery = ({ filter, page, enabled }: UseEventAllSummariesQueryProps) => {
   const trpc = useTRPC()
   const { data, ...query } = useQuery({
-    ...trpc.event.all.queryOptions({ filter, ...page }),
+    ...trpc.event.allSummaries.queryOptions({ filter, ...page }),
     enabled,
   })
 
@@ -31,11 +31,11 @@ export const useEventAllQuery = ({ filter, page, enabled }: UseEventAllQueryProp
   return { eventDetails, ...query }
 }
 
-export const useEventAllInfiniteQuery = ({ filter, page, enabled }: UseEventAllQueryProps) => {
+export const useEventAllSummariesInfiniteQuery = ({ filter, page, enabled }: UseEventAllSummariesQueryProps) => {
   const trpc = useTRPC()
 
   const { data, ...query } = useInfiniteQuery({
-    ...trpc.event.all.infiniteQueryOptions({
+    ...trpc.event.allSummaries.infiniteQueryOptions({
       filter,
       ...page,
     }),
@@ -48,7 +48,7 @@ export const useEventAllInfiniteQuery = ({ filter, page, enabled }: UseEventAllQ
   return { eventDetails, ...query }
 }
 
-export const useEventAllByAttendingUserIdInfiniteQuery = ({
+export const useEventAllSummariesByAttendingUserIdInfiniteQuery = ({
   id,
   filter,
   page,
@@ -57,7 +57,7 @@ export const useEventAllByAttendingUserIdInfiniteQuery = ({
   const trpc = useTRPC()
 
   const { data, ...query } = useInfiniteQuery({
-    ...trpc.event.allByAttendingUserId.infiniteQueryOptions({
+    ...trpc.event.allSummariesByAttendingUserId.infiniteQueryOptions({
       id,
       filter,
       ...page,

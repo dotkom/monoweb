@@ -1,10 +1,9 @@
-import { auth } from "@/auth"
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { AuthNotice } from "@/components/notices/auth-notice"
 import { server } from "@/utils/trpc/server"
-import type { Attendance, BaseEvent, EventWithAttendance, UserId } from "@dotkomonline/types"
+import type { AttendanceSummary, BaseEvent, EventWithAttendanceSummary } from "@dotkomonline/types"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
@@ -15,7 +14,6 @@ import Link from "next/link"
 import type { FC } from "react"
 
 export default async function App() {
-  const session = await auth.getServerSession()
   const events = await server.event.findFeaturedEvents.query({
     limit: 3,
   })
@@ -40,12 +38,11 @@ export default async function App() {
               <BigEventCard
                 event={featuredEvent?.event}
                 attendance={featuredEvent?.attendance}
-                userId={session?.sub ?? null}
                 className="row-span-3"
               />
 
               {otherEvents.map(({ event, attendance }) => (
-                <EventCard key={event.id} event={event} attendance={attendance} userId={session?.sub ?? null} />
+                <EventCard key={event.id} event={event} attendance={attendance} />
               ))}
 
               <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
@@ -68,16 +65,12 @@ export default async function App() {
             <div className="md:hidden -mx-4">
               <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
                 <div className="shrink-0 w-[85vw] max-w-[24rem] ml-4 snap-center">
-                  <EventCard
-                    event={featuredEvent?.event}
-                    attendance={featuredEvent?.attendance}
-                    userId={session?.sub ?? null}
-                  />
+                  <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
                 </div>
 
                 {otherEvents.map(({ event, attendance }) => (
                   <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center">
-                    <EventCard event={event} attendance={attendance} userId={session?.sub ?? null} />
+                    <EventCard event={event} attendance={attendance} />
                   </div>
                 ))}
 
@@ -110,13 +103,12 @@ export default async function App() {
 
 interface BigEventCardProps {
   event: BaseEvent
-  attendance: Attendance | null
-  userId: string | null
+  attendance: AttendanceSummary | null
   className?: string
 }
 
-const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, className }) => {
-  const _reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, className }) => {
+  const _reservedStatus = attendance?.currentUserAttendee?.reserved ?? false
 
   return (
     <Link
@@ -165,13 +157,12 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, userId, classN
 
 interface ComingEventProps {
   event: BaseEvent
-  attendance: Attendance | null
-  userId: string | null
+  attendance: AttendanceSummary | null
   className?: string
 }
 
-const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className }) => {
-  const _reservedStatus = attendance?.attendees.find((attendee) => attendee.user.id === userId)?.reserved ?? null
+const EventCard: FC<ComingEventProps> = ({ event, attendance, className }) => {
+  const _reservedStatus = attendance?.currentUserAttendee?.reserved ?? false
 
   return (
     <Link
@@ -212,13 +203,7 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, userId, className 
   )
 }
 
-function _AttendancePaymentOopsNotice({
-  userId,
-  eventWithAttendance,
-}: {
-  userId: UserId | null
-  eventWithAttendance: EventWithAttendance
-}) {
+function _AttendancePaymentOopsNotice({ eventWithAttendance }: { eventWithAttendance: EventWithAttendanceSummary }) {
   return (
     <div className="w-full p-6 text-white bg-red-600 rounded-2xl">
       <div className="flex flex-col gap-4 w-fit">
@@ -227,7 +212,6 @@ function _AttendancePaymentOopsNotice({
 
         <div className="bg-white dark:bg-stone-950 p-2 rounded-xl text-black dark:text-white">
           <EventListItem
-            userId={userId}
             event={eventWithAttendance.event}
             attendance={eventWithAttendance.attendance}
             className="-mt-2"

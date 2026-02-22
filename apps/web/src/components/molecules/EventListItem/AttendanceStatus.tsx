@@ -2,7 +2,13 @@
 
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
 import { useCountdown } from "@/utils/use-countdown"
-import { type AttendanceSummary, type Attendee, hasAttendeePaid, getAttendanceCapacity } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type AttendanceSummary,
+  type Attendee,
+  getAttendanceCapacity,
+  hasAttendeePaid,
+} from "@dotkomonline/types"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
 import { formatDistanceToNowStrict, interval, isFuture, isWithinInterval } from "date-fns"
@@ -10,7 +16,7 @@ import { nb } from "date-fns/locale"
 import type { FC } from "react"
 
 interface EventListItemAttendanceStatusProps {
-  attendance: AttendanceSummary
+  attendance: AttendanceSummary | Attendance
   attendee: Attendee | null
   eventEndInPast: boolean
 }
@@ -19,7 +25,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
   const attendanceStatus = getAttendanceStatus(attendance)
   const isReserved = attendee?.reserved === true
   const isUnreserved = attendee?.reserved === false
-  const numberOfAttendees = attendance.reservedAttendeeCount
+  const numberOfAttendees =
+    "reservedAttendeeCount" in attendance ? attendance.reservedAttendeeCount : getReservedAttendeeCount(attendance)
   const capacity = getAttendanceCapacity(attendance)
 
   const showLock =

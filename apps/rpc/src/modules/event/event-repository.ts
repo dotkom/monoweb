@@ -82,12 +82,8 @@ export interface EventRepository {
    */
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
   findManySummary(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<EventSummary[]>
-  findByAttendingUserId(
-    handle: DBHandle,
-    attendingUserId: UserId,
-    query: EventFilterQuery,
-    page: Pageable
-  ): Promise<Event[]>
+
+  findIdsByAttendingUserId(handle: DBHandle, attendingUserId: UserId): Promise<EventId[]>
   findByParentEventId(
     handle: DBHandle,
     parentEventId: EventId,
@@ -246,6 +242,7 @@ export function getEventRepository(): EventRepository {
           imageUrl: true,
           parentId: true,
           attendanceId: true,
+          locationTitle: true,
         },
         where: {
           AND: [
@@ -397,7 +394,7 @@ export function getEventRepository(): EventRepository {
       })
     },
 
-    async findByAttendingUserId(handle, userId, query, page) {
+    async findIdsByAttendingUserId(handle, userId) {
       const attendees = await handle.attendee.findMany({
         where: {
           userId,
@@ -417,15 +414,7 @@ export function getEventRepository(): EventRepository {
       if (attendees.length === 0) {
         return []
       }
-      const eventIds = attendees.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
-      return this.findMany(
-        handle,
-        {
-          ...query,
-          byId: eventIds.concat(...(query.byId ?? [])),
-        },
-        page
-      )
+      return attendees.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
     },
 
     async findFeaturedEvents(handle, offset, limit) {

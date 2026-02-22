@@ -1,7 +1,7 @@
 "use client"
 
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
+import { useEventAllSummariesByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { env } from "@/env"
@@ -199,7 +199,7 @@ export function ProfilePage() {
     useQueries({
       queries: [
         trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
-        trpc.event.allByAttendingUserId.queryOptions(
+        trpc.event.allSummariesByAttendingUserId.queryOptions(
           {
             id: user?.id ?? "",
             filter: {
@@ -216,7 +216,7 @@ export function ProfilePage() {
       ],
     })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllByAttendingUserIdInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesByAttendingUserIdInfiniteQuery({
     id: user?.id ?? "",
     filter: {
       byEndDate: {

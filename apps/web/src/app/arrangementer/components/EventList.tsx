@@ -1,12 +1,17 @@
 "use client"
 
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
-import type { EventWithAttendanceSummary } from "@dotkomonline/types"
+import {
+  getAttendee,
+  type EventWithAttendance,
+  type EventWithAttendanceSummary,
+  type UserId,
+} from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconMoodConfuzed } from "@tabler/icons-react"
 import { compareAsc, interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
-import { type FC, useEffect, useRef } from "react"
+import { useEffect, useRef, type FC } from "react"
 import z from "zod"
 
 const OPENING_SOON_DAYS_THRESHOLD = 7 as const
@@ -15,8 +20,9 @@ export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
 export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
 
 interface EventListProps {
-  futureEventWithAttendances: EventWithAttendanceSummary[]
-  pastEventWithAttendances: EventWithAttendanceSummary[]
+  futureEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendance[]
+  pastEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendance[]
+  userId?: UserId
   onLoadMore?(): void
   alwaysShowChildEvents?: boolean
   viewMode?: EventListViewMode
@@ -28,6 +34,7 @@ export const EventList: FC<EventListProps> = ({
   onLoadMore,
   alwaysShowChildEvents,
   viewMode = "ATTENDANCE",
+  userId,
 }: EventListProps) => {
   const now = getCurrentUTC()
 
@@ -45,7 +52,7 @@ export const EventList: FC<EventListProps> = ({
           return true
         }
 
-        return event.attendance.currentUserAttendee?.reserved
+        return getAttendee(event.attendance, userId ?? null)?.reserved
       })
 
   const groupedEvents = Object.groupBy(filteredFutureEvents, (event) => {
@@ -53,7 +60,7 @@ export const EventList: FC<EventListProps> = ({
       return "otherFutureEvents"
     }
 
-    if (event.attendance.currentUserAttendee) {
+    if (getAttendee(event.attendance, userId ?? null)) {
       return "yourEvents"
     }
 
@@ -125,13 +132,13 @@ export const EventList: FC<EventListProps> = ({
         <>
           {futureEvents.length > 0 &&
             futureEvents.map(({ event, attendance }) => (
-              <EventListItem event={event} attendance={attendance} key={event.id} />
+              <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
             ))}
           {pastEvents.length > 0 && (
             <>
               <Divider text="Tidligere arrangementer" />
               {pastEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} key={event.id} />
+                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
               ))}
             </>
           )}
@@ -142,7 +149,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Dine arrangementer" />
               {yourEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} key={event.id} />
+                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
               ))}
             </>
           )}
@@ -150,7 +157,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Åpne arrangementer" />
               {openEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} key={event.id} />
+                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
               ))}
             </>
           )}
@@ -158,7 +165,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Åpner snart" />
               {openingSoonEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} key={event.id} />
+                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
               ))}
             </>
           )}
@@ -166,7 +173,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Kommende arrangementer" />
               {otherFutureEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} key={event.id} />
+                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
               ))}
             </>
           )}
@@ -174,7 +181,7 @@ export const EventList: FC<EventListProps> = ({
             <>
               <Divider text="Tidligere arrangementer" />
               {pastEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} key={event.id} />
+                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
               ))}
             </>
           )}

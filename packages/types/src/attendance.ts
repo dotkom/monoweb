@@ -145,9 +145,13 @@ export function isAttendable(user: User, pool: AttendancePool) {
   return pool.yearCriteria.includes(grade)
 }
 
-export const getAttendee = (attendance: Attendance | null, user: User | UserId | null) => {
+export const getAttendee = (attendance: Attendance | AttendanceSummary | null, user: User | UserId | null) => {
   if (!attendance || !user) {
     return null
+  }
+
+  if ("currentUserAttendee" in attendance) {
+    return attendance.currentUserAttendee
   }
 
   const userId = typeof user === "string" ? user : user.id

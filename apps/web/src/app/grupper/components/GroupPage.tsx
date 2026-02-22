@@ -28,7 +28,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
   const [session, group, futureEventWithAttendances, pastEventWithAttendances] = await Promise.all([
     auth.getServerSession(),
     server.group.get.query(slug),
-    server.event.all.query({
+    server.event.allSummaries.query({
       filter: {
         byOrganizingGroup: [slug],
         byEndDate: {
@@ -38,7 +38,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         orderBy: "asc",
       },
     }),
-    server.event.all.query({
+    server.event.allSummaries.query({
       filter: {
         byEndDate: {
           max: now,

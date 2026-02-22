@@ -1,20 +1,18 @@
 "use client"
 
-import { useEventAllQuery } from "@/app/arrangementer/components/queries"
-import { useTRPC } from "@/utils/trpc/client"
+import { useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventWithAttendanceSummary } from "@dotkomonline/types"
 import { cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
-import { useQueries } from "@tanstack/react-query"
+import { endOfISOWeek, setISOWeek, setISOWeekYear, startOfISOWeek, subDays } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "../EventCalendarItem"
 import { eventCategories } from "../eventTypeConfig"
 import { getWeekCalendarArray } from "./getWeekCalendarArray"
-import { endOfISOWeek, setISOWeek, setISOWeekYear, startOfISOWeek, subDays } from "date-fns"
 
-function getEventTypeGuide(events: EventWithAttendance[]) {
+function getEventTypeGuide(events: EventWithAttendanceSummary[]) {
   const presentTypes = new Set(events.map((event) => event.event.type))
 
   return Array.from(presentTypes)
@@ -31,15 +29,6 @@ interface WeekCalendarProps {
 }
 
 export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) => {
-  const session = useSession()
-
-  const trpc = useTRPC()
-  const [userResult] = useQueries({
-    queries: [trpc.user.findMe.queryOptions()],
-  })
-
-  const { data: user } = userResult
-
   let weekDate = new Date()
   weekDate = setISOWeekYear(weekDate, year)
   weekDate = setISOWeek(weekDate, weekNumber)
@@ -47,7 +36,7 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
   const weekStart = startOfISOWeek(weekDate)
   const weekEnd = endOfISOWeek(weekDate)
 
-  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllSummariesQuery({
     filter: {
       byStartDate: {
         // 3 day buffer in case of long events that are in the week but start way sooner
@@ -62,7 +51,6 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
   })
 
   const eventDetails = futureEventWithAttendances
-  const _userId = session?.sub
 
   const weekData = getWeekCalendarArray(year, weekNumber, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails)
@@ -134,7 +122,6 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
                     key={eventDetail.event.id}
                     eventDetail={eventDetail}
                     eventDisplayProps={eventDisplayProps}
-                    user={user ?? null}
                     className="my-1"
                   />
                 )

@@ -1,6 +1,6 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import {
-  AttendanceSchema,
+  AttendanceSummarySchema,
   AttendanceWriteSchema,
   BaseEventSchema,
   CompanySchema,
@@ -257,6 +257,58 @@ const allByAttendingUserIdProcedure = procedure
     }
   })
 
+export type AllSummariesByAttendingUserIdInput = inferProcedureInput<typeof allSummariesByAttendingUserIdProcedure>
+export type AllSummariesByAttendingUserIdOutput = inferProcedureOutput<typeof allSummariesByAttendingUserIdProcedure>
+const allSummariesByAttendingUserIdProcedure = procedure
+  .input(
+    BasePaginateInputSchema.extend({
+      filter: EventFilterQuerySchema.optional(),
+      id: UserSchema.shape.id,
+    })
+  )
+  .output(
+    z.object({
+      items: EventWithAttendanceSummarySchema.array(),
+      nextCursor: EventSchema.shape.id.optional(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const { id, filter, ...page } = input
+
+    const principal = ctx.principal
+    const isStaff = principal && Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+
+    // If the user is not staff, we exclude internal events
+    let excludingType = filter?.excludingType ?? []
+    if (!isStaff && !excludingType.includes("INTERNAL")) {
+      excludingType = [...excludingType, "INTERNAL"]
+    }
+
+    const events = await ctx.eventService.findEventSummariesByAttendingUserId(
+      ctx.handle,
+      id,
+      { ...filter, excludingType },
+      page
+    )
+    const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
+      ctx.handle,
+      events.map((item) => item.attendanceId).filter((id) => id !== null),
+      ctx.principal?.subject
+    )
+
+    const eventsWithAttendance = events.map((event) => ({
+      event,
+      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) ?? null,
+    }))
+
+    return {
+      items: eventsWithAttendance,
+      nextCursor: events.at(-1)?.id,
+    }
+  })
+
 export type AddAttendanceInput = inferProcedureInput<typeof addAttendanceProcedure>
 export type AddAttendanceOutput = inferProcedureOutput<typeof addAttendanceProcedure>
 const addAttendanceProcedure = procedure
@@ -377,14 +429,15 @@ const findFeaturedEventsProcedure = procedure
       })
       .default({ offset: 0, limit: 1 })
   )
-  .output(z.object({ event: BaseEventSchema, attendance: AttendanceSchema.nullable() }).array())
+  .output(z.object({ event: BaseEventSchema, attendance: AttendanceSummarySchema.nullable() }).array())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const events = await ctx.eventService.findFeaturedEvents(ctx.handle, input.offset, input.limit)
 
-    const attendances = await ctx.attendanceService.getAttendancesByIds(
+    const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
       ctx.handle,
-      events.map((item) => item.attendanceId).filter((id) => id !== null)
+      events.map((item) => item.attendanceId).filter((id) => id !== null),
+      ctx.principal?.subject
     )
 
     const eventsWithAttendance = events.map((event) => ({
@@ -416,6 +469,8 @@ export const eventRouter = t.router({
   delete: deleteEventProcedure,
   all: allEventsProcedure,
   allByAttendingUserId: allByAttendingUserIdProcedure,
+  allSummaries: allEventSummariesProcedure,
+  allSummariesByAttendingUserId: allSummariesByAttendingUserIdProcedure,
   addAttendance: addAttendanceProcedure,
   updateParentEvent: updateParentEventProcedure,
   findParentEvent: findParentEventProcedure,
