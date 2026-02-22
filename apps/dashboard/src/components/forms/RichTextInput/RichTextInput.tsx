@@ -46,28 +46,28 @@ export function createRichTextInput<F extends FieldValues>({
   onFileUpload?: (file: File) => Promise<string>
   maxFileSizeKiB?: number
 }): InputProducerResult<F> {
-  const editorRef = useRef<Editor | null>(null)
-  // This is needed to track the last selection before opening the image modal
-  const lastSelectionRef = useRef<{ from: number; to: number } | null>(null)
-
-  const openImageUploadModal = useUploadImageModal({
-    onFileUpload,
-    maxSizeKiB: maxFileSizeKiB,
-    handleSubmit: async (imageUrl, alt, title) => {
-      const chain = editorRef.current?.chain()
-
-      // Reapply the last selection before inserting the image. If we don't do
-      // this, the image will be inserted at the first possible node at the
-      // start of the file
-      if (lastSelectionRef.current) {
-        chain?.setTextSelection(lastSelectionRef.current)
-      }
-
-      chain?.focus().setImage({ src: imageUrl, alt, title }).run()
-    },
-  })
-
   return function RichTextInput({ name, state, control }) {
+    const editorRef = useRef<Editor | null>(null)
+    // This is needed to track the last selection before opening the image modal
+    const lastSelectionRef = useRef<{ from: number; to: number } | null>(null)
+
+    const openImageUploadModal = useUploadImageModal({
+      onFileUpload,
+      maxSizeKiB: maxFileSizeKiB,
+      handleSubmit: async (imageUrl, alt, title) => {
+        const chain = editorRef.current?.chain()
+
+        // Reapply the last selection before inserting the image. If we don't do
+        // this, the image will be inserted at the first possible node at the
+        // start of the file
+        if (lastSelectionRef.current) {
+          chain?.setTextSelection(lastSelectionRef.current)
+        }
+
+        chain?.focus().setImage({ src: imageUrl, alt, title }).run()
+      },
+    })
+
     return (
       <Input.Wrapper error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}>
         <Input.Label required={required}>{label}</Input.Label>
