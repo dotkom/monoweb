@@ -8,6 +8,7 @@ import {
   type Attendee,
   getAttendanceCapacity,
   hasAttendeePaid,
+  getReservedAttendeeCount,
 } from "@dotkomonline/types"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
