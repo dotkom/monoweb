@@ -1,4 +1,4 @@
-import { createPrisma } from "."
+import { createPrisma } from "./index"
 import { getAttendanceFixtures } from "./fixtures/attendance"
 import { getPoolFixtures } from "./fixtures/attendance-pool"
 import { getCompanyFixtures } from "./fixtures/company"

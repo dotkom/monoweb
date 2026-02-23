@@ -1,4 +1,4 @@
-import { createPrisma } from "."
+import { createPrisma } from "./index"
 import { getCourseFixtures } from "./fixtures/course"
 import { getGradeFixtures } from "./fixtures/grade"
 

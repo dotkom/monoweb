@@ -10,7 +10,7 @@
  * 3. Fetches and upserts all relevant data
  */
 
-import { createPrisma } from "."
+import { createPrisma } from "./index"
 
 const PROD_DATABASE_URL = process.env.DATABASE_URL
 const LOCAL_DATABASE_URL = process.env.LOCAL_DATABASE_URL ?? "postgresql://ow:owpassword123@localhost:4010/ow"

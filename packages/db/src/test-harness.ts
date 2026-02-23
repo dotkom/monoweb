@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process"
 import os from "node:os"
 import { PostgreSqlContainer } from "@testcontainers/postgresql"
-import { createPrisma } from "."
+import { createPrisma } from "./index"
 
 const SCHEMA_FILE_PATH = `${import.meta.dirname}/../prisma/schema.prisma`
 const PRISMA_BIN_PATH = `${import.meta.dirname}/../node_modules/.bin/prisma`
