@@ -71,12 +71,13 @@ async function createMockAttendance(eventId: EventId) {
 }
 
 async function registerMockUserToAttendance(attendanceId: AttendanceId, userId: UserId) {
-  const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendanceId, userId, {
+  const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendanceId, null, userId, {
     immediateReservation: true,
     immediatePayment: false,
     ignoreRegistrationWindow: false,
     overriddenAttendancePoolId: null,
     ignoreRegisteredToParent: false,
+    overrideTurnstileCheck: true,
   })
   invariant(result.success)
   return await core.attendanceService.registerAttendee(dbClient, result)
