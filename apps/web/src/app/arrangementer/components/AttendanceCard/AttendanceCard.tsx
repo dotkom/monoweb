@@ -62,6 +62,7 @@ export const AttendanceCard = ({
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
   const [_, setTurnstileHasLoaded] = useState(false) // can be used later if we want to be aware of when turnstile has loaded
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [hideTurnstile, setHideTurnstile] = useState(false)
 
   const [attendanceResponse, punishmentResponse] = useQueries({
     queries: [
@@ -93,6 +94,16 @@ export const AttendanceCard = ({
   useEffect(() => {
     setAttendanceStatus(getAttendanceStatus(attendance))
   }, [attendance])
+
+  useEffect(() => {
+    if (turnstileToken) {
+      setTimeout(() => {
+        setHideTurnstile(true)
+      }, 1500)
+    } else {
+      setHideTurnstile(false)
+    }
+  }, [turnstileToken])
 
   useSubscription(
     trpc.event.attendance.onRegisterChange.subscriptionOptions(
@@ -238,22 +249,6 @@ export const AttendanceCard = ({
 
       <NonAttendablePoolsBox attendance={attendance} user={user} />
 
-      {!attendee && attendance.registerEnd > new Date() && (
-        <div className={cn({ hidden: Boolean(turnstileToken) }, "relative bg-gray-500")}>
-          <Turnstile
-            sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            retry="auto"
-            refreshExpired="auto"
-            onError={handleTurnstileError}
-            onVerify={handleTurnstileVerify}
-            onExpire={() => setTurnstileToken(null)}
-            onLoad={() => setTurnstileHasLoaded(true)}
-            size="flexible"
-            className="h-[4.05rem]" // Without this a padding occurs below the widget
-          />
-        </div>
-      )}
-
       <div className="flex flex-col gap-4 sm:flex-row">
         {attendee?.reserved && <TicketButton attendee={attendee} />}
 
@@ -277,6 +272,22 @@ export const AttendanceCard = ({
         chargeScheduleDate={chargeScheduleDate ?? null}
         hasTurnstileToken={Boolean(turnstileToken)}
       />
+
+      {!attendee && attendance.registerEnd > new Date() && (
+        <div className={cn({ hidden: hideTurnstile }, "relative bg-gray-500")}>
+          <Turnstile
+            sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+            retry="auto"
+            refreshExpired="auto"
+            onError={handleTurnstileError}
+            onVerify={handleTurnstileVerify}
+            onExpire={() => setTurnstileToken(null)}
+            onLoad={() => setTurnstileHasLoaded(true)}
+            size="flexible"
+            className="h-[4.05rem]" // Without this a padding occurs below the widget
+          />
+        </div>
+      )}
 
       <div className="flex flex-row flex-wrap gap-4">
         <EventRules className="text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />
