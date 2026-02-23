@@ -94,6 +94,7 @@ const adminRegisterForEventProcedure = procedure
     const result = await ctx.attendanceService.getRegistrationAvailability(
       ctx.handle,
       input.attendanceId,
+      null,
       input.userId,
       {
         ignoreRegistrationWindow: true,
@@ -101,6 +102,7 @@ const adminRegisterForEventProcedure = procedure
         immediatePayment: false,
         overriddenAttendancePoolId: input.attendancePoolId,
         ignoreRegisteredToParent: true,
+        overrideTurnstileCheck: true,
       }
     )
     if (!result.success) {
@@ -160,13 +162,14 @@ const getSelectionsResultsProcedure = procedure
 export type GetRegistrationAvailabilityInput = inferProcedureInput<typeof getRegistrationAvailabilityProcedure>
 export type GetRegistrationAvailabilityOutput = inferProcedureOutput<typeof getRegistrationAvailabilityProcedure>
 const getRegistrationAvailabilityProcedure = procedure
-  .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
+  .input(z.object({ attendanceId: AttendanceSchema.shape.id, turnstileToken: z.string() }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return await ctx.attendanceService.getRegistrationAvailability(
       ctx.handle,
       input.attendanceId,
+      input.turnstileToken,
       ctx.principal.subject,
       {
         ignoreRegistrationWindow: false,
@@ -174,6 +177,7 @@ const getRegistrationAvailabilityProcedure = procedure
         immediatePayment: true,
         overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
+        overrideTurnstileCheck: false,
       }
     )
   })
@@ -181,7 +185,7 @@ const getRegistrationAvailabilityProcedure = procedure
 export type RegisterForEventInput = inferProcedureInput<typeof registerForEventProcedure>
 export type RegisterForEventOutput = inferProcedureOutput<typeof registerForEventProcedure>
 const registerForEventProcedure = procedure
-  .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
+  .input(z.object({ attendanceId: AttendanceSchema.shape.id, turnstileToken: z.string() }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
@@ -189,6 +193,7 @@ const registerForEventProcedure = procedure
     const result = await ctx.attendanceService.getRegistrationAvailability(
       ctx.handle,
       input.attendanceId,
+      input.turnstileToken,
       ctx.principal.subject,
       {
         ignoreRegistrationWindow: false,
@@ -196,6 +201,7 @@ const registerForEventProcedure = procedure
         immediatePayment: true,
         overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
+        overrideTurnstileCheck: false,
       }
     )
     if (!result.success) {
