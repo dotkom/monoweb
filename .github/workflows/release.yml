@@ -97,12 +97,10 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   notify:
-    name: Notify users about release
+    name: Notify users about trigger
     runs-on: ubuntu-24.04
     needs:
-      - build-dashboard
-      - build-rpc
-      - build-web
+      - check
     steps:
       - name: Submit message to \#prod-ops-feed in Slack
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
@@ -110,9 +108,9 @@ jobs:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: "*GitHub Action release started av:* ${{ github.triggering_actor }}"
+            text: "*Ny release startet av ${{ github.triggering_actor }}*"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "*GitHub Action release started av:* ${{ github.triggering_actor }}.\n Deployment status: ${{ job.status }}"
+                  text: *Ny release startet av ${{ github.triggering_actor }}*"
