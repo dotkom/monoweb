@@ -7,6 +7,8 @@ import {
   AttendancePoolSchema,
   type AttendancePoolWrite,
   AttendanceSchema,
+  type AttendanceSummary,
+  AttendanceSummarySchema,
   type AttendanceWrite,
   type Attendee,
   type AttendeeId,
@@ -24,6 +26,7 @@ export interface AttendanceRepository {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
   findAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
   findAttendancesByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Attendance[]>
+  findAttendanceSummariesByIds(handle: DBHandle, eventIds: EventId[], userId?: UserId): Promise<AttendanceSummary[]>
   findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   findAttendanceByAttendeePaymentId(handle: DBHandle, attendeePaymentId: string): Promise<Attendance | null>
@@ -137,6 +140,50 @@ export function getAttendanceRepository(): AttendanceRepository {
       })
 
       return attendances.map((attendance) => parseOrReport(AttendanceSchema, attendance))
+    },
+
+    async findAttendanceSummariesByIds(handle, attendanceIds, userId) {
+      const attendances = await handle.attendance.findMany({
+        where: {
+          id: {
+            in: attendanceIds,
+          },
+        },
+        include: {
+          _count: {
+            select: {
+              attendees: {
+                where: {
+                  reserved: true,
+                },
+              },
+            },
+          },
+          pools: true,
+          attendees: {
+            include: {
+              user: {
+                include: {
+                  memberships: true,
+                },
+              },
+            },
+            where: userId ? { userId } : undefined,
+            take: 1,
+            orderBy: {
+              earliestReservationAt: "asc",
+            },
+          },
+        },
+      })
+
+      return attendances.map((attendance) =>
+        parseOrReport(AttendanceSummarySchema, {
+          ...attendance,
+          currentUserAttendee: attendance.attendees[0] ?? null, // We only need the attendee for the given user (if any)
+          reservedAttendeeCount: attendance._count.attendees,
+        })
+      )
     },
 
     async findAttendanceByPoolId(handle, attendancePoolId) {

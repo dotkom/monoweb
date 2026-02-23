@@ -12,6 +12,7 @@ import {
   type Event,
   type EventFilterQuery,
   type EventId,
+  type EventSummary,
   type EventWithFeedbackFormSchema,
   type EventWrite,
   type GroupId,
@@ -39,12 +40,19 @@ export interface EventService {
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
   findEvents(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<Event[]>
+  findEventSummaries(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<EventSummary[]>
   findEventsByAttendingUserId(
     handle: DBHandle,
     userId: UserId,
     query: EventFilterQuery,
     page?: Pageable
   ): Promise<Event[]>
+  findEventSummariesByAttendingUserId(
+    handle: DBHandle,
+    userId: UserId,
+    query: EventFilterQuery,
+    page?: Pageable
+  ): Promise<EventSummary[]>
   findByParentEventId(
     handle: DBHandle,
     parentEventId: EventId,
@@ -89,6 +97,10 @@ export function getEventService(
       return await eventRepository.findMany(handle, query, page ?? { take: 20 })
     },
 
+    async findEventSummaries(handle, query, page) {
+      return await eventRepository.findManySummary(handle, query, page ?? { take: 20 })
+    },
+
     async findByParentEventId(handle, parentEventId, query) {
       return await eventRepository.findByParentEventId(handle, parentEventId, query)
     },
@@ -122,7 +134,27 @@ export function getEventService(
     },
 
     async findEventsByAttendingUserId(handle, userId, query, page) {
-      return await eventRepository.findByAttendingUserId(handle, userId, query, page ?? { take: 20 })
+      const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+      return await eventRepository.findMany(
+        handle,
+        {
+          ...query,
+          byId: eventIds.concat(...(query.byId ?? [])),
+        },
+        page ?? { take: 20 }
+      )
+    },
+
+    async findEventSummariesByAttendingUserId(handle, userId, query, page) {
+      const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+      return await eventRepository.findManySummary(
+        handle,
+        {
+          ...query,
+          byId: eventIds.concat(...(query.byId ?? [])),
+        },
+        page ?? { take: 20 }
+      )
     },
 
     async updateEventOrganizers(handle, eventId, hostingGroups, companies) {

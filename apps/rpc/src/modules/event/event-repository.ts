@@ -13,6 +13,8 @@ import {
   type EventFilterQuery,
   type EventId,
   EventSchema,
+  type EventSummary,
+  EventSummarySchema,
   EventWithFeedbackFormSchema,
   type EventWrite,
   type GroupId,
@@ -20,9 +22,9 @@ import {
 } from "@dotkomonline/types"
 import { getCurrentUTC, snakeCaseToCamelCase } from "@dotkomonline/utils"
 import invariant from "tiny-invariant"
+import z from "zod"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "../../query"
-import z from "zod"
 
 const INCLUDE_COMPANY_AND_GROUPS = {
   companies: {
@@ -79,12 +81,9 @@ export interface EventRepository {
    * as such this query should be performant enough with good indexing.
    */
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
-  findByAttendingUserId(
-    handle: DBHandle,
-    attendingUserId: UserId,
-    query: EventFilterQuery,
-    page: Pageable
-  ): Promise<Event[]>
+  findManySummary(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<EventSummary[]>
+
+  findIdsByAttendingUserId(handle: DBHandle, attendingUserId: UserId): Promise<EventId[]>
   findByParentEventId(
     handle: DBHandle,
     parentEventId: EventId,
@@ -227,6 +226,106 @@ export function getEventRepository(): EventRepository {
       )
     },
 
+    async findManySummary(handle, query, page) {
+      const events = await handle.event.findMany({
+        ...pageQuery(page),
+        orderBy: {
+          start: query.orderBy ?? "desc",
+        },
+        select: {
+          id: true,
+          title: true,
+          start: true,
+          end: true,
+          type: true,
+          status: true,
+          imageUrl: true,
+          parentId: true,
+          attendanceId: true,
+          locationTitle: true,
+        },
+        where: {
+          AND: [
+            {
+              status: query.byStatus?.length
+                ? {
+                    in: query.byStatus,
+                  }
+                : "PUBLIC",
+              start: {
+                gte: query.byStartDate?.min ?? undefined,
+                lte: query.byStartDate?.max ?? undefined,
+              },
+              end: {
+                gte: query.byEndDate?.min ?? undefined,
+                lte: query.byEndDate?.max ?? undefined,
+              },
+              title:
+                query.bySearchTerm !== null
+                  ? {
+                      contains: query.bySearchTerm,
+                      mode: "insensitive",
+                    }
+                  : undefined,
+              id:
+                query.byId && query.byId.length > 0
+                  ? {
+                      in: query.byId,
+                    }
+                  : undefined,
+              type:
+                query.byType && query.byType.length > 0
+                  ? {
+                      in: query.byType,
+                    }
+                  : undefined,
+            },
+            {
+              OR: [
+                {
+                  companies:
+                    query.byOrganizingCompany && query.byOrganizingCompany.length > 0
+                      ? { some: { companyId: { in: query.byOrganizingCompany } } }
+                      : undefined,
+                },
+                {
+                  hostingGroups:
+                    query.byOrganizingGroup && query.byOrganizingGroup.length > 0
+                      ? { some: { groupId: { in: query.byOrganizingGroup } } }
+                      : undefined,
+                },
+              ],
+            },
+            {
+              hostingGroups: query.excludingOrganizingGroup
+                ? {
+                    none: {
+                      groupId: { in: query.excludingOrganizingGroup },
+                    },
+                  }
+                : undefined,
+              type: {
+                notIn: query.excludingType ?? ["INTERNAL"],
+              },
+            },
+            {
+              feedbackForm: query.byHasFeedbackForm
+                ? {
+                    isNot: null,
+                  }
+                : query.byHasFeedbackForm === false
+                  ? {
+                      is: null,
+                    }
+                  : undefined,
+            },
+          ],
+        },
+      })
+
+      return events.map((event) => parseOrReport(EventSummarySchema, event))
+    },
+
     async findByParentEventId(handle, parentEventId, query) {
       const events = await handle.event.findMany({
         where: {
@@ -295,7 +394,7 @@ export function getEventRepository(): EventRepository {
       })
     },
 
-    async findByAttendingUserId(handle, userId, query, page) {
+    async findIdsByAttendingUserId(handle, userId) {
       const attendees = await handle.attendee.findMany({
         where: {
           userId,
@@ -315,15 +414,7 @@ export function getEventRepository(): EventRepository {
       if (attendees.length === 0) {
         return []
       }
-      const eventIds = attendees.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
-      return this.findMany(
-        handle,
-        {
-          ...query,
-          byId: eventIds.concat(...(query.byId ?? [])),
-        },
-        page
-      )
+      return attendees.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
     },
 
     async findFeaturedEvents(handle, offset, limit) {

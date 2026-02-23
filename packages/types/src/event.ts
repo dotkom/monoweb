@@ -2,6 +2,7 @@ import { TZDate } from "@date-fns/tz"
 import { schemas } from "@dotkomonline/db/schemas"
 import { addWeeks, set } from "date-fns"
 import { z } from "zod"
+import { AttendanceSummarySchema } from "."
 import { AttendanceSchema } from "./attendance"
 import { CompanySchema } from "./company"
 import { FeedbackFormSchema } from "./feedback-form"
@@ -68,6 +69,26 @@ export const EventWithAttendanceSchema = z.object({
   attendance: AttendanceSchema.nullable(),
 })
 export type EventWithAttendance = z.infer<typeof EventWithAttendanceSchema>
+
+export const EventSummarySchema = EventSchema.pick({
+  id: true,
+  title: true,
+  start: true,
+  end: true,
+  type: true,
+  status: true,
+  imageUrl: true,
+  parentId: true,
+  attendanceId: true,
+  locationTitle: true,
+})
+export type EventSummary = z.infer<typeof EventSummarySchema>
+
+export const EventWithAttendanceSummarySchema = z.object({
+  event: EventSummarySchema,
+  attendance: AttendanceSummarySchema.nullable(),
+})
+export type EventWithAttendanceSummary = z.infer<typeof EventWithAttendanceSummarySchema>
 
 export const EventWithFeedbackFormSchema = EventSchema.extend({
   feedbackForm: FeedbackFormSchema,

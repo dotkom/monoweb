@@ -1,8 +1,8 @@
 "use client"
 
-import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
+import { useMemo, useState } from "react"
 
 import type { EventFilterQuery } from "@dotkomonline/types"
 
@@ -28,8 +28,8 @@ import {
 
 import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
 
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
+import { getCurrentUTC } from "@dotkomonline/utils"
 
 import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
 import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/EventMonthCalendar"
@@ -37,19 +37,19 @@ import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/Eve
 import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/CalendarWeekNavigation"
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 
+import { FilterChips } from "./components/filters/FilterChips"
 import { GroupFilter } from "./components/filters/GroupFilter"
+import { SearchInput } from "./components/filters/SearchInput"
 import { SortFilter } from "./components/filters/SortFilter"
 import { TypeFilter } from "./components/filters/TypeFilter"
-import { FilterChips } from "./components/filters/FilterChips"
-import { SearchInput } from "./components/filters/SearchInput"
 
 import { EventList, EventListSkeleton } from "./components/EventList"
-import { useEventAllInfiniteQuery, useEventAllQuery } from "./components/queries"
+import { useEventAllSummariesInfiniteQuery, useEventAllSummariesQuery } from "./components/queries"
 
+import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventFilters } from "./hooks/useEventFilters"
 import { useEventsView } from "./hooks/useEventsView"
 import type { EventsView } from "./hooks/useEventsViewNavigation"
-import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
 
 const EventPage = () => {
@@ -77,7 +77,7 @@ const EventPage = () => {
     [filters.search, filters.types, filters.groups]
   )
 
-  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllSummariesQuery({
     filter: {
       ...queryFilter,
       byEndDate: {
@@ -91,7 +91,7 @@ const EventPage = () => {
     },
   })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesInfiniteQuery({
     filter: {
       ...queryFilter,
       byEndDate: {

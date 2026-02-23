@@ -1,8 +1,8 @@
-import type { EventWithAttendance } from "@dotkomonline/types"
-import { compareAsc, startOfISOWeek, setISOWeek, setISOWeekYear } from "date-fns"
+import type { EventWithAttendanceSummary } from "@dotkomonline/types"
+import { compareAsc, setISOWeek, setISOWeekYear, startOfISOWeek } from "date-fns"
 import type { EventDisplayProps, WeekData } from "../types"
 
-export function getWeekCalendarArray(year: number, weekNumber: number, events: EventWithAttendance[]): WeekData {
+export function getWeekCalendarArray(year: number, weekNumber: number, events: EventWithAttendanceSummary[]): WeekData {
   // get date in the target ISO week
   let weekDate = new Date()
   weekDate = setISOWeekYear(weekDate, year)

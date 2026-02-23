@@ -8,6 +8,7 @@ import {
   type AttendancePoolId,
   type AttendancePoolWrite,
   type AttendanceSelection,
+  type AttendanceSummary,
   type AttendanceWrite,
   AttendanceWriteSchema,
   type Attendee,
@@ -165,6 +166,11 @@ export interface AttendanceService {
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   getAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance>
   getAttendancesByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Attendance[]>
+  getAttendanceSummariesByIds(
+    handle: DBHandle,
+    attendanceIds: AttendanceId[],
+    userId?: UserId
+  ): Promise<AttendanceSummary[]>
   getAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance>
   getAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance>
   updateAttendanceById(
@@ -337,6 +343,10 @@ export function getAttendanceService(
 
     async getAttendancesByIds(handle, attendanceIds) {
       return await attendanceRepository.findAttendancesByIds(handle, attendanceIds)
+    },
+
+    async getAttendanceSummariesByIds(handle, attendanceIds, userId) {
+      return await attendanceRepository.findAttendanceSummariesByIds(handle, attendanceIds, userId)
     },
 
     async updateAttendanceById(handle, attendanceId, data) {

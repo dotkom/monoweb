@@ -52,6 +52,7 @@ model Membership {
   start          DateTime                  @db.Timestamptz(3)
   end            DateTime                  @db.Timestamptz(3)
 
+  @@index([userId], name: "idx_membership_user_id")
   @@map("membership")
 }
 
@@ -284,6 +285,7 @@ model AttendancePool {
 
   attendees Attendee[]
 
+  @@index([attendanceId], name: "idx_attendance_pool_attendance_id")
   @@map("attendance_pool")
 }
 
@@ -459,6 +461,7 @@ model EventHostingGroup {
   event   Event  @relation(fields: [eventId], references: [id])
 
   @@id([groupId, eventId])
+  @@index([eventId], name: "idx_event_hosting_group_event_id")
   @@map("event_hosting_group")
 }
 

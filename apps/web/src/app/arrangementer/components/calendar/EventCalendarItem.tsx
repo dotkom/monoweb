@@ -1,8 +1,6 @@
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import { type EventWithAttendance, type User, getAttendee } from "@dotkomonline/types"
-import { Text, Title } from "@dotkomonline/ui"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
-import { cn } from "@dotkomonline/ui"
+import { type EventWithAttendanceSummary, type UserId, getAttendee } from "@dotkomonline/types"
+import { HoverCard, HoverCardContent, HoverCardTrigger, Text, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconClock, IconMapPin } from "@tabler/icons-react"
 import Link from "next/link"
@@ -55,17 +53,17 @@ function getColSpanClass(span: number) {
 }
 
 interface EventCalendarItemProps {
-  eventDetail: EventWithAttendance
-  user: User | null
+  eventDetail: EventWithAttendanceSummary
+  userId?: UserId | null
   className?: string
   eventDisplayProps: EventDisplayProps
 }
 
-export const EventCalendarItem = ({ eventDetail, user, eventDisplayProps, className }: EventCalendarItemProps) => {
+export const EventCalendarItem = ({ eventDetail, userId, eventDisplayProps, className }: EventCalendarItemProps) => {
   const { event, attendance } = eventDetail
   const isActive = new Date() < event.end
 
-  const attendee = getAttendee(eventDetail.attendance, user)
+  const attendee = getAttendee(eventDetail.attendance, userId ?? null)
 
   const category = event.type ? eventCategories[event.type] : undefined
   const triggerClasses = category?.classes.item ?? "bg-gray-100 dark:bg-stone-800"

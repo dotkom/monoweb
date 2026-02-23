@@ -133,6 +133,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
                 pastEventWithAttendances={pastChildEventsWithAttendances}
                 alwaysShowChildEvents
                 viewMode="CHRONOLOGICAL"
+                userId={user?.id}
               />
             </div>
           </TabsContent>

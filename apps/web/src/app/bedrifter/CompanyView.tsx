@@ -1,7 +1,7 @@
 "use client"
 
 import { EventList, EventListSkeleton } from "@/app/arrangementer/components/EventList"
-import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
+import { useEventAllSummariesInfiniteQuery, useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import type { Company } from "@dotkomonline/types"
 import { RichText, Text, Title } from "@dotkomonline/ui"
@@ -29,14 +29,14 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
     roundingMethod: "floor",
   })
 
-  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllSummariesQuery({
     filter: {
       byOrganizingCompany: [company.id],
       byStartDate: { min: now, max: null },
     },
   })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesInfiniteQuery({
     filter: {
       byOrganizingCompany: [company.id],
       byEndDate: {
