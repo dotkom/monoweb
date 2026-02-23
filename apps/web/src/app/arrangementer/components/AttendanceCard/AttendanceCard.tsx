@@ -17,7 +17,7 @@ import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconEdit } from "@tabler/icons-react"
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
-import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
+import { differenceInSeconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import Turnstile from "react-turnstile"
 import { useEffect, useState } from "react"
@@ -273,8 +273,8 @@ export const AttendanceCard = ({
         hasTurnstileToken={Boolean(turnstileToken)}
       />
 
-      {!attendee && attendance.registerEnd > new Date() && (
-        <div className={cn({ hidden: hideTurnstile }, "relative bg-gray-500")}>
+      {user !== null && !attendee && !isPast(attendance.registerEnd) && (
+        <div className={cn({ hidden: hideTurnstile }, "relative rounded-md bg-gray-200 dark:bg-stone-700")}>
           <Turnstile
             sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
             retry="auto"
