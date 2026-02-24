@@ -21,6 +21,8 @@ export const createConfiguration = () =>
     }),
     STRIPE_WEBHOOK_HOST: config(process.env.STRIPE_WEBHOOK_HOST, null),
 
+    TURNSTILE_SECRET_KEY: config(process.env.TURNSTILE_SECRET_KEY),
+
     AWS_REGION: config(process.env.AWS_REGION, "eu-north-1"),
     /**
      * AWS S3 bucket corresponding to the OnlineWeb CDN.

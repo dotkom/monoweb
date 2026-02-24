@@ -1,5 +1,6 @@
 "use client"
 
+import { env } from "@/env"
 import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
@@ -16,8 +17,9 @@ import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconEdit } from "@tabler/icons-react"
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
-import { differenceInSeconds, isBefore, secondsToMilliseconds } from "date-fns"
+import { differenceInSeconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
+import Turnstile from "react-turnstile"
 import { useEffect, useState } from "react"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -58,6 +60,9 @@ export const AttendanceCard = ({
 
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
+  const [_, setTurnstileHasLoaded] = useState(false) // can be used later if we want to be aware of when turnstile has loaded
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [hideTurnstile, setHideTurnstile] = useState(false)
 
   const [attendanceResponse, punishmentResponse] = useQueries({
     queries: [
@@ -89,6 +94,16 @@ export const AttendanceCard = ({
   useEffect(() => {
     setAttendanceStatus(getAttendanceStatus(attendance))
   }, [attendance])
+
+  useEffect(() => {
+    if (turnstileToken) {
+      setTimeout(() => {
+        setHideTurnstile(true)
+      }, 1500)
+    } else {
+      setHideTurnstile(false)
+    }
+  }, [turnstileToken])
 
   useSubscription(
     trpc.event.attendance.onRegisterChange.subscriptionOptions(
@@ -171,10 +186,23 @@ export const AttendanceCard = ({
   }
 
   const registerForAttendance = () => {
-    registerMutation.mutate({ attendanceId: attendance.id })
+    if (!turnstileToken) {
+      console.error("No turnstile token, cannot register")
+      return
+    }
+    registerMutation.mutate({ attendanceId: attendance.id, turnstileToken })
   }
   const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
     deregisterMutation.mutate({ attendanceId: attendance.id, deregisterReason })
+  }
+
+  const handleTurnstileVerify = (token: string) => {
+    setTurnstileToken(token)
+  }
+
+  const handleTurnstileError = (error: string) => {
+    console.error("Turnstile error:", error)
+    setTurnstileToken(null)
   }
 
   const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
@@ -242,7 +270,24 @@ export const AttendanceCard = ({
         event={event}
         isLoading={isLoading}
         chargeScheduleDate={chargeScheduleDate ?? null}
+        hasTurnstileToken={Boolean(turnstileToken)}
       />
+
+      {user !== null && !attendee && !isPast(attendance.registerEnd) && (
+        <div className={cn({ hidden: hideTurnstile }, "relative rounded-md bg-gray-200 dark:bg-stone-700")}>
+          <Turnstile
+            sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+            retry="auto"
+            refreshExpired="auto"
+            onError={handleTurnstileError}
+            onVerify={handleTurnstileVerify}
+            onExpire={() => setTurnstileToken(null)}
+            onLoad={() => setTurnstileHasLoaded(true)}
+            size="flexible"
+            className="h-[4.05rem]" // Without this a padding occurs below the widget
+          />
+        </div>
+      )}
 
       <div className="flex flex-row flex-wrap gap-4">
         <EventRules className="text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 transition-colors" />

@@ -72,6 +72,7 @@ import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { EventService } from "./event-service"
+import { validateTurnstileToken } from "../../turnstile"
 
 type EventRegistrationOptions = {
   /** Should the user be registered regardless of if registration is closed? */
@@ -93,6 +94,11 @@ type EventRegistrationOptions = {
    * NOTE: This flag should PROBABLY only be used if you are calling registerAttendee as a system administrator.
    */
   overriddenAttendancePoolId: AttendancePoolId | null
+  /**
+   * Should the turnstile check be disabled in the backend? Should only be set to true if you are calling
+   * registerAttendee as a system administrator.
+   */
+  overrideTurnstileCheck: boolean
 }
 
 type EventDeregistrationOptions = {
@@ -110,6 +116,7 @@ export const RegistrationRejectionCause = {
   MISSING_PARENT_RESERVATION: "MISSING_PARENT_RESERVATION",
   MISSING_MEMBERSHIP: "MISSING_MEMBERSHIP",
   NO_MATCHING_POOL: "NO_MATCHING_POOL",
+  INVALID_TURNSTILE_TOKEN: "INVALID_TURNSTILE_TOKEN",
 } as const
 
 export type RegistrationBypassCause = keyof typeof RegistrationBypassCause
@@ -118,6 +125,7 @@ export const RegistrationBypassCause = {
   IGNORE_REGISTRATION_START: "IGNORE_REGISTRATION_START",
   IGNORE_REGISTRATION_END: "IGNORE_REGISTRATION_END",
   OVERRIDDEN_POOL: "OVERRIDDEN_POOL",
+  OVERRIDDEN_TURNSTILE_CHECK: "OVERRIDDEN_TURNSTILE_CHECK",
 } as const
 
 /**
@@ -199,6 +207,7 @@ export interface AttendanceService {
   getRegistrationAvailability(
     handle: DBHandle,
     attendanceId: AttendanceId,
+    turnstileToken: string | null, // If null, overrideTurnstileCheck must be true
     userId: UserId,
     options: EventRegistrationOptions
   ): Promise<RegistrationAvailabilityResult>
@@ -459,23 +468,58 @@ export function getAttendanceService(
       await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
     },
 
-    async getRegistrationAvailability(handle, attendanceId, userId, options) {
+    async getRegistrationAvailability(handle, attendanceId, turnstileToken, userId, options) {
       // NOTE: There are a few optimizations on queries in this function, as we want to keep the performance if this
       // procedure high. In order to achieve this, we try to fetch as much data as possible in parallel, and we reduce
-      // the number of queries based on checks needed.
+      // the number of queries based on checks needed. For this reason, we also check the turnstile token validity
+      // during the other initial queries, as this is also a check that can be done early and can potentially short
+      // circuit the rest of the function if the token is invalid.
       //
       // For example, we do not need to query the parent event if the `options` tell to ignore any constraints on the
       // parent event.
-      const [attendance, event, user] = await Promise.all([
+
+      const turnstileCheckRunner = async (): Promise<boolean> => {
+        if (!turnstileToken) {
+          return false
+        }
+
+        const validationResponse = await validateTurnstileToken({
+          token: turnstileToken,
+          secretKey: configuration.TURNSTILE_SECRET_KEY,
+          idempotencyKey: crypto.randomUUID(),
+        })
+
+        if (!validationResponse.success) {
+          logger.warn(
+            "Turnstile validation failed for User(ID=%s) registering for Attendance(ID=%s): %o",
+            userId,
+            attendanceId,
+            validationResponse.error_codes
+          )
+          return false
+        }
+
+        return true
+      }
+
+      const [attendance, event, user, turnstileCheckResult] = await Promise.all([
         this.getAttendanceById(handle, attendanceId),
         eventService.getByAttendanceId(handle, attendanceId),
         userService.getById(handle, userId),
+        turnstileCheckRunner(),
       ])
 
       // A registration might be allowed to bypass a number of checks based on the provided options object. We
       // accumulate these in a list such that downstream users of the result can make decisions based on checks
       // skipped.
       const bypassedChecks: RegistrationBypassCause[] = []
+
+      if (!turnstileCheckResult) {
+        if (!options.overrideTurnstileCheck) {
+          return { cause: "INVALID_TURNSTILE_TOKEN", success: false }
+        }
+        bypassedChecks.push("OVERRIDDEN_TURNSTILE_CHECK")
+      }
 
       const isPreviouslyRegistered = attendance.attendees.some((a) => a.userId === userId)
       if (isPreviouslyRegistered) {
