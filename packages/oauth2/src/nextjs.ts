@@ -5,6 +5,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { type OAuth2Service, type OAuthScope, defaultSessionLengthSeconds } from "./authentication"
 import { type Session, createSession, getSession } from "./session"
+import { JWTExpired } from "jose/errors"
 
 /**
  * Create a short-lived cookie intended to hold state/verifier/nonce values
@@ -168,7 +169,15 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       if (sessionCookie === undefined) {
         return null
       }
-      return await getSession(sessionCookie.value, opts.signingKey)
+      try {
+        return await getSession(sessionCookie.value, opts.signingKey)
+      } catch (err) {
+        if (err instanceof JWTExpired) {
+          cookieHandle.delete(service.getOAuth2SessionCookieName())
+          return null
+        }
+        throw err
+      }
     },
   }
 }
