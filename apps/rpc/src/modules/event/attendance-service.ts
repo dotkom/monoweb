@@ -1620,7 +1620,7 @@ export function getAttendanceService(
       const hostingGroupEmail = findFirstHostingGroupEmail(event)
       if (hostingGroupEmail === null) {
         logger.warn(
-          "Notifcation email sent for Event(ID=%s, Name=%s) did not have sufficient organizer email so %s was used.",
+          "Notification email sent for Event(ID=%s, Name=%s) did not have sufficient organizer email so %s was used.",
           event.id,
           event.title,
           DEFAULT_EMAIL_SOURCE
