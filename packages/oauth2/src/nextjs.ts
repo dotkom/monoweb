@@ -173,7 +173,6 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
         return await getSession(sessionCookie.value, opts.signingKey)
       } catch (err) {
         if (err instanceof JWTExpired) {
-          cookieHandle.delete(service.getOAuth2SessionCookieName())
           return null
         }
         throw err
