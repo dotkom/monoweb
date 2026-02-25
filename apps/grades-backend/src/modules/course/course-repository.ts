@@ -19,7 +19,8 @@ export function getCourseRepository(): CourseRepository {
                 code: 
                   query.byCode !== null ?
                   {
-                    contains: query.byCode
+                    contains: query.byCode,
+                    mode: "insensitive"
                   }
                   : undefined
               },
@@ -29,7 +30,8 @@ export function getCourseRepository(): CourseRepository {
                     norwegianName:
                       query.byName !== null ?
                       {
-                        contains: query.byName
+                        contains: query.byName,
+                        mode: "insensitive"
                       }
                       : undefined
                   },
@@ -37,7 +39,8 @@ export function getCourseRepository(): CourseRepository {
                     englishName:
                       query.byName !== null ?
                       {
-                        contains: query.byName
+                        contains: query.byName,
+                        mode: "insensitive"
                       }
                       : undefined
                   }

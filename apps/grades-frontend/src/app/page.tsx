@@ -1,7 +1,7 @@
 import { server } from "@/utils/trpc/server"
 
 export default async function App() {
-  const courses = await server.course.findCourses.query({ byCode: "TDT" })
+  const courses = await server.course.findCourses.query({ filter: { byCode: "TDT", byName: "Objekt" }})
   const grades = courses.length > 0 ? await server.grade.findGrades.query(courses[0].code) : []
 
   return (
