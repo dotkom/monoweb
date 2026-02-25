@@ -1647,11 +1647,20 @@ export function getAttendanceService(
           event.title
         )
 
-        await emailService.send(sourceEmail, [sourceEmail], [], [], attendeeEmails, "", emails.EVENT_MESSAGE, {
-          eventName: event.title,
-          eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
-          message,
-        })
+        await emailService.send(
+          sourceEmail,
+          [sourceEmail],
+          [],
+          [],
+          attendeeEmails,
+          `Viktig melding om ${event.title}`,
+          emails.EVENT_MESSAGE,
+          {
+            eventName: event.title,
+            eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+            message,
+          }
+        )
       }
     },
   }
