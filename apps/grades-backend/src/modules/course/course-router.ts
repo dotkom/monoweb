@@ -13,8 +13,6 @@ const findCoursesProcedure = procedure
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
 
-    console.log(filter)
-
     const items = await ctx.courseService.findMany(ctx.handle, { ...filter }, page)
     return items
   })

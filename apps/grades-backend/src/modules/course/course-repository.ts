@@ -11,8 +11,15 @@ export interface CourseRepository {
 export function getCourseRepository(): CourseRepository {
   return {
     async findMany(handle, query, page) {
+      const orderDirection = query.orderBy ?? "desc"
+
       const courses = await handle.course.findMany({
           ...pageQuery(page),
+          orderBy: {
+            passRate: query.sortByPassRate ? orderDirection : undefined,
+            averageGrade: query.sortByAverageGrade ? orderDirection : undefined,
+            studentCount: query.sortByStudentCount ? orderDirection : undefined
+          },
           where: {
             AND: [
               {
