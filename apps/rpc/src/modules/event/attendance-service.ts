@@ -1613,7 +1613,7 @@ export function getAttendanceService(
     async notifyAttendees(handle, attendanceId, message) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const event = await eventService.getByAttendanceId(handle, attendanceId)
-      if (isBefore(attendance.registerStart, getCurrentUTC())) {
+      if (isBefore(getCurrentUTC(), attendance.registerStart)) {
         throw new IllegalStateError(`Cannot send message to attendees for Attendance(ID=${attendance.id}) before start`)
       }
 
