@@ -18,7 +18,6 @@ import {
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
   type Event,
-  type GroupType,
   type Membership,
   type TaskId,
   type User,
@@ -27,6 +26,7 @@ import {
   getMembershipGrade,
   hasAttendeePaid,
   isAttendable,
+  findFirstHostingGroupEmail,
 } from "@dotkomonline/types"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
 import {
@@ -258,6 +258,8 @@ export interface AttendanceService {
     mergeTime: TZDate | null
   ): Promise<TaskId | null>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
+
+  notifyAttendees(handle: DBHandle, attendanceId: AttendanceId, message: string): Promise<void>
 }
 
 export function getAttendanceService(
@@ -1438,12 +1440,7 @@ export function getAttendanceService(
           return
         }
 
-        const validGroupTypes: GroupType[] = ["COMMITTEE", "NODE_COMMITTEE"]
-
-        const hostingGroupEmail =
-          event.hostingGroups.filter((group) => group.email && validGroupTypes.includes(group.type)).at(0)?.email ??
-          "bedkom@online.ntnu.no"
-
+        const hostingGroupEmail = findFirstHostingGroupEmail(event) ?? "bedkom@online.ntnu.no"
         logger.info(
           "Sending feedback form email for Event(ID=%s) to %d attendees from email %s",
           event.id,
@@ -1612,6 +1609,47 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
+    },
+    async notifyAttendees(handle, attendanceId, message) {
+      const attendance = await this.getAttendanceById(handle, attendanceId)
+      const event = await eventService.getByAttendanceId(handle, attendanceId)
+      if (isBefore(attendance.registerStart, getCurrentUTC())) {
+        throw new IllegalStateError(`Cannot send message to attendees for Attendance(ID=${attendance.id}) before start`)
+      }
+
+      const hostingGroupEmail = findFirstHostingGroupEmail(event)
+      if (hostingGroupEmail === null) {
+        logger.warn(
+          "Notifcation email sent for Event(ID=%s, Name=%s) did not have sufficient organizer email so %s was used.",
+          event.id,
+          event.title,
+          DEFAULT_EMAIL_SOURCE
+        )
+      }
+      const sourceEmail = hostingGroupEmail ?? DEFAULT_EMAIL_SOURCE
+
+      // In order to keep email sizes relatively small, and to prevent spam detection we batch the emails with 25 BCC recipients at a time
+      const batchSize = 25
+      for (let batchStartIndex = 0; batchStartIndex < attendance.attendees.length; batchStartIndex += batchSize) {
+        const attendees = attendance.attendees.slice(batchStartIndex, batchStartIndex + batchSize)
+        const attendeeEmails = attendees.map((a) => a.user.email).filter((e) => e !== null)
+
+        logger.info(
+          "Scheduling emails %s..%s in batch %s/%s for notification for Event(ID=%s, Name=%s)",
+          batchStartIndex + 1,
+          batchStartIndex + attendees.length + 1,
+          (batchStartIndex % batchSize) + 1,
+          (attendance.attendees.length % batchSize) + 1,
+          event.id,
+          event.title
+        )
+
+        await emailService.send(sourceEmail, [sourceEmail], [], [], attendeeEmails, "", emails.EVENT_MESSAGE, {
+          eventName: event.title,
+          eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+          message,
+        })
+      }
     },
   }
 }
