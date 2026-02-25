@@ -5,6 +5,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { type OAuth2Service, type OAuthScope, defaultSessionLengthSeconds } from "./authentication"
 import { type Session, createSession, getSession } from "./session"
+import { decodeJwt } from "jose"
 import { JWTExpired } from "jose/errors"
 
 /**
@@ -170,6 +171,12 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
         return null
       }
       try {
+        const claims = decodeJwt(sessionCookie.value)
+        const cutoff = new Date("2025-02-25T12:00:00Z").getTime() / 1000
+        if (claims.iat !== undefined && claims.iat < cutoff) {
+          cookieHandle.delete(service.getOAuth2SessionCookieName())
+          return null
+        }
         return await getSession(sessionCookie.value, opts.signingKey)
       } catch (err) {
         if (err instanceof JWTExpired) {
