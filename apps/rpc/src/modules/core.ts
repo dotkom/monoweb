@@ -57,6 +57,8 @@ import { getWorkspaceService } from "./workspace-sync/workspace-service"
 import { Auth0JwtService } from "../lib/auth0-jwt"
 import { getContestRepository } from "./contest/contest-repository"
 import { getContestService } from "./contest/contest-service"
+import { getNotificationRepository } from "./notification/notification-repository"
+import { getNotificationService } from "./notification/notification-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -187,6 +189,7 @@ export async function createServiceLayer(
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
   const contestRepository = getContestRepository()
+  const notificationRepository = getNotificationRepository()
 
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
@@ -217,6 +220,7 @@ export async function createServiceLayer(
     attendanceRepository
   )
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
+  const notificationService = getNotificationService(notificationRepository)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
     eventEmitter,
@@ -292,6 +296,7 @@ export async function createServiceLayer(
     contestService,
     recurringTaskService,
     workspaceService,
+    notificationService,
 
     rpcJwtService: clients.rpcJwtService,
     webJwtService: clients.webJwtService,
