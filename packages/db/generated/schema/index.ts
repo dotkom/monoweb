@@ -3287,7 +3287,7 @@ const notificationrecipientwhereinputSchema = z.object({
   OR: z.lazy(() => NotificationRecipientWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => NotificationRecipientWhereInputObjectSchema), z.lazy(() => NotificationRecipientWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  readAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  readAt: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   notificationId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   notification: z.union([z.lazy(() => NotificationScalarRelationFilterObjectSchema), z.lazy(() => NotificationWhereInputObjectSchema)]).optional(),
@@ -3300,7 +3300,7 @@ export const NotificationRecipientWhereInputObjectZodSchema = notificationrecipi
 // File: NotificationRecipientOrderByWithRelationInput.schema.ts
 const __makeSchema_NotificationRecipientOrderByWithRelationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  readAt: SortOrderSchema.optional(),
+  readAt: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   notificationId: SortOrderSchema.optional(),
   userId: SortOrderSchema.optional(),
   notification: z.lazy(() => NotificationOrderByWithRelationInputObjectSchema).optional(),
@@ -3321,7 +3321,7 @@ export const NotificationRecipientWhereUniqueInputObjectZodSchema = __makeSchema
 // File: NotificationRecipientOrderByWithAggregationInput.schema.ts
 const __makeSchema_NotificationRecipientOrderByWithAggregationInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
-  readAt: SortOrderSchema.optional(),
+  readAt: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   notificationId: SortOrderSchema.optional(),
   userId: SortOrderSchema.optional(),
   _count: z.lazy(() => NotificationRecipientCountOrderByAggregateInputObjectSchema).optional(),
@@ -3339,7 +3339,7 @@ const notificationrecipientscalarwherewithaggregatesinputSchema = z.object({
   OR: z.lazy(() => NotificationRecipientScalarWhereWithAggregatesInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => NotificationRecipientScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => NotificationRecipientScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-  readAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  readAt: z.union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   notificationId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
@@ -7375,7 +7375,7 @@ export const DeregisterReasonUncheckedUpdateManyInputObjectZodSchema = __makeSch
 // File: NotificationRecipientCreateInput.schema.ts
 const __makeSchema_NotificationRecipientCreateInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   notification: z.lazy(() => NotificationCreateNestedOneWithoutRecipientsInputObjectSchema),
   user: z.lazy(() => UserCreateNestedOneWithoutNotificationsReceivedInputObjectSchema)
 }).strict();
@@ -7386,7 +7386,7 @@ export const NotificationRecipientCreateInputObjectZodSchema = __makeSchema_Noti
 // File: NotificationRecipientUncheckedCreateInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedCreateInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   notificationId: z.string(),
   userId: z.string()
 }).strict();
@@ -7397,7 +7397,7 @@ export const NotificationRecipientUncheckedCreateInputObjectZodSchema = __makeSc
 // File: NotificationRecipientUpdateInput.schema.ts
 const __makeSchema_NotificationRecipientUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   notification: z.lazy(() => NotificationUpdateOneRequiredWithoutRecipientsNestedInputObjectSchema).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutNotificationsReceivedNestedInputObjectSchema).optional()
 }).strict();
@@ -7408,7 +7408,7 @@ export const NotificationRecipientUpdateInputObjectZodSchema = __makeSchema_Noti
 // File: NotificationRecipientUncheckedUpdateInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedUpdateInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   notificationId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
@@ -7419,7 +7419,7 @@ export const NotificationRecipientUncheckedUpdateInputObjectZodSchema = __makeSc
 // File: NotificationRecipientCreateManyInput.schema.ts
 const __makeSchema_NotificationRecipientCreateManyInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   notificationId: z.string(),
   userId: z.string()
 }).strict();
@@ -7430,7 +7430,7 @@ export const NotificationRecipientCreateManyInputObjectZodSchema = __makeSchema_
 // File: NotificationRecipientUpdateManyMutationInput.schema.ts
 const __makeSchema_NotificationRecipientUpdateManyMutationInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const NotificationRecipientUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUpdateManyMutationInput> = __makeSchema_NotificationRecipientUpdateManyMutationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUpdateManyMutationInput>;
 export const NotificationRecipientUpdateManyMutationInputObjectZodSchema = __makeSchema_NotificationRecipientUpdateManyMutationInput_schema();
@@ -7439,7 +7439,7 @@ export const NotificationRecipientUpdateManyMutationInputObjectZodSchema = __mak
 // File: NotificationRecipientUncheckedUpdateManyInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedUpdateManyInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   notificationId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
@@ -17906,7 +17906,7 @@ export const DeregisterReasonCreateManyUserInputEnvelopeObjectZodSchema = __make
 // File: NotificationRecipientCreateWithoutUserInput.schema.ts
 const __makeSchema_NotificationRecipientCreateWithoutUserInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   notification: z.lazy(() => NotificationCreateNestedOneWithoutRecipientsInputObjectSchema)
 }).strict();
 export const NotificationRecipientCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.NotificationRecipientCreateWithoutUserInput> = __makeSchema_NotificationRecipientCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientCreateWithoutUserInput>;
@@ -17916,7 +17916,7 @@ export const NotificationRecipientCreateWithoutUserInputObjectZodSchema = __make
 // File: NotificationRecipientUncheckedCreateWithoutUserInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedCreateWithoutUserInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   notificationId: z.string()
 }).strict();
 export const NotificationRecipientUncheckedCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUncheckedCreateWithoutUserInput> = __makeSchema_NotificationRecipientUncheckedCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUncheckedCreateWithoutUserInput>;
@@ -18613,7 +18613,7 @@ const notificationrecipientscalarwhereinputSchema = z.object({
   OR: z.lazy(() => NotificationRecipientScalarWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => NotificationRecipientScalarWhereInputObjectSchema), z.lazy(() => NotificationRecipientScalarWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  readAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  readAt: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
   notificationId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
 }).strict();
@@ -27384,7 +27384,7 @@ export const TaskCreateOrConnectWithoutNotificationsInputObjectZodSchema = __mak
 // File: NotificationRecipientCreateWithoutNotificationInput.schema.ts
 const __makeSchema_NotificationRecipientCreateWithoutNotificationInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   user: z.lazy(() => UserCreateNestedOneWithoutNotificationsReceivedInputObjectSchema)
 }).strict();
 export const NotificationRecipientCreateWithoutNotificationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientCreateWithoutNotificationInput> = __makeSchema_NotificationRecipientCreateWithoutNotificationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientCreateWithoutNotificationInput>;
@@ -27394,7 +27394,7 @@ export const NotificationRecipientCreateWithoutNotificationInputObjectZodSchema 
 // File: NotificationRecipientUncheckedCreateWithoutNotificationInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedCreateWithoutNotificationInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   userId: z.string()
 }).strict();
 export const NotificationRecipientUncheckedCreateWithoutNotificationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUncheckedCreateWithoutNotificationInput> = __makeSchema_NotificationRecipientUncheckedCreateWithoutNotificationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUncheckedCreateWithoutNotificationInput>;
@@ -29056,7 +29056,7 @@ export const DeregisterReasonCreateManyUserInputObjectZodSchema = __makeSchema_D
 // File: NotificationRecipientCreateManyUserInput.schema.ts
 const __makeSchema_NotificationRecipientCreateManyUserInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   notificationId: z.string()
 }).strict();
 export const NotificationRecipientCreateManyUserInputObjectSchema: z.ZodType<Prisma.NotificationRecipientCreateManyUserInput> = __makeSchema_NotificationRecipientCreateManyUserInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientCreateManyUserInput>;
@@ -29498,7 +29498,7 @@ export const DeregisterReasonUncheckedUpdateManyWithoutUserInputObjectZodSchema 
 // File: NotificationRecipientUpdateWithoutUserInput.schema.ts
 const __makeSchema_NotificationRecipientUpdateWithoutUserInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   notification: z.lazy(() => NotificationUpdateOneRequiredWithoutRecipientsNestedInputObjectSchema).optional()
 }).strict();
 export const NotificationRecipientUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUpdateWithoutUserInput> = __makeSchema_NotificationRecipientUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUpdateWithoutUserInput>;
@@ -29508,7 +29508,7 @@ export const NotificationRecipientUpdateWithoutUserInputObjectZodSchema = __make
 // File: NotificationRecipientUncheckedUpdateWithoutUserInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedUpdateWithoutUserInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   notificationId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const NotificationRecipientUncheckedUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUncheckedUpdateWithoutUserInput> = __makeSchema_NotificationRecipientUncheckedUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUncheckedUpdateWithoutUserInput>;
@@ -29518,7 +29518,7 @@ export const NotificationRecipientUncheckedUpdateWithoutUserInputObjectZodSchema
 // File: NotificationRecipientUncheckedUpdateManyWithoutUserInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedUpdateManyWithoutUserInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   notificationId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const NotificationRecipientUncheckedUpdateManyWithoutUserInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserInput> = __makeSchema_NotificationRecipientUncheckedUpdateManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserInput>;
@@ -31466,7 +31466,7 @@ export const FeedbackQuestionAnswerUncheckedUpdateManyWithoutFormAnswerInputObje
 // File: NotificationRecipientCreateManyNotificationInput.schema.ts
 const __makeSchema_NotificationRecipientCreateManyNotificationInput_schema = () => z.object({
   id: z.string().optional(),
-  readAt: z.coerce.date(),
+  readAt: z.coerce.date().optional().nullable(),
   userId: z.string()
 }).strict();
 export const NotificationRecipientCreateManyNotificationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientCreateManyNotificationInput> = __makeSchema_NotificationRecipientCreateManyNotificationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientCreateManyNotificationInput>;
@@ -31476,7 +31476,7 @@ export const NotificationRecipientCreateManyNotificationInputObjectZodSchema = _
 // File: NotificationRecipientUpdateWithoutNotificationInput.schema.ts
 const __makeSchema_NotificationRecipientUpdateWithoutNotificationInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutNotificationsReceivedNestedInputObjectSchema).optional()
 }).strict();
 export const NotificationRecipientUpdateWithoutNotificationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUpdateWithoutNotificationInput> = __makeSchema_NotificationRecipientUpdateWithoutNotificationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUpdateWithoutNotificationInput>;
@@ -31486,7 +31486,7 @@ export const NotificationRecipientUpdateWithoutNotificationInputObjectZodSchema 
 // File: NotificationRecipientUncheckedUpdateWithoutNotificationInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedUpdateWithoutNotificationInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const NotificationRecipientUncheckedUpdateWithoutNotificationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUncheckedUpdateWithoutNotificationInput> = __makeSchema_NotificationRecipientUncheckedUpdateWithoutNotificationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUncheckedUpdateWithoutNotificationInput>;
@@ -31496,7 +31496,7 @@ export const NotificationRecipientUncheckedUpdateWithoutNotificationInputObjectZ
 // File: NotificationRecipientUncheckedUpdateManyWithoutNotificationInput.schema.ts
 const __makeSchema_NotificationRecipientUncheckedUpdateManyWithoutNotificationInput_schema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  readAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  readAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const NotificationRecipientUncheckedUpdateManyWithoutNotificationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUncheckedUpdateManyWithoutNotificationInput> = __makeSchema_NotificationRecipientUncheckedUpdateManyWithoutNotificationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUncheckedUpdateManyWithoutNotificationInput>;
@@ -50693,7 +50693,7 @@ export const DeregisterReasonCountResultSchema = z.number();
 // File: NotificationRecipientFindUniqueResult.schema.ts
 export const NotificationRecipientFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
-  readAt: z.date(),
+  readAt: z.date().optional(),
   notificationId: z.string(),
   notification: z.unknown(),
   userId: z.string(),
@@ -50703,7 +50703,7 @@ export const NotificationRecipientFindUniqueResultSchema = z.nullable(z.object({
 // File: NotificationRecipientFindFirstResult.schema.ts
 export const NotificationRecipientFindFirstResultSchema = z.nullable(z.object({
   id: z.string(),
-  readAt: z.date(),
+  readAt: z.date().optional(),
   notificationId: z.string(),
   notification: z.unknown(),
   userId: z.string(),
@@ -50714,7 +50714,7 @@ export const NotificationRecipientFindFirstResultSchema = z.nullable(z.object({
 export const NotificationRecipientFindManyResultSchema = z.object({
   data: z.array(z.object({
   id: z.string(),
-  readAt: z.date(),
+  readAt: z.date().optional(),
   notificationId: z.string(),
   notification: z.unknown(),
   userId: z.string(),
@@ -50733,7 +50733,7 @@ export const NotificationRecipientFindManyResultSchema = z.object({
 // File: NotificationRecipientCreateResult.schema.ts
 export const NotificationRecipientCreateResultSchema = z.object({
   id: z.string(),
-  readAt: z.date(),
+  readAt: z.date().optional(),
   notificationId: z.string(),
   notification: z.unknown(),
   userId: z.string(),
@@ -50748,7 +50748,7 @@ export const NotificationRecipientCreateManyResultSchema = z.object({
 // File: NotificationRecipientUpdateResult.schema.ts
 export const NotificationRecipientUpdateResultSchema = z.nullable(z.object({
   id: z.string(),
-  readAt: z.date(),
+  readAt: z.date().optional(),
   notificationId: z.string(),
   notification: z.unknown(),
   userId: z.string(),
@@ -50763,7 +50763,7 @@ export const NotificationRecipientUpdateManyResultSchema = z.object({
 // File: NotificationRecipientUpsertResult.schema.ts
 export const NotificationRecipientUpsertResultSchema = z.object({
   id: z.string(),
-  readAt: z.date(),
+  readAt: z.date().optional(),
   notificationId: z.string(),
   notification: z.unknown(),
   userId: z.string(),
@@ -50773,7 +50773,7 @@ export const NotificationRecipientUpsertResultSchema = z.object({
 // File: NotificationRecipientDeleteResult.schema.ts
 export const NotificationRecipientDeleteResultSchema = z.nullable(z.object({
   id: z.string(),
-  readAt: z.date(),
+  readAt: z.date().optional(),
   notificationId: z.string(),
   notification: z.unknown(),
   userId: z.string(),
@@ -52448,7 +52448,7 @@ export type DeregisterReasonModel = z.infer<typeof DeregisterReason>;
 
 export const NotificationRecipient = z.object({
   id: z.string(),
-  readAt: z.date(),
+  readAt: z.date().nullable(),
   notificationId: z.string(),
   userId: z.string(),
 });
