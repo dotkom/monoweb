@@ -29,6 +29,10 @@ const EVENTS = {
     label: "Sosialt",
     backgroundColor: "green",
   },
+  INTEREST_GROUP: {
+    label: "Interessegruppe",
+    backgroundColor: "amber",
+  },
   WELCOME: {
     label: "Fadderuke",
     backgroundColor: "amber",

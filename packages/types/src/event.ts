@@ -108,6 +108,8 @@ export const mapEventTypeToLabel = (eventType: EventType) => {
       return "Bedpres"
     case "SOCIAL":
       return "Sosialt"
+    case "INTEREST_GROUP":
+      return "Interessegruppe"
     case "WELCOME":
       return "Fadderuke"
     default:

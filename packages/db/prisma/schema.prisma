@@ -237,6 +237,8 @@ enum EventType {
   ACADEMIC         @map("ACADEMIC")
   /// Sosialt
   SOCIAL           @map("SOCIAL")
+  /// Interesse grupper
+  INTEREST_GROUP   @map("INTEREST_GROUP")
   // This type is for the rare occation we have an event that is only open to committee members.
   /// Komitéarrangement
   INTERNAL         @map("INTERNAL")
