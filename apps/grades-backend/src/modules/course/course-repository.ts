@@ -14,48 +14,48 @@ export function getCourseRepository(): CourseRepository {
       const orderDirection = query.orderBy ?? "desc"
 
       const courses = await handle.course.findMany({
-          ...pageQuery(page),
-          orderBy: {
-            passRate: query.sortByPassRate ? orderDirection : undefined,
-            averageGrade: query.sortByAverageGrade ? orderDirection : undefined,
-            studentCount: query.sortByStudentCount ? orderDirection : undefined
-          },
-          where: {
-            AND: [
-              {
-                code: 
-                  query.byCode !== null ?
-                  {
-                    contains: query.byCode,
-                    mode: "insensitive"
-                  }
-                  : undefined
-              },
-              {
-                OR: [
-                  {
-                    norwegianName:
-                      query.byName !== null ?
-                      {
-                        contains: query.byName,
-                        mode: "insensitive"
-                      }
-                      : undefined
-                  },
-                  {
-                    englishName:
-                      query.byName !== null ?
-                      {
-                        contains: query.byName,
-                        mode: "insensitive"
-                      }
-                      : undefined
-                  }
-                ]
-              }
-            ]
-          }
-        })
+        ...pageQuery(page),
+        orderBy: {
+          passRate: query.sortByPassRate ? orderDirection : undefined,
+          averageGrade: query.sortByAverageGrade ? orderDirection : undefined,
+          studentCount: query.sortByStudentCount ? orderDirection : undefined,
+        },
+        where: {
+          AND: [
+            {
+              code:
+                query.byCode !== null
+                  ? {
+                      contains: query.byCode,
+                      mode: "insensitive",
+                    }
+                  : undefined,
+            },
+            {
+              OR: [
+                {
+                  norwegianName:
+                    query.byName !== null
+                      ? {
+                          contains: query.byName,
+                          mode: "insensitive",
+                        }
+                      : undefined,
+                },
+                {
+                  englishName:
+                    query.byName !== null
+                      ? {
+                          contains: query.byName,
+                          mode: "insensitive",
+                        }
+                      : undefined,
+                },
+              ],
+            },
+          ],
+        },
+      })
 
       return parseOrReport(CourseSchema.array(), courses)
     },

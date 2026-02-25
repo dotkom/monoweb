@@ -10,12 +10,12 @@ export type Course = z.infer<typeof CourseSchema>
 
 export type CourseFilterQuery = z.infer<typeof CourseFilterQuerySchema>
 export const CourseFilterQuerySchema = z
-	.object({
-		byCode: buildSearchFilter(),
-		byName: buildSearchFilter(),
-		orderBy: createSortOrder(),
-		sortByAverageGrade: z.boolean(),
-		sortByPassRate: z.boolean(),
-		sortByStudentCount: z.boolean()
-	})
-	.partial()
+  .object({
+    byCode: buildSearchFilter(),
+    byName: buildSearchFilter(),
+    orderBy: createSortOrder(),
+    sortByAverageGrade: z.boolean(),
+    sortByPassRate: z.boolean(),
+    sortByStudentCount: z.boolean(),
+  })
+  .partial()
