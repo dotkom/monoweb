@@ -1640,7 +1640,7 @@ export function getAttendanceService(
         logger.info(
           "Scheduling emails %s..%s in batch %s/%s for notification for Event(ID=%s, Name=%s)",
           batchStartIndex + 1,
-          batchStartIndex + attendees.length + 1,
+          batchStartIndex + attendees.length,
           currentBatchIndex,
           totalBatches,
           event.id,
