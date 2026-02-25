@@ -762,7 +762,7 @@ model DeregisterReason {
 
 model NotificationRecipient {
   id     String   @id @default(uuid())
-  readAt DateTime @map("read_at") @db.Timestamptz(3)
+  readAt DateTime? @map("read_at") @db.Timestamptz(3)
 
   notificationId String       @map("notification_id")
   notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
