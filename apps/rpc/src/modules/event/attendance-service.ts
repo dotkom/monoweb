@@ -1634,12 +1634,15 @@ export function getAttendanceService(
         const attendees = attendance.attendees.slice(batchStartIndex, batchStartIndex + batchSize)
         const attendeeEmails = attendees.map((a) => a.user.email).filter((e) => e !== null)
 
+        const currentBatchIndex = Math.floor(batchStartIndex / batchSize) + 1
+        const totalBatches = Math.ceil(attendance.attendees.length / batchSize)
+
         logger.info(
           "Scheduling emails %s..%s in batch %s/%s for notification for Event(ID=%s, Name=%s)",
           batchStartIndex + 1,
           batchStartIndex + attendees.length + 1,
-          (batchStartIndex % batchSize) + 1,
-          (attendance.attendees.length % batchSize) + 1,
+          currentBatchIndex,
+          totalBatches,
           event.id,
           event.title
         )
