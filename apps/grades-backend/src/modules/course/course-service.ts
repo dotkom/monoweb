@@ -1,7 +1,7 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
 import type { CourseRepository } from "./course-repository"
 import type { Course, CourseFilterQuery } from "./course"
-import type { Pageable } from "src/query"
+import type { Pageable } from "../../query"
 
 export interface CourseService {
   findMany(handle: DBHandle, query: CourseFilterQuery, page: Pageable): Promise<Course[]>

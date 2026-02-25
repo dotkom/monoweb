@@ -1,7 +1,7 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
 import { parseOrReport } from "../../invariant"
-import { CourseSchema, type Course, type CourseFilterQuery } from "./course"
-import { pageQuery, type Pageable } from "src/query"
+import { type Course, type CourseFilterQuery, CourseSchema } from "./course"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface CourseRepository {
   findMany(handle: DBHandle, query: CourseFilterQuery, page: Pageable): Promise<Course[]>
@@ -60,7 +60,9 @@ export function getCourseRepository(): CourseRepository {
       return parseOrReport(CourseSchema.array(), courses)
     },
     async find(handle, code) {
-      const course = await handle.course.findUnique({ where: { code: code } })
+      const course = await handle.course.findUnique({
+        where: { code: code },
+      })
 
       return parseOrReport(CourseSchema, course)
     },
