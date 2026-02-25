@@ -53,11 +53,13 @@ const getDisabledText = (
     return "Du må være innlogget for å melde deg på"
   }
 
-  if (!hasTurnstileToken) {
+  const isAttending = attendee !== null
+
+  if (!hasTurnstileToken && !isAttending) {
     return "Du må bekrefte at du ikke er en robot"
   }
 
-  if (attendee) {
+  if (isAttending) {
     if (isPastDeregisterDeadline && attendee.reserved) {
       return "Avmeldingsfristen har utløpt"
     }
