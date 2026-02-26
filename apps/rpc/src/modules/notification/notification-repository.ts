@@ -1,19 +1,35 @@
-import { DBHandle } from "@dotkomonline/db"
-import { Notification, NotificationId, NotificationWrite, UserId, NotificationRecipientId, NotificationRecipient } from "@dotkomonline/types"
+import type { DBHandle } from "@dotkomonline/db"
+import type {
+  Notification,
+  NotificationId,
+  NotificationWrite,
+  NotificationRecipientId,
+  NotificationRecipient,
+  UserNotification,
+} from "./notification"
+
+import type { UserId } from "@dotkomonline/types"
 
 export interface NotificationRepository {
-
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
   create(handle: DBHandle, notificationData: NotificationWrite): Promise<Notification>
-  update(handle: DBHandle, notificationId: NotificationId, notificationData: Partial<NotificationWrite>): Promise<Notification>
+  update(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    notificationData: Partial<NotificationWrite>
+  ): Promise<Notification>
   delete(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
 
   addRecipients(handle: DBHandle, notificationId: NotificationId, recipientIds: UserId[]): Promise<void>
   removeRecipients(handle: DBHandle, notificationId: NotificationId, recipientIds: UserId[]): Promise<void>
 
-  findRecipient(handle: DBHandle, recipientId: NotificationRecipientId, userId: UserId): Promise<NotificationRecipient | null>
-  findAllforUser(handle: DBHandle, userId: UserId): Promise<Notification[]>
-  getUnreadCountforUser(handle: DBHandle, userId: UserId): Promise<number>
+  findRecipient(
+    handle: DBHandle,
+    recipientId: NotificationRecipientId,
+    userId: UserId
+  ): Promise<NotificationRecipient | null>
+  findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<void>
   markAllAsRead(handle: DBHandle, userId: UserId): Promise<void>
 }
@@ -36,10 +52,9 @@ export function getNotificationRepository(): NotificationRepository {
       const { recipientIds, ...data } = notificationData
       const notification = await handle.notification.update({
         where: { id: notificationId },
-        data, 
+        data,
       })
       return notification
-      
     },
     async delete(handle, notificationId) {
       const notification = await handle.notification.findUnique({
@@ -68,12 +83,12 @@ export function getNotificationRepository(): NotificationRepository {
       })
     },
     async removeRecipients(handle, notificationId, recipientIds) {
-        await handle.notificationRecipient.deleteMany({
-          where: {
-            notificationId,
-            userId: { in: recipientIds },
-          },
-        })
+      await handle.notificationRecipient.deleteMany({
+        where: {
+          notificationId,
+          userId: { in: recipientIds },
+        },
+      })
     },
 
     async findAllForUser(handle, userId) {
@@ -83,15 +98,15 @@ export function getNotificationRepository(): NotificationRepository {
       })
     },
 
-    async getUnreadCountforUser(handle, userId) {
-      await handle.notificationRecipient.count({
-        where: { userId, readAt: null },
-      })
-    },
-
     async getUnreadCountForUser(handle, userId) {
       return handle.notificationRecipient.count({
         where: { userId, readAt: null },
+      })
+    },
+    async markAsRead(handle, notificationId, userId) {
+      await handle.notificationRecipient.updateMany({
+        where: { notificationId, userId, readAt: null },
+        data: { readAt: new Date() },
       })
     },
 
