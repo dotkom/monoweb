@@ -130,6 +130,12 @@ export function getAttendanceCapacity(attendance: Attendance | AttendanceSummary
 
 export function isAttendable(user: User, pool: AttendancePool) {
   const membership = findActiveMembership(user)
+
+  // Knights can always attend pools named "Ridder". This is a hard-coded name used only for Knight attendance.
+  if (membership?.type === "KNIGHT") {
+    return pool.title === "Ridder"
+  }
+
   const grade = membership?.semester != null ? getStudyGrade(membership.semester) : null
 
   if (grade === null) {
