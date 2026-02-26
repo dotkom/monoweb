@@ -11,6 +11,7 @@ export type EmailType =
   | "COMPANY_INVOICE_NOTIFICATION"
   | "FEEDBACK_FORM_LINK"
   | "EVENT_ATTENDANCE"
+  | "EVENT_MESSAGE"
   | "RECEIVED_MARK"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
@@ -22,12 +23,6 @@ export interface EmailTemplate<TData, TType extends EmailType> {
 export type InferEmailData<TDef> = TDef extends EmailTemplate<infer TData, infer TType> ? TData : never
 export type InferEmailType<TDef> =
   TDef extends EmailTemplate<infer TData, infer TType extends EmailType> ? TType : never
-
-export type CompanyCollaborationReceiptEmailTemplate = typeof emails.COMPANY_COLLABORATION_RECEIPT
-export type CompanyCollaborationNotificationEmailTemplate = typeof emails.COMPANY_COLLABORATION_NOTIFICATION
-export type CompanyInvoiceNotificationEmailTemplate = typeof emails.COMPANY_INVOICE_NOTIFICATION
-export type FeedbackFormLinkEmailTemplate = typeof emails.FEEDBACK_FORM_LINK
-export type AnyEmailTemplate = CompanyCollaborationReceiptEmailTemplate
 
 export function createEmailTemplate<const TData, const TType extends EmailType>(
   definition: EmailTemplate<TData, TType>
@@ -123,6 +118,16 @@ export const emails = {
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
+  }),
+  EVENT_MESSAGE: createEmailTemplate({
+    type: "EVENT_MESSAGE",
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.string().url(),
+        message: z.string(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "event_message.mustache"), "utf-8"),
   }),
   RECEIVED_MARK: createEmailTemplate({
     type: "RECEIVED_MARK",
