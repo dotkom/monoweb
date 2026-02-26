@@ -15,7 +15,6 @@ export type NotificationRecipient = z.infer<typeof NotificationRecipientSchema>
 
 export type NotificationRecipientId = NotificationRecipient["id"]
 
-
 export type UserNotification = z.infer<typeof UserNotificationSchema>
 export const UserNotificationSchema = schemas.NotificationRecipientSchema.extend({
   notification: schemas.NotificationSchema,
@@ -34,5 +33,3 @@ export const NotificationWriteSchema = NotificationSchema.pick({
 }).extend({
   recipientIds: z.array(z.string().uuid()).min(1),
 })
-
-
