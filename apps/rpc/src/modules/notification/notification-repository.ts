@@ -3,10 +3,12 @@ import type {
   Notification,
   NotificationId,
   NotificationWrite,
-  UserId,
   NotificationRecipientId,
   NotificationRecipient,
-} from "@dotkomonline/types"
+  UserNotification,
+} from "./notification"
+
+import type { UserId } from "@dotkomonline/types"
 
 export interface NotificationRepository {
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
@@ -26,8 +28,8 @@ export interface NotificationRepository {
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
-  findAllforUser(handle: DBHandle, userId: UserId): Promise<Notification[]>
-  getUnreadCountforUser(handle: DBHandle, userId: UserId): Promise<number>
+  findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<void>
   markAllAsRead(handle: DBHandle, userId: UserId): Promise<void>
 }
@@ -96,15 +98,15 @@ export function getNotificationRepository(): NotificationRepository {
       })
     },
 
-    async getUnreadCountforUser(handle, userId) {
-      await handle.notificationRecipient.count({
-        where: { userId, readAt: null },
-      })
-    },
-
     async getUnreadCountForUser(handle, userId) {
       return handle.notificationRecipient.count({
         where: { userId, readAt: null },
+      })
+    },
+    async markAsRead(handle, notificationId, userId) {
+      await handle.notificationRecipient.updateMany({
+        where: { notificationId, userId, readAt: null },
+        data: { readAt: new Date() },
       })
     },
 
