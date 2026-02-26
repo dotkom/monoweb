@@ -1,9 +1,9 @@
-import { NotificationSchema, NotificationWriteSchema, UserNotificationSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
+import { NotificationSchema, NotificationWriteSchema } from "./notification"
 
 export type GetNotificationInput = inferProcedureInput<typeof getNotificationProcedure>
 export type GetNotificationOutput = inferProcedureOutput<typeof getNotificationProcedure>
