@@ -522,6 +522,22 @@ export function getAttendanceService(
       // skipped.
       const bypassedChecks: RegistrationBypassCause[] = []
 
+      // This will deprioritize Knight memberships, meaning that if this returns a Knight membership, it is their only
+      // active membership.
+      const membership = findActiveMembership(user)
+
+      // This makes Knights only respect registration end. This requires a lot of trust, but the Knights are Online's
+      // most trusted and devoted members throughout the years. The reason we give them so much lenience is to make it
+      // simple for both us, the developers, and the event organizers. In practice, it's extremely uncommon for Knights
+      // who don't have any other membership (aren't active students) to register to events. This usually happens once a
+      // year, for an event called "Immatrikuleringsball" ("Immball"), and every five years for the anniversary.
+      // Therefore, we give the Knights so much leniency to avoid having any frontend options for the Knights.
+      if (membership?.type === "KNIGHT") {
+        options.overrideTurnstileCheck = true
+        options.ignoreRegisteredToParent = true
+        options.ignoreRegistrationWindow = true
+      }
+
       if (!turnstileCheckResult) {
         if (!options.overrideTurnstileCheck) {
           return { cause: "INVALID_TURNSTILE_TOKEN", success: false }
@@ -571,8 +587,6 @@ export function getAttendanceService(
         }
       }
 
-      const membership = findActiveMembership(user)
-
       if (membership === null) {
         return { cause: "MISSING_MEMBERSHIP", success: false }
       }
@@ -580,7 +594,22 @@ export function getAttendanceService(
       // This is a "free" check that does zero roundtrips against the database, despite having a rather large piece of
       // code associated with it.
       let applicablePool: AttendancePool | null = null
-      if (options.overriddenAttendancePoolId !== null) {
+
+      if (membership.type === "KNIGHT") {
+        // Knights should register to their own pool, and this pool might not exist before they register. "Ridder" is
+        // the Norwegian name for Knights.
+        applicablePool = attendance.pools.find((p) => p.title === "Ridder") ?? {
+          id: crypto.randomUUID(),
+          attendanceId,
+          capacity: 0,
+          yearCriteria: [],
+          title: "Ridder",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          mergeDelayHours: null,
+          taskId: null,
+        }
+      } else if (options.overriddenAttendancePoolId !== null) {
         const pool = attendance.pools.find((p) => p.id === options.overriddenAttendancePoolId)
 
         if (pool === undefined) {
@@ -657,6 +686,16 @@ export function getAttendanceService(
         success,
       })
 
+      let createdAttendancePool: AttendancePool | null = null
+
+      if (pool.title === "Ridder") {
+        const poolExists = attendance.pools.some((p) => p.id === pool.id)
+
+        if (!poolExists) {
+          createdAttendancePool = await attendanceRepository.createAttendancePool(handle, attendance.id, null, pool)
+        }
+      }
+
       const poolAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved)
       const isImmediateReservation =
         (!isFuture(reservationActiveAt) && (pool.capacity === 0 || poolAttendees.length < pool.capacity)) ||
@@ -718,6 +757,7 @@ export function getAttendanceService(
       eventEmitter.emit("attendance:register-change", {
         attendee,
         status: "registered",
+        newAttendancePool: createdAttendancePool ?? undefined,
       })
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has registered (effective %s) for Event(ID=%s) named %s with options: %o",
@@ -861,6 +901,7 @@ export function getAttendanceService(
       eventEmitter.emit("attendance:register-change", {
         attendee,
         status: "deregistered",
+        newAttendancePool: undefined,
       })
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s with options: %o",
@@ -1694,6 +1735,7 @@ function validateAttendanceWrite(data: AttendanceWrite) {
   }
 }
 
+// NOTE: This should allow creating attendance pools with no year criteria
 function validateAttendancePoolWrite(data: AttendancePoolWrite) {
   if (data.mergeDelayHours !== null && (data.mergeDelayHours < 0 || data.mergeDelayHours > 48)) {
     throw new InvalidArgumentError("Merge delay for pool must be between 0 and 48 hours")
