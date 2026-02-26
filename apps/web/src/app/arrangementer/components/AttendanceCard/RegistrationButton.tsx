@@ -47,17 +47,14 @@ const getDisabledText = (
   isSuspended: boolean,
   registeredToParentEvent: boolean | null,
   reservedToParentEvent: boolean | null,
-  hasTurnstileToken: boolean
+  hasTurnstileToken: boolean,
+  isKnight: boolean
 ) => {
   if (!isLoggedIn) {
     return "Du må være innlogget for å melde deg på"
   }
 
   const isAttending = attendee !== null
-
-  if (!hasTurnstileToken && !isAttending) {
-    return "Du må bekrefte at du ikke er en robot"
-  }
 
   if (isAttending) {
     if (isPastDeregisterDeadline && attendee.reserved) {
@@ -73,23 +70,32 @@ const getDisabledText = (
   if (isSuspended) {
     return "Du er suspendert fra Online"
   }
-  if (!hasMembership) {
-    return "Du må ha registrert medlemskap for å melde deg på"
-  }
-  if (status === "NotOpened") {
-    return "Påmeldinger har ikke åpnet"
-  }
   if (status === "Closed") {
     return "Påmeldingen er stengt"
   }
+
+  // Knights ("Riddere") bypass the remaining checks in the backend
+  if (isKnight) {
+    return null
+  }
+
+  if (!hasMembership) {
+    return "Du må ha registrert medlemskap for å melde deg på"
+  }
   if (!pool) {
     return "Du har ingen påmeldingsgruppe"
+  }
+  if (status === "NotOpened") {
+    return "Påmeldinger har ikke åpnet"
   }
   if (registeredToParentEvent === false) {
     return "Du er ikke påmeldt foreldrearrangementet"
   }
   if (reservedToParentEvent === false && registeredToParentEvent === true) {
     return "Du er i kø på foreldrearrangementet"
+  }
+  if (!hasTurnstileToken) {
+    return "Du må bekrefte at du ikke er en robot"
   }
 
   return null
@@ -125,7 +131,10 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const attendee = getAttendee(attendance, user)
   const pool = getAttendablePool(attendance, user)
   const attendanceStatus = getAttendanceStatus(attendance)
-  const hasMembership = user !== null && Boolean(findActiveMembership(user))
+
+  const membership = user !== null ? findActiveMembership(user) : null
+  const hasMembership = membership !== null
+  const isKnight = membership?.type === "KNIGHT"
 
   // TODO: dont calculate this in frontend
   const actualDeregisterDeadline = chargeScheduleDate
@@ -158,12 +167,13 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     isSuspended,
     registeredToParentEvent,
     reservedToParentEvent,
-    hasTurnstileToken
+    hasTurnstileToken,
+    isKnight
   )
   const disabled = Boolean(disabledText)
 
   const buttonContent = isLoading ? (
-    <IconLoader2 className="size-6 animate-spin py-2" />
+    <IconLoader2 className="size-10 animate-spin py-2" />
   ) : (
     <div
       className={cn(
