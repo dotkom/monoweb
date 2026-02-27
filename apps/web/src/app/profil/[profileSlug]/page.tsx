@@ -45,5 +45,8 @@ export async function generateMetadata({ params }: Pick<ProfilePageProps, "param
       title: name,
       description,
     },
+    other: {
+      robots: "noindex",
+    },
   }
 }
