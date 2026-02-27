@@ -8,6 +8,11 @@ import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { Footer } from "@/components/Footer/Footer"
 import { Navbar } from "@/components/Navbar/Navbar"
 import { ThemeProvider } from "next-themes"
+import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
+import { nb } from "date-fns/locale"
+import "../globals.css"
+
+setDateFnsDefaultOptions({ locale: nb })
 
 export type GlobalErrorProps = {
   error: Error & { digest?: string }
