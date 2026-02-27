@@ -29,13 +29,13 @@ export default function GlobalError({ error }: GlobalErrorProps) {
                 <main className="grow flex flex-col gap-8">
                   <Title>En feil oppsto under innlasting av innhold.</Title>
 
-                  <div className="rounded-lg p-4 bg-red-300">
+                  <div className="rounded-lg p-4 bg-red-300 dark:bg-red-800">
                     <Text>
                       <strong>Detaljer:</strong> {error.message} {error.digest && `(digest=${error.digest})`}
                     </Text>
                   </div>
 
-                  <Text className="text-gray-800" size="lg">
+                  <Text className="text-gray-800 dark:text-stone-400" size="lg">
                     Om feilen vedvarer, vennligst prøv å slette cookies eller refreshe siden.
                   </Text>
                 </main>
