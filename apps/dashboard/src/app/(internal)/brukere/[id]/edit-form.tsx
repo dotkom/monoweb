@@ -4,6 +4,7 @@ import { createImageInput } from "@/components/forms/ImageInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { USER_IMAGE_MAX_SIZE_KIB, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
+import { createTextareaInput } from "@/components/forms/TextareaInput"
 
 interface UseUserProfileWriteFormProps {
   onSubmit(data: UserWrite): void
@@ -45,9 +46,12 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
           { label: "Ikke oppgitt", value: "Ikke oppgitt" },
         ],
       }),
-      biography: createTextInput({
+      biography: createTextareaInput({
         label: "Biografi",
         placeholder: "Skriv noe om brukeren...",
+        minRows: 2,
+        maxRows: 6,
+        autosize: true,
       }),
       dietaryRestrictions: createTextInput({
         label: "Allergier",
