@@ -1,21 +1,18 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+
   previewFeatures = ["relationJoins"]
 }
 
 generator zod {
-  provider = "zod-prisma-types"
-  output   = "../src/schemas"
-
-  useMultipleFiles = false
-  createInputTypes = false
-  addIncludeType   = false
-  addSelectType    = false
+  provider = "prisma-zod-generator"
+  output   = "../generated/schema"
+  config   = "../zod-generator.config.json"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum MembershipType {

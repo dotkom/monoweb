@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto"
 import type { S3Client } from "@aws-sdk/client-s3"
+import { PrismaClient } from "@dotkomonline/db"
 import type { Group } from "@dotkomonline/types"
-import { PrismaClient } from "@prisma/client"
 import type { ManagementClient } from "auth0"
 import { getFeideGroupsRepository } from "src/modules/feide/feide-groups-repository"
 import { getMembershipService } from "src/modules/user/membership-service"

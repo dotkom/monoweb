@@ -1,6 +1,6 @@
-import type { Prisma } from "@prisma/client"
 import { stripIndents } from "common-tags"
 import { addDays, addHours, addMonths, roundToNearestHours, setHours, subDays, subMonths, subWeeks } from "date-fns"
+import type { Prisma } from "../"
 
 const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
 

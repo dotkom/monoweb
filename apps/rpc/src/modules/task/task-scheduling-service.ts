@@ -1,8 +1,7 @@
 import type { TZDate } from "@date-fns/tz"
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, Prisma } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { AttendanceId, AttendeeId, FeedbackFormId, RecurringTaskId, Task, TaskId } from "@dotkomonline/types"
-import type { JsonValue } from "@prisma/client/runtime/library"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 import type { TaskService } from "./task-service"
@@ -40,7 +39,7 @@ export function getLocalTaskSchedulingService(
   return {
     async scheduleAt(handle, task, data, executeAt, recurringTaskId) {
       logger.info("Scheduling task of TaskKind=%s with data: %o", task, data)
-      const payload = taskService.parse(task, data) as JsonValue
+      const payload = taskService.parse(task, data) as Prisma.JsonValue
 
       const scheduledTask = await taskRepository.create(handle, task.type, {
         payload,

@@ -1,6 +1,6 @@
 import PQueue from "p-queue"
 import { clearInterval, type setInterval } from "node:timers"
-import type { DBClient, PrismaClient } from "@dotkomonline/db"
+import type { DBClient, Prisma, PrismaClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Task } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -60,7 +60,7 @@ export function getLocalTaskExecutor(
         // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
         await client.$transaction(async (handle) => {
           const definition = getTaskDefinition(task.type)
-          const payload = taskService.parse(definition, task.payload)
+          const payload = taskService.parse(definition, task.payload as Prisma.JsonValue)
 
           switch (task.type) {
             case tasks.RESERVE_ATTENDEE.type:
