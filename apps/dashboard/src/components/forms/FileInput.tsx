@@ -27,7 +27,7 @@ export function createFileInput<F extends FieldValues>(
         control={control}
         name={name}
         render={({ field, fieldState }) => (
-          <Stack gap="0.5rem">
+          <Stack gap="0.25rem">
             <FileInput
               {...fileInputProps}
               description={description}
@@ -52,17 +52,19 @@ export function createFileInput<F extends FieldValues>(
                 field.onChange(result)
               }}
             />
-            <Button
-              w="fit-content"
-              color="gray"
-              size="compact-xs"
-              variant="subtle"
-              onClick={() => field.onChange(null)}
-              leftSection={<IconX size="1rem" />}
-              styles={{ section: { marginRight: "0.35rem" } }}
-            >
-              Fjern fil
-            </Button>
+            {props.required !== true && (
+              <Button
+                w="fit-content"
+                color="gray"
+                size="compact-xs"
+                variant="subtle"
+                onClick={() => field.onChange(null)}
+                leftSection={<IconX size="0.85rem" />}
+                styles={{ section: { marginRight: "0.35rem" } }}
+              >
+                Fjern fil
+              </Button>
+            )}
           </Stack>
         )}
       />

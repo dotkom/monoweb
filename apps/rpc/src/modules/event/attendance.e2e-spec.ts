@@ -5,7 +5,7 @@ import {
   type MembershipWrite,
   findActiveMembership,
 } from "@dotkomonline/types"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { getCurrentUTC, getCurrentSemesterStart, getNextSemesterStart, isSpringSemester } from "@dotkomonline/utils"
 import { faker } from "@faker-js/faker"
 import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
 import { addDays, addHours, addMinutes, isFuture, subHours } from "date-fns"
@@ -41,9 +41,10 @@ export function getMockAttendancePool(input: Partial<AttendancePoolWrite> = {}):
 export function getMockMembership(input: Partial<MembershipWrite> = {}): MembershipWrite {
   return {
     type: "BACHELOR_STUDENT",
-    start: addDays(getCurrentUTC(), -100),
-    end: addDays(getCurrentUTC(), 100),
+    start: getCurrentSemesterStart(),
+    end: getNextSemesterStart(),
     specialization: null,
+    semester: isSpringSemester() ? 1 : 2,
     ...input,
   }
 }
