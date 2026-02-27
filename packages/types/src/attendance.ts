@@ -144,12 +144,16 @@ export function isAttendable(user: User, pool: AttendancePool) {
 }
 
 export const getAttendee = (attendance: Attendance | AttendanceSummary | null, user: User | UserId | null) => {
-  if (!attendance || !user) {
+  if (!attendance) {
     return null
   }
 
   if ("currentUserAttendee" in attendance) {
     return attendance.currentUserAttendee
+  }
+
+  if (!user) {
+    return null
   }
 
   const userId = typeof user === "string" ? user : user.id
