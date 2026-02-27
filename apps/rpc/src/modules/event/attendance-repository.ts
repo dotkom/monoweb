@@ -177,13 +177,19 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return attendances.map((attendance) =>
-        parseOrReport(AttendanceSummarySchema, {
+      const attendanceSummaries = attendances.map((attendance) => {
+        // We only need the attendee for the given user (if any)
+        const currentAttendee =
+          userId !== undefined && attendance.attendees.find((attendee) => attendee.userId === userId)
+
+        return {
           ...attendance,
-          currentUserAttendee: attendance.attendees[0] ?? null, // We only need the attendee for the given user (if any)
+          currentUserAttendee: currentAttendee || null,
           reservedAttendeeCount: attendance._count.attendees,
-        })
-      )
+        }
+      })
+
+      return parseOrReport(AttendanceSummarySchema.array(), attendanceSummaries)
     },
 
     async findAttendanceByPoolId(handle, attendancePoolId) {
