@@ -1,8 +1,25 @@
 {
   "name": "@dotkomonline/types",
   "main": "./src/index.ts",
-  "exports": "./src/index.ts",
-  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./article": "./src/article.ts",
+    "./attendance": "./src/attendance.ts",
+    "./audit-log": "./src/audit-log.ts",
+    "./company": "./src/company.ts",
+    "./event": "./src/event.ts",
+    "./feedback-form": "./src/feedback-form.ts",
+    "./filters": "./src/filters.ts",
+    "./group": "./src/group.ts",
+    "./job-listing": "./src/job-listing.ts",
+    "./mark": "./src/mark.ts",
+    "./notification-permissions": "./src/notification-permissions.ts",
+    "./offline": "./src/offline.ts",
+    "./privacy-permissions": "./src/privacy-permissions.ts",
+    "./task": "./src/task.ts",
+    "./user": "./src/user.ts",
+    "./workspace-sync": "./src/workspace-sync.ts"
+  },
   "type": "module",
   "scripts": {
     "lint": "biome check . --write",

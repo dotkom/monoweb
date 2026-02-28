@@ -1,7 +1,7 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type * as trpc from "@trpc/server/unstable-core-do-not-import"
 import type { Rule } from "./authorization"
-import { UnauthorizedError } from "./error"
+import { ForbiddenError, UnauthorizedError } from "./error"
 import type { TRPCContext } from "./trpc"
 
 type MiddlewareFunction<TContextIn, TContextOut, TInputOut> = trpc.MiddlewareFunction<
@@ -93,6 +93,35 @@ export function withAuthorization<TContext extends TRPCContext, TInput>(rule: Ru
   const handler: MiddlewareFunction<TContext, TContext, TInput> = async ({ ctx, next, input }) => {
     await ctx.addAuthorizationGuard(rule, input)
     return await next({ ctx })
+  }
+  return handler
+}
+
+/**
+ * tRPC Middleware to return a fallback value if the procedure throws an authentication or authorization error.
+ *
+ * Must be placed AFTER withDatabaseTransaction() and BEFORE withAuthentication()/withAuthorization()
+ * in the middleware chain, so it can catch auth errors from downstream middleware.
+ *
+ * @param query - Fallback function receiving { input, ctx } and returning the fallback data
+ *
+ */
+export function withFallbackQuery<TInput>(
+  query: (args: { input: TInput; ctx: TRPCContext & WithTransaction }) => Promise<unknown>
+) {
+  const handler: MiddlewareFunction<TRPCContext & WithTransaction, TRPCContext & WithTransaction, TInput> = async ({
+    ctx,
+    next,
+    input,
+  }) => {
+    // The error types to catch on.
+    const errorTypes = [UnauthorizedError, ForbiddenError]
+    const result = await next({ ctx })
+
+    if (!result.ok && errorTypes.some((E) => result.error.cause instanceof E)) {
+      return { marker: result.marker, ok: true as const, data: await query({ input, ctx }), ctx }
+    }
+    return result
   }
   return handler
 }
