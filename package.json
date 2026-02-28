@@ -52,7 +52,7 @@
     "pnpm": ">=10.15.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
+    "@biomejs/biome": "2.4.4",
     "typescript": "5.9.3"
   }
 }

@@ -34,7 +34,7 @@
     "zod-prisma-types": "^3.2.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
+    "@biomejs/biome": "2.4.4",
     "@dotkomonline/config": "workspace:*",
     "@types/common-tags": "1.8.4",
     "@types/node": "22.19.3",
