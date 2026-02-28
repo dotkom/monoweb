@@ -114,14 +114,30 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
     )
   }
 
-  const pool = getAttendablePool(attendance, user)
+  let pool = getAttendablePool(attendance, user)
 
   if (!pool) {
-    return (
-      <div className={cardClassname}>
-        <Text>Du kan ikke melde deg på dette arrangementet</Text>
-      </div>
-    )
+    // Knights will create their own pool when registering if it does not exist. For simplicity, we just mock the pool
+    // as this data is just for visualizing the pool.
+    if (membership?.type === "KNIGHT") {
+      pool = {
+        id: "11111111-1111-1111-1111-111111111111",
+        title: "Ridder",
+        attendanceId: attendance.id,
+        mergeDelayHours: null,
+        updatedAt: new Date(),
+        createdAt: new Date(),
+        yearCriteria: [],
+        capacity: 0,
+        taskId: null,
+      }
+    } else {
+      return (
+        <div className={cardClassname}>
+          <Text>Du kan ikke melde deg på dette arrangementet</Text>
+        </div>
+      )
+    }
   }
 
   const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance, pool.id)
