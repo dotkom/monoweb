@@ -2,7 +2,7 @@ import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupRole, type UserId, getGroupTypeName } from "@dotkomonline/types"
-import { Avatar, AvatarFallback, AvatarImage, Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
+import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconArrowUpRight,
@@ -101,6 +101,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
       return compareDesc(left.start, right.start)
     })
+
   const leader = [...members.values()]
     .filter((member) => getLatestActiveMembership(member) !== undefined)
     .find((user) => {
@@ -197,6 +198,11 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 <Text className="text-gray-500 dark:text-stone-400">Ingen kontaktinformasjon</Text>
               ))}
           </div>
+          {group.type === "INTEREST_GROUP" && !activeMembers?.some((m) => m.id === session?.sub) && group.slackUrl && (
+            <Button element="a" color="brand" href={group.slackUrl} className="w-fit">
+              Meld deg inn!
+            </Button>
+          )}
         </div>
       </div>
 

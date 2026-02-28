@@ -113,6 +113,9 @@ export const useGroupWriteForm = ({
           label: getGroupMemberVisibilityName(groupMemberVisibilityType),
         })),
       }),
+      slackUrl: createTextInput({
+        label: "Slack-lenke",
+      }),
       contactUrl: createTextInput({
         label: "Kontakt-lenke",
       }),
