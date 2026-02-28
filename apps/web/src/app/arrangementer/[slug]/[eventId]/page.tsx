@@ -188,11 +188,11 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
       </div>
 
       <div className="flex flex-1 flex-col gap-8 sm:gap-4 md:min-w-88 lg:min-w-104">
-        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
+        <div className="sm:hidden h-0.5 rounded-full w-full bg-gray-300 dark:bg-stone-700" />
         <TimeLocationBox event={event} />
         {attendance !== null && (
           <>
-            <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
+            <div className="sm:hidden h-0.5 rounded-full w-full bg-gray-300 dark:bg-stone-700" />
 
             <AttendanceCard
               initialAttendance={attendance}

@@ -130,13 +130,15 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
   const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
 
+  const reserved = false
+
   return (
     <div
       className={cn(
         "flex flex-col w-full rounded-lg",
         !attendee && "bg-gray-100 dark:bg-stone-700/50",
         attendee?.reserved === true && "bg-green-100 dark:bg-green-900",
-        attendee?.reserved === false && "bg-yellow-100 dark:bg-indigo-900/75"
+        attendee?.reserved === false && "bg-yellow-100 dark:bg-yellow-900/75"
       )}
     >
       <div
@@ -144,7 +146,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
           "flex flex-row gap-2 px-3 py-2 rounded-t-lg justify-center text-sm font-bold",
           !attendee && "bg-gray-200 dark:bg-stone-700",
           attendee?.reserved === true && "bg-green-200 dark:bg-green-800",
-          attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-900"
+          attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-800"
         )}
       >
         <Title element="p" className="text-base">
@@ -156,16 +158,16 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
             mergeDelayHours={pool.mergeDelayHours}
             className={cn(
               attendee?.reserved === true && "bg-green-300/50 dark:bg-green-700/50",
-              attendee?.reserved === false && "bg-yellow-300/50 dark:bg-indigo-700/50"
+              attendee?.reserved === false && "bg-yellow-300/50 dark:bg-yellow-600/50"
             )}
           />
         )}
       </div>
 
-      <div className="flex flex-col min-h-[10rem] gap-6 p-3 rounded-lg items-center text-center justify-center w-full">
+      <div className="flex flex-col min-h-38 gap-6 p-3 rounded-lg items-center text-center justify-center w-full">
         {!showRegisterCountdown && (
           <div className="flex grow flex-col gap-4 items-center text-center justify-center">
-            <div className="flex flex-col gap-1 items-center">
+            <div className="flex gap-1 items-center">
               <Text
                 className={cn(
                   "text-3xl px-2 py-1",
@@ -181,7 +183,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
                 <Text
                   className={cn(
                     "text-lg px-1 py-0.5",
-                    attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-800 rounded-lg"
+                    attendee?.reserved === false && "bg-yellow-200 dark:bg-yellow-800 rounded-lg"
                   )}
                 >
                   +{unreservedAttendeeCount} i kø
@@ -212,12 +214,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         {showPaymentCountdown && attendee?.paymentLink && (
           <Link href={attendee.paymentLink} className="group relative cursor-pointer items-center w-full">
             <Stripes
-              colorA={cn("dark:bg-amber-600", attendee.reserved !== false ? "bg-amber-200" : "bg-indigo-200")}
-              colorB={cn("dark:bg-amber-700", attendee.reserved !== false ? "bg-amber-300" : "bg-indigo-300")}
+              colorA={cn("", reserved ? "bg-yellow-200 dark:bg-amber-600" : "bg-indigo-200 dark:bg-indigo-400")}
+              colorB={cn("", reserved ? "bg-yellow-300 dark:bg-amber-700" : "bg-indigo-300 dark:bg-indigo-500")}
               stripeWidth={24}
               speed="2.0s"
               animated
-              className="group flex items-center h-[10rem] px-5 py-4 rounded-md"
+              className="group flex items-center h-40 px-5 py-4 rounded-md"
             >
               <div className="relative flex flex-row justify-between items-center w-full">
                 <div className="flex flex-col gap-1 items-center justify-center w-full">
@@ -298,8 +300,8 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
 
   return (
     <div className="flex flex-row items-center gap-2">
-      <IconClockHour2 className="size-[1.25em] dark:text-indigo-400" />
-      <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
+      <IconClockHour2 className="size-[1.25em]" />
+      <Text>Du er nr. {queuePosition !== null && queuePosition} i køen</Text>
     </div>
   )
 }
