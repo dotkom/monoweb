@@ -2,9 +2,7 @@ import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { AuthNotice } from "@/components/notices/auth-notice"
-import { DotdageneAdvert } from "@/components/notices/dotdagene-advert"
 import { server } from "@/utils/trpc/server"
-import { TZDate } from "@date-fns/tz"
 import type { AttendanceSummary, BaseEvent, EventWithAttendanceSummary } from "@dotkomonline/types"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
@@ -27,10 +25,6 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
         <AuthNotice />
-        <DotdageneAdvert
-          start={TZDate.tz("Europe/Oslo", "2026-02-25T12:00:00")}
-          end={TZDate.tz("Europe/Oslo", "2026-03-03T15:00:00")}
-        />
         <OnlineHero />
       </div>
 
