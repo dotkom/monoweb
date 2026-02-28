@@ -52,7 +52,8 @@ import { getMembershipService } from "./user/membership-service"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
-
+import { getNotificationRepository } from "./notification/notification-repository"
+import { getNotificationService } from "./notification/notification-service"
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
 const WORKSPACE_SERVICE_ACCOUNT_SCOPES = [
@@ -153,6 +154,7 @@ export async function createServiceLayer(
   const feideGroupsRepository = getFeideGroupsRepository()
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
+  const notificationRepository = getNotificationRepository()
 
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
@@ -183,6 +185,7 @@ export async function createServiceLayer(
     attendanceRepository
   )
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
+  const notificationService = getNotificationService(notificationRepository)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
     eventEmitter,
@@ -247,6 +250,7 @@ export async function createServiceLayer(
     paymentWebhookService,
     recurringTaskService,
     workspaceService,
+    notificationService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only
     prisma: clients.prisma,
