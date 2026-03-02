@@ -24,7 +24,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
 
     return groups
       .filter((group) => value.includes(group.slug) || group.abbreviation.toLowerCase().includes(searchValue))
-      .toSorted((a, b) => a.abbreviation.localeCompare(b.abbreviation))
+      .toSorted((a, b) => a.abbreviation.localeCompare(b.abbreviation, "nb-NO"))
   }, [search, groups, value])
 
   return (
