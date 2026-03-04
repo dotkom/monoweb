@@ -62,10 +62,15 @@ import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { notFound, useParams, useSearchParams } from "next/navigation"
+import { parseAsStringLiteral, useQueryState } from "nuqs"
 import { type ElementType, useMemo } from "react"
+import { z } from "zod"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
 import { useIsAdminQuery } from "./queries"
+
+const EventListTabSchema = z.enum(["reserved", "waitlist"])
+type EventListTab = z.infer<typeof EventListTabSchema>
 
 const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
   const Icon = props.icon
@@ -263,12 +268,16 @@ export function ProfilePage() {
     ) ?? []
 
   // Show the waitlist tab if the user is only registered for events in the waitlist
-  const defaultEventListTab =
+  const defaultEventListTab: EventListTab =
     futureEventsReservedFor.length === 0 &&
     pastEventsReservedFor.length === 0 &&
     (futureEventsInWaitlistFor.length > 0 || pastEventsInWaitlistFor.length > 0)
       ? "waitlist"
       : "reserved"
+
+  const tabParser = parseAsStringLiteral(EventListTabSchema.options)
+
+  const [eventListTab, setEventListTab] = useQueryState("eventListTab", tabParser.withDefault(defaultEventListTab))
 
   const allGroups = useMemo(
     () =>
@@ -541,7 +550,7 @@ export function ProfilePage() {
 
         {isLoggedIn ? (
           futureEventWithAttendances !== undefined && pastEventWithAttendances !== undefined ? (
-            <Tabs defaultValue={defaultEventListTab}>
+            <Tabs value={eventListTab} onValueChange={(value) => setEventListTab(value as EventListTab)}>
               <TabsList className="w-full sm:w-fit">
                 <TabsTrigger className="w-full sm:w-fit" value="reserved">
                   Påmeldt
