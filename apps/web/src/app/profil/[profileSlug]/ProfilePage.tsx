@@ -267,17 +267,9 @@ export function ProfilePage() {
       (eventWithAttendance) => !eventWithAttendance.attendance?.currentUserAttendee?.reserved
     ) ?? []
 
-  // Show the waitlist tab if the user is only registered for events in the waitlist
-  const defaultEventListTab: EventListTab =
-    futureEventsReservedFor.length === 0 &&
-    pastEventsReservedFor.length === 0 &&
-    (futureEventsInWaitlistFor.length > 0 || pastEventsInWaitlistFor.length > 0)
-      ? "waitlist"
-      : "reserved"
-
   const tabParser = parseAsStringLiteral(EventListTabSchema.options)
 
-  const [eventListTab, setEventListTab] = useQueryState("eventListTab", tabParser.withDefault(defaultEventListTab))
+  const [eventListTab, setEventListTab] = useQueryState("eventListTab", tabParser.withDefault("reserved"))
 
   const allGroups = useMemo(
     () =>
