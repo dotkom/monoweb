@@ -14,6 +14,7 @@ import {
 } from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
+import { WanderingMascot } from "./WanderingMascot"
 import { getGroupEasterEgg } from "./easter-eggs"
 
 interface CommitteePageProps {
@@ -110,6 +111,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
   const name = group.name ?? group.abbreviation
   const easterEgg = getGroupEasterEgg(name)
+  console.log("[EasterEgg] group name:", JSON.stringify(name), "lowercased:", JSON.stringify(name?.toLowerCase()), "easterEgg:", easterEgg)
 
   return (
     <div className="flex flex-col gap-8">
@@ -230,6 +232,8 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           pastEventWithAttendances={pastEventWithAttendances.items}
         />
       </div>
+
+      {easterEgg?.mascot && <WanderingMascot config={easterEgg.mascot} />}
     </div>
   )
 }
