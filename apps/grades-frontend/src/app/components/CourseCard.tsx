@@ -4,7 +4,8 @@ import {
   mapCourseCampusToLabel,
   mapCourseSemesterToLabel,
 } from "@dotkomonline/grades-backend/course"
-import { Badge, cn, Text, Title } from "@dotkomonline/ui"
+import { Badge, Text, Title } from "@dotkomonline/ui"
+import Link from "next/link"
 
 interface Props {
   course: Course
@@ -14,7 +15,10 @@ export const CourseCard = ({ course }: Props) => {
   const isActive = !course.lastYearTaught
 
   return (
-    <div className={cn("bg-white rounded-lg shadow-md p-4 max-w-3xl grid grid-cols-[1fr_auto]")}>
+    <Link
+      href={`/courses/${course.code}`}
+      className="bg-white rounded-lg shadow-md p-4 max-w-3xl grid grid-cols-[1fr_auto] hover:bg-gray-50 transition-colors"
+    >
       <div>
         <Title className="text-xl font-bold font-sans">{course.norwegianName}</Title>
         <Text className="text-gray-600">{course.code}</Text>
@@ -52,6 +56,6 @@ export const CourseCard = ({ course }: Props) => {
             : `${Math.round(course.passRate)}%`}
         </Text>
       </div>
-    </div>
+    </Link>
   )
 }
