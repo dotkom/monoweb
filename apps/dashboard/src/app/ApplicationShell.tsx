@@ -33,6 +33,7 @@ import {
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { type FC, useEffect } from "react"
+import { z } from "zod"
 
 const navigations = [
   {
@@ -168,7 +169,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
       <AppShellMain>
         <Breadcrumbs>
           <Anchor href="/" size="sm" key="0-home">
-            hjem
+            Hjem
           </Anchor>
           {pathname
             .slice(1)
@@ -176,9 +177,16 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
             .map((part, index, parts) => {
               const href = `/${parts.slice(0, index + 1).join("/")}`
               const decodedPart = decodeURIComponent(part)
+
+              const isId = decodedPart.includes("|")
+              const isUuid = z.string().uuid().safeParse(decodedPart).success
+
+              // Ids should be lowercase
+              const capitalizedPart = isId || isUuid ? decodedPart : capitalizeFirstLetter(decodedPart)
+
               return (
                 <Anchor href={href} size="sm" key={`${index + 1}-${part}`}>
-                  {decodedPart || "-"}
+                  {capitalizedPart || "-"}
                 </Anchor>
               )
             })}
