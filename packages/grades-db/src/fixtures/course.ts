@@ -315,7 +315,7 @@ Kompetanse: Studentene skal kunne bruke objektorientert programmering for å lø
       englishName: "Health, Safety and Environment (HSE) course for 1st year students",
       credits: 0,
       studyLevel: "FOUNDATION",
-      gradeType: "UNKNOWN",
+      gradeType: "PASS_FAIL",
       firstYearTaught: 2015,
       lastYearTaught: null,
       content:
