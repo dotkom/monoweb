@@ -1,5 +1,6 @@
 "use client"
 
+import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import {
   Anchor,
   AppShell,
