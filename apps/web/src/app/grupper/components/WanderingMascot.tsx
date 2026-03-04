@@ -82,8 +82,28 @@ function BarbarianSVG({ facing }: { facing: "left" | "right" }) {
       aria-hidden="true"
     >
       {/* Sword (behind body) */}
-      <rect x="44" y="8" width="3" height="28" rx="1" fill="#b0b0b0" stroke="#666" strokeWidth="0.7" transform="rotate(15, 45, 22)" />
-      <rect x="43" y="34" width="5" height="6" rx="1" fill="#8B6914" stroke="#5a4510" strokeWidth="0.5" transform="rotate(15, 45, 37)" />
+      <rect
+        x="44"
+        y="8"
+        width="3"
+        height="28"
+        rx="1"
+        fill="#b0b0b0"
+        stroke="#666"
+        strokeWidth="0.7"
+        transform="rotate(15, 45, 22)"
+      />
+      <rect
+        x="43"
+        y="34"
+        width="5"
+        height="6"
+        rx="1"
+        fill="#8B6914"
+        stroke="#5a4510"
+        strokeWidth="0.5"
+        transform="rotate(15, 45, 37)"
+      />
       {/* Legs */}
       <rect x="24" y="44" width="6" height="12" rx="2" fill="#e8a86b" stroke="#b87333" strokeWidth="0.7" />
       <rect x="34" y="44" width="6" height="12" rx="2" fill="#dea060" stroke="#b87333" strokeWidth="0.7" />
@@ -106,7 +126,12 @@ function BarbarianSVG({ facing }: { facing: "left" | "right" }) {
       {/* Head */}
       <circle cx="32" cy="18" r="10" fill="#e8a86b" stroke="#b87333" strokeWidth="1" />
       {/* Hair (short spiky blonde) */}
-      <path d="M 23 16 Q 24 6 28 8 Q 30 4 33 7 Q 36 3 38 8 Q 41 6 41 16" fill="#f0c040" stroke="#c8a020" strokeWidth="0.7" />
+      <path
+        d="M 23 16 Q 24 6 28 8 Q 30 4 33 7 Q 36 3 38 8 Q 41 6 41 16"
+        fill="#f0c040"
+        stroke="#c8a020"
+        strokeWidth="0.7"
+      />
       {/* Eyes */}
       <circle cx="28" cy="17" r="1.8" fill="white" />
       <circle cx="36" cy="17" r="1.8" fill="white" />
@@ -116,7 +141,12 @@ function BarbarianSVG({ facing }: { facing: "left" | "right" }) {
       <line x1="25" y1="13.5" x2="30" y2="14.5" stroke="#c8a020" strokeWidth="1.5" strokeLinecap="round" />
       <line x1="34" y1="14.5" x2="39" y2="13.5" stroke="#c8a020" strokeWidth="1.5" strokeLinecap="round" />
       {/* Horseshoe mustache */}
-      <path d="M 28 21 Q 32 24 36 21 L 36 25 Q 34 23 32 24 Q 30 23 28 25 Z" fill="#f0c040" stroke="#c8a020" strokeWidth="0.5" />
+      <path
+        d="M 28 21 Q 32 24 36 21 L 36 25 Q 34 23 32 24 Q 30 23 28 25 Z"
+        fill="#f0c040"
+        stroke="#c8a020"
+        strokeWidth="0.5"
+      />
       {/* Mouth (battle grin) */}
       <path d="M 29 22 Q 32 25 35 22" fill="none" stroke="#8B4513" strokeWidth="0.8" />
     </svg>
@@ -309,36 +339,39 @@ export function WanderingMascot({ config }: WanderingMascotProps) {
 
     let noteTimeoutId: ReturnType<typeof setTimeout>
     const scheduleNoteDrop = () => {
-      noteTimeoutId = setTimeout(() => {
-        if (stateRef.current === "walking") {
-          console.log("[Mascot] Dropping a note")
-          stateRef.current = "dropping-note"
-          setMascotState("dropping-note")
+      noteTimeoutId = setTimeout(
+        () => {
+          if (stateRef.current === "walking") {
+            console.log("[Mascot] Dropping a note")
+            stateRef.current = "dropping-note"
+            setMascotState("dropping-note")
 
-          const id = noteIdRef.current++
-          const pos = posRef.current
-          setDroppedNotes((prev) => [
-            ...prev.slice(-(MAX_NOTES - 1)),
-            {
-              id,
-              x: Math.min(pos.x, window.innerWidth - 220),
-              y: pos.y + SPRITE_SIZE,
-              rotation: randomBetween(-8, 8),
-              message: randomChoice(notes),
-              dismissing: false,
-            },
-          ])
+            const id = noteIdRef.current++
+            const pos = posRef.current
+            setDroppedNotes((prev) => [
+              ...prev.slice(-(MAX_NOTES - 1)),
+              {
+                id,
+                x: Math.min(pos.x, window.innerWidth - 220),
+                y: pos.y + SPRITE_SIZE,
+                rotation: randomBetween(-8, 8),
+                message: randomChoice(notes),
+                dismissing: false,
+              },
+            ])
 
-          setTimeout(() => {
-            if (stateRef.current === "dropping-note") {
-              pickNewTarget()
-              stateRef.current = "walking"
-              setMascotState("walking")
-            }
-          }, 1500)
-        }
-        scheduleNoteDrop()
-      }, randomBetween(NOTE_DROP_MIN, NOTE_DROP_MAX))
+            setTimeout(() => {
+              if (stateRef.current === "dropping-note") {
+                pickNewTarget()
+                stateRef.current = "walking"
+                setMascotState("walking")
+              }
+            }, 1500)
+          }
+          scheduleNoteDrop()
+        },
+        randomBetween(NOTE_DROP_MIN, NOTE_DROP_MAX)
+      )
     }
     scheduleNoteDrop()
 

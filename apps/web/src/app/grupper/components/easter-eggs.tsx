@@ -40,7 +40,7 @@ const GROUP_EASTER_EGGS: Record<string, GroupEasterEgg> = {
     avatarClassName:
       "easter-egg-gold-border easter-egg-coin-flip rounded-full relative border-transparent border-[3px] [transform-style:preserve-3d]",
   },
-  "golfline": {
+  golfline: {
     mascot: {
       sprite: "goose",
       footprint: "🐾",
@@ -63,7 +63,7 @@ const GROUP_EASTER_EGGS: Record<string, GroupEasterEgg> = {
       ],
     },
   },
-  "clashline": {
+  clashline: {
     mascot: {
       sprite: "barbarian",
       footprint: "⚔️",
