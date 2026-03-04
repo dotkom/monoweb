@@ -9,7 +9,7 @@ docker compose up -d
 pnpm migrate:dev-grades-with-fixtures # Only needs to be run once to set up the database with sample data
 
 # If the migrate command failed, you can reset the database and try again:
-docker compose down
+docker compose down -v
 docker compose up -d
 pnpm migrate:dev-grades-with-fixtures
 
