@@ -4,14 +4,15 @@ import { Navbar } from "@/components/Navbar/Navbar"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
 import { cn } from "@dotkomonline/ui"
-import { ThemeProvider } from "next-themes"
-import { Figtree, Inter } from "next/font/google"
-import type { PropsWithChildren } from "react"
-import "../globals.css"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
+import { ThemeProvider } from "next-themes"
+import { Figtree, Inter } from "next/font/google"
+import type { PropsWithChildren } from "react"
+import "../globals.css"
+import { NuqsProvider } from "./NuqsProvider"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -43,11 +44,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <SessionProvider session={session}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-                <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
-                  <Navbar />
-                  <main className="grow">{children}</main>
-                  <Footer />
-                </div>
+                <NuqsProvider>
+                  <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
+                    <Navbar />
+                    <main className="grow">{children}</main>
+                    <Footer />
+                  </div>
+                </NuqsProvider>
               </ThemeProvider>
             </QueryProvider>
           </SessionProvider>
