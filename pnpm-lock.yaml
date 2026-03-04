@@ -274,6 +274,9 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@types/node':
         specifier: 22.19.3
         version: 22.19.3
