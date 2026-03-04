@@ -41,6 +41,7 @@ import {
 import { skipToken, useQuery } from "@tanstack/react-query"
 import { type FC, Fragment, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
+import { NotificationDropdown } from "./Notifications/NotificationDropdown"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
@@ -214,6 +215,7 @@ export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
   return (
     <div className="flex gap-2">
       <ContactDebugDropdown />
+      <NotificationDropdown />
       <AvatarDropdown dbUser={dbUser} />
     </div>
   )
@@ -254,7 +256,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
         <button
           type="button"
           aria-label="Åpne profilmeny"
-          className="relative rounded-full transition-all duration-200 focus:outline-none"
+          className="relative rounded-full transition-all duration-200 focus:outline-none ml-1"
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
