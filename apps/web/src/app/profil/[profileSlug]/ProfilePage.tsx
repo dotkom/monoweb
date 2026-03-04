@@ -24,6 +24,10 @@ import {
   RadialProgress,
   ReadMore,
   RichText,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Text,
   Title,
   Tooltip,
@@ -238,6 +242,33 @@ export function ProfilePage() {
     },
     enabled: isLoggedIn && Boolean(user?.id),
   })
+
+  const futureEventsReservedFor =
+    futureEventWithAttendances?.items.filter(
+      (eventWithAttendance) => eventWithAttendance.attendance?.currentUserAttendee?.reserved
+    ) ?? []
+  const pastEventsReservedFor =
+    pastEventWithAttendances.filter(
+      (eventWithAttendance) => eventWithAttendance.attendance?.currentUserAttendee?.reserved
+    ) ?? []
+
+  const futureEventsInWaitlistFor =
+    futureEventWithAttendances?.items.filter(
+      (eventWithAttendance) => !eventWithAttendance.attendance?.currentUserAttendee?.reserved
+    ) ?? []
+
+  const pastEventsInWaitlistFor =
+    pastEventWithAttendances.filter(
+      (eventWithAttendance) => !eventWithAttendance.attendance?.currentUserAttendee?.reserved
+    ) ?? []
+
+  // Show the waitlist tab if the user is only registered for events in the waitlist
+  const defaultEventListTab =
+    futureEventsReservedFor.length === 0 &&
+    pastEventsReservedFor.length === 0 &&
+    (futureEventsInWaitlistFor.length > 0 || pastEventsInWaitlistFor.length > 0)
+      ? "waitlist"
+      : "reserved"
 
   const allGroups = useMemo(
     () =>
@@ -510,12 +541,36 @@ export function ProfilePage() {
 
         {isLoggedIn ? (
           futureEventWithAttendances !== undefined && pastEventWithAttendances !== undefined ? (
-            <EventList
-              futureEventWithAttendances={futureEventWithAttendances.items}
-              pastEventWithAttendances={pastEventWithAttendances}
-              onLoadMore={fetchNextPage}
-              viewMode="CHRONOLOGICAL"
-            />
+            <Tabs defaultValue={defaultEventListTab}>
+              <TabsList className="w-full sm:w-fit">
+                <TabsTrigger className="w-full sm:w-fit" value="reserved">
+                  Påmeldt
+                </TabsTrigger>
+                <TabsTrigger className="w-full sm:w-fit" value="waitlist">
+                  I venteliste
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="reserved" className="p-0 border-none mt-4">
+                <EventList
+                  futureEventWithAttendances={futureEventsReservedFor}
+                  pastEventWithAttendances={pastEventsReservedFor}
+                  onLoadMore={fetchNextPage}
+                  viewMode="CHRONOLOGICAL"
+                />
+              </TabsContent>
+
+              <TabsContent value="waitlist" className="p-0 border-none mt-4">
+                <div>
+                  <EventList
+                    futureEventWithAttendances={futureEventsInWaitlistFor}
+                    pastEventWithAttendances={pastEventsInWaitlistFor}
+                    onLoadMore={fetchNextPage}
+                    viewMode="CHRONOLOGICAL"
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
           ) : (
             <div className="flex flex-col gap-1">
               <EventListItemSkeleton />
