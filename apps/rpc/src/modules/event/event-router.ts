@@ -15,13 +15,14 @@ import {
 } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isAdministrator, isEditor, or, isSameSubject } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
 import { procedure, t } from "../../trpc"
 import { EditorRole } from "../authorization-service"
 import { feedbackRouter } from "../feedback-form/feedback-router"
 import { attendanceRouter } from "./attendance-router"
+import { ForbiddenError, UnauthorizedError } from "../../error"
 
 export type GetEventInput = inferProcedureInput<typeof getEventProcedure>
 export type GetEventOutput = inferProcedureOutput<typeof getEventProcedure>
@@ -69,11 +70,26 @@ const createEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    // This will remove any groups the user is not affiliated with, which restricts editors to only being able to create
+    // events for their own groups. This does not account for the parent event's organizer groups.
+    const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
+      ctx.handle,
+      ctx.principal.subject,
+      input.groupIds
+    )
+
+    // If there are no organizer groups left, throw a ForbiddenError
+    if (organizerGroups.size === 0 && input.groupIds.length > 0) {
+      throw new ForbiddenError(
+        `There are no allowed organizer groups to create the event for User(ID=${ctx.principal.subject}) with Input(GroupOrganizers=${input.groupIds.join(",")})`
+      )
+    }
+
     const eventWithoutOrganizers = await ctx.eventService.createEvent(ctx.handle, input.event)
     const event = await ctx.eventService.updateEventOrganizers(
       ctx.handle,
       eventWithoutOrganizers.id,
-      new Set(input.groupIds),
+      organizerGroups,
       new Set(input.companyIds)
     )
     await ctx.eventService.updateEventParent(ctx.handle, event.id, input.parentId ?? null)
@@ -98,6 +114,21 @@ const editEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    // This will remove any groups the user is not affiliated with, which restricts editors to only being able to create
+    // events for their own groups. This does not account for the parent event's organizer groups.
+    const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
+      ctx.handle,
+      ctx.principal.subject,
+      input.groupIds
+    )
+
+    // If there are no organizer groups left, throw a ForbiddenError
+    if (organizerGroups.size === 0 && input.groupIds.length > 0) {
+      throw new ForbiddenError(
+        `There are no allowed organizer groups to create the event for User(ID=${ctx.principal.subject}) with Input(GroupOrganizers=${input.groupIds.join(",")})`
+      )
+    }
+
     const updatedEventWithoutOrganizers = await ctx.eventService.updateEvent(ctx.handle, input.id, input.event)
     const updatedEvent = await ctx.eventService.updateEventOrganizers(
       ctx.handle,
@@ -122,6 +153,22 @@ const deleteEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.findEventById(ctx.handle, input.id)
+
+    if (event?.hostingGroups.length) {
+      const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
+        ctx.handle,
+        ctx.principal.subject,
+        event.hostingGroups.map((group) => group.slug)
+      )
+
+      if (!organizerGroups.size) {
+        throw new UnauthorizedError(
+          `User(ID=${ctx.principal.subject}) is not authorized to delete Event(ID=${input.id},Title=${event.title})`
+        )
+      }
+    }
+
     return await ctx.eventService.deleteEvent(ctx.handle, input.id)
   })
 
@@ -319,11 +366,28 @@ const addAttendanceProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+
+    if (event?.hostingGroups.length) {
+      const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
+        ctx.handle,
+        ctx.principal.subject,
+        event.hostingGroups.map((group) => group.slug)
+      )
+
+      if (!organizerGroups.size) {
+        throw new UnauthorizedError(
+          `User(ID=${ctx.principal.subject}) is not authorized to add attendance to Event(ID=${input.eventId},Title=${event.title})`
+        )
+      }
+    }
+
     const attendance = await ctx.attendanceService.createAttendance(ctx.handle, input.values)
-    const event = await ctx.eventService.updateEventAttendance(ctx.handle, input.eventId, attendance.id)
-    return { event, attendance }
+    const updatedEvent = await ctx.eventService.updateEventAttendance(ctx.handle, input.eventId, attendance.id)
+    return { event: updatedEvent, attendance }
   })
 
+// TODO: rename this to `updateEventParent`
 export type UpdateParentEventInput = inferProcedureInput<typeof updateParentEventProcedure>
 export type UpdateParentEventOutput = inferProcedureOutput<typeof updateParentEventProcedure>
 const updateParentEventProcedure = procedure
@@ -334,6 +398,22 @@ const updateParentEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.findEventById(ctx.handle, input.eventId)
+
+    if (event?.hostingGroups.length) {
+      const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
+        ctx.handle,
+        ctx.principal.subject,
+        event.hostingGroups.map((group) => group.slug)
+      )
+
+      if (!organizerGroups.size) {
+        throw new UnauthorizedError(
+          `User(ID=${ctx.principal.subject}) is not authorized to delete Event(ID=${input.eventId},Title=${event.title})`
+        )
+      }
+    }
+
     const updatedEvent = await ctx.eventService.updateEventParent(ctx.handle, input.eventId, input.parentEventId)
     const attendance = updatedEvent.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, updatedEvent.attendanceId)
@@ -382,8 +462,41 @@ const findUnansweredByUserProcedure = procedure
   .input(UserSchema.shape.id)
   .output(EventWithFeedbackFormSchema.array())
   .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isEditor(),
+        isSameSubject((input) => input)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.eventService.findEventsWithUnansweredFeedbackFormByUserId(ctx.handle, input))
+  .query(async ({ input, ctx }) => {
+    const allEvents = await ctx.eventService.findEventsWithUnansweredFeedbackFormByUserId(ctx.handle, input)
+
+    // If the user is requesting their own unanswered events, return all without further checks
+    if (ctx.principal.subject === input) {
+      return allEvents
+    }
+
+    const authorizedEvents = []
+
+    // AuthorizationService#intersectGroupAffiliations uses a cache, so a for loop is fine here over a Promise.all
+    for (const event of allEvents) {
+      const intersectedAffiliations = await ctx.authorizationService.intersectGroupAffiliations(
+        ctx.handle,
+        ctx.principal.subject,
+        event.hostingGroups.map((group) => group.slug)
+      )
+
+      if (intersectedAffiliations.size > 0) {
+        authorizedEvents.push(event)
+      }
+    }
+
+    return authorizedEvents
+  })
 
 export type IsOrganizerInput = inferProcedureInput<typeof isOrganizerProcedure>
 export type IsOrganizerOutput = inferProcedureOutput<typeof isOrganizerProcedure>
@@ -394,8 +507,13 @@ const isOrganizerProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
-    const groups = await ctx.groupService.findManyByMemberUserId(ctx.handle, ctx.principal.subject)
-    return groups.some((group) => event.hostingGroups.some((organizer) => organizer.slug === group.slug))
+    const intersectedAffiliations = await ctx.authorizationService.intersectGroupAffiliations(
+      ctx.handle,
+      ctx.principal.subject,
+      event.hostingGroups.map((group) => group.slug)
+    )
+
+    return intersectedAffiliations.size > 0
   })
 
 export type FindManyDeregisterReasonsWithEventInput = inferProcedureInput<
