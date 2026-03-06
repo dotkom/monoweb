@@ -120,9 +120,9 @@ const EventPage = () => {
       <Tabs
         value={mainTabValue}
         onValueChange={(v) => {
-          // when switching to calendar, default to week view
+          // when switching to calendar, default to month view
           if (v === "cal") {
-            navigateToView("week")
+            navigateToView("month")
           } else {
             navigateToView(v as EventsView)
           }
