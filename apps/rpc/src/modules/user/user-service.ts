@@ -19,7 +19,7 @@ import {
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
-import type { ManagementClient } from "auth0"
+import type { ManagementClient, PostIdentitiesRequestProviderEnum } from "auth0"
 import * as crypto from "node:crypto"
 import { isDevelopmentEnvironment } from "../../configuration"
 import { isSameDay } from "date-fns"
@@ -66,6 +66,11 @@ export interface UserService {
   getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findUsers(handle: DBHandle, query: UserFilterQuery, page?: Pageable): Promise<User[]>
+  /**
+   * This is for manually linking two logins to the same user. Sometimes the automatic script seems to fail, so we this
+   * is a manual way of linking two users. Should not be confused with the (Google) Workspace router's `linkUser`.
+   */
+  linkUsers(handle: DBHandle, primaryUserId: UserId, secondaryUserId: UserId): Promise<User>
 
   /**
    * Attempt to discover an automatically granted membership from FEIDE.
@@ -491,6 +496,36 @@ export function getUserService(
       }
       const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
       return identity?.access_token ?? null
+    },
+
+    async linkUsers(handle, primaryUserId, secondaryUserId) {
+      logger.info(
+        "Linking authentication identities for survivor User(ID=%s) and consumed User(ID=%s)",
+        primaryUserId,
+        secondaryUserId
+      )
+
+      const primaryUser = await managementClient.users.get({ id: primaryUserId })
+      const secondaryUser = await managementClient.users.get({ id: secondaryUserId })
+
+      const secondaryIdentity =
+        secondaryUser.data.identities.find((identity) => secondaryUserId.endsWith(identity.user_id)) ||
+        secondaryUser.data.identities[0]
+
+      const secondaryIdentityProvider = secondaryIdentity.provider as PostIdentitiesRequestProviderEnum
+
+      await managementClient.users.link(
+        {
+          id: primaryUser.data.user_id,
+        },
+        {
+          provider: secondaryIdentityProvider, // usually "oauth2"
+          user_id: secondaryIdentity.user_id,
+          connection_id: secondaryIdentity.connection,
+        }
+      )
+
+      logger.info("Successfully linked identities for survivor User(ID=%s) and consumed User(ID=%s)")
     },
 
     async createFileUpload(handle, filename, contentType, userId, createdByUserId) {
