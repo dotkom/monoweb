@@ -1,6 +1,7 @@
 import { on } from "node:events"
 import { TZDate } from "@date-fns/tz"
 import {
+  type AttendancePool,
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
   AttendanceSchema,
@@ -217,7 +218,11 @@ const onRegisterChangeProcedure = procedure
   .use(withDatabaseTransaction())
   .subscription(async function* ({ input, ctx, signal }) {
     for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
-      const attendeeUpdateData = data as { attendee: Attendee; status: "registered" | "deregistered" }
+      const attendeeUpdateData = data as {
+        attendee: Attendee
+        status: "registered" | "deregistered"
+        newAttendancePool: AttendancePool | undefined
+      }
 
       if (attendeeUpdateData.attendee.attendanceId !== input.attendanceId) {
         continue
