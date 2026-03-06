@@ -6,11 +6,17 @@ import {
   GroupRoleWriteSchema,
   GroupSchema,
   GroupWriteSchema,
-} from "@dotkomonline/types"
+} from "@dotkomonline/types/group"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isAdministrator, isEditor, isGroupMember, or } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import {
+  withAuditLogEntry,
+  withAuthentication,
+  withAuthorization,
+  withDatabaseTransaction,
+  withFallbackQuery,
+} from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { EditorRole } from "../authorization-service"
 
@@ -140,6 +146,12 @@ export type GetMembersOutput = inferProcedureOutput<typeof getMembersProcedure>
 const getMembersProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withDatabaseTransaction())
+  .use(
+    withFallbackQuery(async ({ input, ctx }) =>
+      ctx.groupService.getMembersByRole(ctx.handle, input, GroupRoleSchema.shape.type.Enum.LEADER)
+    )
+  )
+  .use(withAuthentication())
   .query(async ({ input, ctx }) => ctx.groupService.getMembers(ctx.handle, input))
 
 export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>

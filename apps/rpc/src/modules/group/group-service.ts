@@ -1,6 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, GroupRoleType } from "@dotkomonline/db"
 import {
   type Group,
   type GroupId,
@@ -13,10 +13,10 @@ import {
   type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
-  type UserId,
   getDefaultGroupMemberRoles,
   GROUP_IMAGE_MAX_SIZE_KIB,
-} from "@dotkomonline/types"
+} from "@dotkomonline/types/group"
+import type { UserId } from "@dotkomonline/types/user"
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
@@ -51,6 +51,7 @@ export interface GroupService {
 
   getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMember>
   getMembers(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
+  getMembersByRole(handle: DBHandle, groupSlug: GroupId, groupRole: GroupRoleType): Promise<Map<UserId, GroupMember>>
 
   startMembership(
     handle: DBHandle,
@@ -224,6 +225,18 @@ export function getGroupService(
       }
 
       return members
+    },
+
+    async getMembersByRole(handle, groupSlug, groupRoleType) {
+      const members = await this.getMembers(handle, groupSlug)
+
+      const filteredMembers = new Map<UserId, GroupMember>(
+        [...members.entries()].filter(([_, member]) =>
+          member.groupMemberships.some((membership) => membership.roles.some((role) => role.type === groupRoleType))
+        )
+      )
+
+      return filteredMembers
     },
 
     async startMembership(handle, userId, groupSlug, groupRoleIds) {
