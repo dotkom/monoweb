@@ -24,6 +24,10 @@ import {
   RadialProgress,
   ReadMore,
   RichText,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Text,
   Title,
   Tooltip,
@@ -58,10 +62,15 @@ import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast
 import { nb } from "date-fns/locale"
 import Link from "next/link"
 import { notFound, useParams, useSearchParams } from "next/navigation"
+import { parseAsStringLiteral, useQueryState } from "nuqs"
 import { type ElementType, useMemo } from "react"
+import { z } from "zod"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
 import { useIsAdminQuery } from "./queries"
+
+const EventListTabSchema = z.enum(["reserved", "waitlist"])
+type EventListTab = z.infer<typeof EventListTabSchema>
 
 const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
   const Icon = props.icon
@@ -238,6 +247,29 @@ export function ProfilePage() {
     },
     enabled: isLoggedIn && Boolean(user?.id),
   })
+
+  const futureEventsReservedFor =
+    futureEventWithAttendances?.items.filter(
+      (eventWithAttendance) => eventWithAttendance.attendance?.currentUserAttendee?.reserved
+    ) ?? []
+  const pastEventsReservedFor =
+    pastEventWithAttendances.filter(
+      (eventWithAttendance) => eventWithAttendance.attendance?.currentUserAttendee?.reserved
+    ) ?? []
+
+  const futureEventsInWaitlistFor =
+    futureEventWithAttendances?.items.filter(
+      (eventWithAttendance) => !eventWithAttendance.attendance?.currentUserAttendee?.reserved
+    ) ?? []
+
+  const pastEventsInWaitlistFor =
+    pastEventWithAttendances.filter(
+      (eventWithAttendance) => !eventWithAttendance.attendance?.currentUserAttendee?.reserved
+    ) ?? []
+
+  const tabParser = parseAsStringLiteral(EventListTabSchema.options)
+
+  const [eventListTab, setEventListTab] = useQueryState("eventListTab", tabParser.withDefault("reserved"))
 
   const allGroups = useMemo(
     () =>
@@ -510,12 +542,36 @@ export function ProfilePage() {
 
         {isLoggedIn ? (
           futureEventWithAttendances !== undefined && pastEventWithAttendances !== undefined ? (
-            <EventList
-              futureEventWithAttendances={futureEventWithAttendances.items}
-              pastEventWithAttendances={pastEventWithAttendances}
-              onLoadMore={fetchNextPage}
-              viewMode="CHRONOLOGICAL"
-            />
+            <Tabs value={eventListTab} onValueChange={(value) => setEventListTab(value as EventListTab)}>
+              <TabsList className="w-full sm:w-fit">
+                <TabsTrigger className="w-full sm:w-fit" value="reserved">
+                  Påmeldt
+                </TabsTrigger>
+                <TabsTrigger className="w-full sm:w-fit" value="waitlist">
+                  I venteliste
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="reserved" className="p-0 border-none mt-4">
+                <EventList
+                  futureEventWithAttendances={futureEventsReservedFor}
+                  pastEventWithAttendances={pastEventsReservedFor}
+                  onLoadMore={fetchNextPage}
+                  viewMode="CHRONOLOGICAL"
+                />
+              </TabsContent>
+
+              <TabsContent value="waitlist" className="p-0 border-none mt-4">
+                <div>
+                  <EventList
+                    futureEventWithAttendances={futureEventsInWaitlistFor}
+                    pastEventWithAttendances={pastEventsInWaitlistFor}
+                    onLoadMore={fetchNextPage}
+                    viewMode="CHRONOLOGICAL"
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
           ) : (
             <div className="flex flex-col gap-1">
               <EventListItemSkeleton />
