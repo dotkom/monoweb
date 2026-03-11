@@ -112,6 +112,7 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
           {weekData.eventDetails.map((row, rowIndex) => (
             <div
               className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr]"
+              // biome-ignore lint/suspicious/noArrayIndexKey: rows won't change order
               key={`week-${weekNumber}-row-${rowIndex}-${year}`}
             >
               {row.map((eventWithAttendance) => {
