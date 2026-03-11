@@ -20,12 +20,12 @@ export const CompanyListItem: FC<CompanyListItemProps> = ({ company, hasJobListi
     <Link
       href={`/bedrifter/${company.slug}`}
       className={cn(
-        "group flex flex-col sm:flex-row sm: gap-5 rounded-xl p-10 -mx-2 last:-mb-2",
-        "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors border border-gray-200 items-center"
+        "group flex flex-col sm:flex-row sm:gap-8 rounded-xl p-10 -mx-2 last:-mb-2 items-start sm:items-center",
+        "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors border border-gray-200"
       )}
     >
-      <div className="relative w-max ">
-        <div className="aspect-[16/9] w-full h-18  sm:h-28  bg-gray-100 dark:bg-stone-800 rounded-lg overflow-hidden">
+      <div className="relative w-max">
+        <div className="aspect-[16/9] w-full h-18 sm:h-28 bg-white dark:bg-white rounded-lg overflow-hidden">
           {company.imageUrl ? (
             <Image
               src={company.imageUrl}
@@ -38,9 +38,12 @@ export const CompanyListItem: FC<CompanyListItemProps> = ({ company, hasJobListi
           )}
         </div>
       </div>
-      <div className="flex flex-col gap-3">
-        <div className=" hidden sm:block flex gap-1 ">
-          <Title element="h2" className="font-bold border-b-0 text-lg line-clamp-1 sm:line-clamp-2 ">
+      <div className="flex flex-col gap-3 dark:text-gray-200">
+        <div className=" sm:block flex gap-1 ">
+          <Title
+            element="h2"
+            className="self-start text-left font-bold border-b-0 text-lg line-clamp-1 sm:line-clamp-2"
+          >
             {company.name}
           </Title>
         </div>
