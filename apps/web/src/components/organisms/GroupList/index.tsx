@@ -7,19 +7,17 @@ interface GroupListProps {
 }
 
 export const GroupList: FC<GroupListProps> = ({ groups }) => {
-  const orderedGroups = groups
-    .toSorted((a, b) => {
-      // Inactive groups last
-      if (a.deactivatedAt !== null && b.deactivatedAt === null) return 1
-      if (b.deactivatedAt !== null && a.deactivatedAt === null) return -1
-      // Most events first
-      if (b.eventCount !== a.eventCount) return b.eventCount - a.eventCount
-      // Then by creation time (oldest first)
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    })
+  const orderedGroups = groups.toSorted((a, b) => {
+    // Inactive groups last
+    if (a.deactivatedAt !== null && b.deactivatedAt === null) return 1
+    if (b.deactivatedAt !== null && a.deactivatedAt === null) return -1
+    // Most events first
+    if (b.eventCount !== a.eventCount) return b.eventCount - a.eventCount
+    // Then by creation time (oldest first)
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  })
 
-    console.log(orderedGroups);
-    
+  console.log(orderedGroups)
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
