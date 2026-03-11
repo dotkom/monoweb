@@ -1,5 +1,6 @@
 import { GroupListItem } from "@/components/molecules/GroupListItem"
 import type { Group } from "@dotkomonline/types"
+import { compareAsc } from "date-fns"
 import type { FC } from "react"
 
 interface GroupListProps {
@@ -14,7 +15,7 @@ export const GroupList: FC<GroupListProps> = ({ groups }) => {
     // Most events first
     if ((b.eventCount ?? 0) !== (a.eventCount ?? 0)) return (b.eventCount ?? 0) - (a.eventCount ?? 0)
     // Then by creation time (oldest first)
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    return compareAsc(a.createdAt, b.createdAt)
   })
 
   return (
