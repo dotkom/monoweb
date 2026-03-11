@@ -18,7 +18,7 @@ export type GroupRoleWrite = z.infer<typeof GroupRoleWriteSchema>
 
 export const GroupSchema = schemas.GroupSchema.extend({
   roles: GroupRoleSchema.array(),
-  eventCount: z.number().default(0),
+  eventCount: z.number().optional(),
 })
 export const GroupTypeSchema = schemas.GroupTypeSchema
 
