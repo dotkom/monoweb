@@ -1,7 +1,14 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
-import type { Offline, OfflineId, OfflineWrite, UserId } from "@dotkomonline/types"
+import {
+  OFFLINE_FILE_MAX_SIZE_KIB,
+  OFFLINE_IMAGE_MAX_SIZE_KIB,
+  type Offline,
+  type OfflineId,
+  type OfflineWrite,
+  type UserId,
+} from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
@@ -20,6 +27,13 @@ export interface OfflineService {
   findMany(handle: DBHandle, page: Pageable): Promise<Offline[]>
 
   createFileUpload(
+    handle: DBHandle,
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId
+  ): Promise<PresignedPost>
+
+  createImageUpload(
     handle: DBHandle,
     filename: string,
     contentType: string,
@@ -61,12 +75,23 @@ export function getOfflineService(
       const uuid = crypto.randomUUID()
       const key = `offlines/${Date.now()}-${uuid}-${slugify(filename)}`
 
-      const maxSizeKiB = 50 * 1024 // 50 MiB
+      return await createS3PresignedPost(s3Client, {
+        bucket: s3BucketName,
+        key,
+        maxSizeKiB: OFFLINE_FILE_MAX_SIZE_KIB,
+        contentType,
+        createdByUserId,
+      })
+    },
+
+    async createImageUpload(_handle, filename, contentType, createdByUserId) {
+      const uuid = crypto.randomUUID()
+      const key = `offlines/${Date.now()}-${uuid}-${slugify(filename)}`
 
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        maxSizeKiB,
+        maxSizeKiB: OFFLINE_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       })

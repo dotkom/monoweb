@@ -23,12 +23,12 @@ jobs:
     name: Verify build requirements
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 1
       - uses: pnpm/action-setup@v2
         with:
-          version: 10.27.0
+          version: 10.28.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22.21.1
@@ -40,24 +40,6 @@ jobs:
       - run: pnpm type-check
         name: Run TypeScript type checker
 
-  build-brevduen:
-    name: brevduen
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-brevduen
-        with:
-          deploy: false
-          environment: stg
-          git-hash: ${{ github.sha }}
-
   build-dashboard:
     name: dashboard
     runs-on: ubuntu-24.04-arm
@@ -65,7 +47,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -73,45 +55,8 @@ jobs:
       - uses: ./.github/actions/build-dashboard
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}
-  
-  build-invoicification:
-    name: invoicification
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-invoicification
-        with:
-          deploy: false
-          environment: stg
-          git-hash: ${{ github.sha }}
-
-  build-rif:
-    name: rif
-    runs-on: ubuntu-24.04-arm
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-rif
-        with:
-          deploy: false
-          environment: stg
-          git-hash: ${{ github.sha }}
-
   build-rpc:
     name: rpc
     runs-on: ubuntu-24.04-arm
@@ -119,7 +64,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -127,7 +72,7 @@ jobs:
       - uses: ./.github/actions/build-rpc
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}
 
   build-web:
@@ -137,7 +82,7 @@ jobs:
       - check
     steps:
       - name: Install local GitHub Actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
@@ -145,5 +90,5 @@ jobs:
       - uses: ./.github/actions/build-web
         with:
           deploy: false
-          environment: stg
+          environment: prd
           git-hash: ${{ github.sha }}

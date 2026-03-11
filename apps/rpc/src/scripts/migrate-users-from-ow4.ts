@@ -67,10 +67,10 @@ const rawMemberships = JSON.parse(
 )
 
 const users = OW4UserSchema.array().parse(rawUsers)
-const memberships = OW4MembershipSchema.array().parse(rawMemberships)
+const ow4Memberships = OW4MembershipSchema.array().parse(rawMemberships)
 
 for (const user of users) {
-  const membership = memberships.find((m) => m.username === user.ntnu_username)
+  const ow4Membership = ow4Memberships.find((m) => m.username === user.ntnu_username)
 
   if (user.auth0_subject === null) {
     console.error(`User with OW4 id ${user.id} is missing auth0 subject`)
@@ -99,6 +99,8 @@ for (const user of users) {
 
   const name = user.first_name || user.last_name ? `${user.first_name} ${user.last_name}`.trim() : auth0User.name
 
+  const ow5MembershipType = getMembershipType(user, ow4Membership)
+
   await prisma.user.create({
     data: {
       id: user.auth0_subject,
@@ -114,16 +116,17 @@ for (const user of users) {
       imageUrl: auth0User.imageUrl,
       memberships: {
         createMany: {
-          data: membership
-            ? [
-                {
-                  end: membership.expiration_date,
-                  start: membership.registered,
-                  type: getMembershipType(user, membership),
-                  specialization: getMembershipSpecialization(user.field_of_study),
-                },
-              ]
-            : [],
+          data:
+            ow4Membership && ow5MembershipType
+              ? [
+                  {
+                    end: ow4Membership.expiration_date,
+                    start: ow4Membership.registered,
+                    type: ow5MembershipType,
+                    specialization: getMembershipSpecialization(user.field_of_study),
+                  },
+                ]
+              : [],
         },
       },
     },
@@ -170,7 +173,11 @@ async function getAuth0User(
 
 // https://github.com/dotkom/onlineweb4/blob/main/apps/authentication/constants.py#L21
 
-function getMembershipType(user: OW4User, membership: OW4Membership): Membership["type"] {
+function getMembershipType(user: OW4User, membership?: OW4Membership): Membership["type"] | null {
+  if (!membership) {
+    return null
+  }
+
   // Memberships with manual expiration date >= 2100 are knights
   if (membership.expiration_date >= new TZDate(2100, 1, 1)) return "KNIGHT"
 
@@ -183,10 +190,8 @@ function getMembershipType(user: OW4User, membership: OW4Membership): Membership
       return "BACHELOR_STUDENT"
     case 40:
       return "SOCIAL_MEMBER"
-    case 80:
-      return "PHD_STUDENT"
     default:
-      return "OTHER"
+      return null
   }
 }
 

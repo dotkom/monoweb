@@ -72,7 +72,7 @@ export const DeregisterReasonFormSchema = z.object({
 })
 export type DeregisterReasonFormResult = z.infer<typeof DeregisterReasonFormSchema>
 
-const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Props) => {
+const DeregisterForm = ({ unregisterForAttendance, setOpen, open }: Props) => {
   const form = useForm<DeregisterReasonFormResult>({
     defaultValues: {
       details: null,
@@ -80,11 +80,13 @@ const DeregisterForm = ({ attendee, unregisterForAttendance, setOpen, open }: Pr
     mode: "onChange",
   })
 
+  const { trigger } = form
+
   useEffect(() => {
     if (open) {
-      form.trigger()
+      trigger()
     }
-  }, [form.trigger, open])
+  }, [trigger, open])
 
   const handleSubmit = (values: DeregisterReasonFormResult) => {
     unregisterForAttendance(values)

@@ -1,0 +1,12 @@
+{
+  "extends": "../../packages/config/tsconfig.json",
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "incremental": true,
+    "strictNullChecks": true
+  }
+}

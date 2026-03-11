@@ -1,7 +1,7 @@
 import slugify from "slugify"
 
 const AUTHORIZE_ENDPOINT = "/api/auth/authorize"
-const UNAUTHORIZE_ENDPOINT = "/api/auth/logout"
+const LOGOUT_ENDPOINT = "/api/auth/logout"
 
 /**
  * Creates an authorize URL with the given search parameters.
@@ -28,9 +28,9 @@ export const createAuthorizeUrl = (...parameters: ConstructorParameters<typeof U
 export const createLogoutUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
   const searchParams = new URLSearchParams(...parameters).toString()
   if (!searchParams) {
-    return UNAUTHORIZE_ENDPOINT
+    return LOGOUT_ENDPOINT
   }
-  return `${UNAUTHORIZE_ENDPOINT}?${searchParams}`
+  return `${LOGOUT_ENDPOINT}?${searchParams}`
 }
 
 /**
@@ -60,7 +60,7 @@ export const createAbsoluteLogoutUrl = (
   origin: string,
   ...parameters: ConstructorParameters<typeof URLSearchParams>
 ) => {
-  const url = new URL(UNAUTHORIZE_ENDPOINT, origin)
+  const url = new URL(LOGOUT_ENDPOINT, origin)
   url.search = new URLSearchParams(...parameters).toString()
   return url.toString()
 }

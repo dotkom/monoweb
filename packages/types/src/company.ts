@@ -19,3 +19,5 @@ export const CompanyWriteSchema = CompanySchema.pick({
 })
 
 export type CompanyWrite = z.infer<typeof CompanyWriteSchema>
+
+export const COMPANY_IMAGE_MAX_SIZE_KIB = 5 * 1024

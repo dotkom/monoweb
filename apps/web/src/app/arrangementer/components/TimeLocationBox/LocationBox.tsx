@@ -21,7 +21,7 @@ export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
 
       <div className="flex flex-col grow justify-center">
         {locationTitle && <Text>{locationTitle}</Text>}
-        {locationAddress && <Text>{locationAddress}</Text>}
+        {locationAddress && <Text className="text-gray-600 dark:text-stone-400">{locationAddress}</Text>}
       </div>
 
       {locationLink && <LocationLink link={locationLink} />}

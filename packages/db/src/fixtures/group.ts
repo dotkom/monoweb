@@ -364,4 +364,9 @@ export const getGroupRoleFixtures = (groupInput: Prisma.GroupCreateInput) =>
       name: "E-postbruker",
       type: "EMAIL_ONLY",
     },
+    {
+      groupId: groupInput.slug,
+      name: "Permitert",
+      type: "TEMPORARILY_LEAVE",
+    },
   ] as const satisfies Prisma.GroupRoleCreateManyInput[]

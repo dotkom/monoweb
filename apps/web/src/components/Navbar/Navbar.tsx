@@ -103,7 +103,7 @@ const links: MenuLink[] = [
       },
       {
         title: "Kvitteringskjema",
-        href: "https://kvittering.online.ntnu.no/",
+        href: "https://autobank.online.ntnu.no/",
         icon: IconReceipt,
         description: "Har du lagt ut noe for linjeforeningen? Få refusjon her.",
       },
@@ -120,13 +120,13 @@ const links: MenuLink[] = [
       },
       {
         title: "Fakturaskjema",
-        href: "https://faktura.online.ntnu.no/",
+        href: "/bedrift/faktura",
         icon: IconReceipt,
         description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt.",
       },
       {
         title: "Interesseskjema",
-        href: "https://interesse.online.ntnu.no/",
+        href: "/bedrift/interesse",
         icon: IconMessage,
         description: "Interessert i å vise bedriften din for studentene våre? Meld interesse!",
       },
@@ -136,7 +136,7 @@ const links: MenuLink[] = [
 
 export const Navbar: FC = () => {
   return (
-    <header className="sticky bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl border border-blue-100 dark:border-stone-700/30 shadow-sm top-4 z-50 flex flex-row justify-between items-center w-full max-w-screen-xl mt-8 p-3 rounded-full">
+    <header className="sticky bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl border border-blue-100 dark:border-stone-700/30 shadow-sm top-4 z-50 flex flex-row justify-between items-center w-full max-w-screen-xl mt-4 p-3 rounded-full">
       <Link href={env.NEXT_PUBLIC_HOME_URL}>
         <OnlineIcon className="h-10 w-10" />
       </Link>

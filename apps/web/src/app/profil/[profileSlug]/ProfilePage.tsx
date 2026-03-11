@@ -1,9 +1,10 @@
 "use client"
 
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { useEventAllByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
+import { useEventAllSummariesByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
@@ -12,7 +13,6 @@ import {
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   findActiveMembership,
-  getMembershipGrade,
   getMembershipTypeName,
   getSpecializationName,
 } from "@dotkomonline/types"
@@ -31,7 +31,14 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { capitalizeFirstLetter, createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
+import {
+  capitalizeFirstLetter,
+  createAuthorizeUrl,
+  getCurrentUTC,
+  getPunishmentExpiryDate,
+  getStudyGrade,
+  isMembershipActiveUntilNextSemesterStart,
+} from "@dotkomonline/utils"
 import {
   IconAlertTriangle,
   IconChefHatOff,
@@ -54,6 +61,7 @@ import { notFound, useParams, useSearchParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
+import { useIsAdminQuery } from "./queries"
 
 const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
   const Icon = props.icon
@@ -139,35 +147,41 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
   )
 }
 
-const MembershipDisplay = ({
-  activeMembership,
-  grade,
-}: {
-  activeMembership: Membership | null
-  grade: number | null
-}) => {
-  if (activeMembership) {
+const MembershipDisplay = ({ activeMembership }: { activeMembership: Membership | null }) => {
+  if (!activeMembership) {
     return (
-      <>
-        <IconNotes className="text-gray-500 dark:text-stone-400" width={32} height={32} />
-        <div className="flex flex-col gap-1">
-          <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
-          {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
-          <Text>{grade}. klasse</Text>
-          <Text className="text-xs text-gray-500 dark:text-stone-400">
-            Medlemskapet varer fra {formatDate(activeMembership.start, "MMM yyyy")} til{" "}
-            {formatDate(activeMembership.end, "MMM yyyy")}
-          </Text>
-        </div>
-      </>
+      <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-full">
+        <IconNotesOff className="text-gray-500 dark:text-stone-400" width={32} height={32} />
+        <Text className="text-xl">Ingen medlemskap</Text>
+      </div>
     )
   }
 
+  const grade = activeMembership.semester !== null ? getStudyGrade(activeMembership.semester) : null
+  const membershipActiveUntilNextSemesterStart =
+    activeMembership.end !== null ? isMembershipActiveUntilNextSemesterStart(activeMembership.end) : null
+  const isMembershipIndefinite = activeMembership.end === null
+
+  let membershipValidUntilText = null
+
+  if (isMembershipIndefinite) {
+    membershipValidUntilText = "Livstidsmedlemskap"
+  } else if (membershipActiveUntilNextSemesterStart) {
+    membershipValidUntilText = "Gyldig til starten av neste semester"
+  } else if (activeMembership.end) {
+    membershipValidUntilText = `Gyldig til ${formatDate(activeMembership.end, "dd. MMMM yyyy", { locale: nb })}`
+  }
+
   return (
-    <>
-      <IconNotesOff className="text-gray-500 dark:text-stone-400" width={32} height={32} />
-      <Text className="text-xl">Ingen medlemskap</Text>
-    </>
+    <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-full">
+      <IconNotes className="text-gray-500 dark:text-stone-400" width={32} height={32} />
+      <div className="flex flex-col gap-1">
+        <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
+        {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
+        {grade !== null ? <Text>{grade}. klasse</Text> : null}
+        <Text className="text-sm text-gray-500 dark:text-stone-500">{membershipValidUntilText}</Text>
+      </div>
+    </div>
   )
 }
 
@@ -182,52 +196,45 @@ export function ProfilePage() {
   const session = useSession()
   const fullPathname = useFullPathname()
 
-  const [userResult, isStaffResult] = useQueries({
-    queries: [trpc.user.findByProfileSlug.queryOptions(profileSlug), trpc.user.isStaff.queryOptions()],
+  const [userResult] = useQueries({
+    queries: [trpc.user.findByProfileSlug.queryOptions(profileSlug)],
   })
 
   const { data: user, isLoading: userLoading } = userResult
-  const { data: isStaff = false } = isStaffResult
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
   const isLoggedIn = Boolean(session)
   const isUser = user ? user.id === session?.sub : false
 
-  const [
-    { data: groups, isLoading: groupsLoading },
-    { data: futureEventWithAttendances, isLoading: futureEventWithAttendancesLoading },
-    { data: marks, isLoading: marksLoading },
-    { data: eventsMissingFeedback },
-  ] = useQueries({
-    queries: [
-      trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
-      trpc.event.allByAttendingUserId.queryOptions(
-        {
-          id: user?.id ?? "",
-          filter: {
-            byEndDate: {
-              min: now,
-              max: null,
+  const [{ data: groups }, { data: futureEventWithAttendances }, { data: marks }, { data: eventsMissingFeedback }] =
+    useQueries({
+      queries: [
+        trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
+        trpc.event.allSummariesByAttendingUserId.queryOptions(
+          {
+            id: user?.id ?? "",
+            filter: {
+              byEndDate: {
+                min: now,
+                max: null,
+              },
             },
-            excludingType: isStaff ? [] : undefined,
           },
-        },
-        { enabled: isLoggedIn && Boolean(user?.id) }
-      ),
-      trpc.personalMark.getVisibleInformation.queryOptions({ userId: user?.id ?? "" }, { enabled: isUser }),
-      trpc.event.findUnansweredByUser.queryOptions(user?.id ?? "", { enabled: isUser }),
-    ],
-  })
+          { enabled: isLoggedIn && Boolean(user?.id) }
+        ),
+        trpc.personalMark.getVisibleInformation.queryOptions({ userId: user?.id ?? "" }, { enabled: isUser }),
+        trpc.event.findUnansweredByUser.queryOptions(user?.id ?? "", { enabled: isUser }),
+      ],
+    })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllByAttendingUserIdInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesByAttendingUserIdInfiniteQuery({
     id: user?.id ?? "",
     filter: {
       byEndDate: {
         max: now,
         min: null,
       },
-      excludingType: isStaff ? [] : undefined,
     },
     enabled: isLoggedIn && Boolean(user?.id),
   })
@@ -245,6 +252,8 @@ export function ProfilePage() {
     [groups]
   )
 
+  const { isAdmin } = useIsAdminQuery()
+
   if (user === undefined || userLoading) {
     return <SkeletonProfilePage />
   }
@@ -254,7 +263,9 @@ export function ProfilePage() {
   }
 
   const activeMembership = findActiveMembership(user)
-  const grade = activeMembership ? getMembershipGrade(activeMembership) : null
+  const grade = activeMembership?.semester != null ? getStudyGrade(activeMembership.semester) : null
+
+  const dashboardUrl = new URL(`/brukere/${user.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -268,9 +279,25 @@ export function ProfilePage() {
 
         <div className="flex flex-col gap-2 grow">
           <div className="flex flex-row w-full justify-between">
-            <Title element="h1" className="font-semibold text-xl md:text-2xl">
-              {user.name}
-            </Title>
+            <div className="flex flex-row gap-4 items-center">
+              <Title element="h1" className="font-semibold text-xl md:text-2xl">
+                {user.name}
+              </Title>
+              {isAdmin && (
+                <Button
+                  element={Link}
+                  href={dashboardUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="unstyled"
+                  className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 gap-1.5"
+                  title="Rediger arrangement"
+                >
+                  <IconEdit className="size-[1.25em] md:w-6 md:h-6" />
+                  <Text className="md:hidden">Rediger</Text>
+                </Button>
+              )}
+            </div>
             {isUser && (
               <Button
                 element={Link}
@@ -363,9 +390,7 @@ export function ProfilePage() {
               </div>
             )}
 
-            <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-fit">
-              <MembershipDisplay activeMembership={activeMembership} grade={grade} />
-            </div>
+            <MembershipDisplay activeMembership={activeMembership} />
 
             {!activeMembership ? (
               <>
@@ -396,6 +421,8 @@ export function ProfilePage() {
               </>
             ) : (
               <Text className="text-sm text-gray-500 dark:text-stone-500">
+                Medlemskap er gyldig på semesterbasis.
+                <br />
                 Ved feil angitt informasjon, ta kontakt med{" "}
                 <Link className="underline" href="/grupper/hs">
                   Hovedstyret
@@ -431,13 +458,17 @@ export function ProfilePage() {
                 <Link
                   key={event.id}
                   href={`/tilbakemelding/${event.id}`}
-                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-900 dark:hover:bg-stone-800 transition-colors"
+                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
                 >
                   <div className="flex flex-col gap-0.5">
                     <Text className="text-lg">{event.title}</Text>
                     <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
                       Gi tilbakemelding på {event.title} som du deltok på{" "}
                       {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
+                    </Text>
+                    <Text className="text-sm text-red-400">
+                      Fristen for å svare er{" "}
+                      {formatDate(event.feedbackForm.answerDeadline, "dd. MMM yyyy HH:mm", { locale: nb })}
                     </Text>
                   </div>
                 </Link>

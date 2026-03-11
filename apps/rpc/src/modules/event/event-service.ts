@@ -2,19 +2,22 @@ import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type {
-  AttendanceId,
-  BaseEvent,
-  CompanyId,
-  DeregisterReason,
-  DeregisterReasonWithEvent,
-  DeregisterReasonWrite,
-  Event,
-  EventFilterQuery,
-  EventId,
-  EventWrite,
-  GroupId,
-  UserId,
+import {
+  type AttendanceId,
+  type BaseEvent,
+  type CompanyId,
+  type DeregisterReason,
+  type DeregisterReasonWithEvent,
+  type DeregisterReasonWrite,
+  type Event,
+  type EventFilterQuery,
+  type EventId,
+  type EventSummary,
+  type EventWithFeedbackFormSchema,
+  type EventWrite,
+  type GroupId,
+  type UserId,
+  EVENT_IMAGE_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, NotFoundError } from "../../error"
@@ -37,15 +40,26 @@ export interface EventService {
   updateEventAttendance(handle: DBHandle, eventId: EventId, attendanceId: AttendanceId): Promise<Event>
   updateEventParent(handle: DBHandle, eventId: EventId, parentEventId: EventId | null): Promise<Event>
   findEvents(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<Event[]>
+  findEventSummaries(handle: DBHandle, query: EventFilterQuery, page?: Pageable): Promise<EventSummary[]>
   findEventsByAttendingUserId(
     handle: DBHandle,
     userId: UserId,
     query: EventFilterQuery,
     page?: Pageable
   ): Promise<Event[]>
-  findByParentEventId(handle: DBHandle, parentEventId: EventId): Promise<Event[]>
+  findEventSummariesByAttendingUserId(
+    handle: DBHandle,
+    userId: UserId,
+    query: EventFilterQuery,
+    page?: Pageable
+  ): Promise<EventSummary[]>
+  findByParentEventId(
+    handle: DBHandle,
+    parentEventId: EventId,
+    query: Pick<EventFilterQuery, "orderBy">
+  ): Promise<Event[]>
   findEventById(handle: DBHandle, eventId: EventId): Promise<Event | null>
-  findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<Event[]>
+  findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<EventWithFeedbackFormSchema[]>
   findFeaturedEvents(handle: DBHandle, offset: number, limit: number): Promise<BaseEvent[]>
   /**
    * Get an event by its id
@@ -83,8 +97,12 @@ export function getEventService(
       return await eventRepository.findMany(handle, query, page ?? { take: 20 })
     },
 
-    async findByParentEventId(handle, parentEventId) {
-      return await eventRepository.findByParentEventId(handle, parentEventId)
+    async findEventSummaries(handle, query, page) {
+      return await eventRepository.findManySummary(handle, query, page ?? { take: 20 })
+    },
+
+    async findByParentEventId(handle, parentEventId, query) {
+      return await eventRepository.findByParentEventId(handle, parentEventId, query)
     },
 
     async findEventById(handle, eventId) {
@@ -116,7 +134,27 @@ export function getEventService(
     },
 
     async findEventsByAttendingUserId(handle, userId, query, page) {
-      return await eventRepository.findByAttendingUserId(handle, userId, query, page ?? { take: 20 })
+      const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+      return await eventRepository.findMany(
+        handle,
+        {
+          ...query,
+          byId: eventIds.concat(...(query.byId ?? [])),
+        },
+        page ?? { take: 20 }
+      )
+    },
+
+    async findEventSummariesByAttendingUserId(handle, userId, query, page) {
+      const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+      return await eventRepository.findManySummary(
+        handle,
+        {
+          ...query,
+          byId: eventIds.concat(...(query.byId ?? [])),
+        },
+        page ?? { take: 20 }
+      )
     },
 
     async updateEventOrganizers(handle, eventId, hostingGroups, companies) {
@@ -171,12 +209,10 @@ export function getEventService(
       const uuid = crypto.randomUUID()
       const key = `event/${Date.now()}-${uuid}-${slugify(filename)}`
 
-      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
-
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        maxSizeKiB,
+        maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       })

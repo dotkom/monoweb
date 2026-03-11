@@ -31,7 +31,7 @@ export function getPaymentWebhookService(stripe: Stripe): PaymentWebhookService 
         metadata: { identifier },
         description: identifier,
         enabled_events: ["checkout.session.completed"],
-        api_version: "2025-07-30.basil",
+        api_version: "2025-08-27.basil",
       })
       webhookSecret = endpoint.secret ?? null
       logger.info(`Set up webhook with id ${endpoint.id}`)

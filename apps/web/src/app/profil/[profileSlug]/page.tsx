@@ -9,7 +9,7 @@ interface ProfilePageProps {
   }>
 }
 
-export default function Page({ params }: ProfilePageProps) {
+export default function Page() {
   return <ProfilePage />
 }
 
@@ -44,6 +44,9 @@ export async function generateMetadata({ params }: Pick<ProfilePageProps, "param
       card: "summary",
       title: name,
       description,
+    },
+    other: {
+      robots: "noindex",
     },
   }
 }

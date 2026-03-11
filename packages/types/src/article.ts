@@ -34,3 +34,5 @@ export const ArticleFilterQuerySchema = z
     byTags: buildAnyOfFilter(ArticleTagSchema.shape.name),
   })
   .partial()
+
+export const ARTICLE_IMAGE_MAX_SIZE_KIB = 5 * 1024

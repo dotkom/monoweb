@@ -16,7 +16,7 @@ export type RecurringTaskService = {
   delete(handle: DBHandle, recurringTaskId: RecurringTaskId): Promise<void>
   getById(handle: DBHandle, recurringTaskId: RecurringTaskId): Promise<RecurringTask>
   getAll(handle: DBHandle): Promise<RecurringTask[]>
-  getPending(handle: DBHandle): Promise<RecurringTask[]>
+  findSchedulableTasks(handle: DBHandle): Promise<RecurringTask[]>
   scheduleNextRun(handle: DBHandle, recurringTaskId: RecurringTaskId, lastRunAt: Date): Promise<void>
 }
 
@@ -57,7 +57,7 @@ export function getRecurringTaskService(recurringTaskRepository: RecurringTaskRe
       return await recurringTaskRepository.getAll(handle)
     },
 
-    async getPending(handle) {
+    async findSchedulableTasks(handle) {
       return await recurringTaskRepository.getPending(handle)
     },
 

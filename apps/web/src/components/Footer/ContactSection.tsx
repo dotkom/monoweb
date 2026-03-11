@@ -59,7 +59,7 @@ export const ContactSection: FC = () => (
             okonomi@online.ntnu.no
           </Link>
         </Text>
-        <Text>+47 986 69 907</Text>
+        <Text>+47 467 47 280</Text>
       </div>
     </div>
 

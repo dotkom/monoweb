@@ -1,10 +1,12 @@
 import type { Logger } from "@dotkomonline/logger"
 import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies"
 import { cookies } from "next/headers"
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { z } from "zod"
 import { type OAuth2Service, type OAuthScope, defaultSessionLengthSeconds } from "./authentication"
 import { type Session, createSession, getSession } from "./session"
+import { decodeJwt } from "jose"
+import { JWTExpired } from "jose/errors"
 
 /**
  * Create a short-lived cookie intended to hold state/verifier/nonce values
@@ -36,6 +38,8 @@ const CallbackEndpointInput = z.object({
 export type AuthenticationHandlerOptions = {
   /** The URL the user should be redirected to after a successful login */
   homeUrl: string
+  /** The URL the user should be redirected to with an ?error search parameter if callback failed */
+  errorUrl: string
   /** The OAuth2 redirect URL, where Auth0 will redirect after authorize */
   redirectUrl: string
   scopes: OAuthScope[]
@@ -43,7 +47,7 @@ export type AuthenticationHandlerOptions = {
   host: string
   signingKey: string
   logger: Logger
-  onSignIn?: (session: Session) => Awaited<void> | void
+  onSignIn?: (session: Session) => Promise<void> | void
 }
 
 /**
@@ -55,8 +59,8 @@ export type AuthenticationHandlerOptions = {
 export function createAuthenticationHandler(service: OAuth2Service, opts: AuthenticationHandlerOptions) {
   return {
     /** Begin the OAuth2 authorization code flow */
-    authorize: async function authorize(request: NextRequest): Promise<NextResponse> {
-      const searchParams = request.nextUrl.searchParams
+    authorize: async function authorize(request: Request): Promise<Response> {
+      const searchParams = new URL(request.url).searchParams
 
       const { url, state, nonce, verifier } = await service.createAuthorizeUrl({
         redirectUrl: opts.redirectUrl,
@@ -76,16 +80,19 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       return NextResponse.redirect(url)
     },
     /** Handle callback post-authorization from Auth0 */
-    callback: async function callback(request: NextRequest): Promise<NextResponse> {
+    callback: async function callback(request: Request): Promise<Response> {
+      const requestUrl = new URL(request.url)
       const cookieHandle = await cookies()
       try {
         // Attempt to parse the state and code from the request.
         const input = await CallbackEndpointInput.safeParseAsync({
-          code: request.nextUrl.searchParams.get("code"),
-          state: request.nextUrl.searchParams.get("state"),
+          code: requestUrl.searchParams.get("code"),
+          state: requestUrl.searchParams.get("state"),
         })
         if (!input.success) {
-          return NextResponse.json({ message: "Bad request, expected code and state" }, { status: 400 })
+          const url = new URL(opts.errorUrl)
+          url.searchParams.set("error", "bad request, missing code and/or state")
+          return NextResponse.redirect(url)
         }
         // Acquire the state cookie to match against the state value in the request.
         const expectedState = cookieHandle.get(service.getOAuth2StateCookieName())
@@ -93,7 +100,9 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
         // If the state cookie is not present, there is no reason to attempt to exchange the code for an access token, since
         // we cannot verify the state.
         if (expectedState === undefined || expectedState.value !== input.data.state) {
-          return NextResponse.json({ message: "OAuth 2 state mismatch" }, { status: 400 })
+          const url = new URL(opts.errorUrl)
+          url.searchParams.set("error", "mismatch between actual and expected oauth2 state")
+          return NextResponse.redirect(url)
         }
         // Acquire the verifier cookie to match against the verifier value in the request.
         const expectedVerifier = cookieHandle.get(service.getOAuth2VerifierCookieName())
@@ -101,7 +110,9 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
         // If the verifier cookie is not present, there is no reason to attempt to exchange the code for an access token, since
         // we cannot verify the verifier.
         if (expectedVerifier === undefined) {
-          return NextResponse.json({ message: "Missing OAuth 2 verifier" }, { status: 400 })
+          const url = new URL(opts.errorUrl)
+          url.searchParams.set("error", "missing oauth2 pkce verifier")
+          return NextResponse.redirect(url)
         }
         const tokenSet = await service.getTokenSet(opts.redirectUrl, input.data.code, expectedVerifier.value)
         const userInfo = await service.getUserInfo(tokenSet.accessToken)
@@ -134,7 +145,7 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       }
     },
     /** Handle logout from Auth0 */
-    logout: async function logout(_: NextRequest): Promise<NextResponse> {
+    logout: async function logout(_: Request): Promise<Response> {
       const logoutUrl = await service.createLogoutUrl(opts.host)
       const cookieHandle = await cookies()
       cookieHandle.set(service.getOAuth2SessionCookieName(), "", {
@@ -147,12 +158,12 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       return NextResponse.redirect(logoutUrl)
     },
     /** Read the current user session */
-    session: async function session(_: NextRequest): Promise<NextResponse> {
+    session: async function session(_: Request): Promise<Response> {
       const serverSession = await this.getServerSession()
       if (serverSession === null) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
       }
-      return NextResponse.json(session, { status: 200 })
+      return NextResponse.json(serverSession, { status: 200 })
     },
     getServerSession: async function getServerSession(): Promise<Session | null> {
       const cookieHandle = await cookies()
@@ -160,7 +171,20 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       if (sessionCookie === undefined) {
         return null
       }
-      return await getSession(sessionCookie.value, opts.signingKey)
+      try {
+        const claims = decodeJwt(sessionCookie.value)
+        const cutoff = new Date("2025-02-25T12:00:00Z").getTime() / 1000
+        if (claims.iat !== undefined && claims.iat < cutoff) {
+          cookieHandle.delete(service.getOAuth2SessionCookieName())
+          return null
+        }
+        return await getSession(sessionCookie.value, opts.signingKey)
+      } catch (err) {
+        if (err instanceof JWTExpired) {
+          return null
+        }
+        throw err
+      }
     },
   }
 }

@@ -3,10 +3,12 @@ import { auditLogRouter } from "./modules/audit-log/audit-log-router"
 import { companyRouter } from "./modules/company/company-router"
 import { eventRouter } from "./modules/event/event-router"
 import { groupRouter } from "./modules/group/group-router"
+import { invoicificationRouter } from "./modules/invoicification/invoicification-router"
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
 import { markRouter } from "./modules/mark/mark-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { offlineRouter } from "./modules/offline/offline-router"
+import { rifRouter } from "./modules/rif/rif-router"
 import { userRouter } from "./modules/user/user-router"
 import { workspaceRouter } from "./modules/workspace-sync/workspace-router"
 import { t } from "./trpc"
@@ -23,6 +25,8 @@ export const appRouter = t.router({
   article: articleRouter,
   auditLog: auditLogRouter,
   workspace: workspaceRouter,
+  invoicification: invoicificationRouter,
+  rif: rifRouter,
 })
 
 export type AppRouter = typeof appRouter

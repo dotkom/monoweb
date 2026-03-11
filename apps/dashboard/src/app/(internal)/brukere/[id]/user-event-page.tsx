@@ -1,4 +1,4 @@
-import { Skeleton } from "@mantine/core"
+import { Skeleton, Title, Stack } from "@mantine/core"
 import type { FC } from "react"
 import { EventTable } from "@/app/(internal)/arrangementer/components/events-table"
 import { useEventAllByAttendingUserInfiniteQuery } from "@/app/(internal)/arrangementer/queries"
@@ -10,8 +10,11 @@ export const UserEventPage: FC = () => {
   const { events, isLoading, fetchNextPage } = useEventAllByAttendingUserInfiniteQuery(user.id)
 
   return (
-    <Skeleton visible={isLoading}>
-      <EventTable events={events} onLoadMore={fetchNextPage} />
-    </Skeleton>
+    <Stack>
+      <Title order={2}>Arrangementer</Title>
+      <Skeleton visible={isLoading}>
+        <EventTable events={events} onLoadMore={fetchNextPage} />
+      </Skeleton>
+    </Stack>
   )
 }

@@ -197,7 +197,8 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       </Button>
                       <DropdownMenuItem asChild>
                         <Button
-                          element={Link}
+                          // This might as well be a hard navigate as the server redirects them to the Auth0 flow anyways.
+                          element="a"
                           variant="solid"
                           size="md"
                           className="font-semibold rounded-md justify-start px-3 h-10 bg-blue-100 hover:bg-blue-200/80 dark:bg-stone-700/80 dark:hover:bg-stone-600/50 w-fit"

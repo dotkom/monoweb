@@ -72,6 +72,10 @@ export async function uploadFileToS3PresignedPost(
       body: formData, // No headers needed, fetch adds the correct one for FormData
     })
 
+    if (!response.ok) {
+      throw new Error(`File upload failed with status ${response.status}: ${response.statusText}`)
+    }
+
     // S3 returns a Location header with the url of the uploaded file
     const location = response.headers.get("Location")
     if (!location) {

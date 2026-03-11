@@ -1,15 +1,16 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Article,
-  ArticleFilterQuery,
-  ArticleId,
-  ArticleSlug,
-  ArticleTag,
-  ArticleTagName,
-  ArticleWrite,
-  UserId,
+import {
+  type Article,
+  type ArticleFilterQuery,
+  type ArticleId,
+  type ArticleSlug,
+  type ArticleTag,
+  type ArticleTagName,
+  type ArticleWrite,
+  type UserId,
+  ARTICLE_IMAGE_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { compareAsc, compareDesc } from "date-fns"
@@ -219,12 +220,10 @@ export function getArticleService(
       const uuid = crypto.randomUUID()
       const key = `article/${Date.now()}-${uuid}-${slugify(filename)}`
 
-      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
-
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        maxSizeKiB,
+        maxSizeKiB: ARTICLE_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       })

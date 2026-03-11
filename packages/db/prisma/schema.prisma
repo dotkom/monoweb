@@ -21,10 +21,17 @@ datasource db {
 enum MembershipType {
   BACHELOR_STUDENT @map("BACHELOR_STUDENT")
   MASTER_STUDENT   @map("MASTER_STUDENT")
-  PHD_STUDENT      @map("PHD_STUDENT")
+  /// "Ridder av det Indre Lager" is an honorary membership type for those who have exceptionally contributed beyond
+  /// expectations to Linjeforeningen Online. For our system, it is functionally identical to `SOCIAL_MEMBER` (sosialt
+  /// medlem), but it is highly prestigious and grants a lifetime membership.
   KNIGHT           @map("KNIGHT")
+  /// "Sosialt medlem" is a membership type for those who want membership with Linjeforeningen Online, but are not
+  /// technically informatics students at NTNU (commonly those who internally transfer from other study programs at
+  /// NTNU).
+  ///
+  /// This membership type exists to not allow them to attend (most) events with companies, as we usually sign
+  /// contracts saying we will provide "informatics students", but we still want to include them for all other events.
   SOCIAL_MEMBER    @map("SOCIAL_MEMBER")
-  OTHER            @map("OTHER")
 
   @@map("membership_type")
 }
@@ -45,13 +52,24 @@ enum MembershipSpecialization {
 
 model Membership {
   id             String                    @id @default(uuid())
-  userId         String                    @map("user_id")
-  user           User                      @relation(fields: [userId], references: [id])
   type           MembershipType
+  /// Specialization of the student. This is relevant for Master students. For all other students, this value should be
+  /// `UNKNOWN`.
   specialization MembershipSpecialization? @default(UNKNOWN)
   start          DateTime                  @db.Timestamptz(3)
-  end            DateTime                  @db.Timestamptz(3)
+  /// End date of the membership. Null means the membership does not have an end date, and lasts forever.
+  end            DateTime?                 @db.Timestamptz(3)
+  /// The semester the student is in. 0-indexed.
+  ///
+  /// This value is meant to be used to calculate study grade (year), and can be used to calculate study start date
+  /// with the `start` date of the membership. It is nullable because `KNIGHT` membership type is a lifetime
+  /// membership.
+  semester       Int?
 
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId], name: "idx_membership_user_id")
   @@map("membership")
 }
 
@@ -78,14 +96,17 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee          Attendee[]
-  personalMark      PersonalMark[]
-  groupMemberships  GroupMembership[]
-  memberships       Membership[]
-  givenMarks        PersonalMark[]     @relation("GivenBy")
-  attendeesRefunded Attendee[]         @relation(name: "RefundedBy")
-  auditLogs         AuditLog[]
-  deregisterReasons DeregisterReason[]
+  attendee              Attendee[]
+  personalMark          PersonalMark[]
+  groupMemberships      GroupMembership[]
+  memberships           Membership[]
+  givenMarks            PersonalMark[]          @relation("GivenBy")
+  attendeesRefunded     Attendee[]              @relation(name: "RefundedBy")
+  auditLogs             AuditLog[]
+  deregisterReasons     DeregisterReason[]
+  notificationsReceived NotificationRecipient[]
+  notificationsCreated  Notification[]          @relation("created_by")
+  notificationsUpdated  Notification[]          @relation("last_updated_by")
 
   @@map("ow_user")
 }
@@ -152,11 +173,12 @@ model Group {
   memberVisibility    GroupMemberVisibility  @default(ALL_MEMBERS) @map("member_visibility")
   recruitmentMethod   GroupRecruitmentMethod @default(NONE) @map("recruitment_method")
 
-  events      EventHostingGroup[]
-  type        GroupType
-  memberships GroupMembership[]
-  marks       MarkGroup[]
-  roles       GroupRole[]
+  events        EventHostingGroup[]
+  type          GroupType
+  memberships   GroupMembership[]
+  marks         MarkGroup[]
+  roles         GroupRole[]
+  notifications Notification[]
 
   @@map("group")
 }
@@ -189,13 +211,14 @@ model GroupMembershipRole {
 }
 
 enum GroupRoleType {
-  LEADER        @map("LEADER")
-  PUNISHER      @map("PUNISHER")
-  TREASURER     @map("TREASURER")
-  COSMETIC      @map("COSMETIC")
-  DEPUTY_LEADER @map("DEPUTY_LEADER")
-  TRUSTEE       @map("TRUSTEE")
-  EMAIL_ONLY    @map("EMAIL_ONLY")
+  LEADER            @map("LEADER")
+  PUNISHER          @map("PUNISHER")
+  TREASURER         @map("TREASURER")
+  COSMETIC          @map("COSMETIC")
+  DEPUTY_LEADER     @map("DEPUTY_LEADER")
+  TRUSTEE           @map("TRUSTEE")
+  EMAIL_ONLY        @map("EMAIL_ONLY")
+  TEMPORARILY_LEAVE @map("TEMPORARILY_LEAVE")
 
   @@map("group_role_type")
 }
@@ -279,6 +302,7 @@ model AttendancePool {
 
   attendees Attendee[]
 
+  @@index([attendanceId], name: "idx_attendance_pool_attendance_id")
   @@map("attendance_pool")
 }
 
@@ -454,6 +478,7 @@ model EventHostingGroup {
   event   Event  @relation(fields: [eventId], references: [id])
 
   @@id([groupId, eventId])
+  @@index([eventId], name: "idx_event_hosting_group_event_id")
   @@map("event_hosting_group")
 }
 
@@ -587,6 +612,7 @@ model Task {
   recurringTask   RecurringTask? @relation(fields: [recurringTaskId], references: [id], onDelete: SetNull)
 
   attendancePools AttendancePool[]
+  notifications   Notification[]
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("task")
@@ -749,4 +775,74 @@ model DeregisterReason {
   event   Event  @relation(fields: [eventId], references: [id])
 
   @@map("deregister_reason")
+}
+
+model NotificationRecipient {
+  id     String   @id @default(uuid())
+  readAt DateTime @map("read_at") @db.Timestamptz(3)
+
+  notificationId String       @map("notification_id")
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  userId         String       @map("user_id")
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationPayloadType {
+  URL         @map("URL")
+  EVENT       @map("EVENT")
+  ARTICLE     @map("ARTICLE")
+  GROUP       @map("GROUP")
+  USER        @map("USER")
+  OFFLINE     @map("OFFLINE")
+  JOB_LISTING @map("JOB_LISTING")
+  NONE        @map("NONE")
+}
+
+enum NotificationType {
+  BROADCAST            @map("BROADCAST")
+  BROADCAST_IMPORTANT  @map("BROADCAST_IMPORTANT")
+  EVENT_REGISTRATION   @map("EVENT_REGISTRATION")
+  EVENT_REMINDER       @map("EVENT_REMINDER")
+  EVENT_UPDATE         @map("EVENT_UPDATE")
+  JOB_LISTING_REMINDER @map("JOB_LISTING_REMINDER")
+  NEW_ARTICLE          @map("NEW_ARTICLE")
+  NEW_EVENT            @map("NEW_EVENT")
+  NEW_INTEREST_GROUP   @map("NEW_INTEREST_GROUP")
+  NEW_JOB_LISTING      @map("NEW_JOB_LISTING")
+  NEW_OFFLINE          @map("NEW_OFFLINE")
+  NEW_MARK             @map("NEW_MARK")
+  NEW_FEEDBACK_FORM    @map("NEW_FEEDBACK_FORM")
+}
+
+model Notification {
+  id               String                  @id @default(uuid())
+  createdAt        DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  title            String
+  /// A short description that can be used when showing a preview of the notification.
+  shortDescription String?                 @map("short_description")
+  /// The full rich text content of the notification.
+  content          String
+  type             NotificationType
+  /// Can be an ID or a URL depending on the payload type.
+  payload          String?
+  payloadType      NotificationPayloadType @map("payload_type")
+
+  /// The group that created the notification or the system created on behalf of.
+  actorGroupId    String  @map("actor_group_id")
+  actorGroup      Group   @relation(fields: [actorGroupId], references: [slug])
+  /// The specific user that created the notification. This is meant for logging purposes. Nullable because the system
+  /// can create notifications without a specific user to link it to, for example with recurring tasks.
+  createdById     String? @map("created_by_id")
+  createdBy       User?   @relation("created_by", fields: [createdById], references: [id])
+  lastUpdatedById String? @map("last_updated_by_id")
+  lastUpdatedBy   User?   @relation("last_updated_by", fields: [lastUpdatedById], references: [id])
+  /// The task that created the notification. Useful for tracing and retrieving deadlines that could be useful for the
+  /// notification.
+  taskId          String? @map("task_id")
+  task            Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  recipients NotificationRecipient[]
+
+  @@map("notification")
 }

@@ -13,15 +13,15 @@ export const createConfiguration = () =>
     WEB_PUBLIC_ORIGIN: config(process.env.WEB_PUBLIC_ORIGIN),
     ALLOWED_ORIGINS: config(process.env.ALLOWED_ORIGINS, {
       prd: "https://online.ntnu.no",
-      stg: "https://staging.online.ntnu.no",
       dev: "http://localhost:3000",
     }),
     STRIPE_WEBHOOK_IDENTIFIER: config(process.env.STRIPE_WEBHOOK_IDENTIFIER, {
       prd: "prd",
-      stg: "stg",
       dev: "dev",
     }),
     STRIPE_WEBHOOK_HOST: config(process.env.STRIPE_WEBHOOK_HOST, null),
+
+    TURNSTILE_SECRET_KEY: config(process.env.TURNSTILE_SECRET_KEY),
 
     AWS_REGION: config(process.env.AWS_REGION, "eu-north-1"),
     /**
@@ -48,6 +48,13 @@ export const createConfiguration = () =>
     },
     tasks: {
       workerInterval: config(process.env.TASKS_WORKER_INTERVAL, 10000, z.coerce.number().int()),
+    },
+    // RIF (Interest Form) configuration for Google Sheets integration.
+    // NOTE: This Google Sheets integration could be replaced with database storage
+    // and an admin dashboard in the future for better data management and analytics.
+    rif: {
+      serviceAccount: config(process.env.RIF_SERVICE_ACCOUNT, null),
+      spreadsheetId: config(process.env.RIF_SPREADSHEET_ID, null),
     },
   })
 

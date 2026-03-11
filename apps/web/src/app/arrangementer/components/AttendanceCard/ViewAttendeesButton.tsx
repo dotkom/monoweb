@@ -215,7 +215,7 @@ const GenericAttendeeListEntry = ({
   )
 }
 
-const VerifiedAttendeeListUser = ({ attendee, user }: AttendeeListEntryProps) => {
+const VerifiedAttendeeListUser = ({ attendee }: AttendeeListEntryProps) => {
   return (
     <Link
       href={`/profil/${attendee.user.profileSlug}`}

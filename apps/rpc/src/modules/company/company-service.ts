@@ -13,10 +13,9 @@ import { createS3PresignedPost, slugify } from "@dotkomonline/utils";
 import { NotFoundError } from "../../error";
 import type { Pageable } from "../../query";
 import type { CompanyRepository } from "./company-repository";
-import {
-  getJobListingService,
-  JobListingService,
-} from "../job-listing/job-listing-service";
+import { JobListingService } from "../job-listing/job-listing-service";
+
+import { COMPANY_IMAGE_MAX_SIZE_KIB } from "@dotkomonline/types";
 
 export interface CompanyService {
   findById(handle: DBHandle, companyId: CompanyId): Promise<Company | null>;
@@ -114,7 +113,7 @@ export function getCompanyService(
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        maxSizeKiB,
+        maxSizeKiB: COMPANY_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       });

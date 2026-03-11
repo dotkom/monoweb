@@ -1,7 +1,7 @@
 "use client"
 
 import { EventList, EventListSkeleton } from "@/app/arrangementer/components/EventList"
-import { useEventAllInfiniteQuery, useEventAllQuery } from "@/app/arrangementer/components/queries"
+import { useEventAllSummariesInfiniteQuery, useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import type { Company } from "@dotkomonline/types"
 import { RichText, Text, Title } from "@dotkomonline/ui"
@@ -29,14 +29,14 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
     roundingMethod: "floor",
   })
 
-  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllQuery({
+  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllSummariesQuery({
     filter: {
       byOrganizingCompany: [company.id],
       byStartDate: { min: now, max: null },
     },
   })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllInfiniteQuery({
+  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesInfiniteQuery({
     filter: {
       byOrganizingCompany: [company.id],
       byEndDate: {
@@ -47,7 +47,7 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
   })
 
   return (
-    <EntryDetailLayout title={name} color={"BLUE"}>
+    <EntryDetailLayout title={name}>
       <div className="grid gap-x-12 gap-y-6 sm:grid-cols-[18rem_minmax(100px,_1fr)] md:grid-cols-[24rem_minmax(100px,_1fr)]">
         <div className="border-blue-600 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
           {imageUrl && (
@@ -65,8 +65,7 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
               </a>
             </div>
           )}
-
-          <div className="flex flex-col gap-y-2 px-1 text-lg">
+          <div className="flex flex-col gap-y-2 px-1 text-lg bg-gray-100 dark:bg-stone-700 rounded-2xl p-4 pl-6">
             {icons.map(({ icon: Icon, text, href }) => (
               <div key={`${text}-${href ?? "no-link"}`} className="flex items-center gap-x-2 dark:text-gray-100">
                 <Icon width={24} height={24} />

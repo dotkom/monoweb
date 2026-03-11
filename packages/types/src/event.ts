@@ -1,11 +1,12 @@
-import { schemas } from "@dotkomonline/db/schemas"
-import { z } from "zod"
-import { AttendanceSchema } from "./attendance"
-import { CompanySchema } from "./company"
-import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
-import { GroupSchema } from "./group"
-import { set, addWeeks } from "date-fns"
 import { TZDate } from "@date-fns/tz"
+import { schemas } from "@dotkomonline/db/schemas"
+import { addWeeks, set } from "date-fns"
+import { z } from "zod"
+import { AttendanceSchema, AttendanceSummarySchema } from "./attendance"
+import { CompanySchema } from "./company"
+import { FeedbackFormSchema } from "./feedback-form"
+import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
+import { GroupSchema, type GroupType } from "./group"
 
 /**
  * @packageDocumentation
@@ -67,6 +68,31 @@ export const EventWithAttendanceSchema = z.object({
   attendance: AttendanceSchema.nullable(),
 })
 export type EventWithAttendance = z.infer<typeof EventWithAttendanceSchema>
+
+export const EventSummarySchema = EventSchema.pick({
+  id: true,
+  title: true,
+  start: true,
+  end: true,
+  type: true,
+  status: true,
+  imageUrl: true,
+  parentId: true,
+  attendanceId: true,
+  locationTitle: true,
+})
+export type EventSummary = z.infer<typeof EventSummarySchema>
+
+export const EventWithAttendanceSummarySchema = z.object({
+  event: EventSummarySchema,
+  attendance: AttendanceSummarySchema.nullable(),
+})
+export type EventWithAttendanceSummary = z.infer<typeof EventWithAttendanceSummarySchema>
+
+export const EventWithFeedbackFormSchema = EventSchema.extend({
+  feedbackForm: FeedbackFormSchema,
+})
+export type EventWithFeedbackFormSchema = z.infer<typeof EventWithFeedbackFormSchema>
 
 export const mapEventTypeToLabel = (eventType: EventType) => {
   switch (eventType) {
@@ -144,14 +170,21 @@ export const mapDeregisterReasonTypeToLabel = (type: DeregisterReasonType) => {
   }
 }
 
-/** Adds one week and sets the time to 12:00:00 in Europe/Oslo timezone */
+/** Adds one week and sets the time to 23:59:00 in Europe/Oslo timezone */
 export const getDefaultFeedbackAnswerDeadline = (eventEnd: Date, timezone: string = "Europe/Oslo"): TZDate => {
   const date = new TZDate(eventEnd, timezone)
 
   return set(addWeeks(date, 1), {
-    hours: 12,
-    minutes: 0,
+    hours: 23,
+    minutes: 59,
     seconds: 0,
     milliseconds: 0,
   })
+}
+
+export const EVENT_IMAGE_MAX_SIZE_KIB = 5 * 1024
+
+export function findFirstHostingGroupEmail(event: Event): string | null {
+  const validGroupTypes: GroupType[] = ["COMMITTEE", "NODE_COMMITTEE"]
+  return event.hostingGroups.filter((group) => group.email && validGroupTypes.includes(group.type)).at(0)?.email ?? null
 }

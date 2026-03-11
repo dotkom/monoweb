@@ -90,7 +90,8 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
     server.event.findParentEvent.query({ eventId }),
   ])
 
-  const isOrganizer = user ? await server.event.isOrganizer.query({ eventId }) : null
+  const isOrganizer = user ? await server.event.isOrganizer.query({ eventId }) : false
+  const isAdmin = user ? await server.user.isAdmin.query() : false
   const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
 
   const parentEvent = parentEventWithAttendance?.event ?? null
@@ -101,7 +102,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
 
   return (
     <div className="flex flex-col gap-8">
-      <EventHeader event={event} showDashboardLink={isOrganizer ?? false} />
+      <EventHeader event={event} showDashboardLink={isOrganizer || isAdmin} />
 
       {childEventWithAttendance.length > 0 ? (
         <Tabs defaultValue="description">
@@ -131,6 +132,8 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
                 futureEventWithAttendances={futureChildEventWithAttendances}
                 pastEventWithAttendances={pastChildEventsWithAttendances}
                 alwaysShowChildEvents
+                viewMode="CHRONOLOGICAL"
+                userId={user?.id}
               />
             </div>
           </TabsContent>
@@ -167,7 +170,7 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
     <div className="flex w-full flex-col gap-8 md:flex-row">
       <div className="w-full flex flex-col gap-4 md:w-[60%]">
         {parentEvent && (
-          <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-700">
+          <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-800">
             <Title element="h4" size="sm" className="text-base">
               Arrangementet er en del av
             </Title>

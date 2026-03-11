@@ -7,5 +7,7 @@ export interface InputFieldContext<T extends FieldValues> {
   control: Control<T>
   state: FormState<T>
   defaultValue: FieldValue<T>
+  setError(name: FieldValue<T>, error: { type: string; message: string }): void
+  clearErrors(name: FieldValue<T>): void
 }
 export type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>

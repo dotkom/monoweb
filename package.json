@@ -17,38 +17,42 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif -F @dotkomonline/emails build",
+    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/emails build",
     "lint": "pnpm run -r lint",
     "lint-check": "pnpm run -r lint-check",
     "test": "pnpm run -r test",
     "test:it": "pnpm run -r test:it",
-    "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
+    "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
     "dev:web": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
+    "dev:grades": "pnpm -rc --parallel -F @dotkomonline/grades-backend -F @dotkomonline/grades-frontend exec doppler run --preserve-env pnpm run dev",
     "prisma": "pnpm -F @dotkomonline/db prisma",
     "generate": "pnpm -F @dotkomonline/db generate",
+    "generate:grades": "pnpm -F @dotkomonline/grades-db generate",
     "migrate:dev": "pnpm -F @dotkomonline/db migrate",
     "migrate:dev-with-fixtures": "pnpm -F @dotkomonline/db prisma migrate dev && pnpm -F @dotkomonline/db apply-fixtures",
     "migrate:deploy": "pnpm -F @dotkomonline/db prisma migrate deploy",
     "migrate:deploy-with-fixtures": "pnpm -F @dotkomonline/db prisma migrate deploy && pnpm -F @dotkomonline/db apply-fixtures",
-    "migrate:staging": "doppler run --config stg --project monoweb-rpc -- pnpm migrate:deploy",
     "migrate:prod": "doppler run --config prd --project monoweb-rpc -- pnpm migrate:deploy",
+    "migrate:dev-grades": "doppler run --config dev_personal --project grades-backend -- pnpm -F @dotkomonline/grades-db migrate",
+    "migrate:dev-grades-with-fixtures": "doppler run --config dev_personal --project grades-backend -- pnpm -F @dotkomonline/grades-db prisma migrate dev && doppler run --config dev_personal --project grades-backend -- pnpm -F @dotkomonline/grades-db apply-fixtures",
     "storybook": "pnpm run -r --filter=storybook storybook",
     "type-check": "pnpm run -r type-check",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "shell": "pnpm -F @dotkomonline/rpc shell",
-    "receive-stripe-webhooks": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm receive-stripe-webhooks"
+    "receive-stripe-webhooks": "pnpm -F @dotkomonline/rpc exec doppler run --preserve-env pnpm receive-stripe-webhooks",
+    "vinstraff:user-db-sync": "doppler run --config prd --project monoweb-rpc -- pnpm -F @dotkomonline/db vinstraff:user-db-sync"
   },
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
-  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a",
+  "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
   "engines": {
     "node": ">=22.0.0",
     "pnpm": ">=10.15.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.11",
+    "@biomejs/biome": "2.4.5",
     "typescript": "5.9.3"
   }
 }

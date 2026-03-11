@@ -63,10 +63,10 @@ export const usePoolForm = (props: PoolFormProps) => {
 
   const generatedTitle = createPoolName(yearCriteria ?? [])
   const defaultTitle = form.formState.defaultValues?.title
+  const isDefaultGeneratedTitle = defaultTitle === createPoolName(props.defaultValues.yearCriteria ?? [])
+  const isTitleDirty = Boolean(form.formState.dirtyFields.title)
 
-  const titleIsDirty =
-    Boolean(form.formState.dirtyFields.title) ||
-    (form.getValues("title") === defaultTitle && defaultTitle !== generatedTitle && defaultTitle !== "")
+  const { resetField, setValue } = form
 
   const fields = useMemo(
     () =>
@@ -89,8 +89,8 @@ export const usePoolForm = (props: PoolFormProps) => {
                 color="gray"
                 variant="subtle"
                 onClick={() => {
-                  form.resetField("title", { defaultValue: defaultTitle })
-                  form.setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
+                  resetField("title", { defaultValue: defaultTitle })
+                  setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
                 }}
               >
                 <IconX height={20} width={20} />
@@ -133,17 +133,17 @@ export const usePoolForm = (props: PoolFormProps) => {
           }),
         },
       ] as const,
-    [defaultTitle, generatedTitle, props.disabledYears, form.resetField, form.setValue, props.minCapacity]
+    [defaultTitle, generatedTitle, props.disabledYears, resetField, setValue, props.minCapacity]
   )
 
   useEffect(() => {
-    if (titleIsDirty) {
+    if (!yearCriteria || !isDefaultGeneratedTitle || isTitleDirty) {
       return
     }
 
     form.setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
     form.trigger("title")
-  }, [titleIsDirty, generatedTitle, form.setValue, form.trigger])
+  }, [yearCriteria, generatedTitle, isDefaultGeneratedTitle, isTitleDirty, form])
 
   const onSubmit = form.handleSubmit((values) => {
     form.resetField("yearCriteria")
@@ -168,6 +168,8 @@ export const usePoolForm = (props: PoolFormProps) => {
             register={form.register}
             control={form.control}
             state={form.formState}
+            setError={form.setError}
+            clearErrors={form.clearErrors}
           />
         ))}
         <Button type="submit">{props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe"}</Button>

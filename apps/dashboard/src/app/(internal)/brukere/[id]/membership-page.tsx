@@ -18,7 +18,7 @@ export const MembershipPage: FC = () => {
 
   return (
     <Stack>
-      <Title>Medlemskap</Title>
+      <Title order={2}>Medlemskap</Title>
       <Text>
         Bruk <strong>Opprett medlemskap</strong> for ny informasjon. Bruk <strong>Oppdater</strong> kun for å rette opp
         i eksisterende informasjon.

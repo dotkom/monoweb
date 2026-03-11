@@ -68,6 +68,27 @@ export function getAuditLogRepository(): AuditLogRepository {
                   ].filter(Boolean) as object[],
                 }
               : {},
+            query.byUserId
+              ? {
+                  userId: {
+                    in: query.byUserId,
+                  },
+                }
+              : {},
+            query.byTableName && query.byTableName.length > 0
+              ? {
+                  tableName: {
+                    in: query.byTableName,
+                  },
+                }
+              : {},
+            query.byOperation && query.byOperation.length > 0
+              ? {
+                  operation: {
+                    in: query.byOperation,
+                  },
+                }
+              : {},
           ],
         },
       })

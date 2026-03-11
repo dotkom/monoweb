@@ -1,7 +1,8 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { compareAsc } from "date-fns"
 import { z } from "zod"
-import { type User, type UserId, UserSchema, findActiveMembership, getMembershipGrade } from "./user"
+import { type User, type UserId, UserSchema, findActiveMembership } from "./user"
+import { getStudyGrade } from "@dotkomonline/utils"
 
 // TODO: Where on earth does this come from?
 export type AttendanceStatus = "NotOpened" | "Open" | "Closed"
@@ -100,6 +101,13 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   selections: true,
 })
 
+export const AttendanceSummarySchema = schemas.AttendanceSchema.extend({
+  currentUserAttendee: AttendeeSchema.nullable(),
+  pools: z.array(AttendancePoolSchema),
+  reservedAttendeeCount: z.number(),
+})
+export type AttendanceSummary = z.infer<typeof AttendanceSummarySchema>
+
 export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
   if (poolId) {
     return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.reserved).length
@@ -116,17 +124,14 @@ export function getUnreservedAttendeeCount(attendance: Attendance, poolId?: Atte
   return attendance.attendees.reduce((total, attendee) => total + (attendee.reserved ? 0 : 1), 0)
 }
 
-export function getAttendanceCapacity(attendance: Attendance): number {
+export function getAttendanceCapacity(attendance: Attendance | AttendanceSummary): number {
   return attendance.pools.reduce((total, pool) => total + pool.capacity, 0)
 }
 
 export function isAttendable(user: User, pool: AttendancePool) {
   const membership = findActiveMembership(user)
-  if (membership === null) {
-    return false
-  }
+  const grade = membership?.semester != null ? getStudyGrade(membership.semester) : null
 
-  const grade = getMembershipGrade(membership)
   if (grade === null) {
     return false
   }
@@ -138,8 +143,16 @@ export function isAttendable(user: User, pool: AttendancePool) {
   return pool.yearCriteria.includes(grade)
 }
 
-export const getAttendee = (attendance: Attendance | null, user: User | UserId | null) => {
-  if (!attendance || !user) {
+export const getAttendee = (attendance: Attendance | AttendanceSummary | null, user: User | UserId | null) => {
+  if (!attendance) {
+    return null
+  }
+
+  if ("currentUserAttendee" in attendance) {
+    return attendance.currentUserAttendee
+  }
+
+  if (!user) {
     return null
   }
 
@@ -200,7 +213,7 @@ export const getAttendeeQueuePosition = (attendance: Attendance, user: User | nu
 }
 
 export const hasAttendeePaid = (
-  attendance: Attendance,
+  attendance: Attendance | AttendanceSummary,
   attendee: Attendee | null,
   options?: { excludeReservation?: boolean }
 ): boolean | null => {

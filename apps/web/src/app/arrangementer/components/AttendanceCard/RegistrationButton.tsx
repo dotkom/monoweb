@@ -46,13 +46,20 @@ const getDisabledText = (
   hasMembership: boolean,
   isSuspended: boolean,
   registeredToParentEvent: boolean | null,
-  reservedToParentEvent: boolean | null
+  reservedToParentEvent: boolean | null,
+  hasTurnstileToken: boolean
 ) => {
   if (!isLoggedIn) {
     return "Du må være innlogget for å melde deg på"
   }
 
-  if (attendee) {
+  const isAttending = attendee !== null
+
+  if (!hasTurnstileToken && !isAttending) {
+    return "Du må bekrefte at du ikke er en robot"
+  }
+
+  if (isAttending) {
     if (isPastDeregisterDeadline && attendee.reserved) {
       return "Avmeldingsfristen har utløpt"
     }
@@ -98,6 +105,7 @@ interface RegistrationButtonProps {
   event: Event
   isLoading: boolean
   chargeScheduleDate: Date | null
+  hasTurnstileToken: boolean
 }
 
 export const RegistrationButton: FC<RegistrationButtonProps> = ({
@@ -110,6 +118,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   event,
   isLoading,
   chargeScheduleDate,
+  hasTurnstileToken,
 }) => {
   const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
 
@@ -148,7 +157,8 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     hasMembership,
     isSuspended,
     registeredToParentEvent,
-    reservedToParentEvent
+    reservedToParentEvent,
+    hasTurnstileToken
   )
   const disabled = Boolean(disabledText)
 

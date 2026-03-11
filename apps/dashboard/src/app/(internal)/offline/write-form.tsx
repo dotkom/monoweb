@@ -1,10 +1,13 @@
-import { useOfflineFileUploadMutation } from "@/app/(internal)/offline/mutations/use-offline-file-upload-mutation"
+import {
+  useOfflineFileUploadMutation,
+  useOfflineImageUploadMutation,
+} from "@/app/(internal)/offline/mutations/use-offline-file-upload-mutation"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { OfflineWriteSchema } from "@dotkomonline/types"
+import { OFFLINE_FILE_MAX_SIZE_KIB, OFFLINE_IMAGE_MAX_SIZE_KIB, OfflineWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 
 export const FormValidationSchema = OfflineWriteSchema
@@ -18,6 +21,7 @@ interface UseOfflineWriteFormProps {
 
 export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValues }: UseOfflineWriteFormProps) => {
   const fileUpload = useOfflineFileUploadMutation()
+  const imageUpload = useOfflineImageUploadMutation()
 
   return useFormBuilder({
     schema: FormValidationSchema,
@@ -36,15 +40,17 @@ export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValu
       }),
       fileUrl: createFileInput({
         label: "Fil",
+        maxSizeKiB: OFFLINE_FILE_MAX_SIZE_KIB,
         placeholder: "Last opp",
         required: true,
         onFileUpload: fileUpload,
       }),
       imageUrl: createImageInput({
         label: "Bilde",
+        maxSizeKiB: OFFLINE_IMAGE_MAX_SIZE_KIB,
         placeholder: "Last opp",
         required: true,
-        onFileUpload: fileUpload,
+        onFileUpload: imageUpload,
       }),
     },
   })

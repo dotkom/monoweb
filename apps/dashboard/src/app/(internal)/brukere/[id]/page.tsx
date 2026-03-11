@@ -5,13 +5,17 @@ import {
   IconBuildingWarehouse,
   IconCampfire,
   IconCircles,
+  IconClipboardList,
   IconExclamationMark,
   IconWheelchair,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import type { FC } from "react"
+import { useIsAdminQuery } from "../queries"
 import { UserEditCard } from "./edit-card"
 import { MembershipPage } from "./membership-page"
 import { useUserDetailsContext } from "./provider"
+import { UserAuditLogPage } from "./user-audit-log-page"
 import { UserEventPage } from "./user-event-page"
 import { UserGroupPage } from "./user-group-page"
 import { UserPunishmentPage } from "./user-punishment-page"
@@ -47,10 +51,24 @@ const SIDEBAR_LINKS = [
     slug: "prikker-og-suspensjoner",
     component: UserPunishmentPage,
   },
-] as const
+  {
+    icon: IconClipboardList,
+    label: "Hendelseslogg",
+    slug: "hendelseslogg",
+    component: UserAuditLogPage,
+    isAdmin: true,
+  },
+] satisfies {
+  label: string
+  slug: string
+  icon: FC
+  component: FC
+  isAdmin?: boolean
+}[]
 
 export default function UserDetailsPage() {
   const { user } = useUserDetailsContext()
+  const { isAdmin } = useIsAdminQuery()
   const router = useRouter()
 
   const searchParams = useSearchParams()
@@ -71,13 +89,13 @@ export default function UserDetailsPage() {
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange}>
         <Tabs.List>
-          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
+          {SIDEBAR_LINKS.filter((link) => !link.isAdmin || isAdmin).map(({ label, icon: Icon, slug }) => (
             <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
               {label}
             </Tabs.Tab>
           ))}
         </Tabs.List>
-        {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
+        {SIDEBAR_LINKS.filter((link) => !link.isAdmin || isAdmin).map(({ slug, component: Component }) => (
           <Tabs.Panel mt="md" key={slug} value={slug}>
             <Component />
           </Tabs.Panel>

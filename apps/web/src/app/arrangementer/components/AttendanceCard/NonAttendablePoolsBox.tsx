@@ -16,7 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@dotkomonline/ui"
-import { IconChevronRight, IconClock } from "@tabler/icons-react"
+import { IconChevronDown, IconClock } from "@tabler/icons-react"
 
 interface NonAttendablePoolsBoxProps {
   attendance: Attendance
@@ -37,9 +37,9 @@ export const NonAttendablePoolsBox = ({ attendance, user }: NonAttendablePoolsBo
 
   return (
     <Collapsible defaultOpen={!hasAttendablePool} className="w-full flex flex-col gap-1">
-      <CollapsibleTrigger className="w-full flex items-center gap-2 py-1 font-medium hover:font-semibold [&[data-state=open]>svg]:rotate-90">
+      <CollapsibleTrigger className="w-full flex items-center gap-2 py-1 text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 [&[data-state=open]>svg]:rotate-180">
         <Text className="text-sm">{hasAttendablePool ? "Andre påmeldingsgrupper" : "Påmeldingsgrupper"}</Text>
-        <IconChevronRight className="size-[1.25em] transition-transform -mt-[1px]" />
+        <IconChevronDown className="size-[1.25em] transition-transform" />
       </CollapsibleTrigger>
 
       <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">

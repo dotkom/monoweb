@@ -14,6 +14,8 @@ import {
 } from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
+import { WanderingMascot } from "./WanderingMascot"
+import { getGroupEasterEgg } from "./easter-eggs"
 
 interface CommitteePageProps {
   params: Promise<{ slug: string }>
@@ -22,32 +24,28 @@ interface CommitteePageProps {
 export const GroupPage = async ({ params }: CommitteePageProps) => {
   const { slug } = await params
 
-  const isStaff = await server.user.isStaff.query()
-
   const now = getCurrentUTC()
 
   const [session, group, futureEventWithAttendances, pastEventWithAttendances] = await Promise.all([
     auth.getServerSession(),
     server.group.get.query(slug),
-    server.event.all.query({
+    server.event.allSummaries.query({
       filter: {
         byOrganizingGroup: [slug],
         byEndDate: {
           max: null,
           min: now,
         },
-        excludingType: isStaff ? [] : undefined,
         orderBy: "asc",
       },
     }),
-    server.event.all.query({
+    server.event.allSummaries.query({
       filter: {
         byEndDate: {
           max: now,
           min: null,
         },
         byOrganizingGroup: [slug],
-        excludingType: isStaff ? [] : undefined,
         orderBy: "desc",
       },
     }),
@@ -112,11 +110,12 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     })
 
   const name = group.name ?? group.abbreviation
+  const easterEgg = getGroupEasterEgg(name)
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
-        <Avatar className="w-24 h-24 md:w-32 md:h-32">
+        <Avatar className={cn("w-24 h-24 md:w-32 md:h-32", easterEgg?.avatarClassName)}>
           <AvatarImage src={group.imageUrl ?? undefined} alt={name} />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
             <IconUsers width={48} height={48} />
@@ -232,6 +231,8 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           pastEventWithAttendances={pastEventWithAttendances.items}
         />
       </div>
+
+      {easterEgg?.mascot && <WanderingMascot config={easterEgg.mascot} />}
     </div>
   )
 }
@@ -297,18 +298,20 @@ function getLatestActiveMembership(member: GroupMember) {
 function getRolePriority(role: GroupRole) {
   switch (role.type) {
     case "LEADER":
-      return 7
+      return 8
     case "DEPUTY_LEADER":
-      return 6
+      return 7
     case "TREASURER":
-      return 5
+      return 6
     case "TRUSTEE":
-      return 4
+      return 5
     case "PUNISHER":
-      return 3
+      return 4
     case "COSMETIC":
-      return 2
+      return 3
     case "EMAIL_ONLY":
+      return 2
+    case "TEMPORARILY_LEAVE":
       return 1
     default:
       return 0

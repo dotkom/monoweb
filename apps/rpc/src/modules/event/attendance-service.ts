@@ -8,6 +8,7 @@ import {
   type AttendancePoolId,
   type AttendancePoolWrite,
   type AttendanceSelection,
+  type AttendanceSummary,
   type AttendanceWrite,
   AttendanceWriteSchema,
   type Attendee,
@@ -17,17 +18,23 @@ import {
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
   type Event,
-  type GroupType,
   type Membership,
   type TaskId,
   type User,
   type UserId,
   findActiveMembership,
-  getMembershipGrade,
   hasAttendeePaid,
   isAttendable,
+  findFirstHostingGroupEmail,
 } from "@dotkomonline/types"
-import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, ogJoin, slugify } from "@dotkomonline/utils"
+import {
+  createAbsoluteEventPageUrl,
+  createPoolName,
+  getCurrentUTC,
+  ogJoin,
+  slugify,
+  getStudyGrade,
+} from "@dotkomonline/utils"
 import {
   addDays,
   addHours,
@@ -71,6 +78,7 @@ import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import type { UserService } from "../user/user-service"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { EventService } from "./event-service"
+import { validateTurnstileToken } from "../../turnstile"
 
 type EventRegistrationOptions = {
   /** Should the user be registered regardless of if registration is closed? */
@@ -92,6 +100,11 @@ type EventRegistrationOptions = {
    * NOTE: This flag should PROBABLY only be used if you are calling registerAttendee as a system administrator.
    */
   overriddenAttendancePoolId: AttendancePoolId | null
+  /**
+   * Should the turnstile check be disabled in the backend? Should only be set to true if you are calling
+   * registerAttendee as a system administrator.
+   */
+  overrideTurnstileCheck: boolean
 }
 
 type EventDeregistrationOptions = {
@@ -109,6 +122,7 @@ export const RegistrationRejectionCause = {
   MISSING_PARENT_RESERVATION: "MISSING_PARENT_RESERVATION",
   MISSING_MEMBERSHIP: "MISSING_MEMBERSHIP",
   NO_MATCHING_POOL: "NO_MATCHING_POOL",
+  INVALID_TURNSTILE_TOKEN: "INVALID_TURNSTILE_TOKEN",
 } as const
 
 export type RegistrationBypassCause = keyof typeof RegistrationBypassCause
@@ -117,6 +131,7 @@ export const RegistrationBypassCause = {
   IGNORE_REGISTRATION_START: "IGNORE_REGISTRATION_START",
   IGNORE_REGISTRATION_END: "IGNORE_REGISTRATION_END",
   OVERRIDDEN_POOL: "OVERRIDDEN_POOL",
+  OVERRIDDEN_TURNSTILE_CHECK: "OVERRIDDEN_TURNSTILE_CHECK",
 } as const
 
 /**
@@ -165,6 +180,11 @@ export interface AttendanceService {
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   getAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance>
   getAttendancesByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Attendance[]>
+  getAttendanceSummariesByIds(
+    handle: DBHandle,
+    attendanceIds: AttendanceId[],
+    userId?: UserId
+  ): Promise<AttendanceSummary[]>
   getAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance>
   getAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance>
   updateAttendanceById(
@@ -193,6 +213,7 @@ export interface AttendanceService {
   getRegistrationAvailability(
     handle: DBHandle,
     attendanceId: AttendanceId,
+    turnstileToken: string | null, // If null, overrideTurnstileCheck must be true
     userId: UserId,
     options: EventRegistrationOptions
   ): Promise<RegistrationAvailabilityResult>
@@ -243,6 +264,8 @@ export interface AttendanceService {
     mergeTime: TZDate | null
   ): Promise<TaskId | null>
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
+
+  notifyAttendees(handle: DBHandle, attendanceId: AttendanceId, message: string): Promise<void>
 }
 
 export function getAttendanceService(
@@ -337,6 +360,10 @@ export function getAttendanceService(
 
     async getAttendancesByIds(handle, attendanceIds) {
       return await attendanceRepository.findAttendancesByIds(handle, attendanceIds)
+    },
+
+    async getAttendanceSummariesByIds(handle, attendanceIds, userId) {
+      return await attendanceRepository.findAttendanceSummariesByIds(handle, attendanceIds, userId)
     },
 
     async updateAttendanceById(handle, attendanceId, data) {
@@ -449,23 +476,58 @@ export function getAttendanceService(
       await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
     },
 
-    async getRegistrationAvailability(handle, attendanceId, userId, options) {
+    async getRegistrationAvailability(handle, attendanceId, turnstileToken, userId, options) {
       // NOTE: There are a few optimizations on queries in this function, as we want to keep the performance if this
       // procedure high. In order to achieve this, we try to fetch as much data as possible in parallel, and we reduce
-      // the number of queries based on checks needed.
+      // the number of queries based on checks needed. For this reason, we also check the turnstile token validity
+      // during the other initial queries, as this is also a check that can be done early and can potentially short
+      // circuit the rest of the function if the token is invalid.
       //
       // For example, we do not need to query the parent event if the `options` tell to ignore any constraints on the
       // parent event.
-      const [attendance, event, user] = await Promise.all([
+
+      const turnstileCheckRunner = async (): Promise<boolean> => {
+        if (!turnstileToken) {
+          return false
+        }
+
+        const validationResponse = await validateTurnstileToken({
+          token: turnstileToken,
+          secretKey: configuration.TURNSTILE_SECRET_KEY,
+          idempotencyKey: crypto.randomUUID(),
+        })
+
+        if (!validationResponse.success) {
+          logger.warn(
+            "Turnstile validation failed for User(ID=%s) registering for Attendance(ID=%s): %o",
+            userId,
+            attendanceId,
+            validationResponse.error_codes
+          )
+          return false
+        }
+
+        return true
+      }
+
+      const [attendance, event, user, turnstileCheckResult] = await Promise.all([
         this.getAttendanceById(handle, attendanceId),
         eventService.getByAttendanceId(handle, attendanceId),
         userService.getById(handle, userId),
+        turnstileCheckRunner(),
       ])
 
       // A registration might be allowed to bypass a number of checks based on the provided options object. We
       // accumulate these in a list such that downstream users of the result can make decisions based on checks
       // skipped.
       const bypassedChecks: RegistrationBypassCause[] = []
+
+      if (!turnstileCheckResult) {
+        if (!options.overrideTurnstileCheck) {
+          return { cause: "INVALID_TURNSTILE_TOKEN", success: false }
+        }
+        bypassedChecks.push("OVERRIDDEN_TURNSTILE_CHECK")
+      }
 
       const isPreviouslyRegistered = attendance.attendees.some((a) => a.userId === userId)
       if (isPreviouslyRegistered) {
@@ -491,18 +553,20 @@ export function getAttendanceService(
         if (options.ignoreRegisteredToParent) {
           bypassedChecks.push("IGNORE_PARENT")
         } else {
-          const parent = await attendanceRepository.findAttendanceByEventId(handle, event.parentId)
-          // SAFETY: This cannot fail as it's enforced on database level through a foreign key
-          invariant(parent !== null)
+          // SAFETY: The event should always exist as it's enforced on database level through a foreign key
+          const parentAttendance = await attendanceRepository.findAttendanceByEventId(handle, event.parentId)
 
-          const attendee = parent.attendees.find((a) => a.userId === userId)
+          // We check that the event has an attendance
+          if (parentAttendance !== null) {
+            const attendee = parentAttendance.attendees.find((a) => a.userId === userId)
 
-          if (attendee === undefined) {
-            return { cause: "MISSING_PARENT_REGISTRATION", success: false }
-          }
+            if (attendee === undefined) {
+              return { cause: "MISSING_PARENT_REGISTRATION", success: false }
+            }
 
-          if (!attendee.reserved) {
-            return { cause: "MISSING_PARENT_RESERVATION", success: false }
+            if (!attendee.reserved) {
+              return { cause: "MISSING_PARENT_RESERVATION", success: false }
+            }
           }
         }
       }
@@ -598,6 +662,8 @@ export function getAttendanceService(
         (!isFuture(reservationActiveAt) && (pool.capacity === 0 || poolAttendees.length < pool.capacity)) ||
         options.immediateReservation
 
+      const userGrade = membership.semester != null ? getStudyGrade(membership.semester) : null
+
       const attendee = await attendanceRepository.createAttendee(
         handle,
         attendance.id,
@@ -608,7 +674,7 @@ export function getAttendanceService(
           earliestReservationAt: reservationActiveAt,
           reserved: isImmediateReservation,
           selections: [],
-          userGrade: getMembershipGrade(membership),
+          userGrade,
         } satisfies AttendeeWrite)
       )
 
@@ -810,9 +876,12 @@ export function getAttendanceService(
       invariant(pool !== undefined)
 
       const remainingAttendees = attendance.attendees.filter((a) => a.id !== attendee.id)
+      const reservedAttendeesCount = remainingAttendees.filter(
+        (a) => a.reserved && a.attendancePoolId === pool.id
+      ).length
 
-      const attendeeCount = remainingAttendees.filter((a) => a.attendancePoolId === pool.id).length
-      if (pool.capacity !== 0 && (pool.capacity < 0 || attendeeCount >= pool.capacity)) {
+      // If the pool is at capacity, we cannot reserve anyone new
+      if (pool.capacity !== 0 && (pool.capacity < 0 || reservedAttendeesCount >= pool.capacity)) {
         return
       }
 
@@ -870,8 +939,10 @@ export function getAttendanceService(
         firstUnreservedAdjacentAttendee.user.name || "<missing name>",
         event.id,
         event.title,
-        attendee.id
+        attendee.user.id
       )
+
+      sendEventRegistrationEmail(event, attendance, firstUnreservedAdjacentAttendee)
     },
 
     async findChargeAttendeeScheduleDate(handle, attendeeId) {
@@ -1377,12 +1448,7 @@ export function getAttendanceService(
           return
         }
 
-        const validGroupTypes: GroupType[] = ["COMMITTEE", "NODE_COMMITTEE"]
-
-        const hostingGroupEmail =
-          event.hostingGroups.filter((group) => group.email && validGroupTypes.includes(group.type)).at(0)?.email ??
-          "bedkom@online.ntnu.no"
-
+        const hostingGroupEmail = findFirstHostingGroupEmail(event) ?? "bedkom@online.ntnu.no"
         logger.info(
           "Sending feedback form email for Event(ID=%s) to %d attendees from email %s",
           event.id,
@@ -1551,6 +1617,59 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
+    },
+    async notifyAttendees(handle, attendanceId, message) {
+      const attendance = await this.getAttendanceById(handle, attendanceId)
+      const event = await eventService.getByAttendanceId(handle, attendanceId)
+      if (isBefore(getCurrentUTC(), attendance.registerStart)) {
+        throw new IllegalStateError(`Cannot send message to attendees for Attendance(ID=${attendance.id}) before start`)
+      }
+
+      const hostingGroupEmail = findFirstHostingGroupEmail(event)
+      if (hostingGroupEmail === null) {
+        logger.warn(
+          "Notification email sent for Event(ID=%s, Name=%s) did not have sufficient organizer email so %s was used.",
+          event.id,
+          event.title,
+          DEFAULT_EMAIL_SOURCE
+        )
+      }
+      const sourceEmail = hostingGroupEmail ?? DEFAULT_EMAIL_SOURCE
+
+      // In order to keep email sizes relatively small, and to prevent spam detection we batch the emails with 25 BCC recipients at a time
+      const batchSize = 25
+      for (let batchStartIndex = 0; batchStartIndex < attendance.attendees.length; batchStartIndex += batchSize) {
+        const attendees = attendance.attendees.slice(batchStartIndex, batchStartIndex + batchSize)
+        const attendeeEmails = attendees.map((a) => a.user.email).filter((e) => e !== null)
+
+        const currentBatchIndex = Math.floor(batchStartIndex / batchSize) + 1
+        const totalBatches = Math.ceil(attendance.attendees.length / batchSize)
+
+        logger.info(
+          "Scheduling emails %s..%s in batch %s/%s for notification for Event(ID=%s, Name=%s)",
+          batchStartIndex + 1,
+          batchStartIndex + attendees.length,
+          currentBatchIndex,
+          totalBatches,
+          event.id,
+          event.title
+        )
+
+        await emailService.send(
+          sourceEmail,
+          [sourceEmail],
+          [],
+          [],
+          attendeeEmails,
+          `Viktig melding om ${event.title}`,
+          emails.EVENT_MESSAGE,
+          {
+            eventName: event.title,
+            eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+            message,
+          }
+        )
+      }
     },
   }
 }

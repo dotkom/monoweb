@@ -1,0 +1,26 @@
+{
+  "extends": "../../packages/config/tsconfig.json",
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true,
+    "allowJs": true,
+    "resolveJsonModule": true
+  }
+}

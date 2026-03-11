@@ -11,6 +11,7 @@ export type EmailType =
   | "COMPANY_INVOICE_NOTIFICATION"
   | "FEEDBACK_FORM_LINK"
   | "EVENT_ATTENDANCE"
+  | "EVENT_MESSAGE"
   | "RECEIVED_MARK"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
@@ -19,15 +20,8 @@ export interface EmailTemplate<TData, TType extends EmailType> {
   type: TType
 }
 
-export type InferEmailData<TDef> = TDef extends EmailTemplate<infer TData, infer TType> ? TData : never
-export type InferEmailType<TDef> =
-  TDef extends EmailTemplate<infer TData, infer TType extends EmailType> ? TType : never
-
-export type CompanyCollaborationReceiptEmailTemplate = typeof emails.COMPANY_COLLABORATION_RECEIPT
-export type CompanyCollaborationNotificationEmailTemplate = typeof emails.COMPANY_COLLABORATION_NOTIFICATION
-export type CompanyInvoiceNotificationEmailTemplate = typeof emails.COMPANY_INVOICE_NOTIFICATION
-export type FeedbackFormLinkEmailTemplate = typeof emails.FEEDBACK_FORM_LINK
-export type AnyEmailTemplate = CompanyCollaborationReceiptEmailTemplate
+export type InferEmailData<TDef> = TDef extends EmailTemplate<infer TData, EmailType> ? TData : never
+export type InferEmailType<TDef> = TDef extends EmailTemplate<unknown, infer TType extends EmailType> ? TType : never
 
 export function createEmailTemplate<const TData, const TType extends EmailType>(
   definition: EmailTemplate<TData, TType>
@@ -87,7 +81,8 @@ export const emails = {
         contactName: z.string().min(1, "Navn til kontaktperson kan ikke være tomt"),
         contactEmail: z.string().email("E-post adressen må være en gyldig e-post adresse"),
         contactTel: z.string().min(1, "Telefonnummeret kan ikke være tomt"),
-        invoiceRelation: z.enum(["E-post", "Post", "EHF"]),
+        invoiceRelation: z.string(),
+        preferredDeliveryMethod: z.string(),
         preferredPurchaseOrderNumber: z.number().nullable(),
         preferredDueDateLength: z.number(),
         comment: z.string().nullable(),
@@ -119,9 +114,19 @@ export const emails = {
         eventLink: z.string().url(),
         deregistrationDeadline: z
           .string()
-          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
+  }),
+  EVENT_MESSAGE: createEmailTemplate({
+    type: "EVENT_MESSAGE",
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.string().url(),
+        message: z.string(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "event_message.mustache"), "utf-8"),
   }),
   RECEIVED_MARK: createEmailTemplate({
     type: "RECEIVED_MARK",
@@ -130,7 +135,9 @@ export const emails = {
         title: z.string(),
         details: z.string().nullable(),
         weight: z.number(),
-        endsAt: z.string().transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
+        endsAt: z
+          .string()
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
   }),

@@ -9,13 +9,14 @@ import { useMemo } from "react"
 import { useIsAdminQuery } from "../queries"
 import { useConfirmDeleteMembershipModal } from "./confirm-delete-membership-modal"
 import { useEditMembershipModal } from "./edit-membership-modal"
+import { getStudyGrade, isSpringSemester } from "@dotkomonline/utils"
 
 interface Props {
   data: Membership[]
   userId: UserId
 }
 
-export const useMembershipTable = ({ data, userId }: Props) => {
+export const useMembershipTable = ({ data }: Props) => {
   const { isAdmin } = useIsAdminQuery()
   const columnHelper = createColumnHelper<Membership>()
   const openEditMembershipModal = useEditMembershipModal()
@@ -27,13 +28,20 @@ export const useMembershipTable = ({ data, userId }: Props) => {
         header: () => "Type",
         cell: (info) => getMembershipTypeName(info.getValue()),
       }),
-      columnHelper.accessor("start", {
-        header: () => "Startdato",
-        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
-      }),
-      columnHelper.accessor("end", {
-        header: () => "Sluttdato",
-        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
+      columnHelper.accessor("semester", {
+        header: () => "Semester",
+        cell: (info) => {
+          const zeroIndexSemester = info.getValue()
+
+          if (zeroIndexSemester == null) {
+            return "-"
+          }
+
+          const season = isSpringSemester(zeroIndexSemester) ? "våren" : "høsten"
+          const grade = getStudyGrade(zeroIndexSemester)
+
+          return `${zeroIndexSemester + 1}. sem. (${season} ${grade}. år)`
+        },
       }),
       columnHelper.accessor("specialization", {
         header: () => "Spesialisering",
@@ -43,13 +51,29 @@ export const useMembershipTable = ({ data, userId }: Props) => {
           return specialization ? getSpecializationName(specialization) : "-"
         },
       }),
+      columnHelper.accessor("start", {
+        header: () => "Startdato",
+        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy"),
+      }),
+      columnHelper.accessor("end", {
+        header: () => "Sluttdato",
+        cell: (info) => {
+          const endDate = info.getValue()
+
+          if (!endDate) {
+            return "-"
+          }
+
+          return formatDate(endDate, "dd.MM.yyyy")
+        },
+      }),
       columnHelper.accessor((role) => role, {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
           <Button
-            variant="outline"
-            leftSection={<IconEdit />}
+            size="sm"
+            leftSection={<IconEdit size="1rem" />}
             onClick={() => openEditMembershipModal({ membership: info.getValue() })}
           >
             Oppdater
@@ -65,7 +89,8 @@ export const useMembershipTable = ({ data, userId }: Props) => {
                 <Button
                   variant="filled"
                   color="red"
-                  leftSection={<IconTrash />}
+                  size="sm"
+                  leftSection={<IconTrash size="1rem" />}
                   onClick={() => openDeleteMembershipModal({ membership: info.getValue() })()}
                 >
                   Slett

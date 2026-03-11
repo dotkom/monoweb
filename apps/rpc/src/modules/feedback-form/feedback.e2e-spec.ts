@@ -71,12 +71,13 @@ async function createMockAttendance(eventId: EventId) {
 }
 
 async function registerMockUserToAttendance(attendanceId: AttendanceId, userId: UserId) {
-  const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendanceId, userId, {
+  const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendanceId, null, userId, {
     immediateReservation: true,
     immediatePayment: false,
     ignoreRegistrationWindow: false,
     overriddenAttendancePoolId: null,
     ignoreRegisteredToParent: false,
+    overrideTurnstileCheck: true,
   })
   invariant(result.success)
   return await core.attendanceService.registerAttendee(dbClient, result)
@@ -140,15 +141,20 @@ describe("feedback integration tests", () => {
     expect(copiedForm.questions).toEqual(
       expect.arrayContaining(
         originalForm.questions.map((question) => {
-          // biome-ignore lint/correctness/noUnusedVariables: object property picking
-          const { createdAt, updatedAt, id, feedbackFormId, options, ...questionRest } = question
+          const {
+            createdAt: _createdAt,
+            updatedAt: _updatedAt,
+            id: _id,
+            feedbackFormId: _feedbackFormId,
+            options: _options,
+            ...questionRest
+          } = question
 
           return expect.objectContaining({
             ...questionRest,
             options: expect.arrayContaining(
               question.options.map((option) => {
-                // biome-ignore lint/correctness/noUnusedVariables: object property picking
-                const { id, questionId, ...optionRest } = option
+                const { id: _id, questionId: _questionId, ...optionRest } = option
 
                 return expect.objectContaining(optionRest)
               })

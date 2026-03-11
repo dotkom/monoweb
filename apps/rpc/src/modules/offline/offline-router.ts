@@ -79,6 +79,23 @@ const createOfflineFileUploadProcedure = procedure
     return ctx.offlineService.createFileUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
   })
 
+export type CreateOfflineImageUploadInput = inferProcedureInput<typeof createOfflineImageUploadProcedure>
+export type CreateOfflineImageUploadOutput = inferProcedureOutput<typeof createOfflineImageUploadProcedure>
+const createOfflineImageUploadProcedure = procedure
+  .input(
+    z.object({
+      filename: z.string(),
+      contentType: z.string(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    return ctx.offlineService.createImageUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
+  })
+
 export const offlineRouter = t.router({
   create: createOfflineProcedure,
   edit: editOfflineProcedure,
@@ -86,4 +103,5 @@ export const offlineRouter = t.router({
   find: findOfflineProcedure,
   get: getOfflineProcedure,
   createFileUpload: createOfflineFileUploadProcedure,
+  createImageUpload: createOfflineImageUploadProcedure,
 })

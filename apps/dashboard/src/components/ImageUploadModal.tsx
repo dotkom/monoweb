@@ -15,6 +15,7 @@ const validationSchema = z.object({
 interface UploadImageModalProps {
   handleSubmit: (fileUrl: string, alt: string, title: string | undefined) => Promise<void>
   onFileUpload: (file: File) => Promise<string>
+  maxSizeKiB?: number
 }
 
 export const UploadImageModal: FC<ContextModalProps<UploadImageModalProps>> = ({ context, innerProps }) => {
@@ -30,6 +31,7 @@ export const UploadImageModal: FC<ContextModalProps<UploadImageModalProps>> = ({
         label: "Bilde",
         placeholder: "Last opp fil",
         onFileUpload: innerProps.onFileUpload,
+        maxSizeKiB: innerProps.maxSizeKiB,
       }),
       alt: createTextInput({
         label: "Alt-tekst",

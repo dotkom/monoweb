@@ -50,7 +50,7 @@ const InterestSection: FC = () => {
         Bedriftens svar vil bli sendt til Onlines bedriftskomite og etterstrebes å bli svart på innen to virkedager.
       </Text>
 
-      <a href="https://interesse.online.ntnu.no" className="mt-4">
+      <a href="/bedrift/interesse" className="mt-4">
         <Button>Send Interesse</Button>
       </a>
     </section>

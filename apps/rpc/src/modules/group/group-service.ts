@@ -15,6 +15,7 @@ import {
   type GroupWrite,
   type UserId,
   getDefaultGroupMemberRoles,
+  GROUP_IMAGE_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
@@ -307,12 +308,10 @@ export function getGroupService(
       const uuid = crypto.randomUUID()
       const key = `group/${Date.now()}-${uuid}-${slugify(filename)}`
 
-      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
-
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        maxSizeKiB,
+        maxSizeKiB: GROUP_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
       })

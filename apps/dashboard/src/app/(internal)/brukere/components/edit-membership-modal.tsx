@@ -3,6 +3,7 @@ import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useUpdateMembershipMutation } from "../mutations"
 import { useMembershipWriteForm } from "./membership-form"
+import { Stack, Text } from "@mantine/core"
 
 export const EditMembershipModal: FC<ContextModalProps<{ membership: Membership }>> = ({
   context,
@@ -21,7 +22,14 @@ export const EditMembershipModal: FC<ContextModalProps<{ membership: Membership 
       close()
     },
   })
-  return <FormComponent />
+  return (
+    <Stack gap="sm">
+      <Text size="sm" c="dimmed">
+        Rediger semesterverdien for å endre årstrinn.
+      </Text>
+      <FormComponent />
+    </Stack>
+  )
 }
 
 export const useEditMembershipModal =

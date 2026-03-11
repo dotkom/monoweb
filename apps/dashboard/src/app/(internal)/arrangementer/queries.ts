@@ -2,7 +2,7 @@ import type { AttendanceId, EventFilterQuery, EventId, FeedbackFormId, UserId } 
 import { type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc-client"
-import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
+import type { Pageable } from "@dotkomonline/rpc"
 import { useMemo } from "react"
 
 interface UseEventAllQueryProps {
