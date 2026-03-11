@@ -1,9 +1,10 @@
 "use client"
 
 import { Button, Text, Title } from "@dotkomonline/ui"
-import { useEffect, useMemo, useRef } from "react"
-import type { FC, SVGProps } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import type { FC, PropsWithChildren, SVGProps } from "react"
 import Link from "next/link"
+import { NotFoundGameView } from "./game-view"
 
 const NOT_FOUND_QUOTES = [
   "Siden finnes ikke.",
@@ -14,7 +15,7 @@ const beginAll = (refs: React.RefObject<SVGAnimateElement | null>[]) => {
   for (const ref of refs) ref.current?.beginElement()
 }
 
-const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
+const NotFoundLogo: FC<SVGProps<SVGSVGElement> & { onCharged?: () => void }> = ({ onCharged, ...props }) => {
   // Gradient fill-up animation: two stops animate in sync to create a hard edge
   // that rises from bottom to top. Each stop needs its own ref because SMIL
   // begin="id.begin" sync doesn't work reliably in React's DOM.
@@ -23,11 +24,16 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
   const holdingRef = useRef(false)
   const boltRef = useRef<SVGPathElement>(null)
   const shakeFrameRef = useRef<number | null>(null)
+  const chargeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const stopFill = () => {
     if (!holdingRef.current) return
     holdingRef.current = false
     window.removeEventListener("mouseup", stopFill)
+    if (chargeTimerRef.current != null) {
+      clearTimeout(chargeTimerRef.current)
+      chargeTimerRef.current = null
+    }
     if (shakeFrameRef.current != null) cancelAnimationFrame(shakeFrameRef.current)
     if (boltRef.current) {
       boltRef.current.style.translate = ""
@@ -40,10 +46,20 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
     beginAll(fillRefs)
     window.addEventListener("mouseup", stopFill, { once: true })
 
+    chargeTimerRef.current = setTimeout(() => {
+      if (!holdingRef.current) return
+      holdingRef.current = false
+      window.removeEventListener("mouseup", stopFill)
+      if (shakeFrameRef.current != null) cancelAnimationFrame(shakeFrameRef.current)
+      if (boltRef.current) boltRef.current.style.translate = ""
+      onCharged?.()
+    }, 600)
+
     const startTime = performance.now()
     const shake = () => {
       const elapsed = (performance.now() - startTime) / 1000
-      const intensity = Math.min(elapsed * 5, 3)
+      const t = Math.min(elapsed / 0.6, 1)
+      const intensity = 0.3 + t * t * t * 6
       const x = (Math.random() - 0.5) * 2 * intensity
       const y = (Math.random() - 0.5) * 2 * intensity
       if (boltRef.current) {
@@ -57,6 +73,7 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
   useEffect(() => {
     return () => {
       if (shakeFrameRef.current != null) cancelAnimationFrame(shakeFrameRef.current)
+      if (chargeTimerRef.current != null) clearTimeout(chargeTimerRef.current)
       window.removeEventListener("mouseup", stopFill)
     }
   }, [])
@@ -146,17 +163,135 @@ const NotFoundLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
   )
 }
 
-export const NotFoundDefault = () => {
-  const quote = useMemo(() => NOT_FOUND_QUOTES[Math.floor(Math.random() * NOT_FOUND_QUOTES.length)], [])
+const ChargedLogo: FC<{ onFellOff?: () => void }> = ({ onFellOff }) => {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    let vy = -1000
+    const vx = 60
+    const gravity = 1800
+    const spin = 180
+
+    let x = 0
+    let y = 0
+    let rotation = 0
+    let prev = performance.now()
+    let frame: number
+
+    const step = (now: number) => {
+      const dt = Math.min((now - prev) / 1000, 0.05)
+      prev = now
+
+      vy += gravity * dt
+      x += vx * dt
+      y += vy * dt
+      rotation += spin * dt
+
+      el.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`
+
+      if (y < window.innerHeight + 200) {
+        frame = requestAnimationFrame(step)
+      } else {
+        onFellOff?.()
+      }
+    }
+
+    frame = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(frame)
+  }, [])
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 min-h-[calc(100vh-5rem)]">
+    <div ref={ref}>
       <NotFoundLogo className="w-40 h-40" />
-      <Title className="text-6xl">404</Title>
-      <Text className="text-lg text-slate-500 font-mono italic">{quote}</Text>
-      <Button className="w-fit rounded-lg px-6 py-3" color="brand" element={Link} href="/">
-        Gå til forsiden
-      </Button>
+    </div>
+  )
+}
+
+const Falling: FC<PropsWithChildren> = ({ children }) => {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    let vy = 0
+    const vx = (Math.random() - 0.5) * 60
+    const gravity = 1200 + Math.random() * 400
+    const spin = (Math.random() - 0.5) * 150
+
+    let x = 0
+    let y = 0
+    let rotation = 0
+    let prev = performance.now()
+    let frame: number
+
+    const step = (now: number) => {
+      const dt = Math.min((now - prev) / 1000, 0.05)
+      prev = now
+
+      vy += gravity * dt
+      x += vx * dt
+      y += vy * dt
+      rotation += spin * dt
+
+      el.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`
+
+      if (y < window.innerHeight + 200) {
+        frame = requestAnimationFrame(step)
+      }
+    }
+
+    frame = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(frame)
+  }, [])
+
+  return <div ref={ref}>{children}</div>
+}
+
+export const NotFoundDefault = () => {
+  const quote = useMemo(() => NOT_FOUND_QUOTES[Math.floor(Math.random() * NOT_FOUND_QUOTES.length)], [])
+  const [phase, setPhase] = useState<"idle" | "charged" | "game">("idle")
+
+  useEffect(() => {
+    for (const src of ["/online-logo-o.svg", "/online-logo-o-darkmode.svg"]) {
+      const img = new Image()
+      img.src = src
+    }
+  }, [])
+
+  if (phase === "game") {
+    return <NotFoundGameView onExit={() => setPhase("idle")} />
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-8 min-h-[calc(100vh-5rem)] overflow-hidden">
+      {phase === "charged" ? (
+        <ChargedLogo onFellOff={() => setPhase("game")} />
+      ) : (
+        <NotFoundLogo className="w-40 h-40" onCharged={() => setPhase("charged")} />
+      )}
+      {phase === "charged" ? (
+        <>
+          <Falling><Title className="text-6xl">404</Title></Falling>
+          <Falling><Text className="text-lg text-slate-500 font-mono italic">{quote}</Text></Falling>
+          <Falling>
+            <Button className="w-fit rounded-lg px-6 py-3" color="brand" element={Link} href="/">
+              Gå til forsiden
+            </Button>
+          </Falling>
+        </>
+      ) : phase === "idle" ? (
+        <>
+          <Title className="text-6xl">404</Title>
+          <Text className="text-lg text-slate-500 font-mono italic">{quote}</Text>
+          <Button className="w-fit rounded-lg px-6 py-3" color="brand" element={Link} href="/">
+            Gå til forsiden
+          </Button>
+        </>
+      ) : null}
     </div>
   )
 }
