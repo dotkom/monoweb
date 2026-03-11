@@ -9,18 +9,19 @@ import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
-  type Membership,
-  type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   findActiveMembership,
   getMembershipTypeName,
   getSpecializationName,
+  type Membership,
+  type VisiblePersonalMarkDetails,
 } from "@dotkomonline/types"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Button,
+  cn,
   RadialProgress,
   ReadMore,
   RichText,
@@ -33,7 +34,6 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  cn,
 } from "@dotkomonline/ui"
 import {
   capitalizeFirstLetter,
@@ -61,9 +61,9 @@ import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
-import { notFound, useParams, useSearchParams } from "next/navigation"
-import { parseAsStringLiteral, useQueryState } from "nuqs"
+import { notFound, useParams, useRouter, useSearchParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
+import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
@@ -71,6 +71,13 @@ import { useIsAdminQuery } from "./queries"
 
 const EventListTabSchema = z.enum(["reserved", "waitlist"])
 type EventListTab = z.infer<typeof EventListTabSchema>
+
+const EVENT_LIST_TAB_QUERY_PARAM_KEY = "eventListTab"
+const eventListTabFormSchema = z.object({
+  eventListTab: EventListTabSchema.default("reserved"),
+})
+
+export type EventListTabFormSchema = z.infer<typeof eventListTabFormSchema>
 
 const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
   const Icon = props.icon
@@ -204,6 +211,8 @@ export function ProfilePage() {
   const trpc = useTRPC()
   const session = useSession()
   const fullPathname = useFullPathname()
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [userResult] = useQueries({
     queries: [trpc.user.findByProfileSlug.queryOptions(profileSlug)],
@@ -219,7 +228,9 @@ export function ProfilePage() {
   const [{ data: groups }, { data: futureEventWithAttendances }, { data: marks }, { data: eventsMissingFeedback }] =
     useQueries({
       queries: [
-        trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
+        trpc.group.allByMember.queryOptions(user?.id ?? "", {
+          enabled: isLoggedIn && Boolean(user?.id),
+        }),
         trpc.event.allSummariesByAttendingUserId.queryOptions(
           {
             id: user?.id ?? "",
@@ -267,10 +278,6 @@ export function ProfilePage() {
       (eventWithAttendance) => !eventWithAttendance.attendance?.currentUserAttendee?.reserved
     ) ?? []
 
-  const tabParser = parseAsStringLiteral(EventListTabSchema.options)
-
-  const [eventListTab, setEventListTab] = useQueryState("eventListTab", tabParser.withDefault("reserved"))
-
   const allGroups = useMemo(
     () =>
       groups
@@ -285,6 +292,19 @@ export function ProfilePage() {
   )
 
   const { isAdmin } = useIsAdminQuery()
+
+  const eventListTabQueryParam =
+    EventListTabSchema.safeParse(searchParams.get(EVENT_LIST_TAB_QUERY_PARAM_KEY)).data ?? "reserved"
+
+  const eventTabsForm = useForm<EventListTabFormSchema>({
+    defaultValues: {
+      eventListTab: eventListTabQueryParam,
+    },
+  })
+
+  const submitEventTabsForm = eventTabsForm.handleSubmit(({ eventListTab }) => {
+    router.replace(`?eventListTab=${eventListTab}`, { scroll: false })
+  })
 
   if (user === undefined || userLoading) {
     return <SkeletonProfilePage />
@@ -360,7 +380,12 @@ export function ProfilePage() {
               <Tooltip delayDuration={100}>
                 <TooltipTrigger>
                   <Text>
-                    {capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt, { locale: nb }))} i Online
+                    {capitalizeFirstLetter(
+                      formatDistanceToNowStrict(user.createdAt, {
+                        locale: nb,
+                      })
+                    )}{" "}
+                    i Online
                   </Text>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -496,7 +521,9 @@ export function ProfilePage() {
                     <Text className="text-lg">{event.title}</Text>
                     <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
                       Gi tilbakemelding på {event.title} som du deltok på{" "}
-                      {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
+                      {formatDate(event.start, "dd. MMM yyyy", {
+                        locale: nb,
+                      })}
                     </Text>
                     <Text className="text-sm text-red-400">
                       Fristen for å svare er{" "}
@@ -542,36 +569,55 @@ export function ProfilePage() {
 
         {isLoggedIn ? (
           futureEventWithAttendances !== undefined && pastEventWithAttendances !== undefined ? (
-            <Tabs value={eventListTab} onValueChange={(value) => setEventListTab(value as EventListTab)}>
-              <TabsList className="w-full sm:w-fit">
-                <TabsTrigger className="w-full sm:w-fit" value="reserved">
-                  Påmeldt
-                </TabsTrigger>
-                <TabsTrigger className="w-full sm:w-fit" value="waitlist">
-                  I venteliste
-                </TabsTrigger>
-              </TabsList>
+            <form
+              onSubmit={(event) => {
+                event.preventDefault()
+                void submitEventTabsForm()
+              }}
+            >
+              <Controller
+                control={eventTabsForm.control}
+                name="eventListTab"
+                render={({ field }) => (
+                  <Tabs
+                    value={field.value}
+                    onValueChange={(value) => {
+                      field.onChange(value as EventListTab)
+                      void submitEventTabsForm()
+                    }}
+                  >
+                    <TabsList className="w-full sm:w-fit">
+                      <TabsTrigger className="w-full sm:w-fit" value="reserved">
+                        Påmeldt
+                      </TabsTrigger>
+                      <TabsTrigger className="w-full sm:w-fit" value="waitlist">
+                        I venteliste
+                      </TabsTrigger>
+                    </TabsList>
 
-              <TabsContent value="reserved" className="p-0 border-none mt-4">
-                <EventList
-                  futureEventWithAttendances={futureEventsReservedFor}
-                  pastEventWithAttendances={pastEventsReservedFor}
-                  onLoadMore={fetchNextPage}
-                  viewMode="CHRONOLOGICAL"
-                />
-              </TabsContent>
+                    <TabsContent value="reserved" className="p-0 border-none mt-4">
+                      <EventList
+                        futureEventWithAttendances={futureEventsReservedFor}
+                        pastEventWithAttendances={pastEventsReservedFor}
+                        onLoadMore={fetchNextPage}
+                        viewMode="CHRONOLOGICAL"
+                      />
+                    </TabsContent>
 
-              <TabsContent value="waitlist" className="p-0 border-none mt-4">
-                <div>
-                  <EventList
-                    futureEventWithAttendances={futureEventsInWaitlistFor}
-                    pastEventWithAttendances={pastEventsInWaitlistFor}
-                    onLoadMore={fetchNextPage}
-                    viewMode="CHRONOLOGICAL"
-                  />
-                </div>
-              </TabsContent>
-            </Tabs>
+                    <TabsContent value="waitlist" className="p-0 border-none mt-4">
+                      <div>
+                        <EventList
+                          futureEventWithAttendances={futureEventsInWaitlistFor}
+                          pastEventWithAttendances={pastEventsInWaitlistFor}
+                          onLoadMore={fetchNextPage}
+                          viewMode="CHRONOLOGICAL"
+                        />
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                )}
+              />
+            </form>
           ) : (
             <div className="flex flex-col gap-1">
               <EventListItemSkeleton />
