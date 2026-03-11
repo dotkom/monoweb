@@ -1,7 +1,7 @@
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { procedure, t } from "../../trpc"
 import { withDatabaseTransaction } from "../../middlewares"
-import { CourseSchema } from "../course/course"
+import { CourseSchema } from "../course/course-types"
 
 export type FindGradesInput = inferProcedureInput<typeof findGradesProcedure>
 export type FindGradesOutput = inferProcedureOutput<typeof findGradesProcedure>

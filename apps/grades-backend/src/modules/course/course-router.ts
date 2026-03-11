@@ -3,7 +3,7 @@ import { procedure, t } from "../../trpc"
 import { withDatabaseTransaction } from "../../middlewares"
 import z from "zod"
 import { BasePaginateInputSchema } from "../../query"
-import { CourseFilterQuerySchema } from "./course"
+import { CourseFilterQuerySchema } from "./course-types"
 
 export type FindCoursesInput = inferProcedureInput<typeof findCoursesProcedure>
 export type FindCoursesOutput = inferProcedureOutput<typeof findCoursesProcedure>

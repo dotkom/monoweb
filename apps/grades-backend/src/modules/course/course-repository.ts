@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
 import { parseOrReport } from "../../invariant"
-import { type Course, type CourseFilterQuery, CourseSchema } from "./course"
+import { type Course, type CourseFilterQuery, CourseSchema } from "./course-types"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface CourseRepository {

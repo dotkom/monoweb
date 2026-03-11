@@ -1,7 +1,7 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
 import { parseOrReport } from "../../invariant"
-import { GradeSchema, type Grade } from "./grade"
-import type { CourseCode } from "../course/course"
+import { GradeSchema, type Grade } from "./grade-types"
+import type { CourseCode } from "../course/course-types"
 
 export interface GradeRepository {
   findMany(handle: DBHandle, courseCode: CourseCode): Promise<Grade[]>
