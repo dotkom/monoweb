@@ -68,14 +68,16 @@ export const FilterChips = ({
     })
   }
 
-  if (chips.length === 0) return null
+  if (chips.length === 0) {
+    return null
+  }
 
   return (
     <div className="flex flex-wrap items-center gap-2 transition duration-500">
-      {chips.map((chip, index) => (
+      {chips.map((chip) => (
         <button
           type="button"
-          key={`${chip.filterType}-${chip.value}-${index}`}
+          key={`${chip.filterType}-${chip.value}`}
           onClick={() => onRemoveFilter(chip.filterType, chip.value)}
           className={cn(
             "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm",

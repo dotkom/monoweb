@@ -186,7 +186,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
               const capitalizedPart = isId || isUuid ? decodedPart : capitalizeFirstLetter(decodedPart)
 
               return (
-                <Anchor href={href} size="sm" key={`${index + 1}-${part}`}>
+                <Anchor href={href} size="sm" key={href}>
                   {capitalizedPart || "-"}
                 </Anchor>
               )

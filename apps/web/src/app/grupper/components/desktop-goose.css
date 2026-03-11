@@ -133,6 +133,6 @@
   .desktop-goose--idle,
   .desktop-goose--steal,
   .desktop-goose__honk {
-    animation: none !important;
+    animation: none;
   }
 }
