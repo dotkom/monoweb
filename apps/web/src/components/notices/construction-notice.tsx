@@ -2,15 +2,23 @@
 
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { IconArrowUpRight, IconX } from "@tabler/icons-react"
+import { addYears } from "date-fns"
 import Image from "next/image"
 import { useState } from "react"
 
 export const ConstructionNotice = () => {
   const [hidden, setHidden] = useState(false)
 
-  const dismiss = () => {
-    const oneYearInHours = 365 * 24 * 60 * 60
-    document.cookie = `hide-construction-notice=1; Max-Age=${oneYearInHours}; Path=/; SameSite=Lax`
+  const dismiss = async () => {
+    const expires = addYears(new Date(), 1).getTime()
+
+    await cookieStore.set({
+      name: "hide-construction-notice",
+      value: "1",
+      expires,
+      path: "/",
+      sameSite: "lax",
+    })
     setHidden(true)
   }
 

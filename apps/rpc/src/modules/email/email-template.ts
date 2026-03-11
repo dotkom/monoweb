@@ -20,9 +20,8 @@ export interface EmailTemplate<TData, TType extends EmailType> {
   type: TType
 }
 
-export type InferEmailData<TDef> = TDef extends EmailTemplate<infer TData, infer TType> ? TData : never
-export type InferEmailType<TDef> =
-  TDef extends EmailTemplate<infer TData, infer TType extends EmailType> ? TType : never
+export type InferEmailData<TDef> = TDef extends EmailTemplate<infer TData, EmailType> ? TData : never
+export type InferEmailType<TDef> = TDef extends EmailTemplate<unknown, infer TType extends EmailType> ? TType : never
 
 export function createEmailTemplate<const TData, const TType extends EmailType>(
   definition: EmailTemplate<TData, TType>
