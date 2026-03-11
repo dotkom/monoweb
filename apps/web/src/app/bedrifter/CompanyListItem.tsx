@@ -1,27 +1,35 @@
-import type { Attendance, Company, Event, JobListing } from "@dotkomonline/types"
-import { Title, cn, Text, Badge } from "@dotkomonline/ui"
-import { IconBriefcase, IconMapPin } from "@tabler/icons-react"
-import { createEventPageUrl } from "@dotkomonline/utils"
-import { isPast } from "date-fns"
-import Link from "next/link"
-import type { FC } from "react"
-import Image from "next/image"
-import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
-import { title } from "process"
-import { DividerHorizontalIcon } from "@radix-ui/react-icons"
+import type {
+  Attendance,
+  Company,
+  Event,
+  JobListing,
+} from "@dotkomonline/types";
+import { Title, cn, Text, Badge } from "@dotkomonline/ui";
+import { IconBriefcase, IconMapPin } from "@tabler/icons-react";
+import { createEventPageUrl } from "@dotkomonline/utils";
+import { isPast } from "date-fns";
+import Link from "next/link";
+import type { FC } from "react";
+import Image from "next/image";
+import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage";
+import { title } from "process";
+import { DividerHorizontalIcon } from "@radix-ui/react-icons";
 
 export interface CompanyListItemProps {
-  company: Company
-  hasJobListings: boolean
+  company: Company;
+  jobListingCount: number;
 }
 
-export const CompanyListItem: FC<CompanyListItemProps> = ({ company, hasJobListings }: CompanyListItemProps) => {
+export const CompanyListItem: FC<CompanyListItemProps> = ({
+  company,
+  jobListingCount,
+}: CompanyListItemProps) => {
   return (
     <Link
       href={`/bedrifter/${company.slug}`}
       className={cn(
-        "group flex flex-col sm:flex-row sm:gap-8 rounded-xl p-10 -mx-2 last:-mb-2 items-start sm:items-center",
-        "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors border border-gray-200"
+        "group flex flex-col m max-w-lg  sm:flex-row sm:gap-8 rounded-xl p-10 -mx-2 last:-mb-2 items-start sm:items-center ",
+        "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors border border-gray-200",
       )}
     >
       <div className="relative w-max">
@@ -50,19 +58,23 @@ export const CompanyListItem: FC<CompanyListItemProps> = ({ company, hasJobListi
         <div className="flex flex-row sm:flex-col gap-5">
           <div className="flex gap-1 items-center">
             <IconMapPin width={16} height={16} />
-            <Text className="text-base whitespace-nowrap">{company.location}</Text>
+            <Text className="text-base whitespace-nowrap">
+              {company.location}
+            </Text>
           </div>
-          {hasJobListings && (
+          {jobListingCount > 0 && (
             <div className="flex gap-1 items-center">
               <IconBriefcase width={16} height={16} />
-              <Text className="text-base whitespace-nowrap ">Har ledig stilling </Text>
+              <Text className="text-base whitespace-nowrap ">
+                {jobListingCount} ledige stillinger
+              </Text>
             </div>
           )}
         </div>
       </div>
     </Link>
-  )
-}
+  );
+};
 
 export const EventListItemSkeleton: FC = () => {
   return (
@@ -83,5 +95,5 @@ export const EventListItemSkeleton: FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
