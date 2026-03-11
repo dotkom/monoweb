@@ -130,6 +130,12 @@ const links: MenuLink[] = [
         icon: IconMessage,
         description: "Interessert i å vise bedriften din for studentene våre? Meld interesse!",
       },
+      {
+        title: "Bedrifter",
+        href: "/bedrifter",
+        icon: IconBriefcase,
+        description: "Utforsk bedriftene som sammerbeider med Online linjeforening",
+      },
     ],
   },
 ]
