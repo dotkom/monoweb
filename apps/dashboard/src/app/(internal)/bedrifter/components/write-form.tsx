@@ -4,6 +4,7 @@ import { createImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { COMPANY_IMAGE_MAX_SIZE_KIB, type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
+import { z } from "zod"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   imageUrl: null,
@@ -23,7 +24,9 @@ export const useCompanyWriteForm = ({
   const fileUpload = useCompanyFileUploadMutation()
 
   return useFormBuilder({
-    schema: CompanyWriteSchema,
+    schema: CompanyWriteSchema.extend({
+      website: z.string().url(),
+    }),
     defaultValues,
     onSubmit,
     label,
