@@ -5,11 +5,11 @@ import { AuthNotice } from "@/components/notices/auth-notice"
 import { DotdageneAdvert } from "@/components/notices/dotdagene-advert"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
-import type { AttendanceSummary, BaseEvent, EventWithAttendanceSummary } from "@dotkomonline/types"
+import type { AttendanceSummary, BaseEvent, EventSummary, EventWithAttendanceSummary } from "@dotkomonline/types"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
-import { createEventPageUrl } from "@dotkomonline/utils"
+import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
-import { formatDate } from "date-fns"
+import { formatDate, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
 import Image from "next/image"
 import Link from "next/link"
@@ -22,6 +22,27 @@ export default async function App() {
 
   const featuredEvent = events[0] ?? null
   const otherEvents = events.slice(1)
+
+  const user = await server.user.findMe.query()
+
+  const startOfToday = startOfDay(new TZDate(getCurrentUTC(), "Europe/Oslo"))
+
+  // Events the user is attending that ends today or later
+  const eventsUserIsAttending = user
+    ? (
+        await server.event.allSummariesByAttendingUserId.query({
+          id: user.id,
+          take: 3,
+          filter: {
+            orderBy: "asc",
+            byEndDate: {
+              min: startOfToday,
+              max: null,
+            },
+          },
+        })
+      ).items
+    : []
 
   return (
     <section className="flex flex-col gap-16 w-full">
@@ -68,9 +89,9 @@ export default async function App() {
             </div>
 
             {/* mobile horizontal scroll */}
-            <div className="md:hidden -mx-4">
+            <div className="md:hidden md:-mx-4">
               <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-                <div className="shrink-0 w-[85vw] max-w-[24rem] ml-4 snap-center">
+                <div className="shrink-0 w-[85vw] max-w-[24rem] md:ml-4 snap-center">
                   <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
                 </div>
 
@@ -101,6 +122,45 @@ export default async function App() {
           </>
         ) : (
           <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <Title className="text-3xl font-semibold">Dine arrangementer</Title>
+
+        {!user ? (
+          <Text className="text-gray-500 dark:text-stone-500">Logg inn for å se arrangementer du er påmeldt.</Text>
+        ) : eventsUserIsAttending.length === 0 ? (
+          <Text className="text-gray-500 dark:text-stone-500">
+            Du har ingen kommende arrangementer. Meld deg på et arrangement for å se det her!
+          </Text>
+        ) : (
+          <div>
+            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
+              {eventsUserIsAttending.map(({ event, attendance }) => (
+                <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center">
+                  <EventCard event={event} attendance={attendance} />
+                </div>
+              ))}
+
+              <div className="snap-center pr-4">
+                <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
+                  <Button
+                    element={Link}
+                    href="/arrangementer"
+                    className={cn(
+                      "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
+                      "bg-blue-200 hover:bg-blue-100",
+                      "dark:bg-brand dark:hover:bg-brand/75"
+                    )}
+                    iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
+                  >
+                    <Text className="text-lg">Se alle</Text>
+                  </Button>
+                </Tilt>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </section>
@@ -162,7 +222,7 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, className }) =
 }
 
 interface ComingEventProps {
-  event: BaseEvent
+  event: EventSummary
   attendance: AttendanceSummary | null
   className?: string
 }
