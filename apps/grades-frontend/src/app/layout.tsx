@@ -14,7 +14,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning>
-      <body className="dark:bg-[#141821] bg-pink-400">
+      <body className="dark:bg-[#141821] bg-red-100">
         <PlausibleProvider domain="grades.no">
           <QueryProvider>
             <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
