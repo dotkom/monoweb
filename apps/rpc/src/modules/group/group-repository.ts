@@ -143,10 +143,18 @@ export function getGroupRepository(): GroupRepository {
     async findManyByType(handle, groupType) {
       const groups = await handle.group.findMany({
         where: { type: groupType },
-        include: QUERY_WITH_ROLES,
+        include: {
+          ...QUERY_WITH_ROLES,
+          _count: { select: { events: true } },
+        },
       })
 
-      return groups.map((group) => parseOrReport(GroupSchema, group))
+      return groups.map((group) =>
+        parseOrReport(GroupSchema, {
+          ...group,
+          eventCount: group._count.events,
+        })
+      )
     },
 
     async findManyByUserId(handle, userId) {

@@ -1,4 +1,4 @@
-import type { z } from "zod"
+import { z } from "zod"
 
 import { schemas } from "@dotkomonline/db/schemas"
 import { compareDesc } from "date-fns"
@@ -18,6 +18,7 @@ export type GroupRoleWrite = z.infer<typeof GroupRoleWriteSchema>
 
 export const GroupSchema = schemas.GroupSchema.extend({
   roles: GroupRoleSchema.array(),
+  eventCount: z.number().optional(),
 })
 export const GroupTypeSchema = schemas.GroupTypeSchema
 

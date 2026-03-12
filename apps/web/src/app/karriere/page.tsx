@@ -104,13 +104,9 @@ const CareerPage = () => {
 
 function showLocations(locations: string[]) {
   if (locations.length === 0) {
-    return <Text>Ikke oppgitt</Text>
+    return "Ikke oppgitt"
   }
-  return (
-    <div className="flex flex-row gap-1">
-      <Text>{locations.join(", ")}</Text>
-    </div>
-  )
+  return locations.join(", ")
 }
 
 type CompanyAdListItemProps = {
