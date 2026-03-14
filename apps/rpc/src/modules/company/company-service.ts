@@ -1,18 +1,14 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
-import {
-  type Company,
-  type CompanyId,
-  type CompanySlug,
-  type CompanyWrite,
-  type UserId,
-  COMPANY_IMAGE_MAX_SIZE_KIB,
-} from "@dotkomonline/types"
+import type { Company, CompanyId, CompanySlug, CompanyWrite, JobListingId, UserId } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "../../query"
 import type { CompanyRepository } from "./company-repository"
+import type { JobListingService } from "../job-listing/job-listing-service"
+
+import { COMPANY_IMAGE_MAX_SIZE_KIB } from "@dotkomonline/types"
 
 export interface CompanyService {
   findById(handle: DBHandle, companyId: CompanyId): Promise<Company | null>
@@ -38,10 +34,13 @@ export interface CompanyService {
    */
   update(handle: DBHandle, companyId: CompanyId, data: Partial<CompanyWrite>): Promise<Company>
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
+
+  getJobListings(handle: DBHandle, companyId: CompanyId): Promise<JobListingId[]>
 }
 
 export function getCompanyService(
   companyRepository: CompanyRepository,
+  jobListingService: JobListingService,
   s3Client: S3Client,
   s3BucketName: string
 ): CompanyService {
@@ -88,6 +87,8 @@ export function getCompanyService(
       const uuid = crypto.randomUUID()
       const key = `company/${Date.now()}-${uuid}-${slugify(filename)}`
 
+      const maxSizeKiB = 5 * 1024 // 5 MiB, arbitrarily set
+
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
@@ -95,6 +96,17 @@ export function getCompanyService(
         contentType,
         createdByUserId,
       })
+    },
+
+    async getJobListings(handle, companyId) {
+      const jobListings = await jobListingService.findMany(
+        handle,
+        {
+          byCompany: [companyId],
+        },
+        { take: 10 }
+      )
+      return jobListings.map((jobListing) => jobListing.id)
     },
   }
 }
