@@ -71,16 +71,15 @@ const createEventProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     // This will remove any groups the user is not affiliated with, which restricts editors to only being able to create
     // events for their own groups. This does not account for the parent event's organizer groups.
-    const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
-      ctx.handle,
-      ctx.principal.subject,
+    const organizerGroups = ctx.authorizationService.intersectGroupAffiliations(
+      ctx.principal.affiliations,
       input.groupIds
     )
 
     // If there are no organizer groups left, throw a ForbiddenError
     if (organizerGroups.size === 0 && input.groupIds.length > 0) {
       throw new ForbiddenError(
-        `There are no allowed organizer groups to create the event for User(ID=${ctx.principal.subject}) with Input(GroupOrganizers=${input.groupIds.join(",")})`
+        `There are no allowed organizer groups to create the event for User(ID=${ctx.principal.subject}) with input GroupOrganizers(IDS=${input.groupIds.join(",")})`
       )
     }
 
@@ -115,16 +114,15 @@ const editEventProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     // This will remove any groups the user is not affiliated with, which restricts editors to only being able to create
     // events for their own groups. This does not account for the parent event's organizer groups.
-    const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
-      ctx.handle,
-      ctx.principal.subject,
+    const organizerGroups = ctx.authorizationService.intersectGroupAffiliations(
+      ctx.principal.affiliations,
       input.groupIds
     )
 
     // If there are no organizer groups left, throw a ForbiddenError
     if (organizerGroups.size === 0 && input.groupIds.length > 0) {
       throw new ForbiddenError(
-        `There are no allowed organizer groups to create the event for User(ID=${ctx.principal.subject}) with Input(GroupOrganizers=${input.groupIds.join(",")})`
+        `There are no allowed organizer groups to update the event for User(ID=${ctx.principal.subject}) with input GroupOrganizers(IDS=${input.groupIds.join(",")})`
       )
     }
 
@@ -155,9 +153,8 @@ const deleteEventProcedure = procedure
     const event = await ctx.eventService.findEventById(ctx.handle, input.id)
 
     if (event?.hostingGroups.length) {
-      const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
-        ctx.handle,
-        ctx.principal.subject,
+      const organizerGroups = ctx.authorizationService.intersectGroupAffiliations(
+        ctx.principal.affiliations,
         event.hostingGroups.map((group) => group.slug)
       )
 
@@ -369,8 +366,7 @@ const addAttendanceProcedure = procedure
 
     if (event?.hostingGroups.length) {
       const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
-        ctx.handle,
-        ctx.principal.subject,
+        ctx.principal.affiliations,
         event.hostingGroups.map((group) => group.slug)
       )
 
@@ -401,8 +397,7 @@ const updateParentEventProcedure = procedure
 
     if (event?.hostingGroups.length) {
       const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
-        ctx.handle,
-        ctx.principal.subject,
+        ctx.principal.affiliations,
         event.hostingGroups.map((group) => group.slug)
       )
 
@@ -465,7 +460,7 @@ const findUnansweredByUserProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isEditor(),
+        isCommitteeMember(),
         isSameSubject((input) => input)
       )
     )
@@ -484,8 +479,7 @@ const findUnansweredByUserProcedure = procedure
     // AuthorizationService#intersectGroupAffiliations uses a cache, so a for loop is fine here over a Promise.all
     for (const event of allEvents) {
       const intersectedAffiliations = await ctx.authorizationService.intersectGroupAffiliations(
-        ctx.handle,
-        ctx.principal.subject,
+        ctx.principal.affiliations,
         event.hostingGroups.map((group) => group.slug)
       )
 
