@@ -1,7 +1,7 @@
 import { OfflineSchema, OfflineWriteSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isCommitteeMember } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
@@ -11,7 +11,7 @@ export type CreateOfflineOutput = inferProcedureOutput<typeof createOfflineProce
 const createOfflineProcedure = procedure
   .input(OfflineWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -28,7 +28,7 @@ const editOfflineProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: changes, ctx }) => {
@@ -72,7 +72,7 @@ const createOfflineFileUploadProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -89,7 +89,7 @@ const createOfflineImageUploadProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {

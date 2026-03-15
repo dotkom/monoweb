@@ -7,7 +7,7 @@ import {
 } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isCommitteeMember } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
@@ -23,7 +23,7 @@ const createJobListingProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -42,7 +42,7 @@ const editJobListingProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {

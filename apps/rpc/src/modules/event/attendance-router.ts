@@ -16,7 +16,7 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { TRPCError } from "@trpc/server"
 import { addHours } from "date-fns"
 import { z } from "zod"
-import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
+import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
@@ -31,7 +31,7 @@ const createPoolProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -48,7 +48,7 @@ const updatePoolProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -69,7 +69,7 @@ const deletePoolProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -87,7 +87,7 @@ const adminRegisterForEventProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -121,7 +121,7 @@ const updateAttendancePaymentProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -137,7 +137,7 @@ export type GetSelectionsResultsOutput = inferProcedureOutput<typeof getSelectio
 const getSelectionsResultsProcedure = procedure
   .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.attendanceId)
@@ -232,7 +232,7 @@ export type CancelAttendeePaymentOutput = inferProcedureOutput<typeof cancelAtte
 const cancelAttendeePaymentProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: { attendeeId }, ctx }) => {
@@ -244,7 +244,7 @@ export type StartAttendeePaymentOutput = inferProcedureOutput<typeof startAttend
 const startAttendeePaymentProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: { attendeeId }, ctx }) => {
@@ -293,7 +293,7 @@ export type AdminDeregisterForEventOutput = inferProcedureOutput<typeof adminDer
 const adminDeregisterForEventProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -317,7 +317,7 @@ const adminUpdateAtteendeeReservedProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -334,7 +334,7 @@ const registerAttendanceProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -374,7 +374,7 @@ const updateAttendanceProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) =>

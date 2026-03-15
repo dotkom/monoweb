@@ -78,6 +78,7 @@ export const PublicUserSchema = UserSchema.pick({
   imageUrl: true,
   biography: true,
 })
+export type PublicUser = z.infer<typeof PublicUserSchema>
 
 export const UserFilterQuerySchema = z
   .object({

@@ -12,13 +12,13 @@ import { z } from "zod"
 import { isAdministrator, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { ADMIN_EDITOR_ROLES, EditorRole } from "../authorization-service"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
 const allUsersProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: UserFilterQuerySchema.optional() }))
   .use(withDatabaseTransaction())
+  .use(withAuthentication())
   .query(async ({ input, ctx }) => {
     const items = await ctx.userService.findUsers(ctx.handle, { ...input.filter }, input)
     return {
@@ -190,7 +190,7 @@ const updateUserProcedure = procedure
     let { name, ...data } = input.input
 
     // Only admins can change the name field
-    if (!ctx.principal.editorRoles.has("dotkom") && !ctx.principal.editorRoles.has("hs")) {
+    if (!ctx.authorizationService.isAdministrator(ctx.principal.affiliations)) {
       name = undefined
     }
 
@@ -204,7 +204,7 @@ const isStaffProcedure = procedure.query(async ({ ctx }) => {
   if (principal === null) {
     return false
   }
-  return Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+  return ctx.authorizationService.isCommitteeMember(principal.affiliations)
 })
 
 export type IsAdminInput = inferProcedureInput<typeof isAdminProcedure>
@@ -214,7 +214,7 @@ const isAdminProcedure = procedure.query(async ({ ctx }) => {
   if (principal === null) {
     return false
   }
-  return ADMIN_EDITOR_ROLES.some((role) => principal.editorRoles.has(role))
+  return ctx.authorizationService.isAdministrator(principal.affiliations)
 })
 
 export const userRouter = t.router({

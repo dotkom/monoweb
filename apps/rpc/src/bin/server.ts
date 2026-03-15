@@ -14,7 +14,12 @@ import { registerObservabilityProbeRoutes } from "../http-routes/observability-p
 import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createTrpcContext } from "../trpc"
-import { ADMIN_EDITOR_ROLES } from "../modules/authorization-service"
+import { ADMIN_AFFILIATIONS } from "../modules/authorization-service"
+import { GroupRoleTypeSchema } from "@dotkomonline/types"
+
+const ADMIN_AFFILIATION_SET = new Map(
+  ADMIN_AFFILIATIONS.map((groupId) => [groupId, new Set([GroupRoleTypeSchema.Values.LEADER])])
+)
 
 const logger = getLogger("rpc")
 
@@ -65,18 +70,18 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
       return createTrpcContext(null, serviceLayer)
     }
 
-    // User routes `isStaff` (~isEditor) and `isAdmin` rely on the editor roles set here to determine admin or staff
+    // User routes `isStaff` (~isCommitteeMember) and `isAdmin` rely on the editor roles set here to determine admin or staff
     // status. Therefore, if `isAuthorizationUnsafelyDisabled === true`, we assign their principal admin permissions
     // regardless of their actual roles, in addition to disabling all authorization checks further downstream (see
     // comment atop this file). This ternary serves no greater purpose than overriding permissions for the two routes.
-    const editorRoles = isAuthorizationUnsafelyDisabled
-      ? new Set(ADMIN_EDITOR_ROLES)
-      : await serviceLayer.authorizationService.getEditorRoles(serviceLayer.prisma, subject)
+    const affiliations = isAuthorizationUnsafelyDisabled
+      ? ADMIN_AFFILIATION_SET
+      : await serviceLayer.authorizationService.getGroupAffiliations(serviceLayer.prisma, subject)
 
     return createTrpcContext(
       {
         subject,
-        editorRoles,
+        affiliations,
       },
       serviceLayer
     )
