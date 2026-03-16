@@ -56,9 +56,14 @@ export function useFormBuilder<T extends z.ZodRawShape>({
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          return form.handleSubmit((values) => {
-            return onSubmit(values, form)
-          })(e)
+          return form.handleSubmit(
+            (values) => {
+              return onSubmit(values, form)
+            },
+            (errors) => {
+              console.log("Form submission failed with validation errors:", errors)
+            }
+          )(e)
         }}
       >
         <Flex direction="column" gap="md">
