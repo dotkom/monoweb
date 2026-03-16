@@ -4,6 +4,7 @@ import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { NotificationSchema, NotificationWriteSchema } from "./notification"
+import { BasePaginateInputSchema, PaginateInputSchema } from "src/query"
 
 export type GetNotificationInput = inferProcedureInput<typeof getNotificationProcedure>
 export type GetNotificationOutput = inferProcedureOutput<typeof getNotificationProcedure>
@@ -92,6 +93,20 @@ const markAllAsReadProcedure = procedure
     return ctx.notificationService.markAllAsRead(ctx.handle, ctx.principal.subject)
   })
 
+export type FindNotificationsInput = inferProcedureInput<typeof findNotificationsProcedure>
+export type FindNotificationsOutput = inferProcedureOutput<typeof findNotificationsProcedure>
+const findNotificationsProcedure = procedure
+  .input(PaginateInputSchema).use(withAuthentication()).use(withAuthorization(isEditor()))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const items = await ctx.notificationService.findMany(ctx.handle, input)
+
+    return {
+      items,
+      nextCursor: items.at(-1)?.id,
+    }
+  })
+
 export const notificationRouter = t.router({
   get: getNotificationProcedure,
   create: createNotificationProcedure,
@@ -101,4 +116,5 @@ export const notificationRouter = t.router({
   getUnreadCount: getUnreadCountProcedure,
   markAsRead: markAsReadProcedure,
   markAllAsRead: markAllAsReadProcedure,
+  findMany: findNotificationsProcedure,
 })
