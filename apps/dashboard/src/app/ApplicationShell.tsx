@@ -39,6 +39,7 @@ import {
   IconMoneybag,
   IconPhoto,
   IconPhotoShare,
+  IconBell,
   IconSkull,
   IconUserMinus,
   IconUsersGroup,
@@ -107,6 +108,11 @@ const navigations = [
     label: "Brukere",
     icon: IconUsersGroup,
     href: "/brukere",
+  },
+  {
+    label: "Varslinger",
+    icon: IconBell,
+    href: "/varslinger",
   },
   {
     label: "Plakatbestilling",
