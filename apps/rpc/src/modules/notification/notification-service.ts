@@ -9,9 +9,12 @@ import type {
 } from "./notification"
 import type { UserId } from "@dotkomonline/types"
 import type { NotificationRepository } from "./notification-repository"
+import { Pageable } from "src/query"
+import { UserRepository } from "../user/user-repository"
 
 export interface NotificationService {
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
+  findMany(handle: DBHandle, page: Pageable): Promise<Notification[]>
   create(handle: DBHandle, notificationData: NotificationWrite): Promise<Notification>
   update(
     handle: DBHandle,
@@ -34,13 +37,22 @@ export interface NotificationService {
   markAllAsRead(handle: DBHandle, userId: UserId): Promise<void>
 }
 
-export function getNotificationService(notificationRepository: NotificationRepository): NotificationService {
+export function getNotificationService(notificationRepository: NotificationRepository, userRepository: UserRepository): NotificationService {
   return {
     async findById(handle, notificationId) {
       return await notificationRepository.findById(handle, notificationId)
     },
+     async findMany(handle, page) {
+      return await notificationRepository.findMany(handle, page)
+    },
+    
     async create(handle, notificationData) {
-      return await notificationRepository.create(handle, notificationData)
+      const data = { ...notificationData }
+      if (data.recipientIds.length === 0) {
+        const users =  await userRepository.findMany(handle, {}, { take: 10000 })
+        data.recipientIds = users.map(user => user.id)
+      }
+      return await notificationRepository.create(handle, data)
     },
 
     async update(handle, notificationId, notificationData) {
