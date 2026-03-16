@@ -24,6 +24,7 @@ import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
 import { QRCodeScannedModal } from "@/app/(internal)/arrangementer/components/qr-code-scanned-modal"
 import { CreateGroupMemberModal } from "@/app/(internal)/grupper/modals/create-group-member-modal"
+import { CreateNotificationModal } from "@/app/(internal)/varslinger/modals/create-notification"
 
 const modals = {
   "event/attendance/attendee/create": ManualCreateUserAttendModal,
@@ -48,6 +49,7 @@ const modals = {
   "user/membership/create": CreateMembershipModal,
   "user/membership/update": EditMembershipModal,
   "image/upload": UploadImageModal,
+  "notification/create": CreateNotificationModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (
