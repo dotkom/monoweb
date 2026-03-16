@@ -9,9 +9,11 @@ import type {
 } from "./notification"
 
 import type { UserId } from "@dotkomonline/types"
+import { Pageable, pageQuery } from "src/query"
 
 export interface NotificationRepository {
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
+  findMany(handle: DBHandle, page: Pageable): Promise<Notification[]> 
   create(handle: DBHandle, notificationData: NotificationWrite): Promise<Notification>
   update(
     handle: DBHandle,
@@ -45,17 +47,26 @@ export function getNotificationRepository(): NotificationRepository {
 
     async create(handle, notificationData) {
       const { recipientIds, ...data } = notificationData
+      console.log("IDIOT", notificationData)
       const notification = await handle.notification.create({ data })
       return notification
     },
     async update(handle, notificationId, notificationData) {
       const { recipientIds, ...data } = notificationData
+      console.log("IDIOT", notificationData)
       const notification = await handle.notification.update({
         where: { id: notificationId },
         data,
       })
       return notification
     },
+   async findMany(handle, page) {
+      return await handle.notification.findMany({
+        ...pageQuery(page),
+      })
+    },
+
+
     async delete(handle, notificationId) {
       const notification = await handle.notification.findUnique({
         where: { id: notificationId },
