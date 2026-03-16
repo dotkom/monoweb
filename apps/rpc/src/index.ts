@@ -13,3 +13,6 @@ export type * as OfflineRouter from "./modules/offline/offline-router"
 export type * as PersonalMarkRouter from "./modules/mark/personal-mark-router"
 export type * as WorkspaceRouter from "./modules/workspace-sync/workspace-router"
 export type * as UserRouter from "./modules/user/user-router"
+export type * as NotificationRouter from "./modules/notification/notification-router"
+
+
