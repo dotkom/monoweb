@@ -76,7 +76,7 @@ const links: MenuLink[] = [
         title: "Hovedstyret",
         href: "/grupper/hs",
         icon: IconCrown,
-        description: "Hovedstyret er linjeforeningens ansikt utad og står for daglig drift av linjeforeningen",
+        description: "Hovedstyret er linjeforeningens ansikt utad og står for daglig drift av linjeforeningen.",
       },
       {
         title: "Wiki",
