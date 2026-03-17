@@ -16,15 +16,14 @@ export const EditorRole = {
   FAGKOM: "fagkom",
   FEMINIT: "feminit",
   HS: "hs",
-  KOMITELEDERE: "komiteledere",
   ONLINE_IL: "online-il",
   FOND: "fond",
   PROKOM: "prokom",
   TRIKOM: "trikom",
   EKSKOM: "ekskom",
-  ITEX: "ekskom",
   JUBKOM: "jubkom",
   DOTDAGENE: "dotdagene",
+  VELKOM: "velkom",
 } as const satisfies Record<PropertyKey, GroupId>
 export type EditorRole = (typeof EditorRole)[keyof typeof EditorRole]
 
