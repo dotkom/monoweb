@@ -2,7 +2,7 @@
 
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { env } from "@/env"
-import { type Icon, IconBuildingBank } from "@tabler/icons-react"
+import { type Icon, IconBuildingBank, IconCrown } from "@tabler/icons-react"
 import {
   IconArticle,
   IconBolt,
@@ -71,6 +71,12 @@ const links: MenuLink[] = [
         href: "/om-linjeforeningen",
         icon: IconBolt,
         description: "Informasjon om linjeforeningen Online.",
+      },
+      {
+        title: "Hovedstyret",
+        href: "/grupper/hs",
+        icon: IconCrown,
+        description: "Hovedstyret er linjeforeningens ansikt utad og står for daglig drift av linjeforeningen.",
       },
       {
         title: "Wiki",
