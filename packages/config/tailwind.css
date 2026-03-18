@@ -119,6 +119,9 @@
   --color-gold-mid: #fbbf24;
   --color-gold-dark: #b45309;
 
+  /* Barbie pink colors */
+  --color-barbie-pink-light: #ffc6e7;
+
   /* Easter egg animations */
   --animate-gold-border-spin: gold-border-spin 3s linear infinite;
   --animate-coin-flip: coin-flip 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
@@ -190,6 +193,39 @@
         var(--color-gold-mid),
         var(--color-gold-dark)
       );
+  }
+
+  /*Barbie april fools*/
+  @layer components {
+    .pink-video,
+    .pink-shell {
+      display: none;
+    }
+
+    html[data-theme="pink"] .pink-video,
+    html[data-theme="pink"] .pink-shell {
+      display: block;
+    }
+
+    .pink-shell {
+      background: var(--color-barbie-pink-light);
+    }
+
+    html[data-theme="pink"] body {
+      background: transparent;
+    }
+
+    .pink-content-wrap {
+      @apply relative flex flex-col grow;
+    }
+
+    .pink-content-inner {
+      @apply relative z-10 flex flex-col grow;
+    }
+
+    html[data-theme="pink"] .pink-content-inner {
+      @apply px-6 py-6 lg:px-10;
+    }
   }
 
   .easter-egg-gold-border::before {
