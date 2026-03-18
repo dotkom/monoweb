@@ -185,7 +185,7 @@ export async function createServiceLayer(
     attendanceRepository
   )
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
-  const notificationService = getNotificationService(notificationRepository)
+  const notificationService = getNotificationService(notificationRepository, userRepository)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
     eventEmitter,
