@@ -3,7 +3,7 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { PaginateInputSchema } from "../../query"
+import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
 
 export type GetPersonalMarksByUserInput = inferProcedureInput<typeof getPersonalMarksByUserProcedure>

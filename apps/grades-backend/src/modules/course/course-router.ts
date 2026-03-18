@@ -2,7 +2,7 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { procedure, t } from "../../trpc"
 import { withDatabaseTransaction } from "../../middlewares"
 import z from "zod"
-import { BasePaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import { CourseFilterQuerySchema } from "./course-types"
 
 export type FindCoursesInput = inferProcedureInput<typeof findCoursesProcedure>

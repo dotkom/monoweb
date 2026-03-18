@@ -1,7 +1,7 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { type Company, type CompanyId, CompanySchema, type CompanySlug, type CompanyWrite } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 export interface CompanyRepository {
   findById(handle: DBHandle, companyId: CompanyId): Promise<Company | null>

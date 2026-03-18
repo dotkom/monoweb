@@ -3,7 +3,7 @@ import type { EventFilterQuery, UserId } from "@dotkomonline/types"
 import { useInfiniteQuery } from "@tanstack/react-query"
 
 import { useQuery } from "@tanstack/react-query"
-import type { Pageable } from "node_modules/@dotkomonline/rpc/src/query"
+import type { Pageable } from "@dotkomonline/utils"
 import { useMemo } from "react"
 
 interface UseEventAllSummariesQueryProps {

@@ -3,7 +3,7 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
 import { personalMarkRouter } from "./personal-mark-router"
 

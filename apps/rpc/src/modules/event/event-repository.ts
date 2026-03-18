@@ -24,7 +24,7 @@ import { getCurrentUTC, snakeCaseToCamelCase } from "@dotkomonline/utils"
 import invariant from "tiny-invariant"
 import z from "zod"
 import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 const INCLUDE_COMPANY_AND_GROUPS = {
   companies: {

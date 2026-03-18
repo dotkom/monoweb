@@ -1,7 +1,7 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type { GroupId, Mark, MarkFilterQuery, MarkId, MarkWrite } from "@dotkomonline/types"
 import { NotFoundError } from "../../error"
-import type { Pageable } from "../../query"
+import type { Pageable } from "@dotkomonline/utils"
 import type { MarkRepository } from "./mark-repository"
 
 export interface MarkService {

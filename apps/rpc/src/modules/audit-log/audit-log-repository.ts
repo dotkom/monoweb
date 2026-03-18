@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type { AuditLog, AuditLogFilterQuery, AuditLogId, UserId } from "@dotkomonline/types"
-import { type Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 export interface AuditLogRepository {
   findById(handle: DBHandle, auditLogId: AuditLogId): Promise<AuditLog | null>

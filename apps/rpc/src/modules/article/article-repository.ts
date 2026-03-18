@@ -11,7 +11,7 @@ import {
   type ArticleWrite,
 } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 export interface ArticleRepository {
   create(handle: DBHandle, data: ArticleWrite): Promise<Article>
