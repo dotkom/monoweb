@@ -15,7 +15,6 @@ setDateFnsDefaultOptions({ locale: nb })
 const fontBody = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body" })
 const fontTitle = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-title" })
 
-
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app

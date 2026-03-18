@@ -7,7 +7,11 @@ export default async function App() {
 
   return (
     <div>
-      <section className="flex flex-col gap-16 w-full">{courses.map((course) => <CourseCard course={course}/>)}</section>
+      <section className="flex flex-col gap-16 w-full">
+        {courses.map((course) => (
+          <CourseCard key={course.code} course={course} />
+        ))}
+      </section>
     </div>
   )
 }
