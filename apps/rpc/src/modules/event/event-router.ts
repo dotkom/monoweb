@@ -13,11 +13,11 @@ import {
   GroupSchema,
   UserSchema,
 } from "@dotkomonline/types"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
 import { EditorRole } from "../authorization-service"
 import { feedbackRouter } from "../feedback-form/feedback-router"
@@ -294,7 +294,7 @@ const allSummariesByAttendingUserIdProcedure = procedure
     )
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
       ctx.handle,
-      events.map((item) => item.attendanceId).filter((id) => id !== null),
+      events.map((item) => item.attendanceId).filter((attendanceId) => attendanceId !== null),
       ctx.principal?.subject
     )
 

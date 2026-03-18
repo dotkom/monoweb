@@ -135,6 +135,10 @@ export function getEventService(
 
     async findEventsByAttendingUserId(handle, userId, query, page) {
       const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+      if (eventIds.length === 0) {
+        return []
+      }
+
       return await eventRepository.findMany(
         handle,
         {
@@ -147,6 +151,10 @@ export function getEventService(
 
     async findEventSummariesByAttendingUserId(handle, userId, query, page) {
       const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+      if (eventIds.length === 0) {
+        return []
+      }
+
       return await eventRepository.findManySummary(
         handle,
         {
