@@ -86,7 +86,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
           align="start"
           side="bottom"
           sideOffset={8}
-          className="w-[calc(100vw-2rem)] mx-4 mt-4 p-0 lg:hidden bg-blue-50 z-50 dark:bg-stone-800 border-blue-100 dark:border-stone-700 shadow-sm rounded-3xl"
+          className="w-[calc(100vw-2rem)] mx-4 mt-4 p-0 lg:hidden bg-blue-50 z-50 dark:bg-stone-800 in-data-[theme=pink]:bg-pink-100 in-data-[theme=pink]:border-none border-blue-100 dark:border-stone-700 shadow-sm rounded-3xl"
         >
           <nav ref={navRef} className="max-h-[calc(100dvh-8rem)]">
             <ScrollArea.Root type="always" className="z-50 max-h-[inherit] overflow-hidden">
@@ -188,7 +188,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                         element={Link}
                         variant="solid"
                         color="brand"
-                        className="text-sm font-semibold px-3 py-2"
+                        className="text-sm font-semibold px-3 py-2 in-data-[theme=pink]:bg-barbie-login-btn"
                         href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
                         prefetch={false}
                         icon={<IconLogin2 className="mr-1 text-xl" />}
@@ -201,7 +201,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                           element="a"
                           variant="solid"
                           size="md"
-                          className="font-semibold rounded-md justify-start px-3 h-10 bg-blue-100 hover:bg-blue-200/80 dark:bg-stone-700/80 dark:hover:bg-stone-600/50 w-fit"
+                          className="font-semibold rounded-md justify-start px-3 h-10 bg-blue-100 in-data-[theme=pink]:bg-pink-200 in-data-[theme=pink]:hover:bg-pink-200 hover:bg-blue-200/80 dark:bg-stone-700/80 dark:hover:bg-stone-600/50 w-fit"
                           href={createAuthorizeUrl({ redirectAfter: fullPathname })}
                           onClick={() => setOpen(false)}
                         >
