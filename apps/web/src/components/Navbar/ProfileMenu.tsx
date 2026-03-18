@@ -63,12 +63,12 @@ const ThemeDropdown: FC = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
+      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 [[data-theme=pink]_&]:hover:bg-[#D11BB0] transition-colors">
         <ThemeIcon width={22} height={22} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="-mr-1 lg:-mr-3 p-1 min-w-10 rounded-2xl bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+        className="-mr-1 lg:-mr-3 p-1 min-w-10 rounded-2xl bg-blue-50 dark:bg-stone-800 [[data-theme=pink]_&]:bg-pink-100 [[data-theme=pink]_&]:border-none border border-blue-100 dark:border-stone-700 shadow-sm"
         sideOffset={24}
       >
         <ThemeToggle />
@@ -82,7 +82,7 @@ const ContactDebugDropdown: FC = () => (
     <DropdownMenuTrigger asChild>
       <button
         aria-label="Kontakt debug, les mer om debug"
-        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors"
+        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 [[data-theme=pink]_&]:hover:bg-[#D11BB0] transition-colors"
         type="button"
       >
         <IconMessageReport width={24} height={24} />
@@ -90,7 +90,7 @@ const ContactDebugDropdown: FC = () => (
     </DropdownMenuTrigger>
     <DropdownMenuContent
       align="end"
-      className="w-[calc(100vw-2rem)] mx-4 xs:w-80 xs:ml-4 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 rounded-3xl shadow-sm"
+      className="w-[calc(100vw-2rem)] mx-4 xs:w-80 xs:ml-4 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 [[data-theme=pink]_&]:bg-pink-100 [[data-theme=pink]_&]:border-none border border-blue-100 dark:border-stone-700 rounded-3xl shadow-sm"
       sideOffset={24}
     >
       <div className="space-y-4">
@@ -111,7 +111,7 @@ const ContactDebugDropdown: FC = () => (
             href={DEBUG_CONTACT_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 hover:bg-blue-200 dark:hover:bg-stone-600 transition-colors"
+            className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 [[data-theme=pink]_&]:bg-pink-200 hover:bg-blue-200 dark:hover:bg-stone-600 [[data-theme=pink]_&]:hover:bg-[#E763C6] transition-colors"
           >
             <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
             <IconArrowUpRight width={16} height={16} />
@@ -141,7 +141,7 @@ const LoginAlternativesDropdown: FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="rounded-2xl p-2 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+        className="rounded-2xl p-2 bg-blue-50 dark:bg-stone-800 [[data-theme=pink]_&]:bg-pink-100 [[data-theme=pink]_&]:border-none border border-blue-100 dark:border-stone-700 shadow-sm"
         sideOffset={24}
       >
         <Link
@@ -165,7 +165,7 @@ const UnauthenticatedActions: FC = () => {
           element={Link}
           variant="solid"
           color="brand"
-          className="text-sm font-semibold px-3 py-2"
+          className="text-sm font-semibold px-3 py-2 [[data-theme=pink]_&]:bg-[#B8058B] [[data-theme=pink]_&]:hover:bg-pink-700"
           href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
           prefetch={false}
           icon={<IconLogin2 className="mr-1 text-xl" />}

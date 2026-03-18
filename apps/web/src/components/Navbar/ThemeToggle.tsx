@@ -1,6 +1,6 @@
 import { cn } from "@dotkomonline/ui"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
-import { IconDeviceDesktop, IconMoon, IconSun } from "@tabler/icons-react"
+import { IconDeviceDesktop, IconFlower, IconMoon, IconSun } from "@tabler/icons-react"
 import type { Icon } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 
@@ -12,9 +12,9 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const { setTheme, theme } = useTheme()
 
   const THEME_OPTIONS: Array<{
-    theme: "light" | "dark" | "system"
-    label: string
-    icon: Icon
+    theme: "light" | "dark" | "system" | "pink";
+    label: string;
+    icon: Icon;
   }> = [
     {
       theme: "light",
@@ -27,16 +27,21 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
       icon: IconMoon,
     },
     {
+      theme: "pink",
+      label: "Rosa tema",
+      icon: IconFlower,
+    },
+    {
       theme: "system",
       label: "Systempreferanse",
       icon: IconDeviceDesktop,
     },
-  ]
+  ];
 
   return (
     <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
       <div
-        className="absolute top-1 bottom-1 h-8 w-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700"
+        className="absolute top-1 bottom-1 h-8 w-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700 [[data-theme=pink]_&]:bg-[#E763C6]"
         style={{
           transform: `translateX(${THEME_OPTIONS.findIndex((option) => option.theme === theme) * 2.25}rem)`,
         }}
