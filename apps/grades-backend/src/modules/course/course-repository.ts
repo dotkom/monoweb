@@ -12,9 +12,9 @@ export function getCourseRepository(): CourseRepository {
   return {
     async findMany(handle, query, page) {
       const sortFieldMap = {
-        averageGrades: "averageGrade",
-        passRate: "passRate",
-        studentCount: "studentCount",
+        AVERAGE_GRADE: "averageGrade",
+        PASS_RATE: "passRate",
+        STUDENT_COUNT: "studentCount",
       } as const
 
       const sortOrder = query.orderBy ?? "desc"
