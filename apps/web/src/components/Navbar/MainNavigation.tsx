@@ -42,7 +42,7 @@ const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
               <NavigationMenuLink asChild key={`${link.title}-${item.title}`}>
                 <Link
                   href={item.href}
-                  className="group hover:bg-blue-100/80 dark:hover:bg-stone-700/50 [[data-theme=pink]_&]:hover:bg-barbie-pink-hover-btn select-none space-y-1 rounded-lg p-3 leading-none no-underline outline-hidden transition-colors"
+                  className="group hover:bg-blue-100/80 dark:hover:bg-stone-700/50 in-data-[theme=pink]:hover:bg-barbie-pink-hover-btn select-none space-y-1 rounded-lg p-3 leading-none no-underline outline-hidden transition-colors"
                 >
                   <div className="flex items-start gap-2">
                     {(() => {

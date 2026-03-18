@@ -39,7 +39,7 @@ export const navigationMenuTriggerStyle = cn(
   "disabled:opacity-50 disabled:pointer-events-none",
   "h-10 py-2 px-1.5 lg:px-4 group hover:bg-blue-200 data-[state=open]:bg-blue-200",
   "dark:text-stone-300 dark:hover:bg-stone-700/50 dark:data-[state=open]:bg-stone-700/50",
-  "[[data-theme=pink]_&]:hover:bg-barbie-navbar-hover [[data-theme=pink]_&]:data-[state=open]:bg-barbie-navbar-hover"
+  "in-data-[theme=pink]:hover:bg-barbie-navbar-hover in-data-[theme=pink]:data-[state=open]:bg-barbie-navbar-hover"
 )
 
 export const NavigationMenuTrigger = React.forwardRef<
@@ -67,7 +67,7 @@ export const NavigationMenuContent = React.forwardRef<
       "data-[motion=to-start]:slide-out-to-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=from-start]:slide-in-from-left-52",
       "data-[motion=from-end]:slide-in-from-right-52 absolute left-0 top-0 w-full md:w-auto",
       "bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700/30 shadow-sm rounded-3xl",
-      "[[data-theme=pink]_&]:bg-pink-100 [[data-theme=pink]_&]:border-none",
+      "in-data-[theme=pink]:bg-pink-100 in-data-[theme=pink]:border-none",
       className
     )}
     {...props}
