@@ -11,15 +11,24 @@ export interface CourseRepository {
 export function getCourseRepository(): CourseRepository {
   return {
     async findMany(handle, query, page) {
-      const orderDirection = query.orderBy ?? "desc"
+      const sortFieldMap = {
+        averageGrades: "averageGrade",
+        passRate: "passRate",
+        studentCount: "studentCount",
+      } as const
+
+      const sortOrder = query.orderBy ?? "desc"
+      const sortBy = query.sortBy ?? []
+      const orderBy =
+        sortBy.length > 0
+          ? sortBy.map((sortKey) => ({
+              [sortFieldMap[sortKey]]: sortOrder,
+            }))
+          : []
 
       const courses = await handle.course.findMany({
         ...pageQuery(page),
-        orderBy: {
-          passRate: query.sortByPassRate ? orderDirection : undefined,
-          averageGrade: query.sortByAverageGrade ? orderDirection : undefined,
-          studentCount: query.sortByStudentCount ? orderDirection : undefined,
-        },
+        orderBy,
         where: {
           AND: [
             {
