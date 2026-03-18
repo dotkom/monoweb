@@ -1,4 +1,5 @@
 import { server } from "@/utils/trpc/server"
+import { CourseCard } from "./components/CourseCard"
 
 export default async function App() {
   const courses = await server.course.findCourses.query()
@@ -6,10 +7,9 @@ export default async function App() {
 
   return (
     <div>
-      <section className="flex flex-col gap-16 w-full">{courses.map((course) => course.norwegianName)}</section>
-      <section className="flex flex-col gap-2 w-full">
-        {grades.map((grade) => (
-          <span key={grade.id}>{grade.averageGrade}</span>
+      <section className="flex flex-col gap-16 w-full">
+        {courses.map((course) => (
+          <CourseCard key={course.code} course={course} />
         ))}
       </section>
     </div>
