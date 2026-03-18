@@ -103,11 +103,11 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
   const futureChildEventWithAttendances = childEventWithAttendance.filter(({ event }) => !isPast(event.end))
   const pastChildEventsWithAttendances = childEventWithAttendance.filter(({ event }) => isPast(event.end))
 
-  const has67 = true
-  // attendance !== null &&
-  // (getReservedAttendeeCount(attendance) === 67 ||
-  //   attendance.attendees.length === 67 ||
-  //   getAttendanceCapacity(attendance) === 67)
+  const has67 =
+    attendance !== null &&
+    (getReservedAttendeeCount(attendance) === 67 ||
+      attendance.attendees.length === 67 ||
+      getAttendanceCapacity(attendance) === 67)
 
   return (
     <SixtySevenShake active={has67}>
