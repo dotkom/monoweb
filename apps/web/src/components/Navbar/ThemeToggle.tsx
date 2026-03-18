@@ -12,9 +12,9 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const { setTheme, theme } = useTheme()
 
   const THEME_OPTIONS: Array<{
-    theme: "light" | "dark" | "system" | "pink";
-    label: string;
-    icon: Icon;
+    theme: "light" | "dark" | "system" | "pink"
+    label: string
+    icon: Icon
   }> = [
     {
       theme: "light",
@@ -36,7 +36,7 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
       label: "Systempreferanse",
       icon: IconDeviceDesktop,
     },
-  ];
+  ]
 
   return (
     <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
