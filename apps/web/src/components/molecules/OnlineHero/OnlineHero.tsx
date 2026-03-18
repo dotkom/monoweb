@@ -20,7 +20,6 @@ export const OnlineHero: FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [mounted, setMounted] = useState<boolean>(false)
-  const [isMobile, setIsMobile] = useState<boolean>(false)
 
   const themeState = useRef<string | undefined>(resolvedTheme)
   const splineRef = useRef<SplineInstance | null>(null)
@@ -33,11 +32,6 @@ export const OnlineHero: FC = () => {
 
   useEffect(() => {
     setMounted(true)
-    const mql = window.matchMedia("(max-width: 1023px)")
-    setIsMobile(mql.matches)
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
-    mql.addEventListener("change", handler)
-    return () => mql.removeEventListener("change", handler)
   }, [])
 
   useEffect(() => {
@@ -105,32 +99,30 @@ export const OnlineHero: FC = () => {
         </div>
       </div>
 
-      {!isMobile && (
-        <div className="lg:-ml-8 relative w-full">
-          <div className="relative inset-0 max-w-[600px] aspect-10/9 mx-auto lg:mx-0">
-            {(!mounted || isLoading) && (
-              <div className="absolute inset-0 bg-gray-100 dark:bg-stone-800 rounded-xl animate-pulse w-[80%] h-[80%] m-auto" />
-            )}
-            {mounted && (
-              <div className="absolute inset-0 overflow-hidden rounded-[40%]">
-                <Spline
-                  scene="https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
-                  onLoad={onSplineLoad}
-                  onSplineMouseDown={lightSwitch}
-                />
-                <div
-                  className={cn(
-                    "pointer-events-none absolute inset-0 rounded-[39%]",
-                    "shadow-[inset_0_0_20px_22px_#fff] transition-opacity duration-700",
-                    "dark:shadow-[inset_0_0_20px_22px_#1c1917]",
-                    isLoading ? "opacity-0" : "opacity-100"
-                  )}
-                />
-              </div>
-            )}
-          </div>
+      <div className="lg:-ml-8 relative w-full">
+        <div className="relative inset-0 max-w-[600px] aspect-10/9 mx-auto lg:mx-0">
+          {(!mounted || isLoading) && (
+            <div className="absolute inset-0 bg-gray-100 dark:bg-stone-800 rounded-xl animate-pulse w-[80%] h-[80%] m-auto" />
+          )}
+          {mounted && (
+            <div className="absolute inset-0 overflow-hidden rounded-[40%]">
+              <Spline
+                scene="https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
+                onLoad={onSplineLoad}
+                onSplineMouseDown={lightSwitch}
+              />
+              <div
+                className={cn(
+                  "pointer-events-none absolute inset-0 rounded-[39%]",
+                  "shadow-[inset_0_0_20px_22px_#fff] transition-opacity duration-700",
+                  "dark:shadow-[inset_0_0_20px_22px_#1c1917]",
+                  isLoading ? "opacity-0" : "opacity-100"
+                )}
+              />
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }
