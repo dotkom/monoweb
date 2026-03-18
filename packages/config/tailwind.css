@@ -126,9 +126,9 @@
     forwards;
 
   /* Barbie pink colors */
-  --color-barbie-pink-hover-btn: #E763C6;
-  --color-barbie-navbar-hover: #D11BB0;
-  --color-barbie-login-btn: #B8058B;
+  --color-barbie-pink-hover-btn: #e763c6;
+  --color-barbie-navbar-hover: #d11bb0;
+  --color-barbie-login-btn: #b8058b;
   --background-image-barbie-gradient: linear-gradient(
     180deg,
     #ffb1de 0%,
