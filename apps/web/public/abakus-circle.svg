@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <clipPath id="clip">
+      <circle cx="100" cy="100" r="92" />
+    </clipPath>
+  </defs>
+  <!-- Base dark circle (shadow color) -->
+  <circle cx="100" cy="100" r="92" fill="#a81a1a" />
+  <!-- Bright red circle offset to top-left, clipped to base -->
+  <circle cx="90" cy="90" r="92" fill="#e30413" clip-path="url(#clip)" />
+</svg>

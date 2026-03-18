@@ -35,6 +35,22 @@ const WAVE_MIN_INTERVAL = 1000 // ms between waves
 const WAVE_MAX_INTERVAL = 3000 // ms between waves
 const WAVE_MIN_SIZE = 2
 const WAVE_MAX_SIZE = 4
+const DIFFICULTY_RATE = 0.02 // Difficulty increase per second
+
+// Flappy bird animation for TIHLDE bugs
+const FLAP_AMPLITUDE = 12
+const FLAP_FREQUENCY = 1.8
+const FLAP_UP_RATIO = 0.42 // Fraction of cycle spent going up (faster upstroke)
+
+/** Returns the flap phase (0–2π) with asymmetric timing: fast up, slow down. */
+function flapPhase(elapsed: number): number {
+  const period = 1 / FLAP_FREQUENCY
+  const t = ((elapsed % period) + period) % period / period // 0–1 normalized cycle position
+  if (t < FLAP_UP_RATIO) {
+    return (t / FLAP_UP_RATIO) * Math.PI // 0→π (upstroke)
+  }
+  return Math.PI + ((t - FLAP_UP_RATIO) / (1 - FLAP_UP_RATIO)) * Math.PI // π→2π (downstroke)
+}
 
 interface Point {
   x: number
@@ -46,11 +62,15 @@ interface Projectile {
   y: number
   vx: number
   vy: number
+  launchTime: number
+  spinSpeed: number
 }
 
 interface Bug {
   x: number
   y: number
+  baseY: number
+  spawnTime: number
   radius: number
   speed: number
   isTihlde: boolean
@@ -71,7 +91,6 @@ interface GameState {
   bugImg: HTMLImageElement | null
   abakusImg: HTMLImageElement | null
   charging: boolean
-  chargeStart: number
   chargePower: number // 0-1
   projectiles: Projectile[]
   scale: number
@@ -82,6 +101,7 @@ interface GameState {
   lives: number
   nextSpawnAt: number
   cooldownUntil: number
+  difficulty: number
   gameOver: boolean
 }
 
@@ -187,10 +207,17 @@ function drawSlingshot(ctx: CanvasRenderingContext2D, state: GameState): void {
     drawTrajectoryDots(ctx, state.chargePower)
   }
 
-  // Draw all in-flight projectiles
+  // Draw all in-flight projectiles (spinning)
   if (logoImg) {
+    const now = performance.now()
     for (const p of state.projectiles) {
-      ctx.drawImage(logoImg, p.x - LOGO_SIZE / 2, p.y - LOGO_SIZE / 2, LOGO_SIZE, LOGO_SIZE)
+      const elapsed = (now - p.launchTime) / 1000
+      const angle = elapsed * p.spinSpeed
+      ctx.save()
+      ctx.translate(p.x, p.y)
+      ctx.rotate(angle)
+      ctx.drawImage(logoImg, -LOGO_SIZE / 2, -LOGO_SIZE / 2, LOGO_SIZE, LOGO_SIZE)
+      ctx.restore()
     }
   }
 
@@ -206,13 +233,27 @@ function drawBug(ctx: CanvasRenderingContext2D, bug: Bug, state: GameState): voi
   if (bug.isTihlde && state.bugImg) {
     const h = bug.radius * 2
     const w = h * (state.bugImg.naturalWidth / state.bugImg.naturalHeight)
-    ctx.drawImage(state.bugImg, bug.x - w / 2, bug.y - h / 2, w, h)
+    // Tilt based on sine derivative (positive = moving down, negative = moving up)
+    const elapsed = (performance.now() - bug.spawnTime) / 1000
+    const tilt = -Math.cos(flapPhase(elapsed)) * 0.2
+    ctx.save()
+    ctx.translate(bug.x, bug.y)
+    ctx.rotate(tilt)
+    ctx.drawImage(state.bugImg, -w / 2, -h / 2, w, h)
+    ctx.restore()
     return
   }
 
   if (state.abakusImg) {
     const size = bug.radius * 2
-    ctx.drawImage(state.abakusImg, bug.x - size / 2, bug.y - size / 2, size, size)
+    // Roll based on distance traveled (like a wheel)
+    const distanceTraveled = (VIRTUAL_W + BUG_RADIUS) - bug.x
+    const angle = -distanceTraveled / bug.radius
+    ctx.save()
+    ctx.translate(bug.x, bug.y)
+    ctx.rotate(angle)
+    ctx.drawImage(state.abakusImg, -size / 2, -size / 2, size, size)
+    ctx.restore()
     return
   }
 }
@@ -237,6 +278,13 @@ function drawHUD(ctx: CanvasRenderingContext2D, state: GameState): void {
   ctx.fillStyle = dark ? "#ffffff" : "#18181b"
   ctx.fillText(state.score.toString(), VIRTUAL_W - 30, 50)
 
+  // Difficulty
+  ctx.font = "bold 24px monospace"
+  ctx.fillStyle = dark ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.2)"
+  ctx.fillText(`Lvl ${state.difficulty.toFixed(1)}`, VIRTUAL_W - 28, 92)
+  ctx.fillStyle = dark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"
+  ctx.fillText(`Lvl ${state.difficulty.toFixed(1)}`, VIRTUAL_W - 30, 90)
+
   // Lives
   ctx.font = "28px sans-serif"
   ctx.textAlign = "left"
@@ -255,16 +303,19 @@ function spawnWave(state: GameState): void {
   const groundY = VIRTUAL_H * GROUND_Y_RATIO
   const count = WAVE_MIN_SIZE + Math.floor(Math.random() * (WAVE_MAX_SIZE - WAVE_MIN_SIZE + 1))
   const lastBugOffset = (count - 1) * BUG_RADIUS * 3
-  const isTihlde = Math.random() < 0.5
+  const isTihlde = Math.random() < 0.45
   let slowestSpeed = BUG_BASE_SPEED
   for (let i = 0; i < count; i++) {
     const speed = BUG_BASE_SPEED * (1 + (Math.random() * 2 - 1) * BUG_SPEED_VARIANCE)
     if (speed < slowestSpeed) slowestSpeed = speed
     // TIHLDE logos fly at a fixed height in the air; red circles walk on the ground
-    const y = isTihlde ? groundY * 0.6 : groundY - BUG_RADIUS
+    // Abakus logos need extra offset so the rotating square doesn't clip into the ground
+    const y = isTihlde ? groundY * 0.6 : groundY - BUG_RADIUS * 0.85
     state.bugs.push({
       x: VIRTUAL_W + BUG_RADIUS + i * BUG_RADIUS * 3,
       y,
+      baseY: y,
+      spawnTime: performance.now() - (Math.random() * 1000) / FLAP_FREQUENCY,
       radius: BUG_RADIUS,
       speed,
       isTihlde,
@@ -279,8 +330,13 @@ function spawnWave(state: GameState): void {
 function updateBugs(state: GameState, dt: number): void {
   const slingshotX = VIRTUAL_W * SLINGSHOT_X_RATIO
 
+  const now = performance.now()
   for (const bug of state.bugs) {
-    bug.x -= bug.speed * dt
+    bug.x -= bug.speed * state.difficulty * dt
+    if (bug.isTihlde) {
+      const elapsed = (now - bug.spawnTime) / 1000
+      bug.y = bug.baseY - Math.sin(flapPhase(elapsed)) * FLAP_AMPLITUDE
+    }
   }
 
   const reached = state.bugs.filter((bug) => bug.x <= slingshotX)
@@ -295,7 +351,6 @@ function updateBugs(state: GameState, dt: number): void {
   }
 
   // Spawn logic
-  const now = performance.now()
   if (now >= state.nextSpawnAt) {
     spawnWave(state)
   }
@@ -402,7 +457,6 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 function createInitialState(): Omit<GameState, "logoImg" | "logoImgDark" | "spriteImg" | "bugImg" | "abakusImg"> {
   return {
     charging: false,
-    chargeStart: 0,
     chargePower: 0,
     projectiles: [],
     scale: 1,
@@ -413,6 +467,7 @@ function createInitialState(): Omit<GameState, "logoImg" | "logoImgDark" | "spri
     lives: INITIAL_LIVES,
     nextSpawnAt: performance.now() + randomWaveInterval(),
     cooldownUntil: 0,
+    difficulty: 1.0,
     gameOver: false,
   }
 }
@@ -449,7 +504,6 @@ export function startGame(canvas: HTMLCanvasElement, onExit?: () => void): () =>
     mouseHeld = true
     if (performance.now() < state.cooldownUntil) return
     state.charging = true
-    state.chargeStart = performance.now()
     state.chargePower = 0
   }
 
@@ -466,6 +520,8 @@ export function startGame(canvas: HTMLCanvasElement, onExit?: () => void): () =>
       y: cradle.y,
       vx: Math.cos(LAUNCH_ANGLE) * speed,
       vy: Math.sin(LAUNCH_ANGLE) * speed,
+      launchTime: performance.now(),
+      spinSpeed: powerCurve(state.chargePower) * Math.PI * 6,
     })
     state.chargePower = 0
     state.cooldownUntil = performance.now() + 1000
@@ -525,15 +581,13 @@ export function startGame(canvas: HTMLCanvasElement, onExit?: () => void): () =>
   canvas.addEventListener("touchstart", onTouchStart, { passive: false })
   canvas.addEventListener("touchend", release)
 
-  function updateCharge(): void {
+  function updateCharge(dt: number): void {
     if (!state.charging && mouseHeld && performance.now() >= state.cooldownUntil) {
       state.charging = true
-      state.chargeStart = performance.now()
       state.chargePower = 0
     }
     if (!state.charging) return
-    const elapsed = performance.now() - state.chargeStart
-    state.chargePower = Math.min(elapsed / CHARGE_DURATION_MS, 1)
+    state.chargePower = Math.min(state.chargePower + dt / (CHARGE_DURATION_MS / 1000), 1)
   }
 
   function updateProjectiles(dt: number): void {
@@ -561,7 +615,8 @@ export function startGame(canvas: HTMLCanvasElement, onExit?: () => void): () =>
     state.offsetY = (canvas.height - VIRTUAL_H * state.scale) / 2
 
     if (!state.gameOver) {
-      updateCharge()
+      state.difficulty += DIFFICULTY_RATE * dt
+      updateCharge(dt)
       updateProjectiles(dt)
       updateBugs(state, dt)
       checkCollisions(state)
@@ -584,7 +639,7 @@ export function startGame(canvas: HTMLCanvasElement, onExit?: () => void): () =>
     loadImage("/online-logo-o-darkmode.svg"),
     loadImage("/sprite.png"),
     loadImage("/tihlde-logo.svg"),
-    loadImage("/abakus-circle.png"),
+    loadImage("/abakus-circle.svg"),
   ]).then(([light, dark, sprite, bug, abakus]) => {
     state.logoImg = light
     state.logoImgDark = dark
