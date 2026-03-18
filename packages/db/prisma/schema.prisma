@@ -847,3 +847,4 @@ model Notification {
 
   @@map("notification")
 }
+

@@ -6,6 +6,7 @@ import type {
   NotificationRecipientId,
   NotificationRecipient,
   UserNotification,
+  NotificationType, // ....
 } from "./notification"
 
 import type { UserId } from "@dotkomonline/types"
@@ -30,7 +31,8 @@ export interface NotificationRepository {
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
-  findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  // findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  findAllForUser(handle: DBHandle, userId: UserId, type?: NotificationType): Promise<UserNotification[]> // ...
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<void>
   markAllAsRead(handle: DBHandle, userId: UserId): Promise<void>
