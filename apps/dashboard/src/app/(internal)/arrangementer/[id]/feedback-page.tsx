@@ -83,11 +83,11 @@ export const FeedbackPage: FC = () => {
         ) : (
           <Stack>
             {!canCreateFeedbackForm ? (
-              <Text mb={8} c="red">
+              <Text mb={8} c="red.7">
                 Arrangementet er over. Det er ikke lenger mulig å opprette tilbakemeldingsskjema
               </Text>
             ) : (
-              <Text mb={8} c="red.3">
+              <Text mb={8} c="red.7">
                 Det vil ikke være mulig å opprette tilbakemeldingsskjema etter arrangementet er over
               </Text>
             )}

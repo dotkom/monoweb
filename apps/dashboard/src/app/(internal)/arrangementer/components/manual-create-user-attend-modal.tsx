@@ -39,10 +39,12 @@ export const ManualCreateUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
 
   const Form = useFormBuilder({
     schema: FormSchema,
+    defaultValues: {
+      poolId: defaultValue,
+    },
     fields: {
       poolId: createSelectInput({
         label: "Påmeldingsgruppe",
-        defaultValue,
         data: attendance?.pools.map((pool) => ({
           label: pool.title,
           value: pool.id,
