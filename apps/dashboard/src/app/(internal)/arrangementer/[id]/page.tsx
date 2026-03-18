@@ -19,6 +19,7 @@ import {
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useDeleteEventMutation } from "../mutations"
+import { useEventFeedbackFormGetQuery } from "../queries"
 import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
 import { EventEditCard } from "./edit-card"
@@ -26,7 +27,6 @@ import { FeedbackPage } from "./feedback-page"
 import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
-import { useEventFeedbackFormGetQuery } from "../queries"
 
 const SIDEBAR_LINKS = [
   {
@@ -80,7 +80,7 @@ export default function EventWithAttendancesPage() {
   const hasAttendance = Boolean(attendance)
   const hasPools = Boolean(attendance?.pools && attendance.pools.length > 0)
 
-  const { data: feedbackForm } = useEventFeedbackFormGetQuery(event.id)
+  const { data: feedbackForm, isLoading: feedbackFormIsLoading } = useEventFeedbackFormGetQuery(event.id)
 
   const now = getCurrentUTC()
   const hasFeedbackForm = Boolean(feedbackForm)
@@ -96,7 +96,7 @@ export default function EventWithAttendancesPage() {
   return (
     <Stack>
       {hasAttendance && !hasPools && <WarningBox content="Påmeldingen har ingen påmeldingsgrupper" />}
-      {isCompanyEvent && !hasFeedbackForm && !hasEventEnded && (
+      {!feedbackFormIsLoading && isCompanyEvent && !hasFeedbackForm && !hasEventEnded && (
         <WarningBox content="Arrangementet mangler tilbakemeldingsskjema. Det vil ikke være mulig å opprette tilbakemeldingsskjema etter arrangementet er over" />
       )}
 

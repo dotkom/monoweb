@@ -6,7 +6,7 @@ import { AttendanceSchema, AttendanceSummarySchema } from "./attendance"
 import { CompanySchema } from "./company"
 import { FeedbackFormSchema } from "./feedback-form"
 import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
-import { GroupSchema } from "./group"
+import { GroupSchema, type GroupType } from "./group"
 
 /**
  * @packageDocumentation
@@ -183,3 +183,8 @@ export const getDefaultFeedbackAnswerDeadline = (eventEnd: Date, timezone: strin
 }
 
 export const EVENT_IMAGE_MAX_SIZE_KIB = 5 * 1024
+
+export function findFirstHostingGroupEmail(event: Event): string | null {
+  const validGroupTypes: GroupType[] = ["COMMITTEE", "NODE_COMMITTEE"]
+  return event.hostingGroups.filter((group) => group.email && validGroupTypes.includes(group.type)).at(0)?.email ?? null
+}

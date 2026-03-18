@@ -1,12 +1,6 @@
 import { env } from "@/lib/env"
 import { useSession } from "@dotkomonline/oauth2/react"
-import {
-  UserWriteSchema,
-  type WorkspaceUser,
-  findActiveMembership,
-  getMembershipGrade,
-  getMembershipTypeName,
-} from "@dotkomonline/types"
+import { UserWriteSchema, type WorkspaceUser, findActiveMembership, getMembershipTypeName } from "@dotkomonline/types"
 import { Button, Group, Loader, Stack, Text, TextInput, Title } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconCheck, IconLink, IconUsersGroup, IconX, IconArrowUpRight } from "@tabler/icons-react"
@@ -15,6 +9,7 @@ import { useLinkOwUserToWorkspaceUserMutation, useUpdateUserMutation } from "../
 import { useFindWorkspaceUserQuery, useGroupAllByMemberQuery, useIsAdminQuery } from "../queries"
 import { useUserProfileEditForm } from "./edit-form"
 import { useUserDetailsContext } from "./provider"
+import { getStudyGrade } from "@dotkomonline/utils"
 
 export const UserEditCard: FC = () => {
   const session = useSession()
@@ -57,7 +52,7 @@ export const UserEditCard: FC = () => {
   })
 
   const activeMembership = findActiveMembership(user)
-  const grade = activeMembership ? getMembershipGrade(activeMembership) : null
+  const grade = activeMembership?.semester != null ? getStudyGrade(activeMembership.semester) : null
   const membershipType = activeMembership ? getMembershipTypeName(activeMembership.type) : null
 
   return (

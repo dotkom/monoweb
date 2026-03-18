@@ -1,7 +1,7 @@
 import type { Logger } from "@dotkomonline/logger"
 import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies"
 import { cookies } from "next/headers"
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { z } from "zod"
 import { type OAuth2Service, type OAuthScope, defaultSessionLengthSeconds } from "./authentication"
 import { type Session, createSession, getSession } from "./session"
@@ -59,8 +59,8 @@ export type AuthenticationHandlerOptions = {
 export function createAuthenticationHandler(service: OAuth2Service, opts: AuthenticationHandlerOptions) {
   return {
     /** Begin the OAuth2 authorization code flow */
-    authorize: async function authorize(request: NextRequest): Promise<NextResponse> {
-      const searchParams = request.nextUrl.searchParams
+    authorize: async function authorize(request: Request): Promise<Response> {
+      const searchParams = new URL(request.url).searchParams
 
       const { url, state, nonce, verifier } = await service.createAuthorizeUrl({
         redirectUrl: opts.redirectUrl,
@@ -80,13 +80,14 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       return NextResponse.redirect(url)
     },
     /** Handle callback post-authorization from Auth0 */
-    callback: async function callback(request: NextRequest): Promise<NextResponse> {
+    callback: async function callback(request: Request): Promise<Response> {
+      const requestUrl = new URL(request.url)
       const cookieHandle = await cookies()
       try {
         // Attempt to parse the state and code from the request.
         const input = await CallbackEndpointInput.safeParseAsync({
-          code: request.nextUrl.searchParams.get("code"),
-          state: request.nextUrl.searchParams.get("state"),
+          code: requestUrl.searchParams.get("code"),
+          state: requestUrl.searchParams.get("state"),
         })
         if (!input.success) {
           const url = new URL(opts.errorUrl)
@@ -144,7 +145,7 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       }
     },
     /** Handle logout from Auth0 */
-    logout: async function logout(_: NextRequest): Promise<NextResponse> {
+    logout: async function logout(_: Request): Promise<Response> {
       const logoutUrl = await service.createLogoutUrl(opts.host)
       const cookieHandle = await cookies()
       cookieHandle.set(service.getOAuth2SessionCookieName(), "", {
@@ -157,12 +158,12 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       return NextResponse.redirect(logoutUrl)
     },
     /** Read the current user session */
-    session: async function session(_: NextRequest): Promise<NextResponse> {
+    session: async function session(_: Request): Promise<Response> {
       const serverSession = await this.getServerSession()
       if (serverSession === null) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
       }
-      return NextResponse.json(session, { status: 200 })
+      return NextResponse.json(serverSession, { status: 200 })
     },
     getServerSession: async function getServerSession(): Promise<Session | null> {
       const cookieHandle = await cookies()

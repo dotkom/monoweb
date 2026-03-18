@@ -1,30 +1,31 @@
 import type { Prisma } from "@prisma/client"
-import { addYears, roundToNearestHours, subYears } from "date-fns"
+import { getCurrentSemesterStart, getNextSemesterStart, isSpringSemester } from "@dotkomonline/utils"
 
-const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
-
-const lastYear = subYears(now, 1)
-const nextYear = addYears(now, 1)
+const isSpring = isSpringSemester()
+const start = getCurrentSemesterStart()
+const end = getNextSemesterStart()
 
 export const getMembershipFixtures = (userIds: string[]) =>
   [
     {
       userId: userIds[0],
-      start: lastYear,
+      start,
       type: "BACHELOR_STUDENT",
-      end: nextYear,
+      end,
+      semester: isSpring ? 3 : 4,
     },
     {
       userId: userIds[1],
-      start: lastYear,
+      start,
       type: "KNIGHT",
-      end: nextYear,
+      end,
     },
     {
       userId: userIds[2],
-      start: subYears(now, 4),
+      start,
       type: "MASTER_STUDENT",
-      end: nextYear,
+      end,
       specialization: "SOFTWARE_ENGINEERING",
+      semester: isSpring ? 7 : 6,
     },
   ] as const satisfies Prisma.MembershipCreateManyInput[]

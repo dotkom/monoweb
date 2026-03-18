@@ -21,10 +21,17 @@ datasource db {
 enum MembershipType {
   BACHELOR_STUDENT @map("BACHELOR_STUDENT")
   MASTER_STUDENT   @map("MASTER_STUDENT")
-  PHD_STUDENT      @map("PHD_STUDENT")
+  /// "Ridder av det Indre Lager" is an honorary membership type for those who have exceptionally contributed beyond
+  /// expectations to Linjeforeningen Online. For our system, it is functionally identical to `SOCIAL_MEMBER` (sosialt
+  /// medlem), but it is highly prestigious and grants a lifetime membership.
   KNIGHT           @map("KNIGHT")
+  /// "Sosialt medlem" is a membership type for those who want membership with Linjeforeningen Online, but are not
+  /// technically informatics students at NTNU (commonly those who internally transfer from other study programs at
+  /// NTNU).
+  ///
+  /// This membership type exists to not allow them to attend (most) events with companies, as we usually sign
+  /// contracts saying we will provide "informatics students", but we still want to include them for all other events.
   SOCIAL_MEMBER    @map("SOCIAL_MEMBER")
-  OTHER            @map("OTHER")
 
   @@map("membership_type")
 }
@@ -45,12 +52,22 @@ enum MembershipSpecialization {
 
 model Membership {
   id             String                    @id @default(uuid())
-  userId         String                    @map("user_id")
-  user           User                      @relation(fields: [userId], references: [id])
   type           MembershipType
+  /// Specialization of the student. This is relevant for Master students. For all other students, this value should be
+  /// `UNKNOWN`.
   specialization MembershipSpecialization? @default(UNKNOWN)
   start          DateTime                  @db.Timestamptz(3)
-  end            DateTime                  @db.Timestamptz(3)
+  /// End date of the membership. Null means the membership does not have an end date, and lasts forever.
+  end            DateTime?                 @db.Timestamptz(3)
+  /// The semester the student is in. 0-indexed.
+  ///
+  /// This value is meant to be used to calculate study grade (year), and can be used to calculate study start date
+  /// with the `start` date of the membership. It is nullable because `KNIGHT` membership type is a lifetime
+  /// membership.
+  semester       Int?
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
 
   @@index([userId], name: "idx_membership_user_id")
   @@map("membership")

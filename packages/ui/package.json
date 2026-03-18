@@ -45,12 +45,12 @@
     "next": "^15"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
+    "@biomejs/biome": "2.4.5",
     "@dotkomonline/config": "workspace:*",
     "@ladle/react": "5.1.1",
     "@tailwindcss/postcss": "4.1.18",
-    "@types/react": "19.2.11",
-    "postcss": "8.5.6",
+    "@types/react": "19.2.14",
+    "postcss": "8.5.8",
     "tailwindcss": "4.1.18",
     "typescript": "5.9.3",
     "vite": "6.4.1",

@@ -15,16 +15,22 @@ interface CompanyViewProps {
   company: Company
 }
 
+function buildCompanyLinks(company: Company) {
+  const urls = [{ icon: IconWorld, text: "Nettside", href: company.website as string | null }]
+  if (company.location !== null && company.location !== "") {
+    urls.push({ icon: IconMapPin, text: company.location, href: null })
+  }
+  if (company.email !== null && company.email !== "") {
+    urls.push({ icon: IconMail, text: company.email, href: `mailto:${company.email}` })
+  }
+  if (company.phone !== null && company.phone !== "") {
+    urls.push({ icon: IconPhone, text: company.phone, href: `tel:${company.phone}` })
+  }
+  return urls
+}
+
 export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
-  const { name, description, phone, email, website, location, imageUrl } = company
-
-  const icons = [
-    { icon: IconMapPin, text: location, href: null },
-    { icon: IconWorld, text: "Nettside", href: website },
-    { icon: IconMail, text: email, href: `mailto:${email}` },
-    { icon: IconPhone, text: phone, href: `tel:${phone}` },
-  ]
-
+  const icons = buildCompanyLinks(company)
   const now = roundToNearestMinutes(getCurrentUTC(), {
     roundingMethod: "floor",
   })
@@ -47,14 +53,14 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
   })
 
   return (
-    <EntryDetailLayout title={name}>
+    <EntryDetailLayout title={company.name}>
       <div className="grid gap-x-12 gap-y-6 sm:grid-cols-[18rem_minmax(100px,_1fr)] md:grid-cols-[24rem_minmax(100px,_1fr)]">
         <div className="border-blue-600 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
-          {imageUrl && (
+          {company.imageUrl && (
             <div className="relative mb-4 h-64 w-full overflow-hidden rounded-lg bg-[#fff]">
-              <a href={website} target="_blank" rel="noreferrer">
+              <a href={company.website} target="_blank" rel="noreferrer">
                 <Image
-                  src={imageUrl}
+                  src={company.imageUrl}
                   alt="Company logo"
                   fill
                   style={{ objectFit: "contain" }}
@@ -85,7 +91,7 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
             ))}
           </div>
         </div>
-        {description && <RichText content={description} />}
+        {company.description && <RichText content={company.description} />}
       </div>
       <div className="mt-6 flex flex-col gap-2">
         <Title element="h2">Arrangementer</Title>

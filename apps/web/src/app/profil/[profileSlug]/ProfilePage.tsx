@@ -13,7 +13,6 @@ import {
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   findActiveMembership,
-  getMembershipGrade,
   getMembershipTypeName,
   getSpecializationName,
 } from "@dotkomonline/types"
@@ -32,7 +31,14 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { capitalizeFirstLetter, createAuthorizeUrl, getCurrentUTC, getPunishmentExpiryDate } from "@dotkomonline/utils"
+import {
+  capitalizeFirstLetter,
+  createAuthorizeUrl,
+  getCurrentUTC,
+  getPunishmentExpiryDate,
+  getStudyGrade,
+  isMembershipActiveUntilNextSemesterStart,
+} from "@dotkomonline/utils"
 import {
   IconAlertTriangle,
   IconChefHatOff,
@@ -141,35 +147,41 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
   )
 }
 
-const MembershipDisplay = ({
-  activeMembership,
-  grade,
-}: {
-  activeMembership: Membership | null
-  grade: number | null
-}) => {
-  if (activeMembership) {
+const MembershipDisplay = ({ activeMembership }: { activeMembership: Membership | null }) => {
+  if (!activeMembership) {
     return (
-      <>
-        <IconNotes className="text-gray-500 dark:text-stone-400" width={32} height={32} />
-        <div className="flex flex-col gap-1">
-          <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
-          {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
-          <Text>{grade}. klasse</Text>
-          <Text className="text-xs text-gray-500 dark:text-stone-400">
-            Medlemskapet varer fra {formatDate(activeMembership.start, "MMM yyyy")} til{" "}
-            {formatDate(activeMembership.end, "MMM yyyy")}
-          </Text>
-        </div>
-      </>
+      <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-full">
+        <IconNotesOff className="text-gray-500 dark:text-stone-400" width={32} height={32} />
+        <Text className="text-xl">Ingen medlemskap</Text>
+      </div>
     )
   }
 
+  const grade = activeMembership.semester !== null ? getStudyGrade(activeMembership.semester) : null
+  const membershipActiveUntilNextSemesterStart =
+    activeMembership.end !== null ? isMembershipActiveUntilNextSemesterStart(activeMembership.end) : null
+  const isMembershipIndefinite = activeMembership.end === null
+
+  let membershipValidUntilText = null
+
+  if (isMembershipIndefinite) {
+    membershipValidUntilText = "Livstidsmedlemskap"
+  } else if (membershipActiveUntilNextSemesterStart) {
+    membershipValidUntilText = "Gyldig til starten av neste semester"
+  } else if (activeMembership.end) {
+    membershipValidUntilText = `Gyldig til ${formatDate(activeMembership.end, "dd. MMMM yyyy", { locale: nb })}`
+  }
+
   return (
-    <>
-      <IconNotesOff className="text-gray-500 dark:text-stone-400" width={32} height={32} />
-      <Text className="text-xl">Ingen medlemskap</Text>
-    </>
+    <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-full">
+      <IconNotes className="text-gray-500 dark:text-stone-400" width={32} height={32} />
+      <div className="flex flex-col gap-1">
+        <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
+        {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
+        {grade !== null ? <Text>{grade}. klasse</Text> : null}
+        <Text className="text-sm text-gray-500 dark:text-stone-500">{membershipValidUntilText}</Text>
+      </div>
+    </div>
   )
 }
 
@@ -251,7 +263,7 @@ export function ProfilePage() {
   }
 
   const activeMembership = findActiveMembership(user)
-  const grade = activeMembership ? getMembershipGrade(activeMembership) : null
+  const grade = activeMembership?.semester != null ? getStudyGrade(activeMembership.semester) : null
 
   const dashboardUrl = new URL(`/brukere/${user.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
@@ -378,9 +390,7 @@ export function ProfilePage() {
               </div>
             )}
 
-            <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-fit">
-              <MembershipDisplay activeMembership={activeMembership} grade={grade} />
-            </div>
+            <MembershipDisplay activeMembership={activeMembership} />
 
             {!activeMembership ? (
               <>
@@ -411,6 +421,8 @@ export function ProfilePage() {
               </>
             ) : (
               <Text className="text-sm text-gray-500 dark:text-stone-500">
+                Medlemskap er gyldig på semesterbasis.
+                <br />
                 Ved feil angitt informasjon, ta kontakt med{" "}
                 <Link className="underline" href="/grupper/hs">
                   Hovedstyret

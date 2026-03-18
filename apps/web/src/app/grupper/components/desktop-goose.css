@@ -1,0 +1,138 @@
+/* ===== Desktop Goose Easter Egg Animations ===== */
+
+/* Waddle animation - rocking side-to-side while walking */
+@keyframes goose-waddle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* Idle animation - subtle bobbing */
+@keyframes goose-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Footprint fade out */
+@keyframes footprint-fade {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Note drop - appears from goose with slight bounce */
+@keyframes note-drop {
+  0% {
+    transform: scale(0) rotate(-10deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(var(--note-rotation, 0deg));
+    opacity: 1;
+  }
+}
+
+/* Note dismiss - shrink out */
+@keyframes note-dismiss {
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* Honk speech bubble */
+@keyframes goose-honk {
+  0% {
+    transform: translateX(-50%) scale(0);
+    opacity: 0;
+  }
+  20% {
+    transform: translateX(-50%) scale(1.3);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Cursor steal - head shake */
+@keyframes goose-steal {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-15deg);
+  }
+  40% {
+    transform: rotate(15deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
+.desktop-goose--waddle {
+  animation: goose-waddle 0.4s ease-in-out infinite;
+}
+
+.desktop-goose--idle {
+  animation: goose-idle 2s ease-in-out infinite;
+}
+
+.desktop-goose--steal {
+  animation: goose-steal 0.5s ease-in-out infinite;
+}
+
+.desktop-goose__footprint {
+  animation: footprint-fade 4s ease-out forwards;
+}
+
+.desktop-goose__note {
+  animation: note-drop 0.4s ease-out forwards;
+}
+
+.desktop-goose__note--dismissing {
+  animation: note-dismiss 0.3s ease-in forwards;
+}
+
+.desktop-goose__honk {
+  animation: goose-honk 0.8s ease-out forwards;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .desktop-goose--waddle,
+  .desktop-goose--idle,
+  .desktop-goose--steal,
+  .desktop-goose__honk {
+    animation: none;
+  }
+}

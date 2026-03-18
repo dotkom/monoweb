@@ -3,6 +3,7 @@
   "configMigration": true,
   "extends": ["config:best-practices"],
   "semanticCommits": "disabled",
+  "platformAutomerge": false,
   "major": {
     "automerge": false
   },

@@ -26,7 +26,7 @@ export const env = defineConfiguration({
   NEXT_PUBLIC_HOME_URL: config(process.env.NEXT_PUBLIC_HOME_URL, "/"),
   AWS_CLOUDFRONT_URL: config(process.env.AWS_CLOUDFRONT_URL, {
     prd: "https://cdn.online.ntnu.no",
-    dev: "https://cdn.staging.online.ntnu.no",
+    dev: "https://cdn.dev.online.ntnu.no",
   }),
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: config(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
 })
