@@ -42,6 +42,7 @@ export const GroupWriteSchema = GroupSchema.pick({
   imageUrl: true,
   email: true,
   contactUrl: true,
+  slackUrl: true,
   showLeaderAsContact: true,
   memberVisibility: true,
   deactivatedAt: true,
