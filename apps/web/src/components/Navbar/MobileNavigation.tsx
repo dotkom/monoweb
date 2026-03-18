@@ -188,7 +188,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                         element={Link}
                         variant="solid"
                         color="brand"
-                        className="text-sm font-semibold px-3 py-2 [[data-theme=pink]_&]:bg-[#B8058B]"
+                        className="text-sm font-semibold px-3 py-2 [[data-theme=pink]_&]:bg-barbie-login-btn"
                         href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
                         prefetch={false}
                         icon={<IconLogin2 className="mr-1 text-xl" />}

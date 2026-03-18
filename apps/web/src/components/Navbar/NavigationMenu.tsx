@@ -39,7 +39,7 @@ export const navigationMenuTriggerStyle = cn(
   "disabled:opacity-50 disabled:pointer-events-none",
   "h-10 py-2 px-1.5 lg:px-4 group hover:bg-blue-200 data-[state=open]:bg-blue-200",
   "dark:text-stone-300 dark:hover:bg-stone-700/50 dark:data-[state=open]:bg-stone-700/50",
-  "[[data-theme=pink]_&]:hover:bg-[#D11BB0] [[data-theme=pink]_&]:data-[state=open]:bg-[#D11BB0]"
+  "[[data-theme=pink]_&]:hover:bg-barbie-navbar-hover [[data-theme=pink]_&]:data-[state=open]:bg-barbie-navbar-hover"
 )
 
 export const NavigationMenuTrigger = React.forwardRef<

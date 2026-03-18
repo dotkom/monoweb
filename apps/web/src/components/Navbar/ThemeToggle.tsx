@@ -41,7 +41,7 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   return (
     <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
       <div
-        className="absolute top-1 bottom-1 h-8 w-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700 [[data-theme=pink]_&]:bg-[#E763C6]"
+        className="absolute top-1 bottom-1 h-8 w-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700 [[data-theme=pink]_&]:bg-barbie-pink-hover-btn"
         style={{
           transform: `translateX(${THEME_OPTIONS.findIndex((option) => option.theme === theme) * 2.25}rem)`,
         }}

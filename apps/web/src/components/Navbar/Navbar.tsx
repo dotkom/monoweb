@@ -139,7 +139,7 @@ export const Navbar: FC = () => {
     <header
       className="sticky bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl border border-blue-100 dark:border-stone-700/30 shadow-sm top-4 z-50 flex flex-row justify-between items-center w-full max-w-screen-xl mt-4 p-3 rounded-full
 
-        [[data-theme=pink]_&]:bg-[linear-gradient(180deg,#FFB1DE_0%,#E763C6_41.35%,#D11BB0_87.5%,#FF71E5_100%)]
+        [[data-theme=pink]_&]:bg-barbie-gradient
         [[data-theme=pink]_&]:shadow-[0px_4px_10px_0px_#0000004D]
         [[data-theme=pink]_&]:border-none
         [[data-theme=pink]_&]:text-white

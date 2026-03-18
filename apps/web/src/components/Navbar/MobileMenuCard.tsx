@@ -19,7 +19,7 @@ export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon: Ico
         onClick={onClick}
         className={cn(
           "relative flex flex-col items-start justify-start w-full p-4 rounded-xl transition-colors",
-          "bg-blue-100 hover:bg-blue-200 dark:bg-stone-700 dark:hover:bg-stone-600 [[data-theme=pink]_&]:bg-pink-200 [[data-theme=pink]_&]:hover:bg-[#E763C6]",
+          "bg-blue-100 hover:bg-blue-200 dark:bg-stone-700 dark:hover:bg-stone-600 [[data-theme=pink]_&]:bg-pink-200 [[data-theme=pink]_&]:hover:bg-barbie-pink-hover-btn",
           "border border-blue-200 dark:border-stone-600 [[data-theme=pink]_&]:border-none"
         )}
       >

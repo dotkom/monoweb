@@ -63,7 +63,7 @@ const ThemeDropdown: FC = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 [[data-theme=pink]_&]:hover:bg-[#D11BB0] transition-colors">
+      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 [[data-theme=pink]_&]:hover:bg-barbie-navbar-hover transition-colors">
         <ThemeIcon width={22} height={22} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -82,7 +82,7 @@ const ContactDebugDropdown: FC = () => (
     <DropdownMenuTrigger asChild>
       <button
         aria-label="Kontakt debug, les mer om debug"
-        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 [[data-theme=pink]_&]:hover:bg-[#D11BB0] transition-colors"
+        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 [[data-theme=pink]_&]:hover:bg-barbie-navbar-hover transition-colors"
         type="button"
       >
         <IconMessageReport width={24} height={24} />
@@ -111,7 +111,7 @@ const ContactDebugDropdown: FC = () => (
             href={DEBUG_CONTACT_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 [[data-theme=pink]_&]:bg-pink-200 hover:bg-blue-200 dark:hover:bg-stone-600 [[data-theme=pink]_&]:hover:bg-[#E763C6] transition-colors"
+            className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 [[data-theme=pink]_&]:bg-pink-200 hover:bg-blue-200 dark:hover:bg-stone-600 [[data-theme=pink]_&]:hover:bg-barbie-pink-hover-btn transition-colors"
           >
             <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
             <IconArrowUpRight width={16} height={16} />
@@ -165,7 +165,7 @@ const UnauthenticatedActions: FC = () => {
           element={Link}
           variant="solid"
           color="brand"
-          className="text-sm font-semibold px-3 py-2 [[data-theme=pink]_&]:bg-[#B8058B] [[data-theme=pink]_&]:hover:bg-pink-700"
+          className="text-sm font-semibold px-3 py-2 [[data-theme=pink]_&]:bg-barbie-login-btn [[data-theme=pink]_&]:hover:bg-pink-700"
           href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
           prefetch={false}
           icon={<IconLogin2 className="mr-1 text-xl" />}
