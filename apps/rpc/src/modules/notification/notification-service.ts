@@ -6,6 +6,7 @@ import type {
   NotificationRecipientId,
   NotificationWrite,
   UserNotification,
+  NotificationType, // ...
 } from "./notification"
 import type { UserId } from "@dotkomonline/types"
 import type { NotificationRepository } from "./notification-repository"
@@ -31,7 +32,8 @@ export interface NotificationService {
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
-  findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  findAllForUser(handle: DBHandle, userId: UserId, type?: NotificationType): Promise<UserNotification[]> // ...
+  // findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<void>
   markAllAsRead(handle: DBHandle, userId: UserId): Promise<void>
@@ -39,7 +41,7 @@ export interface NotificationService {
 
 export function getNotificationService(notificationRepository: NotificationRepository, userRepository: UserRepository): NotificationService {
   return {
-    async findById(handle, notificationId) {
+    async findById(handle, notificationId ) {
       return await notificationRepository.findById(handle, notificationId)
     },
      async findMany(handle, page) {
@@ -75,9 +77,13 @@ export function getNotificationService(notificationRepository: NotificationRepos
       return await notificationRepository.findRecipient(handle, recipientId, userId)
     },
 
-    async findAllForUser(handle, userId) {
-      return await notificationRepository.findAllForUser(handle, userId)
-    },
+    // async findAllForUser(handle, userId) {
+    //   return await notificationRepository.findAllForUser(handle, userId)
+    // },
+
+    async findAllForUser(handle, userId, type) {
+      return await notificationRepository.findAllForUser(handle, userId, type) /// ...
+   },
 
     async getUnreadCountForUser(handle, userId) {
       return await notificationRepository.getUnreadCountForUser(handle, userId)
