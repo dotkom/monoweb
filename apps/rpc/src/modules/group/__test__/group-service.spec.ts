@@ -45,6 +45,7 @@ describe("GroupService", () => {
       memberVisibility: "ALL_MEMBERS",
       shortDescription: null,
       contactUrl: null,
+      slackUrl: null,
       deactivatedAt: null,
       roles: [],
       workspaceGroupId: null,

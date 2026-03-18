@@ -13,6 +13,7 @@ export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     description: faker.lorem.paragraphs(3),
     contactUrl: faker.internet.url(),
     email: faker.internet.email(),
+    slackUrl: faker.internet.url(),
     imageUrl: faker.image.url(),
     deactivatedAt: null,
     workspaceGroupId: null,
