@@ -2,7 +2,7 @@ import {
   type Course,
   mapAverageGradeToLetterGrade,
   mapCourseCampusToLabel,
-  mapCourseSemesterToLabel
+  mapCourseSemesterToLabel,
 } from "@dotkomonline/grades-backend/course"
 import { Badge, Text, Title } from "@dotkomonline/ui"
 import Link from "next/link"

@@ -16,7 +16,7 @@ export const CourseFilterQuerySchema = z
     byCode: buildSearchFilter(),
     byName: buildSearchFilter(),
     orderBy: createSortOrder(),
-    sortBy: buildAnyOfFilter(CourseFilterSortSchema)
+    sortBy: buildAnyOfFilter(CourseFilterSortSchema),
   })
   .partial()
 

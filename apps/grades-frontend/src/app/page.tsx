@@ -5,7 +5,8 @@ export default async function App() {
   // TODO: Replace with actual user input filtering
   const courses = await server.course.findCourses.query({
     filter: {
-      sortBy: ["studentCount"], orderBy: "desc"
+      sortBy: ["studentCount"],
+      orderBy: "desc",
     },
   })
   const grades = courses.length > 0 ? await server.grade.findGrades.query(courses[0].code) : []
