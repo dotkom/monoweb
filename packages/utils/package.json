@@ -23,6 +23,7 @@
     "@date-fns/tz": "^1.2.0",
     "date-fns": "^4.1.0",
     "html-to-text": "^9.0.5",
-    "slugify": "^1.6.6"
+    "slugify": "^1.6.6",
+    "zod": "^3.25.76"
   }
 }

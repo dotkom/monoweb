@@ -24,7 +24,7 @@ import * as crypto from "node:crypto"
 import { isDevelopmentEnvironment } from "../../configuration"
 import { isSameDay } from "date-fns"
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
-import type { Pageable } from "../../query"
+import type { Pageable } from "@dotkomonline/utils"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
 import {
   BACHELOR_FIRST_SEMESTER,

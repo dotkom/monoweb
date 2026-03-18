@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc-client"
-import type { Pageable } from "@dotkomonline/rpc"
+import type { Pageable } from "@dotkomonline/utils"
 import type { MarkFilterQuery } from "@dotkomonline/types"
 
 import { useInfiniteQuery } from "@tanstack/react-query"

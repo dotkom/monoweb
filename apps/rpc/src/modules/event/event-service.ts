@@ -21,7 +21,7 @@ import {
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, NotFoundError } from "../../error"
-import type { Pageable } from "../../query"
+import type { Pageable } from "@dotkomonline/utils"
 import type { EventRepository } from "./event-repository"
 
 export interface EventService {

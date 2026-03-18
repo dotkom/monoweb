@@ -15,7 +15,7 @@ import {
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { compareAsc, compareDesc } from "date-fns"
 import { AlreadyExistsError, NotFoundError } from "../../error"
-import type { Pageable } from "../../query"
+import type { Pageable } from "@dotkomonline/utils"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
 import type { ArticleTagRepository } from "./article-tag-repository"

@@ -10,7 +10,7 @@ import type {
 } from "@dotkomonline/types"
 import { isAfter } from "date-fns"
 import { assert, InvalidArgumentError, NotFoundError } from "../../error"
-import type { Pageable } from "../../query"
+import type { Pageable } from "@dotkomonline/utils"
 import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {

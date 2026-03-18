@@ -12,7 +12,7 @@ import {
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 /**
  * UserRepository is an interface for interacting with the user database.

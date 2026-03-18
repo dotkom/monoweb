@@ -9,7 +9,7 @@ import {
   type MarkWrite,
 } from "@dotkomonline/types"
 import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 export interface MarkRepository {
   create(handle: DBHandle, markData: MarkWrite, groupIdsData: GroupId[]): Promise<Mark>

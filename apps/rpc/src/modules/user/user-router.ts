@@ -10,7 +10,7 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isAdministrator, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
 import { ADMIN_EDITOR_ROLES, EditorRole } from "../authorization-service"
 

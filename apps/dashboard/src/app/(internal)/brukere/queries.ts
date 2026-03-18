@@ -1,7 +1,7 @@
 import { useTRPC } from "@/lib/trpc-client"
 import type { AttendanceId, UserFilterQuery, UserId } from "@dotkomonline/types"
 
-import type { Pageable } from "@dotkomonline/rpc"
+import type { Pageable } from "@dotkomonline/utils"
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 

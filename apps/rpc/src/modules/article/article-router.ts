@@ -4,7 +4,7 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema, PaginateInputSchema } from "../../query"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
 
 export type CreateArticleInput = inferProcedureInput<typeof createArticleProcedure>

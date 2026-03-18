@@ -1,5 +1,4 @@
 export type { AppRouter } from "./app-router"
-export type { Pageable } from "./query"
 
 export type * as ArticleRouter from "./modules/article/article-router"
 export type * as AttendanceRouter from "./modules/event/attendance-router"
