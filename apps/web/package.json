@@ -43,7 +43,6 @@
     "@trpc/tanstack-react-query": "11.8.1",
     "axios": "1.13.6",
     "clsx": "^2.0.0",
-    "core-js": "^3.45.1",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "ical-generator": "^8.1.1",
@@ -82,16 +81,5 @@
     "tailwindcss": "4.1.18",
     "tslib": "2.8.1",
     "typescript": "5.9.3"
-  },
-  "browserslist": {
-    "production": [
-      "defaults",
-      "ios_saf >= 10"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   }
 }
