@@ -6,11 +6,11 @@ import {
   UserSchema,
   UserWriteSchema,
 } from "@dotkomonline/types"
+import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isAdministrator, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
 import { ADMIN_EDITOR_ROLES, EditorRole } from "../authorization-service"
 
@@ -66,18 +66,19 @@ const createUserFileUploadProcedure = procedure
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        isSameSubject((i) => i.userId ?? null)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const userId = input?.userId ?? ctx.principal.subject
+
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        isSameSubject(() => userId)
+      ),
+      input
+    )
+
     return await ctx.userService.createFileUpload(
       ctx.handle,
       input.filename,
