@@ -1,6 +1,6 @@
 import { cn } from "@dotkomonline/ui"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
-import { IconDeviceDesktop, IconMoon, IconSun } from "@tabler/icons-react"
+import { IconDeviceDesktop, IconFlower, IconMoon, IconSun } from "@tabler/icons-react"
 import type { Icon } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 
@@ -12,7 +12,7 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const { setTheme, theme } = useTheme()
 
   const THEME_OPTIONS: Array<{
-    theme: "light" | "dark" | "system"
+    theme: "light" | "dark" | "system" | "pink"
     label: string
     icon: Icon
   }> = [
@@ -25,6 +25,11 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
       theme: "dark",
       label: "Mørkt tema",
       icon: IconMoon,
+    },
+    {
+      theme: "pink",
+      label: "Rosa tema",
+      icon: IconFlower,
     },
     {
       theme: "system",
