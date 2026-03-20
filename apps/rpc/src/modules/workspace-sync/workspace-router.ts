@@ -9,7 +9,7 @@ import {
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import invariant from "tiny-invariant"
 import z from "zod"
-import { isAdministrator, isGroupMember, isSameSubject, or } from "../../authorization"
+import { hasGroupRole, isAdministrator, isGroupMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 
@@ -111,14 +111,7 @@ const linkWorkspaceGroupProcedure = procedure
   )
   .output(GroupSchema)
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        isGroupMember((i) => i.groupSlug)
-      )
-    )
-  )
+  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -233,7 +226,14 @@ const synchronizeWorkspaceGroupProcedure = procedure
   )
   .output(z.boolean())
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        hasGroupRole((input) => input.groupSlug, "LEADER")
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
