@@ -195,39 +195,6 @@
       );
   }
 
-  /*Barbie april fools*/
-  @layer components {
-    .pink-video,
-    .pink-shell {
-      display: none;
-    }
-
-    html[data-theme="pink"] .pink-video,
-    html[data-theme="pink"] .pink-shell {
-      display: block;
-    }
-
-    .pink-shell {
-      background: var(--color-barbie-pink-light);
-    }
-
-    html[data-theme="pink"] body {
-      background: transparent;
-    }
-
-    .pink-content-wrap {
-      @apply relative flex flex-col grow;
-    }
-
-    .pink-content-inner {
-      @apply relative z-10 flex flex-col grow;
-    }
-
-    html[data-theme="pink"] .pink-content-inner {
-      @apply px-6 py-6 lg:px-10;
-    }
-  }
-
   .easter-egg-gold-border::before {
     content: "";
     position: absolute;
