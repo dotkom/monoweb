@@ -114,7 +114,7 @@ export const AttendanceCard = ({
         onConnectionStateChange: (state) => {
           setTRPCSSERegisterChangeConnectionState(state.state)
         },
-        onData: ({ status, attendee }) => {
+        onData: ({ status, attendee, newAttendancePool }) => {
           // If the attendee is not the current user, we can update the state
           queryClient.setQueryData(
             trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
@@ -135,9 +135,12 @@ export const AttendanceCard = ({
                 return oldData
               }
 
+              const updatedPools = newAttendancePool ? [...oldData.pools, newAttendancePool] : oldData.pools
+
               return {
                 ...oldData,
                 attendees: [...oldData.attendees, attendee],
+                pools: updatedPools,
               }
             }
           )
@@ -190,6 +193,7 @@ export const AttendanceCard = ({
       console.error("No turnstile token, cannot register")
       return
     }
+
     registerMutation.mutate({ attendanceId: attendance.id, turnstileToken })
   }
   const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
