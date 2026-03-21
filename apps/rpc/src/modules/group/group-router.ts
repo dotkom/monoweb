@@ -9,7 +9,7 @@ import {
 } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
+import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 
@@ -24,7 +24,7 @@ const createGroupProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     // Backlog is only permitted to create interest groups
     if (input.type !== "INTEREST_GROUP") {
-      ctx.addAuthorizationGuard(isAdministrator(), input)
+      await ctx.addAuthorizationGuard(isAdministrator(), input)
     }
     return ctx.groupService.create(ctx.handle, input)
   })
@@ -77,8 +77,8 @@ const updateGroupProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember("BACKLOG"),
-        isGroupMember((input) => input.id)
+        isGroupMember((input) => input.id),
+        isGroupMember("BACKLOG")
       )
     )
   )
@@ -110,8 +110,8 @@ const deleteGroupProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember("BACKLOG"),
-        isGroupMember((input) => input)
+        hasGroupRole((input) => input, "LEADER"),
+        isGroupMember("BACKLOG")
       )
     )
   )
@@ -122,13 +122,7 @@ const deleteGroupProcedure = procedure
 
     // If this is not an interest group, deny Backlog from modifying
     if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          isGroupMember(() => group.slug)
-        ),
-        input
-      )
+      await ctx.addAuthorizationGuard(or(isAdministrator(), hasGroupRole(input, "LEADER")), input)
     }
 
     return ctx.groupService.delete(ctx.handle, input)
@@ -175,8 +169,9 @@ const startMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember("BACKLOG"),
-        isGroupMember((input) => input.groupId)
+        hasGroupRole((input) => input.groupId, "LEADER"),
+        hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
+        isGroupMember("BACKLOG")
       )
     )
   )
@@ -208,8 +203,9 @@ const endMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember("BACKLOG"),
-        isGroupMember((input) => input.groupId)
+        hasGroupRole((input) => input.groupId, "LEADER"),
+        hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
+        isGroupMember("BACKLOG")
       )
     )
   )
@@ -247,8 +243,9 @@ const updateMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember("BACKLOG"),
-        isGroupMember((input) => input.id)
+        hasGroupRole((input) => input.id, "LEADER"),
+        hasGroupRole((input) => input.id, "DEPUTY_LEADER"),
+        isGroupMember("BACKLOG")
       )
     )
   )
@@ -280,8 +277,9 @@ const createRoleProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember("BACKLOG"),
-        isGroupMember((input) => input.groupId)
+        hasGroupRole((input) => input.groupId, "LEADER"),
+        hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
+        isGroupMember("BACKLOG")
       )
     )
   )
@@ -293,10 +291,7 @@ const createRoleProcedure = procedure
     // If this is not an interest group, deny Backlog from modifying
     if (group.type !== "INTEREST_GROUP") {
       await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          isGroupMember(() => group.slug)
-        ),
+        or(isAdministrator(), hasGroupRole(input.groupId, "LEADER"), hasGroupRole(input.groupId, "DEPUTY_LEADER")),
         input
       )
     }
@@ -318,8 +313,9 @@ const updateRoleProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember("BACKLOG"),
-        isGroupMember((input) => input.id)
+        hasGroupRole((input) => input.id, "LEADER"),
+        hasGroupRole((input) => input.id, "DEPUTY_LEADER"),
+        isGroupMember("BACKLOG")
       )
     )
   )
@@ -331,10 +327,7 @@ const updateRoleProcedure = procedure
     // If this is not an interest group, deny Backlog from modifying
     if (group.type !== "INTEREST_GROUP") {
       await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          isGroupMember(() => group.slug)
-        ),
+        or(isAdministrator(), hasGroupRole(input.id, "LEADER"), hasGroupRole(input.id, "DEPUTY_LEADER")),
         input
       )
     }
