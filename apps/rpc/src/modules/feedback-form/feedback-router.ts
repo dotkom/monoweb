@@ -11,7 +11,7 @@ import {
 } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor, isSameSubject } from "../../authorization"
+import { isCommitteeMember, isSameSubject } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
@@ -31,7 +31,7 @@ export type GetFeedbackFormStaffPreviewOutput = inferProcedureOutput<typeof getF
 const getFeedbackFormStaffPreviewProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
@@ -52,7 +52,7 @@ const createFormProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => ctx.feedbackFormService.create(ctx.handle, input.feedbackForm, input.questions))
@@ -67,7 +67,7 @@ const createFormCopyProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) =>
@@ -85,7 +85,7 @@ const updateFormProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) =>
@@ -97,7 +97,7 @@ export type DeleteFormOutput = inferProcedureOutput<typeof deleteFormProcedure>
 const deleteFormProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => ctx.feedbackFormService.delete(ctx.handle, input))
@@ -135,7 +135,7 @@ export type GetPublicResultsTokenOutput = inferProcedureOutput<typeof getPublicR
 const getPublicResultsTokenProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.feedbackFormService.getPublicResultsToken(ctx.handle, input))
 
@@ -181,7 +181,7 @@ const findAnswerByAttendeeProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) =>
     ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.handle, input.formId, input.attendeeId)
@@ -214,7 +214,7 @@ export type GetAllAnswersOutput = inferProcedureOutput<typeof getAllAnswersProce
 const getAllAnswersProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.feedbackFormAnswerService.findManyByFeedbackFormId(ctx.handle, input))
 
@@ -230,7 +230,7 @@ export type DeleteQuestionAnswerOutput = inferProcedureOutput<typeof deleteQuest
 const deleteQuestionAnswerProcedure = procedure
   .input(FeedbackQuestionAnswerSchema.shape.id)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(ctx.handle, input))

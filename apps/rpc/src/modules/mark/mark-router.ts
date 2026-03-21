@@ -1,7 +1,7 @@
 import { GroupSchema, MarkFilterQuerySchema, MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
-import { isEditor } from "../../authorization"
+import { isCommitteeMember } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
@@ -17,7 +17,7 @@ const createMarkProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => ctx.markService.create(ctx.handle, input.data, input.groupIds))
@@ -32,7 +32,7 @@ const editMarkProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) =>
@@ -67,7 +67,7 @@ export type DeleteMarkOutput = inferProcedureOutput<typeof deleteMarkProcedure>
 const deleteMarkProcedure = procedure
   .input(MarkSchema.shape.id)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => ctx.markService.delete(ctx.handle, input))
 

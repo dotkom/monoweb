@@ -33,8 +33,8 @@
  * @packageDocumentation
  */
 
-import type { GroupId, UserId } from "@dotkomonline/types"
-import { ADMIN_EDITOR_ROLES, type EditorRole } from "./modules/authorization-service"
+import type { GroupId, GroupRoleType, UserId } from "@dotkomonline/types"
+import { ADMIN_AFFILIATIONS, COMMITTEE_AFFILIATIONS } from "./modules/authorization-service"
 import type { Principal, TRPCContext } from "./trpc"
 
 export interface RuleContext<TInput> {
@@ -115,34 +115,32 @@ export function isAdministrator<TInput>(): Rule<TInput> {
       if (context.principal === null) {
         return false
       }
-      for (const editorRole of context.principal.editorRoles) {
-        // biome-ignore lint/suspicious/noExplicitAny: Array#includes has terrible typing
-        if (ADMIN_EDITOR_ROLES.includes(editorRole as any)) {
-          return true
-        }
-      }
-      return false
+
+      const affiliations = context.principal.affiliations // this is needed for typing for some reason
+
+      return ADMIN_AFFILIATIONS.some((affiliation) => affiliations.has(affiliation))
     },
   }
 }
 
 /**
- * Business rule that returns true if the user is considered an editor
- *
- * We consider a principal to be an editor if they are a member of any committee
+ * Business rule that returns true if the user is considered a committee member
  */
-export function isEditor<TInput>(): Rule<TInput> {
+export function isCommitteeMember<TInput>(): Rule<TInput> {
   return {
     evaluate(context) {
       if (context.principal === null) {
         return false
       }
-      return context.principal.editorRoles.size !== 0
+
+      const affiliations = context.principal.affiliations
+
+      return COMMITTEE_AFFILIATIONS.some((affiliation) => affiliations.has(affiliation))
     },
   }
 }
 
-type IsGroupMemberSelector<TInput> = (input: TInput) => EditorRole | GroupId | null
+type IsGroupMemberSelector<TInput> = (input: TInput) => GroupId | null
 /**
  * Business rule that returns true if the user is a member of the given group
  *
@@ -151,24 +149,83 @@ type IsGroupMemberSelector<TInput> = (input: TInput) => EditorRole | GroupId | n
  *
  * @example
  * ```
- * isGroupMember(EditorRole.DOTKOM)
- * isGroupMember(i => i.groupSlug)
+ * isGroupMember("dotkom")
+ * isGroupMember(input => input.groupSlug)
  * ```
  */
 export function isGroupMember<TInput>(selector: IsGroupMemberSelector<TInput>): Rule<TInput>
-export function isGroupMember<TInput>(editorRole: EditorRole): Rule<TInput>
+export function isGroupMember<TInput>(groupId: GroupId): Rule<TInput>
 
-export function isGroupMember<TInput>(selectorOrRole: EditorRole | IsGroupMemberSelector<TInput>): Rule<TInput> {
+export function isGroupMember<TInput>(selectorOrGroupId: GroupId | IsGroupMemberSelector<TInput>): Rule<TInput> {
   return {
     evaluate(context) {
       if (context.principal === null) {
         return false
       }
-      const editorRole = selectorOrRole instanceof Function ? selectorOrRole(context.input) : selectorOrRole
-      if (editorRole === null) {
+      const groupId = selectorOrGroupId instanceof Function ? selectorOrGroupId(context.input) : selectorOrGroupId
+      if (groupId === null) {
         return false
       }
-      return context.principal.editorRoles.has(editorRole)
+      return context.principal.affiliations.has(groupId)
+    },
+  }
+}
+
+/**
+ * Business rule that returns true if the user is a member of any of the given groups
+ */
+export function isGroupMemberOfAny<TInput>(groupAffiliations: [GroupId, ...GroupId[]]): Rule<TInput> {
+  const [groupId, ...groupIds] = groupAffiliations
+  return or(isGroupMember(groupId), ...groupIds.map(isGroupMember))
+}
+
+type HasGroupRoleSelector<TInput> = (input: TInput) => GroupId | null
+export function hasGroupRole<TInput>(selector: HasGroupRoleSelector<TInput>, groupRoleType: GroupRoleType): Rule<TInput>
+export function hasGroupRole<TInput>(groupId: GroupId, groupRoleType: GroupRoleType): Rule<TInput>
+export function hasGroupRole<TInput>(
+  selectorOrGroupId: HasGroupRoleSelector<TInput> | GroupId,
+  groupRoleType: GroupRoleType
+): Rule<TInput> {
+  return {
+    async evaluate(context) {
+      if (context.principal === null) {
+        return false
+      }
+
+      const groupId = selectorOrGroupId instanceof Function ? selectorOrGroupId(context.input) : selectorOrGroupId
+
+      if (groupId === null) {
+        return false
+      }
+
+      const roles = context.principal.affiliations.get(groupId)
+
+      return roles?.has(groupRoleType) ?? false
+    },
+  }
+}
+
+export function hasCommitteeRole<TInput>(groupRoleType: GroupRoleType): Rule<TInput> {
+  return {
+    async evaluate(context) {
+      if (context.principal === null) {
+        return false
+      }
+
+      const affiliations = context.principal.affiliations
+      // We compile all unique roles in a set, then check if the set has the required role
+      const roles = new Set<GroupRoleType>()
+
+      for (const [groupId, groupRoles] of affiliations.entries()) {
+        // biome-ignore lint/suspicious/noExplicitAny: Array#includes expects only committee affiliations for input
+        if (!COMMITTEE_AFFILIATIONS.includes(groupId as any)) {
+          continue
+        }
+
+        groupRoles.forEach((role) => void roles.add(role))
+      }
+
+      return roles.has(groupRoleType)
     },
   }
 }
@@ -190,12 +247,4 @@ export function isSameSubject<TInput>(selector: IsSameSubjectSelector<TInput>): 
       return selectedPrincipal === context.principal.subject
     },
   }
-}
-
-/**
- * Business rule that returns true if the user is a member of any of the given groups
- */
-export function isGroupMemberOfAny<TInput>(editorRoles: [EditorRole, ...EditorRole[]]): Rule<TInput> {
-  const [role, ...roles] = editorRoles
-  return or(isGroupMember(role), ...roles.map(isGroupMember))
 }
