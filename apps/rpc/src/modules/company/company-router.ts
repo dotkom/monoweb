@@ -87,6 +87,13 @@ const createCompanyFileUploadProcedure = procedure
     return ctx.companyService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 
+const getCompanyJobListings = procedure
+  .input(CompanySchema.shape.id)
+  .use(withDatabaseTransaction())
+  .query(async ({ ctx, input }) => {
+    return ctx.companyService.getJobListings(ctx.handle, input)
+  })
+
 export const companyRouter = t.router({
   create: createCompanyProcedure,
   edit: editCompanyProcedure,
@@ -96,4 +103,5 @@ export const companyRouter = t.router({
   findBySlug: findCompanyBySlugProcedure,
   getBySlug: getCompanyBySlugProcedure,
   createFileUpload: createCompanyFileUploadProcedure,
+  jobListings: getCompanyJobListings,
 })
