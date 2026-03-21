@@ -13,7 +13,7 @@ import {
   Text,
   cn,
 } from "@dotkomonline/ui"
-import { IconBook2 } from "@tabler/icons-react"
+import { IconGavel } from "@tabler/icons-react"
 import { useState } from "react"
 
 interface EventRulesProps {
@@ -26,7 +26,7 @@ export const EventRules = ({ className }: EventRulesProps) => {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger>
         <div className={cn("text-sm flex flex-row gap-1 items-center cursor-pointer", className)}>
-          <IconBook2 className="size-[1.25em]" />
+          <IconGavel className="size-[1.25em]" />
           <Text>Arrangementregler</Text>
         </div>
       </AlertDialogTrigger>
