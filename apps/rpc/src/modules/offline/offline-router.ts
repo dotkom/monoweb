@@ -1,7 +1,7 @@
 import { OfflineSchema, OfflineWriteSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isCommitteeMember } from "../../authorization"
+import { hasGroupRole, isAdministrator, isCommitteeMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
@@ -11,7 +11,16 @@ export type CreateOfflineOutput = inferProcedureOutput<typeof createOfflineProce
 const createOfflineProcedure = procedure
   .input(OfflineWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        hasGroupRole("prokom", "LEADER"),
+        hasGroupRole("prokom", "DEPUTY_LEADER"),
+        hasGroupRole("prokom", "EDITOR_IN_CHIEF")
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -28,7 +37,16 @@ const editOfflineProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        hasGroupRole("prokom", "LEADER"),
+        hasGroupRole("prokom", "DEPUTY_LEADER"),
+        hasGroupRole("prokom", "EDITOR_IN_CHIEF")
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: changes, ctx }) => {
