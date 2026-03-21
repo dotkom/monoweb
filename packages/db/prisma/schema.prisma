@@ -220,6 +220,8 @@ enum GroupRoleType {
   TRUSTEE           @map("TRUSTEE")
   EMAIL_ONLY        @map("EMAIL_ONLY")
   TEMPORARILY_LEAVE @map("TEMPORARILY_LEAVE")
+  /// The editor in chief for Online's magazine "Offline" ("Redaktør" in Norwegian)
+  EDITOR_IN_CHIEF   @map("EDITOR_IN_CHIEF")
 
   @@map("group_role_type")
 }
