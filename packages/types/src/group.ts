@@ -77,6 +77,8 @@ export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({
 export type GroupMembershipId = GroupMembership["id"]
 export type GroupMembershipWrite = z.infer<typeof GroupMembershipWriteSchema>
 
+// NOTE: We omit `EDITOR_IN_CHIEF` ("Redaktør"), since the role is only relevant for Prokom, the committee managing
+// Online's magazine "Offline".
 export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
   [
     { groupId, type: "LEADER", name: "Leder" },
@@ -85,7 +87,7 @@ export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
     { groupId, type: "TRUSTEE", name: "Tillitsvalgt" },
     { groupId, type: "TREASURER", name: "Økonomiansvarlig" },
     { groupId, type: "COSMETIC", name: "Medlem" },
-    { groupId, type: "EMAIL_ONLY", name: "Epost-bruker" },
+    { groupId, type: "EMAIL_ONLY", name: "E-postbruker" },
     { groupId, type: "TEMPORARILY_LEAVE", name: "Permitert" },
   ] as const satisfies GroupRoleWrite[]
 
@@ -150,6 +152,8 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
       return "E-postbruker"
     case "TEMPORARILY_LEAVE":
       return "Permitert"
+    case "EDITOR_IN_CHIEF":
+      return "Redaktør"
     default:
       return "Ukjent type"
   }
