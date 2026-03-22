@@ -1,7 +1,7 @@
 import { CreatePersonalMarkSchema, PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isEditor, isSameSubject, or } from "../../authorization"
+import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
@@ -47,7 +47,7 @@ export type GetPersonalMarksByMarkOutput = inferProcedureOutput<typeof getPerson
 const getPersonalMarksByMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return ctx.personalMarkService.findPersonalMarksByMarkId(ctx.handle, input.markId)
@@ -58,7 +58,7 @@ export type GetPersonalMarkDetailsByMarkOutput = inferProcedureOutput<typeof get
 const getPersonalMarkDetailsByMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return ctx.personalMarkService.findPersonalMarkDetails(ctx.handle, input.markId)
@@ -69,7 +69,7 @@ export type AddPersonalMarkToUserOutput = inferProcedureOutput<typeof addPersona
 const addPersonalMarkToUserProcedure = procedure
   .input(CreatePersonalMarkSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -81,7 +81,7 @@ export type CountUsersWithMarkOutput = inferProcedureOutput<typeof countUsersWit
 const countUsersWithMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return ctx.personalMarkService.countUsersByMarkId(ctx.handle, input.markId)
@@ -92,7 +92,7 @@ export type RemovePersonalMarkFromUserOutput = inferProcedureOutput<typeof remov
 const removePersonalMarkFromUserProcedure = procedure
   .input(PersonalMarkSchema.pick({ userId: true, markId: true }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {

@@ -9,17 +9,16 @@ import {
 } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isEditor, isGroupMember, or } from "../../authorization"
+import { isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { EditorRole } from "../authorization-service"
 
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
 export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
 const createGroupProcedure = procedure
   .input(GroupWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(or(isAdministrator(), isGroupMember(EditorRole.BACKLOG))))
+  .use(withAuthorization(or(isAdministrator(), isGroupMember("BACKLOG"))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -78,7 +77,7 @@ const updateGroupProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember("BACKLOG"),
         isGroupMember((input) => input.id)
       )
     )
@@ -111,7 +110,7 @@ const deleteGroupProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember("BACKLOG"),
         isGroupMember((input) => input)
       )
     )
@@ -176,7 +175,7 @@ const startMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember("BACKLOG"),
         isGroupMember((input) => input.groupId)
       )
     )
@@ -209,7 +208,7 @@ const endMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember("BACKLOG"),
         isGroupMember((input) => input.groupId)
       )
     )
@@ -248,7 +247,7 @@ const updateMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember("BACKLOG"),
         isGroupMember((input) => input.id)
       )
     )
@@ -281,7 +280,7 @@ const createRoleProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember("BACKLOG"),
         isGroupMember((input) => input.groupId)
       )
     )
@@ -319,7 +318,7 @@ const updateRoleProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isGroupMember(EditorRole.BACKLOG),
+        isGroupMember("BACKLOG"),
         isGroupMember((input) => input.id)
       )
     )
@@ -354,7 +353,7 @@ const createFileUploadProcedure = procedure
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .mutation(async ({ input, ctx }) => {
     return ctx.groupService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })

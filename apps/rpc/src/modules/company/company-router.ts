@@ -2,7 +2,7 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isCommitteeMember } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
@@ -12,7 +12,7 @@ export type CreateCompanyOutput = inferProcedureOutput<typeof createCompanyProce
 const createCompanyProcedure = procedure
   .input(CompanyWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -29,7 +29,7 @@ const editCompanyProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -82,7 +82,7 @@ const createCompanyFileUploadProcedure = procedure
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .mutation(async ({ ctx, input }) => {
     return ctx.companyService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })

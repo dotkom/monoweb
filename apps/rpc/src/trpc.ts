@@ -1,5 +1,5 @@
 import { getLogger } from "@dotkomonline/logger"
-import type { UserId } from "@dotkomonline/types"
+import type { GroupId, GroupRoleType, UserId } from "@dotkomonline/types"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { TRPCError, type TRPC_ERROR_CODE_KEY, initTRPC } from "@trpc/server"
@@ -20,14 +20,13 @@ import {
   UnauthorizedError,
   UnimplementedError,
 } from "./error"
-import type { EditorRoleSet } from "./modules/authorization-service"
 import type { ServiceLayer } from "./modules/core"
 import { isAuthorizationUnsafelyDisabled } from "./configuration"
 
 export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */
   subject: UserId
-  editorRoles: EditorRoleSet
+  affiliations: Map<GroupId, Set<GroupRoleType>>
 }
 
 export const createTrpcContext = async (principal: Principal | null, context: ServiceLayer) => {

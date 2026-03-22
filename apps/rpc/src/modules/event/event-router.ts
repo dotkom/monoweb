@@ -16,10 +16,9 @@ import {
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isEditor } from "../../authorization"
+import { isCommitteeMember } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { EditorRole } from "../authorization-service"
 import { feedbackRouter } from "../feedback-form/feedback-router"
 import { attendanceRouter } from "./attendance-router"
 
@@ -65,7 +64,7 @@ const createEventProcedure = procedure
   )
   .output(EventWithAttendanceSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -94,7 +93,7 @@ const editEventProcedure = procedure
   )
   .output(EventWithAttendanceSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -118,7 +117,7 @@ export type DeleteEventOutput = inferProcedureOutput<typeof deleteEventProcedure
 const deleteEventProcedure = procedure
   .input(z.object({ id: EventSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -140,7 +139,7 @@ const allEventsProcedure = procedure
     const { filter, ...page } = input
 
     const principal = ctx.principal
-    const isStaff = principal && Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
     // If the user is not staff, we exclude internal events
     let excludingType = filter?.excludingType ?? []
@@ -180,7 +179,7 @@ const allEventSummariesProcedure = procedure
     const { filter, ...page } = input
 
     const principal = ctx.principal
-    const isStaff = principal && Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
     // If the user is not staff, we exclude internal events
     let excludingType = filter?.excludingType ?? []
@@ -227,7 +226,7 @@ const allByAttendingUserIdProcedure = procedure
     const { id, filter, ...page } = input
 
     const principal = ctx.principal
-    const isStaff = principal && Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
     // If the user is not staff, we exclude internal events
     let excludingType = filter?.excludingType ?? []
@@ -278,7 +277,7 @@ const allSummariesByAttendingUserIdProcedure = procedure
     const { id, filter, ...page } = input
 
     const principal = ctx.principal
-    const isStaff = principal && Object.values(EditorRole).some((role) => principal.editorRoles.has(role))
+    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
     // If the user is not staff, we exclude internal events
     let excludingType = filter?.excludingType ?? []
@@ -315,7 +314,7 @@ const addAttendanceProcedure = procedure
   .input(z.object({ values: AttendanceWriteSchema, eventId: EventSchema.shape.id }))
   .output(EventWithAttendanceSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -330,7 +329,7 @@ const updateParentEventProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id, parentEventId: EventSchema.shape.id.nullable() }))
   .output(EventWithAttendanceSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -407,7 +406,7 @@ export type FindManyDeregisterReasonsWithEventOutput = inferProcedureOutput<
 const findManyDeregisterReasonsWithEventProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
@@ -454,7 +453,7 @@ const createFileUploadProcedure = procedure
   .input(z.object({ filename: z.string(), contentType: z.string() }))
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
-  .use(withAuthorization(isEditor()))
+  .use(withAuthorization(isCommitteeMember()))
   .mutation(async ({ ctx, input }) => {
     return ctx.eventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
