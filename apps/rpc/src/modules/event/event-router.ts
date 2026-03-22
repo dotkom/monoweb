@@ -112,7 +112,7 @@ const editEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    // This will remove any groups the user is not affiliated with, which restricts editors to only being able to create
+    // This will remove any groups the user is not affiliated with, which restricts editors to only being able to update
     // events for their own groups. This does not account for the parent event's organizer groups.
     const organizerGroups = ctx.authorizationService.intersectGroupAffiliations(
       ctx.principal.affiliations,
