@@ -17,7 +17,7 @@ import { createTrpcContext } from "../trpc"
 import { ADMIN_AFFILIATIONS } from "../modules/authorization-service"
 import { GroupRoleTypeSchema } from "@dotkomonline/types"
 
-const ADMIN_AFFILIATION_SET = new Map(
+const ADMIN_AFFILIATIONS_MAP = new Map(
   ADMIN_AFFILIATIONS.map((groupId) => [groupId, new Set([GroupRoleTypeSchema.Values.LEADER])])
 )
 
@@ -75,7 +75,7 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
     // regardless of their actual roles, in addition to disabling all authorization checks further downstream (see
     // comment atop this file). This ternary serves no greater purpose than overriding permissions for the two routes.
     const affiliations = isAuthorizationUnsafelyDisabled
-      ? ADMIN_AFFILIATION_SET
+      ? ADMIN_AFFILIATIONS_MAP
       : await serviceLayer.authorizationService.getGroupAffiliations(serviceLayer.prisma, subject)
 
     return createTrpcContext(

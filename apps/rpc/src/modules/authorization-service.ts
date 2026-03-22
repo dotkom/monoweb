@@ -112,7 +112,11 @@ export function getAuthorizationService(): AuthorizationService {
 
     for (const { slug, roles } of memberGroups) {
       const groupRoles = newCache.get(slug) ?? new Set<GroupRoleType>()
-      roles.forEach((role) => void groupRoles.add(role.type))
+
+      for (const role of roles) {
+        groupRoles.add(role.type)
+      }
+
       newCache.set(slug, groupRoles)
     }
 
@@ -129,14 +133,14 @@ export function getAuthorizationService(): AuthorizationService {
     },
 
     intersectGroupAffiliations(userAffiliations, affiliationsToCompare) {
-      const setA = toSet(userAffiliations)
-      const setB = toSet(affiliationsToCompare)
+      const a = toSet(userAffiliations)
+      const b = toSet(affiliationsToCompare)
 
-      if (ADMIN_AFFILIATIONS.some((adminAffiliation) => setA.has(adminAffiliation))) {
-        return setB
+      if (ADMIN_AFFILIATIONS.some((adminAffiliation) => a.has(adminAffiliation))) {
+        return b
       }
 
-      return setA.intersection(setB)
+      return a.intersection(b)
     },
 
     hasAnyGroupAffiliation(userAffiliations, affiliationsToCompare) {
