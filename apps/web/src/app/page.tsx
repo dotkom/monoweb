@@ -15,7 +15,7 @@ import type { FC } from "react"
 
 export default async function App() {
   const events = await server.event.findFeaturedEvents.query({
-    limit: 3,
+    limit: 2,
   })
 
   const featuredEvent = events[0] ?? null
@@ -48,15 +48,17 @@ export default async function App() {
         <AuthNotice />
         {/* DESKTOP SCREEN */}
         <div className="hidden md:grid md:grid-cols-[70%_30%] auto-rows-max w-full gap-6 pr-6">
-          <div className="row-span-3 w-full h-full flex items-center justify-center">
+          <div className="row-span-4 w-full h-full flex items-center justify-center">
             <Image
               src="/aprilfools-2026-barbietv.png"
               alt="April Fools"
-              className="rounded-2xl object-cover w-full h-full"
+              className="rounded-2xl object-cover w-full"
               width={0}
               height={0}
             />
           </div>
+
+          <div className="invisible mb-24" />
 
           <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
 
@@ -108,12 +110,12 @@ export default async function App() {
                     element={Link}
                     href="/arrangementer"
                     className={cn(
-                      "rounded-xl h-[95%] w-[95%] text-brand-800 aspect-square gap-2",
+                      "rounded-xl h-[95%] w-[95%] text-white aspect-square gap-2",
                       "bg-linear-to-t from-[#B8058B] to-[#FF46DD] border border-amber-500"
                     )}
                     iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
                   >
-                    <Text className="text-lg">Se alle</Text>
+                    <Text className="text-lg text-white">Se alle</Text>
                   </Button>
                 </div>
               </Tilt>
@@ -147,7 +149,7 @@ export default async function App() {
                       element={Link}
                       href="/arrangementer"
                       className={cn(
-                        "rounded-xl h-[95%] w-[95%] text-brand-800 aspect-square gap-2",
+                        "rounded-xl h-[95%] w-[95%] text-white aspect-square gap-2",
                         "bg-linear-to-t from-[#B8058B] to-[#FF46DD] border border-amber-500"
                       )}
                       iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
