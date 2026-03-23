@@ -44,10 +44,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           fontTitle.variable,
           fontBody.variable,
           "bg-white dark:bg-stone-900",
-          "[html[data-theme='pink']_&]:bg-transparent"
+          "in-data-[theme=pink]:bg-transparent"
         )}
       >
-        <div className="fixed inset-0 -z-10 overflow-hidden hidden [html[data-theme='pink']_&]:block">
+        <div className="fixed inset-0 -z-10 overflow-hidden hidden in-data-[theme=pink]:block">
           <GlitterVideo />
         </div>
         <PlausibleProvider domain="online.ntnu.no">
@@ -57,8 +57,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
                   <Navbar />
                   <div className="relative flex flex-col grow">
-                    <div className="absolute inset-0 -z-10 rounded-3xl pointer-events-none [html[data-theme='pink']_&]:bg-barbie-pink-light" />
-                    <div className="relative z-10 flex flex-col grow [html[data-theme='pink']_&]:px-6 [html[data-theme='pink']_&]:py-6 [html[data-theme='pink']_&]:lg:px-10">
+                    <div className="absolute inset-0 -z-10 rounded-3xl pointer-events-none in-data-[theme=pink]:bg-barbie-pink-light" />
+                    <div className="relative z-10 flex flex-col grow in-data-[theme=pink]:px-6 in-data-[theme=pink]:py-6 in-data-[theme=pink]:lg:px-10">
                       <main className="grow">{children}</main>
                       <Footer />
                     </div>
