@@ -125,6 +125,18 @@
   --animate-coin-flip-in: coin-flip-in 1.2s cubic-bezier(0.4, 0, 0.2, 1)
     forwards;
 
+  /* Barbie pink colors */
+  --color-barbie-pink-hover-btn: #e763c6;
+  --color-barbie-navbar-hover: #d11bb0;
+  --color-barbie-login-btn: #b8058b;
+  --background-image-barbie-gradient: linear-gradient(
+    180deg,
+    #ffb1de 0%,
+    #e763c6 41.35%,
+    #d11bb0 87.5%,
+    #ff71e5 100%
+  );
+
   @keyframes scan {
     0% {
       background-position: 0 0;
