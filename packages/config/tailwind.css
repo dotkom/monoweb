@@ -119,6 +119,9 @@
   --color-gold-mid: #fbbf24;
   --color-gold-dark: #b45309;
 
+  /* Barbie pink colors */
+  --color-barbie-pink-light: #ffc6e7;
+
   /* Easter egg animations */
   --animate-gold-border-spin: gold-border-spin 3s linear infinite;
   --animate-coin-flip: coin-flip 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;

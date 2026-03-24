@@ -12,6 +12,7 @@ import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
+import { GlitterVideo } from "@/components/barbie/GlitterVideo"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -38,15 +39,30 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning>
-      <body className={cn(fontTitle.variable, fontBody.variable, "bg-white dark:bg-stone-900")}>
+      <body
+        className={cn(
+          fontTitle.variable,
+          fontBody.variable,
+          "bg-white dark:bg-stone-900",
+          "in-data-[theme=pink]:bg-transparent"
+        )}
+      >
+        <div className="fixed inset-0 -z-10 overflow-hidden hidden in-data-[theme=pink]:block">
+          <GlitterVideo />
+        </div>
         <PlausibleProvider domain="online.ntnu.no">
           <SessionProvider session={session}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
                 <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
                   <Navbar />
-                  <main className="grow">{children}</main>
-                  <Footer />
+                  <div className="relative flex flex-col grow">
+                    <div className="absolute inset-0 -z-10 rounded-3xl pointer-events-none in-data-[theme=pink]:bg-barbie-pink-light" />
+                    <div className="relative z-10 flex flex-col grow in-data-[theme=pink]:px-6 in-data-[theme=pink]:py-6 in-data-[theme=pink]:lg:px-10">
+                      <main className="grow">{children}</main>
+                      <Footer />
+                    </div>
+                  </div>
                 </div>
               </ThemeProvider>
             </QueryProvider>
