@@ -23,7 +23,6 @@
     "test": "pnpm run -r test",
     "test:it": "pnpm run -r test:it",
     "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
-    "dev:web": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
     "dev:grades": "pnpm -rc --parallel -F @dotkomonline/grades-backend -F @dotkomonline/grades-frontend exec doppler run --preserve-env pnpm run dev",
     "prisma": "pnpm -F @dotkomonline/db prisma",
     "generate": "pnpm -F @dotkomonline/db generate",
