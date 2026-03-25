@@ -68,7 +68,7 @@ interface EventPageParams {
 
 const EventWithAttendancePage = async ({ params }: { params: Promise<EventPageParams> }) => {
   const { slug, eventId } = await params
-  const decodedSlug = decodeURFmponent(slug)
+  const decodedSlug = decodeURIComponent(slug)
 
   const session = await auth.getServerSession()
 

@@ -21,7 +21,10 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
         <Text
           element="label"
           htmlFor={props.id}
-          className={cn("text-black dark:text-white", props.disabled && "text-gray-500 dark:text-stone-400 in-data-[theme=pink]:text-pink-600")}
+          className={cn(
+            "text-black dark:text-white",
+            props.disabled && "text-gray-500 dark:text-stone-400 in-data-[theme=pink]:text-pink-600"
+          )}
         >
           {label}{" "}
           {props.required && (
@@ -34,7 +37,9 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
 
       {description &&
         (typeof description === "string" || typeof description === "number" ? (
-          <Text className="text-gray-500 dark:text-stone-400 in-data-[theme=pink]:text-pink-600 text-xs">{description}</Text>
+          <Text className="text-gray-500 dark:text-stone-400 in-data-[theme=pink]:text-pink-600 text-xs">
+            {description}
+          </Text>
         ) : (
           description
         ))}

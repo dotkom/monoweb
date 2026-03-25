@@ -93,7 +93,12 @@ export const FilterChips = ({
         </button>
       ))}
 
-      <Button onClick={onResetAll} variant="solid" size="sm" className="text-sm rounded-full px-3 py-1.5 in-data-[theme=pink]:text-pink-600 in-data-[theme=pink]:hover:text-pink-700 in-data-[theme=pink]:bg-pink-300 in-data-[theme=pink]:hover:bg-pink-400">
+      <Button
+        onClick={onResetAll}
+        variant="solid"
+        size="sm"
+        className="text-sm rounded-full px-3 py-1.5 in-data-[theme=pink]:text-pink-600 in-data-[theme=pink]:hover:text-pink-700 in-data-[theme=pink]:bg-pink-300 in-data-[theme=pink]:hover:bg-pink-400"
+      >
         Fjern alle
       </Button>
     </div>
