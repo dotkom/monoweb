@@ -2,6 +2,7 @@ import type { FC } from "react"
 import { useEditNotificationMutation } from "../mutations"
 import { useNotificationWriteForm } from "../write-form"
 import { useNotificationDetailsContext } from "./provider"
+
 export const NotificationEditCard: FC = () => {
   const { notification } = useNotificationDetailsContext()
   const edit = useEditNotificationMutation()
@@ -10,9 +11,9 @@ export const NotificationEditCard: FC = () => {
     label: "Oppdater varsling",
     onSubmit: (data) => {
       const { ...notificationData } = data
-      edit.mutate({ id: notification.id, input: notificationData})
+      edit.mutate({ id: notification.id, input: notificationData })
     },
-    defaultValues: { ...notification  }
+    defaultValues: { ...notification },
   })
   return <FormComponent />
 }
