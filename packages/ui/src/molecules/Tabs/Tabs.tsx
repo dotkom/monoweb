@@ -16,7 +16,7 @@ export const TabsList = React.forwardRef<
       "border inline-flex items-center gap-1 justify-center rounded-lg p-1.5",
       "bg-white border-gray-200",
       "dark:bg-stone-800 dark:border-stone-700",
-      "in-data-[theme=pink]:bg-transparent in-data-[theme=pink]:border-pink-500",
+      "in-data-[theme=pink]:bg-transparent in-data-[theme=pink]:border-pink-300",
       className
     )}
     {...props}

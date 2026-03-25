@@ -147,7 +147,7 @@ const EventPage = () => {
                   <DrawerTrigger asChild className="md:hidden">
                     <Button
                       variant="solid"
-                      className="relative sm:px-4 rounded-lg h-11.5 w-11.5 sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
+                      className="relative sm:px-4 rounded-lg h-11.5 w-11.5 sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700 in-data-[theme=pink]:bg-transparent in-data-[theme=pink]:border-pink-300 in-data-[theme=pink]:hover:bg-pink-100 in-data-[theme=pink]:text-pink-600"
                     >
                       <IconFilter2 className="size-5" />
                       <span className="hidden sm:block text-sm pl-1">Filter</span>
@@ -199,7 +199,7 @@ const EventPage = () => {
 
                 <Button
                   onClick={() => setSearchBarOpen((v) => !v)}
-                  className="sm:hidden w-11.5 rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
+                  className="sm:hidden w-11.5 rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700 in-data-[theme=pink]:text-pink-600 in-data-[theme=pink]:bg-transparent in-data-[theme=pink]:border-pink-300 in-data-[theme=pink]:hover:bg-pink-100"
                 >
                   {searchBarOpen ? <IconX className="size-5" /> : <IconSearch className="size-5" />}
                 </Button>
@@ -220,7 +220,7 @@ const EventPage = () => {
 
             {isCalendar && (
               <>
-                <div className="hidden xs:flex gap-1 p-1.5 border border-gray-200 dark:border-none dark:bg-stone-800 in-data-[theme=pink]:border-pink-500 in-data-[theme=pink]:text-pink-600 rounded-lg shrink-0">
+                <div className="hidden xs:flex gap-1 p-1.5 border border-gray-200 dark:border-none dark:bg-stone-800 in-data-[theme=pink]:border-pink-300 in-data-[theme=pink]:text-pink-600 rounded-lg shrink-0">
                   <button
                     type="button"
                     onClick={() => navigateToView("week")}

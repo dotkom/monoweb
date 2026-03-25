@@ -50,7 +50,7 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
           "placeholder:text-gray-500 dark:placeholder:text-stone-400  in-data-[theme=pink]:placeholder:text-pink-600",
           "border-gray-200 px-3 py-2 text-sm ring-offset-background",
           "dark:border-stone-700 dark:bg-stone-800",
-          "in-data-[theme=pink]:border-pink-500",
+          "in-data-[theme=pink]:border-pink-300",
           "focus:outline-hidden focus:ring-2",
           "disabled:cursor-not-allowed disabled:opacity-50",
           hasError && [

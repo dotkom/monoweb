@@ -23,7 +23,7 @@ export const Checkbox: FC<CheckboxProps> = ({ label, className, ref, ...props })
           "dark:bg-stone-900 dark:border-stone-600 dark:hover:border-stone-400",
           "dark:data-[state=checked]:bg-sky-900 dark:data-[state=checked]:border-sky-900",
           "dark:focus-visible:ring-offset-stone-900",
-          "in-data-[theme=pink]:bg-pink-100 in-data-[theme=pink]:border-pink-500 in-data-[theme=pink]:hover:border-pink-700 in-data-[theme=pink]:data-[state=checked]:bg-pink-300 in-data-[theme=pink]:data-[state=checked]:border-pink-300",
+          "in-data-[theme=pink]:bg-pink-100 in-data-[theme=pink]:border-pink-300 in-data-[theme=pink]:hover:border-pink-500 in-data-[theme=pink]:data-[state=checked]:bg-pink-300 in-data-[theme=pink]:data-[state=checked]:border-pink-300",
           className
         )}
       >
