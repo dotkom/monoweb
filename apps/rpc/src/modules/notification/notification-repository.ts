@@ -48,7 +48,13 @@ export function getNotificationRepository(): NotificationRepository {
     async findById(handle, notificationId) {
       const notification = await handle.notification.findUnique({
         where: { id: notificationId },
-        include: { actorGroup: true },
+        include: {
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
+        },
       })
       return parseOrReport(NotificationSchema, notification)
     },
@@ -67,7 +73,11 @@ export function getNotificationRepository(): NotificationRepository {
           },
         },
         include: {
-          actorGroup: true,
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
         },
       })
       return parseOrReport(NotificationSchema, notification)
@@ -77,7 +87,13 @@ export function getNotificationRepository(): NotificationRepository {
       const notification = await handle.notification.update({
         where: { id: notificationId },
         data,
-        include: { actorGroup: true },
+        include: {
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
+        },
       })
       return parseOrReport(NotificationSchema, notification)
     },
@@ -85,7 +101,13 @@ export function getNotificationRepository(): NotificationRepository {
     async findMany(handle, page) {
       const results = await handle.notification.findMany({
         ...pageQuery(page),
-        include: { actorGroup: true },
+        include: {
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
+        },
       })
       return parseOrReport(NotificationSchema.array(), results)
     },
@@ -133,7 +155,11 @@ export function getNotificationRepository(): NotificationRepository {
         include: {
           notification: {
             include: {
-              actorGroup: true,
+              actorGroup: {
+                include: {
+                  roles: true,
+                },
+              },
             },
           },
         },

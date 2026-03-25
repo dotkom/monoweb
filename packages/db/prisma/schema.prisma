@@ -786,6 +786,8 @@ model NotificationRecipient {
   notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   userId         String       @map("user_id")
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_recipient")
 }
 
 enum NotificationPayloadType {

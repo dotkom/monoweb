@@ -49,11 +49,11 @@ export const NotificationSchema = z.object({
   type: NotificationTypeSchema,
   payload: z.string().nullable(),
   payloadType: NotificationPayloadTypeSchema,
-  actorGroupId: z.string().uuid(),
+  actorGroupId: z.string(),
   actorGroup: GroupSchema,
-  createdById: z.string().uuid().nullable(),
+  createdById: z.string().nullable(),
   // createdBy: UserSchema.nullable(),
-  lastUpdatedById: z.string().uuid().nullable(),
+  lastUpdatedById: z.string().nullable(),
   // lastUpdatedBy: UserSchema.nullable(),
   taskId: z.string().uuid().nullable(),
   // task: TaskSchema.nullable(),
@@ -72,7 +72,7 @@ export const NotificationWriteSchema = NotificationSchema.pick({
   actorGroupId: true,
   taskId: true,
 }).extend({
-  recipientIds: z.array(z.string().uuid()),
+  recipientIds: z.array(z.string()),
 })
 
 export type NotificationWrite = z.infer<typeof NotificationWriteSchema>
