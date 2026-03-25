@@ -28,7 +28,7 @@ export const CompanyListItem: FC<CompanyListItemProps> = ({
     <Link
       href={`/bedrifter/${company.slug}`}
       className={cn(
-        "group flex flex-col m max-w-lg  sm:flex-row sm:gap-8 rounded-xl p-10 -mx-2 last:-mb-2 items-start sm:items-center ",
+        "group flex flex-col m max-w-lg  sm:flex-row sm:gap-8 rounded-xl p-10 -mx-2 last:-mb-2 items-start sm:items-center flex-1",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors border border-gray-200",
       )}
     >

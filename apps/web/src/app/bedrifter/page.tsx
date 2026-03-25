@@ -9,15 +9,12 @@ const CompanyPage = async () => {
   const jobListings = items ?? [];
   const countsByCompanyID = new Map<string, number>();
 
-  for (const job of jobListings) {
+  jobListings.forEach((job) => {
     countsByCompanyID.set(
       job.company.id,
       (countsByCompanyID.get(job.company.id) ?? 0) + 1,
     );
-  }
-
-  console.log(data);
-  console.log(items);
+  });
 
   return (
     <div className="flex flex-col gap-5">
@@ -26,7 +23,7 @@ const CompanyPage = async () => {
           Bedrifter
         </Title>
       </div>
-      <ul className="text-blue-950 text-center text-2xl flex flex-col gap-10">
+      <ul className="text-blue-950 text-center text-2xl grid  grid-cols-[repeat(auto-fit,minmax(410px,1fr))] gap-10">
         {data?.map((company) => {
           const jobListingCount = countsByCompanyID.get(company.id) ?? 0;
 
