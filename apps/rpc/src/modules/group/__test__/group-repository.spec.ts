@@ -15,61 +15,10 @@ describe("GroupRepository.findManyGroupMemberships", () => {
     return { handle, findMany }
   }
 
-  it("only shows leaders to non-authenticated users", async () => {
+  it("queries all memberships for a group when userId is not provided", async () => {
     const { handle, findMany } = createHandle()
 
-    await groupRepository.findManyGroupMemberships(handle, "dotkom", undefined, {
-      isAuthenticated: false,
-    })
-
-    expect(findMany).toHaveBeenCalledWith({
-      where: {
-        groupId: "dotkom",
-        roles: {
-          some: {
-            role: {
-              type: "LEADER",
-            },
-          },
-        },
-      },
-      include: {
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
-    })
-  })
-
-  it("does not filter members for anonymous Hovedstyret requests", async () => {
-    const { handle, findMany } = createHandle()
-
-    await groupRepository.findManyGroupMemberships(handle, "hs", undefined, {
-      isAuthenticated: false,
-    })
-
-    expect(findMany).toHaveBeenCalledWith({
-      where: {
-        groupId: "hs",
-      },
-      include: {
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
-    })
-  })
-
-  it("does not filter members for authenticated requests", async () => {
-    const { handle, findMany } = createHandle()
-
-    await groupRepository.findManyGroupMemberships(handle, "dotkom", undefined, {
-      isAuthenticated: true,
-    })
+    await groupRepository.findManyGroupMemberships(handle, "dotkom")
 
     expect(findMany).toHaveBeenCalledWith({
       where: {
@@ -85,24 +34,15 @@ describe("GroupRepository.findManyGroupMemberships", () => {
     })
   })
 
-  it("combines user filtering with leader filtering for anonymous requests", async () => {
+  it("filters memberships by user when userId is provided", async () => {
     const { handle, findMany } = createHandle()
 
-    await groupRepository.findManyGroupMemberships(handle, "dotkom", "user-1", {
-      isAuthenticated: false,
-    })
+    await groupRepository.findManyGroupMemberships(handle, "dotkom", "user-1")
 
     expect(findMany).toHaveBeenCalledWith({
       where: {
         groupId: "dotkom",
         userId: "user-1",
-        roles: {
-          some: {
-            role: {
-              type: "LEADER",
-            },
-          },
-        },
       },
       include: {
         roles: {

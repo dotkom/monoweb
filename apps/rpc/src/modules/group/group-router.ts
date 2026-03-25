@@ -136,6 +136,7 @@ const getMembersProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
+    // We only show leaders of groups to unathenticated users, except for Hovedstyret who is public
     if (!ctx.principal && input !== HOVESTYRET_GROUP_SLUG) {
       return ctx.groupService.getLeader(ctx.handle, input)
     }
