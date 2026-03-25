@@ -1,0 +1,18 @@
+-- AlterTable
+ALTER TABLE "course" ADD COLUMN     "department_id" TEXT;
+
+-- CreateTable
+CREATE TABLE "department" (
+    "id" TEXT NOT NULL,
+    "name_no" TEXT NOT NULL,
+    "name_en" TEXT NOT NULL,
+    "code" INTEGER NOT NULL,
+
+    CONSTRAINT "department_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "department_code_key" ON "department"("code");
+
+-- AddForeignKey
+ALTER TABLE "course" ADD CONSTRAINT "course_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "department"("id") ON DELETE SET NULL ON UPDATE CASCADE;
