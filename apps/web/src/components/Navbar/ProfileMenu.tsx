@@ -52,15 +52,16 @@ const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefin
     return resolvedTheme === "dark" ? IconMoon : IconSun
   }
 
-  if (theme === "pink") {
-    return IconFlower
+  switch (theme) {
+    case "pink":
+      return IconFlower
+  
+    case "dark":
+      return IconMoon
+  
+    default:
+      return IconSun
   }
-
-  if (theme === "dark") {
-    return IconMoon
-  }
-
-  return IconSun
 }
 
 const ThemeDropdown: FC = () => {
