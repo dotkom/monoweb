@@ -57,4 +57,4 @@ registerObservabilityProbeRoutes(server)
 
 await server.listen({ port: 5555, host: "0.0.0.0" })
 
-logger.info("Started RPC server on http://0.0.0.0:5555")
+logger.info("Started backend server on http://0.0.0.0:5555")
