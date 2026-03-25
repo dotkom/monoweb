@@ -15,20 +15,31 @@ import Link from "next/link"
 import type { FC } from "react"
 
 export default async function App() {
-  const events = await server.event.findFeaturedEvents.query({
-    limit: 3,
-  })
+  let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
+  try {
+    events = await server.event.findFeaturedEvents.query({
+      limit: 3,
+    })
+  } catch (e) {
+    console.error("Failed to fetch featured events", e)
+  }
 
   const featuredEvent = events[0] ?? null
   const otherEvents = events.slice(1)
 
-  const user = await server.user.findMe.query()
+  let user: Awaited<ReturnType<typeof server.user.findMe.query>> = null
+  try {
+    user = await server.user.findMe.query()
+  } catch (e) {
+    console.error("Failed to fetch user", e)
+  }
 
   const startOfToday = startOfDay(new TZDate(getCurrentUTC(), "Europe/Oslo"))
 
-  // Events the user is attending that ends today or later
-  const eventsUserIsAttending = user
-    ? (
+  let eventsUserIsAttending: Awaited<ReturnType<typeof server.event.allSummariesByAttendingUserId.query>>["items"] = []
+  if (user) {
+    try {
+      eventsUserIsAttending = (
         await server.event.allSummariesByAttendingUserId.query({
           id: user.id,
           take: 3,
@@ -41,7 +52,10 @@ export default async function App() {
           },
         })
       ).items
-    : []
+    } catch (e) {
+      console.error("Failed to fetch user attending events", e)
+    }
+  }
 
   return (
     <section className="flex flex-col gap-16 w-full">
