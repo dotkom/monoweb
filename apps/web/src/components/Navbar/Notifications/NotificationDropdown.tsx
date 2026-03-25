@@ -3,6 +3,8 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { NotificationItem, type NotificationItemType } from "./NotificationItem"
 import { IconBell, IconLoader2 } from "@tabler/icons-react"
 import { cn } from "@dotkomonline/ui"
+import { useTRPC } from "@/utils/trpc/client"
+import { useQuery } from "@tanstack/react-query"
 
 interface NotificationDropdownProps extends ComponentProps<typeof DropdownMenu.Root> {
   items?: NotificationItemType[]
@@ -19,6 +21,18 @@ export const NotificationDropdown = ({
   open,
   ...props
 }: NotificationDropdownProps) => {
+  const trpc = useTRPC()
+
+  const { data: amountUnread } = useQuery(trpc.notification.getUnreadCount.queryOptions())
+  const { data: notifications } = useQuery(
+    trpc.notification.getMyNotifications.queryOptions(
+      { take: 10 },
+      {
+        enabled: open,
+      }
+    )
+  )
+
   const handleMarkAllAsRead = () => {
     console.log("Mark all as read clicked")
   }
