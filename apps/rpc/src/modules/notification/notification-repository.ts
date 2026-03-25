@@ -1,14 +1,18 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Notification,
-  NotificationId,
-  NotificationWrite,
-  NotificationRecipientId,
-  NotificationRecipient,
-  UserNotification,
+import {
+  type Notification,
+  type NotificationId,
+  type NotificationWrite,
+  type NotificationRecipientId,
+  type NotificationRecipient,
+  type UserNotification,
+  NotificationSchema,
+  NotificationRecipientSchema,
+  UserNotificationSchema,
 } from "./notification"
-import { pageQuery, type Pageable } from "@dotkomonline/utils"
+import { parseOrReport } from "../../invariant"
 import type { UserId } from "../user/user"
+import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 export interface NotificationRepository {
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
@@ -19,20 +23,24 @@ export interface NotificationRepository {
     notificationId: NotificationId,
     notificationData: Partial<NotificationWrite>
   ): Promise<Notification>
-  delete(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
+  delete(handle: DBHandle, notificationId: NotificationId): Promise<boolean>
 
-  addRecipients(handle: DBHandle, notificationId: NotificationId, recipientIds: UserId[]): Promise<void>
-  removeRecipients(handle: DBHandle, notificationId: NotificationId, recipientIds: UserId[]): Promise<void>
+  addRecipients(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    recipientIds: UserId[]
+  ): Promise<NotificationRecipient[]>
+  removeRecipients(handle: DBHandle, notificationId: NotificationId, recipientIds: UserId[]): Promise<number>
 
   findRecipient(
     handle: DBHandle,
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
-  findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  findAllForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
-  markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<void>
-  markAllAsRead(handle: DBHandle, userId: UserId): Promise<void>
+  markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
+  markAllAsRead(handle: DBHandle, userId: UserId): Promise<boolean>
 }
 
 export function getNotificationRepository(): NotificationRepository {
@@ -40,46 +48,77 @@ export function getNotificationRepository(): NotificationRepository {
     async findById(handle, notificationId) {
       const notification = await handle.notification.findUnique({
         where: { id: notificationId },
+        include: {
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
+        },
       })
-      return notification
+      return parseOrReport(NotificationSchema, notification)
     },
 
-    async create(handle, notificationData) {
-      const { recipientIds, ...data } = notificationData
-      const notification = await handle.notification.create({ data })
-
-      await this.addRecipients(handle, notification.id, recipientIds)
-
-      return notification
+    async create(handle, data) {
+      const { recipientIds, ...notificationData } = data
+      const notification = await handle.notification.create({
+        data: {
+          ...notificationData,
+          recipients: {
+            createMany: {
+              data: recipientIds.map((userId) => ({
+                userId,
+              })),
+            },
+          },
+        },
+        include: {
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
+        },
+      })
+      return parseOrReport(NotificationSchema, notification)
     },
-    async update(handle, notificationId, notificationData) {
-      const { recipientIds, ...data } = notificationData
+
+    async update(handle, notificationId, data) {
       const notification = await handle.notification.update({
         where: { id: notificationId },
         data,
+        include: {
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
+        },
       })
-
-      if (recipientIds !== undefined) {
-        await this.addRecipients(handle, notification.id, recipientIds)
-      }
-
-      return notification
+      return parseOrReport(NotificationSchema, notification)
     },
+
     async findMany(handle, page) {
-      return await handle.notification.findMany({
+      const results = await handle.notification.findMany({
         ...pageQuery(page),
+        include: {
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
+        },
       })
+      return parseOrReport(NotificationSchema.array(), results)
     },
 
     async delete(handle, notificationId) {
-      const notification = await handle.notification.findUnique({
+      const deletedNotification = await handle.notification.delete({
         where: { id: notificationId },
       })
-      await handle.notification.delete({
-        where: { id: notificationId },
-      })
-      return notification
+      return !!deletedNotification
     },
+
     async findRecipient(handle, recipientId, userId) {
       const recipient = await handle.notificationRecipient.findFirst({
         where: {
@@ -87,30 +126,51 @@ export function getNotificationRepository(): NotificationRepository {
           userId,
         },
       })
-      return recipient
+      return parseOrReport(NotificationRecipientSchema, recipient)
     },
+
     async addRecipients(handle, notificationId, recipientIds) {
-      await handle.notificationRecipient.createMany({
+      const recipients = await handle.notificationRecipient.createMany({
         data: recipientIds.map((userId) => ({
           notificationId,
           userId,
         })),
       })
+      return parseOrReport(NotificationRecipientSchema.array(), recipients)
     },
+
     async removeRecipients(handle, notificationId, recipientIds) {
-      await handle.notificationRecipient.deleteMany({
+      const result = await handle.notificationRecipient.deleteMany({
         where: {
           notificationId,
           userId: { in: recipientIds },
         },
       })
+      return result.count
     },
 
-    async findAllForUser(handle, userId) {
-      return handle.notificationRecipient.findMany({
+    async findAllForUser(handle, userId, page) {
+      const userNotifications = await handle.notificationRecipient.findMany({
         where: { userId },
-        include: { notification: true },
+        ...pageQuery(page),
+        include: {
+          notification: {
+            include: {
+              actorGroup: {
+                include: {
+                  roles: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          notification: {
+            createdAt: "desc",
+          },
+        },
       })
+      return parseOrReport(UserNotificationSchema.array(), userNotifications)
     },
 
     async getUnreadCountForUser(handle, userId) {
@@ -118,18 +178,21 @@ export function getNotificationRepository(): NotificationRepository {
         where: { userId, readAt: null },
       })
     },
+
     async markAsRead(handle, notificationId, userId) {
-      await handle.notificationRecipient.updateMany({
+      const notificationRecipient = await handle.notificationRecipient.updateMany({
         where: { notificationId, userId, readAt: null },
         data: { readAt: new Date() },
       })
+      return notificationRecipient.count > 0
     },
 
     async markAllAsRead(handle, userId) {
-      await handle.notificationRecipient.updateMany({
+      const notificationRecipient = await handle.notificationRecipient.updateMany({
         where: { userId, readAt: null },
         data: { readAt: new Date() },
       })
+      return notificationRecipient.count > 0
     },
   }
 }
