@@ -94,6 +94,9 @@ model Course {
   facultyId String?  @map("faculty_id")
   faculty   Faculty? @relation(fields: [facultyId], references: [id])
 
+  departmentId String?     @map("department_id")
+  department   Department? @relation(fields: [departmentId], references: [id])
+
   @@index([norwegianName])
   @@index([englishName])
   @@map("course")
@@ -134,4 +137,15 @@ model Faculty {
   courses Course[]
 
   @@map("faculty")
+}
+
+model Department {
+  id     String @id @default(uuid())
+  nameNo String @map("name_no")
+  nameEn String @map("name_en")
+  code   Int    @unique
+
+  courses Course[]
+
+  @@map("department")
 }
