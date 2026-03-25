@@ -21,7 +21,7 @@ import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/uti
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
 import invariant from "tiny-invariant"
-import { AuthenticationError, FailedPreconditionError, NotFoundError } from "../../error"
+import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { Principal } from "../../trpc"
 import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
@@ -45,6 +45,7 @@ export interface GroupService {
    * @throws {NotFoundError} if the group does not exist
    */
   getBySlugAndType(handle: DBHandle, groupSlug: GroupId, groupType: GroupType): Promise<Group>
+  getLeader(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
   findMany(handle: DBHandle): Promise<Group[]>
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   findManyByGroupSlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
@@ -155,6 +156,19 @@ export function getGroupService(
       return group
     },
 
+    async getLeader(handle, groupSlug) {
+      const leaders = await groupRepository.findGroupMembersByRoleType(handle, groupSlug, "LEADER")
+
+      if (leaders.length === 0) {
+        throw new NotFoundError(`Leaders for Group(ID=${groupSlug}) not found`)
+      }
+
+      return leaders.reduce((map, leader) => {
+        map.set(leader.id, leader)
+        return map
+      }, new Map<UserId, GroupMember>())
+    },
+
     async findMany(handle) {
       return groupRepository.findMany(handle)
     },
@@ -181,15 +195,7 @@ export function getGroupService(
     },
 
     async getMember(handle, groupSlug, userId, principal) {
-      // If only return the leader of a group to unauthenticated users.
-      const isAuthenticated = principal !== null || !principal
-      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId, { isAuthenticated })
-
-      if (memberships.length === 0 && !isAuthenticated) {
-        throw new AuthenticationError(
-          `User must be authenticated to view group membership for user ${userId} in group ${groupSlug}`
-        )
-      }
+      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId)
 
       if (memberships.length === 0) {
         throw new Error(`Member not found for user ${userId} in group ${groupSlug}`)
@@ -204,12 +210,9 @@ export function getGroupService(
       }
     },
 
-    async getMembers(handle, groupSlug, principal) {
-      // If only return the leader of a group to unauthenticated users.
-      const isAuthenticated = principal !== null
-      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, undefined, {
-        isAuthenticated,
-      })
+    async getMembers(handle, groupSlug) {
+      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug)
+
       if (!memberships) {
         return new Map()
       }

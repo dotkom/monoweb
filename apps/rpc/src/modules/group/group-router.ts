@@ -13,6 +13,8 @@ import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, or } f
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 
+const HOVESTYRET_GROUP_SLUG = "hs"
+
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
 export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
 const createGroupProcedure = procedure
@@ -133,7 +135,12 @@ export type GetMembersOutput = inferProcedureOutput<typeof getMembersProcedure>
 const getMembersProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.getMembers(ctx.handle, input, ctx.principal))
+  .query(async ({ input, ctx }) => {
+    if (!ctx.principal && input !== HOVESTYRET_GROUP_SLUG) {
+      return ctx.groupService.getLeader(ctx.handle, input)
+    }
+    return ctx.groupService.getMembers(ctx.handle, input, ctx.principal)
+  })
 
 export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>
 export type GetMemberOutput = inferProcedureOutput<typeof getMemberProcedure>

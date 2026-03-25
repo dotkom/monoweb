@@ -2,6 +2,8 @@ import type { DBHandle } from "@dotkomonline/db"
 import {
   type Group,
   type GroupId,
+  type GroupMember,
+  GroupMemberSchema,
   type GroupMembership,
   type GroupMembershipId,
   GroupMembershipSchema,
@@ -9,6 +11,7 @@ import {
   type GroupRole,
   type GroupRoleId,
   GroupRoleSchema,
+  type GroupRoleType,
   type GroupRoleWrite,
   GroupSchema,
   type GroupWrite,
@@ -17,10 +20,6 @@ import {
 import type { GroupType } from "@prisma/client"
 import z from "zod"
 import { parseOrReport } from "../../invariant"
-
-export interface GroupFetchOptions {
-  isAuthenticated: boolean
-}
 
 export interface GroupRepository {
   create(handle: DBHandle, groupSlug: GroupId, data: GroupWrite): Promise<Group>
@@ -46,12 +45,8 @@ export interface GroupRepository {
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
   findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
-  findManyGroupMemberships(
-    handle: DBHandle,
-    groupSlug: GroupId,
-    userId?: UserId,
-    fetchOptions?: GroupFetchOptions
-  ): Promise<GroupMembership[]>
+  findGroupMembersByRoleType(handle: DBHandle, groupSlug: GroupId, roleType: GroupRoleType): Promise<GroupMember[]>
+  findManyGroupMemberships(handle: DBHandle, groupSlug: GroupId, userId?: UserId): Promise<GroupMembership[]>
 
   createGroupRoles(handle: DBHandle, groupRolesData: GroupRoleWrite[]): Promise<GroupRole[]>
   updateGroupRole(
@@ -266,23 +261,64 @@ export function getGroupRepository(): GroupRepository {
         : null
     },
 
-    async findManyGroupMemberships(handle, groupSlug, userId, fetchOptions) {
-      const onlyLeader = groupSlug !== HOVEDSTYRET_GROUP_SLUG && !fetchOptions?.isAuthenticated
+    async findGroupMembersByRoleType(handle, groupSlug, roleType) {
+      const users = await handle.user.findMany({
+        where: {
+          groupMemberships: {
+            some: {
+              groupId: groupSlug,
+              roles: {
+                some: {
+                  role: {
+                    type: roleType,
+                  },
+                },
+              },
+            },
+          },
+        },
+        include: {
+          memberships: true,
+          groupMemberships: {
+            where: {
+              groupId: groupSlug,
+              roles: {
+                some: {
+                  role: {
+                    type: roleType,
+                  },
+                },
+              },
+            },
+            include: {
+              roles: {
+                include: {
+                  role: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      return users.map(({ groupMemberships, ...user }) =>
+        parseOrReport(GroupMemberSchema, {
+          ...user,
+          groupMemberships: groupMemberships.map(({ roles, ...membership }) =>
+            parseOrReport(GroupMembershipSchema, {
+              ...membership,
+              roles: roles.map((role) => role.role),
+            })
+          ),
+        })
+      )
+    },
+
+    async findManyGroupMemberships(handle, groupSlug, userId) {
       const memberships = await handle.groupMembership.findMany({
         where: {
           groupId: groupSlug,
           ...(userId ? { userId } : {}),
-          ...(onlyLeader
-            ? {
-                roles: {
-                  some: {
-                    role: {
-                      type: "LEADER",
-                    },
-                  },
-                },
-              }
-            : {}),
         },
         include: {
           roles: {
@@ -325,5 +361,3 @@ export function getGroupRepository(): GroupRepository {
 const QUERY_WITH_ROLES = {
   roles: true,
 } as const
-
-const HOVEDSTYRET_GROUP_SLUG = "hs"
