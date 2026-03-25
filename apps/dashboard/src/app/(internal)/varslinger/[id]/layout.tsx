@@ -1,4 +1,5 @@
 "use client"
+
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use, useMemo } from "react"
 import { NotificationDetailsContext } from "./provider"
