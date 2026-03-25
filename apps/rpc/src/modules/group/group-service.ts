@@ -20,9 +20,9 @@ import {
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
-import type { Principal } from "src/trpc"
 import invariant from "tiny-invariant"
 import { AuthenticationError, FailedPreconditionError, NotFoundError } from "../../error"
+import type { Principal } from "../../trpc"
 import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
 
