@@ -14,7 +14,7 @@ import {
 import type { ComponentProps, ForwardRefExoticComponent, RefAttributes } from "react"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { Badge, cn } from "@dotkomonline/ui"
-import type { NotificationPayloadType, NotificationType } from "@dotkomonline/types"
+import type { NotificationPayloadType, NotificationType } from "@dotkomonline/rpc"
 
 export interface NotificationItemType {
   id: string
