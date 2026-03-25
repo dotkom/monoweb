@@ -285,6 +285,27 @@ export function getAttendanceService(
 ): AttendanceService {
   const logger = getLogger("attendance-service")
 
+  function sendWaitlistNotificationEmail(event: Event, position: number, attendee: Attendee) {
+    if (attendee.user.email === null) {
+      return
+    }
+
+    void emailService.send(
+      DEFAULT_EMAIL_SOURCE,
+      [],
+      [attendee.user.email],
+      [],
+      [],
+      `Du har flyttet opp på ventelisten for ${event.title}`,
+      emails.WAITLIST_NOTIFICATION,
+      {
+        eventName: event.title,
+        eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+        position,
+      }
+    )
+  }
+
   function sendEventRegistrationEmail(event: Event, attendance: Attendance, attendee: Attendee) {
     if (attendee.user.email === null) {
       return
@@ -891,12 +912,13 @@ export function getAttendanceService(
       // 1. The attendee must be in the same pool as the deregistered attendee
       // 2. The attendee must not already be reserved
       // 3. The attendee must have a reservation time not in the future
-      const firstUnreservedAdjacentAttendee = remainingAttendees
+      const sortedWaitlist = remainingAttendees
         .filter((a) => a.attendancePoolId === pool.id)
         .filter((a) => !a.reserved)
         .filter((a) => !isFuture(a.earliestReservationAt))
         .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
-        .at(0)
+
+      const firstUnreservedAdjacentAttendee = sortedWaitlist.at(0)
 
       if (firstUnreservedAdjacentAttendee === undefined) {
         return
@@ -943,6 +965,10 @@ export function getAttendanceService(
       )
 
       sendEventRegistrationEmail(event, attendance, firstUnreservedAdjacentAttendee)
+
+      for (const [index, waitlistAttendee] of sortedWaitlist.slice(1, 4).entries()) {
+        sendWaitlistNotificationEmail(event, index + 1, waitlistAttendee)
+      }
     },
 
     async findChargeAttendeeScheduleDate(handle, attendeeId) {

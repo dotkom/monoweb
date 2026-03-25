@@ -13,6 +13,7 @@ export type EmailType =
   | "EVENT_ATTENDANCE"
   | "EVENT_MESSAGE"
   | "RECEIVED_MARK"
+  | "WAITLIST_NOTIFICATION"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
   getSchema(): z.ZodSchema<TData>
@@ -140,6 +141,16 @@ export const emails = {
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
+  }),
+  WAITLIST_NOTIFICATION: createEmailTemplate({
+    type: "WAITLIST_NOTIFICATION",
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.string().url(),
+        position: z.number(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "waitlist_notification.mustache"), "utf-8"),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>
