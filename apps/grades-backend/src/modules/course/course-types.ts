@@ -8,6 +8,8 @@ export type CourseId = Course["id"]
 export type CourseCode = Course["code"]
 export type Course = z.infer<typeof CourseSchema>
 
+export type CourseWrite = z.infer<typeof CourseSchema>
+
 export type CourseFilterSort = z.infer<typeof CourseFilterSortSchema>
 export const CourseFilterSortSchema = z.enum(["AVERAGE_GRADE", "PASS_RATE", "STUDENT_COUNT"])
 export type CourseFilterQuery = z.infer<typeof CourseFilterQuerySchema>
