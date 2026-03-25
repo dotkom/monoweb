@@ -5,12 +5,17 @@ import { useUserAllQuery } from "@/app/(internal)/brukere/queries"
  * Use with createSearchableSelectInput.
  */
 export const useUserSearch = (searchQuery: string) => {
-  const { users, isLoading } = useUserAllQuery({
-    filter: {
-      byName: searchQuery,
-      byEmail: searchQuery,
+  const { users, isLoading } = useUserAllQuery(
+    {
+      filter: {
+        byName: searchQuery,
+        byEmail: searchQuery,
+      },
     },
-  })
+    {
+      enabled: searchQuery.length > 0, // Only fetch when there is a search query
+    }
+  )
 
   return { data: users, isLoading }
 }
