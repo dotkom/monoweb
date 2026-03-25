@@ -1,7 +1,7 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { Loader, MultiSelect, type MultiSelectProps, Select, type SelectProps } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Controller, type FieldValues, useController } from "react-hook-form"
 import type { InputProducerResult } from "./types"
 
@@ -61,25 +61,59 @@ export function createSearchableSelectInput<F extends FieldValues, T>({
     const [searchQuery, setSearchQuery] = useState("")
     const [debouncedSearchQuery] = useDebouncedValue(searchQuery, debounceMs)
 
+    // Cache to store selected items for display when they're not in search results
+    const selectedItemsCache = useRef<Map<string, T>>(new Map())
+
     const { data, isLoading } = useSearchHook(debouncedSearchQuery)
     const { field } = useController({ name, control })
 
     const options = data.map(dataMapper)
 
+    // Cache items from current search results that match selected values
+    const selectedValues = isMultiSelect ? ((field.value as string[]) ?? []) : field.value ? [field.value] : []
+    for (const item of data) {
+      const mapped = dataMapper(item)
+      if (selectedValues.includes(mapped.value)) {
+        selectedItemsCache.current.set(mapped.value, item)
+      }
+    }
+
+    // Helper to find an item for a selected value
+    const findSelectedItem = (id: string): T | undefined => {
+      // Check cache first
+      const cachedItem = selectedItemsCache.current.get(id)
+      if (cachedItem) {
+        return cachedItem
+      }
+
+      // Try getSelectedItem if provided
+      if (getSelectedItem) {
+        const item = getSelectedItem(id)
+        if (item) {
+          selectedItemsCache.current.set(id, item)
+          return item
+        }
+      }
+
+      return undefined
+    }
+
     // For single select: ensure selected value is in options
-    if (!isMultiSelect && field.value && getSelectedItem) {
-      const selectedItem = getSelectedItem(field.value)
-      if (selectedItem && !options.some((o) => o.value === field.value)) {
-        options.push(dataMapper(selectedItem))
+    if (!isMultiSelect && field.value) {
+      if (!options.some((o) => o.value === field.value)) {
+        const selectedItem = findSelectedItem(field.value)
+        if (selectedItem) {
+          options.push(dataMapper(selectedItem))
+        }
       }
     }
 
     // For multi select: ensure all selected values are in options
-    if (isMultiSelect && Array.isArray(field.value) && getSelectedItem) {
+    if (isMultiSelect && Array.isArray(field.value)) {
       const selectedIds = field.value as string[]
       for (const selectedId of selectedIds) {
         if (!options.some((o) => o.value === selectedId)) {
-          const selectedItem = getSelectedItem(selectedId)
+          const selectedItem = findSelectedItem(selectedId)
           if (selectedItem) {
             options.push(dataMapper(selectedItem))
           }
