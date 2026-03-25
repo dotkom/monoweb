@@ -18,6 +18,10 @@ import type { GroupType } from "@prisma/client"
 import z from "zod"
 import { parseOrReport } from "../../invariant"
 
+export interface GroupFetchOptions {
+  isAuthenticated: boolean
+}
+
 export interface GroupRepository {
   create(handle: DBHandle, groupSlug: GroupId, data: GroupWrite): Promise<Group>
   update(handle: DBHandle, groupSlug: GroupId, data: Partial<GroupWrite>): Promise<Group>
@@ -42,7 +46,12 @@ export interface GroupRepository {
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
   findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
-  findManyGroupMemberships(handle: DBHandle, groupSlug: GroupId, userId?: UserId): Promise<GroupMembership[]>
+  findManyGroupMemberships(
+    handle: DBHandle,
+    groupSlug: GroupId,
+    userId?: UserId,
+    fetchOptions?: GroupFetchOptions
+  ): Promise<GroupMembership[]>
 
   createGroupRoles(handle: DBHandle, groupRolesData: GroupRoleWrite[]): Promise<GroupRole[]>
   updateGroupRole(
@@ -257,9 +266,24 @@ export function getGroupRepository(): GroupRepository {
         : null
     },
 
-    async findManyGroupMemberships(handle, groupSlug, userId) {
+    async findManyGroupMemberships(handle, groupSlug, userId, fetchOptions) {
+      const onlyLeader = groupSlug !== HOVEDSTYRET_GROUP_SLUG && !fetchOptions?.isAuthenticated
       const memberships = await handle.groupMembership.findMany({
-        where: { groupId: groupSlug, ...(userId ? { userId } : {}) },
+        where: {
+          groupId: groupSlug,
+          ...(userId ? { userId } : {}),
+          ...(onlyLeader
+            ? {
+                roles: {
+                  some: {
+                    role: {
+                      type: "LEADER",
+                    },
+                  },
+                },
+              }
+            : {}),
+        },
         include: {
           roles: {
             include: {
@@ -301,3 +325,5 @@ export function getGroupRepository(): GroupRepository {
 const QUERY_WITH_ROLES = {
   roles: true,
 } as const
+
+const HOVEDSTYRET_GROUP_SLUG = "hs"

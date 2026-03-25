@@ -133,7 +133,7 @@ export type GetMembersOutput = inferProcedureOutput<typeof getMembersProcedure>
 const getMembersProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.getMembers(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.groupService.getMembers(ctx.handle, input, ctx.principal))
 
 export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>
 export type GetMemberOutput = inferProcedureOutput<typeof getMemberProcedure>
@@ -145,7 +145,7 @@ const getMemberProcedure = procedure
     })
   )
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.getMember(ctx.handle, input.groupId, input.userId))
+  .query(async ({ input, ctx }) => ctx.groupService.getMember(ctx.handle, input.groupId, input.userId, ctx.principal))
 
 export type AllByMemberInput = inferProcedureInput<typeof allByMemberProcedure>
 export type AllByMemberOutput = inferProcedureOutput<typeof allByMemberProcedure>

@@ -20,8 +20,9 @@ import {
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
+import type { Principal } from "src/trpc"
 import invariant from "tiny-invariant"
-import { FailedPreconditionError, NotFoundError } from "../../error"
+import { AuthenticationError, FailedPreconditionError, NotFoundError } from "../../error"
 import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
 
@@ -49,8 +50,8 @@ export interface GroupService {
   findManyByGroupSlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
   findManyByMemberUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
 
-  getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMember>
-  getMembers(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
+  getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId, principal?: Principal | null): Promise<GroupMember>
+  getMembers(handle: DBHandle, groupSlug: GroupId, principal?: Principal | null): Promise<Map<UserId, GroupMember>>
 
   startMembership(
     handle: DBHandle,
@@ -179,8 +180,16 @@ export function getGroupService(
       return groupRepository.findManyByUserId(handle, userId)
     },
 
-    async getMember(handle, groupSlug, userId) {
-      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId)
+    async getMember(handle, groupSlug, userId, principal) {
+      // If only return the leader of a group to unauthenticated users.
+      const isAuthenticated = principal !== null || !principal
+      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId, { isAuthenticated })
+
+      if (memberships.length === 0 && !isAuthenticated) {
+        throw new AuthenticationError(
+          `User must be authenticated to view group membership for user ${userId} in group ${groupSlug}`
+        )
+      }
 
       if (memberships.length === 0) {
         throw new Error(`Member not found for user ${userId} in group ${groupSlug}`)
@@ -195,9 +204,12 @@ export function getGroupService(
       }
     },
 
-    async getMembers(handle, groupSlug) {
-      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug)
-
+    async getMembers(handle, groupSlug, principal) {
+      // If only return the leader of a group to unauthenticated users.
+      const isAuthenticated = principal !== null
+      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, undefined, {
+        isAuthenticated,
+      })
       if (!memberships) {
         return new Map()
       }
