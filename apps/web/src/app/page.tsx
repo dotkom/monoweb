@@ -1,6 +1,5 @@
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
-import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { AuthNotice } from "@/components/notices/auth-notice"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
@@ -17,7 +16,7 @@ export default async function App() {
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
   try {
     events = await server.event.findFeaturedEvents.query({
-      limit: 3,
+      limit: 2,
     })
   } catch (e) {
     console.error("Failed to fetch featured events", e)
@@ -60,77 +59,82 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
         <AuthNotice />
-        <OnlineHero />
-      </div>
+        {/* DESKTOP SCREEN */}
+        <div className="hidden md:grid md:grid-cols-[70%_30%] auto-rows-max w-full gap-6 pr-6">
+          <div className="row-span-4 w-full h-full flex items-center justify-center">
+            <Image
+              src="/aprilfools-2026-barbietv.png"
+              alt="April Fools"
+              className="rounded-2xl object-cover w-full"
+              width={0}
+              height={0}
+            />
+          </div>
 
-      <div className="flex flex-col gap-4">
-        <Title className="text-3xl font-semibold">Arrangementer</Title>
+          <div className="invisible mb-24" />
 
-        {featuredEvent ? (
-          <>
-            {/* desktop grid layout */}
-            <div className="hidden md:grid md:grid-cols-[70%_30%] auto-rows-max w-full gap-6 pr-6">
-              <BigEventCard
-                event={featuredEvent?.event}
-                attendance={featuredEvent?.attendance}
-                className="row-span-3"
-              />
+          <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
 
-              {otherEvents.map(({ event, attendance }) => (
-                <EventCard key={event.id} event={event} attendance={attendance} />
-              ))}
+          {otherEvents.map(({ event, attendance }) => (
+            <EventCard key={event.id} event={event} attendance={attendance} />
+          ))}
 
+          <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
+            <div className="flex justify-center items-center rounded-2xl w-full h-full min-h-24 bg-linear-to-r from-amber-700 via-50% via-amber-100 to-amber-700">
+              <Button
+                element={Link}
+                href="/arrangementer"
+                className={cn(
+                  "rounded-xl w-[95%] h-[85%] text-white md:gap-3",
+                  "bg-linear-to-t from-[#B8058B] to-[#FF46DD] hover:bg-blue-100 border border-amber-500"
+                )}
+                iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
+              >
+                <Text className="md:text-xl">Se alle</Text>
+              </Button>
+            </div>
+          </Tilt>
+        </div>
+
+        {/* MOBILE SCREEN */}
+        <div className="md:hidden md:-mx-4 gap-8 flex flex-col">
+          <Image
+            src="/aprilfools-2026-barbietv.png"
+            alt="April Fools"
+            className="rounded-2xl object-cover w-full h-full"
+            width={0}
+            height={0}
+          />
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
+            <div className="shrink-0 w-[85vw] max-w-[24rem] md:ml-4 snap-center">
+              <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
+            </div>
+
+            {otherEvents.map(({ event, attendance }) => (
+              <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center">
+                <EventCard event={event} attendance={attendance} />
+              </div>
+            ))}
+
+            <div className="snap-center pr-4">
               <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
-                <Button
-                  element={Link}
-                  href="/arrangementer"
-                  className={cn(
-                    "rounded-xl w-full h-full min-h-24 text-brand-800 hover:text-black md:gap-3",
-                    "bg-blue-200 hover:bg-blue-100",
-                    "dark:bg-brand dark:hover:bg-brand/75"
-                  )}
-                  iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
-                >
-                  <Text className="md:text-xl">Se alle</Text>
-                </Button>
+                <div className="flex items-center justify-center rounded-2xl h-full aspect-square mr-4 bg-linear-to-r from-amber-700 via-50% via-amber-100 to-amber-700">
+                  <Button
+                    element={Link}
+                    href="/arrangementer"
+                    className={cn(
+                      "rounded-xl h-[95%] w-[95%] text-white aspect-square gap-2",
+                      "bg-linear-to-t from-[#B8058B] to-[#FF46DD] border border-amber-500"
+                    )}
+                    iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
+                  >
+                    <Text className="text-lg text-white">Se alle</Text>
+                  </Button>
+                </div>
               </Tilt>
             </div>
-
-            {/* mobile horizontal scroll */}
-            <div className="md:hidden md:-mx-4">
-              <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-                <div className="shrink-0 w-[85vw] max-w-[24rem] md:ml-4 snap-center">
-                  <EventCard event={featuredEvent?.event} attendance={featuredEvent?.attendance} />
-                </div>
-
-                {otherEvents.map(({ event, attendance }) => (
-                  <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center">
-                    <EventCard event={event} attendance={attendance} />
-                  </div>
-                ))}
-
-                <div className="snap-center pr-4">
-                  <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
-                    <Button
-                      element={Link}
-                      href="/arrangementer"
-                      className={cn(
-                        "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
-                        "bg-blue-200 hover:bg-blue-100",
-                        "dark:bg-brand dark:hover:bg-brand/75"
-                      )}
-                      iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
-                    >
-                      <Text className="text-lg">Se alle</Text>
-                    </Button>
-                  </Tilt>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
-        )}
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -153,18 +157,19 @@ export default async function App() {
 
               <div className="snap-center pr-4">
                 <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
-                  <Button
-                    element={Link}
-                    href="/arrangementer"
-                    className={cn(
-                      "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
-                      "bg-blue-200 hover:bg-blue-100",
-                      "dark:bg-brand dark:hover:bg-brand/75"
-                    )}
-                    iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
-                  >
-                    <Text className="text-lg">Se alle</Text>
-                  </Button>
+                  <div className="flex items-center justify-center rounded-2xl h-full aspect-square mr-4 bg-linear-to-r from-amber-700 via-50% via-amber-100 to-amber-700">
+                    <Button
+                      element={Link}
+                      href="/arrangementer"
+                      className={cn(
+                        "rounded-xl h-[95%] w-[95%] text-white aspect-square gap-2",
+                        "bg-linear-to-t from-[#B8058B] to-[#FF46DD] border border-amber-500"
+                      )}
+                      iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
+                    >
+                      <Text className="text-lg">Se alle</Text>
+                    </Button>
+                  </div>
                 </Tilt>
               </div>
             </div>
@@ -181,6 +186,7 @@ interface BigEventCardProps {
   className?: string
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: this card is unused for the pink theme
 const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, className }) => {
   const _reservedStatus = attendance?.currentUserAttendee?.reserved ?? false
 
@@ -237,39 +243,42 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, className }) => {
   const _reservedStatus = attendance?.currentUserAttendee?.reserved ?? false
 
   return (
-    <Link
-      href={createEventPageUrl(event.id, event.title)}
-      className={cn(
-        "flex flex-col w-full h-fit gap-3 p-3 rounded-2xl border transition-colors",
-        "border-gray-100 bg-gray-50 hover:bg-transparent",
-        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
-        className
-      )}
-    >
-      <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-        {event.imageUrl ? (
-          <img
-            src={event.imageUrl}
-            alt={event.title}
-            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video w-full"
-          />
-        ) : (
-          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
-            <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
-          </div>
+    <div className="flex items-center justify-center w-full h-full rounded-3xl bg-linear-to-r from-amber-700 via-50% via-amber-100 to-amber-700">
+      <Link
+        href={createEventPageUrl(event.id, event.title)}
+        className={cn(
+          "flex flex-col w-[95%] h-[95%] gap-3 p-5 rounded-2xl border border-amber-500 transition-colors",
+          "bg-linear-to-t from-[#B8058B] to-[#FF46DD]",
+          className
         )}
-      </Tilt>
-      <div className="flex flex-col gap-2 w-full">
-        <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
-          {event.title}
-        </Title>
+      >
+        <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
+          {event.imageUrl ? (
+            <Image
+              src={event.imageUrl}
+              alt={event.title}
+              className="rounded-lg border border-amber-500 object-cover aspect-video w-full"
+              width={0}
+              height={0}
+            />
+          ) : (
+            <div className="rounded-lg border w-full border-amber-500 object-cover overflow-hidden aspect-video">
+              <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
+            </div>
+          )}
+        </Tilt>
+        <div className="flex flex-col gap-2 w-full text-white">
+          <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
+            {event.title}
+          </Title>
 
-        <div className="flex flex-row gap-2 items-center">
-          <IconCalendarEvent className="size-5 text-gray-800 dark:text-stone-400" />
-          <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
+          <div className="flex flex-row gap-2 items-center">
+            <IconCalendarEvent className="size-5 text-white" />
+            <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   )
 }
 
