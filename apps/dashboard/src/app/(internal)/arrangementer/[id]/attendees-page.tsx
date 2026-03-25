@@ -5,13 +5,10 @@ import { skipToken } from "@tanstack/react-query"
 import type { FC } from "react"
 import { AllAttendeesTable } from "../components/all-attendees-table"
 import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
+import { openNotifyAttendeesModal } from "../components/notify-attendees-modal"
 import { QrCodeScanner } from "../components/qr-code-scanner"
 import { useEventFeedbackFormGetQuery, useFeedbackAnswersGetQuery } from "../queries"
 import { useEventContext } from "./provider"
-
-const getMailTo = (eventTitle: string, emails: (string | null)[]) => {
-  return `mailto:?bcc=${emails.filter(Boolean).join(",")}&subject=(${eventTitle}) Melding fra arrangør`
-}
 
 export const AttendeesPage: FC = () => {
   const { event, attendance } = useEventContext()
@@ -43,30 +40,11 @@ const Page: FC<Props> = ({ event, attendance, feedbackAnswers }) => {
         <Stack>
           <Group>
             <Button
-              component="a"
               variant="light"
-              disabled={attendees.length === 0 || attendees.length === attendeesWithoutEmail.length}
-              target="_blank"
-              rel="noopener noreferrer"
-              href={getMailTo(
-                event.title,
-                attendees.map((attendee) => attendee.user.email)
-              )}
+              disabled={attendees.length === 0}
+              onClick={() => openNotifyAttendeesModal({ eventId: event.id, attendees })}
             >
               Send e-post til alle
-            </Button>
-            <Button
-              component="a"
-              variant="light"
-              disabled={attendees.length === 0 || attendees.length === attendeesWithoutEmail.length}
-              target="_blank"
-              rel="noopener noreferrer"
-              href={getMailTo(
-                event.title,
-                attendees.filter((attendee) => attendee.reserved).map((attendee) => attendee.user.email)
-              )}
-            >
-              Send e-post til påmeldte (uten venteliste)
             </Button>
           </Group>
           {attendeesWithoutEmail.length > 0 && (

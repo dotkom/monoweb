@@ -493,6 +493,34 @@ export const useDeleteFeedbackFormMutation = () => {
   )
 }
 
+export const useNotifyAttendeesMutation = () => {
+  const trpc = useTRPC()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.event.attendance.notifyAttendees.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Sender e-post...",
+          message: "E-posten blir sendt til alle påmeldte.",
+        })
+      },
+      onSuccess: () => {
+        notification.complete({
+          title: "E-post sendt",
+          message: "E-posten ble sendt til alle påmeldte.",
+        })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under sending av e-post: ${err.toString()}.`,
+        })
+      },
+    })
+  )
+}
+
 export const useUpdateAttendeeReservedMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
