@@ -32,6 +32,7 @@ export const useNotificationWriteForm = ({
     label,
     fields: {
       recipientIds: createSearchableSelectInput({
+        multiSelect: true,
         useSearchHook: useUserSearch,
         dataMapper: (user) => ({ value: user.id, label: `${user.name} (${user.email})` }),
         selectProps: {
