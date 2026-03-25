@@ -55,10 +55,10 @@ const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefin
   switch (theme) {
     case "pink":
       return IconFlower
-  
+
     case "dark":
       return IconMoon
-  
+
     default:
       return IconSun
   }
