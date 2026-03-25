@@ -1,20 +1,13 @@
 #!/bin/bash
-# Fast iteration loop for iOS Safari crash debugging
-# Usage: ./test-ios.sh [phase_name]
+# Build and run the web app as a production Docker image locally.
+# Uses .env.docker for production environment variables.
+# See docs/docker-prod-testing.md for setup instructions.
 #
-# This script:
-# 1. Builds a Docker image from the local source
-# 2. Stops the currently running web container
-# 3. Starts the new image with prod env vars
-# 4. ngrok should already be running on port 3000
-#
-# Prerequisites:
-# - ngrok is already running: ngrok http 3000
-# - .env.docker exists (extracted from prod container)
+# Usage: ./docker-build.sh [label]
 
 set -e
 
-PHASE="${1:-unknown}"
+LABEL="${1:-local}"
 IMAGE_NAME="monoweb-test"
 CONTAINER_NAME="monoweb-test-web"
 ENV_FILE=".env.docker"
@@ -23,15 +16,14 @@ MONOREPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$MONOREPO_ROOT"
 
 if [ ! -f "$ENV_FILE" ]; then
-    echo "ERROR: $ENV_FILE not found. Extract from prod container:"
-    echo "  docker inspect <container_id> --format '{{range .Config.Env}}{{println .}}{{end}}' > .env.docker"
+    echo "ERROR: $ENV_FILE not found. See docs/docker-prod-testing.md for setup."
     exit 1
 fi
 
-echo "=== iOS Safari Crash Debug: Phase [$PHASE] ==="
+echo "=== Docker Build: [$LABEL] ==="
 echo ""
 
-# Step 1: Stop old container FIRST (free up memory for build on 8GB machine)
+# Step 1: Stop old container FIRST (free up memory for build)
 echo "[1/3] Stopping old web container..."
 docker ps --format '{{.ID}} {{.Ports}}' | grep '0.0.0.0:3000' | awk '{print $1}' | xargs -r docker stop 2>/dev/null || true
 docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
@@ -73,7 +65,7 @@ docker run -d \
 
 echo ""
 echo "=== Container started! ==="
-echo "Phase: $PHASE"
+echo "Label: $LABEL"
 echo "Waiting for server to be ready..."
 
 # Wait for the server to respond
@@ -81,8 +73,8 @@ for i in $(seq 1 30); do
     if curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q '200\|304\|302'; then
         echo "Server ready after ${i}s!"
         echo ""
-        echo ">>> Test on iPhone now via ngrok <<<"
-        echo ">>> Check: does the page crash? <<<"
+        echo "Open http://localhost:3000"
+        echo "For mobile testing, use ngrok: ngrok http 3000"
         echo ""
         echo "Logs (Ctrl+C to stop watching):"
         docker logs -f "$CONTAINER_NAME"
