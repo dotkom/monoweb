@@ -23,6 +23,9 @@ export const CourseFilterQuerySchema = z
 export const SemesterSchema = schemas.SemesterSchema
 export type Semester = z.infer<typeof SemesterSchema>
 
+export const FacultySchema = schemas.FacultySchema.extend({})
+export type Faculty = z.infer<typeof FacultySchema>
+
 export const mapCourseSemesterToLabel = (semester: Semester) => {
   switch (semester) {
     case "FALL":

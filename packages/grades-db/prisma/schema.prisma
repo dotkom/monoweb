@@ -91,6 +91,9 @@ model Course {
   campuses          Campus[]           @default([])
   grades            Grade[]
 
+  facultyId String?  @map("faculty_id")
+  faculty   Faculty? @relation(fields: [facultyId], references: [id])
+
   @@index([norwegianName])
   @@index([englishName])
   @@map("course")
@@ -120,4 +123,15 @@ model Grade {
   @@unique([courseId, semester, year])
   @@index([courseId])
   @@map("grade")
+}
+
+model Faculty {
+  id     String @id @default(uuid())
+  nameNo String @map("name_no")
+  nameEn String @map("name_en")
+  code   Int    @unique
+
+  courses Course[]
+
+  @@map("faculty")
 }
