@@ -32,6 +32,7 @@ import {
   IconMailForward,
   IconMessageReport,
   IconMoon,
+  IconFlower,
   IconPalette,
   IconSettings,
   IconSun,
@@ -50,7 +51,16 @@ const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefin
   if (theme === "system") {
     return resolvedTheme === "dark" ? IconMoon : IconSun
   }
-  return theme === "dark" ? IconMoon : IconSun
+
+  if (theme === "pink") {
+    return IconFlower
+  }
+
+  if (theme === "dark") {
+    return IconMoon
+  }
+
+  return IconSun
 }
 
 const ThemeDropdown: FC = () => {
