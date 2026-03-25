@@ -9,6 +9,7 @@ import {
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
   DeregisterReasonTypeSchema,
+  EventSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -16,7 +17,7 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { TRPCError } from "@trpc/server"
 import { addHours } from "date-fns"
 import { z } from "zod"
-import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
+import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, or } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
@@ -402,6 +403,34 @@ const findChargeAttendeeScheduleDateProcedure = procedure
     return await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.handle, attendee.id)
   })
 
+export type NotifyAttendeesInput = inferProcedureInput<typeof notifyAttendeesProcedure>
+export type NotifyAttendeesOutput = inferProcedureOutput<typeof notifyAttendeesProcedure>
+const notifyAttendeesProcedure = procedure
+  .input(
+    z.object({
+      eventId: EventSchema.shape.id,
+      message: z.string(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+    const [firstGroupId, ...restGroupIds] = event.hostingGroups.map((g) => g.slug)
+    await ctx.addAuthorizationGuard(
+      firstGroupId !== undefined
+        ? or(isAdministrator(), isGroupMemberOfAny([firstGroupId, ...restGroupIds]))
+        : isAdministrator(),
+      input
+    )
+    if (event.attendanceId === null) {
+      throw new FailedPreconditionError("Event does not have attendance")
+    }
+    await ctx.attendanceService.notifyAttendees(ctx.handle, event.attendanceId, input.message)
+  })
+
 export const attendanceRouter = t.router({
   createPool: createPoolProcedure,
   updatePool: updatePoolProcedure,
@@ -422,4 +451,5 @@ export const attendanceRouter = t.router({
   getAttendance: getAttendanceProcedure,
   updateAttendance: updateAttendanceProcedure,
   findChargeAttendeeScheduleDate: findChargeAttendeeScheduleDateProcedure,
+  notifyAttendees: notifyAttendeesProcedure,
 })

@@ -1622,7 +1622,9 @@ export function getAttendanceService(
       const attendance = await this.getAttendanceById(handle, attendanceId)
       const event = await eventService.getByAttendanceId(handle, attendanceId)
       if (isBefore(getCurrentUTC(), attendance.registerStart)) {
-        throw new IllegalStateError(`Cannot send message to attendees for Attendance(ID=${attendance.id}) before start`)
+        throw new IllegalStateError(
+          `Cannot send message to attendees for Attendance(ID=${attendance.id}) before register start`
+        )
       }
 
       const hostingGroupEmail = findFirstHostingGroupEmail(event)

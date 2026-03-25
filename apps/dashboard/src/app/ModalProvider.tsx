@@ -23,12 +23,14 @@ import { UploadImageModal } from "@/components/ImageUploadModal"
 import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
 import { QRCodeScannedModal } from "@/app/(internal)/arrangementer/components/qr-code-scanned-modal"
+import { NotifyAttendeesModal } from "@/app/(internal)/arrangementer/components/notify-attendees-modal"
 import { CreateGroupMemberModal } from "@/app/(internal)/grupper/modals/create-group-member-modal"
 
 const modals = {
   "event/attendance/attendee/create": ManualCreateUserAttendModal,
   "event/attendance/attendee/delete": ManualDeleteUserAttendModal,
   "event/attendance/attendee/qr-code-scanned": QRCodeScannedModal,
+  "event/attendance/notify-attendees": NotifyAttendeesModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
   "jobListing/create": CreateJobListingModal,
