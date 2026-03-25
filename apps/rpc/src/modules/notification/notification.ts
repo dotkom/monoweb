@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { GroupSchema } from "../group/group"
 
 export const NotificationTypeSchema = z.enum([
   "BROADCAST",
@@ -9,12 +10,13 @@ export const NotificationTypeSchema = z.enum([
   "JOB_LISTING_REMINDER",
   "NEW_ARTICLE",
   "NEW_EVENT",
+  "NEW_FEEDBACK_FORM",
   "NEW_INTEREST_GROUP",
   "NEW_JOB_LISTING",
-  "NEW_OFFLINE",
   "NEW_MARK",
-  "NEW_FEEDBACK_FORM",
+  "NEW_OFFLINE",
 ])
+
 export type NotificationType = z.infer<typeof NotificationTypeSchema>
 
 export const NotificationPayloadTypeSchema = z.enum([
@@ -27,21 +29,20 @@ export const NotificationPayloadTypeSchema = z.enum([
   "JOB_LISTING",
   "NONE",
 ])
+
 export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSchema>
 
 export const NotificationRecipientSchema = z.object({
   id: z.string(),
-  readAt: z.date().nullable(),
-  notificationId: z.string(),
-  userId: z.string(),
+  readAt: z.coerce.date().nullable(),
 })
+
 export type NotificationRecipient = z.infer<typeof NotificationRecipientSchema>
-export type NotificationRecipientId = NotificationRecipient["id"]
 
 export const NotificationSchema = z.object({
   id: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
   title: z.string(),
   shortDescription: z.string().nullable(),
   content: z.string(),
@@ -49,17 +50,17 @@ export const NotificationSchema = z.object({
   payload: z.string().nullable(),
   payloadType: NotificationPayloadTypeSchema,
   actorGroupId: z.string(),
+  actorGroup: GroupSchema,
   createdById: z.string().nullable(),
+  // createdBy: UserSchema.nullable(),
   lastUpdatedById: z.string().nullable(),
+  // lastUpdatedBy: UserSchema.nullable(),
   taskId: z.string().nullable(),
+  // task: TaskSchema.nullable(),
+  // recipients: z.array(NotificationRecipientSchema),
 })
-export type Notification = z.infer<typeof NotificationSchema>
-export type NotificationId = Notification["id"]
 
-export const UserNotificationSchema = NotificationRecipientSchema.extend({
-  notification: NotificationSchema,
-})
-export type UserNotification = z.infer<typeof UserNotificationSchema>
+export type Notification = z.infer<typeof NotificationSchema>
 
 export const NotificationWriteSchema = NotificationSchema.pick({
   title: true,
@@ -71,9 +72,56 @@ export const NotificationWriteSchema = NotificationSchema.pick({
   actorGroupId: true,
   taskId: true,
 }).extend({
-  recipientIds: z.array(z.string()).min(1),
+  recipientIds: z.array(z.string()),
 })
+
 export type NotificationWrite = z.infer<typeof NotificationWriteSchema>
+
+// ---- Additional Types ----
+
+export const UserNotificationSchema = z.object({
+  id: z.string(),
+  readAt: z.coerce.date().nullable(),
+  notification: NotificationSchema,
+})
+
+export type UserNotification = z.infer<typeof UserNotificationSchema>
+
+// ---- ID Types ----
+
+export type NotificationId = Notification["id"]
+
+export type NotificationRecipientId = NotificationRecipient["id"]
+
+// ---- DTOs ----
+
+export const NotificationDTOSchema = NotificationSchema.pick({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  title: true,
+  shortDescription: true,
+  content: true,
+  type: true,
+  payload: true,
+  payloadType: true,
+  actorGroupId: true,
+  createdById: true,
+  lastUpdatedById: true,
+  taskId: true,
+  actorGroup: true,
+})
+
+export type NotificationDTO = z.infer<typeof NotificationDTOSchema>
+
+export const UserNotificationDTOSchema = UserNotificationSchema.pick({
+  id: true,
+  readAt: true,
+}).extend({
+  notification: NotificationDTOSchema,
+})
+
+export type UserNotificationDTO = z.infer<typeof UserNotificationDTOSchema>
 
 export const mapNotificationTypeToLabel = (notificationType: NotificationType) => {
   switch (notificationType) {
