@@ -1,6 +1,3 @@
-// import { server } from "@/utils/trpc/server";
-// import { mapAverageGradeToLetterGrade } from "node_modules/@dotkomonline/grades-backend/src/modules/course/course";
-// import { courseRouter } from "node_modules/@dotkomonline/grades-backend/src/modules/course/course-router";
 import { server } from "@/utils/trpc/server"
 import { mapAverageGradeToLetterGrade, mapCourseSemesterToLabel } from "@dotkomonline/grades-backend/course"
 
