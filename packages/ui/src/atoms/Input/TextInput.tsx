@@ -21,7 +21,7 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
         <Text
           element="label"
           htmlFor={props.id}
-          className={cn("text-black dark:text-white", props.disabled && "text-gray-500 dark:text-stone-400")}
+          className={cn("text-black dark:text-white", props.disabled && "text-gray-500 dark:text-stone-400 in-data-[theme=pink]:text-pink-600")}
         >
           {label}{" "}
           {props.required && (
@@ -34,7 +34,7 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
 
       {description &&
         (typeof description === "string" || typeof description === "number" ? (
-          <Text className="text-gray-500 dark:text-stone-400 text-xs">{description}</Text>
+          <Text className="text-gray-500 dark:text-stone-400 in-data-[theme=pink]:text-pink-600 text-xs">{description}</Text>
         ) : (
           description
         ))}
@@ -47,9 +47,10 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
         className={cn(
           "flex h-10 w-full items-center justify-between rounded-lg border text-left",
           "text-black dark:text-white",
-          "placeholder:text-gray-500 dark:placeholder:text-stone-400",
+          "placeholder:text-gray-500 dark:placeholder:text-stone-400  in-data-[theme=pink]:placeholder:text-pink-600",
           "border-gray-200 px-3 py-2 text-sm ring-offset-background",
           "dark:border-stone-700 dark:bg-stone-800",
+          "in-data-[theme=pink]:border-pink-500",
           "focus:outline-hidden focus:ring-2",
           "disabled:cursor-not-allowed disabled:opacity-50",
           hasError && [

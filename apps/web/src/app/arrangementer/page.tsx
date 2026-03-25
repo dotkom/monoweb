@@ -220,15 +220,15 @@ const EventPage = () => {
 
             {isCalendar && (
               <>
-                <div className="hidden xs:flex gap-1 p-1.5 border border-gray-200 dark:border-none dark:bg-stone-800 rounded-lg shrink-0">
+                <div className="hidden xs:flex gap-1 p-1.5 border border-gray-200 dark:border-none dark:bg-stone-800 in-data-[theme=pink]:border-pink-500 in-data-[theme=pink]:text-pink-600 rounded-lg shrink-0">
                   <button
                     type="button"
                     onClick={() => navigateToView("week")}
                     className={cn(
                       "px-3 py-1.5 rounded text-sm font-medium transition-colors",
                       view === "week"
-                        ? "bg-gray-200 dark:bg-stone-600 cursor-default"
-                        : "hover:bg-gray-100 dark:hover:bg-stone-700"
+                        ? "bg-gray-200 dark:bg-stone-600 in-data-[theme=pink]:bg-pink-300 cursor-default"
+                        : "hover:bg-gray-100 dark:hover:bg-stone-700 in-data-[theme=pink]:hover:bg-pink-100"
                     )}
                   >
                     Uke
@@ -239,8 +239,8 @@ const EventPage = () => {
                     className={cn(
                       "px-3 py-1.5 rounded text-sm font-medium transition-colors",
                       view === "month"
-                        ? "bg-gray-200 dark:bg-stone-600 cursor-default"
-                        : "hover:bg-gray-100 dark:hover:bg-stone-700"
+                        ? "bg-gray-200 dark:bg-stone-600 in-data-[theme=pink]:bg-pink-300 cursor-default"
+                        : "hover:bg-gray-100 dark:hover:bg-stone-700 in-data-[theme=pink]:hover:bg-pink-100"
                     )}
                   >
                     Måned

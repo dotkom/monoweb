@@ -33,13 +33,14 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
         className={cn(
           "cursor-pointer w-full flex items-center justify-between gap-2 font-medium text-gray-500",
           "[&[data-state=open]>svg]:rotate-180",
-          "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
+          "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors",
+          "in-data-[theme=pink]:text-pink-600 in-data-[theme=pink]:hover:text-pink-700"
         )}
       >
         <div className="flex items-center gap-2 h-5.5">
           <Label className="cursor-pointer">Arrangør</Label>
           {value.length > 0 && (
-            <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
+            <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 in-data-[theme=pink]:bg-pink-100 text-blue-900 dark:text-sky-100 in-data-[theme=pink]:text-pink-600 in-data-[theme=pink]:hover:text-pink-700 rounded-full">
               {value.length}
             </span>
           )}
@@ -54,7 +55,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
           "data-[state=closed]:animate-collapsible-up"
         )}
       >
-        <div className="relative flex flex-col border border-gray-200 dark:border-stone-700 rounded-xl">
+        <div className="relative flex flex-col border border-gray-200 dark:border-stone-700 in-data-[theme=pink]:border-pink-500 in-data-[theme=pink]:text-pink-600 rounded-xl">
           <div className="relative m-0.5">
             <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
             <TextInput
@@ -65,7 +66,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
             />
           </div>
 
-          <div className="flex flex-col gap-1 md:max-h-60 overflow-y-auto p-2 border-t border-gray-200 dark:border-stone-700">
+          <div className="flex flex-col gap-1 md:max-h-60 overflow-y-auto p-2 border-t border-gray-200 dark:border-stone-700 in-data-[theme=pink]:border-pink-500">
             {filtered.map((group) => {
               const isSelected = value.includes(group.slug)
               return (
@@ -76,8 +77,8 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
                   className={cn(
                     "flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors",
                     isSelected
-                      ? "bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100"
-                      : "hover:bg-gray-100 dark:hover:bg-stone-800"
+                      ? "bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 in-data-[theme=pink]:bg-pink-100 in-data-[theme=pink]:text-pink-600"
+                      : "hover:bg-gray-100 dark:hover:bg-stone-800 in-data-[theme=pink]:hover:bg-pink-100"
                   )}
                 >
                   <span>{group.abbreviation}</span>
