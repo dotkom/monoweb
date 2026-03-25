@@ -5,7 +5,6 @@ import { AllNotificationsTable } from "./all-notification-table"
 import { useCreateNotificationModal } from "./modals/create-notification"
 import { useNotificationAllQuery } from "./queries"
 
-
 export default function NotificationPage() {
   const { notifications, isLoading: isNotificationsLoading } = useNotificationAllQuery()
   const open = useCreateNotificationModal()
