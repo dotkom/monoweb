@@ -20,6 +20,7 @@ export const NotificationTypeSchema = z.enum([
 export type NotificationType = z.infer<typeof NotificationTypeSchema>
 
 export const NotificationPayloadTypeSchema = z.enum([
+  "NONE",
   "URL",
   "EVENT",
   "ARTICLE",
@@ -27,7 +28,6 @@ export const NotificationPayloadTypeSchema = z.enum([
   "USER",
   "OFFLINE",
   "JOB_LISTING",
-  "NONE",
 ])
 
 export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSchema>
