@@ -5,3 +5,4 @@ export const GradeSchema = schemas.GradeSchema.extend({})
 
 export type GradeId = Grade["id"]
 export type Grade = z.infer<typeof GradeSchema>
+export type GradeWrite = z.infer<typeof GradeSchema>
