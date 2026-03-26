@@ -14,13 +14,16 @@ const Semesters = schemas.SemesterSchema.enum
 const StudyLevels = schemas.StudyLevelSchema.enum
 const TeachingLanguages = schemas.TeachingLanguageSchema.enum
 
+const apiGradeSchema = z.object({})
+const parsedGradeSchema = apiGradeSchema.transform((input) => {})
+
 const apiCourseSchema = z.object({
   Årstall: z.coerce.number(),
   Semester: z.coerce.number(),
   Emnekode: z.coerce.string(),
   Emnenavn: z.coerce.string(),
   Nivåkode: z.coerce.string(),
-  "Underv.språk": z.coerce.string()
+  "Underv.språk": z.coerce.string(),
 })
 const parsedCourseSchema = apiCourseSchema.transform((input) => {
   const parseSemester = (semester: number) => {
@@ -47,7 +50,7 @@ const parsedCourseSchema = apiCourseSchema.transform((input) => {
       case "VS":
         return StudyLevels.CONTINUING_EDUCATION //???? Not sure if forkurs maps to continuing education
       default:
-        return StudyLevels.UNKNOWN 
+        return StudyLevels.UNKNOWN
     }
   }
 
@@ -61,14 +64,14 @@ const parsedCourseSchema = apiCourseSchema.transform((input) => {
         return []
     }
   }
-  
+
   return {
     year: input.Årstall,
     semester: parseSemester(input.Semester),
     code: input.Emnekode.split("-")[0], // DBH has versioning in their course codes, this ensures only the actual course code remains
     norwegianName: input.Emnenavn,
     studyLevel: parseStudyLevel(input.Nivåkode),
-    teachingLanguges: parseTeachingLanguage(input["Underv.språk"])
+    teachingLanguges: parseTeachingLanguage(input["Underv.språk"]),
   }
 })
 
@@ -91,16 +94,16 @@ const fetchData = async (
   options?: {
     groupBy?: string[]
     filters?: z.infer<typeof filterSchema>[]
-  },
+  }
 ) => {
-	const query = querySchema.parse({
+  const query = querySchema.parse({
     tabell_id: tableId,
     sortBy,
     ...(options?.filters !== undefined ? { filter: options.filters } : {}),
     ...(options?.groupBy !== undefined ? { groupBy: options.groupBy } : {}),
   })
 
-	const res = await fetch(TABLE_URL, {
+  const res = await fetch(TABLE_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
