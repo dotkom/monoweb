@@ -53,14 +53,14 @@ const parseTeachingLanguage = (language: string) => {
   }
 }
 
-const apiGradeSchema = z.object({
+const ApiGradeSchema = z.object({
   Emnekode: z.coerce.string(),
   Årstall: z.coerce.number(),
   Karakter: z.coerce.string(),
   Semester: z.coerce.number(),
   "Antall kandidater totalt": z.coerce.number(),
 })
-const parsedGradeSchema = apiGradeSchema.transform((input) => {
+const ParsedGradeSchema = ApiGradeSchema.transform((input) => {
   return {
     code: input.Emnekode,
     year: input.Årstall,
@@ -70,7 +70,7 @@ const parsedGradeSchema = apiGradeSchema.transform((input) => {
   }
 })
 
-const apiCourseSchema = z.object({
+const ApiCourseSchema = z.object({
   Årstall: z.coerce.number(),
   Semester: z.coerce.number(),
   Emnekode: z.coerce.string(),
@@ -78,7 +78,7 @@ const apiCourseSchema = z.object({
   Nivåkode: z.coerce.string(),
   "Underv.språk": z.coerce.string(),
 })
-const parsedCourseSchema = apiCourseSchema.transform((input) => {
+const ParsedCourseSchema = ApiCourseSchema.transform((input) => {
   return {
     year: input.Årstall,
     semester: parseSemester(input.Semester),
@@ -89,7 +89,7 @@ const parsedCourseSchema = apiCourseSchema.transform((input) => {
   }
 })
 
-const querySchema = z.object({
+const QuerySchema = z.object({
   tabell_id: z.number(),
   api_versjon: z.number().default(API_VERSION),
   statuslinje: z.string().default(STATUS_LINE ? "J" : "N"),
@@ -110,7 +110,7 @@ const fetchData = async (
     filters?: z.infer<typeof filterSchema>[]
   }
 ) => {
-  const query = querySchema.parse({
+  const query = QuerySchema.parse({
     tabell_id: tableId,
     sortBy,
     ...(options?.filters !== undefined ? { filter: options.filters } : {}),
@@ -145,7 +145,7 @@ const fetchAllGrades = () => {
 export const getAllGrades = async () => {
   const grades = await fetchAllGrades()
 
-  return z.array(parsedGradeSchema).parse(grades)
+  return z.array(ParsedGradeSchema).parse(grades)
 }
 
 const fetchAllCourses = async () => {
@@ -160,5 +160,5 @@ const fetchAllCourses = async () => {
 export const getAllCourses = async () => {
   const courses = await fetchAllCourses()
 
-  return z.array(parsedCourseSchema).parse(courses)
+  return z.array(ParsedCourseSchema).parse(courses)
 }
