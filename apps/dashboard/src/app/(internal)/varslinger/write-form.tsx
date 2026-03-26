@@ -6,9 +6,19 @@ import type { z } from "zod"
 import { useGroupAllQuery } from "../grupper/queries"
 import { createSearchableSelectInput } from "@/components/forms/SearchableSelectInput"
 import { useUserSearch } from "@/components/forms/hooks/useUserSearch"
-import { NotificationPayloadTypeSchema, NotificationTypeSchema, NotificationWriteSchema } from "@dotkomonline/rpc"
+import {
+  mapNotificationPayloadTypeToLabel,
+  mapNotificationTypeToLabel,
+  NotificationPayloadTypeSchema,
+  NotificationTypeSchema,
+  NotificationWriteSchema,
+} from "@dotkomonline/rpc"
 
-const NOTIFICATION_FORM_DEFAULT_VALUES: Partial<NotificationWriteFormSchema> = { recipientIds: [], taskId: null }
+const NOTIFICATION_FORM_DEFAULT_VALUES: Partial<NotificationWriteFormSchema> = {
+  recipientIds: [],
+  taskId: null,
+  payloadType: "NONE",
+}
 
 type NotificationWriteFormSchema = z.infer<typeof NotificationWriteSchema>
 
@@ -57,9 +67,18 @@ export const useNotificationWriteForm = ({
       type: createSelectInput({
         data: Object.values(NotificationTypeSchema.Values).map((type) => ({
           value: type,
-          label: type,
+          label: mapNotificationTypeToLabel(type),
         })),
         label: "Type",
+        placeholder: "Velg type",
+        required: true,
+      }),
+      payloadType: createSelectInput({
+        label: "Payload Type",
+        data: Object.values(NotificationPayloadTypeSchema.Values).map((type) => ({
+          value: type,
+          label: mapNotificationPayloadTypeToLabel(type),
+        })),
         placeholder: "Velg type",
         required: true,
       }),
@@ -67,15 +86,6 @@ export const useNotificationWriteForm = ({
         label: "Payload",
         placeholder: "Payload",
         required: false,
-      }),
-      payloadType: createSelectInput({
-        label: "payload type",
-        data: Object.values(NotificationPayloadTypeSchema.Values).map((type) => ({
-          value: type,
-          label: type,
-        })),
-        placeholder: "Velg type",
-        required: true,
       }),
       actorGroupId: createSelectInput({
         label: "Ansvarlig gruppe",
