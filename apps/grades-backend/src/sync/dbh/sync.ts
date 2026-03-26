@@ -14,8 +14,59 @@ const Semesters = schemas.SemesterSchema.enum
 const StudyLevels = schemas.StudyLevelSchema.enum
 const TeachingLanguages = schemas.TeachingLanguageSchema.enum
 
-const apiGradeSchema = z.object({})
-const parsedGradeSchema = apiGradeSchema.transform((input) => {})
+const parseSemester = (semester: number) => {
+  switch (semester) {
+    case 1:
+      return Semesters.SPRING
+    case 2:
+      return Semesters.SUMMER
+    case 3:
+      return Semesters.FALL
+    default:
+      return null
+  }
+}
+
+const parseStudyLevel = (level: string) => {
+  switch (level) {
+    case "LN": // DBH does not differentiate between bachelor level courses, we assume foundation as fallback
+      return StudyLevels.FOUNDATION
+    case "HN":
+      return StudyLevels.MASTER
+    case "FU":
+      return StudyLevels.PHD
+    case "VS":
+      return StudyLevels.CONTINUING_EDUCATION //???? Not sure if forkurs maps to continuing education
+    default:
+      return StudyLevels.UNKNOWN
+  }
+}
+
+const parseTeachingLanguage = (language: string) => {
+  switch (language) {
+    case "NOR":
+      return [TeachingLanguages.NORWEGIAN]
+    case "ENG":
+      return [TeachingLanguages.ENGLISH]
+    default:
+      return []
+  }
+}
+
+const apiGradeSchema = z.object({
+  Årstall: z.coerce.number(),
+  Karakter: z.coerce.string(),
+  Semester: z.coerce.number(),
+  "Antall kandidater totalt": z.coerce.number(),
+})
+const parsedGradeSchema = apiGradeSchema.transform((input) => {
+  return {
+    year: input.Årstall,
+    grade: input.Karakter,
+    semester: parseSemester(input.Semester),
+    count: input["Antall kandidater totalt"],
+  }
+})
 
 const apiCourseSchema = z.object({
   Årstall: z.coerce.number(),
@@ -26,45 +77,6 @@ const apiCourseSchema = z.object({
   "Underv.språk": z.coerce.string(),
 })
 const parsedCourseSchema = apiCourseSchema.transform((input) => {
-  const parseSemester = (semester: number) => {
-    switch (semester) {
-      case 1:
-        return Semesters.SPRING
-      case 2:
-        return Semesters.SUMMER
-      case 3:
-        return Semesters.FALL
-      default:
-        return null
-    }
-  }
-
-  const parseStudyLevel = (level: string) => {
-    switch (level) {
-      case "LN": // DBH does not differentiate between bachelor level courses, we assume foundation as fallback
-        return StudyLevels.FOUNDATION
-      case "HN":
-        return StudyLevels.MASTER
-      case "FU":
-        return StudyLevels.PHD
-      case "VS":
-        return StudyLevels.CONTINUING_EDUCATION //???? Not sure if forkurs maps to continuing education
-      default:
-        return StudyLevels.UNKNOWN
-    }
-  }
-
-  const parseTeachingLanguage = (language: string) => {
-    switch (language) {
-      case "NOR":
-        return [TeachingLanguages.NORWEGIAN]
-      case "ENG":
-        return [TeachingLanguages.ENGLISH]
-      default:
-        return []
-    }
-  }
-
   return {
     year: input.Årstall,
     semester: parseSemester(input.Semester),
@@ -130,6 +142,8 @@ const fetchAllGrades = () => {
 
 export const getAllGrades = async () => {
   const grades = await fetchAllGrades()
+
+  return z.array(parsedGradeSchema).parse(grades)
 }
 
 const fetchAllCourses = async () => {
@@ -146,5 +160,3 @@ export const getAllCourses = async () => {
 
   return z.array(parsedCourseSchema).parse(courses)
 }
-
-console.log(await getAllCourses())
