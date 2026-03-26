@@ -75,11 +75,11 @@ const getMyNotificationsProcedure = procedure
   )
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    const notifications = await ctx.notificationService.findAllForUser(ctx.handle, ctx.principal.subject)
+  .query(async ({ input, ctx }) => {
+    const notifications = await ctx.notificationService.findAllForUser(ctx.handle, ctx.principal.subject, input)
     return {
       items: notifications,
-      nextCursor: notifications.at(-1)?.id,
+      nextCursor: notifications.length === input.take ? notifications.at(-1)?.id : undefined,
     }
   })
 
