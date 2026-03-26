@@ -14,23 +14,18 @@ import {
 import type { ComponentProps, ForwardRefExoticComponent, RefAttributes } from "react"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { Badge, cn } from "@dotkomonline/ui"
-import type { NotificationPayloadType, NotificationType } from "@dotkomonline/rpc"
+import type { NotificationType, UserNotificationDTO } from "@dotkomonline/rpc"
+import { formatDistanceToNow, format, differenceInDays } from "date-fns"
+import { nb } from "date-fns/locale"
 
-export interface NotificationItemType {
-  id: string
-  createdAt: Date
-  updatedAt: Date
-  title: string
-  shortDescription: string
-  content: string
-  type: NotificationType
-  payload?: string
-  payloadType: NotificationPayloadType
-  actorGroupId: string
-  createdById?: string
-  lastUpdatedById?: string
-  taskId?: string
-  readAt?: Date
+const formatNotificationTime = (date: Date): string => {
+  const now = new Date()
+  const daysDiff = differenceInDays(now, date)
+
+  if (daysDiff < 7) {
+    return formatDistanceToNow(date, { addSuffix: true, locale: nb })
+  }
+  return format(date, "d. MMM yyyy", { locale: nb })
 }
 
 export const NotificationIconMap: Record<
@@ -53,21 +48,30 @@ export const NotificationIconMap: Record<
 }
 
 interface NotificationItem extends ComponentProps<typeof DropdownMenu.Item> {
-  notification: NotificationItemType
+  userNotification: UserNotificationDTO
   onItemClick?: () => void
 }
 
-export const NotificationItem = ({ notification, onItemClick, className, ...props }: NotificationItem) => {
+export const NotificationItem = ({ userNotification, onItemClick, className, ...props }: NotificationItem) => {
+  const notification = userNotification.notification
+
   const Icon = NotificationIconMap[notification.type]
-  const isRead = !!notification.readAt
+  const isRead = !!userNotification.readAt
   const isImportant = notification.type === "BROADCAST_IMPORTANT"
 
   const unreadItemColor = isImportant
-    ? "border-l-red-500 bg-red-500/5 hover:bg-red-500/10 focus-visible:bg-red-500/10 dark:focus-visible:bg-red-500/15"
-    : "border-l-blue-500 bg-blue-500/5 hover:bg-blue-500/10 focus-visible:bg-blue-500/10 dark:focus-visible:bg-blue-500/15"
+    ? "border-l-red-500 bg-red-500/10 hover:bg-red-500/10 focus-visible:bg-red-500/10 dark:focus-visible:bg-red-500/15"
+    : "border-l-blue-500 bg-blue-500/10 hover:bg-blue-500/10 focus-visible:bg-blue-500/10 dark:focus-visible:bg-blue-500/15"
   const unreadDotColor = isImportant ? "bg-red-500" : "bg-blue-500"
   const unreadTextColor = isImportant ? "text-red-600" : "text-blue-600"
   const unreadIconBgColor = isImportant ? "bg-red-500/20" : "bg-blue-500/20"
+
+  const handleSelect = (event: Event) => {
+    // Prevent dropdown from closing if payloadType is NONE
+    if (notification.payloadType === "NONE") {
+      event.preventDefault()
+    }
+  }
 
   return (
     <DropdownMenu.Item
@@ -76,11 +80,12 @@ export const NotificationItem = ({ notification, onItemClick, className, ...prop
         "flex gap-4 px-5 py-4 cursor-pointer border-l-4 focus-visible:outline-none not-last:border-b not-last:border-b-white/10",
         { [unreadItemColor]: !isRead },
         {
-          "opacity-80 border-transparent hover:bg-black/5 focus-visible:bg-black/10 dark:hover:bg-white/5 dark:focus-visible:bg-white/10":
+          "opacity-80 border-transparent hover:bg-blue-100 focus-visible:bg-blue-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/10":
             isRead,
         },
         className
       )}
+      onSelect={handleSelect}
       onClick={onItemClick}
     >
       <div className="flex flex-row gap-3 w-full">
@@ -89,7 +94,7 @@ export const NotificationItem = ({ notification, onItemClick, className, ...prop
             className={cn(
               "rounded-lg flex items-center justify-center h-10 w-10",
               { [unreadIconBgColor]: !isRead },
-              { "bg-black/20": isRead }
+              { "bg-black/10": isRead }
             )}
           >
             <Icon
@@ -99,7 +104,9 @@ export const NotificationItem = ({ notification, onItemClick, className, ...prop
           {!isRead && <div className={cn("h-2 w-2 rounded-full mx-auto mt-2", unreadDotColor)} />}
         </div>
         <div className="flex flex-col p-0.5 w-full relative">
-          <p className="text-black/70 dark:text-white/70 text-xs ml-auto absolute top-0 right-0">5 timer siden</p>
+          <p className="text-black/70 dark:text-white/70 text-xs ml-auto absolute top-0 right-0">
+            {formatNotificationTime(new Date(notification.createdAt))}
+          </p>
 
           {isImportant && (
             <Badge
