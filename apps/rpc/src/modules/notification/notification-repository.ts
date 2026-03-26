@@ -37,10 +37,10 @@ export interface NotificationRepository {
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
-  findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  findAllForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
-  markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<NotificationRecipient>
-  markAllAsRead(handle: DBHandle, userId: UserId): Promise<NotificationRecipient>
+  markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
+  markAllAsRead(handle: DBHandle, userId: UserId): Promise<boolean>
 }
 
 export function getNotificationRepository(): NotificationRepository {
@@ -149,9 +149,10 @@ export function getNotificationRepository(): NotificationRepository {
       return result.count
     },
 
-    async findAllForUser(handle, userId) {
+    async findAllForUser(handle, userId, page) {
       const userNotifications = await handle.notificationRecipient.findMany({
         where: { userId },
+        ...pageQuery(page),
         include: {
           notification: {
             include: {
@@ -161,6 +162,11 @@ export function getNotificationRepository(): NotificationRepository {
                 },
               },
             },
+          },
+        },
+        orderBy: {
+          notification: {
+            createdAt: "desc",
           },
         },
       })
@@ -178,7 +184,7 @@ export function getNotificationRepository(): NotificationRepository {
         where: { notificationId, userId, readAt: null },
         data: { readAt: new Date() },
       })
-      return parseOrReport(NotificationRecipientSchema, notificationRecipient)
+      return notificationRecipient.count > 0
     },
 
     async markAllAsRead(handle, userId) {
@@ -186,7 +192,7 @@ export function getNotificationRepository(): NotificationRepository {
         where: { userId, readAt: null },
         data: { readAt: new Date() },
       })
-      return parseOrReport(NotificationRecipientSchema, notificationRecipient)
+      return notificationRecipient.count > 0
     },
   }
 }
