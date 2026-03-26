@@ -1,5 +1,6 @@
 import * as z from "zod"
 import { filterSchema, institutionFilter, taskFilter } from "./filters"
+import { schemas } from "@dotkomonline/grades-db/schemas"
 
 const BASE_URL = "https://dbh.hkdir.no"
 const TABLE_URL = `${BASE_URL}/api/Tabeller/hentJSONTabellData`
@@ -8,6 +9,68 @@ const API_VERSION = 1
 const STATUS_LINE = false // Should extra information about the API response be included?
 const CODE_TEXT = true // Should names of related resources be included?
 const DECIMAL_SEPERATOR = "."
+
+const Semesters = schemas.SemesterSchema.enum
+const StudyLevels = schemas.StudyLevelSchema.enum
+const TeachingLanguages = schemas.TeachingLanguageSchema.enum
+
+const apiCourseSchema = z.object({
+  Årstall: z.coerce.number(),
+  Semester: z.coerce.number(),
+  Emnekode: z.coerce.string(),
+  Emnenavn: z.coerce.string(),
+  Nivåkode: z.coerce.string(),
+  "Underv.språk": z.coerce.string()
+})
+const parsedCourseSchema = apiCourseSchema.transform((input) => {
+  const parseSemester = (semester: number) => {
+    switch (semester) {
+      case 1:
+        return Semesters.SPRING
+      case 2:
+        return Semesters.SUMMER
+      case 3:
+        return Semesters.FALL
+      default:
+        return null
+    }
+  }
+
+  const parseStudyLevel = (level: string) => {
+    switch (level) {
+      case "LN": // DBH does not differentiate between bachelor level courses, we assume foundation as fallback
+        return StudyLevels.FOUNDATION
+      case "HN":
+        return StudyLevels.MASTER
+      case "FU":
+        return StudyLevels.PHD
+      case "VS":
+        return StudyLevels.CONTINUING_EDUCATION //???? Not sure if forkurs maps to continuing education
+      default:
+        return StudyLevels.UNKNOWN 
+    }
+  }
+
+  const parseTeachingLanguage = (language: string) => {
+    switch (language) {
+      case "NOR":
+        return [TeachingLanguages.NORWEGIAN]
+      case "ENG":
+        return [TeachingLanguages.ENGLISH]
+      default:
+        return []
+    }
+  }
+  
+  return {
+    year: input.Årstall,
+    semester: parseSemester(input.Semester),
+    code: input.Emnekode.split("-")[0], // DBH has versioning in their course codes, this ensures only the actual course code remains
+    norwegianName: input.Emnenavn,
+    studyLevel: parseStudyLevel(input.Nivåkode),
+    teachingLanguges: parseTeachingLanguage(input["Underv.språk"])
+  }
+})
 
 const querySchema = z.object({
   tabell_id: z.number(),
@@ -22,50 +85,63 @@ const querySchema = z.object({
   begrensning: z.coerce.string().optional(),
 })
 
-export const getAllGrades = async () => {
+const fetchData = async (
+  tableId: number,
+  sortBy: string[],
+  options?: {
+    groupBy?: string[]
+    filters?: z.infer<typeof filterSchema>[]
+  },
+) => {
+	const query = querySchema.parse({
+    tabell_id: tableId,
+    sortBy,
+    ...(options?.filters !== undefined ? { filter: options.filters } : {}),
+    ...(options?.groupBy !== undefined ? { groupBy: options.groupBy } : {}),
+  })
+
+	const res = await fetch(TABLE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(query),
+  })
+
+  if (res.status === 204) {
+    return []
+  }
+
+  return await res.json()
+}
+
+const fetchAllGrades = () => {
   const tableId = 308
 
   const groupBy = ["Institusjonskode", "Emnekode", "Karakter", "Årstall", "Semester", "Avdelingskode"]
   const sortBy = ["Emnekode", "Årstall", "Semester"]
   const filters = [institutionFilter]
 
-  const query = querySchema.parse({
-    tabell_id: tableId,
-    sortBy,
-    filter: filters,
-    groupBy,
-  })
-
-  const res = await fetch(TABLE_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(query),
-  })
-
-  return await res.json()
+  return fetchData(tableId, sortBy, { groupBy, filters })
 }
 
-export const getAllCourses = async () => {
+export const getAllGrades = async () => {
+  const grades = await fetchAllGrades()
+}
+
+const fetchAllCourses = async () => {
   const tableId = 208
 
   const sortBy = ["Emnekode", "Årstall", "Semester"]
   const filters = [institutionFilter, taskFilter]
 
-  const query = querySchema.parse({
-    tabell_id: tableId,
-    sortBy,
-    filter: filters,
-  })
-
-  const res = await fetch(TABLE_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(query),
-  })
-
-  return await res.json()
+  return fetchData(tableId, sortBy, { filters })
 }
+
+export const getAllCourses = async () => {
+  const courses = await fetchAllCourses()
+
+  return z.array(parsedCourseSchema).parse(courses)
+}
+
+console.log(await getAllCourses())
