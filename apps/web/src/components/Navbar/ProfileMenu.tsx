@@ -245,11 +245,17 @@ const linkGroups: LinkGroup[] = [
 
 export const ProfileMenu: FC = () => {
   const session = useSession()
+  const trpc = useTRPC()
+
+  const { data: amountUnread } = useQuery(
+    trpc.notification.getUnreadCount.queryOptions(undefined, { enabled: Boolean(session) })
+  )
+
   if (session === null) return <UnauthenticatedActions />
   return (
     <div className="flex gap-1 mr-2 lg:mr-0">
       <ContactDebugDropdown />
-      <NotificationDropdown />
+      <NotificationDropdown amountUnread={amountUnread} />
       <AvatarDropdown />
     </div>
   )
