@@ -54,6 +54,7 @@ const parseTeachingLanguage = (language: string) => {
 }
 
 const apiGradeSchema = z.object({
+  Emnekode: z.coerce.string(),
   Årstall: z.coerce.number(),
   Karakter: z.coerce.string(),
   Semester: z.coerce.number(),
@@ -61,6 +62,7 @@ const apiGradeSchema = z.object({
 })
 const parsedGradeSchema = apiGradeSchema.transform((input) => {
   return {
+    code: input.Emnekode,
     year: input.Årstall,
     grade: input.Karakter,
     semester: parseSemester(input.Semester),
