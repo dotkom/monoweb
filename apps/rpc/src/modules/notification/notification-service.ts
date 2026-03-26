@@ -31,10 +31,10 @@ export interface NotificationService {
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
-  findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  findAllForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
-  markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<void>
-  markAllAsRead(handle: DBHandle, userId: UserId): Promise<void>
+  markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
+  markAllAsRead(handle: DBHandle, userId: UserId): Promise<boolean>
 }
 
 export function getNotificationService(
@@ -79,8 +79,8 @@ export function getNotificationService(
       return await notificationRepository.findRecipient(handle, recipientId, userId)
     },
 
-    async findAllForUser(handle, userId) {
-      return await notificationRepository.findAllForUser(handle, userId)
+    async findAllForUser(handle, userId, page) {
+      return await notificationRepository.findAllForUser(handle, userId, page)
     },
 
     async getUnreadCountForUser(handle, userId) {
@@ -88,11 +88,11 @@ export function getNotificationService(
     },
 
     async markAsRead(handle, notificationId, userId) {
-      await notificationRepository.markAsRead(handle, notificationId, userId)
+      return await notificationRepository.markAsRead(handle, notificationId, userId)
     },
 
     async markAllAsRead(handle, userId) {
-      await notificationRepository.markAllAsRead(handle, userId)
+      return await notificationRepository.markAllAsRead(handle, userId)
     },
   }
 }
