@@ -303,7 +303,7 @@ export function getGroupRepository(): GroupRepository {
 
       const groupMembers = users.map(({ groupMemberships, ...user }) => ({
         ...user,
-        groupMembership: groupMemberships.map(({ roles, ...membership }) => ({
+        groupMemberships: groupMemberships.map(({ roles, ...membership }) => ({
           ...membership,
           roles: roles.map((role) => role.role),
         })),
