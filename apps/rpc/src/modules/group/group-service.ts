@@ -22,7 +22,6 @@ import { areIntervalsOverlapping, compareDesc } from "date-fns"
 import { maxTime } from "date-fns/constants"
 import invariant from "tiny-invariant"
 import { FailedPreconditionError, NotFoundError } from "../../error"
-import type { Principal } from "../../trpc"
 import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
 
@@ -45,14 +44,14 @@ export interface GroupService {
    * @throws {NotFoundError} if the group does not exist
    */
   getBySlugAndType(handle: DBHandle, groupSlug: GroupId, groupType: GroupType): Promise<Group>
-  getLeader(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
   findMany(handle: DBHandle): Promise<Group[]>
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   findManyByGroupSlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
   findManyByMemberUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
 
-  getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId, principal?: Principal | null): Promise<GroupMember>
-  getMembers(handle: DBHandle, groupSlug: GroupId, principal?: Principal | null): Promise<Map<UserId, GroupMember>>
+  getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMember>
+  getMembers(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
+  getLeaders(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
 
   startMembership(
     handle: DBHandle,
@@ -156,7 +155,7 @@ export function getGroupService(
       return group
     },
 
-    async getLeader(handle, groupSlug) {
+    async getLeaders(handle, groupSlug) {
       const leaders = await groupRepository.findGroupMembersByRoleType(handle, groupSlug, "LEADER")
 
       if (leaders.length === 0) {
@@ -194,7 +193,7 @@ export function getGroupService(
       return groupRepository.findManyByUserId(handle, userId)
     },
 
-    async getMember(handle, groupSlug, userId, principal) {
+    async getMember(handle, groupSlug, userId) {
       const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId)
 
       if (memberships.length === 0) {

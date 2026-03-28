@@ -301,17 +301,15 @@ export function getGroupRepository(): GroupRepository {
         },
       })
 
-      return users.map(({ groupMemberships, ...user }) =>
-        parseOrReport(GroupMemberSchema, {
-          ...user,
-          groupMemberships: groupMemberships.map(({ roles, ...membership }) =>
-            parseOrReport(GroupMembershipSchema, {
-              ...membership,
-              roles: roles.map((role) => role.role),
-            })
-          ),
-        })
-      )
+      const groupMembers = users.map(({ groupMemberships, ...user }) => ({
+        ...user,
+        groupMembership: groupMemberships.map(({ roles, ...membership }) => ({
+          ...membership,
+          roles: roles.map((role) => role.role),
+        })),
+      }))
+
+      return parseOrReport(GroupMemberSchema.array(), groupMembers)
     },
 
     async findManyGroupMemberships(handle, groupSlug, userId) {

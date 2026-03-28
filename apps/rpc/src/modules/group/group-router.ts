@@ -13,7 +13,7 @@ import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, or } f
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 
-const HOVESTYRET_GROUP_SLUG = "hs"
+const HOVEDSTYRET_GROUP_SLUG = "hs"
 
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
 export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
@@ -137,10 +137,10 @@ const getMembersProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     // We only show leaders of groups to unathenticated users, except for Hovedstyret who is public
-    if (!ctx.principal && input !== HOVESTYRET_GROUP_SLUG) {
-      return ctx.groupService.getLeader(ctx.handle, input)
+    if (!ctx.principal && input !== HOVEDSTYRET_GROUP_SLUG) {
+      return ctx.groupService.getLeaders(ctx.handle, input)
     }
-    return ctx.groupService.getMembers(ctx.handle, input, ctx.principal)
+    return ctx.groupService.getMembers(ctx.handle, input)
   })
 
 export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>
@@ -153,7 +153,7 @@ const getMemberProcedure = procedure
     })
   )
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.getMember(ctx.handle, input.groupId, input.userId, ctx.principal))
+  .query(async ({ input, ctx }) => ctx.groupService.getMember(ctx.handle, input.groupId, input.userId))
 
 export type AllByMemberInput = inferProcedureInput<typeof allByMemberProcedure>
 export type AllByMemberOutput = inferProcedureOutput<typeof allByMemberProcedure>
