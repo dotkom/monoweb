@@ -1,12 +1,12 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { Principal, TRPCContext } from "../../../trpc"
+import type { TRPCContext } from "../../../trpc"
 import { groupRouter } from "../group-router"
 
-describe("group router principal forwarding", () => {
-  it("routes anonymous non-Hovedstyret getMembers to getLeader", async () => {
+describe("group router service forwarding", () => {
+  it("routes anonymous non-Hovedstyret getMembers to getLeaders", async () => {
     const txHandle = {} as DBHandle
     const groupService = {
-      getLeader: vi.fn().mockResolvedValue([]),
+      getLeaders: vi.fn().mockResolvedValue([]),
       getMembers: vi.fn(),
       getMember: vi.fn(),
     }
@@ -24,14 +24,14 @@ describe("group router principal forwarding", () => {
 
     await caller.getMembers("dotkom")
 
-    expect(groupService.getLeader).toHaveBeenCalledWith(txHandle, "dotkom")
+    expect(groupService.getLeaders).toHaveBeenCalledWith(txHandle, "dotkom")
     expect(groupService.getMembers).not.toHaveBeenCalled()
   })
 
   it("routes anonymous Hovedstyret getMembers to getMembers", async () => {
     const txHandle = {} as DBHandle
     const groupService = {
-      getLeader: vi.fn(),
+      getLeaders: vi.fn(),
       getMembers: vi.fn().mockResolvedValue(new Map()),
       getMember: vi.fn(),
     }
@@ -49,23 +49,22 @@ describe("group router principal forwarding", () => {
 
     await caller.getMembers("hs")
 
-    expect(groupService.getMembers).toHaveBeenCalledWith(txHandle, "hs", null)
-    expect(groupService.getLeader).not.toHaveBeenCalled()
+    expect(groupService.getMembers).toHaveBeenCalledWith(txHandle, "hs")
+    expect(groupService.getLeaders).not.toHaveBeenCalled()
   })
 
-  it("passes authenticated principal to getMember", async () => {
+  it("passes through group and user ids to getMember", async () => {
     const txHandle = {} as DBHandle
-    const principal = {
-      subject: "user-1",
-      affiliations: new Map(),
-    } as Principal
     const groupService = {
       getMembers: vi.fn(),
       getMember: vi.fn().mockResolvedValue({}),
     }
 
     const ctx = {
-      principal,
+      principal: {
+        subject: "user-1",
+        affiliations: new Map(),
+      },
       prisma: {
         $transaction: vi.fn(async (fn: (handle: DBHandle) => Promise<unknown>) => await fn(txHandle)),
       },
@@ -77,6 +76,6 @@ describe("group router principal forwarding", () => {
 
     await caller.getMember({ groupId: "dotkom", userId: "user-1" })
 
-    expect(groupService.getMember).toHaveBeenCalledWith(txHandle, "dotkom", "user-1", principal)
+    expect(groupService.getMember).toHaveBeenCalledWith(txHandle, "dotkom", "user-1")
   })
 })
