@@ -10,4 +10,5 @@ export const createPrisma = (databaseUrl: string) => {
   return new PrismaClient({ adapter })
 }
 
+export * as sql from "../generated/prisma/sql"
 export * from "../generated/prisma/client"
