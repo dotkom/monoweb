@@ -1,14 +1,13 @@
-import { randomUUID } from "node:crypto"
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { Group } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
 import type { ManagementClient } from "auth0"
+import { randomUUID } from "node:crypto"
 import { getFeideGroupsRepository } from "src/modules/feide/feide-groups-repository"
 import { getMembershipService } from "src/modules/user/membership-service"
 import { getUserRepository } from "src/modules/user/user-repository"
 import { getUserService } from "src/modules/user/user-service"
 import { mockDeep } from "vitest-mock-extended"
-import { NotFoundError } from "../../../error"
 import { getGroupRepository } from "../group-repository"
 import { getGroupService } from "../group-service"
 
@@ -52,16 +51,20 @@ describe("GroupService", () => {
       showLeaderAsContact: false,
       recruitmentMethod: "AUTUMN_APPLICATION",
     }
-    const id = randomUUID()
+    vi.spyOn(groupRepository, "findBySlug")
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ ...group })
     vi.spyOn(groupRepository, "create").mockResolvedValueOnce({ ...group })
+    vi.spyOn(groupRepository, "createGroupRoles").mockResolvedValueOnce([])
+
     const created = await groupService.create(db, group)
-    expect(created).toEqual({ id, ...group })
-    expect(groupRepository.create).toHaveBeenCalledWith(db, group)
+    expect(created).toEqual(group)
+    expect(groupRepository.create).toHaveBeenCalledWith(db, "dotkom", group)
   })
 
   it("does not find non-existent committees", async () => {
     const id = randomUUID()
     vi.spyOn(groupRepository, "findBySlug").mockResolvedValueOnce(null)
-    await expect(async () => groupService.findBySlug(db, id)).rejects.toThrowError(NotFoundError)
+    await expect(groupService.findBySlug(db, id)).resolves.toBeNull()
   })
 })

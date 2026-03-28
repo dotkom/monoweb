@@ -12,6 +12,7 @@ import { z } from "zod"
 import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
+import { HOVEDSTYRET_GROUP_SLUG } from "../authorization-service"
 
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
 export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
@@ -133,7 +134,13 @@ export type GetMembersOutput = inferProcedureOutput<typeof getMembersProcedure>
 const getMembersProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.getMembers(ctx.handle, input))
+  .query(async ({ input, ctx }) => {
+    // We only show leaders of groups to unathenticated users, except for Hovedstyret who is public
+    if (!ctx.principal && input !== HOVEDSTYRET_GROUP_SLUG) {
+      return ctx.groupService.getLeaders(ctx.handle, input)
+    }
+    return ctx.groupService.getMembers(ctx.handle, input)
+  })
 
 export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>
 export type GetMemberOutput = inferProcedureOutput<typeof getMemberProcedure>
