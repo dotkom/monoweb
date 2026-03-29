@@ -170,59 +170,6 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   }
 }
 
-resource "auth0_client" "voting" {
-  cross_origin_auth = true
-  cross_origin_loc  = "https://vedtatt.online.ntnu.no/"
-  app_type          = "spa"
-  allowed_origins = {
-    "dev" = [
-      "http://localhost:3000",
-      "http://localhost:8000"
-    ]
-    "prd" = [
-      "https://vedtatt.online.ntnu.no",
-    ]
-  }[terraform.workspace]
-  web_origins = {
-    "dev" = [
-      "http://localhost:3000",
-      "http://localhost:8000"
-    ]
-    "prd" = [
-      "https://vedtatt.online.ntnu.no",
-    ]
-  }[terraform.workspace]
-  callbacks = {
-    "dev" = [
-      "http://localhost:3000",
-      "http://localhost:8000",
-      "http://localhost:3000/docs/oauth2-redirect",
-      "http://localhost:8000/docs/oauth2-redirect",
-    ]
-    "prd" = [
-      "https://vedtatt.online.ntnu.no",
-      "http://localhost:3000",
-      "http://localhost:8000",
-      "http://localhost:3000/docs/oauth2-redirect",
-      "http://localhost:8000/docs/oauth2-redirect",
-    ]
-  }[terraform.workspace]
-  grant_types                   = ["authorization_code", "refresh_token"]
-  name                          = "Vedtatt Klone${local.name_suffix[terraform.workspace]}"
-  organization_require_behavior = "no_prompt"
-  is_first_party                = true
-  oidc_conformant               = true
-
-  refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-  }
-
-  jwt_configuration {
-    alg = "RS256"
-  }
-}
-
 data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
@@ -309,7 +256,6 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
     auth0_client.appkom_veldedighet.client_id,
-    auth0_client.voting.client_id,
     auth0_client.feide_account_linker.id
   ]
 }
@@ -325,7 +271,6 @@ resource "auth0_connection_clients" "feide" {
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
     auth0_client.appkom_veldedighet.client_id,
-    auth0_client.voting.client_id
   ]
 }
 
