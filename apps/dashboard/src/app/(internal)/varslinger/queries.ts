@@ -3,7 +3,7 @@ import type { Pageable } from "@dotkomonline/utils"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 
-export const useNotificationAllQuery = (page?: Pageable) => {
+export const useNotificationAllInfiniteQuery = (page?: Pageable) => {
   const trpc = useTRPC()
 
   const { data, ...query } = useInfiniteQuery({
