@@ -11,6 +11,7 @@ import { offlineRouter } from "./modules/offline/offline-router"
 import { rifRouter } from "./modules/rif/rif-router"
 import { userRouter } from "./modules/user/user-router"
 import { workspaceRouter } from "./modules/workspace-sync/workspace-router"
+import { notificationRouter } from "./modules/notification/notification-router"
 import { t } from "./trpc"
 
 export const appRouter = t.router({
@@ -27,6 +28,7 @@ export const appRouter = t.router({
   workspace: workspaceRouter,
   invoicification: invoicificationRouter,
   rif: rifRouter,
+  notification: notificationRouter,
 })
 
 export type AppRouter = typeof appRouter
