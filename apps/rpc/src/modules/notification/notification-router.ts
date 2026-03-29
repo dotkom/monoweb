@@ -3,15 +3,22 @@ import { z } from "zod"
 import { isEditor } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { NotificationSchema, NotificationWriteSchema } from "./notification"
-import { BasePaginateInputSchema, PaginateInputSchema } from "src/query"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
+import {
+  NotificationDTOSchema,
+  NotificationSchema,
+  NotificationWriteSchema,
+  UserNotificationDTOSchema,
+  UserNotificationSchema,
+} from "./notification-types"
 
 export type GetNotificationInput = inferProcedureInput<typeof getNotificationProcedure>
 export type GetNotificationOutput = inferProcedureOutput<typeof getNotificationProcedure>
 const getNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
+  .output(NotificationDTOSchema.nullable())
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
+  .query(({ input, ctx }) => {
     return ctx.notificationService.findById(ctx.handle, input)
   })
 
@@ -19,12 +26,13 @@ export type CreateNotificationInput = inferProcedureInput<typeof createNotificat
 export type CreateNotificationOutput = inferProcedureOutput<typeof createNotificationProcedure>
 const createNotificationProcedure = procedure
   .input(NotificationWriteSchema)
+  .output(NotificationDTOSchema)
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    return ctx.notificationService.create(ctx.handle, input)
+  .mutation(({ input, ctx }) => {
+    return ctx.notificationService.createWithRecipients(ctx.handle, input)
   })
 
 export type EditNotificationInput = inferProcedureInput<typeof editNotificationProcedure>
@@ -36,6 +44,7 @@ const editNotificationProcedure = procedure
       input: NotificationWriteSchema.partial(),
     })
   )
+  .output(NotificationDTOSchema)
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
@@ -48,6 +57,7 @@ export type DeleteNotificationInput = inferProcedureInput<typeof deleteNotificat
 export type DeleteNotificationOutput = inferProcedureOutput<typeof deleteNotificationProcedure>
 const deleteNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
+  .output(z.boolean())
   .use(withAuthentication())
   .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
@@ -59,15 +69,24 @@ const deleteNotificationProcedure = procedure
 export type GetMyNotificationsInput = inferProcedureInput<typeof getMyNotificationsProcedure>
 export type GetMyNotificationsOutput = inferProcedureOutput<typeof getMyNotificationsProcedure>
 const getMyNotificationsProcedure = procedure
+  .input(BasePaginateInputSchema)
+  .output(
+    z.object({ items: z.array(UserNotificationDTOSchema), nextCursor: UserNotificationSchema.shape.id.optional() })
+  )
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    return ctx.notificationService.findAllForUser(ctx.handle, ctx.principal.subject)
+  .query(async ({ input, ctx }) => {
+    const notifications = await ctx.notificationService.findAllForUser(ctx.handle, ctx.principal.subject, input)
+    return {
+      items: notifications,
+      nextCursor: notifications.length === input.take ? notifications.at(-1)?.id : undefined,
+    }
   })
 
 export type GetUnreadCountInput = inferProcedureInput<typeof getUnreadCountProcedure>
 export type GetUnreadCountOutput = inferProcedureOutput<typeof getUnreadCountProcedure>
 const getUnreadCountProcedure = procedure
+  .output(z.number())
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ ctx }) => {
@@ -96,7 +115,10 @@ const markAllAsReadProcedure = procedure
 export type FindNotificationsInput = inferProcedureInput<typeof findNotificationsProcedure>
 export type FindNotificationsOutput = inferProcedureOutput<typeof findNotificationsProcedure>
 const findNotificationsProcedure = procedure
-  .input(PaginateInputSchema).use(withAuthentication()).use(withAuthorization(isEditor()))
+  .input(PaginateInputSchema)
+  .output(z.object({ items: z.array(NotificationDTOSchema), nextCursor: NotificationSchema.shape.id.optional() }))
+  .use(withAuthentication())
+  .use(withAuthorization(isEditor()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const items = await ctx.notificationService.findMany(ctx.handle, input)
