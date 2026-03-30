@@ -26,7 +26,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
         tiltMaxAngleX={0.25}
         tiltMaxAngleY={0.25}
         glareMaxOpacity={0.1}
-        className="rounded-xl bg-gray-100 dark:bg-stone-800"
+        className="rounded-xl bg-gray-100 dark:bg-stone-800 in-data-[theme=pink]:bg-pink-100"
       >
         <div className="group relative w-full aspect-video md:aspect-24/9 overflow-hidden rounded-xl">
           {event.imageUrl ? (
@@ -60,7 +60,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             <div className="absolute right-3 top-3 z-10 hidden opacity-0 transition-opacity duration-200 md:block md:group-hover:opacity-100">
               <Button
                 variant="solid"
-                className="p-2 rounded-md bg-black/40 text-white hover:bg-black/50 dark:bg-black/40 dark:hover:bg-black/50"
+                className="p-2 rounded-md bg-black/40 text-white hover:bg-black/50 dark:bg-black/40 dark:hover:bg-black/50 in-data-[theme=pink]:bg-pink-500/40 in-data-[theme=pink]:hover:bg-pink-500/50"
                 onClick={() => setShowFullImage((prev) => !prev)}
                 aria-label={showFullImage ? "Fyll rammen" : "Se hele bildet"}
               >
@@ -86,7 +86,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             target="_blank"
             rel="noopener noreferrer"
             variant="unstyled"
-            className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 gap-1.5"
+            className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 in-data-[theme=pink]:bg-pink-100 in-data-[theme=pink]:hover:bg-pink-300 gap-1.5"
             title="Rediger arrangement"
           >
             <IconEdit className="size-[1.25em] md:w-6 md:h-6" />

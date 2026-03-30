@@ -194,11 +194,11 @@ export const EventList: FC<EventListProps> = ({
 
 const Divider = ({ text }: { text: string }) => (
   <div className="w-full flex flex-row items-center gap-2 sm:-my-1">
-    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-700 rounded-full" />
-    <Text className="text-gray-400 dark:text-stone-600 text-xs uppercase tracking-widest font-medium select-none">
+    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-700 in-data-[theme=pink]:bg-pink-300 rounded-full" />
+    <Text className="text-gray-400 dark:text-stone-600 in-data-[theme=pink]:text-pink-600 text-xs uppercase tracking-widest font-medium select-none">
       {text}
     </Text>
-    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-700 rounded-full" />
+    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-700 in-data-[theme=pink]:bg-pink-300 rounded-full" />
   </div>
 )
 
