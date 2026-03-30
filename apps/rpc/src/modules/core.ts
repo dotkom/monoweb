@@ -162,6 +162,7 @@ export async function createServiceLayer(
   const userService = getUserService(
     userRepository,
     feideGroupsRepository,
+    groupRepository,
     clients.auth0Client,
     membershipService,
     clients.s3Client,
