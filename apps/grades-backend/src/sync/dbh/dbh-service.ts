@@ -13,6 +13,7 @@ const DECIMAL_SEPERATOR = "."
 const Semesters = schemas.SemesterSchema.enum
 const StudyLevels = schemas.StudyLevelSchema.enum
 const TeachingLanguages = schemas.TeachingLanguageSchema.enum
+const CourseStatus = z.enum(["ACTIVE", "NEW", "DISCONTINUED"])
 
 const parseSemester = (semester: number) => {
   switch (semester) {
@@ -53,6 +54,20 @@ const parseTeachingLanguage = (language: string) => {
   }
 }
 
+const parseStatus = (status: number) => {
+  switch (status) {
+    case 1:
+      return CourseStatus.Enum.ACTIVE
+    case 2:
+      return CourseStatus.Enum.NEW
+    case 3:
+    case 4:
+      return CourseStatus.Enum.DISCONTINUED
+    default:
+      return null
+  }
+}
+
 const ApiGradeSchema = z.object({
   Emnekode: z.coerce.string(),
   Årstall: z.coerce.number(),
@@ -77,6 +92,7 @@ const ApiCourseSchema = z.object({
   Emnenavn: z.coerce.string(),
   Nivåkode: z.coerce.string(),
   "Underv.språk": z.coerce.string(),
+  Status: z.coerce.number(),
 })
 const ParsedCourseSchema = ApiCourseSchema.transform((input) => {
   return {
@@ -86,6 +102,7 @@ const ParsedCourseSchema = ApiCourseSchema.transform((input) => {
     norwegianName: input.Emnenavn,
     studyLevel: parseStudyLevel(input.Nivåkode),
     teachingLanguges: parseTeachingLanguage(input["Underv.språk"]),
+    status: parseStatus(input.Status)
   }
 })
 
