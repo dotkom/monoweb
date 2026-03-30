@@ -80,7 +80,7 @@ const ApiGradeSchema = z.object({
   Avdelingsnavn: z.coerce.string(),
   "Antall kandidater totalt": z.coerce.number(),
   "Antall kandidater kvinner": z.coerce.number(),
-  "Antall kandidater menn": z.coerce.number()
+  "Antall kandidater menn": z.coerce.number(),
 })
 const ParsedGradeSchema = ApiGradeSchema.transform((input) => {
   return {
