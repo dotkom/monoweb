@@ -2,6 +2,14 @@ import * as z from "zod"
 import { filterSchema, institutionFilter, taskFilter } from "./filters"
 import { schemas } from "@dotkomonline/grades-db/schemas"
 
+/*
+API documentation can be found at:
+https://dbh.hkdir.no/static/files/dokumenter/api/api_dokumentasjon.pdf
+
+Or table documentation found at:
+https://dbh.hkdir.no/datainnhold/tabell-dokumentasjon
+*/
+
 const BASE_URL = "https://dbh.hkdir.no"
 const TABLE_URL = `${BASE_URL}/api/Tabeller/hentJSONTabellData`
 
@@ -13,6 +21,7 @@ const DECIMAL_SEPERATOR = "."
 const Semesters = schemas.SemesterSchema.enum
 const StudyLevels = schemas.StudyLevelSchema.enum
 const TeachingLanguages = schemas.TeachingLanguageSchema.enum
+const CourseStatus = z.enum(["ACTIVE", "NEW", "DISCONTINUED"])
 
 const parseSemester = (semester: number) => {
   switch (semester) {
@@ -53,12 +62,35 @@ const parseTeachingLanguage = (language: string) => {
   }
 }
 
+const parseStatus = (status: number) => {
+  switch (status) {
+    case 1:
+      return CourseStatus.Enum.ACTIVE
+    case 2:
+      return CourseStatus.Enum.NEW
+    case 3:
+    case 4:
+      return CourseStatus.Enum.DISCONTINUED
+    default:
+      return null
+  }
+}
+
+// Table field information avaiable at
+// https://dbh.hkdir.no/datainnhold/tabell-dokumentasjon/308
 const ApiGradeSchema = z.object({
+  Instutisjonskode: z.coerce.number(),
+  Instutisjonsnavn: z.coerce.string(),
   Emnekode: z.coerce.string(),
-  Årstall: z.coerce.number(),
   Karakter: z.coerce.string(),
+  Årstall: z.coerce.number(),
   Semester: z.coerce.number(),
+  Semesternavn: z.coerce.string(),
+  Avdelingskode: z.coerce.number(),
+  Avdelingsnavn: z.coerce.string(),
   "Antall kandidater totalt": z.coerce.number(),
+  "Antall kandidater kvinner": z.coerce.number(),
+  "Antall kandidater menn": z.coerce.number(),
 })
 const ParsedGradeSchema = ApiGradeSchema.transform((input) => {
   return {
@@ -70,13 +102,32 @@ const ParsedGradeSchema = ApiGradeSchema.transform((input) => {
   }
 })
 
+// Table field information avaiable at
+// https://dbh.hkdir.no/datainnhold/tabell-dokumentasjon/208
 const ApiCourseSchema = z.object({
+  Instutisjonskode: z.coerce.number(),
+  Instutisjonsnavn: z.coerce.string(),
+  Avdelingskode: z.coerce.number(),
+  Avdelingsnavn: z.coerce.string(),
+  Avdelingskode_SSB: z.coerce.number().nullable(),
   Årstall: z.coerce.number(),
   Semester: z.coerce.number(),
+  Semesternavn: z.coerce.string(),
+  Studieprogramkode: z.coerce.string(),
+  Studieprogramnavn: z.coerce.string(),
   Emnekode: z.coerce.string(),
   Emnenavn: z.coerce.string(),
-  Nivåkode: z.coerce.string(),
+  Nivåkode: z.coerce.string(), // Is sometimes a number for old timey courses where level is null
+  Nivånavn: z.coerce.string().nullable(),
+  Studiepoeng: z.coerce.number(),
+  "NUS-kode": z.coerce.number(),
+  Status: z.coerce.number(),
+  Statusnavn: z.coerce.string(),
   "Underv.språk": z.coerce.string(),
+  Navn: z.coerce.string(), // wtf is the difference between emnenavn and just navn????
+  Fagkode: z.coerce.number().nullable(), // wtf is the difference between emnekode and fagkode
+  Fagnavn: z.coerce.string().nullable(), // oh great, another name
+  "Oppgave (ny fra h2012)": z.coerce.number(), // Always 0 with the taskFilter
 })
 const ParsedCourseSchema = ApiCourseSchema.transform((input) => {
   return {
@@ -86,6 +137,7 @@ const ParsedCourseSchema = ApiCourseSchema.transform((input) => {
     norwegianName: input.Emnenavn,
     studyLevel: parseStudyLevel(input.Nivåkode),
     teachingLanguges: parseTeachingLanguage(input["Underv.språk"]),
+    status: parseStatus(input.Status),
   }
 })
 
