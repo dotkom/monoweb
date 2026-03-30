@@ -69,11 +69,18 @@ const parseStatus = (status: number) => {
 }
 
 const ApiGradeSchema = z.object({
+  Instutisjonskode: z.coerce.number(),
+  Instutisjonsnavn: z.coerce.string(),
   Emnekode: z.coerce.string(),
-  Årstall: z.coerce.number(),
   Karakter: z.coerce.string(),
+  Årstall: z.coerce.number(),
   Semester: z.coerce.number(),
+  Semesternavn: z.coerce.string(),
+  Avdelingskode: z.coerce.number(),
+  Avdelingsnavn: z.coerce.string(),
   "Antall kandidater totalt": z.coerce.number(),
+  "Antall kandidater kvinner": z.coerce.number(),
+  "Antall kandidater menn": z.coerce.number()
 })
 const ParsedGradeSchema = ApiGradeSchema.transform((input) => {
   return {
@@ -86,13 +93,29 @@ const ParsedGradeSchema = ApiGradeSchema.transform((input) => {
 })
 
 const ApiCourseSchema = z.object({
+  Instutisjonskode: z.coerce.number(),
+  Instutisjonsnavn: z.coerce.string(),
+  Avdelingskode: z.coerce.number(),
+  Avdelingsnavn: z.coerce.string(),
+  Avdelingskode_SSB: z.coerce.number().nullable(),
   Årstall: z.coerce.number(),
   Semester: z.coerce.number(),
+  Semesternavn: z.coerce.string(),
+  Studieprogramkode: z.coerce.string(),
+  Studieprogramnavn: z.coerce.string(),
   Emnekode: z.coerce.string(),
   Emnenavn: z.coerce.string(),
-  Nivåkode: z.coerce.string(),
-  "Underv.språk": z.coerce.string(),
+  Nivåkode: z.coerce.string(), // Might be number, can't be bothered to check, coercing to string for safety
+  Nivånavn: z.coerce.string().nullable(),
+  Studiepoeng: z.coerce.number(),
+  "NUS-kode": z.coerce.number(),
   Status: z.coerce.number(),
+  Statusnavn: z.coerce.string(),
+  "Underv.språk": z.coerce.string(),
+  Navn: z.coerce.string(), // wtf is the difference between emnenavn and just navn????
+  Fagkode: z.coerce.number().nullable(), // wtf is the difference between emnekode and fagkode
+  Fagnavn: z.coerce.string().nullable(), // oh great, another name
+  "Oppgave (ny fra h2012)": z.coerce.number(), // Always 0 with the taskFilter
 })
 const ParsedCourseSchema = ApiCourseSchema.transform((input) => {
   return {
