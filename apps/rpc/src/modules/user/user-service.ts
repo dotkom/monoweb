@@ -34,7 +34,8 @@ import {
   type MembershipService,
 } from "./membership-service"
 import type { UserRepository } from "./user-repository"
-import { mergeUsers } from "./merge-users";
+import { mergeUsers } from "./merge-users"
+import type { GroupRepository } from "../group/group-repository"
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
@@ -133,6 +134,7 @@ const ONLINE_BACHELOR_PROGRAMMES = ["BIT"]
 export function getUserService(
   userRepository: UserRepository,
   feideGroupsRepository: FeideGroupsRepository,
+  groupRepository: GroupRepository,
   managementClient: ManagementClient,
   membershipService: MembershipService,
   client: S3Client,
@@ -564,8 +566,8 @@ export function getUserService(
         throw new NotFoundError(`Consumed User(ID=${consumedUserId}) not found`)
       }
 
-      await mergeUsers(handle, survivorUser, consumedUser)
-      
+      await mergeUsers(handle, groupRepository, survivorUser, consumedUser)
+
       const mergedUser = await this.getById(handle, survivorUserId)
 
       logger.info("Successfully merged consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
