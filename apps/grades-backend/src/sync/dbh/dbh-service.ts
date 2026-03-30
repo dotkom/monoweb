@@ -102,7 +102,7 @@ const ParsedCourseSchema = ApiCourseSchema.transform((input) => {
     norwegianName: input.Emnenavn,
     studyLevel: parseStudyLevel(input.Nivåkode),
     teachingLanguges: parseTeachingLanguage(input["Underv.språk"]),
-    status: parseStatus(input.Status)
+    status: parseStatus(input.Status),
   }
 })
 
