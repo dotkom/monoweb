@@ -105,7 +105,7 @@ const ApiCourseSchema = z.object({
   Studieprogramnavn: z.coerce.string(),
   Emnekode: z.coerce.string(),
   Emnenavn: z.coerce.string(),
-  Nivåkode: z.coerce.string(), // Might be number, can't be bothered to check, coercing to string for safety
+  Nivåkode: z.coerce.string(), // Is sometimes a number for old timey courses where level is null
   Nivånavn: z.coerce.string().nullable(),
   Studiepoeng: z.coerce.number(),
   "NUS-kode": z.coerce.number(),
