@@ -189,4 +189,11 @@ export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmen
   }
 }
 
+export const areGroupRolesEqual = (rolesA: GroupMembership["roles"], rolesB: GroupMembership["roles"]): boolean => {
+  const typesA = new Set(rolesA.map((role) => role.id))
+  const typesB = new Set(rolesB.map((role) => role.id))
+
+  return typesA.symmetricDifference(typesB).size === 0
+}
+
 export const GROUP_IMAGE_MAX_SIZE_KIB = 5 * 1024

@@ -16,14 +16,21 @@ import {
   type UserId,
   getDefaultGroupMemberRoles,
   GROUP_IMAGE_MAX_SIZE_KIB,
+  areGroupRolesEqual,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { areIntervalsOverlapping, compareDesc } from "date-fns"
+import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns"
 import { maxTime } from "date-fns/constants"
 import invariant from "tiny-invariant"
 import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
+import { Stripe } from "stripe"
+import Error = module
+import { a, b } from "vitest/dist/chunks/suite.d.FvehnV49"
+import Error = module
+import * as crypto from "node:crypto"
+import { s3Client } from "../../../vitest-integration.setup"
 
 export interface GroupService {
   create(handle: DBHandle, data: GroupWrite): Promise<Group>
@@ -72,6 +79,16 @@ export interface GroupService {
     groupMembershipData: GroupMembershipWrite,
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
+  deleteManyGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void>
+  createManyGroupMemberships(
+    handle: DBHandle,
+    groupMembershipData: (GroupMembershipWrite & { roleIds: Set<GroupRoleId> })[]
+  ): Promise<void>
+  /**
+   * Reduces the array of memberships to its simplest form, removing overlapping memberships and merging memberships
+   * which could be merged.
+   */
+  simplifyMemberships(memberships: [GroupMembership, ...GroupMembership[]]): Promise<GroupMembership[]>
 
   createRole(handle: DBHandle, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, groupRoleId: GroupRoleId, groupRoleData: GroupRoleWrite): Promise<GroupRole>
@@ -318,6 +335,41 @@ export function getGroupService(
       return await groupRepository.updateGroupRole(handle, groupRoleId, groupRoleData)
     },
 
+    async simplifyMemberships(memberships) {
+      const membershipsByGroup = new Map<string, GroupMembership[]>()
+
+      for (const membership of memberships) {
+        const existing = membershipsByGroup.get(membership.groupId)
+        if (existing) {
+          existing.push(membership)
+        } else {
+          membershipsByGroup.set(membership.groupId, [membership])
+        }
+      }
+
+      const results: GroupMembership[] = []
+
+      for (const groupMemberships of membershipsByGroup.values()) {
+        const simplified = simplifyMembershipsForGroup(groupMemberships)
+        results.push(...simplified)
+      }
+
+      return results
+    },
+
+    createManyGroupMemberships(
+      handle: DBHandle,
+      groupMembershipData: (GroupMembershipWrite & {
+        roleIds: Set<GroupRoleId>
+      })[]
+    ): Promise<void> {
+      return Promise.resolve(undefined)
+    },
+
+    deleteManyGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void> {
+      return Promise.resolve(undefined)
+    },
+
     async createFileUpload(filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `group/${Date.now()}-${uuid}-${slugify(filename)}`
@@ -331,4 +383,103 @@ export function getGroupService(
       })
     },
   }
+}
+
+type Segment = {
+  start: Date
+  end: Date | null
+  roles: GroupRole[]
+  sourceMembership: GroupMembership
+}
+
+function simplifyMembershipsForGroup(memberships: GroupMembership[]): GroupMembership[] {
+  const hasOngoingMembership = memberships.some((membership) => membership.end === null)
+
+  // This set collects membership boundary points so we can recreate segments for merging roles into.
+  const boundarySet = new Set<number>()
+
+  for (const membership of memberships) {
+    boundarySet.add(membership.start.getTime())
+    if (membership.end !== null) {
+      boundarySet.add(membership.end.getTime())
+    }
+  }
+
+  const sortedBoundaries = [...boundarySet].toSorted((a, b) => a - b).map((timestamp) => new Date(timestamp))
+
+  const segments: Segment[] = []
+
+  for (let i = 0; i < sortedBoundaries.length; i++) {
+    const segmentStart = sortedBoundaries[i]
+    const isLastBoundary = i === sortedBoundaries.length - 1
+
+    if (isLastBoundary && !hasOngoingMembership) {
+      break
+    }
+
+    const segmentEnd = isLastBoundary ? null : sortedBoundaries[i + 1]
+
+    const activeRolesInSegment: GroupRole[] = []
+    let sourceMembership: GroupMembership | null = null
+
+    for (const membership of memberships) {
+      const isSegmentStartContained = !isAfter(membership.start, segmentStart)
+      const isSegmentEndContained = membership.end === null || isAfter(membership.end, segmentStart)
+
+      if (isSegmentStartContained && isSegmentEndContained) {
+        activeRolesInSegment.push(...membership.roles)
+
+        if (sourceMembership === null) {
+          sourceMembership = membership
+        }
+      }
+    }
+
+    if (activeRolesInSegment.length === 0 || sourceMembership === null) {
+      continue
+    }
+
+    const uniqueRolesById = new Map<string, GroupRole>()
+    for (const role of activeRolesInSegment) {
+      if (!uniqueRolesById.has(role.id)) {
+        uniqueRolesById.set(role.id, role)
+      }
+    }
+
+    segments.push({
+      start: segmentStart,
+      end: segmentEnd,
+      roles: [...uniqueRolesById.values()],
+      sourceMembership,
+    })
+  }
+
+  const mergedSegments: Segment[] = []
+
+  for (const segment of segments) {
+    const previousSegment = mergedSegments.length > 0 ? mergedSegments[mergedSegments.length - 1] : null
+
+    const canMergeWithPrevious =
+      previousSegment !== null &&
+      previousSegment.end !== null &&
+      isEqual(previousSegment.end, segment.start) &&
+      areGroupRolesEqual(previousSegment.roles, segment.roles)
+
+    if (canMergeWithPrevious && previousSegment !== null) {
+      previousSegment.end = segment.end
+    } else {
+      mergedSegments.push({ ...segment })
+    }
+  }
+
+  return mergedSegments.map((segment) => ({
+    id: segment.sourceMembership.id,
+    createdAt: segment.sourceMembership.createdAt,
+    updatedAt: segment.sourceMembership.updatedAt,
+    start: segment.start,
+    end: segment.end,
+    userId: segment.sourceMembership.userId,
+    groupId: segment.sourceMembership.groupId,
+    roles: segment.roles,
+  }))
 }

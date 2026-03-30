@@ -4,24 +4,54 @@ import type { DBHandle, Prisma } from "@dotkomonline/db"
 
 // This file implements the logic for merging two user accounts.
 //
-// It is split into three parts:
-//   1. Field classification (how they will be merged)
-//   2. A type check to make sure every field is classified (exhaustiveness check)
-//   3. The merge implementation
+// HOW TO ADD A NEW FIELD TO USER:
 //
-// In general, we keep everything from the survivor user, and backfill from the consumed user only when the survivor has
-// null/empty values. We have some custom logic for memberships and other fields.
+// 1. You will get a compile error from `_assertNoMissingFields` below.
+//    This means the field must be classified into one of the arrays.
+//
+// 2. Choose the right classification:
+//
+//    OMITTED_FIELDS
+//      - Completely ignore for the merge. Should only be identity/metadata fields (id, createdAt, ...).
+//
+//    BACKFILL_SCALAR_FIELDS
+//      - Nullable scalars. Survivor wins; consumed backfills if survivor is null.
+//
+//    BACKFILL_RELATION_FK_FIELDS
+//      - One-to-one relation FKs (e.g. privacyPermissionsId).
+//      - You MUST also add a cleanup block in the "DELETE ORPHANED RELATIONS" section to delete the consumed user's
+//        record when both users have one.
+//
+//    CUSTOM_MERGE_FIELDS
+//      - Scalars that need special logic (e.g. profileSlug, flags).
+//      - Add your merge logic in the "CUSTOM SCALAR MERGES" section.
+//
+//    REASSIGN_RELATION_NAMES
+//      - Has-many relations
+//      - Add `updateMany` calls in the "REASSIGN ALL RELATIONS" section to move all records from consumed to survivor.
+//        - If the relation has multiple FK columns pointing to User (like attendee has userId and paymentRefundedById),
+//          add one updateMany per FK column.
+//
+//    CUSTOM_MERGE_RELATION_NAMES
+//      - Relations that need deduplication logic (memberships, group memberships).
+//      - Add your merge logic in the corresponding section.
+//
+// =========================================================
 
 // FIELD CLASSIFICATION
 
-/** These fields are omitted during the merge. */
+/**
+ * These fields are omitted during the merge.
+ */
 const OMITTED_FIELDS = [
   "id", //
   "createdAt",
   "updatedAt",
 ] as const satisfies UserKeys[]
 
-/** Keep the survivor's value; if it is null, backfill from the consumed user. */
+/**
+ * Keep the survivor's value; if it is null, backfill from the consumed user.
+ */
 const BACKFILL_SCALAR_FIELDS = [
   "name",
   "email",
@@ -35,27 +65,31 @@ const BACKFILL_SCALAR_FIELDS = [
 ] as const satisfies UserKeys[]
 
 /**
- * Keep the survivor's value; if it is null, backfill from the consumed user.
+ * Keep the survivor's value; if it is null, backfill from the consumed user. The `relation` property is needed for
+ * typing purposes.
  *
- * These fields should be cleaned if orphaned after the merge. Remember to update BACKFILL_RELATION_NAMES as well.
+ * IMPORTANT: Read comment atop the file for instructions.
  */
 const BACKFILL_RELATION_FK_FIELDS = [
-  "privacyPermissionsId", //
-  "notificationPermissionsId",
-] as const satisfies UserKeys[]
-/** Needed for type checking */
-const BACKFILL_RELATION_NAMES = [
-  "privacyPermissions", //
-  "notificationPermissions",
-] as const satisfies UserKeys[]
+  { field: "privacyPermissionsId", relation: "privacyPermissions" }, //
+  { field: "notificationPermissionsId", relation: "notificationPermissions" },
+] as const satisfies { field: UserKeys; relation: UserKeys }[]
 
-/** Fields with custom merge logic. */
+/**
+ * Fields with custom merge logic.
+ *
+ * IMPORTANT: Read comment atop the file for instructions.
+ */
 const CUSTOM_MERGE_FIELDS = [
   "profileSlug", //
   "flags",
 ] as const satisfies UserKeys[]
 
-/** These relations are reassigned from the consumed user to the survivor. */
+/**
+ * These relations are reassigned from the consumed user to the survivor.
+ *
+ * IMPORTANT: Read comment atop the file for instructions.
+ */
 const REASSIGN_RELATION_NAMES = [
   "attendee",
   "personalMark",
@@ -68,7 +102,11 @@ const REASSIGN_RELATION_NAMES = [
   "notificationsCreated",
 ] as const satisfies UserKeys[]
 
-/** Relations with custom merge logic. */
+/**
+ * Relations with custom merge logic.
+ *
+ * IMPORTANT: Read comment atop the file for instructions.
+ */
 const CUSTOM_MERGE_RELATION_NAMES = [
   "memberships", //
   "groupMemberships",
@@ -79,8 +117,8 @@ const CUSTOM_MERGE_RELATION_NAMES = [
 type AllAccountedFields =
   | (typeof OMITTED_FIELDS)[number]
   | (typeof BACKFILL_SCALAR_FIELDS)[number]
-  | (typeof BACKFILL_RELATION_FK_FIELDS)[number]
-  | (typeof BACKFILL_RELATION_NAMES)[number]
+  | (typeof BACKFILL_RELATION_FK_FIELDS)[number]["relation"]
+  | (typeof BACKFILL_RELATION_FK_FIELDS)[number]["field"]
   | (typeof CUSTOM_MERGE_FIELDS)[number]
   | (typeof REASSIGN_RELATION_NAMES)[number]
   | (typeof CUSTOM_MERGE_RELATION_NAMES)[number]
@@ -91,8 +129,9 @@ type UserKeys = keyof Prisma.$UserPayload["objects"] | keyof Prisma.$UserPayload
 type MissingFromClassification = Exclude<UserKeys, AllAccountedFields>
 type ExtraInClassification = Exclude<AllAccountedFields, UserKeys>
 
-// These will cause a compile error if they are anything other than `never`
-// IF YOU COME HERE FROM TYPE ERROR: You need to classify the field(s) you added in the above arrays.
+// These will cause a compile error if there are missing fields or extra fields in the classification.
+// IF YOU COME HERE FROM TYPE ERROR:
+//   Read the comment atop the file for a guide for classifying the field(s) you added to User in the above arrays.
 const _assertNoMissingFields: MissingFromClassification extends never ? true : MissingFromClassification = true
 const _assertNoExtraFields: ExtraInClassification extends never ? true : ExtraInClassification = true
 
@@ -115,7 +154,7 @@ export const mergeUsers = async (handle: DBHandle, survivorUser: User, consumedU
     }
   }
 
-  for (const field of BACKFILL_RELATION_FK_FIELDS) {
+  for (const { field } of BACKFILL_RELATION_FK_FIELDS) {
     if (survivorUser[field] === null && consumedUser[field] !== null) {
       scalarUpdates[field] = consumedUser[field]
     }
@@ -293,22 +332,15 @@ export const mergeUsers = async (handle: DBHandle, survivorUser: User, consumedU
   })
 
   // DELETE ORPHANED RELATIONS
-  // If we adopted the consumed user's privacy/notification permissions via
-  // the FK backfill, they are already pointing at the survivor. If not,
-  // we need to delete the consumed user's orphaned permission records.
   if (consumedUser.privacyPermissionsId !== null && survivorUser.privacyPermissionsId !== null) {
     await handle.privacyPermissions.delete({
-      where: {
-        id: consumedUser.privacyPermissionsId,
-      },
+      where: { id: consumedUser.privacyPermissionsId },
     })
   }
 
   if (consumedUser.notificationPermissionsId !== null && survivorUser.notificationPermissionsId !== null) {
     await handle.notificationPermissions.delete({
-      where: {
-        id: consumedUser.notificationPermissionsId,
-      },
+      where: { id: consumedUser.notificationPermissionsId },
     })
   }
 
