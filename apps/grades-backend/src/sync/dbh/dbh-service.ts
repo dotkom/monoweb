@@ -2,6 +2,14 @@ import * as z from "zod"
 import { filterSchema, institutionFilter, taskFilter } from "./filters"
 import { schemas } from "@dotkomonline/grades-db/schemas"
 
+/*
+API documentation can be found at:
+https://dbh.hkdir.no/static/files/dokumenter/api/api_dokumentasjon.pdf
+
+Or table documentation found at:
+https://dbh.hkdir.no/datainnhold/tabell-dokumentasjon
+*/
+
 const BASE_URL = "https://dbh.hkdir.no"
 const TABLE_URL = `${BASE_URL}/api/Tabeller/hentJSONTabellData`
 
@@ -68,6 +76,8 @@ const parseStatus = (status: number) => {
   }
 }
 
+// Table field information avaiable at
+// https://dbh.hkdir.no/datainnhold/tabell-dokumentasjon/308
 const ApiGradeSchema = z.object({
   Instutisjonskode: z.coerce.number(),
   Instutisjonsnavn: z.coerce.string(),
@@ -92,6 +102,8 @@ const ParsedGradeSchema = ApiGradeSchema.transform((input) => {
   }
 })
 
+// Table field information avaiable at
+// https://dbh.hkdir.no/datainnhold/tabell-dokumentasjon/208
 const ApiCourseSchema = z.object({
   Instutisjonskode: z.coerce.number(),
   Instutisjonsnavn: z.coerce.string(),
