@@ -117,17 +117,6 @@ resource "auth0_connection" "feide" {
   }
 }
 
-
-# resource "auth0_action" "klassetrinn_autoconf" {
-#   name = "Klassetrinn Autoconf"
-#   code = file("js/klassetrinn.js")
-
-#   supported_triggers {
-#     id = "post_signup"
-#     version = "v3"
-#   }
-# }
-
 resource "auth0_client" "vengeful_vineyard_frontend" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   cross_origin_loc  = "https://vinstraff.no/*"
@@ -255,8 +244,7 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
-    auth0_client.appkom_veldedighet.client_id,
-    auth0_client.feide_account_linker.id
+    auth0_client.appkom_veldedighet.client_id
   ]
 }
 
@@ -674,81 +662,6 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
   ]
 }
 
-resource "auth0_client" "feide_account_linker" {
-  name     = "Feide Account Linker"
-  app_type = "non_interactive"
-  logo_uri = "https://nobirkenes.speedadmin.dk/Images/SSO/Feide-btn.png"
-
-  grant_types = [
-    "client_credentials"
-  ]
-
-  jwt_configuration {
-    alg                 = "RS256"
-    lifetime_in_seconds = 10
-  }
-
-  oidc_conformant = true
-  is_first_party  = true
-}
-
-resource "auth0_client_credentials" "feide_account_linker" {
-  client_id             = auth0_client.feide_account_linker.client_id
-  authentication_method = "client_secret_post"
-}
-
-resource "auth0_client_grant" "m2m_grant" {
-  client_id = auth0_client.feide_account_linker.client_id
-  audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
-
-  scopes = [
-    "read:users",
-    "update:users"
-  ]
-}
-
-resource "auth0_action" "feide_account_linking" {
-  name    = "Feide Account Linking"
-  runtime = "node18"
-  code    = file("js/actions/linkFeideAccounts.js")
-  deploy  = true
-
-  supported_triggers {
-    id      = "post-login"
-    version = "v3"
-  }
-
-  dependencies {
-    name    = "auth0"
-    version = "latest"
-  }
-
-  secrets {
-    name  = "FEIDE_CONNECTION_ID"
-    value = auth0_connection.feide.id
-  }
-
-  secrets {
-    name  = "DOMAIN"
-    value = data.auth0_tenant.tenant.domain
-  }
-
-  secrets {
-    name  = "CLIENT_ID"
-    value = auth0_client.feide_account_linker.client_id
-  }
-
-  secrets {
-    name  = "CLIENT_SECRET"
-    value = auth0_client_credentials.feide_account_linker.client_secret
-  }
-
-  secrets {
-    name  = "PRODUCTION"
-    value = terraform.workspace == "prd" ? "true" : "false"
-  }
-}
-
 resource "auth0_action" "update_membership" {
   name    = "Membership Update"
   runtime = "node18"
@@ -768,14 +681,5 @@ resource "auth0_action" "update_membership" {
   secrets {
     name  = "RPC_HOST"
     value = "rpc.staging.online.ntnu.no"
-  }
-}
-
-resource "auth0_trigger_actions" "login_flow" {
-  trigger = "post-login"
-
-  actions {
-    id           = auth0_action.feide_account_linking.id
-    display_name = auth0_action.feide_account_linking.name
   }
 }
