@@ -53,7 +53,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <PlausibleProvider domain="online.ntnu.no">
           <SessionProvider session={session}>
             <QueryProvider>
-              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
+              <ThemeProvider defaultTheme="pink" enableSystem attribute="data-theme">
                 <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
                   <Navbar />
                   <div className="relative flex flex-col grow">
