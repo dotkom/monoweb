@@ -62,7 +62,7 @@ export default async function App() {
         {/* DESKTOP SCREEN */}
         <div className="hidden md:grid md:grid-cols-[70%_30%] auto-rows-max w-full gap-6 pr-6">
           <div className="row-span-4 w-full h-full flex items-center justify-center">
-            <Image
+            <img
               src="/aprilfools-2026-barbietv.png"
               alt="April Fools"
               className="rounded-2xl object-cover w-full"
@@ -98,12 +98,10 @@ export default async function App() {
 
         {/* MOBILE SCREEN */}
         <div className="md:hidden md:-mx-4 gap-8 flex flex-col">
-          <Image
+          <img
             src="/aprilfools-2026-barbietv.png"
             alt="April Fools"
             className="rounded-2xl object-cover w-full h-full"
-            width={0}
-            height={0}
           />
           <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
             <div className="shrink-0 w-[85vw] max-w-[24rem] md:ml-4 snap-center">
@@ -254,12 +252,10 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, className }) => {
       >
         <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
           {event.imageUrl ? (
-            <Image
+            <img
               src={event.imageUrl}
               alt={event.title}
               className="rounded-lg border border-amber-500 object-cover aspect-video w-full"
-              width={0}
-              height={0}
             />
           ) : (
             <div className="rounded-lg border w-full border-amber-500 object-cover overflow-hidden aspect-video">
