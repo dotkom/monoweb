@@ -20,12 +20,10 @@ data "auth0_tenant" "tenant" {}
 locals {
   custom_domain = {
     "dev" = "auth.dev.online.ntnu.no"
-    "stg" = "auth.stg.online.ntnu.no"
     "prd" = "auth.online.ntnu.no"
   }[terraform.workspace]
   name_suffix = {
     "dev" = " Dev"
-    "stg" = " Staging"
     "prd" = ""
   }
 }
@@ -74,20 +72,6 @@ resource "auth0_branding" "branding" {
         }
         </style>
         <h1 class="warning">DEVELOPMENT</h1>
-        EOT
-        }
-        "stg" = { "ENV_SPECIFIC" : <<EOT
-        <style>
-        .warning {
-          font-family: comic sans ms;
-          color: orangered;
-          font-size: 13vw;
-        }
-        :root {
-          --page-background-color: firebrick;
-        }
-        </style>
-        <h1 class="warning">STAGING</h1>
         EOT
         }
         "prd" = { "ENV_SPECIFIC" : "" }
@@ -153,7 +137,6 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   app_type = "spa"
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
-    "stg" = ["https://staging.vinstraff.no"]
     "prd" = ["https://vinstraff.no"]
   }[terraform.workspace]
   callbacks = {
@@ -161,13 +144,6 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
       "http://localhost:3000",
       "http://localhost:8000",
       "http://localhost:3000/docs/oauth2-redirect",
-      "http://localhost:8000/docs/oauth2-redirect",
-    ]
-    "stg" = [
-      "https://staging.vinstraff.no",
-      "https://staging.vinstraff.no/docs/oauth2-redirect",
-      "http://localhost:3000",
-      "http://localhost:8000",
       "http://localhost:8000/docs/oauth2-redirect",
     ]
     "prd" = [
@@ -203,7 +179,6 @@ resource "auth0_client" "voting" {
       "http://localhost:3000",
       "http://localhost:8000"
     ]
-    "stg" = []
     "prd" = [
       "https://vedtatt.online.ntnu.no",
     ]
@@ -213,7 +188,6 @@ resource "auth0_client" "voting" {
       "http://localhost:3000",
       "http://localhost:8000"
     ]
-    "stg" = []
     "prd" = [
       "https://vedtatt.online.ntnu.no",
     ]
@@ -225,7 +199,6 @@ resource "auth0_client" "voting" {
       "http://localhost:3000/docs/oauth2-redirect",
       "http://localhost:8000/docs/oauth2-redirect",
     ]
-    "stg" = []
     "prd" = [
       "https://vedtatt.online.ntnu.no",
       "http://localhost:3000",
@@ -322,12 +295,10 @@ resource "auth0_client" "onlineweb_frontend" {
   app_type          = "spa"
   allowed_logout_urls = {
     "dev" = ["http://localhost:8080"]
-    "stg" = ["https://*-dotkom.vercel.app", "https://dev.online.ntnu.no"]
     "prd" = ["https://old.online.ntnu.no/auth/login/", "https://online.ntnu.no"]
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:8080/authentication/callback"]
-    "stg" = ["https://*-dotkom.vercel.app/authentication/callback"]
     "prd" = ["https://online.ntnu.no/authentication/callback"]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "implicit", "refresh_token"]
@@ -499,14 +470,12 @@ resource "auth0_client" "onlineweb4" {
   allowed_clients   = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
-    "stg" = ["https://dev.online.ntnu.no"]
     "prd" = ["https://old.online.ntnu.no"]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "regular_web"
   callbacks = {
     "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"]
-    "stg" = ["https://dev.online.ntnu.no/auth0/callback/"]
     "prd" = ["https://old.online.ntnu.no/auth0/callback/"]
   }[terraform.workspace]
   grant_types = ["authorization_code", "client_credentials", "refresh_token"]
@@ -550,18 +519,15 @@ resource "auth0_client" "monoweb_web" {
   # you go here if you decline an (auth) grant, cannot be http
   initiate_login_uri = {
     "dev" = null
-    "stg" = "https://staging.online.ntnu.no/api/auth/callback/auth0"
     "prd" = "https://online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = ["https://staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
     "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace]
   allowed_logout_urls = concat(
     {
       "dev" = ["http://localhost:3000"]
-      "stg" = ["https://staging.online.ntnu.no"]
       "prd" = ["https://online.ntnu.no"]
     }[terraform.workspace]
   )
@@ -602,7 +568,6 @@ resource "auth0_client" "monoweb_dashboard" {
   callbacks = concat(
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
-      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
       "prd" = [
         "https://dashboard.online.ntnu.no/api/auth/callback/auth0",
         "https://online.ntnu.no/api/auth/callback/auth0"
@@ -611,7 +576,6 @@ resource "auth0_client" "monoweb_dashboard" {
   allowed_logout_urls = concat(
     {
       "dev" = ["http://localhost:3002"]
-      "stg" = ["https://dashboard.staging.online.ntnu.no"]
       "prd" = ["https://dashboard.online.ntnu.no"]
     }[terraform.workspace]
   )
