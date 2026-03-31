@@ -40,7 +40,7 @@ export const SearchInput = ({
 
   return (
     <div className={cn("relative", className)}>
-      <IconSearch className="w-8 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 in-data-[theme=pink]:text-pink-500" />
+      <IconSearch className="w-8 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
       <TextInput
         className="pl-10 rounded-lg w-full h-11.5 dark:border-none text-base sm:text-sm"
         placeholder={placeholder}

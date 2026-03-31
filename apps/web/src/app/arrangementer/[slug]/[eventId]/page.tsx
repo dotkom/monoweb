@@ -48,7 +48,7 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
   <Link
     href={createOrganizerPageUrl(item)}
     key={item.name}
-    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-800 in-data-[theme=pink]:hover:bg-pink-300 in-data-[theme=pink]:border-pink-300"
+    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-800"
   >
     {item.imageUrl && (
       <Image
@@ -199,11 +199,11 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
       </div>
 
       <div className="flex flex-1 flex-col gap-8 sm:gap-4 md:min-w-88 lg:min-w-104">
-        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700 in-data-[theme=pink]:bg-pink-500" />
+        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
         <TimeLocationBox event={event} />
         {attendance !== null && (
           <>
-            <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700 in-data-[theme=pink]:bg-pink-500" />
+            <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
 
             <AttendanceCard
               initialAttendance={attendance}
