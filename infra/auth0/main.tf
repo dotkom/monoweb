@@ -230,18 +230,15 @@ data "auth0_client" "vengeful_vineyard_frontend" {
 locals {
   projects = {
     # Key here is name of doppler project
+    monoweb-web       = data.auth0_client.monoweb_web
+    monoweb-dashboard = data.auth0_client.monoweb_dashboard
+    monoweb-rpc       = data.auth0_client.rpc
+    vengeful-vineyard = data.auth0_client.vengeful_vineyard_frontend
 
-    vengeful-vineyard    = data.auth0_client.vengeful_vineyard_frontend
-    onlineweb4           = data.auth0_client.onlineweb4
-    onlineweb-frontend   = data.auth0_client.onlineweb_frontend
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
     appkom-veldedighet   = data.auth0_client.appkom_veldedighet
-
-    monoweb-web       = data.auth0_client.monoweb_web
-    monoweb-dashboard = data.auth0_client.monoweb_dashboard
-    monoweb-rpc       = data.auth0_client.rpc
   }
 }
 
@@ -289,38 +286,6 @@ resource "doppler_secret" "auth0_audiences" {
   value   = auth0_resource_server.online.identifier
 }
 
-resource "auth0_client" "onlineweb_frontend" {
-  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc  = "https://online.ntnu.no/*"
-  app_type          = "spa"
-  allowed_logout_urls = {
-    "dev" = ["http://localhost:8080"]
-    "prd" = ["https://old.online.ntnu.no/auth/login/", "https://online.ntnu.no"]
-  }[terraform.workspace]
-  callbacks = {
-    "dev" = ["http://localhost:8080/authentication/callback"]
-    "prd" = ["https://online.ntnu.no/authentication/callback"]
-  }[terraform.workspace]
-  grant_types                   = ["authorization_code", "implicit", "refresh_token"]
-  name                          = "OnlineWeb Frontend${local.name_suffix[terraform.workspace]}"
-  organization_require_behavior = "no_prompt"
-  is_first_party                = true
-  oidc_conformant               = true
-
-  jwt_configuration {
-    alg = "RS256"
-  }
-
-  refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-  }
-}
-
-data "auth0_client" "onlineweb_frontend" {
-  client_id = auth0_client.onlineweb_frontend.client_id
-}
-
 resource "auth0_client" "auth0_account_management_api_management_client" {
   is_first_party    = true
   app_type          = "non_interactive"
@@ -337,8 +302,6 @@ resource "auth0_connection_clients" "username_password_authentication" {
   connection_id = auth0_connection.username_password_authentication.id
 
   enabled_clients = [
-    auth0_client.onlineweb_frontend.client_id,
-    auth0_client.onlineweb4.client_id,
     auth0_client.monoweb_web.client_id,
     auth0_client.monoweb_dashboard.client_id,
     auth0_client.vengeful_vineyard_frontend.client_id,
@@ -355,8 +318,6 @@ resource "auth0_connection_clients" "feide" {
   connection_id = auth0_connection.feide.id
 
   enabled_clients = [
-    auth0_client.onlineweb_frontend.client_id,
-    auth0_client.onlineweb4.client_id,
     auth0_client.monoweb_web.client_id,
     auth0_client.monoweb_dashboard.client_id,
     auth0_client.vengeful_vineyard_frontend.client_id,
@@ -461,52 +422,6 @@ resource "auth0_client_grant" "rpc" {
     "read:users",
     "update:users",
     "read:user_idp_tokens"
-  ]
-}
-
-resource "auth0_client" "onlineweb4" {
-  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc  = "https://old.online.ntnu.no/*"
-  allowed_clients   = []
-  allowed_logout_urls = {
-    "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
-    "prd" = ["https://old.online.ntnu.no"]
-  }[terraform.workspace]
-  allowed_origins = []
-  app_type        = "regular_web"
-  callbacks = {
-    "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"]
-    "prd" = ["https://old.online.ntnu.no/auth0/callback/"]
-  }[terraform.workspace]
-  grant_types = ["authorization_code", "client_credentials", "refresh_token"]
-  name        = "OnlineWeb4${local.name_suffix[terraform.workspace]}"
-
-  is_first_party                = true
-  oidc_conformant               = true
-  organization_require_behavior = "no_prompt"
-
-  refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-  }
-
-  jwt_configuration {
-    alg = "RS256"
-  }
-}
-
-data "auth0_client" "onlineweb4" {
-  client_id = auth0_client.onlineweb4.client_id
-}
-
-resource "auth0_client_grant" "ow4_mgmt_grant" {
-  audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
-  client_id = auth0_client.onlineweb4.client_id
-  scopes = [
-    "update:users",
-    "read:users",
-    "read:user_idp_tokens",
-    "create:user_tickets", # to send verification emails
   ]
 }
 
