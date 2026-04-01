@@ -30,6 +30,8 @@ const title = cva("text-inherit font-title font-bold", {
       md: "text-xl font-semibold",
       lg: "text-2xl font-semibold",
       xl: "text-3xl",
+      xxl: "text-4xl",
+      xxxl: "text-5xl",
     },
   },
   defaultVariants: {
