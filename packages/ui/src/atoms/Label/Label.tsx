@@ -9,7 +9,7 @@ export const Label: FC<ComponentPropsWithRef<typeof LabelPrimitive.Root>> = ({ c
       element={LabelPrimitive.Root}
       ref={ref}
       className={cn(
-        "text-foreground inline-flex flex-col gap-1 text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 in-data-[theme=pink]:text-pink-600",
+        "text-foreground inline-flex flex-col gap-1 text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
         props.htmlFor && "cursor-pointer",
         className
       )}
