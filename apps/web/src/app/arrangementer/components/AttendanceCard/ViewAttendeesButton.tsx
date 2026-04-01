@@ -1,4 +1,4 @@
-import type { Attendance, Attendee, User } from "@dotkomonline/types"
+import { type Attendance, type Attendee, type User, FlagName } from "@dotkomonline/types"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -154,7 +154,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
 }
 
 const getAttendeeListEntryComponent = (attendee: Attendee) => {
-  if (attendee.user.flags.includes("VANITY_VERIFIED")) {
+  if (attendee.user.flags.some(({ name }) => name === FlagName.OW_VERIFIED)) {
     return VerifiedAttendeeListUser
   }
 
@@ -243,7 +243,7 @@ const VerifiedAttendeeListUser = ({ attendee }: AttendeeListEntryProps) => {
               <IconRosetteDiscountCheckFilled className="size-[1.25em] text-blue-600 dark:text-sky-700" />
             </TooltipTrigger>
             <TooltipContent>
-              <Text>OW-verified</Text>
+              <Text>OW Verified</Text>
             </TooltipContent>
           </Tooltip>
         </div>

@@ -16,6 +16,8 @@ import {
   type UserWrite,
   UserWriteSchema,
   findActiveMembership,
+  type UserFlagWithUsers,
+  type UserFlagWrite,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
@@ -79,6 +81,14 @@ export interface UserService {
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
+
+  createFlag(handle: DBHandle, data: UserFlagWrite): Promise<void>
+  updateFlag(handle: DBHandle, flagName: string, data: Partial<UserFlagWrite>): Promise<void>
+  deleteFlag(handle: DBHandle, flagName: string): Promise<void>
+  findFlagByName(handle: DBHandle, flagName: string): Promise<UserFlagWithUsers | null>
+  findFlagsByUserId(handle: DBHandle, userId: UserId): Promise<UserFlagWithUsers[]>
+  assignFlagToUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
+  removeFlagFromUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
 
   /**
    * Find the Feide federated access token for a user, if it exists.
@@ -491,6 +501,34 @@ export function getUserService(
       }
       const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
       return identity?.access_token ?? null
+    },
+
+    async createFlag(handle, data) {
+      return userRepository.createFlag(handle, data)
+    },
+
+    async updateFlag(handle, flagName, data) {
+      return userRepository.updateFlag(handle, flagName, data)
+    },
+
+    async deleteFlag(handle, flagName) {
+      return userRepository.deleteFlag(handle, flagName)
+    },
+
+    async findFlagByName(handle, flagName) {
+      return userRepository.findFlagByName(handle, flagName)
+    },
+
+    async findFlagsByUserId(handle, userId) {
+      return userRepository.findFlagsByUserId(handle, userId)
+    },
+
+    async assignFlagToUser(handle, userId, flagName) {
+      return userRepository.assignFlagToUser(handle, userId, flagName)
+    },
+
+    async removeFlagFromUser(handle, userId, flagName) {
+      return userRepository.removeFlagFromUser(handle, userId, flagName)
     },
 
     async createFileUpload(handle, filename, contentType, userId, createdByUserId) {
