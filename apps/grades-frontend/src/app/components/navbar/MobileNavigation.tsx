@@ -1,22 +1,22 @@
 "use client"
 
-import type { Locale } from "@/i18n/locale";
-import { setLocale } from "@/i18n/set-locale";
+import type { Locale } from "@/i18n/locale"
+import { setLocale } from "@/i18n/set-locale"
 import {
-    Button,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-    Text,
-    cn,
-} from "@dotkomonline/ui";
-import { IconDeviceMobile, IconMenu2, IconMoon, IconSun } from "@tabler/icons-react";
-import { useLocale } from "next-intl";
-import { useTheme } from "next-themes";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Text,
+  cn,
+} from "@dotkomonline/ui"
+import { IconDeviceMobile, IconMenu2, IconMoon, IconSun } from "@tabler/icons-react"
+import { useLocale } from "next-intl"
+import { useTheme } from "next-themes"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useState } from "react"
 
 export const MobileNavigation = () => {
   const pathname = usePathname()
