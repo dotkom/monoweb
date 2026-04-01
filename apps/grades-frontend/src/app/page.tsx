@@ -1,4 +1,5 @@
 import { server } from "@/utils/trpc/server"
+import { getTranslations } from "next-intl/server"
 import { CourseCard } from "./components/CourseCard"
 
 export default async function App() {
@@ -12,9 +13,12 @@ export default async function App() {
   })
   const grades = courses.length > 0 ? await server.grade.findGrades.query(courses[0].code) : []
 
+  const t = await getTranslations("HomePage")
+
   return (
     <div>
       <section className="flex flex-col gap-16 w-full">
+        <h1>{t("title")}</h1>
         {courses.map((course) => (
           <CourseCard key={course.code} course={course} />
         ))}

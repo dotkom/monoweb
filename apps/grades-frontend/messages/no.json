@@ -1,1 +1,15 @@
-{}
+{
+  "Navbar": {
+    "courses": "Emner",
+    "theme": "Fargetema",
+    "language": "Språk",
+    "norwegian": "Norsk",
+    "english": "English",
+    "courseSearchPlaceholder": "Søk etter emner..."
+  },
+  "ThemePopover": {
+    "light": "Lys",
+    "dark": "Mørk",
+    "system": "System"
+  }
+}
