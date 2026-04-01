@@ -189,4 +189,9 @@ export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmen
   }
 }
 
+export const FlagName = {
+  OW_VERIFIED: "OW Verified",
+  EXCEPTIONALLY_DISTINGUISHED: "Særskilt utmerket",
+}
+
 export const GROUP_IMAGE_MAX_SIZE_KIB = 5 * 1024
