@@ -12,13 +12,14 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { IconDeviceMobile, IconMenu2, IconMoon, IconPalette, IconSun, IconWorld } from "@tabler/icons-react"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 
 export const MobileNavigation = () => {
+  const t = useTranslations("Navbar")
   const pathname = usePathname()
   const locale = useLocale()
   const { theme, setTheme } = useTheme()
@@ -66,7 +67,7 @@ export const MobileNavigation = () => {
                       : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
                   )}
                 >
-                  Emner
+                  {t("courses")}
                 </Link>
 
                 <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />
@@ -76,7 +77,7 @@ export const MobileNavigation = () => {
                 <div className="flex flex-row gap-5">
                   <Text className="flex items-center gap-1.5 text-sm text-neutral-700">
                     <IconPalette size={16} />
-                    Theme
+                    {t("theme")}
                   </Text>
                   <div className="flex flex-row gap-3">
                     <ToggleButton onClick={() => onThemeChange("light")} isActive={theme === "light"}>
@@ -93,14 +94,14 @@ export const MobileNavigation = () => {
                 <div className="flex flex-row gap-5">
                   <Text className="flex items-center gap-1.5 text-sm text-neutral-700">
                     <IconWorld size={16} />
-                    Språk
+                    {t("language")}
                   </Text>
                   <div className="flex flex-row gap-3">
                     <ToggleButton onClick={() => onLocaleChange("no")} isActive={locale === "no"}>
-                      Norsk
+                      {t("norwegian")}
                     </ToggleButton>
                     <ToggleButton onClick={() => onLocaleChange("en")} isActive={locale === "en"}>
-                      English
+                      {t("english")}
                     </ToggleButton>
                   </div>
                 </div>

@@ -5,10 +5,12 @@ import { IconDeviceDesktop, IconDeviceMobile, IconMoon, IconSun } from "@tabler/
 import { useTheme } from "next-themes"
 import { useState } from "react"
 import { PopoverOptionButton } from "./PopoverOptionButton"
+import { useTranslations } from "next-intl"
 
 export const ThemePopover = () => {
   const { theme, setTheme, resolvedTheme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
+  const t = useTranslations("ThemePopover")
 
   const onChange = (newTheme: string) => {
     if (newTheme === theme) {
@@ -27,18 +29,18 @@ export const ThemePopover = () => {
       <PopoverContent className="min-w-36 flex flex-col p-1 transition-colors">
         <PopoverOptionButton onClick={() => onChange("light")} isActive={theme === "light"}>
           <IconSun size={16} />
-          <Text>Light</Text>
+          <Text>{t("light")}</Text>
         </PopoverOptionButton>
 
         <PopoverOptionButton onClick={() => onChange("dark")} isActive={theme === "dark"}>
           <IconMoon size={16} />
-          <Text>Dark</Text>
+          <Text>{t("dark")}</Text>
         </PopoverOptionButton>
 
         <PopoverOptionButton onClick={() => onChange("system")} isActive={theme === "system"}>
           <IconDeviceDesktop size={16} className="hidden xs:block" />
           <IconDeviceMobile size={16} className="xs:hidden" />
-          <Text>System</Text>
+          <Text>{t("system")}</Text>
         </PopoverOptionButton>
       </PopoverContent>
     </Popover>

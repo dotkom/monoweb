@@ -1,6 +1,7 @@
 "use client"
 
 import { cn, Title } from "@dotkomonline/ui"
+import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { CourseSearch } from "../CourseSearch"
@@ -10,6 +11,7 @@ import { ThemePopover } from "./ThemePopover"
 
 export const Navbar = () => {
   const pathname = usePathname()
+  const t = useTranslations("Navbar")
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-neutral-200 bg-white/90 backdrop-blur-md">
@@ -26,11 +28,11 @@ export const Navbar = () => {
               pathname === "/emner" ? "text-neutral-900" : "text-neutral-700 hover:text-neutral-900"
             )}
           >
-            Emner
+            {t("courses")}
             {pathname === "/emner" && <span className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-black" />}
           </Link>
 
-          <CourseSearch placeholder="Søk etter emner..." className="h-9 w-full max-w-lg" />
+          <CourseSearch placeholder={t("courseSearchPlaceholder")} className="h-9 w-full max-w-lg" />
         </div>
 
         <div className="items-center gap-3 hidden sm:flex">
