@@ -102,6 +102,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  flags: true,
                 },
               },
             },
@@ -129,6 +130,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  flags: true,
                 },
               },
             },
@@ -165,6 +167,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  flags: true,
                 },
               },
             },
@@ -208,6 +211,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  flags: true,
                 },
               },
             },
@@ -237,6 +241,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  flags: true,
                 },
               },
             },
@@ -266,6 +271,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  flags: true,
                 },
               },
             },
@@ -295,6 +301,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  flags: true,
                 },
               },
             },
@@ -375,6 +382,7 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
+              flags: true,
             },
           },
         },
@@ -400,6 +408,7 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
+              flags: true,
             },
           },
         },
@@ -418,6 +427,7 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
+              flags: true,
             },
           },
         },
@@ -436,6 +446,7 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
+              flags: true,
             },
           },
         },
