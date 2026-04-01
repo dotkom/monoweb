@@ -11,7 +11,7 @@ import {
   Text,
   cn,
 } from "@dotkomonline/ui"
-import { IconDeviceMobile, IconMenu2, IconMoon, IconSun } from "@tabler/icons-react"
+import { IconDeviceMobile, IconMenu2, IconMoon, IconPalette, IconSun, IconWorld } from "@tabler/icons-react"
 import { useLocale } from "next-intl"
 import { useTheme } from "next-themes"
 import Link from "next/link"
@@ -60,7 +60,7 @@ export const MobileNavigation = () => {
                   href="/emner"
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "flex items-center rounded-md px-3 py-2 font-medium transition-colors gap-2 text-lg",
+                    "flex items-center rounded-md px-3 py-2 font-medium transition-colors gap-2",
                     pathname === "/emner"
                       ? "bg-neutral-100 text-neutral-900"
                       : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
@@ -72,10 +72,13 @@ export const MobileNavigation = () => {
                 <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />
               </section>
 
-              <section className="flex flex-col gap-4">
-                <div className="flex flex-row gap-4">
-                  <Text className="flex items-center gap-1.5 px-1 text-sm text-neutral-700">Theme</Text>
-                  <div className="flex flex-row gap-4">
+              <section className="flex flex-col gap-4 ml-3">
+                <div className="flex flex-row gap-5">
+                  <Text className="flex items-center gap-1.5 text-sm text-neutral-700">
+                    <IconPalette size={16} />
+                    Theme
+                  </Text>
+                  <div className="flex flex-row gap-3">
                     <ToggleButton onClick={() => onThemeChange("light")} isActive={theme === "light"}>
                       <IconSun size={16} />
                     </ToggleButton>
@@ -87,9 +90,12 @@ export const MobileNavigation = () => {
                     </ToggleButton>
                   </div>
                 </div>
-                <div className="flex flex-row gap-4">
-                  <Text className="flex items-center gap-1.5 px-1 text-sm text-neutral-700">Språk</Text>
-                  <div className="flex flex-row gap-4">
+                <div className="flex flex-row gap-5">
+                  <Text className="flex items-center gap-1.5 text-sm text-neutral-700">
+                    <IconWorld size={16} />
+                    Språk
+                  </Text>
+                  <div className="flex flex-row gap-3">
                     <ToggleButton onClick={() => onLocaleChange("no")} isActive={locale === "no"}>
                       Norsk
                     </ToggleButton>
