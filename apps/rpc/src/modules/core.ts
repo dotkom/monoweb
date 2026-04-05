@@ -191,6 +191,7 @@ export async function createServiceLayer(
   const contestRepository = getContestRepository()
   const notificationRepository = getNotificationRepository()
 
+  const notificationService = getNotificationService(notificationRepository, userRepository, attendanceRepository)
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
     ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
@@ -211,7 +212,12 @@ export async function createServiceLayer(
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const auditLogService = getAuditLogService(auditLogRepository)
-  const eventService = getEventService(eventRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
+  const eventService = getEventService(
+    eventRepository,
+    notificationService,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET
+  )
   const feedbackFormService = getFeedbackFormService(
     feedbackFormRepository,
     feedbackFormAnswerRepository,
@@ -220,7 +226,6 @@ export async function createServiceLayer(
     attendanceRepository
   )
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
-  const notificationService = getNotificationService(notificationRepository, userRepository)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
     eventEmitter,
@@ -235,7 +240,8 @@ export async function createServiceLayer(
     feedbackFormService,
     feedbackFormAnswerService,
     configuration,
-    emailService
+    emailService,
+    notificationService
   )
   const companyService = getCompanyService(companyRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
@@ -243,6 +249,7 @@ export async function createServiceLayer(
     articleRepository,
     articleTagRepository,
     articleTagLinkRepository,
+    notificationService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
