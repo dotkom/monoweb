@@ -1,5 +1,6 @@
 import { getLogger } from "@dotkomonline/logger"
-import { google } from "googleapis"
+import { sheets } from "@googleapis/sheets"
+import { JWT } from "googleapis-common"
 import { z } from "zod"
 import type { Configuration } from "../../configuration"
 
@@ -96,13 +97,13 @@ export const createSpreadsheetRow = async (form: InterestFormData, configuration
     throw new Error("Invalid service account credentials for Google Sheets integration")
   }
 
-  const auth = new google.auth.JWT({
+  const jwtAuth = new JWT({
     email: result.data.client_email,
     key: result.data.private_key,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   })
 
-  const sheets = google.sheets({ version: "v4", auth })
+  const sheetsClient = sheets({ version: "v4", auth: jwtAuth })
 
   // Convert form data to spreadsheet row format.
   // NOTE: The phone number format conversion (+47 -> 0047) is for legacy
@@ -123,14 +124,14 @@ export const createSpreadsheetRow = async (form: InterestFormData, configuration
   ]
 
   // First, ensure headers exist (check if row 1 has headers)
-  const headerResponse = await sheets.spreadsheets.values.get({
+  const headerResponse = await sheetsClient.spreadsheets.values.get({
     spreadsheetId: configuration.rif.spreadsheetId,
     range: "A1:L1",
   })
 
   // If no headers exist, add them first
   if (!headerResponse.data.values || headerResponse.data.values.length === 0) {
-    await sheets.spreadsheets.values.update({
+    await sheetsClient.spreadsheets.values.update({
       spreadsheetId: configuration.rif.spreadsheetId,
       range: "A1:L1",
       valueInputOption: "RAW",
@@ -141,7 +142,7 @@ export const createSpreadsheetRow = async (form: InterestFormData, configuration
   }
 
   // Append the new row
-  await sheets.spreadsheets.values.append({
+  await sheetsClient.spreadsheets.values.append({
     spreadsheetId: configuration.rif.spreadsheetId,
     range: "A:L",
     valueInputOption: "RAW",
