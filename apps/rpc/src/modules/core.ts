@@ -4,7 +4,8 @@ import { SESClient } from "@aws-sdk/client-ses"
 import { SQSClient } from "@aws-sdk/client-sqs"
 import { createPrisma } from "@dotkomonline/db"
 import { ManagementClient } from "auth0"
-import { type admin_directory_v1, google } from "googleapis"
+import { admin, type admin_directory_v1 } from "@googleapis/admin"
+import { JWT } from "googleapis-common"
 import Stripe from "stripe"
 import z from "zod"
 import { type Configuration, isAmazonSesEmailFeatureEnabled, isGoogleWorkspaceFeatureEnabled } from "../configuration"
@@ -88,14 +89,14 @@ function getDirectory(configuration: Configuration): admin_directory_v1.Admin {
     throw new IllegalStateError(`Google Workspace service account is malformed: ${result.error.message}`)
   }
 
-  const auth = new google.auth.JWT({
+  const jwtAuth = new JWT({
     email: result.data.client_email,
     key: result.data.private_key,
     scopes: WORKSPACE_SERVICE_ACCOUNT_SCOPES,
     subject: configuration.googleWorkspace.userAccountEmail,
   })
 
-  return google.admin({ version: "directory_v1", auth })
+  return admin({ version: "directory_v1", auth: jwtAuth })
 }
 
 /** Build API clients for third-party services like S3, Auth0, and Stripe. */

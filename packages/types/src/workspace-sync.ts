@@ -1,4 +1,4 @@
-import type { admin_directory_v1 } from "googleapis"
+import type { admin_directory_v1 } from "@googleapis/admin"
 import { z } from "zod"
 import { GroupMemberSchema, GroupSchema } from "./group"
 
