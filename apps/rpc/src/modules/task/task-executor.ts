@@ -94,7 +94,7 @@ export function getLocalTaskExecutor(
               )
 
             case tasks.SEND_FEEDBACK_FORM_EMAILS.type:
-              return await attendanceService.executeSendFeedbackFormLinkEmails(handle)
+              return await attendanceService.executeSendFeedbackFormLinkEmailsAndNotifications(handle)
 
             case tasks.VERIFY_ATTENDEE_ATTENDED.type:
               return await attendanceService.executeVerifyAttendeeAttendedTask(handle)

@@ -13,6 +13,7 @@ import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { OfflineRepository } from "./offline-repository"
+import type { NotificationService } from "../notification/notification-service"
 
 export interface OfflineService {
   create(handle: DBHandle, data: OfflineWrite): Promise<Offline>
@@ -43,12 +44,27 @@ export interface OfflineService {
 
 export function getOfflineService(
   offlineRepository: OfflineRepository,
+  notificationService: NotificationService,
   s3Client: S3Client,
   s3BucketName: string
 ): OfflineService {
   return {
     async create(handle, data) {
-      return offlineRepository.create(handle, data)
+      const createdOffline = await offlineRepository.create(handle, data)
+
+      const offlineRecipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_OFFLINE")
+      await notificationService.create(
+        handle,
+        offlineRecipients,
+        "NEW_OFFLINE",
+        `Nytt offline-utgave: ${createdOffline.title}`,
+        `En ny offline-utgave med tittelen "${createdOffline.title}" har blitt publisert.`,
+        null,
+        "OFFLINE",
+        createdOffline.id
+      )
+
+      return createdOffline
     },
 
     async update(handle, id, data) {
