@@ -79,6 +79,7 @@ import type { UserService } from "../user/user-service"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { EventService } from "./event-service"
 import { validateTurnstileToken } from "../../turnstile"
+import type { NotificationService } from "../notification/notification-service"
 
 type EventRegistrationOptions = {
   /** Should the user be registered regardless of if registration is closed? */
@@ -247,7 +248,7 @@ export interface AttendanceService {
     handle: DBHandle,
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
   ): Promise<void>
-  executeSendFeedbackFormLinkEmails(handle: DBHandle): Promise<void>
+  executeSendFeedbackFormLinkEmailsAndNotifications(handle: DBHandle): Promise<void>
   executeVerifyAttendeeAttendedTask(handle: DBHandle): Promise<void>
 
   /**
@@ -281,7 +282,8 @@ export function getAttendanceService(
   feedbackFormService: FeedbackFormService,
   feedbackAnswerService: FeedbackFormAnswerService,
   configuration: Configuration,
-  emailService: EmailService
+  emailService: EmailService,
+  notificationService: NotificationService
 ): AttendanceService {
   const logger = getLogger("attendance-service")
 
@@ -1438,7 +1440,7 @@ export function getAttendanceService(
       await Promise.all([...personalMarkPromises])
     },
 
-    async executeSendFeedbackFormLinkEmails(handle) {
+    async executeSendFeedbackFormLinkEmailsAndNotifications(handle) {
       const eventsEndedYesterday = await eventService.findEvents(handle, {
         byHasFeedbackForm: true,
         byEndDate: {
@@ -1469,36 +1471,51 @@ export function getAttendanceService(
           (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
         )
         const bcc = attendeesWithoutAnswers.map((a) => a.user.email).filter((email) => email !== null)
+        const notificationRecipientIds = attendeesWithoutAnswers.map((a) => a.userId)
 
-        if (bcc.length === 0) {
-          return
+        if (notificationRecipientIds.length > 0) {
+          const formattedDeadline = feedbackForm.answerDeadline.toLocaleString("no-NO", {
+            dateStyle: "short",
+            timeStyle: "short",
+          })
+          await notificationService.create(
+            handle,
+            notificationRecipientIds,
+            "NEW_FEEDBACK_FORM",
+            "Nytt tilbakemeldingsskjema tilgjengelig",
+            `Tilbakemeldingsskjema for ${event.title} er nå tilgjengelig. Gi din tilbakemelding før ${formattedDeadline}.`,
+            `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
+            "URL"
+          )
         }
 
-        const hostingGroupEmail = findFirstHostingGroupEmail(event) ?? "bedkom@online.ntnu.no"
-        logger.info(
-          "Sending feedback form email for Event(ID=%s) to %d attendees from email %s",
-          event.id,
-          bcc.length,
-          hostingGroupEmail
-        )
+        if (bcc.length > 0) {
+          const hostingGroupEmail = findFirstHostingGroupEmail(event) ?? "bedkom@online.ntnu.no"
+          logger.info(
+            "Sending feedback form email for Event(ID=%s) to %d attendees from email %s",
+            event.id,
+            bcc.length,
+            hostingGroupEmail
+          )
 
-        await emailService.send(
-          hostingGroupEmail,
-          [],
-          [],
-          [],
-          bcc,
-          `Tilbakemelding på ${event.title}`,
-          emails.FEEDBACK_FORM_LINK,
-          {
-            eventName: event.title,
-            eventLink: `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`,
-            feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
-            eventStart: event.start.toISOString(),
-            feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
-            organizerEmail: hostingGroupEmail,
-          }
-        )
+          await emailService.send(
+            hostingGroupEmail,
+            [],
+            [],
+            [],
+            bcc,
+            `Tilbakemelding på ${event.title}`,
+            emails.FEEDBACK_FORM_LINK,
+            {
+              eventName: event.title,
+              eventLink: `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`,
+              feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
+              eventStart: event.start.toISOString(),
+              feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
+              organizerEmail: hostingGroupEmail,
+            }
+          )
+        }
       })
 
       await Promise.all(promises)

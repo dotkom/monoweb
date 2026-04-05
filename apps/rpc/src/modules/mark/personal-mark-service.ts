@@ -17,6 +17,7 @@ import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
 import type { UserService } from "../user/user-service"
 import type { MarkService } from "./mark-service"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
+import type { NotificationService } from "../notification/notification-service"
 
 export interface PersonalMarkService {
   findPersonalMarksByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
@@ -43,7 +44,8 @@ export function getPersonalMarkService(
   personalMarkRepository: PersonalMarkRepository,
   markService: MarkService,
   userService: UserService,
-  emailService: EmailService
+  emailService: EmailService,
+  notificationService: NotificationService
 ): PersonalMarkService {
   const logger = getLogger("personal-mark-service")
 
@@ -68,6 +70,9 @@ export function getPersonalMarkService(
       const mark = await markService.getById(handle, markId)
       const personalMark = await personalMarkRepository.create(handle, userId, mark.id, givenByUserId)
 
+      const title = mark.weight > 1 ? `Du har fått ${mark.weight} prikker` : `Du har fått en prikk`
+
+      await notificationService.create(handle, [userId], "NEW_MARK", title, `${mark.title} med grunn "${mark.details}`)
       await this.sendReceivedMarkEmail(handle, personalMark)
 
       return personalMark
