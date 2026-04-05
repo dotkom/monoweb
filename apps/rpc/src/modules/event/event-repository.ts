@@ -555,6 +555,8 @@ export function getEventRepository(): EventRepository {
       invariant(event !== null, "Event should exist within same transaction after updating attendance")
       return event
     },
+    async count(handle) {
+      return await handle.event.count()
 
     async updateEventParent(handle, eventId, parentEventId) {
       const row = await handle.event.update({
