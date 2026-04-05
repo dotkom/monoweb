@@ -9,7 +9,7 @@ import {
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isSameSubject, or } from "../../authorization"
+import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 
@@ -17,8 +17,9 @@ export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
 const allUsersProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: UserFilterQuerySchema.optional() }))
-  .use(withDatabaseTransaction())
   .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const items = await ctx.userService.findUsers(ctx.handle, { ...input.filter }, input)
     return {
@@ -31,6 +32,15 @@ export type GetUserInput = inferProcedureInput<typeof getUserProcedure>
 export type GetUserOutput = inferProcedureOutput<typeof getUserProcedure>
 const getUserProcedure = procedure
   .input(UserSchema.shape.id)
+  .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isCommitteeMember(),
+        isSameSubject((i) => i)
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return ctx.userService.getById(ctx.handle, input)
