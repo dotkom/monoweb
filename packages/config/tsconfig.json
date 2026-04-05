@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "noErrorTruncation": true,
+    "noErrorTruncation": false,
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",

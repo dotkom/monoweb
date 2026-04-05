@@ -1,27 +1,24 @@
 import { type VariantProps, cva } from "cva"
-import type { ComponentPropsWithRef, ElementType, PropsWithChildren } from "react"
+import type { ElementType, HTMLAttributes, PropsWithChildren, Ref } from "react"
 import { cn } from "../../utils"
 
-export type TextProps<E extends ElementType = "p"> = VariantProps<typeof text> &
-  PropsWithChildren & {
-    /**
-     * The HTML element or React component to render this element as.
-     *
-     * Defaults to HTML <p> element.
-     */
-    element?: E
+export type TextProps = VariantProps<typeof text> &
+  PropsWithChildren &
+  HTMLAttributes<HTMLElement> & {
+    element?: ElementType
     className?: string
-  } & ComponentPropsWithRef<E>
+    ref?: Ref<any>
+    htmlFor?: string
+    type?: string
+    placeholder?: string
+    value?: unknown
+    name?: string
+    required?: boolean
+    disabled?: boolean
+    checked?: boolean
+  }
 
-export function Text<E extends ElementType = "p">({
-  children,
-  element,
-  className,
-  size,
-  truncate,
-  ref,
-  ...props
-}: TextProps<E>) {
+export function Text({ children, element, className, size, truncate, ref, ...props }: TextProps) {
   const Component = element ?? "p"
   const classes = cn(text({ size, truncate }), className)
   return (
