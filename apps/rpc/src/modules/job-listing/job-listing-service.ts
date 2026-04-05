@@ -12,6 +12,7 @@ import { isAfter } from "date-fns"
 import { assert, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { JobListingRepository } from "./job-listing-repository"
+import type { NotificationService } from "../notification/notification-service"
 
 export interface JobListingService {
   create(
@@ -33,11 +34,28 @@ export interface JobListingService {
   findJobListingLocations(handle: DBHandle): Promise<JobListingLocation[]>
 }
 
-export function getJobListingService(jobListingRepository: JobListingRepository): JobListingService {
+export function getJobListingService(
+  jobListingRepository: JobListingRepository,
+  notificationService: NotificationService
+): JobListingService {
   return {
     async create(handle, companyId, jobListingData, locationIdsData) {
       validateJobListingWrite(jobListingData)
-      return await jobListingRepository.create(handle, companyId, jobListingData, locationIdsData)
+      const createdJobListing = await jobListingRepository.create(handle, companyId, jobListingData, locationIdsData)
+
+      const jobListingRecipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_JOB_LISTING")
+      await notificationService.create(
+        handle,
+        jobListingRecipients,
+        "NEW_JOB_LISTING",
+        `Ny stillingsutlysning: ${createdJobListing.title}`,
+        `En ny stillingsutlysning med tittelen "${createdJobListing.title}" har blitt publisert.`,
+        null,
+        "JOB_LISTING",
+        createdJobListing.id
+      )
+
+      return createdJobListing
     },
 
     async update(handle, jobListingId, jobListingData, locationIdsData) {
