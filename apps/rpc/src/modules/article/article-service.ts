@@ -19,6 +19,7 @@ import type { Pageable } from "@dotkomonline/utils"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
 import type { ArticleTagRepository } from "./article-tag-repository"
+import type { NotificationService } from "../notification/notification-service"
 
 export interface ArticleService {
   create(handle: DBHandle, data: ArticleWrite): Promise<Article>
@@ -61,6 +62,7 @@ export function getArticleService(
   articleRepository: ArticleRepository,
   articleTagRepository: ArticleTagRepository,
   articleTagLinkRepository: ArticleTagLinkRepository,
+  notificationService: NotificationService,
   s3Client: S3Client,
   s3BucketName: string
 ): ArticleService {
@@ -71,6 +73,18 @@ export function getArticleService(
       if (existingArticle) {
         throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
       }
+
+      const articleRecipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_ARTICLE")
+      await notificationService.create(
+        handle,
+        articleRecipients,
+        "NEW_ARTICLE",
+        `Ny artikkel: ${data.title}`,
+        `En ny artikkel med tittelen "${data.title}" har blitt publisert.`,
+        null,
+        "ARTICLE",
+        data.slug
+      )
 
       return await articleRepository.create(handle, data)
     },
