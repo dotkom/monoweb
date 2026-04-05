@@ -19,10 +19,11 @@ import {
   type UserId,
   EVENT_IMAGE_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
+import { createEventSlug, createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import type { Pageable } from "@dotkomonline/utils"
 import type { EventRepository } from "./event-repository"
+import type { NotificationService } from "../notification/notification-service"
 
 export interface EventService {
   createEvent(handle: DBHandle, data: EventWrite): Promise<Event>
@@ -75,6 +76,7 @@ export interface EventService {
 
 export function getEventService(
   eventRepository: EventRepository,
+  notificationService: NotificationService,
   s3Client: S3Client,
   s3BucketName: string
 ): EventService {
@@ -82,7 +84,21 @@ export function getEventService(
 
   return {
     async createEvent(handle, data) {
-      return await eventRepository.create(handle, data)
+      const createdEvent = await eventRepository.create(handle, data)
+
+      const newEventRecipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_EVENT")
+      await notificationService.create(
+        handle,
+        newEventRecipients,
+        "NEW_EVENT",
+        `Nytt arrangement: ${data.title}`,
+        `Et nytt arrangement med tittelen "${data.title}" har blitt opprettet.`,
+        null,
+        "EVENT",
+        `${createEventSlug(createdEvent.title)}/${createdEvent.id}`
+      )
+
+      return createdEvent
     },
 
     async deleteEvent(handle, eventId) {
@@ -90,7 +106,40 @@ export function getEventService(
     },
 
     async updateEvent(handle, eventId, data) {
-      return await eventRepository.update(handle, eventId, data)
+      let preEvent: Event | null = null
+
+      // Only send notifications if the event is either in the future or ongoing.
+      if (data.end && new Date() < new Date(data.end)) {
+        preEvent = await this.getEventById(handle, eventId)
+      }
+
+      const afterEvent = await eventRepository.update(handle, eventId, data)
+
+      if (preEvent) {
+        if (
+          afterEvent.description !== preEvent.description && // Only update on description change for now.
+          afterEvent.attendanceId !== null &&
+          afterEvent.hostingGroups.length > 0 // Make sure there is at least one hosting group. Otherwise just ignore.
+        ) {
+          const eventUpdateRecipients = await notificationService.retrieveIntendedRecipientIds(
+            handle,
+            "EVENT_UPDATE",
+            afterEvent.id
+          )
+          await notificationService.create(
+            handle,
+            eventUpdateRecipients,
+            "EVENT_UPDATE",
+            "Beskrivelse oppdatert",
+            `Beskrivelsen for arrangementet "${afterEvent.title}" har blitt oppdatert.`,
+            afterEvent.hostingGroups[0]?.slug,
+            "EVENT",
+            `${createEventSlug(afterEvent.title)}/${afterEvent.id}`
+          )
+        }
+      }
+
+      return afterEvent
     },
 
     async findEvents(handle, query, page) {
