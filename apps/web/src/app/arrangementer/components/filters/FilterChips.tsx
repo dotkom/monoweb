@@ -84,7 +84,6 @@ export const FilterChips = ({
             "bg-blue-100 dark:bg-sky-950",
             "text-blue-900 dark:text-sky-200",
             "hover:bg-blue-200 dark:hover:bg-sky-900",
-            "in-data-[theme=pink]:text-pink-600 in-data-[theme=pink]:hover:text-pink-700 in-data-[theme=pink]:bg-pink-100 in-data-[theme=pink]:hover:bg-pink-300",
             "transition"
           )}
         >
@@ -93,12 +92,7 @@ export const FilterChips = ({
         </button>
       ))}
 
-      <Button
-        onClick={onResetAll}
-        variant="solid"
-        size="sm"
-        className="text-sm rounded-full px-3 py-1.5 in-data-[theme=pink]:text-pink-600 in-data-[theme=pink]:hover:text-pink-700 in-data-[theme=pink]:bg-pink-300 in-data-[theme=pink]:hover:bg-pink-400"
-      >
+      <Button onClick={onResetAll} variant="solid" size="sm" className="text-sm rounded-full px-3 py-1.5">
         Fjern alle
       </Button>
     </div>
