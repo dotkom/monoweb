@@ -12,6 +12,27 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(255, 215, 0, 0.4) 45%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 215, 0, 0.4) 55%,
+      transparent 70%
+    );
+    animation: 5s shimmer 1.5s ease-in-out infinite;
+    pointer-events: none;
+  }
 }
 
 @layer components {
@@ -87,6 +108,18 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  40% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-stripes {
     animation: none;
@@ -113,6 +146,7 @@
   --font-glass: Glass, "sans-serif";
   --animate-flicker: flicker 0.25s infinite;
   --animate-scan: scan 0.2s linear infinite;
+  --animate-shimmer: shimmer 2.5s ease-in-out infinite;
 
   /* Easter egg colors */
   --color-gold-light: #fef3c7;
