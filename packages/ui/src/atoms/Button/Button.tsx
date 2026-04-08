@@ -1,9 +1,7 @@
 import { type VariantProps, cva } from "cva"
-import type { ComponentPropsWithRef, ElementType, PropsWithChildren, ReactNode } from "react"
+import type { ElementType, HTMLAttributes, PropsWithChildren, ReactNode, Ref } from "react"
 import { cn } from "../../utils"
 
-// Add variants, colors, or sizes in the arrays below
-// to add them to the component
 export const BUTTON_VARIANTS = ["solid", "outline", "text", "unstyled"] as const
 export const BUTTON_COLORS = ["light", "dark", "brand", "blue", "red"] as const
 export const BUTTON_SIZES = ["sm", "md", "lg"] as const
@@ -12,21 +10,23 @@ export type ButtonVariant = (typeof BUTTON_VARIANTS)[number]
 export type ButtonColor = (typeof BUTTON_COLORS)[number]
 export type ButtonSize = (typeof BUTTON_SIZES)[number]
 
-export type ButtonProps<E extends ElementType = "button"> = VariantProps<typeof button> &
-  PropsWithChildren & {
-    /**
-     * The HTML element to render the button as
-     *
-     * Defaults to an HTML <button> element, but can be used with the Link
-     * component from 'next/link' to create a link that looks like a button
-     */
-    element?: E
+export type ButtonProps = VariantProps<typeof button> &
+  PropsWithChildren &
+  Omit<HTMLAttributes<HTMLElement>, "color"> & {
+    element?: ElementType
     className?: string
     icon?: ReactNode
     iconRight?: ReactNode
-  } & ComponentPropsWithRef<E>
+    ref?: Ref<HTMLElement>
+    href?: string
+    type?: "button" | "submit" | "reset"
+    disabled?: boolean
+    target?: string
+    rel?: string
+    prefetch?: boolean
+  }
 
-export function Button<E extends ElementType = "button">({
+export function Button({
   element,
   children,
   variant,
@@ -37,7 +37,7 @@ export function Button<E extends ElementType = "button">({
   className,
   ref,
   ...props
-}: ButtonProps<E>) {
+}: ButtonProps) {
   const Component = element ?? "button"
   const classes = cn(button({ variant, size, color }), "inline-flex items-center justify-center gap-1", className)
   return (
@@ -89,7 +89,6 @@ export const button = cva(
         color: "light",
         variant: "solid",
         className: [
-          // Not using `enabled:` to make it easier to override
           "bg-gray-200 hover:bg-gray-100 disabled:hover:bg-gray-200",
           "dark:bg-stone-700 dark:hover:bg-stone-600 dark:disabled:hover:bg-stone-700",
         ].join(" "),
