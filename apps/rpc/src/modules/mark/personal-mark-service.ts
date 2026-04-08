@@ -71,8 +71,18 @@ export function getPersonalMarkService(
       const personalMark = await personalMarkRepository.create(handle, userId, mark.id, givenByUserId)
 
       const title = mark.weight > 1 ? `Du har fått ${mark.weight} prikker` : `Du har fått en prikk`
+      const description = `${mark.title} med grunn "${mark.details}"`
 
-      await notificationService.create(handle, [userId], "NEW_MARK", title, `${mark.title} med grunn "${mark.details}`)
+      await notificationService.create(
+        handle,
+        [userId],
+        "NEW_MARK",
+        title,
+        description,
+        null,
+        "USER",
+        userId
+      )
       await this.sendReceivedMarkEmail(handle, personalMark)
 
       return personalMark

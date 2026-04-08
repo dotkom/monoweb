@@ -55,6 +55,7 @@ import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
 import { getNotificationRepository } from "./notification/notification-repository"
 import { getNotificationService } from "./notification/notification-service"
+import { getNotificationTaskService } from "./notification/notification-task-service"
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
 const WORKSPACE_SERVICE_ACCOUNT_SCOPES = [
@@ -170,16 +171,31 @@ export async function createServiceLayer(
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
-  const groupService = getGroupService(groupRepository, userService, clients.s3Client, configuration.AWS_S3_BUCKET)
-  const jobListingService = getJobListingService(jobListingRepository)
+  const notificationTaskService = getNotificationTaskService(notificationService, attendanceRepository, eventRepository)
+  const groupService = getGroupService(
+    groupRepository,
+    userService,
+    notificationService,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET
+  )
+  const jobListingService = getJobListingService(jobListingRepository, taskSchedulingService, notificationService)
   const markService = getMarkService(markRepository)
-  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, userService, emailService)
+  const personalMarkService = getPersonalMarkService(
+    personalMarkRepository,
+    markService,
+    userService,
+    emailService,
+    notificationService
+  )
   const paymentService = getPaymentService(clients.stripe)
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const auditLogService = getAuditLogService(auditLogRepository)
   const eventService = getEventService(
     eventRepository,
+    attendanceRepository,
+    taskSchedulingService,
     notificationService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET
@@ -210,7 +226,7 @@ export async function createServiceLayer(
     notificationService
   )
   const companyService = getCompanyService(companyRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
-  const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
+  const offlineService = getOfflineService(offlineRepository, notificationService, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(
     articleRepository,
     articleTagRepository,
@@ -225,6 +241,7 @@ export async function createServiceLayer(
     taskDiscoveryService,
     taskSchedulingService,
     attendanceService,
+    notificationTaskService,
     configuration
   )
 

@@ -8,10 +8,13 @@ import type {
   JobListingLocationId,
   JobListingWrite,
 } from "@dotkomonline/types"
-import { isAfter } from "date-fns"
+import { addMilliseconds, isAfter } from "date-fns"
 import { assert, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { JobListingRepository } from "./job-listing-repository"
+import type { TaskSchedulingService } from "../task/task-scheduling-service"
+import { tasks } from "../task/task-definition"
+import { TZDate } from "@date-fns/tz"
 import type { NotificationService } from "../notification/notification-service"
 
 export interface JobListingService {
@@ -36,6 +39,7 @@ export interface JobListingService {
 
 export function getJobListingService(
   jobListingRepository: JobListingRepository,
+  taskSchedulingService: TaskSchedulingService,
   notificationService: NotificationService
 ): JobListingService {
   return {
@@ -43,16 +47,26 @@ export function getJobListingService(
       validateJobListingWrite(jobListingData)
       const createdJobListing = await jobListingRepository.create(handle, companyId, jobListingData, locationIdsData)
 
-      const jobListingRecipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_JOB_LISTING")
+      const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_JOB_LISTING")
       await notificationService.create(
         handle,
-        jobListingRecipients,
+        recipients,
         "NEW_JOB_LISTING",
         `Ny stillingsutlysning: ${createdJobListing.title}`,
-        `En ny stillingsutlysning med tittelen "${createdJobListing.title}" har blitt publisert.`,
+        `En ny stillingsutlysning "${createdJobListing.title}" har blitt publisert.`,
         null,
         "JOB_LISTING",
         createdJobListing.id
+      )
+
+      // Schedule reminder halfway through the job listing's lifespan
+      const lifespanMs = createdJobListing.end.getTime() - createdJobListing.start.getTime()
+      const halfwayAt = addMilliseconds(createdJobListing.start, lifespanMs / 2)
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.SEND_NOTIFICATION_JOB_LISTING_REMINDER,
+        { jobListingId: createdJobListing.id, title: createdJobListing.title },
+        new TZDate(halfwayAt)
       )
 
       return createdJobListing
