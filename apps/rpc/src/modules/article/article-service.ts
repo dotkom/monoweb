@@ -74,19 +74,21 @@ export function getArticleService(
         throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
       }
 
-      const articleRecipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_ARTICLE")
+      const createdArticle = await articleRepository.create(handle, data)
+
+      const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_ARTICLE")
       await notificationService.create(
         handle,
-        articleRecipients,
+        recipients,
         "NEW_ARTICLE",
         `Ny artikkel: ${data.title}`,
-        `En ny artikkel med tittelen "${data.title}" har blitt publisert.`,
+        `En ny artikkel "${data.title}" har blitt publisert.`,
         null,
         "ARTICLE",
         data.slug
       )
 
-      return await articleRepository.create(handle, data)
+      return createdArticle
     },
 
     async update(handle, articleId, data) {
