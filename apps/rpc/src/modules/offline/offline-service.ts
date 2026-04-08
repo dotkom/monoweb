@@ -52,13 +52,13 @@ export function getOfflineService(
     async create(handle, data) {
       const createdOffline = await offlineRepository.create(handle, data)
 
-      const offlineRecipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_OFFLINE")
+      const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_OFFLINE")
       await notificationService.create(
         handle,
-        offlineRecipients,
+        recipients,
         "NEW_OFFLINE",
-        `Nytt offline-utgave: ${createdOffline.title}`,
-        `En ny offline-utgave med tittelen "${createdOffline.title}" har blitt publisert.`,
+        `Ny offline: ${createdOffline.title}`,
+        `En ny offline "${createdOffline.title}" har blitt publisert.`,
         null,
         "OFFLINE",
         createdOffline.id
