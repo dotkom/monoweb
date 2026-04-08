@@ -5,6 +5,7 @@ import type { FeedbackFormId } from "../feedback-form/feedback-form"
 import { type Task, type TaskId, TaskSchema, type TaskType, type TaskWrite } from "./task"
 import { parseOrReport } from "../../invariant"
 import { tasks } from "./task-definition"
+import type { EventId } from "../event/event"
 
 export interface TaskRepository {
   create(handle: DBHandle, type: TaskType, data: TaskWrite): Promise<Task>
@@ -18,6 +19,8 @@ export interface TaskRepository {
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
+  findEventRegistrationNotificationTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findEventReminderNotificationTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
 }
 
 export function getTaskRepository(): TaskRepository {
@@ -171,6 +174,38 @@ export function getTaskRepository(): TaskRepository {
         orderBy: {
           createdAt: "desc",
         },
+      })
+
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+
+    async findEventRegistrationNotificationTask(handle, attendanceId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.SEND_NOTIFICATION_EVENT_REGISTRATION.type,
+          status: "PENDING",
+          payload: {
+            path: ["attendanceId"],
+            equals: attendanceId,
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      })
+
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+
+    async findEventReminderNotificationTask(handle, eventId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.SEND_NOTIFICATION_EVENT_REMINDER.type,
+          status: "PENDING",
+          payload: {
+            path: ["eventId"],
+            equals: eventId,
+          },
+        },
+        orderBy: { createdAt: "desc" },
       })
 
       return parseOrReport(TaskSchema.nullable(), task)
