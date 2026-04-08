@@ -107,6 +107,8 @@ model User {
   notificationsReceived NotificationRecipient[]
   notificationsCreated  Notification[]          @relation("created_by")
   notificationsUpdated  Notification[]          @relation("last_updated_by")
+  contestants           Contestant[]
+  contestTeams          ContestTeam[]           @relation("ContestTeamMember")
 
   @@map("ow_user")
 }
@@ -850,4 +852,67 @@ model Notification {
   recipients NotificationRecipient[]
 
   @@map("notification")
+}
+
+model Contest {
+  id          String            @id @default(uuid())
+  name        String
+  description String?
+  resultType  ContestResultType @map("result_type")
+
+  result      ContestResult?    @relation("ContestResult")
+  contestants Contestant[]
+
+  @@map("contest")
+}
+
+enum ContestResultType {
+  SCORE    @map("SCORE")
+  DURATION @map("DURATION")
+  WINNER   @map("WINNER")
+
+  @@map("contest_result_type")
+}
+
+model Contestant {
+  id String @id @default(uuid())
+
+  contestId       String         @map("contest_id")
+  userId          String?        @map("user_id")
+  winningResultId String?        @map("winning_result_id")
+  contest         Contest        @relation(fields: [contestId], references: [id])
+  team            ContestTeam?
+  user            User?          @relation(fields: [userId], references: [id])
+  /// The result that this contestant is the winner of.
+  winningResult   ContestResult? @relation("ContestWinner", fields: [winningResultId, contestId], references: [id, contestId])
+
+  @@unique([contestId, userId])
+  @@unique([winningResultId, contestId])
+  @@map("contestant")
+}
+
+model ContestTeam {
+  id   String @id @default(uuid())
+  name String
+
+  contestantId String     @unique @map("contestant_id")
+  contestant   Contestant @relation(fields: [contestantId], references: [id])
+
+  members User[] @relation("ContestTeamMember")
+
+  @@map("contest_team")
+}
+
+model ContestResult {
+  id               String      @id @default(uuid())
+  score            Int?
+  duration         Int?
+  winnerContestant Contestant? @relation("ContestWinner")
+
+  contestId String  @unique @map("contest_id")
+  contest   Contest @relation("ContestResult", fields: [contestId], references: [id])
+
+  // This unique is needed for the relation to the contestant.
+  @@unique([id, contestId])
+  @@map("contest_result")
 }
