@@ -429,7 +429,23 @@ export function getAttendanceService(
         }
       }
 
-      return await attendanceRepository.updateAttendanceById(handle, attendanceId, input)
+      const updatedAttendance = await attendanceRepository.updateAttendanceById(handle, attendanceId, input)
+
+      // Reschedule the registration notification if registerStart changed
+      if (data.registerStart !== undefined && input.registerStart.getTime() !== attendance.registerStart.getTime()) {
+        const existingTask = await taskSchedulingService.findEventRegistrationNotificationTask(handle, attendanceId)
+        if (existingTask) {
+          await taskSchedulingService.cancel(handle, existingTask.id)
+        }
+        await taskSchedulingService.scheduleAt(
+          handle,
+          tasks.SEND_NOTIFICATION_EVENT_REGISTRATION,
+          { attendanceId },
+          new TZDate(input.registerStart)
+        )
+      }
+
+      return updatedAttendance
     },
 
     async createAttendancePool(handle, attendanceId, data) {
