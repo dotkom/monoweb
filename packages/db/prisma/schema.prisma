@@ -107,6 +107,8 @@ model User {
   notificationsReceived NotificationRecipient[]
   notificationsCreated  Notification[]          @relation("created_by")
   notificationsUpdated  Notification[]          @relation("last_updated_by")
+  contestants           Contestant[]
+  contestTeams          ContestTeam[]           @relation("ContestTeamMember")
 
   @@map("ow_user")
 }
@@ -850,4 +852,61 @@ model Notification {
   recipients NotificationRecipient[]
 
   @@map("notification")
+}
+
+model Contest {
+  id                  String             @id @default(uuid())
+  name                String
+  description         String?
+  resultType          ContestResultType  @map("result_type")
+  resultOrder         ContestResultOrder @map("result_order")
+  winnerContestantId  String?            @unique @map("winner_contestant")
+
+  winnerContestant Contestant?  @relation("ContestWinner", fields: [winnerContestantId], references: [id])
+  contestants      Contestant[] @relation("ContestContestants")
+
+  @@map("contest")
+}
+
+enum ContestResultType {
+  SCORE    @map("SCORE")
+  DURATION @map("DURATION")
+  WINNER   @map("WINNER")
+
+  @@map("contest_result_type")
+}
+
+enum ContestResultOrder {
+  ASC  @map("asc")
+  DESC @map("desc")
+
+  @@map("contest_result_order")
+}
+
+model Contestant {
+  id String @id @default(uuid())
+
+  contestId   String  @map("contest_id")
+  userId      String? @map("user_id")
+  resultValue Int?    @map("result_value")
+
+  contest Contest      @relation("ContestContestants", fields: [contestId], references: [id])
+  team    ContestTeam?
+  user    User?        @relation(fields: [userId], references: [id])
+  wonContest Contest?  @relation("ContestWinner")
+
+  @@unique([contestId, userId])
+  @@map("contestant")
+}
+
+model ContestTeam {
+  id   String @id @default(uuid())
+  name String
+
+  contestantId String     @unique @map("contestant_id")
+  contestant   Contestant @relation(fields: [contestantId], references: [id])
+
+  members User[] @relation("ContestTeamMember")
+
+  @@map("contest_team")
 }
