@@ -2,6 +2,7 @@ import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { AuthNotice } from "@/components/notices/auth-notice"
+import { FadderApplicationsNotice } from "@/components/notices/fadder-applications-notice"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
 import type { AttendanceSummary, BaseEvent, EventSummary, EventWithAttendanceSummary } from "@dotkomonline/types"
@@ -60,6 +61,10 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
         <AuthNotice />
+        <FadderApplicationsNotice
+          start={/* April 10, 00:00:00 */ TZDate.tz("Europe/Oslo", 2026, 3, 10)}
+          end={/* April 17, 23:59:59 */ TZDate.tz("Europe/Oslo", 2026, 3, 17, 23, 59, 59)}
+        />
         <OnlineHero />
       </div>
 
