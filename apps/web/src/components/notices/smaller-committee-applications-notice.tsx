@@ -32,11 +32,11 @@ export const SmallerCommitteeApplicationsNotice = (interval: Interval) => {
           >
             <div className="flex flex-row gap-2 items-center">
               <div className="transform translate-y-[12.5%] shrink-0">
-                <div className="animate-bounce text-2xl">🤗</div>
+                <div className="animate-bounce text-3xl">🤗</div>
               </div>
 
               <div className="flex flex-col gap-0.5">
-                <Title className="text-base md:text-lg font-semibold">Søk Velkom leder/nestleder</Title>
+                <Title className="text-lg md:text-xl font-semibold">Søk Velkom leder/nestleder</Title>
                 <Text className="text-xs">
                   Velkomstkomiteen er ansvarlig for å arrangere fadderukene for våre nye studenter i både 1. og 4.
                   klasse
@@ -53,10 +53,10 @@ export const SmallerCommitteeApplicationsNotice = (interval: Interval) => {
           >
             <div className="flex flex-row gap-2 items-center">
               <div className="transform translate-y-[12.5%] shrink-0">
-                <div className="animate-bounce text-2xl">🌍</div>
+                <div className="animate-bounce text-3xl">🌍</div>
               </div>
               <div className="flex flex-col gap-0.5">
-                <Title className="text-base md:text-lg font-semibold">Søk Ekskom leder/nestleder</Title>
+                <Title className="text-lg md:text-xl font-semibold">Søk Ekskom leder/nestleder</Title>
                 <Text className="text-xs">
                   Ekskom er ansvarlig for å arrangere ekskursjon for 3. klasse—en spennende mulighet til å utforske nye
                   steder med klassen din.
