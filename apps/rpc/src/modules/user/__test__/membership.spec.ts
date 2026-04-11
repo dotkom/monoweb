@@ -1,4 +1,4 @@
-import { getMembershipService, MASTER_SEMESTER_OFFSET } from "./membership-service"
+import { getMembershipService, MASTER_SEMESTER_OFFSET } from "../membership-service"
 import { describe, expect, it, beforeEach, afterEach, vitest as vi } from "vitest"
 
 describe("Membership integration tests", () => {
