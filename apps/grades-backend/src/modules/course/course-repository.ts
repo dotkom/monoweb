@@ -1,7 +1,7 @@
-import type { DBHandle } from "@dotkomonline/grades-db"
+import { Prisma, type DBHandle } from "@dotkomonline/grades-db"
 import { parseOrReport } from "../../invariant"
 import { type Course, type CourseFilterQuery, type CourseId, CourseSchema, type CourseWrite } from "./course-types"
-import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import type { Pageable } from "@dotkomonline/utils"
 
 export interface CourseRepository {
   findMany(handle: DBHandle, query: CourseFilterQuery, page: Pageable): Promise<Course[]>
@@ -13,60 +13,81 @@ export interface CourseRepository {
 export function getCourseRepository(): CourseRepository {
   return {
     async findMany(handle, query, page) {
-      const sortFieldMap = {
-        AVERAGE_GRADE: "averageGrade",
-        PASS_RATE: "passRate",
-        STUDENT_COUNT: "studentCount",
-      } as const
-
       const sortOrder = query.orderBy ?? "desc"
       const sortBy = query.sortBy ?? []
-      const orderBy =
-        sortBy.length > 0
-          ? sortBy.map((sortKey) => ({
-              [sortFieldMap[sortKey]]: sortOrder,
-            }))
-          : []
+      const sortColumnMap = {
+        AVERAGE_GRADE: "average_grade",
+        PASS_RATE: "pass_rate",
+        STUDENT_COUNT: "student_count",
+      } as const
 
-      const courses = await handle.course.findMany({
-        ...pageQuery(page),
-        orderBy,
-        where: {
-          AND: [
-            {
-              code:
-                query.byCode !== null
-                  ? {
-                      contains: query.byCode,
-                      mode: "insensitive",
-                    }
-                  : undefined,
-            },
-            {
-              OR: [
-                {
-                  norwegianName:
-                    query.byName !== null
-                      ? {
-                          contains: query.byName,
-                          mode: "insensitive",
-                        }
-                      : undefined,
-                },
-                {
-                  englishName:
-                    query.byName !== null
-                      ? {
-                          contains: query.byName,
-                          mode: "insensitive",
-                        }
-                      : undefined,
-                },
-              ],
-            },
-          ],
-        },
-      })
+      const sortDirection = sortOrder === "asc" ? "ASC" : "DESC"
+      const orderByClause =
+        sortBy.length > 0
+          ? sortBy.map((sortKey) => `"${sortColumnMap[sortKey]}" ${sortDirection}`).join(", ")
+          : '"id" DESC'
+
+      const bySearch = query.bySearch
+      const searchContains = bySearch ? `%${bySearch}%` : undefined
+      const searchStartsWith = bySearch ? `${bySearch}%` : undefined
+
+      const searchWhereSql = searchContains
+        ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "norwegian_name" ILIKE ${searchContains} OR "english_name" ILIKE ${searchContains})`
+        : Prisma.empty
+      const cursorWhereSql = page.cursor ? Prisma.sql`AND "id" < ${page.cursor}` : Prisma.empty
+
+      const searchRankingSql = bySearch
+        ? Prisma.sql`
+          WHEN "code" = ${bySearch} THEN 0
+          WHEN "code" ILIKE ${searchStartsWith} THEN 1
+          WHEN "norwegian_name" = ${bySearch} OR "english_name" = ${bySearch} THEN 2
+          WHEN "norwegian_name" ILIKE ${searchStartsWith} OR "english_name" ILIKE ${searchStartsWith} THEN 3
+          WHEN "code" ILIKE ${searchContains} THEN 4
+          WHEN "norwegian_name" ILIKE ${searchContains} OR "english_name" ILIKE ${searchContains} THEN 5
+        `
+        : Prisma.empty
+
+      // Should always be a higher number than the least prioritized search ranking
+      const defaultSearchRank = bySearch ? 6 : 0
+
+      const courses = await handle.$queryRaw<Course[]>`
+        SELECT
+          "id",
+          "code",
+          "norwegian_name" AS "norwegianName",
+          "english_name" AS "englishName",
+          "credits",
+          "study_level" AS "studyLevel",
+          "grade_type" AS "gradeType",
+          "first_year_taught" AS "firstYearTaught",
+          "last_year_taught" AS "lastYearTaught",
+          "content",
+          "teaching_methods" AS "teachingMethods",
+          "learning_outcomes" AS "learningOutcomes",
+          "exam_type" AS "examType",
+          "student_count" AS "studentCount",
+          "average_grade" AS "averageGrade",
+          "pass_rate" AS "passRate",
+          "created_at" AS "createdAt",
+          "updated_at" AS "updatedAt",
+          "taught_semesters" AS "taughtSemesters",
+          "teaching_languages" AS "teachingLanguages",
+          "campuses",
+          "faculty_id" AS "facultyId",
+          "department_id" AS "departmentId"
+        FROM "course"
+        WHERE 1 = 1
+        ${searchWhereSql}
+        ${cursorWhereSql}
+        ORDER BY
+          CASE
+            WHEN "last_year_taught" IS NOT NULL THEN 1000
+            ${searchRankingSql}
+            ELSE ${defaultSearchRank}
+          END,
+          ${Prisma.raw(orderByClause)}
+        LIMIT ${page.take}
+      `
 
       return parseOrReport(CourseSchema.array(), courses)
     },
