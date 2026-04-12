@@ -1,19 +1,17 @@
 import { type VariantProps, cva } from "cva"
-import type { ComponentPropsWithoutRef, ElementType, PropsWithChildren } from "react"
+import type { HTMLAttributes, PropsWithChildren } from "react"
 import { cn } from "../../utils"
 
-export type TitleProps<E extends ElementType = "h2"> = VariantProps<typeof title> &
-  PropsWithChildren & {
-    /**
-     * The HTML element or React component to render this element as.
-     *
-     * Defaults to HTML <h2> element.
-     */
-    element?: E
-    className?: string
-  } & ComponentPropsWithoutRef<E>
+type TitleElement = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p"
 
-export function Title<E extends ElementType = "h2">({ children, element, className, size, ...props }: TitleProps<E>) {
+export type TitleProps = VariantProps<typeof title> &
+  PropsWithChildren &
+  HTMLAttributes<HTMLHeadingElement> & {
+    element?: TitleElement
+    className?: string
+  }
+
+export function Title({ children, element, className, size, ...props }: TitleProps) {
   const Component = element ?? "h2"
   const classes = cn(title({ size }), className)
   return (

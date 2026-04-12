@@ -11,7 +11,15 @@ export type TextInputProps = ComponentPropsWithRef<"input"> & {
   className?: string
 }
 
-export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, className, ...props }) => {
+export const TextInput: FC<TextInputProps> = ({
+  label,
+  description,
+  error,
+  ref,
+  className,
+  size: _htmlSize,
+  ...props
+}) => {
   const hasError = Boolean(error)
   const hasTextError = typeof error === "string"
 

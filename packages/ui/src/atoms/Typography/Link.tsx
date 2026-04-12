@@ -1,34 +1,20 @@
 import { type VariantProps, cva } from "cva"
 import NextLink from "next/link"
-import type { ComponentPropsWithoutRef, ElementType, PropsWithChildren } from "react"
+import type { ComponentPropsWithoutRef, PropsWithChildren } from "react"
 import { cn } from "../../utils"
 
-export type LinkProps<E extends ElementType = typeof NextLink> = VariantProps<typeof link> &
-  PropsWithChildren & {
-    /**
-     * The HTML element or React component to render this element as.
-     *
-     * Defaults to Next.js Link component.
-     */
-    element?: E
+export type LinkProps = VariantProps<typeof link> &
+  PropsWithChildren &
+  ComponentPropsWithoutRef<typeof NextLink> & {
     className?: string
-    href: ComponentPropsWithoutRef<E>["href"]
-  } & ComponentPropsWithoutRef<E>
+  }
 
-export function Link<E extends ElementType = typeof NextLink>({
-  children,
-  element,
-  className,
-  href,
-  size,
-  ...props
-}: LinkProps<E>) {
-  const Component = element ?? NextLink
+export function Link({ children, className, href, size, ...props }: LinkProps) {
   const classes = cn(link({ size }), className)
   return (
-    <Component className={classes} {...props} href={href}>
+    <NextLink className={classes} {...props} href={href}>
       {children}
-    </Component>
+    </NextLink>
   )
 }
 
