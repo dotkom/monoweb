@@ -106,7 +106,15 @@ export interface UserService {
    *
    * @see UserService#mergeUsers for merging the database users after linking the Auth0 identities.
    */
-  linkAuth0Idenitities(primaryUserId: UserId, secondaryUserId: UserId): Promise<void>
+  linkAuth0Identities(primaryUserId: UserId, secondaryUserId: UserId): Promise<void>
+  /**
+   * Like {@link linkAuth0Identities}, but uses the secondary user's ID token (Auth0's `link_with` parameter) instead
+   * of looking up the secondary user in Auth0. Auth0 validates the ID token itself, so this is safer for self-service
+   * account linking where the user has just authenticated with the secondary account.
+   *
+   * @see UserService#mergeUsers for merging the database users after linking the Auth0 identities.
+   */
+  linkAuth0IdentitiesWithToken(primaryUserId: UserId, secondaryIdToken: string): Promise<void>
   /**
    * Merges two users into the survivor and consumes the consumer. The survivor's field values will take precedence over
    * the consumed user's values, except for memberships and group memberships, where we will attempt to keep all unique
@@ -115,7 +123,7 @@ export interface UserService {
    *
    * IMPORTANT: The consumed user will be deleted after the merge.
    *
-   * @see UserService#linkAuth0Idenitities for linking the Auth0 identities before merging the database users.
+   * @see UserService#linkAuth0Identities for linking the Auth0 identities before merging the database users.
    */
   mergeUsers(handle: DBHandle, survivorUserId: UserId, consumedUserId: UserId): Promise<User>
 
@@ -136,6 +144,7 @@ export function getUserService(
   feideGroupsRepository: FeideGroupsRepository,
   groupRepository: GroupRepository,
   managementClient: ManagementClient,
+  webManagementClient: ManagementClient,
   membershipService: MembershipService,
   client: S3Client,
   bucket: string
@@ -522,14 +531,13 @@ export function getUserService(
       return identity?.access_token ?? null
     },
 
-    async linkAuth0Idenitities(primaryUserId, secondaryUserId) {
+    async linkAuth0Identities(primaryUserId, secondaryUserId) {
       logger.info(
         "Linking authentication identities for survivor User(ID=%s) and consumed User(ID=%s)",
         primaryUserId,
         secondaryUserId
       )
 
-      const primaryUser = await managementClient.users.get({ id: primaryUserId })
       const secondaryUser = await managementClient.users.get({ id: secondaryUserId })
 
       const secondaryIdentity =
@@ -540,7 +548,7 @@ export function getUserService(
 
       await managementClient.users.link(
         {
-          id: primaryUser.data.user_id,
+          id: primaryUserId,
         },
         {
           provider: secondaryIdentityProvider, // usually "oauth2"
@@ -549,7 +557,21 @@ export function getUserService(
         }
       )
 
-      logger.info("Successfully linked identities for survivor User(ID=%s) and consumed User(ID=%s)")
+      logger.info(
+        "Successfully linked identities for survivor User(ID=%s) and consumed User(ID=%s)",
+        primaryUserId,
+        secondaryUserId
+      )
+    },
+
+    async linkAuth0IdentitiesWithToken(primaryUserId, secondaryIdToken) {
+      logger.info("Linking authentication identities for primary User(ID=%s) using secondary ID token", primaryUserId)
+
+      // NOTE: We use the web management client here because the users.link endpoint requires the Management Client's
+      // client_id to match the aud claim in the ID token, so we use the web client credentials.
+      await webManagementClient.users.link({ id: primaryUserId }, { link_with: secondaryIdToken })
+
+      logger.info("Successfully linked identities for primary User(ID=%s) using secondary ID token", primaryUserId)
     },
 
     async mergeUsers(handle, survivorUserId, consumedUserId) {

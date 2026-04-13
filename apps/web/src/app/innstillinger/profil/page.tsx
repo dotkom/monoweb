@@ -4,7 +4,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import { Button, Title } from "@dotkomonline/ui"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createAbsoluteLinkIdentityAuthorizeUrl } from "@dotkomonline/utils"
 import { IconArrowLeft } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
@@ -73,6 +73,25 @@ const EditProfilePage = () => {
           Til profil
         </Button>
       </div>
+
+      <Button
+        element="a"
+        href={createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
+          connection: "Username-Password-Authentication",
+          redirectAfter: `${fullPathname}/link`,
+        })}
+      >
+        Link brukernavnpassord
+      </Button>
+      <Button
+        element="a"
+        href={createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
+          connection: "FEIDE",
+          redirectAfter: `${fullPathname}/link`,
+        })}
+      >
+        Link feide
+      </Button>
 
       <ProfileForm
         user={user}

@@ -6,7 +6,7 @@ import { Auth0Profile, defaultSessionLengthSeconds } from "./authentication"
 export type Session = z.infer<typeof Session>
 export const Session = Auth0Profile.extend({
   accessToken: z.string(),
-  refreshToken: z.string(),
+  refreshToken: z.string().optional(),
 })
 
 export async function createSession(value: Session, secret: string): Promise<string> {

@@ -12,6 +12,7 @@ import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
+import { InvalidArgumentError } from "../../error"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
@@ -228,6 +229,49 @@ const isAdminProcedure = procedure.query(async ({ ctx }) => {
   return ctx.authorizationService.isAdministrator(principal.affiliations)
 })
 
+export type ConfirmIdentityLinkInput = inferProcedureInput<typeof confirmIdentityLinkProcedure>
+export type ConfirmIdentityLinkOutput = inferProcedureOutput<typeof confirmIdentityLinkProcedure>
+const confirmIdentityLinkProcedure = procedure
+  .input(
+    z.object({
+      secondaryIdToken: z.string().min(1),
+      secondaryUserId: UserSchema.shape.id,
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const primaryUserId = ctx.principal.subject
+
+    if (primaryUserId === input.secondaryUserId) {
+      throw new InvalidArgumentError("Cannot link a user to themselves")
+    }
+
+    await ctx.userService.linkAuth0IdentitiesWithToken(primaryUserId, input.secondaryIdToken)
+
+    return ctx.userService.mergeUsers(ctx.handle, primaryUserId, input.secondaryUserId)
+  })
+
+export type MergeUsersInput = inferProcedureInput<typeof mergeUsersProcedure>
+export type MergeUsersOutput = inferProcedureOutput<typeof mergeUsersProcedure>
+const mergeUsersProcedure = procedure
+  .input(
+    z.object({
+      survivorUserId: UserSchema.shape.id,
+      consumedUserId: UserSchema.shape.id,
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    await ctx.userService.linkAuth0Identities(input.survivorUserId, input.consumedUserId)
+
+    return ctx.userService.mergeUsers(ctx.handle, input.survivorUserId, input.consumedUserId)
+  })
+
 export const userRouter = t.router({
   all: allUsersProcedure,
   get: getUserProcedure,
@@ -243,4 +287,6 @@ export const userRouter = t.router({
   update: updateUserProcedure,
   isStaff: isStaffProcedure,
   isAdmin: isAdminProcedure,
+  confirmIdentityLink: confirmIdentityLinkProcedure,
+  mergeUsers: mergeUsersProcedure,
 })
