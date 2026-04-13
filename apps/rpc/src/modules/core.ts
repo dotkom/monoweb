@@ -105,17 +105,25 @@ export function createThirdPartyClients(configuration: Configuration) {
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
   const sesClient = new SESClient({ region: configuration.AWS_REGION })
   const sqsClient = new SQSClient({ region: configuration.AWS_REGION })
+
   const auth0Client = new ManagementClient({
     domain: configuration.AUTH0_MGMT_TENANT,
     clientId: configuration.AUTH0_CLIENT_ID,
     clientSecret: configuration.AUTH0_CLIENT_SECRET,
   })
+
+  const webAuth0Client = new ManagementClient({
+    domain: configuration.AUTH0_MGMT_TENANT,
+    clientId: configuration.AUTH0_WEB_CLIENT_ID,
+    clientSecret: configuration.AUTH0_WEB_CLIENT_SECRET,
+  })
+
   const stripe = new Stripe(configuration.STRIPE_SECRET_KEY, {
     apiVersion: "2025-08-27.basil",
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
   const workspaceDirectory = isGoogleWorkspaceFeatureEnabled(configuration) ? getDirectory(configuration) : null
-  return { s3Client, sesClient, sqsClient, auth0Client, stripe, prisma, workspaceDirectory }
+  return { s3Client, sesClient, sqsClient, auth0Client, webAuth0Client, stripe, prisma, workspaceDirectory }
 }
 
 /**
@@ -165,6 +173,7 @@ export async function createServiceLayer(
     feideGroupsRepository,
     groupRepository,
     clients.auth0Client,
+    clients.webAuth0Client,
     membershipService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET

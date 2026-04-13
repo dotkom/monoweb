@@ -97,16 +97,20 @@ export const createCloudFrontUrl = (cloudFrontUrl: string, key: string): string 
 
 /**
  * Creates an link identity authorize URL with the given search parameters. This will not replace the user's session,
- * and will instead return a JWT which verifies the user's identity.
+ * and will instead put a JWT in a HTTP-only cookie that can be used to verify the user's identity.
  *
  * @example
  * const fullPathname = useFullPathname()
- * const url = createLinkIdentityAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })
+ * const url = createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
+ *   connection: "FEIDE", // or "Username-Password-Authentication"
+ *   redirectAfter: `${fullPathname}/link`,
+ * })
  */
-export const createLinkIdentityAuthorizeUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
-  const searchParams = new URLSearchParams(...parameters).toString()
-  if (!searchParams) {
-    return LINK_IDENTITY_AUTHORIZE_ENDPOINT
-  }
-  return `${LINK_IDENTITY_AUTHORIZE_ENDPOINT}?${searchParams}`
+export const createAbsoluteLinkIdentityAuthorizeUrl = (
+  origin: string,
+  ...parameters: ConstructorParameters<typeof URLSearchParams>
+) => {
+  const url = new URL(LINK_IDENTITY_AUTHORIZE_ENDPOINT, origin)
+  url.search = new URLSearchParams(...parameters).toString()
+  return url.toString()
 }
