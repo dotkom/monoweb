@@ -97,6 +97,9 @@ model Course {
   departmentId String?     @map("department_id")
   department   Department? @relation(fields: [departmentId], references: [id])
 
+  /// Metadata used to speed up sync by limiting how far back the scraper has to check for changes
+  oldestYearCheckedForNtnuData Int? @map("oldest_year_checked_for_ntnu_data")
+
   @@index([norwegianName])
   @@index([englishName])
   @@map("course")
