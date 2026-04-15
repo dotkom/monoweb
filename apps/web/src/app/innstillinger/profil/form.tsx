@@ -1,4 +1,5 @@
 "use client"
+
 import { useUserFileUploadMutation } from "@/app/innstillinger/mutations"
 import { useTRPC } from "@/utils/trpc/client"
 import { USER_IMAGE_MAX_SIZE_KIB, type User, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
@@ -26,7 +27,7 @@ import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 
-type FormUserWrite = Omit<UserWrite, "workspaceUserId" | "name">
+type FormUserWrite = Omit<UserWrite, "workspaceUserId" | "name" | "email">
 
 interface FormProps {
   user: User
@@ -40,7 +41,6 @@ interface FormProps {
 export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, resetSaveState }: FormProps) {
   const defaultValues: FormUserWrite = {
     profileSlug: user.profileSlug,
-    email: user.email ?? null,
     imageUrl: user.imageUrl ?? null,
     biography: user.biography ?? null,
     phone: user.phone ?? null,
@@ -61,7 +61,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     defaultValues,
     mode: "onTouched",
     reValidateMode: "onBlur",
-    resolver: zodResolver(UserWriteSchema.omit({ workspaceUserId: true, name: true })),
+    resolver: zodResolver(UserWriteSchema.omit({ workspaceUserId: true, name: true, email: true })),
   })
 
   const profileSlug = useWatch({ control, name: "profileSlug" })
@@ -165,7 +165,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
         <div className="w-full flex flex-col gap-1">
           <TextInput
             label="Fullt navn"
-            description="Dersom dette navnet er feil, kontakt hovedstyret@online.ntnu.no."
+            description="Dersom navnet ditt er feil, kontakt hovedstyret@online.ntnu.no."
             value={user.name || "<Tomt navn>"}
             disabled
           />
@@ -175,7 +175,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
           <TextInput
             label="E-post"
             description="Det blir snart mulig å endre e-posten din."
-            placeholder="ola.nordmann@epost.no"
+            value={user.email || "<Tom e-post>"}
             disabled
           />
         </div>
