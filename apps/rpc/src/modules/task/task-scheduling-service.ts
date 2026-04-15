@@ -1,7 +1,15 @@
 import type { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { AttendanceId, AttendeeId, FeedbackFormId, RecurringTaskId, Task, TaskId } from "@dotkomonline/types"
+import type {
+  AttendanceId,
+  AttendeeId,
+  EventId,
+  FeedbackFormId,
+  RecurringTaskId,
+  Task,
+  TaskId,
+} from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
@@ -28,6 +36,8 @@ export interface TaskSchedulingService {
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
+  findEventRegistrationNotificationTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findEventReminderNotificationTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
 }
 
 export function getLocalTaskSchedulingService(
@@ -78,6 +88,14 @@ export function getLocalTaskSchedulingService(
 
     async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
       return await taskRepository.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
+    },
+
+    async findEventRegistrationNotificationTask(handle, attendanceId) {
+      return await taskRepository.findEventRegistrationNotificationTask(handle, attendanceId)
+    },
+
+    async findEventReminderNotificationTask(handle, eventId) {
+      return await taskRepository.findEventReminderNotificationTask(handle, eventId)
     },
   }
 }

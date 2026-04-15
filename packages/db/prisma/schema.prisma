@@ -581,13 +581,16 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  RESERVE_ATTENDEE          @map("RESERVE_ATTENDEE")
-  CHARGE_ATTENDEE           @map("CHARGE_ATTENDEE")
-  MERGE_ATTENDANCE_POOLS    @map("MERGE_ATTENDANCE_POOLS")
-  VERIFY_PAYMENT            @map("VERIFY_PAYMENT")
-  VERIFY_FEEDBACK_ANSWERED  @map("VERIFY_FEEDBACK_ANSWERED")
-  SEND_FEEDBACK_FORM_EMAILS @map("SEND_FEEDBACK_FORM_EMAILS")
-  VERIFY_ATTENDEE_ATTENDED  @map("VERIFY_ATTENDEE_ATTENDED")
+  RESERVE_ATTENDEE                        @map("RESERVE_ATTENDEE")
+  CHARGE_ATTENDEE                         @map("CHARGE_ATTENDEE")
+  MERGE_ATTENDANCE_POOLS                  @map("MERGE_ATTENDANCE_POOLS")
+  VERIFY_PAYMENT                          @map("VERIFY_PAYMENT")
+  VERIFY_FEEDBACK_ANSWERED                @map("VERIFY_FEEDBACK_ANSWERED")
+  SEND_FEEDBACK_FORM_EMAILS               @map("SEND_FEEDBACK_FORM_EMAILS")
+  VERIFY_ATTENDEE_ATTENDED                @map("VERIFY_ATTENDEE_ATTENDED")
+  SEND_NOTIFICATION_EVENT_REGISTRATION    @map("SEND_NOTIFICATION_EVENT_REGISTRATION")
+  SEND_NOTIFICATION_EVENT_REMINDER        @map("SEND_NOTIFICATION_EVENT_REMINDER")
+  SEND_NOTIFICATION_JOB_LISTING_REMINDER  @map("SEND_NOTIFICATION_JOB_LISTING_REMINDER")
 
   @@map("task_type")
 }
@@ -834,8 +837,8 @@ model Notification {
   payloadType      NotificationPayloadType @map("payload_type")
 
   /// The group that created the notification or the system created on behalf of.
-  actorGroupId    String  @map("actor_group_id")
-  actorGroup      Group   @relation(fields: [actorGroupId], references: [slug])
+  actorGroupId    String? @map("actor_group_id")
+  actorGroup      Group?  @relation(fields: [actorGroupId], references: [slug])
   /// The specific user that created the notification. This is meant for logging purposes. Nullable because the system
   /// can create notifications without a specific user to link it to, for example with recurring tasks.
   createdById     String? @map("created_by_id")

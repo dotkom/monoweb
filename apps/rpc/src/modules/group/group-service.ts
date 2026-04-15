@@ -24,6 +24,7 @@ import invariant from "tiny-invariant"
 import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
+import type { NotificationService } from "../notification/notification-service"
 
 export interface GroupService {
   create(handle: DBHandle, data: GroupWrite): Promise<Group>
@@ -82,6 +83,7 @@ export interface GroupService {
 export function getGroupService(
   groupRepository: GroupRepository,
   userService: UserService,
+  notificationService: NotificationService,
   s3Client: S3Client,
   s3BucketName: string
 ): GroupService {
@@ -107,7 +109,23 @@ export function getGroupService(
       await groupRepository.create(handle, slug, data)
       await groupRepository.createGroupRoles(handle, getDefaultGroupMemberRoles(slug))
 
-      return await this.getBySlug(handle, slug)
+      const createdGroup = await this.getBySlug(handle, slug)
+
+      if (createdGroup.type === "INTEREST_GROUP") {
+        const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_INTEREST_GROUP")
+        await notificationService.create(
+          handle,
+          recipients,
+          "NEW_INTEREST_GROUP",
+          `Ny interessegruppe: ${createdGroup.name}`,
+          `En ny interessegruppe "${createdGroup.name}" har blitt opprettet.`,
+          createdGroup.slug,
+          "GROUP",
+          createdGroup.slug
+        )
+      }
+
+      return createdGroup
     },
 
     async update(handle, groupSlug, data) {
