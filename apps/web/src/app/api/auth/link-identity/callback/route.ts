@@ -52,5 +52,5 @@ export async function GET(request: Request) {
   cookieHandle.set(`${cookiePrefix}monoweb-pending-link-user-id`, secondaryUserId, pendingCookieOptions)
   cookieHandle.set(`${cookiePrefix}monoweb-pending-link-id-token`, tokenSet.idToken, pendingCookieOptions)
 
-  return NextResponse.redirect(`${env.NEXT_PUBLIC_ORIGIN}/innstillinger/profil/link`)
+  return NextResponse.redirect(`${env.NEXT_PUBLIC_ORIGIN}/innstillinger/bruker/link`)
 }

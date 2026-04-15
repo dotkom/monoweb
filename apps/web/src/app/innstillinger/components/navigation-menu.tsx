@@ -6,7 +6,7 @@ import { SettingsMenuItem } from "./settings-menu-item"
 
 export const settingsNavigationItems = [
   {
-    slug: "/innstillinger/min-bruker",
+    slug: "/innstillinger/bruker",
     icon: IconUser,
     title: "Min bruker",
   },
