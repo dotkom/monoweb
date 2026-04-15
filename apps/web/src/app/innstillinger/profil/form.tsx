@@ -27,7 +27,7 @@ import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 
-type FormUserWrite = Omit<UserWrite, "workspaceUserId" | "name" | "email">
+export type FormUserWrite = Omit<UserWrite, "workspaceUserId" | "name" | "email">
 
 interface FormProps {
   user: User

@@ -3,14 +3,13 @@
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { UserWrite } from "@dotkomonline/types"
 import { Button, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconArrowLeft } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { ProfileForm } from "./form"
+import { type FormUserWrite, ProfileForm } from "./form"
 import SkeletonProfileForm from "./loading"
 
 const EditProfilePage = () => {
@@ -54,7 +53,7 @@ const EditProfilePage = () => {
     )
   }
 
-  const onSubmit = (data: Omit<UserWrite, "name" | "workspaceUserId">) => {
+  const onSubmit = (data: FormUserWrite) => {
     userEdit.mutate({ id: user.id, input: data })
   }
 
