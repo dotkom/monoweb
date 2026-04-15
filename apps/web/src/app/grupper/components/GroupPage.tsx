@@ -180,7 +180,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
             {(!hasContactInfo || group.showLeaderAsContact) &&
               (leader ? (
                 <Link
-                  href={`/profil/${leader.profileSlug}`}
+                  href={`/profil/${leader.username}`}
                   className={cn(
                     "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
                     "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
@@ -264,7 +264,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   return (
     <Link
       key={member.id}
-      href={`/profil/${member.profileSlug}`}
+      href={`/profil/${member.username}`}
       className={cn(
         "flex flex-row items-center gap-3 p-2 rounded-lg transition-colors",
         !isVerified && !isUser && "bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700",

@@ -46,22 +46,22 @@ const getUserProcedure = procedure
     return ctx.userService.getById(ctx.handle, input)
   })
 
-export type GetUserByProfileSlugInput = inferProcedureInput<typeof getUserByProfileSlugProcedure>
-export type GetUserByProfileSlugOutput = inferProcedureOutput<typeof getUserByProfileSlugProcedure>
-const getUserByProfileSlugProcedure = procedure
-  .input(UserSchema.shape.profileSlug)
+export type GetUserByUsernameInput = inferProcedureInput<typeof getUserByUsernameProcedure>
+export type GetUserByUsernameOutput = inferProcedureOutput<typeof getUserByUsernameProcedure>
+const getUserByUsernameProcedure = procedure
+  .input(UserSchema.shape.username)
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.userService.getByProfileSlug(ctx.handle, input)
+    return ctx.userService.getByUsername(ctx.handle, input)
   })
 
-export type FindUserByProfileSlugInput = inferProcedureInput<typeof findUserByProfileSlugProcedure>
-export type FindUserByProfileSlugOutput = inferProcedureOutput<typeof findUserByProfileSlugProcedure>
-const findUserByProfileSlugProcedure = procedure
-  .input(UserSchema.shape.profileSlug)
+export type FindUserByUsernameInput = inferProcedureInput<typeof findUserByUsernameProcedure>
+export type FindUserByUsernameOutput = inferProcedureOutput<typeof findUserByUsernameProcedure>
+const findUserByUsernameProcedure = procedure
+  .input(UserSchema.shape.username)
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.userService.findByProfileSlug(ctx.handle, input)
+    return ctx.userService.findByUsername(ctx.handle, input)
   })
 
 export type CreateUserFileUploadInput = inferProcedureInput<typeof createUserFileUploadProcedure>
@@ -231,8 +231,8 @@ const isAdminProcedure = procedure.query(async ({ ctx }) => {
 export const userRouter = t.router({
   all: allUsersProcedure,
   get: getUserProcedure,
-  getByProfileSlug: getUserByProfileSlugProcedure,
-  findByProfileSlug: findUserByProfileSlugProcedure,
+  getByUsername: getUserByUsernameProcedure,
+  findByUsername: findUserByUsernameProcedure,
   createFileUpload: createUserFileUploadProcedure,
   register: registerUserProcedure,
   createMembership: createUserMembershipProcedure,

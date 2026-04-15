@@ -188,8 +188,8 @@ const MembershipDisplay = ({ activeMembership }: { activeMembership: Membership 
 export function ProfilePage() {
   const now = useMemo(() => getCurrentUTC(), [])
 
-  const { profileSlug: rawProfileSlug } = useParams<{ profileSlug: string }>()
-  const profileSlug = decodeURIComponent(rawProfileSlug)
+  const { username: rawUsername } = useParams<{ username: string }>()
+  const username = decodeURIComponent(rawUsername)
   const returnedFromFeide = Boolean(useSearchParams().get("returnedFromFeide"))
 
   const trpc = useTRPC()
@@ -197,7 +197,7 @@ export function ProfilePage() {
   const fullPathname = useFullPathname()
 
   const [userResult] = useQueries({
-    queries: [trpc.user.findByProfileSlug.queryOptions(profileSlug)],
+    queries: [trpc.user.findByUsername.queryOptions(username)],
   })
 
   const { data: user, isLoading: userLoading } = userResult
@@ -362,7 +362,7 @@ export function ProfilePage() {
           <div className="flex flex-col gap-3">
             <Title>Din bruker</Title>
             <div className="grid grid-cols-[auto_1fr] items-start gap-3 overflow-x-scroll sm:overflow-hidden text-sm sm:text-base">
-              <UserProp label="Brukernavn" value={user.profileSlug} icon={IconUser} />
+              <UserProp label="Brukernavn" value={user.username} icon={IconUser} />
               <UserProp label="E-post" value={user.email} icon={IconMail} />
               <UserProp label="Kjønn" value={user.gender || "Ikke oppgitt"} icon={IconGenderBigender} />
               <UserProp label="Telefon" value={user.phone} icon={IconPhone} />

@@ -40,7 +40,7 @@ interface FormProps {
 
 export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, resetSaveState }: FormProps) {
   const defaultValues: FormUserWrite = {
-    profileSlug: user.profileSlug,
+    username: user.username,
     imageUrl: user.imageUrl ?? null,
     biography: user.biography ?? null,
     phone: user.phone ?? null,
@@ -64,16 +64,16 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     resolver: zodResolver(UserWriteSchema.omit({ workspaceUserId: true, name: true, email: true })),
   })
 
-  const profileSlug = useWatch({ control, name: "profileSlug" })
-  const [debouncedSlug] = useDebounce(profileSlug, 500)
+  const username = useWatch({ control, name: "username" })
+  const [debouncedSlug] = useDebounce(username, 500)
 
   const trpc = useTRPC()
 
-  const isProfileSlugChanged = Boolean(debouncedSlug && debouncedSlug !== user.profileSlug)
+  const isUsernameChanged = Boolean(debouncedSlug && debouncedSlug !== user.username)
 
   const { data: fetchedUser, isFetching: isUserFetching } = useQuery(
-    trpc.user.findByProfileSlug.queryOptions(debouncedSlug, {
-      enabled: isProfileSlugChanged,
+    trpc.user.findByUsername.queryOptions(debouncedSlug, {
+      enabled: isUsernameChanged,
     })
   )
 
@@ -127,18 +127,18 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
       <div className="flex flex-col gap-6">
         <div className="w-full flex flex-col gap-1">
           <TextInput
-            description={`Dette brukes i din profil-URL: https://online.ntnu.no/profil/${profileSlug || "..."}`}
+            description={`Dette brukes i din profil-URL: https://online.ntnu.no/profil/${username || "..."}`}
             label="Brukernavn"
             placeholder="supermann99"
             required
-            {...register("profileSlug")}
+            {...register("username")}
           />
-          {errors.profileSlug && (
+          {errors.username && (
             <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-              {errors.profileSlug?.message ?? "En feil oppstod"}
+              {errors.username?.message ?? "En feil oppstod"}
             </Text>
           )}
-          {!errors.profileSlug &&
+          {!errors.username &&
             ((isUserFetching && (
               <div className="flex items-center gap-1 text-slate-500 dark:text-stone-400">
                 <IconLoader className="animate-spin size-4" />
@@ -146,7 +146,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
               </div>
             )) || (
               <>
-                {fetchedUser !== null && isProfileSlugChanged && (
+                {fetchedUser !== null && isUsernameChanged && (
                   <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
                     <IconX className="size-4" />
                     <Text className="text-xs">Brukernavnet er opptatt</Text>

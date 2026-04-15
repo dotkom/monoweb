@@ -89,9 +89,9 @@ for (const user of users) {
     continue
   }
 
-  let slug = auth0User.profileSlug
+  let slug = auth0User.username
   if (user.username.length > 0) {
-    const match = await prisma.user.findUnique({ where: { profileSlug: user.username } })
+    const match = await prisma.user.findUnique({ where: { username: user.username } })
     if (!match) {
       slug = user.username
     }
@@ -109,7 +109,7 @@ for (const user of users) {
       dietaryRestrictions: auth0User.dietaryRestrictions ?? user.allergies,
       email: auth0User.email ?? user.email,
       gender: getGender(auth0User.gender ?? user.gender),
-      profileSlug: slug,
+      username: slug,
       name: name,
       phone: auth0User.phone ?? user.phone_number,
       ntnuUsername: user.ntnu_username,
@@ -144,15 +144,15 @@ async function getAuth0User(
       return null
     }
 
-    const requestedSlug = UserWriteSchema.shape.profileSlug
+    const requestedSlug = UserWriteSchema.shape.username
       .catch(crypto.randomUUID())
       .parse(response.data.app_metadata?.username)
 
-    const match = await handle.user.findUnique({ where: { profileSlug: requestedSlug } })
+    const match = await handle.user.findUnique({ where: { username: requestedSlug } })
     const slug = match !== null ? crypto.randomUUID() : requestedSlug
 
     const user: UserWrite = {
-      profileSlug: slug,
+      username: slug,
       name: response.data.name,
       email: response.data.email,
       imageUrl: response.data.picture,

@@ -23,7 +23,7 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
     defaultValues,
     label,
     fields: {
-      profileSlug: createTextInput({
+      username: createTextInput({
         label: "Brukernavn",
         placeholder: "Ola",
       }),

@@ -28,8 +28,8 @@ const EditProfilePage = () => {
     trpc.user.update.mutationOptions({
       onSuccess: async (data) => {
         await Promise.all([
-          queryClient.invalidateQueries(trpc.user.getByProfileSlug.queryOptions(data.profileSlug)),
-          queryClient.invalidateQueries(trpc.user.findByProfileSlug.queryOptions(data.profileSlug)),
+          queryClient.invalidateQueries(trpc.user.getByUsername.queryOptions(data.username)),
+          queryClient.invalidateQueries(trpc.user.findByUsername.queryOptions(data.username)),
           queryClient.invalidateQueries(trpc.user.getMe.queryOptions()),
           queryClient.invalidateQueries(trpc.user.findMe.queryOptions()),
         ])
@@ -66,7 +66,7 @@ const EditProfilePage = () => {
 
         <Button
           element={Link}
-          href={`/profil/${user.profileSlug}`}
+          href={`/profil/${user.username}`}
           icon={<IconArrowLeft className="size-5" />}
           className="w-fit"
         >
