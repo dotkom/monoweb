@@ -22,7 +22,7 @@ export default async function App() {
   return (
     <div>
       <div className="max-w-3xl space-y-4 p-3">
-        <Title order={3} className="text-base font-semibold text-black">
+        <Title size="md" className="text-base font-semibold text-black">
           Søk etter emner
         </Title>
         <div className="relative">
