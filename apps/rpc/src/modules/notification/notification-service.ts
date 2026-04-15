@@ -1,3 +1,4 @@
+import type EventEmitter from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import type { UserId } from "@dotkomonline/types"
 import type { NotificationRepository } from "./notification-repository"
@@ -57,7 +58,8 @@ export interface NotificationService {
 export function getNotificationService(
   notificationRepository: NotificationRepository,
   userRepository: UserRepository,
-  attendanceRepository: AttendanceRepository
+  attendanceRepository: AttendanceRepository,
+  eventEmitter: EventEmitter
 ): NotificationService {
   return {
     async findById(handle, notificationId) {
@@ -69,7 +71,7 @@ export function getNotificationService(
     },
 
     async create(handle, recipientIds, notificationType, title, shortDescription, actorGroupId, payloadType, payload) {
-      return await notificationRepository.createWithRecipients(handle, {
+      const notification = await notificationRepository.createWithRecipients(handle, {
         title,
         shortDescription,
         content: shortDescription ?? title,
@@ -80,6 +82,10 @@ export function getNotificationService(
         taskId: null,
         recipientIds,
       })
+      for (const userId of recipientIds) {
+        eventEmitter.emit("notification:new", { userId, notification })
+      }
+      return notification
     },
 
     async retrieveIntendedRecipientIds(handle, notificationType, eventId) {
