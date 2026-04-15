@@ -196,7 +196,7 @@ const GenericAttendeeListEntry = ({
 
   return (
     <Link
-      href={`/profil/${attendee.user.profileSlug}`}
+      href={`/profil/${attendee.user.username}`}
       className={cn(
         "flex flex-1 min-w-0 items-center gap-4 p-1.5 rounded-lg w-full overflow-x-hidden transition-colors",
         !isUser && "hover:bg-gray-100 dark:hover:bg-stone-700",
@@ -218,7 +218,7 @@ const GenericAttendeeListEntry = ({
 const VerifiedAttendeeListUser = ({ attendee }: AttendeeListEntryProps) => {
   return (
     <Link
-      href={`/profil/${attendee.user.profileSlug}`}
+      href={`/profil/${attendee.user.username}`}
       className={cn(
         "flex flex-1 min-w-0 items-center gap-4 p-1.5 rounded-lg w-full overflow-x-hidden transition-colors",
         "bg-gradient-to-r",

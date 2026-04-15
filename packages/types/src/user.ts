@@ -29,7 +29,7 @@ export const UserSchema = schemas.UserSchema.extend({
 })
 export type User = z.infer<typeof UserSchema>
 export type UserId = User["id"]
-export type UserProfileSlug = User["profileSlug"]
+export type Username = User["username"]
 
 export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
 export const PHONE_REGEX = /^[0-9-+\s]*$/
@@ -39,7 +39,7 @@ export const PROFILE_SLUG_REGEX = /^[a-z0-9-]+$/
 export const UserWriteSchema = UserSchema.pick({
   workspaceUserId: true,
 }).extend({
-  profileSlug: z
+  username: z
     .string()
     .min(2, "Brukernavnet må være minst 2 tegn lang")
     .max(64, "Brukernavnet kan ikke være lengre enn 64 tegn")
@@ -73,7 +73,7 @@ export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export const PublicUserSchema = UserSchema.pick({
   id: true,
-  profileSlug: true,
+  username: true,
   name: true,
   imageUrl: true,
   biography: true,

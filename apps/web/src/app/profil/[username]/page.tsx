@@ -1,11 +1,11 @@
-import { ProfilePage } from "@/app/profil/[profileSlug]/ProfilePage"
+import { ProfilePage } from "@/app/profil/[username]/ProfilePage"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import type { Metadata } from "next"
 
 interface ProfilePageProps {
   params: Promise<{
-    profileSlug: string
+    username: string
   }>
 }
 
@@ -16,9 +16,9 @@ export default function Page() {
 // TODO: we really should have privacy settings
 // Do not provide profile picture or any other user-generated content, like biography.
 export async function generateMetadata({ params }: Pick<ProfilePageProps, "params">): Promise<Metadata> {
-  const { profileSlug } = await params
+  const { username } = await params
 
-  const user = await server.user.findByProfileSlug.query(profileSlug)
+  const user = await server.user.findByUsername.query(username)
 
   if (!user) {
     return {
@@ -27,9 +27,9 @@ export async function generateMetadata({ params }: Pick<ProfilePageProps, "param
     }
   }
 
-  const name = user.name || user.profileSlug
+  const name = user.name || user.username
   const description = `Profilside for ${name} hos Linjeforeningen Online.`
-  const groupPageUrl = `${env.NEXT_PUBLIC_ORIGIN}/profil/${profileSlug}`
+  const groupPageUrl = `${env.NEXT_PUBLIC_ORIGIN}/profil/${username}`
 
   return {
     title: name,

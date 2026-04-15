@@ -12,7 +12,7 @@ import {
   type User,
   type UserFilterQuery,
   type UserId,
-  type UserProfileSlug,
+  type Username,
   type UserWrite,
   UserWriteSchema,
   findActiveMembership,
@@ -62,8 +62,8 @@ export interface UserService {
    * @throws {NotFoundError} if the user is not found.
    */
   getById(handle: DBHandle, id: UserId): Promise<User>
-  findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
-  getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User>
+  findByUsername(handle: DBHandle, username: Username): Promise<User | null>
+  getByUsername(handle: DBHandle, username: Username): Promise<User>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findUsers(handle: DBHandle, query: UserFilterQuery, page?: Pageable): Promise<User[]>
 
@@ -224,8 +224,8 @@ export function getUserService(
       return user
     },
 
-    async findByProfileSlug(handle, profileSlug) {
-      return await userRepository.findByProfileSlug(handle, profileSlug)
+    async findByUsername(handle, username) {
+      return await userRepository.findByUsername(handle, username)
     },
 
     async findByWorkspaceUserIds(handle, workspaceUserIds) {
@@ -311,17 +311,17 @@ export function getUserService(
 
       await userRepository.register(handle, userId)
 
-      const requestedSlug = UserWriteSchema.shape.profileSlug
+      const requestedSlug = UserWriteSchema.shape.username
         .catch(crypto.randomUUID())
         .parse(response.data.app_metadata?.username)
 
       // Profile slugs are unique, so if somebody has already the requested slug as their profile slug, we change the
       // requested slug to a new random UUID for now. The user can always update this later.
-      const match = await this.findByProfileSlug(handle, requestedSlug)
+      const match = await this.findByUsername(handle, requestedSlug)
       const slug = match !== null ? crypto.randomUUID() : requestedSlug
 
       const profile: UserWrite = {
-        profileSlug: slug,
+        username: slug,
         name: response.data.name,
         email: response.data.email,
         imageUrl: response.data.picture,
@@ -339,11 +339,11 @@ export function getUserService(
       return this.discoverMembership(handle, firstSignInUser.id)
     },
 
-    async getByProfileSlug(handle, profileSlug) {
-      const user = await this.findByProfileSlug(handle, profileSlug)
+    async getByUsername(handle, username) {
+      const user = await this.findByUsername(handle, username)
 
       if (!user) {
-        throw new NotFoundError(`User(ProfileSlug=${profileSlug}) not found`)
+        throw new NotFoundError(`User(Username=${username}) not found`)
       }
 
       return user
@@ -357,18 +357,18 @@ export function getUserService(
         throw new InvalidArgumentError(`Invalid payload for updating User(ID=${userId}): ${result.error.message}`)
       }
 
-      if (data.profileSlug) {
-        if (data.profileSlug !== slugify(data.profileSlug)) {
+      if (data.username) {
+        if (data.username !== slugify(data.username)) {
           throw new InvalidArgumentError(
-            `User(ID=${userId}) cannot have ProfileSlug=${data.profileSlug} because it is not a valid slug`
+            `User(ID=${userId}) cannot have Username=${data.username} because it is not a valid slug`
           )
         }
 
-        const existingUser = await this.findByProfileSlug(handle, data.profileSlug)
+        const existingUser = await this.findByUsername(handle, data.username)
 
         if (existingUser && existingUser.id !== userId) {
           throw new AlreadyExistsError(
-            `User(ID=${userId}) cannot have ProfileSlug=${data.profileSlug} because it is already taken`
+            `User(ID=${userId}) cannot have Username=${data.username} because it is already taken`
           )
         }
       }

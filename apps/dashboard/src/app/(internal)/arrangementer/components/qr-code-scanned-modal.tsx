@@ -181,7 +181,7 @@ const UserBox = ({ user, isMobile }: UserBoxProps) => {
         align="flex-start"
         wrap="nowrap"
       >
-        <Image src={user.imageUrl} alt={user.name ?? user.profileSlug} radius="md" w={100} h={100} />
+        <Image src={user.imageUrl} alt={user.name ?? user.username} radius="md" w={100} h={100} />
         <Stack gap={2}>
           <Title order={4}>{user.name}</Title>
           <Text size="sm">{membership ? `Medlemskap: ${membershipType}` : "Ingen aktivt medlemskap"}</Text>

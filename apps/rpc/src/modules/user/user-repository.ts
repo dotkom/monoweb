@@ -6,7 +6,7 @@ import {
   type User,
   type UserFilterQuery,
   type UserId,
-  type UserProfileSlug,
+  type Username,
   UserSchema,
   type UserWrite,
 } from "@dotkomonline/types"
@@ -26,7 +26,7 @@ export interface UserRepository {
   register(handle: DBHandle, userId: UserId): Promise<User>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   findById(handle: DBHandle, userId: UserId): Promise<User | null>
-  findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
+  findByUsername(handle: DBHandle, username: Username): Promise<User | null>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findMany(handle: DBHandle, query: UserFilterQuery, page: Pageable): Promise<User[]>
 
@@ -47,7 +47,7 @@ export function getUserRepository(): UserRepository {
         },
         create: {
           id: subject,
-          profileSlug: randomUUID(),
+          username: randomUUID(),
         },
         include: {
           memberships: true,
@@ -86,10 +86,10 @@ export function getUserRepository(): UserRepository {
       return parseOrReport(UserSchema.nullable(), user)
     },
 
-    async findByProfileSlug(handle, profileSlug) {
+    async findByUsername(handle, username) {
       const user = await handle.user.findUnique({
         where: {
-          profileSlug,
+          username,
         },
         include: {
           memberships: true,
