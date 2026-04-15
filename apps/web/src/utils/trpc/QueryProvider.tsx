@@ -1,7 +1,7 @@
 "use client"
 
 import { env } from "@/env"
-import { getAccessToken } from "@auth0/nextjs-auth0"
+import { getAccessToken, useUser } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
 import { createClearSessionUrl, isAccessTokenFetchFailure, toAbsoluteUrl } from "@dotkomonline/utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
@@ -69,11 +69,16 @@ export const useTRPCSSERegisterChangeConnectionState = () => {
 }
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
+  const { user } = useUser()
+  const userId = user?.sub
+
   const [trpcSSERegisterChangeConnectionState, setTRPCSSERegisterChangeConnectionState] =
     useState<TRPCSSEConnectionState>("connecting")
 
-  const trpcConfig: CreateTRPCClientOptions<AppRouter> = useMemo(
-    () => ({
+  const trpcConfig: CreateTRPCClientOptions<AppRouter> = useMemo(() => {
+    const hasAuthenticatedUser = typeof userId === "string" && userId !== ""
+
+    return {
       links: [
         loggerLink({
           enabled: (opts) => opts.direction === "down" && opts.result instanceof Error,
@@ -83,6 +88,23 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
           true: httpSubscriptionLink({
             transformer: superjson,
             url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
+            async connectionParams() {
+              if (!hasAuthenticatedUser) {
+                return {}
+              }
+
+              try {
+                const token = await getAccessToken()
+
+                if (typeof token === "string" && token !== "") {
+                  return { token }
+                }
+              } catch {
+                // not authenticated
+              }
+
+              return {}
+            },
           }),
           false: httpBatchLink({
             transformer: superjson,
@@ -119,9 +141,8 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
           }),
         }),
       ],
-    }),
-    []
-  )
+    }
+  }, [userId])
 
   const trpcClient = useMemo(() => createTRPCClient(trpcConfig), [trpcConfig])
 
