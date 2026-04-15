@@ -4,7 +4,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import { Button, Title } from "@dotkomonline/ui"
-import { createAuthorizeUrl, createAbsoluteLinkIdentityAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconArrowLeft } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
@@ -18,16 +18,15 @@ const EditProfilePage = () => {
   const session = useSession()
   const fullPathname = useFullPathname()
 
-  if (!session) {
-    redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
-  }
-
-  const { data: user, isLoading: userIsLoading } = useQuery(trpc.user.getMe.queryOptions())
+  const { data: user, isLoading: userIsLoading } = useQuery({
+    ...trpc.user.getMe.queryOptions(),
+    enabled: session !== null,
+  })
 
   const userEdit = useMutation(
     trpc.user.update.mutationOptions({
       onSuccess: async (data) => {
-        await Promise.all([
+        await Promise.allSettled([
           queryClient.invalidateQueries(trpc.user.getByUsername.queryOptions(data.username)),
           queryClient.invalidateQueries(trpc.user.findByUsername.queryOptions(data.username)),
           queryClient.invalidateQueries(trpc.user.getMe.queryOptions()),
@@ -36,6 +35,10 @@ const EditProfilePage = () => {
       },
     })
   )
+
+  if (!session) {
+    redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
+  }
 
   if (userIsLoading || user === undefined) {
     return (
@@ -73,25 +76,6 @@ const EditProfilePage = () => {
           Til profil
         </Button>
       </div>
-
-      <Button
-        element="a"
-        href={createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
-          connection: "Username-Password-Authentication",
-          redirectAfter: `${fullPathname}/link`,
-        })}
-      >
-        Link brukernavnpassord
-      </Button>
-      <Button
-        element="a"
-        href={createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
-          connection: "FEIDE",
-          redirectAfter: `${fullPathname}/link`,
-        })}
-      >
-        Link feide
-      </Button>
 
       <ProfileForm
         user={user}

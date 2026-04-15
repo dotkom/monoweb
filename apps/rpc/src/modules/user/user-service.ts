@@ -36,6 +36,7 @@ import {
 import type { UserRepository } from "./user-repository"
 import { mergeUsers } from "./merge-users"
 import type { GroupRepository } from "../group/group-repository"
+import type { Auth0Connection } from "./user"
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
@@ -82,6 +83,7 @@ export interface UserService {
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
 
+  getAuth0Connections(userId: UserId): Promise<Auth0Connection>
   /**
    * Find the Feide federated access token for a user, if it exists.
    *
@@ -520,15 +522,34 @@ export function getUserService(
       return userRepository.deleteMembership(handle, membershipId)
     },
 
-    async findFeideAccessTokenByUserId(userId) {
+    async getAuth0Connections(userId) {
       const response = await managementClient.users.get({ id: userId })
+
       if (response.status !== 200) {
         throw new IllegalStateError(
           `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
         )
       }
-      const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
-      return identity?.access_token ?? null
+
+      const identities = response.data.identities
+      const connections = new Set(identities.map((identity) => identity.connection))
+
+      return {
+        identities,
+        hasFeide: connections.has("FEIDE"),
+        hasUsernamePassword: connections.has("Username-Password-Authentication"),
+      }
+    },
+
+    async findFeideAccessTokenByUserId(userId) {
+      const connections = await this.getAuth0Connections(userId)
+      const feideIdentity = connections.identities.find((identity) => identity.connection === "FEIDE")
+
+      if (feideIdentity === undefined) {
+        return null
+      }
+
+      return feideIdentity.access_token
     },
 
     async linkAuth0Identities(primaryUserId, secondaryUserId) {
