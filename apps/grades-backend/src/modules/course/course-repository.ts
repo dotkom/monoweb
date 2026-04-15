@@ -67,7 +67,7 @@ export function getCourseRepository(): CourseRepository {
         ORDER BY
           -- To update ranking, copy-paste rank_search function from
           -- 20260415160933_add_course_ranking_function into a new migration
-          rank_search(code, norwegian_name, english_name, last_year_taught, ${bySearch ? null : bySearch}),
+          rank_search(code, norwegian_name, english_name, last_year_taught, ${bySearch ?? null}) ASC,
           ${Prisma.raw(orderByClause)}
         LIMIT ${page.take}
       `
