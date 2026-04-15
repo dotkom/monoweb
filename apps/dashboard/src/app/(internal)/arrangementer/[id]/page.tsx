@@ -16,6 +16,7 @@ import {
   IconSelector,
   IconTrash,
   IconUser,
+  IconBell,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useDeleteEventMutation } from "../mutations"
@@ -27,6 +28,7 @@ import { FeedbackPage } from "./feedback-page"
 import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
+import { NotificationsPage } from "./notification-page"
 
 const SIDEBAR_LINKS = [
   {
@@ -64,6 +66,12 @@ const SIDEBAR_LINKS = [
     label: "Betaling",
     slug: "betaling",
     component: PaymentPage,
+  },
+  {
+    icon: IconBell,
+    label: "Varslinger",
+    slug: "varslinger",
+    component: NotificationsPage,
   },
 ]
 
