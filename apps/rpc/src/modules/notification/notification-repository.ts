@@ -2,6 +2,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import {
   type Notification,
   type NotificationId,
+  type NotificationPayloadType,
   type NotificationWrite,
   type NotificationRecipientId,
   type NotificationRecipient,
@@ -37,6 +38,7 @@ export interface NotificationRepository {
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
+  findManyByPayload(handle: DBHandle, payloadType: NotificationPayloadType, payload: string, page: Pageable): Promise<Notification[]>
   findAllForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
@@ -147,6 +149,21 @@ export function getNotificationRepository(): NotificationRepository {
         },
       })
       return result.count
+    },
+
+    async findManyByPayload(handle, payloadType, payload, page) {
+      const results = await handle.notification.findMany({
+        ...pageQuery(page),
+        where: { payloadType, payload },
+        include: {
+          actorGroup: {
+            include: {
+              roles: true,
+            },
+          },
+        },
+      })
+      return parseOrReport(NotificationSchema.array(), results)
     },
 
     async findAllForUser(handle, userId, page) {
