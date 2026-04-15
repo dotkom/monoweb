@@ -272,6 +272,29 @@ const mergeUsersProcedure = procedure
     return ctx.userService.mergeUsers(ctx.handle, input.survivorUserId, input.consumedUserId)
   })
 
+export type GetAuth0ConnectionsInput = inferProcedureInput<typeof getAuth0ConnectionsProcedure>
+export type GetAuth0ConnectionsOutput = inferProcedureOutput<typeof getAuth0ConnectionsProcedure>
+const getAuth0ConnectionsProcedure = procedure
+  .input(z.object({ userId: UserSchema.shape.id }).optional())
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const userId = input?.userId ?? ctx.principal.subject
+
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        isSameSubject(() => userId)
+      ),
+      input
+    )
+
+    // We omit the identities array from the response, because it contains sensitive information like access tokens.
+    const { identities, ...response } = await ctx.userService.getAuth0Connections(userId)
+
+    return response
+  })
+
 export const userRouter = t.router({
   all: allUsersProcedure,
   get: getUserProcedure,
@@ -289,4 +312,5 @@ export const userRouter = t.router({
   isAdmin: isAdminProcedure,
   confirmIdentityLink: confirmIdentityLinkProcedure,
   mergeUsers: mergeUsersProcedure,
+  getAuth0Connections: getAuth0ConnectionsProcedure,
 })

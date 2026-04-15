@@ -222,7 +222,6 @@ resource "doppler_secret" "auth0_audiences" {
   value   = auth0_resource_server.online.identifier
 }
 
-# We need the web client ID in RPC
 resource "doppler_secret" "rpc_web_client_id" {
   project = "monoweb-rpc"
   config  = terraform.workspace
@@ -230,7 +229,6 @@ resource "doppler_secret" "rpc_web_client_id" {
   value   = data.auth0_client.monoweb_web.client_id
 }
 
-# We need the web client secret in RPC
 resource "doppler_secret" "rpc_web_client_secret" {
   project = "monoweb-rpc"
   config  = terraform.workspace

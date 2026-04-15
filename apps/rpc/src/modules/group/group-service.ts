@@ -17,6 +17,7 @@ import {
   getDefaultGroupMemberRoles,
   GROUP_IMAGE_MAX_SIZE_KIB,
   areGroupRolesEqual,
+  type GroupMembershipWriteWithRoles,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns"
@@ -83,7 +84,7 @@ export interface GroupService {
    * Reduces the array of memberships to its simplest form, removing overlapping memberships and merging memberships
    * which could be merged.
    */
-  simplifyMemberships(memberships: [GroupMembership, ...GroupMembership[]]): Promise<GroupMembership[]>
+  simplifyMemberships(memberships: GroupMembership[]): GroupMembershipWriteWithRoles[]
 
   createRole(handle: DBHandle, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, groupRoleId: GroupRoleId, groupRoleData: GroupRoleWrite): Promise<GroupRole>
@@ -330,19 +331,15 @@ export function getGroupService(
       return await groupRepository.updateGroupRole(handle, groupRoleId, groupRoleData)
     },
 
-    async simplifyMemberships(memberships) {
+    simplifyMemberships(memberships) {
       const membershipsByGroup = new Map<string, GroupMembership[]>()
 
       for (const membership of memberships) {
-        const existing = membershipsByGroup.get(membership.groupId)
-        if (existing) {
-          existing.push(membership)
-        } else {
-          membershipsByGroup.set(membership.groupId, [membership])
-        }
+        const groupMemberships = membershipsByGroup.getOrInsert(membership.groupId, [])
+        groupMemberships.push(membership)
       }
 
-      const results: GroupMembership[] = []
+      const results: GroupMembershipWriteWithRoles[] = []
 
       for (const groupMemberships of membershipsByGroup.values()) {
         const simplified = simplifyGroupMemberships(groupMemberships)
@@ -401,7 +398,7 @@ type Segment = {
  * A---      B--   C--
  *     AB----   BC-
  */
-export function simplifyGroupMemberships(memberships: GroupMembership[]): GroupMembership[] {
+export function simplifyGroupMemberships(memberships: GroupMembership[]): GroupMembershipWriteWithRoles[] {
   const hasOngoingMembership = memberships.some((membership) => membership.end === null)
 
   // This set collects membership boundary points so we can recreate segments for merging roles into.
@@ -484,12 +481,10 @@ export function simplifyGroupMemberships(memberships: GroupMembership[]): GroupM
 
   return mergedSegments.map((segment) => ({
     id: segment.sourceMembership.id,
-    createdAt: segment.sourceMembership.createdAt,
-    updatedAt: segment.sourceMembership.updatedAt,
     start: segment.start,
     end: segment.end,
     userId: segment.sourceMembership.userId,
     groupId: segment.sourceMembership.groupId,
-    roles: segment.roles,
+    roleIds: new Set(segment.roles.map((role) => role.id)),
   }))
 }
