@@ -28,7 +28,7 @@ import { simplifyGroupMemberships } from "../group/group-service"
 //          1. Add a { fkField, relationName, deleteOrphan } entry.
 //
 //    CUSTOM_SCALAR_MERGERS
-//      - Scalars that need special logic (e.g. profileSlug, flags).
+//      - Scalars that need special logic (e.g. username, flags).
 //      - What you need to do:
 //          1. Add the field to the object.
 //          2. Add a function value.
@@ -116,9 +116,10 @@ const BACKFILL_ONE_TO_ONE_RELATIONS = [
  * Scalar fields with custom merge logic.
  */
 const CUSTOM_SCALAR_MERGERS = {
-  // We take the consumed user's slug only if the survivor's is a UUID and the consumed's is not a UUID (a custom slug).
-  profileSlug: (survivor: User, consumed: User): string =>
-    isUuid(survivor.profileSlug) && !isUuid(consumed.profileSlug) ? consumed.profileSlug : survivor.profileSlug,
+  // We take the consumed user's username only if the survivor's is a UUID and the consumed's is not a UUID (meaning
+  // it's a custom username).
+  username: (survivor: User, consumed: User): string =>
+    isUuid(survivor.username) && !isUuid(consumed.username) ? consumed.username : survivor.username,
 
   // Concatenate and deduplicate
   flags: (survivor: User, consumed: User): string[] => [...new Set([...survivor.flags, ...consumed.flags])],
