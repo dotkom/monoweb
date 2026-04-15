@@ -195,7 +195,7 @@ export async function createServiceLayer(
   const fadderukeRepository = getFadderukeRepository()
   const notificationRepository = getNotificationRepository()
 
-  const notificationService = getNotificationService(notificationRepository, userRepository, attendanceRepository)
+  const notificationService = getNotificationService(notificationRepository, userRepository, attendanceRepository, eventEmitter)
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
     ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
