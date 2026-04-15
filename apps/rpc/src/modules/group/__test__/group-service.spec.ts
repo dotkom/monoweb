@@ -1,6 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
+import { PrismaClient } from "@dotkomonline/db"
 import type { Group } from "@dotkomonline/types"
-import { PrismaClient } from "@prisma/client"
 import type { ManagementClient } from "auth0"
 import { randomUUID } from "node:crypto"
 import { getFeideGroupsRepository } from "src/modules/feide/feide-groups-repository"
