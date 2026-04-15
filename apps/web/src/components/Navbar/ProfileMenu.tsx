@@ -42,6 +42,7 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { type FC, Fragment, useEffect, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
+import { NotificationDropdown } from "./Notifications/NotificationDropdown"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
@@ -246,8 +247,9 @@ export const ProfileMenu: FC = () => {
   const session = useSession()
   if (session === null) return <UnauthenticatedActions />
   return (
-    <div className="flex gap-2 mr-2 lg:mr-0">
+    <div className="flex gap-1 mr-2 lg:mr-0">
       <ContactDebugDropdown />
+      <NotificationDropdown />
       <AvatarDropdown />
     </div>
   )
@@ -288,7 +290,7 @@ export const AvatarDropdown: FC = () => {
         <button
           type="button"
           aria-label="Åpne profilmeny"
-          className="relative rounded-full transition-all duration-200 focus:outline-none"
+          className="relative rounded-full transition-all duration-200 focus:outline-none ml-1"
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
