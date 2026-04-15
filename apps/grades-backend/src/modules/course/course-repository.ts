@@ -29,26 +29,11 @@ export function getCourseRepository(): CourseRepository {
 
       const bySearch = query.bySearch
       const searchContains = bySearch ? `%${bySearch}%` : undefined
-      const searchStartsWith = bySearch ? `${bySearch}%` : undefined
 
       const searchWhereSql = searchContains
         ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "norwegian_name" ILIKE ${searchContains} OR "english_name" ILIKE ${searchContains})`
         : Prisma.empty
       const cursorWhereSql = page.cursor ? Prisma.sql`AND "id" < ${page.cursor}` : Prisma.empty
-
-      const searchRankingSql = bySearch
-        ? Prisma.sql`
-          WHEN "code" = ${bySearch} THEN 0
-          WHEN "code" ILIKE ${searchStartsWith} THEN 1
-          WHEN "norwegian_name" = ${bySearch} OR "english_name" = ${bySearch} THEN 2
-          WHEN "norwegian_name" ILIKE ${searchStartsWith} OR "english_name" ILIKE ${searchStartsWith} THEN 3
-          WHEN "code" ILIKE ${searchContains} THEN 4
-          WHEN "norwegian_name" ILIKE ${searchContains} OR "english_name" ILIKE ${searchContains} THEN 5
-        `
-        : Prisma.empty
-
-      // Should always be a higher number than the least prioritized search ranking
-      const defaultSearchRank = bySearch ? 6 : 0
 
       const courses = await handle.$queryRaw<Course[]>`
         SELECT
@@ -80,11 +65,9 @@ export function getCourseRepository(): CourseRepository {
         ${searchWhereSql}
         ${cursorWhereSql}
         ORDER BY
-          CASE
-            WHEN "last_year_taught" IS NOT NULL THEN 1000
-            ${searchRankingSql}
-            ELSE ${defaultSearchRank}
-          END,
+          -- To update ranking, copy-paste rank_search function from
+          -- 20260415160933_add_course_ranking_function into a new migration
+          rank_search(code, norwegian_name, english_name, last_year_taught, ${bySearch ? null : bySearch}),
           ${Prisma.raw(orderByClause)}
         LIMIT ${page.take}
       `
