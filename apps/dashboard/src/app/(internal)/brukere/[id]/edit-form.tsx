@@ -5,6 +5,7 @@ import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { USER_IMAGE_MAX_SIZE_KIB, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
 import { createTextareaInput } from "@/components/forms/TextareaInput"
+import { useIsAdminQuery } from "../queries"
 
 interface UseUserProfileWriteFormProps {
   onSubmit(data: UserWrite): void
@@ -13,6 +14,7 @@ interface UseUserProfileWriteFormProps {
 }
 
 export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: UseUserProfileWriteFormProps) => {
+  const { isAdmin } = useIsAdminQuery()
   const fileUpload = useUserFileUploadMutation()
 
   return useFormBuilder({
@@ -28,10 +30,12 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       name: createTextInput({
         label: "Navn",
         placeholder: "Ola Nordmann",
+        disabled: isAdmin !== true,
       }),
       email: createTextInput({
         label: "E-post",
         placeholder: "ola.nordmann@gmail.com",
+        disabled: isAdmin !== true,
       }),
       phone: createTextInput({
         label: "Telefon",

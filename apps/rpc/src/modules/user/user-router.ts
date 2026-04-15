@@ -197,14 +197,15 @@ const updateUserProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    let { name, ...data } = input.input
+    let { name, email, ...data } = input.input
 
-    // Only admins can change the name field
+    // Only admins can change the name and email fields
     if (!ctx.authorizationService.isAdministrator(ctx.principal.affiliations)) {
       name = undefined
+      email = undefined
     }
 
-    return ctx.userService.update(ctx.handle, input.id, { name, ...data })
+    return ctx.userService.update(ctx.handle, input.id, { name, email, ...data })
   })
 
 export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
