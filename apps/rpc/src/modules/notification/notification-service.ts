@@ -34,6 +34,12 @@ export interface NotificationService {
     payloadType?: NotificationPayloadType,
     payload?: string | null
   ): Promise<Notification>
+  findManyByPayload(
+    handle: DBHandle,
+    payloadType: NotificationPayloadType,
+    payload: string,
+    page: Pageable
+  ): Promise<Notification[]>
   update(
     handle: DBHandle,
     notificationId: NotificationId,
@@ -98,6 +104,10 @@ export function getNotificationService(
 
       const users = await userRepository.findMany(handle, {}, { take: 10000 })
       return users.map((u) => u.id)
+    },
+
+    async findManyByPayload(handle, payloadType, payload, page) {
+      return await notificationRepository.findManyByPayload(handle, payloadType, payload, page)
     },
 
     async update(handle, notificationId, notificationData) {
