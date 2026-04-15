@@ -61,10 +61,24 @@ controller.signal.addEventListener("abort", () => {
 })
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
+  let rawToken: string | undefined
+
   const bearer = req.headers.authorization
   if (bearer !== undefined) {
-    const token = bearer.substring("Bearer ".length)
-    const principal = await jwtService.verify(token)
+    rawToken = bearer.substring("Bearer ".length)
+  } else if (typeof req.query === "object" && req.query !== null && "connectionParams" in req.query) {
+    try {
+      const params = JSON.parse(req.query.connectionParams as string)
+      if (typeof params.token === "string") {
+        rawToken = params.token
+      }
+    } catch {
+      // malformed connectionParams — treat as unauthenticated
+    }
+  }
+
+  if (rawToken !== undefined) {
+    const principal = await jwtService.verify(rawToken)
     const subject = principal.payload.sub
     if (subject === undefined) {
       return createTrpcContext(null, serviceLayer)
