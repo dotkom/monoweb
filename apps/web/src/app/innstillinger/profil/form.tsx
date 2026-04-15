@@ -172,12 +172,12 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <TextInput label="E-post" placeholder="ola.nordmann@epost.no" required {...register("email")} />
-          {errors.email && (
-            <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-              {errors.email?.message ?? "En feil oppstod"}
-            </Text>
-          )}
+          <TextInput
+            label="E-post"
+            description="Det blir snart mulig å endre e-posten din."
+            placeholder="ola.nordmann@epost.no"
+            disabled
+          />
         </div>
 
         <Controller
