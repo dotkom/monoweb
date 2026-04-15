@@ -176,7 +176,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
           <TextInput label="E-post" value={user.email || "<Tom e-post>"} disabled />
           <Text className="text-xs font-medium text-amber-600 dark:text-orange-300">
             E-post har flyttet til{" "}
-            <Link href="/innstillinger/min-bruker" className="inline-flex items-center gap-0.5">
+            <Link href="/innstillinger/bruker" className="inline-flex items-center gap-0.5">
               Min bruker
               <IconArrowUpRight className="size-3.5" />
             </Link>
