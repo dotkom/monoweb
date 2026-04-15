@@ -31,6 +31,15 @@ export type Faculty = z.infer<typeof FacultySchema>
 export const DepartmentSchema = schemas.DepartmentSchema.extend({})
 export type Department = z.infer<typeof DepartmentSchema>
 
+export const StudyLevelSchema = schemas.StudyLevelSchema
+export type StudyLevel = z.infer<typeof StudyLevelSchema>
+
+export const GradeTypeSchema = schemas.GradeTypeSchema
+export type GradeType = z.infer<typeof GradeTypeSchema>
+
+export const CourseCampusSchema = schemas.CampusSchema
+export type CourseCampus = z.infer<typeof CourseCampusSchema>
+
 export const mapCourseSemesterToLabel = (semester: Semester) => {
   switch (semester) {
     case "FALL":
@@ -61,7 +70,7 @@ export const mapCourseStudyLevelToLabel = (studyLevel: Course["studyLevel"]) => 
   }
 }
 
-export const mapCourseCampusToLabel = (campus: Course["campuses"][number]) => {
+export const mapCourseCampusToLabel = (campus: CourseCampus) => {
   switch (campus) {
     case "TRONDHEIM":
       return "Trondheim"
