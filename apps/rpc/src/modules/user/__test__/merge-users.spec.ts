@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
 import type { Membership, User } from "@dotkomonline/types"
-import { beforeEach, describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it, type vi } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import type { GroupRepository } from "../../group/group-repository"
 import { mergeUsers } from "../merge-users"

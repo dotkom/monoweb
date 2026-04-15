@@ -33,7 +33,7 @@ describe("simplifyGroupMemberships", () => {
     expect(result).toHaveLength(1)
     expect(result[0].start).toEqual(m.start)
     expect(result[0].end).toEqual(m.end)
-    expect(result[0].roles).toEqual([roleA])
+    expect(result[0].roleIds).toEqual(new Set([roleA.id]))
   })
 
   it("merges adjacent memberships with identical roles into one", () => {
@@ -45,7 +45,7 @@ describe("simplifyGroupMemberships", () => {
     expect(result).toHaveLength(1)
     expect(result[0].start).toEqual(new Date("2024-01-01"))
     expect(result[0].end).toEqual(new Date("2024-06-01"))
-    expect(result[0].roles).toEqual([roleA])
+    expect(result[0].roleIds).toEqual(new Set([roleA.id]))
   })
 
   it("does not merge adjacent memberships with different roles", () => {
@@ -62,7 +62,6 @@ describe("simplifyGroupMemberships", () => {
   })
 
   it("splits overlapping memberships with different roles into segments", () => {
-    // A: Jan-Apr, B: Feb-Jun → segments: Jan-Feb(A), Feb-Apr(AB), Apr-Jun(B)
     const mA = makeMembership({ start: new Date("2024-01-01"), end: new Date("2024-04-01"), roles: [roleA] })
     const mB = makeMembership({ start: new Date("2024-02-01"), end: new Date("2024-06-01"), roles: [roleB] })
 
@@ -72,15 +71,15 @@ describe("simplifyGroupMemberships", () => {
 
     expect(result[0].start).toEqual(new Date("2024-01-01"))
     expect(result[0].end).toEqual(new Date("2024-02-01"))
-    expect(result[0].roles.map((r) => r.id)).toEqual([roleA.id])
+    expect(result[0].roleIds).toEqual(new Set([roleA.id]))
 
     expect(result[1].start).toEqual(new Date("2024-02-01"))
     expect(result[1].end).toEqual(new Date("2024-04-01"))
-    expect(new Set(result[1].roles.map((r) => r.id))).toEqual(new Set([roleA.id, roleB.id]))
+    expect(result[1].roleIds).toEqual(new Set([roleA.id, roleB.id]))
 
     expect(result[2].start).toEqual(new Date("2024-04-01"))
     expect(result[2].end).toEqual(new Date("2024-06-01"))
-    expect(result[2].roles.map((r) => r.id)).toEqual([roleB.id])
+    expect(result[2].roleIds).toEqual(new Set([roleB.id]))
   })
 
   it("produces one segment for fully coincident memberships, combining roles", () => {
@@ -92,7 +91,7 @@ describe("simplifyGroupMemberships", () => {
     expect(result).toHaveLength(1)
     expect(result[0].start).toEqual(new Date("2024-01-01"))
     expect(result[0].end).toEqual(new Date("2024-06-01"))
-    expect(new Set(result[0].roles.map((r) => r.id))).toEqual(new Set([roleA.id, roleB.id]))
+    expect(result[0].roleIds).toEqual(new Set([roleA.id, roleB.id]))
   })
 
   it("preserves end=null for an ongoing membership", () => {
@@ -105,7 +104,6 @@ describe("simplifyGroupMemberships", () => {
   })
 
   it("correctly segments an overlapping membership against an ongoing one", () => {
-    // A: Jan-Apr, B: Feb-null → segments: Jan-Feb(A), Feb-Apr(AB), Apr-null(B)
     const mA = makeMembership({ start: new Date("2024-01-01"), end: new Date("2024-04-01"), roles: [roleA] })
     const mB = makeMembership({ start: new Date("2024-02-01"), end: null, roles: [roleB] })
 
@@ -115,21 +113,18 @@ describe("simplifyGroupMemberships", () => {
 
     expect(result[0].start).toEqual(new Date("2024-01-01"))
     expect(result[0].end).toEqual(new Date("2024-02-01"))
-    expect(result[0].roles.map((r) => r.id)).toEqual([roleA.id])
+    expect(result[0].roleIds).toEqual(new Set([roleA.id]))
 
     expect(result[1].start).toEqual(new Date("2024-02-01"))
     expect(result[1].end).toEqual(new Date("2024-04-01"))
-    expect(new Set(result[1].roles.map((r) => r.id))).toEqual(new Set([roleA.id, roleB.id]))
+    expect(result[1].roleIds).toEqual(new Set([roleA.id, roleB.id]))
 
     expect(result[2].start).toEqual(new Date("2024-04-01"))
     expect(result[2].end).toBeNull()
-    expect(result[2].roles.map((r) => r.id)).toEqual([roleB.id])
+    expect(result[2].roleIds).toEqual(new Set([roleB.id]))
   })
 
   it("handles the docstring example: A(0-2), B(1-4), C(3-5) → 5 segments", () => {
-    // Using months as time units:
-    // A: Jan-Mar, B: Feb-May, C: Apr-Jun
-    // Expected: Jan-Feb(A), Feb-Mar(AB), Mar-Apr(B), Apr-May(BC), May-Jun(C)
     const mA = makeMembership({ start: new Date("2024-01-01"), end: new Date("2024-03-01"), roles: [roleA] })
     const mB = makeMembership({ start: new Date("2024-02-01"), end: new Date("2024-05-01"), roles: [roleB] })
     const mC = makeMembership({ start: new Date("2024-04-01"), end: new Date("2024-06-01"), roles: [roleC] })
@@ -140,22 +135,22 @@ describe("simplifyGroupMemberships", () => {
 
     expect(result[0].start).toEqual(new Date("2024-01-01"))
     expect(result[0].end).toEqual(new Date("2024-02-01"))
-    expect(result[0].roles.map((r) => r.id)).toEqual([roleA.id])
+    expect(result[0].roleIds).toEqual(new Set([roleA.id]))
 
     expect(result[1].start).toEqual(new Date("2024-02-01"))
     expect(result[1].end).toEqual(new Date("2024-03-01"))
-    expect(new Set(result[1].roles.map((r) => r.id))).toEqual(new Set([roleA.id, roleB.id]))
+    expect(result[1].roleIds).toEqual(new Set([roleA.id, roleB.id]))
 
     expect(result[2].start).toEqual(new Date("2024-03-01"))
     expect(result[2].end).toEqual(new Date("2024-04-01"))
-    expect(result[2].roles.map((r) => r.id)).toEqual([roleB.id])
+    expect(result[2].roleIds).toEqual(new Set([roleB.id]))
 
     expect(result[3].start).toEqual(new Date("2024-04-01"))
     expect(result[3].end).toEqual(new Date("2024-05-01"))
-    expect(new Set(result[3].roles.map((r) => r.id))).toEqual(new Set([roleB.id, roleC.id]))
+    expect(result[3].roleIds).toEqual(new Set([roleB.id, roleC.id]))
 
     expect(result[4].start).toEqual(new Date("2024-05-01"))
     expect(result[4].end).toEqual(new Date("2024-06-01"))
-    expect(result[4].roles.map((r) => r.id)).toEqual([roleC.id])
+    expect(result[4].roleIds).toEqual(new Set([roleC.id]))
   })
 })
