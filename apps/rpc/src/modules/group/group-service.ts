@@ -51,6 +51,7 @@ export interface GroupService {
 
   getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMember>
   getMembers(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
+  getLeaders(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
 
   startMembership(
     handle: DBHandle,
@@ -152,6 +153,19 @@ export function getGroupService(
         throw new NotFoundError(`Group(ID=${groupSlug}, Type=${groupType}) not found`)
       }
       return group
+    },
+
+    async getLeaders(handle, groupSlug) {
+      const leaders = await groupRepository.findGroupMembersByRoleType(handle, groupSlug, "LEADER")
+
+      if (leaders.length === 0) {
+        throw new NotFoundError(`Leaders for Group(ID=${groupSlug}) not found`)
+      }
+
+      return leaders.reduce((map, leader) => {
+        map.set(leader.id, leader)
+        return map
+      }, new Map<UserId, GroupMember>())
     },
 
     async findMany(handle) {

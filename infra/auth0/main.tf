@@ -20,12 +20,10 @@ data "auth0_tenant" "tenant" {}
 locals {
   custom_domain = {
     "dev" = "auth.dev.online.ntnu.no"
-    "stg" = "auth.stg.online.ntnu.no"
     "prd" = "auth.online.ntnu.no"
   }[terraform.workspace]
   name_suffix = {
     "dev" = " Dev"
-    "stg" = " Staging"
     "prd" = ""
   }
 }
@@ -76,20 +74,6 @@ resource "auth0_branding" "branding" {
         <h1 class="warning">DEVELOPMENT</h1>
         EOT
         }
-        "stg" = { "ENV_SPECIFIC" : <<EOT
-        <style>
-        .warning {
-          font-family: comic sans ms;
-          color: orangered;
-          font-size: 13vw;
-        }
-        :root {
-          --page-background-color: firebrick;
-        }
-        </style>
-        <h1 class="warning">STAGING</h1>
-        EOT
-        }
         "prd" = { "ENV_SPECIFIC" : "" }
       }[terraform.workspace]
     )
@@ -133,17 +117,6 @@ resource "auth0_connection" "feide" {
   }
 }
 
-
-# resource "auth0_action" "klassetrinn_autoconf" {
-#   name = "Klassetrinn Autoconf"
-#   code = file("js/klassetrinn.js")
-
-#   supported_triggers {
-#     id = "post_signup"
-#     version = "v3"
-#   }
-# }
-
 resource "auth0_client" "vengeful_vineyard_frontend" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   cross_origin_loc  = "https://vinstraff.no/*"
@@ -153,7 +126,6 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   app_type = "spa"
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
-    "stg" = ["https://staging.vinstraff.no"]
     "prd" = ["https://vinstraff.no"]
   }[terraform.workspace]
   callbacks = {
@@ -161,13 +133,6 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
       "http://localhost:3000",
       "http://localhost:8000",
       "http://localhost:3000/docs/oauth2-redirect",
-      "http://localhost:8000/docs/oauth2-redirect",
-    ]
-    "stg" = [
-      "https://staging.vinstraff.no",
-      "https://staging.vinstraff.no/docs/oauth2-redirect",
-      "http://localhost:3000",
-      "http://localhost:8000",
       "http://localhost:8000/docs/oauth2-redirect",
     ]
     "prd" = [
@@ -194,62 +159,6 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   }
 }
 
-resource "auth0_client" "voting" {
-  cross_origin_auth = true
-  cross_origin_loc  = "https://vedtatt.online.ntnu.no/"
-  app_type          = "spa"
-  allowed_origins = {
-    "dev" = [
-      "http://localhost:3000",
-      "http://localhost:8000"
-    ]
-    "stg" = []
-    "prd" = [
-      "https://vedtatt.online.ntnu.no",
-    ]
-  }[terraform.workspace]
-  web_origins = {
-    "dev" = [
-      "http://localhost:3000",
-      "http://localhost:8000"
-    ]
-    "stg" = []
-    "prd" = [
-      "https://vedtatt.online.ntnu.no",
-    ]
-  }[terraform.workspace]
-  callbacks = {
-    "dev" = [
-      "http://localhost:3000",
-      "http://localhost:8000",
-      "http://localhost:3000/docs/oauth2-redirect",
-      "http://localhost:8000/docs/oauth2-redirect",
-    ]
-    "stg" = []
-    "prd" = [
-      "https://vedtatt.online.ntnu.no",
-      "http://localhost:3000",
-      "http://localhost:8000",
-      "http://localhost:3000/docs/oauth2-redirect",
-      "http://localhost:8000/docs/oauth2-redirect",
-    ]
-  }[terraform.workspace]
-  grant_types                   = ["authorization_code", "refresh_token"]
-  name                          = "Vedtatt Klone${local.name_suffix[terraform.workspace]}"
-  organization_require_behavior = "no_prompt"
-  is_first_party                = true
-  oidc_conformant               = true
-
-  refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-  }
-
-  jwt_configuration {
-    alg = "RS256"
-  }
-}
-
 data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
@@ -257,18 +166,15 @@ data "auth0_client" "vengeful_vineyard_frontend" {
 locals {
   projects = {
     # Key here is name of doppler project
+    monoweb-web       = data.auth0_client.monoweb_web
+    monoweb-dashboard = data.auth0_client.monoweb_dashboard
+    monoweb-rpc       = data.auth0_client.rpc
+    vengeful-vineyard = data.auth0_client.vengeful_vineyard_frontend
 
-    vengeful-vineyard    = data.auth0_client.vengeful_vineyard_frontend
-    onlineweb4           = data.auth0_client.onlineweb4
-    onlineweb-frontend   = data.auth0_client.onlineweb_frontend
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
     appkom-veldedighet   = data.auth0_client.appkom_veldedighet
-
-    monoweb-web       = data.auth0_client.monoweb_web
-    monoweb-dashboard = data.auth0_client.monoweb_dashboard
-    monoweb-rpc       = data.auth0_client.rpc
   }
 }
 
@@ -316,40 +222,6 @@ resource "doppler_secret" "auth0_audiences" {
   value   = auth0_resource_server.online.identifier
 }
 
-resource "auth0_client" "onlineweb_frontend" {
-  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc  = "https://online.ntnu.no/*"
-  app_type          = "spa"
-  allowed_logout_urls = {
-    "dev" = ["http://localhost:8080"]
-    "stg" = ["https://*-dotkom.vercel.app", "https://dev.online.ntnu.no"]
-    "prd" = ["https://old.online.ntnu.no/auth/login/", "https://online.ntnu.no"]
-  }[terraform.workspace]
-  callbacks = {
-    "dev" = ["http://localhost:8080/authentication/callback"]
-    "stg" = ["https://*-dotkom.vercel.app/authentication/callback"]
-    "prd" = ["https://online.ntnu.no/authentication/callback"]
-  }[terraform.workspace]
-  grant_types                   = ["authorization_code", "implicit", "refresh_token"]
-  name                          = "OnlineWeb Frontend${local.name_suffix[terraform.workspace]}"
-  organization_require_behavior = "no_prompt"
-  is_first_party                = true
-  oidc_conformant               = true
-
-  jwt_configuration {
-    alg = "RS256"
-  }
-
-  refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-  }
-}
-
-data "auth0_client" "onlineweb_frontend" {
-  client_id = auth0_client.onlineweb_frontend.client_id
-}
-
 resource "auth0_client" "auth0_account_management_api_management_client" {
   is_first_party    = true
   app_type          = "non_interactive"
@@ -366,17 +238,13 @@ resource "auth0_connection_clients" "username_password_authentication" {
   connection_id = auth0_connection.username_password_authentication.id
 
   enabled_clients = [
-    auth0_client.onlineweb_frontend.client_id,
-    auth0_client.onlineweb4.client_id,
     auth0_client.monoweb_web.client_id,
     auth0_client.monoweb_dashboard.client_id,
     auth0_client.vengeful_vineyard_frontend.client_id,
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
-    auth0_client.appkom_veldedighet.client_id,
-    auth0_client.voting.client_id,
-    auth0_client.feide_account_linker.id
+    auth0_client.appkom_veldedighet.client_id
   ]
 }
 
@@ -384,8 +252,6 @@ resource "auth0_connection_clients" "feide" {
   connection_id = auth0_connection.feide.id
 
   enabled_clients = [
-    auth0_client.onlineweb_frontend.client_id,
-    auth0_client.onlineweb4.client_id,
     auth0_client.monoweb_web.client_id,
     auth0_client.monoweb_dashboard.client_id,
     auth0_client.vengeful_vineyard_frontend.client_id,
@@ -393,7 +259,6 @@ resource "auth0_connection_clients" "feide" {
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
     auth0_client.appkom_veldedighet.client_id,
-    auth0_client.voting.client_id
   ]
 }
 
@@ -493,54 +358,6 @@ resource "auth0_client_grant" "rpc" {
   ]
 }
 
-resource "auth0_client" "onlineweb4" {
-  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc  = "https://old.online.ntnu.no/*"
-  allowed_clients   = []
-  allowed_logout_urls = {
-    "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
-    "stg" = ["https://dev.online.ntnu.no"]
-    "prd" = ["https://old.online.ntnu.no"]
-  }[terraform.workspace]
-  allowed_origins = []
-  app_type        = "regular_web"
-  callbacks = {
-    "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"]
-    "stg" = ["https://dev.online.ntnu.no/auth0/callback/"]
-    "prd" = ["https://old.online.ntnu.no/auth0/callback/"]
-  }[terraform.workspace]
-  grant_types = ["authorization_code", "client_credentials", "refresh_token"]
-  name        = "OnlineWeb4${local.name_suffix[terraform.workspace]}"
-
-  is_first_party                = true
-  oidc_conformant               = true
-  organization_require_behavior = "no_prompt"
-
-  refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-  }
-
-  jwt_configuration {
-    alg = "RS256"
-  }
-}
-
-data "auth0_client" "onlineweb4" {
-  client_id = auth0_client.onlineweb4.client_id
-}
-
-resource "auth0_client_grant" "ow4_mgmt_grant" {
-  audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
-  client_id = auth0_client.onlineweb4.client_id
-  scopes = [
-    "update:users",
-    "read:users",
-    "read:user_idp_tokens",
-    "create:user_tickets", # to send verification emails
-  ]
-}
-
 resource "auth0_client" "monoweb_web" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   cross_origin_loc  = "https://online.ntnu.no/*"
@@ -550,18 +367,15 @@ resource "auth0_client" "monoweb_web" {
   # you go here if you decline an (auth) grant, cannot be http
   initiate_login_uri = {
     "dev" = null
-    "stg" = "https://staging.online.ntnu.no/api/auth/callback/auth0"
     "prd" = "https://online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = ["https://staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
     "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace]
   allowed_logout_urls = concat(
     {
       "dev" = ["http://localhost:3000"]
-      "stg" = ["https://staging.online.ntnu.no"]
       "prd" = ["https://online.ntnu.no"]
     }[terraform.workspace]
   )
@@ -602,7 +416,6 @@ resource "auth0_client" "monoweb_dashboard" {
   callbacks = concat(
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
-      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
       "prd" = [
         "https://dashboard.online.ntnu.no/api/auth/callback/auth0",
         "https://online.ntnu.no/api/auth/callback/auth0"
@@ -611,7 +424,6 @@ resource "auth0_client" "monoweb_dashboard" {
   allowed_logout_urls = concat(
     {
       "dev" = ["http://localhost:3002"]
-      "stg" = ["https://dashboard.staging.online.ntnu.no"]
       "prd" = ["https://dashboard.online.ntnu.no"]
     }[terraform.workspace]
   )
@@ -850,81 +662,6 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
   ]
 }
 
-resource "auth0_client" "feide_account_linker" {
-  name     = "Feide Account Linker"
-  app_type = "non_interactive"
-  logo_uri = "https://nobirkenes.speedadmin.dk/Images/SSO/Feide-btn.png"
-
-  grant_types = [
-    "client_credentials"
-  ]
-
-  jwt_configuration {
-    alg                 = "RS256"
-    lifetime_in_seconds = 10
-  }
-
-  oidc_conformant = true
-  is_first_party  = true
-}
-
-resource "auth0_client_credentials" "feide_account_linker" {
-  client_id             = auth0_client.feide_account_linker.client_id
-  authentication_method = "client_secret_post"
-}
-
-resource "auth0_client_grant" "m2m_grant" {
-  client_id = auth0_client.feide_account_linker.client_id
-  audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
-
-  scopes = [
-    "read:users",
-    "update:users"
-  ]
-}
-
-resource "auth0_action" "feide_account_linking" {
-  name    = "Feide Account Linking"
-  runtime = "node18"
-  code    = file("js/actions/linkFeideAccounts.js")
-  deploy  = true
-
-  supported_triggers {
-    id      = "post-login"
-    version = "v3"
-  }
-
-  dependencies {
-    name    = "auth0"
-    version = "latest"
-  }
-
-  secrets {
-    name  = "FEIDE_CONNECTION_ID"
-    value = auth0_connection.feide.id
-  }
-
-  secrets {
-    name  = "DOMAIN"
-    value = data.auth0_tenant.tenant.domain
-  }
-
-  secrets {
-    name  = "CLIENT_ID"
-    value = auth0_client.feide_account_linker.client_id
-  }
-
-  secrets {
-    name  = "CLIENT_SECRET"
-    value = auth0_client_credentials.feide_account_linker.client_secret
-  }
-
-  secrets {
-    name  = "PRODUCTION"
-    value = terraform.workspace == "prd" ? "true" : "false"
-  }
-}
-
 resource "auth0_action" "update_membership" {
   name    = "Membership Update"
   runtime = "node18"
@@ -944,14 +681,5 @@ resource "auth0_action" "update_membership" {
   secrets {
     name  = "RPC_HOST"
     value = "rpc.staging.online.ntnu.no"
-  }
-}
-
-resource "auth0_trigger_actions" "login_flow" {
-  trigger = "post-login"
-
-  actions {
-    id           = auth0_action.feide_account_linking.id
-    display_name = auth0_action.feide_account_linking.name
   }
 }

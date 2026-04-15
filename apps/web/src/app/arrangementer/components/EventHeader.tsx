@@ -5,7 +5,6 @@ import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
 import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2, IconEdit } from "@tabler/icons-react"
-import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 import { useState } from "react"
@@ -31,15 +30,13 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
       >
         <div className="group relative w-full aspect-video md:aspect-24/9 overflow-hidden rounded-xl">
           {event.imageUrl ? (
-            <Image
+            <img
               src={event.imageUrl}
               alt={event.title}
               className={cn(
                 "w-full h-full rounded-xl will-change-transform transition-transform duration-500 ease-out",
                 showFullImage ? "object-contain" : "object-cover"
               )}
-              width={0}
-              height={0}
               onLoad={(event) => {
                 const img = event.currentTarget
                 const ratio = img.naturalWidth / img.naturalHeight

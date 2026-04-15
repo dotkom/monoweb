@@ -2,6 +2,7 @@ import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { AuthNotice } from "@/components/notices/auth-notice"
+import { FadderApplicationsNotice } from "@/components/notices/fadder-applications-notice"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
 import type { AttendanceSummary, BaseEvent, EventSummary, EventWithAttendanceSummary } from "@dotkomonline/types"
@@ -10,7 +11,6 @@ import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { formatDate, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
-import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -61,6 +61,10 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
         <AuthNotice />
+        <FadderApplicationsNotice
+          start={/* April 10, 00:00:00 */ TZDate.tz("Europe/Oslo", 2026, 3, 10)}
+          end={/* April 17, 23:59:59 */ TZDate.tz("Europe/Oslo", 2026, 3, 17, 23, 59, 59)}
+        />
         <OnlineHero />
       </div>
 
@@ -197,12 +201,10 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, className }) =
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         {event.imageUrl ? (
-          <Image
+          <img
             src={event.imageUrl}
             alt={event.title}
             className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video w-full"
-            width={0}
-            height={0}
           />
         ) : (
           <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
@@ -251,12 +253,10 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, className }) => {
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         {event.imageUrl ? (
-          <Image
+          <img
             src={event.imageUrl}
             alt={event.title}
             className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video w-full"
-            width={0}
-            height={0}
           />
         ) : (
           <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">

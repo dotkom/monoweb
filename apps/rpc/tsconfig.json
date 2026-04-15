@@ -1,7 +1,12 @@
 {
   "extends": "../../packages/config/tsconfig.json",
   "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.e2e-spec.ts",
+    "**/vitest*.ts"
+  ],
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable"],
     "baseUrl": ".",

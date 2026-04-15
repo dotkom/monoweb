@@ -6,6 +6,7 @@ node_modules/
 .env
 .envrc
 .env.production
+.env.docker
 .envrc
 !.env.example
 .pnp.*

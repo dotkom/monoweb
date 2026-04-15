@@ -2,6 +2,8 @@ import type { DBHandle } from "@dotkomonline/db"
 import {
   type Group,
   type GroupId,
+  type GroupMember,
+  GroupMemberSchema,
   type GroupMembership,
   type GroupMembershipId,
   GroupMembershipSchema,
@@ -9,6 +11,7 @@ import {
   type GroupRole,
   type GroupRoleId,
   GroupRoleSchema,
+  type GroupRoleType,
   type GroupRoleWrite,
   GroupSchema,
   type GroupWrite,
@@ -42,6 +45,7 @@ export interface GroupRepository {
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
   findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
+  findGroupMembersByRoleType(handle: DBHandle, groupSlug: GroupId, roleType: GroupRoleType): Promise<GroupMember[]>
   findManyGroupMemberships(handle: DBHandle, groupSlug: GroupId, userId?: UserId): Promise<GroupMembership[]>
 
   createGroupRoles(handle: DBHandle, groupRolesData: GroupRoleWrite[]): Promise<GroupRole[]>
@@ -257,9 +261,63 @@ export function getGroupRepository(): GroupRepository {
         : null
     },
 
+    async findGroupMembersByRoleType(handle, groupSlug, roleType) {
+      const users = await handle.user.findMany({
+        where: {
+          groupMemberships: {
+            some: {
+              groupId: groupSlug,
+              roles: {
+                some: {
+                  role: {
+                    type: roleType,
+                  },
+                },
+              },
+            },
+          },
+        },
+        include: {
+          memberships: true,
+          groupMemberships: {
+            where: {
+              groupId: groupSlug,
+              roles: {
+                some: {
+                  role: {
+                    type: roleType,
+                  },
+                },
+              },
+            },
+            include: {
+              roles: {
+                include: {
+                  role: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      const groupMembers = users.map(({ groupMemberships, ...user }) => ({
+        ...user,
+        groupMemberships: groupMemberships.map(({ roles, ...membership }) => ({
+          ...membership,
+          roles: roles.map((role) => role.role),
+        })),
+      }))
+
+      return parseOrReport(GroupMemberSchema.array(), groupMembers)
+    },
+
     async findManyGroupMemberships(handle, groupSlug, userId) {
       const memberships = await handle.groupMembership.findMany({
-        where: { groupId: groupSlug, ...(userId ? { userId } : {}) },
+        where: {
+          groupId: groupSlug,
+          ...(userId ? { userId } : {}),
+        },
         include: {
           roles: {
             include: {

@@ -3,6 +3,8 @@ import type { GroupId, GroupRoleType, UserId } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import { LRUCache } from "lru-cache"
 
+export const HOVEDSTYRET_GROUP_SLUG = "hs"
+
 export const COMMITTEE_AFFILIATIONS = [
   "appkom",
   "arrkom",
@@ -13,7 +15,7 @@ export const COMMITTEE_AFFILIATIONS = [
   "dotkom",
   "fagkom",
   "feminit",
-  "hs",
+  HOVEDSTYRET_GROUP_SLUG,
   "online-il",
   "fond",
   "prokom",
@@ -24,7 +26,7 @@ export const COMMITTEE_AFFILIATIONS = [
   "velkom",
 ] as const satisfies GroupId[]
 
-export const ADMIN_AFFILIATIONS = ["dotkom", "hs"] as const satisfies GroupId[]
+export const ADMIN_AFFILIATIONS = ["dotkom", HOVEDSTYRET_GROUP_SLUG] as const satisfies GroupId[]
 
 export interface AuthorizationService {
   /**

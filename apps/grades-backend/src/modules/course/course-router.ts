@@ -29,4 +29,5 @@ const findCourseProcedure = procedure
 
 export const courseRouter = t.router({
   findCourses: findCoursesProcedure,
+  findCourse: findCourseProcedure,
 })

@@ -18,7 +18,7 @@ import {
 } from "@dotkomonline/types"
 import { slugify } from "@dotkomonline/utils"
 import { isAfter } from "date-fns"
-import type { admin_directory_v1 } from "googleapis"
+import type { admin_directory_v1 } from "@googleapis/admin"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
 import type { ConfigurationWithGoogleWorkspace } from "../../configuration"
