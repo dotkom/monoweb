@@ -1,4 +1,4 @@
-import type { User, Membership, GroupMembershipWriteWithRoles } from "@dotkomonline/types"
+import type { User, Membership } from "@dotkomonline/types"
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type { GroupRepository } from "../group/group-repository"
 import { simplifyGroupMemberships } from "../group/group-service"
@@ -222,23 +222,13 @@ const CUSTOM_RELATION_MERGERS = {
   groupMemberships: async (handle: DBHandle, groupRepository: GroupRepository, survivor: User, consumed: User) => {
     const survivorGroupMemberships = await groupRepository.findManyGroupMemberships(handle, null, survivor.id)
     const consumedGroupMemberships = await groupRepository.findManyGroupMemberships(handle, null, consumed.id)
+    const allMemberships = [...survivorGroupMemberships, ...consumedGroupMemberships]
 
-    const groupMemberships = simplifyGroupMemberships([...survivorGroupMemberships, ...consumedGroupMemberships])
+    const newGroupMemberships = simplifyGroupMemberships(allMemberships)
+    const allMembershipIds = [...new Set(allMemberships.map((m) => m.id))]
 
-    const groupMembershipsWrite: GroupMembershipWriteWithRoles[] = groupMemberships.map((membership) => ({
-      start: membership.start,
-      end: membership.end,
-      groupId: membership.groupId,
-      userId: survivor.id,
-      roleIds: new Set(membership.roles.map((r) => r.id)),
-    }))
-
-    await groupRepository.deleteGroupMemberships(
-      handle,
-      groupMemberships.map((m) => m.id)
-    )
-
-    await groupRepository.createManyGroupMemberships(handle, groupMembershipsWrite)
+    await groupRepository.deleteGroupMemberships(handle, allMembershipIds)
+    await groupRepository.createManyGroupMemberships(handle, newGroupMemberships)
   },
 } satisfies Partial<
   Record<
