@@ -12,7 +12,7 @@ import {
   type User,
   type UserFilterQuery,
   type UserId,
-  type UserUsername,
+  type Username,
   type UserWrite,
   UserWriteSchema,
   findActiveMembership,
@@ -62,8 +62,8 @@ export interface UserService {
    * @throws {NotFoundError} if the user is not found.
    */
   getById(handle: DBHandle, id: UserId): Promise<User>
-  findByUsername(handle: DBHandle, username: UserUsername): Promise<User | null>
-  getByUsername(handle: DBHandle, username: UserUsername): Promise<User>
+  findByUsername(handle: DBHandle, username: Username): Promise<User | null>
+  getByUsername(handle: DBHandle, username: Username): Promise<User>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findUsers(handle: DBHandle, query: UserFilterQuery, page?: Pageable): Promise<User[]>
 

@@ -29,7 +29,7 @@ export const UserSchema = schemas.UserSchema.extend({
 })
 export type User = z.infer<typeof UserSchema>
 export type UserId = User["id"]
-export type UserUsername = User["username"]
+export type Username = User["username"]
 
 export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
 export const PHONE_REGEX = /^[0-9-+\s]*$/
