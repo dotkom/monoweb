@@ -1,7 +1,7 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import { type GroupMember, type GroupRole, type UserId, getGroupTypeName } from "@dotkomonline/types"
+import { type GroupMember, type GroupRole, type UserId, getGroupTypeName, FlagName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
@@ -249,7 +249,7 @@ interface GroupMemberEntryProps {
 }
 
 const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
-  const isVerified = member.flags.includes("VANITY_VERIFIED")
+  const isVerified = member.flags.some(({ name }) => name === FlagName.OW_VERIFIED)
   const isUser = userId === member.id
 
   // This requires periods to be sorted by startedAt in descending order

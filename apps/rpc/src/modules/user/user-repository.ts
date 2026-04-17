@@ -9,6 +9,9 @@ import {
   type Username,
   UserSchema,
   type UserWrite,
+  type UserFlagWithUsers,
+  UserFlagWithUsersSchema,
+  type UserFlagWrite,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
@@ -33,6 +36,14 @@ export interface UserRepository {
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
+
+  createFlag(handle: DBHandle, data: UserFlagWrite): Promise<void>
+  updateFlag(handle: DBHandle, name: string, data: Partial<UserFlagWrite>): Promise<void>
+  deleteFlag(handle: DBHandle, name: string): Promise<void>
+  findFlagByName(handle: DBHandle, name: string): Promise<UserFlagWithUsers | null>
+  findFlagsByUserId(handle: DBHandle, userId: UserId): Promise<UserFlagWithUsers[]>
+  assignFlagToUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
+  removeFlagFromUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
 }
 
 export function getUserRepository(): UserRepository {
@@ -51,6 +62,7 @@ export function getUserRepository(): UserRepository {
         },
         include: {
           memberships: true,
+          flags: true,
         },
       })
 
@@ -80,6 +92,7 @@ export function getUserRepository(): UserRepository {
         },
         include: {
           memberships: true,
+          flags: true,
         },
       })
 
@@ -93,6 +106,7 @@ export function getUserRepository(): UserRepository {
         },
         include: {
           memberships: true,
+          flags: true,
         },
       })
 
@@ -110,6 +124,7 @@ export function getUserRepository(): UserRepository {
         },
         include: {
           memberships: true,
+          flags: true,
         },
       })
 
@@ -129,6 +144,7 @@ export function getUserRepository(): UserRepository {
         where,
         include: {
           memberships: true,
+          flags: true,
         },
       })
 
@@ -182,6 +198,111 @@ export function getUserRepository(): UserRepository {
       const user = await this.findById(handle, row.userId)
       invariant(user !== null, `User with id ${row.userId} not found after deleting membership`)
       return user
+    },
+
+    async createFlag(handle, data) {
+      await handle.userFlag.create({
+        data: {
+          name: data.name,
+          description: data.description,
+          imageUrl: data.imageUrl,
+        },
+      })
+    },
+
+    async updateFlag(handle, name, data) {
+      await handle.userFlag.update({
+        where: {
+          name,
+        },
+        data: {
+          name: data.name,
+          description: data.description,
+          imageUrl: data.imageUrl,
+        },
+      })
+    },
+
+    async deleteFlag(handle, name) {
+      await handle.userFlag.delete({
+        where: {
+          name,
+        },
+      })
+    },
+
+    async findFlagByName(handle, name) {
+      const flag = await handle.userFlag.findUnique({
+        where: {
+          name,
+        },
+        include: {
+          users: {
+            select: {
+              id: true,
+              name: true,
+              profileSlug: true,
+              imageUrl: true,
+            },
+          },
+        },
+      })
+
+      return parseOrReport(UserFlagWithUsersSchema.nullable(), flag)
+    },
+
+    async findFlagsByUserId(handle, userId) {
+      const flags = await handle.userFlag.findMany({
+        where: {
+          users: {
+            some: {
+              id: userId,
+            },
+          },
+        },
+        include: {
+          users: {
+            select: {
+              id: true,
+              name: true,
+              profileSlug: true,
+              imageUrl: true,
+            },
+          },
+        },
+      })
+
+      return parseOrReport(UserFlagWithUsersSchema.array(), flags)
+    },
+
+    async assignFlagToUser(handle, userId, flagName) {
+      await handle.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          flags: {
+            connect: {
+              name: flagName,
+            },
+          },
+        },
+      })
+    },
+
+    async removeFlagFromUser(handle, userId, flagName) {
+      await handle.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          flags: {
+            disconnect: {
+              name: flagName,
+            },
+          },
+        },
+      })
     },
   }
 }
