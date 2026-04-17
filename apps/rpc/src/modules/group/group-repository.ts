@@ -16,6 +16,7 @@ import {
   GroupSchema,
   type GroupWrite,
   type UserId,
+  type GroupMembershipWriteWithRoles,
 } from "@dotkomonline/types"
 import type { GroupType } from "@prisma/client"
 import z from "zod"
@@ -33,6 +34,14 @@ export interface GroupRepository {
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   findManyByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
 
+  findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
+  findGroupMembersByRoleType(handle: DBHandle, groupSlug: GroupId, roleType: GroupRoleType): Promise<GroupMember[]>
+
+  findManyGroupMemberships(
+    handle: DBHandle,
+    groupSlug: GroupId | null,
+    userId: UserId | null
+  ): Promise<GroupMembership[]>
   createGroupMembership(
     handle: DBHandle,
     groupMembershipData: GroupMembershipWrite,
@@ -44,9 +53,8 @@ export interface GroupRepository {
     groupMembershipData: GroupMembershipWrite,
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
-  findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
-  findGroupMembersByRoleType(handle: DBHandle, groupSlug: GroupId, roleType: GroupRoleType): Promise<GroupMember[]>
-  findManyGroupMemberships(handle: DBHandle, groupSlug: GroupId, userId?: UserId): Promise<GroupMembership[]>
+  deleteGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void>
+  createManyGroupMemberships(handle: DBHandle, groupMembershipData: GroupMembershipWriteWithRoles[]): Promise<void>
 
   createGroupRoles(handle: DBHandle, groupRolesData: GroupRoleWrite[]): Promise<GroupRole[]>
   updateGroupRole(
@@ -315,7 +323,7 @@ export function getGroupRepository(): GroupRepository {
     async findManyGroupMemberships(handle, groupSlug, userId) {
       const memberships = await handle.groupMembership.findMany({
         where: {
-          groupId: groupSlug,
+          ...(groupSlug ? { groupId: groupSlug } : {}),
           ...(userId ? { userId } : {}),
         },
         include: {
@@ -352,6 +360,29 @@ export function getGroupRepository(): GroupRepository {
       })
 
       return parseOrReport(GroupRoleSchema, row)
+    },
+
+    async deleteGroupMemberships(handle, groupMembershipIds) {
+      await handle.groupMembership.deleteMany({
+        where: {
+          id: {
+            in: groupMembershipIds,
+          },
+        },
+      })
+    },
+
+    async createManyGroupMemberships(handle, groupMembershipData) {
+      await handle.groupMembership.createMany({
+        data: groupMembershipData.map(({ roleIds, ...membershipData }) => ({
+          ...membershipData,
+          roles: {
+            createMany: {
+              data: [...roleIds].map((roleId) => ({ roleId })),
+            },
+          },
+        })),
+      })
     },
   }
 }
