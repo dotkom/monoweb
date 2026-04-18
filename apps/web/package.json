@@ -69,7 +69,7 @@
     "zod": "^3.25.47"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.5",
+    "@biomejs/biome": "2.4.12",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/rpc": "workspace:*",
     "@tailwindcss/postcss": "4.1.18",
