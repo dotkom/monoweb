@@ -73,7 +73,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "open-color": "1.9.1",
-    "postcss": "8.5.8",
+    "postcss": "8.5.10",
     "postcss-preset-mantine": "1.18.0",
     "postcss-simple-vars": "7.0.1",
     "tailwindcss": "4.1.18",
