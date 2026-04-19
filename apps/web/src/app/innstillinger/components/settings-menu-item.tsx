@@ -12,7 +12,7 @@ export type SettingsMenuItemProps = {
 
 export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon: Icon }) => {
   const path = usePathname()
-  const isCurrent = path === slug
+  const isCurrent = path.startsWith(slug)
 
   return (
     <Button
