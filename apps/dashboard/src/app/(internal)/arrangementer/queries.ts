@@ -9,7 +9,6 @@ import type { Pageable } from "@dotkomonline/utils"
 import { useMemo } from "react"
 import type { NotificationPayloadType } from "@dotkomonline/rpc"
 
-
 interface UseEventAllQueryProps {
   filter: EventFilterQuery
   page?: Pageable
@@ -98,9 +97,7 @@ export const useFeedbackAnswersGetQuery = (formId: FeedbackFormId | SkipToken) =
 
 export const useNotificationsByPayloadQuery = (payloadType: NotificationPayloadType, payload: string) => {
   const trpc = useTRPC()
-  const { data, ...query } = useQuery(
-    trpc.notification.findManyByPayload.queryOptions({ payloadType, payload })
-  )
+  const { data, ...query } = useQuery(trpc.notification.findManyByPayload.queryOptions({ payloadType, payload }))
 
   return { notifications: useMemo(() => data?.items ?? [], [data]), ...query }
 }

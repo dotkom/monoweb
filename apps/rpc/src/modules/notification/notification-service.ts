@@ -34,7 +34,12 @@ export interface NotificationService {
     payloadType?: NotificationPayloadType,
     payload?: string | null
   ): Promise<Notification>
-  findManyByPayload(handle: DBHandle, payloadType: NotificationPayloadType, payload: string, page: Pageable): Promise<Notification[]>
+  findManyByPayload(
+    handle: DBHandle,
+    payloadType: NotificationPayloadType,
+    payload: string,
+    page: Pageable
+  ): Promise<Notification[]>
   update(
     handle: DBHandle,
     notificationId: NotificationId,
