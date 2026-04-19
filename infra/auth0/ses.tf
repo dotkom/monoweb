@@ -1,7 +1,7 @@
 resource "auth0_email_provider" "amazon_ses_email_provider" {
   name                 = "ses"
   enabled              = true
-  default_from_address = "online@online.ntnu.no"
+  default_from_address = "Linjeforeningen Online <online@online.ntnu.no>"
 
   credentials {
     access_key_id     = aws_iam_access_key.auth0_ses_emailer.id

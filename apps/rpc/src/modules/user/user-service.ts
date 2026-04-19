@@ -42,6 +42,22 @@ export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   /**
+   * Update the user's email in Auth0 and trigger a verification email to the new address.
+   *
+   * NOTE: We do not update `User#email` until the user verifies the new email address. Call
+   * {@link UserService#syncEmailFromAuth0} after the user has clicked the verification link to update the DB user.
+   *
+   * @throws {InvalidArgumentError} if the new email is identical to the current one.
+   * @throws {AlreadyExistsError} if another user in the database already has this email.
+   */
+  requestEmailChange(handle: DBHandle, userId: UserId, newEmail: string): Promise<void>
+  /**
+   * Synchronizes the DB user's email with the email in Auth0.
+   *
+   * The DB user is mutated if and only if the email is verified in Auth0 AND it differs from the current DB user email.
+   */
+  syncEmailFromAuth0(handle: DBHandle, userId: UserId): Promise<User>
+  /**
    * Find a user by their ID, or null if not found.
    *
    * This function will attempt to registrer the user if, and only if:
@@ -414,6 +430,55 @@ export function getUserService(
       }
 
       return await userRepository.update(handle, userId, data)
+    },
+
+    async requestEmailChange(handle, userId, newEmail) {
+      const user = await this.getById(handle, userId)
+
+      if (user.email === newEmail) {
+        throw new InvalidArgumentError(`User(ID=${userId}) already has Email=${newEmail}`)
+      }
+
+      const conflict = await handle.user.findFirst({
+        where: { email: newEmail, id: { not: userId } },
+        select: { id: true },
+      })
+
+      if (conflict !== null) {
+        throw new AlreadyExistsError(`Email=${newEmail} is already in use by another user`)
+      }
+
+      const response = await managementClient.users.update(
+        { id: userId },
+        { email: newEmail, email_verified: false, verify_email: true }
+      )
+
+      if (response.status !== 200) {
+        throw new IllegalStateError(
+          `Received HTTP ${response.status} (${response.statusText}) when updating Email for User(ID=${userId}) in Auth0`
+        )
+      }
+
+      logger.info("Requested email change for User(ID=%s). Auth0 will send a verification email.", userId)
+    },
+
+    async syncEmailFromAuth0(handle, userId) {
+      const user = await this.getById(handle, userId)
+      const response = await managementClient.users.get({ id: userId })
+
+      if (response.status !== 200) {
+        throw new IllegalStateError(
+          `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
+        )
+      }
+
+      const auth0Email = response.data.email
+      if (!response.data.email_verified || !auth0Email || auth0Email === user.email) {
+        return user
+      }
+
+      logger.info("Syncing verified Auth0 email to DB for User(ID=%s)", userId)
+      return await userRepository.update(handle, userId, { email: auth0Email })
     },
 
     async discoverMembership(handle, userId) {

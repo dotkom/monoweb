@@ -209,6 +209,26 @@ const updateUserProcedure = procedure
     return ctx.userService.update(ctx.handle, input.id, { name, email, ...data })
   })
 
+export type RequestEmailChangeInput = inferProcedureInput<typeof requestEmailChangeProcedure>
+export type RequestEmailChangeOutput = inferProcedureOutput<typeof requestEmailChangeProcedure>
+const requestEmailChangeProcedure = procedure
+  .input(z.object({ newEmail: z.string().email() }))
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    return ctx.userService.requestEmailChange(ctx.handle, ctx.principal.subject, input.newEmail)
+  })
+
+export type SyncEmailFromAuth0Input = inferProcedureInput<typeof syncEmailFromAuth0Procedure>
+export type SyncEmailFromAuth0Output = inferProcedureOutput<typeof syncEmailFromAuth0Procedure>
+const syncEmailFromAuth0Procedure = procedure
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .mutation(async ({ ctx }) => {
+    return ctx.userService.syncEmailFromAuth0(ctx.handle, ctx.principal.subject)
+  })
+
 export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
 export type IsStaffOutput = inferProcedureOutput<typeof isStaffProcedure>
 const isStaffProcedure = procedure.query(async ({ ctx }) => {
@@ -319,6 +339,8 @@ export const userRouter = t.router({
   getMe: getMeProcedure,
   findMe: findMeProcedure,
   update: updateUserProcedure,
+  requestEmailChange: requestEmailChangeProcedure,
+  syncEmailFromAuth0: syncEmailFromAuth0Procedure,
   isStaff: isStaffProcedure,
   isAdmin: isAdminProcedure,
   confirmIdentityLink: confirmIdentityLinkProcedure,
