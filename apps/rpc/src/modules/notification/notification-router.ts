@@ -146,17 +146,15 @@ const findNotificationsProcedure = procedure
 
 export type OnNewNotificationInput = inferProcedureInput<typeof onNewNotificationProcedure>
 export type OnNewNotificationOutput = inferProcedureOutput<typeof onNewNotificationProcedure>
-const onNewNotificationProcedure = procedure
-  .use(withAuthentication())
-  .subscription(async function* ({ ctx, signal }) {
-    for await (const [data] of on(ctx.eventEmitter, "notification:new", { signal })) {
-      const { userId, notification } = data as { userId: string; notification: Notification }
-      if (userId !== ctx.principal.subject) {
-        continue
-      }
-      yield notification
+const onNewNotificationProcedure = procedure.use(withAuthentication()).subscription(async function* ({ ctx, signal }) {
+  for await (const [data] of on(ctx.eventEmitter, "notification:new", { signal })) {
+    const { userId, notification } = data as { userId: string; notification: Notification }
+    if (userId !== ctx.principal.subject) {
+      continue
     }
-  })
+    yield notification
+  }
+})
 
 export type FindNotificationsByPayloadInput = inferProcedureInput<typeof findNotificationsByPayloadProcedure>
 export type FindNotificationsByPayloadOutput = inferProcedureOutput<typeof findNotificationsByPayloadProcedure>

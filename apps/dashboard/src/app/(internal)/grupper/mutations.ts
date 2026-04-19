@@ -282,6 +282,37 @@ export const useLinkGroupMutation = () => {
   )
 }
 
+export const useCreateGroupNotificationMutation = (groupSlug: string) => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+  return useMutation(
+    trpc.notification.create.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Lager varsling...",
+          message: "Varslingen blir opprettet.",
+        })
+      },
+      onSuccess: async (data) => {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.notification.findManyByPayload.queryKey({ payloadType: "GROUP", payload: groupSlug }),
+        })
+        notification.complete({
+          title: "Varsling opprettet",
+          message: `Varslingen "${data.title}" har blitt opprettet.`,
+        })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under opprettelse av varslingen: ${err.toString()}.`,
+        })
+      },
+    })
+  )
+}
+
 export const useGroupFileUploadMutation = () => {
   const trpc = useTRPC()
 

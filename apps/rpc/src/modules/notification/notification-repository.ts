@@ -38,7 +38,12 @@ export interface NotificationRepository {
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
-  findManyByPayload(handle: DBHandle, payloadType: NotificationPayloadType, payload: string, page: Pageable): Promise<Notification[]>
+  findManyByPayload(
+    handle: DBHandle,
+    payloadType: NotificationPayloadType,
+    payload: string,
+    page: Pageable
+  ): Promise<Notification[]>
   findAllForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>

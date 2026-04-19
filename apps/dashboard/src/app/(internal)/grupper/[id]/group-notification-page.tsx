@@ -7,13 +7,13 @@ import { Anchor, Box, Button, Skeleton, Stack, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { type FC, useMemo } from "react"
-import { useNotificationsByPayloadQuery } from "../queries"
-import { useEventContext } from "./provider"
-import { openCreateEventNotificationModal } from "../components/create-event-notification-modal"
+import { useNotificationsByPayloadQuery } from "../../arrangementer/queries"
+import { openCreateGroupNotificationModal } from "../modals/create-group-notification-modal"
+import { useGroupDetailsContext } from "./provider"
 
-export const NotificationsPage: FC = () => {
-  const { event } = useEventContext()
-  const { notifications, isLoading } = useNotificationsByPayloadQuery("EVENT", event.id)
+export const GroupNotificationPage: FC = () => {
+  const { group } = useGroupDetailsContext()
+  const { notifications, isLoading } = useNotificationsByPayloadQuery("GROUP", group.slug)
 
   const columnHelper = createColumnHelper<Notification>()
 
@@ -73,7 +73,7 @@ export const NotificationsPage: FC = () => {
       <Stack gap="lg">
         <Box>
           <Title order={3}>Opprett varsling</Title>
-          <Button mt="md" onClick={openCreateEventNotificationModal({ eventId: event.id })}>
+          <Button mt="md" onClick={openCreateGroupNotificationModal({ groupSlug: group.slug })}>
             Legg til ny varsling
           </Button>
         </Box>

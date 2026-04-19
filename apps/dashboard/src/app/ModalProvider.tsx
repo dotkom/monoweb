@@ -25,6 +25,7 @@ import type { FC, PropsWithChildren } from "react"
 import { QRCodeScannedModal } from "@/app/(internal)/arrangementer/components/qr-code-scanned-modal"
 import { NotifyAttendeesModal } from "@/app/(internal)/arrangementer/components/notify-attendees-modal"
 import { CreateGroupMemberModal } from "@/app/(internal)/grupper/modals/create-group-member-modal"
+import { CreateGroupNotificationModal } from "@/app/(internal)/grupper/modals/create-group-notification-modal"
 import { CreateNotificationModal } from "@/app/(internal)/varslinger/modals/create-notification"
 import { CreateEventNotificationModal } from "./(internal)/arrangementer/components/create-event-notification-modal"
 
@@ -35,7 +36,6 @@ const modals = {
   "event/attendance/notify-attendees": NotifyAttendeesModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
-  "event/notification/create": CreateEventNotificationModal,
   "jobListing/create": CreateJobListingModal,
   "offline/create": CreateOfflineModal,
   "attendance/selections/create": CreateAttendanceSelectionsModal,
@@ -54,6 +54,8 @@ const modals = {
   "user/membership/update": EditMembershipModal,
   "image/upload": UploadImageModal,
   "notification/create": CreateNotificationModal,
+  "event/notification/create": CreateEventNotificationModal,
+  "group/notification/create": CreateGroupNotificationModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (
