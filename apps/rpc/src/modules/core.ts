@@ -192,7 +192,12 @@ export async function createServiceLayer(
   const contestRepository = getContestRepository()
   const notificationRepository = getNotificationRepository()
 
-  const notificationService = getNotificationService(notificationRepository, userRepository, attendanceRepository, eventEmitter)
+  const notificationService = getNotificationService(
+    notificationRepository,
+    userRepository,
+    attendanceRepository,
+    eventEmitter
+  )
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
     ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
