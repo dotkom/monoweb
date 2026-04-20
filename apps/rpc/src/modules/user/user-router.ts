@@ -12,7 +12,7 @@ import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { InvalidArgumentError } from "../../error"
+import { InvalidArgumentError, UnauthorizedError } from "../../error"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
@@ -235,7 +235,6 @@ const confirmIdentityLinkProcedure = procedure
   .input(
     z.object({
       secondaryIdToken: z.string().min(1),
-      secondaryUserId: UserSchema.shape.id,
     })
   )
   .use(withAuthentication())
@@ -244,13 +243,25 @@ const confirmIdentityLinkProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const primaryUserId = ctx.principal.subject
 
-    if (primaryUserId === input.secondaryUserId) {
+    const claims = await ctx.jwtService.web.verify(input.secondaryIdToken).catch(() => null)
+
+    if (claims === null) {
+      throw new UnauthorizedError("Invalid secondary ID token")
+    }
+
+    const secondaryUserId = claims.payload.sub
+
+    if (!secondaryUserId) {
+      throw new UnauthorizedError("Secondary ID token has no sub claim")
+    }
+
+    if (primaryUserId === secondaryUserId) {
       throw new InvalidArgumentError("Cannot link a user to themselves")
     }
 
     await ctx.userService.linkAuth0IdentitiesWithToken(primaryUserId, input.secondaryIdToken)
 
-    return ctx.userService.mergeUsers(ctx.handle, primaryUserId, input.secondaryUserId)
+    return ctx.userService.mergeUsers(ctx.handle, primaryUserId, secondaryUserId)
   })
 
 export type MergeUsersInput = inferProcedureInput<typeof mergeUsersProcedure>

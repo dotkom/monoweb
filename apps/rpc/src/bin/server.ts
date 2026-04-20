@@ -1,6 +1,5 @@
 import "../instrumentation"
 import { getLogger } from "@dotkomonline/logger"
-import { JwtService } from "@dotkomonline/oauth2/jwt"
 import fastifyCors from "@fastify/cors"
 import { captureException } from "@sentry/node"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
@@ -36,9 +35,8 @@ if (isAuthorizationUnsafelyDisabled) {
 }
 
 const configuration = createConfiguration()
+
 const allowedOrigins = configuration.ALLOWED_ORIGINS.split(",")
-const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
-const jwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
 
 const controller = new AbortController()
 const dependencies = createThirdPartyClients(configuration)
@@ -64,7 +62,7 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
   const bearer = req.headers.authorization
   if (bearer !== undefined) {
     const token = bearer.substring("Bearer ".length)
-    const principal = await jwtService.verify(token)
+    const principal = await dependencies.rpcJwtService.verify(token)
     const subject = principal.payload.sub
     if (subject === undefined) {
       return createTrpcContext(null, serviceLayer)

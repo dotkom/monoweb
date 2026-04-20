@@ -53,6 +53,7 @@ import { getMembershipService } from "./user/membership-service"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
+import { JwtService } from "@dotkomonline/oauth2/jwt"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -102,6 +103,13 @@ function getDirectory(configuration: Configuration): admin_directory_v1.Admin {
 
 /** Build API clients for third-party services like S3, Auth0, and Stripe. */
 export function createThirdPartyClients(configuration: Configuration) {
+  const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
+
+  const rpcJwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
+  // This is used to verify ID tokens issued to the web client during the link-identity flow. Their `aud` is the web
+  // client_id (per OIDC), not the resource-server identifier, so a separate JwtService is required.
+  const webJwtService = new JwtService(configuration.AUTH0_ISSUER, [configuration.AUTH0_WEB_CLIENT_ID])
+
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
   const sesClient = new SESClient({ region: configuration.AWS_REGION })
   const sqsClient = new SQSClient({ region: configuration.AWS_REGION })
@@ -123,7 +131,19 @@ export function createThirdPartyClients(configuration: Configuration) {
   })
   const prisma = createPrisma(configuration.DATABASE_URL)
   const workspaceDirectory = isGoogleWorkspaceFeatureEnabled(configuration) ? getDirectory(configuration) : null
-  return { s3Client, sesClient, sqsClient, auth0Client, webAuth0Client, stripe, prisma, workspaceDirectory }
+
+  return {
+    rpcJwtService,
+    webJwtService,
+    s3Client,
+    sesClient,
+    sqsClient,
+    auth0Client,
+    webAuth0Client,
+    stripe,
+    prisma,
+    workspaceDirectory,
+  }
 }
 
 /**
@@ -259,6 +279,11 @@ export async function createServiceLayer(
     paymentWebhookService,
     recurringTaskService,
     workspaceService,
+
+    jwtService: {
+      rpc: clients.rpcJwtService,
+      web: clients.webJwtService,
+    },
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only
     prisma: clients.prisma,

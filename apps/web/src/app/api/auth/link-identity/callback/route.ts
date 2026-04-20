@@ -35,10 +35,7 @@ export async function GET(request: Request) {
     verifier
   )
 
-  // The ID token comes from our own Auth0 tenant over HTTPS — no signature check needed here.
-  // It will be verified by Auth0 again when passed as link_with to the Management API.
-  const claims = decodeJwt(tokenSet.idToken)
-  const secondaryUserId = claims.sub
+  const secondaryUserId = decodeJwt(tokenSet.idToken).sub
   if (!secondaryUserId) {
     return NextResponse.redirect(`${env.NEXT_PUBLIC_ORIGIN}?error=no_sub`)
   }
@@ -49,8 +46,9 @@ export async function GET(request: Request) {
   }
 
   const pendingCookieOptions = { path: "/", httpOnly: true, sameSite: "lax" as const, maxAge: 900, secure: isHttps }
-  cookieHandle.set(`${cookiePrefix}monoweb-pending-link-user-id`, secondaryUserId, pendingCookieOptions)
   cookieHandle.set(`${cookiePrefix}monoweb-pending-link-id-token`, tokenSet.idToken, pendingCookieOptions)
+  // This is used by the confirmation page to render the secondary user's profile, and not as any proof of ownership.
+  cookieHandle.set(`${cookiePrefix}monoweb-pending-link-user-id`, secondaryUserId, pendingCookieOptions)
 
   return NextResponse.redirect(`${env.NEXT_PUBLIC_ORIGIN}/innstillinger/bruker/link`)
 }
