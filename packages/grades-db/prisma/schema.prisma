@@ -141,9 +141,12 @@ model Faculty {
   id     String @id @default(uuid())
   nameNo String @map("name_no")
   nameEn String @map("name_en")
-  code   Int    @unique
 
-  courses Course[]
+  /// DBH code for faculty, for example "230000"
+  code Int @unique
+
+  courses     Course[]
+  departments Department[]
 
   @@map("faculty")
 }
@@ -152,9 +155,14 @@ model Department {
   id     String @id @default(uuid())
   nameNo String @map("name_no")
   nameEn String @map("name_en")
-  code   Int    @unique
+
+  /// DBH code for department, for example "230240"
+  code Int @unique
 
   courses Course[]
+
+  facultyId String  @map("faculty_id")
+  faculty   Faculty @relation(fields: [facultyId], references: [id])
 
   @@map("department")
 }
