@@ -11,7 +11,7 @@ export type NtnuCourse = {
   name: string
   credits: number | null
   studyLevel: StudyLevel
-  gradeType: GradeType
+  gradeType: GradeType | null
   content: string
   teachingMethods: string
   learningOutcomes: string
@@ -290,7 +290,7 @@ function mapStudyLevel(description: string | null, locale: Locale): StudyLevel {
   return STUDY_LEVEL_MAPPINGS[locale][normalized] ?? "UNKNOWN"
 }
 
-function mapGradeType(description: string | null, locale: Locale): GradeType {
+function mapGradeType(description: string | null, locale: Locale): GradeType | null {
   const lowerDesc = description?.trim().toLowerCase() ?? ""
   if (lowerDesc.includes(COURSE_PAGE_TRANSLATIONS.letterGrade[locale].toLowerCase())) {
     return "LETTER"
@@ -300,7 +300,7 @@ function mapGradeType(description: string | null, locale: Locale): GradeType {
     return "PASS_FAIL"
   }
 
-  return "UNKNOWN"
+  return null
 }
 
 const ALLOWED_CONTENT_TAGS = ["p", "ul", "ol", "li", "strong", "b", "em", "i", "br"]

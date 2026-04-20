@@ -43,7 +43,6 @@ enum StudyLevel {
 enum GradeType {
   PASS_FAIL
   LETTER
-  UNKNOWN
 
   @@map("grade_type")
 }
