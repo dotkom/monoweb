@@ -16,7 +16,7 @@ export function getCourseRepository(): CourseRepository {
       const sortFieldMap = {
         AVERAGE_GRADE: "averageGrade",
         PASS_RATE: "passRate",
-        STUDENT_COUNT: "studentCount",
+        CANDIDATE_COUNT: "candidateCount",
       } as const
 
       const sortOrder = query.orderBy ?? "desc"
