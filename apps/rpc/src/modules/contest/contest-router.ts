@@ -162,7 +162,7 @@ const removeContestantProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const contestant = await ctx.handle.contestant.findUniqueOrThrow({ where: { id: input.id } })
+    const contestant = await ctx.contestService.getContestantById(ctx.handle, input.id)
     const contest = await ctx.contestService.getById(ctx.handle, contestant.contestId)
     const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
       contest.groupId,
@@ -189,7 +189,7 @@ const updateContestantResultProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const contestant = await ctx.handle.contestant.findUniqueOrThrow({ where: { id: input.id } })
+    const contestant = await ctx.contestService.getContestantById(ctx.handle, input.id)
     const contest = await ctx.contestService.getById(ctx.handle, contestant.contestId)
     const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
       contest.groupId,

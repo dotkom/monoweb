@@ -15,6 +15,7 @@ import type { ContestRepository } from "./contest-repository"
 export interface ContestService {
   findById(handle: DBHandle, contestId: ContestId): Promise<Contest | null>
   getById(handle: DBHandle, contestId: ContestId): Promise<Contest>
+  getContestantById(handle: DBHandle, contestantId: ContestantId): Promise<Contestant>
   findMany(handle: DBHandle, page: Pageable): Promise<Contest[]>
   create(handle: DBHandle, data: ContestWrite): Promise<Contest>
   update(handle: DBHandle, contestId: ContestId, data: Partial<ContestWrite>): Promise<Contest>
@@ -43,6 +44,14 @@ export function getContestService(contestRepository: ContestRepository): Contest
       return contest
     },
 
+    async getContestantById(handle, contestantId) {
+      const contestant = await contestRepository.findContestantById(handle, contestantId)
+      if (!contestant) {
+        throw new NotFoundError(`Contestant(ID=${contestantId}) not found`)
+      }
+      return contestant
+    },
+
     async findMany(handle, page) {
       return await contestRepository.findMany(handle, page)
     },
@@ -56,18 +65,7 @@ export function getContestService(contestRepository: ContestRepository): Contest
     },
 
     async delete(handle, contestId) {
-      const contest = await this.getById(handle, contestId)
-      if (contest.winnerContestantId) {
-        await contestRepository.setWinner(handle, contestId, null)
-      }
-      const contestants = await contestRepository.findContestantsByContestId(handle, contestId)
-      for (const contestant of contestants) {
-        const team = await contestRepository.findTeamByContestantId(handle, contestant.id)
-        if (team) {
-          await contestRepository.deleteTeam(handle, contestant.id)
-        }
-        await contestRepository.deleteContestant(handle, contestant.id)
-      }
+      await this.getById(handle, contestId)
       await contestRepository.delete(handle, contestId)
     },
 
@@ -94,10 +92,6 @@ export function getContestService(contestRepository: ContestRepository): Contest
     },
 
     async removeContestant(handle, contestantId) {
-      const team = await contestRepository.findTeamByContestantId(handle, contestantId)
-      if (team) {
-        await contestRepository.deleteTeam(handle, contestantId)
-      }
       await contestRepository.deleteContestant(handle, contestantId)
     },
 
