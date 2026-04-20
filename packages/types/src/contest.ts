@@ -21,6 +21,7 @@ export const ContestWriteSchema = ContestSchema.pick({
   description: true,
   resultType: true,
   resultOrder: true,
+  groupId: true,
 })
 
 export type ContestWrite = z.infer<typeof ContestWriteSchema>
