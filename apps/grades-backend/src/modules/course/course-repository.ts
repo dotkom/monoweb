@@ -45,7 +45,7 @@ export function getCourseRepository(): CourseRepository {
             {
               OR: [
                 {
-                  norwegianName:
+                  nameNo:
                     query.byName !== null
                       ? {
                           contains: query.byName,
@@ -54,7 +54,7 @@ export function getCourseRepository(): CourseRepository {
                       : undefined,
                 },
                 {
-                  englishName:
+                  nameEn:
                     query.byName !== null
                       ? {
                           contains: query.byName,

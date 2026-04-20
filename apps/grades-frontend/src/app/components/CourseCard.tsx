@@ -20,7 +20,7 @@ export const CourseCard = ({ course }: Props) => {
       className="bg-white rounded-lg shadow-md p-4 max-w-3xl grid grid-cols-[1fr_auto] hover:bg-gray-50 transition-colors"
     >
       <div>
-        <Title className="text-xl font-bold font-sans">{course.norwegianName}</Title>
+        <Title className="text-xl font-bold font-sans">{course.nameNo}</Title>
         <Text className="text-gray-600">{course.code}</Text>
 
         <div className="mt-4 flex flex-row gap-4">

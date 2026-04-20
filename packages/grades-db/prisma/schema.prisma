@@ -66,18 +66,22 @@ enum TeachingLanguage {
 model Course {
   id              String     @id @default(uuid())
   code            String     @unique
-  norwegianName   String     @map("norwegian_name")
-  englishName     String?    @map("english_name")
+  nameNo          String     @map("name_no")
+  nameEn          String?    @map("name_en")
   credits         Float
   studyLevel      StudyLevel @map("study_level")
   gradeType       GradeType  @map("grade_type")
   firstYearTaught Int        @map("first_year_taught")
   lastYearTaught  Int?       @map("last_year_taught")
 
-  content          String? @map("content")
-  teachingMethods  String? @map("teaching_methods")
-  learningOutcomes String? @map("learning_outcomes")
-  examType         String? @map("exam_type")
+  contentNo          String? @map("content_no")
+  contentEn          String? @map("content_en")
+  teachingMethodsNo  String? @map("teaching_methods_no")
+  teachingMethodsEn  String? @map("teaching_methods_en")
+  learningOutcomesNo String? @map("learning_outcomes_no")
+  learningOutcomesEn String? @map("learning_outcomes_en")
+  examTypeNo         String? @map("exam_type_no")
+  examTypeEn         String? @map("exam_type_en")
 
   studentCount Int   @map("student_count")
   averageGrade Float @map("average_grade")
@@ -100,8 +104,8 @@ model Course {
   /// Metadata used to speed up sync by limiting how far back the scraper has to check for changes
   oldestYearCheckedForNtnuData Int? @map("oldest_year_checked_for_ntnu_data")
 
-  @@index([norwegianName])
-  @@index([englishName])
+  @@index([nameNo])
+  @@index([nameEn])
   @@map("course")
 }
 
