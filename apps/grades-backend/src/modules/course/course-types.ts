@@ -42,7 +42,7 @@ export type CourseCampus = z.infer<typeof CourseCampusSchema>
 
 export const mapCourseSemesterToLabel = (semester: Semester) => {
   switch (semester) {
-    case "FALL":
+    case "AUTUMN":
       return "Høst"
     case "SPRING":
       return "Vår"

@@ -23,7 +23,7 @@ datasource db {
 enum Semester {
   SPRING
   SUMMER
-  FALL
+  AUTUMN
 
   @@map("semester")
 }

@@ -5,7 +5,7 @@ export const getGradeFixtures = () =>
     {
       id: "4f0ebe39-7ebb-44cf-9acb-6a6f14b8183f",
       courseId: "11111111-1111-1111-1111-111111111111",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 1.7580645161290323,
@@ -20,7 +20,7 @@ export const getGradeFixtures = () =>
     {
       id: "addf0d89-600d-44e2-872b-8dd986b99adc",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 2.2462253193960513,
@@ -35,7 +35,7 @@ export const getGradeFixtures = () =>
     {
       id: "30418973-8f3a-45b9-a5b9-a11b1984479e",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 2.12220566318927,
@@ -50,7 +50,7 @@ export const getGradeFixtures = () =>
     {
       id: "52870d76-4fca-4cd8-bf45-9b224d59b133",
       courseId: "d313c0f6-aff5-4c0e-93a7-c493bda6d00e",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 0,
@@ -65,7 +65,7 @@ export const getGradeFixtures = () =>
     {
       id: "2cc3a855-dc59-4e30-9145-baf33bd7ffa4",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 2.7304015296367115,
@@ -80,7 +80,7 @@ export const getGradeFixtures = () =>
     {
       id: "197b44e8-ba78-40f6-a854-f1608d4aa4ba",
       courseId: "811f891a-3058-4d78-88a5-b0cb45016ae2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 1.1833333333333333,
@@ -95,7 +95,7 @@ export const getGradeFixtures = () =>
     {
       id: "f11ed2c3-2378-44bb-bec5-ca9b3a5e2d04",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 2.1379716981132075,
@@ -110,7 +110,7 @@ export const getGradeFixtures = () =>
     {
       id: "8078a53e-dc6a-4e8e-9741-77f0e689ab38",
       courseId: "d3ed3872-8e71-480d-a27d-24d2796b4fc5",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 2,
@@ -125,7 +125,7 @@ export const getGradeFixtures = () =>
     {
       id: "02f762d7-681c-4d74-9d48-5ac18345a859",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 1.9371345029239766,
@@ -140,7 +140,7 @@ export const getGradeFixtures = () =>
     {
       id: "8097786c-197d-4322-910c-17ae1b254a2a",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 2.5242290748898677,
@@ -155,7 +155,7 @@ export const getGradeFixtures = () =>
     {
       id: "28f540b3-296e-40ea-a6f6-d439f055bdf1",
       courseId: "1cef1da9-34d1-4870-aa16-c88db167aa7a",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 0.9240506329113924,
@@ -170,7 +170,7 @@ export const getGradeFixtures = () =>
     {
       id: "dcc49693-e310-448c-a43a-ea0ebbc117ea",
       courseId: "043204dc-f409-42b2-a671-31269aaf38a0",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 0.6153846153846154,
@@ -185,7 +185,7 @@ export const getGradeFixtures = () =>
     {
       id: "e65c9e59-950c-456e-bde9-f0bc2f8904e9",
       courseId: "5a8c2cb9-32a5-49c7-b92d-0c89daffbbec",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 1.1224489795918366,
@@ -200,7 +200,7 @@ export const getGradeFixtures = () =>
     {
       id: "457ddfc4-5697-4e00-90f6-16fa5b7d161f",
       courseId: "0a5efcf5-d3eb-4ced-a240-8790b3772dae",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 1.2641509433962264,
@@ -350,7 +350,7 @@ export const getGradeFixtures = () =>
     {
       id: "55d7f32b-c73d-4830-9d45-c8b9b2bf6800",
       courseId: "043204dc-f409-42b2-a671-31269aaf38a0",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 1.8857142857142857,
@@ -365,7 +365,7 @@ export const getGradeFixtures = () =>
     {
       id: "137ebc8e-a366-4364-984c-cd1500a8876f",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 2.4884929472902746,
@@ -380,7 +380,7 @@ export const getGradeFixtures = () =>
     {
       id: "a0784211-bfca-4309-8a6e-a17505b10329",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 2.3090128755364807,
@@ -395,7 +395,7 @@ export const getGradeFixtures = () =>
     {
       id: "d7cd1ae8-744a-4a70-866a-5f0f51750c60",
       courseId: "1cef1da9-34d1-4870-aa16-c88db167aa7a",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 1.168,
@@ -410,7 +410,7 @@ export const getGradeFixtures = () =>
     {
       id: "f415aa25-e7e9-46d8-85ab-01ef419838e9",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 2.294649061848506,
@@ -425,7 +425,7 @@ export const getGradeFixtures = () =>
     {
       id: "b50f5c85-2742-4720-91a1-528e37a35971",
       courseId: "d3ed3872-8e71-480d-a27d-24d2796b4fc5",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 1.7804878048780488,
@@ -440,7 +440,7 @@ export const getGradeFixtures = () =>
     {
       id: "7772f42e-82c2-417e-8b77-95fb19199ce4",
       courseId: "811f891a-3058-4d78-88a5-b0cb45016ae2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 1.1,
@@ -455,7 +455,7 @@ export const getGradeFixtures = () =>
     {
       id: "d92a0c90-3dfd-49c4-96df-f204b67f4117",
       courseId: "11111111-1111-1111-1111-111111111111",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 1.3176470588235294,
@@ -470,7 +470,7 @@ export const getGradeFixtures = () =>
     {
       id: "e916590b-fcf7-446f-9746-700bf6f86e2f",
       courseId: "5a8c2cb9-32a5-49c7-b92d-0c89daffbbec",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 1.1111111111111112,
@@ -485,7 +485,7 @@ export const getGradeFixtures = () =>
     {
       id: "2bf8ba0a-7e39-4a92-a200-f1cd770ac439",
       courseId: "0a5efcf5-d3eb-4ced-a240-8790b3772dae",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 0.6086956521739131,
@@ -500,7 +500,7 @@ export const getGradeFixtures = () =>
     {
       id: "c9027aa4-335c-4dd8-b478-7899096598f2",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 2.013498312710911,
@@ -515,7 +515,7 @@ export const getGradeFixtures = () =>
     {
       id: "fa58b378-68c1-414f-a678-c7adcef5438c",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 2.341708542713568,
@@ -530,7 +530,7 @@ export const getGradeFixtures = () =>
     {
       id: "bc0734f2-4107-4044-9de6-9beaa9607c62",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 2.152267818574514,
@@ -650,7 +650,7 @@ export const getGradeFixtures = () =>
     {
       id: "ec389e9f-9387-4a23-8496-7267c85726cf",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 2.10853950518755,
@@ -665,7 +665,7 @@ export const getGradeFixtures = () =>
     {
       id: "1ac22c63-943a-4c1e-9238-9fc3ba2481d0",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 2.228358208955224,
@@ -680,7 +680,7 @@ export const getGradeFixtures = () =>
     {
       id: "61964c21-8f8c-4f37-8dce-fdde51d7eefa",
       courseId: "d3ed3872-8e71-480d-a27d-24d2796b4fc5",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 1.4666666666666666,
@@ -695,7 +695,7 @@ export const getGradeFixtures = () =>
     {
       id: "130c4613-3ee6-4e27-a0b9-14b822ce2322",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 1.7147192716236723,
@@ -710,7 +710,7 @@ export const getGradeFixtures = () =>
     {
       id: "45e3e078-fffb-4dcb-a10f-74a2c53bbdac",
       courseId: "043204dc-f409-42b2-a671-31269aaf38a0",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 1.8773584905660377,
@@ -725,7 +725,7 @@ export const getGradeFixtures = () =>
     {
       id: "d62d7ed8-d9a5-4334-96e9-2233e804d569",
       courseId: "11111111-1111-1111-1111-111111111111",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 2.2261904761904763,
@@ -740,7 +740,7 @@ export const getGradeFixtures = () =>
     {
       id: "6e54920a-937c-4cb6-8734-dd27bc5dff60",
       courseId: "0a5efcf5-d3eb-4ced-a240-8790b3772dae",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 0.38235294117647056,
@@ -755,7 +755,7 @@ export const getGradeFixtures = () =>
     {
       id: "ddae911a-a406-4db7-be56-3e6a5b1573d4",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 2.2666666666666666,
@@ -770,7 +770,7 @@ export const getGradeFixtures = () =>
     {
       id: "eae4d600-bcfd-4620-a998-9eaa745d2a57",
       courseId: "5a8c2cb9-32a5-49c7-b92d-0c89daffbbec",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 0.956989247311828,
@@ -785,7 +785,7 @@ export const getGradeFixtures = () =>
     {
       id: "9ad11d63-b783-4789-8a14-8e5486b76070",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 1.8314606741573034,
@@ -800,7 +800,7 @@ export const getGradeFixtures = () =>
     {
       id: "9e3952e0-b329-4599-886d-a4c2df793064",
       courseId: "811f891a-3058-4d78-88a5-b0cb45016ae2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 1.3118279569892473,
@@ -815,7 +815,7 @@ export const getGradeFixtures = () =>
     {
       id: "3243feb8-8c96-4cae-98f2-87234fd89739",
       courseId: "1cef1da9-34d1-4870-aa16-c88db167aa7a",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 1.6896551724137931,
@@ -830,7 +830,7 @@ export const getGradeFixtures = () =>
     {
       id: "9ca2ef7b-7f37-4fb6-9ab9-f3cc4812dcda",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 3.028720626631854,
@@ -965,7 +965,7 @@ export const getGradeFixtures = () =>
     {
       id: "8a305369-e71f-4c00-9a79-9a35cf2a852c",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 0,
@@ -980,7 +980,7 @@ export const getGradeFixtures = () =>
     {
       id: "3567df97-bf1b-4078-915a-9140d9a8a733",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 2.017331022530329,
@@ -995,7 +995,7 @@ export const getGradeFixtures = () =>
     {
       id: "6aae094e-d5ad-48a5-9d8a-118f69656953",
       courseId: "1cef1da9-34d1-4870-aa16-c88db167aa7a",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 1.7727272727272727,
@@ -1010,7 +1010,7 @@ export const getGradeFixtures = () =>
     {
       id: "4cbcbcec-d367-4732-9f7f-523f2395472a",
       courseId: "0a5efcf5-d3eb-4ced-a240-8790b3772dae",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1025,7 +1025,7 @@ export const getGradeFixtures = () =>
     {
       id: "fabe327e-356e-4725-8de9-28abea873903",
       courseId: "d3ed3872-8e71-480d-a27d-24d2796b4fc5",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 2.375,
@@ -1040,7 +1040,7 @@ export const getGradeFixtures = () =>
     {
       id: "6e844e8c-f44c-4b30-b68c-069204ca87cb",
       courseId: "11111111-1111-1111-1111-111111111111",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 2.7012987012987013,
@@ -1055,7 +1055,7 @@ export const getGradeFixtures = () =>
     {
       id: "7eadf38d-922e-4a7d-8a60-ee1d3bd5cc74",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1070,7 +1070,7 @@ export const getGradeFixtures = () =>
     {
       id: "165ec922-d15c-4534-9c0b-33f52e800d67",
       courseId: "811f891a-3058-4d78-88a5-b0cb45016ae2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 1.5157894736842106,
@@ -1085,7 +1085,7 @@ export const getGradeFixtures = () =>
     {
       id: "819cffaa-d9e9-4130-b3fa-81628f52215d",
       courseId: "5a8c2cb9-32a5-49c7-b92d-0c89daffbbec",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1100,7 +1100,7 @@ export const getGradeFixtures = () =>
     {
       id: "2c2e73a0-8d0e-43f7-973e-b75bb37db5a8",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 2.348297213622291,
@@ -1115,7 +1115,7 @@ export const getGradeFixtures = () =>
     {
       id: "396d328d-af53-45c5-8b1c-ead06a2f8f2f",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 1.9684947491248541,
@@ -1130,7 +1130,7 @@ export const getGradeFixtures = () =>
     {
       id: "77b96427-2989-4e3f-a8dc-b6b2c74ae096",
       courseId: "043204dc-f409-42b2-a671-31269aaf38a0",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1145,7 +1145,7 @@ export const getGradeFixtures = () =>
     {
       id: "5a51d6a6-8468-4306-bed4-de2c5c2dae9c",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 2.597547380156076,
@@ -1295,7 +1295,7 @@ export const getGradeFixtures = () =>
     {
       id: "7641f62f-0e6e-413d-be23-c42ec66165b7",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2020,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1310,7 +1310,7 @@ export const getGradeFixtures = () =>
     {
       id: "8d718748-88ea-4e09-a57b-8a15b308d45b",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2020,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1325,7 +1325,7 @@ export const getGradeFixtures = () =>
     {
       id: "25f997bd-1956-4867-9546-f41d8cc63bbc",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2020,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1340,7 +1340,7 @@ export const getGradeFixtures = () =>
     {
       id: "87123fc8-075f-4d0e-868a-61a109dd80e4",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2020,
       isDigitalExam: false,
       averageGrade: 2.641735918744229,
@@ -1355,7 +1355,7 @@ export const getGradeFixtures = () =>
     {
       id: "6c5d7ca3-ab91-4513-835f-13625f2b1ab2",
       courseId: "1cef1da9-34d1-4870-aa16-c88db167aa7a",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2020,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1370,7 +1370,7 @@ export const getGradeFixtures = () =>
     {
       id: "03dd0dd7-9f2a-45ff-868e-800ebf858f7f",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2020,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1385,7 +1385,7 @@ export const getGradeFixtures = () =>
     {
       id: "f6dbc2cf-623d-45eb-9178-770f9e6b3aa6",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2020,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1685,7 +1685,7 @@ export const getGradeFixtures = () =>
     {
       id: "565d12a6-70ff-425d-b395-9ef86dfd6fb2",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 3.09518477043673,
@@ -1700,7 +1700,7 @@ export const getGradeFixtures = () =>
     {
       id: "95190c18-c84a-4e6e-ba79-bd8578f34375",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 2.343001261034048,
@@ -1715,7 +1715,7 @@ export const getGradeFixtures = () =>
     {
       id: "518ca397-199b-45fe-ae00-fc314f62f420",
       courseId: "d313c0f6-aff5-4c0e-93a7-c493bda6d00e",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 0,
@@ -1730,7 +1730,7 @@ export const getGradeFixtures = () =>
     {
       id: "0f5296a8-81fc-40d7-96a0-f0f2ef6056bf",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 2.1481481481481484,
@@ -1745,7 +1745,7 @@ export const getGradeFixtures = () =>
     {
       id: "5e892b25-40aa-4ab0-868c-66b830f228de",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 2.3752151462994835,
@@ -1760,7 +1760,7 @@ export const getGradeFixtures = () =>
     {
       id: "032cdf4f-6aba-42a0-926d-bae57ab14ca4",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 2.4518599562363237,
@@ -1775,7 +1775,7 @@ export const getGradeFixtures = () =>
     {
       id: "2774c62a-5671-4690-98ce-2bde6a05651b",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 2.495473747736874,
@@ -1790,7 +1790,7 @@ export const getGradeFixtures = () =>
     {
       id: "258d6f00-5226-49ee-97b9-7ddbb2a4ed3f",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 2.2470588235294118,
@@ -2150,7 +2150,7 @@ export const getGradeFixtures = () =>
     {
       id: "17771558-7eb6-40c8-8758-133f43ad410c",
       courseId: "d313c0f6-aff5-4c0e-93a7-c493bda6d00e",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 0,
@@ -2165,7 +2165,7 @@ export const getGradeFixtures = () =>
     {
       id: "74a8a729-ebb2-4f80-b2ab-9f3da03d759d",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 2.49496306245803,
@@ -2180,7 +2180,7 @@ export const getGradeFixtures = () =>
     {
       id: "08840c6c-4134-408a-9d5f-152b21af5e0c",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 2.04822335025381,
@@ -2195,7 +2195,7 @@ export const getGradeFixtures = () =>
     {
       id: "dcce0746-67a9-4373-976c-7130997a1e60",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 2.26728971962617,
@@ -2210,7 +2210,7 @@ export const getGradeFixtures = () =>
     {
       id: "a8d095cb-c789-461b-88af-32a0bcca7419",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 2.28587196467991,
@@ -2225,7 +2225,7 @@ export const getGradeFixtures = () =>
     {
       id: "e1bea649-ef27-40a2-9626-38bcfd413abe",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 2.91036998436686,
@@ -2240,7 +2240,7 @@ export const getGradeFixtures = () =>
     {
       id: "19252363-0a6a-44ee-b43c-d59c31360f87",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 2.51271186440678,
@@ -2255,7 +2255,7 @@ export const getGradeFixtures = () =>
     {
       id: "8c9b21c0-6e67-46aa-b2f5-0f2a1d18866c",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 3.54351687388988,
@@ -2270,7 +2270,7 @@ export const getGradeFixtures = () =>
     {
       id: "5c7913f6-13c3-46b8-af98-3af5bc2c7f0a",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2018,
       isDigitalExam: false,
       averageGrade: 2.3739837398374,
@@ -2630,7 +2630,7 @@ export const getGradeFixtures = () =>
     {
       id: "e144ac29-33a3-4c89-a9f2-b22d99088e0e",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 2.71986417657046,
@@ -2645,7 +2645,7 @@ export const getGradeFixtures = () =>
     {
       id: "eaf7f41c-73f3-4da1-844c-58b2b2090bb5",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 2.1640826873385,
@@ -2660,7 +2660,7 @@ export const getGradeFixtures = () =>
     {
       id: "3298d512-7509-458f-9b96-7fa210c27f27",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 3.16210807204803,
@@ -2675,7 +2675,7 @@ export const getGradeFixtures = () =>
     {
       id: "94c054ad-91ef-4ce1-a904-5d1f37fc6227",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 2.4,
@@ -2690,7 +2690,7 @@ export const getGradeFixtures = () =>
     {
       id: "4b2c081f-5bda-41d0-929b-95ace03d839e",
       courseId: "d313c0f6-aff5-4c0e-93a7-c493bda6d00e",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 0,
@@ -2705,7 +2705,7 @@ export const getGradeFixtures = () =>
     {
       id: "fd06e341-9119-478d-af93-12610befae86",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 2.54986522911051,
@@ -2720,7 +2720,7 @@ export const getGradeFixtures = () =>
     {
       id: "3e3d5b45-8e72-4447-b46b-18be46dc0ec6",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 2.94971613949716,
@@ -2735,7 +2735,7 @@ export const getGradeFixtures = () =>
     {
       id: "15f5ec15-d441-440d-8c8f-d1bd2ba41a28",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 3.35374149659864,
@@ -2750,7 +2750,7 @@ export const getGradeFixtures = () =>
     {
       id: "da18ba51-49a2-4cde-bd03-d8d570a375cd",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2017,
       isDigitalExam: false,
       averageGrade: 2.80542264752791,
@@ -3110,7 +3110,7 @@ export const getGradeFixtures = () =>
     {
       id: "9dd84f21-f2f2-4e94-82ce-320db24f1305",
       courseId: "d313c0f6-aff5-4c0e-93a7-c493bda6d00e",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 0,
@@ -3125,7 +3125,7 @@ export const getGradeFixtures = () =>
     {
       id: "23b5fc4e-58c7-4933-be86-a2db7b73ea99",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 2.63994910941476,
@@ -3140,7 +3140,7 @@ export const getGradeFixtures = () =>
     {
       id: "7917f1e4-afc7-4461-8434-6d239d2e00f9",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 2.09228441754917,
@@ -3155,7 +3155,7 @@ export const getGradeFixtures = () =>
     {
       id: "fd40e66c-b754-4596-a80f-a34821c84875",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 3.40822784810127,
@@ -3170,7 +3170,7 @@ export const getGradeFixtures = () =>
     {
       id: "5bd3bc67-416e-4b1a-a526-8ae2d7e5259e",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 3.0184842883549,
@@ -3185,7 +3185,7 @@ export const getGradeFixtures = () =>
     {
       id: "fc50cb37-e409-4dfe-b1b6-2925c787e51d",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 3.35329341317365,
@@ -3200,7 +3200,7 @@ export const getGradeFixtures = () =>
     {
       id: "7dd7f1d3-10e4-476c-8ce8-c24a4887ccac",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 2.37483617300131,
@@ -3215,7 +3215,7 @@ export const getGradeFixtures = () =>
     {
       id: "fecd4608-a422-4fdc-994a-3b1a7fe300e6",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 2.58420441347271,
@@ -3230,7 +3230,7 @@ export const getGradeFixtures = () =>
     {
       id: "d9fb3baf-7892-47bb-bc5e-f1f41adeb5a8",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2016,
       isDigitalExam: false,
       averageGrade: 2.71172325432415,
@@ -3590,7 +3590,7 @@ export const getGradeFixtures = () =>
     {
       id: "e7808a00-81fe-41de-aca1-9f0cf89c4b0a",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 2.59895833333333,
@@ -3605,7 +3605,7 @@ export const getGradeFixtures = () =>
     {
       id: "52b0f644-f8f2-48c9-a8b6-9a00908dbb3e",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 2.7432239657632,
@@ -3620,7 +3620,7 @@ export const getGradeFixtures = () =>
     {
       id: "57a605b8-73ab-4c46-a90a-0d4bcca71ec5",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 2.64462809917355,
@@ -3635,7 +3635,7 @@ export const getGradeFixtures = () =>
     {
       id: "2eb92bff-a789-4c96-a53f-740551224374",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 2.9764982373678,
@@ -3650,7 +3650,7 @@ export const getGradeFixtures = () =>
     {
       id: "8359ef97-4b72-460f-b789-409b9834075b",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 3.47197640117994,
@@ -3665,7 +3665,7 @@ export const getGradeFixtures = () =>
     {
       id: "7f7411f9-e9db-40fa-b3cf-99267c19b854",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 2.95446375074895,
@@ -3680,7 +3680,7 @@ export const getGradeFixtures = () =>
     {
       id: "cecc0a48-1d28-416c-afc9-125984effd8e",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 2.20103092783505,
@@ -3695,7 +3695,7 @@ export const getGradeFixtures = () =>
     {
       id: "e11d82e2-999a-4352-8f5a-318999fd9a76",
       courseId: "d313c0f6-aff5-4c0e-93a7-c493bda6d00e",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 0,
@@ -3710,7 +3710,7 @@ export const getGradeFixtures = () =>
     {
       id: "a4b27056-c84b-4aa3-91a3-c0135cea465a",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2015,
       isDigitalExam: false,
       averageGrade: 2.55399061032864,
@@ -4070,7 +4070,7 @@ export const getGradeFixtures = () =>
     {
       id: "861015f5-dd20-4243-a53f-dd084967327f",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2014,
       isDigitalExam: false,
       averageGrade: 3.07228915662651,
@@ -4085,7 +4085,7 @@ export const getGradeFixtures = () =>
     {
       id: "32d8bb05-a333-4576-86be-3bc1681025da",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2014,
       isDigitalExam: false,
       averageGrade: 3.37042925278219,
@@ -4100,7 +4100,7 @@ export const getGradeFixtures = () =>
     {
       id: "b12eb46c-9249-43b8-93be-8be7cff64ab1",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2014,
       isDigitalExam: false,
       averageGrade: 2.8935860058309,
@@ -4115,7 +4115,7 @@ export const getGradeFixtures = () =>
     {
       id: "1c217393-7ada-4c47-b9c8-c96e5326e333",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2014,
       isDigitalExam: false,
       averageGrade: 2.22297297297297,
@@ -4130,7 +4130,7 @@ export const getGradeFixtures = () =>
     {
       id: "8af1aec3-5887-497f-b113-d805bf204190",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2014,
       isDigitalExam: false,
       averageGrade: 2.89460784313725,
@@ -4145,7 +4145,7 @@ export const getGradeFixtures = () =>
     {
       id: "07946ed5-4033-42ff-901b-6e567d763f2b",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2014,
       isDigitalExam: false,
       averageGrade: 1.81268436578171,
@@ -4160,7 +4160,7 @@ export const getGradeFixtures = () =>
     {
       id: "2f0c215c-d5e5-4d49-b764-941c9f284c9c",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2014,
       isDigitalExam: false,
       averageGrade: 2.84233900814212,
@@ -4175,7 +4175,7 @@ export const getGradeFixtures = () =>
     {
       id: "9d256443-354c-4dcb-9906-a2cb92ee99b8",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2014,
       isDigitalExam: false,
       averageGrade: 2.25278810408922,
@@ -4535,7 +4535,7 @@ export const getGradeFixtures = () =>
     {
       id: "0fc7887a-14ab-4ce8-9ed5-9bcc81cb0823",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2013,
       isDigitalExam: false,
       averageGrade: 2.36453201970443,
@@ -4550,7 +4550,7 @@ export const getGradeFixtures = () =>
     {
       id: "54e8bf81-0880-4ebc-94d9-b59c6cf94368",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2013,
       isDigitalExam: false,
       averageGrade: 2.91067961165049,
@@ -4565,7 +4565,7 @@ export const getGradeFixtures = () =>
     {
       id: "933d0c93-a9da-43d2-a6f3-32e718875df8",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2013,
       isDigitalExam: false,
       averageGrade: 1.72359686179843,
@@ -4580,7 +4580,7 @@ export const getGradeFixtures = () =>
     {
       id: "1949ea9a-00e0-4c9b-89fa-3f9e70a1acdd",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2013,
       isDigitalExam: false,
       averageGrade: 2.27642276422764,
@@ -4595,7 +4595,7 @@ export const getGradeFixtures = () =>
     {
       id: "89138190-d51e-4b24-a696-21d1d4556377",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2013,
       isDigitalExam: false,
       averageGrade: 3.35380116959064,
@@ -4610,7 +4610,7 @@ export const getGradeFixtures = () =>
     {
       id: "c9b206ea-f4c0-40b9-86b5-88efea5814ba",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2013,
       isDigitalExam: false,
       averageGrade: 2.49891067538126,
@@ -4625,7 +4625,7 @@ export const getGradeFixtures = () =>
     {
       id: "e87c6509-5563-43ce-b184-7d7d9f3e7aa2",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2013,
       isDigitalExam: false,
       averageGrade: 1.8006379585327,
@@ -4640,7 +4640,7 @@ export const getGradeFixtures = () =>
     {
       id: "9ebdd084-12cb-4d27-a54d-2b23fb4d00d4",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2013,
       isDigitalExam: false,
       averageGrade: 2.51840942562592,
@@ -4985,7 +4985,7 @@ export const getGradeFixtures = () =>
     {
       id: "757eb155-617c-46f9-a92d-0b6008543dbe",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2012,
       isDigitalExam: false,
       averageGrade: 2.97579425113464,
@@ -5000,7 +5000,7 @@ export const getGradeFixtures = () =>
     {
       id: "3d4b96f2-4b4a-4ec4-b962-7580f920660d",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2012,
       isDigitalExam: false,
       averageGrade: 2.61121157323689,
@@ -5015,7 +5015,7 @@ export const getGradeFixtures = () =>
     {
       id: "c2c613f8-e879-422d-8ba6-5b2a98d57dca",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2012,
       isDigitalExam: false,
       averageGrade: 2.04645622394282,
@@ -5030,7 +5030,7 @@ export const getGradeFixtures = () =>
     {
       id: "655a0d82-51d4-4479-aeac-c6136043f2b8",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2012,
       isDigitalExam: false,
       averageGrade: 2.45192307692308,
@@ -5045,7 +5045,7 @@ export const getGradeFixtures = () =>
     {
       id: "5d463a51-d989-49b6-a531-a30259c162aa",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2012,
       isDigitalExam: false,
       averageGrade: 1.88498402555911,
@@ -5060,7 +5060,7 @@ export const getGradeFixtures = () =>
     {
       id: "7125fd50-7167-41bc-bab5-4ae4a19e8cac",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2012,
       isDigitalExam: false,
       averageGrade: 3.22269807280514,
@@ -5075,7 +5075,7 @@ export const getGradeFixtures = () =>
     {
       id: "fb009450-c01b-4a68-b2dd-ae491d57e62f",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2012,
       isDigitalExam: false,
       averageGrade: 3.22249388753056,
@@ -5090,7 +5090,7 @@ export const getGradeFixtures = () =>
     {
       id: "3baa93b1-9ba4-4d44-bbf4-5357af756052",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2012,
       isDigitalExam: false,
       averageGrade: 3.64050235478807,
@@ -5450,7 +5450,7 @@ export const getGradeFixtures = () =>
     {
       id: "c7336bbb-447d-4ce8-9897-7caeb990400b",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2011,
       isDigitalExam: false,
       averageGrade: 1.9651376146789,
@@ -5465,7 +5465,7 @@ export const getGradeFixtures = () =>
     {
       id: "0e8b3952-40ba-47c1-a092-6d68a3726113",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2011,
       isDigitalExam: false,
       averageGrade: 2.07233273056058,
@@ -5480,7 +5480,7 @@ export const getGradeFixtures = () =>
     {
       id: "55e97962-e625-4f71-a2c7-70de8a3cc752",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2011,
       isDigitalExam: false,
       averageGrade: 3.15756630265211,
@@ -5495,7 +5495,7 @@ export const getGradeFixtures = () =>
     {
       id: "6c11e17f-4116-42c7-af20-b668ce6fcd75",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2011,
       isDigitalExam: false,
       averageGrade: 2.10097719869707,
@@ -5510,7 +5510,7 @@ export const getGradeFixtures = () =>
     {
       id: "cadbfe07-5766-4180-bbf9-05904f162f23",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2011,
       isDigitalExam: false,
       averageGrade: 1.77954144620811,
@@ -5525,7 +5525,7 @@ export const getGradeFixtures = () =>
     {
       id: "ee3beddf-f7ae-42a3-b32e-ce81a5d7c590",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2011,
       isDigitalExam: false,
       averageGrade: 1.68211920529801,
@@ -5540,7 +5540,7 @@ export const getGradeFixtures = () =>
     {
       id: "60b70c04-c970-4476-abc8-bc81fa5fc7f8",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2011,
       isDigitalExam: false,
       averageGrade: 2.60232945091514,
@@ -5555,7 +5555,7 @@ export const getGradeFixtures = () =>
     {
       id: "93ea72db-dfae-4f6e-a0ec-dc447a2652e6",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2011,
       isDigitalExam: false,
       averageGrade: 3.04683195592286,
@@ -5915,7 +5915,7 @@ export const getGradeFixtures = () =>
     {
       id: "456e4c86-c014-4c04-8610-34b4cfaba658",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2010,
       isDigitalExam: false,
       averageGrade: 3.1922480620155,
@@ -5930,7 +5930,7 @@ export const getGradeFixtures = () =>
     {
       id: "ffb4dcb5-ad9b-4f78-8f56-73992640899c",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2010,
       isDigitalExam: false,
       averageGrade: 2.28156996587031,
@@ -5945,7 +5945,7 @@ export const getGradeFixtures = () =>
     {
       id: "969d14c9-d2bf-4471-a3ba-9194443e9fef",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2010,
       isDigitalExam: false,
       averageGrade: 2.89175257731959,
@@ -5960,7 +5960,7 @@ export const getGradeFixtures = () =>
     {
       id: "bad5ebd0-d0c7-41a9-9291-18810710b5ba",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2010,
       isDigitalExam: false,
       averageGrade: 2.1987270155587,
@@ -5975,7 +5975,7 @@ export const getGradeFixtures = () =>
     {
       id: "403fdca1-6fc8-432f-b093-f99fffe2be93",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2010,
       isDigitalExam: false,
       averageGrade: 3.13455657492355,
@@ -5990,7 +5990,7 @@ export const getGradeFixtures = () =>
     {
       id: "8e10e01f-af9d-402b-9fa4-c95ffe24ce78",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2010,
       isDigitalExam: false,
       averageGrade: 2.33550488599349,
@@ -6005,7 +6005,7 @@ export const getGradeFixtures = () =>
     {
       id: "48ae9475-c6f8-4136-be44-54c3494675d7",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2010,
       isDigitalExam: false,
       averageGrade: 1.69874476987448,
@@ -6020,7 +6020,7 @@ export const getGradeFixtures = () =>
     {
       id: "0dc86c62-3c05-4c5e-ab9c-588a6e1fe163",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2010,
       isDigitalExam: false,
       averageGrade: 2.74273127753304,
@@ -6380,7 +6380,7 @@ export const getGradeFixtures = () =>
     {
       id: "2c2b6800-b496-4428-8167-f92da85a6a6b",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2009,
       isDigitalExam: false,
       averageGrade: 2.48830935251799,
@@ -6395,7 +6395,7 @@ export const getGradeFixtures = () =>
     {
       id: "ec997784-6071-48f7-8a8b-1e9aad67e88b",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2009,
       isDigitalExam: false,
       averageGrade: 2.21074099252209,
@@ -6410,7 +6410,7 @@ export const getGradeFixtures = () =>
     {
       id: "9a811b77-9f6d-4a75-880a-85b1036b572f",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2009,
       isDigitalExam: false,
       averageGrade: 2.00769230769231,
@@ -6425,7 +6425,7 @@ export const getGradeFixtures = () =>
     {
       id: "06fb8b81-e861-4d41-a9b3-f2631ef75118",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2009,
       isDigitalExam: false,
       averageGrade: 2.55989583333333,
@@ -6440,7 +6440,7 @@ export const getGradeFixtures = () =>
     {
       id: "4e2c0af5-8eb0-49af-95b3-ce46fe3d0598",
       courseId: "d2d6bc24-72b9-43f4-beb8-600f1348eb4c",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2009,
       isDigitalExam: false,
       averageGrade: 2.45186136071887,
@@ -6455,7 +6455,7 @@ export const getGradeFixtures = () =>
     {
       id: "4a076150-9b99-4936-8767-922e85cd2834",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2009,
       isDigitalExam: false,
       averageGrade: 2.51111111111111,
@@ -6470,7 +6470,7 @@ export const getGradeFixtures = () =>
     {
       id: "4c81cfa9-30b2-4dba-b4ad-c568ecbc65f9",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2009,
       isDigitalExam: false,
       averageGrade: 2.48181818181818,
@@ -6485,7 +6485,7 @@ export const getGradeFixtures = () =>
     {
       id: "b9a96cfb-6228-4cd0-b1de-65055efeeea6",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2009,
       isDigitalExam: false,
       averageGrade: 1.95614035087719,
@@ -6815,7 +6815,7 @@ export const getGradeFixtures = () =>
     {
       id: "e95fbb69-8f95-4e0a-9f1b-545d6c506f47",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2008,
       isDigitalExam: false,
       averageGrade: 2.39007092198582,
@@ -6830,7 +6830,7 @@ export const getGradeFixtures = () =>
     {
       id: "f2d1cecf-a1a6-42b8-a13e-89d328303173",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2008,
       isDigitalExam: false,
       averageGrade: 2.37387964148528,
@@ -6845,7 +6845,7 @@ export const getGradeFixtures = () =>
     {
       id: "5ba75359-14eb-44dd-b76a-8ab9cd2f282d",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2008,
       isDigitalExam: false,
       averageGrade: 2.24078091106291,
@@ -6860,7 +6860,7 @@ export const getGradeFixtures = () =>
     {
       id: "bfb9f585-c435-4103-b579-fc403ce7c1ea",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2008,
       isDigitalExam: false,
       averageGrade: 3.21766561514196,
@@ -6875,7 +6875,7 @@ export const getGradeFixtures = () =>
     {
       id: "892b2973-23f7-4298-882c-3dee60865a4b",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2008,
       isDigitalExam: false,
       averageGrade: 2.7710843373494,
@@ -6890,7 +6890,7 @@ export const getGradeFixtures = () =>
     {
       id: "c9ecbaea-60d6-4dcd-9429-57d253f2929c",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2008,
       isDigitalExam: false,
       averageGrade: 2.78733031674208,
@@ -6905,7 +6905,7 @@ export const getGradeFixtures = () =>
     {
       id: "47e3a35d-78f5-4a8b-a632-d05711d8fdfb",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2008,
       isDigitalExam: false,
       averageGrade: 2.0995670995671,
@@ -7235,7 +7235,7 @@ export const getGradeFixtures = () =>
     {
       id: "1ce0764e-b1bf-4ae6-a8c1-c7d9e7acaa06",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2007,
       isDigitalExam: false,
       averageGrade: 2.05769230769231,
@@ -7250,7 +7250,7 @@ export const getGradeFixtures = () =>
     {
       id: "74af424b-2a05-4c17-834a-f0676799a638",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2007,
       isDigitalExam: false,
       averageGrade: 2.32771084337349,
@@ -7265,7 +7265,7 @@ export const getGradeFixtures = () =>
     {
       id: "4cdb90c1-93d0-4d2b-90b1-59988514ca1a",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2007,
       isDigitalExam: false,
       averageGrade: 2.17522871217452,
@@ -7280,7 +7280,7 @@ export const getGradeFixtures = () =>
     {
       id: "7a7f21db-223c-4ed2-8d5d-e9f316892f16",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2007,
       isDigitalExam: false,
       averageGrade: 2.5431654676259,
@@ -7295,7 +7295,7 @@ export const getGradeFixtures = () =>
     {
       id: "8c5d52b1-3007-4735-bf41-1d58379a92e4",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2007,
       isDigitalExam: false,
       averageGrade: 3.3546511627907,
@@ -7310,7 +7310,7 @@ export const getGradeFixtures = () =>
     {
       id: "e36c5f4c-10a9-42d1-957c-9e294ed9717f",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2007,
       isDigitalExam: false,
       averageGrade: 2.95043731778426,
@@ -7325,7 +7325,7 @@ export const getGradeFixtures = () =>
     {
       id: "15041d7b-0e90-43cb-90f4-c2bc89593d6e",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2007,
       isDigitalExam: false,
       averageGrade: 0.993435448577681,
@@ -7625,7 +7625,7 @@ export const getGradeFixtures = () =>
     {
       id: "dad72cfa-73a7-47a8-b856-95e56f2cc445",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2006,
       isDigitalExam: false,
       averageGrade: 2.40909090909091,
@@ -7640,7 +7640,7 @@ export const getGradeFixtures = () =>
     {
       id: "8fd4ab7f-cadf-4d10-9a29-2a12bad3619d",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2006,
       isDigitalExam: false,
       averageGrade: 2.67175572519084,
@@ -7655,7 +7655,7 @@ export const getGradeFixtures = () =>
     {
       id: "2f4a00a0-56e9-4ae1-80a4-8f3167520ddf",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2006,
       isDigitalExam: false,
       averageGrade: 2.60840707964602,
@@ -7670,7 +7670,7 @@ export const getGradeFixtures = () =>
     {
       id: "c0b828ee-9e2b-4509-9e6e-3fc3a7b8621b",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2006,
       isDigitalExam: false,
       averageGrade: 2.60723514211886,
@@ -7685,7 +7685,7 @@ export const getGradeFixtures = () =>
     {
       id: "1ba92378-57b3-4326-9100-efb468cc772d",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2006,
       isDigitalExam: false,
       averageGrade: 2.63225806451613,
@@ -7700,7 +7700,7 @@ export const getGradeFixtures = () =>
     {
       id: "a992d053-7506-4b32-ba8f-172e81d3bbfe",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2006,
       isDigitalExam: false,
       averageGrade: 2.17512877115526,
@@ -7715,7 +7715,7 @@ export const getGradeFixtures = () =>
     {
       id: "c8c3fa77-b89a-41c6-b5f2-3857da2614bd",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2006,
       isDigitalExam: false,
       averageGrade: 3.20366598778004,
@@ -8015,7 +8015,7 @@ export const getGradeFixtures = () =>
     {
       id: "ef4d8b51-b6f6-47e2-9cdd-8af62332df9e",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2005,
       isDigitalExam: false,
       averageGrade: 1.08951406649616,
@@ -8030,7 +8030,7 @@ export const getGradeFixtures = () =>
     {
       id: "bd38473b-d96d-4d64-9f2e-bf8596b3e350",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2005,
       isDigitalExam: false,
       averageGrade: 2.55555555555556,
@@ -8045,7 +8045,7 @@ export const getGradeFixtures = () =>
     {
       id: "09289b3e-6d3b-4bf9-a493-012453570baf",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2005,
       isDigitalExam: false,
       averageGrade: 2.57701149425287,
@@ -8060,7 +8060,7 @@ export const getGradeFixtures = () =>
     {
       id: "fea88601-6ed1-416a-8e2c-0f4c74686806",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2005,
       isDigitalExam: false,
       averageGrade: 2.21754385964912,
@@ -8075,7 +8075,7 @@ export const getGradeFixtures = () =>
     {
       id: "e5240d6c-e931-4a29-b14a-6585c7a2b756",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2005,
       isDigitalExam: false,
       averageGrade: 2.11813186813187,
@@ -8090,7 +8090,7 @@ export const getGradeFixtures = () =>
     {
       id: "ffa3429c-4dbc-45f2-b10d-75f08882eb13",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2005,
       isDigitalExam: false,
       averageGrade: 1.9231843575419,
@@ -8105,7 +8105,7 @@ export const getGradeFixtures = () =>
     {
       id: "5acf35a2-7275-45fd-924b-ac465458d663",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2005,
       isDigitalExam: false,
       averageGrade: 1.88127853881279,
@@ -8375,7 +8375,7 @@ export const getGradeFixtures = () =>
     {
       id: "9274f31e-782d-4d5b-ad41-3811496b15bc",
       courseId: "6b4f2767-1e95-4755-a1fb-f527efc1f71d",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2004,
       isDigitalExam: false,
       averageGrade: 3.10897435897436,
@@ -8390,7 +8390,7 @@ export const getGradeFixtures = () =>
     {
       id: "31e610ee-c0fd-42d4-b3b4-2d0089700f8c",
       courseId: "524751ea-f8cf-4cd2-9916-cc2928ce96d2",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2004,
       isDigitalExam: false,
       averageGrade: 2.90330788804071,
@@ -8405,7 +8405,7 @@ export const getGradeFixtures = () =>
     {
       id: "5ed88dee-ed9f-4063-bfa0-caf07c2b8b9d",
       courseId: "735c371f-07e1-4a03-ad8c-9817ea9af434",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2004,
       isDigitalExam: false,
       averageGrade: 2.10830860534125,
@@ -8420,7 +8420,7 @@ export const getGradeFixtures = () =>
     {
       id: "e677c1c5-4606-4450-ba3a-9f3016cd729c",
       courseId: "53c38f89-cd7a-4774-85cd-2eab602c4789",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2004,
       isDigitalExam: false,
       averageGrade: 1.31920903954802,
@@ -8435,7 +8435,7 @@ export const getGradeFixtures = () =>
     {
       id: "6c1b9d9b-c8a2-4ac0-8bba-32b3b7d68cdb",
       courseId: "bc18d224-3303-4482-ac86-53d32cb664bf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2004,
       isDigitalExam: false,
       averageGrade: 2.39678284182306,
@@ -8450,7 +8450,7 @@ export const getGradeFixtures = () =>
     {
       id: "7b194d99-55db-41e8-a523-4dc2d925c8a1",
       courseId: "a29b6967-2181-47f2-8518-d29b878775de",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2004,
       isDigitalExam: false,
       averageGrade: 1.97155049786629,
@@ -8465,7 +8465,7 @@ export const getGradeFixtures = () =>
     {
       id: "fc1c1040-c43f-4028-aa4b-28f7e62f0f36",
       courseId: "5a5d64b2-074c-4b50-83eb-805b90de89cf",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2004,
       isDigitalExam: false,
       averageGrade: 2.24346076458753,
@@ -8736,7 +8736,7 @@ export const getGradeFixtures = () =>
     {
       id: "5dc700da-47c5-4c93-9455-09b0ade5fe0c",
       courseId: "4d1c1033-57e8-4b2c-96dc-bf9bec2f207f",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2024,
       isDigitalExam: false,
       averageGrade: 2.8493506493506495,
@@ -8766,7 +8766,7 @@ export const getGradeFixtures = () =>
     {
       id: "64b5e518-bbe8-4b6b-ab22-80ec30aa327b",
       courseId: "4d1c1033-57e8-4b2c-96dc-bf9bec2f207f",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2023,
       isDigitalExam: false,
       averageGrade: 2.8820614469772052,
@@ -8796,7 +8796,7 @@ export const getGradeFixtures = () =>
     {
       id: "c1e7f321-64cc-413d-b6b8-2cef195beda2",
       courseId: "4d1c1033-57e8-4b2c-96dc-bf9bec2f207f",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2022,
       isDigitalExam: false,
       averageGrade: 2.9862424763542563,
@@ -8826,7 +8826,7 @@ export const getGradeFixtures = () =>
     {
       id: "b32e54b0-2d20-406a-99f6-666a31721b6c",
       courseId: "4d1c1033-57e8-4b2c-96dc-bf9bec2f207f",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2021,
       isDigitalExam: false,
       averageGrade: 3.2270042194092827,
@@ -8856,7 +8856,7 @@ export const getGradeFixtures = () =>
     {
       id: "9f57b246-baaf-4377-b619-ad638f619fc1",
       courseId: "4d1c1033-57e8-4b2c-96dc-bf9bec2f207f",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2020,
       isDigitalExam: false,
       averageGrade: 3.1852731591448933,
@@ -8886,7 +8886,7 @@ export const getGradeFixtures = () =>
     {
       id: "59a4bd99-d723-4203-8767-717f2e656acf",
       courseId: "4d1c1033-57e8-4b2c-96dc-bf9bec2f207f",
-      semester: "FALL",
+      semester: "AUTUMN",
       year: 2019,
       isDigitalExam: false,
       averageGrade: 3.1443798449612403,

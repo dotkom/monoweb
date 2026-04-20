@@ -30,7 +30,7 @@ const parseSemester = (semester: number) => {
     case 2:
       return Semesters.SUMMER
     case 3:
-      return Semesters.FALL
+      return Semesters.AUTUMN
     default:
       return null
   }

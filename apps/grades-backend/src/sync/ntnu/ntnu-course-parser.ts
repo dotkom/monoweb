@@ -48,7 +48,7 @@ const COURSE_PAGE_TRANSLATIONS = {
     no: "Vurderingsordning",
     en: "Examination arrangement",
   },
-  fallSemester: {
+  autumnSemester: {
     no: "Høst",
     en: "Autumn",
   },
@@ -193,8 +193,8 @@ function parseSemesters(courseStart: string, locale: Locale): Semester[] {
   const semesters: Semester[] = []
 
   const lowerCourseStart = courseStart.toLowerCase()
-  if (lowerCourseStart.includes(COURSE_PAGE_TRANSLATIONS.fallSemester[locale].toLowerCase())) {
-    semesters.push("FALL")
+  if (lowerCourseStart.includes(COURSE_PAGE_TRANSLATIONS.autumnSemester[locale].toLowerCase())) {
+    semesters.push("AUTUMN")
   }
   if (lowerCourseStart.includes(COURSE_PAGE_TRANSLATIONS.springSemester[locale].toLowerCase())) {
     semesters.push("SPRING")
