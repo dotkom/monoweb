@@ -1,12 +1,12 @@
 import type { DBHandle } from "@dotkomonline/db"
-import {
-  type Contest,
-  type ContestId,
-  type Contestant,
-  type ContestantDetail,
-  type ContestantId,
-  type ContestWrite,
-  type ContestantWrite,
+import type {
+  Contest,
+  ContestId,
+  Contestant,
+  ContestantDetail,
+  ContestantId,
+  ContestWrite,
+  ContestantWrite,
 } from "@dotkomonline/types"
 import { InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
@@ -75,9 +75,7 @@ export function getContestService(contestRepository: ContestRepository): Contest
       if (contestantId !== null) {
         const contestant = await contestRepository.findContestantById(handle, contestantId)
         if (!contestant || contestant.contestId !== contestId) {
-          throw new InvalidArgumentError(
-            `Contestant(ID=${contestantId}) does not belong to Contest(ID=${contestId})`
-          )
+          throw new InvalidArgumentError(`Contestant(ID=${contestantId}) does not belong to Contest(ID=${contestId})`)
         }
       }
       return await contestRepository.setWinner(handle, contestId, contestantId)
