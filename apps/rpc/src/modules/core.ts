@@ -55,6 +55,8 @@ import { getUserMergingService } from "./user/user-merging-service"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
 import { Auth0JwtService } from "../lib/auth0-jwt"
+import { getContestRepository } from "./contest/contest-repository"
+import { getContestService } from "./contest/contest-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -184,6 +186,7 @@ export async function createServiceLayer(
   const feideGroupsRepository = getFeideGroupsRepository()
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
+  const contestRepository = getContestRepository()
 
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
@@ -239,6 +242,7 @@ export async function createServiceLayer(
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
+  const contestService = getContestService(contestRepository)
   const userMergeService = getUserMergingService(
     userService,
     groupRepository,
@@ -285,6 +289,7 @@ export async function createServiceLayer(
     feedbackFormAnswerService,
     authorizationService,
     paymentWebhookService,
+    contestService,
     recurringTaskService,
     workspaceService,
 
