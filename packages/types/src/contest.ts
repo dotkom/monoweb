@@ -26,6 +26,15 @@ export const ContestWriteSchema = ContestSchema.pick({
 
 export type ContestWrite = z.infer<typeof ContestWriteSchema>
 
+export const ContestUpdateSchema = ContestSchema.pick({
+  name: true,
+  description: true,
+  resultType: true,
+  resultOrder: true,
+})
+
+export type ContestUpdate = z.infer<typeof ContestUpdateSchema>
+
 export const ContestantWriteSchema = z.object({
   contestId: schemas.ContestantSchema.shape.contestId,
   userId: schemas.ContestantSchema.shape.userId,

@@ -1,4 +1,4 @@
-import { ContestSchema, ContestWriteSchema, ContestantSchema } from "@dotkomonline/types"
+import { ContestSchema, ContestUpdateSchema, ContestWriteSchema, ContestantSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember } from "../../authorization"
@@ -31,7 +31,7 @@ const updateContestProcedure = procedure
   .input(
     z.object({
       id: ContestSchema.shape.id,
-      input: ContestWriteSchema,
+      input: ContestUpdateSchema,
     })
   )
   .use(withAuthentication())
