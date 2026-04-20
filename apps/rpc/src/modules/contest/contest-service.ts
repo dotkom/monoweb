@@ -1,13 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type {
-  Contest,
-  ContestId,
-  Contestant,
-  ContestantDetail,
-  ContestantId,
-  ContestWrite,
-  ContestantWrite,
-} from "@dotkomonline/types"
+import type { Contest, ContestId, Contestant, ContestantDetail, ContestantId, ContestWrite } from "@dotkomonline/types"
 import { InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { ContestRepository } from "./contest-repository"
@@ -21,7 +13,8 @@ export interface ContestService {
   update(handle: DBHandle, contestId: ContestId, data: Partial<ContestWrite>): Promise<Contest>
   delete(handle: DBHandle, contestId: ContestId): Promise<void>
   setWinner(handle: DBHandle, contestId: ContestId, contestantId: ContestantId | null): Promise<Contest>
-  addContestant(handle: DBHandle, data: ContestantWrite, teamName?: string, memberIds?: string[]): Promise<Contestant>
+  addUserContestant(handle: DBHandle, contestId: ContestId, userId: string): Promise<Contestant>
+  addTeamContestant(handle: DBHandle, contestId: ContestId, teamName: string, memberIds: string[]): Promise<Contestant>
   updateContestantResult(handle: DBHandle, contestantId: ContestantId, resultValue: number | null): Promise<Contestant>
   removeContestant(handle: DBHandle, contestantId: ContestantId): Promise<void>
   getContestWithContestants(
@@ -72,18 +65,24 @@ export function getContestService(contestRepository: ContestRepository): Contest
     async setWinner(handle, contestId, contestantId) {
       if (contestantId !== null) {
         const contestant = await contestRepository.findContestantById(handle, contestantId)
-        if (!contestant || contestant.contestId !== contestId) {
+        if (contestant?.contestId !== contestId) {
           throw new InvalidArgumentError(`Contestant(ID=${contestantId}) does not belong to Contest(ID=${contestId})`)
         }
       }
       return await contestRepository.setWinner(handle, contestId, contestantId)
     },
 
-    async addContestant(handle, data, teamName?, memberIds?) {
-      const contestant = await contestRepository.createContestant(handle, data)
-      if (teamName) {
-        await contestRepository.createTeam(handle, contestant.id, teamName, memberIds ?? [])
-      }
+    async addUserContestant(handle, contestId, userId) {
+      return await contestRepository.createContestant(handle, { contestId, userId, resultValue: null })
+    },
+
+    async addTeamContestant(handle, contestId, teamName, memberIds) {
+      const contestant = await contestRepository.createContestant(handle, {
+        contestId,
+        userId: null,
+        resultValue: null,
+      })
+      await contestRepository.createTeam(handle, contestant.id, teamName, memberIds)
       return contestant
     },
 

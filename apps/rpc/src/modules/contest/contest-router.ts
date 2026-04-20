@@ -1,8 +1,8 @@
 import { ContestSchema, ContestUpdateSchema, ContestWriteSchema, ContestantSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isCommitteeMember } from "../../authorization"
-import { ForbiddenError } from "../../error"
+import { isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
+import { ForbiddenError, InvalidArgumentError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
@@ -12,16 +12,17 @@ export type CreateContestOutput = inferProcedureOutput<typeof createContestProce
 const createContestProcedure = procedure
   .input(ContestWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(
+    withAuthorization(
+      or(
+        isGroupMember((input) => input.groupId),
+        isAdministrator()
+      )
+    )
+  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
-      input.groupId,
-    ])
-    if (allowedGroups.size === 0) {
-      throw new ForbiddenError(`User(ID=${ctx.principal.subject}) is not a member of Group(ID=${input.groupId})`)
-    }
     return ctx.contestService.create(ctx.handle, input)
   })
 
@@ -40,10 +41,7 @@ const updateContestProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contest = await ctx.contestService.getById(ctx.handle, input.id)
-    const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
-      contest.groupId,
-    ])
-    if (allowedGroups.size === 0) {
+    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [contest.groupId])) {
       throw new ForbiddenError(`User(ID=${ctx.principal.subject}) is not authorized to update Contest(ID=${input.id})`)
     }
     return ctx.contestService.update(ctx.handle, input.id, input.input)
@@ -63,10 +61,7 @@ const deleteContestProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contest = await ctx.contestService.getById(ctx.handle, input.id)
-    const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
-      contest.groupId,
-    ])
-    if (allowedGroups.size === 0) {
+    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [contest.groupId])) {
       throw new ForbiddenError(`User(ID=${ctx.principal.subject}) is not authorized to delete Contest(ID=${input.id})`)
     }
     return ctx.contestService.delete(ctx.handle, input.id)
@@ -105,10 +100,7 @@ const setWinnerProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contest = await ctx.contestService.getById(ctx.handle, input.contestId)
-    const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
-      contest.groupId,
-    ])
-    if (allowedGroups.size === 0) {
+    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [contest.groupId])) {
       throw new ForbiddenError(
         `User(ID=${ctx.principal.subject}) is not authorized to set winner for Contest(ID=${input.contestId})`
       )
@@ -133,20 +125,21 @@ const addContestantProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contest = await ctx.contestService.getById(ctx.handle, input.contestId)
-    const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
-      contest.groupId,
-    ])
-    if (allowedGroups.size === 0) {
+    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [contest.groupId])) {
       throw new ForbiddenError(
         `User(ID=${ctx.principal.subject}) is not authorized to add contestants to Contest(ID=${input.contestId})`
       )
     }
-    return ctx.contestService.addContestant(
-      ctx.handle,
-      { contestId: input.contestId, userId: input.userId, resultValue: null },
-      input.teamName,
-      input.memberIds
-    )
+    if (input.teamName) {
+      if (!input.memberIds) {
+        throw new InvalidArgumentError("memberIds is required for team contestants")
+      }
+      return ctx.contestService.addTeamContestant(ctx.handle, input.contestId, input.teamName, input.memberIds)
+    }
+    if (!input.userId) {
+      throw new InvalidArgumentError("userId is required for individual contestants")
+    }
+    return ctx.contestService.addUserContestant(ctx.handle, input.contestId, input.userId)
   })
 
 export type RemoveContestantInput = inferProcedureInput<typeof removeContestantProcedure>
@@ -164,10 +157,7 @@ const removeContestantProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const contestant = await ctx.contestService.getContestantById(ctx.handle, input.id)
     const contest = await ctx.contestService.getById(ctx.handle, contestant.contestId)
-    const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
-      contest.groupId,
-    ])
-    if (allowedGroups.size === 0) {
+    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [contest.groupId])) {
       throw new ForbiddenError(
         `User(ID=${ctx.principal.subject}) is not authorized to remove contestants from Contest(ID=${contest.id})`
       )
@@ -191,10 +181,7 @@ const updateContestantResultProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const contestant = await ctx.contestService.getContestantById(ctx.handle, input.id)
     const contest = await ctx.contestService.getById(ctx.handle, contestant.contestId)
-    const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
-      contest.groupId,
-    ])
-    if (allowedGroups.size === 0) {
+    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [contest.groupId])) {
       throw new ForbiddenError(
         `User(ID=${ctx.principal.subject}) is not authorized to update results for Contest(ID=${contest.id})`
       )
