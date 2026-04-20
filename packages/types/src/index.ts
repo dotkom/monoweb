@@ -1,6 +1,7 @@
 export * from "./article"
 export * from "./attendance"
 export * from "./company"
+export * from "./contest"
 export * from "./event"
 export * from "./feedback-form"
 export * from "./filters"
