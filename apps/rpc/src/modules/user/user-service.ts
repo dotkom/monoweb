@@ -37,7 +37,12 @@ import {
 import type { UserRepository } from "./user-repository"
 import { mergeUsers } from "./user-merging"
 import type { GroupRepository } from "../group/group-repository"
-import type { Auth0Connection } from "./user"
+import {
+  Auth0UserProfileAppMetadataSchema,
+  Auth0UserProfileUserMetadataSchema,
+  type Auth0Connection,
+  type Auth0UserProfile,
+} from "./user"
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
@@ -169,6 +174,29 @@ export function getUserService(
   bucket: string
 ): UserService {
   const logger = getLogger("user-service")
+
+  function parseAuth0ProfileMetadata(auth0User: Auth0UserProfile) {
+    const appMetadataResult = Auth0UserProfileAppMetadataSchema.safeParse(auth0User.app_metadata ?? {})
+    if (!appMetadataResult.success) {
+      logger.warn("Failed to parse Auth0 app metadata for User(ID=%s): %o", auth0User.user_id, appMetadataResult.error)
+    }
+
+    const userMetadataResult = Auth0UserProfileUserMetadataSchema.safeParse(auth0User.user_metadata ?? {})
+    if (!userMetadataResult.success) {
+      logger.warn(
+        "Failed to parse Auth0 user metadata for User(ID=%s): %o",
+        auth0User.user_id,
+        userMetadataResult.error
+      )
+    }
+
+    return {
+      appMetadata: appMetadataResult.success ? appMetadataResult.data : {},
+      userMetadata: userMetadataResult.success ? userMetadataResult.data : {},
+    }
+  }
+
+  type Auth0ProfileMetadata = ReturnType<typeof parseAuth0ProfileMetadata>
 
   async function findApplicableMembership(
     studyProgrammes: NTNUGroup[],
@@ -368,24 +396,14 @@ export function getUserService(
 
       await userRepository.register(handle, userId)
 
-      const requestedSlug = UserWriteSchema.shape.username
-        .catch(crypto.randomUUID())
-        .parse(response.data.app_metadata?.username)
-
-      // Profile slugs are unique, so if somebody has already the requested slug as their profile slug, we change the
-      // requested slug to a new random UUID for now. The user can always update this later.
-      const match = await this.findByUsername(handle, requestedSlug)
-      const slug = match !== null ? crypto.randomUUID() : requestedSlug
-
       const profile: UserWrite = {
-        username: slug,
+        username: crypto.randomUUID(),
         name: response.data.name,
         email: response.data.email,
         imageUrl: response.data.picture,
-        biography: response.data.app_metadata?.biography || null,
-        phone: response.data.app_metadata?.phone || null,
-        // This field was called `allergies` in OnlineWeb 4, but today it's called `dietaryRestrictions`.
-        dietaryRestrictions: response.data.app_metadata?.allergies || null,
+        biography: null,
+        phone: null,
+        dietaryRestrictions: null,
         gender: GenderSchema.enum.UNKNOWN,
         workspaceUserId: null,
       }
