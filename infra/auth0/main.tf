@@ -282,6 +282,24 @@ resource "auth0_prompt" "prompts" {
   webauthn_platform_first_factor = false
 }
 
+resource "auth0_prompt_screen_partial" "signup_password_full_name" {
+  prompt_type = "signup-password"
+  screen_name = "signup-password"
+
+  insertion_points {
+    form_content_start = <<-HTML
+    {% assign locale_lower = locale | downcase %}
+    {% assign locale_token = '|' | append: locale_lower | append: '|' %}
+    {% assign norwegian_locales = '|nb|no|nn|nb-no|no-no|nn-no|' %}
+    <div class="ulp-field">
+      <label for="full-name">{% if norwegian_locales contains locale_token %}Fullt navn{% else %}Full name{% endif %}</label>
+      <input id="full-name" name="ulp-full-name" type="text" autocomplete="name" required>
+      <div class="ulp-error-info">{% if norwegian_locales contains locale_token %}Fullt navn er påkrevd{% else %}Full name is required{% endif %}</div>
+    </div>
+    HTML
+  }
+}
+
 # this has to be imported when creating a new tenant
 resource "auth0_connection" "username_password_authentication" {
   display_name         = null
@@ -377,7 +395,7 @@ resource "auth0_client_grant" "rpc" {
 resource "auth0_client_grant" "monoweb_web_mgmt" {
   audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
   client_id = auth0_client.monoweb_web.client_id
-  scopes    = [
+  scopes = [
     "update:users"
   ]
 }
@@ -686,10 +704,10 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
   ]
 }
 
-resource "auth0_action" "update_membership" {
-  name    = "Membership Update"
+resource "auth0_action" "sync_feide_name" {
+  name    = "Sync FEIDE name"
   runtime = "node18"
-  code    = file("js/actions/updateMembership.js")
+  code    = file("js/actions/syncFeideName.js")
   deploy  = true
 
   supported_triggers {
@@ -700,10 +718,5 @@ resource "auth0_action" "update_membership" {
   secrets {
     name  = "FEIDE_CONNECTION_ID"
     value = auth0_connection.feide.id
-  }
-
-  secrets {
-    name  = "RPC_HOST"
-    value = "rpc.staging.online.ntnu.no"
   }
 }
