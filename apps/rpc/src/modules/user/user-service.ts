@@ -16,6 +16,7 @@ import {
   type UserWrite,
   UserWriteSchema,
   findActiveMembership,
+  GenderSchema,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
@@ -385,8 +386,7 @@ export function getUserService(
         phone: response.data.app_metadata?.phone || null,
         // This field was called `allergies` in OnlineWeb 4, but today it's called `dietaryRestrictions`.
         dietaryRestrictions: response.data.app_metadata?.allergies || null,
-        // Gender is a standard OIDC claim, so we fall back to it if the app_metadata does not contain it.
-        gender: response.data.app_metadata?.gender || response.data.gender || null,
+        gender: GenderSchema.enum.UNKNOWN,
         workspaceUserId: null,
       }
 

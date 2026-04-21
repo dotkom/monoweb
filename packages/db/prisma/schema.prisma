@@ -73,6 +73,15 @@ model Membership {
   @@map("membership")
 }
 
+enum Gender {
+  MALE    @map("MALE")
+  FEMALE  @map("FEMALE")
+  OTHER   @map("OTHER")
+  UNKNOWN @map("UNKNOWN")
+
+  @@map("gender")
+}
+
 model User {
   /// OpenID Connect Subject claim - for this reason there is no @default(uuid()) here.
   id                  String   @id
@@ -82,7 +91,7 @@ model User {
   imageUrl            String?  @map("image_url")
   biography           String?
   phone               String?
-  gender              String?
+  gender              Gender   @default(UNKNOWN)
   dietaryRestrictions String?  @map("dietary_restrictions")
   ntnuUsername        String?  @map("ntnu_username")
   flags               String[]

@@ -2,7 +2,14 @@
 
 import { useUserFileUploadMutation } from "@/app/innstillinger/mutations"
 import { useTRPC } from "@/utils/trpc/client"
-import { USER_IMAGE_MAX_SIZE_KIB, type User, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
+import {
+  GenderSchema,
+  USER_IMAGE_MAX_SIZE_KIB,
+  type User,
+  type UserWrite,
+  UserWriteSchema,
+  getGenderName,
+} from "@dotkomonline/types"
 import {
   Button,
   Label,
@@ -45,7 +52,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     imageUrl: user.imageUrl ?? null,
     biography: user.biography ?? null,
     phone: user.phone ?? null,
-    gender: user.gender ?? null,
+    gender: user.gender,
     dietaryRestrictions: user.dietaryRestrictions ?? null,
   }
 
@@ -260,10 +267,11 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Kjønn</SelectLabel>
-                    <SelectItem value="Mann">Mann</SelectItem>
-                    <SelectItem value="Kvinne">Kvinne</SelectItem>
-                    <SelectItem value="Annet">Annet</SelectItem>
-                    <SelectItem value="Ikke oppgitt">Ikke oppgitt</SelectItem>
+                    {GenderSchema.options.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {getGenderName(option)}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>

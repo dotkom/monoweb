@@ -3,7 +3,13 @@ import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { USER_IMAGE_MAX_SIZE_KIB, type UserWrite, UserWriteSchema } from "@dotkomonline/types"
+import {
+  GenderSchema,
+  getGenderName,
+  USER_IMAGE_MAX_SIZE_KIB,
+  type UserWrite,
+  UserWriteSchema,
+} from "@dotkomonline/types"
 import { createTextareaInput } from "@/components/forms/TextareaInput"
 import { useIsAdminQuery } from "../queries"
 
@@ -43,12 +49,7 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       }),
       gender: createSelectInput({
         label: "Kjønn",
-        data: [
-          { label: "Mann", value: "Mann" },
-          { label: "Kvinne", value: "Kvinne" },
-          { label: "Annet", value: "Annet" },
-          { label: "Ikke oppgitt", value: "Ikke oppgitt" },
-        ],
+        data: GenderSchema.options.map((option) => ({ label: getGenderName(option), value: option })),
       }),
       biography: createTextareaInput({
         label: "Biografi",

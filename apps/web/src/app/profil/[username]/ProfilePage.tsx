@@ -13,6 +13,7 @@ import {
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   findActiveMembership,
+  getGenderName,
   getMembershipTypeName,
   getSpecializationName,
 } from "@dotkomonline/types"
@@ -364,7 +365,7 @@ export function ProfilePage() {
             <div className="grid grid-cols-[auto_1fr] items-start gap-3 overflow-x-scroll sm:overflow-hidden text-sm sm:text-base">
               <UserProp label="Brukernavn" value={user.username} icon={IconUser} />
               <UserProp label="E-post" value={user.email} icon={IconMail} />
-              <UserProp label="Kjønn" value={user.gender || "Ikke oppgitt"} icon={IconGenderBigender} />
+              <UserProp label="Kjønn" value={getGenderName(user.gender)} icon={IconGenderBigender} />
               <UserProp label="Telefon" value={user.phone} icon={IconPhone} />
               <UserProp
                 label="Kostholdsrestriksjoner"

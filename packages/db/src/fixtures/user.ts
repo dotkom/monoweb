@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client"
+import { GenderSchema } from "../schemas/index"
 
 export const getUserFixtures = () =>
   [
@@ -10,7 +11,7 @@ export const getUserFixtures = () =>
       imageUrl: null,
       biography: "Anders And er en and som liker å bade i penger og spise maiskolber.",
       phone: null,
-      gender: "Mann",
+      gender: GenderSchema.enum.MALE,
       dietaryRestrictions: "Vegetarianer",
       ntnuUsername: null,
       flags: [],
@@ -25,7 +26,7 @@ export const getUserFixtures = () =>
       imageUrl: null,
       biography: null,
       phone: null,
-      gender: "Kvinne",
+      gender: GenderSchema.enum.FEMALE,
       dietaryRestrictions: null,
       ntnuUsername: null,
       flags: [],
@@ -40,7 +41,7 @@ export const getUserFixtures = () =>
       imageUrl: null,
       biography: "Help me I'm under da water",
       phone: null,
-      gender: null,
+      gender: GenderSchema.enum.UNKNOWN,
       dietaryRestrictions: "Har dårlig reaksjon mot gluten",
       flags: [],
       privacyPermissionsId: null,

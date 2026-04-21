@@ -7,6 +7,7 @@ import {
   getAttendeeQueuePosition,
   getUnreservedAttendeeCount,
   getMembershipTypeName,
+  getGenderName,
 } from "@dotkomonline/types"
 import { getCurrentUTC, getStudyGrade } from "@dotkomonline/utils"
 import { Button, Flex, Group, Image, Stack, Text, Title, useComputedColorScheme } from "@mantine/core"
@@ -186,7 +187,7 @@ const UserBox = ({ user, isMobile }: UserBoxProps) => {
           <Title order={4}>{user.name}</Title>
           <Text size="sm">{membership ? `Medlemskap: ${membershipType}` : "Ingen aktivt medlemskap"}</Text>
           <Text size="sm">{membership ? (grade ? `Klasse: ${grade}` : "Ingen klassetrinn") : "-"}</Text>
-          <Text size="sm">Kjønn: {user.gender || "Ikke oppgitt"}</Text>
+          <Text size="sm">Kjønn: {getGenderName(user.gender)}</Text>
           <Text size="sm">Kostholdsrestriksjoner: {user.dietaryRestrictions || "Ingen"}</Text>
         </Stack>
       </Flex>
