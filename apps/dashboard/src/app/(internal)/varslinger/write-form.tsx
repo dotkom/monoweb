@@ -3,13 +3,8 @@ import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextIn
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import type { z } from "zod"
-import { useGroupAllQuery } from "../grupper/queries"
-import { createSearchableSelectInput } from "@/components/forms/SearchableSelectInput"
-import { useUserSearch } from "@/components/forms/hooks/useUserSearch"
 import {
-  mapNotificationPayloadTypeToLabel,
   mapNotificationTypeToLabel,
-  NotificationPayloadTypeSchema,
   NotificationTypeSchema,
   NotificationWriteSchema,
 } from "@dotkomonline/rpc"
@@ -18,6 +13,7 @@ const NOTIFICATION_FORM_DEFAULT_VALUES: Partial<NotificationWriteFormSchema> = {
   recipientIds: [],
   taskId: null,
   payloadType: "NONE",
+  actorGroupId: null,
 }
 
 type NotificationWriteFormSchema = z.infer<typeof NotificationWriteSchema>
@@ -33,26 +29,15 @@ export const useNotificationWriteForm = ({
   label = "Legg inn ny varsling",
   defaultValues = NOTIFICATION_FORM_DEFAULT_VALUES,
 }: UseNotificationWriteFormProps) => {
-  const { groups } = useGroupAllQuery()
-
   return useFormBuilder({
     schema: NotificationWriteSchema,
     defaultValues,
     onSubmit,
     label,
     fields: {
-      recipientIds: createSearchableSelectInput({
-        multiSelect: true,
-        useSearchHook: useUserSearch,
-        dataMapper: (user) => ({ value: user.id, label: `${user.name} (${user.email})` }),
-        selectProps: {
-          label: "Mottakere",
-          placeholder: "Søk etter brukere",
-        },
-      }),
       title: createTextInput({
         label: "Tittel",
-        placeholder: "Juleball Påmeldingen er åpen!",
+        placeholder: "Nytt oppmøtested!",
         required: true,
       }),
       shortDescription: createTextInput({
@@ -71,27 +56,6 @@ export const useNotificationWriteForm = ({
         })),
         label: "Type",
         placeholder: "Velg type",
-        required: true,
-      }),
-      payloadType: createSelectInput({
-        label: "Payload Type",
-        data: Object.values(NotificationPayloadTypeSchema.Values).map((type) => ({
-          value: type,
-          label: mapNotificationPayloadTypeToLabel(type),
-        })),
-        placeholder: "Velg type",
-        required: true,
-      }),
-      payload: createTextInput({
-        label: "Payload",
-        placeholder: "Payload",
-        required: false,
-      }),
-      actorGroupId: createSelectInput({
-        label: "Ansvarlig gruppe",
-        placeholder: "Velg gruppe",
-        data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
-        searchable: true,
         required: true,
       }),
     },
