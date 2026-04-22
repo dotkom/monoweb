@@ -9,7 +9,9 @@ exports.onExecutePostLogin = async (event, api) => {
     return
   }
 
-  const feideName = typeof event.user.name === "string" ? event.user.name.trim() : ""
+  const feideIdentity = event.user.identities?.find((identity) => identity.connection === event.connection.name)
+  const rawName = feideIdentity?.profileData?.name ?? event.user.name
+  const feideName = typeof rawName === "string" ? rawName.trim() : ""
 
   if (!feideName) {
     return
