@@ -403,6 +403,18 @@ const findChargeAttendeeScheduleDateProcedure = procedure
     return await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.handle, attendee.id)
   })
 
+export type GetAttendeeUserIdsInput = inferProcedureInput<typeof getAttendeeUserIdsProcedure>
+export type GetAttendeeUserIdsOutput = inferProcedureOutput<typeof getAttendeeUserIdsProcedure>
+const getAttendeeUserIdsProcedure = procedure
+  .input(AttendanceSchema.shape.id)
+  .output(z.array(z.string()))
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    return ctx.attendanceService.getAttendeeUserIds(ctx.handle, input)
+  })
+
 export type NotifyAttendeesInput = inferProcedureInput<typeof notifyAttendeesProcedure>
 export type NotifyAttendeesOutput = inferProcedureOutput<typeof notifyAttendeesProcedure>
 const notifyAttendeesProcedure = procedure
@@ -452,4 +464,5 @@ export const attendanceRouter = t.router({
   updateAttendance: updateAttendanceProcedure,
   findChargeAttendeeScheduleDate: findChargeAttendeeScheduleDateProcedure,
   notifyAttendees: notifyAttendeesProcedure,
+  getAttendeeUserIds: getAttendeeUserIdsProcedure,
 })
