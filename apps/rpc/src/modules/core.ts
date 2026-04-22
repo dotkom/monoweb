@@ -82,7 +82,7 @@ function getDirectory(configuration: Configuration): admin_directory_v1.Admin {
     throw new IllegalStateError("Google Workspace integration is not enabled or missing configuration variables")
   }
 
-  const serviceAccountJson = JSON.parse(configuration.googleWorkspace.serviceAccount)
+  const serviceAccountJson = JSON.parse(atob(configuration.googleWorkspace.serviceAccount))
   const result = workspaceServiceAccountJsonSchema.safeParse(serviceAccountJson)
 
   if (!result.success) {
