@@ -65,4 +65,25 @@ export const ContestantDetailSchema = ContestantSchema.extend({
   user: ContestMemberSchema.nullable(),
 })
 
+
+// export type CompetitionFilterQuery = z.infer<typeof CompetitionFilterQuerySchema>
+// export const CompetitionFilterQuerySchema = z
+//   .object({
+//     byId: buildAnyOfFilter(EventSchema.shape.id),
+//     byStartDate: buildDateRangeFilter(),
+//     byEndDate: buildDateRangeFilter(),
+//     bySearchTerm: buildSearchFilter(),
+//     byOrganizingCompany: buildAnyOfFilter(CompanySchema.shape.id),
+//     byOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
+//     excludingOrganizingGroup: buildAnyOfFilter(GroupSchema.shape.slug),
+//     orderBy: createSortOrder(),
+//     byStatus: buildAnyOfFilter(EventStatusSchema).default(["PUBLIC"]),
+//     byType: buildAnyOfFilter(EventTypeSchema),
+//     excludingType: buildAnyOfFilter(EventTypeSchema).default(["INTERNAL"]),
+//     byHasFeedbackForm: z.boolean(),
+//   })
+//   .partial()
+
+
+
 export type ContestantDetail = z.infer<typeof ContestantDetailSchema>
