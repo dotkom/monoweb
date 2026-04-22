@@ -6,7 +6,7 @@ import { mapNotificationTypeToLabel, NotificationTypeSchema, NotificationWriteSc
 import { getActiveGroupMembership } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
-import { useGroupAllQuery, useGroupMembersAllQuery } from "../queries"
+import { useGroupMembersAllQuery } from "../queries"
 import { useCreateGroupNotificationMutation } from "../mutations"
 
 interface CreateGroupNotificationModalProps {
@@ -21,7 +21,6 @@ export const CreateGroupNotificationModal: FC<ContextModalProps<CreateGroupNotif
   const close = () => context.closeModal(id)
   const create = useCreateGroupNotificationMutation(groupSlug)
   const { members } = useGroupMembersAllQuery(groupSlug)
-  const { groups } = useGroupAllQuery()
 
   const recipientIds = Array.from(members.entries())
     .filter(([, member]) => getActiveGroupMembership(member, groupSlug) !== null)
@@ -34,6 +33,7 @@ export const CreateGroupNotificationModal: FC<ContextModalProps<CreateGroupNotif
       taskId: null,
       payloadType: "GROUP",
       payload: groupSlug,
+      actorGroupId: groupSlug,
     },
     onSubmit: (data) => {
       create.mutate(data)
@@ -43,7 +43,7 @@ export const CreateGroupNotificationModal: FC<ContextModalProps<CreateGroupNotif
     fields: {
       title: createTextInput({
         label: "Tittel",
-        placeholder: "Juleball Påmeldingen er åpen!",
+        placeholder: "Nytt oppmøtested!",
         required: true,
       }),
       shortDescription: createTextInput({
@@ -62,13 +62,6 @@ export const CreateGroupNotificationModal: FC<ContextModalProps<CreateGroupNotif
         })),
         label: "Type",
         placeholder: "Velg type",
-        required: true,
-      }),
-      actorGroupId: createSelectInput({
-        label: "Ansvarlig gruppe",
-        placeholder: "Velg gruppe",
-        data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
-        searchable: true,
         required: true,
       }),
     },

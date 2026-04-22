@@ -86,6 +86,7 @@ export interface AttendanceRepository {
   ): Promise<AttendancePool>
   deleteAttendancePoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<void>
   deleteAttendancePoolsByIds(handle: DBHandle, attendancePoolIds: AttendancePoolId[]): Promise<void>
+  findAttendeeUserIdsByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<UserId[]>
 }
 
 export function getAttendanceRepository(): AttendanceRepository {
@@ -574,6 +575,14 @@ export function getAttendanceRepository(): AttendanceRepository {
       await handle.attendance.delete({
         where: { id: attendanceId },
       })
+    },
+
+    async findAttendeeUserIdsByAttendanceId(handle, attendanceId) {
+      const rows = await handle.attendee.findMany({
+        where: { attendanceId },
+        select: { userId: true },
+      })
+      return rows.map((r) => r.userId)
     },
   }
 }
