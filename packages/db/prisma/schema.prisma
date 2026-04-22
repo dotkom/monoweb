@@ -187,6 +187,7 @@ model Group {
   recruitmentMethod   GroupRecruitmentMethod @default(NONE) @map("recruitment_method")
 
   events        EventHostingGroup[]
+  contests      Contest[]
   type          GroupType
   memberships   GroupMembership[]
   marks         MarkGroup[]
@@ -871,8 +872,11 @@ model Contest {
   resultType  ContestResultType  @map("result_type")
   resultOrder ContestResultOrder @map("result_order")
 
+  groupId String @map("group_id")
+  group   Group  @relation(fields: [groupId], references: [slug])
+
   winnerContestantId String?     @unique @map("winner_contestant_id")
-  winnerContestant   Contestant? @relation("ContestWinner", fields: [winnerContestantId], references: [id])
+  winnerContestant   Contestant? @relation("ContestWinner", fields: [winnerContestantId], references: [id], onDelete: SetNull)
 
   contestants Contestant[] @relation("ContestContestants")
 
@@ -900,7 +904,7 @@ model Contestant {
 
   contestId String  @map("contest_id")
   userId    String? @map("user_id")
-  contest   Contest @relation("ContestContestants", fields: [contestId], references: [id])
+  contest   Contest @relation("ContestContestants", fields: [contestId], references: [id], onDelete: Cascade)
   user      User?   @relation(fields: [userId], references: [id])
 
   team       ContestTeam?
@@ -915,7 +919,7 @@ model ContestTeam {
   name String
 
   contestantId String     @unique @map("contestant_id")
-  contestant   Contestant @relation(fields: [contestantId], references: [id])
+  contestant   Contestant @relation(fields: [contestantId], references: [id], onDelete: Cascade)
 
   members User[] @relation("ContestTeamMember")
 
