@@ -32,6 +32,8 @@ const config = {
   serverExternalPackages: [],
 }
 
+// Temp test
+
 export default withSentryConfig(config, {
   org: "dotkom",
   project: "monoweb-dashboard",
