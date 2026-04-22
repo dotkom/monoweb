@@ -57,6 +57,11 @@ const navigations = [
     icon: IconBriefcase,
     href: "/karriere",
   },
+    {
+    label: "Konkurranser",
+    icon: IconBriefcase,
+    href: "/konkurranser",
+  },
   {
     label: "Artikler",
     icon: IconPhoto,

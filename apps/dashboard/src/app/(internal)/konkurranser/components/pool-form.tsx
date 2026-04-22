@@ -1,0 +1,187 @@
+import { createLabelledCheckboxGroupInput } from "@/components/forms/CheckboxGroup"
+import { createNumberInput } from "@/components/forms/NumberInput"
+import { createTextInput } from "@/components/forms/TextInput"
+import { notifyFail } from "@/lib/notifications"
+import { createPoolName } from "@dotkomonline/utils"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { ActionIcon, Box, Button, Flex, Stack } from "@mantine/core"
+import { IconX } from "@tabler/icons-react"
+import { type FC, useEffect, useMemo } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+const yearEntries = [
+  { label: "1. klasse", key: 1 },
+  { label: "2. klasse", key: 2 },
+  { label: "3. klasse", key: 3 },
+  { label: "4. klasse", key: 4 },
+  { label: "5. klasse", key: 5 },
+]
+
+export interface PoolFormProps {
+  onSubmit(values: PoolForm): void
+  disabledYears: number[]
+  onClose(): void
+  defaultValues: PoolForm
+  mode: "create" | "update"
+  minCapacity?: number
+}
+
+export const PoolFormSchema = z.object({
+  yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn."),
+  capacity: z.number().min(0),
+  title: z.string().min(1),
+  mergeDelayHours: z.preprocess((val) => {
+    if (typeof val === "number") {
+      const num = Number(val)
+      if (num === 0) {
+        return null
+      }
+      return num
+    }
+    return null
+  }, z
+    .number()
+    .int()
+    .min(0, "Utsettelse må være mellom 0 og 96 timer (4 dager).")
+    .max(96, "Utsettelse må være mellom 0 og 96 timer (4 dager).")
+    .nullable()),
+})
+export type PoolForm = z.infer<typeof PoolFormSchema>
+
+export const usePoolForm = (props: PoolFormProps) => {
+  const form = useForm<PoolForm>({
+    resolver: zodResolver(PoolFormSchema),
+    mode: "onBlur",
+    defaultValues: {
+      ...props.defaultValues,
+      title: props.defaultValues.title || createPoolName(props.defaultValues.yearCriteria),
+    },
+  })
+
+  const yearCriteria = form.watch("yearCriteria")
+
+  const generatedTitle = createPoolName(yearCriteria ?? [])
+  const defaultTitle = form.formState.defaultValues?.title
+  const isDefaultGeneratedTitle = defaultTitle === createPoolName(props.defaultValues.yearCriteria ?? [])
+  const isTitleDirty = Boolean(form.formState.dirtyFields.title)
+
+  const { resetField, setValue } = form
+
+  const fields = useMemo(
+    () =>
+      [
+        {
+          name: "yearCriteria",
+          component: createLabelledCheckboxGroupInput<PoolForm>({
+            disabledOptions: props.disabledYears,
+            entries: yearEntries,
+          }),
+        },
+        {
+          name: "title",
+          component: createTextInput<PoolForm>({
+            label: "Tittel",
+            required: true,
+            rightSection: (
+              <ActionIcon
+                size="input-xs"
+                color="gray"
+                variant="subtle"
+                onClick={() => {
+                  resetField("title", { defaultValue: defaultTitle })
+                  setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
+                }}
+              >
+                <IconX height={20} width={20} />
+              </ActionIcon>
+            ),
+          }),
+        },
+        {
+          name: "capacity",
+          component: createNumberInput<PoolForm>({
+            label: "Kapasitet",
+            description: (
+              <Stack gap="xs">
+                <span>
+                  Antall som kan melde seg på før de automatisk settes i kø. Du kan ha flere påmeldte enn kapasitet.
+                </span>
+                <span>Sett til 0 for ubegrenset kapasitet.</span>
+              </Stack>
+            ),
+            min: props.minCapacity ?? 0,
+            required: true,
+          }),
+        },
+        {
+          name: "mergeDelayHours",
+          component: createNumberInput<PoolForm>({
+            label: "Utsettelse i timer",
+            description: (
+              <Stack gap="xs">
+                <span>Hvor mange timer brukere i gruppen skal stå i kø før de blir påmeldt.</span>
+                <span>
+                  Påmeldingsgruppen vil slå seg sammen med andre påmeldingsgrupper etter utsettelsestiden har gått ut.
+                  Dette gir andre muligheten til å melde seg på før den som meldte seg på får en plass.
+                </span>
+                <span>Kapasiteten bør være 0 dersom gruppen har utsettelse.</span>
+              </Stack>
+            ),
+            placeholder: "Ingen utsettelse",
+            min: 0,
+          }),
+        },
+      ] as const,
+    [defaultTitle, generatedTitle, props.disabledYears, resetField, setValue, props.minCapacity]
+  )
+
+  useEffect(() => {
+    if (!yearCriteria || !isDefaultGeneratedTitle || isTitleDirty) {
+      return
+    }
+
+    form.setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
+    form.trigger("title")
+  }, [yearCriteria, generatedTitle, isDefaultGeneratedTitle, isTitleDirty, form])
+
+  const onSubmit = form.handleSubmit((values) => {
+    form.resetField("yearCriteria")
+    try {
+      props.onSubmit(values)
+    } catch (e) {
+      notifyFail({
+        title: "Oops!",
+        message: (e as Error).message,
+      })
+    }
+  })
+
+  const Form = (
+    <form onSubmit={onSubmit}>
+      <Flex direction="column" gap="md">
+        {fields.map(({ name, component: InputComponent }) => (
+          <InputComponent
+            defaultValue={form.formState.defaultValues?.[name]}
+            key={name}
+            name={name}
+            register={form.register}
+            control={form.control}
+            state={form.formState}
+            setError={form.setError}
+            clearErrors={form.clearErrors}
+          />
+        ))}
+        <Button type="submit">{props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe"}</Button>
+      </Flex>
+    </form>
+  )
+
+  return { Form }
+}
+
+export const PoolForm: FC<PoolFormProps> = (props) => {
+  const { Form } = usePoolForm(props)
+
+  return <Box>{Form}</Box>
+}
