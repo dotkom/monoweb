@@ -158,7 +158,12 @@ export async function createServiceLayer(
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
   const notificationRepository = getNotificationRepository()
 
-  const notificationService = getNotificationService(notificationRepository, userRepository, attendanceRepository, eventEmitter)
+  const notificationService = getNotificationService(
+    notificationRepository,
+    userRepository,
+    attendanceRepository,
+    eventEmitter
+  )
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
     ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
@@ -226,7 +231,12 @@ export async function createServiceLayer(
     notificationService
   )
   const companyService = getCompanyService(companyRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
-  const offlineService = getOfflineService(offlineRepository, notificationService, clients.s3Client, configuration.AWS_S3_BUCKET)
+  const offlineService = getOfflineService(
+    offlineRepository,
+    notificationService,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET
+  )
   const articleService = getArticleService(
     articleRepository,
     articleTagRepository,
