@@ -7,6 +7,7 @@ import {
   GroupRoleWriteSchema,
   GroupSchema,
   GroupWriteSchema,
+  getActiveGroupMembership,
 } from "./group"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
@@ -379,6 +380,21 @@ const createFileUploadProcedure = procedure
     return ctx.groupService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 
+export type GetActiveMemberUserIdsInput = inferProcedureInput<typeof getActiveMemberUserIdsProcedure>
+export type GetActiveMemberUserIdsOutput = inferProcedureOutput<typeof getActiveMemberUserIdsProcedure>
+const getActiveMemberUserIdsProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .output(z.array(z.string()))
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const members = await ctx.groupService.findMembersBySlug(ctx.handle, input)
+    return Array.from(members.entries())
+      .filter(([, member]) => getActiveGroupMembership(member, input) !== null)
+      .map(([userId]) => userId)
+  })
+
 export const groupRouter = t.router({
   create: createGroupProcedure,
   all: allGroupsProcedure,
@@ -397,4 +413,5 @@ export const groupRouter = t.router({
   createRole: createRoleProcedure,
   updateRole: updateRoleProcedure,
   createFileUpload: createFileUploadProcedure,
+  getActiveMemberUserIds: getActiveMemberUserIdsProcedure,
 })
