@@ -44,6 +44,10 @@ export interface NotificationRepository {
     payload: string,
     page: Pageable
   ): Promise<Notification[]>
+  findRecipientsByNotificationId(
+    handle: DBHandle,
+    notificationId: NotificationId
+  ): Promise<Array<{ id: string; readAt: Date | null; userId: string; user: { id: string; name: string | null } }>>
   findAllForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
@@ -91,9 +95,18 @@ export function getNotificationRepository(): NotificationRepository {
     },
 
     async update(handle, notificationId, data) {
+      const { recipientIds, actorGroupId, taskId, ...notificationData } = data
       const notification = await handle.notification.update({
         where: { id: notificationId },
-        data,
+        data: {
+          ...notificationData,
+          ...(actorGroupId !== undefined
+            ? { actorGroup: actorGroupId ? { connect: { slug: actorGroupId } } : { disconnect: true } }
+            : {}),
+          ...(taskId !== undefined
+            ? { task: taskId ? { connect: { id: taskId } } : { disconnect: true } }
+            : {}),
+        },
         include: {
           actorGroup: {
             include: {
@@ -137,11 +150,12 @@ export function getNotificationRepository(): NotificationRepository {
     },
 
     async addRecipients(handle, notificationId, recipientIds) {
-      const recipients = await handle.notificationRecipient.createMany({
+      const recipients = await handle.notificationRecipient.createManyAndReturn({
         data: recipientIds.map((userId) => ({
           notificationId,
           userId,
         })),
+        skipDuplicates: true,
       })
       return parseOrReport(NotificationRecipientSchema.array(), recipients)
     },
@@ -154,6 +168,23 @@ export function getNotificationRepository(): NotificationRepository {
         },
       })
       return result.count
+    },
+
+    async findRecipientsByNotificationId(handle, notificationId) {
+      return handle.notificationRecipient.findMany({
+        where: { notificationId },
+        select: {
+          id: true,
+          readAt: true,
+          userId: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      })
     },
 
     async findManyByPayload(handle, payloadType, payload, page) {
