@@ -13,7 +13,7 @@ import {
   splitLink,
 } from "@trpc/client"
 import { minutesToMilliseconds } from "date-fns"
-import { type Dispatch, type PropsWithChildren, type SetStateAction, createContext, useContext, useState } from "react"
+import { type Dispatch, type PropsWithChildren, type SetStateAction, createContext, useContext, useEffect, useRef, useState } from "react"
 import superjson from "superjson"
 import { TRPCProvider } from "./client"
 
@@ -38,6 +38,10 @@ export const useTRPCSSERegisterChangeConnectionState = () => {
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
+  const sessionRef = useRef(session)
+  useEffect(() => {
+    sessionRef.current = session
+  })
   const [trpcSSERegisterChangeConnectionState, setTRPCSSERegisterChangeConnectionState] =
     useState<TRPCSSEConnectionState>("connecting")
 
@@ -51,6 +55,10 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         true: httpSubscriptionLink({
           transformer: superjson,
           url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
+          connectionParams: () => {
+            const s = sessionRef.current
+            return s ? { token: s.accessToken } : {}
+          },
         }),
         false: httpBatchLink({
           transformer: superjson,

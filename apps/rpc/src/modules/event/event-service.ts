@@ -19,10 +19,16 @@ import {
   type UserId,
   EVENT_IMAGE_MAX_SIZE_KIB,
 } from "@dotkomonline/types"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
+import { createEventSlug, createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import type { Pageable } from "@dotkomonline/utils"
 import type { EventRepository } from "./event-repository"
+import type { AttendanceRepository } from "./attendance-repository"
+import type { TaskSchedulingService } from "../task/task-scheduling-service"
+import { tasks } from "../task/task-definition"
+import { TZDate } from "@date-fns/tz"
+import { subDays } from "date-fns"
+import type { NotificationService } from "../notification/notification-service"
 
 export interface EventService {
   createEvent(handle: DBHandle, data: EventWrite): Promise<Event>
@@ -75,6 +81,9 @@ export interface EventService {
 
 export function getEventService(
   eventRepository: EventRepository,
+  attendanceRepository: AttendanceRepository,
+  taskSchedulingService: TaskSchedulingService,
+  notificationService: NotificationService,
   s3Client: S3Client,
   s3BucketName: string
 ): EventService {
@@ -82,7 +91,21 @@ export function getEventService(
 
   return {
     async createEvent(handle, data) {
-      return await eventRepository.create(handle, data)
+      const createdEvent = await eventRepository.create(handle, data)
+
+      const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_EVENT")
+      await notificationService.create(
+        handle,
+        recipients,
+        "NEW_EVENT",
+        `Nytt arrangement: ${createdEvent.title}`,
+        `Et nytt arrangement "${createdEvent.title}" har blitt publisert.`,
+        createdEvent.hostingGroups[0]?.slug ?? null,
+        "EVENT",
+        `${createEventSlug(createdEvent.title)}/${createdEvent.id}`
+      )
+
+      return createdEvent
     },
 
     async deleteEvent(handle, eventId) {
@@ -90,7 +113,50 @@ export function getEventService(
     },
 
     async updateEvent(handle, eventId, data) {
-      return await eventRepository.update(handle, eventId, data)
+      let preEvent: Event | null = null
+
+      // Only send notifications if the event is either in the future or ongoing.
+      if (data.end && new Date() < new Date(data.end)) {
+        preEvent = await this.getEventById(handle, eventId)
+      }
+
+      const afterEvent = await eventRepository.update(handle, eventId, data)
+
+      if (preEvent) {
+        if (
+          afterEvent.description !== preEvent.description &&
+          afterEvent.attendanceId !== null &&
+          afterEvent.hostingGroups.length > 0
+        ) {
+          const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "EVENT_UPDATE", afterEvent.id)
+          await notificationService.create(
+            handle,
+            recipients,
+            "EVENT_UPDATE",
+            `Arrangement oppdatert: ${afterEvent.title}`,
+            `Arrangementet "${afterEvent.title}" har blitt oppdatert.`,
+            afterEvent.hostingGroups[0]?.slug ?? null,
+            "EVENT",
+            `${createEventSlug(afterEvent.title)}/${afterEvent.id}`
+          )
+        }
+
+        // Reschedule the reminder if event start time changed
+        if (data.start && afterEvent.start.getTime() !== preEvent.start.getTime()) {
+          const existingReminder = await taskSchedulingService.findEventReminderNotificationTask(handle, afterEvent.id)
+          if (existingReminder) {
+            await taskSchedulingService.cancel(handle, existingReminder.id)
+          }
+          await taskSchedulingService.scheduleAt(
+            handle,
+            tasks.SEND_NOTIFICATION_EVENT_REMINDER,
+            { eventId: afterEvent.id },
+            new TZDate(subDays(afterEvent.start, 1))
+          )
+        }
+      }
+
+      return afterEvent
     },
 
     async findEvents(handle, query, page) {
@@ -186,7 +252,25 @@ export function getEventService(
 
     async updateEventAttendance(handle, eventId, attendanceId) {
       const event = await this.getEventById(handle, eventId)
-      return await eventRepository.updateEventAttendance(handle, event.id, attendanceId)
+      const updatedEvent = await eventRepository.updateEventAttendance(handle, event.id, attendanceId)
+
+      const attendance = await attendanceRepository.findAttendanceById(handle, attendanceId)
+      if (attendance) {
+        await taskSchedulingService.scheduleAt(
+          handle,
+          tasks.SEND_NOTIFICATION_EVENT_REGISTRATION,
+          { attendanceId },
+          new TZDate(attendance.registerStart)
+        )
+        await taskSchedulingService.scheduleAt(
+          handle,
+          tasks.SEND_NOTIFICATION_EVENT_REMINDER,
+          { eventId: event.id },
+          new TZDate(subDays(event.start, 1))
+        )
+      }
+
+      return updatedEvent
     },
 
     async updateEventParent(handle, eventId, parentEventId) {

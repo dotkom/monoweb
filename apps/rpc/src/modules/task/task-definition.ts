@@ -2,6 +2,9 @@ import { AttendanceSchema, AttendeeSchema, FeedbackFormSchema, type TaskType } f
 import { z } from "zod"
 import { NotFoundError } from "../../error"
 
+const eventIdSchema = z.string().uuid()
+const attendanceIdSchema = z.string().uuid()
+
 export interface TaskDefinition<TData, TType extends TaskType> {
   getSchema(): z.ZodSchema<TData>
   type: TType
@@ -23,6 +26,9 @@ export type ChargeAttendeeTaskDefinition = typeof tasks.CHARGE_ATTENDEE
 export type VerifyFeedbackAnsweredTaskDefinition = typeof tasks.VERIFY_FEEDBACK_ANSWERED
 export type SendFeedbackFormEmailsTaskDefinition = typeof tasks.SEND_FEEDBACK_FORM_EMAILS
 export type VerifyAttendeeAttendedTaskDefinition = typeof tasks.VERIFY_ATTENDEE_ATTENDED
+export type SendNotificationEventRegistrationTaskDefinition = typeof tasks.SEND_NOTIFICATION_EVENT_REGISTRATION
+export type SendNotificationEventReminderTaskDefinition = typeof tasks.SEND_NOTIFICATION_EVENT_REMINDER
+export type SendNotificationJobListingReminderTaskDefinition = typeof tasks.SEND_NOTIFICATION_JOB_LISTING_REMINDER
 export type AnyTaskDefinition =
   | ReserveAttendeeTaskDefinition
   | MergeAttendancePoolsTaskDefinition
@@ -31,6 +37,9 @@ export type AnyTaskDefinition =
   | VerifyFeedbackAnsweredTaskDefinition
   | SendFeedbackFormEmailsTaskDefinition
   | VerifyAttendeeAttendedTaskDefinition
+  | SendNotificationEventRegistrationTaskDefinition
+  | SendNotificationEventReminderTaskDefinition
+  | SendNotificationJobListingReminderTaskDefinition
 
 export const tasks = {
   RESERVE_ATTENDEE: createTaskDefinition({
@@ -76,6 +85,28 @@ export const tasks = {
   VERIFY_ATTENDEE_ATTENDED: createTaskDefinition({
     type: "VERIFY_ATTENDEE_ATTENDED",
     getSchema: () => z.object({}),
+  }),
+  SEND_NOTIFICATION_EVENT_REGISTRATION: createTaskDefinition({
+    type: "SEND_NOTIFICATION_EVENT_REGISTRATION",
+    getSchema: () =>
+      z.object({
+        attendanceId: attendanceIdSchema,
+      }),
+  }),
+  SEND_NOTIFICATION_EVENT_REMINDER: createTaskDefinition({
+    type: "SEND_NOTIFICATION_EVENT_REMINDER",
+    getSchema: () =>
+      z.object({
+        eventId: eventIdSchema,
+      }),
+  }),
+  SEND_NOTIFICATION_JOB_LISTING_REMINDER: createTaskDefinition({
+    type: "SEND_NOTIFICATION_JOB_LISTING_REMINDER",
+    getSchema: () =>
+      z.object({
+        jobListingId: z.string().uuid(),
+        title: z.string(),
+      }),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<TaskType, TaskDefinition<any, any>>

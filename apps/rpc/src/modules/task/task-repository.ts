@@ -2,6 +2,7 @@ import type { DBHandle, TaskStatus } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendeeId,
+  type EventId,
   type FeedbackFormId,
   type Task,
   type TaskId,
@@ -25,6 +26,8 @@ export interface TaskRepository {
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
+  findEventRegistrationNotificationTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findEventReminderNotificationTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
 }
 
 export function getTaskRepository(): TaskRepository {
@@ -178,6 +181,38 @@ export function getTaskRepository(): TaskRepository {
         orderBy: {
           createdAt: "desc",
         },
+      })
+
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+
+    async findEventRegistrationNotificationTask(handle, attendanceId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.SEND_NOTIFICATION_EVENT_REGISTRATION.type,
+          status: "PENDING",
+          payload: {
+            path: ["attendanceId"],
+            equals: attendanceId,
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      })
+
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+
+    async findEventReminderNotificationTask(handle, eventId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.SEND_NOTIFICATION_EVENT_REMINDER.type,
+          status: "PENDING",
+          payload: {
+            path: ["eventId"],
+            equals: eventId,
+          },
+        },
+        orderBy: { createdAt: "desc" },
       })
 
       return parseOrReport(TaskSchema.nullable(), task)

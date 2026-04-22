@@ -1,13 +1,17 @@
+import type EventEmitter from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import type { UserId } from "@dotkomonline/types"
 import type { NotificationRepository } from "./notification-repository"
 import type { Pageable } from "@dotkomonline/utils"
 import type { UserRepository } from "../user/user-repository"
+import type { AttendanceRepository } from "../event/attendance-repository"
 import type {
   Notification,
   NotificationId,
+  NotificationPayloadType,
   NotificationRecipient,
   NotificationRecipientId,
+  NotificationType,
   NotificationWrite,
   UserNotification,
 } from "./notification-types"
@@ -15,7 +19,21 @@ import type {
 export interface NotificationService {
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
   findMany(handle: DBHandle, page: Pageable): Promise<Notification[]>
-  createWithRecipients(handle: DBHandle, notificationData: NotificationWrite): Promise<Notification>
+  retrieveIntendedRecipientIds(
+    handle: DBHandle,
+    notificationType: NotificationType,
+    eventId?: string
+  ): Promise<UserId[]>
+  create(
+    handle: DBHandle,
+    recipientIds: UserId[],
+    notificationType: NotificationType,
+    title: string,
+    shortDescription: string,
+    actorGroupId?: string | null,
+    payloadType?: NotificationPayloadType,
+    payload?: string | null
+  ): Promise<Notification>
   update(
     handle: DBHandle,
     notificationId: NotificationId,
@@ -39,7 +57,9 @@ export interface NotificationService {
 
 export function getNotificationService(
   notificationRepository: NotificationRepository,
-  userRepository: UserRepository
+  userRepository: UserRepository,
+  attendanceRepository: AttendanceRepository,
+  eventEmitter: EventEmitter
 ): NotificationService {
   return {
     async findById(handle, notificationId) {
@@ -50,13 +70,34 @@ export function getNotificationService(
       return await notificationRepository.findMany(handle, page)
     },
 
-    async createWithRecipients(handle, notificationData) {
-      const data = { ...notificationData }
-      if (data.recipientIds.length === 0) {
-        const users = await userRepository.findMany(handle, {}, { take: 10000 })
-        data.recipientIds = users.map((user) => user.id)
+    async create(handle, recipientIds, notificationType, title, shortDescription, actorGroupId, payloadType, payload) {
+      const notification = await notificationRepository.createWithRecipients(handle, {
+        title,
+        shortDescription,
+        content: shortDescription ?? title,
+        type: notificationType,
+        payload: payload ?? null,
+        payloadType: payloadType ?? "NONE",
+        actorGroupId: actorGroupId ?? null,
+        taskId: null,
+        recipientIds,
+      })
+      for (const userId of recipientIds) {
+        eventEmitter.emit("notification:new", { userId, notification })
       }
-      return await notificationRepository.createWithRecipients(handle, data)
+      return notification
+    },
+
+    async retrieveIntendedRecipientIds(handle, notificationType, eventId) {
+      const eventAttendeeTypes: NotificationType[] = ["EVENT_REGISTRATION", "EVENT_REMINDER", "EVENT_UPDATE"]
+
+      if (eventAttendeeTypes.includes(notificationType) && eventId) {
+        const attendance = await attendanceRepository.findAttendanceByEventId(handle, eventId)
+        return attendance?.attendees.map((a) => a.userId) ?? []
+      }
+
+      const users = await userRepository.findMany(handle, {}, { take: 10000 })
+      return users.map((u) => u.id)
     },
 
     async update(handle, notificationId, notificationData) {
