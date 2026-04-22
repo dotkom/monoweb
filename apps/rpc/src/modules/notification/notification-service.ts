@@ -1,4 +1,8 @@
 import type { DBHandle } from "@dotkomonline/db"
+import type { UserId } from "@dotkomonline/types"
+import type { NotificationRepository } from "./notification-repository"
+import type { Pageable } from "@dotkomonline/utils"
+import type { UserRepository } from "../user/user-repository"
 import type {
   Notification,
   NotificationId,
@@ -6,22 +10,18 @@ import type {
   NotificationRecipientId,
   NotificationWrite,
   UserNotification,
-} from "./notification"
-import type { UserId } from "@dotkomonline/types"
-import type { NotificationRepository } from "./notification-repository"
-import { Pageable } from "src/query"
-import { UserRepository } from "../user/user-repository"
+} from "./notification-types"
 
 export interface NotificationService {
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
   findMany(handle: DBHandle, page: Pageable): Promise<Notification[]>
-  create(handle: DBHandle, notificationData: NotificationWrite): Promise<Notification>
+  createWithRecipients(handle: DBHandle, notificationData: NotificationWrite): Promise<Notification>
   update(
     handle: DBHandle,
     notificationId: NotificationId,
     notificationData: Partial<NotificationWrite>
   ): Promise<Notification>
-  delete(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
+  delete(handle: DBHandle, notificationId: NotificationId): Promise<boolean>
 
   addRecipients(handle: DBHandle, notificationId: NotificationId, recipientIds: UserId[]): Promise<void>
   removeRecipients(handle: DBHandle, notificationId: NotificationId, recipientIds: UserId[]): Promise<void>
@@ -31,28 +31,32 @@ export interface NotificationService {
     recipientId: NotificationRecipientId,
     userId: UserId
   ): Promise<NotificationRecipient | null>
-  findAllForUser(handle: DBHandle, userId: UserId): Promise<UserNotification[]>
+  findAllForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
-  markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<void>
-  markAllAsRead(handle: DBHandle, userId: UserId): Promise<void>
+  markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
+  markAllAsRead(handle: DBHandle, userId: UserId): Promise<boolean>
 }
 
-export function getNotificationService(notificationRepository: NotificationRepository, userRepository: UserRepository): NotificationService {
+export function getNotificationService(
+  notificationRepository: NotificationRepository,
+  userRepository: UserRepository
+): NotificationService {
   return {
     async findById(handle, notificationId) {
       return await notificationRepository.findById(handle, notificationId)
     },
-     async findMany(handle, page) {
+
+    async findMany(handle, page) {
       return await notificationRepository.findMany(handle, page)
     },
-    
-    async create(handle, notificationData) {
+
+    async createWithRecipients(handle, notificationData) {
       const data = { ...notificationData }
       if (data.recipientIds.length === 0) {
-        const users =  await userRepository.findMany(handle, {}, { take: 10000 })
-        data.recipientIds = users.map(user => user.id)
+        const users = await userRepository.findMany(handle, {}, { take: 10000 })
+        data.recipientIds = users.map((user) => user.id)
       }
-      return await notificationRepository.create(handle, data)
+      return await notificationRepository.createWithRecipients(handle, data)
     },
 
     async update(handle, notificationId, notificationData) {
@@ -75,8 +79,8 @@ export function getNotificationService(notificationRepository: NotificationRepos
       return await notificationRepository.findRecipient(handle, recipientId, userId)
     },
 
-    async findAllForUser(handle, userId) {
-      return await notificationRepository.findAllForUser(handle, userId)
+    async findAllForUser(handle, userId, page) {
+      return await notificationRepository.findAllForUser(handle, userId, page)
     },
 
     async getUnreadCountForUser(handle, userId) {
@@ -84,11 +88,11 @@ export function getNotificationService(notificationRepository: NotificationRepos
     },
 
     async markAsRead(handle, notificationId, userId) {
-      await notificationRepository.markAsRead(handle, notificationId, userId)
+      return await notificationRepository.markAsRead(handle, notificationId, userId)
     },
 
     async markAllAsRead(handle, userId) {
-      await notificationRepository.markAllAsRead(handle, userId)
+      return await notificationRepository.markAllAsRead(handle, userId)
     },
   }
 }
