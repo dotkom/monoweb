@@ -178,6 +178,41 @@ const findNotificationsByPayloadProcedure = procedure
     }
   })
 
+export type GetRecipientsByNotificationInput = inferProcedureInput<typeof getRecipientsByNotificationProcedure>
+export type GetRecipientsByNotificationOutput = inferProcedureOutput<typeof getRecipientsByNotificationProcedure>
+const getRecipientsByNotificationProcedure = procedure
+  .input(NotificationSchema.shape.id)
+  .output(
+    z.array(
+      z.object({
+        id: z.string().uuid(),
+        readAt: z.coerce.date().nullable(),
+        userId: z.string(),
+        user: z.object({ id: z.string(), name: z.string().nullable() }),
+      })
+    )
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    return ctx.notificationService.findRecipientsByNotificationId(ctx.handle, input)
+  })
+
+export type AddRecipientsInput = inferProcedureInput<typeof addRecipientsProcedure>
+export type AddRecipientsOutput = inferProcedureOutput<typeof addRecipientsProcedure>
+const addRecipientsProcedure = procedure
+  .input(z.object({ notificationId: NotificationSchema.shape.id, recipientIds: z.array(z.string()) }))
+  .output(z.object({ count: z.number() }))
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    await ctx.notificationService.addRecipients(ctx.handle, input.notificationId, input.recipientIds)
+    return { count: input.recipientIds.length }
+  })
+
 export const notificationRouter = t.router({
   get: getNotificationProcedure,
   create: createNotificationProcedure,
@@ -190,4 +225,6 @@ export const notificationRouter = t.router({
   findMany: findNotificationsProcedure,
   onNewNotification: onNewNotificationProcedure,
   findManyByPayload: findNotificationsByPayloadProcedure,
+  getRecipients: getRecipientsByNotificationProcedure,
+  addRecipients: addRecipientsProcedure,
 })

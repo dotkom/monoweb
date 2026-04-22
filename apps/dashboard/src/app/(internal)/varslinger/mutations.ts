@@ -32,6 +32,23 @@ export const useCreateNotificationMutation = () => {
   )
 }
 
+export const useAddNotificationRecipientsMutation = (notificationId: string) => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+  return useMutation(
+    trpc.notification.addRecipients.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.notification.getRecipients.queryOptions(notificationId))
+        notification.complete({ title: "Mottakere lagt til", message: "Mottakerne er lagt til varslingen." })
+      },
+      onError: (err) => {
+        notification.fail({ title: "Feil oppsto", message: err.toString() })
+      },
+    })
+  )
+}
+
 export const useEditNotificationMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
