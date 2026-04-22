@@ -82,6 +82,7 @@ function getDirectory(configuration: Configuration): admin_directory_v1.Admin {
     throw new IllegalStateError("Google Workspace integration is not enabled or missing configuration variables")
   }
 
+  // Google Workspace Service Account is stored in base64 to not break due to newlines in content.
   const serviceAccountJson = JSON.parse(atob(configuration.googleWorkspace.serviceAccount))
   const result = workspaceServiceAccountJsonSchema.safeParse(serviceAccountJson)
 
