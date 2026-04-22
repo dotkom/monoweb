@@ -1,7 +1,13 @@
 import { useTRPC } from "@/lib/trpc-client"
 import type { Pageable } from "@dotkomonline/utils"
-import { useInfiniteQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
+
+export const useNotificationRecipientsQuery = (notificationId: string) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery(trpc.notification.getRecipients.queryOptions(notificationId))
+  return { recipients: data ?? [], ...query }
+}
 
 export const useNotificationAllInfiniteQuery = (page?: Pageable) => {
   const trpc = useTRPC()

@@ -19,7 +19,7 @@ export const AllNotificationsTable = ({ notifications }: AllNotificationsTablePr
         header: () => "Tittel",
         sortingFn: "alphanumeric",
         cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/varsler/${info.row.original.id}`}>
+          <Anchor component={Link} size="sm" href={`/varslinger/${info.row.original.id}`}>
             {info.getValue()}
           </Anchor>
         ),
