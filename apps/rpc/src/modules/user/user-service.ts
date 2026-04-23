@@ -210,6 +210,16 @@ export function getUserService(
     return normalizeText(metadata.appMetadata.initial_full_name) ?? normalizeText(metadata.userMetadata.full_name)
   }
 
+  function getFeideIdentityName(auth0User: Auth0UserProfile): string | null {
+    const feideIdentity = auth0User.identities?.find((identity) => identity.connection === "FEIDE")
+
+    return normalizeText(feideIdentity?.profileData?.name)
+  }
+
+  function getFeideFullName(auth0User: Auth0UserProfile, metadata: Auth0ProfileMetadata): string | null {
+    return getFeideIdentityName(auth0User) ?? normalizeText(metadata.appMetadata.feide_full_name)
+  }
+
   function getAuth0DisplayName(auth0User: Auth0UserProfile): string | null {
     const name = normalizeText(auth0User.name)
     const email = normalizeText(auth0User.email)
@@ -222,16 +232,16 @@ export function getUserService(
   }
 
   function getPreferredName(auth0User: Auth0UserProfile, metadata: Auth0ProfileMetadata): string | null {
-    return (
-      normalizeText(metadata.appMetadata.feide_full_name) ??
-      getUserSubmittedFullName(metadata) ??
-      getAuth0DisplayName(auth0User)
-    )
+    return getFeideFullName(auth0User, metadata) ?? getUserSubmittedFullName(metadata) ?? getAuth0DisplayName(auth0User)
   }
 
-  function shouldReplaceStoredNameWithFeide(user: User, metadata: Auth0ProfileMetadata): boolean {
+  function shouldReplaceStoredNameWithFeide(
+    user: User,
+    auth0User: Auth0UserProfile,
+    metadata: Auth0ProfileMetadata
+  ): boolean {
     const userSubmittedName = getUserSubmittedFullName(metadata)
-    const feideFullName = normalizeText(metadata.appMetadata.feide_full_name)
+    const feideFullName = getFeideFullName(auth0User, metadata)
     const currentName = normalizeText(user.name)
 
     if (feideFullName === null) {
@@ -245,7 +255,50 @@ export function getUserService(
     return userSubmittedName !== null && currentName === userSubmittedName && currentName !== feideFullName
   }
 
-  // Used when registering a new user to give the name we deem correct to Auth0.
+  async function syncFeideMetadataToAuth0(
+    userId: UserId,
+    auth0User: Auth0UserProfile,
+    metadata: Auth0ProfileMetadata
+  ): Promise<Auth0ProfileMetadata> {
+    const feideName = getFeideIdentityName(auth0User)
+
+    if (feideName === null || feideName === normalizeText(metadata.appMetadata.feide_full_name)) {
+      return metadata
+    }
+
+    const response = await managementClient.users.update(
+      { id: userId },
+      {
+        app_metadata: {
+          ...metadata.appMetadata,
+          feide_full_name: feideName,
+        },
+      }
+    )
+
+    if (response.status !== 200) {
+      throw new IllegalStateError(
+        `Received HTTP ${response.status} (${response.statusText}) when syncing User(ID=${userId}) FEIDE metadata to Auth0`
+      )
+    }
+
+    return {
+      ...metadata,
+      appMetadata: {
+        ...metadata.appMetadata,
+        feide_full_name: feideName,
+      },
+    }
+  }
+
+  async function syncUserWithAuth0Profile(handle: DBHandle, user: User, auth0User: Auth0UserProfile): Promise<User> {
+    const syncedUser = await syncProfileFromAuth0(handle, user, auth0User)
+    await syncNameToAuth0(user.id, auth0User, syncedUser.name)
+
+    return syncedUser
+  }
+
+  // Used to keep Auth0's root profile name synced with the DB user's name.
   async function syncNameToAuth0(userId: UserId, auth0User: Auth0UserProfile, desiredName: string | null) {
     const name = normalizeText(desiredName)
     const currentAuth0Name = normalizeText(auth0User.name)
@@ -305,7 +358,7 @@ export function getUserService(
 
   async function syncProfileFromAuth0(handle: DBHandle, user: User, auth0User: Auth0UserProfile): Promise<User> {
     const data: Partial<UserWrite> = {}
-    const metadata = parseAuth0ProfileMetadata(auth0User)
+    const metadata = await syncFeideMetadataToAuth0(user.id, auth0User, parseAuth0ProfileMetadata(auth0User))
 
     const auth0Email = normalizeText(auth0User.email)
 
@@ -318,7 +371,7 @@ export function getUserService(
     if (preferredName !== null) {
       const currentName = normalizeText(user.name)
 
-      if (currentName === null || shouldReplaceStoredNameWithFeide(user, metadata)) {
+      if (currentName === null || shouldReplaceStoredNameWithFeide(user, auth0User, metadata)) {
         data.name = preferredName
       }
     }
@@ -479,8 +532,7 @@ export function getUserService(
         const auth0Response = await managementClient.users.get({ id: userId })
 
         if (auth0Response.status === 200) {
-          syncedUser = await syncProfileFromAuth0(handle, existingUser, auth0Response.data)
-          await syncNameToAuth0(userId, auth0Response.data, syncedUser.name)
+          syncedUser = await syncUserWithAuth0Profile(handle, existingUser, auth0Response.data)
         } else {
           logger.warn(
             "Skipping Auth0 profile sync for existing User(ID=%s) due to HTTP %s (%s)",
@@ -564,7 +616,7 @@ export function getUserService(
       }
 
       const firstSignInUser = await userRepository.update(handle, userId, profile)
-      await syncNameToAuth0(userId, response.data, firstSignInUser.name)
+      await syncUserWithAuth0Profile(handle, firstSignInUser, response.data)
 
       return this.discoverMembership(handle, firstSignInUser.id)
     },
@@ -651,7 +703,7 @@ export function getUserService(
         )
       }
 
-      return await syncProfileFromAuth0(handle, user, response.data)
+      return await syncUserWithAuth0Profile(handle, user, response.data)
     },
 
     async discoverMembership(handle, userId) {
@@ -850,10 +902,22 @@ export function getUserService(
       await mergeUsers(handle, groupRepository, survivorUser, consumedUser)
 
       const mergedUser = await this.getById(handle, survivorUserId)
+      const auth0Response = await managementClient.users.get({ id: survivorUserId })
+
+      if (auth0Response.status !== 200) {
+        logger.warn(
+          "Skipping Auth0 profile sync after merge for User(ID=%s) due to HTTP %s (%s)",
+          survivorUserId,
+          auth0Response.status,
+          auth0Response.statusText
+        )
+
+        return mergedUser
+      }
 
       logger.info("Successfully merged consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
 
-      return mergedUser
+      return await syncUserWithAuth0Profile(handle, mergedUser, auth0Response.data)
     },
 
     async createFileUpload(handle, filename, contentType, userId, createdByUserId) {
