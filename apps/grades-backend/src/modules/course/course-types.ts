@@ -15,8 +15,7 @@ export const CourseFilterSortSchema = z.enum(["AVERAGE_GRADE", "PASS_RATE", "STU
 export type CourseFilterQuery = z.infer<typeof CourseFilterQuerySchema>
 export const CourseFilterQuerySchema = z
   .object({
-    byCode: buildSearchFilter(),
-    byName: buildSearchFilter(),
+    bySearch: buildSearchFilter(),
     orderBy: createSortOrder(),
     sortBy: buildAnyOfFilter(CourseFilterSortSchema),
   })
