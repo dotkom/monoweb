@@ -178,12 +178,12 @@ export function getUserService(
   function parseAuth0ProfileMetadata(auth0User: Auth0UserProfile) {
     const appMetadataResult = Auth0UserProfileAppMetadataSchema.safeParse(auth0User.app_metadata ?? {})
     if (!appMetadataResult.success) {
-      logger.warn("Failed to parse Auth0 app metadata for User(ID=%s): %o", auth0User.user_id, appMetadataResult.error)
+      logger.error("Failed to parse Auth0 app metadata for User(ID=%s): %o", auth0User.user_id, appMetadataResult.error)
     }
 
     const userMetadataResult = Auth0UserProfileUserMetadataSchema.safeParse(auth0User.user_metadata ?? {})
     if (!userMetadataResult.success) {
-      logger.warn(
+      logger.error(
         "Failed to parse Auth0 user metadata for User(ID=%s): %o",
         auth0User.user_id,
         userMetadataResult.error
