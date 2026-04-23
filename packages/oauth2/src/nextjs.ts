@@ -12,7 +12,12 @@ import { JWTExpired } from "jose/errors"
  * Create a short-lived cookie intended to hold state/verifier/nonce values
  * cross-request for authorization.
  */
-function createShortLivedCookie(service: OAuth2Service, cookies: ReadonlyRequestCookies, name: string, value: string) {
+export function createShortLivedCookie(
+  service: OAuth2Service,
+  cookies: ReadonlyRequestCookies,
+  name: string,
+  value: string
+) {
   cookies.set(name, value, {
     path: "/",
     httpOnly: true,

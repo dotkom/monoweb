@@ -263,7 +263,7 @@ const confirmIdentityLinkProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const primaryUserId = ctx.principal.subject
 
-    const claims = await ctx.jwtService.web.verify(input.secondaryIdToken).catch(() => null)
+    const claims = await ctx.webJwtService.verify(input.secondaryIdToken).catch(() => null)
 
     if (claims === null) {
       throw new UnauthorizedError("Invalid secondary ID token")

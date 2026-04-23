@@ -1,6 +1,7 @@
 import { auth, oauth2Service } from "@/auth"
 import { env } from "@/env"
 import { OAuthScopes } from "@dotkomonline/oauth2"
+import { createShortLivedCookie } from "@dotkomonline/oauth2/nextjs"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
@@ -22,9 +23,8 @@ export async function GET(request: Request) {
   })
 
   const cookieHandle = await cookies()
-  const cookieOptions = { path: "/", httpOnly: true, sameSite: "lax" as const, maxAge: 300, secure: isHttps }
-  cookieHandle.set(`${cookiePrefix}monoweb-link-state`, state, cookieOptions)
-  cookieHandle.set(`${cookiePrefix}monoweb-link-verifier`, verifier, cookieOptions)
+  createShortLivedCookie(oauth2Service, cookieHandle, `${cookiePrefix}monoweb-link-state`, state)
+  createShortLivedCookie(oauth2Service, cookieHandle, `${cookiePrefix}monoweb-link-verifier`, verifier)
 
   return NextResponse.redirect(url)
 }
