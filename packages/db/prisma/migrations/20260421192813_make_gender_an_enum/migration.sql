@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "gender" AS ENUM ('MALE', 'FEMALE', 'OTHER', 'UNKNOWN');
+CREATE TYPE "gender" AS ENUM ('MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'UNKNOWN');
 
 -- AlterTable
 ALTER TABLE "ow_user"

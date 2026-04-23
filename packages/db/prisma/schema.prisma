@@ -74,10 +74,11 @@ model Membership {
 }
 
 enum Gender {
-  MALE    @map("MALE")
-  FEMALE  @map("FEMALE")
-  OTHER   @map("OTHER")
-  UNKNOWN @map("UNKNOWN")
+  MALE       @map("MALE")
+  FEMALE     @map("FEMALE")
+  NON_BINARY @map("NON_BINARY")
+  OTHER      @map("OTHER")
+  UNKNOWN    @map("UNKNOWN")
 
   @@map("gender")
 }

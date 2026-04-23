@@ -168,6 +168,8 @@ export function getGenderName(gender: Gender) {
       return "Mann"
     case "FEMALE":
       return "Kvinne"
+    case "NON_BINARY":
+      return "Ikke-binær"
     case "OTHER":
       return "Annet"
     case "UNKNOWN":
