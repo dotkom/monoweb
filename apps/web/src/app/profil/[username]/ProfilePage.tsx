@@ -326,23 +326,7 @@ export function ProfilePage() {
           <div className="flex flex-col gap-3">
             <Title>Medlemskap</Title>
 
-            <MembershipDisplay activeMembership={activeMembership} />
-
-            {!activeMembership ? (
-              <Button element={Link} href="/innstillinger/medlemskap" className="h-fit w-fit">
-                Administrer medlemskap
-              </Button>
-            ) : (
-              <Text className="text-sm text-gray-500 dark:text-stone-500">
-                Medlemskap er gyldig på semesterbasis.
-                <br />
-                Ved feil angitt informasjon, ta kontakt med{" "}
-                <Link className="underline" href="/grupper/hs">
-                  Hovedstyret
-                </Link>
-                .
-              </Text>
-            )}
+            <MembershipDisplay activeMembership={activeMembership} name={user.name} />
           </div>
 
           {marks && marks.length > 0 && (

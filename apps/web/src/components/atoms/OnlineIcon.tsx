@@ -5,9 +5,16 @@ import type { FC } from "react"
 export type OnlineIconProps = Omit<ImageProps, "src" | "alt"> & {
   size?: number
   variant?: "auto" | "dark" | "light"
+  inline?: boolean
 }
 
-export const OnlineIcon: FC<OnlineIconProps> = ({ className, size = 32, variant = "auto", ...props }) => {
+export const OnlineIcon: FC<OnlineIconProps> = ({
+  className,
+  size = 32,
+  variant = "auto",
+  inline = false,
+  ...props
+}) => {
   const light = (
     <Image
       src="/online-logo-o.svg"
@@ -15,7 +22,7 @@ export const OnlineIcon: FC<OnlineIconProps> = ({ className, size = 32, variant 
       width={size}
       height={size}
       priority
-      className={cn("object-contain", variant !== "light" && "dark:hidden", className)}
+      className={cn("object-contain", variant !== "light" && "dark:hidden", inline && "inline-block", className)}
       {...props}
     />
   )
@@ -27,7 +34,11 @@ export const OnlineIcon: FC<OnlineIconProps> = ({ className, size = 32, variant 
       width={size}
       height={size}
       priority
-      className={cn("object-contain", variant !== "dark" && "hidden dark:block", className)}
+      className={cn(
+        "object-contain",
+        variant !== "dark" && (inline ? "hidden dark:inline-block" : "hidden dark:block"),
+        className
+      )}
       {...props}
     />
   )
