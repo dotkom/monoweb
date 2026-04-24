@@ -4,12 +4,12 @@ import type { Membership, User } from "@dotkomonline/types"
 import { beforeEach, describe, expect, it, type vi } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import type { GroupRepository } from "../../group/group-repository"
-import { mergeUsers } from "../merge-users"
+import { mergeUsers } from "../user-merging"
 
 function makeUser(overrides: Partial<User> = {}): User {
   return {
     id: randomUUID(),
-    profileSlug: randomUUID(),
+    username: randomUUID(),
     name: null,
     email: null,
     imageUrl: null,
@@ -77,38 +77,38 @@ describe("mergeUsers", () => {
     })
   })
 
-  describe("profileSlug custom merger", () => {
+  describe("username custom merger", () => {
     it("adopts consumed's custom slug when survivor has a UUID slug", async () => {
-      const survivor = makeUser({ profileSlug: randomUUID() })
-      const consumed = makeUser({ profileSlug: "my-custom-slug" })
+      const survivor = makeUser({ username: randomUUID() })
+      const consumed = makeUser({ username: "my-custom-slug" })
 
       await mergeUsers(handle, groupRepository, survivor, consumed)
 
       expect(handle.user.update).toHaveBeenCalledWith(
-        expect.objectContaining({ data: expect.objectContaining({ profileSlug: "my-custom-slug" }) })
+        expect.objectContaining({ data: expect.objectContaining({ username: "my-custom-slug" }) })
       )
     })
 
     it("keeps survivor's custom slug when it is not a UUID", async () => {
-      const survivor = makeUser({ profileSlug: "survivor-slug" })
-      const consumed = makeUser({ profileSlug: "other-slug" })
+      const survivor = makeUser({ username: "survivor-slug" })
+      const consumed = makeUser({ username: "other-slug" })
 
       await mergeUsers(handle, groupRepository, survivor, consumed)
 
       expect(handle.user.update).toHaveBeenCalledWith(
-        expect.objectContaining({ data: expect.objectContaining({ profileSlug: "survivor-slug" }) })
+        expect.objectContaining({ data: expect.objectContaining({ username: "survivor-slug" }) })
       )
     })
 
     it("keeps survivor's UUID slug when consumed also has a UUID slug", async () => {
       const survivorSlug = randomUUID()
-      const survivor = makeUser({ profileSlug: survivorSlug })
-      const consumed = makeUser({ profileSlug: randomUUID() })
+      const survivor = makeUser({ username: survivorSlug })
+      const consumed = makeUser({ username: randomUUID() })
 
       await mergeUsers(handle, groupRepository, survivor, consumed)
 
       expect(handle.user.update).toHaveBeenCalledWith(
-        expect.objectContaining({ data: expect.objectContaining({ profileSlug: survivorSlug }) })
+        expect.objectContaining({ data: expect.objectContaining({ username: survivorSlug }) })
       )
     })
   })
