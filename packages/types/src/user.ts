@@ -35,9 +35,13 @@ export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
 export const PHONE_REGEX = /^[0-9-+\s]*$/
 export const PROFILE_SLUG_REGEX = /^[a-z0-9-]+$/
 
+export const GenderSchema = schemas.GenderSchema
+export type Gender = z.infer<typeof GenderSchema>
+
 // These max and min values are arbitrary
 export const UserWriteSchema = UserSchema.pick({
   workspaceUserId: true,
+  gender: true,
 }).extend({
   username: z
     .string()
@@ -66,7 +70,6 @@ export const UserWriteSchema = UserSchema.pick({
     .nullable(),
   imageUrl: z.string().url("Ugyldig URL").max(500, "Bildelenken kan ikke være lengre enn 500 tegn").nullable(),
   biography: z.string().max(2000, "Biografien kan ikke være lengre enn 2000 tegn").nullable(),
-  gender: z.string().nullable(),
   dietaryRestrictions: z.string().max(200, "Kostholdsrestriksjoner kan ikke være lengre enn 200 tegn").nullable(),
 })
 export type UserWrite = z.infer<typeof UserWriteSchema>
@@ -156,6 +159,21 @@ export function getSpecializationName(specialization: MembershipSpecialization) 
       return "Programvareutvikling"
     case "UNKNOWN":
       return "Ukjent spesialisering"
+  }
+}
+
+export function getGenderName(gender: Gender) {
+  switch (gender) {
+    case "MALE":
+      return "Mann"
+    case "FEMALE":
+      return "Kvinne"
+    case "NON_BINARY":
+      return "Ikke-binær"
+    case "OTHER":
+      return "Annet"
+    case "UNKNOWN":
+      return "Ikke oppgitt"
   }
 }
 

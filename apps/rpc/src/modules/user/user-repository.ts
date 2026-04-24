@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto"
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import {
+  GenderSchema,
   type MembershipId,
   type MembershipWrite,
   type User,
@@ -48,6 +49,7 @@ export function getUserRepository(): UserRepository {
         create: {
           id: subject,
           username: randomUUID(),
+          gender: GenderSchema.enum.UNKNOWN,
         },
         include: {
           memberships: true,
