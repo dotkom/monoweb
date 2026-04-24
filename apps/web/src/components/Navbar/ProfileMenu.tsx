@@ -19,15 +19,13 @@ import {
   Text,
   Title,
 } from "@dotkomonline/ui"
-import { createAuthorizeUrl, createLogoutUrl } from "@dotkomonline/utils"
+import { createLogoutUrl } from "@dotkomonline/utils"
 import type { Icon } from "@tabler/icons-react"
 import {
   IconAdjustments,
   IconArrowUpRight,
   IconBug,
-  IconDotsVertical,
   IconLock,
-  IconLogin2,
   IconLogout2,
   IconMailForward,
   IconMessageReport,
@@ -131,51 +129,9 @@ const ContactDebugDropdown: FC = () => (
   </DropdownMenu>
 )
 
-const LoginAlternativesDropdown: FC = () => {
-  const fullPathname = useFullPathname()
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center justify-center w-6 h-10">
-        <IconDotsVertical className="" width={22} height={22} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="rounded-2xl p-2 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
-        sideOffset={24}
-      >
-        <Link
-          className="flex items-center font-semibold text-sm px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors"
-          href={createAuthorizeUrl({ redirectAfter: fullPathname })}
-          prefetch={false}
-        >
-          Logg inn uten Feide
-        </Link>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
-
 const UnauthenticatedActions: FC = () => {
-  const fullPathname = useFullPathname()
   return (
     <div className="flex items-center">
-      <div className="flex mr-2">
-        <Button
-          element={Link}
-          variant="solid"
-          color="brand"
-          className="text-sm font-semibold px-3 py-2"
-          href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
-          prefetch={false}
-          icon={<IconLogin2 className="mr-1 text-xl" />}
-        >
-          Logg inn
-        </Button>
-        <div className="hidden lg:block">
-          <LoginAlternativesDropdown />
-        </div>
-      </div>
       <ContactDebugDropdown />
       <ThemeDropdown />
     </div>

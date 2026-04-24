@@ -1,9 +1,6 @@
 "use client"
 
-import { useFullPathname } from "@/utils/use-full-pathname"
-import { useSession } from "@dotkomonline/oauth2/react"
 import {
-  Button,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -15,13 +12,12 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import * as ScrollArea from "@radix-ui/react-scroll-area"
-import { IconArrowUpRight, IconChevronDown, IconHome, IconLogin2 } from "@tabler/icons-react"
+import { IconArrowUpRight, IconChevronDown, IconHome } from "@tabler/icons-react"
 import Link from "next/link"
 import { type FC, useEffect, useRef, useState } from "react"
 
 import type { MenuItem, MenuLink } from "@/components/Navbar/Navbar"
 import { env } from "@/env"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { isExternal } from "../../utils/is-link-external"
 import { Hamburger } from "./Hamburger"
 import { MobileMenuCard } from "./MobileMenuCard"
@@ -29,8 +25,6 @@ import { MobileMenuCard } from "./MobileMenuCard"
 export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   const [open, setOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
-  const session = useSession()
-  const fullPathname = useFullPathname()
 
   const homeLink: MenuLink = {
     title: "Hjem",
@@ -181,35 +175,6 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       )
                     )}
                   </div>
-
-                  {session === null && (
-                    <div className="p-2 pt-8 flex justify-between gap-2">
-                      <Button
-                        element={Link}
-                        variant="solid"
-                        color="brand"
-                        className="text-sm font-semibold px-3 py-2"
-                        href={createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })}
-                        prefetch={false}
-                        icon={<IconLogin2 className="mr-1 text-xl" />}
-                      >
-                        Logg inn
-                      </Button>
-                      <DropdownMenuItem asChild>
-                        <Button
-                          // This might as well be a hard navigate as the server redirects them to the Auth0 flow anyways.
-                          element="a"
-                          variant="solid"
-                          size="md"
-                          className="font-semibold rounded-md justify-start px-3 h-10 bg-blue-100 hover:bg-blue-200/80 dark:bg-stone-700/80 dark:hover:bg-stone-600/50 w-fit"
-                          href={createAuthorizeUrl({ redirectAfter: fullPathname })}
-                          onClick={() => setOpen(false)}
-                        >
-                          Logg inn uten Feide
-                        </Button>
-                      </DropdownMenuItem>
-                    </div>
-                  )}
                 </div>
               </ScrollArea.Viewport>
 
