@@ -1,10 +1,10 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
+import type { CourseCode } from "../course/course-types"
 import type { GradeRepository } from "./grade-repository"
 import type { Grade, GradeWrite } from "./grade-types"
-import type { CourseCode } from "../course/course-types"
 
 export interface GradeService {
-  findMany(handle: DBHandle, courseCode: CourseCode): Promise<Grade[]>
+  findMany(handle: DBHandle, courseCode?: CourseCode): Promise<Grade[]>
   createMany(handle: DBHandle, data: GradeWrite[]): Promise<Grade[]>
 }
 

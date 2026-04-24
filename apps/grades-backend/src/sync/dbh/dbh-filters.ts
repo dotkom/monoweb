@@ -1,6 +1,6 @@
 import * as z from "zod"
 
-const INSTITUTION_ID = 1150 // ID for NTNU in DBH databases
+export const NTNU_DBH_INSTITUTION_ID = 1150
 
 export const filterFilter = {
   TOP: "top",
@@ -24,7 +24,7 @@ export const institutionFilter = filterSchema.parse({
   variabel: "Institusjonskode",
   selection: {
     filter: filterFilter.ITEM,
-    values: [INSTITUTION_ID],
+    values: [NTNU_DBH_INSTITUTION_ID],
   },
 })
 

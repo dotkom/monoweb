@@ -1,13 +1,25 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
-import { parseOrReport } from "../../invariant"
-import { type Course, type CourseFilterQuery, type CourseId, CourseSchema, type CourseWrite } from "./course-types"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import { parseOrReport } from "../../invariant"
+import {
+  type Course,
+  type CourseFilterQuery,
+  type CourseId,
+  CourseSchema,
+  type CourseWrite,
+  type Department,
+  DepartmentSchema,
+  type Faculty,
+  FacultySchema,
+} from "./course-types"
 
 export interface CourseRepository {
   findMany(handle: DBHandle, query: CourseFilterQuery, page: Pageable): Promise<Course[]>
   find(handle: DBHandle, code: string): Promise<Course>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
+  findManyFaculties(handle: DBHandle): Promise<Faculty[]>
+  findManyDepartments(handle: DBHandle): Promise<Department[]>
 }
 
 export function getCourseRepository(): CourseRepository {
@@ -70,6 +82,7 @@ export function getCourseRepository(): CourseRepository {
 
       return parseOrReport(CourseSchema.array(), courses)
     },
+
     async find(handle, code) {
       const course = await handle.course.findUnique({
         where: { code: code },
@@ -93,6 +106,18 @@ export function getCourseRepository(): CourseRepository {
       })
 
       return parseOrReport(CourseSchema, course)
+    },
+
+    async findManyFaculties(handle) {
+      const faculties = await handle.faculty.findMany()
+
+      return parseOrReport(FacultySchema.array(), faculties)
+    },
+
+    async findManyDepartments(handle) {
+      const departments = await handle.department.findMany()
+
+      return parseOrReport(DepartmentSchema.array(), departments)
     },
   }
 }
