@@ -5,13 +5,13 @@ import type { ManagementClient } from "auth0"
 import { mockDeep } from "vitest-mock-extended"
 import type { FeideGroupsRepository } from "../../feide/feide-groups-repository"
 import type { GroupRepository } from "../../group/group-repository"
-import { mergeUsers as mergeUsersInDatabase } from "../merge-users"
+import { mergeUsers as mergeUsersInDatabase } from "../user-merging"
 import type { MembershipService } from "../membership-service"
 import type { UserRepository } from "../user-repository"
 import { getUserService } from "../user-service"
 import { vi, expect, describe, afterEach, it } from "vitest"
 
-vi.mock("../merge-users", () => ({
+vi.mock("../user-merging", () => ({
   mergeUsers: vi.fn().mockResolvedValue(undefined),
 }))
 
@@ -46,6 +46,7 @@ function makeMembership(overrides: Partial<Membership> = {}): Membership {
     end: new Date("2026-12-31T00:00:00.000Z"),
     specialization: null,
     semester: 1,
+    userId: "auth0|user-123",
     ...overrides,
   }
 }
