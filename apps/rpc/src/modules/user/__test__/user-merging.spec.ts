@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
-import type { Membership, User } from "@dotkomonline/types"
+import { GenderSchema, type Membership, type User } from "@dotkomonline/types"
 import { beforeEach, describe, expect, it, type vi } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import type { GroupRepository } from "../../group/group-repository"
@@ -15,7 +15,7 @@ function makeUser(overrides: Partial<User> = {}): User {
     imageUrl: null,
     biography: null,
     phone: null,
-    gender: null,
+    gender: GenderSchema.enum.UNKNOWN,
     dietaryRestrictions: null,
     ntnuUsername: null,
     flags: [],

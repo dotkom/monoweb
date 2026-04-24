@@ -1,6 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { DBHandle } from "@dotkomonline/db"
-import type { Membership, User } from "@dotkomonline/types"
+import { GenderSchema, type Membership, type User } from "@dotkomonline/types"
 import type { ManagementClient } from "auth0"
 import { mockDeep } from "vitest-mock-extended"
 import type { FeideGroupsRepository } from "../../feide/feide-groups-repository"
@@ -27,7 +27,7 @@ function makeUser(overrides: Partial<User> = {}): User {
     biography: null,
     phone: null,
     dietaryRestrictions: null,
-    gender: "UNKNOWN",
+    gender: GenderSchema.enum.UNKNOWN,
     workspaceUserId: null,
     memberships: [],
     ntnuUsername: null,
