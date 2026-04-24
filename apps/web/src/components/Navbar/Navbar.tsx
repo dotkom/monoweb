@@ -2,7 +2,7 @@
 
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { env } from "@/env"
-import { type Icon, IconBuildingBank, IconCrown } from "@tabler/icons-react"
+import { type Icon, IconBuildingBank, IconCrown, IconLogin2 } from "@tabler/icons-react"
 import {
   IconArticle,
   IconBolt,
@@ -20,6 +20,10 @@ import type { FC } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
+import { useSession } from "@dotkomonline/oauth2/react"
+import { useFullPathname } from "@/utils/use-full-pathname"
+import { Button, cn } from "@dotkomonline/ui"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 
 export type MenuItem = {
   title: string
@@ -141,18 +145,48 @@ const links: MenuLink[] = [
 ]
 
 export const Navbar: FC = () => {
+  const fullPathname = useFullPathname()
+  const session = useSession()
+
+  const isLoggedIn = session !== null
+
   return (
-    <header className="sticky bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl border border-blue-100 dark:border-stone-700/30 shadow-sm top-4 z-50 flex flex-row justify-between items-center w-full max-w-screen-xl mt-4 p-3 rounded-full">
-      <Link href={env.NEXT_PUBLIC_HOME_URL}>
-        <OnlineIcon className="h-10 w-10" />
-      </Link>
+    <header className="sticky top-4 z-50 grid grid-cols-[1fr_auto] gap-1.5 items-center w-full max-w-7xl mt-4">
+      <div
+        className={cn(
+          // i have no idea why i need rounded-r-4xl and not rounded-r-full
+          "p-3 rounded-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm border border-blue-100 dark:border-stone-700/30",
+          "flex flex-row justify-between items-center w-full",
+          !isLoggedIn && "rounded-r-lg"
+        )}
+      >
+        <Link href={env.NEXT_PUBLIC_HOME_URL} className="shrink-0">
+          <OnlineIcon className="size-10 shrink-0" />
+        </Link>
 
-      <MainNavigation links={links} />
+        <MainNavigation links={links} />
 
-      <div className="ml-auto flex items-center">
-        <ProfileMenu />
-        <MobileNavigation links={links} />
+        <div className="ml-auto flex items-center">
+          <ProfileMenu />
+          <MobileNavigation links={links} />
+        </div>
       </div>
+
+      {!isLoggedIn && (
+        <div className="h-full rounded-l-lg rounded-r-4xl">
+          <Button
+            element={Link}
+            variant="solid"
+            color="brand"
+            className="font-medium min-w-19 pl-3 pr-4 xs:pl-6 xs:pr-8 py-4 rounded-l-lg rounded-r-4xl shrink-0 h-full"
+            href={createAuthorizeUrl({ redirectAfter: fullPathname })}
+            prefetch={false}
+            icon={<IconLogin2 className="mr-1.5 size-6" />}
+          >
+            <span className="hidden min-[380px]:inline">Logg inn</span>
+          </Button>
+        </div>
+      )}
     </header>
   )
 }
