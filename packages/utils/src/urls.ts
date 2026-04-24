@@ -1,7 +1,13 @@
 import slugify from "slugify"
 
+// Regular authentication flows
 const AUTHORIZE_ENDPOINT = "/api/auth/authorize"
 const LOGOUT_ENDPOINT = "/api/auth/logout"
+
+// This endpoint is for verifying your identity, and returning the JWT without replacing your session.
+// It is used by the "link identity" flow, where the user is already authenticated, but needs to verify their identity
+// to link the two accounts' identities and merge the two accounts into one.
+const LINK_IDENTITY_AUTHORIZE_ENDPOINT = "/api/auth/link-identity/authorize"
 
 /**
  * Creates an authorize URL with the given search parameters.
@@ -87,4 +93,24 @@ export const createAbsoluteEventPageUrl = (
 
 export const createCloudFrontUrl = (cloudFrontUrl: string, key: string): string => {
   return new URL(key, cloudFrontUrl).toString()
+}
+
+/**
+ * Creates an link identity authorize URL with the given search parameters. This will not replace the user's session,
+ * and will instead put a JWT in a HTTP-only cookie that can be used to verify the user's identity.
+ *
+ * @example
+ * const fullPathname = useFullPathname()
+ * const url = createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
+ *   connection: "FEIDE", // or "Username-Password-Authentication"
+ *   redirectAfter: `${fullPathname}/link`,
+ * })
+ */
+export const createAbsoluteLinkIdentityAuthorizeUrl = (
+  origin: string,
+  ...parameters: ConstructorParameters<typeof URLSearchParams>
+) => {
+  const url = new URL(LINK_IDENTITY_AUTHORIZE_ENDPOINT, origin)
+  url.search = new URLSearchParams(...parameters).toString()
+  return url.toString()
 }

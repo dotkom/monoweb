@@ -83,14 +83,14 @@ export type AuthorizeUrlOptions = {
 
 export interface TokenSet {
   accessToken: string
-  refreshToken: string
+  refreshToken?: string
   idToken: string
   expiresAt: number
 }
 
 export const TokenResponse = z.object({
   access_token: z.string().min(1),
-  refresh_token: z.string().min(1),
+  refresh_token: z.string().min(1).optional(),
   id_token: z.string().min(1),
   expires_in: z.number().int().positive(),
   token_type: z.literal("Bearer"),

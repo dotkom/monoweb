@@ -222,6 +222,20 @@ resource "doppler_secret" "auth0_audiences" {
   value   = auth0_resource_server.online.identifier
 }
 
+resource "doppler_secret" "rpc_web_client_id" {
+  project = "monoweb-rpc"
+  config  = terraform.workspace
+  name    = "AUTH0_WEB_CLIENT_ID"
+  value   = data.auth0_client.monoweb_web.client_id
+}
+
+resource "doppler_secret" "rpc_web_client_secret" {
+  project = "monoweb-rpc"
+  config  = terraform.workspace
+  name    = "AUTH0_WEB_CLIENT_SECRET"
+  value   = data.auth0_client.monoweb_web.client_secret
+}
+
 resource "auth0_client" "auth0_account_management_api_management_client" {
   is_first_party    = true
   app_type          = "non_interactive"
@@ -358,6 +372,16 @@ resource "auth0_client_grant" "rpc" {
   ]
 }
 
+# Grants the web client access to the Management API for account linking. The users.link endpoint requires the
+# Management Client's client_id to match the aud claim in the ID token, so we use the web client credentials.
+resource "auth0_client_grant" "monoweb_web_mgmt" {
+  audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
+  client_id = auth0_client.monoweb_web.client_id
+  scopes    = [
+    "update:users"
+  ]
+}
+
 resource "auth0_client" "monoweb_web" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   cross_origin_loc  = "https://online.ntnu.no/*"
@@ -370,8 +394,8 @@ resource "auth0_client" "monoweb_web" {
     "prd" = "https://online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]
   callbacks = {
-    "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
+    "dev" = ["http://localhost:3000/api/auth/callback/auth0", "http://localhost:3000/api/auth/link-identity/callback"]
+    "prd" = ["https://online.ntnu.no/api/auth/callback/auth0", "https://online.ntnu.no/api/auth/link-identity/callback"]
   }[terraform.workspace]
   allowed_logout_urls = concat(
     {
@@ -380,7 +404,7 @@ resource "auth0_client" "monoweb_web" {
     }[terraform.workspace]
   )
 
-  grant_types     = ["authorization_code", "refresh_token"]
+  grant_types     = ["authorization_code", "refresh_token", "client_credentials"]
   is_first_party  = true
   name            = "Monoweb Web${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true

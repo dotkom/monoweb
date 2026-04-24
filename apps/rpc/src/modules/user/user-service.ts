@@ -19,7 +19,7 @@ import {
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
-import type { ManagementClient } from "auth0"
+import type { ManagementClient, PostIdentitiesRequestProviderEnum } from "auth0"
 import * as crypto from "node:crypto"
 import { isDevelopmentEnvironment } from "../../configuration"
 import { isSameDay } from "date-fns"
@@ -34,6 +34,9 @@ import {
   type MembershipService,
 } from "./membership-service"
 import type { UserRepository } from "./user-repository"
+import { mergeUsers } from "./user-merging"
+import type { GroupRepository } from "../group/group-repository"
+import type { Auth0Connection } from "./user"
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
@@ -80,6 +83,7 @@ export interface UserService {
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
 
+  getAuth0Connections(userId: UserId): Promise<Auth0Connection>
   /**
    * Find the Feide federated access token for a user, if it exists.
    *
@@ -90,6 +94,40 @@ export interface UserService {
    * is opaque with format like `afd4988b-a205-49f9-b2e0-03e00bb4b8c0`.
    */
   findFeideAccessTokenByUserId(userId: UserId): Promise<string | null>
+
+  /**
+   * This is for manually linking two identities (login methods) to the same user. This happens in Auth0. All identities
+   * will be consolidated under the primary user.
+   *
+   * IMPORTANT: Be very careful with this function, as it would link a new login to an existing user, which could have
+   * security implications if used incorrectly. Always make sure to verify the ownership of both accounts before linking
+   * them.
+   *
+   * Both database users will still exist after this method is called. The secondary user will not be accessible by
+   * authentication, and should be merged into the primary user.
+   *
+   * @see UserService#mergeUsers for merging the database users after linking the Auth0 identities.
+   */
+  linkAuth0Identities(primaryUserId: UserId, secondaryUserId: UserId): Promise<void>
+  /**
+   * Like {@link linkAuth0Identities}, but uses the secondary user's ID token (Auth0's `link_with` parameter) instead
+   * of looking up the secondary user in Auth0. Auth0 validates the ID token itself, so this is safer for self-service
+   * account linking where the user has just authenticated with the secondary account.
+   *
+   * @see UserService#mergeUsers for merging the database users after linking the Auth0 identities.
+   */
+  linkAuth0IdentitiesWithToken(primaryUserId: UserId, secondaryIdToken: string): Promise<void>
+  /**
+   * Merges two users into the survivor and consumes the consumer. The survivor's field values will take precedence over
+   * the consumed user's values, except for memberships and group memberships, where we will attempt to keep all unique
+   * non-duplicate memberships from both. If a field value is only present on the consumed user, it will be moved to the
+   * survivor.
+   *
+   * IMPORTANT: The consumed user will be deleted after the merge.
+   *
+   * @see UserService#linkAuth0Identities for linking the Auth0 identities before merging the database users.
+   */
+  mergeUsers(handle: DBHandle, survivorUserId: UserId, consumedUserId: UserId): Promise<User>
 
   createFileUpload(
     handle: DBHandle,
@@ -106,7 +144,9 @@ const ONLINE_BACHELOR_PROGRAMMES = ["BIT"]
 export function getUserService(
   userRepository: UserRepository,
   feideGroupsRepository: FeideGroupsRepository,
+  groupRepository: GroupRepository,
   managementClient: ManagementClient,
+  webManagementClient: ManagementClient,
   membershipService: MembershipService,
   client: S3Client,
   bucket: string
@@ -482,15 +522,100 @@ export function getUserService(
       return userRepository.deleteMembership(handle, membershipId)
     },
 
-    async findFeideAccessTokenByUserId(userId) {
+    async getAuth0Connections(userId) {
       const response = await managementClient.users.get({ id: userId })
+
       if (response.status !== 200) {
         throw new IllegalStateError(
           `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
         )
       }
-      const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
-      return identity?.access_token ?? null
+
+      const identities = response.data.identities
+      const connections = new Set(identities.map((identity) => identity.connection))
+
+      return {
+        identities,
+        hasFeide: connections.has("FEIDE"),
+        hasUsernamePassword: connections.has("Username-Password-Authentication"),
+      }
+    },
+
+    async findFeideAccessTokenByUserId(userId) {
+      const connections = await this.getAuth0Connections(userId)
+      const feideIdentity = connections.identities.find((identity) => identity.connection === "FEIDE")
+
+      if (feideIdentity === undefined) {
+        return null
+      }
+
+      return feideIdentity.access_token
+    },
+
+    async linkAuth0Identities(primaryUserId, secondaryUserId) {
+      logger.info(
+        "Linking authentication identities for survivor User(ID=%s) and consumed User(ID=%s)",
+        primaryUserId,
+        secondaryUserId
+      )
+
+      const secondaryUser = await managementClient.users.get({ id: secondaryUserId })
+
+      const secondaryIdentity =
+        secondaryUser.data.identities.find((identity) => secondaryUserId.endsWith(identity.user_id)) ||
+        secondaryUser.data.identities[0]
+
+      const secondaryIdentityProvider = secondaryIdentity.provider as PostIdentitiesRequestProviderEnum
+
+      await managementClient.users.link(
+        {
+          id: primaryUserId,
+        },
+        {
+          provider: secondaryIdentityProvider, // usually "oauth2"
+          user_id: secondaryIdentity.user_id,
+          connection_id: secondaryIdentity.connection,
+        }
+      )
+
+      logger.info(
+        "Successfully linked identities for survivor User(ID=%s) and consumed User(ID=%s)",
+        primaryUserId,
+        secondaryUserId
+      )
+    },
+
+    async linkAuth0IdentitiesWithToken(primaryUserId, secondaryIdToken) {
+      logger.info("Linking authentication identities for primary User(ID=%s) using secondary ID token", primaryUserId)
+
+      // NOTE: We use the web management client here because the users.link endpoint requires the Management Client's
+      // client_id to match the aud claim in the ID token, so we use the web client credentials.
+      await webManagementClient.users.link({ id: primaryUserId }, { link_with: secondaryIdToken })
+
+      logger.info("Successfully linked identities for primary User(ID=%s) using secondary ID token", primaryUserId)
+    },
+
+    async mergeUsers(handle, survivorUserId, consumedUserId) {
+      logger.info("Merging consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
+
+      const survivorUser = await this.getById(handle, survivorUserId)
+      const consumedUser = await this.getById(handle, consumedUserId)
+
+      if (!survivorUser) {
+        throw new NotFoundError(`Survivor User(ID=${survivorUserId}) not found`)
+      }
+
+      if (!consumedUser) {
+        throw new NotFoundError(`Consumed User(ID=${consumedUserId}) not found`)
+      }
+
+      await mergeUsers(handle, groupRepository, survivorUser, consumedUser)
+
+      const mergedUser = await this.getById(handle, survivorUserId)
+
+      logger.info("Successfully merged consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
+
+      return mergedUser
     },
 
     async createFileUpload(handle, filename, contentType, userId, createdByUserId) {

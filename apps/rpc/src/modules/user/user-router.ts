@@ -12,6 +12,7 @@ import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
+import { InvalidArgumentError, UnauthorizedError } from "../../error"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
@@ -228,6 +229,83 @@ const isAdminProcedure = procedure.query(async ({ ctx }) => {
   return ctx.authorizationService.isAdministrator(principal.affiliations)
 })
 
+export type ConfirmIdentityLinkInput = inferProcedureInput<typeof confirmIdentityLinkProcedure>
+export type ConfirmIdentityLinkOutput = inferProcedureOutput<typeof confirmIdentityLinkProcedure>
+const confirmIdentityLinkProcedure = procedure
+  .input(
+    z.object({
+      secondaryIdToken: z.string().min(1),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const primaryUserId = ctx.principal.subject
+
+    const claims = await ctx.jwtService.web.verify(input.secondaryIdToken).catch(() => null)
+
+    if (claims === null) {
+      throw new UnauthorizedError("Invalid secondary ID token")
+    }
+
+    const secondaryUserId = claims.payload.sub
+
+    if (!secondaryUserId) {
+      throw new UnauthorizedError("Secondary ID token has no sub claim")
+    }
+
+    if (primaryUserId === secondaryUserId) {
+      throw new InvalidArgumentError("Cannot link a user to themselves")
+    }
+
+    await ctx.userService.linkAuth0IdentitiesWithToken(primaryUserId, input.secondaryIdToken)
+
+    return ctx.userService.mergeUsers(ctx.handle, primaryUserId, secondaryUserId)
+  })
+
+export type MergeUsersInput = inferProcedureInput<typeof mergeUsersProcedure>
+export type MergeUsersOutput = inferProcedureOutput<typeof mergeUsersProcedure>
+const mergeUsersProcedure = procedure
+  .input(
+    z.object({
+      survivorUserId: UserSchema.shape.id,
+      consumedUserId: UserSchema.shape.id,
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    await ctx.userService.linkAuth0Identities(input.survivorUserId, input.consumedUserId)
+
+    return ctx.userService.mergeUsers(ctx.handle, input.survivorUserId, input.consumedUserId)
+  })
+
+export type GetAuth0ConnectionsInput = inferProcedureInput<typeof getAuth0ConnectionsProcedure>
+export type GetAuth0ConnectionsOutput = inferProcedureOutput<typeof getAuth0ConnectionsProcedure>
+const getAuth0ConnectionsProcedure = procedure
+  .input(z.object({ userId: UserSchema.shape.id }).optional())
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const userId = input?.userId ?? ctx.principal.subject
+
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        isSameSubject(() => userId)
+      ),
+      input
+    )
+
+    // We omit the identities array from the response, because it contains sensitive information like access tokens.
+    const { identities, ...response } = await ctx.userService.getAuth0Connections(userId)
+
+    return response
+  })
+
 export const userRouter = t.router({
   all: allUsersProcedure,
   get: getUserProcedure,
@@ -243,4 +321,7 @@ export const userRouter = t.router({
   update: updateUserProcedure,
   isStaff: isStaffProcedure,
   isAdmin: isAdminProcedure,
+  confirmIdentityLink: confirmIdentityLinkProcedure,
+  mergeUsers: mergeUsersProcedure,
+  getAuth0Connections: getAuth0ConnectionsProcedure,
 })
