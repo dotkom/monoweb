@@ -34,7 +34,7 @@ import {
   type MembershipService,
 } from "./membership-service"
 import type { UserRepository } from "./user-repository"
-import { mergeUsers } from "./merge-users"
+import { mergeUsers } from "./user-merging"
 import type { GroupRepository } from "../group/group-repository"
 import type { Auth0Connection } from "./user"
 
