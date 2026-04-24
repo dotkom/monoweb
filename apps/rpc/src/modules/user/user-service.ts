@@ -198,6 +198,192 @@ export function getUserService(
 
   type Auth0ProfileMetadata = ReturnType<typeof parseAuth0ProfileMetadata>
 
+  function normalizeText(value: unknown): string | null {
+    if (typeof value !== "string") {
+      return null
+    }
+
+    return value.trim() || null
+  }
+
+  function getUserSubmittedFullName(metadata: Auth0ProfileMetadata): string | null {
+    return normalizeText(metadata.appMetadata.initial_full_name) ?? normalizeText(metadata.userMetadata.full_name)
+  }
+
+  function getFeideIdentityName(auth0User: Auth0UserProfile): string | null {
+    const feideIdentity = auth0User.identities?.find((identity) => identity.connection === "FEIDE")
+
+    return normalizeText(feideIdentity?.profileData?.name)
+  }
+
+  function getFeideFullName(auth0User: Auth0UserProfile, metadata: Auth0ProfileMetadata): string | null {
+    return getFeideIdentityName(auth0User) ?? normalizeText(metadata.appMetadata.feide_full_name)
+  }
+
+  function getAuth0DisplayName(auth0User: Auth0UserProfile): string | null {
+    const name = normalizeText(auth0User.name)
+    const email = normalizeText(auth0User.email)
+
+    if (name === null || name === email) {
+      return null
+    }
+
+    return name
+  }
+
+  function getPreferredName(auth0User: Auth0UserProfile, metadata: Auth0ProfileMetadata): string | null {
+    return getFeideFullName(auth0User, metadata) ?? getUserSubmittedFullName(metadata) ?? getAuth0DisplayName(auth0User)
+  }
+
+  function shouldReplaceStoredNameWithFeide(
+    user: User,
+    auth0User: Auth0UserProfile,
+    metadata: Auth0ProfileMetadata
+  ): boolean {
+    const userSubmittedName = getUserSubmittedFullName(metadata)
+    const feideFullName = getFeideFullName(auth0User, metadata)
+    const currentName = normalizeText(user.name)
+
+    if (feideFullName === null) {
+      return false
+    }
+
+    if (currentName === null) {
+      return true
+    }
+
+    return userSubmittedName !== null && currentName === userSubmittedName && currentName !== feideFullName
+  }
+
+  async function syncFeideMetadataToAuth0(
+    userId: UserId,
+    auth0User: Auth0UserProfile,
+    metadata: Auth0ProfileMetadata
+  ): Promise<Auth0ProfileMetadata> {
+    const feideName = getFeideIdentityName(auth0User)
+
+    if (feideName === null || feideName === normalizeText(metadata.appMetadata.feide_full_name)) {
+      return metadata
+    }
+
+    const response = await managementClient.users.update(
+      { id: userId },
+      {
+        app_metadata: {
+          ...metadata.appMetadata,
+          feide_full_name: feideName,
+        },
+      }
+    )
+
+    if (response.status !== 200) {
+      throw new IllegalStateError(
+        `Received HTTP ${response.status} (${response.statusText}) when syncing User(ID=${userId}) FEIDE metadata to Auth0`
+      )
+    }
+
+    return {
+      ...metadata,
+      appMetadata: {
+        ...metadata.appMetadata,
+        feide_full_name: feideName,
+      },
+    }
+  }
+
+  async function syncUserWithAuth0Profile(handle: DBHandle, user: User, auth0User: Auth0UserProfile): Promise<User> {
+    const syncedUser = await syncProfileFromAuth0(handle, user, auth0User)
+    await syncNameToAuth0(user.id, auth0User, syncedUser.name)
+
+    return syncedUser
+  }
+
+  // Used to keep Auth0's root profile name synced with the DB user's name.
+  async function syncNameToAuth0(userId: UserId, auth0User: Auth0UserProfile, desiredName: string | null) {
+    const name = normalizeText(desiredName)
+    const currentAuth0Name = normalizeText(auth0User.name)
+
+    if (name === null || currentAuth0Name === name) {
+      return
+    }
+
+    const response = await managementClient.users.update({ id: userId }, { name })
+
+    if (response.status !== 200) {
+      throw new IllegalStateError(
+        `Received HTTP ${response.status} (${response.statusText}) when syncing User(ID=${userId}) name to Auth0`
+      )
+    }
+  }
+
+  // Used when updating the user's profile in the database.
+  async function syncProfileToAuth0(userId: UserId, currentUser: User, newUser: User, data: Partial<UserWrite>) {
+    const patch: {
+      name?: string
+      email?: string
+      email_verified?: boolean
+      verify_email?: boolean
+    } = {}
+
+    if (data.name !== undefined && currentUser.name !== newUser.name) {
+      const name = normalizeText(newUser.name)
+
+      if (name !== null) {
+        patch.name = name
+      }
+    }
+
+    if (data.email !== undefined && currentUser.email !== newUser.email) {
+      const email = normalizeText(newUser.email)
+
+      if (email !== null) {
+        patch.email = email
+        patch.email_verified = false
+        patch.verify_email = true
+      }
+    }
+
+    if (Object.keys(patch).length === 0) {
+      return
+    }
+
+    const response = await managementClient.users.update({ id: userId }, patch)
+
+    if (response.status !== 200) {
+      throw new IllegalStateError(
+        `Received HTTP ${response.status} (${response.statusText}) when syncing User(ID=${userId}) profile to Auth0`
+      )
+    }
+  }
+
+  async function syncProfileFromAuth0(handle: DBHandle, user: User, auth0User: Auth0UserProfile): Promise<User> {
+    const data: Partial<UserWrite> = {}
+    const metadata = await syncFeideMetadataToAuth0(user.id, auth0User, parseAuth0ProfileMetadata(auth0User))
+
+    const auth0Email = normalizeText(auth0User.email)
+
+    if (auth0User.email_verified && auth0Email !== null && auth0Email !== user.email) {
+      data.email = auth0Email
+    }
+
+    const preferredName = getPreferredName(auth0User, metadata)
+
+    if (preferredName !== null) {
+      const currentName = normalizeText(user.name)
+
+      if (currentName === null || shouldReplaceStoredNameWithFeide(user, auth0User, metadata)) {
+        data.name = preferredName
+      }
+    }
+
+    if (Object.keys(data).length === 0) {
+      return user
+    }
+
+    logger.info("Syncing Auth0 profile fields %o to DB for User(ID=%s)", Object.keys(data), user.id)
+    return await userRepository.update(handle, user.id, data)
+  }
+
   async function findApplicableMembership(
     studyProgrammes: NTNUGroup[],
     studySpecializations: NTNUGroup[],
@@ -342,12 +528,26 @@ export function getUserService(
       // If the user has an active membership, and the existing user is not null there is no more work for us to do,
       // and we can early exit. This is the happiest and fastest path of this function.
       if (existingUser !== null) {
-        const membership = findActiveMembership(existingUser)
+        let syncedUser = existingUser
+        const auth0Response = await managementClient.users.get({ id: userId })
+
+        if (auth0Response.status === 200) {
+          syncedUser = await syncUserWithAuth0Profile(handle, existingUser, auth0Response.data)
+        } else {
+          logger.warn(
+            "Skipping Auth0 profile sync for existing User(ID=%s) due to HTTP %s (%s)",
+            userId,
+            auth0Response.status,
+            auth0Response.statusText
+          )
+        }
+
+        const membership = findActiveMembership(syncedUser)
 
         // If the best active membership is KNIGHT, we attempt to discover a new membership for the user, in case they
         // can find a "better" membership this way.
         if (membership !== null && membership.type !== "KNIGHT") {
-          return existingUser
+          return syncedUser
         }
 
         // The membership of this user has expired since their last sign-in. Attempt to discover a need one.
@@ -396,9 +596,16 @@ export function getUserService(
 
       await userRepository.register(handle, userId)
 
+      const metadata = parseAuth0ProfileMetadata(response.data)
+      const name = getPreferredName(response.data, metadata)
+
+      if (name === null) {
+        throw new IllegalStateError("Failed to determine user name")
+      }
+
       const profile: UserWrite = {
         username: crypto.randomUUID(),
-        name: response.data.name,
+        name,
         email: response.data.email,
         imageUrl: response.data.picture,
         biography: null,
@@ -409,6 +616,7 @@ export function getUserService(
       }
 
       const firstSignInUser = await userRepository.update(handle, userId, profile)
+      await syncUserWithAuth0Profile(handle, firstSignInUser, response.data)
 
       return this.discoverMembership(handle, firstSignInUser.id)
     },
@@ -447,7 +655,12 @@ export function getUserService(
         }
       }
 
-      return await userRepository.update(handle, userId, data)
+      const currentUser = await this.getById(handle, userId)
+      const updatedUser = await userRepository.update(handle, userId, data)
+
+      await syncProfileToAuth0(userId, currentUser, updatedUser, data)
+
+      return updatedUser
     },
 
     async requestEmailChange(handle, userId, newEmail) {
@@ -490,13 +703,7 @@ export function getUserService(
         )
       }
 
-      const auth0Email = response.data.email
-      if (!response.data.email_verified || !auth0Email || auth0Email === user.email) {
-        return user
-      }
-
-      logger.info("Syncing verified Auth0 email to DB for User(ID=%s)", userId)
-      return await userRepository.update(handle, userId, { email: auth0Email })
+      return await syncUserWithAuth0Profile(handle, user, response.data)
     },
 
     async discoverMembership(handle, userId) {
@@ -695,10 +902,22 @@ export function getUserService(
       await mergeUsers(handle, groupRepository, survivorUser, consumedUser)
 
       const mergedUser = await this.getById(handle, survivorUserId)
+      const auth0Response = await managementClient.users.get({ id: survivorUserId })
+
+      if (auth0Response.status !== 200) {
+        logger.warn(
+          "Skipping Auth0 profile sync after merge for User(ID=%s) due to HTTP %s (%s)",
+          survivorUserId,
+          auth0Response.status,
+          auth0Response.statusText
+        )
+
+        return mergedUser
+      }
 
       logger.info("Successfully merged consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
 
-      return mergedUser
+      return await syncUserWithAuth0Profile(handle, mergedUser, auth0Response.data)
     },
 
     async createFileUpload(handle, filename, contentType, userId, createdByUserId) {

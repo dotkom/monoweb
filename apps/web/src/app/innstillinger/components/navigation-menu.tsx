@@ -1,7 +1,7 @@
 "use client"
 
 import { Title } from "@dotkomonline/ui"
-import { IconSpy, IconUser, IconUserCircle } from "@tabler/icons-react"
+import { IconNotes, IconSpy, IconUser, IconUserCircle } from "@tabler/icons-react"
 import { SettingsMenuItem } from "./settings-menu-item"
 
 export const settingsNavigationItems = [
@@ -14,6 +14,11 @@ export const settingsNavigationItems = [
     slug: "/innstillinger/profil",
     icon: IconUserCircle,
     title: "Brukerprofil",
+  },
+  {
+    slug: "/innstillinger/medlemskap",
+    icon: IconNotes,
+    title: "Medlemskap",
   },
   {
     slug: "/innstillinger/personvern",

@@ -280,10 +280,8 @@ export async function createServiceLayer(
     recurringTaskService,
     workspaceService,
 
-    jwtService: {
-      rpc: clients.rpcJwtService,
-      web: clients.webJwtService,
-    },
+    rpcJwtService: clients.rpcJwtService,
+    webJwtService: clients.webJwtService,
     executeTransaction: clients.prisma.$transaction.bind(clients.prisma),
     // Do not use this directly, it is here for repl/script purposes only
     prisma: clients.prisma,

@@ -69,12 +69,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
   if (!user) {
     return (
-      <Link href={authorizeUrl} prefetch={false} className={cardClassname}>
+      <Link href={authorizeUrl} prefetch={false} className={cn("group", cardClassname)}>
         <div className="flex flex-col gap-2">
           <Text>Du er ikke innlogget</Text>
 
           <div className="flex flex-row gap-1 items-center">
-            <Text>Logg inn</Text>
+            <Text className="group-hover:underline">Logg inn</Text>
             <IconArrowUpRight className="size-[1.25em]" />
           </div>
 
@@ -92,16 +92,15 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
   if (!membership && !attendee) {
     return (
-      <div className={cardClassname}>
+      <Link href="/innstillinger/medlemskap" className={cn("group", cardClassname)}>
         <div className="flex flex-col gap-2">
           <Text>Du har ikke registert medlemskap</Text>
 
-          <div className="flex gap-[0.5ch] text-sm">
-            <Text>Gå til</Text>
-            <Link href="/profil" className="flex items-center text-blue-800 dark:text-blue-400 hover:underline">
-              <Text>profilsiden</Text> <IconArrowUpRight className="size-[1.25em]" />
-            </Link>
-            <Text>for å registrere deg</Text>
+          <div className="flex gap-[0.5ch] text-sm align-center">
+            <Text>
+              Gå til <span className="group-hover:underline">medlemskapssiden</span>
+            </Text>
+            <IconArrowUpRight className="size-[1.25em]" />
           </div>
 
           {attendance.attendancePrice && attendance.attendancePrice > 0 && (
@@ -110,7 +109,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
             </div>
           )}
         </div>
-      </div>
+      </Link>
     )
   }
 

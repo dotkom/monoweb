@@ -207,7 +207,7 @@ const linkGroups: LinkGroup[] = [
       {
         icon: IconSettings,
         label: "Innstillinger",
-        href: "/innstillinger/profil",
+        href: "/innstillinger/bruker",
       },
     ],
   },

@@ -4,18 +4,16 @@ import { EventList } from "@/app/arrangementer/components/EventList"
 import { useEventAllSummariesByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { MembershipDisplay } from "@/components/molecules/MembershipDisplay/MembershipDisplay"
 import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
-import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
-  type Membership,
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
   findActiveMembership,
   getGenderName,
   getMembershipTypeName,
-  getSpecializationName,
 } from "@dotkomonline/types"
 import {
   Avatar,
@@ -32,23 +30,13 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
+import { capitalizeFirstLetter, getCurrentUTC, getPunishmentExpiryDate, getStudyGrade } from "@dotkomonline/utils"
 import {
-  capitalizeFirstLetter,
-  createAuthorizeUrl,
-  getCurrentUTC,
-  getPunishmentExpiryDate,
-  getStudyGrade,
-  isMembershipActiveUntilNextSemesterStart,
-} from "@dotkomonline/utils"
-import {
-  IconAlertTriangle,
   IconChefHatOff,
   IconEdit,
   IconGenderBigender,
   IconLock,
   IconMail,
-  IconNotes,
-  IconNotesOff,
   IconPhone,
   IconPhoto,
   IconPointFilled,
@@ -58,7 +46,7 @@ import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
-import { notFound, useParams, useSearchParams } from "next/navigation"
+import { notFound, useParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
@@ -148,54 +136,14 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
   )
 }
 
-const MembershipDisplay = ({ activeMembership }: { activeMembership: Membership | null }) => {
-  if (!activeMembership) {
-    return (
-      <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-full">
-        <IconNotesOff className="text-gray-500 dark:text-stone-400" width={32} height={32} />
-        <Text className="text-xl">Ingen medlemskap</Text>
-      </div>
-    )
-  }
-
-  const grade = activeMembership.semester !== null ? getStudyGrade(activeMembership.semester) : null
-  const membershipActiveUntilNextSemesterStart =
-    activeMembership.end !== null ? isMembershipActiveUntilNextSemesterStart(activeMembership.end) : null
-  const isMembershipIndefinite = activeMembership.end === null
-
-  let membershipValidUntilText = null
-
-  if (isMembershipIndefinite) {
-    membershipValidUntilText = "Livstidsmedlemskap"
-  } else if (membershipActiveUntilNextSemesterStart) {
-    membershipValidUntilText = "Gyldig til starten av neste semester"
-  } else if (activeMembership.end) {
-    membershipValidUntilText = `Gyldig til ${formatDate(activeMembership.end, "dd. MMMM yyyy", { locale: nb })}`
-  }
-
-  return (
-    <div className="flex flex-row gap-4 items-center p-6 bg-gray-50 dark:bg-stone-800 rounded-xl w-full">
-      <IconNotes className="text-gray-500 dark:text-stone-400" width={32} height={32} />
-      <div className="flex flex-col gap-1">
-        <Text className="text-xl font-medium">{getMembershipTypeName(activeMembership.type)}</Text>
-        {activeMembership.specialization && <Text>{getSpecializationName(activeMembership.specialization)}</Text>}
-        {grade !== null ? <Text>{grade}. klasse</Text> : null}
-        <Text className="text-sm text-gray-500 dark:text-stone-500">{membershipValidUntilText}</Text>
-      </div>
-    </div>
-  )
-}
-
 export function ProfilePage() {
   const now = useMemo(() => getCurrentUTC(), [])
 
   const { username: rawUsername } = useParams<{ username: string }>()
   const username = decodeURIComponent(rawUsername)
-  const returnedFromFeide = Boolean(useSearchParams().get("returnedFromFeide"))
 
   const trpc = useTRPC()
   const session = useSession()
-  const fullPathname = useFullPathname()
 
   const [userResult] = useQueries({
     queries: [trpc.user.findByUsername.queryOptions(username)],
@@ -378,59 +326,7 @@ export function ProfilePage() {
           <div className="flex flex-col gap-3">
             <Title>Medlemskap</Title>
 
-            {returnedFromFeide && (
-              <div className="flex items-center dark:bg-red-900 bg-red-600 p-6 text-white rounded-xl gap-4">
-                <IconAlertTriangle width={36} height={36} />
-                <Text>
-                  Vi kunne ikke bekrefte ditt medlemsskap automatisk. Dersom dette er feil ta kontakt med{" "}
-                  <Link className="underline" href="/grupper/hs">
-                    Hovedstyret
-                  </Link>
-                  .
-                </Text>
-              </div>
-            )}
-
-            <MembershipDisplay activeMembership={activeMembership} />
-
-            {!activeMembership ? (
-              <>
-                <Button
-                  color={activeMembership ? "light" : "brand"}
-                  variant={activeMembership ? "outline" : "solid"}
-                  element={Link}
-                  href={createAuthorizeUrl({
-                    connection: "FEIDE",
-                    redirectAfter: fullPathname,
-                    returnedFromFeide: "true",
-                  })}
-                  prefetch={false}
-                  className="h-fit w-fit"
-                >
-                  Registrer medlemskap
-                </Button>
-
-                {!returnedFromFeide && (
-                  <Text className="text-sm text-gray-500 dark:text-stone-500">
-                    For å registrere medlemskap må du logge inn med Feide. Dersom du oppdager feil, ta kontakt med{" "}
-                    <Link className="underline" href="/grupper/hs">
-                      Hovedstyret
-                    </Link>
-                    .
-                  </Text>
-                )}
-              </>
-            ) : (
-              <Text className="text-sm text-gray-500 dark:text-stone-500">
-                Medlemskap er gyldig på semesterbasis.
-                <br />
-                Ved feil angitt informasjon, ta kontakt med{" "}
-                <Link className="underline" href="/grupper/hs">
-                  Hovedstyret
-                </Link>
-                .
-              </Text>
-            )}
+            <MembershipDisplay activeMembership={activeMembership} name={user.name} />
           </div>
 
           {marks && marks.length > 0 && (
