@@ -20,7 +20,8 @@
     "docker:build": "docker build -t grades-backend:latest -f Dockerfile --progress plain ../..",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "sync-grades": "dotenv -o -- tsx --import ./runtime.mjs src/sync/grades-sync.ts"
   },
   "dependencies": {
     "@date-fns/tz": "^1.2.0",

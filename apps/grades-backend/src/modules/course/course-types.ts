@@ -1,5 +1,5 @@
 import { schemas } from "@dotkomonline/grades-db/schemas"
-import { buildSearchFilter, buildAnyOfFilter, createSortOrder } from "@dotkomonline/types"
+import { buildAnyOfFilter, buildSearchFilter, createSortOrder } from "@dotkomonline/types"
 import z from "zod"
 
 export const CourseSchema = schemas.CourseSchema.extend({})
@@ -8,10 +8,40 @@ export type CourseId = Course["id"]
 export type CourseCode = Course["code"]
 export type Course = z.infer<typeof CourseSchema>
 
-export type CourseWrite = z.infer<typeof CourseSchema>
+export const CourseWriteSchema = CourseSchema.pick({
+  code: true,
+  nameNo: true,
+  credits: true,
+  studyLevel: true,
+  gradeType: true,
+  firstYearTaught: true,
+  lastYearTaught: true,
+  candidateCount: true,
+  averageGrade: true,
+  passRate: true,
+  taughtSemesters: true,
+  campuses: true,
+  teachingLanguages: true,
+  contentEn: true,
+  contentNo: true,
+  teachingMethodsEn: true,
+  teachingMethodsNo: true,
+  departmentId: true,
+  facultyId: true,
+  examTypeEn: true,
+  examTypeNo: true,
+  learningOutcomesEn: true,
+  learningOutcomesNo: true,
+  nameEn: true,
+  latestYearCheckedForNtnuData: true,
+}).extend({
+  facultyId: schemas.FacultySchema.shape.id.optional(),
+  departmentId: schemas.DepartmentSchema.shape.id.optional(),
+})
+export type CourseWrite = z.infer<typeof CourseWriteSchema>
 
 export type CourseFilterSort = z.infer<typeof CourseFilterSortSchema>
-export const CourseFilterSortSchema = z.enum(["AVERAGE_GRADE", "PASS_RATE", "STUDENT_COUNT"])
+export const CourseFilterSortSchema = z.enum(["AVERAGE_GRADE", "PASS_RATE", "CANDIDATE_COUNT"])
 export type CourseFilterQuery = z.infer<typeof CourseFilterQuerySchema>
 export const CourseFilterQuerySchema = z
   .object({
@@ -40,9 +70,12 @@ export type GradeType = z.infer<typeof GradeTypeSchema>
 export const CourseCampusSchema = schemas.CampusSchema
 export type CourseCampus = z.infer<typeof CourseCampusSchema>
 
+export const TeachingLanguageSchema = schemas.TeachingLanguageSchema
+export type TeachingLanguage = z.infer<typeof TeachingLanguageSchema>
+
 export const mapCourseSemesterToLabel = (semester: Semester) => {
   switch (semester) {
-    case "FALL":
+    case "AUTUMN":
       return "Høst"
     case "SPRING":
       return "Vår"
@@ -81,7 +114,7 @@ export const mapCourseCampusToLabel = (campus: CourseCampus) => {
   }
 }
 
-export const mapTaughtLanguageToShortLabel = (language: Course["teachingLanguages"][number]) => {
+export const mapTaughtLanguageToShortLabel = (language: TeachingLanguage) => {
   switch (language) {
     case "NORWEGIAN":
       return "NO"

@@ -2,25 +2,34 @@ import type { StudyLevel, TeachingLanguage } from "@dotkomonline/grades-db"
 import * as cheerio from "cheerio"
 import type { Element } from "domhandler"
 import sanitizeHtml from "sanitize-html"
-import type { CourseCampus, CourseCode, GradeType, Semester } from "../../modules/course/course-types"
+import type { z } from "zod"
+import { SemesterSchema, type CourseCampus, type CourseCode, type GradeType } from "../../modules/course/course-types"
 
 export type Locale = "no" | "en"
+
+export const NtnuCourseSemesterSchema = SemesterSchema.extract(["AUTUMN", "SPRING"])
+export type NtnuCourseSemester = z.infer<typeof NtnuCourseSemesterSchema>
 
 export type NtnuCourse = {
   code: CourseCode
   name: string
   credits: number | null
   studyLevel: StudyLevel
-  gradeType: GradeType
+  gradeType: GradeType | null
   content: string
   teachingMethods: string
   learningOutcomes: string
   examType: string | null
-  taughtSemesters: Semester[]
+  taughtSemesters: NtnuCourseSemester[]
   teachingLanguages: TeachingLanguage[]
   campuses: CourseCampus[]
   creditReductions: CreditsReduction[]
   yearFetchedFor: number | null
+}
+
+export type NtnuCoursePageParseResult = {
+  course: NtnuCourse | null
+  hasNoLongerTaughtNotice: boolean
 }
 
 const COURSE_PAGE_TRANSLATIONS = {
@@ -36,6 +45,10 @@ const COURSE_PAGE_TRANSLATIONS = {
     no: "Undervisningsstart",
     en: "Course start",
   },
+  courseDuration: {
+    no: "Varighet",
+    en: "Duration",
+  },
   teachingLanguage: {
     no: "Undervisningsspråk",
     en: "Language of instruction",
@@ -48,7 +61,7 @@ const COURSE_PAGE_TRANSLATIONS = {
     no: "Vurderingsordning",
     en: "Examination arrangement",
   },
-  fallSemester: {
+  autumnSemester: {
     no: "Høst",
     en: "Autumn",
   },
@@ -76,6 +89,10 @@ const COURSE_PAGE_TRANSLATIONS = {
     no: "Det finnes ingen informasjon for dette studieåret",
     en: "There is no information available for the given academic year",
   },
+  noLongerTaught: {
+    no: "Det tilbys ikke lenger undervisning i emnet.",
+    en: "This course is no longer taught and is only available for examination.",
+  },
 }
 
 const STUDY_LEVEL_MAPPINGS: Record<Locale, Record<string, StudyLevel>> = {
@@ -83,6 +100,7 @@ const STUDY_LEVEL_MAPPINGS: Record<Locale, Record<string, StudyLevel>> = {
     "doktorgrads nivå": "PHD",
     "videreutdanning høyere grad": "CONTINUING_EDUCATION",
     "videreutdanning lavere grad": "CONTINUING_EDUCATION",
+    "forprøve/forkurs": "FOUNDATION",
     "høyere grads nivå": "MASTER",
     "fjerdeårsemner, nivå iv": "MASTER",
     "tredjeårsemner, nivå iii": "BACHELOR_ADVANCED",
@@ -92,26 +110,21 @@ const STUDY_LEVEL_MAPPINGS: Record<Locale, Record<string, StudyLevel>> = {
     "norsk for internasjonale studenter": "FOUNDATION",
     "examen philosophicum": "FOUNDATION",
     "examen facultatum": "FOUNDATION",
-    "forprøve/forkurs": "FOUNDATION",
   },
   en: {
     "doctoral degree level": "PHD",
     "further education, higher degree level": "CONTINUING_EDUCATION",
     "further education, lower degree level": "CONTINUING_EDUCATION",
+    "preparatory test/preparatory course": "FOUNDATION",
     "second degree level": "MASTER",
-    "fourth-year courses, level IV": "MASTER",
     "fourth-year courses, level iv": "MASTER",
-    "third-year courses, level III": "BACHELOR_ADVANCED",
     "third-year courses, level iii": "BACHELOR_ADVANCED",
-    "intermediate course, level II": "INTERMEDIATE",
     "intermediate course, level ii": "INTERMEDIATE",
-    "foundation courses, level I": "FOUNDATION",
     "foundation courses, level i": "FOUNDATION",
     "first degree": "FOUNDATION",
     "norwegian for international students": "FOUNDATION",
     "examen philosophicum": "FOUNDATION",
     "examen facultatum": "FOUNDATION",
-    "preparatory test/preparatory course": "FOUNDATION",
   },
 }
 
@@ -125,7 +138,7 @@ export function parseNtnuCoursePage(
   courseCode: CourseCode,
   locale: Locale,
   yearFetchedFor?: number
-): NtnuCourse | null {
+): NtnuCoursePageParseResult | null {
   const $ = cheerio.load(html)
 
   if (hasNoDataForYear($, locale)) {
@@ -147,8 +160,11 @@ export function parseNtnuCoursePage(
   const rawStudyLevel = parseCourseFact($, courseFacts, COURSE_PAGE_TRANSLATIONS.studyLevel[locale])
   const studyLevel = mapStudyLevel(rawStudyLevel, locale)
 
+  const rawDuration = parseCourseFact($, courseFacts, COURSE_PAGE_TRANSLATIONS.courseDuration[locale])
+  const duration = extractCourseDuration(rawDuration ?? "")
+
   const courseStart = parseCourseFact($, courseFacts, COURSE_PAGE_TRANSLATIONS.courseStart[locale])?.toLowerCase()
-  const taughtSemesters = parseSemesters(courseStart ?? "", locale)
+  const taughtSemesters = parseSemesters(courseStart ?? "", duration, locale)
 
   const rawLanguages = parseCourseFact($, courseFacts, COURSE_PAGE_TRANSLATIONS.teachingLanguage[locale])?.toLowerCase()
   const teachingLanguages = parseLanguages(rawLanguages ?? "", locale)
@@ -165,20 +181,23 @@ export function parseNtnuCoursePage(
   const resolvedYearFetchedFor = resolveFetchedYear($, yearFetchedFor)
 
   return {
-    code: courseCode,
-    name,
-    credits,
-    studyLevel,
-    gradeType,
-    content,
-    teachingMethods,
-    learningOutcomes,
-    examType,
-    taughtSemesters,
-    teachingLanguages,
-    campuses,
-    creditReductions,
-    yearFetchedFor: resolvedYearFetchedFor,
+    course: {
+      code: courseCode,
+      name,
+      credits,
+      studyLevel,
+      gradeType,
+      content,
+      teachingMethods,
+      learningOutcomes,
+      examType,
+      taughtSemesters,
+      teachingLanguages,
+      campuses,
+      creditReductions,
+      yearFetchedFor: resolvedYearFetchedFor,
+    },
+    hasNoLongerTaughtNotice: hasNoLongerTaughtNotice($, locale),
   }
 }
 
@@ -189,12 +208,27 @@ function parseCredits(rawCredits: string): number | null {
   return Number.isNaN(parsed) ? null : parsed
 }
 
-function parseSemesters(courseStart: string, locale: Locale): Semester[] {
-  const semesters: Semester[] = []
+function extractCourseDuration(rawDuration: string): number | null {
+  // For example "2 semesters"
+  const match = rawDuration.match(/\d+/)
+  if (match) {
+    return parseInt(match[0], 10)
+  }
+
+  return null
+}
+
+function parseSemesters(courseStart: string, duration: number | null, locale: Locale): NtnuCourseSemester[] {
+  const semesters: NtnuCourseSemester[] = []
+
+  // If a course has a duration of 2 or more semesters, we assume it is taught in both spring and autumn
+  if (duration !== null && duration >= 2) {
+    return ["AUTUMN", "SPRING"]
+  }
 
   const lowerCourseStart = courseStart.toLowerCase()
-  if (lowerCourseStart.includes(COURSE_PAGE_TRANSLATIONS.fallSemester[locale].toLowerCase())) {
-    semesters.push("FALL")
+  if (lowerCourseStart.includes(COURSE_PAGE_TRANSLATIONS.autumnSemester[locale].toLowerCase())) {
+    semesters.push("AUTUMN")
   }
   if (lowerCourseStart.includes(COURSE_PAGE_TRANSLATIONS.springSemester[locale].toLowerCase())) {
     semesters.push("SPRING")
@@ -290,7 +324,7 @@ function mapStudyLevel(description: string | null, locale: Locale): StudyLevel {
   return STUDY_LEVEL_MAPPINGS[locale][normalized] ?? "UNKNOWN"
 }
 
-function mapGradeType(description: string | null, locale: Locale): GradeType {
+function mapGradeType(description: string | null, locale: Locale): GradeType | null {
   const lowerDesc = description?.trim().toLowerCase() ?? ""
   if (lowerDesc.includes(COURSE_PAGE_TRANSLATIONS.letterGrade[locale].toLowerCase())) {
     return "LETTER"
@@ -300,7 +334,7 @@ function mapGradeType(description: string | null, locale: Locale): GradeType {
     return "PASS_FAIL"
   }
 
-  return "UNKNOWN"
+  return null
 }
 
 const ALLOWED_CONTENT_TAGS = ["p", "ul", "ol", "li", "strong", "b", "em", "i", "br"]
@@ -329,6 +363,11 @@ function hasNoDataForYear($: cheerio.CheerioAPI, locale: Locale): boolean {
   const heading = $("#course-details").find("h1, h2, h3, h4, h5, h6").first().text().trim()
 
   return heading === COURSE_PAGE_TRANSLATIONS.noDataForYear[locale]
+}
+
+function hasNoLongerTaughtNotice($: cheerio.CheerioAPI, locale: Locale): boolean {
+  const notice = $(".portlet-msg-alert").text().trim()
+  return notice === COURSE_PAGE_TRANSLATIONS.noLongerTaught[locale]
 }
 
 function resolveFetchedYear($: cheerio.CheerioAPI, requestedYear?: number): number | null {

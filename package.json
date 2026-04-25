@@ -34,6 +34,7 @@
     "migrate:prod": "doppler run --config prd --project monoweb-rpc -- pnpm migrate:deploy",
     "migrate:dev-grades": "doppler run --config dev_personal --project grades-backend -- pnpm -F @dotkomonline/grades-db migrate",
     "migrate:dev-grades-with-fixtures": "doppler run --config dev_personal --project grades-backend -- pnpm -F @dotkomonline/grades-db prisma migrate dev && doppler run --config dev_personal --project grades-backend -- pnpm -F @dotkomonline/grades-db apply-fixtures",
+    "grades:sync:dev": "doppler run --config dev_personal --project grades-backend -- pnpm -F @dotkomonline/grades-backend sync-grades",
     "storybook": "pnpm run -r --filter=storybook storybook",
     "type-check": "pnpm run -r type-check",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",

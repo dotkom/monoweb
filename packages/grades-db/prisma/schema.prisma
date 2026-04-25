@@ -23,7 +23,7 @@ datasource db {
 enum Semester {
   SPRING
   SUMMER
-  FALL
+  AUTUMN
 
   @@map("semester")
 }
@@ -43,7 +43,6 @@ enum StudyLevel {
 enum GradeType {
   PASS_FAIL
   LETTER
-  UNKNOWN
 
   @@map("grade_type")
 }
@@ -68,7 +67,7 @@ model Course {
   code            String     @unique
   nameNo          String     @map("name_no")
   nameEn          String?    @map("name_en")
-  credits         Float
+  credits         Float?
   studyLevel      StudyLevel @map("study_level")
   gradeType       GradeType  @map("grade_type")
   firstYearTaught Int        @map("first_year_taught")
@@ -83,9 +82,9 @@ model Course {
   examTypeNo         String? @map("exam_type_no")
   examTypeEn         String? @map("exam_type_en")
 
-  studentCount Int   @map("student_count")
-  averageGrade Float @map("average_grade")
-  passRate     Float @map("pass_rate")
+  candidateCount Int   @map("candidate_count")
+  averageGrade   Float @map("average_grade")
+  passRate       Float @map("pass_rate")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -102,7 +101,7 @@ model Course {
   department   Department? @relation(fields: [departmentId], references: [id])
 
   /// Metadata used to speed up sync by limiting how far back the scraper has to check for changes
-  oldestYearCheckedForNtnuData Int? @map("oldest_year_checked_for_ntnu_data")
+  latestYearCheckedForNtnuData Int? @map("latest_year_checked_for_ntnu_data")
 
   @@index([nameNo])
   @@index([nameEn])
@@ -110,22 +109,25 @@ model Course {
 }
 
 model Grade {
-  id           String @id @default(uuid())
-  averageGrade Float  @map("average_grade")
-  passed       Int
-  a            Int
-  b            Int
-  c            Int
-  d            Int
-  e            Int
-  failed       Int
+  id          String @id @default(uuid())
+
+  // For letter-graded courses
+  gradeACount Int
+  gradeBCount Int
+  gradeCCount Int
+  gradeDCount Int
+  gradeECount Int
+  gradeFCount Int
+
+  // For pass/fail courses
+  passedCount Int
+  failedCount Int
 
   courseId String @map("course_id")
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-  isDigitalExam Boolean  @map("is_digital_exam")
-  semester      Semester
-  year          Int
+  semester Semester
+  year     Int
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -139,9 +141,12 @@ model Faculty {
   id     String @id @default(uuid())
   nameNo String @map("name_no")
   nameEn String @map("name_en")
-  code   Int    @unique
 
-  courses Course[]
+  /// DBH code for faculty, for example "230000"
+  code Int @unique
+
+  courses     Course[]
+  departments Department[]
 
   @@map("faculty")
 }
@@ -150,9 +155,14 @@ model Department {
   id     String @id @default(uuid())
   nameNo String @map("name_no")
   nameEn String @map("name_en")
-  code   Int    @unique
+
+  /// DBH code for department, for example "230240"
+  code Int @unique
 
   courses Course[]
+
+  facultyId String  @map("faculty_id")
+  faculty   Faculty @relation(fields: [facultyId], references: [id])
 
   @@map("department")
 }
