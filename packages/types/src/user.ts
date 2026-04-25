@@ -24,12 +24,39 @@ export const MembershipWriteSchema = MembershipSchema.pick({
 })
 export type MembershipWrite = z.infer<typeof MembershipWriteSchema>
 
+export const UserFlagSchema = schemas.UserFlagSchema.extend({})
+export type UserFlag = z.infer<typeof UserFlagSchema>
+export type UserFlagId = UserFlag["id"]
+
+export const UserFlagWriteSchema = UserFlagSchema.pick({
+  name: true,
+  description: true,
+  imageUrl: true,
+})
+export type UserFlagWrite = z.infer<typeof UserFlagWriteSchema>
+
+export const FlagName = {
+  VANITY_VERIFIED: "OW Verified",
+  EXCEPTIONALLY_DISTINGUISHED: "Særskilt utmerket",
+} as const
+
 export const UserSchema = schemas.UserSchema.extend({
   memberships: z.array(MembershipSchema),
+  flags: z.array(UserFlagSchema),
 })
 export type User = z.infer<typeof UserSchema>
 export type UserId = User["id"]
 export type Username = User["username"]
+
+export const UserFlagWithUsersSchema = schemas.UserFlagSchema.extend({
+  users: UserSchema.pick({
+    id: true,
+    name: true,
+    profileSlug: true,
+    imageUrl: true,
+  }).array(),
+})
+export type UserFlagWithUsers = z.infer<typeof UserFlagWithUsersSchema>
 
 export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
 export const PHONE_REGEX = /^[0-9-+\s]*$/
