@@ -11,6 +11,7 @@ import { getMarkFixtures } from "./fixtures/mark"
 import { getMembershipFixtures } from "./fixtures/membership"
 import { getOfflineFixtures } from "./fixtures/offline"
 import { getUserFixtures } from "./fixtures/user"
+import { EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME, getUserFlagLinkFixtures } from "./fixtures/user-flag-link"
 import { getGroupMembershipFixtures } from "./fixtures/group-membership"
 import { getGroupMembershipRoleFixtures } from "./fixtures/group-membership-role"
 import { FADDERUKE_CONTEST_ID, getContestFixture, getContestTeamFixtures } from "./fixtures/contest"
@@ -35,6 +36,12 @@ const userIds = userInput.map((u) => u.id)
 await db.user.createManyAndReturn({ data: userInput })
 const membershipInput = getMembershipFixtures(userIds)
 await db.membership.createManyAndReturn({ data: membershipInput })
+
+const exceptionallyDistinguishedFlag = await db.userFlag.findUniqueOrThrow({
+  where: { name: EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME },
+})
+const userFlagLinkInput = getUserFlagLinkFixtures(userIds, exceptionallyDistinguishedFlag.id)
+await db.userFlagLink.createMany({ data: userFlagLinkInput })
 
 const companyInput = getCompanyFixtures()
 const companies = await db.company.createManyAndReturn({ data: companyInput })
