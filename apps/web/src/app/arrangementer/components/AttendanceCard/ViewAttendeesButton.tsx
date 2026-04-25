@@ -1,40 +1,20 @@
-import type { Attendance, Attendee, User } from "@dotkomonline/types"
+import type { User, Attendance } from "@dotkomonline/types"
 import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   Text,
   Title,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  cn,
 } from "@dotkomonline/ui"
-import { IconRosetteDiscountCheckFilled, IconUser, IconUsers, IconX } from "@tabler/icons-react"
+import { IconUsers, IconX } from "@tabler/icons-react"
 import { compareAsc } from "date-fns"
-import Link from "next/link"
-import type { ReactNode } from "react"
-
-const getMinWidth = (maxNumberOfAttendees: number) => {
-  switch (maxNumberOfAttendees.toString().length) {
-    case 1:
-      return "min-w-[2ch]"
-    case 2:
-      return "min-w-[3ch]"
-    case 3:
-      return "min-w-[4ch]"
-    case 4:
-      return "min-w-[5ch]"
-    default:
-      return "min-w-[6ch]"
-  }
-}
+import { AttendeeList } from "./AttendeeList/AttendeeList"
 
 interface ViewAttendeesButtonProps {
   attendeeListOpen: boolean
@@ -60,7 +40,7 @@ export const ViewAttendeesButton = ({
   const button = (
     <Button
       color="light"
-      className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
+      className="rounded-lg w-full h-fit min-h-16 font-medium"
       icon={<IconUsers className="size-[1.25em]" />}
       disabled={!user}
     >
@@ -117,140 +97,5 @@ export const ViewAttendeesButton = ({
         </div>
       </AlertDialogContent>
     </AlertDialog>
-  )
-}
-
-interface AttendeeListProps {
-  attendees: Attendee[]
-  user: User
-  maxNumberOfAttendees: number
-}
-
-const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListProps) => {
-  if (!attendees.length) {
-    return <Text className="text-gray-900 text-sm mx-2">Ingen påmeldte</Text>
-  }
-
-  return attendees.map((attendee, index) => {
-    const UserEntry = getAttendeeListEntryComponent(attendee)
-    const minWidth = getMinWidth(maxNumberOfAttendees)
-
-    return (
-      <div key={attendee.id} className="flex flex-row gap-1 items-center group">
-        <Text
-          className={cn(
-            "text-gray-400 group-hover:text-black dark:text-stone-500 dark:group-hover:text-stone-300",
-            "text-right text-sm font-mono transition-colors",
-            minWidth
-          )}
-        >
-          {index + 1}.
-        </Text>
-
-        <UserEntry attendee={attendee} user={user} />
-      </div>
-    )
-  })
-}
-
-const getAttendeeListEntryComponent = (attendee: Attendee) => {
-  if (attendee.user.flags.includes("VANITY_VERIFIED")) {
-    return VerifiedAttendeeListUser
-  }
-
-  return GenericAttendeeListEntry
-}
-
-interface AttendeeListEntryProps {
-  attendee: Attendee
-  user: User
-}
-
-type GenericAttendeeListEntryProps = AttendeeListEntryProps & {
-  userSection?: ReactNode
-}
-
-const GenericAttendeeListEntry = ({
-  attendee,
-  user,
-  userSection: customUserSection,
-}: GenericAttendeeListEntryProps) => {
-  const isUser = attendee.userId === user.id
-
-  const userSection = customUserSection ?? (
-    <div className="flex flex-col gap-0.5 grow min-w-0">
-      <Text className="text-sm truncate" title={attendee.user.name ?? undefined}>
-        {attendee.user.name}
-      </Text>
-      <Text
-        className={cn(
-          "text-xs truncate",
-          !isUser && "text-gray-900 dark:text-stone-300",
-          isUser && "text-black dark:text-white"
-        )}
-      >
-        {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
-      </Text>
-    </div>
-  )
-
-  return (
-    <Link
-      href={`/profil/${attendee.user.username}`}
-      className={cn(
-        "flex flex-1 min-w-0 items-center gap-4 p-1.5 rounded-lg w-full overflow-x-hidden transition-colors",
-        !isUser && "hover:bg-gray-100 dark:hover:bg-stone-700",
-        isUser && "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900"
-      )}
-    >
-      <Avatar className={cn("size-10", isUser && "outline-2 outline-blue-500 dark:outline-sky-800")}>
-        <AvatarImage src={attendee.user.imageUrl ?? undefined} />
-        <AvatarFallback className="bg-gray-500 dark:bg-stone-500">
-          <IconUser className="size-[1.25em]" />
-        </AvatarFallback>
-      </Avatar>
-
-      {userSection}
-    </Link>
-  )
-}
-
-const VerifiedAttendeeListUser = ({ attendee }: AttendeeListEntryProps) => {
-  return (
-    <Link
-      href={`/profil/${attendee.user.username}`}
-      className={cn(
-        "flex flex-1 min-w-0 items-center gap-4 p-1.5 rounded-lg w-full overflow-x-hidden transition-colors",
-        "bg-gradient-to-r",
-        "from-yellow-200 via-yellow-100 hover:from-yellow-300 hover:via-yellow-200 hover:to-yellow-200",
-        "dark:from-yellow-500 dark:via-yellow-600 dark:hover:from-yellow-400 dark:hover:via-yellow-500 dark:hover:to-yellow-800"
-      )}
-    >
-      <Avatar className="size-10 outline-2 outline-yellow-500 dark:outline-yellow-600">
-        <AvatarImage src={attendee.user.imageUrl ?? undefined} />
-        <AvatarFallback className="bg-yellow-500 dark:bg-yellow-700">
-          <IconUser className="size-[1.25em]" />
-        </AvatarFallback>
-      </Avatar>
-
-      <div className="flex flex-col gap-0.5 grow min-w-0">
-        <div className="flex items-center gap-2">
-          <Text className="text-sm dark:text-black truncate" title={attendee.user.name ?? undefined}>
-            {attendee.user.name}
-          </Text>
-          <Tooltip>
-            <TooltipTrigger>
-              <IconRosetteDiscountCheckFilled className="size-[1.25em] text-blue-600 dark:text-sky-700" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <Text>OW-verified</Text>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-        <Text className="text-xs dark:text-black truncate">
-          {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
-        </Text>
-      </div>
-    </Link>
   )
 }
