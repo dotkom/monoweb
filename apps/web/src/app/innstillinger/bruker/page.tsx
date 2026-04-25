@@ -5,7 +5,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import { Button, Text, TextInput, Title, cn } from "@dotkomonline/ui"
-import { createAbsoluteLinkIdentityAuthorizeUrl, createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createLinkIdentityAuthorizeUrl } from "@dotkomonline/utils"
 import { IconAlertTriangle, IconCheck, IconCopy, IconLink, IconMail, IconPassword, IconX } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { secondsToMilliseconds } from "date-fns"
@@ -88,12 +88,12 @@ export default function MinBrukerPage() {
   const isFeideLinked = auth0Connections?.hasFeide === true
   const isUsernamePasswordLinked = auth0Connections?.hasUsernamePassword === true
 
-  const linkFeideUrl = createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
+  const linkFeideUrl = createLinkIdentityAuthorizeUrl({
     connection: "FEIDE",
     redirectAfter: `${fullPathname}/link`,
   })
 
-  const linkUsernamePasswordUrl = createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
+  const linkUsernamePasswordUrl = createLinkIdentityAuthorizeUrl({
     connection: "Username-Password-Authentication",
     redirectAfter: `${fullPathname}/link`,
   })
