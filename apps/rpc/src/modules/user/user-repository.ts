@@ -10,6 +10,10 @@ import {
   type Username,
   UserSchema,
   type UserWrite,
+  type UserFlagWithUsers,
+  UserFlagWithUsersSchema,
+  type UserFlagWrite,
+  normalizeDbUser,
 } from "./user"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
@@ -34,6 +38,14 @@ export interface UserRepository {
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
+
+  createFlag(handle: DBHandle, data: UserFlagWrite): Promise<void>
+  updateFlag(handle: DBHandle, name: string, data: Partial<UserFlagWrite>): Promise<void>
+  deleteFlag(handle: DBHandle, name: string): Promise<void>
+  findFlagByName(handle: DBHandle, name: string): Promise<UserFlagWithUsers | null>
+  findFlagsByUserId(handle: DBHandle, userId: UserId): Promise<UserFlagWithUsers[]>
+  assignFlagToUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
+  removeFlagFromUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
 }
 
 export function getUserRepository(): UserRepository {
@@ -53,10 +65,15 @@ export function getUserRepository(): UserRepository {
         },
         include: {
           memberships: true,
+          userFlagLinks: {
+            include: {
+              userFlag: true,
+            },
+          },
         },
       })
 
-      return parseOrReport(UserSchema, user)
+      return parseOrReport(UserSchema, normalizeDbUser(user))
     },
 
     async update(handle, userId, data) {
@@ -82,10 +99,15 @@ export function getUserRepository(): UserRepository {
         },
         include: {
           memberships: true,
+          userFlagLinks: {
+            include: {
+              userFlag: true,
+            },
+          },
         },
       })
 
-      return parseOrReport(UserSchema.nullable(), user)
+      return parseOrReport(UserSchema.nullable(), user ? normalizeDbUser(user) : null)
     },
 
     async findByUsername(handle, username) {
@@ -95,6 +117,11 @@ export function getUserRepository(): UserRepository {
         },
         include: {
           memberships: true,
+          userFlagLinks: {
+            include: {
+              userFlag: true,
+            },
+          },
         },
       })
 
@@ -102,7 +129,7 @@ export function getUserRepository(): UserRepository {
         return null
       }
 
-      return parseOrReport(UserSchema.nullable(), user)
+      return parseOrReport(UserSchema, normalizeDbUser(user))
     },
 
     async findByWorkspaceUserIds(handle, workspaceUserIds) {
@@ -112,10 +139,15 @@ export function getUserRepository(): UserRepository {
         },
         include: {
           memberships: true,
+          userFlagLinks: {
+            include: {
+              userFlag: true,
+            },
+          },
         },
       })
 
-      return parseOrReport(UserSchema.array(), users)
+      return parseOrReport(UserSchema.array(), users.map(normalizeDbUser))
     },
 
     async findMany(handle, query, page) {
@@ -131,10 +163,15 @@ export function getUserRepository(): UserRepository {
         where,
         include: {
           memberships: true,
+          userFlagLinks: {
+            include: {
+              userFlag: true,
+            },
+          },
         },
       })
 
-      return parseOrReport(UserSchema.array(), users)
+      return parseOrReport(UserSchema.array(), users.map(normalizeDbUser))
     },
 
     async createMembership(handle, userId, membership) {
@@ -184,6 +221,105 @@ export function getUserRepository(): UserRepository {
       const user = await this.findById(handle, row.userId)
       invariant(user !== null, `User with id ${row.userId} not found after deleting membership`)
       return user
+    },
+
+    async createFlag(handle, data) {
+      await handle.userFlag.create({
+        data: {
+          name: data.name,
+          description: data.description,
+          imageUrl: data.imageUrl,
+        },
+      })
+    },
+
+    async updateFlag(handle, name, data) {
+      await handle.userFlag.update({
+        where: {
+          name,
+        },
+        data: {
+          name: data.name,
+          description: data.description,
+          imageUrl: data.imageUrl,
+        },
+      })
+    },
+
+    async deleteFlag(handle, name) {
+      await handle.userFlag.delete({
+        where: {
+          name,
+        },
+      })
+    },
+
+    async findFlagByName(handle, name) {
+      const flag = await handle.userFlag.findUnique({
+        where: { name },
+        include: {
+          userFlagLinks: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  imageUrl: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      if (!flag) return null
+      const transformed = { ...flag, users: flag.userFlagLinks.map((l) => l.user) }
+      return parseOrReport(UserFlagWithUsersSchema, transformed)
+    },
+
+    async findFlagsByUserId(handle, userId) {
+      const flags = await handle.userFlag.findMany({
+        where: {
+          userFlagLinks: { some: { userId } },
+        },
+        include: {
+          userFlagLinks: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  imageUrl: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      const transformed = flags.map((flag) => ({ ...flag, users: flag.userFlagLinks.map((l) => l.user) }))
+      return parseOrReport(UserFlagWithUsersSchema.array(), transformed)
+    },
+
+    async assignFlagToUser(handle, userId, flagName) {
+      await handle.userFlagLink.create({
+        data: {
+          user: { connect: { id: userId } },
+          userFlag: { connect: { name: flagName } },
+          awardedAt: new Date(),
+        },
+      })
+    },
+
+    async removeFlagFromUser(handle, userId, flagName) {
+      await handle.userFlagLink.deleteMany({
+        where: {
+          userId,
+          userFlag: { name: flagName },
+        },
+      })
     },
   }
 }

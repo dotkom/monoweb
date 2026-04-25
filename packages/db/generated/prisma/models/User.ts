@@ -71,7 +71,6 @@ export type UserCountAggregateOutputType = {
   gender: number
   dietaryRestrictions: number
   ntnuUsername: number
-  flags: number
   workspaceUserId: number
   createdAt: number
   updatedAt: number
@@ -128,7 +127,6 @@ export type UserCountAggregateInputType = {
   gender?: true
   dietaryRestrictions?: true
   ntnuUsername?: true
-  flags?: true
   workspaceUserId?: true
   createdAt?: true
   updatedAt?: true
@@ -220,7 +218,6 @@ export type UserGroupByOutputType = {
   gender: $Enums.Gender
   dietaryRestrictions: string | null
   ntnuUsername: string | null
-  flags: string[]
   workspaceUserId: string | null
   createdAt: Date
   updatedAt: Date
@@ -260,7 +257,6 @@ export type UserWhereInput = {
   gender?: Prisma.EnumGenderFilter<"User"> | $Enums.Gender
   dietaryRestrictions?: Prisma.StringNullableFilter<"User"> | string | null
   ntnuUsername?: Prisma.StringNullableFilter<"User"> | string | null
-  flags?: Prisma.StringNullableListFilter<"User">
   workspaceUserId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -281,6 +277,7 @@ export type UserWhereInput = {
   notificationsUpdated?: Prisma.NotificationListRelationFilter
   contestants?: Prisma.ContestantListRelationFilter
   contestTeams?: Prisma.ContestTeamListRelationFilter
+  userFlagLinks?: Prisma.UserFlagLinkListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -294,7 +291,6 @@ export type UserOrderByWithRelationInput = {
   gender?: Prisma.SortOrder
   dietaryRestrictions?: Prisma.SortOrderInput | Prisma.SortOrder
   ntnuUsername?: Prisma.SortOrderInput | Prisma.SortOrder
-  flags?: Prisma.SortOrder
   workspaceUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -315,6 +311,7 @@ export type UserOrderByWithRelationInput = {
   notificationsUpdated?: Prisma.NotificationOrderByRelationAggregateInput
   contestants?: Prisma.ContestantOrderByRelationAggregateInput
   contestTeams?: Prisma.ContestTeamOrderByRelationAggregateInput
+  userFlagLinks?: Prisma.UserFlagLinkOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -334,7 +331,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   gender?: Prisma.EnumGenderFilter<"User"> | $Enums.Gender
   dietaryRestrictions?: Prisma.StringNullableFilter<"User"> | string | null
   ntnuUsername?: Prisma.StringNullableFilter<"User"> | string | null
-  flags?: Prisma.StringNullableListFilter<"User">
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   privacyPermissions?: Prisma.XOR<Prisma.PrivacyPermissionsNullableScalarRelationFilter, Prisma.PrivacyPermissionsWhereInput> | null
@@ -352,6 +348,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notificationsUpdated?: Prisma.NotificationListRelationFilter
   contestants?: Prisma.ContestantListRelationFilter
   contestTeams?: Prisma.ContestTeamListRelationFilter
+  userFlagLinks?: Prisma.UserFlagLinkListRelationFilter
 }, "id" | "username" | "workspaceUserId" | "privacyPermissionsId" | "notificationPermissionsId">
 
 export type UserOrderByWithAggregationInput = {
@@ -365,7 +362,6 @@ export type UserOrderByWithAggregationInput = {
   gender?: Prisma.SortOrder
   dietaryRestrictions?: Prisma.SortOrderInput | Prisma.SortOrder
   ntnuUsername?: Prisma.SortOrderInput | Prisma.SortOrder
-  flags?: Prisma.SortOrder
   workspaceUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -390,7 +386,6 @@ export type UserScalarWhereWithAggregatesInput = {
   gender?: Prisma.EnumGenderWithAggregatesFilter<"User"> | $Enums.Gender
   dietaryRestrictions?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   ntnuUsername?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  flags?: Prisma.StringNullableListFilter<"User">
   workspaceUserId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -409,7 +404,6 @@ export type UserCreateInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -430,6 +424,7 @@ export type UserCreateInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -443,7 +438,6 @@ export type UserUncheckedCreateInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -464,6 +458,7 @@ export type UserUncheckedCreateInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -477,7 +472,6 @@ export type UserUpdateInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -498,6 +492,7 @@ export type UserUpdateInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -511,7 +506,6 @@ export type UserUncheckedUpdateInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -532,6 +526,7 @@ export type UserUncheckedUpdateInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -545,7 +540,6 @@ export type UserCreateManyInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -564,7 +558,6 @@ export type UserUpdateManyMutationInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -583,7 +576,6 @@ export type UserUncheckedUpdateManyInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -594,14 +586,6 @@ export type UserUncheckedUpdateManyInput = {
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
-}
-
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -615,7 +599,6 @@ export type UserCountOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   dietaryRestrictions?: Prisma.SortOrder
   ntnuUsername?: Prisma.SortOrder
-  flags?: Prisma.SortOrder
   workspaceUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -688,21 +671,12 @@ export type UserUpdateOneRequiredWithoutMembershipsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMembershipsInput, Prisma.UserUpdateWithoutMembershipsInput>, Prisma.UserUncheckedUpdateWithoutMembershipsInput>
 }
 
-export type UserCreateflagsInput = {
-  set: string[]
-}
-
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
 export type EnumGenderFieldUpdateOperationsInput = {
   set?: $Enums.Gender
-}
-
-export type UserUpdateflagsInput = {
-  set?: string[]
-  push?: string | string[]
 }
 
 export type UserCreateNestedOneWithoutGroupMembershipsInput = {
@@ -937,6 +911,20 @@ export type UserUncheckedUpdateManyWithoutContestTeamsNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateNestedOneWithoutUserFlagLinksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserFlagLinksInput, Prisma.UserUncheckedCreateWithoutUserFlagLinksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserFlagLinksInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUserFlagLinksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserFlagLinksInput, Prisma.UserUncheckedCreateWithoutUserFlagLinksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserFlagLinksInput
+  upsert?: Prisma.UserUpsertWithoutUserFlagLinksInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserFlagLinksInput, Prisma.UserUpdateWithoutUserFlagLinksInput>, Prisma.UserUncheckedUpdateWithoutUserFlagLinksInput>
+}
+
 export type UserCreateWithoutMembershipsInput = {
   id: string
   username: string
@@ -948,7 +936,6 @@ export type UserCreateWithoutMembershipsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -968,6 +955,7 @@ export type UserCreateWithoutMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -981,7 +969,6 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1001,6 +988,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -1030,7 +1018,6 @@ export type UserUpdateWithoutMembershipsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1050,6 +1037,7 @@ export type UserUpdateWithoutMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -1063,7 +1051,6 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1083,6 +1070,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGroupMembershipsInput = {
@@ -1096,7 +1084,6 @@ export type UserCreateWithoutGroupMembershipsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1116,6 +1103,7 @@ export type UserCreateWithoutGroupMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -1129,7 +1117,6 @@ export type UserUncheckedCreateWithoutGroupMembershipsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1149,6 +1136,7 @@ export type UserUncheckedCreateWithoutGroupMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -1178,7 +1166,6 @@ export type UserUpdateWithoutGroupMembershipsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1198,6 +1185,7 @@ export type UserUpdateWithoutGroupMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -1211,7 +1199,6 @@ export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1231,6 +1218,7 @@ export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAttendeeInput = {
@@ -1244,7 +1232,6 @@ export type UserCreateWithoutAttendeeInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1264,6 +1251,7 @@ export type UserCreateWithoutAttendeeInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAttendeeInput = {
@@ -1277,7 +1265,6 @@ export type UserUncheckedCreateWithoutAttendeeInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1297,6 +1284,7 @@ export type UserUncheckedCreateWithoutAttendeeInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAttendeeInput = {
@@ -1315,7 +1303,6 @@ export type UserCreateWithoutAttendeesRefundedInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1335,6 +1322,7 @@ export type UserCreateWithoutAttendeesRefundedInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
@@ -1348,7 +1336,6 @@ export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1368,6 +1355,7 @@ export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAttendeesRefundedInput = {
@@ -1397,7 +1385,6 @@ export type UserUpdateWithoutAttendeeInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1417,6 +1404,7 @@ export type UserUpdateWithoutAttendeeInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendeeInput = {
@@ -1430,7 +1418,6 @@ export type UserUncheckedUpdateWithoutAttendeeInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1450,6 +1437,7 @@ export type UserUncheckedUpdateWithoutAttendeeInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutAttendeesRefundedInput = {
@@ -1474,7 +1462,6 @@ export type UserUpdateWithoutAttendeesRefundedInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1494,6 +1481,7 @@ export type UserUpdateWithoutAttendeesRefundedInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
@@ -1507,7 +1495,6 @@ export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1527,6 +1514,7 @@ export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPersonalMarkInput = {
@@ -1540,7 +1528,6 @@ export type UserCreateWithoutPersonalMarkInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1560,6 +1547,7 @@ export type UserCreateWithoutPersonalMarkInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPersonalMarkInput = {
@@ -1573,7 +1561,6 @@ export type UserUncheckedCreateWithoutPersonalMarkInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1593,6 +1580,7 @@ export type UserUncheckedCreateWithoutPersonalMarkInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPersonalMarkInput = {
@@ -1611,7 +1599,6 @@ export type UserCreateWithoutGivenMarksInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1631,6 +1618,7 @@ export type UserCreateWithoutGivenMarksInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGivenMarksInput = {
@@ -1644,7 +1632,6 @@ export type UserUncheckedCreateWithoutGivenMarksInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1664,6 +1651,7 @@ export type UserUncheckedCreateWithoutGivenMarksInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGivenMarksInput = {
@@ -1693,7 +1681,6 @@ export type UserUpdateWithoutPersonalMarkInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1713,6 +1700,7 @@ export type UserUpdateWithoutPersonalMarkInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalMarkInput = {
@@ -1726,7 +1714,6 @@ export type UserUncheckedUpdateWithoutPersonalMarkInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1746,6 +1733,7 @@ export type UserUncheckedUpdateWithoutPersonalMarkInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutGivenMarksInput = {
@@ -1770,7 +1758,6 @@ export type UserUpdateWithoutGivenMarksInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1790,6 +1777,7 @@ export type UserUpdateWithoutGivenMarksInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGivenMarksInput = {
@@ -1803,7 +1791,6 @@ export type UserUncheckedUpdateWithoutGivenMarksInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1823,6 +1810,7 @@ export type UserUncheckedUpdateWithoutGivenMarksInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPrivacyPermissionsInput = {
@@ -1836,7 +1824,6 @@ export type UserCreateWithoutPrivacyPermissionsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1856,6 +1843,7 @@ export type UserCreateWithoutPrivacyPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
@@ -1869,7 +1857,6 @@ export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1889,6 +1876,7 @@ export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPrivacyPermissionsInput = {
@@ -1918,7 +1906,6 @@ export type UserUpdateWithoutPrivacyPermissionsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1938,6 +1925,7 @@ export type UserUpdateWithoutPrivacyPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
@@ -1951,7 +1939,6 @@ export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1971,6 +1958,7 @@ export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationPermissionsInput = {
@@ -1984,7 +1972,6 @@ export type UserCreateWithoutNotificationPermissionsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2004,6 +1991,7 @@ export type UserCreateWithoutNotificationPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
@@ -2017,7 +2005,6 @@ export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2037,6 +2024,7 @@ export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationPermissionsInput = {
@@ -2066,7 +2054,6 @@ export type UserUpdateWithoutNotificationPermissionsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2086,6 +2073,7 @@ export type UserUpdateWithoutNotificationPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
@@ -2099,7 +2087,6 @@ export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2119,6 +2106,7 @@ export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -2132,7 +2120,6 @@ export type UserCreateWithoutAuditLogsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2152,6 +2139,7 @@ export type UserCreateWithoutAuditLogsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -2165,7 +2153,6 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2185,6 +2172,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2214,7 +2202,6 @@ export type UserUpdateWithoutAuditLogsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2234,6 +2221,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2247,7 +2235,6 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2267,6 +2254,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeregisterReasonsInput = {
@@ -2280,7 +2268,6 @@ export type UserCreateWithoutDeregisterReasonsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2300,6 +2287,7 @@ export type UserCreateWithoutDeregisterReasonsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
@@ -2313,7 +2301,6 @@ export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2333,6 +2320,7 @@ export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeregisterReasonsInput = {
@@ -2362,7 +2350,6 @@ export type UserUpdateWithoutDeregisterReasonsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2382,6 +2369,7 @@ export type UserUpdateWithoutDeregisterReasonsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
@@ -2395,7 +2383,6 @@ export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2415,6 +2402,7 @@ export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsReceivedInput = {
@@ -2428,7 +2416,6 @@ export type UserCreateWithoutNotificationsReceivedInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2448,6 +2435,7 @@ export type UserCreateWithoutNotificationsReceivedInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
@@ -2461,7 +2449,6 @@ export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2481,6 +2468,7 @@ export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsReceivedInput = {
@@ -2510,7 +2498,6 @@ export type UserUpdateWithoutNotificationsReceivedInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2530,6 +2517,7 @@ export type UserUpdateWithoutNotificationsReceivedInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
@@ -2543,7 +2531,6 @@ export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2563,6 +2550,7 @@ export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsCreatedInput = {
@@ -2576,7 +2564,6 @@ export type UserCreateWithoutNotificationsCreatedInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2596,6 +2583,7 @@ export type UserCreateWithoutNotificationsCreatedInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
@@ -2609,7 +2597,6 @@ export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2629,6 +2616,7 @@ export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsCreatedInput = {
@@ -2647,7 +2635,6 @@ export type UserCreateWithoutNotificationsUpdatedInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2667,6 +2654,7 @@ export type UserCreateWithoutNotificationsUpdatedInput = {
   notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
@@ -2680,7 +2668,6 @@ export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2700,6 +2687,7 @@ export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
   notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsUpdatedInput = {
@@ -2729,7 +2717,6 @@ export type UserUpdateWithoutNotificationsCreatedInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2749,6 +2736,7 @@ export type UserUpdateWithoutNotificationsCreatedInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
@@ -2762,7 +2750,6 @@ export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2782,6 +2769,7 @@ export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutNotificationsUpdatedInput = {
@@ -2806,7 +2794,6 @@ export type UserUpdateWithoutNotificationsUpdatedInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2826,6 +2813,7 @@ export type UserUpdateWithoutNotificationsUpdatedInput = {
   notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
@@ -2839,7 +2827,6 @@ export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2859,6 +2846,7 @@ export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
   notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContestantsInput = {
@@ -2872,7 +2860,6 @@ export type UserCreateWithoutContestantsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2892,6 +2879,7 @@ export type UserCreateWithoutContestantsInput = {
   notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContestantsInput = {
@@ -2905,7 +2893,6 @@ export type UserUncheckedCreateWithoutContestantsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2925,6 +2912,7 @@ export type UserUncheckedCreateWithoutContestantsInput = {
   notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContestantsInput = {
@@ -2954,7 +2942,6 @@ export type UserUpdateWithoutContestantsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2974,6 +2961,7 @@ export type UserUpdateWithoutContestantsInput = {
   notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContestantsInput = {
@@ -2987,7 +2975,6 @@ export type UserUncheckedUpdateWithoutContestantsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3007,6 +2994,7 @@ export type UserUncheckedUpdateWithoutContestantsInput = {
   notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContestTeamsInput = {
@@ -3020,7 +3008,6 @@ export type UserCreateWithoutContestTeamsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3040,6 +3027,7 @@ export type UserCreateWithoutContestTeamsInput = {
   notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContestTeamsInput = {
@@ -3053,7 +3041,6 @@ export type UserUncheckedCreateWithoutContestTeamsInput = {
   gender?: $Enums.Gender
   dietaryRestrictions?: string | null
   ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3073,6 +3060,7 @@ export type UserUncheckedCreateWithoutContestTeamsInput = {
   notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContestTeamsInput = {
@@ -3110,7 +3098,6 @@ export type UserScalarWhereInput = {
   gender?: Prisma.EnumGenderFilter<"User"> | $Enums.Gender
   dietaryRestrictions?: Prisma.StringNullableFilter<"User"> | string | null
   ntnuUsername?: Prisma.StringNullableFilter<"User"> | string | null
-  flags?: Prisma.StringNullableListFilter<"User">
   workspaceUserId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -3118,7 +3105,89 @@ export type UserScalarWhereInput = {
   notificationPermissionsId?: Prisma.StringNullableFilter<"User"> | string | null
 }
 
-export type UserUpdateWithoutContestTeamsInput = {
+export type UserCreateWithoutUserFlagLinksInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+}
+
+export type UserUncheckedCreateWithoutUserFlagLinksInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+}
+
+export type UserCreateOrConnectWithoutUserFlagLinksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserFlagLinksInput, Prisma.UserUncheckedCreateWithoutUserFlagLinksInput>
+}
+
+export type UserUpsertWithoutUserFlagLinksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserFlagLinksInput, Prisma.UserUncheckedUpdateWithoutUserFlagLinksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserFlagLinksInput, Prisma.UserUncheckedCreateWithoutUserFlagLinksInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUserFlagLinksInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserFlagLinksInput, Prisma.UserUncheckedUpdateWithoutUserFlagLinksInput>
+}
+
+export type UserUpdateWithoutUserFlagLinksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3129,7 +3198,6 @@ export type UserUpdateWithoutContestTeamsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3149,9 +3217,10 @@ export type UserUpdateWithoutContestTeamsInput = {
   notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
 }
 
-export type UserUncheckedUpdateWithoutContestTeamsInput = {
+export type UserUncheckedUpdateWithoutUserFlagLinksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3162,7 +3231,6 @@ export type UserUncheckedUpdateWithoutContestTeamsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3182,6 +3250,73 @@ export type UserUncheckedUpdateWithoutContestTeamsInput = {
   notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+}
+
+export type UserUpdateWithoutContestTeamsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutContestTeamsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutContestTeamsInput = {
@@ -3195,7 +3330,6 @@ export type UserUncheckedUpdateManyWithoutContestTeamsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3222,6 +3356,7 @@ export type UserCountOutputType = {
   notificationsUpdated: number
   contestants: number
   contestTeams: number
+  userFlagLinks: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3238,6 +3373,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   notificationsUpdated?: boolean | UserCountOutputTypeCountNotificationsUpdatedArgs
   contestants?: boolean | UserCountOutputTypeCountContestantsArgs
   contestTeams?: boolean | UserCountOutputTypeCountContestTeamsArgs
+  userFlagLinks?: boolean | UserCountOutputTypeCountUserFlagLinksArgs
 }
 
 /**
@@ -3341,6 +3477,13 @@ export type UserCountOutputTypeCountContestTeamsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ContestTeamWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUserFlagLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserFlagLinkWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3353,7 +3496,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   gender?: boolean
   dietaryRestrictions?: boolean
   ntnuUsername?: boolean
-  flags?: boolean
   workspaceUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -3374,6 +3516,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   notificationsUpdated?: boolean | Prisma.User$notificationsUpdatedArgs<ExtArgs>
   contestants?: boolean | Prisma.User$contestantsArgs<ExtArgs>
   contestTeams?: boolean | Prisma.User$contestTeamsArgs<ExtArgs>
+  userFlagLinks?: boolean | Prisma.User$userFlagLinksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3388,7 +3531,6 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   gender?: boolean
   dietaryRestrictions?: boolean
   ntnuUsername?: boolean
-  flags?: boolean
   workspaceUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -3407,7 +3549,6 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   gender?: boolean
   dietaryRestrictions?: boolean
   ntnuUsername?: boolean
-  flags?: boolean
   workspaceUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -3426,7 +3567,6 @@ export type UserSelectScalar = {
   gender?: boolean
   dietaryRestrictions?: boolean
   ntnuUsername?: boolean
-  flags?: boolean
   workspaceUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -3434,7 +3574,7 @@ export type UserSelectScalar = {
   notificationPermissionsId?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "name" | "email" | "imageUrl" | "biography" | "phone" | "gender" | "dietaryRestrictions" | "ntnuUsername" | "flags" | "workspaceUserId" | "createdAt" | "updatedAt" | "privacyPermissionsId" | "notificationPermissionsId", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "name" | "email" | "imageUrl" | "biography" | "phone" | "gender" | "dietaryRestrictions" | "ntnuUsername" | "workspaceUserId" | "createdAt" | "updatedAt" | "privacyPermissionsId" | "notificationPermissionsId", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   privacyPermissions?: boolean | Prisma.User$privacyPermissionsArgs<ExtArgs>
   notificationPermissions?: boolean | Prisma.User$notificationPermissionsArgs<ExtArgs>
@@ -3451,6 +3591,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   notificationsUpdated?: boolean | Prisma.User$notificationsUpdatedArgs<ExtArgs>
   contestants?: boolean | Prisma.User$contestantsArgs<ExtArgs>
   contestTeams?: boolean | Prisma.User$contestTeamsArgs<ExtArgs>
+  userFlagLinks?: boolean | Prisma.User$userFlagLinksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3474,6 +3615,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     notificationsUpdated: Prisma.$NotificationPayload<ExtArgs>[]
     contestants: Prisma.$ContestantPayload<ExtArgs>[]
     contestTeams: Prisma.$ContestTeamPayload<ExtArgs>[]
+    userFlagLinks: Prisma.$UserFlagLinkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     /**
@@ -3489,7 +3631,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     gender: $Enums.Gender
     dietaryRestrictions: string | null
     ntnuUsername: string | null
-    flags: string[]
     /**
      * Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
      */
@@ -3907,6 +4048,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   notificationsUpdated<T extends Prisma.User$notificationsUpdatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contestants<T extends Prisma.User$contestantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contestantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContestantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contestTeams<T extends Prisma.User$contestTeamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contestTeamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContestTeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userFlagLinks<T extends Prisma.User$userFlagLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userFlagLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserFlagLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3946,7 +4088,6 @@ export interface UserFieldRefs {
   readonly gender: Prisma.FieldRef<"User", 'Gender'>
   readonly dietaryRestrictions: Prisma.FieldRef<"User", 'String'>
   readonly ntnuUsername: Prisma.FieldRef<"User", 'String'>
-  readonly flags: Prisma.FieldRef<"User", 'String[]'>
   readonly workspaceUserId: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -4701,6 +4842,30 @@ export type User$contestTeamsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ContestTeamScalarFieldEnum | Prisma.ContestTeamScalarFieldEnum[]
+}
+
+/**
+ * User.userFlagLinks
+ */
+export type User$userFlagLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserFlagLink
+   */
+  select?: Prisma.UserFlagLinkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserFlagLink
+   */
+  omit?: Prisma.UserFlagLinkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserFlagLinkInclude<ExtArgs> | null
+  where?: Prisma.UserFlagLinkWhereInput
+  orderBy?: Prisma.UserFlagLinkOrderByWithRelationInput | Prisma.UserFlagLinkOrderByWithRelationInput[]
+  cursor?: Prisma.UserFlagLinkWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserFlagLinkScalarFieldEnum | Prisma.UserFlagLinkScalarFieldEnum[]
 }
 
 /**
