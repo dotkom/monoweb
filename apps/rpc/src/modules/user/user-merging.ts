@@ -28,7 +28,7 @@ import { simplifyGroupMemberships } from "../group/group-service"
 //          1. Add a { fkField, relationName, deleteOrphan } entry.
 //
 //    CUSTOM_SCALAR_MERGERS
-//      - Scalars that need special logic (e.g. username, flags).
+//      - Scalars that need special logic (e.g. username).
 //      - What you need to do:
 //          1. Add the field to the object.
 //          2. Add a function value.
@@ -42,7 +42,7 @@ import { simplifyGroupMemberships } from "../group/group-service"
 //                User relation name as the key.
 //
 //    CUSTOM_RELATION_MERGERS
-//      - Relations needing deduplication logic (memberships, group memberships).
+//      - Relations needing deduplication logic (flags, memberships, group memberships).
 //      - What you need to do:
 //          1. Add the field to the object.
 //          2. Add a handler function.
@@ -120,9 +120,6 @@ const CUSTOM_SCALAR_MERGERS = {
   // it's a custom username).
   username: (survivor: User, consumed: User): string =>
     isUuid(survivor.username) && !isUuid(consumed.username) ? consumed.username : survivor.username,
-
-  // Concatenate and deduplicate
-  flags: (survivor: User, consumed: User): string[] => [...new Set([...survivor.flags, ...consumed.flags])],
 } satisfies Partial<Record<AllUserKeys, (survivor: User, consumed: User) => unknown>>
 
 /**
@@ -192,6 +189,26 @@ const REASSIGN_RELATION_HANDLERS = {
  * Relations with custom merge logic (deduplication).
  */
 const CUSTOM_RELATION_MERGERS = {
+  flags: async (handle: DBHandle, _groupRepository: GroupRepository, survivor: User, consumed: User) => {
+    const survivorFlagIds = new Set(survivor.flags.map((flag) => flag.id))
+    const consumedFlagsToConnect = consumed.flags
+      .filter((flag) => !survivorFlagIds.has(flag.id))
+      .map((flag) => ({ id: flag.id }))
+
+    if (consumedFlagsToConnect.length > 0) {
+      await handle.user.update({
+        where: {
+          id: survivor.id,
+        },
+        data: {
+          flags: {
+            connect: consumedFlagsToConnect,
+          },
+        },
+      })
+    }
+  },
+
   memberships: async (handle: DBHandle, _groupRepository: GroupRepository, survivor: User, consumed: User) => {
     const survivorMembershipKeys = new Set(survivor.memberships.map(buildMembershipDeduplicationKey))
 

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
-import { GenderSchema, type Membership, type User } from "@dotkomonline/types"
+import { GenderSchema, type Membership, type User, type UserFlag } from "@dotkomonline/types"
 import { beforeEach, describe, expect, it, type vi } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import type { GroupRepository } from "../../group/group-repository"
@@ -38,6 +38,18 @@ function makeMembership(userId: string, overrides: Partial<Membership> = {}): Me
     start: new Date("2024-01-01"),
     end: new Date("2024-06-01"),
     userId,
+    ...overrides,
+  }
+}
+
+function makeUserFlag(overrides: Partial<UserFlag> = {}): UserFlag {
+  return {
+    id: randomUUID(),
+    name: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    description: null,
+    imageUrl: null,
     ...overrides,
   }
 }
@@ -113,15 +125,60 @@ describe("mergeUsers", () => {
     })
   })
 
-  describe("flags custom merger", () => {
-    it("concatenates and deduplicates flags from both users", async () => {
-      const survivor = makeUser({ flags: ["a", "b"] })
-      const consumed = makeUser({ flags: ["b", "c"] })
+  describe("flags custom relation merger", () => {
+    it("connects consumed flags that are not already attached to survivor", async () => {
+      const sharedFlag = makeUserFlag({ name: "shared" })
+      const survivorFlag = makeUserFlag({ name: "survivor" })
+      const consumedFlag = makeUserFlag({ name: "consumed" })
+      const survivor = makeUser({ flags: [survivorFlag, sharedFlag] })
+      const consumed = makeUser({ flags: [sharedFlag, consumedFlag] })
 
       await mergeUsers(handle, groupRepository, survivor, consumed)
 
-      const [[updateArgs]] = (handle.user.update as ReturnType<typeof vi.fn>).mock.calls
-      expect(new Set(updateArgs.data.flags)).toEqual(new Set(["a", "b", "c"]))
+      expect(handle.user.update).toHaveBeenCalledWith({
+        where: {
+          id: survivor.id,
+        },
+        data: {
+          flags: {
+            connect: [{ id: consumedFlag.id }],
+          },
+        },
+      })
+    })
+
+    it("does not connect flags when consumed only has duplicates", async () => {
+      const sharedFlag = makeUserFlag({ name: "shared" })
+      const survivor = makeUser({ flags: [sharedFlag] })
+      const consumed = makeUser({ flags: [sharedFlag] })
+
+      await mergeUsers(handle, groupRepository, survivor, consumed)
+
+      const updateCalls = (handle.user.update as ReturnType<typeof vi.fn>).mock.calls
+      expect(updateCalls).not.toEqual(
+        expect.arrayContaining([
+          [
+            expect.objectContaining({
+              data: expect.objectContaining({
+                flags: expect.objectContaining({
+                  connect: expect.any(Array),
+                }),
+              }),
+            }),
+          ],
+        ])
+      )
+    })
+
+    it("does not write flags as a scalar array", async () => {
+      const survivor = makeUser({ flags: [makeUserFlag({ name: "survivor" })] })
+      const consumed = makeUser({ flags: [makeUserFlag({ name: "consumed" })] })
+
+      await mergeUsers(handle, groupRepository, survivor, consumed)
+
+      for (const [updateArgs] of (handle.user.update as ReturnType<typeof vi.fn>).mock.calls) {
+        expect(Array.isArray(updateArgs.data.flags)).toBe(false)
+      }
     })
   })
 

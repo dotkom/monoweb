@@ -83,6 +83,19 @@ enum Gender {
   @@map("gender")
 }
 
+model UserFlag {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  description String?
+  imageUrl    String?  @map("image_url")
+
+  users User[] @relation("UserFlags")
+
+  @@map("user_flag")
+}
+
 model User {
   /// OpenID Connect Subject claim - for this reason there is no @default(uuid()) here.
   id                  String   @id
@@ -95,7 +108,6 @@ model User {
   gender              Gender   @default(UNKNOWN)
   dietaryRestrictions String?  @map("dietary_restrictions")
   ntnuUsername        String?  @map("ntnu_username")
-  flags               String[]
   /// Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
   workspaceUserId     String?  @unique @map("workspace_user_id")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -117,6 +129,7 @@ model User {
   notificationsReceived NotificationRecipient[]
   notificationsCreated  Notification[]          @relation("created_by")
   notificationsUpdated  Notification[]          @relation("last_updated_by")
+  flags                 UserFlag[]              @relation("UserFlags")
 
   @@map("ow_user")
 }
