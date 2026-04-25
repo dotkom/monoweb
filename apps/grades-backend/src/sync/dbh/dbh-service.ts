@@ -134,7 +134,7 @@ const ParsedCourseSchema = ApiCourseSchema.transform((input) => {
     year: input.Årstall,
     semester: parseSemester(input.Semester),
     code: input.Emnekode.split("-")[0], // DBH has versioning in their course codes, this ensures only the actual course code remains
-    norwegianName: input.Emnenavn,
+    nameNo: input.Emnenavn,
     studyLevel: parseStudyLevel(input.Nivåkode),
     teachingLanguges: parseTeachingLanguage(input["Underv.språk"]),
     status: parseStatus(input.Status),
