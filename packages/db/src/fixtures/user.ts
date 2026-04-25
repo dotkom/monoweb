@@ -1,5 +1,5 @@
-import type { Prisma } from "@prisma/client"
 import { GenderSchema } from "../schemas/index"
+import type { Prisma } from "../"
 
 export const getUserFixtures = () =>
   [
