@@ -40,6 +40,24 @@ export type MembershipWrite = z.infer<typeof MembershipWriteSchema>
 export const GenderSchema = z.enum(["MALE", "FEMALE", "NON_BINARY", "OTHER", "UNKNOWN"])
 export type Gender = z.infer<typeof GenderSchema>
 
+export const UserFlagSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().nullable(),
+  imageUrl: z.string().nullable(),
+})
+export type UserFlag = z.infer<typeof UserFlagSchema>
+export type UserFlagId = UserFlag["id"]
+
+export const UserFlagWriteSchema = UserFlagSchema.pick({
+  name: true,
+  description: true,
+  imageUrl: true,
+})
+export type UserFlagWrite = z.infer<typeof UserFlagWriteSchema>
+
 export const UserSchema = z.object({
   id: z.string(),
   username: z.string(),
@@ -51,7 +69,7 @@ export const UserSchema = z.object({
   gender: GenderSchema.default("UNKNOWN"),
   dietaryRestrictions: z.string().nullable(),
   ntnuUsername: z.string().nullable(),
-  flags: z.array(z.string()),
+  flags: z.array(UserFlagSchema),
   workspaceUserId: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -62,6 +80,25 @@ export const UserSchema = z.object({
 export type User = z.infer<typeof UserSchema>
 export type UserId = User["id"]
 export type Username = User["username"]
+
+export function normalizeDbUser(user: { userFlagLinks: { userFlag: UserFlag }[]; [key: string]: unknown }) {
+  const { userFlagLinks, ...rest } = user
+
+  return {
+    ...rest,
+    flags: userFlagLinks.map((l) => l.userFlag),
+  }
+}
+
+export const UserFlagWithUsersSchema = UserFlagSchema.extend({
+  users: UserSchema.pick({
+    id: true,
+    name: true,
+    username: true,
+    imageUrl: true,
+  }).array(),
+})
+export type UserFlagWithUsers = z.infer<typeof UserFlagWithUsersSchema>
 
 export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
 export const PHONE_REGEX = /^[0-9-+\s]*$/
