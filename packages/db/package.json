@@ -23,6 +23,7 @@
     "type-check": "tsc --noEmit",
     "prisma": "prisma",
     "migrate": "prisma migrate dev",
+    "migrate:reset": "prisma migrate reset",
     "generate": "prisma generate",
     "postinstall": "prisma generate",
     "apply-fixtures": "tsx src/fixtures.ts",
