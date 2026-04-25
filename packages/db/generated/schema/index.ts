@@ -38,7 +38,7 @@ export type RelationLoadStrategy = z.infer<typeof RelationLoadStrategySchema>;
 
 // File: UserScalarFieldEnum.schema.ts
 
-export const UserScalarFieldEnumSchema = z.enum(['id', 'username', 'name', 'email', 'imageUrl', 'biography', 'phone', 'gender', 'dietaryRestrictions', 'ntnuUsername', 'flags', 'workspaceUserId', 'createdAt', 'updatedAt', 'privacyPermissionsId', 'notificationPermissionsId'])
+export const UserScalarFieldEnumSchema = z.enum(['id', 'username', 'name', 'email', 'imageUrl', 'biography', 'phone', 'gender', 'dietaryRestrictions', 'ntnuUsername', 'workspaceUserId', 'createdAt', 'updatedAt', 'privacyPermissionsId', 'notificationPermissionsId'])
 
 export type UserScalarFieldEnum = z.infer<typeof UserScalarFieldEnumSchema>;
 
@@ -263,6 +263,18 @@ export type ContestantScalarFieldEnum = z.infer<typeof ContestantScalarFieldEnum
 export const ContestTeamScalarFieldEnumSchema = z.enum(['id', 'name', 'contestantId'])
 
 export type ContestTeamScalarFieldEnum = z.infer<typeof ContestTeamScalarFieldEnumSchema>;
+
+// File: UserFlagScalarFieldEnum.schema.ts
+
+export const UserFlagScalarFieldEnumSchema = z.enum(['id', 'name', 'createdAt', 'updatedAt', 'description', 'imageUrl'])
+
+export type UserFlagScalarFieldEnum = z.infer<typeof UserFlagScalarFieldEnumSchema>;
+
+// File: UserFlagLinkScalarFieldEnum.schema.ts
+
+export const UserFlagLinkScalarFieldEnumSchema = z.enum(['id', 'awardedAt', 'reason', 'userId', 'userFlagId'])
+
+export type UserFlagLinkScalarFieldEnum = z.infer<typeof UserFlagLinkScalarFieldEnumSchema>;
 
 // File: SortOrder.schema.ts
 
@@ -509,7 +521,6 @@ const userwhereinputSchema = z.object({
   gender: z.union([z.lazy(() => EnumGenderFilterObjectSchema), GenderSchema]).optional(),
   dietaryRestrictions: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   ntnuUsername: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
-  flags: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
   workspaceUserId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
@@ -529,7 +540,8 @@ const userwhereinputSchema = z.object({
   notificationsCreated: z.lazy(() => NotificationListRelationFilterObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationListRelationFilterObjectSchema).optional(),
   contestants: z.lazy(() => ContestantListRelationFilterObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamListRelationFilterObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamListRelationFilterObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkListRelationFilterObjectSchema).optional()
 }).strict();
 export const UserWhereInputObjectSchema: z.ZodType<Prisma.UserWhereInput> = userwhereinputSchema as unknown as z.ZodType<Prisma.UserWhereInput>;
 export const UserWhereInputObjectZodSchema = userwhereinputSchema;
@@ -547,7 +559,6 @@ const __makeSchema_UserOrderByWithRelationInput_schema = () => z.object({
   gender: SortOrderSchema.optional(),
   dietaryRestrictions: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   ntnuUsername: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  flags: SortOrderSchema.optional(),
   workspaceUserId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
@@ -567,7 +578,8 @@ const __makeSchema_UserOrderByWithRelationInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationOrderByRelationAggregateInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationOrderByRelationAggregateInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantOrderByRelationAggregateInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamOrderByRelationAggregateInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamOrderByRelationAggregateInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
 export const UserOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.UserOrderByWithRelationInput> = __makeSchema_UserOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.UserOrderByWithRelationInput>;
 export const UserOrderByWithRelationInputObjectZodSchema = __makeSchema_UserOrderByWithRelationInput_schema();
@@ -597,7 +609,6 @@ const __makeSchema_UserOrderByWithAggregationInput_schema = () => z.object({
   gender: SortOrderSchema.optional(),
   dietaryRestrictions: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   ntnuUsername: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  flags: SortOrderSchema.optional(),
   workspaceUserId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
@@ -627,7 +638,6 @@ const userscalarwherewithaggregatesinputSchema = z.object({
   gender: z.union([z.lazy(() => EnumGenderWithAggregatesFilterObjectSchema), GenderSchema]).optional(),
   dietaryRestrictions: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   ntnuUsername: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
-  flags: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
   workspaceUserId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
@@ -3662,6 +3672,151 @@ export const ContestTeamScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Pr
 export const ContestTeamScalarWhereWithAggregatesInputObjectZodSchema = contestteamscalarwherewithaggregatesinputSchema;
 
 
+// File: UserFlagWhereInput.schema.ts
+
+const userflagwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => UserFlagWhereInputObjectSchema), z.lazy(() => UserFlagWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => UserFlagWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => UserFlagWhereInputObjectSchema), z.lazy(() => UserFlagWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  description: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  imageUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  userFlagLinks: z.lazy(() => UserFlagLinkListRelationFilterObjectSchema).optional()
+}).strict();
+export const UserFlagWhereInputObjectSchema: z.ZodType<Prisma.UserFlagWhereInput> = userflagwhereinputSchema as unknown as z.ZodType<Prisma.UserFlagWhereInput>;
+export const UserFlagWhereInputObjectZodSchema = userflagwhereinputSchema;
+
+
+// File: UserFlagOrderByWithRelationInput.schema.ts
+const __makeSchema_UserFlagOrderByWithRelationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  createdAt: SortOrderSchema.optional(),
+  updatedAt: SortOrderSchema.optional(),
+  description: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  imageUrl: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkOrderByRelationAggregateInputObjectSchema).optional()
+}).strict();
+export const UserFlagOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.UserFlagOrderByWithRelationInput> = __makeSchema_UserFlagOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.UserFlagOrderByWithRelationInput>;
+export const UserFlagOrderByWithRelationInputObjectZodSchema = __makeSchema_UserFlagOrderByWithRelationInput_schema();
+
+
+// File: UserFlagWhereUniqueInput.schema.ts
+const __makeSchema_UserFlagWhereUniqueInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string().optional()
+}).strict();
+export const UserFlagWhereUniqueInputObjectSchema: z.ZodType<Prisma.UserFlagWhereUniqueInput> = __makeSchema_UserFlagWhereUniqueInput_schema() as unknown as z.ZodType<Prisma.UserFlagWhereUniqueInput>;
+export const UserFlagWhereUniqueInputObjectZodSchema = __makeSchema_UserFlagWhereUniqueInput_schema();
+
+
+// File: UserFlagOrderByWithAggregationInput.schema.ts
+const __makeSchema_UserFlagOrderByWithAggregationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  createdAt: SortOrderSchema.optional(),
+  updatedAt: SortOrderSchema.optional(),
+  description: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  imageUrl: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  _count: z.lazy(() => UserFlagCountOrderByAggregateInputObjectSchema).optional(),
+  _max: z.lazy(() => UserFlagMaxOrderByAggregateInputObjectSchema).optional(),
+  _min: z.lazy(() => UserFlagMinOrderByAggregateInputObjectSchema).optional()
+}).strict();
+export const UserFlagOrderByWithAggregationInputObjectSchema: z.ZodType<Prisma.UserFlagOrderByWithAggregationInput> = __makeSchema_UserFlagOrderByWithAggregationInput_schema() as unknown as z.ZodType<Prisma.UserFlagOrderByWithAggregationInput>;
+export const UserFlagOrderByWithAggregationInputObjectZodSchema = __makeSchema_UserFlagOrderByWithAggregationInput_schema();
+
+
+// File: UserFlagScalarWhereWithAggregatesInput.schema.ts
+
+const userflagscalarwherewithaggregatesinputSchema = z.object({
+  AND: z.union([z.lazy(() => UserFlagScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => UserFlagScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => UserFlagScalarWhereWithAggregatesInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => UserFlagScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => UserFlagScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  description: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
+  imageUrl: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable()
+}).strict();
+export const UserFlagScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.UserFlagScalarWhereWithAggregatesInput> = userflagscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.UserFlagScalarWhereWithAggregatesInput>;
+export const UserFlagScalarWhereWithAggregatesInputObjectZodSchema = userflagscalarwherewithaggregatesinputSchema;
+
+
+// File: UserFlagLinkWhereInput.schema.ts
+
+const userflaglinkwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => UserFlagLinkWhereInputObjectSchema), z.lazy(() => UserFlagLinkWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => UserFlagLinkWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => UserFlagLinkWhereInputObjectSchema), z.lazy(() => UserFlagLinkWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  awardedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  reason: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  userFlagId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  user: z.union([z.lazy(() => UserScalarRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional(),
+  userFlag: z.union([z.lazy(() => UserFlagScalarRelationFilterObjectSchema), z.lazy(() => UserFlagWhereInputObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkWhereInputObjectSchema: z.ZodType<Prisma.UserFlagLinkWhereInput> = userflaglinkwhereinputSchema as unknown as z.ZodType<Prisma.UserFlagLinkWhereInput>;
+export const UserFlagLinkWhereInputObjectZodSchema = userflaglinkwhereinputSchema;
+
+
+// File: UserFlagLinkOrderByWithRelationInput.schema.ts
+const __makeSchema_UserFlagLinkOrderByWithRelationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  awardedAt: SortOrderSchema.optional(),
+  reason: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  userId: SortOrderSchema.optional(),
+  userFlagId: SortOrderSchema.optional(),
+  user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
+  userFlag: z.lazy(() => UserFlagOrderByWithRelationInputObjectSchema).optional()
+}).strict();
+export const UserFlagLinkOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.UserFlagLinkOrderByWithRelationInput> = __makeSchema_UserFlagLinkOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkOrderByWithRelationInput>;
+export const UserFlagLinkOrderByWithRelationInputObjectZodSchema = __makeSchema_UserFlagLinkOrderByWithRelationInput_schema();
+
+
+// File: UserFlagLinkWhereUniqueInput.schema.ts
+const __makeSchema_UserFlagLinkWhereUniqueInput_schema = () => z.object({
+  id: z.string().optional()
+}).strict();
+export const UserFlagLinkWhereUniqueInputObjectSchema: z.ZodType<Prisma.UserFlagLinkWhereUniqueInput> = __makeSchema_UserFlagLinkWhereUniqueInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkWhereUniqueInput>;
+export const UserFlagLinkWhereUniqueInputObjectZodSchema = __makeSchema_UserFlagLinkWhereUniqueInput_schema();
+
+
+// File: UserFlagLinkOrderByWithAggregationInput.schema.ts
+const __makeSchema_UserFlagLinkOrderByWithAggregationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  awardedAt: SortOrderSchema.optional(),
+  reason: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  userId: SortOrderSchema.optional(),
+  userFlagId: SortOrderSchema.optional(),
+  _count: z.lazy(() => UserFlagLinkCountOrderByAggregateInputObjectSchema).optional(),
+  _max: z.lazy(() => UserFlagLinkMaxOrderByAggregateInputObjectSchema).optional(),
+  _min: z.lazy(() => UserFlagLinkMinOrderByAggregateInputObjectSchema).optional()
+}).strict();
+export const UserFlagLinkOrderByWithAggregationInputObjectSchema: z.ZodType<Prisma.UserFlagLinkOrderByWithAggregationInput> = __makeSchema_UserFlagLinkOrderByWithAggregationInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkOrderByWithAggregationInput>;
+export const UserFlagLinkOrderByWithAggregationInputObjectZodSchema = __makeSchema_UserFlagLinkOrderByWithAggregationInput_schema();
+
+
+// File: UserFlagLinkScalarWhereWithAggregatesInput.schema.ts
+
+const userflaglinkscalarwherewithaggregatesinputSchema = z.object({
+  AND: z.union([z.lazy(() => UserFlagLinkScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => UserFlagLinkScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => UserFlagLinkScalarWhereWithAggregatesInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => UserFlagLinkScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => UserFlagLinkScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  awardedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+  reason: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
+  userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  userFlagId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
+}).strict();
+export const UserFlagLinkScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.UserFlagLinkScalarWhereWithAggregatesInput> = userflaglinkscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.UserFlagLinkScalarWhereWithAggregatesInput>;
+export const UserFlagLinkScalarWhereWithAggregatesInputObjectZodSchema = userflaglinkscalarwherewithaggregatesinputSchema;
+
+
 // File: MembershipCreateInput.schema.ts
 const __makeSchema_MembershipCreateInput_schema = () => z.object({
   id: z.string().optional(),
@@ -3771,7 +3926,6 @@ const __makeSchema_UserCreateInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   privacyPermissionsId: z.string().optional().nullable(),
@@ -3790,7 +3944,8 @@ const __makeSchema_UserCreateInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateInputObjectSchema: z.ZodType<Prisma.UserCreateInput> = __makeSchema_UserCreateInput_schema() as unknown as z.ZodType<Prisma.UserCreateInput>;
 export const UserCreateInputObjectZodSchema = __makeSchema_UserCreateInput_schema();
@@ -3808,7 +3963,6 @@ const __makeSchema_UserUncheckedCreateInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   privacyPermissionsId: z.string().optional().nullable(),
@@ -3827,7 +3981,8 @@ const __makeSchema_UserUncheckedCreateInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateInput> = __makeSchema_UserUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateInput>;
 export const UserUncheckedCreateInputObjectZodSchema = __makeSchema_UserUncheckedCreateInput_schema();
@@ -3845,7 +4000,6 @@ const __makeSchema_UserUpdateInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -3865,7 +4019,8 @@ const __makeSchema_UserUpdateInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateInputObjectSchema: z.ZodType<Prisma.UserUpdateInput> = __makeSchema_UserUpdateInput_schema() as unknown as z.ZodType<Prisma.UserUpdateInput>;
 export const UserUpdateInputObjectZodSchema = __makeSchema_UserUpdateInput_schema();
@@ -3883,7 +4038,6 @@ const __makeSchema_UserUncheckedUpdateInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -3903,7 +4057,8 @@ const __makeSchema_UserUncheckedUpdateInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateInput> = __makeSchema_UserUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateInput>;
 export const UserUncheckedUpdateInputObjectZodSchema = __makeSchema_UserUncheckedUpdateInput_schema();
@@ -3921,7 +4076,6 @@ const __makeSchema_UserCreateManyInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -3944,7 +4098,6 @@ const __makeSchema_UserUpdateManyMutationInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -3967,7 +4120,6 @@ const __makeSchema_UserUncheckedUpdateManyInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -7747,6 +7899,181 @@ export const ContestTeamUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.C
 export const ContestTeamUncheckedUpdateManyInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateManyInput_schema();
 
 
+// File: UserFlagCreateInput.schema.ts
+const __makeSchema_UserFlagCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  createdAt: z.coerce.date().optional(),
+  description: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserFlagInputObjectSchema).optional()
+}).strict();
+export const UserFlagCreateInputObjectSchema: z.ZodType<Prisma.UserFlagCreateInput> = __makeSchema_UserFlagCreateInput_schema() as unknown as z.ZodType<Prisma.UserFlagCreateInput>;
+export const UserFlagCreateInputObjectZodSchema = __makeSchema_UserFlagCreateInput_schema();
+
+
+// File: UserFlagUncheckedCreateInput.schema.ts
+const __makeSchema_UserFlagUncheckedCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  createdAt: z.coerce.date().optional(),
+  description: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInputObjectSchema).optional()
+}).strict();
+export const UserFlagUncheckedCreateInputObjectSchema: z.ZodType<Prisma.UserFlagUncheckedCreateInput> = __makeSchema_UserFlagUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.UserFlagUncheckedCreateInput>;
+export const UserFlagUncheckedCreateInputObjectZodSchema = __makeSchema_UserFlagUncheckedCreateInput_schema();
+
+
+// File: UserFlagUpdateInput.schema.ts
+const __makeSchema_UserFlagUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserFlagNestedInputObjectSchema).optional()
+}).strict();
+export const UserFlagUpdateInputObjectSchema: z.ZodType<Prisma.UserFlagUpdateInput> = __makeSchema_UserFlagUpdateInput_schema() as unknown as z.ZodType<Prisma.UserFlagUpdateInput>;
+export const UserFlagUpdateInputObjectZodSchema = __makeSchema_UserFlagUpdateInput_schema();
+
+
+// File: UserFlagUncheckedUpdateInput.schema.ts
+const __makeSchema_UserFlagUncheckedUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInputObjectSchema).optional()
+}).strict();
+export const UserFlagUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.UserFlagUncheckedUpdateInput> = __makeSchema_UserFlagUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.UserFlagUncheckedUpdateInput>;
+export const UserFlagUncheckedUpdateInputObjectZodSchema = __makeSchema_UserFlagUncheckedUpdateInput_schema();
+
+
+// File: UserFlagCreateManyInput.schema.ts
+const __makeSchema_UserFlagCreateManyInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  description: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable()
+}).strict();
+export const UserFlagCreateManyInputObjectSchema: z.ZodType<Prisma.UserFlagCreateManyInput> = __makeSchema_UserFlagCreateManyInput_schema() as unknown as z.ZodType<Prisma.UserFlagCreateManyInput>;
+export const UserFlagCreateManyInputObjectZodSchema = __makeSchema_UserFlagCreateManyInput_schema();
+
+
+// File: UserFlagUpdateManyMutationInput.schema.ts
+const __makeSchema_UserFlagUpdateManyMutationInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const UserFlagUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.UserFlagUpdateManyMutationInput> = __makeSchema_UserFlagUpdateManyMutationInput_schema() as unknown as z.ZodType<Prisma.UserFlagUpdateManyMutationInput>;
+export const UserFlagUpdateManyMutationInputObjectZodSchema = __makeSchema_UserFlagUpdateManyMutationInput_schema();
+
+
+// File: UserFlagUncheckedUpdateManyInput.schema.ts
+const __makeSchema_UserFlagUncheckedUpdateManyInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const UserFlagUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.UserFlagUncheckedUpdateManyInput> = __makeSchema_UserFlagUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.UserFlagUncheckedUpdateManyInput>;
+export const UserFlagUncheckedUpdateManyInputObjectZodSchema = __makeSchema_UserFlagUncheckedUpdateManyInput_schema();
+
+
+// File: UserFlagLinkCreateInput.schema.ts
+const __makeSchema_UserFlagLinkCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  user: z.lazy(() => UserCreateNestedOneWithoutUserFlagLinksInputObjectSchema),
+  userFlag: z.lazy(() => UserFlagCreateNestedOneWithoutUserFlagLinksInputObjectSchema)
+}).strict();
+export const UserFlagLinkCreateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateInput> = __makeSchema_UserFlagLinkCreateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateInput>;
+export const UserFlagLinkCreateInputObjectZodSchema = __makeSchema_UserFlagLinkCreateInput_schema();
+
+
+// File: UserFlagLinkUncheckedCreateInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  userId: z.string(),
+  userFlagId: z.string()
+}).strict();
+export const UserFlagLinkUncheckedCreateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedCreateInput> = __makeSchema_UserFlagLinkUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedCreateInput>;
+export const UserFlagLinkUncheckedCreateInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedCreateInput_schema();
+
+
+// File: UserFlagLinkUpdateInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  user: z.lazy(() => UserUpdateOneRequiredWithoutUserFlagLinksNestedInputObjectSchema).optional(),
+  userFlag: z.lazy(() => UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInputObjectSchema).optional()
+}).strict();
+export const UserFlagLinkUpdateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateInput> = __makeSchema_UserFlagLinkUpdateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateInput>;
+export const UserFlagLinkUpdateInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateInput_schema();
+
+
+// File: UserFlagLinkUncheckedUpdateInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userFlagId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedUpdateInput> = __makeSchema_UserFlagLinkUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedUpdateInput>;
+export const UserFlagLinkUncheckedUpdateInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedUpdateInput_schema();
+
+
+// File: UserFlagLinkCreateManyInput.schema.ts
+const __makeSchema_UserFlagLinkCreateManyInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  userId: z.string(),
+  userFlagId: z.string()
+}).strict();
+export const UserFlagLinkCreateManyInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateManyInput> = __makeSchema_UserFlagLinkCreateManyInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateManyInput>;
+export const UserFlagLinkCreateManyInputObjectZodSchema = __makeSchema_UserFlagLinkCreateManyInput_schema();
+
+
+// File: UserFlagLinkUpdateManyMutationInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateManyMutationInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const UserFlagLinkUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateManyMutationInput> = __makeSchema_UserFlagLinkUpdateManyMutationInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateManyMutationInput>;
+export const UserFlagLinkUpdateManyMutationInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateManyMutationInput_schema();
+
+
+// File: UserFlagLinkUncheckedUpdateManyInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedUpdateManyInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userFlagId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyInput> = __makeSchema_UserFlagLinkUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyInput>;
+export const UserFlagLinkUncheckedUpdateManyInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedUpdateManyInput_schema();
+
+
 // File: StringFilter.schema.ts
 const __makeSchema_StringFilter_schema = () => z.object({
   equals: z.string().optional(),
@@ -8045,18 +8372,6 @@ export const EnumGenderFilterObjectSchema: z.ZodType<Prisma.EnumGenderFilter> = 
 export const EnumGenderFilterObjectZodSchema = __makeSchema_EnumGenderFilter_schema();
 
 
-// File: StringNullableListFilter.schema.ts
-const __makeSchema_StringNullableListFilter_schema = () => z.object({
-  equals: z.string().array().optional().nullable(),
-  has: z.string().optional().nullable(),
-  hasEvery: z.string().array().optional(),
-  hasSome: z.string().array().optional(),
-  isEmpty: z.boolean().optional()
-}).strict();
-export const StringNullableListFilterObjectSchema: z.ZodType<Prisma.StringNullableListFilter> = __makeSchema_StringNullableListFilter_schema() as unknown as z.ZodType<Prisma.StringNullableListFilter>;
-export const StringNullableListFilterObjectZodSchema = __makeSchema_StringNullableListFilter_schema();
-
-
 // File: PrivacyPermissionsNullableScalarRelationFilter.schema.ts
 const __makeSchema_PrivacyPermissionsNullableScalarRelationFilter_schema = () => z.object({
   is: z.lazy(() => PrivacyPermissionsWhereInputObjectSchema).optional().nullable(),
@@ -8175,6 +8490,16 @@ export const ContestTeamListRelationFilterObjectSchema: z.ZodType<Prisma.Contest
 export const ContestTeamListRelationFilterObjectZodSchema = __makeSchema_ContestTeamListRelationFilter_schema();
 
 
+// File: UserFlagLinkListRelationFilter.schema.ts
+const __makeSchema_UserFlagLinkListRelationFilter_schema = () => z.object({
+  every: z.lazy(() => UserFlagLinkWhereInputObjectSchema).optional(),
+  some: z.lazy(() => UserFlagLinkWhereInputObjectSchema).optional(),
+  none: z.lazy(() => UserFlagLinkWhereInputObjectSchema).optional()
+}).strict();
+export const UserFlagLinkListRelationFilterObjectSchema: z.ZodType<Prisma.UserFlagLinkListRelationFilter> = __makeSchema_UserFlagLinkListRelationFilter_schema() as unknown as z.ZodType<Prisma.UserFlagLinkListRelationFilter>;
+export const UserFlagLinkListRelationFilterObjectZodSchema = __makeSchema_UserFlagLinkListRelationFilter_schema();
+
+
 // File: AttendeeOrderByRelationAggregateInput.schema.ts
 const __makeSchema_AttendeeOrderByRelationAggregateInput_schema = () => z.object({
   _count: SortOrderSchema.optional()
@@ -8255,6 +8580,14 @@ export const ContestTeamOrderByRelationAggregateInputObjectSchema: z.ZodType<Pri
 export const ContestTeamOrderByRelationAggregateInputObjectZodSchema = __makeSchema_ContestTeamOrderByRelationAggregateInput_schema();
 
 
+// File: UserFlagLinkOrderByRelationAggregateInput.schema.ts
+const __makeSchema_UserFlagLinkOrderByRelationAggregateInput_schema = () => z.object({
+  _count: SortOrderSchema.optional()
+}).strict();
+export const UserFlagLinkOrderByRelationAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkOrderByRelationAggregateInput> = __makeSchema_UserFlagLinkOrderByRelationAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkOrderByRelationAggregateInput>;
+export const UserFlagLinkOrderByRelationAggregateInputObjectZodSchema = __makeSchema_UserFlagLinkOrderByRelationAggregateInput_schema();
+
+
 // File: UserCountOrderByAggregateInput.schema.ts
 const __makeSchema_UserCountOrderByAggregateInput_schema = () => z.object({
   id: SortOrderSchema.optional(),
@@ -8267,7 +8600,6 @@ const __makeSchema_UserCountOrderByAggregateInput_schema = () => z.object({
   gender: SortOrderSchema.optional(),
   dietaryRestrictions: SortOrderSchema.optional(),
   ntnuUsername: SortOrderSchema.optional(),
-  flags: SortOrderSchema.optional(),
   workspaceUserId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
@@ -11371,6 +11703,90 @@ export const ContestTeamMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.C
 export const ContestTeamMinOrderByAggregateInputObjectZodSchema = __makeSchema_ContestTeamMinOrderByAggregateInput_schema();
 
 
+// File: UserFlagCountOrderByAggregateInput.schema.ts
+const __makeSchema_UserFlagCountOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  createdAt: SortOrderSchema.optional(),
+  updatedAt: SortOrderSchema.optional(),
+  description: SortOrderSchema.optional(),
+  imageUrl: SortOrderSchema.optional()
+}).strict();
+export const UserFlagCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagCountOrderByAggregateInput> = __makeSchema_UserFlagCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagCountOrderByAggregateInput>;
+export const UserFlagCountOrderByAggregateInputObjectZodSchema = __makeSchema_UserFlagCountOrderByAggregateInput_schema();
+
+
+// File: UserFlagMaxOrderByAggregateInput.schema.ts
+const __makeSchema_UserFlagMaxOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  createdAt: SortOrderSchema.optional(),
+  updatedAt: SortOrderSchema.optional(),
+  description: SortOrderSchema.optional(),
+  imageUrl: SortOrderSchema.optional()
+}).strict();
+export const UserFlagMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagMaxOrderByAggregateInput> = __makeSchema_UserFlagMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagMaxOrderByAggregateInput>;
+export const UserFlagMaxOrderByAggregateInputObjectZodSchema = __makeSchema_UserFlagMaxOrderByAggregateInput_schema();
+
+
+// File: UserFlagMinOrderByAggregateInput.schema.ts
+const __makeSchema_UserFlagMinOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  createdAt: SortOrderSchema.optional(),
+  updatedAt: SortOrderSchema.optional(),
+  description: SortOrderSchema.optional(),
+  imageUrl: SortOrderSchema.optional()
+}).strict();
+export const UserFlagMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagMinOrderByAggregateInput> = __makeSchema_UserFlagMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagMinOrderByAggregateInput>;
+export const UserFlagMinOrderByAggregateInputObjectZodSchema = __makeSchema_UserFlagMinOrderByAggregateInput_schema();
+
+
+// File: UserFlagScalarRelationFilter.schema.ts
+const __makeSchema_UserFlagScalarRelationFilter_schema = () => z.object({
+  is: z.lazy(() => UserFlagWhereInputObjectSchema).optional(),
+  isNot: z.lazy(() => UserFlagWhereInputObjectSchema).optional()
+}).strict();
+export const UserFlagScalarRelationFilterObjectSchema: z.ZodType<Prisma.UserFlagScalarRelationFilter> = __makeSchema_UserFlagScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.UserFlagScalarRelationFilter>;
+export const UserFlagScalarRelationFilterObjectZodSchema = __makeSchema_UserFlagScalarRelationFilter_schema();
+
+
+// File: UserFlagLinkCountOrderByAggregateInput.schema.ts
+const __makeSchema_UserFlagLinkCountOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  awardedAt: SortOrderSchema.optional(),
+  reason: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
+  userFlagId: SortOrderSchema.optional()
+}).strict();
+export const UserFlagLinkCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCountOrderByAggregateInput> = __makeSchema_UserFlagLinkCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCountOrderByAggregateInput>;
+export const UserFlagLinkCountOrderByAggregateInputObjectZodSchema = __makeSchema_UserFlagLinkCountOrderByAggregateInput_schema();
+
+
+// File: UserFlagLinkMaxOrderByAggregateInput.schema.ts
+const __makeSchema_UserFlagLinkMaxOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  awardedAt: SortOrderSchema.optional(),
+  reason: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
+  userFlagId: SortOrderSchema.optional()
+}).strict();
+export const UserFlagLinkMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkMaxOrderByAggregateInput> = __makeSchema_UserFlagLinkMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkMaxOrderByAggregateInput>;
+export const UserFlagLinkMaxOrderByAggregateInputObjectZodSchema = __makeSchema_UserFlagLinkMaxOrderByAggregateInput_schema();
+
+
+// File: UserFlagLinkMinOrderByAggregateInput.schema.ts
+const __makeSchema_UserFlagLinkMinOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  awardedAt: SortOrderSchema.optional(),
+  reason: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional(),
+  userFlagId: SortOrderSchema.optional()
+}).strict();
+export const UserFlagLinkMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkMinOrderByAggregateInput> = __makeSchema_UserFlagLinkMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkMinOrderByAggregateInput>;
+export const UserFlagLinkMinOrderByAggregateInputObjectZodSchema = __makeSchema_UserFlagLinkMinOrderByAggregateInput_schema();
+
+
 // File: UserCreateNestedOneWithoutMembershipsInput.schema.ts
 const __makeSchema_UserCreateNestedOneWithoutMembershipsInput_schema = () => z.object({
   create: z.union([z.lazy(() => UserCreateWithoutMembershipsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutMembershipsInputObjectSchema)]).optional(),
@@ -11443,14 +11859,6 @@ const __makeSchema_UserUpdateOneRequiredWithoutMembershipsNestedInput_schema = (
 }).strict();
 export const UserUpdateOneRequiredWithoutMembershipsNestedInputObjectSchema: z.ZodType<Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput> = __makeSchema_UserUpdateOneRequiredWithoutMembershipsNestedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput>;
 export const UserUpdateOneRequiredWithoutMembershipsNestedInputObjectZodSchema = __makeSchema_UserUpdateOneRequiredWithoutMembershipsNestedInput_schema();
-
-
-// File: UserCreateflagsInput.schema.ts
-const __makeSchema_UserCreateflagsInput_schema = () => z.object({
-  set: z.string().array()
-}).strict();
-export const UserCreateflagsInputObjectSchema: z.ZodType<Prisma.UserCreateflagsInput> = __makeSchema_UserCreateflagsInput_schema() as unknown as z.ZodType<Prisma.UserCreateflagsInput>;
-export const UserCreateflagsInputObjectZodSchema = __makeSchema_UserCreateflagsInput_schema();
 
 
 // File: PrivacyPermissionsCreateNestedOneWithoutUserInput.schema.ts
@@ -11615,6 +12023,17 @@ export const ContestTeamCreateNestedManyWithoutMembersInputObjectSchema: z.ZodTy
 export const ContestTeamCreateNestedManyWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamCreateNestedManyWithoutMembersInput_schema();
 
 
+// File: UserFlagLinkCreateNestedManyWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkCreateNestedManyWithoutUserInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema).array(), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => UserFlagLinkCreateManyUserInputEnvelopeObjectSchema).optional(),
+  connect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateNestedManyWithoutUserInput> = __makeSchema_UserFlagLinkCreateNestedManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateNestedManyWithoutUserInput>;
+export const UserFlagLinkCreateNestedManyWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkCreateNestedManyWithoutUserInput_schema();
+
+
 // File: PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput.schema.ts
 const __makeSchema_PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput_schema = () => z.object({
   create: z.union([z.lazy(() => PrivacyPermissionsCreateWithoutUserInputObjectSchema), z.lazy(() => PrivacyPermissionsUncheckedCreateWithoutUserInputObjectSchema)]).optional(),
@@ -11777,6 +12196,17 @@ export const ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema
 export const ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUncheckedCreateNestedManyWithoutMembersInput_schema();
 
 
+// File: UserFlagLinkUncheckedCreateNestedManyWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedCreateNestedManyWithoutUserInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema).array(), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => UserFlagLinkCreateManyUserInputEnvelopeObjectSchema).optional(),
+  connect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput> = __makeSchema_UserFlagLinkUncheckedCreateNestedManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput>;
+export const UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedCreateNestedManyWithoutUserInput_schema();
+
+
 // File: NullableStringFieldUpdateOperationsInput.schema.ts
 const __makeSchema_NullableStringFieldUpdateOperationsInput_schema = () => z.object({
   set: z.string().optional()
@@ -11791,15 +12221,6 @@ const __makeSchema_EnumGenderFieldUpdateOperationsInput_schema = () => z.object(
 }).strict();
 export const EnumGenderFieldUpdateOperationsInputObjectSchema: z.ZodType<Prisma.EnumGenderFieldUpdateOperationsInput> = __makeSchema_EnumGenderFieldUpdateOperationsInput_schema() as unknown as z.ZodType<Prisma.EnumGenderFieldUpdateOperationsInput>;
 export const EnumGenderFieldUpdateOperationsInputObjectZodSchema = __makeSchema_EnumGenderFieldUpdateOperationsInput_schema();
-
-
-// File: UserUpdateflagsInput.schema.ts
-const __makeSchema_UserUpdateflagsInput_schema = () => z.object({
-  set: z.string().array().optional(),
-  push: z.union([z.string(), z.string().array()]).optional()
-}).strict();
-export const UserUpdateflagsInputObjectSchema: z.ZodType<Prisma.UserUpdateflagsInput> = __makeSchema_UserUpdateflagsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateflagsInput>;
-export const UserUpdateflagsInputObjectZodSchema = __makeSchema_UserUpdateflagsInput_schema();
 
 
 // File: PrivacyPermissionsUpdateOneWithoutUserNestedInput.schema.ts
@@ -12063,6 +12484,24 @@ export const ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema: z.ZodTy
 export const ContestTeamUpdateManyWithoutMembersNestedInputObjectZodSchema = __makeSchema_ContestTeamUpdateManyWithoutMembersNestedInput_schema();
 
 
+// File: UserFlagLinkUpdateManyWithoutUserNestedInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateManyWithoutUserNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema).array(), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => UserFlagLinkUpsertWithWhereUniqueWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUpsertWithWhereUniqueWithoutUserInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => UserFlagLinkCreateManyUserInputEnvelopeObjectSchema).optional(),
+  set: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => UserFlagLinkUpdateWithWhereUniqueWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUpdateWithWhereUniqueWithoutUserInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => UserFlagLinkUpdateManyWithWhereWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUpdateManyWithWhereWithoutUserInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema), z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput> = __makeSchema_UserFlagLinkUpdateManyWithoutUserNestedInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput>;
+export const UserFlagLinkUpdateManyWithoutUserNestedInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateManyWithoutUserNestedInput_schema();
+
+
 // File: PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput.schema.ts
 const __makeSchema_PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput_schema = () => z.object({
   create: z.union([z.lazy(() => PrivacyPermissionsCreateWithoutUserInputObjectSchema), z.lazy(() => PrivacyPermissionsUncheckedCreateWithoutUserInputObjectSchema)]).optional(),
@@ -12322,6 +12761,24 @@ const __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersNestedInput_schem
 }).strict();
 export const ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput> = __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersNestedInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput>;
 export const ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersNestedInput_schema();
+
+
+// File: UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema).array(), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => UserFlagLinkUpsertWithWhereUniqueWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUpsertWithWhereUniqueWithoutUserInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => UserFlagLinkCreateManyUserInputEnvelopeObjectSchema).optional(),
+  set: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => UserFlagLinkUpdateWithWhereUniqueWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUpdateWithWhereUniqueWithoutUserInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => UserFlagLinkUpdateManyWithWhereWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUpdateManyWithWhereWithoutUserInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema), z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput> = __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput>;
+export const UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput_schema();
 
 
 // File: EventCompanyCreateNestedManyWithoutCompanyInput.schema.ts
@@ -15956,6 +16413,108 @@ export const UserUncheckedUpdateManyWithoutContestTeamsNestedInputObjectSchema: 
 export const UserUncheckedUpdateManyWithoutContestTeamsNestedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsNestedInput_schema();
 
 
+// File: UserFlagLinkCreateNestedManyWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkCreateNestedManyWithoutUserFlagInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema).array(), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => UserFlagLinkCreateManyUserFlagInputEnvelopeObjectSchema).optional(),
+  connect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const UserFlagLinkCreateNestedManyWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateNestedManyWithoutUserFlagInput> = __makeSchema_UserFlagLinkCreateNestedManyWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateNestedManyWithoutUserFlagInput>;
+export const UserFlagLinkCreateNestedManyWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkCreateNestedManyWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema).array(), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => UserFlagLinkCreateManyUserFlagInputEnvelopeObjectSchema).optional(),
+  connect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInput> = __makeSchema_UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInput>;
+export const UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedCreateNestedManyWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkUpdateManyWithoutUserFlagNestedInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateManyWithoutUserFlagNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema).array(), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => UserFlagLinkCreateManyUserFlagInputEnvelopeObjectSchema).optional(),
+  set: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => UserFlagLinkUpdateManyWithWhereWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUpdateManyWithWhereWithoutUserFlagInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema), z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const UserFlagLinkUpdateManyWithoutUserFlagNestedInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateManyWithoutUserFlagNestedInput> = __makeSchema_UserFlagLinkUpdateManyWithoutUserFlagNestedInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateManyWithoutUserFlagNestedInput>;
+export const UserFlagLinkUpdateManyWithoutUserFlagNestedInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateManyWithoutUserFlagNestedInput_schema();
+
+
+// File: UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema).array(), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => UserFlagLinkCreateManyUserFlagInputEnvelopeObjectSchema).optional(),
+  set: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema), z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => UserFlagLinkUpdateManyWithWhereWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUpdateManyWithWhereWithoutUserFlagInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema), z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInput> = __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInput>;
+export const UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserFlagNestedInput_schema();
+
+
+// File: UserCreateNestedOneWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserCreateNestedOneWithoutUserFlagLinksInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserCreateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutUserFlagLinksInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutUserFlagLinksInputObjectSchema).optional(),
+  connect: z.lazy(() => UserWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const UserCreateNestedOneWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutUserFlagLinksInput> = __makeSchema_UserCreateNestedOneWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserCreateNestedOneWithoutUserFlagLinksInput>;
+export const UserCreateNestedOneWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserCreateNestedOneWithoutUserFlagLinksInput_schema();
+
+
+// File: UserFlagCreateNestedOneWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserFlagCreateNestedOneWithoutUserFlagLinksInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagCreateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserFlagUncheckedCreateWithoutUserFlagLinksInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => UserFlagCreateOrConnectWithoutUserFlagLinksInputObjectSchema).optional(),
+  connect: z.lazy(() => UserFlagWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const UserFlagCreateNestedOneWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserFlagCreateNestedOneWithoutUserFlagLinksInput> = __makeSchema_UserFlagCreateNestedOneWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserFlagCreateNestedOneWithoutUserFlagLinksInput>;
+export const UserFlagCreateNestedOneWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserFlagCreateNestedOneWithoutUserFlagLinksInput_schema();
+
+
+// File: UserUpdateOneRequiredWithoutUserFlagLinksNestedInput.schema.ts
+const __makeSchema_UserUpdateOneRequiredWithoutUserFlagLinksNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserCreateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutUserFlagLinksInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutUserFlagLinksInputObjectSchema).optional(),
+  upsert: z.lazy(() => UserUpsertWithoutUserFlagLinksInputObjectSchema).optional(),
+  connect: z.lazy(() => UserWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => UserUpdateToOneWithWhereWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserUpdateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutUserFlagLinksInputObjectSchema)]).optional()
+}).strict();
+export const UserUpdateOneRequiredWithoutUserFlagLinksNestedInputObjectSchema: z.ZodType<Prisma.UserUpdateOneRequiredWithoutUserFlagLinksNestedInput> = __makeSchema_UserUpdateOneRequiredWithoutUserFlagLinksNestedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateOneRequiredWithoutUserFlagLinksNestedInput>;
+export const UserUpdateOneRequiredWithoutUserFlagLinksNestedInputObjectZodSchema = __makeSchema_UserUpdateOneRequiredWithoutUserFlagLinksNestedInput_schema();
+
+
+// File: UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInput.schema.ts
+const __makeSchema_UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserFlagCreateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserFlagUncheckedCreateWithoutUserFlagLinksInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => UserFlagCreateOrConnectWithoutUserFlagLinksInputObjectSchema).optional(),
+  upsert: z.lazy(() => UserFlagUpsertWithoutUserFlagLinksInputObjectSchema).optional(),
+  connect: z.lazy(() => UserFlagWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserFlagUpdateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserFlagUncheckedUpdateWithoutUserFlagLinksInputObjectSchema)]).optional()
+}).strict();
+export const UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInputObjectSchema: z.ZodType<Prisma.UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInput> = __makeSchema_UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInput_schema() as unknown as z.ZodType<Prisma.UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInput>;
+export const UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInputObjectZodSchema = __makeSchema_UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInput_schema();
+
+
 // File: NestedStringFilter.schema.ts
 
 
@@ -16851,7 +17410,6 @@ const __makeSchema_UserCreateWithoutMembershipsInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -16870,7 +17428,8 @@ const __makeSchema_UserCreateWithoutMembershipsInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutMembershipsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutMembershipsInput> = __makeSchema_UserCreateWithoutMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutMembershipsInput>;
 export const UserCreateWithoutMembershipsInputObjectZodSchema = __makeSchema_UserCreateWithoutMembershipsInput_schema();
@@ -16888,7 +17447,6 @@ const __makeSchema_UserUncheckedCreateWithoutMembershipsInput_schema = () => z.o
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -16907,7 +17465,8 @@ const __makeSchema_UserUncheckedCreateWithoutMembershipsInput_schema = () => z.o
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutMembershipsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutMembershipsInput> = __makeSchema_UserUncheckedCreateWithoutMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutMembershipsInput>;
 export const UserUncheckedCreateWithoutMembershipsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutMembershipsInput_schema();
@@ -16953,7 +17512,6 @@ const __makeSchema_UserUpdateWithoutMembershipsInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -16972,7 +17530,8 @@ const __makeSchema_UserUpdateWithoutMembershipsInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutMembershipsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutMembershipsInput> = __makeSchema_UserUpdateWithoutMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutMembershipsInput>;
 export const UserUpdateWithoutMembershipsInputObjectZodSchema = __makeSchema_UserUpdateWithoutMembershipsInput_schema();
@@ -16990,7 +17549,6 @@ const __makeSchema_UserUncheckedUpdateWithoutMembershipsInput_schema = () => z.o
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -17009,7 +17567,8 @@ const __makeSchema_UserUncheckedUpdateWithoutMembershipsInput_schema = () => z.o
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutMembershipsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutMembershipsInput> = __makeSchema_UserUncheckedUpdateWithoutMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutMembershipsInput>;
 export const UserUncheckedUpdateWithoutMembershipsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutMembershipsInput_schema();
@@ -17728,6 +18287,46 @@ export const ContestTeamCreateOrConnectWithoutMembersInputObjectSchema: z.ZodTyp
 export const ContestTeamCreateOrConnectWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamCreateOrConnectWithoutMembersInput_schema();
 
 
+// File: UserFlagLinkCreateWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkCreateWithoutUserInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  userFlag: z.lazy(() => UserFlagCreateNestedOneWithoutUserFlagLinksInputObjectSchema)
+}).strict();
+export const UserFlagLinkCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateWithoutUserInput> = __makeSchema_UserFlagLinkCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateWithoutUserInput>;
+export const UserFlagLinkCreateWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkCreateWithoutUserInput_schema();
+
+
+// File: UserFlagLinkUncheckedCreateWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedCreateWithoutUserInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  userFlagId: z.string()
+}).strict();
+export const UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedCreateWithoutUserInput> = __makeSchema_UserFlagLinkUncheckedCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedCreateWithoutUserInput>;
+export const UserFlagLinkUncheckedCreateWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedCreateWithoutUserInput_schema();
+
+
+// File: UserFlagLinkCreateOrConnectWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkCreateOrConnectWithoutUserInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema)])
+}).strict();
+export const UserFlagLinkCreateOrConnectWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateOrConnectWithoutUserInput> = __makeSchema_UserFlagLinkCreateOrConnectWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateOrConnectWithoutUserInput>;
+export const UserFlagLinkCreateOrConnectWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkCreateOrConnectWithoutUserInput_schema();
+
+
+// File: UserFlagLinkCreateManyUserInputEnvelope.schema.ts
+const __makeSchema_UserFlagLinkCreateManyUserInputEnvelope_schema = () => z.object({
+  data: z.union([z.lazy(() => UserFlagLinkCreateManyUserInputObjectSchema), z.lazy(() => UserFlagLinkCreateManyUserInputObjectSchema).array()]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+export const UserFlagLinkCreateManyUserInputEnvelopeObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateManyUserInputEnvelope> = __makeSchema_UserFlagLinkCreateManyUserInputEnvelope_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateManyUserInputEnvelope>;
+export const UserFlagLinkCreateManyUserInputEnvelopeObjectZodSchema = __makeSchema_UserFlagLinkCreateManyUserInputEnvelope_schema();
+
+
 // File: PrivacyPermissionsUpsertWithoutUserInput.schema.ts
 const __makeSchema_PrivacyPermissionsUpsertWithoutUserInput_schema = () => z.object({
   update: z.union([z.lazy(() => PrivacyPermissionsUpdateWithoutUserInputObjectSchema), z.lazy(() => PrivacyPermissionsUncheckedUpdateWithoutUserInputObjectSchema)]),
@@ -18384,6 +18983,50 @@ const contestteamscalarwhereinputSchema = z.object({
 }).strict();
 export const ContestTeamScalarWhereInputObjectSchema: z.ZodType<Prisma.ContestTeamScalarWhereInput> = contestteamscalarwhereinputSchema as unknown as z.ZodType<Prisma.ContestTeamScalarWhereInput>;
 export const ContestTeamScalarWhereInputObjectZodSchema = contestteamscalarwhereinputSchema;
+
+
+// File: UserFlagLinkUpsertWithWhereUniqueWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkUpsertWithWhereUniqueWithoutUserInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema),
+  update: z.union([z.lazy(() => UserFlagLinkUpdateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedUpdateWithoutUserInputObjectSchema)]),
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserInputObjectSchema)])
+}).strict();
+export const UserFlagLinkUpsertWithWhereUniqueWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpsertWithWhereUniqueWithoutUserInput> = __makeSchema_UserFlagLinkUpsertWithWhereUniqueWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpsertWithWhereUniqueWithoutUserInput>;
+export const UserFlagLinkUpsertWithWhereUniqueWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkUpsertWithWhereUniqueWithoutUserInput_schema();
+
+
+// File: UserFlagLinkUpdateWithWhereUniqueWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateWithWhereUniqueWithoutUserInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema),
+  data: z.union([z.lazy(() => UserFlagLinkUpdateWithoutUserInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedUpdateWithoutUserInputObjectSchema)])
+}).strict();
+export const UserFlagLinkUpdateWithWhereUniqueWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateWithWhereUniqueWithoutUserInput> = __makeSchema_UserFlagLinkUpdateWithWhereUniqueWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateWithWhereUniqueWithoutUserInput>;
+export const UserFlagLinkUpdateWithWhereUniqueWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateWithWhereUniqueWithoutUserInput_schema();
+
+
+// File: UserFlagLinkUpdateManyWithWhereWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateManyWithWhereWithoutUserInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema),
+  data: z.union([z.lazy(() => UserFlagLinkUpdateManyMutationInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserInputObjectSchema)])
+}).strict();
+export const UserFlagLinkUpdateManyWithWhereWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateManyWithWhereWithoutUserInput> = __makeSchema_UserFlagLinkUpdateManyWithWhereWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateManyWithWhereWithoutUserInput>;
+export const UserFlagLinkUpdateManyWithWhereWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateManyWithWhereWithoutUserInput_schema();
+
+
+// File: UserFlagLinkScalarWhereInput.schema.ts
+
+const userflaglinkscalarwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema), z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema), z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  awardedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  reason: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  userFlagId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
+}).strict();
+export const UserFlagLinkScalarWhereInputObjectSchema: z.ZodType<Prisma.UserFlagLinkScalarWhereInput> = userflaglinkscalarwhereinputSchema as unknown as z.ZodType<Prisma.UserFlagLinkScalarWhereInput>;
+export const UserFlagLinkScalarWhereInputObjectZodSchema = userflaglinkscalarwhereinputSchema;
 
 
 // File: EventCompanyCreateWithoutCompanyInput.schema.ts
@@ -19135,7 +19778,6 @@ const __makeSchema_UserCreateWithoutGroupMembershipsInput_schema = () => z.objec
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -19154,7 +19796,8 @@ const __makeSchema_UserCreateWithoutGroupMembershipsInput_schema = () => z.objec
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutGroupMembershipsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutGroupMembershipsInput> = __makeSchema_UserCreateWithoutGroupMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutGroupMembershipsInput>;
 export const UserCreateWithoutGroupMembershipsInputObjectZodSchema = __makeSchema_UserCreateWithoutGroupMembershipsInput_schema();
@@ -19172,7 +19815,6 @@ const __makeSchema_UserUncheckedCreateWithoutGroupMembershipsInput_schema = () =
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -19191,7 +19833,8 @@ const __makeSchema_UserUncheckedCreateWithoutGroupMembershipsInput_schema = () =
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutGroupMembershipsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutGroupMembershipsInput> = __makeSchema_UserUncheckedCreateWithoutGroupMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutGroupMembershipsInput>;
 export const UserUncheckedCreateWithoutGroupMembershipsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutGroupMembershipsInput_schema();
@@ -19346,7 +19989,6 @@ const __makeSchema_UserUpdateWithoutGroupMembershipsInput_schema = () => z.objec
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -19365,7 +20007,8 @@ const __makeSchema_UserUpdateWithoutGroupMembershipsInput_schema = () => z.objec
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutGroupMembershipsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutGroupMembershipsInput> = __makeSchema_UserUpdateWithoutGroupMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutGroupMembershipsInput>;
 export const UserUpdateWithoutGroupMembershipsInputObjectZodSchema = __makeSchema_UserUpdateWithoutGroupMembershipsInput_schema();
@@ -19383,7 +20026,6 @@ const __makeSchema_UserUncheckedUpdateWithoutGroupMembershipsInput_schema = () =
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -19402,7 +20044,8 @@ const __makeSchema_UserUncheckedUpdateWithoutGroupMembershipsInput_schema = () =
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutGroupMembershipsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutGroupMembershipsInput> = __makeSchema_UserUncheckedUpdateWithoutGroupMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutGroupMembershipsInput>;
 export const UserUncheckedUpdateWithoutGroupMembershipsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutGroupMembershipsInput_schema();
@@ -20514,7 +21157,6 @@ const __makeSchema_UserCreateWithoutAttendeeInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -20533,7 +21175,8 @@ const __makeSchema_UserCreateWithoutAttendeeInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutAttendeeInput> = __makeSchema_UserCreateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutAttendeeInput>;
 export const UserCreateWithoutAttendeeInputObjectZodSchema = __makeSchema_UserCreateWithoutAttendeeInput_schema();
@@ -20551,7 +21194,6 @@ const __makeSchema_UserUncheckedCreateWithoutAttendeeInput_schema = () => z.obje
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -20570,7 +21212,8 @@ const __makeSchema_UserUncheckedCreateWithoutAttendeeInput_schema = () => z.obje
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutAttendeeInput> = __makeSchema_UserUncheckedCreateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutAttendeeInput>;
 export const UserUncheckedCreateWithoutAttendeeInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutAttendeeInput_schema();
@@ -20638,7 +21281,6 @@ const __makeSchema_UserCreateWithoutAttendeesRefundedInput_schema = () => z.obje
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -20657,7 +21299,8 @@ const __makeSchema_UserCreateWithoutAttendeesRefundedInput_schema = () => z.obje
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutAttendeesRefundedInput> = __makeSchema_UserCreateWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutAttendeesRefundedInput>;
 export const UserCreateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserCreateWithoutAttendeesRefundedInput_schema();
@@ -20675,7 +21318,6 @@ const __makeSchema_UserUncheckedCreateWithoutAttendeesRefundedInput_schema = () 
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -20694,7 +21336,8 @@ const __makeSchema_UserUncheckedCreateWithoutAttendeesRefundedInput_schema = () 
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutAttendeesRefundedInput> = __makeSchema_UserUncheckedCreateWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutAttendeesRefundedInput>;
 export const UserUncheckedCreateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutAttendeesRefundedInput_schema();
@@ -20836,7 +21479,6 @@ const __makeSchema_UserUpdateWithoutAttendeeInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -20855,7 +21497,8 @@ const __makeSchema_UserUpdateWithoutAttendeeInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutAttendeeInput> = __makeSchema_UserUpdateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutAttendeeInput>;
 export const UserUpdateWithoutAttendeeInputObjectZodSchema = __makeSchema_UserUpdateWithoutAttendeeInput_schema();
@@ -20873,7 +21516,6 @@ const __makeSchema_UserUncheckedUpdateWithoutAttendeeInput_schema = () => z.obje
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -20892,7 +21534,8 @@ const __makeSchema_UserUncheckedUpdateWithoutAttendeeInput_schema = () => z.obje
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutAttendeeInput> = __makeSchema_UserUncheckedUpdateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutAttendeeInput>;
 export const UserUncheckedUpdateWithoutAttendeeInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutAttendeeInput_schema();
@@ -20980,7 +21623,6 @@ const __makeSchema_UserUpdateWithoutAttendeesRefundedInput_schema = () => z.obje
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -20999,7 +21641,8 @@ const __makeSchema_UserUpdateWithoutAttendeesRefundedInput_schema = () => z.obje
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutAttendeesRefundedInput> = __makeSchema_UserUpdateWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutAttendeesRefundedInput>;
 export const UserUpdateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserUpdateWithoutAttendeesRefundedInput_schema();
@@ -21017,7 +21660,6 @@ const __makeSchema_UserUncheckedUpdateWithoutAttendeesRefundedInput_schema = () 
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -21036,7 +21678,8 @@ const __makeSchema_UserUncheckedUpdateWithoutAttendeesRefundedInput_schema = () 
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutAttendeesRefundedInput> = __makeSchema_UserUncheckedUpdateWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutAttendeesRefundedInput>;
 export const UserUncheckedUpdateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutAttendeesRefundedInput_schema();
@@ -22329,7 +22972,6 @@ const __makeSchema_UserCreateWithoutPersonalMarkInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -22348,7 +22990,8 @@ const __makeSchema_UserCreateWithoutPersonalMarkInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutPersonalMarkInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutPersonalMarkInput> = __makeSchema_UserCreateWithoutPersonalMarkInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutPersonalMarkInput>;
 export const UserCreateWithoutPersonalMarkInputObjectZodSchema = __makeSchema_UserCreateWithoutPersonalMarkInput_schema();
@@ -22366,7 +23009,6 @@ const __makeSchema_UserUncheckedCreateWithoutPersonalMarkInput_schema = () => z.
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -22385,7 +23027,8 @@ const __makeSchema_UserUncheckedCreateWithoutPersonalMarkInput_schema = () => z.
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutPersonalMarkInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPersonalMarkInput> = __makeSchema_UserUncheckedCreateWithoutPersonalMarkInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutPersonalMarkInput>;
 export const UserUncheckedCreateWithoutPersonalMarkInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutPersonalMarkInput_schema();
@@ -22412,7 +23055,6 @@ const __makeSchema_UserCreateWithoutGivenMarksInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -22431,7 +23073,8 @@ const __makeSchema_UserCreateWithoutGivenMarksInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutGivenMarksInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutGivenMarksInput> = __makeSchema_UserCreateWithoutGivenMarksInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutGivenMarksInput>;
 export const UserCreateWithoutGivenMarksInputObjectZodSchema = __makeSchema_UserCreateWithoutGivenMarksInput_schema();
@@ -22449,7 +23092,6 @@ const __makeSchema_UserUncheckedCreateWithoutGivenMarksInput_schema = () => z.ob
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -22468,7 +23110,8 @@ const __makeSchema_UserUncheckedCreateWithoutGivenMarksInput_schema = () => z.ob
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutGivenMarksInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutGivenMarksInput> = __makeSchema_UserUncheckedCreateWithoutGivenMarksInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutGivenMarksInput>;
 export const UserUncheckedCreateWithoutGivenMarksInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutGivenMarksInput_schema();
@@ -22565,7 +23208,6 @@ const __makeSchema_UserUpdateWithoutPersonalMarkInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22584,7 +23226,8 @@ const __makeSchema_UserUpdateWithoutPersonalMarkInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutPersonalMarkInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutPersonalMarkInput> = __makeSchema_UserUpdateWithoutPersonalMarkInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutPersonalMarkInput>;
 export const UserUpdateWithoutPersonalMarkInputObjectZodSchema = __makeSchema_UserUpdateWithoutPersonalMarkInput_schema();
@@ -22602,7 +23245,6 @@ const __makeSchema_UserUncheckedUpdateWithoutPersonalMarkInput_schema = () => z.
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22621,7 +23263,8 @@ const __makeSchema_UserUncheckedUpdateWithoutPersonalMarkInput_schema = () => z.
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutPersonalMarkInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPersonalMarkInput> = __makeSchema_UserUncheckedUpdateWithoutPersonalMarkInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutPersonalMarkInput>;
 export const UserUncheckedUpdateWithoutPersonalMarkInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutPersonalMarkInput_schema();
@@ -22658,7 +23301,6 @@ const __makeSchema_UserUpdateWithoutGivenMarksInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22677,7 +23319,8 @@ const __makeSchema_UserUpdateWithoutGivenMarksInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutGivenMarksInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutGivenMarksInput> = __makeSchema_UserUpdateWithoutGivenMarksInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutGivenMarksInput>;
 export const UserUpdateWithoutGivenMarksInputObjectZodSchema = __makeSchema_UserUpdateWithoutGivenMarksInput_schema();
@@ -22695,7 +23338,6 @@ const __makeSchema_UserUncheckedUpdateWithoutGivenMarksInput_schema = () => z.ob
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22714,7 +23356,8 @@ const __makeSchema_UserUncheckedUpdateWithoutGivenMarksInput_schema = () => z.ob
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutGivenMarksInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutGivenMarksInput> = __makeSchema_UserUncheckedUpdateWithoutGivenMarksInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutGivenMarksInput>;
 export const UserUncheckedUpdateWithoutGivenMarksInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutGivenMarksInput_schema();
@@ -22732,7 +23375,6 @@ const __makeSchema_UserCreateWithoutPrivacyPermissionsInput_schema = () => z.obj
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -22751,7 +23393,8 @@ const __makeSchema_UserCreateWithoutPrivacyPermissionsInput_schema = () => z.obj
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutPrivacyPermissionsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutPrivacyPermissionsInput> = __makeSchema_UserCreateWithoutPrivacyPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutPrivacyPermissionsInput>;
 export const UserCreateWithoutPrivacyPermissionsInputObjectZodSchema = __makeSchema_UserCreateWithoutPrivacyPermissionsInput_schema();
@@ -22769,7 +23412,6 @@ const __makeSchema_UserUncheckedCreateWithoutPrivacyPermissionsInput_schema = ()
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -22788,7 +23430,8 @@ const __makeSchema_UserUncheckedCreateWithoutPrivacyPermissionsInput_schema = ()
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutPrivacyPermissionsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPrivacyPermissionsInput> = __makeSchema_UserUncheckedCreateWithoutPrivacyPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutPrivacyPermissionsInput>;
 export const UserUncheckedCreateWithoutPrivacyPermissionsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutPrivacyPermissionsInput_schema();
@@ -22834,7 +23477,6 @@ const __makeSchema_UserUpdateWithoutPrivacyPermissionsInput_schema = () => z.obj
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22853,7 +23495,8 @@ const __makeSchema_UserUpdateWithoutPrivacyPermissionsInput_schema = () => z.obj
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutPrivacyPermissionsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutPrivacyPermissionsInput> = __makeSchema_UserUpdateWithoutPrivacyPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutPrivacyPermissionsInput>;
 export const UserUpdateWithoutPrivacyPermissionsInputObjectZodSchema = __makeSchema_UserUpdateWithoutPrivacyPermissionsInput_schema();
@@ -22871,7 +23514,6 @@ const __makeSchema_UserUncheckedUpdateWithoutPrivacyPermissionsInput_schema = ()
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -22890,7 +23532,8 @@ const __makeSchema_UserUncheckedUpdateWithoutPrivacyPermissionsInput_schema = ()
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutPrivacyPermissionsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPrivacyPermissionsInput> = __makeSchema_UserUncheckedUpdateWithoutPrivacyPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutPrivacyPermissionsInput>;
 export const UserUncheckedUpdateWithoutPrivacyPermissionsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutPrivacyPermissionsInput_schema();
@@ -22908,7 +23551,6 @@ const __makeSchema_UserCreateWithoutNotificationPermissionsInput_schema = () => 
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -22927,7 +23569,8 @@ const __makeSchema_UserCreateWithoutNotificationPermissionsInput_schema = () => 
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutNotificationPermissionsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutNotificationPermissionsInput> = __makeSchema_UserCreateWithoutNotificationPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutNotificationPermissionsInput>;
 export const UserCreateWithoutNotificationPermissionsInputObjectZodSchema = __makeSchema_UserCreateWithoutNotificationPermissionsInput_schema();
@@ -22945,7 +23588,6 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationPermissionsInput_schema
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -22964,7 +23606,8 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationPermissionsInput_schema
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutNotificationPermissionsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationPermissionsInput> = __makeSchema_UserUncheckedCreateWithoutNotificationPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationPermissionsInput>;
 export const UserUncheckedCreateWithoutNotificationPermissionsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutNotificationPermissionsInput_schema();
@@ -23010,7 +23653,6 @@ const __makeSchema_UserUpdateWithoutNotificationPermissionsInput_schema = () => 
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -23029,7 +23671,8 @@ const __makeSchema_UserUpdateWithoutNotificationPermissionsInput_schema = () => 
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutNotificationPermissionsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutNotificationPermissionsInput> = __makeSchema_UserUpdateWithoutNotificationPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutNotificationPermissionsInput>;
 export const UserUpdateWithoutNotificationPermissionsInputObjectZodSchema = __makeSchema_UserUpdateWithoutNotificationPermissionsInput_schema();
@@ -23047,7 +23690,6 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationPermissionsInput_schema
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -23066,7 +23708,8 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationPermissionsInput_schema
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutNotificationPermissionsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationPermissionsInput> = __makeSchema_UserUncheckedUpdateWithoutNotificationPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationPermissionsInput>;
 export const UserUncheckedUpdateWithoutNotificationPermissionsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutNotificationPermissionsInput_schema();
@@ -25726,7 +26369,6 @@ const __makeSchema_UserCreateWithoutAuditLogsInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -25745,7 +26387,8 @@ const __makeSchema_UserCreateWithoutAuditLogsInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutAuditLogsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutAuditLogsInput> = __makeSchema_UserCreateWithoutAuditLogsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutAuditLogsInput>;
 export const UserCreateWithoutAuditLogsInputObjectZodSchema = __makeSchema_UserCreateWithoutAuditLogsInput_schema();
@@ -25763,7 +26406,6 @@ const __makeSchema_UserUncheckedCreateWithoutAuditLogsInput_schema = () => z.obj
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -25782,7 +26424,8 @@ const __makeSchema_UserUncheckedCreateWithoutAuditLogsInput_schema = () => z.obj
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutAuditLogsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutAuditLogsInput> = __makeSchema_UserUncheckedCreateWithoutAuditLogsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutAuditLogsInput>;
 export const UserUncheckedCreateWithoutAuditLogsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutAuditLogsInput_schema();
@@ -25828,7 +26471,6 @@ const __makeSchema_UserUpdateWithoutAuditLogsInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -25847,7 +26489,8 @@ const __makeSchema_UserUpdateWithoutAuditLogsInput_schema = () => z.object({
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutAuditLogsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutAuditLogsInput> = __makeSchema_UserUpdateWithoutAuditLogsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutAuditLogsInput>;
 export const UserUpdateWithoutAuditLogsInputObjectZodSchema = __makeSchema_UserUpdateWithoutAuditLogsInput_schema();
@@ -25865,7 +26508,6 @@ const __makeSchema_UserUncheckedUpdateWithoutAuditLogsInput_schema = () => z.obj
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -25884,7 +26526,8 @@ const __makeSchema_UserUncheckedUpdateWithoutAuditLogsInput_schema = () => z.obj
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutAuditLogsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutAuditLogsInput> = __makeSchema_UserUncheckedUpdateWithoutAuditLogsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutAuditLogsInput>;
 export const UserUncheckedUpdateWithoutAuditLogsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutAuditLogsInput_schema();
@@ -25902,7 +26545,6 @@ const __makeSchema_UserCreateWithoutDeregisterReasonsInput_schema = () => z.obje
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -25921,7 +26563,8 @@ const __makeSchema_UserCreateWithoutDeregisterReasonsInput_schema = () => z.obje
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutDeregisterReasonsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutDeregisterReasonsInput> = __makeSchema_UserCreateWithoutDeregisterReasonsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutDeregisterReasonsInput>;
 export const UserCreateWithoutDeregisterReasonsInputObjectZodSchema = __makeSchema_UserCreateWithoutDeregisterReasonsInput_schema();
@@ -25939,7 +26582,6 @@ const __makeSchema_UserUncheckedCreateWithoutDeregisterReasonsInput_schema = () 
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -25958,7 +26600,8 @@ const __makeSchema_UserUncheckedCreateWithoutDeregisterReasonsInput_schema = () 
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutDeregisterReasonsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutDeregisterReasonsInput> = __makeSchema_UserUncheckedCreateWithoutDeregisterReasonsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutDeregisterReasonsInput>;
 export const UserUncheckedCreateWithoutDeregisterReasonsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutDeregisterReasonsInput_schema();
@@ -26071,7 +26714,6 @@ const __makeSchema_UserUpdateWithoutDeregisterReasonsInput_schema = () => z.obje
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -26090,7 +26732,8 @@ const __makeSchema_UserUpdateWithoutDeregisterReasonsInput_schema = () => z.obje
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutDeregisterReasonsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutDeregisterReasonsInput> = __makeSchema_UserUpdateWithoutDeregisterReasonsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutDeregisterReasonsInput>;
 export const UserUpdateWithoutDeregisterReasonsInputObjectZodSchema = __makeSchema_UserUpdateWithoutDeregisterReasonsInput_schema();
@@ -26108,7 +26751,6 @@ const __makeSchema_UserUncheckedUpdateWithoutDeregisterReasonsInput_schema = () 
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -26127,7 +26769,8 @@ const __makeSchema_UserUncheckedUpdateWithoutDeregisterReasonsInput_schema = () 
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutDeregisterReasonsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutDeregisterReasonsInput> = __makeSchema_UserUncheckedUpdateWithoutDeregisterReasonsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutDeregisterReasonsInput>;
 export const UserUncheckedUpdateWithoutDeregisterReasonsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutDeregisterReasonsInput_schema();
@@ -26271,7 +26914,6 @@ const __makeSchema_UserCreateWithoutNotificationsReceivedInput_schema = () => z.
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -26290,7 +26932,8 @@ const __makeSchema_UserCreateWithoutNotificationsReceivedInput_schema = () => z.
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutNotificationsReceivedInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutNotificationsReceivedInput> = __makeSchema_UserCreateWithoutNotificationsReceivedInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutNotificationsReceivedInput>;
 export const UserCreateWithoutNotificationsReceivedInputObjectZodSchema = __makeSchema_UserCreateWithoutNotificationsReceivedInput_schema();
@@ -26308,7 +26951,6 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsReceivedInput_schema =
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -26327,7 +26969,8 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsReceivedInput_schema =
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutNotificationsReceivedInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsReceivedInput> = __makeSchema_UserUncheckedCreateWithoutNotificationsReceivedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsReceivedInput>;
 export const UserUncheckedCreateWithoutNotificationsReceivedInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutNotificationsReceivedInput_schema();
@@ -26432,7 +27075,6 @@ const __makeSchema_UserUpdateWithoutNotificationsReceivedInput_schema = () => z.
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -26451,7 +27093,8 @@ const __makeSchema_UserUpdateWithoutNotificationsReceivedInput_schema = () => z.
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutNotificationsReceivedInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutNotificationsReceivedInput> = __makeSchema_UserUpdateWithoutNotificationsReceivedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutNotificationsReceivedInput>;
 export const UserUpdateWithoutNotificationsReceivedInputObjectZodSchema = __makeSchema_UserUpdateWithoutNotificationsReceivedInput_schema();
@@ -26469,7 +27112,6 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsReceivedInput_schema =
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -26488,7 +27130,8 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsReceivedInput_schema =
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutNotificationsReceivedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsReceivedInput> = __makeSchema_UserUncheckedUpdateWithoutNotificationsReceivedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsReceivedInput>;
 export const UserUncheckedUpdateWithoutNotificationsReceivedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutNotificationsReceivedInput_schema();
@@ -26571,7 +27214,6 @@ const __makeSchema_UserCreateWithoutNotificationsCreatedInput_schema = () => z.o
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -26590,7 +27232,8 @@ const __makeSchema_UserCreateWithoutNotificationsCreatedInput_schema = () => z.o
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutNotificationsCreatedInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutNotificationsCreatedInput> = __makeSchema_UserCreateWithoutNotificationsCreatedInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutNotificationsCreatedInput>;
 export const UserCreateWithoutNotificationsCreatedInputObjectZodSchema = __makeSchema_UserCreateWithoutNotificationsCreatedInput_schema();
@@ -26608,7 +27251,6 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsCreatedInput_schema = 
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -26627,7 +27269,8 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsCreatedInput_schema = 
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutNotificationsCreatedInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsCreatedInput> = __makeSchema_UserUncheckedCreateWithoutNotificationsCreatedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsCreatedInput>;
 export const UserUncheckedCreateWithoutNotificationsCreatedInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutNotificationsCreatedInput_schema();
@@ -26654,7 +27297,6 @@ const __makeSchema_UserCreateWithoutNotificationsUpdatedInput_schema = () => z.o
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -26673,7 +27315,8 @@ const __makeSchema_UserCreateWithoutNotificationsUpdatedInput_schema = () => z.o
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutNotificationsUpdatedInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutNotificationsUpdatedInput> = __makeSchema_UserCreateWithoutNotificationsUpdatedInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutNotificationsUpdatedInput>;
 export const UserCreateWithoutNotificationsUpdatedInputObjectZodSchema = __makeSchema_UserCreateWithoutNotificationsUpdatedInput_schema();
@@ -26691,7 +27334,6 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsUpdatedInput_schema = 
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -26710,7 +27352,8 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsUpdatedInput_schema = 
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutNotificationsUpdatedInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsUpdatedInput> = __makeSchema_UserUncheckedCreateWithoutNotificationsUpdatedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsUpdatedInput>;
 export const UserUncheckedCreateWithoutNotificationsUpdatedInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutNotificationsUpdatedInput_schema();
@@ -26910,7 +27553,6 @@ const __makeSchema_UserUpdateWithoutNotificationsCreatedInput_schema = () => z.o
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -26929,7 +27571,8 @@ const __makeSchema_UserUpdateWithoutNotificationsCreatedInput_schema = () => z.o
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutNotificationsCreatedInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutNotificationsCreatedInput> = __makeSchema_UserUpdateWithoutNotificationsCreatedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutNotificationsCreatedInput>;
 export const UserUpdateWithoutNotificationsCreatedInputObjectZodSchema = __makeSchema_UserUpdateWithoutNotificationsCreatedInput_schema();
@@ -26947,7 +27590,6 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsCreatedInput_schema = 
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -26966,7 +27608,8 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsCreatedInput_schema = 
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutNotificationsCreatedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsCreatedInput> = __makeSchema_UserUncheckedUpdateWithoutNotificationsCreatedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsCreatedInput>;
 export const UserUncheckedUpdateWithoutNotificationsCreatedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutNotificationsCreatedInput_schema();
@@ -27003,7 +27646,6 @@ const __makeSchema_UserUpdateWithoutNotificationsUpdatedInput_schema = () => z.o
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -27022,7 +27664,8 @@ const __makeSchema_UserUpdateWithoutNotificationsUpdatedInput_schema = () => z.o
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutNotificationsUpdatedInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutNotificationsUpdatedInput> = __makeSchema_UserUpdateWithoutNotificationsUpdatedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutNotificationsUpdatedInput>;
 export const UserUpdateWithoutNotificationsUpdatedInputObjectZodSchema = __makeSchema_UserUpdateWithoutNotificationsUpdatedInput_schema();
@@ -27040,7 +27683,6 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsUpdatedInput_schema = 
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -27059,7 +27701,8 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsUpdatedInput_schema = 
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutNotificationsUpdatedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsUpdatedInput> = __makeSchema_UserUncheckedUpdateWithoutNotificationsUpdatedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsUpdatedInput>;
 export const UserUncheckedUpdateWithoutNotificationsUpdatedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutNotificationsUpdatedInput_schema();
@@ -27461,7 +28104,6 @@ const __makeSchema_UserCreateWithoutContestantsInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -27480,7 +28122,8 @@ const __makeSchema_UserCreateWithoutContestantsInput_schema = () => z.object({
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutContestantsInput> = __makeSchema_UserCreateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutContestantsInput>;
 export const UserCreateWithoutContestantsInputObjectZodSchema = __makeSchema_UserCreateWithoutContestantsInput_schema();
@@ -27498,7 +28141,6 @@ const __makeSchema_UserUncheckedCreateWithoutContestantsInput_schema = () => z.o
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -27517,7 +28159,8 @@ const __makeSchema_UserUncheckedCreateWithoutContestantsInput_schema = () => z.o
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutContestantsInput> = __makeSchema_UserUncheckedCreateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutContestantsInput>;
 export const UserUncheckedCreateWithoutContestantsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutContestantsInput_schema();
@@ -27680,7 +28323,6 @@ const __makeSchema_UserUpdateWithoutContestantsInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -27699,7 +28341,8 @@ const __makeSchema_UserUpdateWithoutContestantsInput_schema = () => z.object({
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutContestantsInput> = __makeSchema_UserUpdateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutContestantsInput>;
 export const UserUpdateWithoutContestantsInputObjectZodSchema = __makeSchema_UserUpdateWithoutContestantsInput_schema();
@@ -27717,7 +28360,6 @@ const __makeSchema_UserUncheckedUpdateWithoutContestantsInput_schema = () => z.o
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -27736,7 +28378,8 @@ const __makeSchema_UserUncheckedUpdateWithoutContestantsInput_schema = () => z.o
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
-  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutContestantsInput> = __makeSchema_UserUncheckedUpdateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutContestantsInput>;
 export const UserUncheckedUpdateWithoutContestantsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutContestantsInput_schema();
@@ -27875,7 +28518,6 @@ const __makeSchema_UserCreateWithoutContestTeamsInput_schema = () => z.object({
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -27894,7 +28536,8 @@ const __makeSchema_UserCreateWithoutContestTeamsInput_schema = () => z.object({
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
-  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional()
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutContestTeamsInput> = __makeSchema_UserCreateWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutContestTeamsInput>;
 export const UserCreateWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserCreateWithoutContestTeamsInput_schema();
@@ -27912,7 +28555,6 @@ const __makeSchema_UserUncheckedCreateWithoutContestTeamsInput_schema = () => z.
   gender: GenderSchema.optional(),
   dietaryRestrictions: z.string().optional().nullable(),
   ntnuUsername: z.string().optional().nullable(),
-  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -27931,7 +28573,8 @@ const __makeSchema_UserUncheckedCreateWithoutContestTeamsInput_schema = () => z.
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
-  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutContestTeamsInput> = __makeSchema_UserUncheckedCreateWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutContestTeamsInput>;
 export const UserUncheckedCreateWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutContestTeamsInput_schema();
@@ -28033,7 +28676,6 @@ const userscalarwhereinputSchema = z.object({
   gender: z.union([z.lazy(() => EnumGenderFilterObjectSchema), GenderSchema]).optional(),
   dietaryRestrictions: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   ntnuUsername: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
-  flags: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
   workspaceUserId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
@@ -28042,6 +28684,330 @@ const userscalarwhereinputSchema = z.object({
 }).strict();
 export const UserScalarWhereInputObjectSchema: z.ZodType<Prisma.UserScalarWhereInput> = userscalarwhereinputSchema as unknown as z.ZodType<Prisma.UserScalarWhereInput>;
 export const UserScalarWhereInputObjectZodSchema = userscalarwhereinputSchema;
+
+
+// File: UserFlagLinkCreateWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkCreateWithoutUserFlagInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  user: z.lazy(() => UserCreateNestedOneWithoutUserFlagLinksInputObjectSchema)
+}).strict();
+export const UserFlagLinkCreateWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateWithoutUserFlagInput> = __makeSchema_UserFlagLinkCreateWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateWithoutUserFlagInput>;
+export const UserFlagLinkCreateWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkCreateWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkUncheckedCreateWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedCreateWithoutUserFlagInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  userId: z.string()
+}).strict();
+export const UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedCreateWithoutUserFlagInput> = __makeSchema_UserFlagLinkUncheckedCreateWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedCreateWithoutUserFlagInput>;
+export const UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedCreateWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkCreateOrConnectWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkCreateOrConnectWithoutUserFlagInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema)])
+}).strict();
+export const UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateOrConnectWithoutUserFlagInput> = __makeSchema_UserFlagLinkCreateOrConnectWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateOrConnectWithoutUserFlagInput>;
+export const UserFlagLinkCreateOrConnectWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkCreateOrConnectWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkCreateManyUserFlagInputEnvelope.schema.ts
+const __makeSchema_UserFlagLinkCreateManyUserFlagInputEnvelope_schema = () => z.object({
+  data: z.union([z.lazy(() => UserFlagLinkCreateManyUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkCreateManyUserFlagInputObjectSchema).array()]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+export const UserFlagLinkCreateManyUserFlagInputEnvelopeObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateManyUserFlagInputEnvelope> = __makeSchema_UserFlagLinkCreateManyUserFlagInputEnvelope_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateManyUserFlagInputEnvelope>;
+export const UserFlagLinkCreateManyUserFlagInputEnvelopeObjectZodSchema = __makeSchema_UserFlagLinkCreateManyUserFlagInputEnvelope_schema();
+
+
+// File: UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema),
+  update: z.union([z.lazy(() => UserFlagLinkUpdateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedUpdateWithoutUserFlagInputObjectSchema)]),
+  create: z.union([z.lazy(() => UserFlagLinkCreateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedCreateWithoutUserFlagInputObjectSchema)])
+}).strict();
+export const UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInput> = __makeSchema_UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInput>;
+export const UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkUpsertWithWhereUniqueWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkWhereUniqueInputObjectSchema),
+  data: z.union([z.lazy(() => UserFlagLinkUpdateWithoutUserFlagInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedUpdateWithoutUserFlagInputObjectSchema)])
+}).strict();
+export const UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInput> = __makeSchema_UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInput>;
+export const UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateWithWhereUniqueWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkUpdateManyWithWhereWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateManyWithWhereWithoutUserFlagInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkScalarWhereInputObjectSchema),
+  data: z.union([z.lazy(() => UserFlagLinkUpdateManyMutationInputObjectSchema), z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserFlagInputObjectSchema)])
+}).strict();
+export const UserFlagLinkUpdateManyWithWhereWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateManyWithWhereWithoutUserFlagInput> = __makeSchema_UserFlagLinkUpdateManyWithWhereWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateManyWithWhereWithoutUserFlagInput>;
+export const UserFlagLinkUpdateManyWithWhereWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateManyWithWhereWithoutUserFlagInput_schema();
+
+
+// File: UserCreateWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserCreateWithoutUserFlagLinksInput_schema = () => z.object({
+  id: z.string(),
+  username: z.string(),
+  name: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  biography: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  gender: GenderSchema.optional(),
+  dietaryRestrictions: z.string().optional().nullable(),
+  ntnuUsername: z.string().optional().nullable(),
+  workspaceUserId: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  privacyPermissionsId: z.string().optional().nullable(),
+  notificationPermissionsId: z.string().optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkCreateNestedManyWithoutGivenByInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeCreateNestedManyWithoutPaymentRefundedByInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+}).strict();
+export const UserCreateWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutUserFlagLinksInput> = __makeSchema_UserCreateWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutUserFlagLinksInput>;
+export const UserCreateWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserCreateWithoutUserFlagLinksInput_schema();
+
+
+// File: UserUncheckedCreateWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserUncheckedCreateWithoutUserFlagLinksInput_schema = () => z.object({
+  id: z.string(),
+  username: z.string(),
+  name: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  biography: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  gender: GenderSchema.optional(),
+  dietaryRestrictions: z.string().optional().nullable(),
+  ntnuUsername: z.string().optional().nullable(),
+  workspaceUserId: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  privacyPermissionsId: z.string().optional().nullable(),
+  notificationPermissionsId: z.string().optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUncheckedCreateNestedManyWithoutGivenByInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+}).strict();
+export const UserUncheckedCreateWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutUserFlagLinksInput> = __makeSchema_UserUncheckedCreateWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutUserFlagLinksInput>;
+export const UserUncheckedCreateWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutUserFlagLinksInput_schema();
+
+
+// File: UserCreateOrConnectWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserCreateOrConnectWithoutUserFlagLinksInput_schema = () => z.object({
+  where: z.lazy(() => UserWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => UserCreateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutUserFlagLinksInputObjectSchema)])
+}).strict();
+export const UserCreateOrConnectWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutUserFlagLinksInput> = __makeSchema_UserCreateOrConnectWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserCreateOrConnectWithoutUserFlagLinksInput>;
+export const UserCreateOrConnectWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserCreateOrConnectWithoutUserFlagLinksInput_schema();
+
+
+// File: UserFlagCreateWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserFlagCreateWithoutUserFlagLinksInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  description: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable()
+}).strict();
+export const UserFlagCreateWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserFlagCreateWithoutUserFlagLinksInput> = __makeSchema_UserFlagCreateWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserFlagCreateWithoutUserFlagLinksInput>;
+export const UserFlagCreateWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserFlagCreateWithoutUserFlagLinksInput_schema();
+
+
+// File: UserFlagUncheckedCreateWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserFlagUncheckedCreateWithoutUserFlagLinksInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  description: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable()
+}).strict();
+export const UserFlagUncheckedCreateWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserFlagUncheckedCreateWithoutUserFlagLinksInput> = __makeSchema_UserFlagUncheckedCreateWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserFlagUncheckedCreateWithoutUserFlagLinksInput>;
+export const UserFlagUncheckedCreateWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserFlagUncheckedCreateWithoutUserFlagLinksInput_schema();
+
+
+// File: UserFlagCreateOrConnectWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserFlagCreateOrConnectWithoutUserFlagLinksInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => UserFlagCreateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserFlagUncheckedCreateWithoutUserFlagLinksInputObjectSchema)])
+}).strict();
+export const UserFlagCreateOrConnectWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserFlagCreateOrConnectWithoutUserFlagLinksInput> = __makeSchema_UserFlagCreateOrConnectWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserFlagCreateOrConnectWithoutUserFlagLinksInput>;
+export const UserFlagCreateOrConnectWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserFlagCreateOrConnectWithoutUserFlagLinksInput_schema();
+
+
+// File: UserUpsertWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserUpsertWithoutUserFlagLinksInput_schema = () => z.object({
+  update: z.union([z.lazy(() => UserUpdateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutUserFlagLinksInputObjectSchema)]),
+  create: z.union([z.lazy(() => UserCreateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutUserFlagLinksInputObjectSchema)]),
+  where: z.lazy(() => UserWhereInputObjectSchema).optional()
+}).strict();
+export const UserUpsertWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserUpsertWithoutUserFlagLinksInput> = __makeSchema_UserUpsertWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserUpsertWithoutUserFlagLinksInput>;
+export const UserUpsertWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserUpsertWithoutUserFlagLinksInput_schema();
+
+
+// File: UserUpdateToOneWithWhereWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserUpdateToOneWithWhereWithoutUserFlagLinksInput_schema = () => z.object({
+  where: z.lazy(() => UserWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => UserUpdateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutUserFlagLinksInputObjectSchema)])
+}).strict();
+export const UserUpdateToOneWithWhereWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserUpdateToOneWithWhereWithoutUserFlagLinksInput> = __makeSchema_UserUpdateToOneWithWhereWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserUpdateToOneWithWhereWithoutUserFlagLinksInput>;
+export const UserUpdateToOneWithWhereWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserUpdateToOneWithWhereWithoutUserFlagLinksInput_schema();
+
+
+// File: UserUpdateWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserUpdateWithoutUserFlagLinksInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  username: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  biography: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  phone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  privacyPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  notificationPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUpdateManyWithoutGivenByNestedInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUpdateManyWithoutPaymentRefundedByNestedInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+}).strict();
+export const UserUpdateWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutUserFlagLinksInput> = __makeSchema_UserUpdateWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutUserFlagLinksInput>;
+export const UserUpdateWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserUpdateWithoutUserFlagLinksInput_schema();
+
+
+// File: UserUncheckedUpdateWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserUncheckedUpdateWithoutUserFlagLinksInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  username: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  biography: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  phone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  privacyPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  notificationPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+}).strict();
+export const UserUncheckedUpdateWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutUserFlagLinksInput> = __makeSchema_UserUncheckedUpdateWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutUserFlagLinksInput>;
+export const UserUncheckedUpdateWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutUserFlagLinksInput_schema();
+
+
+// File: UserFlagUpsertWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserFlagUpsertWithoutUserFlagLinksInput_schema = () => z.object({
+  update: z.union([z.lazy(() => UserFlagUpdateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserFlagUncheckedUpdateWithoutUserFlagLinksInputObjectSchema)]),
+  create: z.union([z.lazy(() => UserFlagCreateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserFlagUncheckedCreateWithoutUserFlagLinksInputObjectSchema)]),
+  where: z.lazy(() => UserFlagWhereInputObjectSchema).optional()
+}).strict();
+export const UserFlagUpsertWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserFlagUpsertWithoutUserFlagLinksInput> = __makeSchema_UserFlagUpsertWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserFlagUpsertWithoutUserFlagLinksInput>;
+export const UserFlagUpsertWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserFlagUpsertWithoutUserFlagLinksInput_schema();
+
+
+// File: UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInput_schema = () => z.object({
+  where: z.lazy(() => UserFlagWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => UserFlagUpdateWithoutUserFlagLinksInputObjectSchema), z.lazy(() => UserFlagUncheckedUpdateWithoutUserFlagLinksInputObjectSchema)])
+}).strict();
+export const UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInput> = __makeSchema_UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInput>;
+export const UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserFlagUpdateToOneWithWhereWithoutUserFlagLinksInput_schema();
+
+
+// File: UserFlagUpdateWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserFlagUpdateWithoutUserFlagLinksInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const UserFlagUpdateWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserFlagUpdateWithoutUserFlagLinksInput> = __makeSchema_UserFlagUpdateWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserFlagUpdateWithoutUserFlagLinksInput>;
+export const UserFlagUpdateWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserFlagUpdateWithoutUserFlagLinksInput_schema();
+
+
+// File: UserFlagUncheckedUpdateWithoutUserFlagLinksInput.schema.ts
+const __makeSchema_UserFlagUncheckedUpdateWithoutUserFlagLinksInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const UserFlagUncheckedUpdateWithoutUserFlagLinksInputObjectSchema: z.ZodType<Prisma.UserFlagUncheckedUpdateWithoutUserFlagLinksInput> = __makeSchema_UserFlagUncheckedUpdateWithoutUserFlagLinksInput_schema() as unknown as z.ZodType<Prisma.UserFlagUncheckedUpdateWithoutUserFlagLinksInput>;
+export const UserFlagUncheckedUpdateWithoutUserFlagLinksInputObjectZodSchema = __makeSchema_UserFlagUncheckedUpdateWithoutUserFlagLinksInput_schema();
 
 
 // File: AttendeeCreateManyUserInput.schema.ts
@@ -28226,6 +29192,17 @@ const __makeSchema_ContestantCreateManyUserInput_schema = () => z.object({
 }).strict();
 export const ContestantCreateManyUserInputObjectSchema: z.ZodType<Prisma.ContestantCreateManyUserInput> = __makeSchema_ContestantCreateManyUserInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateManyUserInput>;
 export const ContestantCreateManyUserInputObjectZodSchema = __makeSchema_ContestantCreateManyUserInput_schema();
+
+
+// File: UserFlagLinkCreateManyUserInput.schema.ts
+const __makeSchema_UserFlagLinkCreateManyUserInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  userFlagId: z.string()
+}).strict();
+export const UserFlagLinkCreateManyUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateManyUserInput> = __makeSchema_UserFlagLinkCreateManyUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateManyUserInput>;
+export const UserFlagLinkCreateManyUserInputObjectZodSchema = __makeSchema_UserFlagLinkCreateManyUserInput_schema();
 
 
 // File: AttendeeUpdateWithoutUserInput.schema.ts
@@ -28822,6 +29799,39 @@ const __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersInput_schema = ()
 }).strict();
 export const ContestTeamUncheckedUpdateManyWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateManyWithoutMembersInput> = __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateManyWithoutMembersInput>;
 export const ContestTeamUncheckedUpdateManyWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersInput_schema();
+
+
+// File: UserFlagLinkUpdateWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateWithoutUserInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userFlag: z.lazy(() => UserFlagUpdateOneRequiredWithoutUserFlagLinksNestedInputObjectSchema).optional()
+}).strict();
+export const UserFlagLinkUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateWithoutUserInput> = __makeSchema_UserFlagLinkUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateWithoutUserInput>;
+export const UserFlagLinkUpdateWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateWithoutUserInput_schema();
+
+
+// File: UserFlagLinkUncheckedUpdateWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedUpdateWithoutUserInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userFlagId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkUncheckedUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedUpdateWithoutUserInput> = __makeSchema_UserFlagLinkUncheckedUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedUpdateWithoutUserInput>;
+export const UserFlagLinkUncheckedUpdateWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedUpdateWithoutUserInput_schema();
+
+
+// File: UserFlagLinkUncheckedUpdateManyWithoutUserInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userFlagId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkUncheckedUpdateManyWithoutUserInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserInput> = __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserInput>;
+export const UserFlagLinkUncheckedUpdateManyWithoutUserInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserInput_schema();
 
 
 // File: EventCompanyCreateManyCompanyInput.schema.ts
@@ -30741,7 +31751,6 @@ const __makeSchema_UserUpdateWithoutContestTeamsInput_schema = () => z.object({
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -30760,7 +31769,8 @@ const __makeSchema_UserUpdateWithoutContestTeamsInput_schema = () => z.object({
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
-  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional()
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutContestTeamsInput> = __makeSchema_UserUpdateWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutContestTeamsInput>;
 export const UserUpdateWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUpdateWithoutContestTeamsInput_schema();
@@ -30778,7 +31788,6 @@ const __makeSchema_UserUncheckedUpdateWithoutContestTeamsInput_schema = () => z.
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -30797,7 +31806,8 @@ const __makeSchema_UserUncheckedUpdateWithoutContestTeamsInput_schema = () => z.
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
   notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
-  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  userFlagLinks: z.lazy(() => UserFlagLinkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutContestTeamsInput> = __makeSchema_UserUncheckedUpdateWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutContestTeamsInput>;
 export const UserUncheckedUpdateWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutContestTeamsInput_schema();
@@ -30815,7 +31825,6 @@ const __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsInput_schema = () =
   gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
   dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
   workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -30824,6 +31833,50 @@ const __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsInput_schema = () =
 }).strict();
 export const UserUncheckedUpdateManyWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateManyWithoutContestTeamsInput> = __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateManyWithoutContestTeamsInput>;
 export const UserUncheckedUpdateManyWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsInput_schema();
+
+
+// File: UserFlagLinkCreateManyUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkCreateManyUserFlagInput_schema = () => z.object({
+  id: z.string().optional(),
+  awardedAt: z.coerce.date(),
+  reason: z.string().optional().nullable(),
+  userId: z.string()
+}).strict();
+export const UserFlagLinkCreateManyUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCreateManyUserFlagInput> = __makeSchema_UserFlagLinkCreateManyUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCreateManyUserFlagInput>;
+export const UserFlagLinkCreateManyUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkCreateManyUserFlagInput_schema();
+
+
+// File: UserFlagLinkUpdateWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkUpdateWithoutUserFlagInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  user: z.lazy(() => UserUpdateOneRequiredWithoutUserFlagLinksNestedInputObjectSchema).optional()
+}).strict();
+export const UserFlagLinkUpdateWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUpdateWithoutUserFlagInput> = __makeSchema_UserFlagLinkUpdateWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateWithoutUserFlagInput>;
+export const UserFlagLinkUpdateWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkUpdateWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkUncheckedUpdateWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedUpdateWithoutUserFlagInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkUncheckedUpdateWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedUpdateWithoutUserFlagInput> = __makeSchema_UserFlagLinkUncheckedUpdateWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedUpdateWithoutUserFlagInput>;
+export const UserFlagLinkUncheckedUpdateWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedUpdateWithoutUserFlagInput_schema();
+
+
+// File: UserFlagLinkUncheckedUpdateManyWithoutUserFlagInput.schema.ts
+const __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserFlagInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  awardedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  reason: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkUncheckedUpdateManyWithoutUserFlagInputObjectSchema: z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserFlagInput> = __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserFlagInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserFlagInput>;
+export const UserFlagLinkUncheckedUpdateManyWithoutUserFlagInputObjectZodSchema = __makeSchema_UserFlagLinkUncheckedUpdateManyWithoutUserFlagInput_schema();
 
 
 // File: MembershipCountAggregateInput.schema.ts
@@ -30897,7 +31950,6 @@ const __makeSchema_UserCountAggregateInput_schema = () => z.object({
   gender: z.literal(true).optional(),
   dietaryRestrictions: z.literal(true).optional(),
   ntnuUsername: z.literal(true).optional(),
-  flags: z.literal(true).optional(),
   workspaceUserId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
@@ -32702,6 +33754,83 @@ export const ContestTeamMaxAggregateInputObjectSchema: z.ZodType<Prisma.ContestT
 export const ContestTeamMaxAggregateInputObjectZodSchema = __makeSchema_ContestTeamMaxAggregateInput_schema();
 
 
+// File: UserFlagCountAggregateInput.schema.ts
+const __makeSchema_UserFlagCountAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  createdAt: z.literal(true).optional(),
+  updatedAt: z.literal(true).optional(),
+  description: z.literal(true).optional(),
+  imageUrl: z.literal(true).optional(),
+  _all: z.literal(true).optional()
+}).strict();
+export const UserFlagCountAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagCountAggregateInputType> = __makeSchema_UserFlagCountAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagCountAggregateInputType>;
+export const UserFlagCountAggregateInputObjectZodSchema = __makeSchema_UserFlagCountAggregateInput_schema();
+
+
+// File: UserFlagMinAggregateInput.schema.ts
+const __makeSchema_UserFlagMinAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  createdAt: z.literal(true).optional(),
+  updatedAt: z.literal(true).optional(),
+  description: z.literal(true).optional(),
+  imageUrl: z.literal(true).optional()
+}).strict();
+export const UserFlagMinAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagMinAggregateInputType> = __makeSchema_UserFlagMinAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagMinAggregateInputType>;
+export const UserFlagMinAggregateInputObjectZodSchema = __makeSchema_UserFlagMinAggregateInput_schema();
+
+
+// File: UserFlagMaxAggregateInput.schema.ts
+const __makeSchema_UserFlagMaxAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  createdAt: z.literal(true).optional(),
+  updatedAt: z.literal(true).optional(),
+  description: z.literal(true).optional(),
+  imageUrl: z.literal(true).optional()
+}).strict();
+export const UserFlagMaxAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagMaxAggregateInputType> = __makeSchema_UserFlagMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagMaxAggregateInputType>;
+export const UserFlagMaxAggregateInputObjectZodSchema = __makeSchema_UserFlagMaxAggregateInput_schema();
+
+
+// File: UserFlagLinkCountAggregateInput.schema.ts
+const __makeSchema_UserFlagLinkCountAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  awardedAt: z.literal(true).optional(),
+  reason: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
+  userFlagId: z.literal(true).optional(),
+  _all: z.literal(true).optional()
+}).strict();
+export const UserFlagLinkCountAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkCountAggregateInputType> = __makeSchema_UserFlagLinkCountAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkCountAggregateInputType>;
+export const UserFlagLinkCountAggregateInputObjectZodSchema = __makeSchema_UserFlagLinkCountAggregateInput_schema();
+
+
+// File: UserFlagLinkMinAggregateInput.schema.ts
+const __makeSchema_UserFlagLinkMinAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  awardedAt: z.literal(true).optional(),
+  reason: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
+  userFlagId: z.literal(true).optional()
+}).strict();
+export const UserFlagLinkMinAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkMinAggregateInputType> = __makeSchema_UserFlagLinkMinAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkMinAggregateInputType>;
+export const UserFlagLinkMinAggregateInputObjectZodSchema = __makeSchema_UserFlagLinkMinAggregateInput_schema();
+
+
+// File: UserFlagLinkMaxAggregateInput.schema.ts
+const __makeSchema_UserFlagLinkMaxAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  awardedAt: z.literal(true).optional(),
+  reason: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
+  userFlagId: z.literal(true).optional()
+}).strict();
+export const UserFlagLinkMaxAggregateInputObjectSchema: z.ZodType<Prisma.UserFlagLinkMaxAggregateInputType> = __makeSchema_UserFlagLinkMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.UserFlagLinkMaxAggregateInputType>;
+export const UserFlagLinkMaxAggregateInputObjectZodSchema = __makeSchema_UserFlagLinkMaxAggregateInput_schema();
+
+
 // File: UserCountOutputTypeSelect.schema.ts
 const __makeSchema_UserCountOutputTypeSelect_schema = () => z.object({
   attendee: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountAttendeeArgsObjectSchema)]).optional(),
@@ -32716,7 +33845,8 @@ const __makeSchema_UserCountOutputTypeSelect_schema = () => z.object({
   notificationsCreated: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountNotificationsCreatedArgsObjectSchema)]).optional(),
   notificationsUpdated: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountNotificationsUpdatedArgsObjectSchema)]).optional(),
   contestants: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountContestantsArgsObjectSchema)]).optional(),
-  contestTeams: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountContestTeamsArgsObjectSchema)]).optional()
+  contestTeams: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountContestTeamsArgsObjectSchema)]).optional(),
+  userFlagLinks: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountUserFlagLinksArgsObjectSchema)]).optional()
 }).strict();
 export const UserCountOutputTypeSelectObjectSchema: z.ZodType<Prisma.UserCountOutputTypeSelect> = __makeSchema_UserCountOutputTypeSelect_schema() as unknown as z.ZodType<Prisma.UserCountOutputTypeSelect>;
 export const UserCountOutputTypeSelectObjectZodSchema = __makeSchema_UserCountOutputTypeSelect_schema();
@@ -32906,6 +34036,14 @@ export const ContestTeamCountOutputTypeSelectObjectSchema: z.ZodType<Prisma.Cont
 export const ContestTeamCountOutputTypeSelectObjectZodSchema = __makeSchema_ContestTeamCountOutputTypeSelect_schema();
 
 
+// File: UserFlagCountOutputTypeSelect.schema.ts
+const __makeSchema_UserFlagCountOutputTypeSelect_schema = () => z.object({
+  userFlagLinks: z.union([z.boolean(), z.lazy(() => UserFlagCountOutputTypeCountUserFlagLinksArgsObjectSchema)]).optional()
+}).strict();
+export const UserFlagCountOutputTypeSelectObjectSchema: z.ZodType<Prisma.UserFlagCountOutputTypeSelect> = __makeSchema_UserFlagCountOutputTypeSelect_schema() as unknown as z.ZodType<Prisma.UserFlagCountOutputTypeSelect>;
+export const UserFlagCountOutputTypeSelectObjectZodSchema = __makeSchema_UserFlagCountOutputTypeSelect_schema();
+
+
 // File: UserCountOutputTypeArgs.schema.ts
 const __makeSchema_UserCountOutputTypeArgs_schema = () => z.object({
   select: z.lazy(() => UserCountOutputTypeSelectObjectSchema).optional()
@@ -33016,6 +34154,14 @@ const __makeSchema_UserCountOutputTypeCountContestTeamsArgs_schema = () => z.obj
 }).strict();
 export const UserCountOutputTypeCountContestTeamsArgsObjectSchema = __makeSchema_UserCountOutputTypeCountContestTeamsArgs_schema();
 export const UserCountOutputTypeCountContestTeamsArgsObjectZodSchema = __makeSchema_UserCountOutputTypeCountContestTeamsArgs_schema();
+
+
+// File: UserCountOutputTypeCountUserFlagLinksArgs.schema.ts
+const __makeSchema_UserCountOutputTypeCountUserFlagLinksArgs_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkWhereInputObjectSchema).optional()
+}).strict();
+export const UserCountOutputTypeCountUserFlagLinksArgsObjectSchema = __makeSchema_UserCountOutputTypeCountUserFlagLinksArgs_schema();
+export const UserCountOutputTypeCountUserFlagLinksArgsObjectZodSchema = __makeSchema_UserCountOutputTypeCountUserFlagLinksArgs_schema();
 
 
 // File: CompanyCountOutputTypeArgs.schema.ts
@@ -33482,6 +34628,22 @@ export const ContestTeamCountOutputTypeCountMembersArgsObjectSchema = __makeSche
 export const ContestTeamCountOutputTypeCountMembersArgsObjectZodSchema = __makeSchema_ContestTeamCountOutputTypeCountMembersArgs_schema();
 
 
+// File: UserFlagCountOutputTypeArgs.schema.ts
+const __makeSchema_UserFlagCountOutputTypeArgs_schema = () => z.object({
+  select: z.lazy(() => UserFlagCountOutputTypeSelectObjectSchema).optional()
+}).strict();
+export const UserFlagCountOutputTypeArgsObjectSchema = __makeSchema_UserFlagCountOutputTypeArgs_schema();
+export const UserFlagCountOutputTypeArgsObjectZodSchema = __makeSchema_UserFlagCountOutputTypeArgs_schema();
+
+
+// File: UserFlagCountOutputTypeCountUserFlagLinksArgs.schema.ts
+const __makeSchema_UserFlagCountOutputTypeCountUserFlagLinksArgs_schema = () => z.object({
+  where: z.lazy(() => UserFlagLinkWhereInputObjectSchema).optional()
+}).strict();
+export const UserFlagCountOutputTypeCountUserFlagLinksArgsObjectSchema = __makeSchema_UserFlagCountOutputTypeCountUserFlagLinksArgs_schema();
+export const UserFlagCountOutputTypeCountUserFlagLinksArgsObjectZodSchema = __makeSchema_UserFlagCountOutputTypeCountUserFlagLinksArgs_schema();
+
+
 // File: MembershipSelect.schema.ts
 const __makeSchema_MembershipSelect_schema = () => z.object({
   id: z.boolean().optional(),
@@ -33509,7 +34671,6 @@ const __makeSchema_UserSelect_schema = () => z.object({
   gender: z.boolean().optional(),
   dietaryRestrictions: z.boolean().optional(),
   ntnuUsername: z.boolean().optional(),
-  flags: z.boolean().optional(),
   workspaceUserId: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
@@ -33530,6 +34691,7 @@ const __makeSchema_UserSelect_schema = () => z.object({
   notificationsUpdated: z.union([z.boolean(), z.lazy(() => NotificationFindManySchema)]).optional(),
   contestants: z.union([z.boolean(), z.lazy(() => ContestantFindManySchema)]).optional(),
   contestTeams: z.union([z.boolean(), z.lazy(() => ContestTeamFindManySchema)]).optional(),
+  userFlagLinks: z.union([z.boolean(), z.lazy(() => UserFlagLinkFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
 export const UserSelectObjectSchema: z.ZodType<Prisma.UserSelect> = __makeSchema_UserSelect_schema() as unknown as z.ZodType<Prisma.UserSelect>;
@@ -34175,6 +35337,35 @@ export const ContestTeamSelectObjectSchema: z.ZodType<Prisma.ContestTeamSelect> 
 export const ContestTeamSelectObjectZodSchema = __makeSchema_ContestTeamSelect_schema();
 
 
+// File: UserFlagSelect.schema.ts
+const __makeSchema_UserFlagSelect_schema = () => z.object({
+  id: z.boolean().optional(),
+  name: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  description: z.boolean().optional(),
+  imageUrl: z.boolean().optional(),
+  userFlagLinks: z.union([z.boolean(), z.lazy(() => UserFlagLinkFindManySchema)]).optional(),
+  _count: z.union([z.boolean(), z.lazy(() => UserFlagCountOutputTypeArgsObjectSchema)]).optional()
+}).strict();
+export const UserFlagSelectObjectSchema: z.ZodType<Prisma.UserFlagSelect> = __makeSchema_UserFlagSelect_schema() as unknown as z.ZodType<Prisma.UserFlagSelect>;
+export const UserFlagSelectObjectZodSchema = __makeSchema_UserFlagSelect_schema();
+
+
+// File: UserFlagLinkSelect.schema.ts
+const __makeSchema_UserFlagLinkSelect_schema = () => z.object({
+  id: z.boolean().optional(),
+  awardedAt: z.boolean().optional(),
+  reason: z.boolean().optional(),
+  userId: z.boolean().optional(),
+  userFlagId: z.boolean().optional(),
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+  userFlag: z.union([z.boolean(), z.lazy(() => UserFlagArgsObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkSelectObjectSchema: z.ZodType<Prisma.UserFlagLinkSelect> = __makeSchema_UserFlagLinkSelect_schema() as unknown as z.ZodType<Prisma.UserFlagLinkSelect>;
+export const UserFlagLinkSelectObjectZodSchema = __makeSchema_UserFlagLinkSelect_schema();
+
+
 // File: MembershipArgs.schema.ts
 const __makeSchema_MembershipArgs_schema = () => z.object({
   select: z.lazy(() => MembershipSelectObjectSchema).optional(),
@@ -34525,6 +35716,24 @@ export const ContestTeamArgsObjectSchema = __makeSchema_ContestTeamArgs_schema()
 export const ContestTeamArgsObjectZodSchema = __makeSchema_ContestTeamArgs_schema();
 
 
+// File: UserFlagArgs.schema.ts
+const __makeSchema_UserFlagArgs_schema = () => z.object({
+  select: z.lazy(() => UserFlagSelectObjectSchema).optional(),
+  include: z.lazy(() => UserFlagIncludeObjectSchema).optional()
+}).strict();
+export const UserFlagArgsObjectSchema = __makeSchema_UserFlagArgs_schema();
+export const UserFlagArgsObjectZodSchema = __makeSchema_UserFlagArgs_schema();
+
+
+// File: UserFlagLinkArgs.schema.ts
+const __makeSchema_UserFlagLinkArgs_schema = () => z.object({
+  select: z.lazy(() => UserFlagLinkSelectObjectSchema).optional(),
+  include: z.lazy(() => UserFlagLinkIncludeObjectSchema).optional()
+}).strict();
+export const UserFlagLinkArgsObjectSchema = __makeSchema_UserFlagLinkArgs_schema();
+export const UserFlagLinkArgsObjectZodSchema = __makeSchema_UserFlagLinkArgs_schema();
+
+
 // File: MembershipInclude.schema.ts
 const __makeSchema_MembershipInclude_schema = () => z.object({
   user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional()
@@ -34550,6 +35759,7 @@ const __makeSchema_UserInclude_schema = () => z.object({
   notificationsUpdated: z.union([z.boolean(), z.lazy(() => NotificationFindManySchema)]).optional(),
   contestants: z.union([z.boolean(), z.lazy(() => ContestantFindManySchema)]).optional(),
   contestTeams: z.union([z.boolean(), z.lazy(() => ContestTeamFindManySchema)]).optional(),
+  userFlagLinks: z.union([z.boolean(), z.lazy(() => UserFlagLinkFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
 export const UserIncludeObjectSchema: z.ZodType<Prisma.UserInclude> = __makeSchema_UserInclude_schema() as unknown as z.ZodType<Prisma.UserInclude>;
@@ -34921,6 +36131,24 @@ export const ContestTeamIncludeObjectSchema: z.ZodType<Prisma.ContestTeamInclude
 export const ContestTeamIncludeObjectZodSchema = __makeSchema_ContestTeamInclude_schema();
 
 
+// File: UserFlagInclude.schema.ts
+const __makeSchema_UserFlagInclude_schema = () => z.object({
+  userFlagLinks: z.union([z.boolean(), z.lazy(() => UserFlagLinkFindManySchema)]).optional(),
+  _count: z.union([z.boolean(), z.lazy(() => UserFlagCountOutputTypeArgsObjectSchema)]).optional()
+}).strict();
+export const UserFlagIncludeObjectSchema: z.ZodType<Prisma.UserFlagInclude> = __makeSchema_UserFlagInclude_schema() as unknown as z.ZodType<Prisma.UserFlagInclude>;
+export const UserFlagIncludeObjectZodSchema = __makeSchema_UserFlagInclude_schema();
+
+
+// File: UserFlagLinkInclude.schema.ts
+const __makeSchema_UserFlagLinkInclude_schema = () => z.object({
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+  userFlag: z.union([z.boolean(), z.lazy(() => UserFlagArgsObjectSchema)]).optional()
+}).strict();
+export const UserFlagLinkIncludeObjectSchema: z.ZodType<Prisma.UserFlagLinkInclude> = __makeSchema_UserFlagLinkInclude_schema() as unknown as z.ZodType<Prisma.UserFlagLinkInclude>;
+export const UserFlagLinkIncludeObjectZodSchema = __makeSchema_UserFlagLinkInclude_schema();
+
+
 // File: findUniqueMembership.schema.ts
 
 export const MembershipFindUniqueSchema: z.ZodType<Prisma.MembershipFindUniqueArgs> = z.object({ select: MembershipSelectObjectSchema.optional(), include: MembershipIncludeObjectSchema.optional(), where: MembershipWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.MembershipFindUniqueArgs>;
@@ -35126,7 +36354,6 @@ export const UserFindFirstSelectSchema__findFirstUser_schema: z.ZodType<Prisma.U
     gender: z.boolean().optional(),
     dietaryRestrictions: z.boolean().optional(),
     ntnuUsername: z.boolean().optional(),
-    flags: z.boolean().optional(),
     workspaceUserId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
@@ -35147,6 +36374,7 @@ export const UserFindFirstSelectSchema__findFirstUser_schema: z.ZodType<Prisma.U
     notificationsUpdated: z.boolean().optional(),
     contestants: z.boolean().optional(),
     contestTeams: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.UserSelect>;
 
@@ -35161,7 +36389,6 @@ export const UserFindFirstSelectZodSchema__findFirstUser_schema = z.object({
     gender: z.boolean().optional(),
     dietaryRestrictions: z.boolean().optional(),
     ntnuUsername: z.boolean().optional(),
-    flags: z.boolean().optional(),
     workspaceUserId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
@@ -35182,6 +36409,7 @@ export const UserFindFirstSelectZodSchema__findFirstUser_schema = z.object({
     notificationsUpdated: z.boolean().optional(),
     contestants: z.boolean().optional(),
     contestTeams: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 
@@ -35205,7 +36433,6 @@ export const UserFindFirstOrThrowSelectSchema__findFirstOrThrowUser_schema: z.Zo
     gender: z.boolean().optional(),
     dietaryRestrictions: z.boolean().optional(),
     ntnuUsername: z.boolean().optional(),
-    flags: z.boolean().optional(),
     workspaceUserId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
@@ -35226,6 +36453,7 @@ export const UserFindFirstOrThrowSelectSchema__findFirstOrThrowUser_schema: z.Zo
     notificationsUpdated: z.boolean().optional(),
     contestants: z.boolean().optional(),
     contestTeams: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.UserSelect>;
 
@@ -35240,7 +36468,6 @@ export const UserFindFirstOrThrowSelectZodSchema__findFirstOrThrowUser_schema = 
     gender: z.boolean().optional(),
     dietaryRestrictions: z.boolean().optional(),
     ntnuUsername: z.boolean().optional(),
-    flags: z.boolean().optional(),
     workspaceUserId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
@@ -35261,6 +36488,7 @@ export const UserFindFirstOrThrowSelectZodSchema__findFirstOrThrowUser_schema = 
     notificationsUpdated: z.boolean().optional(),
     contestants: z.boolean().optional(),
     contestTeams: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 
@@ -35284,7 +36512,6 @@ export const UserFindManySelectSchema__findManyUser_schema: z.ZodType<Prisma.Use
     gender: z.boolean().optional(),
     dietaryRestrictions: z.boolean().optional(),
     ntnuUsername: z.boolean().optional(),
-    flags: z.boolean().optional(),
     workspaceUserId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
@@ -35305,6 +36532,7 @@ export const UserFindManySelectSchema__findManyUser_schema: z.ZodType<Prisma.Use
     notificationsUpdated: z.boolean().optional(),
     contestants: z.boolean().optional(),
     contestTeams: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.UserSelect>;
 
@@ -35319,7 +36547,6 @@ export const UserFindManySelectZodSchema__findManyUser_schema = z.object({
     gender: z.boolean().optional(),
     dietaryRestrictions: z.boolean().optional(),
     ntnuUsername: z.boolean().optional(),
-    flags: z.boolean().optional(),
     workspaceUserId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
@@ -35340,6 +36567,7 @@ export const UserFindManySelectZodSchema__findManyUser_schema = z.object({
     notificationsUpdated: z.boolean().optional(),
     contestants: z.boolean().optional(),
     contestTeams: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 
@@ -42472,6 +43700,354 @@ export const ContestTeamGroupBySchema: z.ZodType<Prisma.ContestTeamGroupByArgs> 
 
 export const ContestTeamGroupByZodSchema = z.object({ where: ContestTeamWhereInputObjectSchema.optional(), orderBy: z.union([ContestTeamOrderByWithAggregationInputObjectSchema, ContestTeamOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ContestTeamScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ContestTeamScalarFieldEnumSchema), _count: z.union([ z.literal(true), ContestTeamCountAggregateInputObjectSchema ]).optional(), _min: ContestTeamMinAggregateInputObjectSchema.optional(), _max: ContestTeamMaxAggregateInputObjectSchema.optional() }).strict();
 
+// File: findUniqueUserFlag.schema.ts
+
+export const UserFlagFindUniqueSchema: z.ZodType<Prisma.UserFlagFindUniqueArgs> = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), where: UserFlagWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.UserFlagFindUniqueArgs>;
+
+export const UserFlagFindUniqueZodSchema = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), where: UserFlagWhereUniqueInputObjectSchema }).strict();
+
+// File: findUniqueOrThrowUserFlag.schema.ts
+
+export const UserFlagFindUniqueOrThrowSchema: z.ZodType<Prisma.UserFlagFindUniqueOrThrowArgs> = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), where: UserFlagWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.UserFlagFindUniqueOrThrowArgs>;
+
+export const UserFlagFindUniqueOrThrowZodSchema = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), where: UserFlagWhereUniqueInputObjectSchema }).strict();
+
+// File: findFirstUserFlag.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const UserFlagFindFirstSelectSchema__findFirstUserFlag_schema: z.ZodType<Prisma.UserFlagSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    description: z.boolean().optional(),
+    imageUrl: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.UserFlagSelect>;
+
+export const UserFlagFindFirstSelectZodSchema__findFirstUserFlag_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    description: z.boolean().optional(),
+    imageUrl: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const UserFlagFindFirstSchema: z.ZodType<Prisma.UserFlagFindFirstArgs> = z.object({ select: UserFlagFindFirstSelectSchema__findFirstUserFlag_schema.optional(), include: z.lazy(() => UserFlagIncludeObjectSchema.optional()), orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagScalarFieldEnumSchema, UserFlagScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagFindFirstArgs>;
+
+export const UserFlagFindFirstZodSchema = z.object({ select: UserFlagFindFirstSelectSchema__findFirstUserFlag_schema.optional(), include: z.lazy(() => UserFlagIncludeObjectSchema.optional()), orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagScalarFieldEnumSchema, UserFlagScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findFirstOrThrowUserFlag.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const UserFlagFindFirstOrThrowSelectSchema__findFirstOrThrowUserFlag_schema: z.ZodType<Prisma.UserFlagSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    description: z.boolean().optional(),
+    imageUrl: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.UserFlagSelect>;
+
+export const UserFlagFindFirstOrThrowSelectZodSchema__findFirstOrThrowUserFlag_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    description: z.boolean().optional(),
+    imageUrl: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const UserFlagFindFirstOrThrowSchema: z.ZodType<Prisma.UserFlagFindFirstOrThrowArgs> = z.object({ select: UserFlagFindFirstOrThrowSelectSchema__findFirstOrThrowUserFlag_schema.optional(), include: z.lazy(() => UserFlagIncludeObjectSchema.optional()), orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagScalarFieldEnumSchema, UserFlagScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagFindFirstOrThrowArgs>;
+
+export const UserFlagFindFirstOrThrowZodSchema = z.object({ select: UserFlagFindFirstOrThrowSelectSchema__findFirstOrThrowUserFlag_schema.optional(), include: z.lazy(() => UserFlagIncludeObjectSchema.optional()), orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagScalarFieldEnumSchema, UserFlagScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findManyUserFlag.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const UserFlagFindManySelectSchema__findManyUserFlag_schema: z.ZodType<Prisma.UserFlagSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    description: z.boolean().optional(),
+    imageUrl: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.UserFlagSelect>;
+
+export const UserFlagFindManySelectZodSchema__findManyUserFlag_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    description: z.boolean().optional(),
+    imageUrl: z.boolean().optional(),
+    userFlagLinks: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const UserFlagFindManySchema: z.ZodType<Prisma.UserFlagFindManyArgs> = z.object({ select: UserFlagFindManySelectSchema__findManyUserFlag_schema.optional(), include: z.lazy(() => UserFlagIncludeObjectSchema.optional()), orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagScalarFieldEnumSchema, UserFlagScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagFindManyArgs>;
+
+export const UserFlagFindManyZodSchema = z.object({ select: UserFlagFindManySelectSchema__findManyUserFlag_schema.optional(), include: z.lazy(() => UserFlagIncludeObjectSchema.optional()), orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagScalarFieldEnumSchema, UserFlagScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: countUserFlag.schema.ts
+
+export const UserFlagCountSchema: z.ZodType<Prisma.UserFlagCountArgs> = z.object({ orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), UserFlagCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagCountArgs>;
+
+export const UserFlagCountZodSchema = z.object({ orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), UserFlagCountAggregateInputObjectSchema ]).optional() }).strict();
+
+// File: createOneUserFlag.schema.ts
+
+export const UserFlagCreateOneSchema: z.ZodType<Prisma.UserFlagCreateArgs> = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), data: z.union([UserFlagCreateInputObjectSchema, UserFlagUncheckedCreateInputObjectSchema]) }).strict() as unknown as z.ZodType<Prisma.UserFlagCreateArgs>;
+
+export const UserFlagCreateOneZodSchema = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), data: z.union([UserFlagCreateInputObjectSchema, UserFlagUncheckedCreateInputObjectSchema]) }).strict();
+
+// File: createManyUserFlag.schema.ts
+
+export const UserFlagCreateManySchema: z.ZodType<Prisma.UserFlagCreateManyArgs> = z.object({ data: z.union([ UserFlagCreateManyInputObjectSchema, z.array(UserFlagCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagCreateManyArgs>;
+
+export const UserFlagCreateManyZodSchema = z.object({ data: z.union([ UserFlagCreateManyInputObjectSchema, z.array(UserFlagCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: createManyAndReturnUserFlag.schema.ts
+
+export const UserFlagCreateManyAndReturnSchema: z.ZodType<Prisma.UserFlagCreateManyAndReturnArgs> = z.object({ select: UserFlagSelectObjectSchema.optional(), data: z.union([ UserFlagCreateManyInputObjectSchema, z.array(UserFlagCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagCreateManyAndReturnArgs>;
+
+export const UserFlagCreateManyAndReturnZodSchema = z.object({ select: UserFlagSelectObjectSchema.optional(), data: z.union([ UserFlagCreateManyInputObjectSchema, z.array(UserFlagCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: deleteOneUserFlag.schema.ts
+
+export const UserFlagDeleteOneSchema: z.ZodType<Prisma.UserFlagDeleteArgs> = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), where: UserFlagWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.UserFlagDeleteArgs>;
+
+export const UserFlagDeleteOneZodSchema = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), where: UserFlagWhereUniqueInputObjectSchema }).strict();
+
+// File: deleteManyUserFlag.schema.ts
+
+export const UserFlagDeleteManySchema: z.ZodType<Prisma.UserFlagDeleteManyArgs> = z.object({ where: UserFlagWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagDeleteManyArgs>;
+
+export const UserFlagDeleteManyZodSchema = z.object({ where: UserFlagWhereInputObjectSchema.optional() }).strict();
+
+// File: updateOneUserFlag.schema.ts
+
+export const UserFlagUpdateOneSchema: z.ZodType<Prisma.UserFlagUpdateArgs> = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), data: z.union([UserFlagUpdateInputObjectSchema, UserFlagUncheckedUpdateInputObjectSchema]), where: UserFlagWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.UserFlagUpdateArgs>;
+
+export const UserFlagUpdateOneZodSchema = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), data: z.union([UserFlagUpdateInputObjectSchema, UserFlagUncheckedUpdateInputObjectSchema]), where: UserFlagWhereUniqueInputObjectSchema }).strict();
+
+// File: updateManyUserFlag.schema.ts
+
+export const UserFlagUpdateManySchema: z.ZodType<Prisma.UserFlagUpdateManyArgs> = z.object({ data: UserFlagUpdateManyMutationInputObjectSchema, where: UserFlagWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagUpdateManyArgs>;
+
+export const UserFlagUpdateManyZodSchema = z.object({ data: UserFlagUpdateManyMutationInputObjectSchema, where: UserFlagWhereInputObjectSchema.optional() }).strict();
+
+// File: updateManyAndReturnUserFlag.schema.ts
+
+export const UserFlagUpdateManyAndReturnSchema: z.ZodType<Prisma.UserFlagUpdateManyAndReturnArgs> = z.object({ select: UserFlagSelectObjectSchema.optional(), data: UserFlagUpdateManyMutationInputObjectSchema, where: UserFlagWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagUpdateManyAndReturnArgs>;
+
+export const UserFlagUpdateManyAndReturnZodSchema = z.object({ select: UserFlagSelectObjectSchema.optional(), data: UserFlagUpdateManyMutationInputObjectSchema, where: UserFlagWhereInputObjectSchema.optional() }).strict();
+
+// File: upsertOneUserFlag.schema.ts
+
+export const UserFlagUpsertOneSchema: z.ZodType<Prisma.UserFlagUpsertArgs> = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), where: UserFlagWhereUniqueInputObjectSchema, create: z.union([ UserFlagCreateInputObjectSchema, UserFlagUncheckedCreateInputObjectSchema ]), update: z.union([ UserFlagUpdateInputObjectSchema, UserFlagUncheckedUpdateInputObjectSchema ]) }).strict() as unknown as z.ZodType<Prisma.UserFlagUpsertArgs>;
+
+export const UserFlagUpsertOneZodSchema = z.object({ select: UserFlagSelectObjectSchema.optional(), include: UserFlagIncludeObjectSchema.optional(), where: UserFlagWhereUniqueInputObjectSchema, create: z.union([ UserFlagCreateInputObjectSchema, UserFlagUncheckedCreateInputObjectSchema ]), update: z.union([ UserFlagUpdateInputObjectSchema, UserFlagUncheckedUpdateInputObjectSchema ]) }).strict();
+
+// File: aggregateUserFlag.schema.ts
+
+export const UserFlagAggregateSchema: z.ZodType<Prisma.UserFlagAggregateArgs> = z.object({ orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), UserFlagCountAggregateInputObjectSchema ]).optional(), _min: UserFlagMinAggregateInputObjectSchema.optional(), _max: UserFlagMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagAggregateArgs>;
+
+export const UserFlagAggregateZodSchema = z.object({ orderBy: z.union([UserFlagOrderByWithRelationInputObjectSchema, UserFlagOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagWhereInputObjectSchema.optional(), cursor: UserFlagWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), UserFlagCountAggregateInputObjectSchema ]).optional(), _min: UserFlagMinAggregateInputObjectSchema.optional(), _max: UserFlagMaxAggregateInputObjectSchema.optional() }).strict();
+
+// File: groupByUserFlag.schema.ts
+
+export const UserFlagGroupBySchema: z.ZodType<Prisma.UserFlagGroupByArgs> = z.object({ where: UserFlagWhereInputObjectSchema.optional(), orderBy: z.union([UserFlagOrderByWithAggregationInputObjectSchema, UserFlagOrderByWithAggregationInputObjectSchema.array()]).optional(), having: UserFlagScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(UserFlagScalarFieldEnumSchema), _count: z.union([ z.literal(true), UserFlagCountAggregateInputObjectSchema ]).optional(), _min: UserFlagMinAggregateInputObjectSchema.optional(), _max: UserFlagMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagGroupByArgs>;
+
+export const UserFlagGroupByZodSchema = z.object({ where: UserFlagWhereInputObjectSchema.optional(), orderBy: z.union([UserFlagOrderByWithAggregationInputObjectSchema, UserFlagOrderByWithAggregationInputObjectSchema.array()]).optional(), having: UserFlagScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(UserFlagScalarFieldEnumSchema), _count: z.union([ z.literal(true), UserFlagCountAggregateInputObjectSchema ]).optional(), _min: UserFlagMinAggregateInputObjectSchema.optional(), _max: UserFlagMaxAggregateInputObjectSchema.optional() }).strict();
+
+// File: findUniqueUserFlagLink.schema.ts
+
+export const UserFlagLinkFindUniqueSchema: z.ZodType<Prisma.UserFlagLinkFindUniqueArgs> = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), where: UserFlagLinkWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkFindUniqueArgs>;
+
+export const UserFlagLinkFindUniqueZodSchema = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), where: UserFlagLinkWhereUniqueInputObjectSchema }).strict();
+
+// File: findUniqueOrThrowUserFlagLink.schema.ts
+
+export const UserFlagLinkFindUniqueOrThrowSchema: z.ZodType<Prisma.UserFlagLinkFindUniqueOrThrowArgs> = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), where: UserFlagLinkWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkFindUniqueOrThrowArgs>;
+
+export const UserFlagLinkFindUniqueOrThrowZodSchema = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), where: UserFlagLinkWhereUniqueInputObjectSchema }).strict();
+
+// File: findFirstUserFlagLink.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const UserFlagLinkFindFirstSelectSchema__findFirstUserFlagLink_schema: z.ZodType<Prisma.UserFlagLinkSelect> = z.object({
+    id: z.boolean().optional(),
+    awardedAt: z.boolean().optional(),
+    reason: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    userFlagId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userFlag: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkSelect>;
+
+export const UserFlagLinkFindFirstSelectZodSchema__findFirstUserFlagLink_schema = z.object({
+    id: z.boolean().optional(),
+    awardedAt: z.boolean().optional(),
+    reason: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    userFlagId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userFlag: z.boolean().optional()
+  }).strict();
+
+export const UserFlagLinkFindFirstSchema: z.ZodType<Prisma.UserFlagLinkFindFirstArgs> = z.object({ select: UserFlagLinkFindFirstSelectSchema__findFirstUserFlagLink_schema.optional(), include: z.lazy(() => UserFlagLinkIncludeObjectSchema.optional()), orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagLinkScalarFieldEnumSchema, UserFlagLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkFindFirstArgs>;
+
+export const UserFlagLinkFindFirstZodSchema = z.object({ select: UserFlagLinkFindFirstSelectSchema__findFirstUserFlagLink_schema.optional(), include: z.lazy(() => UserFlagLinkIncludeObjectSchema.optional()), orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagLinkScalarFieldEnumSchema, UserFlagLinkScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findFirstOrThrowUserFlagLink.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const UserFlagLinkFindFirstOrThrowSelectSchema__findFirstOrThrowUserFlagLink_schema: z.ZodType<Prisma.UserFlagLinkSelect> = z.object({
+    id: z.boolean().optional(),
+    awardedAt: z.boolean().optional(),
+    reason: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    userFlagId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userFlag: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkSelect>;
+
+export const UserFlagLinkFindFirstOrThrowSelectZodSchema__findFirstOrThrowUserFlagLink_schema = z.object({
+    id: z.boolean().optional(),
+    awardedAt: z.boolean().optional(),
+    reason: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    userFlagId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userFlag: z.boolean().optional()
+  }).strict();
+
+export const UserFlagLinkFindFirstOrThrowSchema: z.ZodType<Prisma.UserFlagLinkFindFirstOrThrowArgs> = z.object({ select: UserFlagLinkFindFirstOrThrowSelectSchema__findFirstOrThrowUserFlagLink_schema.optional(), include: z.lazy(() => UserFlagLinkIncludeObjectSchema.optional()), orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagLinkScalarFieldEnumSchema, UserFlagLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkFindFirstOrThrowArgs>;
+
+export const UserFlagLinkFindFirstOrThrowZodSchema = z.object({ select: UserFlagLinkFindFirstOrThrowSelectSchema__findFirstOrThrowUserFlagLink_schema.optional(), include: z.lazy(() => UserFlagLinkIncludeObjectSchema.optional()), orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagLinkScalarFieldEnumSchema, UserFlagLinkScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findManyUserFlagLink.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const UserFlagLinkFindManySelectSchema__findManyUserFlagLink_schema: z.ZodType<Prisma.UserFlagLinkSelect> = z.object({
+    id: z.boolean().optional(),
+    awardedAt: z.boolean().optional(),
+    reason: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    userFlagId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userFlag: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkSelect>;
+
+export const UserFlagLinkFindManySelectZodSchema__findManyUserFlagLink_schema = z.object({
+    id: z.boolean().optional(),
+    awardedAt: z.boolean().optional(),
+    reason: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    userFlagId: z.boolean().optional(),
+    user: z.boolean().optional(),
+    userFlag: z.boolean().optional()
+  }).strict();
+
+export const UserFlagLinkFindManySchema: z.ZodType<Prisma.UserFlagLinkFindManyArgs> = z.object({ select: UserFlagLinkFindManySelectSchema__findManyUserFlagLink_schema.optional(), include: z.lazy(() => UserFlagLinkIncludeObjectSchema.optional()), orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagLinkScalarFieldEnumSchema, UserFlagLinkScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkFindManyArgs>;
+
+export const UserFlagLinkFindManyZodSchema = z.object({ select: UserFlagLinkFindManySelectSchema__findManyUserFlagLink_schema.optional(), include: z.lazy(() => UserFlagLinkIncludeObjectSchema.optional()), orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([UserFlagLinkScalarFieldEnumSchema, UserFlagLinkScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: countUserFlagLink.schema.ts
+
+export const UserFlagLinkCountSchema: z.ZodType<Prisma.UserFlagLinkCountArgs> = z.object({ orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), UserFlagLinkCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkCountArgs>;
+
+export const UserFlagLinkCountZodSchema = z.object({ orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), UserFlagLinkCountAggregateInputObjectSchema ]).optional() }).strict();
+
+// File: createOneUserFlagLink.schema.ts
+
+export const UserFlagLinkCreateOneSchema: z.ZodType<Prisma.UserFlagLinkCreateArgs> = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), data: z.union([UserFlagLinkCreateInputObjectSchema, UserFlagLinkUncheckedCreateInputObjectSchema]) }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkCreateArgs>;
+
+export const UserFlagLinkCreateOneZodSchema = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), data: z.union([UserFlagLinkCreateInputObjectSchema, UserFlagLinkUncheckedCreateInputObjectSchema]) }).strict();
+
+// File: createManyUserFlagLink.schema.ts
+
+export const UserFlagLinkCreateManySchema: z.ZodType<Prisma.UserFlagLinkCreateManyArgs> = z.object({ data: z.union([ UserFlagLinkCreateManyInputObjectSchema, z.array(UserFlagLinkCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkCreateManyArgs>;
+
+export const UserFlagLinkCreateManyZodSchema = z.object({ data: z.union([ UserFlagLinkCreateManyInputObjectSchema, z.array(UserFlagLinkCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: createManyAndReturnUserFlagLink.schema.ts
+
+export const UserFlagLinkCreateManyAndReturnSchema: z.ZodType<Prisma.UserFlagLinkCreateManyAndReturnArgs> = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), data: z.union([ UserFlagLinkCreateManyInputObjectSchema, z.array(UserFlagLinkCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkCreateManyAndReturnArgs>;
+
+export const UserFlagLinkCreateManyAndReturnZodSchema = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), data: z.union([ UserFlagLinkCreateManyInputObjectSchema, z.array(UserFlagLinkCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: deleteOneUserFlagLink.schema.ts
+
+export const UserFlagLinkDeleteOneSchema: z.ZodType<Prisma.UserFlagLinkDeleteArgs> = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), where: UserFlagLinkWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkDeleteArgs>;
+
+export const UserFlagLinkDeleteOneZodSchema = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), where: UserFlagLinkWhereUniqueInputObjectSchema }).strict();
+
+// File: deleteManyUserFlagLink.schema.ts
+
+export const UserFlagLinkDeleteManySchema: z.ZodType<Prisma.UserFlagLinkDeleteManyArgs> = z.object({ where: UserFlagLinkWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkDeleteManyArgs>;
+
+export const UserFlagLinkDeleteManyZodSchema = z.object({ where: UserFlagLinkWhereInputObjectSchema.optional() }).strict();
+
+// File: updateOneUserFlagLink.schema.ts
+
+export const UserFlagLinkUpdateOneSchema: z.ZodType<Prisma.UserFlagLinkUpdateArgs> = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), data: z.union([UserFlagLinkUpdateInputObjectSchema, UserFlagLinkUncheckedUpdateInputObjectSchema]), where: UserFlagLinkWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateArgs>;
+
+export const UserFlagLinkUpdateOneZodSchema = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), data: z.union([UserFlagLinkUpdateInputObjectSchema, UserFlagLinkUncheckedUpdateInputObjectSchema]), where: UserFlagLinkWhereUniqueInputObjectSchema }).strict();
+
+// File: updateManyUserFlagLink.schema.ts
+
+export const UserFlagLinkUpdateManySchema: z.ZodType<Prisma.UserFlagLinkUpdateManyArgs> = z.object({ data: UserFlagLinkUpdateManyMutationInputObjectSchema, where: UserFlagLinkWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateManyArgs>;
+
+export const UserFlagLinkUpdateManyZodSchema = z.object({ data: UserFlagLinkUpdateManyMutationInputObjectSchema, where: UserFlagLinkWhereInputObjectSchema.optional() }).strict();
+
+// File: updateManyAndReturnUserFlagLink.schema.ts
+
+export const UserFlagLinkUpdateManyAndReturnSchema: z.ZodType<Prisma.UserFlagLinkUpdateManyAndReturnArgs> = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), data: UserFlagLinkUpdateManyMutationInputObjectSchema, where: UserFlagLinkWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkUpdateManyAndReturnArgs>;
+
+export const UserFlagLinkUpdateManyAndReturnZodSchema = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), data: UserFlagLinkUpdateManyMutationInputObjectSchema, where: UserFlagLinkWhereInputObjectSchema.optional() }).strict();
+
+// File: upsertOneUserFlagLink.schema.ts
+
+export const UserFlagLinkUpsertOneSchema: z.ZodType<Prisma.UserFlagLinkUpsertArgs> = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), where: UserFlagLinkWhereUniqueInputObjectSchema, create: z.union([ UserFlagLinkCreateInputObjectSchema, UserFlagLinkUncheckedCreateInputObjectSchema ]), update: z.union([ UserFlagLinkUpdateInputObjectSchema, UserFlagLinkUncheckedUpdateInputObjectSchema ]) }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkUpsertArgs>;
+
+export const UserFlagLinkUpsertOneZodSchema = z.object({ select: UserFlagLinkSelectObjectSchema.optional(), include: UserFlagLinkIncludeObjectSchema.optional(), where: UserFlagLinkWhereUniqueInputObjectSchema, create: z.union([ UserFlagLinkCreateInputObjectSchema, UserFlagLinkUncheckedCreateInputObjectSchema ]), update: z.union([ UserFlagLinkUpdateInputObjectSchema, UserFlagLinkUncheckedUpdateInputObjectSchema ]) }).strict();
+
+// File: aggregateUserFlagLink.schema.ts
+
+export const UserFlagLinkAggregateSchema: z.ZodType<Prisma.UserFlagLinkAggregateArgs> = z.object({ orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), UserFlagLinkCountAggregateInputObjectSchema ]).optional(), _min: UserFlagLinkMinAggregateInputObjectSchema.optional(), _max: UserFlagLinkMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkAggregateArgs>;
+
+export const UserFlagLinkAggregateZodSchema = z.object({ orderBy: z.union([UserFlagLinkOrderByWithRelationInputObjectSchema, UserFlagLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: UserFlagLinkWhereInputObjectSchema.optional(), cursor: UserFlagLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), UserFlagLinkCountAggregateInputObjectSchema ]).optional(), _min: UserFlagLinkMinAggregateInputObjectSchema.optional(), _max: UserFlagLinkMaxAggregateInputObjectSchema.optional() }).strict();
+
+// File: groupByUserFlagLink.schema.ts
+
+export const UserFlagLinkGroupBySchema: z.ZodType<Prisma.UserFlagLinkGroupByArgs> = z.object({ where: UserFlagLinkWhereInputObjectSchema.optional(), orderBy: z.union([UserFlagLinkOrderByWithAggregationInputObjectSchema, UserFlagLinkOrderByWithAggregationInputObjectSchema.array()]).optional(), having: UserFlagLinkScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(UserFlagLinkScalarFieldEnumSchema), _count: z.union([ z.literal(true), UserFlagLinkCountAggregateInputObjectSchema ]).optional(), _min: UserFlagLinkMinAggregateInputObjectSchema.optional(), _max: UserFlagLinkMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.UserFlagLinkGroupByArgs>;
+
+export const UserFlagLinkGroupByZodSchema = z.object({ where: UserFlagLinkWhereInputObjectSchema.optional(), orderBy: z.union([UserFlagLinkOrderByWithAggregationInputObjectSchema, UserFlagLinkOrderByWithAggregationInputObjectSchema.array()]).optional(), having: UserFlagLinkScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(UserFlagLinkScalarFieldEnumSchema), _count: z.union([ z.literal(true), UserFlagLinkCountAggregateInputObjectSchema ]).optional(), _min: UserFlagLinkMinAggregateInputObjectSchema.optional(), _max: UserFlagLinkMaxAggregateInputObjectSchema.optional() }).strict();
+
 // File: MembershipFindUniqueResult.schema.ts
 export const MembershipFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
@@ -42667,7 +44243,6 @@ export const UserFindUniqueResultSchema = z.nullable(z.object({
   gender: z.unknown(),
   dietaryRestrictions: z.string().optional(),
   ntnuUsername: z.string().optional(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -42687,7 +44262,8 @@ export const UserFindUniqueResultSchema = z.nullable(z.object({
   notificationsCreated: z.array(z.unknown()),
   notificationsUpdated: z.array(z.unknown()),
   contestants: z.array(z.unknown()),
-  contestTeams: z.array(z.unknown())
+  contestTeams: z.array(z.unknown()),
+  userFlagLinks: z.array(z.unknown())
 }));
 
 // File: UserFindFirstResult.schema.ts
@@ -42702,7 +44278,6 @@ export const UserFindFirstResultSchema = z.nullable(z.object({
   gender: z.unknown(),
   dietaryRestrictions: z.string().optional(),
   ntnuUsername: z.string().optional(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -42722,7 +44297,8 @@ export const UserFindFirstResultSchema = z.nullable(z.object({
   notificationsCreated: z.array(z.unknown()),
   notificationsUpdated: z.array(z.unknown()),
   contestants: z.array(z.unknown()),
-  contestTeams: z.array(z.unknown())
+  contestTeams: z.array(z.unknown()),
+  userFlagLinks: z.array(z.unknown())
 }));
 
 // File: UserFindManyResult.schema.ts
@@ -42738,7 +44314,6 @@ export const UserFindManyResultSchema = z.object({
   gender: z.unknown(),
   dietaryRestrictions: z.string().optional(),
   ntnuUsername: z.string().optional(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -42758,7 +44333,8 @@ export const UserFindManyResultSchema = z.object({
   notificationsCreated: z.array(z.unknown()),
   notificationsUpdated: z.array(z.unknown()),
   contestants: z.array(z.unknown()),
-  contestTeams: z.array(z.unknown())
+  contestTeams: z.array(z.unknown()),
+  userFlagLinks: z.array(z.unknown())
 })),
   pagination: z.object({
   page: z.number().int().min(1),
@@ -42782,7 +44358,6 @@ export const UserCreateResultSchema = z.object({
   gender: z.unknown(),
   dietaryRestrictions: z.string().optional(),
   ntnuUsername: z.string().optional(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -42802,7 +44377,8 @@ export const UserCreateResultSchema = z.object({
   notificationsCreated: z.array(z.unknown()),
   notificationsUpdated: z.array(z.unknown()),
   contestants: z.array(z.unknown()),
-  contestTeams: z.array(z.unknown())
+  contestTeams: z.array(z.unknown()),
+  userFlagLinks: z.array(z.unknown())
 });
 
 // File: UserCreateManyResult.schema.ts
@@ -42822,7 +44398,6 @@ export const UserUpdateResultSchema = z.nullable(z.object({
   gender: z.unknown(),
   dietaryRestrictions: z.string().optional(),
   ntnuUsername: z.string().optional(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -42842,7 +44417,8 @@ export const UserUpdateResultSchema = z.nullable(z.object({
   notificationsCreated: z.array(z.unknown()),
   notificationsUpdated: z.array(z.unknown()),
   contestants: z.array(z.unknown()),
-  contestTeams: z.array(z.unknown())
+  contestTeams: z.array(z.unknown()),
+  userFlagLinks: z.array(z.unknown())
 }));
 
 // File: UserUpdateManyResult.schema.ts
@@ -42862,7 +44438,6 @@ export const UserUpsertResultSchema = z.object({
   gender: z.unknown(),
   dietaryRestrictions: z.string().optional(),
   ntnuUsername: z.string().optional(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -42882,7 +44457,8 @@ export const UserUpsertResultSchema = z.object({
   notificationsCreated: z.array(z.unknown()),
   notificationsUpdated: z.array(z.unknown()),
   contestants: z.array(z.unknown()),
-  contestTeams: z.array(z.unknown())
+  contestTeams: z.array(z.unknown()),
+  userFlagLinks: z.array(z.unknown())
 });
 
 // File: UserDeleteResult.schema.ts
@@ -42897,7 +44473,6 @@ export const UserDeleteResultSchema = z.nullable(z.object({
   gender: z.unknown(),
   dietaryRestrictions: z.string().optional(),
   ntnuUsername: z.string().optional(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -42917,7 +44492,8 @@ export const UserDeleteResultSchema = z.nullable(z.object({
   notificationsCreated: z.array(z.unknown()),
   notificationsUpdated: z.array(z.unknown()),
   contestants: z.array(z.unknown()),
-  contestTeams: z.array(z.unknown())
+  contestTeams: z.array(z.unknown()),
+  userFlagLinks: z.array(z.unknown())
 }));
 
 // File: UserDeleteManyResult.schema.ts
@@ -42937,7 +44513,6 @@ export const UserAggregateResultSchema = z.object({  _count: z.object({
     gender: z.number(),
     dietaryRestrictions: z.number(),
     ntnuUsername: z.number(),
-    flags: z.number(),
     workspaceUserId: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
@@ -42957,7 +44532,8 @@ export const UserAggregateResultSchema = z.object({  _count: z.object({
     notificationsCreated: z.number(),
     notificationsUpdated: z.number(),
     contestants: z.number(),
-    contestTeams: z.number()
+    contestTeams: z.number(),
+    userFlagLinks: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
@@ -42969,7 +44545,6 @@ export const UserAggregateResultSchema = z.object({  _count: z.object({
     phone: z.string().nullable(),
     dietaryRestrictions: z.string().nullable(),
     ntnuUsername: z.string().nullable(),
-    flags: z.array(z.string()).nullable(),
     workspaceUserId: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
@@ -42986,7 +44561,6 @@ export const UserAggregateResultSchema = z.object({  _count: z.object({
     phone: z.string().nullable(),
     dietaryRestrictions: z.string().nullable(),
     ntnuUsername: z.string().nullable(),
-    flags: z.array(z.string()).nullable(),
     workspaceUserId: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
@@ -43005,7 +44579,6 @@ export const UserGroupByResultSchema = z.array(z.object({
   phone: z.string(),
   dietaryRestrictions: z.string(),
   ntnuUsername: z.string(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -43022,7 +44595,6 @@ export const UserGroupByResultSchema = z.array(z.object({
     gender: z.number(),
     dietaryRestrictions: z.number(),
     ntnuUsername: z.number(),
-    flags: z.number(),
     workspaceUserId: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
@@ -43042,7 +44614,8 @@ export const UserGroupByResultSchema = z.array(z.object({
     notificationsCreated: z.number(),
     notificationsUpdated: z.number(),
     contestants: z.number(),
-    contestTeams: z.number()
+    contestTeams: z.number(),
+    userFlagLinks: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
@@ -43054,7 +44627,6 @@ export const UserGroupByResultSchema = z.array(z.object({
     phone: z.string().nullable(),
     dietaryRestrictions: z.string().nullable(),
     ntnuUsername: z.string().nullable(),
-    flags: z.array(z.string()).nullable(),
     workspaceUserId: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
@@ -43071,7 +44643,6 @@ export const UserGroupByResultSchema = z.array(z.object({
     phone: z.string().nullable(),
     dietaryRestrictions: z.string().nullable(),
     ntnuUsername: z.string().nullable(),
-    flags: z.array(z.string()).nullable(),
     workspaceUserId: z.string().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable(),
@@ -50298,6 +51869,335 @@ export const ContestTeamGroupByResultSchema = z.array(z.object({
 // File: ContestTeamCountResult.schema.ts
 export const ContestTeamCountResultSchema = z.number();
 
+// File: UserFlagFindUniqueResult.schema.ts
+export const UserFlagFindUniqueResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  userFlagLinks: z.array(z.unknown())
+}));
+
+// File: UserFlagFindFirstResult.schema.ts
+export const UserFlagFindFirstResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  userFlagLinks: z.array(z.unknown())
+}));
+
+// File: UserFlagFindManyResult.schema.ts
+export const UserFlagFindManyResultSchema = z.object({
+  data: z.array(z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  userFlagLinks: z.array(z.unknown())
+})),
+  pagination: z.object({
+  page: z.number().int().min(1),
+  pageSize: z.number().int().min(1),
+  total: z.number().int().min(0),
+  totalPages: z.number().int().min(0),
+  hasNext: z.boolean(),
+  hasPrev: z.boolean()
+})
+});
+
+// File: UserFlagCreateResult.schema.ts
+export const UserFlagCreateResultSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  userFlagLinks: z.array(z.unknown())
+});
+
+// File: UserFlagCreateManyResult.schema.ts
+export const UserFlagCreateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: UserFlagUpdateResult.schema.ts
+export const UserFlagUpdateResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  userFlagLinks: z.array(z.unknown())
+}));
+
+// File: UserFlagUpdateManyResult.schema.ts
+export const UserFlagUpdateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: UserFlagUpsertResult.schema.ts
+export const UserFlagUpsertResultSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  userFlagLinks: z.array(z.unknown())
+});
+
+// File: UserFlagDeleteResult.schema.ts
+export const UserFlagDeleteResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  userFlagLinks: z.array(z.unknown())
+}));
+
+// File: UserFlagDeleteManyResult.schema.ts
+export const UserFlagDeleteManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: UserFlagAggregateResult.schema.ts
+export const UserFlagAggregateResultSchema = z.object({  _count: z.object({
+    id: z.number(),
+    name: z.number(),
+    createdAt: z.number(),
+    updatedAt: z.number(),
+    description: z.number(),
+    imageUrl: z.number(),
+    userFlagLinks: z.number()
+  }).optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable(),
+    description: z.string().nullable(),
+    imageUrl: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable(),
+    description: z.string().nullable(),
+    imageUrl: z.string().nullable()
+  }).nullable().optional()});
+
+// File: UserFlagGroupByResult.schema.ts
+export const UserFlagGroupByResultSchema = z.array(z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string(),
+  imageUrl: z.string(),
+  _count: z.object({
+    id: z.number(),
+    name: z.number(),
+    createdAt: z.number(),
+    updatedAt: z.number(),
+    description: z.number(),
+    imageUrl: z.number(),
+    userFlagLinks: z.number()
+  }).optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable(),
+    description: z.string().nullable(),
+    imageUrl: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable(),
+    description: z.string().nullable(),
+    imageUrl: z.string().nullable()
+  }).nullable().optional()
+}));
+
+// File: UserFlagCountResult.schema.ts
+export const UserFlagCountResultSchema = z.number();
+
+// File: UserFlagLinkFindUniqueResult.schema.ts
+export const UserFlagLinkFindUniqueResultSchema = z.nullable(z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string().optional(),
+  userId: z.string(),
+  userFlagId: z.string(),
+  user: z.unknown(),
+  userFlag: z.unknown()
+}));
+
+// File: UserFlagLinkFindFirstResult.schema.ts
+export const UserFlagLinkFindFirstResultSchema = z.nullable(z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string().optional(),
+  userId: z.string(),
+  userFlagId: z.string(),
+  user: z.unknown(),
+  userFlag: z.unknown()
+}));
+
+// File: UserFlagLinkFindManyResult.schema.ts
+export const UserFlagLinkFindManyResultSchema = z.object({
+  data: z.array(z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string().optional(),
+  userId: z.string(),
+  userFlagId: z.string(),
+  user: z.unknown(),
+  userFlag: z.unknown()
+})),
+  pagination: z.object({
+  page: z.number().int().min(1),
+  pageSize: z.number().int().min(1),
+  total: z.number().int().min(0),
+  totalPages: z.number().int().min(0),
+  hasNext: z.boolean(),
+  hasPrev: z.boolean()
+})
+});
+
+// File: UserFlagLinkCreateResult.schema.ts
+export const UserFlagLinkCreateResultSchema = z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string().optional(),
+  userId: z.string(),
+  userFlagId: z.string(),
+  user: z.unknown(),
+  userFlag: z.unknown()
+});
+
+// File: UserFlagLinkCreateManyResult.schema.ts
+export const UserFlagLinkCreateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: UserFlagLinkUpdateResult.schema.ts
+export const UserFlagLinkUpdateResultSchema = z.nullable(z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string().optional(),
+  userId: z.string(),
+  userFlagId: z.string(),
+  user: z.unknown(),
+  userFlag: z.unknown()
+}));
+
+// File: UserFlagLinkUpdateManyResult.schema.ts
+export const UserFlagLinkUpdateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: UserFlagLinkUpsertResult.schema.ts
+export const UserFlagLinkUpsertResultSchema = z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string().optional(),
+  userId: z.string(),
+  userFlagId: z.string(),
+  user: z.unknown(),
+  userFlag: z.unknown()
+});
+
+// File: UserFlagLinkDeleteResult.schema.ts
+export const UserFlagLinkDeleteResultSchema = z.nullable(z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string().optional(),
+  userId: z.string(),
+  userFlagId: z.string(),
+  user: z.unknown(),
+  userFlag: z.unknown()
+}));
+
+// File: UserFlagLinkDeleteManyResult.schema.ts
+export const UserFlagLinkDeleteManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: UserFlagLinkAggregateResult.schema.ts
+export const UserFlagLinkAggregateResultSchema = z.object({  _count: z.object({
+    id: z.number(),
+    awardedAt: z.number(),
+    reason: z.number(),
+    userId: z.number(),
+    userFlagId: z.number(),
+    user: z.number(),
+    userFlag: z.number()
+  }).optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    awardedAt: z.date().nullable(),
+    reason: z.string().nullable(),
+    userId: z.string().nullable(),
+    userFlagId: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    awardedAt: z.date().nullable(),
+    reason: z.string().nullable(),
+    userId: z.string().nullable(),
+    userFlagId: z.string().nullable()
+  }).nullable().optional()});
+
+// File: UserFlagLinkGroupByResult.schema.ts
+export const UserFlagLinkGroupByResultSchema = z.array(z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string(),
+  userId: z.string(),
+  userFlagId: z.string(),
+  _count: z.object({
+    id: z.number(),
+    awardedAt: z.number(),
+    reason: z.number(),
+    userId: z.number(),
+    userFlagId: z.number(),
+    user: z.number(),
+    userFlag: z.number()
+  }).optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    awardedAt: z.date().nullable(),
+    reason: z.string().nullable(),
+    userId: z.string().nullable(),
+    userFlagId: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    awardedAt: z.date().nullable(),
+    reason: z.string().nullable(),
+    userId: z.string().nullable(),
+    userFlagId: z.string().nullable()
+  }).nullable().optional()
+}));
+
+// File: UserFlagLinkCountResult.schema.ts
+export const UserFlagLinkCountResultSchema = z.number();
+
 // File: index.ts
 
 
@@ -50335,7 +52235,6 @@ export const User = z.object({
   gender: GenderSchema.default("UNKNOWN"),
   dietaryRestrictions: z.string().nullable(),
   ntnuUsername: z.string().nullable(),
-  flags: z.array(z.string()),
   workspaceUserId: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -51022,3 +52921,36 @@ export type ContestTeam = z.infer<typeof ContestTeam>;
 // Legacy aliases
 export const ContestTeamSchema = ContestTeam;
 export type ContestTeamType = z.infer<typeof ContestTeam>;
+
+// File: UserFlag.schema.ts
+
+export const UserFlag = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().nullable(),
+  imageUrl: z.string().nullable(),
+});
+
+export type UserFlag = z.infer<typeof UserFlag>;
+
+// Legacy aliases
+export const UserFlagSchema = UserFlag;
+export type UserFlagType = z.infer<typeof UserFlag>;
+
+// File: UserFlagLink.schema.ts
+
+export const UserFlagLink = z.object({
+  id: z.string(),
+  awardedAt: z.date(),
+  reason: z.string().nullable(),
+  userId: z.string(),
+  userFlagId: z.string(),
+});
+
+export type UserFlagLink = z.infer<typeof UserFlagLink>;
+
+// Legacy aliases
+export const UserFlagLinkSchema = UserFlagLink;
+export type UserFlagLinkType = z.infer<typeof UserFlagLink>;

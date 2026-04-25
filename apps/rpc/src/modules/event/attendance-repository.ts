@@ -18,9 +18,20 @@ import {
   type EventId,
   type TaskId,
   type UserId,
+  normalizeDbUser,
 } from "@dotkomonline/types"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
+
+type WithUserFlagLinks = { user: Parameters<typeof normalizeDbUser>[0]; [k: string]: unknown }
+
+function normalizeAttendee<T extends WithUserFlagLinks>(attendee: T) {
+  return { ...attendee, user: normalizeDbUser(attendee.user) }
+}
+
+function normalizeAttendance<T extends { attendees: WithUserFlagLinks[]; [k: string]: unknown }>(attendance: T) {
+  return { ...attendance, attendees: attendance.attendees.map(normalizeAttendee) }
+}
 
 export interface AttendanceRepository {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
@@ -102,6 +113,11 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  userFlagLinks: {
+                    include: {
+                      userFlag: true,
+                    },
+                  },
                 },
               },
             },
@@ -112,7 +128,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance)
+      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
     },
 
     async findAttendancesByIds(handle, attendanceIds) {
@@ -129,6 +145,11 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  userFlagLinks: {
+                    include: {
+                      userFlag: true,
+                    },
+                  },
                 },
               },
             },
@@ -139,7 +160,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return attendances.map((attendance) => parseOrReport(AttendanceSchema, attendance))
+      return attendances.map((attendance) => parseOrReport(AttendanceSchema, normalizeAttendance(attendance)))
     },
 
     async findAttendanceSummariesByIds(handle, attendanceIds, userId) {
@@ -165,6 +186,11 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  userFlagLinks: {
+                    include: {
+                      userFlag: true,
+                    },
+                  },
                 },
               },
             },
@@ -184,7 +210,7 @@ export function getAttendanceRepository(): AttendanceRepository {
 
         return {
           ...attendance,
-          currentUserAttendee: currentAttendee || null,
+          currentUserAttendee: currentAttendee ? normalizeAttendee(currentAttendee) : null,
           reservedAttendeeCount: attendance._count.attendees,
         }
       })
@@ -208,6 +234,11 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  userFlagLinks: {
+                    include: {
+                      userFlag: true,
+                    },
+                  },
                 },
               },
             },
@@ -218,7 +249,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance)
+      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
     },
 
     async findAttendanceByAttendeeId(handle, attendeeId) {
@@ -237,6 +268,11 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  userFlagLinks: {
+                    include: {
+                      userFlag: true,
+                    },
+                  },
                 },
               },
             },
@@ -247,7 +283,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance)
+      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
     },
 
     async findAttendanceByAttendeePaymentId(handle, attendeePaymentId) {
@@ -266,6 +302,11 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  userFlagLinks: {
+                    include: {
+                      userFlag: true,
+                    },
+                  },
                 },
               },
             },
@@ -276,7 +317,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance)
+      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
     },
 
     async findAttendanceByEventId(handle, eventId) {
@@ -295,6 +336,11 @@ export function getAttendanceRepository(): AttendanceRepository {
               user: {
                 include: {
                   memberships: true,
+                  userFlagLinks: {
+                    include: {
+                      userFlag: true,
+                    },
+                  },
                 },
               },
             },
@@ -305,7 +351,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance)
+      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
     },
 
     async updateAttendanceById(handle, attendanceId, data) {
@@ -375,12 +421,17 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
+              userFlagLinks: {
+                include: {
+                  userFlag: true,
+                },
+              },
             },
           },
         },
       })
 
-      return parseOrReport(AttendeeSchema, attendee)
+      return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
     },
 
     async deleteAttendeeById(handle, attendeeId) {
@@ -400,12 +451,17 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
+              userFlagLinks: {
+                include: {
+                  userFlag: true,
+                },
+              },
             },
           },
         },
       })
 
-      return parseOrReport(AttendeeSchema.nullable(), attendee)
+      return parseOrReport(AttendeeSchema.nullable(), attendee ? normalizeAttendee(attendee) : null)
     },
 
     async updateAttendeeById(handle, attendeeId, data) {
@@ -418,12 +474,17 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
+              userFlagLinks: {
+                include: {
+                  userFlag: true,
+                },
+              },
             },
           },
         },
       })
 
-      return parseOrReport(AttendeeSchema, attendee)
+      return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
     },
 
     async updateAttendeePaymentById(handle, attendeeId, data) {
@@ -436,12 +497,17 @@ export function getAttendanceRepository(): AttendanceRepository {
           user: {
             include: {
               memberships: true,
+              userFlagLinks: {
+                include: {
+                  userFlag: true,
+                },
+              },
             },
           },
         },
       })
 
-      return parseOrReport(AttendeeSchema, attendee)
+      return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
     },
 
     async createAttendancePool(handle, attendanceId, mergeAttendancePoolsTaskId, data) {

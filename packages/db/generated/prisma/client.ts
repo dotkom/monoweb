@@ -236,3 +236,13 @@ export type Contestant = Prisma.ContestantModel
  * 
  */
 export type ContestTeam = Prisma.ContestTeamModel
+/**
+ * Model UserFlag
+ * 
+ */
+export type UserFlag = Prisma.UserFlagModel
+/**
+ * Model UserFlagLink
+ * 
+ */
+export type UserFlagLink = Prisma.UserFlagLinkModel
