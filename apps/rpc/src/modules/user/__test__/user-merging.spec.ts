@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
-import { GenderSchema, type Membership, type User } from "../user"
+import { GenderSchema, type Membership, type User, type UserFlag } from "../user"
 import { beforeEach, describe, expect, it, type vi } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import type { AttendanceService } from "../../event/attendance-service"
@@ -43,6 +43,18 @@ function makeMembership(userId: string, overrides: Partial<Membership> = {}): Me
   }
 }
 
+function makeUserFlag(overrides: Partial<UserFlag> = {}): UserFlag {
+  return {
+    id: randomUUID(),
+    name: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    description: null,
+    imageUrl: null,
+    ...overrides,
+  }
+}
+
 describe("mergeUsers", () => {
   let handle: ReturnType<typeof mockDeep<DBHandle>>
   let groupRepository: ReturnType<typeof mockDeep<GroupRepository>>
@@ -60,6 +72,7 @@ describe("mergeUsers", () => {
     handle.personalMark.findMany.mockResolvedValue([])
     handle.contestant.findMany.mockResolvedValue([])
     handle.contestTeam.findMany.mockResolvedValue([])
+    handle.userFlagLink.findMany.mockResolvedValue([])
     deps = { groupRepository, attendanceService }
   })
 
@@ -122,15 +135,65 @@ describe("mergeUsers", () => {
     })
   })
 
-  describe("flags custom merger", () => {
-    it("concatenates and deduplicates flags from both users", async () => {
-      const survivor = makeUser({ flags: ["a", "b"] })
-      const consumed = makeUser({ flags: ["b", "c"] })
+  describe("userFlagLinks custom relation merger", () => {
+    it("transfers consumed flag links that are not already attached to survivor", async () => {
+      const sharedFlag = makeUserFlag({ name: "shared" })
+      const survivorFlag = makeUserFlag({ name: "survivor" })
+      const consumedFlag = makeUserFlag({ name: "consumed" })
+      const awardedAt = new Date("2024-01-01")
+      const survivor = makeUser({ flags: [survivorFlag, sharedFlag] })
+      const consumed = makeUser({ flags: [sharedFlag, consumedFlag] })
+
+      handle.userFlagLink.findMany.mockImplementation(async ({ where }) => {
+        if (where?.userId === survivor.id) {
+          return [
+            { userFlagId: survivorFlag.id, awardedAt },
+            { userFlagId: sharedFlag.id, awardedAt },
+          ] as never
+        }
+
+        return [
+          { id: "consumed-link-1", userFlagId: sharedFlag.id, awardedAt },
+          { id: "consumed-link-2", userFlagId: consumedFlag.id, awardedAt },
+        ] as never
+      })
 
       await mergeUsers(handle, deps, survivor, consumed)
 
-      const [[updateArgs]] = (handle.user.update as ReturnType<typeof vi.fn>).mock.calls
-      expect(new Set(updateArgs.data.flags)).toEqual(new Set(["a", "b", "c"]))
+      expect(handle.userFlagLink.updateMany).toHaveBeenCalledWith({
+        where: { id: { in: ["consumed-link-2"] } },
+        data: { userId: survivor.id },
+      })
+    })
+
+    it("does not transfer flag links when consumed only has duplicates", async () => {
+      const sharedFlag = makeUserFlag({ name: "shared" })
+      const awardedAt = new Date("2024-01-01")
+      const survivor = makeUser({ flags: [sharedFlag] })
+      const consumed = makeUser({ flags: [sharedFlag] })
+
+      handle.userFlagLink.findMany.mockImplementation(async ({ where }) => {
+        if (where?.userId === survivor.id) {
+          return [{ userFlagId: sharedFlag.id, awardedAt }] as never
+        }
+
+        return [{ id: "consumed-link-1", userFlagId: sharedFlag.id, awardedAt }] as never
+      })
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.userFlagLink.updateMany).not.toHaveBeenCalled()
+    })
+
+    it("does not write flags as a scalar field", async () => {
+      const survivor = makeUser({ flags: [makeUserFlag({ name: "survivor" })] })
+      const consumed = makeUser({ flags: [makeUserFlag({ name: "consumed" })] })
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      for (const [updateArgs] of (handle.user.update as ReturnType<typeof vi.fn>).mock.calls) {
+        expect(updateArgs.data).not.toHaveProperty("flags")
+      }
     })
   })
 

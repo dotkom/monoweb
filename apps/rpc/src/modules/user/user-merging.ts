@@ -36,7 +36,7 @@ interface MergeUsersDependencies {
 //          1. Add a { fkField, relationName, deleteOrphan } entry.
 //
 //    CUSTOM_SCALAR_MERGERS
-//      - Scalars that need special logic (e.g. username, flags).
+//      - Scalars that need special logic (e.g. username).
 //      - What you need to do:
 //          1. Add the field to the object.
 //          2. Add a function value.
@@ -50,7 +50,7 @@ interface MergeUsersDependencies {
 //                User relation name as the key.
 //
 //    CUSTOM_RELATION_MERGERS
-//      - Relations needing deduplication logic (memberships, group memberships).
+//      - Relations needing deduplication logic (flags, memberships, group memberships).
 //      - What you need to do:
 //          1. Add the field to the object.
 //          2. Add a handler function.
@@ -124,9 +124,6 @@ const CUSTOM_SCALAR_MERGERS = {
   // it's a custom username).
   username: (survivor: User, consumed: User): string =>
     isGuid(survivor.username) && !isGuid(consumed.username) ? consumed.username : survivor.username,
-
-  // Concatenate and deduplicate
-  flags: (survivor: User, consumed: User): string[] => [...new Set([...survivor.flags, ...consumed.flags])],
 } satisfies Partial<Record<AllUserKeys, (survivor: User, consumed: User) => unknown>>
 
 /**
@@ -184,6 +181,32 @@ const REASSIGN_RELATION_HANDLERS = {
  * Relations with custom merge logic (deduplication or conflict resolution against unique/PK constraints).
  */
 const CUSTOM_RELATION_MERGERS = {
+  userFlagLinks: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
+    const survivorLinks = await handle.userFlagLink.findMany({
+      where: { userId: survivor.id },
+      select: { userFlagId: true, awardedAt: true },
+    })
+    const consumedLinks = await handle.userFlagLink.findMany({
+      where: { userId: consumed.id },
+      select: { id: true, userFlagId: true, awardedAt: true },
+    })
+
+    const toKey = (userFlagId: string, awardedAt: Date) => `${userFlagId}:${awardedAt.toISOString().slice(0, 10)}`
+    const survivorKeys = new Set(survivorLinks.map((l) => toKey(l.userFlagId, l.awardedAt)))
+
+    const idsToTransfer = consumedLinks
+      .filter((l) => !survivorKeys.has(toKey(l.userFlagId, l.awardedAt)))
+      .map((l) => l.id)
+
+    if (idsToTransfer.length > 0) {
+      await handle.userFlagLink.updateMany({
+        where: { id: { in: idsToTransfer } },
+        data: { userId: survivor.id },
+      })
+    }
+    // Remaining consumed links are duplicates (same flag, same date); cascade delete handles them when consumed user is deleted.
+  },
+
   // Deduplication of memberships.
   memberships: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorMembershipKeys = new Set(survivor.memberships.map(buildMembershipDeduplicationKey))
