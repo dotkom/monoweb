@@ -1,3 +1,4 @@
+import { RollingNumber } from "@/components/RollingNumber"
 import { useCountdown } from "@/utils/use-countdown"
 import {
   type Attendance,
@@ -62,7 +63,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null
 
   const cardClassname = cn(
-    "flex flex-col w-full min-h-[10rem] gap-2 p-3 rounded-lg",
+    "flex flex-col w-full min-h-40 gap-2 p-3 rounded-lg",
     "items-center text-center justify-center",
     "bg-gray-100 dark:bg-stone-700"
   )
@@ -161,7 +162,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         )}
       </div>
 
-      <div className="flex flex-col min-h-[10rem] gap-6 p-3 rounded-lg items-center text-center justify-center w-full">
+      <div className="flex flex-col min-h-40 gap-6 p-3 rounded-lg items-center text-center justify-center w-full">
         {!showRegisterCountdown && (
           <div className="flex grow flex-col gap-4 items-center text-center justify-center">
             <div className="flex flex-col gap-1 items-center">
@@ -171,7 +172,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
                   hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
                 )}
               >
-                {reservedAttendeeCount}
+                <RollingNumber value={reservedAttendeeCount} />
                 {/* Don't show capacity for merge pools (capacity = 0) */}
                 {pool.capacity > 0 && `/${pool.capacity}`}
               </Text>
@@ -183,7 +184,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
                     attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-800 rounded-lg"
                   )}
                 >
-                  +{unreservedAttendeeCount} i kø
+                  +<RollingNumber value={unreservedAttendeeCount} /> i kø
                 </Text>
               )}
             </div>
@@ -216,7 +217,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
               stripeWidth={24}
               speed="2.0s"
               animated
-              className="group flex items-center h-[10rem] px-5 py-4 rounded-md"
+              className="group flex items-center h-40 px-5 py-4 rounded-md"
             >
               <div className="relative flex flex-row justify-between items-center w-full">
                 <div className="flex flex-col gap-1 items-center justify-center w-full">
@@ -232,7 +233,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
             {/* White/dark overlay */}
             <span
               className={cn(
-                "absolute top-0 left-0 inset-0 rounded-md bg-gradient-to-t pointer-events-none transition-colors duration-400",
+                "absolute top-0 left-0 inset-0 rounded-md bg-linear-to-t pointer-events-none transition-colors duration-400",
                 "from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent",
                 "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent"
               )}
