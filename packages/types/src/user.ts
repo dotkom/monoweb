@@ -35,6 +35,22 @@ export const UserFlagWriteSchema = UserFlagSchema.pick({
 })
 export type UserFlagWrite = z.infer<typeof UserFlagWriteSchema>
 
+export const FlagName = {
+  VANITY_VERIFIED: "VANITY_VERIFIED",
+  EXCEPTIONALLY_DISTINGUISHED: "EXCEPTIONALLY_DISTINGUISHED",
+} as const
+
+export type FlagName = (typeof FlagName)[keyof typeof FlagName]
+
+export function getFlagLabel(name: FlagName) {
+  switch (name) {
+    case FlagName.VANITY_VERIFIED:
+      return "OW Verified"
+    case FlagName.EXCEPTIONALLY_DISTINGUISHED:
+      return "Særskilt utmerket"
+  }
+}
+
 export const UserSchema = schemas.UserSchema.extend({
   memberships: z.array(MembershipSchema),
   flags: z.array(UserFlagSchema),
