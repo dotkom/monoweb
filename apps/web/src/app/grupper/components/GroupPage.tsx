@@ -247,7 +247,7 @@ interface GroupMemberEntryProps {
 }
 
 const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
-  const isVerified = member.flags.includes("VANITY_VERIFIED")
+  const isVerified = member.flags.some((flag) => flag.name === "VANITY_VERIFIED")
   const isUser = userId === member.id
 
   // This requires periods to be sorted by startedAt in descending order
