@@ -1,0 +1,58 @@
+.isRolling {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 28%,
+    black 72%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 28%,
+    black 72%,
+    transparent 100%
+  );
+}
+
+.previous {
+  animation: rolling-number-out 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.current {
+  animation: rolling-number-in 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes rolling-number-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes rolling-number-in {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .previous {
+    display: none;
+  }
+
+  .current {
+    animation: none;
+  }
+}
