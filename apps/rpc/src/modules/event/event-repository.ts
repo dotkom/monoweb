@@ -1,4 +1,4 @@
-import type { DBHandle, Prisma } from "@dotkomonline/db"
+import { type DBHandle, type Prisma, sql } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type BaseEvent,
@@ -433,76 +433,7 @@ export function getEventRepository(): EventRepository {
         Past events are not featured. We would rather have no featured events than "stale" events.
        */
 
-      const events = await handle.$queryRaw`
-        WITH
-          capacities AS (
-            SELECT
-              attendance_id,
-              SUM("capacity") AS sum
-            FROM attendance_pool
-            GROUP BY attendance_id
-          ),
-          attendees AS (
-            SELECT
-              attendance_id,
-              COUNT(*) AS count
-            FROM attendee
-            GROUP BY attendance_id
-          )
-        SELECT
-          event.*,
-          COALESCE(capacities.sum, 0) AS total_capacity,
-          COALESCE(attendees.count, 0) AS attendee_count,
-          -- 1,2,3: event type buckets
-          CASE event.type
-            WHEN 'GENERAL_ASSEMBLY' THEN 1
-            WHEN 'COMPANY'          THEN 2
-            WHEN 'ACADEMIC'         THEN 2
-            ELSE 3
-          END AS type_rank,
-          -- 1-4: registration buckets
-          CASE
-            -- 1. Future, registration open and not full AND capacities limited (> 0)
-            WHEN event.attendance_id IS NOT NULL
-              AND NOW() BETWEEN attendance.register_start AND attendance.register_end
-              AND COALESCE(capacities.sum, 0) > 0
-              AND COALESCE(attendees.count, 0) < COALESCE(capacities.sum, 0)
-            THEN 1
-            -- 2. Future, registration not started yet (capacities doesn't matter)
-            WHEN event.attendance_id IS NOT NULL
-              AND NOW() < attendance.register_start
-            THEN 2
-            -- 3. Future, no registration OR unlimited capacities (total capacities = 0)
-            WHEN event.attendance_id IS NULL
-              OR COALESCE(capacities.sum, 0) = 0
-            THEN 3
-            -- 4. Future, registration full (status doesn't matter)
-            WHEN event.attendance_id IS NOT NULL
-              AND COALESCE(capacities.sum, 0) > 0
-              AND COALESCE(attendees.count, 0) >= COALESCE(capacities.sum, 0)
-            THEN 4
-            -- Fallback: treat as bucket 4
-            ELSE 4
-          END AS registration_bucket
-        FROM event
-        LEFT JOIN attendance
-          ON attendance.id = event.attendance_id
-        LEFT JOIN capacities
-          ON capacities.attendance_id = event.attendance_id
-        LEFT JOIN attendees
-          ON attendees.attendance_id = event.attendance_id
-        WHERE
-          event.status = 'PUBLIC'
-          -- Past events are not featured
-          AND event.start > NOW()
-        ORDER BY
-          type_rank ASC,
-          registration_bucket ASC,
-          -- Tiebreaker with earlier events first
-          event.start ASC
-        OFFSET ${offset}
-        LIMIT ${limit};
-      `
+      const events = await handle.$queryRawTyped(sql.findFeaturedEvents(offset, limit))
 
       return parseOrReport(
         z.preprocess((data) => snakeCaseToCamelCase(data), BaseEventSchema.array()),
