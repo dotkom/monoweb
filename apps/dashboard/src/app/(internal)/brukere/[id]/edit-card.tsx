@@ -6,7 +6,8 @@ import { useDebouncedValue } from "@mantine/hooks"
 import { IconCheck, IconLink, IconUsersGroup, IconX, IconArrowUpRight } from "@tabler/icons-react"
 import { type FC, useEffect, useState } from "react"
 import { useLinkOwUserToWorkspaceUserMutation, useUpdateUserMutation } from "../mutations"
-import { useFindWorkspaceUserQuery, useGroupAllByMemberQuery, useIsAdminQuery } from "../queries"
+import { useAuthorization } from "@/auth/authorization-context"
+import { useFindWorkspaceUserQuery, useGroupAllByMemberQuery } from "../queries"
 import { useUserProfileEditForm } from "./edit-form"
 import { useUserDetailsContext } from "./provider"
 import { getStudyGrade } from "@dotkomonline/utils"
@@ -17,7 +18,7 @@ export const UserEditCard: FC = () => {
 
   const [customKey, setCustomKey] = useState<string | undefined>(undefined)
 
-  const { isAdmin } = useIsAdminQuery()
+  const { isAdministrator } = useAuthorization()
   const { groups } = useGroupAllByMemberQuery(user.id)
 
   const update = useUpdateUserMutation()
@@ -27,7 +28,7 @@ export const UserEditCard: FC = () => {
 
   const isWorkspaceLinked = Boolean(user.workspaceUserId)
   const showWorkspaceLink = isWorkspaceLinked || groups.length > 0
-  const isWorkspaceFetchEnabled = (isAdmin || isUser) && showWorkspaceLink
+  const isWorkspaceFetchEnabled = (isAdministrator || isUser) && showWorkspaceLink
   const { workspaceUser, isLoading: isLoadingWorkspaceUser } = useFindWorkspaceUserQuery(
     user.id,
     customKey,
@@ -78,7 +79,7 @@ export const UserEditCard: FC = () => {
 
       <LinkUser
         showWorkspaceLink={showWorkspaceLink}
-        isAdmin={isAdmin ?? false}
+        isAdministrator={isAdministrator}
         isWorkspaceLinked={isWorkspaceLinked}
         isWorkspaceFetchEnabled={isWorkspaceFetchEnabled}
         isLoadingWorkspaceUser={isLoadingWorkspaceUser}
@@ -94,7 +95,7 @@ export const UserEditCard: FC = () => {
 
 interface LinkUserProps {
   showWorkspaceLink: boolean
-  isAdmin: boolean
+  isAdministrator: boolean
   isWorkspaceLinked: boolean
   isWorkspaceFetchEnabled: boolean
   isLoadingWorkspaceUser: boolean
@@ -105,7 +106,7 @@ interface LinkUserProps {
 
 const LinkUser: FC<LinkUserProps> = ({
   showWorkspaceLink,
-  isAdmin,
+  isAdministrator,
   isWorkspaceLinked,
   isWorkspaceFetchEnabled,
   isLoadingWorkspaceUser,
@@ -171,14 +172,14 @@ const LinkUser: FC<LinkUserProps> = ({
         )}
       </Stack>
 
-      {!isWorkspaceLinked && !isAdmin && (
+      {!isWorkspaceLinked && !isAdministrator && (
         <Text size="xs">
           Kontakt HS for å tilknytte brukeren til en Google-bruker. Brukeren må tilknyttes for å kunne bli lagt til i
           e-postlister.
         </Text>
       )}
 
-      {!isWorkspaceLinked && isAdmin && (
+      {!isWorkspaceLinked && isAdministrator && (
         <TextInput
           description="Egendefinert nøkkel. Bruk denne om den ikke finner automatisk. Kan være komplett e-postadresse eller fullt navn."
           placeholder="navn.navnesen@online.ntnu.no eller Navn Navnesen"
@@ -234,7 +235,7 @@ const LinkUser: FC<LinkUserProps> = ({
           <Button
             color="green"
             w="fit-content"
-            disabled={!isAdmin || !workspaceUser}
+            disabled={!isAdministrator || !workspaceUser}
             leftSection={<IconLink size={16} />}
             onClick={onClick}
           >
