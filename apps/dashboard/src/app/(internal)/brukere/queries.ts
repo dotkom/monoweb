@@ -51,12 +51,6 @@ export const useGroupAllByMemberQuery = (userId: UserId) => {
   return { groups, isLoading }
 }
 
-export const useIsAdminQuery = () => {
-  const trpc = useTRPC()
-  const { data: isAdmin, isLoading } = useQuery(trpc.user.isAdmin.queryOptions())
-  return { isAdmin, isLoading }
-}
-
 export const useFindWorkspaceUserQuery = (userId: UserId, customKey?: string, enabled = true) => {
   const trpc = useTRPC()
   const {

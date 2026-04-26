@@ -44,6 +44,7 @@ import {
   IconUsersGroup,
   IconWheelchair,
 } from "@tabler/icons-react"
+import { useAuthorization } from "@/auth/authorization-context"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { type FC, useEffect } from "react"
@@ -115,21 +116,21 @@ const navigations = [
     label: "Hendelseslogg",
     icon: IconClipboardList,
     href: "/logg",
-    isAdmin: true,
+    isAdministrator: true,
   },
 ] satisfies {
   label: string
   icon: FC
   href: string
   openInNewTab?: boolean
-  isAdmin?: boolean
+  isAdministrator?: boolean
 }[]
 interface ApplicationShellProps {
-  isAdmin: boolean
   children: React.ReactNode
 }
 
-export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children }) => {
+export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
+  const { isAdministrator } = useAuthorization()
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
   const pathname = usePathname()
@@ -196,7 +197,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
       </AppShellHeader>
       <AppShellNavbar p="md">
         {navigations
-          .filter((navigation) => isAdmin || !navigation.isAdmin)
+          .filter((navigation) => isAdministrator || !navigation.isAdministrator)
           .map((navigation) => (
             <NavLink
               component={Link}

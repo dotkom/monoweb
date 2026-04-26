@@ -7,7 +7,7 @@ import "@fontsource-variable/inter-tight/wght.css"
 import "@fontsource-variable/google-sans-code/wght.css"
 import { auth0 } from "@/lib/auth"
 import { getServerAccessToken } from "@/lib/server-access-token"
-import { server } from "@/lib/trpc-server"
+import { getServerAuthorization } from "@/lib/server-authorization"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { Notifications } from "@mantine/notifications"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
@@ -15,6 +15,7 @@ import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
 import type { PropsWithChildren } from "react"
+import { AuthorizationProvider } from "@/auth/authorization-context"
 import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
@@ -51,7 +52,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const accessToken = await getServerAccessToken()
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
   const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
-  const isAdmin = accessToken !== null ? await server.user.isAdmin.query() : false
+
+  const { isAdministrator, isCommitteeMember, affiliations } = await getServerAuthorization()
 
   return (
     <html lang="no" {...mantineHtmlProps}>
@@ -65,7 +67,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               <MantineProvider defaultColorScheme="auto" theme={theme}>
                 <Notifications />
                 <ModalProvider>
-                  <ApplicationShell isAdmin={isAdmin}>{children}</ApplicationShell>
+                  <AuthorizationProvider
+                    isAdministrator={isAdministrator}
+                    isCommitteeMember={isCommitteeMember}
+                    affiliations={affiliations}
+                  >
+                    <ApplicationShell>{children}</ApplicationShell>
+                  </AuthorizationProvider>
                 </ModalProvider>
               </MantineProvider>
             </QueryProvider>
