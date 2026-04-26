@@ -173,7 +173,7 @@ export const Navbar: FC = () => {
       </div>
 
       {!isLoggedIn && (
-        <div className="h-full rounded-l-lg rounded-r-4xl">
+        <div className="h-full rounded-l-lg rounded-r-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm">
           <Button
             element={Link}
             variant="solid"
