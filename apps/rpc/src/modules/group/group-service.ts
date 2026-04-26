@@ -23,7 +23,7 @@ import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/uti
 import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns"
 import { maxTime } from "date-fns/constants"
 import invariant from "tiny-invariant"
-import { FailedPreconditionError, NotFoundError } from "../../error"
+import { FailedPreconditionError, IllegalStateError, NotFoundError } from "../../error"
 import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
 import crypto from "node:crypto"
@@ -53,8 +53,8 @@ export interface GroupService {
   findManyByMemberUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
 
   getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMember>
-  getMembers(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
-  getLeaders(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
+  findMembersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
+  findLeadersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
 
   startMembership(
     handle: DBHandle,
@@ -168,12 +168,8 @@ export function getGroupService(
       return group
     },
 
-    async getLeaders(handle, groupSlug) {
+    async findLeadersBySlug(handle, groupSlug) {
       const leaders = await groupRepository.findGroupMembersByRoleType(handle, groupSlug, "LEADER")
-
-      if (leaders.length === 0) {
-        throw new NotFoundError(`Leaders for Group(ID=${groupSlug}) not found`)
-      }
 
       return leaders.reduce((map, leader) => {
         map.set(leader.id, leader)
@@ -222,7 +218,7 @@ export function getGroupService(
       }
     },
 
-    async getMembers(handle, groupSlug) {
+    async findMembersBySlug(handle, groupSlug) {
       const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, null)
 
       if (memberships.length === 0) {
@@ -241,7 +237,7 @@ export function getGroupService(
           .sort((a, b) => compareDesc(a.start, b.start))
 
         if (groupMemberships.length === 0) {
-          throw new Error(`Member not found for user ${user.id} in group ${groupSlug}`)
+          throw new IllegalStateError(`No group memberships found for User(ID=${user.id}) in Group(ID=${groupSlug})`)
         }
 
         members.set(user.id, {
