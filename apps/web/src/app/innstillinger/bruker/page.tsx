@@ -199,10 +199,8 @@ export default function MinBrukerPage() {
             className="w-fit sm:col-start-2 sm:row-start-2"
             disabled={requestEmailChange.isPending || !newEmail}
           >
-            <div className="flex gap-2 items-center">
-              <IconMail className="size-4" />
-              <Text className="text-sm">Send bekreftelse</Text>
-            </div>
+            <IconMail className="size-4" />
+            <Text className="text-sm">Send bekreftelse</Text>
           </Button>
         </form>
       </div>
@@ -232,10 +230,8 @@ export default function MinBrukerPage() {
 
           <div className="flex flex-row gap-2">
             <Button className="w-fit" {...usernamePasswordLinkButtonProps}>
-              <div className="flex gap-2 items-center">
-                <IconLink size="1rem" />
-                <Text className="text-sm">Tilknytt</Text>
-              </div>
+              <IconLink className="size-4" />
+              <Text className="text-sm">Tilknytt</Text>
             </Button>
             {isUsernamePasswordLinked && (
               <div className="flex flex-row gap-1 items-center text-xs text-green-600">
@@ -252,10 +248,8 @@ export default function MinBrukerPage() {
 
           <div className="flex flex-row gap-2">
             <Button className="w-fit" {...feideLinkButtonProps}>
-              <div className="flex gap-2 items-center">
-                <IconLink size="1rem" />
-                <Text className="text-sm">Tilknytt</Text>
-              </div>
+              <IconLink className="size-4" />
+              <Text className="text-sm">Tilknytt</Text>
             </Button>
             {isFeideLinked && (
               <div className="flex flex-row gap-1 items-center text-xs text-green-600">

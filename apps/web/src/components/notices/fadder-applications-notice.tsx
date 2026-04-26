@@ -30,18 +30,16 @@ export const FadderApplicationsNotice = (interval: Interval) => {
             href="https://docs.google.com/forms/d/e/1FAIpQLSdrJxxsaJFx5Vxn-jnFuHPzru0VR9NxTDwSKkM1zyaAh3sUUg/viewform?usp=sharing&ouid=103573623441947136785"
             className="group flex flex-row justify-between w-full items-center p-5 bg-indigo-200 hover:bg-indigo-100 dark:bg-indigo-500/50 dark:hover:bg-indigo-400/50 rounded-lg"
           >
-            <div className="flex flex-row gap-2 items-center">
-              <div className="transform translate-y-[12.5%] shrink-0">
-                <div className="animate-bounce text-3xl">🤗</div>
-              </div>
-
-              <div className="flex flex-col gap-0.5">
-                <Title className="text-lg md:text-xl font-semibold">Bli fadder!</Title>
-                <Text className="text-xs">Bidra til å gi nye informatikere en fantastisk studiestart til høsten.</Text>
-              </div>
+            <div className="transform translate-y-[12.5%] shrink-0">
+              <div className="animate-bounce text-3xl">🤗</div>
             </div>
 
-            <IconArrowUpRight className="size-6 shrink-0" />
+            <div className="flex flex-col gap-0.5">
+              <Title className="text-lg md:text-xl font-semibold">Bli fadder!</Title>
+              <Text className="text-xs">Bidra til å gi nye informatikere en fantastisk studiestart til høsten.</Text>
+            </div>
+
+            <IconArrowUpRight className="ml-auto size-6 shrink-0" />
           </Button>
         </div>
       </div>

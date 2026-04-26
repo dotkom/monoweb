@@ -18,7 +18,7 @@ export const PopoverOptionButton = ({ children, isActive, onClick, className }: 
       className
     )}
   >
-    <span className="flex items-center gap-2">{children}</span>
-    {isActive && <IconCheck size={16} stroke={2} />}
+    {children}
+    {isActive && <IconCheck className="ml-auto" size={16} stroke={2} />}
   </Button>
 )

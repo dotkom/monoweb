@@ -130,7 +130,7 @@ const ToggleButton = ({ isActive, onClick, children }: ToggleButtonProps) => {
         isActive && "font-medium bg-neutral-100"
       )}
     >
-      <span className="flex items-center gap-2">{children}</span>
+      {children}
     </Button>
   )
 }
