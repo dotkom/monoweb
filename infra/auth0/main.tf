@@ -7,12 +7,10 @@ resource "auth0_tenant" "tenant" {
   enabled_locales                               = ["nb", "en", "no", "nn"]
   friendly_name                                 = "Online, Linjeforeningen for informatikk"
   idle_session_lifetime                         = 360 # 15 days
-  # TODO: make S3 bucket for this
-  # this is just the O
-  picture_url      = "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/679/"
-  sandbox_version  = "18"
-  session_lifetime = 720 # 30 days
-  support_email    = "dotkom@online.ntnu.no"
+  picture_url                                   = "https://cdn.online.ntnu.no/branding/online-logo.svg"
+  sandbox_version                               = "18"
+  session_lifetime                              = 720 # 30 days
+  support_email                                 = "dotkom@online.ntnu.no"
 }
 
 data "auth0_tenant" "tenant" {}
@@ -23,7 +21,7 @@ locals {
     "prd" = "auth.online.ntnu.no"
   }[terraform.workspace]
   name_suffix = {
-    "dev" = " Dev"
+    "dev" = " dev"
     "prd" = ""
   }
 }
@@ -49,9 +47,8 @@ resource "aws_route53_record" "auth0_custom_domain" {
 }
 
 resource "auth0_branding" "branding" {
-  favicon_url = "https://online.ntnu.no/img/icons/icon-256.png"
-  # this appears to be bugged, TF appears to read it as picture_url?
-  logo_url = "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/679/"
+  favicon_url = "https://cdn.online.ntnu.no/branding/online-icon.png"
+  logo_url    = "https://cdn.online.ntnu.no/branding/online-logo.svg"
 
   colors {
     # Online-orange
@@ -63,18 +60,33 @@ resource "auth0_branding" "branding" {
   universal_login {
     body = templatefile("branding/universal_login_base.html",
       {
-        "dev" = { "ENV_SPECIFIC" : <<EOT
-        <style>
-        .warning {
-          font-family: comic sans ms;
-          color: hotpink;
-          font-size: 13vw;
+        "dev" = {
+          "ENV_SPECIFIC" : <<-EOT
+            <style>
+              .env-dev-banner {
+                position: absolute;
+                top: 0.5rem;
+                left: 0.5rem;
+                right: 0.5rem;
+                z-index: 99;
+                padding: 0.66rem 1rem;
+                text-align: center;
+                font-family: "Figtree", "Inter", system-ui, sans-serif;
+                font-size: 1rem;
+                font-weight: 600;
+                color: oklch(97.1% 0.013 17.38);
+                background: oklch(57.7% 0.245 27.325);
+                border-bottom: 1px solid oklch(44.4% 0.177 26.899);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+                border-radius: 0.5rem;
+              }
+            </style>
+            <div class="env-dev-banner" role="status">Development</div>
+          EOT
         }
-        </style>
-        <h1 class="warning">DEVELOPMENT</h1>
-        EOT
+        "prd" = {
+          "ENV_SPECIFIC" : ""
         }
-        "prd" = { "ENV_SPECIFIC" : "" }
       }[terraform.workspace]
     )
   }
@@ -103,6 +115,7 @@ resource "auth0_connection" "feide" {
   show_as_button = null
   strategy       = "oauth2"
   options {
+    icon_url               = "https://online.ntnu.no/feide-symbol-black.svg"
     allowed_audiences      = []
     api_enable_users       = false
     auth_params            = {}
@@ -144,7 +157,7 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
     ]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
-  name                          = "Vengeful Vineyard${local.name_suffix[terraform.workspace]}"
+  name                          = "Vinstraff${local.name_suffix[terraform.workspace]}"
   organization_require_behavior = "no_prompt"
   is_first_party                = true
   oidc_conformant               = true
@@ -282,6 +295,7 @@ resource "auth0_prompt" "prompts" {
   webauthn_platform_first_factor = false
 }
 
+# This adds a full name field to the signup form
 resource "auth0_prompt_screen_partial" "signup_password_full_name" {
   prompt_type = "signup-password"
   screen_name = "signup-password"
@@ -424,7 +438,7 @@ resource "auth0_client" "monoweb_web" {
 
   grant_types     = ["authorization_code", "refresh_token", "client_credentials"]
   is_first_party  = true
-  name            = "Monoweb Web${local.name_suffix[terraform.workspace]}"
+  name            = "OnlineWeb${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true
 
   refresh_token {
@@ -470,7 +484,7 @@ resource "auth0_client" "monoweb_dashboard" {
     }[terraform.workspace]
   )
   grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
-  name            = "Monoweb Dashboard${local.name_suffix[terraform.workspace]}"
+  name            = "OnlineWeb Dashboard${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true
   is_first_party  = true
 
@@ -497,6 +511,110 @@ data "auth0_client" "monoweb_dashboard" {
   client_id = auth0_client.monoweb_dashboard.client_id
 }
 
+resource "auth0_action" "sync_feide_name" {
+  name    = "Sync FEIDE name"
+  runtime = "node18"
+  code    = file("js/actions/syncFeideName.js")
+  deploy  = true
+
+  supported_triggers {
+    id      = "post-login"
+    version = "v3"
+  }
+
+  secrets {
+    name  = "FEIDE_CONNECTION_ID"
+    value = auth0_connection.feide.id
+  }
+}
+
+resource "auth0_branding_theme" "default" {
+  display_name = "Online Theme"
+
+  borders {
+    button_border_radius = 8
+    button_border_weight = 1
+    buttons_style        = "rounded"
+    input_border_radius  = 8
+    input_border_weight  = 1
+    inputs_style         = "rounded"
+    show_widget_shadow   = true
+    widget_border_weight = 0
+    widget_corner_radius = 16
+  }
+
+  colors {
+    base_focus_color          = "#635dff"
+    base_hover_color          = "#000000"
+    body_text                 = "#1e212a"
+    captcha_widget_theme      = "light"
+    error                     = "#d03c38"
+    header                    = "#1e212a"
+    icons                     = "#65676e"
+    input_background          = "#ffffff"
+    input_border              = "#c9cace"
+    input_filled_text         = "#000000"
+    input_labels_placeholders = "#65676e"
+    links_focused_components  = "#635dff"
+    primary_button            = "#F9B759"
+    primary_button_label      = "#ffffff"
+    secondary_button_border   = "#c9cace"
+    secondary_button_label    = "#1e212a"
+    success                   = "#13a688"
+    widget_background         = "#ffffff"
+    widget_border             = "#c9cace"
+  }
+
+  fonts {
+    font_url            = "https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-normal.woff2"
+    links_style         = "normal"
+    reference_text_size = 16
+
+    body_text {
+      bold = false
+      size = 87.5
+    }
+
+    buttons_text {
+      bold = false
+      size = 100
+    }
+
+    input_labels {
+      bold = false
+      size = 100
+    }
+
+    links {
+      bold = true
+      size = 87.5
+    }
+
+    subtitle {
+      bold = false
+      size = 87.5
+    }
+
+    title {
+      bold = false
+      size = 150
+    }
+  }
+
+  page_background {
+    background_color     = "#0D5474"
+    background_image_url = null
+    page_layout          = "center"
+  }
+
+  widget {
+    header_text_alignment = "left"
+    logo_height           = 52
+    logo_position         = "center"
+    logo_url              = "https://cdn.online.ntnu.no/branding/online-logo.svg"
+    social_buttons_layout = "top"
+  }
+}
 
 resource "auth0_attack_protection" "attack_protection" {
   breached_password_detection {
@@ -702,21 +820,4 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
     "read:refresh_tokens",
     "delete:refresh_tokens"
   ]
-}
-
-resource "auth0_action" "sync_feide_name" {
-  name    = "Sync FEIDE name"
-  runtime = "node18"
-  code    = file("js/actions/syncFeideName.js")
-  deploy  = true
-
-  supported_triggers {
-    id      = "post-login"
-    version = "v3"
-  }
-
-  secrets {
-    name  = "FEIDE_CONNECTION_ID"
-    value = auth0_connection.feide.id
-  }
 }
