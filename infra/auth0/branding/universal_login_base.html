@@ -3,9 +3,13 @@
   <head>
     {%- auth0:head -%}
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700&display=swap");
+
       :root {
         --page-background-color: #0D5474;
+        --font-title: Figtree, Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
+
       body._widget-auto-layout {
         background-color: var(--page-background-color);
         /* SVG from https://heropatterns.com */
@@ -13,7 +17,14 @@
         background-size: 5vw 5vw;
         height: 100vh;
       }
-      </style>
+
+      body._widget-auto-layout h1,
+      body._widget-auto-layout h2,
+      body._widget-auto-layout h3,
+      body._widget-auto-layout .ulp-title {
+        font-family: var(--font-title);
+      }
+    </style>
     <title>{{ prompt.screen.texts.pageTitle }}</title>
   </head>
   <body class="_widget-auto-layout">
