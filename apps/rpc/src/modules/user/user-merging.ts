@@ -229,7 +229,11 @@ const CUSTOM_RELATION_MERGERS = {
     const allMembershipIds = [...new Set(allMemberships.map((m) => m.id))]
 
     await groupRepository.deleteGroupMemberships(handle, allMembershipIds)
-    await groupRepository.createManyGroupMemberships(handle, newGroupMemberships)
+
+    const createGroupMembershipOperations = newGroupMemberships.map(({ roleIds, ...membership }) =>
+      groupRepository.createGroupMembership(handle, membership, roleIds)
+    )
+    await Promise.all(createGroupMembershipOperations)
   },
 } satisfies Partial<
   Record<
