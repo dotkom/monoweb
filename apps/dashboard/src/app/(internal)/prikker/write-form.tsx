@@ -52,8 +52,7 @@ export const useMarkWriteForm = ({
 
   // Should probably be replaced with a query for only groups user is in at some point
   // (will it though? 💀)
-  // TODO: disallow email only groups from creating marks
-  const { data: groups } = useQuery(trpc.group.all.queryOptions({ filter: { includeEmailOnly: true } }))
+  const { data: groups } = useQuery(trpc.group.all.queryOptions())
 
   return useFormBuilder({
     schema: MarkFormSchema,
