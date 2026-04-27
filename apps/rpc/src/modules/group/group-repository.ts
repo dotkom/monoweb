@@ -16,7 +16,6 @@ import {
   GroupSchema,
   type GroupWrite,
   type UserId,
-  type GroupMembershipWriteWithRoles,
 } from "@dotkomonline/types"
 import type { GroupType } from "@prisma/client"
 import z from "zod"
@@ -54,7 +53,6 @@ export interface GroupRepository {
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
   deleteGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void>
-  createManyGroupMemberships(handle: DBHandle, groupMembershipData: GroupMembershipWriteWithRoles[]): Promise<void>
 
   createGroupRoles(handle: DBHandle, groupRolesData: GroupRoleWrite[]): Promise<GroupRole[]>
   updateGroupRole(
@@ -369,19 +367,6 @@ export function getGroupRepository(): GroupRepository {
             in: groupMembershipIds,
           },
         },
-      })
-    },
-
-    async createManyGroupMemberships(handle, groupMembershipData) {
-      await handle.groupMembership.createMany({
-        data: groupMembershipData.map(({ roleIds, ...membershipData }) => ({
-          ...membershipData,
-          roles: {
-            createMany: {
-              data: [...roleIds].map((roleId) => ({ roleId })),
-            },
-          },
-        })),
       })
     },
   }
