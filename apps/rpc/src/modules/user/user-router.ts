@@ -279,28 +279,47 @@ const confirmIdentityLinkProcedure = procedure
       throw new InvalidArgumentError("Cannot link a user to themselves")
     }
 
+    const mergedUser = await ctx.userService.mergeUsers(ctx.handle, primaryUserId, secondaryUserId)
+
     await ctx.userService.linkAuth0IdentitiesWithToken(primaryUserId, input.secondaryIdToken)
 
-    return ctx.userService.mergeUsers(ctx.handle, primaryUserId, secondaryUserId)
+    return mergedUser
   })
 
+// IMPORTANT: It does not make sense to link Auth0 identities WITHOUT merging the database users, as the user will be
+// orphaned and will not be accessible by authentication.
 export type MergeUsersInput = inferProcedureInput<typeof mergeUsersProcedure>
 export type MergeUsersOutput = inferProcedureOutput<typeof mergeUsersProcedure>
 const mergeUsersProcedure = procedure
   .input(
-    z.object({
-      survivorUserId: UserSchema.shape.id,
-      consumedUserId: UserSchema.shape.id,
-    })
+    z
+      .object({
+        survivorUserId: UserSchema.shape.id,
+        consumedUserId: UserSchema.shape.id,
+        mergeInDatabase: z.boolean().default(true),
+        linkAuth0Identities: z.boolean().default(true),
+      })
+      .refine((input) => input.mergeInDatabase || input.linkAuth0Identities, {
+        message: "At least one of mergeInDatabase or linkAuth0Identities must be true",
+        path: ["mergeInDatabase"],
+      })
   )
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    await ctx.userService.linkAuth0Identities(input.survivorUserId, input.consumedUserId)
+    const { survivorUserId, consumedUserId, mergeInDatabase, linkAuth0Identities } = input
 
-    return ctx.userService.mergeUsers(ctx.handle, input.survivorUserId, input.consumedUserId)
+    if (linkAuth0Identities) {
+      await ctx.userService.linkAuth0Identities(survivorUserId, consumedUserId)
+    }
+
+    const user = mergeInDatabase
+      ? await ctx.userService.mergeUsers(ctx.handle, survivorUserId, consumedUserId)
+      : await ctx.userService.getById(ctx.handle, survivorUserId)
+
+    return user
   })
 
 export type GetAuth0ConnectionsInput = inferProcedureInput<typeof getAuth0ConnectionsProcedure>
