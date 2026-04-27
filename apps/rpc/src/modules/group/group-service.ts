@@ -79,7 +79,7 @@ export interface GroupService {
   createManyGroupMemberships(
     handle: DBHandle,
     groupMembershipData: (GroupMembershipWrite & { roleIds: Set<GroupRoleId> })[]
-  ): Promise<void>
+  ): Promise<GroupMembership[]>
   /**
    * Reduces the array of memberships to its simplest form, removing overlapping memberships and merging memberships
    * which could be merged.
@@ -346,16 +346,20 @@ export function getGroupService(
       return results
     },
 
-    createManyGroupMemberships(
+    async createManyGroupMemberships(
       handle: DBHandle,
       groupMembershipData: (GroupMembershipWrite & {
         roleIds: Set<GroupRoleId>
       })[]
-    ): Promise<void> {
-      return groupRepository.createManyGroupMemberships(handle, groupMembershipData)
+    ): Promise<GroupMembership[]> {
+      const operations = groupMembershipData.map(({ roleIds, ...membershipData }) =>
+        groupRepository.createGroupMembership(handle, membershipData, roleIds)
+      )
+
+      return await Promise.all(operations)
     },
 
-    deleteManyGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void> {
+    async deleteManyGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void> {
       return groupRepository.deleteGroupMemberships(handle, groupMembershipIds)
     },
 
