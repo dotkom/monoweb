@@ -28,10 +28,10 @@ export interface GroupRepository {
   findBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Group | null>
   findByGroupRoleId(handle: DBHandle, groupRoleId: GroupRoleId): Promise<Group | null>
   findByGroupMembershipId(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<Group | null>
-  findMany(handle: DBHandle): Promise<Group[]>
+  findMany(handle: DBHandle, filter?: { includeEmailOnly?: boolean }): Promise<Group[]>
   findManyBySlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
-  findManyByUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
+  findManyByUserId(handle: DBHandle, userId: UserId, filter?: { includeEmailOnly?: boolean }): Promise<Group[]>
 
   findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
   findGroupMembersByRoleType(handle: DBHandle, groupSlug: GroupId, roleType: GroupRoleType): Promise<GroupMember[]>
@@ -131,8 +131,11 @@ export function getGroupRepository(): GroupRepository {
       return membership ? parseOrReport(GroupSchema.nullable(), membership.group) : null
     },
 
-    async findMany(handle) {
+    async findMany(handle, filter) {
       const groups = await handle.group.findMany({
+        where: {
+          ...(filter?.includeEmailOnly ? {} : { NOT: { type: "EMAIL_ONLY" } }),
+        },
         include: QUERY_WITH_ROLES,
       })
 
@@ -167,9 +170,10 @@ export function getGroupRepository(): GroupRepository {
       )
     },
 
-    async findManyByUserId(handle, userId) {
+    async findManyByUserId(handle, userId, filter) {
       const groups = await handle.group.findMany({
         where: {
+          ...(filter?.includeEmailOnly ? {} : { NOT: { type: "EMAIL_ONLY" } }),
           memberships: {
             some: {
               userId,

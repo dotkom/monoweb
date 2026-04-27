@@ -47,10 +47,10 @@ export interface GroupService {
    * @throws {NotFoundError} if the group does not exist
    */
   getBySlugAndType(handle: DBHandle, groupSlug: GroupId, groupType: GroupType): Promise<Group>
-  findMany(handle: DBHandle): Promise<Group[]>
+  findMany(handle: DBHandle, filter?: { includeEmailOnly?: boolean }): Promise<Group[]>
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   findManyByGroupSlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
-  findManyByMemberUserId(handle: DBHandle, userId: UserId): Promise<Group[]>
+  findManyByMemberUserId(handle: DBHandle, userId: UserId, filter?: { includeEmailOnly?: boolean }): Promise<Group[]>
 
   getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMember>
   findMembersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
@@ -177,8 +177,8 @@ export function getGroupService(
       }, new Map<UserId, GroupMember>())
     },
 
-    async findMany(handle) {
-      return groupRepository.findMany(handle)
+    async findMany(handle, filter) {
+      return groupRepository.findMany(handle, filter)
     },
 
     async findManyByType(handle, groupType) {
@@ -198,8 +198,8 @@ export function getGroupService(
       return groups
     },
 
-    async findManyByMemberUserId(handle, userId) {
-      return groupRepository.findManyByUserId(handle, userId)
+    async findManyByMemberUserId(handle, userId, filter) {
+      return groupRepository.findManyByUserId(handle, userId, filter)
     },
 
     async getMember(handle, groupSlug, userId) {

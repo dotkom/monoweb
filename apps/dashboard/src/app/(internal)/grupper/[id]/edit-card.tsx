@@ -33,7 +33,8 @@ export const GroupEditCard: FC = () => {
   const { isAdmin } = useIsAdminQuery()
 
   const isWorkspaceLinked = Boolean(group.workspaceGroupId)
-  const showWorkspaceLink = isWorkspaceLinked || group.type === "COMMITTEE" || group.type === "NODE_COMMITTEE"
+  const showWorkspaceLink =
+    isWorkspaceLinked || group.type === "COMMITTEE" || group.type === "NODE_COMMITTEE" || group.type === "EMAIL_ONLY"
   const isWorkspaceFetchEnabled = (isAdmin ?? false) && showWorkspaceLink
   const { workspaceGroup, isLoading: isLoadingWorkspaceGroup } = useFindWorkspaceGroupQuery(
     group.slug,

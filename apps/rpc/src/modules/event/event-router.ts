@@ -500,7 +500,9 @@ const isOrganizerProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
-    const groups = await ctx.groupService.findManyByMemberUserId(ctx.handle, ctx.principal.subject)
+    const groups = await ctx.groupService.findManyByMemberUserId(ctx.handle, ctx.principal.subject, {
+      includeEmailOnly: true,
+    })
 
     return groups.some((group) => event.hostingGroups.some((organizer) => organizer.slug === group.slug))
   })

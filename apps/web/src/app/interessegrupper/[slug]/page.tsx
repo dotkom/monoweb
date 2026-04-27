@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Pick<InterestGroupPageProps, 
 
   const group = await server.group.find.query(slug)
 
-  if (!group) {
+  if (!group || group.type === "EMAIL_ONLY") {
     return {
       title: "Gruppe ikke funnet | Linjeforeningen Online",
       description: "Gruppen finnes ikke eller er slettet.",

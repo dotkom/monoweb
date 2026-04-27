@@ -159,7 +159,7 @@ export function ProfilePage() {
   const [{ data: groups }, { data: futureEventWithAttendances }, { data: marks }, { data: eventsMissingFeedback }] =
     useQueries({
       queries: [
-        trpc.group.allByMember.queryOptions(user?.id ?? "", { enabled: isLoggedIn && Boolean(user?.id) }),
+        trpc.group.allByMember.queryOptions({ userId: user?.id ?? "" }, { enabled: isLoggedIn && Boolean(user?.id) }),
         trpc.event.allSummariesByAttendingUserId.queryOptions(
           {
             id: user?.id ?? "",
