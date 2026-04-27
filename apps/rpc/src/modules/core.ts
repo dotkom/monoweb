@@ -51,6 +51,7 @@ import { getLocalTaskSchedulingService } from "./task/task-scheduling-service"
 import { getTaskService } from "./task/task-service"
 import { getMembershipService } from "./user/membership-service"
 import { getUserRepository } from "./user/user-repository"
+import { getUserMergingService } from "./user/user-merge-service"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
@@ -191,9 +192,7 @@ export async function createServiceLayer(
   const userService = getUserService(
     userRepository,
     feideGroupsRepository,
-    groupRepository,
     clients.auth0Client,
-    clients.webAuth0Client,
     membershipService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET
@@ -240,6 +239,13 @@ export async function createServiceLayer(
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
+  const userMergeService = getUserMergingService(
+    userService,
+    groupRepository,
+    clients.auth0Client,
+    clients.webAuth0Client
+  )
+
   const taskExecutor = getLocalTaskExecutor(
     taskService,
     recurringTaskService,
@@ -260,6 +266,7 @@ export async function createServiceLayer(
     eventEmitter,
     emailService,
     userService,
+    userMergeService,
     eventService,
     groupService,
     companyService,
