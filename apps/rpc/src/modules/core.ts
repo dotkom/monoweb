@@ -51,7 +51,7 @@ import { getLocalTaskSchedulingService } from "./task/task-scheduling-service"
 import { getTaskService } from "./task/task-service"
 import { getMembershipService } from "./user/membership-service"
 import { getUserRepository } from "./user/user-repository"
-import { getUserMergingService } from "./user/user-merge-service"
+import { getUserMergingService } from "./user/user-merging-service"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
@@ -242,6 +242,7 @@ export async function createServiceLayer(
   const userMergeService = getUserMergingService(
     userService,
     groupRepository,
+    attendanceService,
     clients.auth0Client,
     clients.webAuth0Client
   )
