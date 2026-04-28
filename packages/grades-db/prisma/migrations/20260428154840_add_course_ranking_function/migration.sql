@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION rank_search(
     code TEXT,
-    norwegian_name TEXT,
-    english_name TEXT,
+    name_no TEXT,
+    name_en TEXT,
     last_year_taught INTEGER,
     search_term TEXT
 )
@@ -27,10 +27,10 @@ BEGIN
     RETURN baseline + CASE
         WHEN code = search_term THEN 0
         WHEN code ILIKE search_starts_with THEN 1
-        WHEN norwegian_name = search_term OR english_name = search_term THEN 2
-        WHEN norwegian_name ILIKE search_starts_with OR english_name ILIKE search_starts_with THEN 3
+        WHEN name_no = search_term OR name_en = search_term THEN 2
+        WHEN name_no ILIKE search_starts_with OR name_en ILIKE search_starts_with THEN 3
         WHEN code ILIKE search_contains THEN 4
-        WHEN norwegian_name ILIKE search_contains OR english_name ILIKE search_contains THEN 5
+        WHEN name_no ILIKE search_contains OR name_en ILIKE search_contains THEN 5
         ELSE 6
     END;
 END;
