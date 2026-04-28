@@ -64,7 +64,7 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
           user: {
             select: {
               id: true,
-              profileSlug: true,
+              username: true,
               name: true,
               imageUrl: true,
               biography: true,
@@ -73,7 +73,7 @@ export function getPersonalMarkRepository(): PersonalMarkRepository {
           givenBy: {
             select: {
               id: true,
-              profileSlug: true,
+              username: true,
               name: true,
               imageUrl: true,
               biography: true,

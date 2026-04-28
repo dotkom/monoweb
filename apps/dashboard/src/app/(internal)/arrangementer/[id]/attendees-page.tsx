@@ -56,7 +56,7 @@ const Page: FC<Props> = ({ event, attendance, feedbackAnswers }) => {
                 {attendeesWithoutEmail.map((attendee) => (
                   <ListItem key={attendee.id}>
                     <Anchor size="xs" href={`/brukere/${attendee.user.id}`}>
-                      {attendee.user.name} ({attendee.user.profileSlug})
+                      {attendee.user.name} ({attendee.user.username})
                     </Anchor>
                   </ListItem>
                 ))}

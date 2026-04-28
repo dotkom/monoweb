@@ -1,13 +1,25 @@
 import { Prisma, type DBHandle } from "@dotkomonline/grades-db"
-import { parseOrReport } from "../../invariant"
-import { type Course, type CourseFilterQuery, type CourseId, CourseSchema, type CourseWrite } from "./course-types"
 import type { Pageable } from "@dotkomonline/utils"
+import { parseOrReport } from "../../invariant"
+import {
+  type Course,
+  type CourseFilterQuery,
+  type CourseId,
+  CourseSchema,
+  type CourseWrite,
+  type Department,
+  DepartmentSchema,
+  type Faculty,
+  FacultySchema,
+} from "./course-types"
 
 export interface CourseRepository {
   findMany(handle: DBHandle, query: CourseFilterQuery, page: Pageable): Promise<Course[]>
   find(handle: DBHandle, code: string): Promise<Course>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
+  findManyFaculties(handle: DBHandle): Promise<Faculty[]>
+  findManyDepartments(handle: DBHandle): Promise<Department[]>
 }
 
 export function getCourseRepository(): CourseRepository {
@@ -18,7 +30,7 @@ export function getCourseRepository(): CourseRepository {
       const sortColumnMap = {
         AVERAGE_GRADE: "average_grade",
         PASS_RATE: "pass_rate",
-        STUDENT_COUNT: "student_count",
+        CANDIDATE_COUNT: "candidate_count",
       } as const
 
       const sortDirection = sortOrder === "asc" ? "ASC" : "DESC"
@@ -31,7 +43,7 @@ export function getCourseRepository(): CourseRepository {
       const searchContains = bySearch ? `%${bySearch}%` : undefined
 
       const searchWhereSql = searchContains
-        ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "norwegian_name" ILIKE ${searchContains} OR "english_name" ILIKE ${searchContains})`
+        ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "name_no" ILIKE ${searchContains} OR "name_en" ILIKE ${searchContains})`
         : Prisma.empty
       const cursorWhereSql = page.cursor ? Prisma.sql`AND "id" < ${page.cursor}` : Prisma.empty
 
@@ -39,18 +51,22 @@ export function getCourseRepository(): CourseRepository {
         SELECT
           "id",
           "code",
-          "norwegian_name" AS "norwegianName",
-          "english_name" AS "englishName",
+          "name_no" AS "nameNo",
+          "name_en" AS "nameEn",
           "credits",
           "study_level" AS "studyLevel",
           "grade_type" AS "gradeType",
           "first_year_taught" AS "firstYearTaught",
           "last_year_taught" AS "lastYearTaught",
-          "content",
-          "teaching_methods" AS "teachingMethods",
-          "learning_outcomes" AS "learningOutcomes",
-          "exam_type" AS "examType",
-          "student_count" AS "studentCount",
+          "content_no" AS "contentNo",
+          "content_en" AS "contentEn",
+          "teaching_methods_no" AS "teachingMethodsNo",
+          "teaching_methods_en" AS "teachingMethodsEn",
+          "learning_outcomes_no" AS "learningOutcomesNo",
+          "learning_outcomes_en" AS "learningOutcomesEn",
+          "exam_type_no" AS "examTypeNo",
+          "exam_type_en" AS "examTypeEn",
+          "candidate_count" AS "candidateCount",
           "average_grade" AS "averageGrade",
           "pass_rate" AS "passRate",
           "created_at" AS "createdAt",
@@ -59,7 +75,8 @@ export function getCourseRepository(): CourseRepository {
           "teaching_languages" AS "teachingLanguages",
           "campuses",
           "faculty_id" AS "facultyId",
-          "department_id" AS "departmentId"
+          "department_id" AS "departmentId",
+          "latest_year_checked_for_ntnu_data" AS "latestYearCheckedForNtnuData"
         FROM "course"
         WHERE 1 = 1
         ${searchWhereSql}
@@ -67,13 +84,14 @@ export function getCourseRepository(): CourseRepository {
         ORDER BY
           -- To update ranking, copy-paste rank_search function from
           -- 20260415160933_add_course_ranking_function into a new migration
-          rank_search(code, norwegian_name, english_name, last_year_taught, ${bySearch ?? null}) ASC,
+          rank_search(code, name_no, name_en, last_year_taught, ${bySearch ?? null}) ASC,
           ${Prisma.raw(orderByClause)}
         LIMIT ${page.take}
       `
 
       return parseOrReport(CourseSchema.array(), courses)
     },
+
     async find(handle, code) {
       const course = await handle.course.findUnique({
         where: { code: code },
@@ -97,6 +115,18 @@ export function getCourseRepository(): CourseRepository {
       })
 
       return parseOrReport(CourseSchema, course)
+    },
+
+    async findManyFaculties(handle) {
+      const faculties = await handle.faculty.findMany()
+
+      return parseOrReport(FacultySchema.array(), faculties)
+    },
+
+    async findManyDepartments(handle) {
+      const departments = await handle.department.findMany()
+
+      return parseOrReport(DepartmentSchema.array(), departments)
     },
   }
 }

@@ -64,10 +64,10 @@
     "zod": "^3.25.47"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.5",
+    "@biomejs/biome": "2.4.12",
     "@dotkomonline/config": "workspace:*",
     "@faker-js/faker": "9.9.0",
-    "@testcontainers/postgresql": "11.12.0",
+    "@testcontainers/postgresql": "11.14.0",
     "@types/mustache": "4.2.6",
     "@types/node": "22.19.7",
     "@types/ws": "8.18.1",
@@ -78,6 +78,6 @@
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "vitest": "3.2.4",
-    "vitest-mock-extended": "3.1.0"
+    "vitest-mock-extended": "3.1.1"
   }
 }

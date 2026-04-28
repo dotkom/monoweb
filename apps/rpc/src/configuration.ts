@@ -7,7 +7,9 @@ export const createConfiguration = () =>
     AUTH0_ISSUER: config(process.env.AUTH0_ISSUER),
     AUTH0_AUDIENCES: config(process.env.AUTH0_AUDIENCES),
     AUTH0_CLIENT_ID: config(process.env.AUTH0_CLIENT_ID),
+    AUTH0_WEB_CLIENT_ID: config(process.env.AUTH0_WEB_CLIENT_ID),
     AUTH0_CLIENT_SECRET: config(process.env.AUTH0_CLIENT_SECRET),
+    AUTH0_WEB_CLIENT_SECRET: config(process.env.AUTH0_WEB_CLIENT_SECRET),
     AUTH0_MGMT_TENANT: config(process.env.AUTH0_MGMT_TENANT),
 
     WEB_PUBLIC_ORIGIN: config(process.env.WEB_PUBLIC_ORIGIN),

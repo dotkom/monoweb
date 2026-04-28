@@ -12,14 +12,15 @@ import {
   type User,
   type UserFilterQuery,
   type UserId,
-  type UserProfileSlug,
+  type Username,
   type UserWrite,
   UserWriteSchema,
   findActiveMembership,
+  GenderSchema,
 } from "@dotkomonline/types"
 import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
-import type { ManagementClient } from "auth0"
+import type { ManagementClient, PostIdentitiesRequestProviderEnum } from "auth0"
 import * as crypto from "node:crypto"
 import { isDevelopmentEnvironment } from "../../configuration"
 import { isSameDay } from "date-fns"
@@ -34,10 +35,34 @@ import {
   type MembershipService,
 } from "./membership-service"
 import type { UserRepository } from "./user-repository"
+import { mergeUsers } from "./user-merging"
+import type { GroupRepository } from "../group/group-repository"
+import {
+  Auth0UserProfileAppMetadataSchema,
+  Auth0UserProfileUserMetadataSchema,
+  type Auth0Connection,
+  type Auth0UserProfile,
+} from "./user"
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
+  /**
+   * Update the user's email in Auth0 and trigger a verification email to the new address.
+   *
+   * NOTE: We do not update `User#email` until the user verifies the new email address. Call
+   * {@link UserService#syncEmailFromAuth0} after the user has clicked the verification link to update the DB user.
+   *
+   * @throws {InvalidArgumentError} if the new email is identical to the current one.
+   * @throws {AlreadyExistsError} if another user in the database already has this email.
+   */
+  requestEmailChange(handle: DBHandle, userId: UserId, newEmail: string): Promise<void>
+  /**
+   * Synchronizes the DB user's email with the email in Auth0.
+   *
+   * The DB user is mutated if and only if the email is verified in Auth0 AND it differs from the current DB user email.
+   */
+  syncEmailFromAuth0(handle: DBHandle, userId: UserId): Promise<User>
   /**
    * Find a user by their ID, or null if not found.
    *
@@ -62,8 +87,8 @@ export interface UserService {
    * @throws {NotFoundError} if the user is not found.
    */
   getById(handle: DBHandle, id: UserId): Promise<User>
-  findByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User | null>
-  getByProfileSlug(handle: DBHandle, profileSlug: UserProfileSlug): Promise<User>
+  findByUsername(handle: DBHandle, username: Username): Promise<User | null>
+  getByUsername(handle: DBHandle, username: Username): Promise<User>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findUsers(handle: DBHandle, query: UserFilterQuery, page?: Pageable): Promise<User[]>
 
@@ -80,6 +105,7 @@ export interface UserService {
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
 
+  getAuth0Connections(userId: UserId): Promise<Auth0Connection>
   /**
    * Find the Feide federated access token for a user, if it exists.
    *
@@ -90,6 +116,40 @@ export interface UserService {
    * is opaque with format like `afd4988b-a205-49f9-b2e0-03e00bb4b8c0`.
    */
   findFeideAccessTokenByUserId(userId: UserId): Promise<string | null>
+
+  /**
+   * This is for manually linking two identities (login methods) to the same user. This happens in Auth0. All identities
+   * will be consolidated under the primary user.
+   *
+   * IMPORTANT: Be very careful with this function, as it would link a new login to an existing user, which could have
+   * security implications if used incorrectly. Always make sure to verify the ownership of both accounts before linking
+   * them.
+   *
+   * Both database users will still exist after this method is called. The secondary user will not be accessible by
+   * authentication, and should be merged into the primary user.
+   *
+   * @see UserService#mergeUsers for merging the database users after linking the Auth0 identities.
+   */
+  linkAuth0Identities(primaryUserId: UserId, secondaryUserId: UserId): Promise<void>
+  /**
+   * Like {@link linkAuth0Identities}, but uses the secondary user's ID token (Auth0's `link_with` parameter) instead
+   * of looking up the secondary user in Auth0. Auth0 validates the ID token itself, so this is safer for self-service
+   * account linking where the user has just authenticated with the secondary account.
+   *
+   * @see UserService#mergeUsers for merging the database users after linking the Auth0 identities.
+   */
+  linkAuth0IdentitiesWithToken(primaryUserId: UserId, secondaryIdToken: string): Promise<void>
+  /**
+   * Merges two users into the survivor and consumes the consumer. The survivor's field values will take precedence over
+   * the consumed user's values, except for memberships and group memberships, where we will attempt to keep all unique
+   * non-duplicate memberships from both. If a field value is only present on the consumed user, it will be moved to the
+   * survivor.
+   *
+   * IMPORTANT: The consumed user will be deleted after the merge.
+   *
+   * @see UserService#linkAuth0Identities for linking the Auth0 identities before merging the database users.
+   */
+  mergeUsers(handle: DBHandle, survivorUserId: UserId, consumedUserId: UserId): Promise<User>
 
   createFileUpload(
     handle: DBHandle,
@@ -106,12 +166,223 @@ const ONLINE_BACHELOR_PROGRAMMES = ["BIT"]
 export function getUserService(
   userRepository: UserRepository,
   feideGroupsRepository: FeideGroupsRepository,
+  groupRepository: GroupRepository,
   managementClient: ManagementClient,
+  webManagementClient: ManagementClient,
   membershipService: MembershipService,
   client: S3Client,
   bucket: string
 ): UserService {
   const logger = getLogger("user-service")
+
+  function parseAuth0ProfileMetadata(auth0User: Auth0UserProfile) {
+    const appMetadataResult = Auth0UserProfileAppMetadataSchema.safeParse(auth0User.app_metadata ?? {})
+    if (!appMetadataResult.success) {
+      logger.error("Failed to parse Auth0 app metadata for User(ID=%s): %o", auth0User.user_id, appMetadataResult.error)
+    }
+
+    const userMetadataResult = Auth0UserProfileUserMetadataSchema.safeParse(auth0User.user_metadata ?? {})
+    if (!userMetadataResult.success) {
+      logger.error(
+        "Failed to parse Auth0 user metadata for User(ID=%s): %o",
+        auth0User.user_id,
+        userMetadataResult.error
+      )
+    }
+
+    return {
+      appMetadata: appMetadataResult.success ? appMetadataResult.data : {},
+      userMetadata: userMetadataResult.success ? userMetadataResult.data : {},
+    }
+  }
+
+  type Auth0ProfileMetadata = ReturnType<typeof parseAuth0ProfileMetadata>
+
+  function normalizeText(value: unknown): string | null {
+    if (typeof value !== "string") {
+      return null
+    }
+
+    return value.trim() || null
+  }
+
+  function getUserSubmittedFullName(metadata: Auth0ProfileMetadata): string | null {
+    return normalizeText(metadata.appMetadata.initial_full_name) ?? normalizeText(metadata.userMetadata.full_name)
+  }
+
+  function getFeideIdentityName(auth0User: Auth0UserProfile): string | null {
+    const feideIdentity = auth0User.identities?.find((identity) => identity.connection === "FEIDE")
+
+    return normalizeText(feideIdentity?.profileData?.name)
+  }
+
+  function getFeideFullName(auth0User: Auth0UserProfile, metadata: Auth0ProfileMetadata): string | null {
+    return getFeideIdentityName(auth0User) ?? normalizeText(metadata.appMetadata.feide_full_name)
+  }
+
+  function getAuth0DisplayName(auth0User: Auth0UserProfile): string | null {
+    const name = normalizeText(auth0User.name)
+    const email = normalizeText(auth0User.email)
+
+    if (name === null || name === email) {
+      return null
+    }
+
+    return name
+  }
+
+  function getPreferredName(auth0User: Auth0UserProfile, metadata: Auth0ProfileMetadata): string | null {
+    return getFeideFullName(auth0User, metadata) ?? getUserSubmittedFullName(metadata) ?? getAuth0DisplayName(auth0User)
+  }
+
+  function shouldReplaceStoredNameWithFeide(
+    user: User,
+    auth0User: Auth0UserProfile,
+    metadata: Auth0ProfileMetadata
+  ): boolean {
+    const userSubmittedName = getUserSubmittedFullName(metadata)
+    const feideFullName = getFeideFullName(auth0User, metadata)
+    const currentName = normalizeText(user.name)
+
+    if (feideFullName === null) {
+      return false
+    }
+
+    if (currentName === null) {
+      return true
+    }
+
+    return userSubmittedName !== null && currentName === userSubmittedName && currentName !== feideFullName
+  }
+
+  async function syncFeideMetadataToAuth0(
+    userId: UserId,
+    auth0User: Auth0UserProfile,
+    metadata: Auth0ProfileMetadata
+  ): Promise<Auth0ProfileMetadata> {
+    const feideName = getFeideIdentityName(auth0User)
+
+    if (feideName === null || feideName === normalizeText(metadata.appMetadata.feide_full_name)) {
+      return metadata
+    }
+
+    const response = await managementClient.users.update(
+      { id: userId },
+      {
+        app_metadata: {
+          ...metadata.appMetadata,
+          feide_full_name: feideName,
+        },
+      }
+    )
+
+    if (response.status !== 200) {
+      throw new IllegalStateError(
+        `Received HTTP ${response.status} (${response.statusText}) when syncing User(ID=${userId}) FEIDE metadata to Auth0`
+      )
+    }
+
+    return {
+      ...metadata,
+      appMetadata: {
+        ...metadata.appMetadata,
+        feide_full_name: feideName,
+      },
+    }
+  }
+
+  async function syncUserWithAuth0Profile(handle: DBHandle, user: User, auth0User: Auth0UserProfile): Promise<User> {
+    const syncedUser = await syncProfileFromAuth0(handle, user, auth0User)
+    await syncNameToAuth0(user.id, auth0User, syncedUser.name)
+
+    return syncedUser
+  }
+
+  // Used to keep Auth0's root profile name synced with the DB user's name.
+  async function syncNameToAuth0(userId: UserId, auth0User: Auth0UserProfile, desiredName: string | null) {
+    const name = normalizeText(desiredName)
+    const currentAuth0Name = normalizeText(auth0User.name)
+
+    if (name === null || currentAuth0Name === name) {
+      return
+    }
+
+    const response = await managementClient.users.update({ id: userId }, { name })
+
+    if (response.status !== 200) {
+      throw new IllegalStateError(
+        `Received HTTP ${response.status} (${response.statusText}) when syncing User(ID=${userId}) name to Auth0`
+      )
+    }
+  }
+
+  // Used when updating the user's profile in the database.
+  async function syncProfileToAuth0(userId: UserId, currentUser: User, newUser: User, data: Partial<UserWrite>) {
+    const patch: {
+      name?: string
+      email?: string
+      email_verified?: boolean
+      verify_email?: boolean
+    } = {}
+
+    if (data.name !== undefined && currentUser.name !== newUser.name) {
+      const name = normalizeText(newUser.name)
+
+      if (name !== null) {
+        patch.name = name
+      }
+    }
+
+    if (data.email !== undefined && currentUser.email !== newUser.email) {
+      const email = normalizeText(newUser.email)
+
+      if (email !== null) {
+        patch.email = email
+        patch.email_verified = false
+        patch.verify_email = true
+      }
+    }
+
+    if (Object.keys(patch).length === 0) {
+      return
+    }
+
+    const response = await managementClient.users.update({ id: userId }, patch)
+
+    if (response.status !== 200) {
+      throw new IllegalStateError(
+        `Received HTTP ${response.status} (${response.statusText}) when syncing User(ID=${userId}) profile to Auth0`
+      )
+    }
+  }
+
+  async function syncProfileFromAuth0(handle: DBHandle, user: User, auth0User: Auth0UserProfile): Promise<User> {
+    const data: Partial<UserWrite> = {}
+    const metadata = await syncFeideMetadataToAuth0(user.id, auth0User, parseAuth0ProfileMetadata(auth0User))
+
+    const auth0Email = normalizeText(auth0User.email)
+
+    if (auth0User.email_verified && auth0Email !== null && auth0Email !== user.email) {
+      data.email = auth0Email
+    }
+
+    const preferredName = getPreferredName(auth0User, metadata)
+
+    if (preferredName !== null) {
+      const currentName = normalizeText(user.name)
+
+      if (currentName === null || shouldReplaceStoredNameWithFeide(user, auth0User, metadata)) {
+        data.name = preferredName
+      }
+    }
+
+    if (Object.keys(data).length === 0) {
+      return user
+    }
+
+    logger.info("Syncing Auth0 profile fields %o to DB for User(ID=%s)", Object.keys(data), user.id)
+    return await userRepository.update(handle, user.id, data)
+  }
 
   async function findApplicableMembership(
     studyProgrammes: NTNUGroup[],
@@ -224,8 +495,8 @@ export function getUserService(
       return user
     },
 
-    async findByProfileSlug(handle, profileSlug) {
-      return await userRepository.findByProfileSlug(handle, profileSlug)
+    async findByUsername(handle, username) {
+      return await userRepository.findByUsername(handle, username)
     },
 
     async findByWorkspaceUserIds(handle, workspaceUserIds) {
@@ -257,12 +528,26 @@ export function getUserService(
       // If the user has an active membership, and the existing user is not null there is no more work for us to do,
       // and we can early exit. This is the happiest and fastest path of this function.
       if (existingUser !== null) {
-        const membership = findActiveMembership(existingUser)
+        let syncedUser = existingUser
+        const auth0Response = await managementClient.users.get({ id: userId })
+
+        if (auth0Response.status === 200) {
+          syncedUser = await syncUserWithAuth0Profile(handle, existingUser, auth0Response.data)
+        } else {
+          logger.warn(
+            "Skipping Auth0 profile sync for existing User(ID=%s) due to HTTP %s (%s)",
+            userId,
+            auth0Response.status,
+            auth0Response.statusText
+          )
+        }
+
+        const membership = findActiveMembership(syncedUser)
 
         // If the best active membership is KNIGHT, we attempt to discover a new membership for the user, in case they
         // can find a "better" membership this way.
         if (membership !== null && membership.type !== "KNIGHT") {
-          return existingUser
+          return syncedUser
         }
 
         // The membership of this user has expired since their last sign-in. Attempt to discover a need one.
@@ -311,39 +596,36 @@ export function getUserService(
 
       await userRepository.register(handle, userId)
 
-      const requestedSlug = UserWriteSchema.shape.profileSlug
-        .catch(crypto.randomUUID())
-        .parse(response.data.app_metadata?.username)
+      const metadata = parseAuth0ProfileMetadata(response.data)
+      const name = getPreferredName(response.data, metadata)
 
-      // Profile slugs are unique, so if somebody has already the requested slug as their profile slug, we change the
-      // requested slug to a new random UUID for now. The user can always update this later.
-      const match = await this.findByProfileSlug(handle, requestedSlug)
-      const slug = match !== null ? crypto.randomUUID() : requestedSlug
+      if (name === null) {
+        throw new IllegalStateError("Failed to determine user name")
+      }
 
       const profile: UserWrite = {
-        profileSlug: slug,
-        name: response.data.name,
+        username: crypto.randomUUID(),
+        name,
         email: response.data.email,
         imageUrl: response.data.picture,
-        biography: response.data.app_metadata?.biography || null,
-        phone: response.data.app_metadata?.phone || null,
-        // This field was called `allergies` in OnlineWeb 4, but today it's called `dietaryRestrictions`.
-        dietaryRestrictions: response.data.app_metadata?.allergies || null,
-        // Gender is a standard OIDC claim, so we fall back to it if the app_metadata does not contain it.
-        gender: response.data.app_metadata?.gender || response.data.gender || null,
+        biography: null,
+        phone: null,
+        dietaryRestrictions: null,
+        gender: GenderSchema.enum.UNKNOWN,
         workspaceUserId: null,
       }
 
       const firstSignInUser = await userRepository.update(handle, userId, profile)
+      await syncUserWithAuth0Profile(handle, firstSignInUser, response.data)
 
       return this.discoverMembership(handle, firstSignInUser.id)
     },
 
-    async getByProfileSlug(handle, profileSlug) {
-      const user = await this.findByProfileSlug(handle, profileSlug)
+    async getByUsername(handle, username) {
+      const user = await this.findByUsername(handle, username)
 
       if (!user) {
-        throw new NotFoundError(`User(ProfileSlug=${profileSlug}) not found`)
+        throw new NotFoundError(`User(Username=${username}) not found`)
       }
 
       return user
@@ -357,23 +639,71 @@ export function getUserService(
         throw new InvalidArgumentError(`Invalid payload for updating User(ID=${userId}): ${result.error.message}`)
       }
 
-      if (data.profileSlug) {
-        if (data.profileSlug !== slugify(data.profileSlug)) {
+      if (data.username) {
+        if (data.username !== slugify(data.username)) {
           throw new InvalidArgumentError(
-            `User(ID=${userId}) cannot have ProfileSlug=${data.profileSlug} because it is not a valid slug`
+            `User(ID=${userId}) cannot have Username=${data.username} because it is not a valid slug`
           )
         }
 
-        const existingUser = await this.findByProfileSlug(handle, data.profileSlug)
+        const existingUser = await this.findByUsername(handle, data.username)
 
         if (existingUser && existingUser.id !== userId) {
           throw new AlreadyExistsError(
-            `User(ID=${userId}) cannot have ProfileSlug=${data.profileSlug} because it is already taken`
+            `User(ID=${userId}) cannot have Username=${data.username} because it is already taken`
           )
         }
       }
 
-      return await userRepository.update(handle, userId, data)
+      const currentUser = await this.getById(handle, userId)
+      const updatedUser = await userRepository.update(handle, userId, data)
+
+      await syncProfileToAuth0(userId, currentUser, updatedUser, data)
+
+      return updatedUser
+    },
+
+    async requestEmailChange(handle, userId, newEmail) {
+      const user = await this.getById(handle, userId)
+
+      if (user.email === newEmail) {
+        throw new InvalidArgumentError(`User(ID=${userId}) already has Email=${newEmail}`)
+      }
+
+      const conflict = await handle.user.findFirst({
+        where: { email: newEmail, id: { not: userId } },
+        select: { id: true },
+      })
+
+      if (conflict !== null) {
+        throw new AlreadyExistsError(`Email=${newEmail} is already in use by another user`)
+      }
+
+      const response = await managementClient.users.update(
+        { id: userId },
+        { email: newEmail, email_verified: false, verify_email: true }
+      )
+
+      if (response.status !== 200) {
+        throw new IllegalStateError(
+          `Received HTTP ${response.status} (${response.statusText}) when updating Email for User(ID=${userId}) in Auth0`
+        )
+      }
+
+      logger.info("Requested email change for User(ID=%s). Auth0 will send a verification email.", userId)
+    },
+
+    async syncEmailFromAuth0(handle, userId) {
+      const user = await this.getById(handle, userId)
+      const response = await managementClient.users.get({ id: userId })
+
+      if (response.status !== 200) {
+        throw new IllegalStateError(
+          `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
+        )
+      }
+
+      return await syncUserWithAuth0Profile(handle, user, response.data)
     },
 
     async discoverMembership(handle, userId) {
@@ -482,15 +812,112 @@ export function getUserService(
       return userRepository.deleteMembership(handle, membershipId)
     },
 
-    async findFeideAccessTokenByUserId(userId) {
+    async getAuth0Connections(userId) {
       const response = await managementClient.users.get({ id: userId })
+
       if (response.status !== 200) {
         throw new IllegalStateError(
           `Received HTTP ${response.status} (${response.statusText}) when fetching User(ID=${userId}) from Auth0`
         )
       }
-      const identity = response.data.identities.find(({ connection }) => connection === "FEIDE")
-      return identity?.access_token ?? null
+
+      const identities = response.data.identities
+      const connections = new Set(identities.map((identity) => identity.connection))
+
+      return {
+        identities,
+        hasFeide: connections.has("FEIDE"),
+        hasUsernamePassword: connections.has("Username-Password-Authentication"),
+      }
+    },
+
+    async findFeideAccessTokenByUserId(userId) {
+      const connections = await this.getAuth0Connections(userId)
+      const feideIdentity = connections.identities.find((identity) => identity.connection === "FEIDE")
+
+      if (feideIdentity === undefined) {
+        return null
+      }
+
+      return feideIdentity.access_token
+    },
+
+    async linkAuth0Identities(primaryUserId, secondaryUserId) {
+      logger.info(
+        "Linking authentication identities for survivor User(ID=%s) and consumed User(ID=%s)",
+        primaryUserId,
+        secondaryUserId
+      )
+
+      const secondaryUser = await managementClient.users.get({ id: secondaryUserId })
+
+      const secondaryIdentity =
+        secondaryUser.data.identities.find((identity) => secondaryUserId.endsWith(identity.user_id)) ||
+        secondaryUser.data.identities[0]
+
+      const secondaryIdentityProvider = secondaryIdentity.provider as PostIdentitiesRequestProviderEnum
+
+      await managementClient.users.link(
+        {
+          id: primaryUserId,
+        },
+        {
+          provider: secondaryIdentityProvider, // usually "oauth2"
+          user_id: secondaryIdentity.user_id,
+          connection_id: secondaryIdentity.connection,
+        }
+      )
+
+      logger.info(
+        "Successfully linked identities for survivor User(ID=%s) and consumed User(ID=%s)",
+        primaryUserId,
+        secondaryUserId
+      )
+    },
+
+    async linkAuth0IdentitiesWithToken(primaryUserId, secondaryIdToken) {
+      logger.info("Linking authentication identities for primary User(ID=%s) using secondary ID token", primaryUserId)
+
+      // NOTE: We use the web management client here because the users.link endpoint requires the Management Client's
+      // client_id to match the aud claim in the ID token, so we use the web client credentials.
+      await webManagementClient.users.link({ id: primaryUserId }, { link_with: secondaryIdToken })
+
+      logger.info("Successfully linked identities for primary User(ID=%s) using secondary ID token", primaryUserId)
+    },
+
+    async mergeUsers(handle, survivorUserId, consumedUserId) {
+      logger.info("Merging consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
+
+      const survivorUser = await this.getById(handle, survivorUserId)
+      const consumedUser = await this.getById(handle, consumedUserId)
+
+      if (!survivorUser) {
+        throw new NotFoundError(`Survivor User(ID=${survivorUserId}) not found`)
+      }
+
+      if (!consumedUser) {
+        throw new NotFoundError(`Consumed User(ID=${consumedUserId}) not found`)
+      }
+
+      await mergeUsers(handle, groupRepository, survivorUser, consumedUser)
+
+      const mergedUser = await this.getById(handle, survivorUserId)
+      const auth0Response = await managementClient.users.get({ id: survivorUserId })
+
+      if (auth0Response.status !== 200) {
+        logger.warn(
+          "Skipping Auth0 profile sync after merge for User(ID=%s) due to HTTP %s (%s)",
+          survivorUserId,
+          auth0Response.status,
+          auth0Response.statusText
+        )
+
+        return mergedUser
+      }
+
+      logger.info("Successfully merged consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
+
+      return await syncUserWithAuth0Profile(handle, mergedUser, auth0Response.data)
     },
 
     async createFileUpload(handle, filename, contentType, userId, createdByUserId) {

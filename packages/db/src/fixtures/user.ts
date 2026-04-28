@@ -1,16 +1,17 @@
 import type { Prisma } from "@prisma/client"
+import { GenderSchema } from "../schemas/index"
 
 export const getUserFixtures = () =>
   [
     {
       id: "11111111-1111-1111-1111-111111111111",
       name: "Anders And",
-      profileSlug: "anders",
+      username: "anders",
       email: "anders@and.example.com",
       imageUrl: null,
       biography: "Anders And er en and som liker å bade i penger og spise maiskolber.",
       phone: null,
-      gender: "Mann",
+      gender: GenderSchema.enum.MALE,
       dietaryRestrictions: "Vegetarianer",
       ntnuUsername: null,
       flags: [],
@@ -20,12 +21,12 @@ export const getUserFixtures = () =>
     {
       id: "22222222-2222-2222-2222-222222222222",
       name: "Berta Bjørn",
-      profileSlug: "berta",
+      username: "berta",
       email: "berta@bjorn.example.com",
       imageUrl: null,
       biography: null,
       phone: null,
-      gender: "Kvinne",
+      gender: GenderSchema.enum.FEMALE,
       dietaryRestrictions: null,
       ntnuUsername: null,
       flags: [],
@@ -35,12 +36,12 @@ export const getUserFixtures = () =>
     {
       id: "33333333-3333-3333-3333-333333333333",
       name: "Carl Clam",
-      profileSlug: "d306027f-4666-44d0-9ccc-68f433e57be6",
+      username: "d306027f-4666-44d0-9ccc-68f433e57be6",
       email: "carl@clam.example.com",
       imageUrl: null,
       biography: "Help me I'm under da water",
       phone: null,
-      gender: null,
+      gender: GenderSchema.enum.UNKNOWN,
       dietaryRestrictions: "Har dårlig reaksjon mot gluten",
       flags: [],
       privacyPermissionsId: null,

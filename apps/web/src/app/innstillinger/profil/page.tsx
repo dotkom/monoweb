@@ -3,14 +3,13 @@
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
-import type { UserWrite } from "@dotkomonline/types"
 import { Button, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconArrowLeft } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { ProfileForm } from "./form"
+import { type FormUserWrite, ProfileForm } from "./form"
 import SkeletonProfileForm from "./loading"
 
 const EditProfilePage = () => {
@@ -19,24 +18,27 @@ const EditProfilePage = () => {
   const session = useSession()
   const fullPathname = useFullPathname()
 
-  if (!session) {
-    redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
-  }
-
-  const { data: user, isLoading: userIsLoading } = useQuery(trpc.user.getMe.queryOptions())
+  const { data: user, isLoading: userIsLoading } = useQuery({
+    ...trpc.user.getMe.queryOptions(),
+    enabled: session !== null,
+  })
 
   const userEdit = useMutation(
     trpc.user.update.mutationOptions({
       onSuccess: async (data) => {
-        await Promise.all([
-          queryClient.invalidateQueries(trpc.user.getByProfileSlug.queryOptions(data.profileSlug)),
-          queryClient.invalidateQueries(trpc.user.findByProfileSlug.queryOptions(data.profileSlug)),
+        await Promise.allSettled([
+          queryClient.invalidateQueries(trpc.user.getByUsername.queryOptions(data.username)),
+          queryClient.invalidateQueries(trpc.user.findByUsername.queryOptions(data.username)),
           queryClient.invalidateQueries(trpc.user.getMe.queryOptions()),
           queryClient.invalidateQueries(trpc.user.findMe.queryOptions()),
         ])
       },
     })
   )
+
+  if (!session) {
+    redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
+  }
 
   if (userIsLoading || user === undefined) {
     return (
@@ -54,7 +56,7 @@ const EditProfilePage = () => {
     )
   }
 
-  const onSubmit = (data: Omit<UserWrite, "name" | "workspaceUserId">) => {
+  const onSubmit = (data: FormUserWrite) => {
     userEdit.mutate({ id: user.id, input: data })
   }
 
@@ -67,7 +69,7 @@ const EditProfilePage = () => {
 
         <Button
           element={Link}
-          href={`/profil/${user.profileSlug}`}
+          href={`/profil/${user.username}`}
           icon={<IconArrowLeft className="size-5" />}
           className="w-fit"
         >

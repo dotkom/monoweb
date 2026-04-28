@@ -34,13 +34,13 @@
     "zod-prisma-types": "^3.2.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.5",
+    "@biomejs/biome": "2.4.12",
     "@dotkomonline/config": "workspace:*",
     "@types/common-tags": "1.8.4",
     "@types/node": "22.19.3",
     "@types/pg": "8.16.0",
     "common-tags": "1.8.2",
-    "prisma": "6.19.2",
+    "prisma": "6.19.3",
     "tsx": "4.21.0",
     "typescript": "5.9.3"
   }

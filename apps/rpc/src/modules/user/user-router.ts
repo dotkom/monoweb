@@ -12,6 +12,7 @@ import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
+import { InvalidArgumentError, UnauthorizedError } from "../../error"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
@@ -46,22 +47,22 @@ const getUserProcedure = procedure
     return ctx.userService.getById(ctx.handle, input)
   })
 
-export type GetUserByProfileSlugInput = inferProcedureInput<typeof getUserByProfileSlugProcedure>
-export type GetUserByProfileSlugOutput = inferProcedureOutput<typeof getUserByProfileSlugProcedure>
-const getUserByProfileSlugProcedure = procedure
-  .input(UserSchema.shape.profileSlug)
+export type GetUserByUsernameInput = inferProcedureInput<typeof getUserByUsernameProcedure>
+export type GetUserByUsernameOutput = inferProcedureOutput<typeof getUserByUsernameProcedure>
+const getUserByUsernameProcedure = procedure
+  .input(UserSchema.shape.username)
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.userService.getByProfileSlug(ctx.handle, input)
+    return ctx.userService.getByUsername(ctx.handle, input)
   })
 
-export type FindUserByProfileSlugInput = inferProcedureInput<typeof findUserByProfileSlugProcedure>
-export type FindUserByProfileSlugOutput = inferProcedureOutput<typeof findUserByProfileSlugProcedure>
-const findUserByProfileSlugProcedure = procedure
-  .input(UserSchema.shape.profileSlug)
+export type FindUserByUsernameInput = inferProcedureInput<typeof findUserByUsernameProcedure>
+export type FindUserByUsernameOutput = inferProcedureOutput<typeof findUserByUsernameProcedure>
+const findUserByUsernameProcedure = procedure
+  .input(UserSchema.shape.username)
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.userService.findByProfileSlug(ctx.handle, input)
+    return ctx.userService.findByUsername(ctx.handle, input)
   })
 
 export type CreateUserFileUploadInput = inferProcedureInput<typeof createUserFileUploadProcedure>
@@ -197,14 +198,35 @@ const updateUserProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    let { name, ...data } = input.input
+    let { name, email, ...data } = input.input
 
-    // Only admins can change the name field
+    // Only admins can change the name and email fields
     if (!ctx.authorizationService.isAdministrator(ctx.principal.affiliations)) {
       name = undefined
+      email = undefined
     }
 
-    return ctx.userService.update(ctx.handle, input.id, { name, ...data })
+    return ctx.userService.update(ctx.handle, input.id, { name, email, ...data })
+  })
+
+export type RequestEmailChangeInput = inferProcedureInput<typeof requestEmailChangeProcedure>
+export type RequestEmailChangeOutput = inferProcedureOutput<typeof requestEmailChangeProcedure>
+const requestEmailChangeProcedure = procedure
+  .input(z.object({ newEmail: z.string().email() }))
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    return ctx.userService.requestEmailChange(ctx.handle, ctx.principal.subject, input.newEmail)
+  })
+
+export type SyncEmailFromAuth0Input = inferProcedureInput<typeof syncEmailFromAuth0Procedure>
+export type SyncEmailFromAuth0Output = inferProcedureOutput<typeof syncEmailFromAuth0Procedure>
+const syncEmailFromAuth0Procedure = procedure
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .mutation(async ({ ctx }) => {
+    return ctx.userService.syncEmailFromAuth0(ctx.handle, ctx.principal.subject)
   })
 
 export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
@@ -227,11 +249,107 @@ const isAdminProcedure = procedure.query(async ({ ctx }) => {
   return ctx.authorizationService.isAdministrator(principal.affiliations)
 })
 
+export type ConfirmIdentityLinkInput = inferProcedureInput<typeof confirmIdentityLinkProcedure>
+export type ConfirmIdentityLinkOutput = inferProcedureOutput<typeof confirmIdentityLinkProcedure>
+const confirmIdentityLinkProcedure = procedure
+  .input(
+    z.object({
+      secondaryIdToken: z.string().min(1),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const primaryUserId = ctx.principal.subject
+
+    const claims = await ctx.webJwtService.verify(input.secondaryIdToken).catch(() => null)
+
+    if (claims === null) {
+      throw new UnauthorizedError("Invalid secondary ID token")
+    }
+
+    const secondaryUserId = claims.payload.sub
+
+    if (!secondaryUserId) {
+      throw new UnauthorizedError("Secondary ID token has no sub claim")
+    }
+
+    if (primaryUserId === secondaryUserId) {
+      throw new InvalidArgumentError("Cannot link a user to themselves")
+    }
+
+    const mergedUser = await ctx.userService.mergeUsers(ctx.handle, primaryUserId, secondaryUserId)
+
+    await ctx.userService.linkAuth0IdentitiesWithToken(primaryUserId, input.secondaryIdToken)
+
+    return mergedUser
+  })
+
+// IMPORTANT: It does not make sense to link Auth0 identities WITHOUT merging the database users, as the user will be
+// orphaned and will not be accessible by authentication.
+export type MergeUsersInput = inferProcedureInput<typeof mergeUsersProcedure>
+export type MergeUsersOutput = inferProcedureOutput<typeof mergeUsersProcedure>
+const mergeUsersProcedure = procedure
+  .input(
+    z
+      .object({
+        survivorUserId: UserSchema.shape.id,
+        consumedUserId: UserSchema.shape.id,
+        mergeInDatabase: z.boolean().default(true),
+        linkAuth0Identities: z.boolean().default(true),
+      })
+      .refine((input) => input.mergeInDatabase || input.linkAuth0Identities, {
+        message: "At least one of mergeInDatabase or linkAuth0Identities must be true",
+        path: ["mergeInDatabase"],
+      })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const { survivorUserId, consumedUserId, mergeInDatabase, linkAuth0Identities } = input
+
+    if (linkAuth0Identities) {
+      await ctx.userService.linkAuth0Identities(survivorUserId, consumedUserId)
+    }
+
+    const user = mergeInDatabase
+      ? await ctx.userService.mergeUsers(ctx.handle, survivorUserId, consumedUserId)
+      : await ctx.userService.getById(ctx.handle, survivorUserId)
+
+    return user
+  })
+
+export type GetAuth0ConnectionsInput = inferProcedureInput<typeof getAuth0ConnectionsProcedure>
+export type GetAuth0ConnectionsOutput = inferProcedureOutput<typeof getAuth0ConnectionsProcedure>
+const getAuth0ConnectionsProcedure = procedure
+  .input(z.object({ userId: UserSchema.shape.id }).optional())
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const userId = input?.userId ?? ctx.principal.subject
+
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        isSameSubject(() => userId)
+      ),
+      input
+    )
+
+    // We omit the identities array from the response, because it contains sensitive information like access tokens.
+    const { identities, ...response } = await ctx.userService.getAuth0Connections(userId)
+
+    return response
+  })
+
 export const userRouter = t.router({
   all: allUsersProcedure,
   get: getUserProcedure,
-  getByProfileSlug: getUserByProfileSlugProcedure,
-  findByProfileSlug: findUserByProfileSlugProcedure,
+  getByUsername: getUserByUsernameProcedure,
+  findByUsername: findUserByUsernameProcedure,
   createFileUpload: createUserFileUploadProcedure,
   register: registerUserProcedure,
   createMembership: createUserMembershipProcedure,
@@ -240,6 +358,11 @@ export const userRouter = t.router({
   getMe: getMeProcedure,
   findMe: findMeProcedure,
   update: updateUserProcedure,
+  requestEmailChange: requestEmailChangeProcedure,
+  syncEmailFromAuth0: syncEmailFromAuth0Procedure,
   isStaff: isStaffProcedure,
   isAdmin: isAdminProcedure,
+  confirmIdentityLink: confirmIdentityLinkProcedure,
+  mergeUsers: mergeUsersProcedure,
+  getAuth0Connections: getAuth0ConnectionsProcedure,
 })

@@ -528,7 +528,7 @@ export function getWorkspaceService(
 
         invariant(response.data.members, "Expected response data to be defined")
 
-        const members = await groupService.getMembers(handle, group.slug)
+        const members = await groupService.findMembersBySlug(handle, group.slug)
 
         const joinedGroupAndWorkspaceMembers = joinGroupAndWorkspaceMembers(
           [...members.values()],

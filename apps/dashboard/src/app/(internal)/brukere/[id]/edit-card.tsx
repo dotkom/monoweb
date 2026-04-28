@@ -63,7 +63,7 @@ export const UserEditCard: FC = () => {
           variant="light"
           rightSection={<IconArrowUpRight height={14} width={14} />}
           component="a"
-          href={new URL(`profil/${user.profileSlug}`, env.NEXT_PUBLIC_WEB_URL).toString()}
+          href={new URL(`profil/${user.username}`, env.NEXT_PUBLIC_WEB_URL).toString()}
           target="_blank"
           rel="noopener noreferrer"
         >

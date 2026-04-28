@@ -12,28 +12,33 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const { setTheme, theme } = useTheme()
 
   const THEME_OPTIONS: Array<{
+    key: string
     theme: "light" | "dark" | "system"
     label: string
     icon: Icon
     className?: string
   }> = [
     {
+      key: "light",
       theme: "light",
       label: "Lyst tema",
       icon: IconSun,
     },
     {
+      key: "dark",
       theme: "dark",
       label: "Mørkt tema",
       icon: IconMoon,
     },
     {
+      key: "system-desktop",
       theme: "system",
       label: "Systempreferanse",
       icon: IconDeviceDesktop,
       className: "hidden sm:flex",
     },
     {
+      key: "system-mobile",
       theme: "system",
       label: "Systempreferanse",
       icon: IconDeviceMobile,
@@ -53,7 +58,7 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
       {THEME_OPTIONS.map((item) => {
         const IconComponent = item.icon
         return (
-          <Tooltip key={item.theme}>
+          <Tooltip key={item.key}>
             <TooltipTrigger asChild>
               <button
                 type="button"

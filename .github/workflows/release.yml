@@ -42,6 +42,31 @@ jobs:
       - run: pnpm type-check
         name: Run TypeScript type checker
 
+  migrate:
+    name: Run database migrations
+    runs-on: ubuntu-24.04-arm
+    needs:
+      - check
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 1
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10.28.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22.21.1
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+        name: Install dependencies from pnpm lockfile
+      - uses: ./.github/actions/internal/doppler-secrets
+        with:
+          project: monoweb-rpc
+          config: prd
+      - run: pnpm migrate:deploy
+        name: Apply Prisma migrations against prod
+
   build-dashboard:
     name: dashboard
     runs-on: ubuntu-24.04-arm
@@ -65,6 +90,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     needs:
       - check
+      - migrate
     steps:
       - name: Install local GitHub Actions
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6

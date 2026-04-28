@@ -4,7 +4,7 @@ import { GradeSchema, type GradeWrite, type Grade } from "./grade-types"
 import type { CourseCode } from "../course/course-types"
 
 export interface GradeRepository {
-  findMany(handle: DBHandle, courseCode: CourseCode): Promise<Grade[]>
+  findMany(handle: DBHandle, courseCode?: CourseCode): Promise<Grade[]>
   createMany(handle: DBHandle, data: GradeWrite[]): Promise<Grade[]>
 }
 
@@ -23,7 +23,7 @@ export function getGradeRepository(): GradeRepository {
       return parseOrReport(GradeSchema.array(), grades)
     },
     async createMany(handle, data) {
-      const grades = await handle.grade.createMany({
+      const grades = await handle.grade.createManyAndReturn({
         data,
       })
 

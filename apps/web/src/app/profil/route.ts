@@ -17,9 +17,9 @@ export async function GET(req: NextRequest) {
 
   const user = await server.user.getMe.query()
 
-  if (!user.profileSlug) {
+  if (!user.username) {
     redirect("/")
   }
 
-  redirect(`/profil/${user.profileSlug}${req.nextUrl.search}`)
+  redirect(`/profil/${user.username}${req.nextUrl.search}`)
 }

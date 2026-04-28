@@ -137,9 +137,9 @@ const getMembersProcedure = procedure
   .query(async ({ input, ctx }) => {
     // We only show leaders of groups to unathenticated users, except for Hovedstyret who is public
     if (!ctx.principal && input !== HOVEDSTYRET_GROUP_SLUG) {
-      return ctx.groupService.getLeaders(ctx.handle, input)
+      return ctx.groupService.findLeadersBySlug(ctx.handle, input)
     }
-    return ctx.groupService.getMembers(ctx.handle, input)
+    return ctx.groupService.findMembersBySlug(ctx.handle, input)
   })
 
 export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>

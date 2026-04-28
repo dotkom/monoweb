@@ -90,7 +90,7 @@ export const createSpreadsheetRow = async (form: InterestFormData, configuration
     )
   }
 
-  // Parse and validate service account credentials
+  // Google Workspace Service Account is stored in base64 to not break due to newlines in content.
   const json = JSON.parse(atob(configuration.rif.serviceAccount))
   const result = serviceAccountSchema.safeParse(json)
   if (!result.success) {

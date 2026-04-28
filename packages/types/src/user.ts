@@ -29,17 +29,21 @@ export const UserSchema = schemas.UserSchema.extend({
 })
 export type User = z.infer<typeof UserSchema>
 export type UserId = User["id"]
-export type UserProfileSlug = User["profileSlug"]
+export type Username = User["username"]
 
 export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
 export const PHONE_REGEX = /^[0-9-+\s]*$/
 export const PROFILE_SLUG_REGEX = /^[a-z0-9-]+$/
 
+export const GenderSchema = schemas.GenderSchema
+export type Gender = z.infer<typeof GenderSchema>
+
 // These max and min values are arbitrary
 export const UserWriteSchema = UserSchema.pick({
   workspaceUserId: true,
+  gender: true,
 }).extend({
-  profileSlug: z
+  username: z
     .string()
     .min(2, "Brukernavnet må være minst 2 tegn lang")
     .max(64, "Brukernavnet kan ikke være lengre enn 64 tegn")
@@ -66,14 +70,13 @@ export const UserWriteSchema = UserSchema.pick({
     .nullable(),
   imageUrl: z.string().url("Ugyldig URL").max(500, "Bildelenken kan ikke være lengre enn 500 tegn").nullable(),
   biography: z.string().max(2000, "Biografien kan ikke være lengre enn 2000 tegn").nullable(),
-  gender: z.string().nullable(),
   dietaryRestrictions: z.string().max(200, "Kostholdsrestriksjoner kan ikke være lengre enn 200 tegn").nullable(),
 })
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export const PublicUserSchema = UserSchema.pick({
   id: true,
-  profileSlug: true,
+  username: true,
   name: true,
   imageUrl: true,
   biography: true,
@@ -156,6 +159,21 @@ export function getSpecializationName(specialization: MembershipSpecialization) 
       return "Programvareutvikling"
     case "UNKNOWN":
       return "Ukjent spesialisering"
+  }
+}
+
+export function getGenderName(gender: Gender) {
+  switch (gender) {
+    case "MALE":
+      return "Mann"
+    case "FEMALE":
+      return "Kvinne"
+    case "NON_BINARY":
+      return "Ikke-binær"
+    case "OTHER":
+      return "Annet"
+    case "UNKNOWN":
+      return "Ikke oppgitt"
   }
 }
 

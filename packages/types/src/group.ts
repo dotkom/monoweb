@@ -77,6 +77,11 @@ export const GroupMembershipWriteSchema = GroupMembershipSchema.omit({
 export type GroupMembershipId = GroupMembership["id"]
 export type GroupMembershipWrite = z.infer<typeof GroupMembershipWriteSchema>
 
+export const GroupMembershipWriteWithRolesSchema = GroupMembershipWriteSchema.extend({
+  roleIds: z.set(GroupRoleSchema.shape.id),
+})
+export type GroupMembershipWriteWithRoles = z.infer<typeof GroupMembershipWriteWithRolesSchema>
+
 // NOTE: We omit `EDITOR_IN_CHIEF` ("Redaktør"), since the role is only relevant for Prokom, the committee managing
 // Online's magazine "Offline".
 export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
@@ -187,6 +192,13 @@ export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmen
     case "SPRING_APPLICATION":
       return "Opptak ved våren"
   }
+}
+
+export const areGroupRolesEqual = (rolesA: GroupMembership["roles"], rolesB: GroupMembership["roles"]): boolean => {
+  const typesA = new Set(rolesA.map((role) => role.id))
+  const typesB = new Set(rolesB.map((role) => role.id))
+
+  return typesA.symmetricDifference(typesB).size === 0
 }
 
 export const GROUP_IMAGE_MAX_SIZE_KIB = 5 * 1024

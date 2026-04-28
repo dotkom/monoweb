@@ -15,7 +15,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
   return (
     <div>
       <div className="font-bold text-4xl m-5">
-        {courseId} - {course.norwegianName}
+        {courseId} - {course.nameNo}
       </div>
 
       <div className="text-3xl font-semibold bg-gray-700 rounded-md p-4 m-5">Om faget</div>

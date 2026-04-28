@@ -6,7 +6,10 @@ import { Auth0Profile, defaultSessionLengthSeconds } from "./authentication"
 export type Session = z.infer<typeof Session>
 export const Session = Auth0Profile.extend({
   accessToken: z.string(),
-  refreshToken: z.string(),
+  // Refresh token is only missing for JWTs issued by the link-identity flow. JWTs issued for regular authenticated
+  // users always have a refresh token. The link-identity JWTs are used temporarily to prove ownership, and therefore do
+  // not have a refresh token.
+  refreshToken: z.string().optional(),
 })
 
 export async function createSession(value: Session, secret: string): Promise<string> {

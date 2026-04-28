@@ -1,19 +1,24 @@
 "use client"
 
 import { Title } from "@dotkomonline/ui"
-import { IconSpy, IconUser } from "@tabler/icons-react"
+import { IconNotes, IconUser, IconUserCircle } from "@tabler/icons-react"
 import { SettingsMenuItem } from "./settings-menu-item"
 
 export const settingsNavigationItems = [
   {
-    slug: "/innstillinger/profil",
+    slug: "/innstillinger/bruker",
     icon: IconUser,
-    title: "Profil",
+    title: "Min bruker",
   },
   {
-    slug: "/innstillinger/personvern",
-    icon: IconSpy,
-    title: "Personvern",
+    slug: "/innstillinger/medlemskap",
+    icon: IconNotes,
+    title: "Medlemskap",
+  },
+  {
+    slug: "/innstillinger/profil",
+    icon: IconUserCircle,
+    title: "Brukerprofil",
   },
 ]
 

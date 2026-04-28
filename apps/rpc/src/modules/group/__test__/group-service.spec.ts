@@ -3,13 +3,14 @@ import type { Group } from "@dotkomonline/types"
 import { PrismaClient } from "@prisma/client"
 import type { ManagementClient } from "auth0"
 import { randomUUID } from "node:crypto"
-import { getFeideGroupsRepository } from "src/modules/feide/feide-groups-repository"
-import { getMembershipService } from "src/modules/user/membership-service"
-import { getUserRepository } from "src/modules/user/user-repository"
-import { getUserService } from "src/modules/user/user-service"
+import { getFeideGroupsRepository } from "../../feide/feide-groups-repository"
+import { getMembershipService } from "../../user/membership-service"
+import { getUserRepository } from "../../user/user-repository"
+import { getUserService } from "../../user/user-service"
 import { mockDeep } from "vitest-mock-extended"
 import { getGroupRepository } from "../group-repository"
 import { getGroupService } from "../group-service"
+import { describe, expect, it, vi } from "vitest"
 
 describe("GroupService", () => {
   const db = vi.mocked(PrismaClient.prototype)
@@ -17,18 +18,19 @@ describe("GroupService", () => {
   const s3Client = mockDeep<S3Client>()
   const userRepository = getUserRepository()
   const feideGroupsRepository = getFeideGroupsRepository()
+  const groupRepository = getGroupRepository()
   const membershipService = getMembershipService()
 
   const userService = getUserService(
     userRepository,
     feideGroupsRepository,
+    groupRepository,
     auth0Client,
     membershipService,
     s3Client,
     "fake-aws-bucket"
   )
 
-  const groupRepository = getGroupRepository()
   const groupService = getGroupService(groupRepository, userService, s3Client, "fake-aws-bucket")
 
   it("creates a new group", async () => {
