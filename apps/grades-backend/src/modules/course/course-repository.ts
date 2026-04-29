@@ -1,5 +1,5 @@
-import type { DBHandle } from "@dotkomonline/grades-db"
-import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import { Prisma, type DBHandle } from "@dotkomonline/grades-db"
+import type { Pageable } from "@dotkomonline/utils"
 import { parseOrReport } from "../../invariant"
 import {
   type Course,
@@ -25,60 +25,69 @@ export interface CourseRepository {
 export function getCourseRepository(): CourseRepository {
   return {
     async findMany(handle, query, page) {
-      const sortFieldMap = {
-        AVERAGE_GRADE: "averageGrade",
-        PASS_RATE: "passRate",
-        CANDIDATE_COUNT: "candidateCount",
-      } as const
-
       const sortOrder = query.orderBy ?? "desc"
       const sortBy = query.sortBy ?? []
-      const orderBy =
-        sortBy.length > 0
-          ? sortBy.map((sortKey) => ({
-              [sortFieldMap[sortKey]]: sortOrder,
-            }))
-          : []
+      const sortColumnMap = {
+        AVERAGE_GRADE: "average_grade",
+        PASS_RATE: "pass_rate",
+        CANDIDATE_COUNT: "candidate_count",
+      } as const
 
-      const courses = await handle.course.findMany({
-        ...pageQuery(page),
-        orderBy,
-        where: {
-          AND: [
-            {
-              code:
-                query.byCode !== null
-                  ? {
-                      contains: query.byCode,
-                      mode: "insensitive",
-                    }
-                  : undefined,
-            },
-            {
-              OR: [
-                {
-                  nameNo:
-                    query.byName !== null
-                      ? {
-                          contains: query.byName,
-                          mode: "insensitive",
-                        }
-                      : undefined,
-                },
-                {
-                  nameEn:
-                    query.byName !== null
-                      ? {
-                          contains: query.byName,
-                          mode: "insensitive",
-                        }
-                      : undefined,
-                },
-              ],
-            },
-          ],
-        },
-      })
+      const sortDirection = sortOrder === "asc" ? "ASC" : "DESC"
+      const orderByClause =
+        sortBy.length > 0
+          ? sortBy.map((sortKey) => `"${sortColumnMap[sortKey]}" ${sortDirection}`).join(", ")
+          : '"id" DESC'
+
+      const bySearch = query.bySearch
+      const searchContains = bySearch ? `%${bySearch}%` : undefined
+
+      const searchWhereSql = searchContains
+        ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "name_no" ILIKE ${searchContains} OR "name_en" ILIKE ${searchContains})`
+        : Prisma.empty
+      const cursorWhereSql = page.cursor ? Prisma.sql`AND "id" < ${page.cursor}` : Prisma.empty
+
+      const courses = await handle.$queryRaw<Course[]>`
+        SELECT
+          "id",
+          "code",
+          "name_no" AS "nameNo",
+          "name_en" AS "nameEn",
+          "credits",
+          "study_level" AS "studyLevel",
+          "grade_type" AS "gradeType",
+          "first_year_taught" AS "firstYearTaught",
+          "last_year_taught" AS "lastYearTaught",
+          "content_no" AS "contentNo",
+          "content_en" AS "contentEn",
+          "teaching_methods_no" AS "teachingMethodsNo",
+          "teaching_methods_en" AS "teachingMethodsEn",
+          "learning_outcomes_no" AS "learningOutcomesNo",
+          "learning_outcomes_en" AS "learningOutcomesEn",
+          "exam_type_no" AS "examTypeNo",
+          "exam_type_en" AS "examTypeEn",
+          "candidate_count" AS "candidateCount",
+          "average_grade" AS "averageGrade",
+          "pass_rate" AS "passRate",
+          "created_at" AS "createdAt",
+          "updated_at" AS "updatedAt",
+          "taught_semesters" AS "taughtSemesters",
+          "teaching_languages" AS "teachingLanguages",
+          "campuses",
+          "faculty_id" AS "facultyId",
+          "department_id" AS "departmentId",
+          "latest_year_checked_for_ntnu_data" AS "latestYearCheckedForNtnuData"
+        FROM "course"
+        WHERE 1 = 1
+        ${searchWhereSql}
+        ${cursorWhereSql}
+        ORDER BY
+          -- To update ranking, copy-paste rank_search function from
+          -- 20260415160933_add_course_ranking_function into a new migration
+          rank_search(code, name_no, name_en, last_year_taught, ${bySearch ?? null}) ASC,
+          ${Prisma.raw(orderByClause)}
+        LIMIT ${page.take}
+      `
 
       return parseOrReport(CourseSchema.array(), courses)
     },
