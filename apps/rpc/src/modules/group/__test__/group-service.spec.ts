@@ -24,7 +24,6 @@ describe("GroupService", () => {
   const userService = getUserService(
     userRepository,
     feideGroupsRepository,
-    groupRepository,
     auth0Client,
     membershipService,
     s3Client,
