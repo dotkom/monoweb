@@ -356,7 +356,13 @@ const updateSelectionResponsesProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    await ctx.addAuthorizationGuard(or(isCommitteeMember(), isSameSubject(() => attendee.userId)), input)
+    await ctx.addAuthorizationGuard(
+      or(
+        isCommitteeMember(),
+        isSameSubject(() => attendee.userId)
+      ),
+      input
+    )
     await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, { selections: input.options })
   })
 
