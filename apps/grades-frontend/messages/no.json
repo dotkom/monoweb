@@ -1,4 +1,16 @@
 {
+  "Enums": {
+    "Semester": {
+      "SPRING": "Vår",
+      "AUTUMN": "Høst",
+      "SUMMER": "Sommer"
+    },
+    "Campus": {
+      "TRONDHEIM": "Trondheim",
+      "GJOVIK": "Gjøvik",
+      "ALESUND": "Ålesund"
+    }
+  },
   "Navbar": {
     "courses": "Emner",
     "theme": "Fargetema",
@@ -11,5 +23,10 @@
     "light": "Lys",
     "dark": "Mørk",
     "system": "System"
+  },
+  "CourseCard": {
+    "lastTaught": "Sist undervist {year}",
+    "passFail": "Bestått / ikke bestått",
+    "passRate": "{rate}% bestått"
   }
 }

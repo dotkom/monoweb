@@ -1,61 +1,86 @@
-import {
-  type Course,
-  mapAverageGradeToLetterGrade,
-  mapCourseCampusToLabel,
-  mapCourseSemesterToLabel,
-} from "@dotkomonline/grades-backend/course"
-import { Badge, Text, Title } from "@dotkomonline/ui"
+import { type Course, mapAverageGradeToLetterGrade } from "@dotkomonline/grades-backend/course"
+import { cn, Text, Title } from "@dotkomonline/ui"
+import { getLocale, getTranslations } from "next-intl/server"
 import Link from "next/link"
+import type { PropsWithChildren } from "react"
 
 interface Props {
   course: Course
 }
 
-export const CourseCard = ({ course }: Props) => {
-  const isActive = !course.lastYearTaught
+export const CourseCard = async ({ course }: Props) => {
+  const t = await getTranslations()
+  const locale = await getLocale()
+
+  const isEnglish = locale === "en"
+
+  const isDeprecated = course.lastYearTaught !== null
+  const isLetterGrade = course.gradeType === "LETTER"
 
   return (
     <Link
-      href={`/courses/${course.code}`}
-      className="bg-white rounded-lg shadow-md p-4 max-w-3xl grid grid-cols-[1fr_auto] hover:bg-gray-50 transition-colors"
+      href={`/emner/${course.code}`}
+      className={cn(
+        "rounded-xl shadow-sm p-4 sm:p-6 grid grid-cols-[1fr_auto] gap-8 w-full border",
+        "bg-white text-neutral-950 border-neutral-200",
+        "dark:bg-stone-800 dark:text-stone-200 dark:border-stone-700",
+        "transition-all duration-200",
+        "hover:-translate-y-0.5 hover:shadow-md hover:border-neutral-400 hover:bg-neutral-50",
+        "dark:hover:bg-stone-700 dark:hover:border-stone-600",
+        isDeprecated && "border-dashed border-neutral-300 dark:border-stone-700"
+      )}
     >
-      <div>
-        <Title className="text-xl font-bold font-sans">{course.nameNo}</Title>
-        <Text className="text-gray-600">{course.code}</Text>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-1">
+          <Title className="text-lg sm:text-xl font-normal">{isEnglish ? course.nameEn : course.nameNo}</Title>
+          <Text className="font-bold text-sm sm:text-base text-neutral-500 dark:text-stone-400">{course.code}</Text>
+        </div>
 
-        <div className="mt-4 flex flex-row gap-4">
-          <div className="flex flex-row gap-2">
-            {course.campuses.map((campus) => (
-              <Badge key={campus} className="text-sm" color="slate" variant="light">
-                {mapCourseCampusToLabel(campus)}
-              </Badge>
-            ))}
-          </div>
-          <div className="flex flex-row gap-2">
-            {course.taughtSemesters.map((semester) => (
-              <Badge key={semester} className="text-sm" color="blue" variant="light">
-                {mapCourseSemesterToLabel(semester)}
-              </Badge>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          {isDeprecated && course.lastYearTaught && (
+            <CourseBadge className="text-neutral-500 border-dashed border-neutral-300 dark:text-stone-400 dark:border-stone-700">
+              {t("CourseCard.lastTaught", { year: course.lastYearTaught })}
+            </CourseBadge>
+          )}
+
+          {course.taughtSemesters.map((semester) => (
+            <CourseBadge key={semester}>{t(`Enums.Semester.${semester}`)}</CourseBadge>
+          ))}
+
+          {course.campuses.map((campus) => (
+            <CourseBadge key={campus} className="hidden sm:inline-flex">
+              {t(`Enums.Campus.${campus}`)}
+            </CourseBadge>
+          ))}
         </div>
       </div>
-      <div className="flex flex-col items-end">
-        {isActive ? (
-          <Badge color="green" variant="light">
-            Undervises
-          </Badge>
-        ) : (
-          <Badge color="slate" variant="light">
-            Sist undervist {course.lastYearTaught}
-          </Badge>
-        )}
-        <Text className="mt-2 text-2xl font-semibold">
-          {course.gradeType === "LETTER"
-            ? `${mapAverageGradeToLetterGrade(course.averageGrade)}`
-            : `${Math.round(course.passRate)}%`}
+
+      <div className="flex flex-col items-end gap-2 w-full">
+        <div className="min-h-4 flex items-center">
+          <Text className="text-neutral-500 dark:text-stone-400 font-medium text-xs h-7 flex items-end">
+            {isLetterGrade ? t("CourseCard.passRate", { rate: Math.round(course.passRate) }) : t("CourseCard.passFail")}
+          </Text>
+        </div>
+
+        <Text
+          className={cn("font-bold tracking-normal", isLetterGrade ? "text-5xl sm:text-6xl" : "text-4xl sm:text-5xl")}
+        >
+          {isLetterGrade ? `${mapAverageGradeToLetterGrade(course.averageGrade)}` : `${Math.round(course.passRate)}%`}
         </Text>
       </div>
     </Link>
   )
 }
+
+const CourseBadge = ({ children, className }: PropsWithChildren<{ className?: string }>) => (
+  <span
+    className={cn(
+      "inline-flex items-center rounded-md border px-2.5 py-1 text-sm font-medium leading-none",
+      "bg-neutral-100 text-neutral-700 border-neutral-200",
+      "dark:bg-stone-800 dark:text-stone-200 dark:border-stone-700",
+      className
+    )}
+  >
+    {children}
+  </span>
+)
