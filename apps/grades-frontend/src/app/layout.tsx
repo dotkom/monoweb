@@ -6,10 +6,11 @@ import { NextIntlClientProvider } from "next-intl"
 import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
 import { Figtree, Inter } from "next/font/google"
+import { NuqsAdapter } from "nuqs/adapters/next"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
-import { Navbar } from "./components/navbar/Navbar"
 import { Footer } from "./components/Footer"
+import { Navbar } from "./components/navbar/Navbar"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -20,18 +21,20 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning>
-      <body className={cn(fontTitle.variable, fontBody.variable, "dark:bg-[#141821] bg-white")}>
+      <body className={cn(fontTitle.variable, fontBody.variable, "bg-white dark:bg-stone-900")}>
         <PlausibleProvider domain="grades.no">
           <QueryProvider>
             <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
               <NextIntlClientProvider>
-                <div className="flex flex-col gap-8">
-                  <Navbar />
-                  <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
-                    <main className="grow">{children}</main>
-                    <Footer />
+                <NuqsAdapter>
+                  <div className="flex flex-col gap-8">
+                    <Navbar />
+                    <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
+                      <main className="grow">{children}</main>
+                      <Footer />
+                    </div>
                   </div>
-                </div>
+                </NuqsAdapter>
               </NextIntlClientProvider>
             </ThemeProvider>
           </QueryProvider>

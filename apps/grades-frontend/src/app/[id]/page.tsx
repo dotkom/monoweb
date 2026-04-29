@@ -1,5 +1,6 @@
 import { server } from "@/utils/trpc/server"
-import { mapAverageGradeToLetterGrade, mapCourseSemesterToLabel } from "@dotkomonline/grades-backend/course"
+import { mapAverageGradeToLetterGrade } from "@dotkomonline/grades-backend/course"
+import { getTranslations } from "next-intl/server"
 
 interface CoursePageProps {
   params: Promise<{
@@ -11,6 +12,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const { id: rawParamId } = await params
   const courseId = decodeURIComponent(rawParamId)
   const course = await server.course.findCourse.query(courseId)
+  const t = await getTranslations("Enums.Semester")
 
   return (
     <div>
@@ -32,7 +34,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
           <div>
             {/* Her skal det være siste år faget gikk (altså år så 
             semester skal vises) {course.taughtSemesters} */}
-            Semester {course.taughtSemesters.map((semester) => mapCourseSemesterToLabel(semester))}
+            Semester {course.taughtSemesters.map((semester) => t(semester))}
           </div>
           <div>
             Gjennomsnitt {mapAverageGradeToLetterGrade(course.averageGrade)}({course.averageGrade.toFixed(2)})

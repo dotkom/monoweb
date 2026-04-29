@@ -9,7 +9,27 @@
       "TRONDHEIM": "Trondheim",
       "GJOVIK": "Gjøvik",
       "ALESUND": "Ålesund"
+    },
+    "TeachingLanguage": {
+      "NORWEGIAN": "Norwegian",
+      "ENGLISH": "English",
+      "shortLabel": {
+        "NORWEGIAN": "NO",
+        "ENGLISH": "EN"
+      }
+    },
+    "StudyLevel": {
+      "BACHELOR_ADVANCED": "Bachelor (advanced)",
+      "CONTINUING_EDUCATION": "Continuing education",
+      "FOUNDATION": "Foundation",
+      "INTERMEDIATE": "Intermediate",
+      "MASTER": "Master",
+      "PHD": "PhD",
+      "UNKNOWN": "Unknown"
     }
+  },
+  "Common": {
+    "Semester": "Semester"
   },
   "Navbar": {
     "courses": "Courses",
@@ -28,5 +48,30 @@
     "lastTaught": "Last taught {year}",
     "passFail": "Pass / fail",
     "passRate": "{rate}% passed"
+  },
+  "CourseFilters": {
+    "ariaLabel": "Course filters",
+    "drawerTitle": "Filter courses",
+    "semester": "Semester",
+    "teachingLanguage": "Language",
+    "campus": "Campus",
+    "minGrade": "Grade",
+    "sortBy": "Sort by",
+    "sortOptions": {
+      "nameAsc": "Name (A-Z)",
+      "nameDesc": "Name (Z-A)",
+      "gradeAsc": "Grade (low to high)",
+      "gradeDesc": "Grade (high to low)"
+    },
+    "minGradeOptions": {
+      "ALL": "All",
+      "A": "A",
+      "B": "Minimum B",
+      "C": "Minimum C",
+      "D": "Minimum D",
+      "E": "Minimum E"
+    },
+    "openAriaLabel": "Open filters",
+    "closeAriaLabel": "Close filters"
   }
 }
