@@ -65,5 +65,10 @@
     },
     "openAriaLabel": "Åpne filtre",
     "closeAriaLabel": "Lukk filtre"
+  },
+  "CourseAutocomplete": {
+    "placeholder": "Søk etter emner...",
+    "noResults": "Ingen emner funnet",
+    "seeAllResults": "Se alle resultater"
   }
 }

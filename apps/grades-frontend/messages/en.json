@@ -73,5 +73,10 @@
     },
     "openAriaLabel": "Open filters",
     "closeAriaLabel": "Close filters"
+  },
+  "CourseAutocomplete": {
+    "placeholder": "Search for courses...",
+    "noResults": "No courses found",
+    "seeAllResults": "See all results"
   }
 }
