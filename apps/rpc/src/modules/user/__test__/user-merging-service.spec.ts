@@ -4,6 +4,7 @@ import { GenderSchema, type Membership, type User } from "@dotkomonline/types"
 import type { ManagementClient } from "auth0"
 import { mockDeep } from "vitest-mock-extended"
 import { afterEach, describe, expect, it, vi } from "vitest"
+import type { AttendanceService } from "../../event/attendance-service"
 import type { FeideGroupsRepository } from "../../feide/feide-groups-repository"
 import type { GroupRepository } from "../../group/group-repository"
 import type { MembershipService } from "../membership-service"
@@ -60,6 +61,7 @@ describe("UserMergingService", () => {
     const userRepository = mockDeep<UserRepository>()
     const feideGroupsRepository = mockDeep<FeideGroupsRepository>()
     const groupRepository = mockDeep<GroupRepository>()
+    const attendanceService = mockDeep<AttendanceService>()
     const managementClient = mockDeep<ManagementClient>()
     const webManagementClient = mockDeep<ManagementClient>()
     const membershipService = mockDeep<MembershipService>()
@@ -77,6 +79,7 @@ describe("UserMergingService", () => {
     const userMergingService = getUserMergingService(
       userService,
       groupRepository,
+      attendanceService,
       managementClient,
       webManagementClient
     )

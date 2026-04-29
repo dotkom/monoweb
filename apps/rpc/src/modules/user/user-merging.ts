@@ -1,7 +1,13 @@
 import type { User, Membership } from "@dotkomonline/types"
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type { GroupRepository } from "../group/group-repository"
+import type { AttendanceService } from "../event/attendance-service"
 import { simplifyGroupMemberships } from "../group/group-service"
+
+interface MergeUsersDependencies {
+  groupRepository: GroupRepository
+  attendanceService: AttendanceService
+}
 
 // This file implements the logic for merging two user accounts.
 //
@@ -132,22 +138,10 @@ const CUSTOM_SCALAR_MERGERS = {
  * add one entry per FK column, using the corresponding User relation name as the key.
  */
 const REASSIGN_RELATION_HANDLERS = {
-  attendee: async (handle: DBHandle, fromId: string, toId: string) => {
-    await handle.attendee.updateMany({
-      where: { userId: fromId },
-      data: { userId: toId },
-    })
-  },
   attendeesRefunded: async (handle: DBHandle, fromId: string, toId: string) => {
     await handle.attendee.updateMany({
       where: { paymentRefundedById: fromId },
       data: { paymentRefundedById: toId },
-    })
-  },
-  personalMark: async (handle: DBHandle, fromId: string, toId: string) => {
-    await handle.personalMark.updateMany({
-      where: { userId: fromId },
-      data: { userId: toId },
     })
   },
   givenMarks: async (handle: DBHandle, fromId: string, toId: string) => {
@@ -189,10 +183,11 @@ const REASSIGN_RELATION_HANDLERS = {
 } satisfies Partial<Record<AllUserKeys, (handle: DBHandle, fromId: string, toId: string) => Promise<void>>>
 
 /**
- * Relations with custom merge logic (deduplication).
+ * Relations with custom merge logic (deduplication or conflict resolution against unique/PK constraints).
  */
 const CUSTOM_RELATION_MERGERS = {
-  memberships: async (handle: DBHandle, _groupRepository: GroupRepository, survivor: User, consumed: User) => {
+  // Deduplication of memberships.
+  memberships: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorMembershipKeys = new Set(survivor.memberships.map(buildMembershipDeduplicationKey))
 
     const membershipIdsToTransfer = consumed.memberships
@@ -202,13 +197,9 @@ const CUSTOM_RELATION_MERGERS = {
     if (membershipIdsToTransfer.length > 0) {
       await handle.membership.updateMany({
         where: {
-          id: {
-            in: membershipIdsToTransfer,
-          },
+          id: { in: membershipIdsToTransfer },
         },
-        data: {
-          userId: survivor.id,
-        },
+        data: { userId: survivor.id },
       })
     }
 
@@ -220,25 +211,102 @@ const CUSTOM_RELATION_MERGERS = {
     })
   },
 
-  groupMemberships: async (handle: DBHandle, groupRepository: GroupRepository, survivor: User, consumed: User) => {
-    const survivorGroupMemberships = await groupRepository.findManyGroupMemberships(handle, null, survivor.id)
-    const consumedGroupMemberships = await groupRepository.findManyGroupMemberships(handle, null, consumed.id)
+  // Merging of group memberships.
+  groupMemberships: async (handle: DBHandle, dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
+    const survivorGroupMemberships = await dependencies.groupRepository.findManyGroupMemberships(
+      handle,
+      null,
+      survivor.id
+    )
+    const consumedGroupMemberships = await dependencies.groupRepository.findManyGroupMemberships(
+      handle,
+      null,
+      consumed.id
+    )
     const allMemberships = [...survivorGroupMemberships, ...consumedGroupMemberships]
 
     const newGroupMemberships = simplifyGroupMemberships(allMemberships)
     const allMembershipIds = [...new Set(allMemberships.map((m) => m.id))]
 
-    await groupRepository.deleteGroupMemberships(handle, allMembershipIds)
+    await dependencies.groupRepository.deleteGroupMemberships(handle, allMembershipIds)
 
     const createGroupMembershipOperations = newGroupMemberships.map(({ roleIds, ...membership }) =>
-      groupRepository.createGroupMembership(handle, membership, roleIds)
+      dependencies.groupRepository.createGroupMembership(handle, membership, roleIds)
     )
     await Promise.all(createGroupMembershipOperations)
+  },
+
+  // Handling FK constraint errors, payment cancellations, waitlist promotions, and notifications correctly.
+  //
+  // NOTE: We do not handle EVERY edge case here. There are some cases with payment where deregisterAttendee will not
+  // allow deregistering the attendee, and this will fail.
+  attendee: async (handle: DBHandle, dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
+    const survivorAttendees = await handle.attendee.findMany({
+      where: { userId: survivor.id },
+      select: { attendanceId: true },
+    })
+
+    const consumedAttendees = await handle.attendee.findMany({
+      where: {
+        userId: consumed.id,
+      },
+      select: {
+        id: true,
+        attendanceId: true,
+      },
+    })
+
+    const survivorAttendanceIds = new Set(survivorAttendees.map((attendee) => attendee.attendanceId))
+
+    const conflictingConsumedAttendees = consumedAttendees.filter((attendee) =>
+      survivorAttendanceIds.has(attendee.attendanceId)
+    )
+    const nonConflictingConsumedAttendeeIds = consumedAttendees
+      .filter((attendee) => !survivorAttendanceIds.has(attendee.attendanceId))
+      .map((attendee) => attendee.id)
+
+    // We run deregistrations sequentially to ensure that the side effects are observable in the correct order.
+    for (const attendee of conflictingConsumedAttendees) {
+      await dependencies.attendanceService.deregisterAttendee(handle, attendee.id, { ignoreDeregistrationWindow: true })
+    }
+
+    if (nonConflictingConsumedAttendeeIds.length > 0) {
+      await handle.attendee.updateMany({
+        where: {
+          id: { in: nonConflictingConsumedAttendeeIds },
+        },
+        data: { userId: survivor.id },
+      })
+    }
+  },
+
+  // Handling FK constraint errors on personal marks.
+  personalMark: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
+    const survivorMarks = await handle.personalMark.findMany({
+      where: { userId: survivor.id },
+      select: { markId: true },
+    })
+
+    const survivorMarkIds = survivorMarks.map((personalMark) => personalMark.markId)
+
+    if (survivorMarkIds.length > 0) {
+      await handle.personalMark.deleteMany({
+        where: {
+          userId: consumed.id,
+          markId: { in: survivorMarkIds },
+        },
+      })
+    }
+
+    await handle.personalMark.updateMany({
+      where: { userId: consumed.id },
+      data: { userId: survivor.id },
+    })
   },
 } satisfies Partial<
   Record<
     AllUserKeys,
-    (handle: DBHandle, groupRepository: GroupRepository, survivor: User, consumed: User) => Promise<void>
+    (handle: DBHandle, dependencies: MergeUsersDependencies, survivor: User, consumed: User) => Promise<void>
   >
 >
 
@@ -269,11 +337,11 @@ const _assertNoExtraFields: ExtraInClassification extends never ? true : ExtraIn
  *
  * IMPORTANT: The consumed user will be deleted after the merge.
  *
- * @see UserService#linkAuth0Idenitities for linking the Auth0 identities before merging the database users.
+ * @see UserMergeService#linkAuth0Identities for linking the Auth0 identities before merging the database users.
  */
 export const mergeUsers = async (
   handle: DBHandle,
-  groupRepository: GroupRepository,
+  deps: MergeUsersDependencies,
   survivorUser: User,
   consumedUser: User
 ): Promise<void> => {
@@ -310,7 +378,7 @@ export const mergeUsers = async (
 
   // CUSTOM RELATION MERGES
   for (const merge of Object.values(CUSTOM_RELATION_MERGERS)) {
-    await merge(handle, groupRepository, survivorUser, consumedUser)
+    await merge(handle, deps, survivorUser, consumedUser)
   }
 
   // DELETE ORPHANED ONE-TO-ONE RELATIONS

@@ -2,6 +2,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { User, UserId } from "@dotkomonline/types"
 import type { ManagementClient, PostIdentitiesRequestProviderEnum } from "auth0"
+import type { AttendanceService } from "../event/attendance-service"
 import type { GroupRepository } from "../group/group-repository"
 import { mergeUsers } from "./user-merging"
 import type { UserService } from "./user-service"
@@ -50,6 +51,7 @@ export interface UserMergingService {
 export function getUserMergingService(
   userService: UserService,
   groupRepository: GroupRepository,
+  attendanceService: AttendanceService,
   managementClient: ManagementClient,
   webManagementClient: ManagementClient
 ): UserMergingService {
@@ -62,7 +64,7 @@ export function getUserMergingService(
       const survivorUser = await userService.getById(handle, survivorUserId)
       const consumedUser = await userService.getById(handle, consumedUserId)
 
-      await mergeUsers(handle, groupRepository, survivorUser, consumedUser)
+      await mergeUsers(handle, { groupRepository, attendanceService }, survivorUser, consumedUser)
 
       logger.info("Successfully merged consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
 
