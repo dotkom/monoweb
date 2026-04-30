@@ -21,7 +21,7 @@ import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseT
 import { procedure, t } from "../../trpc"
 import { feedbackRouter } from "../feedback-form/feedback-router"
 import { attendanceRouter } from "./attendance-router"
-import { ForbiddenError, UnauthorizedError } from "../../error"
+import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../error"
 
 export type GetEventInput = inferProcedureInput<typeof getEventProcedure>
 export type GetEventOutput = inferProcedureOutput<typeof getEventProcedure>
@@ -79,8 +79,14 @@ const createEventProcedure = procedure
     // If there are no organizer groups left, throw a ForbiddenError
     if (organizerGroups.size === 0 && input.groupIds.length > 0) {
       throw new ForbiddenError(
-        `There are no allowed organizer groups to create the event for User(ID=${ctx.principal.subject}) with input GroupOrganizers(IDS=${input.groupIds.join(",")})`
+        `There are no allowed organizer groups to create the event for User(ID=${ctx.principal.subject}) with input GroupOrganizers(IDs=${input.groupIds.join(",")})`
       )
+    }
+
+    const groups = await ctx.groupService.findManyByGroupSlugs(ctx.handle, input.groupIds)
+
+    if (groups.some((group) => group.type === "EMAIL_ONLY")) {
+      throw new InvalidArgumentError("Email-only groups cannot be used as organizers for events")
     }
 
     const eventWithoutOrganizers = await ctx.eventService.createEvent(ctx.handle, input.event)
@@ -122,8 +128,14 @@ const editEventProcedure = procedure
     // If there are no organizer groups left, throw a ForbiddenError
     if (organizerGroups.size === 0 && input.groupIds.length > 0) {
       throw new ForbiddenError(
-        `There are no allowed organizer groups to update the event for User(ID=${ctx.principal.subject}) with input GroupOrganizers(IDS=${input.groupIds.join(",")})`
+        `There are no allowed organizer groups to update the event for User(ID=${ctx.principal.subject}) with input GroupOrganizers(IDs=${input.groupIds.join(",")})`
       )
+    }
+
+    const groups = await ctx.groupService.findManyByGroupSlugs(ctx.handle, input.groupIds)
+
+    if (groups.some((group) => group.type === "EMAIL_ONLY")) {
+      throw new InvalidArgumentError("Email-only groups cannot be used as organizers for events")
     }
 
     const updatedEventWithoutOrganizers = await ctx.eventService.updateEvent(ctx.handle, input.id, input.event)
@@ -500,9 +512,7 @@ const isOrganizerProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
-    const groups = await ctx.groupService.findManyByMemberUserId(ctx.handle, ctx.principal.subject, {
-      includeEmailOnly: true,
-    })
+    const groups = await ctx.groupService.findManyByMemberUserId(ctx.handle, ctx.principal.subject)
 
     return groups.some((group) => event.hostingGroups.some((organizer) => organizer.slug === group.slug))
   })

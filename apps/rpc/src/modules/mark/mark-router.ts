@@ -6,6 +6,7 @@ import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseT
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
 import { personalMarkRouter } from "./personal-mark-router"
+import { InvalidArgumentError } from "../../error"
 
 export type CreateMarkInput = inferProcedureInput<typeof createMarkProcedure>
 export type CreateMarkOutput = inferProcedureOutput<typeof createMarkProcedure>
@@ -20,7 +21,15 @@ const createMarkProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => ctx.markService.create(ctx.handle, input.data, input.groupIds))
+  .mutation(async ({ input, ctx }) => {
+    const groups = await ctx.groupService.findManyByGroupSlugs(ctx.handle, input.groupIds)
+
+    if (groups.some((group) => group.type === "EMAIL_ONLY")) {
+      throw new InvalidArgumentError("Email-only groups cannot be used for marks")
+    }
+
+    return ctx.markService.create(ctx.handle, input.data, input.groupIds)
+  })
 
 export type EditMarkInput = inferProcedureInput<typeof editMarkProcedure>
 export type EditMarkOutput = inferProcedureOutput<typeof editMarkProcedure>
@@ -35,9 +44,15 @@ const editMarkProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) =>
-    ctx.markService.update(ctx.handle, input.changes.id, input.changes, input.groupIds)
-  )
+  .mutation(async ({ input, ctx }) => {
+    const groups = await ctx.groupService.findManyByGroupSlugs(ctx.handle, input.groupIds)
+
+    if (groups.some((group) => group.type === "EMAIL_ONLY")) {
+      throw new InvalidArgumentError("Email-only groups cannot be used for marks")
+    }
+
+    return ctx.markService.update(ctx.handle, input.changes.id, input.changes, input.groupIds)
+  })
 
 export type GetMarkInput = inferProcedureInput<typeof getMarkProcedure>
 export type GetMarkOutput = inferProcedureOutput<typeof getMarkProcedure>
