@@ -10,6 +10,7 @@ import {
   AttendeeSelectionResponseSchema,
   DeregisterReasonTypeSchema,
   EventSchema,
+  type GroupId,
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -355,6 +356,23 @@ const updateSelectionResponsesProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+
+    if (event.hostingGroups.length === 0) {
+      throw new FailedPreconditionError(`Event(ID=${event.id}) does not have hosting groups`)
+    }
+
+    const hostingGroupIds = event.hostingGroups.map((g) => g.slug) as [GroupId, ...GroupId[]]
+
+    await ctx.addAuthorizationGuard(
+      or(
+        isGroupMemberOfAny(hostingGroupIds),
+        isSameSubject(() => attendee.userId)
+      ),
+      input
+    )
+
     await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, { selections: input.options })
   })
 
