@@ -55,6 +55,7 @@ export const GroupWriteSchema = GroupSchema.pick({
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
 
 export const GroupRoleTypeSchema = schemas.GroupRoleTypeSchema
+export const GroupRoleTypeEnum = GroupRoleTypeSchema.enum
 export type GroupRoleType = z.infer<typeof GroupRoleTypeSchema>
 
 export const GroupMembershipSchema = schemas.GroupMembershipSchema.extend({
@@ -86,14 +87,14 @@ export type GroupMembershipWriteWithRoles = z.infer<typeof GroupMembershipWriteW
 // Online's magazine "Offline".
 export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
   [
-    { groupId, type: "LEADER", name: "Leder" },
-    { groupId, type: "PUNISHER", name: "Vinstraffansvarlig" },
-    { groupId, type: "DEPUTY_LEADER", name: "Nestleder" },
-    { groupId, type: "TRUSTEE", name: "Tillitsvalgt" },
-    { groupId, type: "TREASURER", name: "Økonomiansvarlig" },
-    { groupId, type: "COSMETIC", name: "Medlem" },
-    { groupId, type: "EMAIL_ONLY", name: "E-postbruker" },
-    { groupId, type: "TEMPORARILY_LEAVE", name: "Permitert" },
+    { groupId, type: GroupRoleTypeEnum.LEADER, name: "Leder" },
+    { groupId, type: GroupRoleTypeEnum.PUNISHER, name: "Vinstraffansvarlig" },
+    { groupId, type: GroupRoleTypeEnum.DEPUTY_LEADER, name: "Nestleder" },
+    { groupId, type: GroupRoleTypeEnum.TRUSTEE, name: "Tillitsvalgt" },
+    { groupId, type: GroupRoleTypeEnum.TREASURER, name: "Økonomiansvarlig" },
+    { groupId, type: GroupRoleTypeEnum.COSMETIC, name: "Medlem" },
+    { groupId, type: GroupRoleTypeEnum.EMAIL_ONLY, name: "E-postbruker" },
+    { groupId, type: GroupRoleTypeEnum.TEMPORARILY_LEAVE, name: "Permitert" },
   ] as const satisfies GroupRoleWrite[]
 
 export const createGroupPageUrl = (group: Group) => {
@@ -143,23 +144,23 @@ export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | n
 
 export const getGroupRoleTypeName = (type: GroupRoleType) => {
   switch (type) {
-    case "LEADER":
+    case GroupRoleTypeEnum.LEADER:
       return "Leder"
-    case "PUNISHER":
+    case GroupRoleTypeEnum.PUNISHER:
       return "Vinstraffansvarlig"
-    case "COSMETIC":
+    case GroupRoleTypeEnum.COSMETIC:
       return "Kosmetisk"
-    case "DEPUTY_LEADER":
+    case GroupRoleTypeEnum.DEPUTY_LEADER:
       return "Nestleder"
-    case "TRUSTEE":
+    case GroupRoleTypeEnum.TRUSTEE:
       return "Tillitsvalgt"
-    case "TREASURER":
+    case GroupRoleTypeEnum.TREASURER:
       return "Økonomiansvarlig"
-    case "EMAIL_ONLY":
+    case GroupRoleTypeEnum.EMAIL_ONLY:
       return "E-postbruker"
-    case "TEMPORARILY_LEAVE":
+    case GroupRoleTypeEnum.TEMPORARILY_LEAVE:
       return "Permitert"
-    case "EDITOR_IN_CHIEF":
+    case GroupRoleTypeEnum.EDITOR_IN_CHIEF:
       return "Redaktør"
     default:
       return "Ukjent type"

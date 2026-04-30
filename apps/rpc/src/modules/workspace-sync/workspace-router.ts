@@ -1,4 +1,5 @@
 import {
+  GroupRoleTypeEnum,
   GroupSchema,
   UserSchema,
   WorkspaceGroupLinkSchema,
@@ -230,7 +231,7 @@ const synchronizeWorkspaceGroupProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole((input) => input.groupSlug, "LEADER")
+        hasGroupRole((input) => input.groupSlug, GroupRoleTypeEnum.LEADER)
       )
     )
   )

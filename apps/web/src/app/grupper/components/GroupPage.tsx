@@ -1,7 +1,7 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import { type GroupMember, type GroupRole, type UserId, getGroupTypeName } from "@dotkomonline/types"
+import { type GroupMember, type GroupRole, GroupRoleTypeEnum, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
@@ -67,7 +67,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
   const membersToShow = [...members.values()].filter((member) => {
     const membership = getLatestActiveMembership(member)
 
-    const isEmailOnly = membership?.roles.every((r) => r.type === "EMAIL_ONLY")
+    const isEmailOnly = membership?.roles.every((role) => role.type === GroupRoleTypeEnum.EMAIL_ONLY)
     const isMe = member.id === session?.sub
 
     if (group.memberVisibility === "NONE" || (isEmailOnly && !isMe)) {
@@ -79,11 +79,13 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     }
 
     if (group.memberVisibility === "LEADER") {
-      return membership?.roles.some((r) => r.type === "LEADER")
+      return membership?.roles.some((role) => role.type === GroupRoleTypeEnum.LEADER)
     }
 
     if (group.memberVisibility === "WITH_ROLES") {
-      return membership?.roles.some((r) => r.type !== "COSMETIC" && r.type !== "EMAIL_ONLY")
+      return membership?.roles.some(
+        (role) => role.type !== GroupRoleTypeEnum.COSMETIC && role.type !== GroupRoleTypeEnum.EMAIL_ONLY
+      )
     }
 
     return false
@@ -112,7 +114,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     .filter((member) => getLatestActiveMembership(member) !== undefined)
     .find((user) => {
       const membership = getLatestActiveMembership(user)
-      return membership?.roles.some((r) => r.type === "LEADER")
+      return membership?.roles.some((role) => role.type === GroupRoleTypeEnum.LEADER)
     })
 
   const name = group.name ?? group.abbreviation
@@ -308,21 +310,21 @@ function getLatestActiveMembership(member: GroupMember) {
 
 function getRolePriority(role: GroupRole) {
   switch (role.type) {
-    case "LEADER":
+    case GroupRoleTypeEnum.LEADER:
       return 8
-    case "DEPUTY_LEADER":
+    case GroupRoleTypeEnum.DEPUTY_LEADER:
       return 7
-    case "TREASURER":
+    case GroupRoleTypeEnum.TREASURER:
       return 6
-    case "TRUSTEE":
+    case GroupRoleTypeEnum.TRUSTEE:
       return 5
-    case "PUNISHER":
+    case GroupRoleTypeEnum.PUNISHER:
       return 4
-    case "COSMETIC":
+    case GroupRoleTypeEnum.COSMETIC:
       return 3
-    case "EMAIL_ONLY":
+    case GroupRoleTypeEnum.EMAIL_ONLY:
       return 2
-    case "TEMPORARILY_LEAVE":
+    case GroupRoleTypeEnum.TEMPORARILY_LEAVE:
       return 1
     default:
       return 0

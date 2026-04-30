@@ -1,4 +1,4 @@
-import { OfflineSchema, OfflineWriteSchema } from "@dotkomonline/types"
+import { GroupRoleTypeEnum, OfflineSchema, OfflineWriteSchema } from "@dotkomonline/types"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { hasGroupRole, isAdministrator, isCommitteeMember, or } from "../../authorization"
@@ -16,9 +16,9 @@ const createOfflineProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, "LEADER"),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, "DEPUTY_LEADER"),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, "EDITOR_IN_CHIEF")
+        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.LEADER),
+        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.DEPUTY_LEADER),
+        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.EDITOR_IN_CHIEF)
       )
     )
   )
@@ -42,9 +42,9 @@ const editOfflineProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, "LEADER"),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, "DEPUTY_LEADER"),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, "EDITOR_IN_CHIEF")
+        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.LEADER),
+        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.DEPUTY_LEADER),
+        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.EDITOR_IN_CHIEF)
       )
     )
   )

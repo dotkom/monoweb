@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client"
+import { GroupRoleTypeSchema } from "../schemas/index"
 
 export const getGroupFixtures = () =>
   [
@@ -332,41 +333,41 @@ export const getGroupRoleFixtures = (groupInput: Prisma.GroupCreateInput) =>
     {
       groupId: groupInput.slug,
       name: "Leder",
-      type: "LEADER",
+      type: GroupRoleTypeSchema.enum.LEADER,
     },
     {
       groupId: groupInput.slug,
       name: "Vinstraffansvarlig",
-      type: "PUNISHER",
+      type: GroupRoleTypeSchema.enum.PUNISHER,
     },
     {
       groupId: groupInput.slug,
       name: "Nestleder",
-      type: "DEPUTY_LEADER",
+      type: GroupRoleTypeSchema.enum.DEPUTY_LEADER,
     },
     {
       groupId: groupInput.slug,
       name: "Tillitsvalgt",
-      type: "TRUSTEE",
+      type: GroupRoleTypeSchema.enum.TRUSTEE,
     },
     {
       groupId: groupInput.slug,
       name: "Økonomiansvarlig",
-      type: "TREASURER",
+      type: GroupRoleTypeSchema.enum.TREASURER,
     },
     {
       groupId: groupInput.slug,
       name: "Medlem",
-      type: "COSMETIC",
+      type: GroupRoleTypeSchema.enum.COSMETIC,
     },
     {
       groupId: groupInput.slug,
       name: "E-postbruker",
-      type: "EMAIL_ONLY",
+      type: GroupRoleTypeSchema.enum.EMAIL_ONLY,
     },
     {
       groupId: groupInput.slug,
       name: "Permitert",
-      type: "TEMPORARILY_LEAVE",
+      type: GroupRoleTypeSchema.enum.TEMPORARILY_LEAVE,
     },
   ] as const satisfies Prisma.GroupRoleCreateManyInput[]

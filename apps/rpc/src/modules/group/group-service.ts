@@ -14,6 +14,7 @@ import {
   type GroupType,
   type GroupWrite,
   type UserId,
+  GroupRoleTypeEnum,
   getDefaultGroupMemberRoles,
   GROUP_IMAGE_MAX_SIZE_KIB,
   areGroupRolesEqual,
@@ -169,7 +170,7 @@ export function getGroupService(
     },
 
     async findLeadersBySlug(handle, groupSlug) {
-      const leaders = await groupRepository.findGroupMembersByRoleType(handle, groupSlug, "LEADER")
+      const leaders = await groupRepository.findGroupMembersByRoleType(handle, groupSlug, GroupRoleTypeEnum.LEADER)
 
       return leaders.reduce((map, leader) => {
         map.set(leader.id, leader)
