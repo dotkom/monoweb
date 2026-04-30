@@ -5,6 +5,7 @@ import { hasGroupRole, isAdministrator, isCommitteeMember, or } from "../../auth
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
+import { CommitteeGroupSlug } from "../authorization-service"
 
 export type CreateOfflineInput = inferProcedureInput<typeof createOfflineProcedure>
 export type CreateOfflineOutput = inferProcedureOutput<typeof createOfflineProcedure>
@@ -15,9 +16,9 @@ const createOfflineProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole("prokom", "LEADER"),
-        hasGroupRole("prokom", "DEPUTY_LEADER"),
-        hasGroupRole("prokom", "EDITOR_IN_CHIEF")
+        hasGroupRole(CommitteeGroupSlug.PROKOM, "LEADER"),
+        hasGroupRole(CommitteeGroupSlug.PROKOM, "DEPUTY_LEADER"),
+        hasGroupRole(CommitteeGroupSlug.PROKOM, "EDITOR_IN_CHIEF")
       )
     )
   )
@@ -41,9 +42,9 @@ const editOfflineProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole("prokom", "LEADER"),
-        hasGroupRole("prokom", "DEPUTY_LEADER"),
-        hasGroupRole("prokom", "EDITOR_IN_CHIEF")
+        hasGroupRole(CommitteeGroupSlug.PROKOM, "LEADER"),
+        hasGroupRole(CommitteeGroupSlug.PROKOM, "DEPUTY_LEADER"),
+        hasGroupRole(CommitteeGroupSlug.PROKOM, "EDITOR_IN_CHIEF")
       )
     )
   )

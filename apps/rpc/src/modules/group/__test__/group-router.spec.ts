@@ -1,5 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type { TRPCContext } from "../../../trpc"
+import { CommitteeGroupSlug } from "../../authorization-service"
 import { groupRouter } from "../group-router"
 
 describe("group router service forwarding", () => {
@@ -22,9 +23,9 @@ describe("group router service forwarding", () => {
 
     const caller = groupRouter.createCaller(ctx)
 
-    await caller.getMembers("dotkom")
+    await caller.getMembers(CommitteeGroupSlug.DOTKOM)
 
-    expect(groupService.getLeaders).toHaveBeenCalledWith(txHandle, "dotkom")
+    expect(groupService.getLeaders).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.DOTKOM)
     expect(groupService.getMembers).not.toHaveBeenCalled()
   })
 
@@ -47,9 +48,9 @@ describe("group router service forwarding", () => {
 
     const caller = groupRouter.createCaller(ctx)
 
-    await caller.getMembers("hs")
+    await caller.getMembers(CommitteeGroupSlug.HOVEDSTYRET)
 
-    expect(groupService.getMembers).toHaveBeenCalledWith(txHandle, "hs")
+    expect(groupService.getMembers).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.HOVEDSTYRET)
     expect(groupService.getLeaders).not.toHaveBeenCalled()
   })
 
@@ -74,8 +75,8 @@ describe("group router service forwarding", () => {
 
     const caller = groupRouter.createCaller(ctx)
 
-    await caller.getMember({ groupId: "dotkom", userId: "user-1" })
+    await caller.getMember({ groupId: CommitteeGroupSlug.DOTKOM, userId: "user-1" })
 
-    expect(groupService.getMember).toHaveBeenCalledWith(txHandle, "dotkom", "user-1")
+    expect(groupService.getMember).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.DOTKOM, "user-1")
   })
 })

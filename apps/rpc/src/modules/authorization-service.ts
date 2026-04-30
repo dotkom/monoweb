@@ -3,31 +3,36 @@ import type { GroupId, GroupRoleType, UserId } from "@dotkomonline/types"
 import { minutesToMilliseconds } from "date-fns"
 import { LRUCache } from "lru-cache"
 
-export const HOVEDSTYRET_GROUP_SLUG = "hs"
+export const CommitteeGroupSlug = {
+  HOVEDSTYRET: "hs",
+  DOTKOM: "dotkom",
+  APPKOM: "appkom",
+  ARRKOM: "arrkom",
+  BACKLOG: "backlog",
+  BANKOM: "bankom",
+  BEDKOM: "bedkom",
+  DEBUG: "debug",
+  DOTDAGENE: "dotdagene",
+  EKSKOM: "ekskom",
+  FAGKOM: "fagkom",
+  FEMINIT: "feminit",
+  FOND: "fond",
+  JUBKOM: "jubkom",
+  ONLINE_IL: "online-il",
+  PROKOM: "prokom",
+  REDAKSJONEN: "redaksjonen",
+  TRIKOM: "trikom",
+  VELKOM: "velkom",
+} as const satisfies Record<string, GroupId>
 
-export const COMMITTEE_AFFILIATIONS = [
-  HOVEDSTYRET_GROUP_SLUG,
-  "dotkom",
-  "appkom",
-  "arrkom",
-  "backlog",
-  "bankom",
-  "bedkom",
-  "debug",
-  "dotdagene",
-  "ekskom",
-  "fagkom",
-  "feminit",
-  "fond",
-  "jubkom",
-  "online-il",
-  "prokom",
-  "redaksjonen",
-  "trikom",
-  "velkom",
-] as const satisfies GroupId[]
+export type CommitteeGroupSlug = (typeof CommitteeGroupSlug)[keyof typeof CommitteeGroupSlug]
 
-export const ADMIN_AFFILIATIONS = ["dotkom", HOVEDSTYRET_GROUP_SLUG] as const satisfies GroupId[]
+export const COMMITTEE_AFFILIATIONS: CommitteeGroupSlug[] = Object.values(CommitteeGroupSlug)
+
+export const ADMIN_AFFILIATIONS = [
+  CommitteeGroupSlug.DOTKOM,
+  CommitteeGroupSlug.HOVEDSTYRET,
+] as const satisfies readonly GroupId[]
 
 export interface AuthorizationService {
   /**
@@ -44,8 +49,8 @@ export interface AuthorizationService {
    * manually checking affiliations, since this will account for administrator permissions.
    */
   intersectGroupAffiliations(
-    userAffiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | Array<GroupId>,
-    affiliationsToCompare: Set<GroupId> | Array<GroupId>
+    userAffiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>,
+    affiliationsToCompare: Set<GroupId> | ReadonlyArray<GroupId>
   ): Set<GroupId>
 
   /**
@@ -53,8 +58,8 @@ export interface AuthorizationService {
    * checking affiliations, since this will account for administrator permissions.
    */
   hasAnyGroupAffiliation(
-    affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | Array<GroupId>,
-    affiliationsToCompare: Set<GroupId> | Array<GroupId>
+    affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>,
+    affiliationsToCompare: Set<GroupId> | ReadonlyArray<GroupId>
   ): boolean
 
   /**
@@ -62,19 +67,19 @@ export interface AuthorizationService {
    * affiliations, since this will account for administrator permissions.
    */
   hasEveryGroupAffiliation(
-    affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | Array<GroupId>,
-    affiliationsToCompare: Set<GroupId> | Array<GroupId>
+    affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>,
+    affiliationsToCompare: Set<GroupId> | ReadonlyArray<GroupId>
   ): boolean
 
   /**
    * Helper for using intersectGroupAffiliations with all committee affiliations.
    */
-  isCommitteeMember(affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | Array<GroupId>): boolean
+  isCommitteeMember(affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>): boolean
 
   /**
    * Helper for using intersectGroupAffiliations with all administrator affiliations.
    */
-  isAdministrator(affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | Array<GroupId>): boolean
+  isAdministrator(affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>): boolean
 }
 
 export function getAuthorizationService(): AuthorizationService {
@@ -173,7 +178,7 @@ export function getAuthorizationService(): AuthorizationService {
   }
 }
 
-function toSet<T>(input: Map<T, unknown> | Set<T> | Array<T>): Set<T> {
+function toSet<T>(input: Map<T, unknown> | Set<T> | ReadonlyArray<T>): Set<T> {
   if (input instanceof Map) {
     return new Set(input.keys())
   }
@@ -182,5 +187,5 @@ function toSet<T>(input: Map<T, unknown> | Set<T> | Array<T>): Set<T> {
     return new Set(input)
   }
 
-  return input
+  return input as Set<T>
 }

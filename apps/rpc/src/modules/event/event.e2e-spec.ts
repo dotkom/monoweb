@@ -1,6 +1,7 @@
 import type { EventWrite, GroupWrite } from "@dotkomonline/types"
 import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
+import { CommitteeGroupSlug } from "../authorization-service"
 import { core, dbClient } from "../../../vitest-integration.setup"
 import { FailedPreconditionError } from "../../error"
 
@@ -18,7 +19,7 @@ export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     deactivatedAt: null,
     workspaceGroupId: null,
     memberVisibility: "ALL_MEMBERS",
-    slug: "dotkom",
+    slug: CommitteeGroupSlug.DOTKOM,
     showLeaderAsContact: false,
     recruitmentMethod: "AUTUMN_APPLICATION",
     ...input,
@@ -61,7 +62,7 @@ describe("event integration tests", () => {
     // Updating with new ones and removing some
     const group2 = await core.groupService.create(
       dbClient,
-      getMockGroup({ abbreviation: "fagkom", name: "Fag- og kurskomiteen" })
+      getMockGroup({ abbreviation: CommitteeGroupSlug.FAGKOM, name: "Fag- og kurskomiteen" })
     )
     const updated2 = await core.eventService.updateEventOrganizers(
       dbClient,
