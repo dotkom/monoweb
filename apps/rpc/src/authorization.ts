@@ -15,8 +15,8 @@
  *
  * This file contains a general framework for boolean predicates, and combinator functions to build rules.
  *
- * The goal is to use the combinators along with the `authorized()` middleware from `/src/middlewares.ts` to create
- * authorization guards for API endpoints.
+ * The goal is to use the combinators along with the `withAuthorization()` middleware from `/src/middlewares.ts` to
+ * create authorization guards for API endpoints.
  *
  * # Further reading
  *
@@ -108,6 +108,11 @@ export function deny<TInput>(): Rule<TInput> {
  * Business rule that returns true if the user is considered an administrator
  *
  * We consider a principal to be an administrator if they are a member of Hovedstyret (HS) or Dotkom
+ *
+ * @example
+ * ```
+ * isAdministrator()
+ * ```
  */
 export function isAdministrator<TInput>(): Rule<TInput> {
   return {
@@ -125,6 +130,11 @@ export function isAdministrator<TInput>(): Rule<TInput> {
 
 /**
  * Business rule that returns true if the user is considered a committee member
+ *
+ * @example
+ * ```
+ * isCommitteeMember()
+ * ```
  */
 export function isCommitteeMember<TInput>(): Rule<TInput> {
   return {
@@ -180,6 +190,17 @@ export function isGroupMemberOfAny<TInput>(groupAffiliations: [GroupId, ...Group
 }
 
 type HasGroupRoleSelector<TInput> = (input: TInput) => GroupId | null
+/**
+ * Business rule that returns true if the user has the given group role in the given group
+ *
+ * This function supports either grabbing the group from the input, or a hard-coded group.
+ *
+ * @example
+ * ```
+ * hasGroupRole(CommitteeGroupSlug.DOTKOM, GroupRoleTypeEnum.LEADER)
+ * hasGroupRole(input => input.groupSlug, GroupRoleTypeEnum.LEADER)
+ * ```
+ */
 export function hasGroupRole<TInput>(selector: HasGroupRoleSelector<TInput>, groupRoleType: GroupRoleType): Rule<TInput>
 export function hasGroupRole<TInput>(groupId: GroupId, groupRoleType: GroupRoleType): Rule<TInput>
 export function hasGroupRole<TInput>(
@@ -205,6 +226,14 @@ export function hasGroupRole<TInput>(
   }
 }
 
+/**
+ * Business rule that returns true if the user has the given group role in any committee group.
+ *
+ * @example
+ * ```
+ * hasCommitteeRole(GroupRoleTypeEnum.LEADER)
+ * ```
+ */
 export function hasCommitteeRole<TInput>(groupRoleType: GroupRoleType): Rule<TInput> {
   return {
     async evaluate(context) {
@@ -235,6 +264,11 @@ type IsSameSubjectSelector<TInput> = (input: TInput) => UserId | null
  * the request.
  *
  * NOTE: A subject is the "correct" name for the ID of a user.
+ *
+ * @example
+ * ```
+ * isSameSubject(input => input.userId)
+ * ```
  */
 export function isSameSubject<TInput>(selector: IsSameSubjectSelector<TInput>): Rule<TInput> {
   return {
