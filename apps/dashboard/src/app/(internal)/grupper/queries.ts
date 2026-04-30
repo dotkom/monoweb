@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 export const useGroupAllQuery = () => {
   const trpc = useTRPC()
   const { data: groups, ...query } = useQuery({
-    ...trpc.group.all.queryOptions(),
+    ...trpc.group.all.queryOptions({ filter: { includeEmailOnly: true } }),
     initialData: [],
   })
   return { groups, ...query }

@@ -33,8 +33,11 @@ const createGroupProcedure = procedure
 export type AllGroupsInput = inferProcedureInput<typeof allGroupsProcedure>
 export type AllGroupsOutput = inferProcedureOutput<typeof allGroupsProcedure>
 const allGroupsProcedure = procedure
+  .input(z.object({ filter: z.object({ includeEmailOnly: z.boolean().optional() }).optional() }).optional())
   .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.groupService.findMany(ctx.handle))
+  .query(async ({ ctx, input }) =>
+    ctx.groupService.findMany(ctx.handle, { includeEmailOnly: input?.filter?.includeEmailOnly ?? false })
+  )
 
 export type AllGroupsByTypeInput = inferProcedureInput<typeof allByTypeProcedure>
 export type AllGroupsByTypeOutput = inferProcedureOutput<typeof allByTypeProcedure>
@@ -157,9 +160,18 @@ const getMemberProcedure = procedure
 export type AllByMemberInput = inferProcedureInput<typeof allByMemberProcedure>
 export type AllByMemberOutput = inferProcedureOutput<typeof allByMemberProcedure>
 const allByMemberProcedure = procedure
-  .input(GroupMembershipSchema.shape.userId)
+  .input(
+    z.object({
+      userId: GroupMembershipSchema.shape.userId,
+      filter: z.object({ includeEmailOnly: z.boolean().optional() }).optional(),
+    })
+  )
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.findManyByMemberUserId(ctx.handle, input))
+  .query(async ({ input, ctx }) =>
+    ctx.groupService.findManyByMemberUserId(ctx.handle, input.userId, {
+      includeEmailOnly: input.filter?.includeEmailOnly ?? false,
+    })
+  )
 
 export type StartMembershipInput = inferProcedureInput<typeof startMembershipProcedure>
 export type StartMembershipOutput = inferProcedureOutput<typeof startMembershipProcedure>

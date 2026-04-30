@@ -145,6 +145,7 @@ enum GroupType {
   NODE_COMMITTEE @map("NODE_COMMITTEE")
   ASSOCIATED     @map("ASSOCIATED")
   INTEREST_GROUP @map("INTEREST_GROUP")
+  EMAIL_ONLY     @map("EMAIL_ONLY")
 
   @@map("group_type")
 }
@@ -183,9 +184,9 @@ model Group {
   workspaceGroupId    String?                @unique @map("workspace_group_id")
   memberVisibility    GroupMemberVisibility  @default(ALL_MEMBERS) @map("member_visibility")
   recruitmentMethod   GroupRecruitmentMethod @default(NONE) @map("recruitment_method")
+  type                GroupType
 
   events        EventHostingGroup[]
-  type          GroupType
   memberships   GroupMembership[]
   marks         MarkGroup[]
   roles         GroupRole[]

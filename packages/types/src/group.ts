@@ -119,6 +119,8 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
       return "Assosiert gruppe"
     case "INTEREST_GROUP":
       return "Interessegruppe"
+    case "EMAIL_ONLY":
+      return "E-postgruppe"
     default:
       return "Ukjent type"
   }

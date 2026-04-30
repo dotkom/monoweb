@@ -16,6 +16,7 @@ import { compareDesc } from "date-fns"
 import Link from "next/link"
 import { WanderingMascot } from "./WanderingMascot"
 import { getGroupEasterEgg } from "./easter-eggs"
+import { notFound } from "next/navigation"
 
 interface CommitteePageProps {
   params: Promise<{ slug: string }>
@@ -50,6 +51,10 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
       },
     }),
   ])
+
+  if (group.type === "EMAIL_ONLY") {
+    return notFound()
+  }
 
   // We do not show members for ASSOCIATED types because they often have members outside Online, meaning the member list
   // would be incomplete.

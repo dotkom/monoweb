@@ -44,7 +44,7 @@ export const useUserAllInfiniteQuery = ({ filter, page }: UseUserAllQueryProps) 
 export const useGroupAllByMemberQuery = (userId: UserId) => {
   const trpc = useTRPC()
   const { data: groups, isLoading } = useQuery({
-    ...trpc.group.allByMember.queryOptions(userId),
+    ...trpc.group.allByMember.queryOptions({ userId, filter: { includeEmailOnly: true } }),
     initialData: [],
   })
 
