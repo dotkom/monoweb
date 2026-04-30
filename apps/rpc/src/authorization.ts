@@ -149,7 +149,7 @@ type IsGroupMemberSelector<TInput> = (input: TInput) => GroupId | null
  *
  * @example
  * ```
- * isGroupMember("dotkom")
+ * isGroupMember(CommitteeGroupSlug.DOTKOM)
  * isGroupMember(input => input.groupSlug)
  * ```
  */
@@ -217,8 +217,7 @@ export function hasCommitteeRole<TInput>(groupRoleType: GroupRoleType): Rule<TIn
       const roles = new Set<GroupRoleType>()
 
       for (const [groupId, groupRoles] of affiliations.entries()) {
-        // biome-ignore lint/suspicious/noExplicitAny: Array#includes expects only committee affiliations for input
-        if (!COMMITTEE_AFFILIATIONS.includes(groupId as any)) {
+        if (!(COMMITTEE_AFFILIATIONS as readonly GroupId[]).includes(groupId)) {
           continue
         }
 

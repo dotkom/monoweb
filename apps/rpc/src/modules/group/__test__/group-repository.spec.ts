@@ -1,4 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
+import { CommitteeGroupSlug } from "../../authorization-service"
 import { getGroupRepository } from "../group-repository"
 
 describe("GroupRepository.findManyGroupMemberships", () => {
@@ -18,11 +19,11 @@ describe("GroupRepository.findManyGroupMemberships", () => {
   it("queries all memberships for a group when userId is not provided", async () => {
     const { handle, findMany } = createHandle()
 
-    await groupRepository.findManyGroupMemberships(handle, "dotkom")
+    await groupRepository.findManyGroupMemberships(handle, CommitteeGroupSlug.DOTKOM)
 
     expect(findMany).toHaveBeenCalledWith({
       where: {
-        groupId: "dotkom",
+        groupId: CommitteeGroupSlug.DOTKOM,
       },
       include: {
         roles: {
@@ -37,11 +38,11 @@ describe("GroupRepository.findManyGroupMemberships", () => {
   it("filters memberships by user when userId is provided", async () => {
     const { handle, findMany } = createHandle()
 
-    await groupRepository.findManyGroupMemberships(handle, "dotkom", "user-1")
+    await groupRepository.findManyGroupMemberships(handle, CommitteeGroupSlug.DOTKOM, "user-1")
 
     expect(findMany).toHaveBeenCalledWith({
       where: {
-        groupId: "dotkom",
+        groupId: CommitteeGroupSlug.DOTKOM,
         userId: "user-1",
       },
       include: {

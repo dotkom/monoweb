@@ -3,6 +3,7 @@ import {
   GroupMembershipSchema,
   GroupMembershipWriteSchema,
   GroupRoleSchema,
+  GroupRoleTypeSchema,
   GroupRoleWriteSchema,
   GroupSchema,
   GroupWriteSchema,
@@ -12,14 +13,14 @@ import { z } from "zod"
 import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { HOVEDSTYRET_GROUP_SLUG } from "../authorization-service"
+import { CommitteeGroupSlug } from "../authorization-service"
 
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
 export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
 const createGroupProcedure = procedure
   .input(GroupWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(or(isAdministrator(), isGroupMember("BACKLOG"))))
+  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -82,7 +83,7 @@ const updateGroupProcedure = procedure
       or(
         isAdministrator(),
         isGroupMember((input) => input.id),
-        isGroupMember("BACKLOG")
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
   )
@@ -114,8 +115,8 @@ const deleteGroupProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole((input) => input, "LEADER"),
-        isGroupMember("BACKLOG")
+        hasGroupRole((input) => input, GroupRoleTypeSchema.enum.LEADER),
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
   )
@@ -139,7 +140,7 @@ const getMembersProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     // We only show leaders of groups to unathenticated users, except for Hovedstyret who is public
-    if (!ctx.principal && input !== HOVEDSTYRET_GROUP_SLUG) {
+    if (!ctx.principal && input !== CommitteeGroupSlug.HOVEDSTYRET) {
       return ctx.groupService.findLeadersBySlug(ctx.handle, input)
     }
     return ctx.groupService.findMembersBySlug(ctx.handle, input)
@@ -190,7 +191,7 @@ const startMembershipProcedure = procedure
         isAdministrator(),
         hasGroupRole((input) => input.groupId, "LEADER"),
         hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
-        isGroupMember("BACKLOG")
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
   )
@@ -224,7 +225,7 @@ const endMembershipProcedure = procedure
         isAdministrator(),
         hasGroupRole((input) => input.groupId, "LEADER"),
         hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
-        isGroupMember("BACKLOG")
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
   )
@@ -264,7 +265,7 @@ const updateMembershipProcedure = procedure
         isAdministrator(),
         hasGroupRole((input) => input.id, "LEADER"),
         hasGroupRole((input) => input.id, "DEPUTY_LEADER"),
-        isGroupMember("BACKLOG")
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
   )
@@ -298,7 +299,7 @@ const createRoleProcedure = procedure
         isAdministrator(),
         hasGroupRole((input) => input.groupId, "LEADER"),
         hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
-        isGroupMember("BACKLOG")
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
   )
@@ -334,7 +335,7 @@ const updateRoleProcedure = procedure
         isAdministrator(),
         hasGroupRole((input) => input.id, "LEADER"),
         hasGroupRole((input) => input.id, "DEPUTY_LEADER"),
-        isGroupMember("BACKLOG")
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
   )

@@ -8,6 +8,7 @@ import { getMembershipService } from "../../user/membership-service"
 import { getUserRepository } from "../../user/user-repository"
 import { getUserService } from "../../user/user-service"
 import { mockDeep } from "vitest-mock-extended"
+import { CommitteeGroupSlug } from "../../authorization-service"
 import { getGroupRepository } from "../group-repository"
 import { getGroupService } from "../group-service"
 import { describe, expect, it, vi } from "vitest"
@@ -34,7 +35,7 @@ describe("GroupService", () => {
 
   it("creates a new group", async () => {
     const group: Omit<Group, "id"> = {
-      slug: "dotkom",
+      slug: CommitteeGroupSlug.DOTKOM,
       abbreviation: "Dotkom",
       name: "Drifts- og utviklingskomiteen",
       createdAt: new Date(),
@@ -60,7 +61,7 @@ describe("GroupService", () => {
 
     const created = await groupService.create(db, group)
     expect(created).toEqual(group)
-    expect(groupRepository.create).toHaveBeenCalledWith(db, "dotkom", group)
+    expect(groupRepository.create).toHaveBeenCalledWith(db, CommitteeGroupSlug.DOTKOM, group)
   })
 
   it("does not find non-existent committees", async () => {
