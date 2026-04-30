@@ -482,7 +482,6 @@ export function simplifyGroupMemberships(memberships: GroupMembership[]): GroupM
   }
 
   return mergedSegments.map((segment) => ({
-    id: segment.sourceMembership.id,
     start: segment.start,
     end: segment.end,
     userId: segment.sourceMembership.userId,
