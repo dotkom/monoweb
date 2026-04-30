@@ -4,11 +4,11 @@ import { CommitteeGroupSlug } from "../../authorization-service"
 import { groupRouter } from "../group-router"
 
 describe("group router service forwarding", () => {
-  it("routes anonymous non-Hovedstyret getMembers to getLeaders", async () => {
+  it("routes anonymous non-Hovedstyret getMembers to findLeadersBySlug", async () => {
     const txHandle = {} as DBHandle
     const groupService = {
-      getLeaders: vi.fn().mockResolvedValue([]),
-      getMembers: vi.fn(),
+      findLeadersBySlug: vi.fn().mockResolvedValue(new Map()),
+      findMembersBySlug: vi.fn(),
       getMember: vi.fn(),
     }
 
@@ -25,15 +25,15 @@ describe("group router service forwarding", () => {
 
     await caller.getMembers(CommitteeGroupSlug.DOTKOM)
 
-    expect(groupService.getLeaders).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.DOTKOM)
-    expect(groupService.getMembers).not.toHaveBeenCalled()
+    expect(groupService.findLeadersBySlug).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.DOTKOM)
+    expect(groupService.findMembersBySlug).not.toHaveBeenCalled()
   })
 
-  it("routes anonymous Hovedstyret getMembers to getMembers", async () => {
+  it("routes anonymous Hovedstyret getMembers to findMembersBySlug", async () => {
     const txHandle = {} as DBHandle
     const groupService = {
-      getLeaders: vi.fn(),
-      getMembers: vi.fn().mockResolvedValue(new Map()),
+      findLeadersBySlug: vi.fn(),
+      findMembersBySlug: vi.fn().mockResolvedValue(new Map()),
       getMember: vi.fn(),
     }
 
@@ -50,14 +50,14 @@ describe("group router service forwarding", () => {
 
     await caller.getMembers(CommitteeGroupSlug.HOVEDSTYRET)
 
-    expect(groupService.getMembers).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.HOVEDSTYRET)
-    expect(groupService.getLeaders).not.toHaveBeenCalled()
+    expect(groupService.findMembersBySlug).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.HOVEDSTYRET)
+    expect(groupService.findLeadersBySlug).not.toHaveBeenCalled()
   })
 
   it("passes through group and user ids to getMember", async () => {
     const txHandle = {} as DBHandle
     const groupService = {
-      getMembers: vi.fn(),
+      findMembersBySlug: vi.fn(),
       getMember: vi.fn().mockResolvedValue({}),
     }
 
