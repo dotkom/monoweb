@@ -14,10 +14,10 @@ import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createTrpcContext } from "../trpc"
 import { ADMIN_AFFILIATIONS } from "../modules/authorization-service"
-import { GroupRoleTypeSchema } from "@dotkomonline/types"
+import { GroupRoleTypeEnum } from "@dotkomonline/types"
 
 const ADMIN_AFFILIATIONS_MAP = new Map(
-  ADMIN_AFFILIATIONS.map((groupId) => [groupId, new Set([GroupRoleTypeSchema.Values.LEADER])])
+  ADMIN_AFFILIATIONS.map((groupId) => [groupId, new Set([GroupRoleTypeEnum.LEADER])])
 )
 
 const logger = getLogger("rpc")

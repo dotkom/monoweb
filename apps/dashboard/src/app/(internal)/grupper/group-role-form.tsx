@@ -1,7 +1,7 @@
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { GroupRoleTypeSchema, GroupRoleWriteSchema, getGroupRoleTypeName } from "@dotkomonline/types"
+import { GroupRoleWriteSchema, getGroupRoleTypeName, GroupRoleTypeEnum } from "@dotkomonline/types"
 import type z from "zod"
 
 const FormSchema = GroupRoleWriteSchema.omit({
@@ -40,7 +40,7 @@ export const useGroupRoleForm = ({ onSubmit, label = "Lagre", defaultValues }: U
         label: "Type",
         placeholder: "Velg en",
         required: true,
-        data: Object.values(GroupRoleTypeSchema.Values).map((groupRoleType) => ({
+        data: Object.values(GroupRoleTypeEnum).map((groupRoleType) => ({
           value: groupRoleType,
           label: getGroupRoleTypeName(groupRoleType),
         })),

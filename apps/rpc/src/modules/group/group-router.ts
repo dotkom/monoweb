@@ -2,8 +2,8 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import {
   GroupMembershipSchema,
   GroupMembershipWriteSchema,
+  GroupRoleTypeEnum,
   GroupRoleSchema,
-  GroupRoleTypeSchema,
   GroupRoleWriteSchema,
   GroupSchema,
   GroupWriteSchema,
@@ -115,7 +115,7 @@ const deleteGroupProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole((input) => input, GroupRoleTypeSchema.enum.LEADER),
+        hasGroupRole((input) => input, GroupRoleTypeEnum.LEADER),
         isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
@@ -127,7 +127,7 @@ const deleteGroupProcedure = procedure
 
     // If this is not an interest group, remove the Backlog clause
     if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(or(isAdministrator(), hasGroupRole(input, "LEADER")), input)
+      await ctx.addAuthorizationGuard(or(isAdministrator(), hasGroupRole(input, GroupRoleTypeEnum.LEADER)), input)
     }
 
     return ctx.groupService.delete(ctx.handle, input)
@@ -189,8 +189,8 @@ const startMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole((input) => input.groupId, "LEADER"),
-        hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
+        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.LEADER),
+        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER),
         isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
@@ -223,8 +223,8 @@ const endMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole((input) => input.groupId, "LEADER"),
-        hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
+        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.LEADER),
+        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER),
         isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
@@ -263,8 +263,8 @@ const updateMembershipProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole((input) => input.id, "LEADER"),
-        hasGroupRole((input) => input.id, "DEPUTY_LEADER"),
+        hasGroupRole((input) => input.id, GroupRoleTypeEnum.LEADER),
+        hasGroupRole((input) => input.id, GroupRoleTypeEnum.DEPUTY_LEADER),
         isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
@@ -297,8 +297,8 @@ const createRoleProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole((input) => input.groupId, "LEADER"),
-        hasGroupRole((input) => input.groupId, "DEPUTY_LEADER"),
+        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.LEADER),
+        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER),
         isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
@@ -311,7 +311,11 @@ const createRoleProcedure = procedure
     // If this is not an interest group, deny Backlog from modifying
     if (group.type !== "INTEREST_GROUP") {
       await ctx.addAuthorizationGuard(
-        or(isAdministrator(), hasGroupRole(input.groupId, "LEADER"), hasGroupRole(input.groupId, "DEPUTY_LEADER")),
+        or(
+          isAdministrator(),
+          hasGroupRole(input.groupId, GroupRoleTypeEnum.LEADER),
+          hasGroupRole(input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER)
+        ),
         input
       )
     }
@@ -333,8 +337,8 @@ const updateRoleProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole((input) => input.id, "LEADER"),
-        hasGroupRole((input) => input.id, "DEPUTY_LEADER"),
+        hasGroupRole((input) => input.id, GroupRoleTypeEnum.LEADER),
+        hasGroupRole((input) => input.id, GroupRoleTypeEnum.DEPUTY_LEADER),
         isGroupMember(CommitteeGroupSlug.BACKLOG)
       )
     )
@@ -347,7 +351,11 @@ const updateRoleProcedure = procedure
     // If this is not an interest group, deny Backlog from modifying
     if (group.type !== "INTEREST_GROUP") {
       await ctx.addAuthorizationGuard(
-        or(isAdministrator(), hasGroupRole(input.id, "LEADER"), hasGroupRole(input.id, "DEPUTY_LEADER")),
+        or(
+          isAdministrator(),
+          hasGroupRole(input.id, GroupRoleTypeEnum.LEADER),
+          hasGroupRole(input.id, GroupRoleTypeEnum.DEPUTY_LEADER)
+        ),
         input
       )
     }

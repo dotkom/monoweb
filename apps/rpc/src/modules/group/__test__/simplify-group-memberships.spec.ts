@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto"
-import type { GroupMembership, GroupRole } from "@dotkomonline/types"
+import { type GroupMembership, type GroupRole, GroupRoleTypeEnum } from "@dotkomonline/types"
 import { describe, expect, it } from "vitest"
 import { simplifyGroupMemberships } from "../group-service"
 
-const roleA: GroupRole = { id: "role-a", name: "Role A", type: "COSMETIC", groupId: "group-1" }
-const roleB: GroupRole = { id: "role-b", name: "Role B", type: "COSMETIC", groupId: "group-1" }
-const roleC: GroupRole = { id: "role-c", name: "Role C", type: "COSMETIC", groupId: "group-1" }
+const roleA: GroupRole = { id: "role-a", name: "Role A", type: GroupRoleTypeEnum.COSMETIC, groupId: "group-1" }
+const roleB: GroupRole = { id: "role-b", name: "Role B", type: GroupRoleTypeEnum.COSMETIC, groupId: "group-1" }
+const roleC: GroupRole = { id: "role-c", name: "Role C", type: GroupRoleTypeEnum.COSMETIC, groupId: "group-1" }
 
 function makeMembership(overrides: Partial<GroupMembership> = {}): GroupMembership {
   return {
