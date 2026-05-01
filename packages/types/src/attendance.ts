@@ -212,20 +212,54 @@ export const getAttendeeQueuePosition = (attendance: Attendance, user: User | nu
   return index + 1
 }
 
+type AttendeePaymentProps = Pick<
+  Attendee,
+  "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "paymentDeadline" | "paymentRefundedById"
+>
+
 export const hasAttendeePaid = (
-  attendance: Attendance | AttendanceSummary,
-  attendee: Attendee | null,
-  options?: { excludeReservation?: boolean }
+  attendee: Omit<AttendeePaymentProps, "paymentRefundedById"> | null,
+  attendancePrice: number | null,
+  options?: { excludePaymentReservation?: boolean }
 ): boolean | null => {
-  if (!attendance.attendancePrice) {
+  if (attendancePrice === null || attendee === null) {
     return null
   }
 
-  if (!attendee) {
-    return false
+  const hasBeenRefunded = attendee.paymentRefundedAt !== null
+  const hasBeenCharged = attendee.paymentChargedAt !== null
+  const hasReserved = options?.excludePaymentReservation ? false : attendee.paymentReservedAt !== null
+  const hasDeadline = attendee.paymentDeadline !== null
+
+  return hasBeenCharged || hasReserved || (hasBeenRefunded && !hasDeadline)
+}
+
+export const isAttendeeChargedAndUnrefunded = (
+  attendee: Pick<Attendee, "paymentChargedAt" | "paymentRefundedAt">
+): boolean => attendee.paymentChargedAt !== null && attendee.paymentRefundedAt === null
+
+export type AttendeePaymentStatus = "none" | "pending" | "reserved" | "charged" | "refunded" | "cancelled"
+
+export const getAttendeePaymentStatus = (attendee: AttendeePaymentProps): AttendeePaymentStatus => {
+  if (attendee.paymentRefundedAt !== null) {
+    return "refunded"
   }
 
-  const hasReserved = options?.excludeReservation ? false : Boolean(attendee.paymentReservedAt)
+  if (attendee.paymentChargedAt !== null) {
+    return "charged"
+  }
 
-  return Boolean(attendee.paymentChargedAt || hasReserved || (attendee.paymentRefundedAt && !attendee.paymentDeadline))
+  if (attendee.paymentReservedAt !== null) {
+    return "reserved"
+  }
+
+  if (attendee.paymentRefundedById !== null) {
+    return "cancelled"
+  }
+
+  if (attendee.paymentDeadline !== null) {
+    return "pending"
+  }
+
+  return "none"
 }

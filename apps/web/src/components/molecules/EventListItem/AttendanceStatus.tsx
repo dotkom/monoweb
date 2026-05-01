@@ -38,7 +38,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
   const paymentCountdownInterval =
     attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
   const isWithinPaymentCountdown =
-    paymentCountdownInterval && hasAttendeePaid(attendance, attendee) === false
+    paymentCountdownInterval && hasAttendeePaid(attendee, attendance.attendancePrice) === false
       ? isWithinInterval(new Date(), paymentCountdownInterval)
       : false
   const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null

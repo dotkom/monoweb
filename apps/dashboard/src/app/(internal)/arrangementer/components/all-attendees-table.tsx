@@ -1,10 +1,12 @@
 import type {
   Attendance,
   AttendancePool,
+  AttendeePaymentStatus,
   Attendee,
   AttendeeSelectionResponse,
   FeedbackFormAnswer,
 } from "@dotkomonline/types"
+import { getAttendeePaymentStatus } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   ActionIcon,
@@ -188,19 +190,16 @@ export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: Al
             return null
           }
 
-          let badge: BadgeProps = {}
-
-          if (attendee.paymentRefundedAt) {
-            badge = { color: "gray", children: "Refundert" }
-          } else if (attendee.paymentChargedAt) {
-            badge = { color: "green", children: "Betalt" }
-          } else if (attendee.paymentReservedAt) {
-            badge = { color: "blue", children: "Reservert" }
-          } else {
-            badge = { color: "red", children: "Ikke betalt" }
+          const paymentStatusBadge: Record<AttendeePaymentStatus, BadgeProps> = {
+            refunded: { color: "gray", children: "Refundert" },
+            charged: { color: "green", children: "Betalt" },
+            reserved: { color: "blue", children: "Reservert" },
+            cancelled: { color: "gray", children: "Kansellert" },
+            pending: { color: "red", children: "Ikke betalt" },
+            none: { color: "red", children: "Ikke betalt" },
           }
 
-          return <Badge size="sm" {...badge} />
+          return <Badge size="sm" {...paymentStatusBadge[getAttendeePaymentStatus(attendee)]} />
         },
       }),
       columnHelper.accessor((attendee) => attendee, {

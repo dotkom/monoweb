@@ -854,8 +854,8 @@ export function getAttendanceService(
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      const hasPaid = hasAttendeePaid(attendance, attendee, {
-        excludeReservation: true,
+      const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice, {
+        excludePaymentReservation: true,
       })
 
       // If the attendee has paid and not been refunded, we cannot allow deregistration.

@@ -57,7 +57,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const paymentCountdownInterval =
     attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
   const isWithinPaymentCountdown =
-    paymentCountdownInterval && hasAttendeePaid(attendance, attendee) === false
+    paymentCountdownInterval && hasAttendeePaid(attendee, attendance.attendancePrice) === false
       ? isWithinInterval(now, paymentCountdownInterval)
       : false
   const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null
@@ -311,7 +311,7 @@ interface PaymentStatusProps {
 }
 
 const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStatusProps) => {
-  const hasPaid = hasAttendeePaid(attendance, attendee)
+  const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice)
 
   if (!attendance.attendancePrice || hasPaid === null) {
     return null
