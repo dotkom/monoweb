@@ -4,18 +4,12 @@ import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupRole, GroupRoleTypeEnum, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import {
-  IconArrowUpRight,
-  IconMail,
-  IconRosetteDiscountCheckFilled,
-  IconUser,
-  IconUsers,
-  IconWorld,
-} from "@tabler/icons-react"
+import { IconArrowUpRight, IconRosetteDiscountCheckFilled, IconUser, IconUsers, IconWorld } from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
 import { WanderingMascot } from "./WanderingMascot"
 import { getGroupEasterEgg } from "./easter-eggs"
+import { GroupEmailLink } from "./GroupEmailLink"
 import { notFound } from "next/navigation"
 
 interface CommitteePageProps {
@@ -150,22 +144,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           <div className="flex flex-row gap-4 items-center text-sm text-gray-500 dark:text-stone-400 flex-wrap">
             <Text>Kontakt:</Text>
 
-            {group.email && (
-              <Link
-                href={`mailto:${group.email}`}
-                target="_blank"
-                rel="noreferrer"
-                className={cn(
-                  "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
-                  "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
-                  "dark:bg-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-300"
-                )}
-              >
-                <IconMail width={16} height={16} />
-                <Text>{group.email}</Text>
-                <IconArrowUpRight width={16} height={16} />
-              </Link>
-            )}
+            {group.email && <GroupEmailLink email={group.email} />}
 
             {group.contactUrl && (
               <Link
