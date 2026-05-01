@@ -6,6 +6,7 @@ import type { AttendanceService } from "../event/attendance-service"
 import type { GroupRepository } from "../group/group-repository"
 import { mergeUsers } from "./user-merging"
 import type { UserService } from "./user-service"
+import { NotFoundError } from "../../error"
 
 export interface UserMergingService {
   /**
@@ -80,9 +81,13 @@ export function getUserMergingService(
 
       const secondaryUser = await managementClient.users.get({ id: secondaryUserId })
 
-      const secondaryIdentity =
-        secondaryUser.data.identities.find((identity) => secondaryUserId.endsWith(identity.user_id)) ||
-        secondaryUser.data.identities[0]
+      const secondaryIdentity = secondaryUser.data.identities.find((identity) =>
+        secondaryUserId.endsWith(identity.user_id)
+      )
+
+      if (secondaryIdentity === undefined) {
+        throw new NotFoundError(`Auth0 identity for secondary User(ID=${secondaryUserId}) not found`)
+      }
 
       const secondaryIdentityProvider = secondaryIdentity.provider as PostIdentitiesRequestProviderEnum
 
