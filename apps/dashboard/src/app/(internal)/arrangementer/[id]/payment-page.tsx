@@ -1,5 +1,10 @@
 import { GenericTable } from "@/components/GenericTable"
-import type { Attendee } from "@dotkomonline/types"
+import {
+  type AttendeePaymentStatus,
+  type Attendee,
+  getAttendeePaymentStatus,
+  isAttendeeChargedAndUnrefunded,
+} from "@dotkomonline/types"
 import { Badge, type BadgeProps, Box, Button, Group, Input, Stack, Title } from "@mantine/core"
 import { IconExternalLink } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -11,6 +16,15 @@ import {
   useUpdateAttendancePaymentMutation,
 } from "../mutations"
 import { useEventContext } from "./provider"
+
+const PAYMENT_STATUS_BADGE: Record<AttendeePaymentStatus, BadgeProps> = {
+  refunded: { color: "gray", children: "Refundert" },
+  charged: { color: "green", children: "Betalt" },
+  reserved: { color: "blue", children: "Reservert" },
+  cancelled: { color: "gray", children: "Kansellert" },
+  pending: { color: "red", children: "Ikke betalt" },
+  none: { color: "gray", children: "Ingen betaling" },
+}
 
 export const PaymentPage: FC = () => {
   const { attendance } = useEventContext()
@@ -61,24 +75,9 @@ export const PaymentPage: FC = () => {
         header: "Betaling",
         cell: (info) => {
           const value = info.getValue()
+          const props = PAYMENT_STATUS_BADGE[getAttendeePaymentStatus(value)]
 
-          let badge: BadgeProps = {}
-
-          if (value.paymentRefundedAt) {
-            badge = { color: "gray", children: "Refundert" }
-          } else if (value.paymentChargedAt) {
-            badge = { color: "green", children: "Betalt" }
-          } else if (value.paymentReservedAt) {
-            badge = { color: "blue", children: "Reservert" }
-          } else if (!value.paymentRefundedAt && value.paymentRefundedById) {
-            badge = { color: "gray", children: "Kansellert" }
-          } else if (value.paymentDeadline) {
-            badge = { color: "red", children: "Ikke betalt" }
-          } else {
-            badge = { color: "gray", children: "Ingen betaling" }
-          }
-
-          return <Badge {...badge} />
+          return <Badge {...props} />
         },
       }),
       columnHelper.accessor((attendee) => attendee.paymentCheckoutUrl, {
@@ -106,7 +105,7 @@ export const PaymentPage: FC = () => {
         cell: (info) => {
           const attendee = info.getValue()
 
-          if (attendee.paymentChargedAt && !attendee.paymentRefundedAt) {
+          if (isAttendeeChargedAndUnrefunded(attendee)) {
             return (
               <Button
                 size="xs"

@@ -49,7 +49,7 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
     ? min([deregisterDeadline, chargeScheduleDate])
     : deregisterDeadline
 
-  const hasPaid = hasAttendeePaid(attendance, attendee) ?? false
+  const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice) ?? false
   const showDeregisterDeadlineNotice = hasPaid && !isEqual(actualDeregisterDeadline, deregisterDeadline)
 
   const dateBlocks = [
