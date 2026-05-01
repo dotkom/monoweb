@@ -2,7 +2,7 @@
 
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { env } from "@/env"
-import { type Icon, IconBuildingBank, IconCrown, IconLogin2 } from "@tabler/icons-react"
+import { type Icon, IconBuildingBank, IconBulb, IconCrown, IconLogin2 } from "@tabler/icons-react"
 import {
   IconArticle,
   IconBolt,
@@ -110,6 +110,12 @@ const links: MenuLink[] = [
         href: "https://onlinefondet.no",
         icon: IconBuildingBank,
         description: "Søk om økonomisk støtte fra Onlines egne fond.",
+      },
+      {
+        title: "Foreslå arrangement",
+        href: "https://docs.google.com/forms/d/e/1FAIpQLScbveu4vu-3JmZImLtfytnQKxCKfocwlcuUwuTOwssDUpt0_Q",
+        icon: IconBulb,
+        description: "Har du et ønske om et arrangement? Foreslå det her.",
       },
       {
         title: "Kvitteringskjema",
