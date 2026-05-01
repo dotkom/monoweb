@@ -2,13 +2,13 @@
 
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { useTRPC } from "@/utils/trpc/client"
+import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useSession } from "@dotkomonline/oauth2/react"
 import { Button, Text, TextInput, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLinkIdentityAuthorizeUrl } from "@dotkomonline/utils"
 import { IconAlertTriangle, IconCheck, IconCopy, IconLink, IconMail, IconPassword, IconX } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { secondsToMilliseconds } from "date-fns"
 import { redirect, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -16,6 +16,9 @@ export default function MinBrukerPage() {
   const fullPathname = useFullPathname()
   const searchParams = useSearchParams()
   const session = useSession()
+
+  const [newEmail, setNewEmail] = useState("")
+  const { icon: copyEmailIcon, copy: copyEmail } = useCopyToClipboard()
 
   const linkErrorMessage = searchParams.get("error") ?? null
   const linkStatus = searchParams.get("link_status")
@@ -43,25 +46,6 @@ export default function MinBrukerPage() {
       },
     })
   )
-
-  const [newEmail, setNewEmail] = useState("")
-  const [copyEmailIcon, setCopyEmailIcon] = useState<"copy" | "check">("copy")
-
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout> | null = null
-
-    if (copyEmailIcon === "check") {
-      timeout = setTimeout(() => {
-        setCopyEmailIcon("copy")
-      }, secondsToMilliseconds(2.5))
-    }
-
-    return () => {
-      if (timeout !== null) {
-        clearTimeout(timeout)
-      }
-    }
-  }, [copyEmailIcon])
 
   const requestEmailChange = useMutation(
     trpc.user.requestEmailChange.mutationOptions({
@@ -164,19 +148,17 @@ export default function MinBrukerPage() {
               <Text className="text-sm">{user.email}</Text>
               <Button
                 variant="unstyled"
+                aria-label="Kopier e-postadresse"
                 size="sm"
                 className="group -m-1.5 p-1.5 rounded-lg transition-colors hover:text-inherit hover:bg-gray-100"
                 onClick={() => {
-                  if (!user.email) {
-                    return
+                  if (user.email) {
+                    copyEmail(user.email)
                   }
-
-                  navigator.clipboard.writeText(user.email).then(() => {
-                    setCopyEmailIcon("check")
-                  })
                 }}
               >
                 <CopyEmailIcon
+                  aria-hidden
                   size="1em"
                   className={cn(
                     "shrink-0 transition-colors text-gray-500 dark:text-stone-400 group-hover:text-inherit",
