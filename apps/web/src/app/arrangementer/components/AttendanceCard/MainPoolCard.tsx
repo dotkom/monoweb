@@ -313,7 +313,7 @@ interface PaymentStatusProps {
 const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStatusProps) => {
   const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice)
 
-  if (!attendance.attendancePrice || hasPaid === null) {
+  if (hasPaid === null) {
     return null
   }
 
