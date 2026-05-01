@@ -59,6 +59,12 @@ const links: MenuLink[] = [
     title: "Om oss",
     items: [
       {
+        title: "Om Linjeforeningen",
+        href: "/om-linjeforeningen",
+        icon: IconBolt,
+        description: "Er du nysgjerrig på hva linjeforeningen Online egentlig er? Da er dette et godt sted å starte.",
+      },
+      {
         title: "Komiteer og grupper",
         href: "/grupper",
         icon: IconUsers,
@@ -69,12 +75,6 @@ const links: MenuLink[] = [
         href: "/interessegrupper",
         icon: IconUsers,
         description: "Er du medlem av en interessegruppe? Sjekk de ut her!",
-      },
-      {
-        title: "Om Linjeforeningen",
-        href: "/om-linjeforeningen",
-        icon: IconBolt,
-        description: "Informasjon om linjeforeningen Online.",
       },
       {
         title: "Hovedstyret",
@@ -129,16 +129,16 @@ const links: MenuLink[] = [
         description: "Utforsk linjeforeningens tilbud og ta kontakt.",
       },
       {
-        title: "Fakturaskjema",
-        href: "/bedrift/faktura",
-        icon: IconReceipt,
-        description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt.",
-      },
-      {
         title: "Interesseskjema",
         href: "/bedrift/interesse",
         icon: IconMessage,
         description: "Interessert i å vise bedriften din for studentene våre? Meld interesse!",
+      },
+      {
+        title: "Fakturaskjema",
+        href: "/bedrift/faktura",
+        icon: IconReceipt,
+        description: "Send inn fakturainformasjon for din bedrift med fakturaskjemaet vårt.",
       },
     ],
   },
