@@ -50,6 +50,9 @@ importers:
       '@fontsource/inter-tight':
         specifier: ^5.2.6
         version: 5.2.7
+      '@fontsource/roboto-mono':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@hello-pangea/dnd':
         specifier: ^18.0.1
         version: 18.0.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2089,6 +2092,9 @@ packages:
 
   '@fontsource/inter@5.2.8':
     resolution: {integrity: sha512-P6r5WnJoKiNVV+zvW2xM13gNdFhAEpQ9dQJHt3naLvfg+LkF2ldgSLiF4T41lf1SQCM9QmkqPTn4TH568IRagg==}
+
+  '@fontsource/roboto-mono@5.2.8':
+    resolution: {integrity: sha512-M0XPRcvkOKiTPooXwX7yJSNpuad3CPcQwsADBfnopz3apBs+VKI47pc42mlvAxJjNTRauu5rndSxHc8F52bR7Q==}
 
   '@formatjs/fast-memoize@3.1.2':
     resolution: {integrity: sha512-vPnriihkfK0lzoQGaXq+qXH23VsYyansRTkTgo2aTG0k1NjLFyZimFVdfj4C9JkSE5dm7CEngcQ5TTc1yAyBfQ==}
@@ -9926,6 +9932,8 @@ snapshots:
   '@fontsource/inter-tight@5.2.7': {}
 
   '@fontsource/inter@5.2.8': {}
+
+  '@fontsource/roboto-mono@5.2.8': {}
 
   '@formatjs/fast-memoize@3.1.2': {}
 

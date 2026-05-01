@@ -11,7 +11,7 @@ module.exports = {
       fontFamily: {
         title: ["var(--font-title, 'Figtree')"],
         body: ["var(--font-body, 'Inter')"],
-        mono: ["Roboto Mono", "monospace"],
+        mono: ["var(--font-mono, 'Roboto Mono')"],
       },
       colors: {
         inherit: "inherit",

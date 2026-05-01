@@ -14,6 +14,11 @@ import "@fontsource/inter-tight/500.css"
 import "@fontsource/inter-tight/600.css"
 import "@fontsource/inter-tight/700.css"
 import "@fontsource/inter-tight/800.css"
+import "@fontsource/roboto-mono/300.css"
+import "@fontsource/roboto-mono/400.css"
+import "@fontsource/roboto-mono/500.css"
+import "@fontsource/roboto-mono/600.css"
+import "@fontsource/roboto-mono/700.css"
 import { auth } from "@/lib/auth"
 import { server } from "@/lib/trpc-server"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
@@ -48,6 +53,7 @@ export const dynamic = "force-dynamic"
 
 const theme = createTheme({
   fontFamily: "Inter",
+  fontFamilyMonospace: "Roboto Mono",
   headings: {
     fontFamily: "Inter Tight",
   },
