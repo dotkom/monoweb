@@ -222,8 +222,12 @@ export const hasAttendeePaid = (
   attendancePrice: number | null,
   options?: { excludePaymentReservation?: boolean }
 ): boolean | null => {
-  if (attendancePrice === null || attendee === null) {
+  if (attendancePrice === null) {
     return null
+  }
+
+  if (attendee === null) {
+    return false
   }
 
   const hasBeenRefunded = attendee.paymentRefundedAt !== null
