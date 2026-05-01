@@ -1,4 +1,5 @@
 import type { User, Membership } from "@dotkomonline/types"
+import { isAttendeeChargedAndUnrefunded } from "@dotkomonline/types"
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type { GroupRepository } from "../group/group-repository"
 import type { AttendanceService } from "../event/attendance-service"
@@ -237,9 +238,6 @@ const CUSTOM_RELATION_MERGERS = {
   },
 
   // Handling FK constraint errors, payment cancellations, waitlist promotions, and notifications correctly.
-  //
-  // NOTE: We do not handle EVERY edge case here. There are some cases with payment where deregisterAttendee will not
-  // allow deregistering the attendee, and this will fail.
   attendee: async (handle: DBHandle, dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorAttendees = await handle.attendee.findMany({
       where: { userId: survivor.id },
@@ -253,6 +251,8 @@ const CUSTOM_RELATION_MERGERS = {
       select: {
         id: true,
         attendanceId: true,
+        paymentChargedAt: true,
+        paymentRefundedAt: true,
       },
     })
 
@@ -267,6 +267,12 @@ const CUSTOM_RELATION_MERGERS = {
 
     // We run deregistrations sequentially to ensure that the side effects are observable in the correct order.
     for (const attendee of conflictingConsumedAttendees) {
+      // `deregisterAttendee` blocks when the attendee has been charged without being refunded. We refund the attendee
+      // so we can properly deregister them.
+      if (isAttendeeChargedAndUnrefunded(attendee)) {
+        await dependencies.attendanceService.cancelAttendeePayment(handle, attendee.id, survivor.id)
+      }
+
       await dependencies.attendanceService.deregisterAttendee(handle, attendee.id, { ignoreDeregistrationWindow: true })
     }
 
