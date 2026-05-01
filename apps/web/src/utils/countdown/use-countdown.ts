@@ -1,7 +1,7 @@
 "use client"
 
 import { addSeconds, differenceInSeconds, intervalToDuration, isPast, secondsToMilliseconds } from "date-fns"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export type CountdownFormatterData =
   | "NOW"
@@ -16,11 +16,18 @@ export type CountdownFormatterData =
 
 type CountdownFormatter<T> = (countdown: CountdownFormatterData) => T
 
+/**
+ * Ticks once per second until `deadline`. The `formatter` is always the latest passed in (stored in a ref) so the
+ * timer is only reset when `deadline` changes — module-level formatters like `formatTimeLeft` are optional, not required.
+ */
 // biome-ignore lint/suspicious/noExplicitAny: This should be any
 export function useCountdown<Formatter extends CountdownFormatter<any> = CountdownFormatter<string>>(
   deadline: Date | null,
   formatter: Formatter = formatTimeLeft as Formatter
 ): ReturnType<Formatter> | null {
+  const formatterReference = useRef(formatter)
+  formatterReference.current = formatter
+
   const initialCountdownValue = deadline && formatter(getFormatterData(deadline))
   const [countdown, setCountdown] = useState<ReturnType<Formatter> | null>(initialCountdownValue)
 
@@ -44,7 +51,7 @@ export function useCountdown<Formatter extends CountdownFormatter<any> = Countdo
     const tickCountdown = (now?: Date) => {
       const data = getFormatterData(deadline, now)
 
-      setCountdown(formatter(data))
+      setCountdown(formatterReference.current(data))
 
       if (data === "NOW") {
         destroy()
@@ -68,17 +75,13 @@ export function useCountdown<Formatter extends CountdownFormatter<any> = Countdo
     return () => {
       destroy()
     }
-  }, [deadline, formatter])
+  }, [deadline])
 
   if (deadline && isPast(deadline)) {
-    return formatter("NOW")
+    return formatterReference.current("NOW")
   }
 
   return countdown
-}
-
-function zeroPad(n: number, digits = 2) {
-  return n.toString().padStart(digits, "0")
 }
 
 function getFormatterData(target: Date, now: Date = new Date()): CountdownFormatterData {
@@ -105,6 +108,10 @@ function getFormatterData(target: Date, now: Date = new Date()): CountdownFormat
   return { years, months, days, hours, minutes, seconds }
 }
 
+export function zeroPad(n: number, digits = 2) {
+  return n.toString().padStart(digits, "0")
+}
+
 export function formatTimeLeft(countdown: CountdownFormatterData): string {
   if (countdown === "NOW") {
     return "Nå"
@@ -127,33 +134,4 @@ export function formatTimeLeft(countdown: CountdownFormatterData): string {
   }
 
   return `${zeroPad(countdown.minutes)}:${zeroPad(countdown.seconds)}`
-}
-
-export function formatNumericalTimeLeft(countdown: CountdownFormatterData): string {
-  if (countdown === "NOW") {
-    return "00:00:00"
-  }
-
-  const years = countdown.years ? zeroPad(countdown.years, 2) : null
-  const months = countdown.months ? zeroPad(countdown.months, 2) : null
-  const days = countdown.days ? zeroPad(countdown.days, 2) : null
-  const hours = zeroPad(countdown.hours)
-  const minutes = zeroPad(countdown.minutes)
-  const seconds = zeroPad(countdown.seconds)
-
-  let string = ""
-
-  if (years) {
-    string += `${years} år `
-  }
-
-  if (months) {
-    string += `${months} mnd `
-  }
-
-  if (days) {
-    string += `${days} dgr `
-  }
-
-  return `${string}${hours}:${minutes}:${seconds}`
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
-import { useCountdown } from "@/utils/use-countdown"
+import { useCountdown } from "@/utils/countdown/use-countdown"
 import {
   type Attendance,
   type AttendanceSummary,

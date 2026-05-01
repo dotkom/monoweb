@@ -1,6 +1,8 @@
 "use client"
+
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { formatNumericalTimeLeft, useCountdown } from "@/utils/use-countdown"
+import { formatNumericalTimeLeft } from "@/utils/countdown/formatNumericalTimeLeft"
+import { useCountdown } from "@/utils/countdown/use-countdown"
 import { TZDate } from "@date-fns/tz"
 import { Text } from "@dotkomonline/ui"
 import { IconArrowUpRight } from "@tabler/icons-react"
