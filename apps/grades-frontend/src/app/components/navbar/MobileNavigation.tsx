@@ -3,7 +3,6 @@
 import type { Locale } from "@/i18n/locale"
 import { setLocale } from "@/i18n/set-locale"
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
@@ -17,13 +16,18 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
+import { IconActionButton, PillActionButton } from "../action-button/ActionButton"
 
 export const MobileNavigation = () => {
   const t = useTranslations("Navbar")
+  const tTheme = useTranslations("ThemePopover")
+  const tLocale = useTranslations("LocalePopover")
   const pathname = usePathname()
   const locale = useLocale()
   const { theme, setTheme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
+
+  const isCourseListPageRoute = pathname === "/emner"
 
   const onThemeChange = (newTheme: "light" | "dark" | "system") => {
     if (newTheme === theme) {
@@ -43,66 +47,91 @@ export const MobileNavigation = () => {
 
   return (
     <div className="sm:hidden">
-      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger className="flex items-center">
-          <IconMenu2 />
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
+        <DropdownMenuTrigger asChild>
+          <IconActionButton aria-label={isOpen ? t("closeNavigation") : t("openNavigation")}>
+            <IconMenu2 size={24} />
+          </IconActionButton>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
-          align="start"
+          align="center"
           side="bottom"
           sideOffset={8}
-          className="sm:hidden w-[calc(100vw-2rem)] mx-4 mt-3 z-50 shadow-sm animate-none! border-neutral-200 p-4"
+          className={cn(
+            "sm:hidden w-[calc(var(--radix-popper-available-width)-2rem)]",
+            "mx-4 mt-3",
+            "rounded-2xl border border-neutral-200/80 dark:border-stone-700/80",
+            "bg-white/90 dark:bg-stone-800/90 backdrop-blur-lg",
+            "shadow-lg",
+            "p-3"
+          )}
         >
           <nav className="max-h-[calc(100dvh-8rem)] overflow-y-auto">
-            <div className="space-y-5">
+            <div className="space-y-4">
               <section>
                 <Link
                   href="/emner"
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "flex items-center rounded-md px-3 py-2 font-medium transition-colors gap-2",
-                    pathname === "/emner"
-                      ? "bg-neutral-100 text-neutral-900"
-                      : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
+                    "group relative flex items-center justify-between gap-2",
+                    "rounded-md px-3 py-2.5 text-[15px] font-medium",
+                    "transition-colors",
+                    isCourseListPageRoute
+                      ? "bg-neutral-100 text-neutral-900 dark:bg-stone-700 dark:text-white hover:bg-neutral-200 dark:hover:bg-stone-600"
+                      : "text-neutral-800 dark:text-white hover:bg-neutral-100 dark:hover:bg-stone-700"
                   )}
                 >
-                  {t("courses")}
+                  <span>{t("courses")}</span>
                 </Link>
 
-                <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />
+                <DropdownMenuSeparator className="my-3 bg-neutral-200/80 dark:bg-stone-700/80" />
               </section>
 
-              <section className="flex flex-col gap-4 ml-3">
-                <div className="flex flex-row gap-5">
-                  <Text className="flex items-center gap-1.5 text-sm text-neutral-700">
+              <section className="flex flex-col gap-6 px-1">
+                <div className="flex flex-col gap-2">
+                  <Text className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-neutral-600 dark:text-stone-300">
                     <IconPalette size={16} />
                     {t("theme")}
                   </Text>
-                  <div className="flex flex-row gap-3">
-                    <ToggleButton onClick={() => onThemeChange("light")} isActive={theme === "light"}>
+
+                  <div className="flex flex-row gap-2">
+                    <IconActionButton
+                      onClick={() => onThemeChange("light")}
+                      isActive={theme === "light"}
+                      aria-label={tTheme("light")}
+                    >
                       <IconSun size={16} />
-                    </ToggleButton>
-                    <ToggleButton onClick={() => onThemeChange("dark")} isActive={theme === "dark"}>
+                    </IconActionButton>
+                    <IconActionButton
+                      onClick={() => onThemeChange("dark")}
+                      isActive={theme === "dark"}
+                      aria-label={tTheme("dark")}
+                    >
                       <IconMoon size={16} />
-                    </ToggleButton>
-                    <ToggleButton onClick={() => onThemeChange("system")} isActive={theme === "system"}>
+                    </IconActionButton>
+                    <IconActionButton
+                      onClick={() => onThemeChange("system")}
+                      isActive={theme === "system"}
+                      aria-label={tTheme("system")}
+                    >
                       <IconDeviceMobile size={16} />
-                    </ToggleButton>
+                    </IconActionButton>
                   </div>
                 </div>
-                <div className="flex flex-row gap-5">
-                  <Text className="flex items-center gap-1.5 text-sm text-neutral-700">
+
+                <div className="flex flex-col gap-2">
+                  <Text className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-neutral-600 dark:text-stone-300">
                     <IconWorld size={16} />
                     {t("language")}
                   </Text>
-                  <div className="flex flex-row gap-3">
-                    <ToggleButton onClick={() => onLocaleChange("no")} isActive={locale === "no"}>
-                      {t("norwegian")}
-                    </ToggleButton>
-                    <ToggleButton onClick={() => onLocaleChange("en")} isActive={locale === "en"}>
-                      {t("english")}
-                    </ToggleButton>
+                  <div className="flex flex-row gap-2">
+                    <PillActionButton onClick={() => onLocaleChange("no")} isActive={locale === "no"}>
+                      {tLocale("norwegian")}
+                    </PillActionButton>
+                    <PillActionButton onClick={() => onLocaleChange("en")} isActive={locale === "en"}>
+                      {tLocale("english")}
+                    </PillActionButton>
                   </div>
                 </div>
               </section>
@@ -111,26 +140,5 @@ export const MobileNavigation = () => {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
-}
-
-interface ToggleButtonProps {
-  isActive?: boolean
-  onClick: () => void
-  children: React.ReactNode
-}
-
-const ToggleButton = ({ isActive, onClick, children }: ToggleButtonProps) => {
-  return (
-    <Button
-      variant="text"
-      onClick={onClick}
-      className={cn(
-        "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-stone-600 hover:text-neutral-900",
-        isActive && "font-medium bg-neutral-100"
-      )}
-    >
-      {children}
-    </Button>
   )
 }

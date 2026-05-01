@@ -33,16 +33,22 @@
   },
   "Navbar": {
     "courses": "Courses",
+    "openNavigation": "Open navigation",
+    "closeNavigation": "Close navigation",
     "theme": "Theme",
     "language": "Language",
-    "norwegian": "Norsk",
-    "english": "English",
     "courseSearchPlaceholder": "Search for courses..."
   },
   "ThemePopover": {
+    "ariaLabel": "Theme: {theme}",
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "LocalePopover": {
+    "ariaLabel": "Language: {language}",
+    "norwegian": "Norsk",
+    "english": "English"
   },
   "CourseCard": {
     "lastTaught": "Last taught {year}",
@@ -51,6 +57,8 @@
   },
   "CourseFilters": {
     "ariaLabel": "Course filters",
+    "openAriaLabel": "Open filters",
+    "closeAriaLabel": "Close filters",
     "drawerTitle": "Filter courses",
     "semester": "Semester",
     "teachingLanguage": "Language",
@@ -70,9 +78,7 @@
       "C": "Minimum C",
       "D": "Minimum D",
       "E": "Minimum E"
-    },
-    "openAriaLabel": "Open filters",
-    "closeAriaLabel": "Close filters"
+    }
   },
   "CourseAutocomplete": {
     "placeholder": "Search for courses...",

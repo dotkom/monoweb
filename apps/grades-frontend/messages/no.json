@@ -31,10 +31,24 @@
   "Common": {
     "Semester": "Semester"
   },
+  "Navbar": {
+    "courses": "Emner",
+    "openNavigation": "Åpne meny",
+    "closeNavigation": "Lukk meny",
+    "theme": "Fargetema",
+    "language": "Språk",
+    "courseSearchPlaceholder": "Søk etter emner..."
+  },
   "ThemePopover": {
+    "ariaLabel": "Tema: {theme}",
     "light": "Lys",
     "dark": "Mørk",
     "system": "System"
+  },
+  "LocalePopover": {
+    "ariaLabel": "Språk: {language}",
+    "norwegian": "Norsk",
+    "english": "English"
   },
   "CourseCard": {
     "lastTaught": "Sist undervist {year}",
@@ -43,6 +57,8 @@
   },
   "CourseFilters": {
     "ariaLabel": "Emnefiltre",
+    "openAriaLabel": "Åpne filtre",
+    "closeAriaLabel": "Lukk filtre",
     "drawerTitle": "Filtrer emner",
     "semester": "Semester",
     "teachingLanguage": "Språk",
@@ -62,9 +78,7 @@
       "C": "Minst C",
       "D": "Minst D",
       "E": "Minst E"
-    },
-    "openAriaLabel": "Åpne filtre",
-    "closeAriaLabel": "Lukk filtre"
+    }
   },
   "CourseAutocomplete": {
     "placeholder": "Søk etter emner...",

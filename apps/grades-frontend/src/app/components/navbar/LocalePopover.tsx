@@ -1,15 +1,16 @@
 "use client"
 
 import { setLocale } from "@/i18n/set-locale"
-import { Popover, PopoverContent, PopoverPortal, PopoverTrigger, Text } from "@dotkomonline/ui"
+import { cn, Popover, PopoverContent, PopoverPortal, PopoverTrigger, Text } from "@dotkomonline/ui"
 import { IconWorld } from "@tabler/icons-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useState } from "react"
 import { PopoverOptionButton } from "./PopoverOptionButton"
+import { ActionButton } from "../action-button/ActionButton"
 
 export const LocalePopover = () => {
   const locale = useLocale()
-  const t = useTranslations("Navbar")
+  const t = useTranslations("LocalePopover")
 
   const [languagePopoverOpen, setLanguagePopoverOpen] = useState(false)
 
@@ -26,9 +27,14 @@ export const LocalePopover = () => {
 
   return (
     <Popover open={languagePopoverOpen} onOpenChange={setLanguagePopoverOpen}>
-      <PopoverTrigger className="flex items-center justify-center rounded-lg bg-transparent p-2 text-neutral-800 hover:bg-neutral-100 gap-2">
-        <IconWorld size={20} stroke={1.8} />
-        {currentLanguage}
+      <PopoverTrigger asChild>
+        <ActionButton
+          aria-label={t("ariaLabel", { language: currentLanguage })}
+          className={cn("inline-flex items-center justify-center gap-2 px-3.5 py-2")}
+        >
+          <IconWorld size={20} stroke={1.8} />
+          {currentLanguage}
+        </ActionButton>
       </PopoverTrigger>
       <PopoverPortal>
         <PopoverContent className="flex flex-col p-1 min-w-30">
