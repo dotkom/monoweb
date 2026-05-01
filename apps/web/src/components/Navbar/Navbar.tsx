@@ -113,7 +113,7 @@ const links: MenuLink[] = [
       },
       {
         title: "Foreslå arrangement",
-        href: "https://docs.google.com/forms/d/e/1FAIpQLScbveu4vu-3JmZImLtfytnQKxCKfocwlcuUwuTOwssDUpt0_Q",
+        href: "https://docs.google.com/forms/d/e/1FAIpQLScbveu4vu-3JmZImLtfytnQKxCKfocwlcuUwuTOwssDUpt0_Q/viewform",
         icon: IconBulb,
         description: "Har du et ønske om et arrangement? Foreslå det her.",
       },
