@@ -186,12 +186,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const buttonContent = isLoading ? (
     <IconLoader2 className="shrink-0 size-6 animate-spin" />
   ) : (
-    <div
-      className={cn(
-        "flex flex-row gap-2 items-center",
-        disabled ? "text-gray-800 dark:text-stone-300" : "text-black dark:text-white"
-      )}
-    >
+    <>
       {disabled ? (
         <IconLock className="shrink-0 size-[1.25em]" />
       ) : attendee ? (
@@ -199,8 +194,11 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
       ) : (
         <IconUserPlus className="shrink-0 size-[1.25em]" />
       )}
-      <Text className="font-medium">{buttonText}</Text>
-    </div>
+
+      <Text element="span" className="font-medium">
+        {buttonText}
+      </Text>
+    </>
   )
 
   const registrationButton = (
@@ -209,7 +207,8 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
       disabled={disabled}
       icon={buttonIcon}
       className={cn(
-        "rounded-lg h-fit min-h-[4rem] flex-col gap-1",
+        "rounded-lg h-fit min-h-16",
+        disabled && "text-gray-800 dark:text-stone-300",
         getButtonColor(disabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
       )}
     >

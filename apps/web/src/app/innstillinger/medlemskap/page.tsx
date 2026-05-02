@@ -120,10 +120,8 @@ export default function MedlemskapPage() {
                 color="brand"
                 className="w-fit px-5 py-3.5 rounded-lg"
               >
-                <div className="flex gap-2 items-center">
-                  <FeideIcon size={16} variant="white" />
-                  <Text className="text-sm">Logg inn med FEIDE</Text>
-                </div>
+                <FeideIcon size={16} variant="white" />
+                <Text className="text-sm">Logg inn med FEIDE</Text>
               </Button>
             </div>
           </div>
@@ -166,10 +164,8 @@ export default function MedlemskapPage() {
                 color="brand"
                 className="w-fit p-4 rounded-lg font-medium"
               >
-                <div className="flex gap-2 items-center">
-                  <Text className="text-sm">Gå til Min bruker</Text>
-                  <IconArrowUpRight className="size-4" />
-                </div>
+                <Text className="text-sm">Gå til Min bruker</Text>
+                <IconArrowUpRight className="size-4" />
               </Button>
             </div>
           </div>
