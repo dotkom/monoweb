@@ -152,15 +152,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
           {pool.title}
         </Title>
 
-        {pool.mergeDelayHours && pool.mergeDelayHours > 0 && (
-          <DelayPill
-            mergeDelayHours={pool.mergeDelayHours}
-            className={cn(
-              attendee?.reserved === true && "bg-green-300/50 dark:bg-green-700/50",
-              attendee?.reserved === false && "bg-yellow-300/50 dark:bg-indigo-700/50"
-            )}
-          />
-        )}
+        {pool.mergeDelayHours && pool.mergeDelayHours > 0 && <DelayPill mergeDelayHours={pool.mergeDelayHours} />}
       </div>
 
       <div className="flex flex-col min-h-40 gap-6 p-3 rounded-lg items-center text-center justify-center w-full">
@@ -252,10 +244,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
 interface DelayPillProps {
   mergeDelayHours: number | null
-  className?: string
 }
 
-const DelayPill = ({ mergeDelayHours, className }: DelayPillProps) => {
+const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
   const content = mergeDelayHours
     ? `Denne gruppen får plasser ${mergeDelayHours} timer etter påmeldingsstart`
     : "Denne påmeldingsgruppen kan få plasser senere"
@@ -263,8 +254,8 @@ const DelayPill = ({ mergeDelayHours, className }: DelayPillProps) => {
   return (
     <Tooltip delayDuration={100}>
       <TooltipTrigger asChild>
-        <div className={cn("flex items-center gap-0.5 px-1 rounded-md bg-gray-300/50 dark:bg-stone-600/75", className)}>
-          <IconClock className="size-[1.25em]" />
+        <div className="flex items-center gap-1">
+          <IconClock className="size-4" />
           <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
         </div>
       </TooltipTrigger>

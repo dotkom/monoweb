@@ -184,7 +184,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   }
 
   const buttonContent = isLoading ? (
-    <IconLoader2 className="size-6 animate-spin py-2" />
+    <IconLoader2 className="shrink-0 size-6 animate-spin" />
   ) : (
     <div
       className={cn(
@@ -193,11 +193,11 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
       )}
     >
       {disabled ? (
-        <IconLock className="size-[1.25em]" />
+        <IconLock className="shrink-0 size-[1.25em]" />
       ) : attendee ? (
-        <IconUserMinus className="size-[1.25em]" />
+        <IconUserMinus className="shrink-0 size-[1.25em]" />
       ) : (
-        <IconUserPlus className="size-[1.25em]" />
+        <IconUserPlus className="shrink-0 size-[1.25em]" />
       )}
       <Text className="font-medium">{buttonText}</Text>
     </div>

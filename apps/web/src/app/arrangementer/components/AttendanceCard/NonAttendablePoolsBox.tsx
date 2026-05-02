@@ -85,7 +85,7 @@ const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProp
         </Text>
 
         {unreservedAttendeeCount > 0 && (
-          <Text className="text-gray-900 dark:text-stone-400">
+          <Text className="text-gray-600 dark:text-stone-400">
             +<RollingNumber value={unreservedAttendeeCount} /> i kø
           </Text>
         )}
@@ -102,8 +102,8 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
   return (
     <Tooltip delayDuration={100}>
       <TooltipTrigger asChild>
-        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-gray-200 dark:bg-stone-600 text-gray-900 dark:text-stone-50">
-          <IconClock className="size-[1.25em]" />
+        <div className="flex items-center gap-1">
+          <IconClock className="size-3.5" />
           <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
         </div>
       </TooltipTrigger>

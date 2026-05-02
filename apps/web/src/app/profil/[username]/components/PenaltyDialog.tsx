@@ -1,4 +1,4 @@
-import { PenaltyRules } from "@/utils/penalty-rules"
+import { PenaltyRules } from "@/components/PenaltyRules/PenaltyRules"
 import {
   AlertDialog,
   AlertDialogCancel,

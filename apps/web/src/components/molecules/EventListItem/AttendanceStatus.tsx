@@ -11,7 +11,7 @@ import {
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
+import { IconCheck, IconClockDollar, IconHourglassEmpty, IconLock, IconUsers } from "@tabler/icons-react"
 import { formatDistanceToNowStrict, interval, isFuture, isWithinInterval } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
@@ -70,7 +70,11 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
             {hasCapacity && `/${capacity}`}
           </Text>
 
-          {isReserved ? <IconCheck className="size-4" /> : isUnreserved ? <IconClock className="size-4" /> : null}
+          {isReserved ? (
+            <IconCheck className="size-4" />
+          ) : isUnreserved ? (
+            <IconHourglassEmpty className="size-4" />
+          ) : null}
         </div>
 
         {showLock && (
