@@ -1,5 +1,6 @@
+import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown"
 import { RollingNumber } from "@/components/RollingNumber"
-import { useCountdown } from "@/utils/use-countdown"
+import { useCountdown } from "@/utils/countdown/use-countdown"
 import {
   type Attendance,
   type Attendee,
@@ -48,12 +49,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const now = new Date()
   const attendee = getAttendee(attendance, user)
 
-  const registerCountdownText = useCountdown(attendance.registerStart)
+  const registerCountdownDisplay = useCountdown(attendance.registerStart, formatRollingCountdown)
   const registerCountdownInterval = interval(subMinutes(attendance.registerStart, 15), attendance.registerStart)
   const isWithinRegisterCountdown = isWithinInterval(now, registerCountdownInterval)
   const showRegisterCountdown = isWithinRegisterCountdown && !attendee
 
-  const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null)
+  const paymentCountdownDisplay = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
     attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
   const isWithinPaymentCountdown =
@@ -174,7 +175,11 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
               >
                 <RollingNumber value={reservedAttendeeCount} />
                 {/* Don't show capacity for merge pools (capacity = 0) */}
-                {pool.capacity > 0 && `/${pool.capacity}`}
+                {pool.capacity > 0 && (
+                  <>
+                    /<span className="font-mono">{pool.capacity}</span>
+                  </>
+                )}
               </Text>
 
               {hasWaitlist && (
@@ -203,8 +208,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         {showRegisterCountdown && (
           <div className="flex flex-col gap-1 items-center">
             <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
-            <Text className="text-4xl font-medium tabular-nums" suppressHydrationWarning>
-              {registerCountdownText}
+            <Text className="text-4xl font-medium" suppressHydrationWarning>
+              {registerCountdownDisplay}
             </Text>
           </div>
         )}
@@ -222,8 +227,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
               <div className="relative flex flex-row justify-between items-center w-full">
                 <div className="flex flex-col gap-1 items-center justify-center w-full">
                   <Text className="text-lg font-medium">Du må betale innen</Text>
-                  <Text suppressHydrationWarning className="text-4xl font-medium tabular-nums">
-                    {paymentCountdownText}
+                  <Text suppressHydrationWarning className="text-4xl font-medium">
+                    {paymentCountdownDisplay}
                   </Text>
                 </div>
                 <IconArrowUpRight className="size-[1.25em] [@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0" />

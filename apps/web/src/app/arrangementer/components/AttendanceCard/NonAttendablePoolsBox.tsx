@@ -1,3 +1,4 @@
+import { RollingNumber } from "@/components/RollingNumber"
 import {
   type Attendance,
   type AttendancePool,
@@ -75,12 +76,18 @@ const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProp
 
       <div className="flex flex-row gap-2 items-center">
         <Text>
-          {reservedAttendeeCount}
-          {pool.capacity > 0 && `/${pool.capacity}`}
+          <RollingNumber value={reservedAttendeeCount} />
+          {pool.capacity > 0 && (
+            <>
+              /<span className="font-mono">{pool.capacity}</span>
+            </>
+          )}
         </Text>
 
         {unreservedAttendeeCount > 0 && (
-          <Text className="text-gray-900 dark:text-stone-400">+{unreservedAttendeeCount} i kø</Text>
+          <Text className="text-gray-900 dark:text-stone-400">
+            +<RollingNumber value={unreservedAttendeeCount} /> i kø
+          </Text>
         )}
       </div>
     </div>
