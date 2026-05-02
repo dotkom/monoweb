@@ -42,12 +42,20 @@ export type CourseWrite = z.infer<typeof CourseWriteSchema>
 
 export type CourseFilterSort = z.infer<typeof CourseFilterSortSchema>
 export const CourseFilterSortSchema = z.enum(["AVERAGE_GRADE", "PASS_RATE", "CANDIDATE_COUNT"])
+
+export const MinLetterGradeFilterSchema = z.enum(["A", "B", "C", "D", "E"])
+export type MinLetterGradeFilter = z.infer<typeof MinLetterGradeFilterSchema>
+
 export type CourseFilterQuery = z.infer<typeof CourseFilterQuerySchema>
 export const CourseFilterQuerySchema = z
   .object({
     bySearch: buildSearchFilter(),
     orderBy: createSortOrder(),
     sortBy: buildAnyOfFilter(CourseFilterSortSchema),
+    bySemester: buildAnyOfFilter(schemas.SemesterSchema),
+    byTeachingLanguage: buildAnyOfFilter(schemas.TeachingLanguageSchema),
+    byCampus: buildAnyOfFilter(schemas.CampusSchema),
+    byMinGrade: MinLetterGradeFilterSchema.nullish(),
   })
   .partial()
 
@@ -72,56 +80,6 @@ export type CourseCampus = z.infer<typeof CourseCampusSchema>
 export const TeachingLanguageSchema = schemas.TeachingLanguageSchema
 export type TeachingLanguage = z.infer<typeof TeachingLanguageSchema>
 
-export const mapCourseSemesterToLabel = (semester: Semester) => {
-  switch (semester) {
-    case "AUTUMN":
-      return "Høst"
-    case "SPRING":
-      return "Vår"
-    case "SUMMER":
-      return "Sommer"
-  }
-}
-
-export const mapCourseStudyLevelToLabel = (studyLevel: Course["studyLevel"]) => {
-  switch (studyLevel) {
-    case "BACHELOR_ADVANCED":
-      return "Bachelor (avansert)"
-    case "CONTINUING_EDUCATION":
-      return "Videreutdanning"
-    case "FOUNDATION":
-      return "Grunnkurs"
-    case "INTERMEDIATE":
-      return "Mellomnivå"
-    case "MASTER":
-      return "Master"
-    case "PHD":
-      return "PhD"
-    case "UNKNOWN":
-      return "Ukjent"
-  }
-}
-
-export const mapCourseCampusToLabel = (campus: CourseCampus) => {
-  switch (campus) {
-    case "TRONDHEIM":
-      return "Trondheim"
-    case "ALESUND":
-      return "Ålesund"
-    case "GJOVIK":
-      return "Gjøvik"
-  }
-}
-
-export const mapTaughtLanguageToShortLabel = (language: TeachingLanguage) => {
-  switch (language) {
-    case "NORWEGIAN":
-      return "NO"
-    case "ENGLISH":
-      return "EN"
-  }
-}
-
 export const mapAverageGradeToLetterGrade = (averageGrade: Course["averageGrade"]) => {
   const roundedAverage = Math.round(averageGrade)
 
@@ -138,5 +96,20 @@ export const mapAverageGradeToLetterGrade = (averageGrade: Course["averageGrade"
       return "E"
     case 0:
       return "F"
+  }
+}
+
+export const mapLetterGradeFilterToMinAverageGrade = (minGrade: MinLetterGradeFilter): number => {
+  switch (minGrade) {
+    case "A":
+      return 4.5
+    case "B":
+      return 3.5
+    case "C":
+      return 2.5
+    case "D":
+      return 1.5
+    case "E":
+      return 0.5
   }
 }

@@ -9,15 +9,27 @@
       "TRONDHEIM": "Trondheim",
       "GJOVIK": "Gjøvik",
       "ALESUND": "Ålesund"
+    },
+    "TeachingLanguage": {
+      "NORWEGIAN": "Norsk",
+      "ENGLISH": "Engelsk",
+      "shortLabel": {
+        "NORWEGIAN": "NO",
+        "ENGLISH": "EN"
+      }
+    },
+    "StudyLevel": {
+      "BACHELOR_ADVANCED": "Bachelor (avansert)",
+      "CONTINUING_EDUCATION": "Videreutdanning",
+      "FOUNDATION": "Grunnkurs",
+      "INTERMEDIATE": "Mellomnivå",
+      "MASTER": "Master",
+      "PHD": "PhD",
+      "UNKNOWN": "Ukjent"
     }
   },
-  "Navbar": {
-    "courses": "Emner",
-    "theme": "Fargetema",
-    "language": "Språk",
-    "norwegian": "Norsk",
-    "english": "English",
-    "courseSearchPlaceholder": "Søk etter emner..."
+  "Common": {
+    "Semester": "Semester"
   },
   "ThemePopover": {
     "light": "Lys",
@@ -28,5 +40,30 @@
     "lastTaught": "Sist undervist {year}",
     "passFail": "Bestått / ikke bestått",
     "passRate": "{rate}% bestått"
+  },
+  "CourseFilters": {
+    "ariaLabel": "Emnefiltre",
+    "drawerTitle": "Filtrer emner",
+    "semester": "Semester",
+    "teachingLanguage": "Språk",
+    "campus": "Campus",
+    "minGrade": "Karakter",
+    "sortBy": "Sorter etter",
+    "sortOptions": {
+      "nameAsc": "Navn (A-Z)",
+      "nameDesc": "Navn (Z-A)",
+      "gradeAsc": "Karakter (lav til høy)",
+      "gradeDesc": "Karakter (høy til lav)"
+    },
+    "minGradeOptions": {
+      "ALL": "Alle",
+      "A": "A",
+      "B": "Minst B",
+      "C": "Minst C",
+      "D": "Minst D",
+      "E": "Minst E"
+    },
+    "openAriaLabel": "Åpne filtre",
+    "closeAriaLabel": "Lukk filtre"
   }
 }

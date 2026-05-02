@@ -10,7 +10,6 @@ export default async function App() {
       orderBy: "desc",
     },
   })
-  const grades = courses.length > 0 ? await server.grade.findGrades.query(courses[0].code) : []
 
   return (
     <div>

@@ -1,4 +1,4 @@
-import { Prisma, type DBHandle } from "@dotkomonline/grades-db"
+import { type DBHandle, Prisma } from "@dotkomonline/grades-db"
 import type { Pageable } from "@dotkomonline/utils"
 import { parseOrReport } from "../../invariant"
 import {
@@ -11,6 +11,7 @@ import {
   DepartmentSchema,
   type Faculty,
   FacultySchema,
+  mapLetterGradeFilterToMinAverageGrade,
 } from "./course-types"
 
 export interface CourseRepository {
@@ -39,13 +40,36 @@ export function getCourseRepository(): CourseRepository {
           ? sortBy.map((sortKey) => `"${sortColumnMap[sortKey]}" ${sortDirection}`).join(", ")
           : '"id" DESC'
 
-      const bySearch = query.bySearch
+      const bySearch = query.bySearch?.trim()
       const searchContains = bySearch ? `%${bySearch}%` : undefined
 
       const searchWhereSql = searchContains
         ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "name_no" ILIKE ${searchContains} OR "name_en" ILIKE ${searchContains})`
         : Prisma.empty
       const cursorWhereSql = page.cursor ? Prisma.sql`AND "id" < ${page.cursor}` : Prisma.empty
+
+      const bySemester = query.bySemester ?? []
+      const byTeachingLanguage = query.byTeachingLanguage ?? []
+      const byCampus = query.byCampus ?? []
+      const byMinGrade = query.byMinGrade
+
+      const semesterWhereSql =
+        bySemester.length > 0
+          ? Prisma.sql`AND "taught_semesters" && ARRAY[${Prisma.join(bySemester)}]::"semester"[]`
+          : Prisma.empty
+
+      const teachingLanguageWhereSql =
+        byTeachingLanguage.length > 0
+          ? Prisma.sql`AND "teaching_languages" && ARRAY[${Prisma.join(byTeachingLanguage)}]::"teaching_language"[]`
+          : Prisma.empty
+
+      const campusWhereSql =
+        byCampus.length > 0 ? Prisma.sql`AND "campuses" && ARRAY[${Prisma.join(byCampus)}]::"campus"[]` : Prisma.empty
+
+      const minGradeWhereSql =
+        byMinGrade != null
+          ? Prisma.sql`AND "average_grade" >= ${mapLetterGradeFilterToMinAverageGrade(byMinGrade)}`
+          : Prisma.empty
 
       const courses = await handle.$queryRaw<Course[]>`
         SELECT
@@ -81,10 +105,14 @@ export function getCourseRepository(): CourseRepository {
         WHERE 1 = 1
         ${searchWhereSql}
         ${cursorWhereSql}
+        ${semesterWhereSql}
+        ${teachingLanguageWhereSql}
+        ${campusWhereSql}
+        ${minGradeWhereSql}
         ORDER BY
           -- To update ranking, copy-paste rank_search function from
-          -- 20260415160933_add_course_ranking_function into a new migration
-          rank_search(code, name_no, name_en, last_year_taught, ${bySearch ?? null}) ASC,
+          -- 20260428154840_add_course_ranking_function into a new migration
+          rank_search(code, name_no, name_en, last_year_taught, ${bySearch || null}) ASC,
           ${Prisma.raw(orderByClause)}
         LIMIT ${page.take}
       `

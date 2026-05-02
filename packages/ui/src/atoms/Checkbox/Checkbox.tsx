@@ -6,16 +6,17 @@ import { Label } from "../Label/Label"
 
 export type CheckboxProps = ComponentPropsWithRef<typeof CheckboxPrimitive.Root> & {
   label?: string
+  labelClassName?: string
 }
 
-export const Checkbox: FC<CheckboxProps> = ({ label, className, ref, ...props }) => {
+export const Checkbox: FC<CheckboxProps> = ({ label, className, labelClassName, ref, ...props }) => {
   return (
     <div className="flex items-center gap-2">
       <CheckboxPrimitive.Root
         ref={ref}
         {...props}
         className={cn(
-          "peer h-6 w-6 shrink-0 rounded-sm border transition-all duration-150 ease-in-out",
+          "peer size-5 shrink-0 rounded-sm border transition-all duration-150 ease-in-out",
           "border-gray-400 bg-white hover:border-gray-600",
           "focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2",
           "data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-200",
@@ -27,12 +28,15 @@ export const Checkbox: FC<CheckboxProps> = ({ label, className, ref, ...props })
         )}
       >
         <CheckboxPrimitive.Indicator className="flex items-center justify-center text-blue-900 dark:text-sky-100">
-          <IconCheck className="size-5" />
+          <IconCheck className="size-4" />
         </CheckboxPrimitive.Indicator>
       </CheckboxPrimitive.Root>
 
       {label && (
-        <Label htmlFor={props.id} className="text-base text-gray-800 dark:text-stone-200 select-none cursor-pointer">
+        <Label
+          htmlFor={props.id}
+          className={cn("text-base text-gray-800 dark:text-stone-200 select-none cursor-pointer", labelClassName)}
+        >
           {label}
         </Label>
       )}
