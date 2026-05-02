@@ -11,19 +11,59 @@ interface RollingNumberProps {
   minDigits?: number
 }
 
+interface DigitSlot {
+  key: string
+  previous: string
+  current: string
+  isRolling: boolean
+  rollKey: number
+}
+
 const ROLLING_NUMBER_ANIMATION_MS = 260
 
 const formatDisplayedValue = (value: number, minDigits?: number) => {
-  const stringValue = String(value)
-
   if (minDigits === undefined) {
-    return stringValue
+    return value.toString()
   }
 
-  return stringValue.padStart(minDigits, "0")
+  return value.toString().padStart(minDigits, "0")
 }
 
 const getDisplayedLength = (value: number, minDigits?: number) => formatDisplayedValue(value, minDigits).length
+
+const initSlots = (display: string): DigitSlot[] =>
+  Array.from(display, (ch, i) => ({
+    key: `pos-${display.length - 1 - i}`,
+    previous: ch,
+    current: ch,
+    isRolling: false,
+    rollKey: 0,
+  }))
+
+const buildSlots = (previous: string, current: string, existing: DigitSlot[]): DigitSlot[] => {
+  const length = Math.max(previous.length, current.length)
+  const paddedPrevious = previous.padStart(length, " ")
+  const paddedCurrent = current.padStart(length, " ")
+
+  return Array.from({ length: length }, (_, i) => {
+    const key = `pos-${length - 1 - i}`
+
+    const prev = paddedPrevious[i]
+    const curr = paddedCurrent[i]
+
+    const changed = prev !== curr
+    const existingSlog = existing.find((s) => s.key === key)
+    const rollKey = changed ? (existingSlog?.rollKey ?? 0) + 1 : (existingSlog?.rollKey ?? 0)
+
+    return {
+      key,
+      previous: prev,
+      current: curr,
+      isRolling: changed,
+      rollKey,
+    }
+  })
+}
 
 /**
  * A component that displays a number that animates from the previous value to the current value.
@@ -34,72 +74,73 @@ const getDisplayedLength = (value: number, minDigits?: number) => formatDisplaye
  * </Text>
  */
 export const RollingNumber = ({ value, containerClassName, className, minDigits }: RollingNumberProps) => {
-  const currentValueRef = useRef(value)
-  const [previousValue, setPreviousValue] = useState(value)
-  const [currentValue, setCurrentValue] = useState(value)
+  const currentDisplayRef = useRef(formatDisplayedValue(value, minDigits))
+  const [slots, setSlots] = useState<DigitSlot[]>(() => initSlots(formatDisplayedValue(value, minDigits)))
   const [widthDigitCount, setWidthDigitCount] = useState(getDisplayedLength(value, minDigits))
-  const [rollKey, setRollKey] = useState(0)
-  const [isRolling, setIsRolling] = useState(false)
+  const [rollGeneration, setRollGeneration] = useState(0)
 
   useEffect(() => {
-    const previous = currentValueRef.current
+    const previousDisplay = currentDisplayRef.current
+    const currentDisplay = formatDisplayedValue(value, minDigits)
 
-    if (value === previous) {
+    if (previousDisplay === currentDisplay) {
       return
     }
 
-    setPreviousValue(previous)
-    currentValueRef.current = value
-    setCurrentValue(value)
-    setWidthDigitCount(Math.max(getDisplayedLength(previous, minDigits), getDisplayedLength(value, minDigits)))
-    setRollKey((key) => key + 1)
-    setIsRolling(true)
+    currentDisplayRef.current = currentDisplay
+
+    setWidthDigitCount(Math.max(previousDisplay.length, currentDisplay.length))
+    setSlots((existing) => buildSlots(previousDisplay, currentDisplay, existing))
+    setRollGeneration((g) => g + 1)
   }, [value, minDigits])
 
   useEffect(() => {
-    if (rollKey === 0) {
+    if (rollGeneration === 0) {
       return
     }
 
     const timeout = setTimeout(() => {
-      setIsRolling(false)
-      setWidthDigitCount(getDisplayedLength(currentValueRef.current, minDigits))
+      const finalDisplay = currentDisplayRef.current
+      setWidthDigitCount(finalDisplay.length)
+      setSlots(initSlots(finalDisplay))
     }, ROLLING_NUMBER_ANIMATION_MS)
 
-    return () => clearTimeout(timeout)
-  }, [rollKey, minDigits])
-
-  const width = `${widthDigitCount}ch`
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [rollGeneration])
 
   return (
     <span
       aria-live="polite"
-      style={{ width }}
+      style={{ width: `${widthDigitCount}ch` }}
       className={cn(
-        "inline-grid overflow-hidden align-baseline",
+        "inline-flex overflow-hidden align-baseline",
         "motion-safe:transition-[width] motion-safe:duration-120 motion-safe:ease-in-out",
-        isRolling && styles.isRolling,
         containerClassName
       )}
     >
-      {isRolling && (
-        <Text
-          element="span"
-          key={`previous-${rollKey}`}
-          aria-hidden
-          className={cn("[grid-area:1/1] font-mono", styles.previous, className)}
-        >
-          {formatDisplayedValue(previousValue, minDigits)}
-        </Text>
-      )}
-
-      <Text
-        element="span"
-        key={`current-${rollKey}`}
-        className={cn("[grid-area:1/1] font-mono", isRolling && styles.current, className)}
-      >
-        {formatDisplayedValue(currentValue, minDigits)}
-      </Text>
+      {slots.map((slot) => (
+        <span key={slot.key} className={cn("inline-grid overflow-hidden", slot.isRolling && styles.isRolling)}>
+          {slot.isRolling && (
+            <Text
+              element="span"
+              key={`prev-${slot.rollKey}`}
+              aria-hidden
+              className={cn("[grid-area:1/1] font-mono", styles.previous, className)}
+            >
+              {slot.previous}
+            </Text>
+          )}
+          <Text
+            element="span"
+            key={`curr-${slot.rollKey}`}
+            className={cn("[grid-area:1/1] font-mono", slot.isRolling && styles.current, className)}
+          >
+            {slot.current}
+          </Text>
+        </span>
+      ))}
     </span>
   )
 }
