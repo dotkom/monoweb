@@ -192,8 +192,12 @@ export const AttendanceCard = ({
     }
     registerMutation.mutate({ attendanceId: attendance.id, turnstileToken })
   }
-  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult) => {
-    deregisterMutation.mutate({ attendanceId: attendance.id, deregisterReason })
+
+  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult | null) => {
+    deregisterMutation.mutate(
+      { attendanceId: attendance.id, deregisterReason: deregisterReason ?? undefined },
+      { onSuccess: () => setTurnstileToken(null) }
+    )
   }
 
   const handleTurnstileVerify = (token: string) => {

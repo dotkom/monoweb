@@ -16,12 +16,17 @@ import {
 import { getCurrentUTC } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { TRPCError } from "@trpc/server"
-import { addHours } from "date-fns"
+import { addHours, addMilliseconds, hoursToMilliseconds, isPast } from "date-fns"
 import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, or } from "../../authorization"
-import { FailedPreconditionError } from "../../error"
+import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
+
+// A grace period of 2 hours after registration to allow attendees to deregister in case of accidental registration or a
+// quick change of mind. This duration was chosen arbitrarily, though it seemed nice to not overlap with the 1 hour
+// payment deadline. Frontends should have a few seconds to account for clock skew to avoid errors near the grace end.
+const DEREGISTER_GRACE_PERIOD_MS = hoursToMilliseconds(2)
 
 export type CreatePoolInput = inferProcedureInput<typeof createPoolProcedure>
 export type CreatePoolOutput = inferProcedureOutput<typeof createPoolProcedure>
@@ -257,14 +262,17 @@ const startAttendeePaymentProcedure = procedure
 
 export type DeregisterForEventInput = inferProcedureInput<typeof deregisterForEventProcedure>
 export type DeregisterForEventOutput = inferProcedureOutput<typeof deregisterForEventProcedure>
+
 const deregisterForEventProcedure = procedure
   .input(
     z.object({
       attendanceId: AttendancePoolSchema.shape.id,
-      deregisterReason: z.object({
-        type: DeregisterReasonTypeSchema,
-        details: z.string().nullable(),
-      }),
+      deregisterReason: z
+        .object({
+          type: DeregisterReasonTypeSchema,
+          details: z.string().nullable(),
+        })
+        .optional(),
     })
   )
   .use(withAuthentication())
@@ -273,21 +281,32 @@ const deregisterForEventProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.attendanceId)
     const attendee = attendance.attendees.find((attendee) => attendee.user.id === ctx.principal.subject)
+
     if (attendee === undefined) {
-      throw new TRPCError({ code: "NOT_FOUND" })
+      throw new NotFoundError(`Attendee(ID=${attendance.id},UserID=${ctx.principal.subject}) not found`)
     }
+
+    const gracePeriodEnd = addMilliseconds(attendee.createdAt, DEREGISTER_GRACE_PERIOD_MS)
+
+    if (input.deregisterReason === undefined && isPast(gracePeriodEnd)) {
+      throw new InvalidArgumentError("Deregister reason is required outside the grace period")
+    }
+
     await ctx.attendanceService.deregisterAttendee(ctx.handle, attendee.id, {
       ignoreDeregistrationWindow: false,
     })
 
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
-    await ctx.eventService.createDeregisterReason(ctx.handle, {
-      ...input.deregisterReason,
-      userId: ctx.principal.subject,
-      eventId: event.id,
-      registeredAt: attendee.createdAt,
-      userGrade: attendee.userGrade,
-    })
+    if (input.deregisterReason) {
+      const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+
+      await ctx.eventService.createDeregisterReason(ctx.handle, {
+        ...input.deregisterReason,
+        userId: ctx.principal.subject,
+        eventId: event.id,
+        registeredAt: attendee.createdAt,
+        userGrade: attendee.userGrade,
+      })
+    }
   })
 
 export type AdminDeregisterForEventInput = inferProcedureInput<typeof adminDeregisterForEventProcedure>
