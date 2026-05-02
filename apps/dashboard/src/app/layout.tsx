@@ -2,23 +2,9 @@ import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps } fro
 import "@mantine/core/styles.css"
 import "@mantine/dates/styles.css"
 import "@mantine/notifications/styles.css"
-import "@fontsource/inter/300.css"
-import "@fontsource/inter/400.css"
-import "@fontsource/inter/500.css"
-import "@fontsource/inter/600.css"
-import "@fontsource/inter/700.css"
-import "@fontsource/inter/800.css"
-import "@fontsource/inter-tight/300.css"
-import "@fontsource/inter-tight/400.css"
-import "@fontsource/inter-tight/500.css"
-import "@fontsource/inter-tight/600.css"
-import "@fontsource/inter-tight/700.css"
-import "@fontsource/inter-tight/800.css"
-import "@fontsource/roboto-mono/300.css"
-import "@fontsource/roboto-mono/400.css"
-import "@fontsource/roboto-mono/500.css"
-import "@fontsource/roboto-mono/600.css"
-import "@fontsource/roboto-mono/700.css"
+import "@fontsource-variable/inter/wght.css"
+import "@fontsource-variable/inter-tight/wght.css"
+import "@fontsource-variable/google-sans-code/wght.css"
 import { auth } from "@/lib/auth"
 import { server } from "@/lib/trpc-server"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
@@ -52,10 +38,10 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic"
 
 const theme = createTheme({
-  fontFamily: "Inter",
-  fontFamilyMonospace: "Roboto Mono",
+  fontFamily: "Inter Variable",
+  fontFamilyMonospace: "Google Sans Code Variable",
   headings: {
-    fontFamily: "Inter Tight",
+    fontFamily: "Inter Tight Variable",
   },
 })
 

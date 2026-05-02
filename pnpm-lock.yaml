@@ -44,15 +44,15 @@ importers:
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../../packages/utils
-      '@fontsource/inter':
-        specifier: ^5.2.6
-        version: 5.2.8
-      '@fontsource/inter-tight':
-        specifier: ^5.2.6
-        version: 5.2.7
-      '@fontsource/roboto-mono':
+      '@fontsource-variable/google-sans-code':
+        specifier: ^5.2.4
+        version: 5.2.4
+      '@fontsource-variable/inter':
         specifier: ^5.2.8
         version: 5.2.8
+      '@fontsource-variable/inter-tight':
+        specifier: ^5.2.7
+        version: 5.2.7
       '@hello-pangea/dnd':
         specifier: ^18.0.1
         version: 18.0.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1135,11 +1135,11 @@ importers:
       '@floating-ui/react':
         specifier: ^0.27.16
         version: 0.27.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@fontsource/figtree':
-        specifier: ^5.2.8
+      '@fontsource-variable/figtree':
+        specifier: ^5.2.10
         version: 5.2.10
-      '@fontsource/inter':
-        specifier: ^5.2.6
+      '@fontsource-variable/inter':
+        specifier: ^5.2.8
         version: 5.2.8
       '@radix-ui/react-accordion':
         specifier: ^1.2.11
@@ -2084,17 +2084,17 @@ packages:
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
 
-  '@fontsource/figtree@5.2.10':
-    resolution: {integrity: sha512-nlO06N1qad88ySqzi/a2xwDBkamfZ4MFilP8la5dDyRY36ED0UYTs2hhtwJf8fM52+Nn7dQO2r27reKaXOyOIg==}
+  '@fontsource-variable/figtree@5.2.10':
+    resolution: {integrity: sha512-a5Gumbpy3mdd+Yg31g6Qb7CmjYbrfyutJa3bWfP5q8A4GclIOwX7mI+ZuSHsJnw/mHvW6r9oh1AHJcJTIxK4JA==}
 
-  '@fontsource/inter-tight@5.2.7':
-    resolution: {integrity: sha512-44TmSfHdNQus/3MWOMIonUEnbxwQhiaFo2sfBJEGIE4c7TN+GO6kfLzsTH4Nu52BC9HDZFl9fPQ6Cwzp9vYTtQ==}
+  '@fontsource-variable/google-sans-code@5.2.4':
+    resolution: {integrity: sha512-70i7eS9B7VYT1sJcpU+bYnCrKwWOh8+RCTZNLgzE3crUaDwAqx0hRhd2Hr0ZyStJq88f+CF8/r+YUK0A3gMsPA==}
 
-  '@fontsource/inter@5.2.8':
-    resolution: {integrity: sha512-P6r5WnJoKiNVV+zvW2xM13gNdFhAEpQ9dQJHt3naLvfg+LkF2ldgSLiF4T41lf1SQCM9QmkqPTn4TH568IRagg==}
+  '@fontsource-variable/inter-tight@5.2.7':
+    resolution: {integrity: sha512-uU0qW9vlzVQQv8GVrhn8SlNl2A44C0CE9IC6N9P0D9mwhmJcg8UF/fxvmdRayDPlMAnYqxlXtYENDIeZyVvxkg==}
 
-  '@fontsource/roboto-mono@5.2.8':
-    resolution: {integrity: sha512-M0XPRcvkOKiTPooXwX7yJSNpuad3CPcQwsADBfnopz3apBs+VKI47pc42mlvAxJjNTRauu5rndSxHc8F52bR7Q==}
+  '@fontsource-variable/inter@5.2.8':
+    resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
 
   '@formatjs/fast-memoize@3.1.2':
     resolution: {integrity: sha512-vPnriihkfK0lzoQGaXq+qXH23VsYyansRTkTgo2aTG0k1NjLFyZimFVdfj4C9JkSE5dm7CEngcQ5TTc1yAyBfQ==}
@@ -9927,13 +9927,13 @@ snapshots:
 
   '@floating-ui/utils@0.2.11': {}
 
-  '@fontsource/figtree@5.2.10': {}
+  '@fontsource-variable/figtree@5.2.10': {}
 
-  '@fontsource/inter-tight@5.2.7': {}
+  '@fontsource-variable/google-sans-code@5.2.4': {}
 
-  '@fontsource/inter@5.2.8': {}
+  '@fontsource-variable/inter-tight@5.2.7': {}
 
-  '@fontsource/roboto-mono@5.2.8': {}
+  '@fontsource-variable/inter@5.2.8': {}
 
   '@formatjs/fast-memoize@3.1.2': {}
 

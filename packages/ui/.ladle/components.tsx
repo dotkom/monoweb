@@ -1,7 +1,7 @@
 import type { GlobalProvider } from "@ladle/react"
 import { clsx } from "clsx"
-import "@fontsource/figtree"
-import "@fontsource/inter"
+import "@fontsource-variable/figtree/wght.css"
+import "@fontsource-variable/inter/wght.css"
 import "../../config/tailwind.css"
 
 export const Provider: GlobalProvider = ({ children, globalState }) => (

@@ -9,9 +9,9 @@ module.exports = {
     colors,
     extend: {
       fontFamily: {
-        title: ["var(--font-title, 'Figtree')"],
-        body: ["var(--font-body, 'Inter')"],
-        mono: ["var(--font-mono, 'Roboto Mono')"],
+        title: ["var(--font-title, 'Figtree Variable')"],
+        body: ["var(--font-body, 'Inter Variable')"],
+        mono: ["var(--font-mono, 'Google Sans Code Variable')"],
       },
       colors: {
         inherit: "inherit",
