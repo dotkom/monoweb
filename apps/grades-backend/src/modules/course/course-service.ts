@@ -1,10 +1,9 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
-import type { Pageable } from "@dotkomonline/utils"
 import type { CourseRepository } from "./course-repository"
 import type { Course, CourseFilterQuery, CourseId, CourseWrite, Department, Faculty } from "./course-types"
 
 export interface CourseService {
-  findMany(handle: DBHandle, query: CourseFilterQuery, page: Pageable): Promise<Course[]>
+  findMany(handle: DBHandle, query: CourseFilterQuery, offset: number, limit: number): Promise<Course[]>
   find(handle: DBHandle, code: string): Promise<Course>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
@@ -14,8 +13,8 @@ export interface CourseService {
 
 export function getCourseService(courseRepository: CourseRepository): CourseService {
   return {
-    async findMany(handle, query, page) {
-      return courseRepository.findMany(handle, query, page)
+    async findMany(handle, query, offset, limit) {
+      return courseRepository.findMany(handle, query, offset, limit)
     },
 
     async find(handle, code) {
