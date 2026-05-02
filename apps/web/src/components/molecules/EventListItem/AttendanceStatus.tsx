@@ -1,6 +1,7 @@
 "use client"
 
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
+import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown"
 import { useCountdown } from "@/utils/countdown/use-countdown"
 import {
   type Attendance,
@@ -34,7 +35,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
     !eventEndInPast &&
     (isReserved || isUnreserved ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "Closed")
 
-  const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null)
+  const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
     attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
   const isWithinPaymentCountdown =
