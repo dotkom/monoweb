@@ -113,3 +113,11 @@ export const mapLetterGradeFilterToMinAverageGrade = (minGrade: MinLetterGradeFi
       return 0.5
   }
 }
+
+export const getCourseName = (course: Course, locale: "no" | "en") => {
+  if (locale === "en" && course.nameEn !== null) {
+    return course.nameEn
+  }
+
+  return course.nameNo
+}

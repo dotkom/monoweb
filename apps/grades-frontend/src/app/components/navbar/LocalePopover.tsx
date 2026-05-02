@@ -1,7 +1,7 @@
 "use client"
 
 import { setLocale } from "@/i18n/set-locale"
-import { Popover, PopoverContent, PopoverTrigger, Text } from "@dotkomonline/ui"
+import { Popover, PopoverContent, PopoverPortal, PopoverTrigger, Text } from "@dotkomonline/ui"
 import { IconWorld } from "@tabler/icons-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useState } from "react"
@@ -30,14 +30,16 @@ export const LocalePopover = () => {
         <IconWorld size={20} stroke={1.8} />
         {currentLanguage}
       </PopoverTrigger>
-      <PopoverContent className="flex flex-col p-1 min-w-30">
-        <PopoverOptionButton onClick={() => onLocaleChange("no")} isActive={locale === "no"}>
-          <Text>{t("norwegian")}</Text>
-        </PopoverOptionButton>
-        <PopoverOptionButton onClick={() => onLocaleChange("en")} isActive={locale === "en"}>
-          <Text>{t("english")}</Text>
-        </PopoverOptionButton>
-      </PopoverContent>
+      <PopoverPortal>
+        <PopoverContent className="flex flex-col p-1 min-w-30">
+          <PopoverOptionButton onClick={() => onLocaleChange("no")} isActive={locale === "no"}>
+            <Text>{t("norwegian")}</Text>
+          </PopoverOptionButton>
+          <PopoverOptionButton onClick={() => onLocaleChange("en")} isActive={locale === "en"}>
+            <Text>{t("english")}</Text>
+          </PopoverOptionButton>
+        </PopoverContent>
+      </PopoverPortal>
     </Popover>
   )
 }

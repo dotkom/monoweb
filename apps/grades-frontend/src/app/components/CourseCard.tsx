@@ -1,4 +1,4 @@
-import { type Course, mapAverageGradeToLetterGrade } from "@dotkomonline/grades-backend/course"
+import { type Course, getCourseName, mapAverageGradeToLetterGrade } from "@dotkomonline/grades-backend/course"
 import { cn, Text, Title } from "@dotkomonline/ui"
 import { getLocale, getTranslations } from "next-intl/server"
 import Link from "next/link"
@@ -11,8 +11,6 @@ interface Props {
 export const CourseCard = async ({ course }: Props) => {
   const t = await getTranslations()
   const locale = await getLocale()
-
-  const isEnglish = locale === "en"
 
   const isDeprecated = course.lastYearTaught !== null
   const isLetterGrade = course.gradeType === "LETTER"
@@ -32,7 +30,7 @@ export const CourseCard = async ({ course }: Props) => {
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">
-          <Title className="text-lg sm:text-xl font-normal">{isEnglish ? course.nameEn : course.nameNo}</Title>
+          <Title className="text-lg sm:text-xl font-normal">{getCourseName(course, locale)}</Title>
           <Text className="font-bold text-sm sm:text-base text-neutral-500 dark:text-stone-400">{course.code}</Text>
         </div>
 
