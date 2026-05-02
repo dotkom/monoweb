@@ -11,8 +11,23 @@ import type { PropsWithChildren } from "react"
 import "../globals.css"
 import { Footer } from "./components/Footer"
 import { Navbar } from "./components/navbar/Navbar"
+import type { Metadata } from "next"
 
 setDateFnsDefaultOptions({ locale: nb })
+
+export const metadata: Metadata = {
+  title: "Grades.no - Karakterstatistikk",
+  description: "Karakterstatistikk for emner ved Norges teknisk-naturvitenskapelige universitet (NTNU).",
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+}
 
 const fontBody = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body" })
 const fontTitle = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-title" })
