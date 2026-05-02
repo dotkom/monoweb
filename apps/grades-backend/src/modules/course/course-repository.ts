@@ -110,9 +110,9 @@ export function getCourseRepository(): CourseRepository {
         ${campusWhereSql}
         ${minGradeWhereSql}
         ORDER BY
-          -- To update ranking, copy-paste rank_search function from
-          -- 20260428154840_add_course_ranking_function into a new migration
-          rank_search(code, name_no, name_en, last_year_taught, ${bySearch || null}) ASC,
+          -- The ranking logic is defined as a PostgreSQL function.
+          -- To modify it, create a new migration and copy-paste the function from the previous migration that modified it.
+          course_rank_score(code, name_no, name_en, last_year_taught, ${bySearch || null}) DESC,
           ${Prisma.raw(orderByClause)}
         LIMIT ${page.take}
       `
