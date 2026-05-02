@@ -29,7 +29,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 <NuqsAdapter>
                   <div className="flex flex-col gap-8">
                     <Navbar />
-                    <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
+                    <div className="min-h-screen flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 lg:px-12">
                       <main className="grow">{children}</main>
                       <Footer />
                     </div>

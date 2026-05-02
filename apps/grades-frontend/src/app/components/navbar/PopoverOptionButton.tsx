@@ -13,7 +13,7 @@ export const PopoverOptionButton = ({ children, isActive, onClick, className }: 
     variant="text"
     onClick={onClick}
     className={cn(
-      "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-stone-600 hover:text-neutral-900",
+      "flex w-full justify-start text-left rounded-md px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-200/70 dark:hover:bg-stone-600 hover:text-neutral-900",
       isActive && "font-medium",
       className
     )}

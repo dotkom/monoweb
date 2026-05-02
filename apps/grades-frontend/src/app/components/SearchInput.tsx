@@ -13,7 +13,7 @@ export const SearchInput = forwardRef<HTMLInputElement, ComponentPropsWithRef<"i
         <TextInput
           ref={ref}
           {...props}
-          className="pl-10 rounded-lg w-full h-full  text-base border border-neutral-200 placeholder:text-neutral-500 focus:border-neutral-300 focus:ring-1 ring-neutral-300 "
+          className="pl-10 rounded-lg w-full h-full text-base border border-neutral-200 placeholder:text-neutral-500 focus:border-neutral-300 focus:ring-1 ring-neutral-300"
         />
       </div>
     )

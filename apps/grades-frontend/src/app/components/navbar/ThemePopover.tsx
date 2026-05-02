@@ -2,15 +2,17 @@
 
 import { Popover, PopoverContent, PopoverPortal, PopoverTrigger, Text } from "@dotkomonline/ui"
 import { IconDeviceDesktop, IconDeviceMobile, IconMoon, IconSun } from "@tabler/icons-react"
+import { useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
 import { useState } from "react"
 import { PopoverOptionButton } from "./PopoverOptionButton"
-import { useTranslations } from "next-intl"
+import { IconActionButton } from "../action-button/ActionButton"
 
 export const ThemePopover = () => {
   const { theme, setTheme, resolvedTheme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
   const t = useTranslations("ThemePopover")
+  const resolvedThemeLabel = resolvedTheme === "light" || resolvedTheme === "dark" ? resolvedTheme : "system"
 
   const onChange = (newTheme: string) => {
     if (newTheme === theme) {
@@ -23,8 +25,10 @@ export const ThemePopover = () => {
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger className="flex size-9 items-center justify-center rounded-lg bg-transparent p-0 text-neutral-800 hover:bg-neutral-100">
-        {resolvedTheme === "light" ? <IconSun size={20} stroke={1.8} /> : <IconMoon size={20} stroke={1.8} />}
+      <PopoverTrigger asChild>
+        <IconActionButton aria-label={t("ariaLabel", { theme: t(resolvedThemeLabel) })}>
+          {resolvedTheme === "light" ? <IconSun size={20} stroke={1.8} /> : <IconMoon size={20} stroke={1.8} />}
+        </IconActionButton>
       </PopoverTrigger>
       <PopoverPortal>
         <PopoverContent className="min-w-36 flex flex-col p-1 transition-colors">
