@@ -5,7 +5,7 @@ import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
 import { cn } from "@dotkomonline/ui"
 import { ThemeProvider } from "next-themes"
-import { Figtree, Inter } from "next/font/google"
+import { Figtree, Inter, Google_Sans_Code } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
@@ -30,15 +30,16 @@ export const metadata: Metadata = {
   },
 }
 
-const fontBody = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body" })
-const fontTitle = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-title" })
+const fontBody = Inter({ subsets: ["latin"], variable: "--font-body" })
+const fontTitle = Figtree({ subsets: ["latin"], variable: "--font-title" })
+const fontMono = Google_Sans_Code({ subsets: ["latin"], variable: "--font-mono", fallback: ["monospace"] })
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth.getServerSession()
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning>
-      <body className={cn(fontTitle.variable, fontBody.variable, "bg-white dark:bg-stone-900")}>
+      <body className={cn(fontTitle.variable, fontBody.variable, fontMono.variable, "bg-white dark:bg-stone-900")}>
         <PlausibleProvider domain="online.ntnu.no">
           <SessionProvider session={session}>
             <QueryProvider>
