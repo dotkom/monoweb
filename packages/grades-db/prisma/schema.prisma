@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   output          = "../src/generated"
-  previewFeatures = ["relationJoins"]
+  previewFeatures = ["relationJoins", "postgresqlExtensions"]
 }
 
 generator zod {
@@ -16,8 +16,9 @@ generator zod {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pg_trgm]
 }
 
 enum Semester {
@@ -103,13 +104,14 @@ model Course {
   /// Metadata used to speed up sync by limiting how far back the scraper has to check for changes
   latestYearCheckedForNtnuData Int? @map("latest_year_checked_for_ntnu_data")
 
-  @@index([nameNo])
-  @@index([nameEn])
+  @@index(fields: [nameNo(ops: raw("gin_trgm_ops"))], type: Gin)
+  @@index(fields: [nameEn(ops: raw("gin_trgm_ops"))], type: Gin)
+  @@index(fields: [code(ops: raw("gin_trgm_ops"))], type: Gin)
   @@map("course")
 }
 
 model Grade {
-  id          String @id @default(uuid())
+  id String @id @default(uuid())
 
   // For letter-graded courses
   gradeACount Int
