@@ -43,7 +43,7 @@
     "@dotkomonline/config": "workspace:*",
     "@types/common-tags": "1.8.4",
     "@types/node": "22.19.7",
-    "@types/pg": "8.16.0",
+    "@types/pg": "8.20.0",
     "common-tags": "1.8.2",
     "prisma": "6.19.3",
     "tsx": "4.21.0",
