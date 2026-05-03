@@ -8,6 +8,7 @@ import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import {
   SemesterSchema,
   type Course,
+  type CourseCampus,
   type CourseWrite,
   type Department,
   type Faculty,
@@ -143,7 +144,8 @@ async function migrateDepartments(prisma: DBClient, faculties: Faculty[]) {
      grade_type,
      place,
      attendee_count,
-     average
+     average,
+     pass_rate
    from
      grades_course
      left join grades_faculty on grades_faculty.faculty_id = grades_course.faculty_code
@@ -156,25 +158,26 @@ async function migrateCourses(prisma: DBClient, faculties: Faculty[], department
     name_en: z.string(),
     code: z.string(),
     faculty_code: z.coerce.number().nullable(),
-    department_code: z.coerce.number().nullable(),
+    department_code: z.coerce.number(),
     credits: z.number(),
     study_level: z.number(),
 
     taught_in_spring: z.boolean(),
     taught_in_autumn: z.boolean(),
-    taught_from: z.number().int().nullable(),
-    last_year_taught: z.number().int().nullable(),
+    taught_from: z.number().int(),
+    last_year_taught: z.number().int(),
     taught_in_english: z.boolean(),
 
-    content_no: z.string().nullable(),
-    learning_methods: z.string().nullable(),
-    learning_goal: z.string().nullable(),
-    exam_type_no: z.string().nullable(),
-    grade_type: z.string().nullable(),
-    place: z.string().nullable(),
+    content_no: z.string(),
+    learning_methods: z.string(),
+    learning_goal: z.string(),
+    exam_type_no: z.string(),
+    grade_type: z.string(),
+    place: z.string(),
 
-    attendee_count: z.number().int().nullable(),
-    average: z.number().nullable(),
+    attendee_count: z.number().int(),
+    average: z.number(),
+    pass_rate: z.number(),
   })
 
   const rawCourses = await fsp.readFile(path.resolve(pathOfThisScript, "./courses.json"), "utf-8")
@@ -249,33 +252,45 @@ async function migrateCourses(prisma: DBClient, faculties: Faculty[], department
         throw new Error(`Unknown study level ${course.study_level} for course ${course.code}`)
     }
 
+    const campuses: CourseCampus[] = []
+    const lowerPlace = course.place.toLowerCase()
+    if (lowerPlace.includes("trondheim")) {
+      campuses.push("TRONDHEIM")
+    }
+    if (lowerPlace.includes("gjøvik")) {
+      campuses.push("GJOVIK")
+    }
+    if (lowerPlace.includes("ålesund")) {
+      campuses.push("ALESUND")
+    }
+
     const gradeType: GradeType = course.grade_type?.toLowerCase().includes("bokstav") ? "LETTER" : "PASS_FAIL"
 
     const courseWrite: CourseWrite = {
       code: course.code,
       nameNo: course.name_no,
-      nameEn: course.name_en,
+      nameEn: course.name_en.trim() === "" ? null : course.name_en,
       facultyId: facultyByCode[String(course.faculty_code)]?.id,
       departmentId: departmentByCode[String(course.department_code)]?.id,
-      credits: course.credits,
+      credits: course.credits === 0 ? null : course.credits,
       studyLevel: studyLevel,
-      firstYearTaught: course.taught_from ?? new Date().getFullYear(),
-      lastYearTaught: course.last_year_taught,
+      firstYearTaught: course.taught_from === 0 ? new Date().getFullYear() : course.taught_from,
+      lastYearTaught: course.last_year_taught === 0 ? null : course.last_year_taught,
       taughtSemesters,
       teachingLanguages,
-      contentNo: course.content_no,
+      contentNo: course.content_no.trim() === "" ? null : course.content_no,
       contentEn: null,
-      teachingMethodsNo: course.learning_methods,
+      teachingMethodsNo: course.learning_methods.trim() === "" ? null : course.learning_methods,
       teachingMethodsEn: null,
-      learningOutcomesNo: course.learning_goal,
+      learningOutcomesNo: course.learning_goal.trim() === "" ? null : course.learning_goal,
       learningOutcomesEn: null,
-      examTypeNo: course.exam_type_no,
+      examTypeNo: course.exam_type_no.trim() === "" ? null : course.exam_type_no,
       examTypeEn: null,
       gradeType: gradeType,
-      campuses: ["TRONDHEIM"],
-      candidateCount: course.attendee_count ?? 0,
-      averageGrade: course.average ?? 0,
-      passRate: 0,
+      campuses: campuses,
+      candidateCount: course.attendee_count,
+      averageGrade: course.average,
+      passRate: course.pass_rate,
       latestYearCheckedForNtnuData: null,
     }
 
