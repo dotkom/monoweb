@@ -53,7 +53,7 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
         filter: {
           bySearch: debouncedSearch,
         },
-        take: 5,
+        limit: 5,
       },
       {
         enabled: debouncedSearch.length > 0,

@@ -58,7 +58,7 @@ const departments = await courseService.findManyDepartments(prisma)
 const allDbhSemesterCourseRecords = await getAllCourseRecords()
 const allDbhGradeResults = await getAllGrades()
 
-const courses = await courseService.findMany(prisma, {}, { take: Number.MAX_SAFE_INTEGER })
+const courses = await courseService.findMany(prisma, {}, 0, Number.MAX_SAFE_INTEGER)
 const semesterResults = await gradeService.findMany(prisma)
 
 const dbhCourseRecordsByCode = Object.groupBy(allDbhSemesterCourseRecords, (record) => record.code)

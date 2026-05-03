@@ -1,5 +1,4 @@
 import { type DBHandle, Prisma } from "@dotkomonline/grades-db"
-import type { Pageable } from "@dotkomonline/utils"
 import { parseOrReport } from "../../invariant"
 import {
   type Course,
@@ -15,7 +14,7 @@ import {
 } from "./course-types"
 
 export interface CourseRepository {
-  findMany(handle: DBHandle, query: CourseFilterQuery, page: Pageable): Promise<Course[]>
+  findMany(handle: DBHandle, query: CourseFilterQuery, offset: number, limit: number): Promise<Course[]>
   find(handle: DBHandle, code: string): Promise<Course>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
@@ -25,7 +24,7 @@ export interface CourseRepository {
 
 export function getCourseRepository(): CourseRepository {
   return {
-    async findMany(handle, query, page) {
+    async findMany(handle, query, offset, limit) {
       const sortOrder = query.orderBy ?? "desc"
       const sortBy = query.sortBy ?? []
       const sortColumnMap = {
@@ -37,7 +36,7 @@ export function getCourseRepository(): CourseRepository {
       const sortDirection = sortOrder === "asc" ? "ASC" : "DESC"
       const orderByClause =
         sortBy.length > 0
-          ? sortBy.map((sortKey) => `"${sortColumnMap[sortKey]}" ${sortDirection}`).join(", ")
+          ? `${sortBy.map((sortKey) => `"${sortColumnMap[sortKey]}" ${sortDirection}`).join(", ")}, "id" DESC`
           : '"id" DESC'
 
       const bySearch = query.bySearch?.trim()
@@ -46,7 +45,6 @@ export function getCourseRepository(): CourseRepository {
       const searchWhereSql = searchContains
         ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "name_no" ILIKE ${searchContains} OR "name_en" ILIKE ${searchContains})`
         : Prisma.empty
-      const cursorWhereSql = page.cursor ? Prisma.sql`AND "id" < ${page.cursor}` : Prisma.empty
 
       const bySemester = query.bySemester ?? []
       const byTeachingLanguage = query.byTeachingLanguage ?? []
@@ -104,7 +102,6 @@ export function getCourseRepository(): CourseRepository {
         FROM "course"
         WHERE 1 = 1
         ${searchWhereSql}
-        ${cursorWhereSql}
         ${semesterWhereSql}
         ${teachingLanguageWhereSql}
         ${campusWhereSql}
@@ -114,7 +111,8 @@ export function getCourseRepository(): CourseRepository {
           -- To modify it, create a new migration and copy-paste the function from the previous migration that modified it.
           course_rank_score(code, name_no, name_en, last_year_taught, ${bySearch || null}) DESC,
           ${Prisma.raw(orderByClause)}
-        LIMIT ${page.take}
+        OFFSET ${offset}
+        LIMIT ${limit}
       `
 
       return parseOrReport(CourseSchema.array(), courses)

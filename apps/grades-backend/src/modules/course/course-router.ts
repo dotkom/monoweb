@@ -1,19 +1,22 @@
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { procedure, t } from "../../trpc"
-import { withDatabaseTransaction } from "../../middlewares"
 import z from "zod"
-import { BasePaginateInputSchema } from "@dotkomonline/utils"
+import { withDatabaseTransaction } from "../../middlewares"
+import { procedure, t } from "../../trpc"
 import { CourseFilterQuerySchema } from "./course-types"
 
 export type FindCoursesInput = inferProcedureInput<typeof findCoursesProcedure>
 export type FindCoursesOutput = inferProcedureOutput<typeof findCoursesProcedure>
 const findCoursesProcedure = procedure
-  .input(BasePaginateInputSchema.extend({ filter: CourseFilterQuerySchema.optional() }).default({}))
+  .input(
+    z.object({
+      filter: CourseFilterQuerySchema.optional(),
+      offset: z.number().int().min(0).default(0),
+      limit: z.number().int().min(1).max(100).default(20),
+    })
+  )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const { filter, ...page } = input
-
-    const items = await ctx.courseService.findMany(ctx.handle, { ...filter }, page)
+    const items = await ctx.courseService.findMany(ctx.handle, input.filter ?? {}, input.offset, input.limit)
     return items
   })
 
