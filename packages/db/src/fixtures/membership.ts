@@ -11,6 +11,7 @@ export const getMembershipFixtures = (userIds: string[]) =>
       userId: userIds[0],
       start,
       type: "BACHELOR_STUDENT",
+      specialization: null,
       end,
       semester: isSpring ? 3 : 4,
     },
@@ -18,7 +19,8 @@ export const getMembershipFixtures = (userIds: string[]) =>
       userId: userIds[1],
       start,
       type: "KNIGHT",
-      end,
+      specialization: null,
+      end: null,
     },
     {
       userId: userIds[2],
