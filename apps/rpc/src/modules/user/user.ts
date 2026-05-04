@@ -172,6 +172,14 @@ export function getFlagLabel(name: FlagName) {
   }
 }
 
+export function isKnight(user: User) {
+  return user.memberships.some(({ type }) => type === MembershipTypeSchema.enum.KNIGHT)
+}
+
+export function isVanityVerified(user: User) {
+  return user.flags.some(({ name }) => name === FlagName.VANITY_VERIFIED)
+}
+
 export function isMembershipActive(
   membership: Membership | MembershipWrite,
   now: TZDate | Date = getCurrentUTC()
