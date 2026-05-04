@@ -3,9 +3,13 @@
 import { Avatar, AvatarFallback, AvatarImage, cn, Text } from "@dotkomonline/ui"
 import { IconUser } from "@tabler/icons-react"
 import type { Attendee } from "@dotkomonline/rpc/attendance"
-import { isKnight, type User } from "@dotkomonline/rpc/user"
+import type { User } from "@dotkomonline/rpc/user"
 import Link from "next/link.js"
 import { createContext, useContext, type JSX, type ReactNode } from "react"
+import {
+  formatExceptionallyDistinguishedCreatedAtYear,
+  getExceptionallyDistinguishedFlag,
+} from "./exceptionallyDistinguished"
 
 export interface PlateProps {
   attendee: Attendee
@@ -89,8 +93,19 @@ interface AttendeeDetailsProps {
 
 function AttendeeDetails({ nameClassName, gradeClassName }: AttendeeDetailsProps) {
   const { attendee, smallIcons } = usePlateContext()
-  const gradeString = attendee.userGrade !== null ? `${attendee.userGrade}. klasse` : null
-  const knightString = isKnight(attendee.user) ? "Ridder av det Indre Lager" : null
+
+  const hasGrade = attendee.userGrade !== null
+
+  const exceptionallyDistinguishedFlag = getExceptionallyDistinguishedFlag(attendee.user.flags)
+  const exceptionallyDistinguished = exceptionallyDistinguishedFlag !== null
+
+  let exceptionallyDistinguishedText = "Særskilt utmerket"
+
+  if (exceptionallyDistinguishedFlag !== null) {
+    const createdAtYear = formatExceptionallyDistinguishedCreatedAtYear(exceptionallyDistinguishedFlag)
+
+    exceptionallyDistinguishedText = `${exceptionallyDistinguishedText} ${createdAtYear}`
+  }
 
   return (
     <div className="flex w-fit max-w-full min-w-0 shrink flex-col gap-0.5">
@@ -103,12 +118,14 @@ function AttendeeDetails({ nameClassName, gradeClassName }: AttendeeDetailsProps
       </div>
 
       <div className="flex min-w-0 items-center gap-2">
-        {gradeString !== null && <Text className={cn("min-w-0 truncate text-xs", gradeClassName)}>{gradeString}</Text>}
+        {hasGrade && (
+          <Text className={cn("min-w-0 truncate text-xs", gradeClassName)}>{attendee.userGrade}. klasse</Text>
+        )}
 
-        {gradeString !== null && knightString !== null && <Text className={cn("text-xs", gradeClassName)}>•</Text>}
+        {hasGrade && exceptionallyDistinguished && <Text className={cn("text-xs", gradeClassName)}>•</Text>}
 
-        {knightString !== null && (
-          <Text className={cn("min-w-0 truncate text-xs", gradeClassName)}>{knightString}</Text>
+        {exceptionallyDistinguished && (
+          <Text className={cn("min-w-0 truncate text-xs", gradeClassName)}>{exceptionallyDistinguishedText}</Text>
         )}
       </div>
     </div>
