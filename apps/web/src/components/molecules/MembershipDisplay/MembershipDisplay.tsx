@@ -97,7 +97,7 @@ const MembershipDisplayShell = ({
   let href: string | null = null
 
   if (activeMembership === null && hasFeideConnection) {
-    href = createAuthorizeUrl({ connection: "FEIDE", redirectAfter: pathname })
+    href = createAuthorizeUrl({ connection: "FEIDE", returnTo: pathname })
   } else if (!isMembershipPage) {
     href = "/innstillinger/medlemskap"
   }

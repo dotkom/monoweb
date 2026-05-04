@@ -9,8 +9,8 @@ export async function GET(req: NextRequest) {
 
   if (!session) {
     const params = new URLSearchParams(req.nextUrl.search)
-    if (!params.has("redirectAfter")) {
-      params.set("redirectAfter", "/profil")
+    if (!params.has("returnTo")) {
+      params.set("returnTo", "/profil")
     }
     redirect(createAuthorizeUrl(params))
   }

@@ -56,7 +56,7 @@ export const AttendanceCard = ({
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
 
   const fullPathname = useFullPathname()
-  const authorizeUrl = createAuthorizeUrl({ redirectAfter: fullPathname })
+  const authorizeUrl = createAuthorizeUrl({ returnTo: fullPathname })
 
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))

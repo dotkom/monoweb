@@ -54,7 +54,7 @@ export default function MedlemskapPage() {
   })
 
   if (!sessionLoading && !sessionIsAuthenticated) {
-    redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
+    redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
   if (sessionLoading || !sessionIsAuthenticated) {
@@ -63,7 +63,7 @@ export default function MedlemskapPage() {
 
   const feideAuthorizeUrl = createAuthorizeUrl({
     connection: "FEIDE",
-    redirectAfter: fullPathname,
+    returnTo: fullPathname,
   })
 
   const isLoading = userIsLoading || auth0ConnectionsIsLoading || user === undefined || auth0Connections === undefined

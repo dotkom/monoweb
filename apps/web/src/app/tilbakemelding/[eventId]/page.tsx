@@ -33,12 +33,13 @@ const EventFeedbackPage = async ({
   const isPreview = preview === "true"
 
   const session = await getServerSession()
-  if (!session) {
-    const params = new URLSearchParams()
-    if (!params.has("redirectAfter")) {
-      params.set("redirectAfter", `/tilbakemelding/${eventId}${preview ? `?preview=${preview}` : ""}`)
+
+  if (session === null) {
+    const authorizeParams = new URLSearchParams()
+    if (!authorizeParams.has("returnTo")) {
+      authorizeParams.set("returnTo", `/tilbakemelding/${eventId}${preview ? `?preview=${preview}` : ""}`)
     }
-    redirect(createAuthorizeUrl(params))
+    redirect(createAuthorizeUrl(authorizeParams))
   }
 
   const feedbackForm = await server.event.feedback.getFormByEventId.query(eventId)
