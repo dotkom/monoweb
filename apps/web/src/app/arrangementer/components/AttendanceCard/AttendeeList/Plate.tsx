@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage, cn, Text } from "@dotkomonline/ui"
 import { IconUser } from "@tabler/icons-react"
 import type { Attendee } from "@dotkomonline/rpc/attendance"
-import type { User } from "@dotkomonline/rpc/user"
+import { isKnight, type User } from "@dotkomonline/rpc/user"
 import Link from "next/link.js"
 import { createContext, useContext, type JSX, type ReactNode } from "react"
 import {
@@ -96,6 +96,8 @@ function AttendeeDetails({ nameClassName, gradeClassName }: AttendeeDetailsProps
 
   const hasGrade = attendee.userGrade !== null
 
+  const knight = isKnight(attendee.user)
+
   const exceptionallyDistinguishedFlag = getExceptionallyDistinguishedFlag(attendee.user.flags)
   const exceptionallyDistinguished = exceptionallyDistinguishedFlag !== null
 
@@ -124,7 +126,16 @@ function AttendeeDetails({ nameClassName, gradeClassName }: AttendeeDetailsProps
 
         {hasGrade && exceptionallyDistinguished && <Text className={cn("text-xs", gradeClassName)}>•</Text>}
 
-        {exceptionallyDistinguished && (
+        {knight && (
+          <>
+            <Text className={cn("min-w-0 truncate text-xs max-sm:hidden", gradeClassName)}>
+              Ridder av det Indre Lager
+            </Text>
+            <Text className={cn("min-w-0 truncate text-xs sm:hidden", gradeClassName)}>Ridder</Text>
+          </>
+        )}
+
+        {exceptionallyDistinguished && !knight && (
           <Text className={cn("min-w-0 truncate text-xs", gradeClassName)}>{exceptionallyDistinguishedText}</Text>
         )}
       </div>
