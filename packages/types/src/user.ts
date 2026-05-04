@@ -232,4 +232,8 @@ export function isVanityVerified(user: User) {
   return user.flags.some(({ name }) => name === FlagName.VANITY_VERIFIED)
 }
 
+export function isExceptionallyDistinguished(user: User) {
+  return user.flags.some(({ name }) => name === FlagName.EXCEPTIONALLY_DISTINGUISHED)
+}
+
 export const USER_IMAGE_MAX_SIZE_KIB = 512
