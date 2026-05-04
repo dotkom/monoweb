@@ -224,4 +224,12 @@ export function getGenderName(gender: Gender) {
   }
 }
 
+export function isKnight(user: User) {
+  return user.memberships.some(({ type }) => type === MembershipTypeSchema.enum.KNIGHT)
+}
+
+export function isVanityVerified(user: User) {
+  return user.flags.some(({ name }) => name === FlagName.VANITY_VERIFIED)
+}
+
 export const USER_IMAGE_MAX_SIZE_KIB = 512
