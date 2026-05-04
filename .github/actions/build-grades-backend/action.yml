@@ -1,0 +1,44 @@
+name: Build & deploy grades/backend
+description: Build and deploy Grades backend to AWS ECS
+inputs:
+  git-hash:
+    description: 'Git hash to build'
+    required: true
+  deploy:
+    description: 'Deploy the built image to AWS ECS'
+    required: false
+    default: false
+  environment:
+    description: 'Environment to deploy to. Only required if deploy is true'
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Install local GitHub Actions
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      with:
+        fetch-depth: 1
+        sparse-checkout: '.github'
+        sparse-checkout-cone-mode: true
+    - uses: ./.github/actions/internal/docker-build
+      id: build
+      with:
+        aws-region: 'eu-north-1'
+        aws-iam-role: arn:aws:iam::891459268445:role/grades-${{ inputs.environment }}-backend-ci-role
+        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/grades/${{ inputs.environment }}/backend
+        git-hash: ${{ inputs.git-hash }}
+        dockerfile: apps/grades-backend/Dockerfile
+        push: ${{ inputs.deploy }}
+        build-arguments: |
+          SENTRY_RELEASE=git-${{ inputs.git-hash }}-${{ inputs.environment }}
+    - uses: ./.github/actions/internal/aws-ecs-deploy
+      if: ${{ inputs.deploy == 'true' }}
+      id: deploy
+      with:
+        aws-region: 'eu-north-1'
+        aws-iam-role: arn:aws:iam::891459268445:role/grades-${{ inputs.environment }}-backend-ci-role
+        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/grades-${{ inputs.environment }}-backend
+        cluster-name: evergreen-prod-cluster
+        service-name: grades-${{ inputs.environment }}-backend
+        container-name: grades-${{ inputs.environment }}-backend
+        image: ${{ steps.build.outputs.image }}

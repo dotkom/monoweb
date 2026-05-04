@@ -231,6 +231,9 @@ importers:
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -292,9 +295,6 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@types/node':
         specifier: 22.19.3
         version: 22.19.3
@@ -328,9 +328,6 @@ importers:
       '@dotkomonline/oauth2':
         specifier: workspace:*
         version: link:../../packages/oauth2
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui

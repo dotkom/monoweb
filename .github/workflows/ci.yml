@@ -57,6 +57,7 @@ jobs:
           deploy: false
           environment: prd
           git-hash: ${{ github.sha }}
+
   build-rpc:
     name: rpc
     runs-on: ubuntu-24.04-arm
@@ -88,6 +89,42 @@ jobs:
           sparse-checkout: '.github'
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-web
+        with:
+          deploy: false
+          environment: prd
+          git-hash: ${{ github.sha }}
+
+  build-grades-backend:
+    name: grades-backend
+    runs-on: ubuntu-24.04-arm
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: true
+      - uses: ./.github/actions/build-grades-backend
+        with:
+          deploy: false
+          environment: prd
+          git-hash: ${{ github.sha }}
+
+  build-grades-frontend:
+    name: grades-frontend
+    runs-on: ubuntu-24.04-arm
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: true
+      - uses: ./.github/actions/build-grades-frontend
         with:
           deploy: false
           environment: prd
