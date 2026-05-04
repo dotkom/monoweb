@@ -1,6 +1,7 @@
-import type { Attendee, User } from "@dotkomonline/types"
 import { cn, Text } from "@dotkomonline/ui"
-import { getAttendeePlate } from "./AttendeePlate"
+import { getAttendeeIcons, getAttendeePlate } from "./AttendeePlate"
+import type { Attendee } from "@dotkomonline/rpc/attendance"
+import type { User } from "@dotkomonline/rpc/user"
 
 interface AttendeeListProps {
   attendees: Attendee[]
@@ -16,6 +17,7 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
   return attendees.map((attendee, index) => {
     const Plate = getAttendeePlate(attendee)
     const minWidth = getMinWidth(maxNumberOfAttendees)
+    const { smallIcons, largeIcon } = getAttendeeIcons(attendee)
 
     return (
       <div key={attendee.id} className="flex flex-row gap-1 items-center group">
@@ -29,7 +31,7 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
           {index + 1}.
         </Text>
 
-        <Plate attendee={attendee} user={user} />
+        <Plate attendee={attendee} user={user} smallIcons={smallIcons} largeIcon={largeIcon} />
       </div>
     )
   })

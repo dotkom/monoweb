@@ -38,10 +38,3 @@ ALTER TABLE "user_flag_link" ADD CONSTRAINT "user_flag_link_user_id_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "user_flag_link" ADD CONSTRAINT "user_flag_link_user_flag_id_fkey" FOREIGN KEY ("user_flag_id") REFERENCES "user_flag"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- Seed flags
-INSERT INTO "user_flag" ("id", "name", "description", "image_url")
-VALUES
-  (gen_random_uuid(), 'EXCEPTIONALLY_DISTINGUISHED', 'Særskilt utmerkelse er en av de gjeveste prisene som deles ut i Online. Prisen deles ut til et fåtall personer som igjennom et år har gjort et utmerket arbeid for Online, langt utover egen rolles forventning i linjeforeningen.', 'https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg'),
-  (gen_random_uuid(), 'VANITY_VERIFIED', 'OW Verified er en kosmetisk profiltillegg som vises blant annet på arrangementpåmeldingslister. Foreløpig har den blitt solgt til høystbydende på veldedighetsfesten.', null)
-ON CONFLICT ("name") DO NOTHING;
