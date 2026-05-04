@@ -165,20 +165,28 @@ export const UserFilterQuerySchema = z
   .partial()
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
-export const FlagName = {
-  VANITY_VERIFIED: "VANITY_VERIFIED",
-  EXCEPTIONALLY_DISTINGUISHED: "EXCEPTIONALLY_DISTINGUISHED",
-} as const
-
-export type FlagName = (typeof FlagName)[keyof typeof FlagName]
+export const FlagNameSchema = z.enum(["VANITY_VERIFIED", "EXCEPTIONALLY_DISTINGUISHED"])
+export type FlagName = z.infer<typeof FlagNameSchema>
 
 export function getFlagLabel(name: FlagName) {
   switch (name) {
-    case FlagName.VANITY_VERIFIED:
+    case FlagNameSchema.enum.VANITY_VERIFIED:
       return "OW Verified"
-    case FlagName.EXCEPTIONALLY_DISTINGUISHED:
+    case FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED:
       return "Særskilt utmerket"
   }
+}
+
+export function isKnight(user: User) {
+  return user.memberships.some(({ type }) => type === MembershipTypeSchema.enum.KNIGHT)
+}
+
+export function isVanityVerified(user: User) {
+  return user.flags.some(({ name }) => name === FlagNameSchema.enum.VANITY_VERIFIED)
+}
+
+export function isExceptionallyDistinguished(user: User) {
+  return user.flags.some(({ name }) => name === FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED)
 }
 
 export function isMembershipActive(

@@ -1,6 +1,7 @@
-import type { Attendee, User } from "@dotkomonline/types"
 import { cn, Text } from "@dotkomonline/ui"
-import { getAttendeePlate } from "./AttendeePlate"
+import { getAttendeeIcons, getAttendeePlate } from "./AttendeePlate"
+import type { Attendee } from "@dotkomonline/rpc/attendance"
+import type { User } from "@dotkomonline/rpc/user"
 
 interface AttendeeListProps {
   attendees: Attendee[]
@@ -9,30 +10,35 @@ interface AttendeeListProps {
 }
 
 export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListProps) => {
-  if (!attendees.length) {
+  if (attendees.length === 0) {
     return <Text className="text-gray-500 dark:text-stone-500 text-sm mx-2">Ingen påmeldte</Text>
   }
 
-  return attendees.map((attendee, index) => {
-    const Plate = getAttendeePlate(attendee)
-    const minWidth = getMinWidth(maxNumberOfAttendees)
+  return (
+    <div className="flex flex-col gap-2">
+      {attendees.map((attendee, index) => {
+        const Plate = getAttendeePlate(attendee)
+        const minWidth = getMinWidth(maxNumberOfAttendees)
+        const { smallIcons, largeIcon } = getAttendeeIcons(attendee)
 
-    return (
-      <div key={attendee.id} className="flex flex-row gap-1 items-center group">
-        <Text
-          style={{ minWidth }}
-          className={cn(
-            "text-gray-400 group-hover:text-black dark:text-stone-500 dark:group-hover:text-stone-300",
-            "text-right text-sm font-mono transition-colors"
-          )}
-        >
-          {index + 1}.
-        </Text>
+        return (
+          <div key={attendee.id} className="flex flex-row gap-1 items-center group">
+            <Text
+              style={{ minWidth }}
+              className={cn(
+                "text-gray-400 group-hover:text-black dark:text-stone-500 dark:group-hover:text-stone-300",
+                "text-right text-sm font-mono transition-colors"
+              )}
+            >
+              {index + 1}.
+            </Text>
 
-        <Plate attendee={attendee} user={user} />
-      </div>
-    )
-  })
+            <Plate attendee={attendee} user={user} smallIcons={smallIcons} largeIcon={largeIcon} />
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 function getMinWidth(maxNumberOfAttendees: number) {
