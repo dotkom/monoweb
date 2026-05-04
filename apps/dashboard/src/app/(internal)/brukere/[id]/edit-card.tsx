@@ -1,5 +1,5 @@
 import { env } from "@/lib/env"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import { UserWriteSchema, type WorkspaceUser, findActiveMembership, getMembershipTypeName } from "@dotkomonline/types"
 import { Button, Group, Loader, Stack, Text, TextInput, Title } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
@@ -12,7 +12,7 @@ import { useUserDetailsContext } from "./provider"
 import { getStudyGrade } from "@dotkomonline/utils"
 
 export const UserEditCard: FC = () => {
-  const session = useSession()
+  const { user: sessionUser } = useUser()
   const { user } = useUserDetailsContext()
 
   const [customKey, setCustomKey] = useState<string | undefined>(undefined)
@@ -23,7 +23,7 @@ export const UserEditCard: FC = () => {
   const update = useUpdateUserMutation()
   const linkUserMutation = useLinkOwUserToWorkspaceUserMutation()
 
-  const isUser = session?.sub === user.id
+  const isUser = sessionUser?.sub === user.id
 
   const isWorkspaceLinked = Boolean(user.workspaceUserId)
   const showWorkspaceLink = isWorkspaceLinked || groups.length > 0

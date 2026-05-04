@@ -1,5 +1,5 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { auth } from "@/auth"
+import { getServerSession } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupRole, GroupRoleTypeEnum, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
@@ -22,7 +22,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
   const now = getCurrentUTC()
 
   const [session, group, futureEventWithAttendances, pastEventWithAttendances] = await Promise.all([
-    auth.getServerSession(),
+    getServerSession(),
     server.group.get.query(slug),
     server.event.allSummaries.query({
       filter: {

@@ -1,4 +1,4 @@
-import { auth } from "@/auth"
+import { getServerSession } from "@/auth"
 import { createAuthorizeUrl, getStudyGrade } from "@dotkomonline/utils"
 import { Avatar, AvatarFallback, AvatarImage, cn, Text, Title } from "@dotkomonline/ui"
 import { redirect } from "next/navigation"
@@ -9,7 +9,7 @@ import { findActiveMembership, getMembershipTypeName, type User } from "@dotkomo
 import { IconArrowNarrowLeft, IconUser, IconUserFilled } from "@tabler/icons-react"
 
 export default async function LinkIdentityPage() {
-  const session = await auth.getServerSession()
+  const session = await getServerSession()
 
   if (!session) {
     redirect(createAuthorizeUrl({ redirectAfter: "/innstillinger/bruker/link" }))

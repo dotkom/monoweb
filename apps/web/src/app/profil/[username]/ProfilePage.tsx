@@ -7,7 +7,7 @@ import { EventListItemSkeleton } from "@/components/molecules/EventListItem/Even
 import { MembershipDisplay } from "@/components/molecules/MembershipDisplay/MembershipDisplay"
 import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import {
   type VisiblePersonalMarkDetails,
   createGroupPageUrl,
@@ -143,7 +143,7 @@ export function ProfilePage() {
   const username = decodeURIComponent(rawUsername)
 
   const trpc = useTRPC()
-  const session = useSession()
+  const { user: sessionUser } = useUser()
 
   const [userResult] = useQueries({
     queries: [trpc.user.findByUsername.queryOptions(username)],
@@ -153,8 +153,8 @@ export function ProfilePage() {
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
-  const isLoggedIn = Boolean(session)
-  const isUser = user ? user.id === session?.sub : false
+  const isLoggedIn = sessionUser != null
+  const isUser = user ? user.id === sessionUser?.sub : false
 
   const [{ data: groups }, { data: futureEventWithAttendances }, { data: marks }, { data: eventsMissingFeedback }] =
     useQueries({

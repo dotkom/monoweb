@@ -20,7 +20,7 @@ import type { FC } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { Button, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
@@ -152,9 +152,9 @@ const links: MenuLink[] = [
 
 export const Navbar: FC = () => {
   const fullPathname = useFullPathname()
-  const session = useSession()
+  const { user } = useUser()
 
-  const isLoggedIn = session !== null
+  const isLoggedIn = user != null
 
   return (
     <header className="sticky top-4 z-50 grid grid-cols-[1fr_auto] gap-1.5 items-center w-full max-w-7xl mt-4">

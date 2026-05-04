@@ -1,10 +1,10 @@
-import { auth } from "@/lib/auth"
+import { getServerSession } from "@/lib/auth"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { Button, Card, Container, Flex, Text, Title } from "@mantine/core"
 import { redirect } from "next/navigation"
 
 export default async function Page() {
-  const session = await auth.getServerSession()
+  const session = await getServerSession()
   if (session !== null) {
     return redirect("/")
   }

@@ -5,9 +5,9 @@ import "@mantine/notifications/styles.css"
 import "@fontsource-variable/inter/wght.css"
 import "@fontsource-variable/inter-tight/wght.css"
 import "@fontsource-variable/google-sans-code/wght.css"
-import { auth } from "@/lib/auth"
+import { auth0 } from "@/lib/auth"
 import { server } from "@/lib/trpc-server"
-import { SessionProvider } from "@dotkomonline/oauth2/react"
+import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { Notifications } from "@mantine/notifications"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -46,9 +46,9 @@ const theme = createTheme({
 })
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const session = await auth.getServerSession()
-
+  const session = await auth0.getSession()
   const isAdmin = await server.user.isAdmin.query()
+
   return (
     <html lang="no" {...mantineHtmlProps}>
       <head>
@@ -56,7 +56,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       </head>
       <body>
         <PlausibleProvider domain="dashboard.online.ntnu.no">
-          <SessionProvider session={session}>
+          <Auth0Provider user={session?.user}>
             <QueryProvider>
               <MantineProvider defaultColorScheme="auto" theme={theme}>
                 <Notifications />
@@ -65,7 +65,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 </ModalProvider>
               </MantineProvider>
             </QueryProvider>
-          </SessionProvider>
+          </Auth0Provider>
         </PlausibleProvider>
       </body>
     </html>

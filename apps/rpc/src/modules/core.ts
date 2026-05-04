@@ -54,7 +54,7 @@ import { getUserRepository } from "./user/user-repository"
 import { getUserMergingService } from "./user/user-merging-service"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
-import { JwtService } from "@dotkomonline/oauth2/jwt"
+import { Auth0JwtService } from "../lib/auth0-jwt"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -106,10 +106,10 @@ function getDirectory(configuration: Configuration): admin_directory_v1.Admin {
 export function createThirdPartyClients(configuration: Configuration) {
   const oauthAudiences = configuration.AUTH0_AUDIENCES.split(",")
 
-  const rpcJwtService = new JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
+  const rpcJwtService = new Auth0JwtService(configuration.AUTH0_ISSUER, oauthAudiences)
   // This is used to verify ID tokens issued to the web client during the link-identity flow. Their `aud` is the web
   // client_id (per OIDC), not the resource-server identifier, so a separate JwtService is required.
-  const webJwtService = new JwtService(configuration.AUTH0_ISSUER, [configuration.AUTH0_WEB_CLIENT_ID])
+  const webJwtService = new Auth0JwtService(configuration.AUTH0_ISSUER, [configuration.AUTH0_WEB_CLIENT_ID])
 
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
   const sesClient = new SESClient({ region: configuration.AWS_REGION })

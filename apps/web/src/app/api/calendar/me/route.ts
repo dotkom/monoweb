@@ -1,12 +1,12 @@
 import { createSecretKey } from "node:crypto"
 import { CALENDAR_ISSUER } from "@/app/api/calendar/ical"
-import { auth } from "@/auth"
+import { getServerSession } from "@/auth"
 import { env } from "@/env"
 import { SignJWT } from "jose"
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET(_: NextRequest): Promise<NextResponse> {
-  const session = await auth.getServerSession()
+  const session = await getServerSession()
   if (session === null) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }

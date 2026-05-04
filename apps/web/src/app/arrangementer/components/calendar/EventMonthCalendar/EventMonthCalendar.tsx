@@ -2,7 +2,7 @@
 
 import { useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import type { EventWithAttendanceSummary } from "@dotkomonline/types"
 import { cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
@@ -29,7 +29,7 @@ interface CalendarProps {
 }
 
 export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
-  const session = useSession()
+  const { user } = useUser()
 
   // fetch 10 days prior to first day of month as a buffer since fliter is by start date
   const calendarStart = new TZDate(year, month, 1 - 10)
@@ -50,7 +50,7 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
   })
 
   const eventDetails = futureEventWithAttendances
-  const userId = session?.sub
+  const userId = user?.sub
 
   const cal = getMonthCalendarArray(year, month, eventDetails)
   const eventTypeGuideItems = getEventTypeGuide(eventDetails)

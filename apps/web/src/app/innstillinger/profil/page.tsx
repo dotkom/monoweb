@@ -2,7 +2,7 @@
 
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import { Button, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconArrowLeft } from "@tabler/icons-react"
@@ -15,12 +15,13 @@ import SkeletonProfileForm from "./loading"
 const EditProfilePage = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const session = useSession()
+  const { user: sessionUser, isLoading: sessionLoading } = useUser()
+  const sessionIsAuthenticated = sessionUser != null
   const fullPathname = useFullPathname()
 
   const { data: user, isLoading: userIsLoading } = useQuery({
     ...trpc.user.getMe.queryOptions(),
-    enabled: session !== null,
+    enabled: sessionIsAuthenticated,
   })
 
   const userEdit = useMutation(
@@ -36,11 +37,11 @@ const EditProfilePage = () => {
     })
   )
 
-  if (!session) {
+  if (!sessionLoading && !sessionIsAuthenticated) {
     redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
   }
 
-  if (userIsLoading || user === undefined) {
+  if (sessionLoading || !sessionIsAuthenticated || userIsLoading || user === undefined) {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-row justify-between">

@@ -2,8 +2,7 @@
 
 import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
-import { useFullPathname } from "@/utils/use-full-pathname"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import {
   Avatar,
   AvatarFallback,
@@ -199,8 +198,16 @@ const linkGroups: LinkGroup[] = [
 ]
 
 export const ProfileMenu: FC = () => {
-  const session = useSession()
-  if (session === null) return <UnauthenticatedActions />
+  const { user, isLoading } = useUser()
+
+  if (isLoading) {
+    return null
+  }
+
+  if (user === undefined || user === null) {
+    return <UnauthenticatedActions />
+  }
+
   return (
     <div className="flex gap-2 mr-2 lg:mr-0">
       <ContactDebugDropdown />
@@ -211,14 +218,13 @@ export const ProfileMenu: FC = () => {
 
 export const AvatarDropdown: FC = () => {
   const [open, setOpen] = useState(false)
-  const session = useSession()
-  const fullPathname = useFullPathname()
+  const { user: authUser, isLoading: authLoading } = useUser()
   const trpc = useTRPC()
 
   const [userResponse, isStaffResponse] = useQueries({
     queries: [
-      trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(session) }),
-      trpc.user.isStaff.queryOptions(undefined, { enabled: Boolean(session) }),
+      trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(authUser) && !authLoading }),
+      trpc.user.isStaff.queryOptions(undefined, { enabled: Boolean(authUser) && !authLoading }),
     ],
   })
 
@@ -335,11 +341,7 @@ export const AvatarDropdown: FC = () => {
         <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />
 
         <DropdownMenuItem className="rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors cursor-pointer">
-          <Link
-            prefetch={false}
-            href={createLogoutUrl({ redirectAfter: fullPathname })}
-            className="flex items-center w-full gap-3 text-sm"
-          >
+          <Link prefetch={false} href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm">
             <IconLogout2 className="size-5 text-red-500" />
             <Text className="font-medium text-red-500">Logg ut</Text>
           </Link>
