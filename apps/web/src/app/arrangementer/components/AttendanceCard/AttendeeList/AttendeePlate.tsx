@@ -1,7 +1,12 @@
-import { type Attendee, isVanityVerified, type User } from "@dotkomonline/types"
+import { type Attendee, isVanityVerified, type User, isExceptionallyDistinguished, FlagName } from "@dotkomonline/types"
 import type { FC, JSX, ReactNode } from "react"
 import { GenericPlate } from "./GenericPlate"
 import { getVanityVerifiedSmallIcon, VanityVerifiedPlate } from "./VanityVerifiedPlate"
+import {
+  ExceptionallyDistinguishedPlate,
+  getExceptionallyDistinguishedLargeIcon,
+  getExceptionallyDistinguishedSmallIcon,
+} from "./ExceptionallyDistinguished"
 
 export interface PlateProps {
   attendee: Attendee
@@ -13,6 +18,10 @@ export interface PlateProps {
 }
 
 export function getAttendeePlate(attendee: Attendee): FC<PlateProps> {
+  if (isExceptionallyDistinguished(attendee.user)) {
+    return ExceptionallyDistinguishedPlate
+  }
+
   if (isVanityVerified(attendee.user)) {
     return VanityVerifiedPlate
   }
@@ -22,7 +31,17 @@ export function getAttendeePlate(attendee: Attendee): FC<PlateProps> {
 
 export function getAttendeeIcons(attendee: Attendee) {
   const smallIcons: JSX.Element[] = []
-  const largeIcon: JSX.Element | null = null
+  let largeIcon: JSX.Element | null = null
+
+  if (isExceptionallyDistinguished(attendee.user)) {
+    const flags = attendee.user.flags.filter(({ name }) => name === FlagName.EXCEPTIONALLY_DISTINGUISHED)
+
+    if (largeIcon === null) {
+      largeIcon = getExceptionallyDistinguishedLargeIcon(flags)
+    } else {
+      smallIcons.push(getExceptionallyDistinguishedSmallIcon(flags))
+    }
+  }
 
   if (isVanityVerified(attendee.user)) {
     smallIcons.push(getVanityVerifiedSmallIcon())
