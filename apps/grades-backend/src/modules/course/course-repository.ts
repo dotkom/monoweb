@@ -1,4 +1,4 @@
-import { type DBHandle, Prisma } from "@dotkomonline/grades-db"
+import { type DBHandle, PrismaRuntime } from "@dotkomonline/grades-db"
 import { parseOrReport } from "../../invariant"
 import {
   type Course,
@@ -43,8 +43,8 @@ export function getCourseRepository(): CourseRepository {
       const searchContains = bySearch ? `%${bySearch}%` : undefined
 
       const searchWhereSql = searchContains
-        ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "name_no" ILIKE ${searchContains} OR "name_en" ILIKE ${searchContains})`
-        : Prisma.empty
+        ? PrismaRuntime.sql`AND ("code" ILIKE ${searchContains} OR "name_no" ILIKE ${searchContains} OR "name_en" ILIKE ${searchContains})`
+        : PrismaRuntime.empty
 
       const bySemester = query.bySemester ?? []
       const byTeachingLanguage = query.byTeachingLanguage ?? []
@@ -53,21 +53,23 @@ export function getCourseRepository(): CourseRepository {
 
       const semesterWhereSql =
         bySemester.length > 0
-          ? Prisma.sql`AND "taught_semesters" && ARRAY[${Prisma.join(bySemester)}]::"semester"[]`
-          : Prisma.empty
+          ? PrismaRuntime.sql`AND "taught_semesters" && ARRAY[${PrismaRuntime.join(bySemester)}]::"semester"[]`
+          : PrismaRuntime.empty
 
       const teachingLanguageWhereSql =
         byTeachingLanguage.length > 0
-          ? Prisma.sql`AND "teaching_languages" && ARRAY[${Prisma.join(byTeachingLanguage)}]::"teaching_language"[]`
-          : Prisma.empty
+          ? PrismaRuntime.sql`AND "teaching_languages" && ARRAY[${PrismaRuntime.join(byTeachingLanguage)}]::"teaching_language"[]`
+          : PrismaRuntime.empty
 
       const campusWhereSql =
-        byCampus.length > 0 ? Prisma.sql`AND "campuses" && ARRAY[${Prisma.join(byCampus)}]::"campus"[]` : Prisma.empty
+        byCampus.length > 0
+          ? PrismaRuntime.sql`AND "campuses" && ARRAY[${PrismaRuntime.join(byCampus)}]::"campus"[]`
+          : PrismaRuntime.empty
 
       const minGradeWhereSql =
         byMinGrade != null
-          ? Prisma.sql`AND "average_grade" >= ${mapLetterGradeFilterToMinAverageGrade(byMinGrade)}`
-          : Prisma.empty
+          ? PrismaRuntime.sql`AND "average_grade" >= ${mapLetterGradeFilterToMinAverageGrade(byMinGrade)}`
+          : PrismaRuntime.empty
 
       const courses = await handle.$queryRaw<Course[]>`
         SELECT
@@ -110,7 +112,7 @@ export function getCourseRepository(): CourseRepository {
           -- The ranking logic is defined as a PostgreSQL function.
           -- To modify it, create a new migration and copy-paste the function from the previous migration that modified it.
           course_rank_score(code, name_no, name_en, last_year_taught, ${bySearch || null}) DESC,
-          ${Prisma.raw(orderByClause)}
+          ${PrismaRuntime.raw(orderByClause)}
         OFFSET ${offset}
         LIMIT ${limit}
       `

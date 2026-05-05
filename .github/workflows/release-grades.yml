@@ -1,0 +1,125 @@
+# Perform a full release of the Grades applications in the monorepo
+
+name: Production Release (Grades)
+on:
+  workflow_dispatch:
+    inputs:
+      git-hash:
+        description: 'Git hash to release (leave empty to use latest on main)'
+        required: false
+
+concurrency:
+  group: grades-production
+  cancel-in-progress: true
+
+env:
+  DEPLOYMENT_TARGET_HASH: ${{ github.event.inputs.git-hash || github.sha }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # The "check" job is responsible for verifying the minimum requirements to
+  # build all the packages in the monorepo.
+  check:
+    name: Verify build requirements
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 1
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10.28.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22.21.1
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+        name: Install dependencies from pnpm lockfile
+      - run: pnpm lint-check
+        name: Run linting and formatting checks
+      - run: pnpm type-check
+        name: Run TypeScript type checker
+
+  migrate-grades:
+    name: Run grades database migrations
+    runs-on: ubuntu-24.04-arm
+    needs:
+      - check
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 1
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10.28.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22.21.1
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+        name: Install dependencies from pnpm lockfile
+      - uses: ./.github/actions/internal/doppler-secrets
+        with:
+          project: grades-backend
+          config: prd
+      - run: pnpm migrate:deploy-grades
+        name: Apply Prisma migrations against prod
+
+  build-grades-backend:
+    name: grades-backend
+    runs-on: ubuntu-24.04-arm
+    needs:
+      - check
+      - migrate-grades
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: true
+      - uses: ./.github/actions/build-grades-backend
+        with:
+          deploy: true
+          environment: prd
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+
+  build-grades-frontend:
+    name: grades-frontend
+    runs-on: ubuntu-24.04-arm
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: true
+      - uses: ./.github/actions/build-grades-frontend
+        with:
+          deploy: true
+          environment: prd
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
+
+  notify:
+    name: Notify users about trigger
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - name: Submit message to \#prod-ops-feed in Slack
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "*Ny Grades release started av ${{ github.triggering_actor }}*"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Ny Grades release started av ${{ github.triggering_actor }}*"

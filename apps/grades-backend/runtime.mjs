@@ -1,5 +1,6 @@
 import path from "node:path"
-import { URL } from "node:url"
+import { existsSync } from "node:fs"
+import { fileURLToPath, URL } from "node:url"
 
 export async function resolve(specifier, context, nextResolve) {
   // Only handle relative or absolute paths without extensions
@@ -9,10 +10,12 @@ export async function resolve(specifier, context, nextResolve) {
   ) {
     // Try with .ts extension first
     const tsFile = `${specifier}.ts`
-    const resolvedTsPath = new URL(tsFile, context.parentURL).href
-    return {
-      url: resolvedTsPath,
-      shortCircuit: true,
+    const resolvedTsUrl = new URL(tsFile, context.parentURL)
+    if (existsSync(fileURLToPath(resolvedTsUrl))) {
+      return {
+        url: resolvedTsUrl.href,
+        shortCircuit: true,
+      }
     }
   }
 

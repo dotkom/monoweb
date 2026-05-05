@@ -17,7 +17,6 @@
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/oauth2": "workspace:*",
-    "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
     "@next/env": "^15.3.5",
