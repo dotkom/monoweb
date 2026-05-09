@@ -9,30 +9,15 @@ const LOGOUT_ENDPOINT = "/api/auth/logout"
 // to link the two accounts' identities and merge the two accounts into one.
 const LINK_IDENTITY_AUTHORIZE_ENDPOINT = "/api/auth/link-identity/authorize"
 
-function normalizeAuthorizeSearchParams(...parameters: ConstructorParameters<typeof URLSearchParams>): URLSearchParams {
-  const params = new URLSearchParams(...parameters)
-  const redirectAfter = params.get("redirectAfter")
-
-  if (redirectAfter !== null) {
-    params.delete("redirectAfter")
-
-    if (!params.has("returnTo")) {
-      params.set("returnTo", redirectAfter)
-    }
-  }
-
-  return params
-}
-
 /**
  * Creates an authorize URL with the given search parameters.
  *
  * @example
  * const fullPathname = useFullPathname()
- * const url = createAuthorizeUrl({ connection: "FEIDE", redirectAfter: fullPathname })
+ * const url = createAuthorizeUrl({ connection: "FEIDE", returnTo: fullPathname })
  */
 export const createAuthorizeUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
-  const searchParams = normalizeAuthorizeSearchParams(...parameters).toString()
+  const searchParams = new URLSearchParams(...parameters).toString()
   if (!searchParams) {
     return AUTHORIZE_ENDPOINT
   }
@@ -46,7 +31,7 @@ export const createAuthorizeUrl = (...parameters: ConstructorParameters<typeof U
  * const url = createLogoutUrl()
  */
 export const createLogoutUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
-  const searchParams = normalizeAuthorizeSearchParams(...parameters).toString()
+  const searchParams = new URLSearchParams(...parameters).toString()
   if (!searchParams) {
     return LOGOUT_ENDPOINT
   }
@@ -58,14 +43,14 @@ export const createLogoutUrl = (...parameters: ConstructorParameters<typeof URLS
  *
  * @example
  * const fullPathname = useFullPathname()
- * const url = createAbsoluteAuthorizeUrl(window.location.origin, { connection: "FEIDE", redirectAfter: fullPathname })
+ * const url = createAbsoluteAuthorizeUrl(window.location.origin, { connection: "FEIDE", returnTo: fullPathname })
  */
 export const createAbsoluteAuthorizeUrl = (
   origin: string,
   ...parameters: ConstructorParameters<typeof URLSearchParams>
 ) => {
   const url = new URL(AUTHORIZE_ENDPOINT, origin)
-  url.search = normalizeAuthorizeSearchParams(...parameters).toString()
+  url.search = new URLSearchParams(...parameters).toString()
   return url.toString()
 }
 
@@ -80,7 +65,7 @@ export const createAbsoluteLogoutUrl = (
   ...parameters: ConstructorParameters<typeof URLSearchParams>
 ) => {
   const url = new URL(LOGOUT_ENDPOINT, origin)
-  url.search = normalizeAuthorizeSearchParams(...parameters).toString()
+  url.search = new URLSearchParams(...parameters).toString()
   return url.toString()
 }
 
@@ -116,11 +101,11 @@ export const createCloudFrontUrl = (cloudFrontUrl: string, key: string): string 
  * const fullPathname = useFullPathname()
  * const url = createLinkIdentityAuthorizeUrl({
  *   connection: "FEIDE", // or "Username-Password-Authentication"
- *   redirectAfter: `${fullPathname}/link`,
+ *   returnTo: `${fullPathname}/link`,
  * })
  */
 export const createLinkIdentityAuthorizeUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
-  const searchParams = normalizeAuthorizeSearchParams(...parameters).toString()
+  const searchParams = new URLSearchParams(...parameters).toString()
   if (!searchParams) {
     return LINK_IDENTITY_AUTHORIZE_ENDPOINT
   }
@@ -135,7 +120,7 @@ export const createLinkIdentityAuthorizeUrl = (...parameters: ConstructorParamet
  * const fullPathname = useFullPathname()
  * const url = createAbsoluteLinkIdentityAuthorizeUrl(window.location.origin, {
  *   connection: "FEIDE", // or "Username-Password-Authentication"
- *   redirectAfter: `${fullPathname}/link`,
+ *   returnTo: `${fullPathname}/link`,
  * })
  */
 export const createAbsoluteLinkIdentityAuthorizeUrl = (
@@ -143,6 +128,6 @@ export const createAbsoluteLinkIdentityAuthorizeUrl = (
   ...parameters: ConstructorParameters<typeof URLSearchParams>
 ) => {
   const url = new URL(LINK_IDENTITY_AUTHORIZE_ENDPOINT, origin)
-  url.search = normalizeAuthorizeSearchParams(...parameters).toString()
+  url.search = new URLSearchParams(...parameters).toString()
   return url.toString()
 }

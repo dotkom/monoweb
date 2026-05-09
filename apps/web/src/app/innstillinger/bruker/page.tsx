@@ -68,7 +68,7 @@ export default function MinBrukerPage() {
   }, [sessionIsAuthenticated, synchronizeEmail])
 
   if (!sessionLoading && !sessionIsAuthenticated) {
-    redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
+    redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
   if (sessionLoading || !sessionIsAuthenticated) {
@@ -80,12 +80,12 @@ export default function MinBrukerPage() {
 
   const linkFeideUrl = createLinkIdentityAuthorizeUrl({
     connection: "FEIDE",
-    redirectAfter: `${fullPathname}/link`,
+    returnTo: `${fullPathname}/link`,
   })
 
   const linkUsernamePasswordUrl = createLinkIdentityAuthorizeUrl({
     connection: "Username-Password-Authentication",
-    redirectAfter: `${fullPathname}/link`,
+    returnTo: `${fullPathname}/link`,
   })
 
   const usernamePasswordLinkButtonProps =

@@ -12,7 +12,7 @@ export default async function LinkIdentityPage() {
   const session = await getServerSession()
 
   if (!session) {
-    redirect(createAuthorizeUrl({ redirectAfter: "/innstillinger/bruker/link" }))
+    redirect(createAuthorizeUrl({ returnTo: "/innstillinger/bruker/link" }))
   }
 
   const { secondaryUserId } = await getIdentityLinkCookies().catch(() => {

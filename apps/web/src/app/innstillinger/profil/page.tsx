@@ -38,7 +38,7 @@ const EditProfilePage = () => {
   )
 
   if (!sessionLoading && !sessionIsAuthenticated) {
-    redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
+    redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
   if (sessionLoading || !sessionIsAuthenticated || userIsLoading || user === undefined) {

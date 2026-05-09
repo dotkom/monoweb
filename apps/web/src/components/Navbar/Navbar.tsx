@@ -185,7 +185,7 @@ export const Navbar: FC = () => {
             variant="solid"
             color="brand"
             className="font-medium min-w-19 pl-3 pr-4 xs:pl-6 xs:pr-8 py-4 rounded-l-lg rounded-r-4xl shrink-0 h-full"
-            href={createAuthorizeUrl({ redirectAfter: fullPathname })}
+            href={createAuthorizeUrl({ returnTo: fullPathname })}
             prefetch={false}
             icon={<IconLogin2 className="mr-1.5 size-6" />}
           >
