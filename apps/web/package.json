@@ -47,7 +47,7 @@
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "ical-generator": "^8.1.1",
-    "import-in-the-middle": "^2.0.6",
+    "import-in-the-middle": "^3.0.1",
     "isomorphic-dompurify": "^3.0.0",
     "jose": "^6.0.11",
     "jsdom": "28.1.0",
