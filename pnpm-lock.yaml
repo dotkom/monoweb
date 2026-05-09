@@ -141,8 +141,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       import-in-the-middle:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^3.0.1
+        version: 3.0.1
       next:
         specifier: ^15.3.6
         version: 15.5.15(@opentelemetry/api@1.9.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -265,8 +265,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       import-in-the-middle:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^3.0.1
+        version: 3.0.1
       p-limit:
         specifier: ^7.3.0
         version: 7.3.0
@@ -371,8 +371,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       import-in-the-middle:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^3.0.1
+        version: 3.0.1
       jsdom:
         specifier: 28.1.0
         version: 28.1.0
@@ -546,8 +546,8 @@ importers:
         specifier: 8.0.1
         version: 8.0.1
       import-in-the-middle:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^3.0.1
+        version: 3.0.1
       lru-cache:
         specifier: ^11.1.0
         version: 11.2.6
@@ -730,8 +730,8 @@ importers:
         specifier: ^8.1.1
         version: 8.1.1(@types/node@22.19.7)(dayjs@1.11.19)(luxon@3.7.2)
       import-in-the-middle:
-        specifier: ^2.0.6
-        version: 2.0.6
+        specifier: ^3.0.1
+        version: 3.0.1
       isomorphic-dompurify:
         specifier: ^3.0.0
         version: 3.0.0
