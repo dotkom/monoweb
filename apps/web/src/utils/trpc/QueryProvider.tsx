@@ -1,7 +1,7 @@
 "use client"
 
 import { env } from "@/env"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { getAccessToken } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
@@ -13,7 +13,15 @@ import {
   splitLink,
 } from "@trpc/client"
 import { minutesToMilliseconds } from "date-fns"
-import { type Dispatch, type PropsWithChildren, type SetStateAction, createContext, useContext, useState } from "react"
+import {
+  type Dispatch,
+  type PropsWithChildren,
+  type SetStateAction,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from "react"
 import superjson from "superjson"
 import { TRPCProvider } from "./client"
 
@@ -37,40 +45,52 @@ export const useTRPCSSERegisterChangeConnectionState = () => {
 }
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
-  const session = useSession()
   const [trpcSSERegisterChangeConnectionState, setTRPCSSERegisterChangeConnectionState] =
     useState<TRPCSSEConnectionState>("connecting")
 
-  const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
-    links: [
-      loggerLink({
-        enabled: (opts) => opts.direction === "down" && opts.result instanceof Error,
-      }),
-      splitLink({
-        condition: (op) => op.type === "subscription",
-        true: httpSubscriptionLink({
-          transformer: superjson,
-          url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
+  const trpcConfig: CreateTRPCClientOptions<AppRouter> = useMemo(
+    () => ({
+      links: [
+        loggerLink({
+          enabled: (opts) => opts.direction === "down" && opts.result instanceof Error,
         }),
-        false: httpBatchLink({
-          transformer: superjson,
-          url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
-          async fetch(url, options) {
-            const headers = new Headers(options?.headers)
+        splitLink({
+          condition: (op) => op.type === "subscription",
+          true: httpSubscriptionLink({
+            transformer: superjson,
+            url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
+          }),
+          false: httpBatchLink({
+            transformer: superjson,
+            url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
+            async fetch(url, options) {
+              const headers = new Headers(options?.headers)
 
-            if (session !== null) {
-              headers.append("Authorization", `Bearer ${session.accessToken}`)
-            }
-            return fetch(url, {
-              ...options,
-              credentials: "include",
-              headers,
-            })
-          },
+              try {
+                const token = await getAccessToken()
+
+                if (typeof token === "string" && token !== "") {
+                  headers.set("Authorization", `Bearer ${token}`)
+                }
+              } catch {
+                // not authenticated
+              }
+
+              return fetch(url, {
+                ...options,
+                credentials: "include",
+                headers,
+              })
+            },
+          }),
         }),
-      }),
-    ],
-  }
+      ],
+    }),
+    []
+  )
+
+  const trpcClient = useMemo(() => createTRPCClient(trpcConfig), [trpcConfig])
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -86,7 +106,6 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         },
       })
   )
-  const [trpcClient] = useState(() => createTRPCClient(trpcConfig))
 
   return (
     <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>

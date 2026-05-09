@@ -6,13 +6,18 @@ resource "auth0_tenant" "tenant" {
   default_redirection_uri                       = "https://online.ntnu.no"
   enabled_locales                               = ["nb", "en", "no", "nn"]
   friendly_name                                 = "Online, Linjeforeningen for informatikk"
-  idle_session_lifetime                         = 360 # 15 days
   picture_url                                   = "https://cdn.online.ntnu.no/branding/online-logo.svg"
   sandbox_version                               = "18"
-  session_lifetime                              = 720 # 30 days
   support_email                                 = "dotkom@online.ntnu.no"
-  ephemeral_session_lifetime                    = 168 # 7 days
-  idle_ephemeral_session_lifetime               = 72 # 3 days
+
+  session_lifetime                = 2160 # 90 days
+  idle_session_lifetime           = 720  # 30 days
+  ephemeral_session_lifetime      = 168  # 7 days
+  idle_ephemeral_session_lifetime = 72   # 3 days
+
+  sessions {
+    oidc_logout_prompt_enabled = false
+  }
 }
 
 data "auth0_tenant" "tenant" {}
@@ -103,8 +108,8 @@ resource "auth0_resource_server" "online" {
   signing_secret                                  = null
   skip_consent_for_verifiable_first_party_clients = true
   token_dialect                                   = "access_token_authz"
-  token_lifetime                                  = 86400
-  token_lifetime_for_web                          = 7200
+  token_lifetime                                  = 600 # 10 minutes
+  token_lifetime_for_web                          = 600 # 10 minutes
   verification_location                           = null
 }
 
@@ -165,8 +170,13 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   oidc_conformant               = true
 
   refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
+    rotation_type                = "rotating"
+    expiration_type              = "expiring"
+    infinite_token_lifetime      = false
+    infinite_idle_token_lifetime = false
+
+    token_lifetime      = 7776000 # 90 days
+    idle_token_lifetime = 2592000 # 30 days
   }
 
   jwt_configuration {
@@ -444,17 +454,13 @@ resource "auth0_client" "monoweb_web" {
   oidc_conformant = true
 
   refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-
-    # Absolute expiration
-    token_lifetime = 2592000 # 30 days
-
-    # Idle expiration. If the user doesn't visit in this amount of time, they are logged out.
-    idle_token_lifetime = 1296000 # 15 days
-
+    rotation_type                = "rotating"
+    expiration_type              = "expiring"
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
+
+    token_lifetime      = 7776000 # 90 days
+    idle_token_lifetime = 2592000 # 30 days
   }
 
   # organization_require_behavior is here since so that terraform does not attempt to apply it everytime
@@ -485,23 +491,19 @@ resource "auth0_client" "monoweb_dashboard" {
       "prd" = ["https://dashboard.online.ntnu.no"]
     }[terraform.workspace]
   )
-  grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
+  grant_types     = ["authorization_code", "refresh_token", "client_credentials"]
   name            = "OnlineWeb Dashboard${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true
   is_first_party  = true
 
   refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-
-    # Absolute expiration
-    token_lifetime = 172800 # 2 days 
-
-    # Idle expiration. If the user doesn't visit in this amount of time, they are logged out.
-    idle_token_lifetime = 43200 # 12 hours
-
+    rotation_type                = "rotating"
+    expiration_type              = "expiring"
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
+
+    token_lifetime      = 7776000 # 90 days
+    idle_token_lifetime = 2592000 # 30 days
   }
 
   jwt_configuration {

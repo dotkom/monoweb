@@ -4,7 +4,7 @@ import { FeideIcon } from "@/components/icons/FeideIcon"
 import { useTRPC } from "@/utils/trpc/client"
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { useFullPathname } from "@/utils/use-full-pathname"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import { Button, Text, TextInput, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLinkIdentityAuthorizeUrl } from "@dotkomonline/utils"
 import { IconAlertTriangle, IconCheck, IconCopy, IconLink, IconMail, IconPassword, IconX } from "@tabler/icons-react"
@@ -15,7 +15,9 @@ import { useEffect, useState } from "react"
 export default function MinBrukerPage() {
   const fullPathname = useFullPathname()
   const searchParams = useSearchParams()
-  const session = useSession()
+  const { user: sessionUser, isLoading: sessionLoading } = useUser()
+
+  const sessionIsAuthenticated = sessionUser != null
 
   const [newEmail, setNewEmail] = useState("")
   const { icon: copyEmailIcon, copy: copyEmail } = useCopyToClipboard()
@@ -30,13 +32,13 @@ export default function MinBrukerPage() {
   const queryClient = useQueryClient()
 
   const { data: auth0Connections, isLoading: auth0ConnectionsIsLoading } = useQuery({
-    ...trpc.user.getAuth0Connections.queryOptions({ userId: session?.sub ?? "" }),
-    enabled: session !== null,
+    ...trpc.user.getAuth0Connections.queryOptions({ userId: sessionUser?.sub ?? "" }),
+    enabled: sessionIsAuthenticated,
   })
 
   const { data: user } = useQuery({
     ...trpc.user.getMe.queryOptions(),
-    enabled: session !== null,
+    enabled: sessionIsAuthenticated,
   })
 
   const { mutate: synchronizeEmail } = useMutation(
@@ -58,15 +60,19 @@ export default function MinBrukerPage() {
   // We synchronize the email from Auth0 on mount, so that if the user returns here after clicking a verification link,
   // the DB user also gets updated.
   useEffect(() => {
-    if (session === null) {
+    if (!sessionIsAuthenticated) {
       return
     }
 
     synchronizeEmail()
-  }, [session, synchronizeEmail])
+  }, [sessionIsAuthenticated, synchronizeEmail])
 
-  if (session === null) {
+  if (!sessionLoading && !sessionIsAuthenticated) {
     redirect(createAuthorizeUrl({ redirectAfter: fullPathname }))
+  }
+
+  if (sessionLoading || !sessionIsAuthenticated) {
+    return null
   }
 
   const isFeideLinked = auth0Connections?.hasFeide === true

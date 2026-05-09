@@ -1,7 +1,7 @@
 "use client"
 
 import { DateTooltip } from "@/components/DateTooltip"
-import { useSession } from "@dotkomonline/oauth2/react"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import {
   type GroupId,
   type GroupMembership,
@@ -27,7 +27,8 @@ function formatRoles(memberships: GroupMembership[]) {
 }
 
 export const useGroupMemberTable = ({ data, groupId, showWorkspaceColumns }: Props) => {
-  const userId = useSession()?.sub ?? null
+  const { user: sessionUser } = useUser()
+  const userId = sessionUser?.sub ?? null
 
   const columnHelper = createColumnHelper<WorkspaceMemberLink>()
 

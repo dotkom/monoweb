@@ -1,10 +1,10 @@
 import { EventFeedbackForm } from "@/app/tilbakemelding/components/FeedbackForm"
+import { getServerSession } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import type { Attendee, Event, FeedbackForm, FeedbackRejectionCause } from "@dotkomonline/types"
 import { Text, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 
 function getFailureMessage(cause: FeedbackRejectionCause) {
   switch (cause) {
@@ -32,7 +32,7 @@ const EventFeedbackPage = async ({
   const { preview } = await searchParams
   const isPreview = preview === "true"
 
-  const session = await auth.getServerSession()
+  const session = await getServerSession()
   if (!session) {
     const params = new URLSearchParams()
     if (!params.has("redirectAfter")) {

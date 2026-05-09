@@ -28,8 +28,13 @@ resource "auth0_client" "appkom_opptak" {
   oidc_conformant = true
 
   refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
+    rotation_type                = "rotating"
+    expiration_type              = "expiring"
+    infinite_token_lifetime      = false
+    infinite_idle_token_lifetime = false
+
+    token_lifetime      = 2592000 # 30 days
+    idle_token_lifetime = 1296000 # 15 days
   }
 
   jwt_configuration {
@@ -48,8 +53,8 @@ resource "auth0_client" "appkom_autobank" {
     "dev" = ["http://localhost:3000/"]
     "stg" = ["https://autobank-frontend.vercel.app/"]
     "prd" = [
-        "https://autobank-frontend.vercel.app/",
-        "https://autobank.online.ntnu.no"
+      "https://autobank-frontend.vercel.app/",
+      "https://autobank.online.ntnu.no"
     ]
   }[terraform.workspace]
   allowed_origins = []
@@ -58,8 +63,8 @@ resource "auth0_client" "appkom_autobank" {
     "dev" = ["http://localhost:3000/authentication/callback"]
     "stg" = ["https://autobank-frontend.vercel.app/authentication/callback"]
     "prd" = [
-        "https://autobank-frontend.vercel.app/authentication/callback",
-        "https://autobank.online.ntnu.no/authentication/callback"
+      "https://autobank-frontend.vercel.app/authentication/callback",
+      "https://autobank.online.ntnu.no/authentication/callback"
     ]
   }[terraform.workspace]
   grant_types = ["authorization_code", "refresh_token"]
@@ -69,8 +74,13 @@ resource "auth0_client" "appkom_autobank" {
   oidc_conformant = true
 
   refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
+    rotation_type                = "rotating"
+    expiration_type              = "expiring"
+    infinite_token_lifetime      = false
+    infinite_idle_token_lifetime = false
+
+    token_lifetime      = 2592000 # 30 days
+    idle_token_lifetime = 1296000 # 15 days
   }
 
   jwt_configuration {
@@ -119,8 +129,13 @@ resource "auth0_client" "appkom_events_app" {
   }
 
   refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
+    rotation_type                = "rotating"
+    expiration_type              = "expiring"
+    infinite_token_lifetime      = false
+    infinite_idle_token_lifetime = false
+
+    token_lifetime      = 2592000 # 30 days
+    idle_token_lifetime = 1296000 # 15 days
   }
 
   mobile {
@@ -161,8 +176,13 @@ resource "auth0_client" "appkom_veldedighet" {
   oidc_conformant = true
 
   refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
+    rotation_type                = "rotating"
+    expiration_type              = "expiring"
+    infinite_token_lifetime      = false
+    infinite_idle_token_lifetime = false
+
+    token_lifetime      = 2592000 # 30 days
+    idle_token_lifetime = 1296000 # 15 days
   }
 
   jwt_configuration {

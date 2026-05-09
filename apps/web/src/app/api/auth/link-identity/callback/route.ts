@@ -1,5 +1,6 @@
-import { auth, oauth2Service } from "@/auth"
+import { getServerSession } from "@/auth"
 import { env } from "@/env"
+import { exchangeLinkIdentityCode } from "@/lib/link-identity-oauth"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { decodeJwt } from "jose"
 import { cookies } from "next/headers"
@@ -29,18 +30,21 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${env.NEXT_PUBLIC_ORIGIN}?error=missing_link_verifier`)
   }
 
-  const tokenSet = await oauth2Service.getTokenSet(
-    `${env.NEXT_PUBLIC_ORIGIN}/api/auth/link-identity/callback`,
+  const tokenSet = await exchangeLinkIdentityCode({
+    issuerUrl: env.AUTH0_ISSUER,
+    clientId: env.AUTH0_CLIENT_ID,
+    clientSecret: env.AUTH0_CLIENT_SECRET,
+    redirectUri: `${env.NEXT_PUBLIC_ORIGIN}/api/auth/link-identity/callback`,
     code,
-    verifier
-  )
+    verifier,
+  })
 
   const secondaryUserId = decodeJwt(tokenSet.idToken).sub
   if (!secondaryUserId) {
     return NextResponse.redirect(`${env.NEXT_PUBLIC_ORIGIN}?error=no_sub`)
   }
 
-  const session = await auth.getServerSession()
+  const session = await getServerSession()
   if (!session) {
     return NextResponse.redirect(new URL(createAuthorizeUrl(), env.NEXT_PUBLIC_ORIGIN))
   }

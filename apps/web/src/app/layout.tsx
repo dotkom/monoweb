@@ -1,8 +1,8 @@
-import { auth } from "@/auth"
+import { auth0 } from "@/auth"
 import { Footer } from "@/components/Footer/Footer"
 import { Navbar } from "@/components/Navbar/Navbar"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
-import { SessionProvider } from "@dotkomonline/oauth2/react"
+import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { cn } from "@dotkomonline/ui"
 import { ThemeProvider } from "next-themes"
 import { Figtree, Inter, Google_Sans_Code } from "next/font/google"
@@ -35,13 +35,13 @@ const fontTitle = Figtree({ subsets: ["latin"], variable: "--font-title" })
 const fontMono = Google_Sans_Code({ subsets: ["latin"], variable: "--font-mono", fallback: ["monospace"] })
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const session = await auth.getServerSession()
+  const session = await auth0.getSession()
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning>
       <body className={cn(fontTitle.variable, fontBody.variable, fontMono.variable, "bg-white dark:bg-stone-900")}>
         <PlausibleProvider domain="online.ntnu.no">
-          <SessionProvider session={session}>
+          <Auth0Provider user={session?.user}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
                 <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
@@ -51,7 +51,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 </div>
               </ThemeProvider>
             </QueryProvider>
-          </SessionProvider>
+          </Auth0Provider>
         </PlausibleProvider>
       </body>
     </html>

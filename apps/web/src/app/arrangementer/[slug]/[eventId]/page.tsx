@@ -1,4 +1,4 @@
-import { auth } from "@/auth"
+import { getServerSession } from "@/auth"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
@@ -73,7 +73,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
   const { slug, eventId } = await params
   const decodedSlug = decodeURIComponent(slug)
 
-  const session = await auth.getServerSession()
+  const session = await getServerSession()
 
   const eventDetail = await server.event.find.query(eventId)
 

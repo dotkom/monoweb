@@ -5,6 +5,11 @@ import { withSentryConfig } from "@sentry/nextjs"
  */
 const config = {
   reactStrictMode: true,
+  env: {
+    NEXT_PUBLIC_LOGIN_ROUTE: "/api/auth/authorize",
+    NEXT_PUBLIC_PROFILE_ROUTE: "/api/auth/session",
+    NEXT_PUBLIC_ACCESS_TOKEN_ROUTE: "/api/auth/access-token",
+  },
   images: {
     unoptimized: true,
   },
