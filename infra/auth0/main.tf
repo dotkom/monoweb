@@ -11,6 +11,8 @@ resource "auth0_tenant" "tenant" {
   sandbox_version                               = "18"
   session_lifetime                              = 720 # 30 days
   support_email                                 = "dotkom@online.ntnu.no"
+  ephemeral_session_lifetime                    = 168 # 7 days
+  idle_ephemeral_session_lifetime               = 72 # 3 days
 }
 
 data "auth0_tenant" "tenant" {}
