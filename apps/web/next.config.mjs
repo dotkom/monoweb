@@ -23,12 +23,14 @@ export default withSentryConfig(config, {
   org: "dotkom",
   project: "monoweb-web",
   sentryUrl: "https://sentry.io/",
-  reactComponentAnnotation: {
-    enabled: true,
-  },
   tunnelRoute: "/pulse",
   authToken: process.env.SENTRY_AUTH_TOKEN,
   widenClientFileUpload: true,
   hideSourceMaps: true,
-  disableLogger: true,
+  webpack: {
+    reactComponentAnnotation: true,
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
 })
